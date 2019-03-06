@@ -1,13 +1,16 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import {MainComponent} from "./main.component";
+import {EntryComponent} from "./entry.component";
+import {MainComponent} from "../core/containers/main/main.component";
 
-const routes: Routes = [];
+const routes: Routes = [{
+  path:'',component:MainComponent
+}];
 
 @NgModule({
-  declarations:[MainComponent],
+  declarations:[EntryComponent],
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule,
-  MainComponent]
+  EntryComponent]
 })
 export class GatewayModule { }

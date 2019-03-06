@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+.ant-avatar{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.ant-avatar-string{
+  position: sticky !important;
+}

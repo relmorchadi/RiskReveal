@@ -11,11 +11,13 @@ import {CommonModule} from "@angular/common";
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import {en_US, NgZorroAntdModule, NZ_I18N} from "ng-zorro-antd";
+import {COMPONENTS} from "./components"
+import {CONTAINERS} from "./containers";
 
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [],
+  declarations: [...COMPONENTS,...CONTAINERS],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -25,7 +27,8 @@ registerLocaleData(en);
   ],
   exports: [
     NgZorroAntdModule,
-    NgxsFormPluginModule, NgxsModule
+    NgxsFormPluginModule, NgxsModule,
+    ...COMPONENTS,...CONTAINERS
   ]
 })
 export class CoreModule implements NgxsHmrLifeCycle<Snapshot> {

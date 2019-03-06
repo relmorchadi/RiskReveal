@@ -1,0 +1,17 @@
+.rr-logo{
+  height: 58px;
+}
+.icon-size{
+  font-size: 2em;
+}
+
+.circular-progress-bar{
+  position: relative;
+  font-family: 'Scor_fonticon' !important;
+}
+.circular-progress-bar:after{
+  content: "\ea1d";
+  position: absolute;
+  top: 0px;
+  left: 6px;
+}
