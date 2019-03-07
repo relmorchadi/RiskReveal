@@ -28,6 +28,8 @@
     "@ngxs/store": "3.4.1-dev.master-543c32f",
     "core-js": "2.5.4",
     "immer": "2.1.0",
+    "lodash": "^4.17.11",
+    "lodash-fp": "^0.10.4",
     "ng-zorro-antd": "7.0.1",
     "rich-logger-decorator": "4.0.0",
     "rxjs": "6.3.3",
