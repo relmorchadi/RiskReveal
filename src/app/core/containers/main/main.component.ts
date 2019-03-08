@@ -6,7 +6,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./main.component.scss']
 })
 export class MainComponent implements OnInit {
-
+  leftNavbarIsCollapsed:boolean = false;
+  tabs = [ 1, 2, 3 ];
   constructor() { }
 
   ngOnInit() {

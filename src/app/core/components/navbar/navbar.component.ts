@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {fromEvent} from "rxjs";
 import {debounceTime} from "rxjs/operators";
 
@@ -9,8 +9,16 @@ import {debounceTime} from "rxjs/operators";
 })
 export class NavbarComponent implements OnInit {
   expandMenu = false;
+  @Output('expandLeftMenu') expandLeftMenu:EventEmitter<boolean> = new EventEmitter<boolean>();
+  leftNavbarCollapsed:boolean = false;
+
   formatter = (_)=> ""
   constructor() { }
+
+  collapseLeftNavbar(){
+    this.leftNavbarCollapsed = !this.leftNavbarCollapsed;
+    this.expandLeftMenu.emit(this.leftNavbarCollapsed)
+  }
 
   ngOnInit() {
     fromEvent(window,'resize')

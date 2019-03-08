@@ -1,3 +1,18 @@
 @import "./variables";
 
+html,body{
+  background-color: $color-grey-1;
+}
+.ant-menu-submenu-open{
+  border-left: 3px solid $color-secondary;
+}
 
+.ant-menu-inline .ant-menu-item::after{
+  border-right: 3px solid $color-secondary !important;
+}
+hr{
+  height: 1px !important;
+}
+.ant-menu-submenu > .ant-menu {
+  background-color: #F4F6FC;
+}

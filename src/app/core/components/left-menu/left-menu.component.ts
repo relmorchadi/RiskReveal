@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 
 @Component({
@@ -7,11 +7,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./left-menu.component.scss']
 })
 export class LeftMenuComponent implements OnInit {
-  isCollapsed = false;
+  @Input('isCollapsed') isCollapsed:boolean  = false;
   constructor() { }
-  toggleCollapsed(): void {
-    this.isCollapsed = !this.isCollapsed;
-  }
   ngOnInit() {
   }
 
