@@ -1,0 +1,15 @@
+@import "~src/assets/scss/variables";
+
+::ng-deep i.ant-menu-submenu-arrow{
+  right: 0px !important;
+}
+
+.workspace-list-item{
+  cursor: pointer;
+}
+
+.workspace-list-item:hover{
+  //background-color: $color-dark-green;
+}
+
+

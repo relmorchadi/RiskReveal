@@ -13,6 +13,9 @@ export class NavbarComponent implements OnInit {
   leftNavbarCollapsed:boolean = false;
 
   formatter = (_)=> ""
+
+  selectedWorkspace: any;
+
   constructor() { }
 
   collapseLeftNavbar(){
