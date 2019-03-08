@@ -1,3 +1,60 @@
 @import "./variables";
 
+#cdk-overlay-0 > div > div > div.ant-popover-inner > div > div {
+  padding: 0px;
+}
+
+.tabs-popover-content {
+  padding: 5px;
+  width: 400px;
+
+  .ant-tabs-tab {
+    height: 14.61px;
+    color: rgba(0, 0, 0, 0.6);
+    font-family: Rubik;
+    font-size: 11px;
+    letter-spacing: 0.08px;
+    line-height: 24px;
+    text-align: center;
+    margin: 0px !important;
+  }
+
+  .ant-tabs-tab-active {
+    height: 14.61px;
+    color: #0700CF !important;
+    font-family: Rubik;
+    font-size: 11px;
+    letter-spacing: 0.08px;
+    line-height: 24px;
+    text-align: center;
+    .tab-badge {
+      color: #0700CF;
+      opacity: 0.9;
+    }
+  }
+
+  .ant-tabs-ink-bar {
+    background-color: #0700CF !important;
+  }
+
+}
+
+.tab-search-input {
+  height: 24px;
+  width: 95%;
+  background-color: #F5F5F5;
+  input{
+    height: 24px;
+    background-color: transparent;
+    border: none;
+    margin-left: 5px;
+    width: 90%;
+  }
+  i{
+    width: 5%;
+    margin-left: 5px;
+  }
+
+
+}
 
