@@ -10,6 +10,9 @@ import {debounceTime} from "rxjs/operators";
 export class NavbarComponent implements OnInit {
   expandMenu = false;
   formatter = (_)=> ""
+
+  selectedWorkspace: any;
+
   constructor() { }
 
   ngOnInit() {

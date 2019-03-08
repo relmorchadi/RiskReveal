@@ -1,0 +1,15 @@
+.circular-progress-bar{
+  position: relative;
+  font-family: 'Scor_fonticon' !important;
+}
+.circular-progress-bar:after{
+  display: none;
+  content: "\ea1d";
+  position: absolute;
+  top: 0px;
+  left: 6px;
+}
+
+::ng-deep span.ant-progress-text{
+  display: none;
+}

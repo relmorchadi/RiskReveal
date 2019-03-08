@@ -13,6 +13,7 @@ import en from '@angular/common/locales/en';
 import {en_US, NgZorroAntdModule, NZ_I18N} from "ng-zorro-antd";
 import {COMPONENTS} from "./components"
 import {CONTAINERS} from "./containers";
+import {RouterModule} from "@angular/router";
 
 registerLocaleData(en);
 
@@ -21,6 +22,7 @@ registerLocaleData(en);
   imports: [
     CommonModule,
     NgZorroAntdModule,
+    RouterModule,
     NgxsFormPluginModule.forRoot(),
     NgxsModule.forRoot([], {developmentMode: !environment.production}),
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]

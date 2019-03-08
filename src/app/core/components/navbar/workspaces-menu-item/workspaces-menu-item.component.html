@@ -1,0 +1,65 @@
+<div style="	color: rgba(0,0,0,0.6);" nz-popover [nzContent]="workspacePopoverContent">
+  {{!!selectedWorkspace ? selectedWorkspace?.name : 'Select a Workspace'}} &nbsp;&nbsp;
+  <i nz-icon type="down" theme="outline" style="float: right; margin-top: 5px"></i>
+  <!--<i style="font-size: 1.5em" class="icon-angle-down"></i>-->
+</div>
+<ng-template #workspacePopoverContent>
+
+  <div class="tabs-popover-content">
+    <nz-tabset>
+      <nz-tab [nzTitle]="RecentHeaderContent">
+        <div class="popup-tab-content">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="gray-search-input"/>
+          </div>
+          <ul>
+            <li *ngFor="let workspace of workspaces" class="ws-item">
+              <i class="icon-window-section ws-icon"></i> &nbsp; {{workspace?.name}} <i class="icon-check_24px"></i>
+            </li>
+          </ul>
+        </div>
+      </nz-tab>
+      <nz-tab [nzTitle]="FavouriteHeaderContent">
+        Content of Tab Pane 2
+      </nz-tab>
+      <nz-tab [nzTitle]="AssignedHeaderContent">
+        Content of Tab Pane 3
+      </nz-tab>
+      <nz-tab [nzTitle]="PinnedHeaderContent">
+        Content of Tab Pane 4
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  `
+
+  <ng-template #RecentHeaderContent>
+    <span style="width: 5px">Recent &nbsp; <span class="badge badge-light tab-badge">12</span></span>
+  </ng-template>
+
+  <ng-template #FavouriteHeaderContent>
+    <span style="width: 90px">Favourites &nbsp; <span class="badge badge-light tab-badge">6</span></span>
+  </ng-template>
+
+  <ng-template #AssignedHeaderContent>
+    <span style="width: 80px">Assigned &nbsp; <span class="badge badge-light tab-badge">3</span></span>
+  </ng-template>
+
+  <ng-template #PinnedHeaderContent>
+    <span style="width: 72px">Pinned &nbsp; <span class="badge badge-light tab-badge">3</span></span>
+  </ng-template>
+
+
+  <!--<nz-list [nzDataSource]="workspaces" nzBordered-->
+  <!--[nzRenderItem]="item">-->
+  <!--<ng-template #item let-item>-->
+  <!--<nz-list-item-->
+  <!--class="workspace-list-item"-->
+  <!--(click)="toggleWorkspace(workspace)"-->
+  <!--[routerLink]="['/workspace',item?.id]"-->
+  <!--[nzContent]="item?.name">-->
+  <!--</nz-list-item>-->
+  <!--</ng-template>-->
+  <!--</nz-list>-->
+</ng-template>
+

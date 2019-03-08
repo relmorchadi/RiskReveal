@@ -7,71 +7,28 @@
   <div class="collapse navbar-collapse align-items-stretch">
     <ul style="flex:1" class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item d-flex align-items-center">
-        <a class="pl-3 pr-3 icon-size icon-home-alt nav-link" href="#"></a>
+        <a class="pl-3 pr-3 icon-size icon-home-alt nav-link" routerLink="/home" routerLinkActive="active"></a>
       </li>
       <li class="nav-item border-right d-flex align-items-center">
-        <a class="pl-3 pr-3 icon-size icon-copy-landscape nav-link" href="#"></a>
+        <a class="pl-3 pr-3 icon-size icon-copy-landscape nav-link" routerLink="/copy" routerLinkActive="active"></a>
       </li>
       <li class="px-4 border-right nav-item d-flex align-items-center">
-        <nz-dropdown>
-          <a class="d-flex align-items-center" nz-dropdown>
-            Last Workspaces<i class="pl-3" nz-icon type="down"></i>
-          </a>
-          <ul nz-menu>
-            <li nz-menu-item (click)="log('1st menu item')">1st menu item</li>
-            <li nz-menu-item (click)="log('2nd menu item')">2nd menu item</li>
-            <li nz-menu-item (click)="log('3rd menu item')">3rd menu item</li>
-          </ul>
-        </nz-dropdown>
+        <workspaces-menu-item ></workspaces-menu-item>
       </li>
       <li style="flex: 1" class="d-flex align-items-center nav-item px-3">
-        <nz-input-group [nzPrefix]="prefixIconTag"
-                        [nzSuffix]="suffixIconSearch"
-        >
-          <input type="text" nz-input placeholder="input search text">
-        </nz-input-group>
-        <ng-template #suffixIconSearch>
-          <i style="cursor: pointer" class="icon-search_24px"></i>
-        </ng-template>
-        <ng-template #prefixIconTag>
-          <i style="cursor: pointer" class="icon-pricetag-alt "></i>
-        </ng-template>
+        <search-menu-item></search-menu-item>
       </li>
     </ul>
     <div class="d-flex align-items-center my-2 my-lg-0">
       <ul class="navbar-nav align-self-stretch">
         <li class="px-3 border-left nav-item d-flex align-items-center">
-          <nz-badge [nzCount]="5">
-            <!-- <a href="#"
-                class="icon-help_outline_24px icon-size"></a>-->
-            <nz-progress class="circular-progress-bar" [nzPercent]="60"
-                         [nzFormat]="formatter"
-                         [nzStrokeWidth]="8"
-                         nzType="circle" [nzWidth]="26">
-
-            </nz-progress>
-          </nz-badge>
+          <tasks-menu-item></tasks-menu-item>
         </li>
         <li class="px-3 border-left nav-item d-flex align-items-center">
-          <nz-badge [nzCount]="5">
-            <a href="#" class="icon-notifications_24px icon-size">
-            </a>
-          </nz-badge>
+          <notifications-menu-item></notifications-menu-item>
         </li>
         <li class="pl-3 border-left nav-item d-flex align-items-center">
-          <nz-avatar nzIcon="user" nzSize="large"
-                     style="vertical-align: middle;">
-          </nz-avatar>
-          <nz-dropdown>
-            <a class="pr-2 pl-4" nz-dropdown>
-              Last Workspaces<i class="pl-3" nz-icon type="down"></i>
-            </a>
-            <ul nz-menu>
-              <li nz-menu-item (click)="log('1st menu item')">1st menu item</li>
-              <li nz-menu-item (click)="log('2nd menu item')">2nd menu item</li>
-              <li nz-menu-item (click)="log('3rd menu item')">3rd menu item</li>
-            </ul>
-          </nz-dropdown>
+          <user-menu-item></user-menu-item>
         </li>
         <li class="px-3 border-left nav-item d-flex align-items-center"><a href="#"
                                                                            class="icon-help_outline_24px icon-size"></a>
@@ -85,13 +42,15 @@
 
     <ul nz-menu [nzMode]="'inline'" style="width: 100%;">
       <li nz-submenu>
-        <span nz-row nzType="flex" title><i nz-col nzSpan="3" class="icon-home-alt align-self-center"></i> <span nz-col nzSpan="21">Dashboard</span></span>
+        <span nz-row nzType="flex" title><i nz-col nzSpan="3" class="icon-home-alt align-self-center"></i> <span nz-col
+                                                                                                                 nzSpan="21">Dashboard</span></span>
         <ul>
           <li nz-menu-item>Dashboard item</li>
         </ul>
       </li>
       <li nz-submenu>
-        <span nz-row nzType="flex" title><i nz-col nzSpan="3" class="icon-copy-landscape align-self-center"></i> <span nz-col nzSpan="21">Comparer</span></span>
+        <span nz-row nzType="flex" title><i nz-col nzSpan="3" class="icon-copy-landscape align-self-center"></i> <span
+          nz-col nzSpan="21">Comparer</span></span>
         <ul>
           <li nz-menu-item>Comparer item</li>
         </ul>
@@ -124,7 +83,7 @@
       <li nz-submenu>
         <span nz-row nzType="flex" title>
           <span nz-col nzSpan="3">
-          <nz-badge  [nzCount]="5">
+          <nz-badge [nzCount]="5">
             <a style="font-size: 1.5em;zoom:0.8" href="#" class="icon-notifications_24px ">
             </a>
           </nz-badge>
@@ -136,7 +95,7 @@
       <li nz-submenu>
         <span nz-row nzType="flex" title>
           <span nz-col nzSpan="3">
-            <nz-avatar   [ngStyle]="{'zoom':0.8}"
+            <nz-avatar [ngStyle]="{'zoom':0.8}"
                        nzIcon="user">
           </nz-avatar>
           </span>
