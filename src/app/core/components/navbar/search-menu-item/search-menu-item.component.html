@@ -1,10 +1,78 @@
-<nz-input-group [nzPrefix]="prefixIconTag"
-                [nzSuffix]="suffixIconSearch">
-  <input type="text" nz-input placeholder="input search text">
-</nz-input-group>
-<ng-template #suffixIconSearch>
-  <i style="cursor: pointer" class="icon-search_24px"></i>
-</ng-template>
-<ng-template #prefixIconTag>
-  <i style="cursor: pointer" class="icon-pricetag-alt "></i>
-</ng-template>
+<form [formGroup]="contractFilterFormGroup">
+  <!--<nz-dropdown #searchDropDown [nzPlacement]="'bottomRight'"-->
+  <!--nzTrigger="click">-->
+  <!--<div nz-dropdown>-->
+
+  <nz-input-group [nzPrefix]="prefixIconTag"
+                  [nzSuffix]="suffixIconSearch">
+    <input class="search-button" type="text" nz-input placeholder="Search">
+  </nz-input-group>
+  <ng-template #suffixIconSearch>
+    <i nz-popover [nzContent]="searchDropdown" nzTrigger="click" style="cursor: pointer" class="icon-search_24px"></i>
+  </ng-template>
+  <ng-template #prefixIconTag>
+    <i style="cursor: pointer" class="icon-pricetag-alt"></i>
+  </ng-template>
+
+  <!--<nz-input-group style="width: 95%;" [nzSuffix]="suffixTemplate" [nzPrefix]="prefixTemplate">-->
+  <!--<input (keydown)="filterContracts($event)" formControlName="globalKeyword" id="search-input" type="text"-->
+  <!--nz-input placeholder="Search" style="border-radius: 25px">-->
+  <!--</nz-input-group>-->
+  <!--<ng-template #prefixTemplate>-->
+  <!--<i class="icon-search_24px"></i>-->
+  <!--</ng-template>-->
+  <!--<ng-template #suffixTemplate>-->
+  <!--<i class="icon-call_to_action_24px"></i>-->
+  <!--&lt;!&ndash;<i class="icon-action-tab-24-px"></i>&ndash;&gt;-->
+  <!--</ng-template>-->
+  <!--</div>-->
+
+
+  <ng-template #searchDropdown>
+    <div nz-menu style="height: 300px; overflow: auto; border-radius: 10px; width: 850px">
+      <nz-table #basicTable [nzData]="contracts">
+        <thead>
+        <tr>
+          <th nzShowFilter [nzFilters]="filterWorkspance" (nzFilterChange)="updateFilter($event,'workSpaceId')">
+            <nz-input-group [nzPrefix]="prefixIconSearch">
+              <input formControlName="workspaceId" type="text" nz-input placeholder="Workspace ID">
+            </nz-input-group>
+          </th>
+          <th>
+            <nz-input-group [nzPrefix]="prefixIconSearch">
+              <input formControlName="workspaceName" type="text" nz-input placeholder="Workspace Name">
+            </nz-input-group>
+          </th>
+          <th nzShowFilter [nzFilters]="filterUwy" (nzFilterChange)="updateFilter($event,'uwYear')">
+            <nz-input-group [nzPrefix]="prefixIconSearch">
+              <input formControlName="uwYear" type="text" nz-input placeholder="UwYear">
+            </nz-input-group>
+          </th>
+          <th>
+            <nz-input-group [nzPrefix]="prefixIconSearch">
+              <input formControlName="treatyId" type="text" nz-input placeholder="Treaty Id">
+            </nz-input-group>
+          </th>
+          <th>
+            <nz-input-group [nzPrefix]="prefixIconSearch">
+              <input formControlName="cedantName" type="text" nz-input placeholder="Cedant Name">
+            </nz-input-group>
+          </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let data of basicTable.data">
+          <td>{{data.workspaceId}}</td>
+          <td>{{data.workspaceName}}</td>
+          <td>{{data.uwYear}}</td>
+          <td>{{data.treatyId}}</td>
+          <td>{{data.cedantName}}</td>
+        </tr>
+        </tbody>
+      </nz-table>
+      <ng-template #prefixIconSearch>
+        <i nz-icon type="search"></i>
+      </ng-template>
+    </div>
+  </ng-template>
+</form>
