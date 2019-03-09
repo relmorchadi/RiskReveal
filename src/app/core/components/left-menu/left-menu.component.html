@@ -1,0 +1,68 @@
+<ul nz-menu [nzMode]="'inline'"  [nzInlineCollapsed]="isCollapsed">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Workspace' : ''">
+          <span title>
+            <i nz-icon><i class="icon-window-section"></i></i>
+            <span>Workspace</span>
+          </span>
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT browser' : ''">
+          <span title>
+            <i nz-icon><i class="icon-file-search-alt"></i></i>
+            <span>PLT browser</span>
+          </span>
+  </li>
+  <li style="pointer-events: none" class="p-0" nz-menu-item>
+    <hr class="col-xs-12">
+  </li>
+  <li nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Data sources Import' : ''">
+          <span title>
+            <i nz-icon><i class="icon-call_merge_24px"></i></i>
+            <span>Data sources Import</span>
+          </span>
+    <ul>
+      <li nz-menu-item>Risk Link Import</li>
+      <li nz-menu-item>File Base Import</li>
+      <li nz-menu-item>Clone Data</li>
+    <!--  <li nz-submenu>
+        <span title>Submenu</span>
+        <ul>
+          <li nz-menu-item>Option 7</li>
+          <li nz-menu-item>Option 8</li>
+        </ul>
+      </li>-->
+    </ul>
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Exposure' : ''">
+          <span title>
+            <i nz-icon><i class="icon-adjust-half"></i></i>
+            <span>Exposure</span>
+          </span>
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
+          <span title>
+            <i nz-icon><i class="icon-sitemap"></i></i>
+            <span>Calibration</span>
+          </span>
+  </li>
+  <li style="pointer-events: none" class="p-0" nz-menu-item>
+    <hr class="col-xs-12">
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Results' : ''">
+          <span title>
+            <i nz-icon><i class="icon-chart-growth"></i></i>
+            <span>Results</span>
+          </span>
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Results' : ''">
+          <span title>
+            <i nz-icon><i class="fa fa-code-fork"></i></i>
+            <span>Inuring</span>
+          </span>
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Results' : ''">
+          <span title>
+            <i nz-icon><i class="icon-export"></i></i>
+            <span>Publish</span>
+          </span>
+  </li>
+</ul>

@@ -1,2 +1,35 @@
-<app-navbar></app-navbar>
-<h1>Main</h1>
+<app-navbar (expandLeftMenu)="leftNavbarIsCollapsed=$event"></app-navbar>
+
+<!--<div nz-row>
+  <div nz-col  [nzLg]="leftNavbarIsCollapsed ? 2 : 5" [nzXs]="leftNavbarIsCollapsed ? 3 : 6">
+    <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
+  </div>
+  <div class="p-1" nz-col [nzLg] ="leftNavbarIsCollapsed ? 22 : 19" [nzXs]="leftNavbarIsCollapsed ? 21 : 18" >Content</div>
+</div>-->
+
+<div style="display: flex">
+  <div style="flex: 0">
+    <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
+  </div>
+  <div style="flex: 1">
+
+    <div class="card-container">
+      <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
+        <nz-tab *ngFor="let tab of tabs" [nzTitle]="tabTitle">
+          <div class="row">
+            <div class="col-12">
+              <button type="button" class="btn btn-outline-warning text-capitalize hide-btn">Hide detail</button>
+            </div>
+          </div>
+          <p>Content of Tab Pane {{ tab }}</p>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+  </div>
+</div>
+<ng-template #tabTitle>
+  <span style="text-align: left;" class="pl-3">
+    <h3 class="tab-title">02PY376</h3>
+    <h6 class="sub-title">2019</h6>
+  </span>
+</ng-template>
