@@ -1,0 +1,119 @@
+:host {
+  overflow: hidden;
+  display: block;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-content {
+  height: 100%;
+  margin-top: -16px;
+}
+
+/*.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab:first-child {
+  border-left: 18px solid rgba(0, 0, 0, 0.04);
+}*/
+
+.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
+  background: #2C6B81;
+}
+
+.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
+  border-radius: 0px !important;
+  background: #2C6B81;
+  border: 0;
+  margin: 0;
+  width: 204px;
+  flex-direction: column;
+  display: inline-flex;
+  text-align: center;
+  justify-content: center;
+  align-items: stretch;
+  padding: 0;
+  color: white;
+  height: 104px;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+  background: #14617A !important;
+}
+
+.tab-title {
+  color: #FFFFFF;
+  font-family: Rubik;
+  font-size: 24.38px;
+  line-height: 29px;
+  margin-bottom: 0.2em
+}
+
+.sub-title {
+  color: rgba(255, 255, 255, 0.6);
+  font-family: Rubik;
+  font-size: 14.22px;
+  letter-spacing: 0.25px;
+  line-height: 20px;
+}
+.tab-detail{
+  background: #14617A;
+  color: white;
+}
+.btn-detail{
+  background: #F8E71C;
+  color: white;
+  border: 0;
+}
+.btn-detail-color{
+  color:#F8E71C
+}
+.hide-btn {
+  border: 1px solid #F8E71C;
+  border-radius: 18px;
+  background-color: rgba(98, 2, 238, 0);
+  font-size: 14.22px;
+  font-weight: bold;
+  letter-spacing: 1.25px;
+  line-height: 16px;
+  text-align: center;
+  display: inline-block;
+  color: #16617a;
+}
+.hide-btn:hover{
+  border: 1px solid #F8E71C;
+  border-radius: 18px;
+  color: white;
+  background-color: #F8E71C;
+}
+
+.workspace-title{
+  height: 28px;
+  color: #FFFFFF;
+  font-size: 16.26px;
+  letter-spacing: 0.5px;
+  line-height: 28px;
+  text-transform: uppercase;
+}
+
+.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
+  height: auto;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
+  background: #fff;
+  height: 100%;
+  padding: 16px;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar {
+  border-color: #fff;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab {
+  border-color: transparent;
+  background: transparent;
+}
+
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+  border-color: #fff;
+  background: #fff;
+}
+.card-container ::ng-deep .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
+  padding: 0;
+}
