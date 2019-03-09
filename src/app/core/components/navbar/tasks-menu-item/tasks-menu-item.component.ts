@@ -6,7 +6,7 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tasks-menu-item.component.scss']
 })
 export class TasksMenuItemComponent implements OnInit {
-
+  formatter = (_)=> ""
   constructor() { }
 
   ngOnInit() {

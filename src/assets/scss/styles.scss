@@ -1,6 +1,9 @@
 @import "./variables";
 @import "./scrollbar";
 
+* {
+  font-family: Rubik;
+}
 .ant-menu-inline .ant-menu-item::after {
   border-right: 3px solid $color-secondary !important;
 }
