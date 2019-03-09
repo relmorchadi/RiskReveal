@@ -14,6 +14,7 @@ import {en_US, NgZorroAntdModule, NZ_I18N} from "ng-zorro-antd";
 import {COMPONENTS} from "./components"
 import {CONTAINERS} from "./containers";
 import {RouterModule} from "@angular/router";
+import {FormsModule} from "@angular/forms";
 
 registerLocaleData(en);
 
@@ -23,6 +24,7 @@ registerLocaleData(en);
     CommonModule,
     NgZorroAntdModule,
     RouterModule,
+    FormsModule,
     NgxsFormPluginModule.forRoot(),
     NgxsModule.forRoot([], {developmentMode: !environment.production}),
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
