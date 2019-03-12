@@ -16,11 +16,12 @@ import {CONTAINERS} from "./containers";
 import {RouterModule} from "@angular/router";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
 import {SharedModule} from '../shared/shared.module';
+import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
 
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [...COMPONENTS,...CONTAINERS],
+  declarations: [...COMPONENTS,...CONTAINERS, BoldKeywordPipe],
   imports: [
     NgZorroAntdModule,
     RouterModule,

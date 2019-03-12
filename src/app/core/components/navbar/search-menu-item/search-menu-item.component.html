@@ -47,11 +47,11 @@
         </thead>
         <tbody>
         <tr *ngFor="let data of basicTable.data">
-          <td>{{data.workspaceId}}</td>
-          <td>{{data.workspaceName}}</td>
-          <td>{{data.uwYear}}</td>
-          <td>{{data.treatyId}}</td>
-          <td>{{data.cedantName}}</td>
+          <td [innerHtml]="data.workspaceId | boldKeyword: contractFilterFormGroup.get('workspaceId').value"></td>
+          <td [innerHtml]="data.workspaceName | boldKeyword: contractFilterFormGroup.get('workspaceName').value"></td>
+          <td [innerHtml]="data.uwYear | boldKeyword: contractFilterFormGroup.get('uwYear').value"></td>
+          <td [innerHtml]="data.treatyId | boldKeyword: contractFilterFormGroup.get('treatyId').value"></td>
+          <td [innerHtml]="data.cedantName | boldKeyword: contractFilterFormGroup.get('cedantName').value"></td>
         </tr>
         </tbody>
       </nz-table>
