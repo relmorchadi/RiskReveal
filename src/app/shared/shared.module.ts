@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {NgZorroAntdModule} from "ng-zorro-antd";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {HelperService} from './helper.service';
 
 @NgModule({
   declarations: [],
@@ -11,6 +12,7 @@ import {FormsModule, ReactiveFormsModule} from "@angular/forms";
     ReactiveFormsModule,
     FormsModule
   ],
+  providers:[],
   exports:[
     CommonModule,
     NgZorroAntdModule,

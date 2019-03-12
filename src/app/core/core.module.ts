@@ -15,16 +15,17 @@ import {COMPONENTS} from "./components"
 import {CONTAINERS} from "./containers";
 import {RouterModule} from "@angular/router";
 import {FormsModule, ReactiveFormsModule} from "@angular/forms";
+import {SharedModule} from '../shared/shared.module';
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [...COMPONENTS,...CONTAINERS],
   imports: [
-    CommonModule,
     NgZorroAntdModule,
     RouterModule,
     FormsModule,
+    SharedModule,
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
     NgxsModule.forRoot([], {developmentMode: !environment.production}),

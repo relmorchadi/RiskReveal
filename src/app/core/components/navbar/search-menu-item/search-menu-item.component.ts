@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder} from "@angular/forms";
 import {contractsMockData} from "./contracts.mock-data";
-import * as _ from 'lodash';
+import  * as _ from "lodash"
+
 
 @Component({
   selector: 'search-menu-item',

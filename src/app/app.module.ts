@@ -8,6 +8,7 @@ import {FormsModule} from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
+import {HelperService} from './shared/helper.service';
 
 
 
@@ -22,7 +23,7 @@ import {NgbModule} from "@ng-bootstrap/ng-bootstrap";
     BrowserAnimationsModule,
     NgbModule,
   ],
-  providers: [],
+  providers: [HelperService],
   bootstrap: [EntryComponent],
 
 })
