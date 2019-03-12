@@ -1,13 +1,20 @@
-<nz-avatar nzIcon="user" nzSize="large"
-           style="vertical-align: middle;">
-</nz-avatar>
-<nz-dropdown>
-  <a class="pr-2 pl-4" nz-dropdown>
-    Last Workspaces<i class="pl-3" nz-icon type="down"></i>
-  </a>
-  <ul nz-menu>
-    <li nz-menu-item >1st menu item</li>
-    <li nz-menu-item >2nd menu item</li>
-    <li nz-menu-item >3rd menu item</li>
-  </ul>
-</nz-dropdown>
+<div class="pl-1 pr-1" style="cursor: pointer" nz-popover [nzContent]="userPopoverContent" nzPlacment="bottomLeft" nzTrigger="click">
+  <nz-avatar nzText="N.D" nzSize="large" ></nz-avatar>
+  Nathalie Dulac &nbsp;&nbsp;
+  <i nz-icon type="down" theme="outline" style="float: right; margin-top: 12px;"></i>
+</div>
+<ng-template #userPopoverContent>
+  <div class="tabs-popover-content">
+    <nz-tabset>
+      <nz-tab [nzTitle]="userPrefHeaderContent">
+        <div style="height: 200px"></div>
+      </nz-tab>
+    </nz-tabset>
+  </div>
+
+  <ng-template #userPrefHeaderContent>
+    <span style="width: 5px">User Preferences &nbsp;
+      <!--<span class="badge badge-light tab-badge">12</span>-->
+    </span>
+  </ng-template>
+</ng-template>
