@@ -158,4 +158,48 @@
 
     }
   }
+  .project-card{
+    min-width: 320px;
+    max-width: 350px;
+    border-radius: 2px;	background-color: #FAFAFA;	box-shadow: 0 9px 12px 1px rgba(0,0,0,0.1), 0 3px 16px 2px rgba(0,0,0,0.08), 0 5px 6px -3px rgba(0,0,0,0.1);
+    .project-header {
+      height: 80px;
+      display: flex;
+      .project-header-icon{
+        background-color: #F5A623;
+        width: 80px;
+        i{
+          color: white;
+          font-size: 2em;
+        }
+      }
+      .project-header-title {
+        span:nth-child(1){
+          color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 20.32px;	font-weight: 500;	letter-spacing: 0.25px;	line-height: 24px;
+        }
+        span:nth-child(2){
+          color: rgba(0,0,0,0.6);		font-size: 16.26px;	letter-spacing: 0.5px;	line-height: 28px;
+        }
+        flex:1;
+        background: #F4F6FC;
+      }
+    }
+    .project-progress{
+      zoom: 0.6;
+      height: 70px;
+    }
+    .project-kpi {
+      font-size: 0.7em;
+      .badge{
+        background: #e700104f;
+        border-radius: 12px;
+      }
+    }
+    .project-kpi-details{
+      background: #F4F6FC;
+      .project-kpi-details-title{
+        font-size: 0.7em;
+      }
+    }
+  }
 }

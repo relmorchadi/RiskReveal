@@ -156,10 +156,18 @@
                 <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activities </li>
                 <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Completeness </li>
               </ul>
-              <div class="row">
-                <div class="col-lg-4">F</div>
-                <div class="col-lg-4">F</div>
-                <div class="col-lg-4">F</div>
+              <div class="row p-3">
+                <div class="col-lg-6 col-xl-4 d-flex mt-3 justify-content-center">
+                  <ng-container *ngTemplateOutlet="project"></ng-container>
+                </div>
+                <div class="col-lg-6 col-xl-4 d-flex mt-3  justify-content-center">
+                  <ng-container *ngTemplateOutlet="project"></ng-container></div>
+                <div class="col-lg-6 col-xl-4 mt-xl-0 mt-3 d-flex justify-content-center">
+                  <ng-container *ngTemplateOutlet="project"></ng-container>
+                </div>
+                <div class="col-lg-6 col-xl-4 mt-xl-3 mt-3  d-flex justify-content-center">
+                  <ng-container *ngTemplateOutlet="project"></ng-container>
+                </div>
               </div>
             </div>
           </div>
@@ -173,4 +181,67 @@
     <h3 class="tab-title">02PY376</h3>
     <h6 class="sub-title">2019</h6>
   </span>
+</ng-template>
+<ng-template #project>
+  <div class="project-card mx-1">
+    <div class="project-header">
+      <div class="project-header-icon d-flex justify-content-center align-items-center">
+        <i class="icon-hourglass_empty_24px"></i>
+      </div>
+      <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+        <span>Project P-00723</span>
+        <span>Post Inured PLT</span>
+      </div>
+    </div>
+    <div class="project-progress d-flex justify-content-center align-items-center">
+      <nz-steps [nzCurrent]="3" nzProgressDot>
+        <nz-step nzTitle="Imported"></nz-step>
+        <nz-step nzTitle="Published"></nz-step>
+        <nz-step nzTitle="Priced"></nz-step>
+        <nz-step nzTitle="Accumulated"></nz-step>
+      </nz-steps>
+    </div>
+    <div class="project-kpi border-top d-flex">
+      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end">
+        <i style="font-size: 1.6em" class="icon-globe mb-1"></i>
+        <span class="">RP</span>
+        <span class=""><b>1</b></span>
+      </div>
+      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end">
+        <i style="font-size: 1.6em" class="icon-design-tool mb-1"></i>
+        <span class="">Exp</span>
+        <span class="badge"><b>No</b></span>
+      </div>
+      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end">
+        <i style="font-size: 1.6em" class="icon-box mb-1"></i>
+        <span class="">PLT</span>
+        <span class=""><b>1</b></span>
+      </div>
+      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end">
+        <i style="font-size: 1.6em" class="icon-note mb-1"></i>
+        <span class="">Pricing</span>
+        <span class=""><b>4</b></span>
+      </div>
+      <div style="flex:1" class="text-center  py-2 px-3 d-inline-flex flex-column justify-content-end">
+        <i style="font-size: 1.6em" class="icon-focus-add mb-1"></i>
+        <span class="">Accum</span>
+        <span class=""><b>4</b></span>
+      </div>
+    </div>
+    <div class="project-kpi-details">
+      <p class="project-kpi-details-title pl-4 py-2">
+        Donec et nulla elementum, mattis arcu in, alliquam mauris.
+      </p>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="px-4" style="font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+        <span class="px-4" style="color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+      </div>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="px-4" style="font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+        <span class="px-4" style="color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+      </div>
+    </div>
+  </div>
 </ng-template>
