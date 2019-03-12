@@ -1,40 +1,24 @@
 <form [formGroup]="contractFilterFormGroup">
-  <!--<nz-dropdown #searchDropDown [nzPlacement]="'bottomRight'"-->
-  <!--nzTrigger="click">-->
-  <!--<div nz-dropdown>-->
 
-  <nz-input-group style="z-index: 1001" [nzPrefix]="prefixIconTag"
+  <nz-input-group nz-popover [nzContent]="searchDropdown" nzTrigger="click" style="z-index: 1001" [nzPrefix]="prefixIconTag"
                   [nzSuffix]="suffixIconSearch">
-    <input class="search-input" type="text" nz-input placeholder="Search">
+    <input (keydown)="filterContracts($event)" formControlName="globalKeyword"
+           class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
   <ng-template #suffixIconSearch>
     <!-- @TODO Update the placment -->
-    <i nz-popover [nzContent]="searchDropdown" nzTrigger="click" style="cursor: pointer" class="icon-search_24px"></i>
+    <i style="cursor: pointer" class="icon-search_24px"></i>
   </ng-template>
   <ng-template #prefixIconTag>
     <i style="cursor: pointer" class="icon-pricetag-alt"></i>
   </ng-template>
 
-  <!--<nz-input-group style="width: 95%;" [nzSuffix]="suffixTemplate" [nzPrefix]="prefixTemplate">-->
-  <!--<input (keydown)="filterContracts($event)" formControlName="globalKeyword" id="search-input" type="text"-->
-  <!--nz-input placeholder="Search" style="border-radius: 25px">-->
-  <!--</nz-input-group>-->
-  <!--<ng-template #prefixTemplate>-->
-  <!--<i class="icon-search_24px"></i>-->
-  <!--</ng-template>-->
-  <!--<ng-template #suffixTemplate>-->
-  <!--<i class="icon-call_to_action_24px"></i>-->
-  <!--&lt;!&ndash;<i class="icon-action-tab-24-px"></i>&ndash;&gt;-->
-  <!--</ng-template>-->
-  <!--</div>-->
-
-
   <ng-template #searchDropdown>
     <div nz-menu style="height: 300px; overflow: auto; border-radius: 10px; width: 850px">
-      <nz-table #basicTable [nzData]="contracts">
+      <nz-table [nzVirtualItemSize]="54" #basicTable [nzData]="contracts">
         <thead>
         <tr>
-          <th nzShowFilter [nzFilters]="filterWorkspance" (nzFilterChange)="updateFilter($event,'workSpaceId')">
+          <th nzShowFilter [nzFilters]="filterWorkspance" (nzFilterChange)="updateFilter($event,'workspaceId')">
             <nz-input-group [nzPrefix]="prefixIconSearch">
               <input formControlName="workspaceId" type="text" nz-input placeholder="Workspace ID">
             </nz-input-group>

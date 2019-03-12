@@ -15,8 +15,8 @@ export class SearchMenuItemComponent implements OnInit {
 
   contracts:any = contractsMockData;
 
-  filterUwy= [];
-  filterWorkspance= [];
+  filterUwy= _.uniqBy(contractsMockData.map((item:any) => ({text: item.uwYear, value: item.uwYear})), 'value');
+  filterWorkspance= _.uniqBy(contractsMockData.map((item:any) => ({text: item.workspaceId, value: item.workspaceId})), 'value');
 
   constructor(private _fb: FormBuilder) {
     this.contractFilterFormGroup = this._fb.group({
@@ -51,6 +51,13 @@ export class SearchMenuItemComponent implements OnInit {
       this.contracts = contractsMockData.filter((item: any) => this._specificSearch(item, _.omit(this.contractFilterFormGroup.value, 'globalKeyword')));
     }
   };
+
+  updateFilter(searchValues, key) {
+    if (searchValues == null || searchValues.length == 0)
+      this.contracts = contractsMockData;
+    else
+      this.contracts = _.filter(contractsMockData, (item) => _.includes(searchValues, item[key]));
+  }
 
   private _specificSearch(item, filter) {
     let items = _.keys(filter).filter(key => filter[key] || false).map(key => new String(item[key]).toLowerCase().includes(new String(filter[key]).toLowerCase()));
