@@ -1,17 +1,21 @@
 @import "~src/assets/scss/variables";
 
-::ng-deep i.ant-menu-submenu-arrow{
-  right: 0px !important;
+:host{
+  ::ng-deep i.ant-menu-submenu-arrow{
+    right: 0px !important;
+  }
+  .workspace-list-item{
+    cursor: pointer;
+  }
+
+  .workspace-list-item:hover{
+    //background-color: $color-dark-green;
+  }
+
+  .icon-window-section{
+    color: $color-secondary;
+  }
 }
 
-.workspace-list-item{
-  cursor: pointer;
-}
 
-.workspace-list-item:hover{
-  //background-color: $color-dark-green;
-}
 
-.icon-window-section{
-  color: $color-secondary;
-}

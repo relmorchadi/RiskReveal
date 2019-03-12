@@ -1,6 +1,24 @@
 :host {
   overflow: hidden;
   display: block;
+  ::ng-deep submenu-inline > .ant-menu-submenu-title .ant-menu-submenu-arrow  {
+    padding-right: 15px !important;
+  }
+}
+.tab-title-container{
+  position:relative;text-align: left;
+}
+.close-tab-btn{
+  position: absolute;
+  top: -14px;
+  width: 10px;
+  height: 10px;
+  right: 9px;
+  display: none;
+  cursor: pointer;
+}
+.tab-title-container:hover .close-tab-btn{
+  display: block;
 }
 
 .tab-title {
@@ -159,8 +177,8 @@
     }
   }
   .project-card{
-    min-width: 320px;
-    max-width: 350px;
+    min-width: 330px;
+    max-width: 400px;
     border-radius: 2px;	background-color: #FAFAFA;	box-shadow: 0 9px 12px 1px rgba(0,0,0,0.1), 0 3px 16px 2px rgba(0,0,0,0.08), 0 5px 6px -3px rgba(0,0,0,0.1);
     .project-header {
       height: 80px;
@@ -187,6 +205,22 @@
     .project-progress{
       zoom: 0.6;
       height: 70px;
+      ::ng-deep {
+        .ant-steps-item-finish {
+          .ant-steps-item-tail::after {
+            background-color:#03DAC4 !important;
+          }
+          .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+            background: #03DAC4 !important;
+          }
+
+        }
+        .ant-steps-item-process > .ant-steps-item-content > .ant-steps-item-title {
+          font-weight: bold !important;
+          color: rgba(0, 0, 0, 0.95) !important;
+        }
+
+      }
     }
     .project-kpi {
       font-size: 0.7em;
