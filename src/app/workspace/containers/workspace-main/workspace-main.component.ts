@@ -27,7 +27,6 @@ export class WorkspaceMainComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this._helper.collapseLeftMenu$.subscribe((e) => {
-      console.log('heyefkep');
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
   }

@@ -4,6 +4,9 @@
   ::ng-deep submenu-inline > .ant-menu-submenu-title .ant-menu-submenu-arrow  {
     padding-right: 15px !important;
   }
+  ::ng-deep .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+    //border-left: 4px solid #00c2a8;
+  }
 }
 .tab-title-container{
   position:relative;text-align: left;
@@ -173,8 +176,8 @@
     }
     .ant-menu-horizontal > .ant-menu-item:hover,.ant-menu-horizontal > .ant-menu-item-selected i{
       color: rgb(5, 37, 216) !important;
-
     }
+
   }
   .project-card{
     min-width: 330px;
@@ -193,10 +196,10 @@
       }
       .project-header-title {
         span:nth-child(1){
-          color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 20.32px;	font-weight: 500;	letter-spacing: 0.25px;	line-height: 24px;
+          color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 18px;	font-weight: 500;	letter-spacing: 0.25px;	line-height: 24px;
         }
         span:nth-child(2){
-          color: rgba(0,0,0,0.6);		font-size: 16.26px;	letter-spacing: 0.5px;	line-height: 28px;
+          color: rgba(0,0,0,0.6);		font-size: 14px;	letter-spacing: 0.5px;	line-height: 28px;
         }
         flex:1;
         background: #F4F6FC;
