@@ -1,4 +1,98 @@
-<nz-badge [nzCount]="5">
-  <i class="icon-notifications_24px icon-size">
-  </i>
+<nz-badge style="cursor: pointer" [nzCount]="5" nz-popover [nzContent]="notificationsPopoverContent" nzTrigger="click">
+  <i class="icon-notifications_24px icon-size"></i>
 </nz-badge>
+<ng-template #notificationsPopoverContent>
+  <div class="tabs-popover-content" style="width: 465px">
+    <nz-tabset>
+      <nz-tab [nzTitle]="AllHeaderContent">
+        <div class="popup-tab-content">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="gray-search-input"/>
+          </div>
+          <p class="notification-title mt-2">
+            Today
+          </p>
+          <ul style="height: 151px">
+            <li *ngFor="let notification of notification.all.today" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+          <p class="notification-title mt-2">
+            Yesterday
+          </p>
+
+          <ul style="height: 172px">
+            <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+
+
+          <div class="mt-2">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
+              <nz-option [nzValue]="4" nzLabel="Today"></nz-option>
+              <nz-option [nzValue]="5" nzLabel="Last 7 days"></nz-option>
+            </nz-select>
+
+            <div class="float-right">
+              <button class="popover-menu-control-button" nz-button nzType="default">SEE ALL</button>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab [nzTitle]="ErrorsHeaderContent">
+        Tab 2 content
+      </nz-tab>
+      <nz-tab [nzTitle]="WarningsHeaderContent">
+        Tab 3 content
+      </nz-tab>
+      <nz-tab [nzTitle]="InformationalHeaderContent">
+        Tab 4 content
+      </nz-tab>
+    </nz-tabset>
+  </div>
+  `
+
+  <ng-template #AllHeaderContent>
+    <span style="width: 5px">All Notifications &nbsp; <span class="badge badge-light tab-badge">9</span></span>
+  </ng-template>
+
+  <ng-template #ErrorsHeaderContent>
+    <span style="width: 90px">Errors &nbsp; <span class="badge badge-light tab-badge">2</span></span>
+  </ng-template>
+
+  <ng-template #WarningsHeaderContent>
+    <span style="width: 80px">Warnings &nbsp; <span class="badge badge-light tab-badge">3</span></span>
+  </ng-template>
+
+  <ng-template #InformationalHeaderContent>
+    <span style="width: 72px">Informational &nbsp; <span class="badge badge-light tab-badge">3</span></span>
+  </ng-template>
+
+</ng-template>
+
+

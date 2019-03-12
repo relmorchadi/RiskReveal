@@ -3,11 +3,12 @@
   <!--nzTrigger="click">-->
   <!--<div nz-dropdown>-->
 
-  <nz-input-group [nzPrefix]="prefixIconTag"
+  <nz-input-group style="z-index: 1001" [nzPrefix]="prefixIconTag"
                   [nzSuffix]="suffixIconSearch">
-    <input class="search-button" type="text" nz-input placeholder="Search">
+    <input class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
   <ng-template #suffixIconSearch>
+    <!-- @TODO Update the placment -->
     <i nz-popover [nzContent]="searchDropdown" nzTrigger="click" style="cursor: pointer" class="icon-search_24px"></i>
   </ng-template>
   <ng-template #prefixIconTag>

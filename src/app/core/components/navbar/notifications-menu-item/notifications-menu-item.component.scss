@@ -6,4 +6,28 @@ i.notifications_24px {
   color: rgba(0, 0, 0, 0.7) !important;
 }
 
+.notification-item {
+  padding: 13px;
+  border-radius: 5px;
+}
 
+.notification-title {
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 16.26px;
+  letter-spacing: 0.5px;
+  line-height: 20px;
+}
+
+.center-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notification-icon {
+  font-size: 2rem;
+}
+
+.notification-content{
+  font-size: 14.22px;
+}

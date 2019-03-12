@@ -3,6 +3,7 @@ import {FormBuilder} from "@angular/forms";
 import {contractsMockData} from "./contracts.mock-data";
 import  * as _ from "lodash"
 
+
 @Component({
   selector: 'search-menu-item',
   templateUrl: './search-menu-item.component.html',
@@ -78,6 +79,12 @@ export class SearchMenuItemComponent implements OnInit {
     if (keyboardEvent.key == 'Enter') {
       this.contracts = contractsMockData.filter(item => this._globalSearch(item, this.contractFilterFormGroup.get('globalKeyword').value));
     }
+  }
+
+  private _globalSearch(item, keyword) {
+    if (keyword == null || keyword == '')
+      return true;
+    return _.some(_.values(item), value => new String(value).toLowerCase().includes(new String(keyword).toLowerCase()));
   }
 
 }
