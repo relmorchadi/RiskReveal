@@ -189,7 +189,17 @@
 <ng-template let-tabsLength='tabsLength' let-index='index' #tabTitle>
   <div class="tab-title-container pl-3">
     <h3 class="tab-title">02PY376</h3>
-    <h6 class="sub-title">2019</h6>
+    <nz-dropdown [nzTrigger]="'click'">
+      <a nz-dropdown>
+        <h6 class="d-flex sub-title">2019 <i class="pl-3" nz-icon type="down"></i></h6>
+      </a>
+      <ul nz-menu>
+        <li nz-menu-item>2018</li>
+        <li nz-menu-item>2017</li>
+        <li nz-menu-item>2016</li>
+      </ul>
+    </nz-dropdown>
+
     <div (click)="close(index)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}"  class="close-tab-btn">x</div>
   </div>
 </ng-template>
