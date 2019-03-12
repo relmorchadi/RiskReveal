@@ -31,7 +31,9 @@ export class WorkspaceMainComponent implements OnInit, OnDestroy {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
   }
-
+  close(item){
+    this.tabs = _.filter(this.tabs,(i)=> i != item)
+  }
   ngOnDestroy(): void {
     _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
   }
