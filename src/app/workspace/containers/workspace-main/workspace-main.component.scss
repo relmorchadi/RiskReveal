@@ -3,39 +3,6 @@
   display: block;
 }
 
-.card-container ::ng-deep .ant-tabs-card .ant-tabs-content {
-  height: 100%;
-  margin-top: -16px;
-}
-
-/*.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab:first-child {
-  border-left: 18px solid rgba(0, 0, 0, 0.04);
-}*/
-
-.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
-  background: #2C6B81;
-}
-
-.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
-  border-radius: 0px !important;
-  background: #2C6B81;
-  border: 0;
-  margin: 0;
-  width: 204px;
-  flex-direction: column;
-  display: inline-flex;
-  text-align: center;
-  justify-content: center;
-  align-items: stretch;
-  padding: 0;
-  color: white;
-  height: 104px;
-}
-
-.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
-  background: #14617A !important;
-}
-
 .tab-title {
   color: #FFFFFF;
   font-family: Rubik;
@@ -60,8 +27,25 @@
   color: white;
   border: 0;
 }
+.plus-btn{
+  background: rgb(0, 195, 169);
+  color: white;
+  border: 0;
+  position:absolute;right:0;top:-20px; border: 4px solid rgb(240, 242, 248);
+  box-shadow:none;
+  text-shadow: none;
+}
+.plus-btn-icon{
+  color: white;
+}
 .btn-detail-color{
   color:#F8E71C
+}
+.workspace-main-content{
+  position: relative;
+  flex: 1;
+  background: rgb(244, 246, 252);
+
 }
 .hide-btn {
   border: 1px solid #F8E71C;
@@ -90,30 +74,88 @@
   line-height: 28px;
   text-transform: uppercase;
 }
-
-.card-container ::ng-deep .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
-  height: auto;
+.card-container {
+  ::ng-deep {
+    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+      background: #14617A !important;
+    }
+    .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
+      border-radius: 0px !important;
+      background: #2C6B81;
+      border: 0;
+      margin: 0;
+      width: 204px;
+      flex-direction: column;
+      display: inline-flex;
+      text-align: center;
+      justify-content: center;
+      align-items: stretch;
+      padding: 0;
+      color: white;
+      height: 104px;
+    }
+    .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
+      background: #2C6B81;
+    }
+    .ant-tabs-card .ant-tabs-content {
+      height: 100%;
+      margin-top: -16px;
+    }
+    .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
+      height: auto;
+    }
+    .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
+      background: #fff;
+      height: 100%;
+      padding: 16px;
+    }
+    .ant-tabs-card .ant-tabs-bar {
+      border-color: #fff;
+    }
+    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab {
+      border-color: transparent;
+      background: transparent;
+    }
+    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+      border-color: #fff;
+      background: #fff;
+    }
+    .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
+      padding: 0;
+    }
+    .tab-metadata-title{
+      color: rgba(255,255,255,0.6);		font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
+    }
+    .tab-metadata-value{
+      color: #FFFFFF;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
+    }
+    .tab-metadata-more{
+      color: #03DAC4;	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
+    }
+    .tab-kpi-title{
+      color: #FFFFFF;	font-size: 16.26px;	letter-spacing: 0.08px;	line-height: 28px;
+    }
+    .kpi-icon-title{
+      color: #FFFFFF;	font-family: Rubik;	font-size: 12px;	letter-spacing: 0.08px;	line-height: 16px;
+    }
+    .kpi-icon-value{
+      color: #FFFFFF;	font-family: Rubik;	font-size: 34.54px;	letter-spacing: 0.25px;	line-height: 41px;
+    }
+  }
 }
 
-.card-container ::ng-deep .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
-  background: #fff;
-  height: 100%;
-  padding: 16px;
-}
+.workspace-main-content{
+  ::ng-deep {
+    .ant-menu-horizontal > .ant-menu-item {
+      color: rgb(115, 115, 118);
+    }
+    .ant-menu-horizontal > .ant-menu-item:hover,.ant-menu-horizontal > .ant-menu-item-selected{
+      color: rgb(5, 37, 216);
+      border-bottom: 2px solid rgb(5, 37, 216);
+    }
+    .ant-menu-horizontal > .ant-menu-item:hover,.ant-menu-horizontal > .ant-menu-item-selected i{
+      color: rgb(5, 37, 216) !important;
 
-.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar {
-  border-color: #fff;
-}
-
-.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab {
-  border-color: transparent;
-  background: transparent;
-}
-
-.card-container ::ng-deep .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
-  border-color: #fff;
-  background: #fff;
-}
-.card-container ::ng-deep .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
-  padding: 0;
+    }
+  }
 }

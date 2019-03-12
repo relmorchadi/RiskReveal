@@ -4,17 +4,7 @@
 * {
   font-family: Rubik;
 }
-.ant-menu-inline .ant-menu-item::after {
-  border-right: 3px solid $color-secondary !important;
-}
 
-hr {
-  height: 1px !important;
-}
-
-.ant-menu-submenu > .ant-menu {
-  background-color: #F4F6FC;
-}
 
 #cdk-overlay-0 > div > div > div.ant-popover-inner > div > div {
   padding: 0px;

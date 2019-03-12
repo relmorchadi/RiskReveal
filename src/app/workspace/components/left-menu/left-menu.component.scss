@@ -1,0 +1,20 @@
+@import "~src/assets/scss/variables";
+:host {
+  ::ng-deep {
+
+    .ant-menu-inline .ant-menu-item::after {
+      border-right: 3px solid $color-secondary !important;
+    }
+
+    hr {
+      height: 1px !important;
+    }
+
+    .ant-menu-submenu > .ant-menu {
+      background-color: #F4F6FC;
+    }
+    .ant-menu .ant-menu-root .ant-menu-light .ant-menu-inline {
+      padding-right: 0.5em;
+    }
+  }
+}

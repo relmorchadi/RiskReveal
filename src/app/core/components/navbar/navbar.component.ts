@@ -1,6 +1,7 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {fromEvent} from "rxjs";
 import {debounceTime} from "rxjs/operators";
+import {HelperService} from '../../../shared/helper.service';
 
 @Component({
   selector: 'app-navbar',
@@ -9,25 +10,19 @@ import {debounceTime} from "rxjs/operators";
 })
 export class NavbarComponent implements OnInit {
   expandMenu = false;
-  @Output('expandLeftMenu') expandLeftMenu:EventEmitter<boolean> = new EventEmitter<boolean>();
-  leftNavbarCollapsed:boolean = false;
-
   formatter = (_)=> ""
 
-  selectedWorkspace: any;
-
-  constructor() { }
+  constructor(private _helper:HelperService) { }
 
   collapseLeftNavbar(){
-    this.leftNavbarCollapsed = !this.leftNavbarCollapsed;
-    this.expandLeftMenu.emit(this.leftNavbarCollapsed)
+    this._helper.collapseLeftMenu$.next()
+    console.log("hey")
   }
 
   ngOnInit() {
     fromEvent(window,'resize')
       .pipe(debounceTime(200))
       .subscribe(({target:{innerWidth}}:any)=>{
-
         this.expandMenu = this.expandMenu ? !(innerWidth > 768) : this.expandMenu
     })
   }
