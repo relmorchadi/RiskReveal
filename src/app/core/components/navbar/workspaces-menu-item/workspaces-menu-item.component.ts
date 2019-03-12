@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {HelperService} from '../../../../shared/helper.service';
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -26,9 +27,9 @@ export class WorkspacesMenuItemComponent implements OnInit {
   ];
   selectedWorkspace = null;
 
-  lastOnes= 1;
+  lastOnes = 1;
 
-  constructor() {
+  constructor(private _helperService: HelperService) {
   }
 
   ngOnInit() {
@@ -36,5 +37,21 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   toggleWorkspace(workspace) {
     workspace.selected = !workspace.selected;
+  }
+
+  popOutWorkspaces() {
+    this.workspaces.filter(ws => ws.selected).forEach(ws => {
+      window.open('/workspace/' + ws.id);
+      console.log('try to open', ws);
+
+    });
+  }
+
+  openWorkspaces() {
+    let selectedItems =[ ...this.workspaces.filter(ws => ws.selected)];
+    if ( selectedItems.length > 0) {
+      this._helperService
+        .openWorkspaces.next(selectedItems.map(ws => ws.id));
+    }
   }
 }

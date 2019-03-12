@@ -5,8 +5,8 @@ import {MainComponent} from "../core/containers/main/main.component";
 
 const routes: Routes = [{
   path:'',component:MainComponent,children:[
-    {path:'workspace',loadChildren:'../workspace/workspace.module#WorkspaceModule'},
-    {path:'dashboard',loadChildren:'../dashboard/dashboard.module#DashboardModule'},
+    {data: {title: 'RR- Workspace'}, path:'workspace',loadChildren:'../workspace/workspace.module#WorkspaceModule'},
+    {data: {title: 'RR- Dashboard'}, path:'dashboard',loadChildren:'../dashboard/dashboard.module#DashboardModule'},
     {path:'**',redirectTo:'workspace'}
   ]},
 ];
@@ -14,7 +14,6 @@ const routes: Routes = [{
 @NgModule({
   declarations:[EntryComponent],
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule,
-  EntryComponent]
+  exports: [RouterModule, EntryComponent]
 })
 export class GatewayModule { }
