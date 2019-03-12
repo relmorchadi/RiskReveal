@@ -2,11 +2,12 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {COMPONENTS} from "./components"
 import {CONTAINERS, WorkspaceMainComponent} from "./containers";
-import {RouterModule} from "@angular/router";
+import {RouterModule, Routes} from '@angular/router';
 import {SharedModule} from "../shared/shared.module";
 
-const routes = [
-  {path:'',component:WorkspaceMainComponent}
+const routes:Routes = [
+  {data: {title: 'RR- Workspace'}, path:'',component: WorkspaceMainComponent},
+  {data: {title: 'RR- Workspace'}, path:':id',component: WorkspaceMainComponent},
 ]
 
 @NgModule({
