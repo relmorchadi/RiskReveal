@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {GridsterConfig} from 'angular-gridster2';
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -6,6 +7,8 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./dashboard-entry.component.scss']
 })
 export class DashboardEntryComponent implements OnInit {
+  protected options: GridsterConfig;
+  protected item:any = {x:0,y:0,cols:10,rows:5}
 
   dashboardsMockData = [
     {id: 1, title: 'Dashboard N°1'},
@@ -40,6 +43,27 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.options = {
+      gridType: 'fit',
+      enableEmptyCellDrop: true,
+      emptyCellDropCallback: ()=>{}, //this.onDrop,
+      pushItems: true,
+      swap: true,
+      pushDirections: { north: true, east: true, south: true, west: true },
+      resizable: { enabled: true },
+      itemChangeCallback: ()=>{} ,//this.itemChange.bind(this),
+      draggable: {
+        enabled: true,
+      //  ignoreContent: true,
+      //  dropOverItems: true,
+       // dragHandleClass: 'drag-handler',
+       // ignoreContentClass: 'no-drag',
+      },
+
+      displayGrid: 'always',
+      minCols: 10,
+      minRows: 10
+    };
   }
 
   dashboardChange(param){

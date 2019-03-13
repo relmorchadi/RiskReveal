@@ -3,8 +3,20 @@
     <nz-content>
       <nz-tabset class="dashboard-content">
         <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
-          <div nz-row>
-            <renewal-contract-scope></renewal-contract-scope>
+          <div style="height: 1000px" nz-row>
+            <gridster [options]="options" style="background-color: transparent;">
+              <!-- Earch grister-item is generated with *ngFor -->
+              <gridster-item style="overflow: auto" [item]="{x:0,y:0,cols:10,rows:5}">
+                <renewal-contract-scope></renewal-contract-scope>
+             </gridster-item>
+              <gridster-item style="overflow:auto" [item]="{x:0,y:0,cols:5,rows:5}">
+                <renewal-contract-scope></renewal-contract-scope>
+              </gridster-item>
+              <gridster-item style="overflow: auto" [item]="{x:0,y:0,cols:5,rows:5}">
+                <renewal-contract-scope></renewal-contract-scope>
+              </gridster-item>
+            </gridster>
+
           </div>
         </nz-tab>
       </nz-tabset>
