@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {GridsterConfig} from 'angular-gridster2';
+import {GridsterConfig, GridType} from 'angular-gridster2';
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -44,7 +44,7 @@ export class DashboardEntryComponent implements OnInit {
 
   ngOnInit() {
     this.options = {
-      gridType: 'fit',
+      gridType: GridType.Fit,
       enableEmptyCellDrop: true,
       emptyCellDropCallback: ()=>{}, //this.onDrop,
       pushItems: true,
