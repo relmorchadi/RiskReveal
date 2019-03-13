@@ -20,7 +20,7 @@ nz-header {
   height: 100%;
   overflow: auto;
 
-  ::ng-deep .ant-layout-sider-children{
+  ::ng-deep .ant-layout-sider-children {
     height: 86.5%;
   }
 }
@@ -126,7 +126,7 @@ nz-header {
   color: rgba(0, 0, 0, 0.6);
 }
 
-.edit-dashboard-section{
+.edit-dashboard-section {
   margin-top: 30px;
 }
 
@@ -168,14 +168,14 @@ ul.widgets-list {
   }
 }
 
-.collapse-command{
+.collapse-command {
   position: absolute;
   bottom: 20px;
   width: 80%;
   background-color: #FFF;
   line-height: 30px;
   vertical-align: middle;
-  i{
+  i {
     margin-right: 30px;
   }
   cursor: pointer;
@@ -183,5 +183,9 @@ ul.widgets-list {
 
 .collapse-command:hover {
   border-right: 3px solid #008694;
-  background-color: rgba(0,0,0,0.1);
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+::ng-deep .dashboard-content {
+  padding: 20px 30px !important;
 }

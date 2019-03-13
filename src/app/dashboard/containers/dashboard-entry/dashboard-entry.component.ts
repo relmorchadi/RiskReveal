@@ -27,22 +27,23 @@ export class DashboardEntryComponent implements OnInit {
     ]
   };
 
+  dashboardComparator = (a,b) => (a && b) ? a.id == b.id : false;
 
-
-  selectedDashboard=this.dashboardsMockData[0];
+  selectedDashboard;
   dashboardTitle="Dashboard N°1";
   tabs = [1, 2, 3];
 
   rightSliderCollapsed = false;
 
   constructor() {
+    this.selectedDashboard = this.dashboardsMockData[0];
   }
 
   ngOnInit() {
   }
 
   dashboardChange(param){
-    this.dashboardTitle= param;
+    this.dashboardTitle= param ? param.title : null;
   }
 
 
