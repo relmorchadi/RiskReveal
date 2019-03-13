@@ -1,12 +1,12 @@
 <nz-layout style="height: 91%">
   <nz-layout style="height: 100%">
     <nz-content>
-      <nz-tabset>
-        <div class="dashboard-content">
-          <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
-            Dashboard {{tab}} content
-          </nz-tab>
-        </div>
+      <nz-tabset class="dashboard-content">
+        <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
+          <div nz-row>
+            <renewal-contract-scope></renewal-contract-scope>
+          </div>
+        </nz-tab>
       </nz-tabset>
     </nz-content>
   </nz-layout>
@@ -30,9 +30,10 @@
         </div>
       </div>
       <div class="slider-content">
-        <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;" nzShowSearch nzAllowClear
+        <nz-select [compareWith]="dashboardComparator" (ngModelChange)="dashboardChange($event)" style="width: 200px;"
+                   nzShowSearch nzAllowClear
                    nzPlaceHolder="Select Dashboard" [(ngModel)]="selectedDashboard">
-          <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.title" [nzValue]="d?.title">
+          <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.title" [nzValue]="d">
             {{d.title}} <i class="icon-remove_red_eye_24px selected-item-icon"></i></nz-option>
         </nz-select>
         <div class="edit-dashboard-section">
