@@ -2,7 +2,12 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
-
+let staticTabs:any = [{title:'02PY376',year:'2019'},
+  {title:'02PY376',year:'2018'},
+  {title:'02PY376',year:'2019'},
+  {title:'06YE736',year:'2018'},
+  {title:'19IT762',year:'2018'}
+];
 @Component({
   selector: 'app-workspace-main',
   templateUrl: './workspace-main.component.html',
@@ -10,16 +15,17 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class WorkspaceMainComponent implements OnInit, OnDestroy {
   leftNavbarIsCollapsed: boolean = false;
-  tabs = [1, 2, 3];
+  tabs:any =staticTabs;
   collapseWorkspaceDetail: boolean = true;
   componentSubscription: any = [];
+  selectedPrStatus = '1'
 
   constructor(private _helper: HelperService, private route: ActivatedRoute) {
     this.route.params.subscribe(params => {
       if(params.id){
-        this.tabs = [1];
+        this.tabs = [staticTabs[0]];
       }else {
-        this.tabs= [1, 2, 3];
+        this.tabs= staticTabs;
       }
     })
     this._helper.openWorkspaces.subscribe(workspaces => this.tabs = workspaces);
@@ -35,6 +41,10 @@ export class WorkspaceMainComponent implements OnInit, OnDestroy {
   }
   ngOnDestroy(): void {
     _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
+  }
+
+  generateYears(year){
+    return _.range(year-1,2013)
   }
 
 

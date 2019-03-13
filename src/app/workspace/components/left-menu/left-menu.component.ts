@@ -12,4 +12,10 @@ export class LeftMenuComponent implements OnInit {
   ngOnInit() {
   }
 
+  collapse($event){
+    $event.stopPropagation()
+    $event.preventDefault();
+    this.isCollapsed = !this.isCollapsed
+  }
+
 }

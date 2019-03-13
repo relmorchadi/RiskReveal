@@ -1,8 +1,27 @@
 <ul nz-menu [nzMode]="'inline'"  [nzInlineCollapsed]="isCollapsed">
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Workspace' : ''">
+  <li (click)="collapse($event)" style="text-align: center"  nz-menu-item nz-tooltip nzPlacement="right">
+          <span  title>
+            <i nz-icon>
+              <i *ngIf="!isCollapsed" (click)="collapse($event)" class="icon-chevron_left_24px"></i>
+              <i *ngIf="isCollapsed" (click)="collapse($event)" class="icon-chevron_right_24px"></i>
+            </i>
+          </span>
+  </li>
+  <li nz-submenu="" nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Workspace' : ''">
           <span title>
             <i nz-icon><i class="icon-window-section"></i></i>
             <span>Workspace</span>
+          </span>
+    <ul>
+      <li nz-menu-item>Projects</li>
+      <li nz-menu-item>Contract</li>
+      <li nz-menu-item>Activity</li>
+    </ul>
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT browser' : ''">
+          <span title>
+            <i nz-icon><i class="icon-location_searching_24px"></i></i>
+            <span>Scope of Completeness</span>
           </span>
   </li>
   <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT browser' : ''">
@@ -31,6 +50,12 @@
             <span>Exposure</span>
           </span>
   </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Results' : ''">
+          <span title>
+            <i nz-icon><i class="icon-chart-growth"></i></i>
+            <span>Results</span>
+          </span>
+  </li>
   <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
           <span title>
             <i nz-icon><i class="icon-sitemap"></i></i>
@@ -40,22 +65,23 @@
   <li style="pointer-events: none" class="p-0" nz-menu-item>
     <hr class="col-xs-12">
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Results' : ''">
-          <span title>
-            <i nz-icon><i class="icon-chart-growth"></i></i>
-            <span>Results</span>
-          </span>
-  </li>
+
   <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Inuring' : ''">
           <span title>
             <i nz-icon><i class="fa fa-code-fork"></i></i>
             <span>Inuring</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Publish' : ''">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Pricing' : ''">
           <span title>
-            <i nz-icon><i class="icon-export"></i></i>
-            <span>Publish</span>
+            <i nz-icon><i class="icon-dollar-alt"></i></i>
+            <span>Pricing</span>
+          </span>
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Accumulation' : ''">
+          <span title>
+            <i nz-icon><i class="icon-focus-add"></i></i>
+            <span>Accumulation</span>
           </span>
   </li>
 </ul>

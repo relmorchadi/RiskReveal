@@ -26,5 +26,8 @@ export class NavbarComponent implements OnInit {
         this.expandMenu = this.expandMenu ? !(innerWidth > 768) : this.expandMenu
     })
   }
+  wiki(){
+    window.open("http://wikipedia.com",'_blank')
+  }
 
 }

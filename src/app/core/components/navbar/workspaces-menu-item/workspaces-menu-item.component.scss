@@ -1,8 +1,13 @@
 @import "~src/assets/scss/variables";
 
 :host{
-  ::ng-deep i.ant-menu-submenu-arrow{
-    right: 0px !important;
+  ::ng-deep {
+    i.ant-menu-submenu-arrow{
+      right: 0px !important;
+    }
+    .ant-tabs .ant-tabs-top-content > .ant-tabs-tabpane{
+      margin-bottom: 5px !important;
+    }
   }
   .workspace-list-item{
     cursor: pointer;

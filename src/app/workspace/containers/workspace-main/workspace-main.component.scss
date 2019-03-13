@@ -27,17 +27,17 @@
 .tab-title {
   color: #FFFFFF;
   font-family: Rubik;
-  font-size: 24.38px;
+  font-size: 14px;
   line-height: 29px;
-  margin-bottom: 0.2em
+  margin-bottom: 0
 }
 
 .sub-title {
   color: rgba(255, 255, 255, 0.6);
   font-family: Rubik;
-  font-size: 14.22px;
+  font-size: 9px;
   letter-spacing: 0.25px;
-  line-height: 20px;
+  line-height: 0px;
 }
 .tab-detail{
   background: #14617A;
@@ -46,7 +46,9 @@
 .btn-detail{
   background: #F8E71C;
   color: white;
-  border: 0;
+  position:absolute;right:0;top:-20px; border: 4px solid rgb(240, 242, 248);
+  box-shadow:none;
+  text-shadow: none;
 }
 .plus-btn{
   background: rgb(0, 195, 169);
@@ -67,6 +69,17 @@
   flex: 1;
   background: rgb(244, 246, 252);
 
+}
+
+.pine-btn{
+  box-sizing: border-box;
+  height: 57px;
+  width: 57px;
+  background: transparent;
+  border: 1px solid #E5E9FA;
+  position: absolute;
+  right: 0;
+  top: 20px;
 }
 .hide-btn {
   border: 1px solid #F8E71C;
@@ -106,7 +119,7 @@
       background: #2C6B81;
       border: 0;
       margin: 0;
-      width: 204px;
+      width: 120px;
       flex-direction: column;
       display: inline-flex;
       text-align: center;
@@ -114,7 +127,7 @@
       align-items: stretch;
       padding: 0;
       color: white;
-      height: 104px;
+      height: 60px;
     }
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
       background: #2C6B81;
@@ -146,10 +159,16 @@
       padding: 0;
     }
     .tab-metadata-title{
-      color: rgba(255,255,255,0.6);		font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
+      color: rgba(255,255,255,0.6);		font-size: 13px;	letter-spacing: 0.25px;	line-height: 20px;
+      @media screen and (max-width: 768px)  {
+        font-size: 12px;
+      }
+      @media screen and (max-width: 1024px) and (min-width: 769px) {
+        font-size: 11px;
+      }
     }
     .tab-metadata-value{
-      color: #FFFFFF;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
+      color: #FFFFFF;	font-size: 11px;	letter-spacing: 0.25px;	line-height: 20px;
     }
     .tab-metadata-more{
       color: #03DAC4;	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
@@ -159,9 +178,22 @@
     }
     .kpi-icon-title{
       color: #FFFFFF;	font-family: Rubik;	font-size: 12px;	letter-spacing: 0.08px;	line-height: 16px;
+      word-break: break-word;
+      @media screen and (max-width: 768px)  {
+        font-size: 11px;
+      }
+      @media screen and (max-width: 1024px) and (min-width: 769px) {
+        font-size: 9px;
+      }
     }
     .kpi-icon-value{
       color: #FFFFFF;	font-family: Rubik;	font-size: 34.54px;	letter-spacing: 0.25px;	line-height: 41px;
+      @media screen and (max-width: 768px)  {
+        font-size: 24px;
+      }
+      @media screen and (max-width: 1024px) and (min-width: 769px) {
+        font-size: 22px;
+      }
     }
   }
 }
@@ -179,11 +211,32 @@
       color: rgb(5, 37, 216) !important;
     }
 
+    .projects-title{
+      color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 34.54px;	font-weight: 300;	letter-spacing: 0.25px;	line-height: 41px;
+    }
+    .ant-select-selection {
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid #0700CF;
+    }
+    .ant-select-selection__rendered{
+      color: #0700CF;
+    }
+
   }
   .project-card{
-    min-width: 330px;
+    min-width: 320px;
     max-width: 400px;
+    &:hover{
+      border: 3px solid #06B8FF;
+    }
     border-radius: 2px;	background-color: #FAFAFA;	box-shadow: 0 9px 12px 1px rgba(0,0,0,0.1), 0 3px 16px 2px rgba(0,0,0,0.08), 0 5px 6px -3px rgba(0,0,0,0.1);
+    @media screen and (max-width: 768px)  {
+      min-width: 400px;
+    }
+    @media screen and (max-width: 1024px) and (min-width: 769px) {
+      min-width: 320px;
+    }
     .project-header {
       height: 80px;
       display: flex;
@@ -218,16 +271,31 @@
             background: #03DAC4 !important;
           }
 
+
         }
         .ant-steps-item-process > .ant-steps-item-content > .ant-steps-item-title {
           font-weight: bold !important;
           color: rgba(0, 0, 0, 0.95) !important;
+        }
+        .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
+          background: #00d9c3 !important;
         }
 
       }
     }
     .project-kpi {
       font-size: 0.7em;
+      div {
+        i{
+          height: 19.89px;	width: 16.89px;
+        }
+        span:nth-child(2){
+          font-size: 12px;	letter-spacing: 0.5px;	line-height: 20px
+        }
+        span:nth-child(3){
+          font-size: 16px;
+        }
+      }
       .badge{
         background: #e700104f;
         border-radius: 12px;

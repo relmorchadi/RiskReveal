@@ -13,7 +13,7 @@
         <a class="pl-3 pr-3 icon-size icon-copy-landscape nav-link" routerLink="/copy" routerLinkActive="active"></a>
       </li>
       <li class="px-4 border-right nav-item d-flex align-items-center">
-        <workspaces-menu-item ></workspaces-menu-item>
+        <workspaces-menu-item></workspaces-menu-item>
       </li>
       <li style="flex: 1" class="d-flex align-items-center nav-item px-3">
         <search-menu-item></search-menu-item>
@@ -30,7 +30,7 @@
         <li class="pl-3 border-left nav-item d-flex align-items-center">
           <user-menu-item></user-menu-item>
         </li>
-        <li class="px-3 border-left nav-item d-flex align-items-center"><a href="#"
+        <li class="px-3 border-left nav-item d-flex align-items-center"><a (click)="wiki()"
                                                                            class="icon-help_outline_24px icon-size"></a>
         </li>
       </ul>
@@ -105,12 +105,12 @@
           <li nz-menu-item>User Details</li>
         </ul>
       </li>
-      <li nz-submenu>
-        <span nz-row nzType="flex" title>
-          <span class="align-self-center" nz-col nzSpan="3">
-          <i class="icon-help_outline_24px
+      <li  nz-submenu>
+        <span (click)="wiki()" nz-row nzType="flex" title>
+          <span  class="align-self-center" nz-col nzSpan="3">
+          <i (click)="wiki()" class="icon-help_outline_24px
 "></i>
-        </span> <span nz-col nzSpan="21">Help</span></span>
+        </span> <span (click)="wiki()" nz-col nzSpan="21">Help</span></span>
 
       </li>
 
