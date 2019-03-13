@@ -1,0 +1,34 @@
+nz-header{
+  background-color: transparent;
+}
+
+.closed-slider{
+  background-color: #008694;
+  min-width: 85px !important;
+  flex: 0 0 85px !important;
+}
+
+::ng-deep .ant-tabs-tab {
+  height: 14.61px;
+  color: rgba(0, 0, 0, 0.6);
+  font-family: Rubik;
+  font-size: 11px;
+  letter-spacing: 0.08px;
+  line-height: 24px;
+  text-align: center;
+  margin: 0px !important;
+}
+
+::ng-deep .ant-tabs-tab-active {
+  height: 14.61px;
+  color: #0700CF !important;
+  font-family: Rubik;
+  font-size: 11px;
+  letter-spacing: 0.08px;
+  line-height: 24px;
+  text-align: center;
+  .tab-badge {
+    color: #0700CF;
+    opacity: 0.9;
+  }
+}

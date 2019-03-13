@@ -1,3 +1,20 @@
-<p>
-  dashboard-entry works!
-</p>
+<nz-layout style="height: 100%">
+  <nz-layout>
+    <nz-content>
+      <nz-tabset>
+
+        <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
+          Dashboard {{tab}} content
+        </nz-tab>
+
+      </nz-tabset>
+
+
+    </nz-content>
+  </nz-layout>
+  <nz-sider  [ngClass]="{'collapsed-slider': rightSliderCollapsed,'closed-slider':!rightSliderCollapsed }">
+    <div style="margin-top: 50px; display: flex; justify-content: center">
+      <i class="icon-settings_24px" style="color: #fff; font-size: 24px" (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
+    </div>
+  </nz-sider>
+</nz-layout>
