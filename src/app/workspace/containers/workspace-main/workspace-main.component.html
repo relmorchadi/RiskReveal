@@ -167,8 +167,8 @@
                 <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
                         class="mx-4 btn-detail d-flex justify-content-center align-items-center"
                         nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;" nz-icon type="down" theme="outline"></i>
-                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;" nz-icon type="up" theme="outline"></i>
+                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
+                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
                 </button>
                <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
                   <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
@@ -221,7 +221,7 @@
         <h6 class="d-flex align-items-center sub-title">{{year}} <i class="pl-3" nz-icon type="down"></i></h6>
       </a>
       <ul nz-menu>
-        <li *ngFor="let y of generateYears(year)" nz-menu-item>{{y}}</li>
+        <li (click)="addWs(title,y)" *ngFor="let y of generateYears(year)" nz-menu-item>{{y}}</li>
       </ul>
     </nz-dropdown>
 
@@ -237,6 +237,9 @@
       <div class="project-header-title d-flex flex-column justify-content-center pl-3">
         <span>P-9035</span>
         <span>Post Inured PLT</span>
+      </div>
+      <div>
+        <i class="icon-ellipsis-h"></i>
       </div>
     </div>
     <div class="project-progress d-flex justify-content-center align-items-center">

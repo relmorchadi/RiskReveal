@@ -6,6 +6,6 @@ export class HelperService{
   constructor() {}
 
   collapseLeftMenu$:Subject<void> = new Subject<void>();
-  openWorkspaces:Subject<any>= new Subject<any>();
+  openWorkspaces:Subject<any>= new BehaviorSubject<any>([]);
 
 }

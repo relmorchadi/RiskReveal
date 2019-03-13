@@ -43,6 +43,10 @@ export class WorkspaceMainComponent implements OnInit, OnDestroy {
     _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
   }
 
+  addWs(title,year){
+    this.tabs = [...this.tabs,{title,year}]
+  }
+
   generateYears(year){
     return _.range(year-1,2013)
   }

@@ -1,3 +1,14 @@
+:host {
+  ::ng-deep {
+    .ant-progress-circle-path {
+      stroke: #03DAC4;
+    }
+    .ant-badge-count{
+      background: #03DAC4;
+    }
+  }
+}
+
 .circular-progress-bar{
   position: relative;
   font-family: 'Scor_fonticon' !important;

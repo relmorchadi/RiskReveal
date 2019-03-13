@@ -7,7 +7,7 @@ const routes: Routes = [{
   path:'',component:MainComponent,children:[
     {data: {title: 'RR- Workspace'}, path:'workspace',loadChildren:'../workspace/workspace.module#WorkspaceModule'},
     {data: {title: 'RR- Dashboard'}, path:'dashboard',loadChildren:'../dashboard/dashboard.module#DashboardModule'},
-    {path:'**',redirectTo:'workspace'}
+    {path:'**',redirectTo:'dashboard'}
   ]},
 ];
 
