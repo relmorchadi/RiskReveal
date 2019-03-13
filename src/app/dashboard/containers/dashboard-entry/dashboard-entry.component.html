@@ -1,20 +1,74 @@
-<nz-layout style="height: 100%">
-  <nz-layout>
+<nz-layout style="height: 91%">
+  <nz-layout style="height: 100%">
     <nz-content>
       <nz-tabset>
-
-        <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
-          Dashboard {{tab}} content
-        </nz-tab>
-
+        <div class="dashboard-content">
+          <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
+            Dashboard {{tab}} content
+          </nz-tab>
+        </div>
       </nz-tabset>
-
-
     </nz-content>
   </nz-layout>
-  <nz-sider  [ngClass]="{'collapsed-slider': rightSliderCollapsed,'closed-slider':!rightSliderCollapsed }">
-    <div style="margin-top: 50px; display: flex; justify-content: center">
-      <i class="icon-settings_24px" style="color: #fff; font-size: 24px" (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
+  <nz-sider class="dashboard-slider"
+            [ngClass]="{'collapsed-slider': rightSliderCollapsed,'closed-slider':!rightSliderCollapsed }">
+    <div *ngIf="!rightSliderCollapsed; else sliderContent" class="collapsed-setting-icon">
+      <i class="clickable-item icon-settings_24px" style="color: #fff; font-size: 24px"
+         (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
     </div>
+    <ng-template #sliderContent>
+      <div nz-row class="slider-header-item">
+        <div nz-col class="center-items" nzSpan="8">
+          <i class="clickable-item icon-settings_24px" style="color: #fff; font-size: 24px"
+             (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
+        </div>
+        <div nz-col nzSpan="16" class="header-title">
+          Dashboard <br>
+          Preferences
+          <button class="add-workspace-btn" nz-button nzType="primary" nzShape="circle"><i nz-icon type="plus"></i>
+          </button>
+        </div>
+      </div>
+      <div class="slider-content">
+        <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;" nzShowSearch nzAllowClear
+                   nzPlaceHolder="Select Dashboard" [(ngModel)]="selectedDashboard">
+          <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.title" [nzValue]="d?.title">
+            {{d.title}} <i class="icon-remove_red_eye_24px selected-item-icon"></i></nz-option>
+        </nz-select>
+        <div class="edit-dashboard-section">
+          <input style="width: 70%" class="hover-input" placeholder="" [(ngModel)]="dashboardTitle">
+          <i class="icon-trash-alt delete-icon"></i>
+        </div>
+        <div class="highlight">
+          Display selected widgets on dashboard
+          <br><br>
+          <span class="title">TREATY</span>
+        </div>
+        <ul class="widgets-list">
+          <li *ngFor="let treaty of widgetsMockData.treaty" class="widget-item"
+              (click)="treaty.selected = !treaty.selected "
+              [ngClass]="{'active-widget-item': treaty.selected}">
+            <i [ngClass]="treaty.icon"></i> {{treaty.title}} <i class="float-right mr-1 mt-1"
+                                                                [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
+          </li>
+        </ul>
+        <div class="highlight" style="margin-top: 10px">
+          <span class="title">FAC</span>
+        </div>
+        <ul class="widgets-list" style="height: 50px;">
+          <li *ngFor="let fac of widgetsMockData.fac" class="widget-item" (click)="fac.selected = !fac.selected "
+              [ngClass]="{'active-widget-item': fac.selected}">
+            <i [ngClass]="fac.icon"></i>
+            {{fac.title}}
+            <i class="float-right mr-1 mt-1"
+               [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
+          </li>
+        </ul>
+
+        <div class="collapse-command" (click)="rightSliderCollapsed= !rightSliderCollapsed">
+          <i class="icon-arrow_forward_ios_24px"></i> Collapse
+        </div>
+      </div>
+    </ng-template>
   </nz-sider>
 </nz-layout>

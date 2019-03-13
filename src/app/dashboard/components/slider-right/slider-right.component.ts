@@ -1,12 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-dashboard-entry',
-  templateUrl: './dashboard-entry.component.html',
-  styleUrls: ['./dashboard-entry.component.scss']
+  selector: 'slider-right',
+  templateUrl: './slider-right.component.html',
+  styleUrls: ['./slider-right.component.scss']
 })
-export class DashboardEntryComponent implements OnInit {
-
+export class SliderRightComponent implements OnInit {
   dashboardsMockData = [
     {id: 1, title: 'Dashboard N°1'},
     {id: 2, title: 'Dashboard N°2'},
@@ -44,6 +43,4 @@ export class DashboardEntryComponent implements OnInit {
   dashboardChange(param){
     this.dashboardTitle= param;
   }
-
-
 }
