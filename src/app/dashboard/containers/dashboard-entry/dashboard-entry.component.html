@@ -1,11 +1,12 @@
 <nz-layout style="height: 91%">
   <nz-layout style="height: 100%">
     <nz-content>
+      <!--
       <nz-tabset class="dashboard-content">
         <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
           <div style="height: 1000px" nz-row>
             <gridster [options]="options" style="background-color: transparent;">
-              <!-- Earch grister-item is generated with *ngFor -->
+              <!-- Earch grister-item is generated with *ngFor
               <gridster-item style="overflow: auto" [item]="{x:0,y:0,cols:10,rows:5}">
                 <renewal-contract-scope></renewal-contract-scope>
              </gridster-item>
@@ -19,7 +20,19 @@
 
           </div>
         </nz-tab>
+      </nz-tabset> -->
+      <nz-tabset [nzSelectedIndex]="selectedDashboard" class="dashboard-content">
+        <nz-tab [nzForceRender]="true" *ngFor="let dashboard of dashboards" [nzTitle]="dashboard?.name">
+          <div style="height: 1000px;width: 100%">
+            <gridster [options]="options" style="background-color: transparent;">
+              <gridster-item *ngFor="let item of dashboard.items" style="overflow: auto" [item]="item?.position">
+                  <renewal-contract-scope class="no-drag"></renewal-contract-scope>
+              </gridster-item>
+            </gridster>
+          </div>
+        </nz-tab>
       </nz-tabset>
+
     </nz-content>
   </nz-layout>
   <nz-sider class="dashboard-slider"
@@ -37,20 +50,25 @@
         <div nz-col nzSpan="16" class="header-title">
           Dashboard <br>
           Preferences
-          <button class="add-workspace-btn" nz-button nzType="primary" nzShape="circle"><i nz-icon type="plus"></i>
+          <button nz-popconfirm (nzOnConfirm)="addDashboard()" [nzTitle]="dash"  class="add-workspace-btn" nz-button nzType="primary" nzShape="circle">
+            <i nz-icon type="plus"></i>
           </button>
+          <ng-template #dash>
+            <p class="popover-title">Add New Dashboard</p>
+            <input [(ngModel)]="newDashboardTitle" class="form-control" type="text">
+          </ng-template>
         </div>
       </div>
       <div class="slider-content">
-        <nz-select [compareWith]="dashboardComparator" (ngModelChange)="dashboardChange($event)" style="width: 200px;"
+        <nz-select  (ngModelChange)="dashboardChange($event)" style="width: 200px;"
                    nzShowSearch nzAllowClear
                    nzPlaceHolder="Select Dashboard" [(ngModel)]="selectedDashboard">
-          <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.title" [nzValue]="d">
-            {{d.title}} <i class="icon-remove_red_eye_24px selected-item-icon"></i></nz-option>
+          <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
+            {{d.name}} <i class="icon-remove_red_eye_24px selected-item-icon"></i></nz-option>
         </nz-select>
         <div class="edit-dashboard-section">
-          <input style="width: 70%" class="hover-input" placeholder="" [(ngModel)]="dashboardTitle">
-          <i class="icon-trash-alt delete-icon"></i>
+          <input style="width: 80%" class="hover-input" placeholder="" (change)="changeDashboardName($event.target.value)" [(ngModel)]="dashboardTitle">
+          <i (click)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"></i>
         </div>
         <div class="highlight">
           Display selected widgets on dashboard

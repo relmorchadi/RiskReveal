@@ -3,11 +3,25 @@
   ::ng-deep {
     .ant-select-selection{
       background-color: transparent;
-      color: #0700CF;
-    //  border: none;
+      border: none;
+      border-bottom: 2px solid #0700CF;
     }
+    .ant-select-selection__rendered{
+      margin-left: 2px !important;
+    }
+
   }
 }
+
+.popover-title {
+  color: rgba(0,0,0,0.6);
+  font-size: 16.26px;
+  letter-spacing: 0.5px;
+  line-height: 28px;
+
+}
+
+
 nz-header {
   background-color: transparent;
 }
@@ -125,11 +139,11 @@ nz-header {
 
 .hover-input {
   width: 80%;
-  font-size: 16.26px;
+  font-size: 14.26px;
   letter-spacing: 0.5px;
   line-height: 20px;
-  font-weight: bold;
 }
+
 
 .delete-icon {
   display: none;

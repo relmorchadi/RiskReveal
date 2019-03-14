@@ -104,4 +104,25 @@
   }
 
 }
+gridster .gridster-row {
+  border: none !important;
+}
+gridster .gridster-column {
+  border: none !important;
+}
 
+.ant-popover-inner-content{
+  padding: 8px 8px !important;
+}
+.ant-popover-buttons button:nth-child(1){
+  background: transparent;
+  box-shadow: none;
+  color: rgba(0,0,0,0.6);
+  border: 0px;
+}
+.ant-popover-buttons button:nth-child(2){
+  background: transparent;
+  box-shadow: none;
+  color: #0010d3;
+  border: 0px;
+}

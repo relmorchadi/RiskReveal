@@ -1,4 +1,54 @@
-
+:host{
+  position: relative;
+  display: block;
+  ::ng-deep {
+    .ui-table .ui-sortable-column.ui-state-highlight{
+      background-color: #c8c8c8;
+      color: #333333;
+    }
+     .ui-table .ui-table-thead:nth-child(1) > tr > th{
+       color: rgba(0,0,0,0.6); font-size: 11px;
+       letter-spacing: 0.08px;	line-height: 14px
+    }
+    .ui-table-resizable>.ui-table-wrapper{
+      table thead:nth-child(1){
+        background: white;
+        border-bottom: 2px solid #DDDDDD;
+      }
+    }
+    .ui-table .ui-table-thead > tr > th{
+      border: 1px solid transparent;
+      background-color: white;
+    }
+    .ui-table .ui-sortable-column:not(.ui-state-highlight):hover{
+      background-color: transparent;
+    }
+    .ui-table .ui-sortable-column.ui-state-highlight{
+      background-color: transparent;
+    }
+    .ui-table .ui-table-tbody > tr > td {
+      background-color: inherit;
+      border: none;
+      border-bottom: 1px solid #DDDDDD;
+      height: 24px;
+      width: 56px;
+      color: rgba(0,0,0,0.87);
+      font-family: Rubik;
+      font-size: 12px;
+      letter-spacing: 0.08px;
+      line-height: 24px;
+    }
+    .ui-table .ui-sortable-column.ui-state-highlight .ui-sortable-column-icon {
+      color: #848484;
+    }
+    .ui-table-wrapper.ng-star-inserted > table > tbody {
+      zoom: 0.8;
+    }
+    .ui-table .ui-table-tbody > tr:nth-child(even){
+      background-color: white;
+    }
+  }
+}
 .missing-icon-process-none {
   height: 20px;
   width: 20px;
