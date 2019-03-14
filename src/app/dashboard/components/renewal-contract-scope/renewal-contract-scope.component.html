@@ -174,5 +174,11 @@
 </nz-tabset>
 
 <ng-template #title>
-  Renewal Contract Scope <i class="icon-menu_24px float-right mr-1 mt1"></i>
+  Renewal Contract Scope <i  (contextmenu)="contextMenu($event,template)" style="cursor: pointer" class="icon-menu_24px float-right mr-1 mt1"></i>
+</ng-template>
+<ng-template #template>
+  <ul nz-menu nzInDropDown (nzClick)="close($event)">
+    <li (click)="duplicate.emit('')" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
+    <li (click)="delete.emit('')" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
+  </ul>
 </ng-template>

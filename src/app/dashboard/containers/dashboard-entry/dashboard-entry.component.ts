@@ -139,6 +139,16 @@ export class DashboardEntryComponent implements OnInit {
     let name:any =  _.get(_.find(this.dashboards,{id}),'name')
     this.dashboardTitle= name || ''
   }
+  delete(id,item){
+    this.dashboards[id].items= _.filter(this.dashboards[id].items,(e:any)=>e.id != item.id)
+    this.dashboards[id].items = _.map(this.dashboards[id].items,(e,id)=>({...e,id}))
+    localStorage.setItem('dashboard',JSON.stringify(this.dashboards))
+  }
+  duplicate(id,item){
+    this.dashboards[id].items = _.concat(this.dashboards[id].items,[{...item,id:this.dashboards[id].items.length+1}])
+    this.dashboards[id].items = _.map(this.dashboards[id].items ,(e,id)=>({...e,id}))
+    localStorage.setItem('dashboard',JSON.stringify(this.dashboards))
+  }
 
 
 }

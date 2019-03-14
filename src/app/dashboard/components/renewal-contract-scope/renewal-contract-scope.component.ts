@@ -1,4 +1,5 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, TemplateRef} from '@angular/core';
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 
 @Component({
   selector: 'renewal-contract-scope',
@@ -6,7 +7,9 @@ import {Component, OnInit} from '@angular/core';
   styleUrls: ['./renewal-contract-scope.component.scss']
 })
 export class RenewalContractScopeComponent implements OnInit {
-
+  @Output('delete') delete:any = new EventEmitter<any>();
+  @Output('duplicate') duplicate:any = new EventEmitter<any>();
+  private dropdown: NzDropdownContextComponent;
   renewalPeriod = '1';
   uwyUnits = '1';
   activeProject = '1';
@@ -45,10 +48,18 @@ export class RenewalContractScopeComponent implements OnInit {
     }
   ]
 
-  constructor() {
+  constructor(private nzDropdownService: NzDropdownService) {
   }
 
   ngOnInit() {
+  }
+  contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
+    this.dropdown = this.nzDropdownService.create($event, template);
+    console.log(this.dropdown)
+  }
+  close(e: NzMenuItemDirective): void {
+
+    this.dropdown.close();
   }
 
 }

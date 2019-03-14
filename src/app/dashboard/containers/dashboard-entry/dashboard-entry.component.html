@@ -26,7 +26,7 @@
           <div style="height: 1000px;width: 100%">
             <gridster [options]="options" style="background-color: transparent;">
               <gridster-item *ngFor="let item of dashboard.items" style="overflow: auto" [item]="item?.position">
-                  <renewal-contract-scope class="no-drag"></renewal-contract-scope>
+                  <renewal-contract-scope (delete)="delete(dashboard.id,item)" (duplicate)="duplicate(dashboard.id,item)" class="no-drag"></renewal-contract-scope>
               </gridster-item>
             </gridster>
           </div>

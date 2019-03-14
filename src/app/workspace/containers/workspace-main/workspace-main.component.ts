@@ -21,20 +21,28 @@ export class WorkspaceMainComponent implements OnInit, OnDestroy {
   selectedPrStatus = '1'
 
   constructor(private _helper: HelperService, private route: ActivatedRoute) {
-    this.route.params.subscribe(params => {
-      if(params.id){
-        this.tabs = [staticTabs[0]];
-      }else {
-        this.tabs= staticTabs;
-      }
-    })
-    this._helper.openWorkspaces.subscribe(workspaces => this.tabs = workspaces);
+
   }
 
   ngOnInit() {
     this._helper.collapseLeftMenu$.subscribe((e) => {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
+    this._helper.openWorkspaces.subscribe(workspaces => this.tabs = workspaces);
+    const pathName: any = window.location.pathname || '';
+    if (pathName.includes('workspace')) {
+      const workspaceId: any = pathName[pathName.length - 1];
+      if(workspaceId !=null ) this.tabs = [staticTabs[0]];
+    }
+    // this.route.params.subscribe(params => {
+    //   if(params.id){
+    //     this.tabs = [staticTabs[0]];
+    //     console.log(this.tabs)
+    //   }else {
+    //     this.tabs= staticTabs;
+    //   }
+    // })
+
   }
   close(item){
     this.tabs = _.filter(this.tabs,(i)=> i != item)
