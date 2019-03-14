@@ -34,8 +34,8 @@ nz-tabset {
     color: rgba(0, 0, 0, 0.38);
   }
 
-  table{
-    *{
+  table {
+    * {
       text-align: center;
     }
     thead {
@@ -48,7 +48,16 @@ nz-tabset {
     }
   }
 
-
+  .select-sections {
+    ::ng-deep .ant-select-selection {
+      background-color: transparent;
+      border: none;
+      border-bottom: 2px solid #0700CF;
+    }
+    ::ng-deep .ant-select-selection__rendered {
+      color: #0700CF;
+    }
+  }
 
 }
 

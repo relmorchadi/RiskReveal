@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'renewal-contract-scope',
@@ -7,7 +7,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class RenewalContractScopeComponent implements OnInit {
 
-  constructor() { }
+  renewalPeriod = '1';
+  uwyUnits = '1';
+  activeProject = '1';
+
+  constructor() {
+  }
 
   ngOnInit() {
   }
