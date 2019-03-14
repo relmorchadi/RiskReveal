@@ -1,23 +1,32 @@
 <form [formGroup]="contractFilterFormGroup">
 
-  <nz-input-group nz-popover [nzContent]="searchDropdown" nzTrigger="click" style="z-index: 1001" [nzPrefix]="prefixIconTag"
+  <nz-input-group style="z-index: 1001"
+                  [nzPrefix]="prefixIconTag"
                   [nzSuffix]="suffixIconSearch">
-    <input (keydown)="filterContracts($event)" formControlName="globalKeyword"
+    <input [ngClass]="{'search-page-active-border': isSearchRoute()}" (keydown)="filterContracts($event)" formControlName="globalKeyword"
            class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
   <ng-template #suffixIconSearch>
-    <!-- @TODO Update the placment -->
-    <i style="cursor: pointer" class="icon-search_24px"></i>
+    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" style="cursor: pointer" class="icon-search_24px"></i>
   </ng-template>
   <ng-template #prefixIconTag>
-    <i style="cursor: pointer" class="icon-pricetag-alt"></i>
+    <i #searchPopupBtn nz-popover [nzContent]="searchDropdown" nzPlacement="bottomLeft" nzTrigger="click"
+       style="cursor: pointer" class="icon-pricetag-alt"></i>
   </ng-template>
 
   <ng-template #searchDropdown>
-    <div nz-menu style="height: 300px; overflow: auto; border-radius: 10px; width: 850px">
-      <nz-table [nzVirtualItemSize]="54" #basicTable [nzData]="contracts">
+    <div class="search-contextual-table"
+         nz-menu style="height: 300px; overflow: auto; border-radius: 10px; width: 850px">
+      <nz-table *ngIf="contractFilterFormGroup.get('globalKeyword').value; else chooseTag" #basicTable
+                [nzShowPagination]="false" [nzData]="contracts" [nzScroll]="{ y: '210px' }">
         <thead>
         <tr>
+          <th>Workspace ID</th>
+          <th>Workspace Name</th>
+          <th>UW Year</th>
+          <th>Treaty ID</th>
+          <th>Cedant Name</th>
+          <!--
           <th nzShowFilter [nzFilters]="filterWorkspance" (nzFilterChange)="updateFilter($event,'workspaceId')">
             <nz-input-group [nzPrefix]="prefixIconSearch">
               <input formControlName="workspaceId" type="text" nz-input placeholder="Workspace ID">
@@ -43,21 +52,37 @@
               <input formControlName="cedantName" type="text" nz-input placeholder="Cedant Name">
             </nz-input-group>
           </th>
+          -->
         </tr>
         </thead>
         <tbody>
         <tr *ngFor="let data of basicTable.data">
-          <td [innerHtml]="data.workspaceId | boldKeyword: contractFilterFormGroup.get('workspaceId').value"></td>
-          <td [innerHtml]="data.workspaceName | boldKeyword: contractFilterFormGroup.get('workspaceName').value"></td>
-          <td [innerHtml]="data.uwYear | boldKeyword: contractFilterFormGroup.get('uwYear').value"></td>
-          <td [innerHtml]="data.treatyId | boldKeyword: contractFilterFormGroup.get('treatyId').value"></td>
-          <td [innerHtml]="data.cedantName | boldKeyword: contractFilterFormGroup.get('cedantName').value"></td>
+          <td
+            [innerHtml]="data.workspaceId | boldKeyword: contractFilterFormGroup.get('workspaceId').value:actualGlobalKeyword"></td>
+          <td
+            [innerHtml]="data.workspaceName | boldKeyword: contractFilterFormGroup.get('workspaceName').value:actualGlobalKeyword"></td>
+          <td
+            [innerHtml]="data.uwYear | boldKeyword: contractFilterFormGroup.get('uwYear').value:actualGlobalKeyword"></td>
+          <td
+            [innerHtml]="data.treatyId | boldKeyword: contractFilterFormGroup.get('treatyId').value:actualGlobalKeyword"></td>
+          <td
+            [innerHtml]="data.cedantName | boldKeyword: contractFilterFormGroup.get('cedantName').value:actualGlobalKeyword"></td>
         </tr>
         </tbody>
       </nz-table>
+      <ng-template #chooseTag>
+        <ul class="badges-list">
+          <li *ngFor="let badge of badgesList" class="badge-item"><i [ngClass]="badge.icon" [ngStyle]="{'backgroundColor': badge.backgroundColor}"></i>{{badge.title}}</li>
+        </ul>
+      </ng-template>
+      <div class="more-results-sction">
+        <button routerLink="/search" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
+      </div>
       <ng-template #prefixIconSearch>
         <i nz-icon type="search"></i>
       </ng-template>
     </div>
+
+
   </ng-template>
 </form>

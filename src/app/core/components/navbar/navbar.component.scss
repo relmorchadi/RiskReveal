@@ -9,3 +9,14 @@
 search-menu-item{
   width: 100%;
 }
+
+
+.navigation-active{
+  border-bottom: 3px solid #03DAC4;
+  background-color: #F9F9F9;
+}
+
+a.nav-link {
+  height: 100%;
+  line-height: 2.3rem;
+}

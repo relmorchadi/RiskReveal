@@ -1,15 +1,94 @@
-.search-input{
+.search-input {
   border-radius: 24px;
   background-color: #F4F6FC;
   border: none;
 }
 
-.search-input:focus{
+.search-input:focus {
   border: 1px solid #06B8FF;
   background-color: #FFFFFF;
 }
 
-::ng-deep .search-highlighted-kw{
+::ng-deep .search-highlighted-kw {
   font-weight: bold;
   background-color: #7ED321;
 }
+
+.more-results-button {
+  color: #0700CF;
+  font-family: Rubik;
+  font-size: 14.22px;
+  font-weight: 500;
+  letter-spacing: 1.25px;
+  line-height: 16px;
+  border: none;
+  font-weight: bold;
+}
+
+td, th {
+  color: rgba(0, 0, 0, 0.38) !important;
+  font-size: 12px !important;
+  letter-spacing: 0.08px !important;
+  line-height: 14px !important;
+  background-color: #FFFFFF !important;
+}
+
+.more-results-sction{
+  line-height: 2.5rem;
+  background-color: #f0f2f5;
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  left: 0px;
+  button{
+    background-color: #f0f2f5;
+    margin-left: 10px;
+  }
+}
+
+.search-contextual-table{
+  ::ng-deep div.ant-table-header{
+    margin-bottom: -15px !important;
+  }
+
+  ::ng-deep .ant-table-tbody > tr > td{
+    padding: 10px 16px !important;
+    text-align: center;
+  }
+}
+
+
+ul.badges-list{
+  list-style: none;
+  padding-left: 5px;
+  height: 250px;
+  overflow-y: auto;
+  li.badge-item {
+    margin: 15px 10px;
+    padding: 3px 5px;
+    cursor: pointer;
+    i{
+      margin-right: 5px;
+      padding: 7px;
+      border-radius: 20px;
+      color: white;
+    }
+  }
+}
+
+
+.search-page-active-shape{
+  background-color: #06B8FF;
+  padding-right: 15px;
+  padding-top: 7px;
+  padding-bottom: 9px;
+  padding-left: 10px;
+  border-radius: 0px 15px 15px 0px;
+  margin-right: -12px;
+}
+
+.search-page-active-border {
+  border: 1.5px solid #06B8FF;
+}
+
+
