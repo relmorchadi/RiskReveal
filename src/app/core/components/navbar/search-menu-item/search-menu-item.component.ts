@@ -18,6 +18,8 @@ export class SearchMenuItemComponent implements OnInit {
 
   contracts: any = contractsMockData;
 
+  showResult = false ;
+
   filterUwy = _.uniqBy(contractsMockData.map((item: any) => ({text: item.uwYear, value: item.uwYear})), 'value');
   filterWorkspance = _.uniqBy(contractsMockData.map((item: any) => ({text: item.workspaceId, value: item.workspaceId})), 'value');
 
@@ -98,6 +100,9 @@ export class SearchMenuItemComponent implements OnInit {
       let searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
       this.examinateExpression(searchExpression);
       this.searchPopupBtn.nativeElement.click();
+      this.showResult = true;
+    }else{
+      this.showResult = false;
     }
 
     /*

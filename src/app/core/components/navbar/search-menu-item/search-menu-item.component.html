@@ -17,8 +17,10 @@
   <ng-template #searchDropdown>
     <div class="search-contextual-table"
          nz-menu style="height: 300px; overflow: auto; border-radius: 10px; width: 850px">
-      <nz-table *ngIf="contractFilterFormGroup.get('globalKeyword').value; else chooseTag" #basicTable
-                [nzShowPagination]="false" [nzData]="contracts" [nzScroll]="{ y: '210px' }">
+      <nz-table *ngIf="showResult; else chooseTag" #basicTable
+                [nzShowPagination]="false" [nzData]="contracts"
+                [nzItemRender]="100"
+                [nzScroll]="{ y: '210px' }">
         <thead>
         <tr>
           <th>Workspace ID</th>
@@ -82,7 +84,5 @@
         <i nz-icon type="search"></i>
       </ng-template>
     </div>
-
-
   </ng-template>
 </form>
