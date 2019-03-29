@@ -1,5 +1,6 @@
+
+<div routerLink="/workspace" class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}} &nbsp;&nbsp; </div>
 <div style="color: rgba(0,0,0,0.6); cursor: pointer" nz-popover [nzContent]="workspacePopoverContent" nzTrigger="click" >
-  {{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}} &nbsp;&nbsp;
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 5px"></i>
 </div>
 <ng-template #workspacePopoverContent>

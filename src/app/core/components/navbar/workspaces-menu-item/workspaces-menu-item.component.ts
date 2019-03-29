@@ -9,11 +9,11 @@ import {Router} from '@angular/router';
 })
 export class WorkspacesMenuItemComponent implements OnInit {
   workspaces: any = [
-    {id:1,name:'02PY376',selected: true,year:'2019'},
-    {id:2,name:'02PY376',selected: true,year:'2018'},
-    {id:3,name:'02PY376',selected: true,year:'2019'},
-    {id:4,name:'06YE736',selected: true,year:'2018'},
-    {id:5,name:'19IT762',selected: true,year:'2018'}
+    {id: 1, name: '02PY376', selected: true, year: '2019'},
+    {id: 2, name: '02PY376', selected: true, year: '2018'},
+    {id: 3, name: '02PY376', selected: true, year: '2019'},
+    {id: 4, name: '06YE736', selected: true, year: '2018'},
+    {id: 5, name: '19IT762', selected: true, year: '2018'}
   ];
   selectedWorkspace = null;
 

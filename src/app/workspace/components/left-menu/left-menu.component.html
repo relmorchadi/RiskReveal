@@ -31,7 +31,16 @@
           </span>
   </li>
   <li style="pointer-events: none" class="p-0" nz-menu-item>
-    <hr class="col-xs-12">
+    <hr class="col-xs-24">
+  </li>
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'RiskLink Import' : ''">
+    <span title routerLink="/workspace/RiskLink">
+      <i nz-icon><i class="icon-hover"></i></i>
+      <span>RiskLink Import</span>
+    </span>
+  </li>
+  <li style="pointer-events: none" class="p-0" nz-menu-item>
+    <hr class="col-xs-24">
   </li>
   <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Data sources Import' : ''">
           <span title>

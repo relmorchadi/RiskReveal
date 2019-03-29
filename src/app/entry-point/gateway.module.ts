@@ -4,12 +4,12 @@ import {EntryComponent} from "./entry.component";
 import {MainComponent} from "../core/containers/main/main.component";
 
 const routes: Routes = [{
-  path:'',component:MainComponent,children:[
-    {data: {title: 'RR- Workspace'}, path:'workspace',loadChildren:'../workspace/workspace.module#WorkspaceModule'},
-    {data: {title: 'RR- Dashboard'}, path:'dashboard',loadChildren:'../dashboard/dashboard.module#DashboardModule'},
-    {data: {title: 'RR- PLT Comparer'}, path:'plt-comparer',loadChildren:'../plt-comparer/plt-comparer.module#PltComparerModule'},
-    {data: {title: 'RR- Search'}, path:'search',loadChildren:'../search/search.module#SearchModule'},
-    {path:'**',redirectTo:'dashboard'}
+  path: '', component: MainComponent, children:[
+    {data: {title: 'RR- Workspace'}, path: 'workspace', loadChildren: '../workspace/workspace.module#WorkspaceModule'},
+    {data: {title: 'RR- Dashboard'}, path: 'dashboard', loadChildren: '../dashboard/dashboard.module#DashboardModule'},
+    {data: {title: 'RR- PLT Comparer'}, path: 'plt-comparer', loadChildren: '../plt-comparer/plt-comparer.module#PltComparerModule'},
+    {data: {title: 'RR- Search'}, path: 'search', loadChildren: '../search/search.module#SearchModule'},
+    {path: '**', redirectTo: 'dashboard'}
   ]},
 ];
 

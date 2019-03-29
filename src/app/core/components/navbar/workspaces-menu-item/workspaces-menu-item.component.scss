@@ -1,5 +1,11 @@
 @import "~src/assets/scss/variables";
 
+.pointer{
+  cursor: pointer;
+  &:focus{
+    outline: 0;
+  }
+}
 :host{
   ::ng-deep {
     i.ant-menu-submenu-arrow{
