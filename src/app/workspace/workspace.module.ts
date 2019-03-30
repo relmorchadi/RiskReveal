@@ -4,17 +4,17 @@ import {COMPONENTS} from "./components"
 import {CONTAINERS, WorkspaceMainComponent} from "./containers";
 import {RouterModule, Routes} from '@angular/router';
 import {SharedModule} from "../shared/shared.module";
-import { WorkspaceRiskLinkImportComponent } from './containers/workspace-risk-link-import/workspace-risk-link-import.component';
+import { WorkspaceRiskLinkComponent } from './containers/workspace-risk-link/workspace-risk-link.component';
 
 const routes: Routes = [
   {data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent},
-  {data: {title: 'RR- Workspace'}, path: 'RiskLink', component: WorkspaceRiskLinkImportComponent},
+  {data: {title: 'RR- Workspace'}, path: 'RiskLink', component: WorkspaceRiskLinkComponent},
   // {data: {title: 'RR- Workspace'}, path: ':id', component: WorkspaceMainComponent},
 ];
 
 @NgModule({
   declarations: [
-    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkImportComponent
+    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkComponent
   ],
   imports: [
     SharedModule,
