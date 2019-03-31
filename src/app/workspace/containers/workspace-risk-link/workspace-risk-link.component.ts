@@ -28,8 +28,8 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   list2value: string = 'Financial Perspective';
   list3value: string = 'Currency';
 
-  listEDM:any = [];
-  listRDM:any = [];
+  listEDM: any = [];
+  listRDM: any = [];
 
   RDM: any = [
     {id: 1, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', selected: false, Reference: '413'},
@@ -53,11 +53,42 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 8, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '7/15'}
   ];
 
+  tableleft: any = [
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+  ];
+
+  tableRight: any = [
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+  ];
+
   displaydropdownEDM: boolean = false;
   displaydropdownRDM: boolean = false;
-  displaylist: boolean = false;
   displaylistRDM: boolean = false;
   displaylistEDM: boolean = false;
+  displayImport: boolean = false;
+
+  currentStep = 0;
 
   constructor(private _helper: HelperService, private route: ActivatedRoute) {
 
@@ -83,7 +114,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   addWs(title,year){
-    this.tabs = [...this.tabs,{title,year}]
+    this.tabs = [...this.tabs, {title, year}]
   }
 
   generateYears(year){
@@ -113,11 +144,11 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     if (value === 1) {
       this.EDM.forEach((e) => {
         e.selected = false;
-      })
+      });
     } else {
       this.RDM.forEach((e) => {
         e.selected = false;
-      })
+      });
     }
   }
 
@@ -130,31 +161,38 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   selecteditem(value){
-    let listitems = []
     if (value === 1) {
+      this.listEDM = [];
       this.EDM.forEach((e) => {
         if (e.selected === true) {
-          listitems = [...listitems , e]
+          let newitem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
+          this.listEDM = [...this.listEDM , newitem];
         }
       });
-      listitems.forEach((e) => {
-        e.selected = false;
-      });
-      this.listEDM = listitems;
       this.displaydropdownEDM = false;
       this.listEDM.length === 0 ? this.displaylistEDM = false : this.displaylistEDM = true;
     } else {
+      this.listRDM = [];
       this.RDM.forEach((e) => {
         if (e.selected === true) {
-          listitems = [...listitems , e]
+          let newitem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
+          this.listRDM = [...this.listRDM, newitem];
         }
       });
-      listitems.forEach((e) => {
-        e.selected = false;
-      });
-      this.listRDM = listitems;
       this.displaydropdownRDM = false;
       this.listRDM.length === 0 ? this.displaylistRDM = false : this.displaylistRDM = true;
+      this.listRDM.length > 0 && this.listEDM.length > 0 ? this.currentStep = 1 : this.currentStep = 0;
+    }
+  }
+  selectStep(value) {
+    if (value === 0 && this.currentStep === 1) {
+      this.currentStep = 0;
+      this.listEDM = [];
+      this.listRDM = [];
+      this.displaylistEDM = false;
+      this.displaylistRDM = false;
+      this.unselectAll(1);
+      this.unselectAll(2);
     }
   }
 }

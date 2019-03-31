@@ -195,10 +195,10 @@
                         <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
                       </div>
                       <div class="body-wrap-header-step">
-                          <nz-steps [nzCurrent]="0" nzProgressDot>
-                              <nz-step nzTitle="Step 1" nzDescription="Select EDM & RDM"></nz-step>
-                              <nz-step nzTitle="Step 2" nzDescription="Portfolios & Analysis"></nz-step>
-                              <nz-step nzTitle="Step 3" nzDescription=""></nz-step>
+                          <nz-steps [nzCurrent]="currentStep" nzProgressDot>
+                              <nz-step style="cursor: pointer" (click)="selectStep(0)" nzTitle="Step 1" nzDescription="Select EDM & RDM"></nz-step>
+                              <nz-step style="cursor: pointer" class="coming-up" (click)="selectStep(1)" nzTitle="Step 2" nzDescription="Portfolios & Analysis"></nz-step>
+                              <nz-step style="cursor: pointer"  nzTitle="Step 3" nzDescription="Import"></nz-step>
                             </nz-steps>
                       </div>
                     </div>
@@ -300,16 +300,16 @@
                             <div class="list-items" *ngIf="displaylistEDM">
                               <span class="list-items-title">EDM</span>
                               <ul>
-                                <li *ngFor="let EDM of listEDM" class="poover-menu-item" (click)="toggleitemsEDM(EDM)" [ngClass]="{'poover-menu-item-active': EDM.selected}" >
-                                  <span class="logo" style="background: #0700CF;">E</span> <span class="text">{{EDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': EDM.selected}" ></i>
+                                <li *ngFor="let itemsE of listEDM" class="poover-menu-item" (click)="toggleitemsEDM(itemsE)" [ngClass]="{'poover-menu-item-active': itemsE.selected}" >
+                                  <span class="logo" style="background: #0700CF;">E</span> <span [title]="itemsE.name" class="text">{{itemsE?.name}}</span> <span class="reference">{{itemsE?.Reference}}</span> <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}" ></i>
                                 </li>
                               </ul>
                             </div>
                             <div class="list-items" *ngIf="displaylistRDM">
                               <span class="list-items-title">RDM</span>
                               <ul>
-                                <li *ngFor="let RDM of listRDM" class="poover-menu-item" (click)="toggleitemsRDM(RDM)" [ngClass]="{'poover-menu-item-active': RDM.selected}" >
-                                  <span class="logo" style="background: #03DAC4">R</span> <span class="text">{{RDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': RDM.selected}" ></i>
+                                <li *ngFor="let itemsR of listRDM" class="poover-menu-item" (click)="toggleitemsRDM(itemsR)" [ngClass]="{'poover-menu-item-active': itemsR.selected}" >
+                                  <span class="logo" style="background: #03DAC4">R</span> <span [title]="itemsR.name" class="text">{{itemsR?.name}}</span> <span class="reference">{{itemsR?.Reference}}</span> <i class="logo-right" [ngClass]="{'icon-check_24px': itemsR.selected}" ></i>
                                 </li>
                               </ul>
                             </div>
@@ -320,13 +320,86 @@
                             <div class="body-wraper-header">
                               <div class="body-wraper-header-left">
                                   <hr>
-                                  <div>Select EDM & RDM</div>
+                                  <div>Select For Import</div>
                               </div>
                               <div class="body-wraper-header-right">
                                 <i nz-icon nzType="up" nzTheme="outline"></i>
                               </div>
                             </div>
+                            <div class="show-table">
+                              <table style="border-right: 5px solid rgba(0,0,0,0.25);">
+                                <thead>
+                                  <tr>
+                                    <th style="min-width:15px"></th>
+                                    <th style="min-width:25px">ID</th>
+                                    <th style="min-width:90px">Name
+                                      <nz-input-group [nzPrefix]="suffixIconSearch">
+                                        <input type="text" nz-input />
+                                      </nz-input-group>
+                                      <ng-template #suffixIconSearch>
+                                          <i nz-icon type="search"></i>
+                                      </ng-template>
+                                    </th>
+                                    <th style="min-width:60px">Already Imported</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr *ngFor="let items of tableleft">
+                                    <th><i nz-icon *ngIf="!items.checked" nzType="check-circle" nzTheme="outline"></i></th>
+                                    <th>{{items.id}}</th>
+                                    <th>{{items.name}}</th>
+                                    <th style="font-size:16px; color: #0700CF;"> <i [ngClass]="{'icon-assignment_returned_24px': items.AlreadyImported}" ></i></th>
+                                  </tr>
+                                </tbody>
+                              </table>
+                              <table class="table-right">
+                                <thead>
+                                    <th style="min-width:150px">Description
+                                        <nz-input-group [nzPrefix]="suffixIconSearch">
+                                          <input type="text" nz-input />
+                                        </nz-input-group>
+                                    </th>
+                                    <th style="min-width:80px">Engine Version
+                                        <nz-input-group [nzPrefix]="suffixIconSearch">
+                                          <input type="text" nz-input />
+                                        </nz-input-group>
+                                    </th>
+                                    <th style="min-width:80px">Groupe Type
+                                      <nz-input-group [nzPrefix]="suffixIconSearch">
+                                        <input type="text" nz-input />
+                                      </nz-input-group>
+                                    </th>
+                                    <th style="min-width:110px">Cedent
+                                      <nz-input-group [nzPrefix]="suffixIconSearch">
+                                        <input type="text" nz-input />
+                                      </nz-input-group>
+                                    </th>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let items of tableRight">
+                                        <th>{{items.description}}</th>
+                                        <th>{{items.engineVersion}}</th>
+                                        <th>{{items.groupeType}}</th>
+                                        <th>{{items.cedent}}</th>
+                                      </tr>
+                                </tbody>
+                              </table>
+                              <div><button>SELECT</button></div>
+                            </div>
                           </div>
+                      </div>
+                    </div>
+                    <div class="body-wrap-body" *ngIf="displayImport">
+                      <div class="body-wraper">
+                          <div class="body-wraper-header">
+                            <div class="body-wraper-header-left">
+                              <hr>
+                            <div>Select For Import</div>
+                          </div>
+                          <div class="body-wraper-header-right">
+                            <i nz-icon nzType="up" nzTheme="outline"></i>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -356,4 +429,5 @@
 
     <div (click)="close(index)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
   </div>
+
 
