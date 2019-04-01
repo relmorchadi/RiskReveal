@@ -23,10 +23,14 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   list1: any = ['RMS Instance', 'item 1', 'item 2'];
   list2: any = ['Financial Perspective', 'item 1', 'item 2'];
   list3: any = ['Currency', 'item 1', 'item 2'];
+  list4: any = ['Currently Imported', 'item 1', 'item 2'];
+  list5: any = ['Add calibration', 'item 1', 'item 2'];
 
   list1value: string = 'RMS Instance';
   list2value: string = 'Financial Perspective';
   list3value: string = 'Currency';
+  list4value: string = 'Currently Imported';
+  list5value: string = 'Add calibration';
 
   listEDM: any = [];
   listRDM: any = [];
@@ -82,11 +86,20 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
   ];
 
+  SummaryInfo: any = [
+    {status : true, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'},
+    {status : false, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'}
+  ]
+
   displaydropdownEDM: boolean = false;
   displaydropdownRDM: boolean = false;
   displaylistRDM: boolean = false;
   displaylistEDM: boolean = false;
+  displaytable: boolean = false;
   displayImport: boolean = false;
+
+  collapsehead: boolean = true;
+  collapseright: boolean = true;
 
   currentStep = 0;
 
@@ -125,8 +138,36 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     RDM.selected = !RDM.selected;
   }
 
+  toggleitemslistRDM(RDM) {
+    RDM.selected = !RDM.selected;
+    let nbrselected = 0;
+    this.listRDM.forEach((e) => {
+        e.selected === true ? nbrselected = nbrselected + 1 : null;
+      }
+    );
+    this.listEDM.forEach((e) => {
+       e.selected === true ? nbrselected = nbrselected + 1 : null;
+      }
+    );
+    nbrselected > 0 ? this.displaytable = true : this.displaytable = false;
+  }
+
   toggleitemsEDM(EDM) {
     EDM.selected = !EDM.selected;
+  }
+
+  toggleitemslistEDM(EDM) {
+    EDM.selected = !EDM.selected;
+    let nbrselected = 0;
+    this.listRDM.forEach((e) => {
+        e.selected === true ? nbrselected = nbrselected + 1 : null;
+      }
+    );
+    this.listEDM.forEach((e) => {
+        e.selected === true ? nbrselected = nbrselected + 1 : null;
+      }
+    );
+    nbrselected > 0 ? this.displaytable = true : this.displaytable = false;
   }
 
   selectAll(value) {
@@ -183,6 +224,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       this.listRDM.length === 0 ? this.displaylistRDM = false : this.displaylistRDM = true;
       this.listRDM.length > 0 && this.listEDM.length > 0 ? this.currentStep = 1 : this.currentStep = 0;
     }
+    this.collapseright = true;
   }
   selectStep(value) {
     if (value === 0 && this.currentStep === 1) {
@@ -191,8 +233,38 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       this.listRDM = [];
       this.displaylistEDM = false;
       this.displaylistRDM = false;
+      this.displaytable = false;
       this.unselectAll(1);
       this.unselectAll(2);
     }
+    if (value === 1 && this.currentStep === 2) {
+      this.currentStep = 1;
+      this.listEDM.forEach((e) => {
+          e.selected = false;
+        }
+      );
+      this.listRDM.forEach((e) => {
+          e.selected = false;
+        }
+      );
+      this.displayImport =  false;
+      this.displaytable = false;
+    }
+    if (value === 0 && this.currentStep === 2) {
+      this.selectStep(1);
+      this.selectStep(0);
+    }
+  }
+  displayImported() {
+    if ( this.currentStep === 1) {
+      this.currentStep = 2;
+      this.displayImport = true;
+    }
+  }
+  collapseHead() {
+    this.collapsehead = !this.collapsehead;
+  }
+  collapseRight() {
+    this.collapseright = !this.collapseright;
   }
 }

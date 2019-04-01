@@ -383,15 +383,19 @@
     .body-wraper{
       background-color: #fff;
       display:flex;
+      border: 2px solid transparent;
       flex-direction: column;
       width:100%;
+      &:hover{
+        border: 2px solid #06B8FF;
+      }
       .body-wraper-header{
         display:flex;
         width:100%;
         .body-wraper-header-left{
           width:300px;
           div{
-            margin-top: 15px; padding-left: 20px;
+            margin-top: 15px; padding-left: 20px; padding-bottom: 15px;
             color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 20.32px;	font-weight: 500;	letter-spacing: 0.25px;	line-height: 24px;
           }
           hr{
@@ -421,13 +425,50 @@
             }
           }
         }
+        .body-wraper-header-right-summary{
+          display: flex;
+          flex: 1;
+          justify-content: flex-end;
+          padding: 7px;
+          ::ng-deep{
+            .ant-select{
+              width: 200px;
+              margin-right:15px;
+            }
+            .ant-select-selection{
+              background-color: transparent;
+              border: none;
+              border-bottom: 1px solid #0700CF;
+              border-radius: 0px;
+            }
+            .ant-select-selection__rendered{
+              color: #0700CF;
+            }
+          }
+          .icon-drop{
+            ::ng-deep{
+              .anticon{
+                cursor: pointer;
+                border: 1px solid transparent;
+                font-size: 12px;
+                border-radius: 100px;
+                width: 18px;
+                height: 18px;
+                background-color: rgba(0, 0, 0, 0.05);
+                color: rgba(0, 0, 0, 0.35);
+                padding: 1px;
+                margin: 5px 8px 0 10px;
+              }
+            }
+          }
+        }
       }
       .body-wraper-body{
         display:flex;
         justify-content: space-between;
         width:95%;
         margin:auto;
-        padding: 25px 0 35px;
+        padding: 20px 0 35px;
         .body-wraper-search{
           width:380px;
           display:flex;
@@ -500,6 +541,7 @@
                 padding: 3px 5px;
                 cursor: pointer;
                 border-bottom: 1px solid rgba(0,0,0,0.15);
+                user-select: none;
                 span{
                   font-size:11px;
                 }
@@ -548,7 +590,7 @@
     .left{
       width:33%;
       display:flex;
-      height:500px;
+      height:550px;
       margin-bottom: 20px;
       .list-items{
         display: flex;
@@ -623,7 +665,7 @@
     .right{
       width:65%;
       display:flex;
-      height:500px;
+      height:550px;
       margin-bottom: 20px;
       .show-table{
         display:flex;
@@ -648,6 +690,15 @@
                 height: 24px;
                 font-size:10px;
               }
+              ::ng-deep{
+                .ant-input-prefix{
+                  color: rgba(0,0,0,0.3);
+                  left: 7px;
+                }
+                .ant-input-affix-wrapper .ant-input:not(:first-child) {
+                  padding-left: 25px;
+                }
+              }
             }
           }
           tbody{
@@ -671,7 +722,92 @@
           width:72%;
         }
       }
-
+      .import-button{
+        display: flex;
+        width: 97%;
+        margin: auto;
+        justify-content: flex-end;
+        button{
+          width: 96px; height: 36px; font-family: Rubik;	font-size: 14.22px;	font-weight: bold;	letter-spacing: 1.25px;	line-height: 16px;	text-align: center;
+          background-color: #0700CF; color:#fff; 	border-radius: 18px; box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12), 0 1px 3px 0 rgba(0,0,0,0.2);
+        }
+      }
+    }
+    .right-collapsed{
+      height:70px;
+    }
+    .summary-info{
+      padding: 20px 0;
+      margin:auto;
+      width:95%;
+      table{
+        width: 100%;
+        thead{
+          tr{
+            height:30px;
+            border-bottom: 1px solid rgba(0,0,0,0.15);
+            th{
+              padding-left:4px;
+              color: rgba(0,0,0,0.4);	font-family: Rubik;	font-size: 12px;	letter-spacing: 0.08px;	line-height: 14px;
+            }
+          }
+        }
+        tbody{
+          tr{
+            height:30px;
+            border-bottom: 1px solid rgba(0,0,0,0.15);
+          }
+          th{
+            padding-left:4px;
+            color: rgba(0,0,0,0.8);	font-family: Rubik;	font-size: 12px;	letter-spacing: 0.08px;	line-height: 14px; font-weight: bold;
+            .icon-trash-alt{
+              cursor:pointer;
+            }
+            .state{
+              width:14px;
+              height:14px;
+              border: 1px solid transparent;
+              border-radius: 100px;
+              background-color:#7ED321;
+            }
+            .state-false{
+              background-color:#F8E71C;
+            }
+          }
+        }
+      }
+    }
+    .body-wrap-footer{
+      display:flex;
+      justify-content: space-between;
+      width:100%;
+      margin-bottom:20px;
+      .body-wrap-footer-left{
+        display:flex;
+        flex:1;
+        ::ng-deep{
+          .ant-select{
+            width: 200px;
+            margin-right:15px;
+          }
+          .ant-select-selection{
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid #0700CF;
+            border-radius: 0px;
+          }
+          .ant-select-selection__rendered{
+            color: #0700CF;
+          }
+        }
+      }
+      .body-wrap-footer-right{
+        button{
+          color: #FFFFFF;	font-family: Rubik;	font-size: 14.22px;	font-weight: 500;	letter-spacing: 1.25px;	line-height: 16px;	text-align: center;
+          height: 36px;	width: 157px;	background-color: #0700CF;
+          border-radius: 18px;	box-shadow: 0 1px 1px 0 rgba(0,0,0,0.14), 0 2px 1px -1px rgba(0,0,0,0.12), 0 1px 3px 0 rgba(0,0,0,0.2);
+        }
+      }
     }
   }
 }
