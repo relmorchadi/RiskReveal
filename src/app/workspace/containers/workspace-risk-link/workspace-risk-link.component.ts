@@ -58,32 +58,34 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   ];
 
   tableleft: any = [
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
   ];
 
-  tableRight: any = [
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
-    {description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedent: 'RMS_EUWS_industry'},
+  scrollableCols = [
+    { field: 'description', header: 'Description', width: '200px' },
+    { field: 'engineVersion', header: 'Engine Version', width: '110px' },
+    { field: 'groupeType', header: 'Groupe Type', width: '110px' },
+    { field: 'cedent', header: 'cedent', width: '110px' },
+  ];
+
+  frozenCols = [
+    { field: 'checked', header: 'checked', width: '20px' },
+    { field: 'id', header: 'id', width: '50px' },
+    { field: 'name', header: 'name', width: '160px' },
+    { field: 'AlreadyImported', header: 'Already Imported', width: '50px' }
   ];
 
   SummaryInfo: any = [
@@ -198,6 +200,14 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       this.displaydropdownEDM = !this.displaydropdownEDM;
     } else {
       this.displaydropdownRDM = !this.displaydropdownRDM;
+    }
+  }
+
+  closedropdown(value) {
+    if (value === 1) {
+      this.displaydropdownEDM = false;
+    } else {
+      this.displaydropdownRDM = false;
     }
   }
 
