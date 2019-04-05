@@ -1,8 +1,9 @@
 <ul nz-menu [nzMode]="'inline'"  [nzInlineCollapsed]="isCollapsed">
-  <li (click)="collapse($event)" style="text-align: center"  nz-menu-item nz-tooltip nzPlacement="right">
+  <li (click)="collapse($event)" style="text-align: right"  nz-menu-item nz-tooltip nzPlacement="right">
           <span  title>
             <i nz-icon>
               <i *ngIf="!isCollapsed" (click)="collapse($event)" class="icon-chevron_left_24px"></i>
+              <!--i *ngIf="!isCollapsed" (click)="collapse($event)" nz-icon nzType="double-left" nzTheme="outline"></i-->
               <i *ngIf="isCollapsed" (click)="collapse($event)" class="icon-chevron_right_24px"></i>
             </i>
           </span>
@@ -30,29 +31,19 @@
             <span>PLT browser</span>
           </span>
   </li>
-  <li style="pointer-events: none" class="p-0" nz-menu-item>
-    <hr class="col-xs-24">
-  </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'RiskLink Import' : ''">
-    <span title routerLink="/workspace/RiskLink">
-      <i nz-icon><i class="icon-hover"></i></i>
-      <span>RiskLink Import</span>
-    </span>
-  </li>
-  <li style="pointer-events: none" class="p-0" nz-menu-item>
-    <hr class="col-xs-24">
-  </li>
+  <hr class="col-xs-12">
   <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Data sources Import' : ''">
           <span title>
             <i nz-icon><i class="icon-call_merge_24px"></i></i>
             <span>Data sources Import</span>
           </span>
     <ul>
-      <li nz-menu-item>Risk Link Import</li>
+      <li routerLink="/workspace/RiskLink" nz-menu-item>Risk Link Import</li>
       <li nz-menu-item>File Base Import</li>
       <li nz-menu-item>Clone Data</li>
     </ul>
   </li>
+  <hr class="col-xs-12">
   <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Exposure' : ''">
           <span title>
             <i nz-icon><i class="icon-adjust-half"></i></i>
@@ -71,10 +62,7 @@
             <span>Calibration</span>
           </span>
   </li>
-  <li style="pointer-events: none" class="p-0" nz-menu-item>
-    <hr class="col-xs-12">
-  </li>
-
+  <hr class="col-xs-12">
   <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Inuring' : ''">
           <span title>
             <i nz-icon><i class="fa fa-code-fork"></i></i>

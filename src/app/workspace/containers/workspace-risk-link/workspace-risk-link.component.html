@@ -244,7 +244,7 @@
                               </div>
                               <div class="search-bar-result-list">
                                 <ul>
-                                  <li *ngFor="let EDM of EDM" class="poover-menu-item" (click)="toggleitemsEDM(EDM)" [ngClass]="{'poover-menu-item-active': EDM.selected}" >
+                                  <li *ngFor="let EDM of EDM" class="poover-menu-item" (click)="toggleitems(EDM)" [ngClass]="{'poover-menu-item-active': EDM.selected}" >
                                     <span class="logo" style="background: #0700CF;">E</span> <span>{{EDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': EDM.selected}" ></i>
                                   </li>
                                 </ul>
@@ -271,7 +271,7 @@
                                 </div>
                                 <div class="search-bar-result-list">
                                     <ul>
-                                      <li *ngFor="let RDM of RDM" class="poover-menu-item" (click)="toggleitemsRDM(RDM)" [ngClass]="{'poover-menu-item-active': RDM.selected}" >
+                                      <li *ngFor="let RDM of RDM" class="poover-menu-item" (click)="toggleitems(RDM)" [ngClass]="{'poover-menu-item-active': RDM.selected}" >
                                         <span class="logo" style="background: #03DAC4">R</span> <span>{{RDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': RDM.selected}" ></i>
                                       </li>
                                     </ul>
@@ -297,7 +297,7 @@
                             <div class="list-items" *ngIf="displaylistEDM && collapseright">
                               <span class="list-items-title">EDM</span>
                               <ul>
-                                <li *ngFor="let itemsE of listEDM" class="poover-menu-item" (click)="toggleitemslistEDM(itemsE)" [ngClass]="{'poover-menu-item-active': itemsE.selected}" >
+                                <li *ngFor="let itemsE of listEDM" class="poover-menu-item" (click)="toggleitemslistRDM(itemsE)" [ngClass]="{'poover-menu-item-active': itemsE.selected}" >
                                   <span class="logo" style="background: #0700CF;">E</span> <span [title]="itemsE.name" class="text">{{itemsE?.name}}</span> <span class="reference">{{itemsE?.Reference}}</span> <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}" ></i>
                                 </li>
                               </ul>
@@ -325,84 +325,42 @@
                               </div>
                             </div>
                             <div class="show-table" *ngIf="collapseright">
-                              <p-table [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="tableleft" [scrollable]="true" scrollHeight="300px" frozenWidth="280px">
+                              <p-table #dt [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="tableleft" [scrollable]="true" scrollHeight="340px" frozenWidth="275px">
                                   <ng-template pTemplate="colgroup" let-columns>
-                                      <colgroup>
-                                        <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
-                                      </colgroup>
-                                    </ng-template>
-                                    <ng-template pTemplate="header" let-columns>
-                                      <tr>
-                                        <th *ngFor="let col of columns" [pSortableColumn]="col.field">
-                                          <div *ngIf="col.header !== 'checked'">{{col.header}}</div>
-                                        </th>
-                                      </tr>
-                                    </ng-template>
-                                    <ng-template pTemplate="body"  let-rowData let-columns="columns">
-                                      <tr *ngIf="displaytable">
-                                        <td *ngFor="let col of columns" [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
-                                          <div style="font-size:12px;" *ngIf="col.field === 'checked'"><i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
-                                          <div *ngIf="col.field === 'id'">{{rowData[col.field]}}</div>
-                                          <div *ngIf="col.field === 'name'">{{rowData[col.field]}}</div>
-                                          <div style="font-size:20px; color: #0700CF;" *ngIf="col.field === 'AlreadyImported'"><i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}" ></i></div>
-                                          <div *ngIf="col.field === 'description'">{{rowData[col.field]}}</div>
-                                          <div *ngIf="col.field === 'engineVersion'">{{rowData[col.field]}}</div>
-                                          <div *ngIf="col.field === 'groupeType'">{{rowData[col.field]}}</div>
-                                          <div *ngIf="col.field === 'cedent'">{{rowData[col.field]}}</div>
-                                        </td>
-                                      </tr>
+                                    <colgroup>
+                                      <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                                    </colgroup>
                                   </ng-template>
-                                <!--thead>
-                                  <tr>
-                                    <th nzWidth="25px" ></th>
-                                    <th nzWidth="35px" >ID</th>
-                                    <th nzWidth="200px"></th>Name
-                                      <nz-input-group [nzPrefix]="suffixIconSearch">
-                                        <input type="text" nz-input />
-                                      </nz-input-group>
-                                      <ng-template #suffixIconSearch>
-                                          <i nz-icon type="search"></i>
-                                      </ng-template>
-                                    </th>
-                                    <th nzWidth="50px" nzLeft="260px">Already Imported</th>
-                                    <th nzWidth="200px">Description
-                                      <nz-input-group [nzPrefix]="suffixIconSearch">
-                                        <input type="text" nz-input />
-                                      </nz-input-group>
-                                  </th>
-                                  <th nzWidth="100px">Engine Version
-                                      <nz-input-group [nzPrefix]="suffixIconSearch">
-                                        <input type="text" nz-input />
-                                      </nz-input-group>
-                                  </th>
-                                  <th nzWidth="150px">Groupe Type
-                                    <nz-input-group [nzPrefix]="suffixIconSearch">
-                                      <input type="text" nz-input />
-                                    </nz-input-group>
-                                  </th>
-                                  <th nzWidth="150px">Cedent
-                                    <nz-input-group [nzPrefix]="suffixIconSearch">
-                                      <input type="text" nz-input />
-                                    </nz-input-group>
-                                  </th>
-                                  <th nzWidth="15px" nzRight="0px">L</th>
-                                  </tr>
-                                </thead>
-                                <tbody-- *ngIf="displaytable">
-                                  <ng-template nz-virtual-scroll *ngFor="let items of fixedTable.data" >
-                                    <tr >
-                                      <th nzWidth="25px" nzLeft="0px"><i nz-icon *ngIf="!items.checked" nzType="check-circle" nzTheme="outline"></i></th>
-                                      <th nzWidth="35px" nzLeft="15px">{{items.id}}</th>
-                                      <th nzWidth="200px" nzLeft="40px">{{items.name}}</th>
-                                      <th nzWidth="50px" nzLeft="190px" style="font-size:16px; color: #0700CF;"> <i [ngClass]="{'icon-assignment_returned_24px': items.AlreadyImported}" ></i></th>
-                                      <th nzWidth="200px">{{items.description}}</th>
-                                      <th nzWidth="100px">{{items.engineVersion}}</th>
-                                      <th nzWidth="100px">{{items.groupeType}}</th>
-                                      <th nzWidth="100px">{{items.cedent}}</th>
-                                      <th nzWidth="15px" nzRight="0px">L</th>
+                                  <ng-template pTemplate="header" let-columns>
+                                    <tr>
+                                      <th *ngFor="let col of columns">
+                                        <div *ngIf="col.header !== 'checked'">{{col.header}}</div>
+                                        <div class="search-bar-table" *ngIf="col.header !== 'checked' && col.header !== 'id' && col.header !== 'Already Imported'">
+                                            <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                                            <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                                        </div>
+                                      </th>
                                     </tr>
                                   </ng-template>
-                                </tbody-->
+                                  <ng-template pTemplate="body"  let-rowData let-columns="columns">
+                                    <tr *ngIf="displaytable">
+                                      <td  *ngFor="let col of columns" [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                                        <div style=" margin-top: -12px; font-size:12px;" *ngIf="col.field === 'checked'">
+                                          <i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
+                                        <div *ngIf="col.field === 'id'">{{rowData[col.field]}}</div>
+                                        <div *ngIf="col.field === 'name'">{{rowData[col.field]}}</div>
+                                        <div style="font-size:20px; color: #0700CF; text-align: center;" *ngIf="col.field === 'AlreadyImported'">
+                                          <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}" ></i></div>
+                                        <div *ngIf="col.field === 'description'">{{rowData[col.field]}}</div>
+                                        <div *ngIf="col.field === 'engineVersion'">{{rowData[col.field]}}</div>
+                                        <div *ngIf="col.field === 'groupeType'">{{rowData[col.field]}}</div>
+                                        <div *ngIf="col.field === 'cedant'">{{rowData[col.field]}}</div>
+                                      </td>
+                                    </tr>
+                                    <tr *ngIf="!displaytable">
+
+                                    </tr>
+                                  </ng-template>
                               </p-table>
                             </div>
                             <div class="import-button" *ngIf="collapseright" (click)="displayImported()"><button>SELECT</button></div>

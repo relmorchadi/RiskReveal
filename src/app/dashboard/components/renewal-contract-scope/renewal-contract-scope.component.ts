@@ -14,37 +14,37 @@ export class RenewalContractScopeComponent implements OnInit {
   uwyUnits = '1';
   activeProject = '1';
   cols = [
-    {field:'country',header:'Country'},
-    {field:'cedent',header:'Cedent'},
-    {field:'treaty',header:'Treaty'},
-    {field:'year',header:'Uw Year'},
-    {field:'pricingVersion',header:'Pricing Version'},
-    {field:'rrStatus',header:'RR Status'},
-    {field:'owner',header:'Owner'},
-    {field:'date',header:'Date'},
-    {field:'exposures',header:'Exposures'},
-    {field:'published',header:'Published to Pricing'},
-    {field:'used',header:'Used in Pricing'},
-    {field:'accumulation',header:'accumulation'},
+    {field: 'country', header: 'Country'},
+    {field: 'cedant', header: 'Cedant'},
+    {field: 'treaty', header: 'Treaty'},
+    {field: 'year', header: 'Uw Year'},
+    {field: 'pricingVersion', header: 'Pricing Version'},
+    {field: 'rrStatus', header: 'RR Status'},
+    {field: 'owner', header: 'Owner'},
+    {field: 'date', header: 'Date'},
+    {field: 'exposures', header: 'Exposures'},
+    {field: 'published', header: 'Published to Pricing'},
+    {field: 'used', header: 'Used in Pricing'},
+    {field: 'accumulation', header: 'accumulation'},
   ]
   mockData = [
-    {year:2019,country:'Italy',cedent:'383477 Lorem Ipsum Colores',
-      treaty:'334675 Donec et nulla',pricingVersion:'Final',owner:'Nathalie Dulac', date:'18/12/23'
+    {year: 2019, country: 'Italy', cedant: '383477 Lorem Ipsum Colores',
+      treaty: '334675 Donec et nulla', pricingVersion: 'Final', owner: 'Nathalie Dulac', date: '18/12/23'
     },
-    {year:2019,country:'Italy',cedent:'383477 Lorem Ipsum Colores',
-      treaty:'334675 Donec et nulla',pricingVersion:'Final',owner:'Nathalie Dulac', date:'18/12/23'
+    {year: 2019, country: 'Italy', cedant: '383477 Lorem Ipsum Colores',
+      treaty: '334675 Donec et nulla', pricingVersion: 'Final', owner: 'Nathalie Dulac', date: '18/12/23'
     },
-    {year:2019,country:'Italy',cedent:'383477 Lorem Ipsum Colores',
-      treaty:'334675 Donec et nulla',pricingVersion:'Final',owner:'Nathalie Dulac', date:'18/12/23'
+    {year: 2019, country: 'Italy', cedant: '383477 Lorem Ipsum Colores',
+      treaty: '334675 Donec et nulla', pricingVersion: 'Final', owner: 'Nathalie Dulac', date: '18/12/23'
     },
-    {year:2019,country:'Italy',cedent:'383477 Lorem Ipsum Colores',
-      treaty:'334675 Donec et nulla',pricingVersion:'Final',owner:'Nathalie Dulac', date:'18/12/23'
+    {year: 2019, country: 'Italy', cedant: '383477 Lorem Ipsum Colores',
+      treaty: '334675 Donec et nulla', pricingVersion: 'Final', owner: 'Nathalie Dulac', date:'18/12/23'
     },
-    {year:2019,country:'Italy',cedent:'383477 Lorem Ipsum Colores',
-      treaty:'334675 Donec et nulla',pricingVersion:'Final',owner:'Nathalie Dulac', date:'18/12/23'
+    {year: 2019, country: 'Italy', cedant: '383477 Lorem Ipsum Colores',
+      treaty: '334675 Donec et nulla', pricingVersion: 'Final', owner: 'Nathalie Dulac', date: '18/12/23'
     },
-    {year:2019,country:'Italy',cedent:'383477 Lorem Ipsum Colores',
-      treaty:'334675 Donec et nulla',pricingVersion:'Final',owner:'Nathalie Dulac', date:'18/12/23'
+    {year: 2019, country: 'Italy', cedant: '383477 Lorem Ipsum Colores',
+      treaty: '334675 Donec et nulla', pricingVersion: 'Final', owner: 'Nathalie Dulac', date: '18/12/23'
     }
   ]
 

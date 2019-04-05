@@ -30,6 +30,11 @@
   font-size: 14px;
   line-height: 29px;
   margin-bottom: 0
+  ::ng-deep{
+    .ant-dropdown-menu{
+      padding: 0;
+    }
+  }
 }
 
 .sub-title {
@@ -114,6 +119,9 @@
     .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
       background: #14617A !important;
     }
+    .ant-dropdown-menu{
+      padding:0 ;
+    }
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
       border-radius: 0px !important;
       background: #2C6B81;
@@ -174,6 +182,7 @@
       color: #03DAC4;	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
     }
     .tab-kpi-title{
+      opacity: 0.5; padding-left: 35px; padding-bottom: 20px;
       color: #FFFFFF;	font-size: 16.26px;	letter-spacing: 0.08px;	line-height: 28px;
     }
     .kpi-icon-title{
@@ -224,23 +233,61 @@
     }
 
   }
+  .card-holder-wrap{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 1440px;
+    padding: 20px;
+    margin: auto;
+    @media screen  and (min-width: 2200px) {
+      width: 2250px ;
+    }
+    @media screen and (max-width: 1650px) and (min-width: 1500px) {
+      width: 1315px ;
+    }
+    @media screen and (max-width: 1500px) and (min-width: 1350px) {
+      width: 1200px ;
+    }
+    @media screen and (max-width: 1350px) and (min-width: 1024px) {
+      width: 970px;
+    }
+    @media screen and (max-width: 1024px) and (min-width: 780px) {
+      width: 95%;
+      margin: 15px auto;
+    }
+  }
+  .card-holder{
+    margin:10px 0;
+    @media screen and (max-width: 1024px) and (min-width: 780px) {
+      margin: 15px auto;
+    }
+  }
   .project-card{
-    min-width: 320px;
-    max-width: 400px;
-
+    min-width: 350px;
+    max-width: 450px;
+    border:3px solid transparent;
+    border-radius: 2px;	background-color: #FAFAFA;
+    box-shadow: 0 9px 12px 1px rgba(0,0,0,0.1), 0 3px 16px 2px rgba(0,0,0,0.08), 0 5px 6px -3px rgba(0,0,0,0.1);
     &:hover{
-      border: 3px solid #06B8FF;
+      box-shadow:0 9px 12px 1px rgba(0, 0, 0, 0.3), 0 3px 16px 2px rgba(0, 0, 0, 0.2), 0 5px 6px -3px rgba(0, 0, 0, 0.2);
     }
-    border-radius: 2px;	background-color: #FAFAFA;	box-shadow: 0 9px 12px 1px rgba(0,0,0,0.1), 0 3px 16px 2px rgba(0,0,0,0.08), 0 5px 6px -3px rgba(0,0,0,0.1);
+    @media screen and (max-width: 1650px) and (min-width: 1500px) {
+      max-width: 420px !important;
+    }
+    @media screen and (max-width: 1500px) and (min-width: 1350px) {
+      max-width: 370px !important;
+    }
     @media screen and (max-width: 768px)  {
-      min-width: 400px;
-    }
-    @media screen and (max-width: 1024px) and (min-width: 769px) {
-      min-width: 320px;
+      margin: auto;
+      min-width: 300px !important;
+      max-width: 500px !important;
     }
     .project-header {
       height: 80px;
       display: flex;
+      margin-left: -3px;
+      margin-top: -3px;
       .project-header-icon{
         background-color: #F5A623;
         width: 80px;
@@ -261,9 +308,27 @@
       }
     }
     .project-progress{
-      zoom: 0.6;
+      // zoom: 0.6;
       height: 70px;
       ::ng-deep {
+        .ant-steps-item-tail{
+          margin-left: 50px;
+          @media screen and (max-width: 1650px) and (min-width: 1500px) {
+            margin-left: 45px;
+          }
+          @media screen and (max-width: 1500px) and (min-width: 1350px) {
+            margin-left: 40px;
+          }
+        }
+        .ant-steps-item-icon{
+          margin-left: 50px;
+          @media screen and (max-width: 1650px) and (min-width: 1500px) {
+            margin-left: 45px;
+          }
+          @media screen and (max-width: 1500px) and (min-width: 1350px) {
+            margin-left: 40px;
+          }
+        }
         .ant-steps-item-finish {
           .ant-steps-item-tail::after {
             background-color:#03DAC4 !important;
@@ -271,12 +336,34 @@
           .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
             background: #03DAC4 !important;
           }
-
-
         }
         .ant-steps-item-process > .ant-steps-item-content > .ant-steps-item-title {
           font-weight: bold !important;
           color: rgba(0, 0, 0, 0.95) !important;
+        }
+        .ant-steps-dot .ant-steps-item-content {
+          width: 110px;
+          @media screen and (max-width: 1650px) and (min-width: 1500px) {
+            width:100px;
+          }
+          @media screen and (max-width: 1500px) and (min-width: 1350px) {
+            width: 90px ;
+          }
+          @media screen and (max-width: 768px)  {
+            width: 140px;
+          }
+        }
+        .ant-steps-item-title{
+          font-size: 12px;
+          @media screen and (max-width: 1500px) and (min-width: 1350px) {
+            font-size: 11px;
+          }
+          @media screen and (max-width: 1024px) and (min-width: 780px) {
+            font-size: 13px;
+          }
+          @media screen and (max-width: 768px)  {
+            font-size: 16px;
+          }
         }
         .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
           background: #00d9c3 !important;
@@ -290,22 +377,34 @@
         i{
           height: 19.89px;	width: 16.89px;
         }
-        span:nth-child(2){
-          font-size: 12px;	letter-spacing: 0.5px;	line-height: 20px
+        .project-kpi-span{
+          padding-top: 12px;
+          font-size: 17px;	letter-spacing: 0.5px;	line-height: 20px;
         }
         span:nth-child(3){
-          font-size: 16px;
+          font-size: 30px;
         }
       }
       .badge{
+        margin-top: 11px;
         background: #e700104f;
         border-radius: 12px;
+        font-size: 15px !important;
       }
     }
     .project-kpi-details{
       background: #F4F6FC;
       .project-kpi-details-title{
-        font-size: 0.7em;
+        font-size: 0.9em;
+        @media screen and (max-width: 1500px) and (min-width: 1350px) {
+          font-size: 0.7em;
+        }
+      }
+      .dt-11{
+        font-size:11px;
+        @media screen and (max-width: 1500px) and (min-width: 1350px) {
+          font-size: 10px;
+        }
       }
     }
   }

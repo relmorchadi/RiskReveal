@@ -1,13 +1,19 @@
 @import "~src/assets/scss/variables";
 :host {
   ::ng-deep {
-
+    .ant-menu-root.ant-menu-vertical{
+      padding-bottom: 40vh;
+    }
+    .ant-menu-root.ant-menu-inline{
+      padding-bottom: 40vh;
+    }
     .ant-menu-inline .ant-menu-item::after {
       border-right: 3px solid $color-secondary !important;
     }
 
     hr {
       height: 1px !important;
+      margin: 0;
     }
 
     .ant-menu-submenu > .ant-menu {
@@ -17,7 +23,7 @@
       padding-right: 0.5em;
     }
     li [class^="icon-"] {
-      font-size: 1.2rem;
+      font-size: 1.4rem;
     }
   }
 }

@@ -7,6 +7,7 @@ import {SharedModule} from "../shared/shared.module";
 import { WorkspaceRiskLinkComponent } from './containers/workspace-risk-link/workspace-risk-link.component';
 import { HighlightDirective } from './highlight.directive';
 import { TableModule }  from 'primeng/table';
+import { NgMasonryGridModule } from 'ng-masonry-grid';
 
 const routes: Routes = [
   {data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent},
@@ -21,6 +22,7 @@ const routes: Routes = [
   imports: [
     SharedModule,
     TableModule,
+    NgMasonryGridModule,
     RouterModule.forChild(routes)
   ],
   exports:[

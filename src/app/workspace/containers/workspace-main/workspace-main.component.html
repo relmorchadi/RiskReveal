@@ -72,26 +72,27 @@
             </div>
           </div>
           <div [ngClass]="{'collapse':collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
-            <div class="row tab-detail p-2 pb-5">
+            <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
 
               <div class="pl-md-4 col-md-12 col-lg-6">
-                <div nz-row class="pt-lg-5 pt-md-0">
+                <div nz-row class="pt-lg-5 pt-md-0" style="padding-top:0px !important;">
                   <div nz-col nz-row [nzSpan]="12">
                     <div class="row">
-                      <span class="col-7 tab-metadata-title">Subsidary :</span>
+                      <span style="flex: 0 0 44.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
                       <span class="col-5 tab-metadata-value">2-SCOR REEASS</span>
                     </div>
                     <div class="row">
-                      <span class="col-7 tab-metadata-title">Subsidary Leger :</span>
+                      <span style="flex: 0 0 44.333333%;" class="col-7 tab-metadata-title">Subsidary Leger :</span>
                       <span class="col-5 tab-metadata-value">2.2 - PARIS</span>
                     </div>
                     <div class="row">
-                      <span class="col-7 tab-metadata-title">Contract Source Type :</span>
+                      <span style="flex: 0 0 44.333333%;" class="col-7 tab-metadata-title">Contract Source Type :</span>
                       <span class="col-5 tab-metadata-value">Omega</span>
                     </div>
                   </div>
                   <div nz-col nz-row [nzSpan]="12">
                     <div nz-col [nzSpan]="12">
+                      <i style="font-size: 1.6em; position:absolute; margin-left:-30px;" class="icon-calendar-alt mb-4"></i>
                       <span class="d-block tab-metadata-title">Inception Date :</span>
                       <span class="d-block tab-metadata-value">31/10/2019</span>
                       <span class="d-block tab-metadata-title">Expiry Date :</span>
@@ -107,7 +108,7 @@
                   </div>
                 </div>
               </div>
-              <div class="pl-md-4 col-md-12 col-lg-6" >
+              <div class="pl-md-4 col-md-12 col-lg-6" style="margin-top: -60px;" >
                 <h5 class="tab-kpi-title">In Scope Region Perils</h5>
                 <div class="d-flex">
                   <div style="flex:1" class="text-center d-inline-flex flex-column justify-content-end">
@@ -182,28 +183,49 @@
                   <i style="color: #16617a;" nz-icon theme="outline">
                     <i class="icon-map-pin-alt"></i>
                   </i>
-                   </button>
+                </button>
                 <div class="row pl-2 ml-4 mt-4">
                  <div class="col-11 pr-4">
                    <span class="projects-title">Projects</span>
+                   <i nz-icon class="float-right mt-2" style="font-size: 22px; margin-top: 15px !important; margin-left: 20px;" nzType="appstore" nzTheme="outline"></i>
                    <nz-select class="float-right mt-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="selectedPrStatus">
                      <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
                    </nz-select>
                  </div>
                 </div>
-                <div class="row p-3">
-                  <div class="col-lg-6 col-xl-4 d-flex mt-4 justify-content-center">
-                    <ng-container *ngTemplateOutlet="project1"></ng-container>
+                <div class="card-holder-wrap">
+                  <div class="card-holder">
+                    <ng-container (click)="selectproject('project1')" *ngTemplateOutlet="project1"></ng-container>
                   </div>
-                  <div class="col-lg-6 col-xl-4 d-flex mt-4  justify-content-center">
-                    <ng-container *ngTemplateOutlet="project2"></ng-container></div>
-                  <div class="col-lg-6 col-xl-4 mt-4 d-flex justify-content-center">
-                    <ng-container *ngTemplateOutlet="project3"></ng-container>
+                  <div class="card-holder">
+                    <ng-container (click)="selectproject('project2')" *ngTemplateOutlet="project2"></ng-container></div>
+                  <div class="card-holder">
+                    <ng-container (click)="selectproject('project3')" *ngTemplateOutlet="project3"></ng-container>
                   </div>
-                  <div class="col-lg-6 col-xl-4  mt-4  d-flex justify-content-center">
-                    <ng-container *ngTemplateOutlet="project4"></ng-container>
+                  <div class="card-holder">
+                    <ng-container (click)="selectproject('project4')" *ngTemplateOutlet="project4"></ng-container>
                   </div>
                 </div>
+                <!--div style="width:80%;margin:auto;">
+                  <ng-masonry-grid
+                  [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }"
+                  [useAnimation]="true"
+                  [useImagesLoaded]="true"
+                  [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
+                    <ng-masonry-grid-item id="{{'masonry-item-'+1}}" >
+                      <ng-container class="masonry-item" *ngTemplateOutlet="project1"></ng-container>
+                    </ng-masonry-grid-item>
+                    <ng-masonry-grid-item id="{{'masonry-item-'+2}}">
+                      <ng-container class="masonry-item" *ngTemplateOutlet="project2"></ng-container>
+                    </ng-masonry-grid-item>
+                    <ng-masonry-grid-item id="{{'masonry-item-'+3}}">
+                      <ng-container class="masonry-item" *ngTemplateOutlet="project3"></ng-container>
+                    </ng-masonry-grid-item>
+                    <ng-masonry-grid-item id="{{'masonry-item-'+4}}">
+                      <ng-container class="masonry-item" *ngTemplateOutlet="project4"></ng-container>
+                    </ng-masonry-grid-item >
+                  </ng-masonry-grid>
+                </div-->
               </div>
             </div>
           </div>
@@ -220,7 +242,7 @@
       <a nz-dropdown>
         <h6 class="d-flex align-items-center sub-title">{{year}} <i class="pl-3" nz-icon type="down"></i></h6>
       </a>
-      <ul nz-menu>
+      <ul style="padding:0" nz-menu>
         <li (click)="addWs(title,y)" *ngFor="let y of generateYears(year)" nz-menu-item>{{y}}</li>
       </ul>
     </nz-dropdown>
@@ -248,30 +270,30 @@
       </nz-steps>
     </div>
     <div class="project-kpi border-top d-flex">
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-globe mb-1"></i>
-        <span class="">RP</span>
-        <span class=""><b>1</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>1</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-design-tool mb-1"></i>
-        <span class="">Exp</span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
         <span class="badge"><b>No</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-box mb-1"></i>
-        <span class="">PLT</span>
-        <span class=""><b>1</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>1</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-note mb-1"></i>
-        <span class="">Pricing</span>
-        <span class=""><b>1</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>1</b></span>
       </div>
-      <div style="flex:1" class="text-center  py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-focus-add mb-1"></i>
-        <span class="">Accum</span>
-        <span class=""><b>1</b></span>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>1</b></span>
       </div>
     </div>
     <div class="project-kpi-details pb-3">
@@ -279,14 +301,14 @@
         Donec et nulla elementum, mattis arcu in, alliquam mauris.
       </p>
       <div class="border-top d-flex project-kpi-details-content">
-        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
-        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
-        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+        <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+        <span class="pr-4 dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
+        <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
       </div>
       <div class="border-top d-flex project-kpi-details-content">
-        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Owner</span>
-        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
-        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+        <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Owner</span>
+        <span class="pr-4 dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
+        <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
       </div>
     </div>
   </div>
@@ -311,30 +333,30 @@
       </nz-steps>
     </div>
     <div class="project-kpi border-top d-flex">
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-globe mb-1"></i>
-        <span class="">RP</span>
-        <span class=""><b>2</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>2</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-design-tool mb-1"></i>
-        <span class="">Exp</span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
         <span class="badge"><b>No</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-box mb-1"></i>
-        <span class="">PLT</span>
-        <span class=""><b>5</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>5</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-note mb-1"></i>
-        <span class="">Pricing</span>
-        <span class=""><b>3</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>3</b></span>
       </div>
-      <div style="flex:1" class="text-center  py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-focus-add mb-1"></i>
-        <span class="">Accum</span>
-        <span class=""><b>0</b></span>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>0</b></span>
       </div>
     </div>
     <div class="project-kpi-details pb-3">
@@ -374,30 +396,30 @@
       </nz-steps>
     </div>
     <div class="project-kpi border-top d-flex">
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-globe mb-1"></i>
-        <span class="">RP</span>
-        <span class=""><b>4</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>4</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-design-tool mb-1"></i>
-        <span class="">Exp</span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
         <span style="background: #00a2826e"  class="badge"><b>YES</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-box mb-1"></i>
-        <span class="">PLT</span>
-        <span class=""><b>7</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>7</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-note mb-1"></i>
-        <span class="">Pricing</span>
-        <span class=""><b>0</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>0</b></span>
       </div>
-      <div style="flex:1" class="text-center  py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-focus-add mb-1"></i>
-        <span class="">Accum</span>
-        <span class=""><b>0</b></span>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>0</b></span>
       </div>
     </div>
     <div class="project-kpi-details pb-3">
@@ -437,30 +459,30 @@
       </nz-steps>
     </div>
     <div class="project-kpi border-top d-flex">
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-globe mb-1"></i>
-        <span class="">RP</span>
-        <span class=""><b>4</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>4</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-design-tool mb-1"></i>
-        <span class="">Exp</span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
         <span class="badge"><b>No</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-box mb-1"></i>
-        <span class="">PLT</span>
-        <span class=""><b>7</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>7</b></span>
       </div>
-      <div style="flex:1" class="text-center border-right py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-note mb-1"></i>
-        <span class="">Pricing</span>
-        <span class=""><b>4</b></span>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>4</b></span>
       </div>
-      <div style="flex:1" class="text-center  py-2 px-3 d-inline-flex flex-column justify-content-end align-items-center">
-        <i style="font-size: 1.6em" class="icon-focus-add mb-1"></i>
-        <span class="">Accum</span>
-        <span class=""><b>0</b></span>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>0</b></span>
       </div>
     </div>
     <div class="project-kpi-details pb-3">
