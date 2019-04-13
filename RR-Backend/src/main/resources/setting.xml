@@ -1,0 +1,32 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+    "-//Hibernate/Hibernate Configuration DTD//EN"
+    "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+  <session-factory>
+    <property name="connection.url">jdbc:sqlserver://localhost;database=RR</property>
+    <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
+      <mapping class="com.rr.riskreveal.domain.Contract"/>
+      <mapping class="com.rr.riskreveal.domain.Country"/>
+      <mapping class="com.rr.riskreveal.domain.OmegaCedant"/>
+      <mapping class="com.rr.riskreveal.domain.Project"/>
+      <mapping class="com.rr.riskreveal.domain.Workspace"/>
+      <mapping class="com.rr.riskreveal.domain.Users"/>
+      <mapping class="com.rr.riskreveal.domain.WorkspaceProjectMapping"/>
+      <mapping class="com.rr.riskreveal.domain.Reinstatement"/>
+      <mapping class="com.rr.riskreveal.domain.Section"/>
+      <mapping class="com.rr.riskreveal.domain.Cedant"/>
+      <mapping class="com.rr.riskreveal.domain.WorkspaceYears"/>
+    <mapping class="com.rr.riskreveal.domain.Treaty"/>
+      <mapping class="com.rr.riskreveal.domain.ContractSearchResult"/>
+      <mapping class="com.rr.riskreveal.domain.counter.CedantCountView"/>
+      <mapping class="com.rr.riskreveal.domain.counter.CountryCountView"/>
+      <mapping class="com.rr.riskreveal.domain.counter.TreatyCountView"/>
+      <mapping class="com.rr.riskreveal.domain.counter.UwyCountView"/>
+      <!-- <property name="connection.username"/> -->
+    <!-- <property name="connection.password"/> -->
+
+    <!-- DB schema will be updated if needed -->
+    <!-- <property name="hbm2ddl.auto">update</property> -->
+  </session-factory>
+</hibernate-configuration>

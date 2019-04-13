@@ -1,0 +1,397 @@
+<nz-layout>
+
+
+  <div nz-row class="row top-separator">
+    <div nz-col nzSpan=24>
+      <span>
+        SEARCH ENVIRONMENT &nbsp; <i class="icon-close_24px" (click)="navigateBack()"></i>
+      </span>
+    </div>
+  </div>
+
+  <div nz-row class="search-container">
+    <div [ngStyle]="{'width': expandWorkspaceDetails ? '75%' : '94%' }">
+      <div class="mr-5 ml-5">
+
+        <div class="title-wrapper" nz-row style="margin-top: 50px;">
+          <div class="title-section">
+            <h3>Showing {{paginationOption?.page + '-' + paginationOption?.size + ' of ' + paginationOption?.total}}
+            results</h3>
+          </div>
+
+          <div class="search-actions-container">
+            <button class="search-opt-btn" nz-button>Advanced Search &nbsp; <i
+              class="icon-keyboard_arrow_down_24px"></i></button>
+            <button class="search-opt-btn" nz-button>Saved Search &nbsp; <i class="icon-keyboard_arrow_down_24px"></i>
+            </button>
+            <button class="search-opt-rounded-btn" nz-button>SAVE SEARCH</button>
+          </div>
+        </div>
+
+
+        <!--<nz-table-->
+        <!--nzVirtualScroll-->
+        <!--[nzVirtualItemSize]="5"-->
+        <!--[nzData]="contracts"-->
+        <!--[nzFrontPagination]="false"-->
+        <!--[nzShowPagination]="false"-->
+        <!--[nzScroll]="{ x: '1200px', y: '240px' }"-->
+        <!--(scroll)="contractsDatatableScroll($event)">-->
+        <!--<thead [formGroup]="contractFilterFormGroup">-->
+        <!--<tr>-->
+        <!--<th>ID</th>-->
+        <!--<th>Country</th>-->
+        <!--<th colspan="2">Cedant</th>-->
+        <!--<th>Uw Year</th>-->
+        <!--<th colspan="2">Workspace Context</th>-->
+        <!--<th></th>-->
+        <!--</tr>-->
+        <!--<tr>-->
+        <!--<th></th>-->
+        <!--<th>-->
+        <!--<div class="filter-input">-->
+        <!--<i class="icon-search"></i>-->
+        <!--<input type="text" formControlName="country">-->
+        <!--</div>-->
+        <!--</th>-->
+        <!--<th>-->
+        <!--<div class="filter-input">-->
+        <!--<i class="icon-search"></i>-->
+        <!--<input type="text" formControlName="cedant">-->
+        <!--</div>-->
+        <!--</th>-->
+        <!--<th>-->
+        <!--<div class="filter-input">-->
+        <!--<i class="icon-search"></i>-->
+        <!--<input type="text">-->
+        <!--</div>-->
+        <!--</th>-->
+        <!--<th>-->
+        <!--<div class="filter-input">-->
+        <!--<i class="icon-search"></i>-->
+        <!--<input type="text" formControlName="year">-->
+        <!--</div>-->
+        <!--</th>-->
+        <!--<th>-->
+        <!--<div class="filter-input">-->
+        <!--<i class="icon-search"></i>-->
+        <!--<input type="text" formControlName="workspaceId">-->
+        <!--</div>-->
+        <!--</th>-->
+        <!--<th>-->
+        <!--<div class="filter-input">-->
+        <!--<i class="icon-search"></i>-->
+        <!--<input type="text" formControlName="workspaceName">-->
+        <!--</div>-->
+        <!--</th>-->
+        <!--<th></th>-->
+        <!--</tr>-->
+        <!--</thead>-->
+        <!--<tbody>-->
+        <!--<ng-template nz-virtual-scroll let-contract>-->
+        <!--<tr>-->
+        <!--<td>{{contract?.id}}</td>-->
+        <!--<td>{{contract?.countryName}}</td>-->
+        <!--<td>{{contract?.cedantCode}}</td>-->
+        <!--<td>{{contract?.cedantName}}</td>-->
+        <!--<td>{{contract?.uwYear}}</td>-->
+        <!--<td>{{contract?.workSpaceId}}</td>-->
+        <!--<td>{{contract?.workspaceName}}</td>-->
+        <!--<td class="actions-td">-->
+        <!--<i class="icon-fullscreen_24px"></i>-->
+        <!--<i class="icon-open_in_new_24px"></i>-->
+        <!--</td>-->
+        <!--</tr>-->
+        <!--</ng-template>-->
+        <!--</tbody>-->
+        <!--</nz-table>-->
+
+        <div class="chips-wrapper">
+          <div *ngFor="let items of searchedItems; let i = index" style="padding: 15px 4px;">
+            <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i)" [value]="items.value" [closeStatus]="true"></app-chip-tag>
+          </div>
+          <span (click)="clearChips()" *ngIf="searchedItems.length > 0">Clear All</span>
+        </div>
+
+        <table class="table search-table">
+          <thead [formGroup]="contractFilterFormGroup">
+          <tr>
+            <th>ID</th>
+            <th>Country</th>
+            <th colspan="2">Cedant</th>
+            <th>Uw Year</th>
+            <th colspan="2">Workspace Context</th>
+            <th></th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" formControlName="country">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" formControlName="cedantCode">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" formControlName="cedant">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" formControlName="year">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" formControlName="workspaceId">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" formControlName="workspaceName">
+              </div>
+            </th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <tr *ngFor="let contract of contracts | contractFilter:contractFilterFormGroup.value" style="cursor: pointer" (click)="openWorkspaceInSlider(contract)"
+            [ngClass]="{'acive_contract_item': currentWorkspace?.id == contract.id && currentWorkspace?.uwYear == contract.uwYear }">
+            <td>{{contract?.id}}</td>
+            <td>{{contract?.countryName}}</td>
+            <td>{{contract?.cedantCode}}</td>
+            <td>{{contract?.cedantName}}</td>
+            <td>{{contract?.uwYear}}</td>
+            <td>{{contract?.workSpaceId}}</td>
+            <td>{{contract?.workspaceName}}</td>
+            <td class="actions-td">
+              <i class="icon-fullscreen_24px" (click)="openWorkspace(contract)"></i>
+              <i class="icon-open_in_new_24px" (click)="popUpWorkspace(contract)"></i>
+            </td>
+          </tr>
+          <tr *ngIf="paginationOption.total> paginationOption.size">
+            <td colspan="8">
+              <nz-skeleton *ngIf="loadingMore; else seeMore" [nzActive]="true"></nz-skeleton>
+              <ng-template #seeMore>
+                <button class="show-more-btn" nz-button (click)="loadMoreItems()">
+                  <span>See More</span>
+                </button>
+              </ng-template>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+
+      </div>
+
+    </div>
+    <div [ngStyle]="{'width': expandWorkspaceDetails ? '25%' : '6%' }" class="right-column">
+
+      <div *ngIf="!expandWorkspaceDetails; else workspaceDetails" class="navigation-icons mt-5"
+           style="min-height: 100px">
+        <i class="icon-map-pin-alt"></i>
+        <i *ngIf="currentWorkspace" class="icon-arrow_back_ios_24px" (click)="expandWorkspaceDetails=!expandWorkspaceDetails"></i>
+      </div>
+
+      <ng-template #workspaceDetails>
+
+
+        <div class="row title-section mt-4">
+          <div class="col-md-8 ml-4 mt-2">
+            <h4>Workspace detail</h4>
+            <h3>{{currentWorkspace?.workSpaceId}} - {{currentWorkspace?.uwYear}}</h3>
+          </div>
+          <div class="col-md-3 navigation-icons">
+            <i class="icon-map-pin-alt"></i>
+            <i class="icon-arrow_forward_ios_24px" (click)="expandWorkspaceDetails=!expandWorkspaceDetails"></i>
+          </div>
+
+        </div>
+
+        <nz-tabset>
+          <nz-tab nzTitle="Summary">
+            <div class="summary-content">
+              <div class="d-inline-flex flex-column ml-4">
+                <h3 class="workspace-value">XL, inc, vol, ind, acc, auto casco
+                  <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate>
+                </h3>
+                <h4 class="workspace-value"> 20769 | A.M.M.A (BEL) </h4>
+              </div>
+              <div class="divider"></div>
+              <div class="row ml-2">
+                <div class="col-md-6">
+                  <span class="workspace-title">Subsidiary :</span>
+                </div>
+                <div class="col-md-6">
+                  <span class="workspace-value">2-SCOR REASS</span>
+                </div>
+              </div>
+              <div class="row ml-2">
+                <div class="col-md-6">
+                  <span class="workspace-title">Subsidiary Ledger :</span>
+                </div>
+                <div class="col-md-6">
+                  <span class="workspace-value">2-2 PARIS</span>
+                </div>
+              </div>
+              <div class="row ml-2">
+                <div class="col-md-6">
+                <span class="workspace-title">
+                  Contract Source Type:
+                </span>
+                </div>
+                <div class="col-md-6">
+                <span class="workspace-value">
+                  Omega
+                </span>
+                </div>
+              </div>
+              <div class="row ml-4 mt-4">
+                <i class="icon-calendar-alt"></i>
+                <div class="d-column ml-2">
+                  <span class="workspace-title">Inception:</span>
+                  <span class="workspace-value">31/12/2018</span>
+                </div>
+                <div class="d-column ml-5">
+                  <span class="workspace-title">Expiry:</span>
+                  <span class="workspace-value">30/12/2019</span>
+                </div>
+              </div>
+
+              <div class="row mt-4 ml-4 d-column">
+                <span class="workspace-title">Treaty Section :</span>
+                <span class="workspace-value">Treaty Section N°1</span>
+                <span class="workspace-value">Treaty Section N°2</span>
+                <span class="workspace-value">Treaty Section N°3</span>
+                <span class="treaty-sect-see-all mt-2">See all</span>
+              </div>
+
+              <div class="divider"></div>
+
+
+              <div class="row scope-in-rp mt-2 mb-5">
+                <h5 class="tab-kpi-title col-md-11 ml-4">In Scope Region Perils</h5>
+                <div class="d-flex col-md-11">
+                  <div style="flex:1" class="text-center d-inline-flex flex-column justify-content-end">
+                    <i style="font-size: 1.6em" class="icon-my_location_24px mb-4"></i>
+                    <span style="flex:1"
+                          class="d-flex align-items-start mb-1 justify-content-center kpi-icon-title workspace-title">Scope</span>
+                    <span class="kpi-icon-value"><b>4/6</b></span>
+                  </div>
+                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
+                    <i style="font-size: 1.6em" class="icon-design-tool mb-4"></i>
+                    <span style="flex:1"
+                          class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title workspace-title">Exposures</span>
+                    <span class="kpi-icon-value"><b>1</b></span>
+                  </div>
+                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
+                    <i style="font-size: 1.6em" class="icon-box mb-4"></i>
+                    <span style="flex:1"
+                          class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title workspace-title">Qualifying PLTs</span>
+                    <span class="kpi-icon-value">
+                      <b>3</b>
+                    </span>
+                  </div>
+                </div>
+                <div class="d-flex col-md-11 mt-2">
+                  <div style="flex:1" class="text-center d-inline-flex flex-column justify-content-end">
+                    <i style="font-size: 1.6em" class="icon-note mb-4"></i>
+                    <span style="flex:1"
+                          class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title workspace-title">Published For Pricing</span>
+                    <span class="kpi-icon-value">
+                      <b>3</b>
+                    </span>
+                  </div>
+                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
+                    <i style="font-size: 1.6em" class="icon-dollar-alt mb-4"></i>
+                    <span style="flex:1"
+                          class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title workspace-title">Priced</span>
+                    <span class="kpi-icon-value">
+                      <b>2</b>
+                    </span>
+                  </div>
+                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
+                    <i style="font-size: 1.6em" class="icon-focus-add mb-4"></i>
+                    <span style="flex:1"
+                          class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title workspace-title">Published For Accumulation</span>
+                    <span class="kpi-icon-value">
+                      <b>-</b>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="Projects">
+            <div class="projects-content">
+              <div nz-row class="project-item mr-4 ml-4">
+                <div nz-col nzSpan="6" class="project-icon" style="background-color: #B481FE">
+                  <i class="fa fa-code-fork" aria-hidden="true"></i>
+                </div>
+                <div nz-col nzSpan="18" class="d-column pl-4">
+                  <span class="project-title">Post Inured PLT</span>
+                  <span class="project-id">P-9035</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div nz-row class="project-item mr-4 ml-4">
+                <div nz-col nzSpan="6" class="project-icon" style="background-color: #F5B74E">
+                  <i class="fa fa-file-text" aria-hidden="true"></i>
+                </div>
+                <div nz-col nzSpan="18" class="d-column pl-4">
+                  <span class="project-title">TIWA 2018</span>
+                  <span class="project-id">P-5892</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div nz-row class="project-item mr-4 ml-4">
+                <div nz-col nzSpan="6" class="project-icon" style="background-color: #F5B74E">
+                  <i class="fa fa-file-text" aria-hidden="true"></i>
+                </div>
+                <div nz-col nzSpan="18" class="d-column pl-4">
+                  <span class="project-title">Ameriprise 208</span>
+                  <span class="project-id">P-1686</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div nz-row class="project-item mr-4 ml-4">
+                <div nz-col nzSpan="6" class="project-icon" style="background-color: #36C6FE">
+                  <i class="icon-link_24px"></i>
+                </div>
+                <div nz-col nzSpan="18" class="d-column pl-4">
+                  <span class="project-title">Trinity Kemper 2018(2)</span>
+                  <span class="project-id">P-1724</span>
+                </div>
+              </div>
+              <div class="divider"></div>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="UW Years">
+            <div class="uwyear-content">
+              <div nz-row class="year-item" *ngFor="let year of [2019,2018,2017,2016,2015,2014,2013]">
+                <div nz-col nzSpan="20">
+                  {{year}}
+                </div>
+                <div nz-col nzSpan="3" class="actions-section">
+                  <i class="icon-fullscreen_24px"></i>
+                  <i class="icon-open_in_new_24px"></i>
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </ng-template>
+    </div>
+  </div>
+</nz-layout>

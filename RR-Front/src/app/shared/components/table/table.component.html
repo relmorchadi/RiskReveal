@@ -1,0 +1,41 @@
+<p-table #dt
+  [scrollable]="true" [rows]="20" [value]="listOfData" [columns]="tableColumn"
+  [scrollHeight]="tableHeight"
+>
+<!--
+  [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
+  [lazy]="true" [virtualRowHeight]="34" [showLoader]="false"
+-->
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+      <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+    </colgroup>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+      <tr>
+        <th *ngFor="let col of columns" [pSortableColumn]="col.sorted ? col.field : null">
+          <span *ngIf="col.display">{{col.header}}</span><p-sortIcon *ngIf="col.sorted" [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+          <div class="search-bar-table" *ngIf="col.filtred">
+              <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+              <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+          </div>
+        </th>
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <td  *ngFor="let col of columns" [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+          <div style=" margin-top: -12px; font-size:12px;" *ngIf="col.field === 'checked'">
+            <i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
+          <div *ngIf="col.field === 'id'">{{rowData[col.field]}}</div>
+          <div *ngIf="col.field === 'name'">{{rowData[col.field]}}</div>
+          <div style="font-size:20px; color: #0700CF; text-align: center;" *ngIf="col.field === 'AlreadyImported'">
+            <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}" ></i></div>
+          <div *ngIf="col.field === 'description'">{{rowData[col.field]}}</div>
+          <div *ngIf="col.field === 'engineVersion'">{{rowData[col.field]}}</div>
+          <div *ngIf="col.field === 'groupeType'">{{rowData[col.field]}}</div>
+          <div *ngIf="col.field === 'cedant'">{{rowData[col.field]}}</div>
+        </td>
+      </tr>
+  </ng-template>
+</p-table>

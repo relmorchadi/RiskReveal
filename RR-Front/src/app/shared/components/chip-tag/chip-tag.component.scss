@@ -1,0 +1,22 @@
+:host{
+  display:flex;
+}
+
+.span-left{
+  padding: 7px 10px 0; border-radius: 16px 0px 0px 16px;
+  background-color: #E5E9FA;
+  color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 11.22px;	letter-spacing: 0.25px;	line-height: 12px;
+}
+.span-right{
+  padding: 6px 10px 6px 6px; border-radius: 0px 16px 16px 0px; display:flex;
+  background-color: #F4F6FC;
+  color: rgba(0,0,0,0.6);	font-family: Rubik;	font-size: 9px;	letter-spacing: 0.08px;	line-height: 14px;
+}
+
+::ng-deep{
+  .anticon{
+    cursor:pointer;
+    margin-left: 5px;
+    margin-top: 2px;
+  }
+}
