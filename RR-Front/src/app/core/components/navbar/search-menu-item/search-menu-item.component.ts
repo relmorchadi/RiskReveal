@@ -3,9 +3,10 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
 import {SearchService} from "../../../service/search.service";
 import {catchError, debounceTime, map} from "rxjs/operators";
-import { NzNotificationService } from 'ng-zorro-antd';
-import { forkJoin } from 'rxjs';
+import {NotificationService} from "../../../../shared/notification.service";
+
 import { Router } from '@angular/router';
+import {forkJoin} from "rxjs/internal/observable/forkJoin";
 
 
 @Component({
@@ -25,23 +26,12 @@ export class SearchMenuItemComponent implements OnInit {
   visibleSearch = false;
   deleteBlock = true;
   showClearIcon = false;
-  choices = [];
   actualGlobalKeyword = '';
   keywordBackup = '';
-  searchvalue = '';
+  searchValue = '';
   /* tslint:disable */
-  searchBadges = [
-    {id: 'cedant', icon: 'icon-window-section', title: 'Cedant', shortcut: 'c', backgroundColor: '#005738', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-    {id: 'country', icon: 'icon-globe', title: 'Country', shortcut: 'ctr', backgroundColor: '#008464', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-    {id: 'year', icon: 'icon-calendar_today_24px', title: 'Year', shortcut: 'uwy', backgroundColor: '#00A282', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-    {id: 'program', icon: 'icon-layers-alt', title: 'Program', shortcut: 'p', backgroundColor: '#00C4AA', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-    {id: 'treaty', icon: 'icon-book', title: 'Treaty', shortcut: 't', backgroundColor: '#03DAC4', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-    {id: 'analyst', icon: 'icon-user', title: 'Analyst', shortcut: 'a', backgroundColor: '#F5A623', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-    {id: 'project', icon: 'icon-folder-check', title: 'Project ID', shortcut: 'prj', backgroundColor: '#0700CF', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-    {id: 'plt', icon: 'icon-box', title: 'PLT', shortcut: 'plt', backgroundColor: '#C38FFF', badgeBackgroundColor: '#64D4C6', badgeIcon: 'icon-bookmark_24px'},
-  ];
 
-  readonly refsLoader  = {
+  /*readonly refsLoader  = {
     cedant: (keyword) => {
       return this._searchService.searchCedent(keyword || '');
     },
@@ -57,13 +47,13 @@ export class SearchMenuItemComponent implements OnInit {
     data: (keyword, size, table) => {
       return this._searchService.searchByTable(keyword || '',size || '', table || '');
     }
-  };
+  };*/
 
   tables = ['CEDANT' , 'COUNTRY', 'TREATY', 'YEAR'];
 
-  Badges = [];
+  badges = [];
   data = [];
-  RecentSearch = [];
+  recentSearch = [];
   showRecentSearch = [];
 
   savedSearch = [
@@ -97,7 +87,7 @@ export class SearchMenuItemComponent implements OnInit {
     ctr: 'country'
   };
 
-  constructor(private _fb: FormBuilder, private _searchService: SearchService, private router:Router, private notification: NzNotificationService) {
+  constructor(private _fb: FormBuilder, private _searchService: SearchService, private router:Router, private _notifcationService:NotificationService) {
     this.contractFilterFormGroup = this._fb.group({
       switchValue: false,
       globalKeyword: [],
@@ -118,8 +108,8 @@ export class SearchMenuItemComponent implements OnInit {
       .subscribe((param) => {
         this._selectedSearch(param)
     });
-    this.RecentSearch = JSON.parse(localStorage.getItem('items'));
-    this.showRecentSearch = this.RecentSearch.slice(0,3);
+    this.recentSearch = JSON.parse(localStorage.getItem('items')) || [];
+    this.showRecentSearch = this.recentSearch.slice(0,3);
   }
 
 
@@ -160,24 +150,15 @@ export class SearchMenuItemComponent implements OnInit {
     if (correspondingKey) {
       this.contractFilterFormGroup.get(correspondingKey).patchValue(keyword)
       let instance = {key: correspondingKey, value: keyword};
-      this.Badges.push(instance);
+      this.badges.push(instance);
     }
     else {
-      this.notification.config({
-        nzPlacement: 'bottomRight'
-      })
-      this.notification.create(
-          'error', 'Information',
-          'some shortcuts were false please check the shortcuts or change them!',
-      );
+      this._notifcationService.createNotification('Information',
+        'some shortcuts were false please check the shortcuts or change them!',
+        'error','bottomRight',4000);
     }
     this.contractFilterFormGroup.value['globalKeyword']=''
     return '';
-  }
-
-  private _specificSearch(item, filter) {
-    let items = _.keys(filter).filter(key => filter[key] || false).map(key => new String(item[key]).toLowerCase().includes(new String(filter[key]).toLowerCase()));
-    return !_.some(items, e => e == false);
   }
 
   filterContracts(keyboardEvent) {
@@ -188,7 +169,7 @@ export class SearchMenuItemComponent implements OnInit {
         this.examinateExpression(searchExpression);
       }
       event.preventDefault();
-      this.redirectTosearchPage();
+      this.redirectToSearchPage();
     }
     if (this.deleteBlock === true){
       if (keyboardEvent.key == 'Backspace' && keyboardEvent.target.value === '') {
@@ -197,39 +178,35 @@ export class SearchMenuItemComponent implements OnInit {
       }
     } else {
       if (keyboardEvent.key == 'Backspace' && keyboardEvent.target.value === '' ) {
-        this.Badges.pop();
+        this.badges.pop();
         this.deleteBlock = true;
         console.log(this.deleteBlock);
       }
     }
     if (keyboardEvent.key === 'Delete'  && keyboardEvent.target.value === '') {
-      this.Badges.pop();
+      this.badges.pop();
     }
     /* if(this.currentBadge)
     this.selectChoice({label: this.contractFilterFormGroup.get('globalKeyword').value})*/
   }
 
-  redirectTosearchPage(){
-    if (this.Badges.length > 0)
+  redirectToSearchPage(){
+    if (this.badges.length > 0)
     {
-      this.RecentSearch = [[...this.Badges], ...this.RecentSearch];
-      console.log([...this.Badges]);
-      this._searchService.affectItems([...this.Badges]);
-      localStorage.setItem('items', JSON.stringify(this.RecentSearch));
-      this.showRecentSearch = this.RecentSearch.slice(0,3);
+      this.recentSearch = [[...this.badges], ...this.recentSearch];
+      console.log([...this.badges]);
+      this._searchService.affectItems([...this.badges]);
+      localStorage.setItem('items', JSON.stringify(this.recentSearch));
+      this.showRecentSearch = this.recentSearch.slice(0,3);
     }
-    this.Badges = [];
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
-    this.visible = false;
-    this.visibleSearch = false;
+    this.clearValue();
     this.router.navigate(['/search']);
   }
 
-  redirectwithsearch(items) {
-    console.log(items);
+  redirectWithSearch(items) {
     this._searchService.affectItems(items);
-    this.visibleSearch = false;
-    this.visible = false;
+    this.clearValue();
     this.router.navigate(['/search']);
   }
 
@@ -241,7 +218,8 @@ export class SearchMenuItemComponent implements OnInit {
     let item = {key: key,value: value};
     this.showLastSearch = true;
     this.showResult = false;
-    this.Badges.push(item);
+    this.badges.push(item);
+    // let {globalKeyword} = this.contractFilterFormGroup.value
     this.keywordBackup= this.contractFilterFormGroup.get('globalKeyword').value;
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this._selectedSearch(this.contractFilterFormGroup.get('globalKeyword').value);
@@ -254,49 +232,31 @@ export class SearchMenuItemComponent implements OnInit {
         tableName => this.searchLoader(keyword, tableName)
         )
     ).subscribe( payload => {
-      payload.forEach(element => {
-        this.data = [...this.data, element.content];
-      });
+      this.data = _.concat(this.data,_.map(payload,'content'));
       let len = this.data.length;
       this.data = this.data.slice(len - 4, len);
       console.log(this.data)
     })
   }
 
-
-
   closeSearchBadge(status, index) {
     if(status){
-      this.Badges.splice(index, 1);
+      this.badges.splice(index, 1);
     }
   }
 
   enableExpertMode() {
-    this.notification.config({
-      nzPlacement: 'bottomRight'
-    })
     if(this.contractFilterFormGroup.value['switchValue']){
       this.visibleSearch = false;
-      this.notification.create(
-        'info', 'Information',
+      this._notifcationService.createNotification('Information',
         'the export mode is now enabled',
-        { nzDuration: 2000 }
-      );
+        'info','bottomRight',2000);
     } else {
-      this.notification.create(
-        'info', 'Information',
+      this._notifcationService.createNotification('Information',
         'the export mode is now disabled',
-        { nzDuration: 2000 }
-      );
+        'info','bottomRight',2000);
     }
   }
-
-  /*
-  selectChoice(choice) {
-    let searchExpression:string = `${this.keywordBackup?this.keywordBackup+' ':''}${this.currentBadge.shortcut}:"${choice.label}"`;
-    this.contractFilterFormGroup.patchValue({globalKeyword: searchExpression});
-    this.currentBadge=null;
-  }*/
 
   private _clearFilters() {
     this.contractFilterFormGroup.patchValue({
@@ -343,22 +303,24 @@ export class SearchMenuItemComponent implements OnInit {
         this.examinateExpression(searchExpression);
         this.showResult = true;
       }
+      this.visibleSearch = true;
     } else {
       this.visibleSearch = false;
     }
     this.visible = false;
   }
 
-  openclose(): void {
+  openClose(): void {
     this.visible = !this.visible;
   }
-  clearvalue(): void {
-    this.searchvalue = '';
+
+  clearValue(): void {
+    this.searchValue = '';
     this.showResult = false;
     this.visibleSearch = false;
     this.visible = false;
     this.showClearIcon = false;
     this._clearFilters();
-    this.Badges = [];
+    this.badges = [];
   }
 }

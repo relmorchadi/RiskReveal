@@ -12,7 +12,7 @@ import { NgMasonryGridModule } from 'ng-masonry-grid';
 const routes: Routes = [
   {data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent},
   {data: {title: 'RR- Workspace'}, path: 'RiskLink', component: WorkspaceRiskLinkComponent},
-  // {data: {title: 'RR- Workspace'}, path: ':id', component: WorkspaceMainComponent},
+  {data: {title: 'RR- Workspace'}, path: ':id', component: WorkspaceMainComponent},
 ];
 
 @NgModule({

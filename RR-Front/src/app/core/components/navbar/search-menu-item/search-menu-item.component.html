@@ -8,20 +8,20 @@
     <input [ngClass]="{'search-page-active-border': isSearchRoute()}" (keydown)="filterContracts($event)"
            (input)="onInput($event)" #searchInput [(nzVisible)]="visibleSearch"
            nz-popover [nzContent]="searchDropdown"  nzPlacement="bottomLeft" nzTrigger="click"
-           formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="searchvalue"
+           formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="searchValue"
            class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
   <ng-template #suffixIconSearch>
-    <i nz-icon *ngIf="showClearIcon" class="item-close" (click)="clearvalue()" nzType="close" nzTheme="outline"></i>
-    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="redirectTosearchPage()" style="cursor: pointer" class="icon-search_24px"></i>
+    <i nz-icon *ngIf="showClearIcon" class="item-close" (click)="clearValue()" nzType="close" nzTheme="outline"></i>
+    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="redirectToSearchPage()" style="cursor: pointer" class="icon-search_24px"></i>
   </ng-template>
   <ng-template #prefixIconTag>
     <div class="prefix-wrapper">
-      <button class="code-button" [(nzVisible)]="visible" (click)="openclose()" nz-popover [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
+      <button class="code-button" [(nzVisible)]="visible" (click)="openClose()" nz-popover [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
         <i class="icon-code_24px"></i>
       </button>
       <div class="chips-wrapper">
-        <app-chip-tag *ngFor="let items of Badges; let i = index" (onclick)="closeSearchBadge($event, i)" [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
+        <app-chip-tag *ngFor="let items of badges; let i = index" (onclick)="closeSearchBadge($event, i)" [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
       </div>
     </div>
   </ng-template>
@@ -36,9 +36,9 @@
                 <span class="search-history-viewAll">See All</span>
               </div>
               <ul>
-                <li *ngFor="let items of showRecentSearch" (click)="redirectwithsearch(items)">
-                  <div class="chip-container" *ngFor="let instence of items">
-                    <app-chip-tag  [closeStatus]="false" [key]="instence.key" [value]="instence.value"></app-chip-tag>
+                <li *ngFor="let items of showRecentSearch" (click)="redirectWithSearch(items)">
+                  <div class="chip-container" *ngFor="let instance of items">
+                    <app-chip-tag  [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
                   </div>
                 </li>
               </ul>
@@ -49,9 +49,9 @@
                 <span class="search-history-viewAll">See All</span>
               </div>
               <ul style="line-height: normal">
-                  <li *ngFor="let items of savedSearch" (click)="redirectwithsearch(items)">
-                    <div class="chip-container" *ngFor="let instence of items">
-                      <app-chip-tag [closeStatus]="false" [key]="instence.key" [value]="instence.value"></app-chip-tag>
+                  <li *ngFor="let items of savedSearch" (click)="redirectWithSearch(items)">
+                    <div class="chip-container" *ngFor="let instance of items">
+                      <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
                     </div>
                   </li>
               </ul>
@@ -77,9 +77,6 @@
       <div class="more-results-sction">
         <button routerLink="/search" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
       </div>
-      <ng-template #prefixIconSearch>
-        <i nz-icon type="search"></i>
-      </ng-template>
     </div>
   </ng-template>
 
