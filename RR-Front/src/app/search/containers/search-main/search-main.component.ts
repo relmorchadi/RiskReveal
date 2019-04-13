@@ -21,6 +21,15 @@ export class SearchMainComponent implements OnInit {
   loadingMore = false;
   searchedItems = [];
   currentWorkspace= null;
+  /*columns = [
+    { field: 'id', header: 'Id', width: '150px', display:true, sorted:false, filtered:false },
+    { field: 'countryName', header: 'Country', width: '110px', display:true, sorted:true, filtered:true },
+    { field: 'cedantCode', header: 'Cedant', width: '110px', display:true, sorted:true, filtered:true  },
+    { field: 'cedantName', header: '', width: '110px', display:false, sorted:false, filtered:false  },
+    { field: 'uwYear', header: 'Uw Year', width: '110px', display:true, sorted:true, filtered:true  },
+    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display:true, sorted:true, filtered:true  },
+    { field: 'workspaceName', header: '', width: '110px', display:false, sorted:false, filtered:false  },
+  ];*/
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router,private _location: Location) {
@@ -54,6 +63,7 @@ export class SearchMainComponent implements OnInit {
       country: []
     });
   }
+
 
   loadMoreItems() {
     this._loadContracts(String(this.paginationOption.size + 20));
@@ -104,6 +114,7 @@ export class SearchMainComponent implements OnInit {
         this.loadingMore = false;
         this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
     });
+    console.log(this.contracts);
   }
 
   navigateBack() {

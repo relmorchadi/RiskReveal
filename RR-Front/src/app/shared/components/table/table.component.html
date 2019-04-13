@@ -1,11 +1,77 @@
-<p-table #dt
-  [scrollable]="true" [rows]="20" [value]="listOfData" [columns]="tableColumn"
-  [scrollHeight]="tableHeight"
+<nz-table
+  *ngIf ="virtualScroll"
+  nzVirtualScroll
+  [nzVirtualItemSize]="12"
+  [nzData]="listOfData"
+  [nzFrontPagination]="false"
+  [nzShowPagination]="false"
+  [nzScroll]="{ x: tableWidth, y: tableHeight }"
 >
+  <thead>
+    <tr >
+      <th *ngFor="let col of tableColumn"
+          [nzWidth]="col.width"
+          [nzShowSort]="col.sorted"
+          [nzSortKey]="col.field"
+      >
+        <span *ngIf="col.display">{{col.header}}</span>
+        <div class="search-bar-table" *ngIf="col.filtered">
+          <nz-input-group [nzPrefix]="suffixIconSearch">
+            <input type="text" nz-input />
+          </nz-input-group>
+        </div>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+  <ng-template nz-virtual-scroll let-data let-index="index">
+    <tr>
+      <td *ngFor="let col of tableColumn">{{ data[col.field] }}</td>
+    </tr>
+  </ng-template>
+  </tbody>
+</nz-table>
+
+
+<nz-table
+  #dt
+  *ngIf="!virtualScroll"
+  [nzData]="listOfData"
+  [nzPageSize]="numberOfElement"
+>
+  <thead>
+  <tr >
+    <th *ngFor="let col of tableColumn"
+        [nzWidth]="col.width"
+        [nzShowSort]="col.sorted"
+        [nzSortKey]="col.field"
+    >
+      <span *ngIf="col.display">{{col.header}}</span>
+      <div class="search-bar-table" *ngIf="col.filtered">
+        <nz-input-group [nzPrefix]="suffixIconSearch">
+          <input type="text" nz-input />
+        </nz-input-group>
+      </div>
+    </th>
+  </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let data of dt.data">
+      <td *ngFor="let col of tableColumn">{{ data[col.field] }}</td>
+    </tr>
+  </tbody>
+</nz-table>
+
+<ng-template #suffixIconSearch>
+  <i nz-icon type="search"></i>
+</ng-template>
+
+
+
 <!--
   [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
   [lazy]="true" [virtualRowHeight]="34" [showLoader]="false"
--->
+
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
       <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -24,6 +90,9 @@
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-columns="columns">
       <tr>
+        <td *ngFor="let col of columns" >
+          {{rowData[col.field]}}
+        </td>
         <td  *ngFor="let col of columns" [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
           <div style=" margin-top: -12px; font-size:12px;" *ngIf="col.field === 'checked'">
             <i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
@@ -38,4 +107,4 @@
         </td>
       </tr>
   </ng-template>
-</p-table>
+</nz-table>-->

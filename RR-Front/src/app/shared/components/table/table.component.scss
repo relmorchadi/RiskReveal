@@ -1,18 +1,21 @@
 ::ng-deep{
-  .ui-table-scrollable-view.ui-table-frozen-view{
-    border-right: 6px solid rgba(0,0,0,0.09);
+  .ant-table-thead > tr > th.ant-table-column-has-actions.ant-table-column-has-sorters:hover {
+    background: #fff !important;
   }
-  .ui-table-thead{
+  .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
+    background: #fff !important;
+  }
+  .ant-table-header{
     th{
       padding:5px;
       padding-top:15px;
       font-size: 10px;
       vertical-align: top;
-      color: rgba(0,0,0,0.38);
-      background-color:#fff;
+      color: rgba(0,0,0,0.38) !important;
+      background-color:#fff !important;
       font-family: Rubik;
       height: 45px;
-      border:none;
+      border:none ;
       border-bottom: 1px solid rgba(0,0,0,0.15);
       .search-bar-table{
         display:flex;
@@ -30,14 +33,14 @@
       }
     }
   }
-  .ui-table-tbody{
+  .ant-table-tbody{
     td{
       padding-left:3px;
       cursor: pointer;
       font-size: 10px;
       height:25px;
       border:none;
-      background-color:#fff;
+      background-color:#fff !important;
       border-bottom: 1px solid rgba(0,0,0,0.15);
       div {
         width: 100%;

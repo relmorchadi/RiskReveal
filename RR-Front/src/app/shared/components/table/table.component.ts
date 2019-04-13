@@ -9,12 +9,15 @@ import { LazyLoadEvent } from 'primeng/primeng';
 export class TableComponent implements OnInit {
   sortName: string | null = null;
   sortValue: string | null = null;
+  searchAddress: string;
+  listOfSearchName: string[] = [];
+
   @Input()
   listOfData: any[];
   @Input()
-  scrolable: any[];
+  virtualScroll: boolean;
   @Input()
-  Frozen: any[];
+  numberOfElement: number;
   @Input()
   tableColumn: any[];
   @Input()
@@ -26,18 +29,38 @@ export class TableComponent implements OnInit {
 
   ngOnInit() {
   }
-  loadDataOnScroll(event: LazyLoadEvent) {
-    // this.loading = true;
 
-    // for demo purposes keep loading the same dataset
-    // in a real production application, this data should come from server by building the query with LazyLoadEvent options
-    /* setTimeout(() => {
-        //last chunk
-        if (event.first === 249980)
-            this.virtualCars = this.loadChunk(event.first, 20);
-        else
-            this.virtualCars = this.loadChunk(event.first, event.rows);
-        this.loading = false;
-    }, 250);   */
-}
+  sort(sort: { key: string; value: string }): void {
+    this.sortName = sort.key;
+    this.sortValue = sort.value;
+    this.search();
+  }
+
+  filter(listOfSearchName: string[], searchAddress: string): void {
+    this.listOfSearchName = listOfSearchName;
+    this.searchAddress = searchAddress;
+    this.search();
+  }
+
+  search(): void {
+    /** filter data **/
+    const filterFunc = (item: { name: string; age: number; address: string }) =>
+      (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) &&
+      (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
+    const data = this.listOfData.filter(item => filterFunc(item));
+    /** sort data **/
+    if (this.sortName && this.sortValue) {
+      this.listOfData = data.sort((a, b) =>
+        this.sortValue === 'ascend'
+          ? a[this.sortName!] > b[this.sortName!]
+          ? 1
+          : -1
+          : b[this.sortName!] > a[this.sortName!]
+          ? 1
+          : -1
+      );
+    } else {
+      this.listOfData = data;
+    }
+  }
 }
