@@ -248,6 +248,7 @@
   flex-direction: column;
   width: 87%;
   margin:auto;
+  /* Title of the app  */
   .body-wrap-header{
     display: flex;
     justify-content: space-between;
@@ -267,6 +268,18 @@
     .body-wrap-header-step{
       flex:1;
       ::ng-deep{
+        .ant-steps-dot .ant-steps-item-tail::after {
+          height: 2px;
+       }
+        .ant-steps-item-tail{
+          top: 7px;
+          width: 95%;
+          margin-left: 80px;
+        }
+        .ant-steps-item-icon{
+          width: 18px;
+          height: 18px;
+        }
         .coming-up.ant-steps-item.ant-steps-item-wait > .ant-steps-item-content{
           margin-left: -12px;
           width:180px;
@@ -289,6 +302,7 @@
       }
     }
   }
+  /* Drop Drown of the Risk Link Page  */
   .body-wrap-middle{
     margin-top:20px;
     ::ng-deep{
@@ -360,7 +374,6 @@
           display: flex;
           flex: 1;
           justify-content: flex-end;
-          padding: 7px;
           ::ng-deep{
             .ant-select{
               width: 200px;
@@ -583,8 +596,8 @@
             color: #fff;
           }
           .logo-right{
-            width: 17px;
-            height: 17px;
+            width: 16px;
+            height: 16px;
             margin-top: 2px;
             margin-left: 3px;
           }
@@ -651,51 +664,6 @@
             }
           }
         }
-        /*
-        table{
-          // height: 400px;
-          thead{
-            th{
-              padding:3px;
-              font-size: 10px;
-              vertical-align: top;
-              color: rgba(0,0,0,0.38);
-              font-family: Rubik;
-              height: 45px;
-              border-bottom: 1px solid rgba(0,0,0,0.15);
-              input{
-                background-color: #F5F5F5;
-                height: 24px;
-                font-size:10px;
-              }
-              ::ng-deep{
-                .ant-input-prefix{
-                  color: rgba(0,0,0,0.3);
-                  left: 7px;
-                }
-                .ant-input-affix-wrapper .ant-input:not(:first-child) {
-                  padding-left: 25px;
-                }
-              }
-            }
-          }
-          tbody{
-            th{
-              padding-left:3px;
-              cursor: pointer;
-              font-size: 10px;
-              height:35px;
-              border-bottom: 1px solid rgba(0,0,0,0.15);
-              ::ng-deep{
-                .anticon{
-                  width:15px;
-                  height:15px;
-                  color:rgba(0,0,0,0.5);
-                }
-              }
-            }
-          }
-        }*/
       }
       .import-button{
         display: flex;

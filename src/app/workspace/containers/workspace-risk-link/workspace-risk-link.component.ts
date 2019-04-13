@@ -93,7 +93,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {status : true, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'},
     {status : false, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'}
   ]
-  /* tslint:enable */
+
   displaydropdownEDM: boolean = false;
   displaydropdownRDM: boolean = false;
   displaylistRDM: boolean = false;
@@ -101,9 +101,11 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   displaytable: boolean = false;
   displayImport: boolean = false;
 
+
   collapsehead: boolean = true;
   collapseright: boolean = true;
-
+  collapsefooter: boolean = true;
+  /* tslint:enable */
   currentStep = 0;
 
   constructor(private _helper: HelperService, private route: ActivatedRoute) {
@@ -283,5 +285,8 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
   collapseRight() {
     this.collapseright = !this.collapseright;
+  }
+  collapseFooter() {
+    this.collapsefooter = !this.collapsefooter;
   }
 }

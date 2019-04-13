@@ -375,16 +375,17 @@
                             <hr>
                             <div>Exposure Summaries</div>
                           </div>
-                          <div class="body-wraper-header-right-summary">
-                            <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list4value">
+                          <div class="body-wraper-header-right-summary" >
+                            <nz-select *ngIf="collapsefooter" nzShowSearch nzAllowClear [(ngModel)]="list4value">
                               <nz-option *ngFor="let op of list4" [nzLabel]="op" [nzValue]="op"></nz-option>
                             </nz-select>
                             <div class="icon-drop">
-                              <i nz-icon nzType="up" nzTheme="outline"></i>
+                              <i  *ngIf="collapsefooter" nz-icon nzType="up" (click)="collapseFooter()" nzTheme="outline"></i>
+                              <i nz-icon *ngIf="!collapsefooter" (click)="collapseFooter()" style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
                             </div>
                           </div>
                         </div>
-                        <div class="summary-info">
+                        <div class="summary-info" *ngIf="collapsefooter">
                           <table>
                             <thead>
                               <tr>
