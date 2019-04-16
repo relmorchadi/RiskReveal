@@ -1,461 +1,272 @@
-<div class="card-container">
-  <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-
-    <ng-container *ngFor="let tab of tabs">
-      <ng-template #titleTemplate>
-        <ng-container
-          [ngTemplateOutlet]="tabTitle"
-          [ngTemplateOutletContext]="{index:tab,
-          tabsLength:tabs.length,
-          title:tab.title,
-          year:tab.year}"
-        ></ng-container>
-      </ng-template>
-      <nz-tab  [nzTitle]="titleTemplate">
-        <div nz-row>
-          <div nz-col nzSpan="24">
-            <div  class="row tab-detail p-2">
-              <!--
-              <div class="col-md-1 col-lg-1"  >
-                 <div class="d-inline-flex flex-column justify-content-center align-items-center">
-                 <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail" class="mx-4 btn-detail d-flex justify-content-center align-items-center"
-                         nz-button nzType="primary" nzSize="default" nzShape="circle">
-                   <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;" nz-icon type="down" theme="outline"></i>
-                   <i *ngIf="!collapseWorkspaceDetail"style="color: #16617a;" nz-icon type="up" theme="outline"></i>
-                 </button>
-                 <small class="btn-detail-color">{{collapseWorkspaceDetail ? 'Detail' : 'Hide'}}</small>
-               </div>
-
-              </div>   -->
-              <div class="col-md-12 pl-md-4 col-lg-6" >
-                <div class="d-inline-flex flex-column">
-                  <h3 class="workspace-title">XL, inc, vol, ind, acc, auto casco <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
-                  <h4 class="workspace-title"> 20769 | A.M.M.A (BEL) </h4>
+<div class="workspace-main-content">
+  <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
+           nz-button nzType="primary" nzSize="large" nzShape="circle">
+     <i style="color: white;" nz-icon type="plus" theme="outline"></i>
+   </button>
+   -->
+  <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
+   </ul>
+   -->
+  <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+          nz-button nzType="primary" nzSize="default" nzShape="circle">
+    <i style="color: #16617a;" nz-icon theme="outline">
+      <i class="icon-map-pin-alt"></i>
+    </i>
+  </button>
+  <div class="app-wrap">
+    <div class="header-wrap">
+      <span class="header-wrap-text">Project P - 00723</span>
+      <hr class="col-xs-24">
+    </div>
+    <div class="body-wrap">
+      <div class="body-wrap-header">
+        <div class="body-wrap-header-text">
+          <span class="body-wrap-header-text-title">TREATY</span>
+          <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
+        </div>
+        <div class="body-wrap-header-step">
+          <nz-steps [nzCurrent]="currentStep" nzProgressDot>
+            <nz-step style="cursor: pointer" (click)="selectStep(0)" nzTitle="Step 1" nzDescription="Select EDM & RDM"></nz-step>
+            <nz-step style="cursor: pointer" class="coming-up" (click)="selectStep(1)" nzTitle="Step 2" nzDescription="Portfolios & Analysis"></nz-step>
+            <nz-step style="cursor: pointer"  nzTitle="Step 3" nzDescription="Import"></nz-step>
+          </nz-steps>
+        </div>
+      </div>
+      <div class="body-wrap-middle">
+        <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list1value">
+          <nz-option *ngFor="let op of list1" [nzLabel]="op" [nzValue]="op"></nz-option>
+        </nz-select>
+        <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list2value">
+          <nz-option *ngFor="let op of list2" [nzLabel]="op" [nzValue]="op"></nz-option>
+        </nz-select>
+        <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list3value">
+          <nz-option *ngFor="let op of list3" [nzLabel]="op" [nzValue]="op"></nz-option>
+        </nz-select>
+      </div>
+      <div class="body-wrap-body">
+        <div class="body-wraper">
+          <div class="body-wraper-header">
+            <div class="body-wraper-header-left">
+              <hr>
+              <div>Select EDM & RDM</div>
+            </div>
+            <div class="body-wraper-header-right">
+              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>
+              <i nz-icon *ngIf="collapsehead" (click)="collapseHead()" nzType="up" nzTheme="outline"></i>
+              <i nz-icon *ngIf="!collapsehead" (click)="collapseHead()" style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
+            </div>
+          </div>
+          <div *ngIf="collapsehead" class="body-wraper-body">
+            <div class="body-wraper-search"  clickOutside (clickOutside)="closeDropdown(1)" [ngClass]="{'body-wraper-search-active': displayDropdownEDM, 'body-wraper-search-display': displayListEDM}">
+              <div class="search-bar" (click)="openCloseDropdown(1)" [ngClass]="{'search-bar-active': displayDropdownEDM, 'search-bar-display': displayListEDM}">
+                <i class="search-bar-icon-search" nz-icon nzType="search" nzTheme="outline"></i>
+                <div class="search-bar-text" *ngIf="!displayListEDM">Select EDM</div>
+                <div class="search-bar-text displayed-info" *ngIf="displayListEDM">
+                  <span class="search-bar-text-title">EDM</span>
+                  <span class="search-bar-text-subtitle">Add EDM</span>
                 </div>
+                <i class="search-bar-icon-down" nz-icon nzType="down" nzTheme="outline"></i>
               </div>
-              <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
-                <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
-                  <span><b>4/6</b></span>
+              <div class="search-bar-result" *ngIf="displayDropdownEDM">
+                <div class="search-bar-result-icon">
+                  <i style="font-size: 1.6em; margin-right:15px; cursor:pointer" nz-tooltip nzTitle="Select All" (click)="selectAll(1)" nzPlacement="bottom" class="icon-focus-add"></i>
+                  <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All" (click)="unselectAll(1)" nzPlacement="bottom"  class="icon-minus-square"></i>
                 </div>
-                <div  nzTitle="Exposures" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
-                  <span>
-                  <b>1</b>
-                </span>
+                <div class="search-bar-result-list">
+                  <ul>
+                    <li *ngFor="let EDM of EDM" class="poover-menu-item" (click)="toggleItems(EDM)" [ngClass]="{'poover-menu-item-active': EDM.selected}" >
+                      <span class="logo" style="background: #0700CF;">E</span> <span>{{EDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': EDM.selected}" ></i>
+                    </li>
+                  </ul>
                 </div>
-                <div  nzTitle="Qualifying PLTs" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-box mb-2"></i>
-                  <span>
-                  <b>3</b>
-                </span>
-                </div>
-                <div  nzTitle="Published For Pricing" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-note mb-2"></i>
-                  <span>
-                  <b>3</b>
-                </span>
-                </div>
-                <div  nzTitle="Priced" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
-                  <span>
-                  <b>2</b>
-                </span>
-                </div>
-                <div  nzTitle="Published For Accumulation" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
-                  <span>
-                  <b>-</b>
-                </span>
+                <div class="search-bar-result-button">
+                  <button (click)="selectedItem(1)" nz-button>SELECT</button>
                 </div>
               </div>
             </div>
-          </div>
-          <div [ngClass]="{'collapse':collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
-            <div class="row tab-detail p-2 pb-5">
-
-              <div class="pl-md-4 col-md-12 col-lg-6">
-                <div nz-row class="pt-lg-5 pt-md-0">
-                  <div nz-col nz-row [nzSpan]="12">
-                    <div class="row">
-                      <span class="col-7 tab-metadata-title">Subsidary :</span>
-                      <span class="col-5 tab-metadata-value">2-SCOR REEASS</span>
-                    </div>
-                    <div class="row">
-                      <span class="col-7 tab-metadata-title">Subsidary Leger :</span>
-                      <span class="col-5 tab-metadata-value">2.2 - PARIS</span>
-                    </div>
-                    <div class="row">
-                      <span class="col-7 tab-metadata-title">Contract Source Type :</span>
-                      <span class="col-5 tab-metadata-value">Omega</span>
-                    </div>
-                  </div>
-                  <div nz-col nz-row [nzSpan]="12">
-                    <div nz-col [nzSpan]="12">
-                      <span class="d-block tab-metadata-title">Inception Date :</span>
-                      <span class="d-block tab-metadata-value">31/10/2019</span>
-                      <span class="d-block tab-metadata-title">Expiry Date :</span>
-                      <span class="d-block tab-metadata-value">21/10/2020</span>
-                    </div>
-                    <div nz-col class="border-left pl-3" [nzSpan]="12">
-                      <span class="d-block tab-metadata-title">Treaty Section :</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°1</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°2</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°3</span>
-                      <a class="tab-metadata-more" href="">See All</a>
-                    </div>
-                  </div>
+            <div class="body-wraper-search" clickOutside (clickOutside)="closeDropdown(2)" [ngClass]="{'body-wraper-search-active': displayDropdownRDM ,'body-wraper-search-display': displayListRDM}">
+              <div class="search-bar" (click)="openCloseDropdown(2)" [ngClass]="{'search-bar-active': displayDropdownRDM, 'search-bar-display': displayListRDM}">
+                <i class="search-bar-icon-search" nz-icon nzType="search" nzTheme="outline"></i>
+                <div class="search-bar-text" *ngIf="!displayListRDM">Select RDM</div>
+                <div class="search-bar-text displayed-info" *ngIf="displayListRDM">
+                  <span class="search-bar-text-title">RDM</span>
+                  <span class="search-bar-text-subtitle">Add RDM</span>
                 </div>
+                <i class="search-bar-icon-down" nz-icon nzType="down" nzTheme="outline"></i>
               </div>
-              <div class="pl-md-4 col-md-12 col-lg-6" >
-                <h5 class="tab-kpi-title">In Scope Region Perils</h5>
-                <div class="d-flex">
-                  <div style="flex:1" class="text-center d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-my_location_24px mb-4"></i>
-                    <span style="flex:1" class="d-flex align-items-start mb-1 justify-content-center kpi-icon-title">Scope</span>
-                    <span class="kpi-icon-value"><b>4/6</b></span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-design-tool mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Exposures</span>
-                    <span class="kpi-icon-value"><b>1</b></span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-box mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Qualifying PLTs</span>
-                    <span class="kpi-icon-value">
-                  <b>3</b>
-                </span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-note mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Published For Pricing</span>
-                    <span class="kpi-icon-value">
-                  <b>3</b>
-                </span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-dollar-alt mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Priced</span>
-                    <span class="kpi-icon-value">
-                  <b>2</b>
-                </span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-focus-add mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Published For Accumulation</span>
-                    <span class="kpi-icon-value">
-                  <b>-</b>
-                </span>
-                  </div>
+              <div class="search-bar-result" *ngIf="displayDropdownRDM">
+                <div class="search-bar-result-icon">
+                  <i style="font-size: 1.6em; margin-right:15px; cursor:pointer" nz-tooltip nzTitle="Select All" (click)="selectAll(2)" nzPlacement="bottom" class="icon-focus-add"></i>
+                  <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All" (click)="unselectAll(2)" nzPlacement="bottom"  class="icon-minus-square"></i>
                 </div>
-              </div>
-
-            </div>
-          </div>
-          <div nz-col [nzSpan]="24">
-            <div style="display: flex">
-              <div style="flex: 0">
-                <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
-              </div>
-              <div class="workspace-main-content">
-               <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
-                        nz-button nzType="primary" nzSize="large" nzShape="circle">
-                  <i style="color: white;" nz-icon type="plus" theme="outline"></i>
-                </button>
-                -->
-                <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
-                        class="mx-4 btn-detail d-flex justify-content-center align-items-center"
-                        nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
-                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
-                </button>
-               <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
-                </ul>
-                -->
-                <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-                nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i style="color: #16617a;" nz-icon theme="outline">
-                    <i class="icon-map-pin-alt"></i>
-                  </i>
-                </button>
-                <div class="app-wrap">
-                  <div class="header-wrap">
-                    <span class="header-wrap-text">Project P - 00723</span>
-                    <hr class="col-xs-24">
-                  </div>
-                  <div class="body-wrap">
-                    <div class="body-wrap-header">
-                      <div class="body-wrap-header-text">
-                        <span class="body-wrap-header-text-title">TREATY</span>
-                        <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
-                      </div>
-                      <div class="body-wrap-header-step">
-                          <nz-steps [nzCurrent]="currentStep" nzProgressDot>
-                              <nz-step style="cursor: pointer" (click)="selectStep(0)" nzTitle="Step 1" nzDescription="Select EDM & RDM"></nz-step>
-                              <nz-step style="cursor: pointer" class="coming-up" (click)="selectStep(1)" nzTitle="Step 2" nzDescription="Portfolios & Analysis"></nz-step>
-                              <nz-step style="cursor: pointer"  nzTitle="Step 3" nzDescription="Import"></nz-step>
-                            </nz-steps>
-                      </div>
-                    </div>
-                    <div class="body-wrap-middle">
-                        <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list1value">
-                            <nz-option *ngFor="let op of list1" [nzLabel]="op" [nzValue]="op"></nz-option>
-                        </nz-select>
-                        <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list2value">
-                            <nz-option *ngFor="let op of list2" [nzLabel]="op" [nzValue]="op"></nz-option>
-                        </nz-select>
-                        <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list3value">
-                            <nz-option *ngFor="let op of list3" [nzLabel]="op" [nzValue]="op"></nz-option>
-                        </nz-select>
-                    </div>
-                    <div class="body-wrap-body">
-                      <div class="body-wraper">
-                        <div class="body-wraper-header">
-                          <div class="body-wraper-header-left">
-                              <hr>
-                              <div>Select EDM & RDM</div>
-                          </div>
-                          <div class="body-wraper-header-right">
-                            <button *ngIf="collapsehead"  nz-button> ADVANCED</button>
-                            <i nz-icon *ngIf="collapsehead" (click)="collapseHead()" nzType="up" nzTheme="outline"></i>
-                            <i nz-icon *ngIf="!collapsehead" (click)="collapseHead()" style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
-                          </div>
-                        </div>
-                        <div *ngIf="collapsehead" class="body-wraper-body">
-                          <div class="body-wraper-search"  clickOutside (clickOutside)="closedropdown(1)" [ngClass]="{'body-wraper-search-active': displaydropdownEDM, 'body-wraper-search-display': displaylistEDM}">
-                            <div class="search-bar" (click)="openclosedropdown(1)" [ngClass]="{'search-bar-active': displaydropdownEDM, 'search-bar-display': displaylistEDM}">
-                              <i class="search-bar-icon-search" nz-icon nzType="search" nzTheme="outline"></i>
-                              <div class="search-bar-text" *ngIf="!displaylistEDM">Select EDM</div>
-                              <div class="search-bar-text displayed-info" *ngIf="displaylistEDM">
-                                <span class="search-bar-text-title">EDM</span>
-                                <span class="search-bar-text-subtitle">Add EDM</span>
-                              </div>
-                              <i class="search-bar-icon-down" nz-icon nzType="down" nzTheme="outline"></i>
-                            </div>
-                            <div class="search-bar-result" *ngIf="displaydropdownEDM">
-                              <div class="search-bar-result-icon">
-                                <i style="font-size: 1.6em; margin-right:15px; cursor:pointer" nz-tooltip nzTitle="Select All" (click)="selectAll(1)" nzPlacement="bottom" class="icon-focus-add"></i>
-                                <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All" (click)="unselectAll(1)" nzPlacement="bottom"  class="icon-minus-square"></i>
-                              </div>
-                              <div class="search-bar-result-list">
-                                <ul>
-                                  <li *ngFor="let EDM of EDM" class="poover-menu-item" (click)="toggleitems(EDM)" [ngClass]="{'poover-menu-item-active': EDM.selected}" >
-                                    <span class="logo" style="background: #0700CF;">E</span> <span>{{EDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': EDM.selected}" ></i>
-                                  </li>
-                                </ul>
-                              </div>
-                              <div class="search-bar-result-button">
-                                <button (click)="selecteditem(1)" nz-button>SELECT</button>
-                              </div>
-                            </div>
-                          </div>
-                          <div class="body-wraper-search" clickOutside (clickOutside)="closedropdown(2)" [ngClass]="{'body-wraper-search-active': displaydropdownRDM ,'body-wraper-search-display': displaylistRDM}">
-                              <div class="search-bar" (click)="openclosedropdown(2)" [ngClass]="{'search-bar-active': displaydropdownRDM, 'search-bar-display': displaylistRDM}">
-                                  <i class="search-bar-icon-search" nz-icon nzType="search" nzTheme="outline"></i>
-                                  <div class="search-bar-text" *ngIf="!displaylistRDM">Select RDM</div>
-                                  <div class="search-bar-text displayed-info" *ngIf="displaylistRDM">
-                                    <span class="search-bar-text-title">RDM</span>
-                                    <span class="search-bar-text-subtitle">Add RDM</span>
-                                  </div>
-                                  <i class="search-bar-icon-down" nz-icon nzType="down" nzTheme="outline"></i>
-                              </div>
-                              <div class="search-bar-result" *ngIf="displaydropdownRDM">
-                                <div class="search-bar-result-icon">
-                                  <i style="font-size: 1.6em; margin-right:15px; cursor:pointer" nz-tooltip nzTitle="Select All" (click)="selectAll(2)" nzPlacement="bottom" class="icon-focus-add"></i>
-                                  <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All" (click)="unselectAll(2)" nzPlacement="bottom"  class="icon-minus-square"></i>
-                                </div>
-                                <div class="search-bar-result-list">
-                                    <ul>
-                                      <li *ngFor="let RDM of RDM" class="poover-menu-item" (click)="toggleitems(RDM)" [ngClass]="{'poover-menu-item-active': RDM.selected}" >
-                                        <span class="logo" style="background: #03DAC4">R</span> <span>{{RDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': RDM.selected}" ></i>
-                                      </li>
-                                    </ul>
-                                </div>
-                                <div class="search-bar-result-button">
-                                  <button (click)="selecteditem(2)" nz-button>SELECT</button>
-                                </div>
-                              </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div class="body-wrap-body" style="justify-content: space-between" *ngIf="displaylistEDM || displaylistRDM">
-                      <div class="left" [ngClass]="{'right-collapsed': !collapseright}">
-                          <div class="body-wraper">
-                            <div class="body-wraper-header">
-                              <div class="body-wraper-header-left">
-                                  <hr>
-                                  <div>Selected EDMs & RDMs</div>
-                              </div>
-                            </div>
-                            <div class="list-items" *ngIf="displaylistEDM && collapseright">
-                              <span class="list-items-title">EDM</span>
-                              <ul>
-                                <li *ngFor="let itemsE of listEDM" class="poover-menu-item" (click)="toggleitemslistRDM(itemsE)" [ngClass]="{'poover-menu-item-active': itemsE.selected}" >
-                                  <span class="logo" style="background: #0700CF;">E</span> <span [title]="itemsE.name" class="text">{{itemsE?.name}}</span> <span class="reference">{{itemsE?.Reference}}</span> <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}" ></i>
-                                </li>
-                              </ul>
-                            </div>
-                            <div class="list-items" *ngIf="displaylistRDM && collapseright">
-                              <span class="list-items-title">RDM</span>
-                              <ul>
-                                <li *ngFor="let itemsR of listRDM" class="poover-menu-item" (click)="toggleitemslistRDM(itemsR)" [ngClass]="{'poover-menu-item-active': itemsR.selected}" >
-                                  <span class="logo" style="background: #03DAC4">R</span> <span [title]="itemsR.name" class="text">{{itemsR?.name}}</span> <span class="reference">{{itemsR?.Reference}}</span> <i class="logo-right" [ngClass]="{'icon-check_24px': itemsR.selected}" ></i>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                      </div>
-                      <div class="right" [ngClass]="{'right-collapsed': !collapseright}">
-                        <div class="body-wraper">
-                            <div class="body-wraper-header">
-                              <div class="body-wraper-header-left">
-                                  <hr>
-                                  <div>Select For Import</div>
-                              </div>
-                              <div class="body-wraper-header-right">
-                                  <i nz-icon *ngIf="collapseright" (click)="collapseRight()" nzType="up" nzTheme="outline"></i>
-                                  <i nz-icon *ngIf="!collapseright" (click)="collapseRight()" style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
-                              </div>
-                            </div>
-                            <div class="show-table" *ngIf="collapseright">
-                              <p-table #dt [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="tableleft" [scrollable]="true" scrollHeight="340px" frozenWidth="275px">
-                                  <ng-template pTemplate="colgroup" let-columns>
-                                    <colgroup>
-                                      <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
-                                    </colgroup>
-                                  </ng-template>
-                                  <ng-template pTemplate="header" let-columns>
-                                    <tr>
-                                      <th *ngFor="let col of columns">
-                                        <div *ngIf="col.header !== 'checked'">{{col.header}}</div>
-                                        <div class="search-bar-table" *ngIf="col.header !== 'checked' && col.header !== 'id' && col.header !== 'Already Imported'">
-                                            <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                                            <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
-                                        </div>
-                                      </th>
-                                    </tr>
-                                  </ng-template>
-                                  <ng-template pTemplate="body"  let-rowData let-columns="columns">
-                                    <tr *ngIf="displaytable">
-                                      <td  *ngFor="let col of columns" [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
-                                        <div style=" margin-top: -12px; font-size:12px;" *ngIf="col.field === 'checked'">
-                                          <i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
-                                        <div *ngIf="col.field === 'id'">{{rowData[col.field]}}</div>
-                                        <div *ngIf="col.field === 'name'">{{rowData[col.field]}}</div>
-                                        <div style="font-size:20px; color: #0700CF; text-align: center;" *ngIf="col.field === 'AlreadyImported'">
-                                          <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}" ></i></div>
-                                        <div *ngIf="col.field === 'description'">{{rowData[col.field]}}</div>
-                                        <div *ngIf="col.field === 'engineVersion'">{{rowData[col.field]}}</div>
-                                        <div *ngIf="col.field === 'groupeType'">{{rowData[col.field]}}</div>
-                                        <div *ngIf="col.field === 'cedant'">{{rowData[col.field]}}</div>
-                                      </td>
-                                    </tr>
-                                    <tr *ngIf="!displaytable">
-
-                                    </tr>
-                                  </ng-template>
-                              </p-table>
-                            </div>
-                            <div class="import-button" *ngIf="collapseright" (click)="displayImported()"><button>SELECT</button></div>
-                          </div>
-                      </div>
-                    </div>
-
-                    <div class="body-wrap-body" *ngIf="displayImport">
-                      <div class="body-wraper">
-                        <div class="body-wraper-header">
-                          <div class="body-wraper-header-left">
-                            <hr>
-                            <div>Exposure Summaries</div>
-                          </div>
-                          <div class="body-wraper-header-right-summary" >
-                            <nz-select *ngIf="collapsefooter" nzShowSearch nzAllowClear [(ngModel)]="list4value">
-                              <nz-option *ngFor="let op of list4" [nzLabel]="op" [nzValue]="op"></nz-option>
-                            </nz-select>
-                            <div class="icon-drop">
-                              <i  *ngIf="collapsefooter" nz-icon nzType="up" (click)="collapseFooter()" nzTheme="outline"></i>
-                              <i nz-icon *ngIf="!collapsefooter" (click)="collapseFooter()" style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
-                            </div>
-                          </div>
-                        </div>
-                        <div class="summary-info" *ngIf="collapsefooter">
-                          <table>
-                            <thead>
-                              <tr>
-                                <th style="min-width:60px">Status</th>
-                                <th style="min-width:220px">Portfolio</th>
-                                <th style="min-width:120px">Exposed Currency</th>
-                                <th style="min-width:120px">Target Currency</th>
-                                <th style="min-width:60px">EDM</th>
-                                <th style="min-width:70px">Import ID</th>
-                                <th style="min-width:220px">Date Import</th>
-                                <th style="min-width:90px">User 1</th>
-                                <th style="min-width:35px"></th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              <tr *ngFor="let items of SummaryInfo">
-                                <th style="text-align: center"><div class="state" [ngClass]="{'state-false': !items.status}" ></div></th>
-                                <th>{{items.portfolio}}</th>
-                                <th>{{items.exposedCurrency}}</th>
-                                <th>{{items.TargetCurrency}}</th>
-                                <th>{{items.EDM}}</th>
-                                <th>{{items.importID}}</th>
-                                <th><i class="icon-event-outlined"></i>{{items.dateImport}}</th>
-                                <th>{{items.User1}}</th>
-                                <th><i class="icon-trash-alt"></i></th>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="body-wrap-body" *ngIf="displayImport">
-                      <div class="body-wrap-footer">
-                        <div class="body-wrap-footer-left">
-                            <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list5value">
-                                <nz-option *ngFor="let op of list5" [nzLabel]="op" [nzValue]="op"></nz-option>
-                            </nz-select>
-                            <label nz-radio [ngStyle]="" nzValue="A">Publish to ARC</label>
-                            <label nz-radio [ngStyle]="" nzValue="B">Publish for Pricing</label>
-                        </div>
-                        <div class="body-wrap-footer-right">
-                          <button nz-button>IMPORT</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div class="search-bar-result-list">
+                  <ul>
+                    <li *ngFor="let RDM of RDM" class="poover-menu-item" (click)="toggleItems(RDM)" [ngClass]="{'poover-menu-item-active': RDM.selected}" >
+                      <span class="logo" style="background: #03DAC4">R</span> <span>{{RDM?.name}}</span> <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': RDM.selected}" ></i>
+                    </li>
+                  </ul>
+                </div>
+                <div class="search-bar-result-button">
+                  <button (click)="selectedItem(2)" nz-button>SELECT</button>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </nz-tab>
-    </ng-container>
+      </div>
 
-  </nz-tabset>
-</div>
+      <div class="body-wrap-body" style="justify-content: space-between" *ngIf="displayListEDM || displayListRDM">
+        <div class="left" [ngClass]="{'right-collapsed': !collapseright}">
+          <div class="body-wraper">
+            <div class="body-wraper-header">
+              <div class="body-wraper-header-left">
+                <hr>
+                <div>Selected EDMs & RDMs</div>
+              </div>
+            </div>
+            <div class="list-items" *ngIf="displayListEDM && collapseright">
+              <span class="list-items-title">EDM</span>
+              <ul>
+                <li *ngFor="let itemsE of listEDM" class="poover-menu-item" (click)="toggleItemsListRDM(itemsE)" [ngClass]="{'poover-menu-item-active': itemsE.selected}" >
+                  <span class="logo" style="background: #0700CF;">E</span> <span [title]="itemsE.name" class="text">{{itemsE?.name}}</span> <span class="reference">{{itemsE?.Reference}}</span> <i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}" ></i>
+                </li>
+              </ul>
+            </div>
+            <div class="list-items" *ngIf="displayListRDM && collapseright">
+              <span class="list-items-title">RDM</span>
+              <ul>
+                <li *ngFor="let itemsR of listRDM" class="poover-menu-item" (click)="toggleItemsListRDM(itemsR)" [ngClass]="{'poover-menu-item-active': itemsR.selected}" >
+                  <span class="logo" style="background: #03DAC4">R</span> <span [title]="itemsR.name" class="text">{{itemsR?.name}}</span> <span class="reference">{{itemsR?.Reference}}</span> <i class="logo-right" [ngClass]="{'icon-check_24px': itemsR.selected}" ></i>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="right" [ngClass]="{'right-collapsed': !collapseright}">
+          <div class="body-wraper">
+            <div class="body-wraper-header">
+              <div class="body-wraper-header-left">
+                <hr>
+                <div>Select For Import</div>
+              </div>
+              <div class="body-wraper-header-right">
+                <i nz-icon *ngIf="collapseright" (click)="collapseRight()" nzType="up" nzTheme="outline"></i>
+                <i nz-icon *ngIf="!collapseright" (click)="collapseRight()" style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
+              </div>
+            </div>
+            <div class="show-table" *ngIf="collapseright">
+              <p-table #dt [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="tableLeft" [scrollable]="true" scrollHeight="340px" frozenWidth="275px">
+                <ng-template pTemplate="colgroup" let-columns>
+                  <colgroup>
+                    <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                  </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <th *ngFor="let col of columns">
+                      <div *ngIf="col.header !== 'checked'">{{col.header}}</div>
+                      <div class="search-bar-table" *ngIf="col.header !== 'checked' && col.header !== 'id' && col.header !== 'Already Imported'">
+                        <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                      </div>
+                    </th>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body"  let-rowData let-columns="columns">
+                  <tr *ngIf="displayTable">
+                    <td  *ngFor="let col of columns" [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                      <div style=" margin-top: -12px; font-size:12px;" *ngIf="col.field === 'checked'">
+                        <i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
+                      <div *ngIf="col.field === 'id'">{{rowData[col.field]}}</div>
+                      <div *ngIf="col.field === 'name'">{{rowData[col.field]}}</div>
+                      <div style="font-size:20px; color: #0700CF; text-align: center;" *ngIf="col.field === 'AlreadyImported'">
+                        <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}" ></i></div>
+                      <div *ngIf="col.field === 'description'">{{rowData[col.field]}}</div>
+                      <div *ngIf="col.field === 'engineVersion'">{{rowData[col.field]}}</div>
+                      <div *ngIf="col.field === 'groupeType'">{{rowData[col.field]}}</div>
+                      <div *ngIf="col.field === 'cedant'">{{rowData[col.field]}}</div>
+                    </td>
+                  </tr>
+                  <tr *ngIf="!displayTable">
 
-<ng-template let-title='title' let-year='year' let-tabsLength='tabsLength' let-index='index' #tabTitle>
-  <div class="tab-title-container pl-3">
-    <h3 class="tab-title">{{title}}</h3>
-    <nz-dropdown [nzTrigger]="'click'">
-      <a nz-dropdown>
-        <h6 class="d-flex align-items-center sub-title">{{year}} <i class="pl-3" nz-icon type="down"></i></h6>
-      </a>
-      <ul nz-menu>
-        <li (click)="addWs(title,y)" *ngFor="let y of generateYears(year)" nz-menu-item>{{y}}</li>
-      </ul>
-    </nz-dropdown>
+                  </tr>
+                </ng-template>
+              </p-table>
+            </div>
+            <div class="import-button" *ngIf="collapseright" (click)="displayImported()" disabled><button>SELECT</button></div>
+          </div>
+        </div>
+      </div>
 
-    <div (click)="close(index)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
+      <div class="body-wrap-body" *ngIf="displayImport">
+        <div class="body-wraper">
+          <div class="body-wraper-header">
+            <div class="body-wraper-header-left">
+              <hr>
+              <div>Exposure Summaries</div>
+            </div>
+            <div class="body-wraper-header-right-summary" >
+              <nz-select *ngIf="collapsefooter" nzShowSearch nzAllowClear [(ngModel)]="list4value">
+                <nz-option *ngFor="let op of list4" [nzLabel]="op" [nzValue]="op"></nz-option>
+              </nz-select>
+              <div class="icon-drop">
+                <i  *ngIf="collapsefooter" nz-icon nzType="up" (click)="collapseFooter()" nzTheme="outline"></i>
+                <i nz-icon *ngIf="!collapsefooter" (click)="collapseFooter()" style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
+              </div>
+            </div>
+          </div>
+          <div class="summary-info" *ngIf="collapsefooter">
+            <table>
+              <thead>
+              <tr>
+                <th style="min-width:60px">Status</th>
+                <th style="min-width:220px">Portfolio</th>
+                <th style="min-width:120px">Exposed Currency</th>
+                <th style="min-width:120px">Target Currency</th>
+                <th style="min-width:60px">EDM</th>
+                <th style="min-width:70px">Import ID</th>
+                <th style="min-width:220px">Date Import</th>
+                <th style="min-width:90px">User 1</th>
+                <th style="min-width:35px"></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let items of SummaryInfo">
+                <th style="text-align: center"><div class="state" [ngClass]="{'state-false': !items.status}" ></div></th>
+                <th>{{items.portfolio}}</th>
+                <th>{{items.exposedCurrency}}</th>
+                <th>{{items.TargetCurrency}}</th>
+                <th>{{items.EDM}}</th>
+                <th>{{items.importID}}</th>
+                <th><i class="icon-event-outlined"></i>{{items.dateImport}}</th>
+                <th>{{items.User1}}</th>
+                <th><i class="icon-trash-alt"></i></th>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="body-wrap-body" *ngIf="displayImport">
+        <div class="body-wrap-footer">
+          <div class="body-wrap-footer-left">
+            <nz-select  nzShowSearch nzAllowClear [(ngModel)]="list5value">
+              <nz-option *ngFor="let op of list5" [nzLabel]="op" [nzValue]="op"></nz-option>
+            </nz-select>
+            <label nz-radio [ngStyle]="" nzValue="A">Publish to ARC</label>
+            <label nz-radio [ngStyle]="" nzValue="B">Publish for Pricing</label>
+          </div>
+          <div class="body-wrap-footer-right">
+            <button nz-button>IMPORT</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+</div>
 
 

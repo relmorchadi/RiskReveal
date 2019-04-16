@@ -1,255 +1,65 @@
-<div class="card-container">
-  <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-
-    <ng-container *ngFor="let tab of tabs">
-      <ng-template #titleTemplate>
-        <ng-container
-          [ngTemplateOutlet]="tabTitle"
-          [ngTemplateOutletContext]="{index:tab,
-          tabsLength:tabs.length,
-          title:tab.title,
-          year:tab.year}"
-        ></ng-container>
-      </ng-template>
-      <nz-tab  [nzTitle]="titleTemplate">
-        <div nz-row>
-          <div nz-col nzSpan="24">
-            <div  class="row tab-detail p-2">
-              <!--
-              <div class="col-md-1 col-lg-1"  >
-                 <div class="d-inline-flex flex-column justify-content-center align-items-center">
-                 <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail" class="mx-4 btn-detail d-flex justify-content-center align-items-center"
-                         nz-button nzType="primary" nzSize="default" nzShape="circle">
-                   <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;" nz-icon type="down" theme="outline"></i>
-                   <i *ngIf="!collapseWorkspaceDetail"style="color: #16617a;" nz-icon type="up" theme="outline"></i>
-                 </button>
-                 <small class="btn-detail-color">{{collapseWorkspaceDetail ? 'Detail' : 'Hide'}}</small>
-               </div>
-
-              </div>   -->
-              <div class="col-md-12 pl-md-4 col-lg-6" >
-                <div class="d-inline-flex flex-column">
-                  <h3 class="workspace-title">XL, inc, vol, ind, acc, auto casco <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
-                  <h4 class="workspace-title"> 20769 | A.M.M.A (BEL) </h4>
-                </div>
-              </div>
-              <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
-                <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
-                  <span><b>4/6</b></span>
-                </div>
-                <div  nzTitle="Exposures" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
-                  <span>
-                  <b>1</b>
-                </span>
-                </div>
-                <div  nzTitle="Qualifying PLTs" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-box mb-2"></i>
-                  <span>
-                  <b>3</b>
-                </span>
-                </div>
-                <div  nzTitle="Published For Pricing" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-note mb-2"></i>
-                  <span>
-                  <b>3</b>
-                </span>
-                </div>
-                <div  nzTitle="Priced" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
-                  <span>
-                  <b>2</b>
-                </span>
-                </div>
-                <div  nzTitle="Published For Accumulation" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
-                  <span>
-                  <b>-</b>
-                </span>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div [ngClass]="{'collapse':collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
-            <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
-
-              <div class="pl-md-4 col-md-12 col-lg-6">
-                <div nz-row class="pt-lg-5 pt-md-0" style="padding-top:0px !important;">
-                  <div nz-col nz-row [nzSpan]="12">
-                    <div class="row">
-                      <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
-                      <span class="col-5 tab-metadata-value">2-SCOR REEASS</span>
-                    </div>
-                    <div class="row">
-                      <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary Leger :</span>
-                      <span class="col-5 tab-metadata-value">2.2 - PARIS</span>
-                    </div>
-                    <div class="row">
-                      <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Contract Source Type :</span>
-                      <span class="col-5 tab-metadata-value">Omega</span>
-                    </div>
-                  </div>
-                  <div nz-col nz-row [nzSpan]="12">
-                    <div nz-col [nzSpan]="12">
-                      <i style="font-size: 1.6em; position:absolute; margin-left:-30px;" class="icon-calendar-alt mb-4"></i>
-                      <span class="d-block tab-metadata-title">Inception Date :</span>
-                      <span class="d-block tab-metadata-value">31/10/2019</span>
-                      <span class="d-block tab-metadata-title">Expiry Date :</span>
-                      <span class="d-block tab-metadata-value">21/10/2020</span>
-                    </div>
-                    <div nz-col class="border-left pl-3" [nzSpan]="12">
-                      <span class="d-block tab-metadata-title">Treaty Section :</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°1</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°2</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°3</span>
-                      <a class="tab-metadata-more" href="">See All</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div class="pl-md-4 col-md-12 col-lg-6" style="margin-top: -60px;" >
-                <h5 class="tab-kpi-title">In Scope Region Perils</h5>
-                <div class="d-flex">
-                  <div style="flex:1" class="text-center d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-my_location_24px mb-4"></i>
-                    <span style="flex:1" class="d-flex align-items-start mb-1 justify-content-center kpi-icon-title">Scope</span>
-                    <span class="kpi-icon-value"><b>4/6</b></span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-design-tool mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Exposures</span>
-                    <span class="kpi-icon-value"><b>1</b></span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-box mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Qualifying PLTs</span>
-                    <span class="kpi-icon-value">
-                  <b>3</b>
-                </span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-note mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Published For Pricing</span>
-                    <span class="kpi-icon-value">
-                  <b>3</b>
-                </span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-dollar-alt mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Priced</span>
-                    <span class="kpi-icon-value">
-                  <b>2</b>
-                </span>
-                  </div>
-                  <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                    <i style="font-size: 1.6em" class="icon-focus-add mb-4"></i>
-                    <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Published For Accumulation</span>
-                    <span class="kpi-icon-value">
-                  <b>-</b>
-                </span>
-                  </div>
-                </div>
-              </div>
-
-            </div>
-          </div>
-          <div nz-col [nzSpan]="24">
-            <div style="display: flex">
-              <div style="flex: 0">
-                <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
-              </div>
-              <div class="workspace-main-content">
-               <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
-                        nz-button nzType="primary" nzSize="large" nzShape="circle">
-                  <i style="color: white;" nz-icon type="plus" theme="outline"></i>
-                </button>
-                -->
-                <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
-                        class="mx-4 btn-detail d-flex justify-content-center align-items-center"
-                        nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
-                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
-                </button>
-               <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
-                  <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
-                </ul>
-                -->
-                <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-                        nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i style="color: #16617a;" nz-icon theme="outline">
-                    <i class="icon-map-pin-alt"></i>
-                  </i>
-                </button>
-                <div class="row pl-2 ml-4 mt-4">
-                 <div class="col-11 pr-4">
-                   <span class="projects-title">Projects</span>
-                   <i nz-icon class="float-right mt-2" style="font-size: 22px; margin-top: 15px !important; margin-left: 20px;" nzType="appstore" nzTheme="outline"></i>
-                   <nz-select class="float-right mt-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="selectedPrStatus">
-                     <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
-                   </nz-select>
-                 </div>
-                </div>
-                <div class="card-holder-wrap">
-                  <div class="card-holder">
-                    <ng-container (click)="selectproject('project1')" *ngTemplateOutlet="project1"></ng-container>
-                  </div>
-                  <div class="card-holder">
-                    <ng-container (click)="selectproject('project2')" *ngTemplateOutlet="project2"></ng-container></div>
-                  <div class="card-holder">
-                    <ng-container (click)="selectproject('project3')" *ngTemplateOutlet="project3"></ng-container>
-                  </div>
-                  <div class="card-holder">
-                    <ng-container (click)="selectproject('project4')" *ngTemplateOutlet="project4"></ng-container>
-                  </div>
-                </div>
-                <!--div style="width:80%;margin:auto;">
-                  <ng-masonry-grid
-                  [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }"
-                  [useAnimation]="true"
-                  [useImagesLoaded]="true"
-                  [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
-                    <ng-masonry-grid-item id="{{'masonry-item-'+1}}" >
-                      <ng-container class="masonry-item" *ngTemplateOutlet="project1"></ng-container>
-                    </ng-masonry-grid-item>
-                    <ng-masonry-grid-item id="{{'masonry-item-'+2}}">
-                      <ng-container class="masonry-item" *ngTemplateOutlet="project2"></ng-container>
-                    </ng-masonry-grid-item>
-                    <ng-masonry-grid-item id="{{'masonry-item-'+3}}">
-                      <ng-container class="masonry-item" *ngTemplateOutlet="project3"></ng-container>
-                    </ng-masonry-grid-item>
-                    <ng-masonry-grid-item id="{{'masonry-item-'+4}}">
-                      <ng-container class="masonry-item" *ngTemplateOutlet="project4"></ng-container>
-                    </ng-masonry-grid-item >
-                  </ng-masonry-grid>
-                </div-->
-              </div>
-            </div>
-          </div>
-        </div>
-      </nz-tab>
-    </ng-container>
-
-  </nz-tabset>
-</div>
-<ng-template let-title='title' let-year='year' let-tabsLength='tabsLength' let-index='index' #tabTitle>
-  <div class="tab-title-container pl-3">
-    <h3 class="tab-title">{{title}}</h3>
-    <nz-dropdown [nzTrigger]="'click'">
-      <a nz-dropdown>
-        <h6 class="d-flex align-items-center sub-title">{{year}} <i class="pl-3" nz-icon type="down"></i></h6>
-      </a>
-      <ul style="padding:0" nz-menu>
-        <li (click)="addWs(title,y)" *ngFor="let y of generateYears(year)" nz-menu-item>{{y}}</li>
-      </ul>
-    </nz-dropdown>
-
-    <div (click)="close(index)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
+<div class="workspace-main-content">
+  <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
+           nz-button nzType="primary" nzSize="large" nzShape="circle">
+     <i style="color: white;" nz-icon type="plus" theme="outline"></i>
+   </button>
+   -->
+  <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
+   </ul>
+   -->
+  <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+          nz-button nzType="primary" nzSize="default" nzShape="circle">
+    <i style="color: #16617a;" nz-icon theme="outline">
+      <i class="icon-map-pin-alt"></i>
+    </i>
+  </button>
+  <div class="row pl-2 ml-4 mt-4">
+    <div class="col-11 pr-4">
+      <span class="projects-title">Projects</span>
+      <i nz-icon class="float-right mt-2" style="font-size: 22px; margin-top: 15px !important; margin-left: 20px;" nzType="appstore" nzTheme="outline"></i>
+      <nz-select class="float-right mt-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="selectedPrStatus">
+        <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
+      </nz-select>
+    </div>
   </div>
-</ng-template>
+  <div class="card-holder-wrap">
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project1')" *ngTemplateOutlet="project1"></ng-container>
+    </div>
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project2')" *ngTemplateOutlet="project2"></ng-container></div>
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project3')" *ngTemplateOutlet="project3"></ng-container>
+    </div>
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project4')" *ngTemplateOutlet="project4"></ng-container>
+    </div>
+  </div>
+  <!--div style="width:80%;margin:auto;">
+    <ng-masonry-grid
+    [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }"
+    [useAnimation]="true"
+    [useImagesLoaded]="true"
+    [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
+      <ng-masonry-grid-item id="{{'masonry-item-'+1}}" >
+        <ng-container class="masonry-item" *ngTemplateOutlet="project1"></ng-container>
+      </ng-masonry-grid-item>
+      <ng-masonry-grid-item id="{{'masonry-item-'+2}}">
+        <ng-container class="masonry-item" *ngTemplateOutlet="project2"></ng-container>
+      </ng-masonry-grid-item>
+      <ng-masonry-grid-item id="{{'masonry-item-'+3}}">
+        <ng-container class="masonry-item" *ngTemplateOutlet="project3"></ng-container>
+      </ng-masonry-grid-item>
+      <ng-masonry-grid-item id="{{'masonry-item-'+4}}">
+        <ng-container class="masonry-item" *ngTemplateOutlet="project4"></ng-container>
+      </ng-masonry-grid-item >
+    </ng-masonry-grid>
+  </div-->
+</div>
 <ng-template  #project1>
   <div class="project-card mx-1">
     <div class="project-header">

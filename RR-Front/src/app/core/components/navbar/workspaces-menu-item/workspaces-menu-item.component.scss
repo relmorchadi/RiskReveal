@@ -28,5 +28,10 @@
   }
 }
 
+.gray-search-input{
+  &:focus{
+    outline:0;
+  }
+}
 
 
