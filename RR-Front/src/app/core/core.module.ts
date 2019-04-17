@@ -5,7 +5,7 @@ import {environment} from '../../environments/environment'
 import {NgxsHmrLifeCycle, NgxsHmrSnapshot as Snapshot} from '@ngxs/hmr-plugin';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {NgxsFormPluginModule} from '@ngxs/form-plugin';
-import {RouterStateSerializer} from '@ngxs/router-plugin';
+import {NgxsRouterPluginModule, RouterStateSerializer} from '@ngxs/router-plugin';
 import {CustomRouterStateSerializer} from './service/router/RouterStateSerializer'
 import {CommonModule} from '@angular/common';
 import { registerLocaleData } from '@angular/common';
@@ -17,6 +17,7 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
 import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
+import {SearchNavBarState} from "./store/states/search-nav-bar.state";
 
 registerLocaleData(en);
 
@@ -27,9 +28,10 @@ registerLocaleData(en);
     RouterModule,
     FormsModule,
     SharedModule,
+    NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    NgxsModule.forRoot([], {developmentMode: !environment.production}),
+    NgxsModule.forRoot([SearchNavBarState], {developmentMode: !environment.production}),
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
   exports: [
