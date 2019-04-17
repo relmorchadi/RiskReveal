@@ -1,6 +1,6 @@
 
 <div routerLink="/workspace" class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}} &nbsp;&nbsp; </div>
-<div style="color: rgba(0,0,0,0.6); cursor: pointer" nz-popover [nzContent]="workspacePopoverContent" nzTrigger="click" >
+<div style="color: rgba(0,0,0,0.6); cursor: pointer" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click" >
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 5px"></i>
 </div>
 <ng-template #workspacePopoverContent>
@@ -13,9 +13,24 @@
             <i class="icon-search_24px"></i>
             <input class="gray-search-input" (input)="searchNewWorkspace($event)"/>
           </div>
+          <nz-alert
+            nzType="info"
+            nzCloseable
+            nzShowIcon
+            nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"
+          ></nz-alert>
           <ul>
             <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)" [ngClass]="{'poover-menu-item-active': workspace.selected}" >
-              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
+              <div class="items-popover-wrapper">
+                <i class="icon-window-section"></i>
+                <div class="item-popover-context">
+                  <span class="item-popover-context-header">{{workspace?.workspaceName}}</span>
+                  <span class="item-popover-context-footer">{{workspace?.cedantName}} {{workspace?.programName}}</span>
+                </div>
+              </div>
+              <div class="items-popover-info">
+                {{workspace?.year}} - {{workspace?.id}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
+              </div>
             </li>
           </ul>
           <div class="mt-2">
@@ -119,15 +134,15 @@
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>
-    <span style="width: 90px">Favourites &nbsp; <span class="badge badge-light tab-badge">6</span></span>
+    <span style="width: 90px">Favourites &nbsp; <span class="badge badge-light tab-badge">0</span></span>
   </ng-template>
 
   <ng-template #AssignedHeaderContent>
-    <span style="width: 80px">Assigned &nbsp; <span class="badge badge-light tab-badge">3</span></span>
+    <span style="width: 80px">Assigned &nbsp; <span class="badge badge-light tab-badge">0</span></span>
   </ng-template>
 
   <ng-template #PinnedHeaderContent>
-    <span style="width: 72px">Pinned &nbsp; <span class="badge badge-light tab-badge">3</span></span>
+    <span style="width: 72px">Pinned &nbsp; <span class="badge badge-light tab-badge">0</span></span>
   </ng-template>
 
 </ng-template>

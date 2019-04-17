@@ -6,7 +6,7 @@
         <nz-tab *ngFor="let tab of tabs" [nzTitle]="'Dashboard N²'+tab">
           <div style="height: 1000px" nz-row>
             <gridster [options]="options" style="background-color: transparent;">
-              <!-- Earch grister-item is generated with *ngFor
+              /** Earch grister-item is generated with *ngFor **/
               <gridster-item style="overflow: auto" [item]="{x:0,y:0,cols:10,rows:5}">
                 <renewal-contract-scope></renewal-contract-scope>
              </gridster-item>
@@ -22,7 +22,13 @@
         </nz-tab>
       </nz-tabset> -->
       <nz-tabset [nzSelectedIndex]="selectedDashboard" class="dashboard-content">
-        <nz-tab [nzForceRender]="true" *ngFor="let dashboard of dashboards" [nzTitle]="dashboard?.name">
+        <nz-tab [nzForceRender]="true" *ngFor="let dashboard of visibleTabs" [nzTitle]="titleTemplate">
+          <ng-template #titleTemplate>
+            <div class="tabs-header-wrapper">
+              {{ dashboard?.name }}
+              <i nz-icon type="close" (click)="closeTab(dashboard)" class="ant-tabs-close-x"></i>
+            </div>
+          </ng-template>
           <div style="height: 1000px;width: 100%">
             <gridster [options]="options" style="background-color: transparent;">
               <gridster-item *ngFor="let item of dashboard.items" style="overflow: auto" [item]="item?.position">
@@ -64,7 +70,9 @@
                    nzShowSearch nzAllowClear
                    nzPlaceHolder="Select Dashboard" [(ngModel)]="selectedDashboard">
           <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
-            {{d.name}} <i class="icon-remove_red_eye_24px selected-item-icon"></i></nz-option>
+            {{d.name}} <i *ngIf="d.visible" (click)="closeTab(d)" class="icon-remove_red_eye_24px selected-item-icon"></i>
+            <i *ngIf="!d.visible" nz-icon (click)="activeView(d)" nzType="eye-invisible" class="selected-item-icon" nzTheme="outline"></i>
+          </nz-option>
         </nz-select>
         <div class="edit-dashboard-section">
           <input style="width: 80%" class="hover-input" placeholder="" (change)="changeDashboardName($event.target.value)" [(ngModel)]="dashboardTitle">
@@ -79,8 +87,9 @@
           <li *ngFor="let treaty of widgetsMockData.treaty" class="widget-item"
               (click)="treaty.selected = !treaty.selected "
               [ngClass]="{'active-widget-item': treaty.selected}">
-            <i [ngClass]="treaty.icon"></i> {{treaty.title}} <i class="float-right mr-1 mt-1"
-                                                                [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
+            <i [ngClass]="treaty.icon"></i> {{treaty.title}}
+            <i class="float-right mr-1 mt-1"
+               [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
           </li>
         </ul>
         <div class="highlight" style="margin-top: 10px">

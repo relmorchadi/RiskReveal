@@ -1,4 +1,4 @@
-<nz-table
+<!-- <nz-table
   *ngIf ="virtualScroll"
   nzVirtualScroll
   [nzVirtualItemSize]="12"
@@ -26,7 +26,9 @@
   <tbody>
   <ng-template nz-virtual-scroll let-data let-index="index">
     <tr>
-      <td *ngFor="let col of tableColumn">{{ data[col.field] }}</td>
+      <td *ngFor="let col of tableColumn">
+      <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i>
+      {{ data[col.field] }}</td>
     </tr>
   </ng-template>
   </tbody>
@@ -37,7 +39,7 @@
   #dt
   *ngIf="!virtualScroll"
   [nzData]="listOfData"
-  [nzPageSize]="numberOfElement"
+  [nzPageSize]="totalRecords"
 >
   <thead>
   <tr >
@@ -57,20 +59,68 @@
   </thead>
   <tbody>
     <tr *ngFor="let data of dt.data">
-      <td *ngFor="let col of tableColumn">{{ data[col.field] }}</td>
+      <td *ngFor="let col of tableColumn">
+      <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i>
+      {{ data[col.field] }}</td>
     </tr>
   </tbody>
 </nz-table>
 
 <ng-template #suffixIconSearch>
   <i nz-icon type="search"></i>
-</ng-template>
+</ng-template-->
 
 
 
-<!--
+
+<p-table *ngIf="virtualScroll"
+  [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
+  [scrollable]="true" [scrollHeight]="tableHeight" [rows]="20" [totalRecords]="totalRecords"
   [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
-  [lazy]="true" [virtualRowHeight]="34" [showLoader]="false"
+  [lazy]="true" [virtualRowHeight]="50" [showLoader]="false"
+  >
+
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+      <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
+    </colgroup>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+     <tr *ngIf="!sortable">
+       <th *ngFor="let col of columns" pResizableColumn>
+         <span *ngIf="col.display">{{col.header}}</span>
+         <div class="search-bar-table" *ngIf="col.filtered">
+           <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+           <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+         </div>
+       </th>
+    </tr>
+    <tr *ngIf="sortable">
+      <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sorted ? col.field : null">
+        <span *ngIf="col.display">{{col.header}}</span><p-sortIcon *ngIf="col.sorted" [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowData let-columns="columns">
+      <tr>
+        <td *ngFor="let col of columns" >
+          <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col.field]}}
+        </td>
+      </tr>
+  </ng-template>
+  <ng-template pTemplate="loadingbody" let-columns="columns">
+    <tr style="height:34px">
+      <td *ngFor="let col of columns">
+        <div class="loading-text"></div>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
+
+<p-table *ngIf="!virtualScroll"
+         [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
+         [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
+>
 
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -78,33 +128,26 @@
     </colgroup>
   </ng-template>
   <ng-template pTemplate="header" let-columns>
-      <tr>
-        <th *ngFor="let col of columns" [pSortableColumn]="col.sorted ? col.field : null">
-          <span *ngIf="col.display">{{col.header}}</span><p-sortIcon *ngIf="col.sorted" [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-          <div class="search-bar-table" *ngIf="col.filtred">
-              <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-              <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
-          </div>
-        </th>
-      </tr>
+    <tr *ngIf="!sortable">
+      <th *ngFor="let col of columns" pResizableColumn>
+        <span *ngIf="col.display">{{col.header}}</span>
+        <div class="search-bar-table" *ngIf="col.filtered">
+          <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+          <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+        </div>
+      </th>
+    </tr>
+    <tr *ngIf="sortable">
+      <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sorted ? col.field : null">
+        <span *ngIf="col?.display">{{col.header}}</span><p-sortIcon *ngIf="col?.sorted" [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+      </th>
+    </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-columns="columns">
-      <tr>
-        <td *ngFor="let col of columns" >
-          {{rowData[col.field]}}
-        </td>
-        <td  *ngFor="let col of columns" [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
-          <div style=" margin-top: -12px; font-size:12px;" *ngIf="col.field === 'checked'">
-            <i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
-          <div *ngIf="col.field === 'id'">{{rowData[col.field]}}</div>
-          <div *ngIf="col.field === 'name'">{{rowData[col.field]}}</div>
-          <div style="font-size:20px; color: #0700CF; text-align: center;" *ngIf="col.field === 'AlreadyImported'">
-            <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}" ></i></div>
-          <div *ngIf="col.field === 'description'">{{rowData[col.field]}}</div>
-          <div *ngIf="col.field === 'engineVersion'">{{rowData[col.field]}}</div>
-          <div *ngIf="col.field === 'groupeType'">{{rowData[col.field]}}</div>
-          <div *ngIf="col.field === 'cedant'">{{rowData[col.field]}}</div>
-        </td>
-      </tr>
+    <tr>
+      <td *ngFor="let col of columns" >
+        <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i> {{rowData[col.field]}}
+      </td>
+    </tr>
   </ng-template>
-</nz-table>-->
+</p-table>

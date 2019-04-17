@@ -35,8 +35,9 @@
       <ul class="widgets-list">
         <li *ngFor="let treaty of widgetsMockData.treaty" class="widget-item" (click)="treaty.selected = !treaty.selected "
             [ngClass]="{'active-widget-item': treaty.selected}">
-          <i [ngClass]="treaty.icon"></i> {{treaty.title}} <i class="float-right mr-1 mt-1"
-                                                              [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
+          <i [ngClass]="treaty.icon"></i> {{treaty.title}}
+          <i class="float-right mr-1 mt-1"
+             [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
         </li>
       </ul>
       <div class="highlight" style="margin-top: 10px">

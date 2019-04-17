@@ -27,7 +27,7 @@ const initiaState: SearchNavBar = {
   data: [],
   recentSearch: [],
   showRecentSearch: [],
-  tables: ['CEDANT', 'COUNTRY', 'TREATY', 'YEAR'],
+  tables: ['CEDANT', 'COUNTRY', 'TREATY', 'YEAR', "PROGRAM"],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
@@ -108,12 +108,12 @@ export class SearchNavBarState implements NgxsOnInit {
         key: 'data',
         value: _.concat(ctx.getState().data, _.map(payload, 'content'))
       }));
-    })
+    });
   }
 
   @Action(AddBadgeSearchStateAction)
   addBadge(ctx: StateContext<SearchNavBar>, {badge}: AddBadgeSearchStateAction) {
-    ctx.patchState({badges: [...ctx.getState().badges, badge]})
+    ctx.patchState({badges: [...ctx.getState().badges, badge]});
   }
 
 
@@ -136,7 +136,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   private searchLoader(keyword, table) {
     return this._searchService.searchByTable(keyword || '', '5', table || '');
-  };
+  }
 
   // @Action(SearchContractsCountSuccessAction)
   // searchContractsSuccess(ctx: StateContext<SearchNavBarState>,{result}: SearchContractsCountSuccessAction){

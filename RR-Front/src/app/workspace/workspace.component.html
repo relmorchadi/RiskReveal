@@ -1,14 +1,24 @@
 <div class="card-container">
   <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-
-    <ng-container *ngFor="let tab of tabs">
+<!--    cedantCode: "22231"
+cedantName: "SCOR SE"
+ledgerName: "UK"
+subsidiaryId: "1"
+subsidiaryName: "SCOR UK"
+treatySections: ["1"]
+uwYear: 2019
+workSpaceId: "00F0020"
+workspaceName: "SBS-SCOR UK-UK"
+years: (2) ["2018", "2019"]-->
+    <ng-container *ngFor="let tab of (getSearchedWorkspaces() | async)">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
           [ngTemplateOutletContext]="{index:tab,
-          tabsLength:tabs.length,
-          title:tab.title,
-          year:tab.year}"
+          tabsLength:(getSearchedWorkspaces() | async).length,
+          title:tab.workSpaceId,
+          year:tab.uwYear,
+          years:tab.years}"
         ></ng-container>
       </ng-template>
       <nz-tab  [nzTitle]="titleTemplate">
@@ -17,44 +27,34 @@
             <div  class="row tab-detail p-2">
               <div class="col-md-12 pl-md-4 col-lg-6" >
                 <div class="d-inline-flex flex-column">
-                  <h3 class="workspace-title">XL, inc, vol, ind, acc, auto casco <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
-                  <h4 class="workspace-title"> 20769 | A.M.M.A (BEL) </h4>
+                  <h3 class="workspace-title">{{tab.workspaceName}} <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
+                  <h4 class="workspace-title"> {{tab.cedantCode}} | {{tab.cedantName}} </h4>
                 </div>
               </div>
               <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
                 <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                   <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
-                  <span><b>4/6</b></span>
+                  <span><b>-</b></span>
                 </div>
                 <div  nzTitle="Exposures" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                   <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
-                  <span>
-                  <b>1</b>
-                </span>
+                  <span><b>-</b></span>
                 </div>
                 <div  nzTitle="Qualifying PLTs" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                   <i style="font-size: 1.6em" class="icon-box mb-2"></i>
-                  <span>
-                  <b>3</b>
-                </span>
+                  <span><b>-</b></span>
                 </div>
                 <div  nzTitle="Published For Pricing" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                   <i style="font-size: 1.6em" class="icon-note mb-2"></i>
-                  <span>
-                  <b>3</b>
-                </span>
+                  <span><b>-</b></span>
                 </div>
                 <div  nzTitle="Priced" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                   <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
-                  <span>
-                  <b>2</b>
-                </span>
+                  <span><b>-</b></span>
                 </div>
                 <div  nzTitle="Published For Accumulation" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                   <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
-                  <span>
-                  <b>-</b>
-                </span>
+                  <span><b>-</b></span>
                 </div>
               </div>
             </div>
@@ -67,11 +67,11 @@
                   <div nz-col nz-row [nzSpan]="12">
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
-                      <span class="col-5 tab-metadata-value">2-SCOR REEASS</span>
+                      <span class="col-5 tab-metadata-value">{{tab.subsidiaryId}}-{{tab.subsidiaryName}}</span>
                     </div>
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary Leger :</span>
-                      <span class="col-5 tab-metadata-value">2.2 - PARIS</span>
+                      <span class="col-5 tab-metadata-value">{{tab.ledgerName}}</span>
                     </div>
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Contract Source Type :</span>
@@ -88,10 +88,8 @@
                     </div>
                     <div nz-col class="border-left pl-3" [nzSpan]="12">
                       <span class="d-block tab-metadata-title">Treaty Section :</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°1</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°2</span>
-                      <span class="d-block tab-metadata-value">Treaty Section N°3</span>
-                      <a class="tab-metadata-more" href="">See All</a>
+                      <span *ngFor="let section of tab.treatySections.slice(0,3)" class="d-block tab-metadata-value">Treaty Section N°{{section}}</span>
+                      <a *ngIf="tab.treatySections.length > 2" class="tab-metadata-more">See All</a>
                     </div>
                   </div>
                 </div>
@@ -102,32 +100,29 @@
                   <div style="flex:1" class="text-center d-inline-flex flex-column justify-content-end">
                     <i style="font-size: 1.6em" class="icon-my_location_24px mb-4"></i>
                     <span style="flex:1" class="d-flex align-items-start mb-1 justify-content-center kpi-icon-title">Scope</span>
-                    <span class="kpi-icon-value"><b>4/6</b></span>
+                    <span class="kpi-icon-value"><b>-</b></span>
                   </div>
                   <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
                     <i style="font-size: 1.6em" class="icon-design-tool mb-4"></i>
                     <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Exposures</span>
-                    <span class="kpi-icon-value"><b>1</b></span>
+                    <span class="kpi-icon-value"><b>-</b></span>
                   </div>
                   <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
                     <i style="font-size: 1.6em" class="icon-box mb-4"></i>
                     <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Qualifying PLTs</span>
-                    <span class="kpi-icon-value">
-                  <b>3</b>
+                    <span class="kpi-icon-value"><b>-</b>
                 </span>
                   </div>
                   <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
                     <i style="font-size: 1.6em" class="icon-note mb-4"></i>
                     <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Published For Pricing</span>
-                    <span class="kpi-icon-value">
-                  <b>3</b>
+                    <span class="kpi-icon-value"><b>-</b>
                 </span>
                   </div>
                   <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
                     <i style="font-size: 1.6em" class="icon-dollar-alt mb-4"></i>
                     <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Priced</span>
-                    <span class="kpi-icon-value">
-                  <b>2</b>
+                    <span class="kpi-icon-value"><b>-</b>
                 </span>
                   </div>
                   <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
@@ -162,15 +157,15 @@
 
   </nz-tabset>
 </div>
-<ng-template let-title='title' let-year='year' let-tabsLength='tabsLength' let-index='index' #tabTitle>
+<ng-template let-title='title' let-year='year' let-years='years' let-tabsLength='tabsLength' let-index='index' #tabTitle>
   <div class="tab-title-container pl-3">
     <h3 class="tab-title">{{title}}</h3>
     <nz-dropdown [nzTrigger]="'click'">
       <a nz-dropdown>
-        <h6 class="d-flex align-items-center sub-title">{{year}} <i class="pl-3" nz-icon type="down"></i></h6>
+        <h6 class="d-flex align-items-center sub-title">{{year}}<i class="pl-3" nz-icon type="down"></i></h6>
       </a>
       <ul style="padding:0" nz-menu>
-        <li (click)="addWs(title,y)" *ngFor="let y of generateYears(year)" nz-menu-item>{{y}}</li>
+        <li (click)="addWs(title,y)" *ngFor="let y of years" nz-menu-item>{{y}}</li>
       </ul>
     </nz-dropdown>
 

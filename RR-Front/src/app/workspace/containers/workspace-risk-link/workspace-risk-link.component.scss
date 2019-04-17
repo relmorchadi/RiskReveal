@@ -103,7 +103,7 @@
         background-color: transparent;
         border: none;
         border-bottom: 1px solid #0700CF;
-        border-radius: 0px;
+        border-radius: 0;
       }
       .ant-select-selection__rendered{
         color: #0700CF;
@@ -133,7 +133,7 @@
             color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 20.32px;	font-weight: 500;	letter-spacing: 0.25px;	line-height: 24px;
           }
           hr{
-            height: 4px;	background-color: #0700CF; margin: 0px;
+            height: 4px;	background-color: #0700CF; margin: 0;
           }
         }
         .body-wraper-header-right{
@@ -172,7 +172,7 @@
               background-color: transparent;
               border: none;
               border-bottom: 1px solid #0700CF;
-              border-radius: 0px;
+              border-radius: 0;
             }
             .ant-select-selection__rendered{
               color: #0700CF;
@@ -203,7 +203,7 @@
         margin:auto;
         padding: 20px 0 35px;
         .body-wraper-search{
-          width:380px;
+          width:450px;
           display:flex;
           flex-direction: column;
           user-select: none;
@@ -251,7 +251,7 @@
           .search-bar-result{
             z-index:1000;
             position:absolute;
-            width:380px;
+            width:450px;
             background-color: #fff;
             margin-top: 32px;
             margin-left: -3px;
@@ -271,7 +271,7 @@
                 padding-right: 20px;
               }
               .poover-menu-item{
-                margin: 5px 0px;
+                margin: 5px 0;
                 padding: 3px 5px;
                 cursor: pointer;
                 border-bottom: 1px solid rgba(0,0,0,0.15);
@@ -344,7 +344,7 @@
         }
         .poover-menu-item{
           display:flex;
-          margin: 6px 0px;
+          margin: 6px 0;
           padding: 3px 5px;
           cursor: pointer;
           border-bottom: 1px solid rgba(0,0,0,0.15);
@@ -369,7 +369,7 @@
           }
           .logo{
             color: #FFFFFF;
-            padding: 0px 5px;
+            padding: 0 5px;
             font-family: Rubik;
             font-size: 12px;
             font-weight: bold;
@@ -530,7 +530,7 @@
             background-color: transparent;
             border: none;
             border-bottom: 1px solid #0700CF;
-            border-radius: 0px;
+            border-radius: 0;
           }
           .ant-select-selection__rendered{
             color: #0700CF;
