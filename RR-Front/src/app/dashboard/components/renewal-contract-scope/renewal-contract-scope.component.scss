@@ -1,6 +1,7 @@
 :host{
   position: relative;
   display: block;
+  height:100%;
   ::ng-deep {
     .ui-table .ui-sortable-column.ui-state-highlight{
       background-color: #c8c8c8;
@@ -58,11 +59,12 @@
   margin: auto;
 }
 
-nz-tabset {
-  background-color: #FFFFFF;
-}
-
 .renewal-contract-table {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  justify-content: space-between;
   ::ng-deep div.ant-tabs-tab {
     height: 60px;
     width: 350px;
@@ -109,6 +111,10 @@ nz-tabset {
     }
   }
 
+}
+
+p-table{
+  overflow:auto;
 }
 
 
