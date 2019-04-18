@@ -10,6 +10,10 @@
       margin-left: 2px !important;
     }
 
+    .ant-tabs-close-x{
+      margin-left: 8px;
+      margin-top: 6px;
+    }
   }
 }
 
@@ -212,4 +216,8 @@ ul.widgets-list {
 
 ::ng-deep .dashboard-content {
   padding: 20px 30px !important;
+}
+
+.tabs-header-wrapper{
+  display:flex;
 }

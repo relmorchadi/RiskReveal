@@ -198,6 +198,7 @@ export class SearchMenuItemComponent implements OnInit {
       workspaceName: '',
       year: '',
       treaty: '',
+      programId: '',
       cedant: '',
       country: ''
     });
@@ -221,7 +222,7 @@ export class SearchMenuItemComponent implements OnInit {
       else
         this.store.dispatch(new PatchSearchStateAction([{key: 'showResult', value: true}, {
           key: 'showLastSearch',
-          value: true
+          value: false
         }]))
     }
     this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}))

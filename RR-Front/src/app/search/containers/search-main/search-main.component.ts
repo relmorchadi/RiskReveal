@@ -18,18 +18,19 @@ export class SearchMainComponent implements OnInit {
   expandWorkspaceDetails = false;
   contracts = [];
   paginationOption = {page: 0, size: 20, total: null};
+  selectedWorkspace: any;
   loadingMore = false;
   searchedItems = [];
-  currentWorkspace= null;
-  /*columns = [
+  currentWorkspace = null;
+  columns = [
     { field: 'id', header: 'Id', width: '150px', display:true, sorted:false, filtered:false },
-    { field: 'countryName', header: 'Country', width: '110px', display:true, sorted:true, filtered:true },
-    { field: 'cedantCode', header: 'Cedant', width: '110px', display:true, sorted:true, filtered:true  },
+    { field: 'countryName', header: 'Country', width: '110px', display:true, sorted:false, filtered:true },
+    { field: 'cedantCode', header: 'Cedant', width: '110px', display:true, sorted:false, filtered:true  },
     { field: 'cedantName', header: '', width: '110px', display:false, sorted:false, filtered:false  },
-    { field: 'uwYear', header: 'Uw Year', width: '110px', display:true, sorted:true, filtered:true  },
-    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display:true, sorted:true, filtered:true  },
+    { field: 'uwYear', header: 'Uw Year', width: '110px', display:true, sorted:false, filtered:true  },
+    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display:true, sorted:false, filtered:true  },
     { field: 'workspaceName', header: '', width: '110px', display:false, sorted:false, filtered:false  },
-  ];*/
+  ];
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router,private _location: Location) {
@@ -56,6 +57,7 @@ export class SearchMainComponent implements OnInit {
       globalKeyword: [],
       workspaceId: [],
       workspaceName: [],
+      programId: [],
       year: [],
       treaty: [],
       cedantCode: [],
@@ -64,40 +66,86 @@ export class SearchMainComponent implements OnInit {
     });
   }
 
+  private searchData(id, year) {
+    return this._searchService.searchWorkspace(id || '', year || '2019');
+  }
 
   loadMoreItems() {
     this._loadContracts(String(this.paginationOption.size + 20));
     this.loadingMore = true;
   }
 
-  openWorkspace(contract) {
-    this._helperService
-      .openWorkspaces.next(contract);
-    this._router.navigate(['/workspace']);
+  openWorkspace(wsId, year) {
+    this.searchData(wsId, year).subscribe(
+      (dt:any) => {
+        let workspace = {
+          uwYear: wsId,
+          workSpaceId: year,
+          cedantCode: dt.cedantCode,
+          cedantName: dt.cedantName,
+          ledgerName: dt.ledgerName,
+          subsidiaryId: dt.subsidiaryId,
+          subsidiaryName: dt.subsidiaryName,
+          treatySections: dt.treatySections,
+          workspaceName: dt.worspaceName,
+          years: dt.years
+        };
+        console.log(workspace);
+        this._helperService.affectItems([workspace])
+        this._router.navigate(['/workspace']);
+      }
+    );
   }
 
-  openWorkspaceInSlider(contract){
-    this.currentWorkspace= contract;
-    this.expandWorkspaceDetails= true;
+  openWorkspaceInSlider(contract) {
+    this.currentWorkspace = contract;
+    this.expandWorkspaceDetails = true;
+    this.searchData(contract.workSpaceId, contract.uwYear).subscribe(
+      dt => {
+        this.selectedWorkspace = dt;
+        console.log(this.selectedWorkspace);
+      }
+    );
   }
 
-  popUpWorkspace(contract) {
-    window.open('/workspace/' + contract.id);
+  popUpWorkspace(wsId, year) {
+    this.searchData(wsId, year).subscribe(
+      (dt:any) => {
+        let workspace = {
+          uwYear: wsId,
+          workSpaceId: year,
+          cedantCode: dt.cedantCode,
+          cedantName: dt.cedantName,
+          ledgerName: dt.ledgerName,
+          subsidiaryId: dt.subsidiaryId,
+          subsidiaryName: dt.subsidiaryName,
+          treatySections: dt.treatySections,
+          workspaceName: dt.worspaceName,
+          years: dt.years
+        };
+        console.log(workspace);
+        this._helperService.affectItems([workspace])
+        window.open('/workspace/' + wsId);
+      }
+    );
+
   }
 
   private _loadContracts(size = '20') {
     console.log('Try to load contracts');
+    console.log(this.searchedItems);
     this.clearSearch();
     if (this.searchedItems.length > 0 ) {
       let keys = [];
       let values = [];
       this.searchedItems.forEach(
         (e) => {
-          if ( e.key === 'UW/Year') {
+          if ( e.key === 'UW/Year')
             keys.push('year');
-          } else {
+          else if ( e.key === 'PROGRAM')
+            keys.push('programId')
+          else
             keys.push(e.key.toLowerCase());
-          }
           values.push(e.value);
         }
       );
@@ -107,7 +155,6 @@ export class SearchMainComponent implements OnInit {
         }
       );
     }
-    console.log(this.contractFilterFormGroup.value);
     this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
       .subscribe((data: any) => {
         this.contracts = data.content;

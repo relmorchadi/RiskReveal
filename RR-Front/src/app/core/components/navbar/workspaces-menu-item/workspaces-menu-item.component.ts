@@ -4,6 +4,8 @@ import {Router} from '@angular/router';
 import {SearchService} from '../../../service/search.service'
 import {FormBuilder, FormGroup} from "@angular/forms";
 import * as _ from 'lodash';
+import {forkJoin} from "rxjs";
+import {PatchSearchStateAction} from "../../../store/actions";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -16,6 +18,8 @@ export class WorkspacesMenuItemComponent implements OnInit {
   selectedWorkspace = null;
   selectedItems = [];
   lastOnes = 10;
+  visible: boolean = false;
+  workspaceData: any;
 
   constructor(private _helperService: HelperService,private router:Router, private _searchService: SearchService,
               private _fb: FormBuilder) {
@@ -24,6 +28,11 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   ngOnInit() {
     this.searchWorkspace('10');
+
+  }
+
+  private searchData(id, year) {
+    return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
   setForm() {
@@ -43,9 +52,22 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this.workspaces = [];
     this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
       .subscribe((data: any) => {
+        console.log(data);
         data.content.forEach(
-          (element) => {
-            const item = {id: element.id, name: element.workSpaceId, selected: false, year: element.uwYear};
+          ws => {
+            const item = {
+              id: ws.workSpaceId,
+              workspaceName: ws.workspaceName,
+              programName: ws.programName,
+              countryName: ws.countryName,
+              expiryDate: ws.expiryDate,
+              subsidiaryLedgerid: ws.subsidiaryLedgerid,
+              subsidiaryid: ws.subsidiaryid,
+              treatyName: ws.treatyName,
+              cedantName: ws.cedantName,
+              year: ws.uwYear,
+              selected: false
+            };
             this.workspaces = [...this.workspaces, item];
           }
         );
@@ -67,7 +89,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   searchNewWorkspace(search) {
     // let selectedItems =[ ...this.workspaces.filter(ws => ws.selected)];
-    this.contractFilterFormGroup.patchValue({treaty: search.target.value});
+    this.contractFilterFormGroup.patchValue({cedant: search.target.value});
     this.searchWorkspace();
   }
 
@@ -81,21 +103,41 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   popOutWorkspaces() {
+    this.visible = false;
     this.workspaces.filter(ws => ws.selected).forEach(ws => {
       window.open('/workspace/' + ws.id);
       console.log('try to open', ws);
-
     });
   }
 
-
-  openWorkspaces() {
+  async openWorkspaces() {
     let selectedItems =[ ...this.workspaces.filter(ws => ws.selected)];
-    if ( selectedItems.length > 0) {
-      console.log({selectedItems})
-      this._helperService
-        .openWorkspaces.next(selectedItems.map(({name,...item}:any) =>({title:name,...item})));
-      this.router.navigate(['/workspace'])
-    }
+    let workspaces = [];
+    selectedItems.forEach(
+      (SI) => {
+        this.searchData(SI.id, SI.year).subscribe(
+          (dt:any) => {
+            let workspace = {
+              uwYear: SI.id,
+              workSpaceId: SI.year,
+              cedantCode: dt.cedantCode,
+              cedantName: dt.cedantName,
+              ledgerName: dt.ledgerName,
+              subsidiaryId: dt.subsidiaryId,
+              subsidiaryName: dt.subsidiaryName,
+              treatySections: dt.treatySections,
+              workspaceName: dt.worspaceName,
+              years: dt.years
+            };
+            workspaces = [workspace,...workspaces];
+            if(workspaces.length === selectedItems.length){
+              this._helperService.affectItems(workspaces)
+              this.router.navigate(['/workspace']);
+              this.visible = false;
+            }
+          }
+        );
+      }
+    );
   }
 }

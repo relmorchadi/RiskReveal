@@ -34,4 +34,76 @@
   }
 }
 
+.tabs-popover-content{
+  width: 500px;
+  ::ng-deep{
+    .ant-alert-info {
+      background-color: #F8E71C;
+      border:none;
+    }
+    .ant-alert-info .ant-alert-icon {
+      font-size: 15px;
+      color: #f8e71c;
+      background-color: #000;
+      border-radius: 21px;
+      border: 2px solid #000;
+    }
+    span.ant-alert-message {
+      display: flex;
+      margin-left: 9px;
+      color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 16.26px;	letter-spacing: 0.5px;	line-height: 20px;
+    }
+  }
+}
+
+nz-alert{
+  padding-bottom: 10px;
+}
+
+.poover-menu-item{
+  display: flex;
+  justify-content: space-between;
+  padding: 0 7px;
+  .items-popover-wrapper{
+    display:flex;
+    flex:1;
+    .icon-window-section{
+      font-size: 22px;
+      color: #40e2c8;
+      padding: 7px;
+    }
+    .item-popover-context{
+      display:flex;
+      flex-direction: column;
+      .item-popover-context-header{
+        color: rgba(0,0,0,0.87);	font-family: Rubik; font-weight: 500 ;font-size: 13px;	letter-spacing: 0.08px;	line-height: 24px;
+      }
+      .item-popover-context-footer{
+        color: rgba(0,0,0,0.5);	font-family: Rubik;	font-size: 11px;	letter-spacing: 0.08px;	line-height: 10px;
+      }
+    }
+  }
+  .items-popover-info{
+    display: flex;
+    justify-content: flex-end;
+    width: 35%;
+    align-items: center;
+    i.icon-check_24px {
+      font-size: 13px;
+      margin-left: 4px;
+      padding: 2px;
+      color: #fff;
+      width: 17px;
+      height: 17px;
+      background: #40e2c8;
+      border-radius: 20px;
+    }
+    i.icon-radio_button_unchecked_24px {
+      font-size: 17px;
+      margin-left: 4px;
+    }
+  }
+}
+
+
 

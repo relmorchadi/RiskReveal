@@ -40,6 +40,10 @@ export class SearchService {
     return this._http.get(`${this.api}searchcount`, {params: {keyword, size, table}});
   }
 
+  searchWorkspace(id = '', year = '') {
+    return this._http.get(`${this.api}worspace/${id}/${year}`)
+  }
+
   affectItems(item) {
     this.searchedItems = item;
     this.items.next();
