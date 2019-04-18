@@ -24,6 +24,12 @@ public class ContractSearchResultSpecification {
                 .and(ofNullable(workspaceFilter.getTreaty()).map(treaty -> assertIsLike(ContractSearchResult_.treatyName, treaty)).orElse(null));
     }
 
+    public static Specification<ContractSearchResult> filterByWorkspaceIdAndUwy(String worspaceId, String uwy){
+        return Specification
+                .where(assertIsEqual(ContractSearchResult_.workSpaceId, worspaceId))
+                .and(assertIsEqual(ContractSearchResult_.uwYear, uwy));
+    }
+
     public static Specification<ContractSearchResult> filterGlobal(String keyword) {
         return isNullOrEmpty(keyword) ? Specification.where(null) : Specification
                 .where(assertIsLike(ContractSearchResult_.cedantName, keyword))
@@ -37,6 +43,12 @@ public class ContractSearchResultSpecification {
     private static Specification<ContractSearchResult> assertIsLike(SingularAttribute<ContractSearchResult, ?> attr, String keyword) {
         return (Root<ContractSearchResult> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
             return cb.like(root.get(attr).as(String.class), "%" + keyword + "%");
+        };
+    }
+
+    private static Specification<ContractSearchResult> assertIsEqual(SingularAttribute<ContractSearchResult, ?> attr, String keyword) {
+        return (Root<ContractSearchResult> root, CriteriaQuery<?> query, CriteriaBuilder cb) -> {
+            return cb.equal(root.get(attr).as(String.class), keyword);
         };
     }
 
