@@ -58,28 +58,39 @@ export class WorkspaceComponent implements OnInit {
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-  close(item) {
-    this.tabs = _.filter(this.tabs, (i) => i !== item);
-  }
+
+
   ngOnDestroy(): void {
     _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
   }
 
-  selectedWorkspaceset(items){
-    this.selectedWorkspaces = [];
-    items.forEach(
-      ws => this.searchData(ws.title, ws.year).subscribe(
-        data => {
-          this.selectedWorkspaces = [...this.selectedWorkspaces, data];
-          console.log(this.selectedWorkspaces);
-        }
-      )
-    )
-
+  close(title, year) {
+    this._helper.itemsRemove(title, year);
   }
 
   addWs(title, year) {
-    this.tabs = [...this.tabs, {title, year}];
+    this.searchData(title, year).subscribe(
+      (dt:any) => {
+        let workspace = {
+          uwYear: year,
+          workSpaceId: title,
+          cedantCode: dt.cedantCode,
+          cedantName: dt.cedantName,
+          ledgerName: dt.ledgerName,
+          subsidiaryId: dt.subsidiaryId,
+          subsidiaryName: dt.subsidiaryName,
+          treatySections: dt.treatySections,
+          workspaceName: dt.worspaceName,
+          years: dt.years
+        };
+        this._helper.itemsAppend(workspace);
+      }
+    )
+  }
+
+  generateYear(year, years) {
+    const generatedYears = years.filter(y => y < year);
+    return generatedYears;
   }
 
   selectproject(id) {

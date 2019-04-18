@@ -1,6 +1,6 @@
 
-<div routerLink="/workspace" class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}} &nbsp;&nbsp; </div>
-<div style="color: rgba(0,0,0,0.6); cursor: pointer" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click" >
+<div style="color: rgba(0,0,0,0.6); cursor: pointer;display: flex; user-select: none" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click" >
+  <div class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}} &nbsp;&nbsp; </div>
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 5px"></i>
 </div>
 <ng-template #workspacePopoverContent>
@@ -34,7 +34,7 @@
             </li>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="updateWorkspaces($event)" [nzAllowClear]="false" class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false" class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
               <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>

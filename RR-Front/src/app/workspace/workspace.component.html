@@ -1,15 +1,5 @@
 <div class="card-container">
   <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-<!--    cedantCode: "22231"
-cedantName: "SCOR SE"
-ledgerName: "UK"
-subsidiaryId: "1"
-subsidiaryName: "SCOR UK"
-treatySections: ["1"]
-uwYear: 2019
-workSpaceId: "00F0020"
-workspaceName: "SBS-SCOR UK-UK"
-years: (2) ["2018", "2019"]-->
     <ng-container *ngFor="let tab of (getSearchedWorkspaces() | async)">
       <ng-template #titleTemplate>
         <ng-container
@@ -18,7 +8,8 @@ years: (2) ["2018", "2019"]-->
           tabsLength:(getSearchedWorkspaces() | async).length,
           title:tab.workSpaceId,
           year:tab.uwYear,
-          years:tab.years}"
+          years:tab.years
+          }"
         ></ng-container>
       </ng-template>
       <nz-tab  [nzTitle]="titleTemplate">
@@ -71,7 +62,7 @@ years: (2) ["2018", "2019"]-->
                     </div>
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary Leger :</span>
-                      <span class="col-5 tab-metadata-value">{{tab.ledgerName}}</span>
+                      <span class="col-5 tab-metadata-value">{{tab.ledgerId}} - {{tab.ledgerName}}</span>
                     </div>
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Contract Source Type :</span>
@@ -82,9 +73,9 @@ years: (2) ["2018", "2019"]-->
                     <div nz-col [nzSpan]="12">
                       <i style="font-size: 1.6em; position:absolute; margin-left:-30px;" class="icon-calendar-alt mb-4"></i>
                       <span class="d-block tab-metadata-title">Inception Date :</span>
-                      <span class="d-block tab-metadata-value">31/10/2019</span>
+                      <span class="d-block tab-metadata-value">{{tab?.inceptionDate | date:'dd/MM/yyyy'}}</span>
                       <span class="d-block tab-metadata-title">Expiry Date :</span>
-                      <span class="d-block tab-metadata-value">21/10/2020</span>
+                      <span class="d-block tab-metadata-value">{{tab?.expiryDate | date:'dd/MM/yyyy'}}</span>
                     </div>
                     <div nz-col class="border-left pl-3" [nzSpan]="12">
                       <span class="d-block tab-metadata-title">Treaty Section :</span>
@@ -162,13 +153,13 @@ years: (2) ["2018", "2019"]-->
     <h3 class="tab-title">{{title}}</h3>
     <nz-dropdown [nzTrigger]="'click'">
       <a nz-dropdown>
-        <h6 class="d-flex align-items-center sub-title">{{year}}<i class="pl-3" nz-icon type="down"></i></h6>
+        <h6 style="line-height: 15px" class="d-flex align-items-center sub-title">{{year}}<i class="pl-3" *ngIf="generateYear(year, years).length >0" nz-icon type="down"></i></h6>
       </a>
       <ul style="padding:0" nz-menu>
-        <li (click)="addWs(title,y)" *ngFor="let y of years" nz-menu-item>{{y}}</li>
+        <li (click)="addWs(title,y)" *ngFor="let y of generateYear(year, years)" nz-menu-item>{{y}}</li>
       </ul>
     </nz-dropdown>
+    <div (click)="close(title, year)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
 
-    <div (click)="close(index)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
   </div>
 </ng-template>

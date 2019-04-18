@@ -20,10 +20,47 @@ export class DashboardEntryComponent implements OnInit {
         {
           id: 1,
           name: 'Renewal Contract Scope',
+          selected: true,
+          icon: 'icon-window-section',
           componentName: 'RenewalContractScopeComponent',
-
           position: {cols: 10, rows: 5, col: 0, row: 0}
         },
+        {
+          id: 2,
+          name: 'Priced PLTs Changed',
+          icon: 'icon-sliders-v-alt',
+          selected: false,
+          componentName: 'Priced PLTs Changed',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        },
+        {
+          id: 3,
+          name: 'Contract Scope Changed',
+          icon: 'icon-adjust-circle',
+          selected: false,
+          componentName: 'Contract Scope Changed',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        },
+        {
+          id: 4,
+          name: 'Latest Published PLTs',
+          icon: 'icon-window-grid',
+          selected: false,
+          componentName: 'Latest Published PLTs',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        },
+        {
+          id: 5,
+          name: 'Renewal Tracker',
+          icon: 'icon-history-alt',
+          selected: false,
+          componentName: 'Renewal Tracker',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        }
+      ],
+      fac: [
+        {id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          componentName: 'RenewalContractScopeComponent', selected: false}
       ]
     },
     {
@@ -34,29 +71,66 @@ export class DashboardEntryComponent implements OnInit {
         {
           id: 1,
           name: 'Renewal Contract Scope',
+          selected: true,
+          icon: 'icon-window-section',
           componentName: 'RenewalContractScopeComponent',
-          position: {cols: 10, rows: 5, col: 0, row: 3}
+          position: {cols: 10, rows: 5, col: 0, row: 0}
         },
+        {
+          id: 2,
+          name: 'Priced PLTs Changed',
+          icon: 'icon-sliders-v-alt',
+          selected: false,
+          componentName: 'Priced PLTs Changed',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        },
+        {
+          id: 3,
+          name: 'Contract Scope Changed',
+          icon: 'icon-adjust-circle',
+          selected: false,
+          componentName: 'Contract Scope Changed',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        },
+        {
+          id: 4,
+          name: 'Latest Published PLTs',
+          icon: 'icon-window-grid',
+          selected: false,
+          componentName: 'Latest Published PLTs',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        },
+        {
+          id: 5,
+          name: 'Renewal Tracker',
+          icon: 'icon-history-alt',
+          selected: false,
+          componentName: 'Renewal Tracker',
+          position: {cols: 10, rows: 5, col: 0, row: 0}
+        }
+      ],
+      fac: [
+        {id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          componentName: 'RenewalContractScopeComponent', selected: false}
       ]
     },
   ];
 
   dashboardsMockData = [];
   visibleTabs = [];
-  selectedDashboard: any = 0;
 
   widgetsMockData = {
     treaty: [
       {id: 1, icon: 'icon-window-section', title: 'Renewal Contract Scope',
        componentName: 'RenewalContractScopeComponent', selected: true},
       {id: 2, icon: 'icon-sliders-v-alt', title: 'Priced PLTs Changed',
-      componentName: 'RenewalContractScopeComponent', selected: false},
+      componentName: 'Priced PLTs Changed', selected: true},
       {id: 3, icon: 'icon-adjust-circle', title: 'Contract Scope Changed',
-       componentName: 'RenewalContractScopeComponent', selected: false},
+       componentName: 'Contract Scope Changed', selected: true},
       {id: 4, icon: 'icon-window-grid', title: 'Latest Published PLTs',
-       componentName: 'RenewalContractScopeComponent', selected: false},
+       componentName: 'Latest Published PLTs', selected: true},
       {id: 5, icon: 'icon-history-alt', title: 'Renewal Tracker',
-       componentName: 'RenewalContractScopeComponent', selected: false},
+       componentName: 'Renewal Tracker', selected: true},
     ],
     fac: [
       {id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
@@ -68,6 +142,9 @@ export class DashboardEntryComponent implements OnInit {
 
   dashboardTitle = 'Dashboard N°1';
   tabs = [1, 2, 3];
+
+  idSelected = 0;
+  idTab = 0;
 
   rightSliderCollapsed = false;
 
@@ -99,7 +176,7 @@ export class DashboardEntryComponent implements OnInit {
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
     this.visibleTabs = this.dashboards.filter(ds => ds.visible === true);
     this.updateDashboardMockData();
-    this.dashboardChange(this.selectedDashboard);
+    this.dashboardChange(this.idSelected);
   }
 
   addDashboard() {
@@ -111,30 +188,32 @@ export class DashboardEntryComponent implements OnInit {
       name: this.newDashboardTitle,
       visible: true,
       items:_.concat(_.map(selectedTreatyComponent,
-        ({componentName, title}: any, key) => ({id: key, componentName, name: title, position: {rows: 5, cols: 5}})),
+        ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title,icon: icon,selected: true, position: {rows: 5, cols: 5}})),
         _.map(selectedFacComponent,
-          ({componentName, title}: any, key) => ({id: key, componentName, name: title, position: {rows: 5, cols: 5}}))
+          ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title,icon: icon, selected: true, position: {rows: 5, cols: 5}}))
       )
-    }
+    };
     this.dashboards = [...this.dashboards, item];
     this.visibleTabs = [...this.visibleTabs, item];
+    this.idSelected = this.visibleTabs.length - 1;
+    this.dashboardTitle = this.newDashboardTitle || '';
     this.updateDashboardMockData()
     this.newDashboardTitle = '';
   }
 
   deleteDashboard() {
-    this.dashboards = _.filter(this.dashboards, (e: any) => this.selectedDashboard != e.id);
-    this.visibleTabs = _.filter(this.visibleTabs, (e: any) => this.selectedDashboard != e.id);
+    this.dashboards = _.filter(this.dashboards, (e: any) => this.idSelected != e.id);
+    this.visibleTabs = _.filter(this.visibleTabs, (e: any) => this.idSelected != e.id);
     localStorage.setItem('dashboard',JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
 
-    this.selectedDashboard = _.get(this.dashboards, '[0].id', '');
-    console.log({id:this.selectedDashboard});
-    this.dashboardChange(this.selectedDashboard);
+    this.idSelected = _.get(this.dashboards, '[0].id', '');
+    console.log({id:this.idSelected});
+    this.dashboardChange(this.idSelected);
   }
 
   changeDashboardName(name) {
-    let dashIndex = _.findIndex(this.dashboards,{id:this.selectedDashboard})
+    let dashIndex = _.findIndex(this.dashboards,{id:this.idSelected})
     if(dashIndex != -1) this.dashboards[dashIndex].name = name
     this.visibleTabs.forEach((vt => vt.id === this.dashboards[dashIndex] ? vt.name = name : null))
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards))
@@ -152,6 +231,7 @@ export class DashboardEntryComponent implements OnInit {
   dashboardChange(id: any) {
     let name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
+    this.idSelected = id;
   }
 
   delete(id, item) {
@@ -172,6 +252,7 @@ export class DashboardEntryComponent implements OnInit {
     this.dashboards.forEach(ds => ds.id === tab.id ? ds.visible = true : null);
     localStorage.setItem('dashboard',JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
+    this.idSelected = tab.id;
   }
 
   closeTab(tab): void {
@@ -179,6 +260,16 @@ export class DashboardEntryComponent implements OnInit {
     this.dashboards.forEach(ds => ds.id === tab.id ? ds.visible = false : null);
     localStorage.setItem('dashboard',JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
+  }
+
+  addRemoveItem(item) {
+    item.selected = !item.selected
+  }
+
+  onEnterAdd(keyEvent) {
+    if(keyEvent.key === 'Enter' ){
+      this.addDashboard();
+    }
   }
 
 }

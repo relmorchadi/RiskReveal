@@ -136,6 +136,8 @@ export class SearchMenuItemComponent implements OnInit {
       }))
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
+    } else {
+
     }
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.clearValue();

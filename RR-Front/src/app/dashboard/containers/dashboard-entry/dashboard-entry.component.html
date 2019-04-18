@@ -21,7 +21,7 @@
           </div>
         </nz-tab>
       </nz-tabset> -->
-      <nz-tabset [nzSelectedIndex]="selectedDashboard" class="dashboard-content">
+      <nz-tabset [(nzSelectedIndex)]="idSelected" class="dashboard-content">
         <nz-tab [nzForceRender]="true" *ngFor="let dashboard of visibleTabs" [nzTitle]="titleTemplate">
           <ng-template #titleTemplate>
             <div class="tabs-header-wrapper">
@@ -31,9 +31,11 @@
           </ng-template>
           <div style="height: 1000px;width: 100%">
             <gridster [options]="options" style="background-color: transparent;">
-              <gridster-item *ngFor="let item of dashboard.items" style="overflow: auto" [item]="item?.position">
-                  <renewal-contract-scope (delete)="delete(dashboard.id,item)" (duplicate)="duplicate(dashboard.id,item)" class="no-drag"></renewal-contract-scope>
-              </gridster-item>
+              <ng-container *ngFor="let item of dashboard.items" >
+                <gridster-item  *ngIf="item.selected" [item]="item?.position ">
+                    <renewal-contract-scope [itemName]="item?.name" (delete)="delete(dashboard.id, item)" (duplicate)="duplicate(dashboard.id,item)" class="no-drag"></renewal-contract-scope>
+                </gridster-item>
+              </ng-container>
             </gridster>
           </div>
         </nz-tab>
@@ -61,50 +63,51 @@
           </button>
           <ng-template #dash>
             <p class="popover-title">Add New Dashboard</p>
-            <input [(ngModel)]="newDashboardTitle" class="form-control" type="text">
+            <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" class="form-control" type="text">
           </ng-template>
         </div>
       </div>
       <div class="slider-content">
-        <nz-select  (ngModelChange)="dashboardChange($event)" style="width: 200px;"
-                   nzShowSearch nzAllowClear
-                   nzPlaceHolder="Select Dashboard" [(ngModel)]="selectedDashboard">
-          <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
-            {{d.name}} <i *ngIf="d.visible" (click)="closeTab(d)" class="icon-remove_red_eye_24px selected-item-icon"></i>
-            <i *ngIf="!d.visible" nz-icon (click)="activeView(d)" nzType="eye-invisible" class="selected-item-icon" nzTheme="outline"></i>
-          </nz-option>
-        </nz-select>
-        <div class="edit-dashboard-section">
-          <input style="width: 80%" class="hover-input" placeholder="" (change)="changeDashboardName($event.target.value)" [(ngModel)]="dashboardTitle">
-          <i (click)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"></i>
+        <div>
+          <nz-select  (ngModelChange)="dashboardChange($event)" style="width: 200px;"
+                      nzShowSearch nzAllowClear
+                      nzPlaceHolder="Select Dashboard" [(ngModel)]="idSelected">
+            <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
+              {{d.name}} <i *ngIf="d.visible" (click)="closeTab(d)" class="icon-remove_red_eye_24px selected-item-icon"></i>
+              <i *ngIf="!d.visible" nz-icon (click)="activeView(d)" nzType="eye-invisible" class="selected-item-icon" nzTheme="outline"></i>
+            </nz-option>
+          </nz-select>
+          <div class="edit-dashboard-section">
+            <input style="width: 80%" class="hover-input" placeholder="" (change)="changeDashboardName($event.target.value)" [(ngModel)]=" dashboardsMockData[idSelected].name">
+            <i (click)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"></i>
+          </div>
+          <div class="highlight">
+            Display selected widgets on dashboard
+            <br><br>
+            <span class="title">TREATY</span>
+          </div>
+          <ul class="widgets-list">
+            <li *ngFor="let treaty of dashboardsMockData[idSelected].items;" class="widget-item"
+                (click)="addRemoveItem(treaty) "
+                [ngClass]="{'active-widget-item': treaty?.selected}">
+              <i [ngClass]="treaty.icon"></i> {{treaty?.name}}
+              <i class="float-right mr-1 mt-1"
+                 [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
+            </li>
+          </ul>
+          <div class="highlight" style="margin-top: 10px">
+            <span class="title">FAC</span>
+          </div>
+          <ul class="widgets-list" style="height: 50px;">
+            <li *ngFor="let fac of widgetsMockData.fac" class="widget-item" (click)="fac.selected = !fac.selected "
+                [ngClass]="{'active-widget-item': fac.selected}">
+              <i [ngClass]="fac.icon"></i>
+              {{fac.title}}
+              <i class="float-right mr-1 mt-1"
+                 [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
+            </li>
+          </ul>
         </div>
-        <div class="highlight">
-          Display selected widgets on dashboard
-          <br><br>
-          <span class="title">TREATY</span>
-        </div>
-        <ul class="widgets-list">
-          <li *ngFor="let treaty of widgetsMockData.treaty" class="widget-item"
-              (click)="treaty.selected = !treaty.selected "
-              [ngClass]="{'active-widget-item': treaty.selected}">
-            <i [ngClass]="treaty.icon"></i> {{treaty.title}}
-            <i class="float-right mr-1 mt-1"
-               [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
-          </li>
-        </ul>
-        <div class="highlight" style="margin-top: 10px">
-          <span class="title">FAC</span>
-        </div>
-        <ul class="widgets-list" style="height: 50px;">
-          <li *ngFor="let fac of widgetsMockData.fac" class="widget-item" (click)="fac.selected = !fac.selected "
-              [ngClass]="{'active-widget-item': fac.selected}">
-            <i [ngClass]="fac.icon"></i>
-            {{fac.title}}
-            <i class="float-right mr-1 mt-1"
-               [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
-          </li>
-        </ul>
-
         <div class="collapse-command" (click)="rightSliderCollapsed= !rightSliderCollapsed">
           <i class="icon-arrow_forward_ios_24px"></i> Collapse
         </div>

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output, TemplateRef} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output, Input, TemplateRef} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from "lodash";
 
@@ -14,7 +14,9 @@ export class RenewalContractScopeComponent implements OnInit {
   renewalPeriod = '1';
   uwyUnits = '1';
   activeProject = '1';
+  @Input()
   itemName: string = 'Renewal Contract Scope';
+
   editName: boolean = false;
 
   cols = [

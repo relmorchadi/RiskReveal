@@ -38,10 +38,10 @@ export class SearchMainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.searchedItems = this._searchService.getSearchedItems();
+    this.searchedItems = this._searchService.searchedItems;
     this._searchService.items.subscribe(
       () =>  {
-        this.searchedItems = [...this._searchService.getSearchedItems()];
+        this.searchedItems = [...this._searchService.searchedItems];
         this._loadContracts();
       }
     );
@@ -79,13 +79,16 @@ export class SearchMainComponent implements OnInit {
     this.searchData(wsId, year).subscribe(
       (dt:any) => {
         let workspace = {
-          uwYear: wsId,
-          workSpaceId: year,
+          uwYear: year,
+          workSpaceId: wsId,
           cedantCode: dt.cedantCode,
           cedantName: dt.cedantName,
           ledgerName: dt.ledgerName,
-          subsidiaryId: dt.subsidiaryId,
+          ledgerId: dt.subsidiaryLedgerId,
           subsidiaryName: dt.subsidiaryName,
+          subsidiaryId: dt.subsidiaryId,
+          expiryDate: dt.expiryDate,
+          inceptionDate: dt.inceptionDate,
           treatySections: dt.treatySections,
           workspaceName: dt.worspaceName,
           years: dt.years
