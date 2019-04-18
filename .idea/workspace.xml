@@ -2,218 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f8727fef-26cd-460f-aad4-9cd94359c09e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.editorconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/angular.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/e2e/protractor.conf.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/e2e/src/app.e2e-spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/e2e/src/app.po.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/e2e/tsconfig.e2e.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/app.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/navbar.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/navbar.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/navbar.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/navbar.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/notifications-menu-item/notifications-menu-item.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/notifications-menu-item/notifications-menu-item.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/notifications-menu-item/notifications-menu-item.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/notifications-menu-item/notifications-menu-item.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/search-menu-item/contracts.mock-data.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/search-menu-item/search-menu-item.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/search-menu-item/search-menu-item.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/search-menu-item/search-menu-item.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/search-menu-item/search-menu-item.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/tasks-menu-item/tasks-menu-item.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/tasks-menu-item/tasks-menu-item.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/tasks-menu-item/tasks-menu-item.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/tasks-menu-item/tasks-menu-item.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/user-menu-item/user-menu-item.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/user-menu-item/user-menu-item.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/user-menu-item/user-menu-item.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/user-menu-item/user-menu-item.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/workspaces-menu-item/workspaces-menu-item.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/workspaces-menu-item/workspaces-menu-item.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/workspaces-menu-item/workspaces-menu-item.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/components/navbar/workspaces-menu-item/workspaces-menu-item.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/containers/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/containers/main/main.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/containers/main/main.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/containers/main/main.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/containers/main/main.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/core.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/pipes/bold-keyword.pipe.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/pipes/bold-keyword.pipe.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/service/router/RouterState.d.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/core/service/router/RouterStateSerializer.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/renewal-contract-scope/renewal-contract-scope.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/renewal-contract-scope/renewal-contract-scope.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/renewal-contract-scope/renewal-contract-scope.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/renewal-contract-scope/renewal-contract-scope.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/slider-right/slider-right.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/slider-right/slider-right.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/slider-right/slider-right.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/components/slider-right/slider-right.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/containers/dashboard-entry/dashboard-entry.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/containers/dashboard-entry/dashboard-entry.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/containers/dashboard-entry/dashboard-entry.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/containers/dashboard-entry/dashboard-entry.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/containers/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/dashboard/dashboard.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/entry-point/entry.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/entry-point/gateway.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/entry-point/main.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plt-comparer/components/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plt-comparer/containers/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plt-comparer/containers/plt-comparer-main/plt-comparer-main.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plt-comparer/containers/plt-comparer-main/plt-comparer-main.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plt-comparer/containers/plt-comparer-main/plt-comparer-main.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plt-comparer/containers/plt-comparer-main/plt-comparer-main.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/plt-comparer/plt-comparer.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/search/containers/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/search/containers/search-main/search-main.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/search/containers/search-main/search-main.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/search/containers/search-main/search-main.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/search/containers/search-main/search-main.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/search/search.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/shared/helper.service.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/shared/shared.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/components/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/components/left-menu/left-menu.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/components/left-menu/left-menu.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/components/left-menu/left-menu.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/components/left-menu/left-menu.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/index.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/workspace-main/workspace-main.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/workspace-main/workspace-main.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/workspace-main/workspace-main.component.spec.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/workspace-main/workspace-main.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/workspace-risk-link/workspace-risk-link.component.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/workspace-risk-link/workspace-risk-link.component.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/containers/workspace-risk-link/workspace-risk-link.component.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/highlight.directive.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/app/workspace/workspace.module.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/.gitkeep" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/fonts/scor_fonticon.eot" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/fonts/scor_fonticon.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/fonts/scor_fonticon.ttf" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/fonts/scor_fonticon.woff" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/images/rr-logo.svg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/images/user-img.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/_variables.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_alert.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_badge.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_breadcrumb.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_button-group.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_buttons.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_card.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_carousel.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_close.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_code.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_custom-forms.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_dropdown.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_forms.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_functions.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_grid.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_images.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_input-group.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_jumbotron.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_list-group.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_media.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_mixins.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_modal.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_nav.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_navbar.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_pagination.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_popover.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_print.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_progress.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_reboot.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_root.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_spinners.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_tables.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_toasts.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_tooltip.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_transitions.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_type.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_utilities.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/_variables.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/bootstrap-grid.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/bootstrap-reboot.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/bootstrap.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_alert.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_background-variant.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_badge.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_border-radius.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_box-shadow.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_breakpoints.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_buttons.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_caret.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_clearfix.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_deprecate.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_float.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_forms.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_gradients.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_grid-framework.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_grid.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_hover.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_image.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_list-group.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_lists.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_nav-divider.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_pagination.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_reset-text.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_resize.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_screen-reader.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_size.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_table-row.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_text-emphasis.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_text-hide.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_text-truncate.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_transition.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/mixins/_visibility.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_align.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_background.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_borders.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_clearfix.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_display.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_embed.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_flex.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_float.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_overflow.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_position.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_screenreaders.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_shadows.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_sizing.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_spacing.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_stretched-link.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_text.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/utilities/_visibility.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/bootstrap/vendor/_rfs.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/scor_icons.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/scrollbar.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/assets/scss/styles.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/browserslist" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/environments/environment.hmr.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/environments/environment.prod.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/environments/environment.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/favicon.ico" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/index.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/karma.conf.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/polyfills.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/styles.scss" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/theme.less" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tsconfig.app.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tsconfig.spec.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tslint.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tsconfig.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/tslint.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/yarn.lock" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.html" beforeDir="false" afterPath="$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.ts" beforeDir="false" afterPath="$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RR-Front/src/app/core/core.module.ts" beforeDir="false" afterPath="$PROJECT_DIR$/RR-Front/src/app/core/core.module.ts" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/dist/" />
     <ignored path="$PROJECT_DIR$/tmp/" />
@@ -245,15 +37,72 @@
     <favorites_list name="Risk Reveal" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-main/workspace-main.component.ts">
+        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.ts">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="317">
-              <caret line="45" column="4" lean-forward="true" selection-start-line="45" selection-start-column="4" selection-end-line="52" selection-end-column="9" />
+            <state relative-caret-position="289">
+              <caret line="18" column="75" selection-start-line="18" selection-start-column="75" selection-end-line="18" selection-end-column="75" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/states/index.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="17">
+              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="10" column="41" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="41" />
               <folding>
-                <element signature="e#0#59#0" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#ng-template#3;n#form#0;n#!!top" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/actions/index.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="39" selection-start-column="39" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/actions/search-nav-bar.state.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="136">
+              <caret line="8" column="33" lean-forward="true" selection-start-line="8" selection-start-column="33" selection-end-line="8" selection-end-column="33" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/states/search-nav-bar.state.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="442">
+              <caret line="119" column="33" selection-start-line="119" selection-start-column="10" selection-end-line="119" selection-end-column="33" />
+              <folding>
+                <element signature="e#0#85#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/index.ts">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="34">
+              <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
             </state>
           </provider>
         </entry>
@@ -263,7 +112,42 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>id</find>
+      <find>searchValue</find>
+      <find>this.</find>
+      <find>false,</find>
+      <find>'',</find>
+      <find>[];</find>
+      <find>items</find>
+      <find>app-l</find>
+      <find>state</find>
+      <find>$event</find>
+      <find>refixIconTa</find>
+      <find>visible</find>
+      <find>(state$ | async)?.visible=$event</find>
+      <find>showClearIcon</find>
+      <find>forkjoi</find>
+      <find>fork</find>
+      <find>searchLoader</find>
+      <find>ske</find>
+      <find>.data</find>
+      <find>_selectedSearch</find>
+      <find>.contracts</find>
+      <find>showRecentSearch</find>
+      <find>recentSea</find>
+      <find>.dispatch([</find>
+      <find>recentSearch</find>
+      <find>(state$ | async)?</find>
+      <find>(nzVisible)</find>
+      <find>nzVisible</find>
     </findStrings>
+    <replaceStrings>
+      <replace>boolean;</replace>
+      <replace>string;</replace>
+      <replace>this.state.</replace>
+      <replace>any[];</replace>
+      <replace>(state$ | async)?</replace>
+      <replace>state?</replace>
+    </replaceStrings>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -273,11 +157,22 @@
       <list>
         <option value="$PROJECT_DIR$/RR-Front/src/environments/environment.ts" />
         <option value="$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-main/workspace-main.component.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-risk-link/workspace-risk-link.component.scss" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/model/search-nav-bar.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/core.module.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/store/actions/search-nav-bar.state.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/store/states/search-nav-bar.state.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.html" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/store/actions/index.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/store/states/index.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/store/index.ts" />
+        <option value="$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.ts" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6" fullScreen="true">
-    <option name="x" value="-1440" />
+    <option name="x" value="-1556" />
+    <option name="y" value="-5" />
     <option name="width" value="1440" />
     <option name="height" value="900" />
   </component>
@@ -287,7 +182,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="PackagesPane" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -319,13 +213,69 @@
               <item name="RR-Front" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Risk Reveal" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Risk Reveal" type="462c0819:PsiDirectoryNode" />
+              <item name="RR-Front" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Risk Reveal" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Risk Reveal" type="462c0819:PsiDirectoryNode" />
+              <item name="RR-Front" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="components" type="462c0819:PsiDirectoryNode" />
+              <item name="navbar" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Risk Reveal" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Risk Reveal" type="462c0819:PsiDirectoryNode" />
+              <item name="RR-Front" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="core" type="462c0819:PsiDirectoryNode" />
+              <item name="store" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Risk Reveal" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Risk Reveal" type="462c0819:PsiDirectoryNode" />
+              <item name="RR-Front" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
               <item name="workspace" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Risk Reveal" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Risk Reveal" type="462c0819:PsiDirectoryNode" />
+              <item name="RR-Front" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="workspace" type="462c0819:PsiDirectoryNode" />
+              <item name="containers" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Risk Reveal" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Risk Reveal" type="462c0819:PsiDirectoryNode" />
+              <item name="RR-Front" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="app" type="462c0819:PsiDirectoryNode" />
+              <item name="workspace" type="462c0819:PsiDirectoryNode" />
+              <item name="containers" type="462c0819:PsiDirectoryNode" />
+              <item name="workspace-main" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -335,7 +285,7 @@
     <property name="RequestMappingsPanelWidth1" value="75" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555154516451" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1555500766137" />
     <property name="database.console.LAST_STATE" value="false" />
     <property name="editor.config.ad.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
@@ -395,6 +345,7 @@
       <workItem from="1554228767870" duration="55999000" />
       <workItem from="1554797793839" duration="45105000" />
       <workItem from="1555152415464" duration="2091000" />
+      <workItem from="1555406193689" duration="30354000" />
     </task>
     <servers />
   </component>
@@ -404,13 +355,13 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2531000" />
+    <option name="totallyTimeSpent" value="33489000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-1440" y="0" width="1440" height="900" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.54120266" visible="true" weight="0.260745" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.54120266" visible="true" weight="0.29297996" />
       <window_info id="Structure" order="1" sideWeight="0.45879734" side_tool="true" weight="0.25716332" />
       <window_info id="Persistence" order="2" sideWeight="0.40700483" side_tool="true" weight="0.26647565" />
       <window_info id="Designer" order="3" />
@@ -421,7 +372,7 @@
       <window_info id="Web" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32971016" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.38392857" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.66183573" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.49758455" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -429,7 +380,7 @@
       <window_info anchor="bottom" id="Spring" order="7" weight="0.32971016" />
       <window_info anchor="bottom" id="Database Console" order="8" weight="0.3357488" />
       <window_info anchor="bottom" id="TypeScript" order="9" weight="0.32971016" />
-      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49856734" weight="0.48341838" />
+      <window_info anchor="bottom" id="Terminal" order="10" sideWeight="0.49856734" weight="0.4830918" />
       <window_info anchor="bottom" id="Event Log" order="11" sideWeight="0.50143266" side_tool="true" weight="0.45772946" />
       <window_info anchor="bottom" id="Messages" order="12" weight="0.32971016" />
       <window_info anchor="bottom" id="Problems" order="13" />
@@ -507,23 +458,23 @@
           <properties />
           <option name="timeStamp" value="8" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-main/workspace-main.component.html</url>
+          <line>315</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-main/workspace-main.component.html</url>
+          <line>167</line>
+          <properties lambdaOrdinal="-1" />
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/core.module.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="36" column="37" selection-start-line="36" selection-start-column="37" selection-end-line="36" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json" />
     <entry file="file://$PROJECT_DIR$/RR-Front/src/environments/environment.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="102">
@@ -541,16 +492,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/workspace.module.ts">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="14" column="32" lean-forward="true" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/index.ts">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-main/workspace-main.component.ts">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="317">
@@ -558,6 +499,175 @@
           <folding>
             <element signature="e#0#59#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/containers/main/main.component.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/components/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="23" selection-start-line="7" selection-start-column="13" selection-end-line="7" selection-end-column="23" />
+          <folding>
+            <element signature="e#0#58#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/containers/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="23" selection-start-line="3" selection-start-column="13" selection-end-line="3" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/index.ts">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/components/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="102">
+          <caret line="6" lean-forward="true" selection-start-line="6" selection-end-line="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/assets/scss/_variables.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="1" selection-start-line="3" selection-start-column="1" selection-end-line="3" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-risk-link/workspace-risk-link.component.scss">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1377">
+          <caret line="186" column="12" selection-start-line="186" selection-start-column="7" selection-end-line="186" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/model/search-nav-bar.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="24" lean-forward="true" selection-start-line="24" selection-end-line="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/node_modules/@ngxs/store/src/symbols.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="447">
+          <caret line="118" column="17" selection-start-line="118" selection-start-column="17" selection-end-line="118" selection-end-column="17" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/core.module.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="33" column="35" selection-start-line="33" selection-start-column="35" selection-end-line="33" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/workspace.module.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="19" column="80" selection-start-line="19" selection-start-column="62" selection-end-line="19" selection-end-column="80" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/workspace/containers/workspace-main/workspace-main.component.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" column="34" selection-start-line="7" selection-start-column="11" selection-end-line="7" selection-end-column="34" />
+          <folding>
+            <element signature="n#div#1;n#div#0;n#div#2;n#div#0;n#nz-tab#0;n#ng-container#0;n#nz-tabset#0;n#div#0;n#!!top" />
+            <element signature="n#ng-template#0;n#!!top" />
+            <element signature="n#ng-template#1;n#!!top" />
+            <element signature="n#ng-template#2;n#!!top" />
+            <element signature="n#ng-template#3;n#!!top" />
+            <element signature="n#ng-template#4;n#!!top" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/node_modules/immer/dist/immer.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="185">
+          <caret line="102" column="4" selection-start-line="102" selection-start-column="4" selection-end-line="102" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/node_modules/@ngxs/store/src/decorators/select.d.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="221">
+          <caret line="14" column="24" selection-start-line="14" selection-start-column="24" selection-end-line="14" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/states/core.state.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="41" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="41" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#ng-template#3;n#form#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/actions/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="39" selection-start-column="39" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/actions/search-nav-bar.state.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="136">
+          <caret line="8" column="33" lean-forward="true" selection-start-line="8" selection-start-column="33" selection-end-line="8" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/states/search-nav-bar.state.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="442">
+          <caret line="119" column="33" selection-start-line="119" selection-start-column="10" selection-end-line="119" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#85#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" lean-forward="true" selection-start-line="2" selection-end-line="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/store/states/index.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/RR-Front/src/app/core/components/navbar/search-menu-item/search-menu-item.component.ts">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="18" column="75" selection-start-line="18" selection-start-column="75" selection-end-line="18" selection-end-column="75" />
         </state>
       </provider>
     </entry>

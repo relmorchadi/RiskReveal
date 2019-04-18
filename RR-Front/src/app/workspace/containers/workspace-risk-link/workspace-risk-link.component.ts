@@ -57,7 +57,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 8, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '7/15'}
   ];
   /* tslint:disable */
-  tableleft: any = [
+  tableLeft: any = [
     {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
     {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
     {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
@@ -94,11 +94,11 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {status : false, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'}
   ]
 
-  displaydropdownEDM: boolean = false;
-  displaydropdownRDM: boolean = false;
-  displaylistRDM: boolean = false;
-  displaylistEDM: boolean = false;
-  displaytable: boolean = false;
+  displayDropdownEDM: boolean = false;
+  displayDropdownRDM: boolean = false;
+  displayListRDM: boolean = false;
+  displayListEDM: boolean = false;
+  displayTable: boolean = false;
   displayImport: boolean = false;
 
 
@@ -127,6 +127,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   close(item){
     this.tabs = _.filter(this.tabs,(i)=> i != item)
   }
+
   ngOnDestroy (): void {
     _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
   }
@@ -139,23 +140,23 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     return _.range(year - 1, 2013);
   }
 
-  toggleitems(RDM) {
+  toggleItems(RDM) {
     RDM.selected = !RDM.selected;
   }
 
-  toggleitemslistRDM(RDM) {
-    let nbrselected = 0;
+  toggleItemsListRDM(RDM) {
+    let nbrSelected = 0;
     this.listRDM.forEach((e) => {
-        e.selected === true ? nbrselected = nbrselected + 1 : null;
+        e.selected === true ? nbrSelected = nbrSelected + 1 : null;
       }
     );
     this.listEDM.forEach((e) => {
-       e.selected === true ? nbrselected = nbrselected + 1 : null;
+       e.selected === true ? nbrSelected = nbrSelected + 1 : null;
       }
     );
-    if (nbrselected === 0) {
+    if (nbrSelected === 0) {
       RDM.selected = true;
-      this.displaytable = true;
+      this.displayTable = true;
     } else {
       if (!RDM.selected) {
         this.listRDM.forEach((e) => {
@@ -176,7 +177,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
             e.selected = false;
           }
         );
-        this.displaytable = false;
+        this.displayTable = false;
       }
     }
   }
@@ -204,33 +205,33 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     }
   }
 
-  openclosedropdown(value) {
+  openCloseDropdown(value) {
     if (value === 1) {
-      this.displaydropdownEDM = !this.displaydropdownEDM;
+      this.displayDropdownEDM = !this.displayDropdownEDM;
     } else {
-      this.displaydropdownRDM = !this.displaydropdownRDM;
+      this.displayDropdownRDM = !this.displayDropdownRDM;
     }
   }
 
-  closedropdown(value) {
+  closeDropdown(value) {
     if (value === 1) {
-      this.displaydropdownEDM = false;
+      this.displayDropdownEDM = false;
     } else {
-      this.displaydropdownRDM = false;
+      this.displayDropdownRDM = false;
     }
   }
 
-  selecteditem(value){
+  selectedItem(value){
     if (value === 1) {
       this.listEDM = [];
       this.EDM.forEach((e) => {
         if (e.selected === true) {
-          let newitem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
-          this.listEDM = [...this.listEDM , newitem];
+          let newItem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
+          this.listEDM = [...this.listEDM , newItem];
         }
       });
-      this.displaydropdownEDM = false;
-      this.listEDM.length === 0 ? this.displaylistEDM = false : this.displaylistEDM = true;
+      this.displayDropdownEDM = false;
+      this.listEDM.length === 0 ? this.displayListEDM = false : this.displayListEDM = true;
     } else {
       this.listRDM = [];
       this.RDM.forEach((e) => {
@@ -239,8 +240,8 @@ export class WorkspaceRiskLinkComponent implements OnInit {
           this.listRDM = [...this.listRDM, newitem];
         }
       });
-      this.displaydropdownRDM = false;
-      this.listRDM.length === 0 ? this.displaylistRDM = false : this.displaylistRDM = true;
+      this.displayDropdownRDM = false;
+      this.listRDM.length === 0 ? this.displayListRDM = false : this.displayListRDM = true;
       this.listRDM.length > 0 && this.listEDM.length > 0 ? this.currentStep = 1 : this.currentStep = 0;
     }
     this.collapseright = true;
@@ -250,9 +251,9 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       this.currentStep = 0;
       this.listEDM = [];
       this.listRDM = [];
-      this.displaylistEDM = false;
-      this.displaylistRDM = false;
-      this.displaytable = false;
+      this.displayListEDM = false;
+      this.displayListRDM = false;
+      this.displayTable = false;
       this.unselectAll(1);
       this.unselectAll(2);
     }
@@ -267,7 +268,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
         }
       );
       this.displayImport =  false;
-      this.displaytable = false;
+      this.displayTable = false;
     }
     if (value === 0 && this.currentStep === 2) {
       this.selectStep(1);

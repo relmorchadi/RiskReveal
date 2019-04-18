@@ -7,17 +7,17 @@ import { LazyLoadEvent } from 'primeng/primeng';
   styleUrls: ['./table.component.scss']
 })
 export class TableComponent implements OnInit {
-  sortName: string | null = null;
-  sortValue: string | null = null;
-  searchAddress: string;
-  listOfSearchName: string[] = [];
 
+  loading: boolean;
+
+  @Input()
+  totalRecords: number;
+  @Input()
+  sortable: boolean = false;
   @Input()
   listOfData: any[];
   @Input()
   virtualScroll: boolean;
-  @Input()
-  numberOfElement: number;
   @Input()
   tableColumn: any[];
   @Input()
@@ -31,24 +31,24 @@ export class TableComponent implements OnInit {
   }
 
   sort(sort: { key: string; value: string }): void {
-    this.sortName = sort.key;
+    /*this.sortName = sort.key;
     this.sortValue = sort.value;
-    this.search();
+    this.search();*/
   }
 
   filter(listOfSearchName: string[], searchAddress: string): void {
-    this.listOfSearchName = listOfSearchName;
+    /*this.listOfSearchName = listOfSearchName;
     this.searchAddress = searchAddress;
-    this.search();
+    this.search();*/
   }
 
   search(): void {
-    /** filter data **/
+    /* filter data
     const filterFunc = (item: { name: string; age: number; address: string }) =>
       (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) &&
       (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
     const data = this.listOfData.filter(item => filterFunc(item));
-    /** sort data **/
+    /** sort data
     if (this.sortName && this.sortValue) {
       this.listOfData = data.sort((a, b) =>
         this.sortValue === 'ascend'
@@ -61,6 +61,27 @@ export class TableComponent implements OnInit {
       );
     } else {
       this.listOfData = data;
+    }*/
+  }
+
+  loadDataOnScroll(event: LazyLoadEvent) {
+    this.loading = true;
+    setTimeout(() => {
+      //last chunk
+      if (event.first === 249980)
+        this.listOfData = this.loadChunk(event.first, 20);
+      else
+        this.listOfData = this.loadChunk(event.first, event.rows);
+
+      this.loading = false;
+    }, 250);
+  }
+  loadChunk(index, length) {
+    let chunk = [];
+    for (let i = 0; i < length; i++) {
+      chunk[i] = {...this.listOfData[i]};
     }
+
+    return chunk;
   }
 }
