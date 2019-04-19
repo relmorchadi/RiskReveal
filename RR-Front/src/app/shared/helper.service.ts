@@ -5,8 +5,7 @@ import {of} from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class HelperService {
-  items = [];
-
+  items = JSON.parse(localStorage.getItem('workspaces')) || [];
   public items$: Observable<any>;
 
   constructor() {}
@@ -15,7 +14,8 @@ export class HelperService {
   openWorkspaces = new BehaviorSubject<any>([]);
 
   affectItems(item) {
-    this.items = item;
+    localStorage.setItem('workspaces', JSON.stringify(item));
+    this.items = JSON.parse(localStorage.getItem('workspaces'));
   }
 
   getSearchedWorkspaces() {
@@ -27,7 +27,13 @@ export class HelperService {
       if (ws.workSpaceId === item.workSpaceId && ws.uwYear == item.uwYear) {return ws; }
       }
     );
-    if (alreadyImported.length === 0 ) {this.items.push(item); }
+    if (alreadyImported.length === 0 ) {
+      this.items.push(item);
+      const savedWorkspaces: any = localStorage.getItem('workspaces');
+      savedWorkspaces.push(item);
+      console.log(savedWorkspaces);
+      localStorage.setItem('workspaces', JSON.stringify(savedWorkspaces));
+    }
   }
 
   itemsRemove( wsId, year) {
