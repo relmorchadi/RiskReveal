@@ -1,0 +1,316 @@
+<div class="workspace-main-content">
+  <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
+           nz-button nzType="primary" nzSize="large" nzShape="circle">
+     <i style="color: white;" nz-icon type="plus" theme="outline"></i>
+   </button>
+   -->
+  <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
+   </ul>
+   -->
+  <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+          nz-button nzType="primary" nzSize="default" nzShape="circle">
+    <i style="color: #16617a;" nz-icon theme="outline">
+      <i class="icon-map-pin-alt"></i>
+    </i>
+  </button>
+  <div class="row pl-2 ml-4 mt-4">
+    <div class="col-11 pr-4">
+      <span class="projects-title">Projects</span>
+      <i nz-icon class="float-right mt-2" style="font-size: 22px; margin-top: 15px !important; margin-left: 20px;" nzType="appstore" nzTheme="outline"></i>
+      <nz-select class="float-right mt-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="selectedPrStatus">
+        <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
+      </nz-select>
+    </div>
+  </div>
+  <div class="card-holder-wrap">
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project1')" *ngTemplateOutlet="project1"></ng-container>
+    </div>
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project2')" *ngTemplateOutlet="project2"></ng-container></div>
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project3')" *ngTemplateOutlet="project3"></ng-container>
+    </div>
+    <div class="card-holder">
+      <ng-container (click)="selectproject('project4')" *ngTemplateOutlet="project4"></ng-container>
+    </div>
+  </div>
+  <!--div style="width:80%;margin:auto;">
+    <ng-masonry-grid
+    [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }"
+    [useAnimation]="true"
+    [useImagesLoaded]="true"
+    [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
+      <ng-masonry-grid-item id="{{'masonry-item-'+1}}" >
+        <ng-container class="masonry-item" *ngTemplateOutlet="project1"></ng-container>
+      </ng-masonry-grid-item>
+      <ng-masonry-grid-item id="{{'masonry-item-'+2}}">
+        <ng-container class="masonry-item" *ngTemplateOutlet="project2"></ng-container>
+      </ng-masonry-grid-item>
+      <ng-masonry-grid-item id="{{'masonry-item-'+3}}">
+        <ng-container class="masonry-item" *ngTemplateOutlet="project3"></ng-container>
+      </ng-masonry-grid-item>
+      <ng-masonry-grid-item id="{{'masonry-item-'+4}}">
+        <ng-container class="masonry-item" *ngTemplateOutlet="project4"></ng-container>
+      </ng-masonry-grid-item >
+    </ng-masonry-grid>
+  </div-->
+</div>
+<ng-template  #project1>
+  <div class="project-card mx-1">
+    <div class="project-header">
+      <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
+        <i class="fa fa-code-fork" aria-hidden="true"></i>
+      </div>
+      <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+        <span>P-9035</span>
+        <span>Post Inured PLT</span>
+      </div>
+    </div>
+    <div class="project-progress d-flex justify-content-center align-items-center">
+      <nz-steps [nzCurrent]="3" nzProgressDot>
+        <nz-step nzTitle="Imported"></nz-step>
+        <nz-step nzTitle="Published"></nz-step>
+        <nz-step nzTitle="Priced"></nz-step>
+        <nz-step nzTitle="Accumulated"></nz-step>
+      </nz-steps>
+    </div>
+    <div class="project-kpi border-top d-flex">
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+    </div>
+    <div class="project-kpi-details pb-3">
+      <p class="project-kpi-details-title pl-4 py-2">
+        Donec et nulla elementum, mattis arcu in, alliquam mauris.
+      </p>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+        <span class="pr-4 dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
+        <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+      </div>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Owner</span>
+        <span class="pr-4 dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">Risk Reveal</span>
+        <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template  #project2>
+  <div class="project-card mx-1">
+    <div class="project-header">
+      <div class="project-header-icon d-flex justify-content-center align-items-center">
+        <i class="fa fa-file-text" aria-hidden="true"></i>
+      </div>
+      <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+        <span>P-5892</span>
+        <span>TWIA 2018</span>
+      </div>
+    </div>
+    <div class="project-progress d-flex justify-content-center align-items-center">
+      <nz-steps [nzCurrent]="1" nzProgressDot>
+        <nz-step nzTitle="Imported"></nz-step>
+        <nz-step nzTitle="Published"></nz-step>
+        <nz-step nzTitle="Priced"></nz-step>
+        <nz-step nzTitle="Accumulated"></nz-step>
+      </nz-steps>
+    </div>
+    <div class="project-kpi border-top d-flex">
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+    </div>
+    <div class="project-kpi-details pb-3">
+      <p class="project-kpi-details-title pl-4 py-2">
+        Donec et nulla elementum, mattis arcu in, alliquam mauris.
+      </p>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Michael Clarke</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">15/05/2018</span>
+      </div>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Owner</span>
+        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Michael Clarke</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Due 15/05/2018</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template  #project3>
+  <div class="project-card mx-1">
+    <div class="project-header">
+      <div class="project-header-icon d-flex justify-content-center align-items-center">
+        <i class="fa fa-file-text" aria-hidden="true"></i>
+      </div>
+      <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+        <span>P-1686</span>
+        <span>Ameriprise 2018</span>
+      </div>
+    </div>
+    <div class="project-progress d-flex justify-content-center align-items-center">
+      <nz-steps [nzCurrent]="0" nzProgressDot>
+        <nz-step nzTitle="Imported"></nz-step>
+        <nz-step nzTitle="Published"></nz-step>
+        <nz-step nzTitle="Priced"></nz-step>
+        <nz-step nzTitle="Accumulated"></nz-step>
+      </nz-steps>
+    </div>
+    <div class="project-kpi border-top d-flex">
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
+        <!--<span style="background: #00a2826e"><b>-</b></span>-->
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+    </div>
+    <div class="project-kpi-details pb-3">
+      <p class="project-kpi-details-title pl-4 py-2">
+        Donec et nulla elementum, mattis arcu in, alliquam mauris.
+      </p>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Michael Clarke</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">26/10/2016</span>
+      </div>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Owner</span>
+        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Michael Clarke</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">26/10/2016</span>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<ng-template  #project4>
+  <div class="project-card mx-1">
+    <div class="project-header">
+      <div style="background: #06B8FF" class="project-header-icon d-flex justify-content-center align-items-center">
+        <i class="icon-link_24px"></i>
+      </div>
+      <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+        <span>P-1724</span>
+        <span>Trinity Kemper 2018 (2)</span>
+      </div>
+    </div>
+    <div class="project-progress d-flex justify-content-center align-items-center">
+      <nz-steps [nzCurrent]="2" nzProgressDot>
+        <nz-step nzTitle="Imported"></nz-step>
+        <nz-step nzTitle="Published"></nz-step>
+        <nz-step nzTitle="Priced"></nz-step>
+        <nz-step nzTitle="Accumulated"></nz-step>
+      </nz-steps>
+    </div>
+    <div class="project-kpi border-top d-flex">
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+        <span class="project-kpi-span">RP</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+        <span class="project-kpi-span">Exp</span>
+        <!--<span class="badge"><b>-</b></span>-->
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+        <span class="project-kpi-span">PLT</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+        <span class="project-kpi-span">Pricing</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+      <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+        <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+        <span class="project-kpi-span">Accum</span>
+        <span class="project-kpi-span"><b>-</b></span>
+      </div>
+    </div>
+    <div class="project-kpi-details pb-3">
+      <p class="project-kpi-details-title pl-4 py-2">
+        Donec et nulla elementum, mattis arcu in, alliquam mauris.
+      </p>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Michael Clarke</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+      </div>
+      <div class="border-top d-flex project-kpi-details-content">
+        <span class="pl-4" style="flex:1;font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Owner</span>
+        <span class="pr-4" style="flex:1;color: rgba(0,0,0,0.87);font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">Michael Clarke</span>
+        <span class="text-center" style="flex:1;color: rgba(0,0,0,0.87);	font-size: 11px;	letter-spacing: 0.08px;	line-height: 32px;">31/01/2019</span>
+      </div>
+    </div>
+  </div>
+</ng-template>

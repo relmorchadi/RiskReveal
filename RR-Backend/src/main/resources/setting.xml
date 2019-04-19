@@ -23,6 +23,8 @@
       <mapping class="com.rr.riskreveal.domain.counter.CountryCountView"/>
       <mapping class="com.rr.riskreveal.domain.counter.TreatyCountView"/>
       <mapping class="com.rr.riskreveal.domain.counter.UwyCountView"/>
+      <mapping class="com.rr.riskreveal.domain.WorkspaceView"/>
+      <mapping class="com.rr.riskreveal.domain.counter.ProgramView"/>
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 

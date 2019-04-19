@@ -13,6 +13,7 @@ public class WorkspaceFilter {
     private String projectId;
     private String plt;
     private String globalKeyword;
+    private String programId;
 
     public WorkspaceFilter() {
     }
@@ -87,6 +88,14 @@ public class WorkspaceFilter {
 
     public void setGlobalKeyword(String globalKeyword) {
         this.globalKeyword = globalKeyword;
+    }
+
+    public String getProgramId() {
+        return programId;
+    }
+
+    public void setProgramId(String programId) {
+        this.programId = programId;
     }
 
     public boolean isEmpty() {

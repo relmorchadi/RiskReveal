@@ -4,7 +4,8 @@ public enum TableNames {
     CEDANT("cedant"),
     COUNTRY("country"),
     TREATY("treaty"),
-    YEAR("treaty");
+    YEAR("treaty"),
+    PROGRAM("program");
 
     private String value;
     TableNames(String value) {

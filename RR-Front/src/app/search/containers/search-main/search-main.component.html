@@ -240,7 +240,7 @@
                   <span class="workspace-title">Subsidiary :</span>
                 </div>
                 <div class="col-md-6">
-                  <span class="workspace-value">{{selectedWorkspace?.subsidiaryName}}</span>
+                  <span class="workspace-value">{{selectedWorkspace?.subsidiaryId}} - {{selectedWorkspace?.subsidiaryName}}</span>
                 </div>
               </div>
               <div class="row ml-2">
@@ -248,7 +248,7 @@
                   <span class="workspace-title">Subsidiary Ledger :</span>
                 </div>
                 <div class="col-md-6">
-                  <span class="workspace-value">{{selectedWorkspace?.ledgerName}}</span>
+                  <span class="workspace-value">{{selectedWorkspace?.subsidiaryLedgerId}} - {{selectedWorkspace?.ledgerName}}</span>
                 </div>
               </div>
               <div class="row ml-2">
@@ -267,11 +267,11 @@
                 <i class="icon-calendar-alt"></i>
                 <div class="d-column ml-2">
                   <span class="workspace-title">Inception:</span>
-                  <span class="workspace-value">31/12/2018</span>
+                  <span class="workspace-value">{{selectedWorkspace?.inceptionDate | date:'dd/MM/yyyy'}}</span>
                 </div>
                 <div class="d-column ml-5">
                   <span class="workspace-title">Expiry:</span>
-                  <span class="workspace-value">30/12/2019</span>
+                  <span class="workspace-value">{{selectedWorkspace?.expiryDate | date:'dd/MM/yyyy'}}</span>
                 </div>
               </div>
 

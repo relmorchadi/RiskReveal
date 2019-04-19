@@ -104,6 +104,8 @@ nz-header {
 }
 
 .slider-content {
+  display: flex;
+  flex-direction: column;
   background: #FFFFFF;
   height: 100%;
   padding: 30px 24px
@@ -135,19 +137,18 @@ nz-header {
 
 .hover-input {
   border: none;
-}
-
-.hover-input:hover {
-  border-bottom: 1px solid rgba(0, 0, 0, 0.6);
-}
-
-.hover-input {
   width: 80%;
   font-size: 14.26px;
   letter-spacing: 0.5px;
   line-height: 20px;
+  &:focus{
+    outline:0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+  }
+  &:hover{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.6);
+  }
 }
-
 
 .delete-icon {
   display: none;
@@ -197,21 +198,18 @@ ul.widgets-list {
 }
 
 .collapse-command {
-  position: absolute;
-  bottom: 20px;
-  width: 80%;
+  width: 100%;
+  cursor: pointer;
   background-color: #FFF;
   line-height: 30px;
   vertical-align: middle;
   i {
     margin-right: 30px;
   }
-  cursor: pointer;
-}
-
-.collapse-command:hover {
-  border-right: 3px solid #008694;
-  background-color: rgba(0, 0, 0, 0.1);
+  &:hover{
+    border-right: 3px solid #008694;
+    background-color: rgba(0, 0, 0, 0.1);
+  }
 }
 
 ::ng-deep .dashboard-content {

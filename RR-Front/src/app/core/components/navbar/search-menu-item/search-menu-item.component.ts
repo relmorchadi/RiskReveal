@@ -1,22 +1,22 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
-import {SearchService} from "../../../service/search.service";
-import {debounceTime} from "rxjs/operators";
-import {NotificationService} from "../../../../shared/notification.service";
+import {SearchService} from '../../../service/search.service';
+import {debounceTime} from 'rxjs/operators';
+import {NotificationService} from '../../../../shared/notification.service';
 
 import {Router} from '@angular/router';
 import {
   AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
   PatchSearchStateAction,
   SearchContractsCountAction
-} from "../../../store/actions/search-nav-bar.state";
+} from '../../../store/index';
 
-import {Select, Store} from "@ngxs/store";
-import {SearchNavBar} from "../../../model/search-nav-bar";
-import {} from "../../../store/actions/search-nav-bar.state";
+import {Select, Store} from '@ngxs/store';
+import {SearchNavBar} from '../../../model/search-nav-bar';
+import {} from '../../../store/actions/search-nav-bar.state';
 import * as _ from 'lodash';
-import {Observable} from "rxjs";
-import {SearchNavBarState} from "../../../store/states/search-nav-bar.state";
+import {Observable} from 'rxjs';
+import {SearchNavBarState} from '../../../store/index';
 
 
 @Component({
@@ -50,15 +50,15 @@ export class SearchMenuItemComponent implements OnInit {
 
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
-    this.contractFilterFormGroup.get("globalKeyword")
+    this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((param) => {
-        this._selectedSearch(param)
+        this._selectedSearch(param);
       });
     this.store.dispatch(new LoadRecentSearchAction);
     this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
-      .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})))
+      .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
   }
 
   isSearchRoute() {
@@ -66,55 +66,57 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   examinateExpression(expression: string) {
-    if (this.contractFilterFormGroup.value['switchValue']) {
-      let regExp = /(\w*:){1}((\w*\s)*)/g
-      let globalKeyword = `${expression} `.replace(regExp, (match, shortcut, keyword) => {
-        console.log({shortcut, keyword})
+    if (this.contractFilterFormGroup.get('switchValue').value) {
+      const regExp = /(\w*:){1}((\w*\s)*)/g;
+      const globalKeyword = `${expression} `.replace(regExp, (match, shortcut, keyword) => {
+        console.log({shortcut, keyword});
         return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword));
       }).trim();
-      this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}))
+      this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}));
     } else {
-      this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: expression}))
+      this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: expression}));
     }
-  };
+  }
 
   toBadges(shortcut, keyword) {
-    let correspondingKey: string = this.state.sortcutFormKeysMapper[shortcut];
+    const correspondingKey: string = this.state.sortcutFormKeysMapper[shortcut];
     if (correspondingKey) {
-      this.contractFilterFormGroup.get(correspondingKey).patchValue(keyword)
-      let instance = {key: correspondingKey, value: keyword};
+      this.contractFilterFormGroup.get(correspondingKey).patchValue(keyword);
+      const instance = {key: correspondingKey, value: keyword};
       this.state.badges.push(instance);
-      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}))
+      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
     } else {
       this._notifcationService.createNotification('Information',
         'some shortcuts were false please check the shortcuts or change them!',
         'error', 'bottomRight', 4000);
     }
-    this.contractFilterFormGroup.value['globalKeyword'] = ''
+    this.contractFilterFormGroup.get('globalKeyword').patchValue('');
     return '';
   }
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    if (keyboardEvent.key == 'Enter') {
-      if (this.contractFilterFormGroup.value['switchValue']) {
-        let searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
+    if (keyboardEvent.key === 'Enter') {
+      const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
+      if (this.contractFilterFormGroup.get('switchValue')) {
         this.examinateExpression(searchExpression);
+      } else {
+        this._searchService.globalSearchItem = searchExpression;
       }
       event.preventDefault();
       this.redirectToSearchPage();
     }
     if (this.state.deleteBlock === true) {
-      if (keyboardEvent.key == 'Backspace' && keyboardEvent.target.value === '') {
+      if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.deleteBlock = false;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: false}));
         console.log(this.state.deleteBlock);
       }
     } else {
-      if (keyboardEvent.key == 'Backspace' && keyboardEvent.target.value === '') {
+      if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.badges.pop();
         this.state.deleteBlock = true;
-        this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: true}))
+        this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: true}));
         this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
 
         console.log(this.state.deleteBlock);
@@ -133,7 +135,7 @@ export class SearchMenuItemComponent implements OnInit {
       this.store.dispatch(new PatchSearchStateAction({
         key: 'recentSearch',
         value: [[...this.state.badges], ...this.state.recentSearch]
-      }))
+      }));
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
     }
@@ -150,10 +152,10 @@ export class SearchMenuItemComponent implements OnInit {
 
   searchLoader(keyword, table) {
     return this._searchService.searchByTable(keyword || '', '5', table || '');
-  };
+  }
 
   selectSearchBadge(key, value) {
-    let item = {key: key, value: value};
+    const item = {key: key, value: value};
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.store.dispatch([
       new PatchSearchStateAction([
@@ -173,13 +175,13 @@ export class SearchMenuItemComponent implements OnInit {
   closeSearchBadge(status, index) {
     if (status) {
       this.state.badges.splice(index, 1);
-      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}))
+      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
     }
   }
 
   enableExpertMode() {
-    if (this.contractFilterFormGroup.value['switchValue']) {
-      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}))
+    if (this.contractFilterFormGroup.get('switchValue').value) {
+      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
       // this.state.visibleSearch = false;
       this._notifcationService.createNotification('Information',
         'the export mode is now enabled',
@@ -211,42 +213,43 @@ export class SearchMenuItemComponent implements OnInit {
   // }
 
   focusInput(event) {
-    if (this.contractFilterFormGroup.value['switchValue']) {
+    if (this.contractFilterFormGroup.get('switchValue').value) {
       this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
         key: 'showResult',
         value: false
-      }]))
+      }]));
     } else {
-      if (event.target.value === '' || event.target.value.length < 2)
-        this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: true}))
-      else
+      if (event.target.value === '' || event.target.value.length < 2) {
+        this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: true}));
+      } else {
         this.store.dispatch(new PatchSearchStateAction([{key: 'showResult', value: true}, {
           key: 'showLastSearch',
           value: false
-        }]))
+        }]));
+      }
     }
-    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}))
+    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
   }
 
   onInput(event) {
     event.target.value === '' ? this.state.showClearIcon = false : this.state.showClearIcon = true;
-    if (!this.contractFilterFormGroup.value['switchValue']) {
+    if (!this.contractFilterFormGroup.get('switchValue').value) {
       if (event.target.value === '' || event.target.value.length < 2) {
         this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
           key: 'showResult',
           value: false
-        }]))
+        }]));
       } else {
-        this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: false}))
-        let searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
+        this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: false}));
+        const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
         this.examinateExpression(searchExpression);
-        this.store.dispatch(new PatchSearchStateAction({key: 'showResult', value: true}))
+        this.store.dispatch(new PatchSearchStateAction({key: 'showResult', value: true}));
       }
-      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: true}))
+      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: true}));
     } else {
-      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}))
+      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
     }
-    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}))
+    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
   }
 
   openClose(): void {

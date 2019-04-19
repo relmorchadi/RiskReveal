@@ -73,7 +73,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
         );
         if (this.selectedItems.length === 0) {
           this.workspaces[0].selected = true;
-          this.selectedItems.push(this.workspaces[0]);
+          this.selectedItems = [...this.selectedItems, this.workspaces[0]];
         } else {
           this.workspaces.forEach((ws) => {
               this.selectedItems.forEach((si) => ws.id === si.id ? ws.selected = true : null);
@@ -81,10 +81,6 @@ export class WorkspacesMenuItemComponent implements OnInit {
           );
         }
       });
-  }
-
-  updateWorkspaces(event) {
-    this.searchWorkspace(event);
   }
 
   searchNewWorkspace(search) {
@@ -95,7 +91,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   toggleWorkspace(workspace) {
     if (workspace.selected === true) {
-      this.selectedItems.push(workspace);
+      this.selectedItems = [...this.selectedItems, workspace];
     } else {
       this.selectedItems.filter(ws => ws.id !== workspace.id);
     }
@@ -105,7 +101,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   popOutWorkspaces() {
     this.visible = false;
     this.workspaces.filter(ws => ws.selected).forEach(ws => {
-      window.open('/workspace/' + ws.id);
+      window.open('/workspace/' + ws.id+'/'+ws.year);
       console.log('try to open', ws);
     });
   }
@@ -118,13 +114,16 @@ export class WorkspacesMenuItemComponent implements OnInit {
         this.searchData(SI.id, SI.year).subscribe(
           (dt:any) => {
             let workspace = {
-              uwYear: SI.id,
-              workSpaceId: SI.year,
+              workSpaceId: SI.id,
+              uwYear: SI.year,
               cedantCode: dt.cedantCode,
               cedantName: dt.cedantName,
               ledgerName: dt.ledgerName,
-              subsidiaryId: dt.subsidiaryId,
+              ledgerId: dt.subsidiaryLedgerId,
               subsidiaryName: dt.subsidiaryName,
+              subsidiaryId: dt.subsidiaryId,
+              expiryDate: dt.expiryDate,
+              inceptionDate: dt.inceptionDate,
               treatySections: dt.treatySections,
               workspaceName: dt.worspaceName,
               years: dt.years

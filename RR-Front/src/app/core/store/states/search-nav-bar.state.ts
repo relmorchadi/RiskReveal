@@ -1,16 +1,16 @@
-import {Action, NgxsOnInit, Selector, State, StateContext, Store} from "@ngxs/store";
+import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
 import {
   AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
   PatchSearchStateAction,
   SearchContractsCountAction, SearchContractsCountErrorAction,
   SearchContractsCountSuccessAction
-} from "../actions/search-nav-bar.state";
-import {SearchService} from "../../service/search.service";
-import {catchError, mergeMap} from "rxjs/operators";
-import {forkJoin, of} from "rxjs";
-import {SearchNavBar} from "../../model/search-nav-bar";
-import {WorkspaceFilter} from "../../model";
-import * as _ from "lodash";
+} from '../actions/search-nav-bar.state';
+import {SearchService} from '../../service/search.service';
+import {catchError, mergeMap} from 'rxjs/operators';
+import {forkJoin, of} from 'rxjs';
+import {SearchNavBar} from '../../model/search-nav-bar';
+import {WorkspaceFilter} from '../../model';
+import * as _ from 'lodash';
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -27,7 +27,7 @@ const initiaState: SearchNavBar = {
   data: [],
   recentSearch: [],
   showRecentSearch: [],
-  tables: ['CEDANT', 'COUNTRY', 'TREATY', 'YEAR', "PROGRAM"],
+  tables: ['CEDANT', 'COUNTRY', 'TREATY', 'YEAR', 'PROGRAM'],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
@@ -98,7 +98,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(SearchContractsCountAction)
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
-    ctx.dispatch(new PatchSearchStateAction({key: 'data', value: []}))
+    ctx.dispatch(new PatchSearchStateAction({key: 'data', value: []}));
     forkJoin(
       ...ctx.getState().tables.map(
         tableName => this.searchLoader(keyword, tableName)
@@ -130,8 +130,8 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(LoadRecentSearchAction)
-  loadRecentSearch(ctx: StateContext<SearchNavBar>){
-    ctx.patchState( {recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0,3) });
+  loadRecentSearch(ctx: StateContext<SearchNavBar>) {
+    ctx.patchState( {recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 3) });
   }
 
   private searchLoader(keyword, table) {

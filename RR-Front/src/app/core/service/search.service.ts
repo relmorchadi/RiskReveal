@@ -1,16 +1,20 @@
 import { Subject } from 'rxjs';
 import { Injectable } from '@angular/core';
-import {environment} from "../../../environments/environment";
-import {HttpClient} from "@angular/common/http";
-import {WorkspaceFilter} from "../model/workspace-filter";
+import {environment} from '../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
+import {WorkspaceFilter} from '../model/workspace-filter';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
-  searchedItems = [];
 
-  public items: Subject<any> = new Subject<any>();
+
+  private _searchedItems = [];
+  private _globalSearchItem = '';
+
+  public items = new Subject<any>();
+  public globalSearch$ = new Subject<any>();
 
   private readonly api = environment.API_URI + 'search/';
 
@@ -36,21 +40,35 @@ export class SearchService {
     return this._http.post(`${this.api}workspace`, filter, {params: {size}});
   }
 
-  searchByTable(keyword = '', size= '5', table = "country") {
+  searchByTable(keyword = '', size = '5', table = 'country') {
     return this._http.get(`${this.api}searchcount`, {params: {keyword, size, table}});
   }
 
   searchWorkspace(id = '', year = '') {
-    return this._http.get(`${this.api}worspace/${id}/${year}`)
+    return this._http.get(`${this.api}worspace/${id}/${year}`);
+  }
+
+  searchGlobal(keyword, size = '20') {
+    return this._http.get(`${this.api}workspace`, {params: {keyword, size}});
   }
 
   affectItems(item) {
-    this.searchedItems = item;
+    this._searchedItems = item;
     this.items.next();
   }
 
-  getSearchedItems() {
-    return this.searchedItems;
+  get globalSearchItem(): string {
+    return this._globalSearchItem;
+  }
+
+  set globalSearchItem(value: string) {
+    console.log(this._globalSearchItem);
+    this._globalSearchItem = value;
+    this.globalSearch$.next();
+  }
+
+  get searchedItems(): any[] {
+    return this._searchedItems;
   }
 
 }
