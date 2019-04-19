@@ -96,22 +96,23 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    if (keyboardEvent.key == 'Enter') {
-      if (this.contractFilterFormGroup.value['switchValue']) {
-        let searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
+    if (keyboardEvent.key === 'Enter') {
+      let searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
+      if (this.contractFilterFormGroup.value['switchValue'])
         this.examinateExpression(searchExpression);
-      }
+      else
+        this._searchService.globalSearchItem = searchExpression;
       event.preventDefault();
       this.redirectToSearchPage();
     }
     if (this.state.deleteBlock === true) {
-      if (keyboardEvent.key == 'Backspace' && keyboardEvent.target.value === '') {
+      if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.deleteBlock = false;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: false}));
         console.log(this.state.deleteBlock);
       }
     } else {
-      if (keyboardEvent.key == 'Backspace' && keyboardEvent.target.value === '') {
+      if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.badges.pop();
         this.state.deleteBlock = true;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: true}))
@@ -136,8 +137,6 @@ export class SearchMenuItemComponent implements OnInit {
       }))
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
-    } else {
-
     }
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.clearValue();

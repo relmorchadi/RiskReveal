@@ -1,28 +1,25 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
-import {COMPONENTS} from "./components"
-import {CONTAINERS, WorkspaceMainComponent} from "./containers";
+import {COMPONENTS} from './components';
+import {CONTAINERS, WorkspaceMainComponent, WorkspaceRiskLinkComponent, WorkspaceProjectComponent} from './containers';
 import {RouterModule, Routes} from '@angular/router';
-import {SharedModule} from "../shared/shared.module";
-import {WorkspaceRiskLinkComponent} from './containers/workspace-risk-link/workspace-risk-link.component';
+import {SharedModule} from '../shared/shared.module';
 import {HighlightDirective} from './highlight.directive';
 import {TableModule} from 'primeng/table';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
-import {WorkspaceComponent} from './workspace.component';
 const routes: Routes = [
   {
-    data: {title: 'RR- Workspace'}, path: '', component: WorkspaceComponent,
+    data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
     children: [
-      {path: '', component: WorkspaceMainComponent},
-      {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch:'full'},
-      {path: ':id', component: WorkspaceMainComponent},
+      {path: '', component: WorkspaceProjectComponent},
+      {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch: 'full'},
+      {path: ':id', component: WorkspaceProjectComponent},
     ]
   }
 ];
 
 @NgModule({
-  declarations: [
-    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkComponent, HighlightDirective, WorkspaceMainComponent, WorkspaceComponent
+  declarations: [...COMPONENTS, ...CONTAINERS, HighlightDirective
   ],
   imports: [
     SharedModule,

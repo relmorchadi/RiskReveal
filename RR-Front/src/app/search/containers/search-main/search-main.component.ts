@@ -1,9 +1,9 @@
 import {Component, HostListener, OnInit} from '@angular/core';
-import {FormBuilder, FormGroup} from "@angular/forms";
-import {SearchService} from "../../../core/service/search.service";
-import {debounceTime} from "rxjs/operators";
-import {HelperService} from "../../../shared/helper.service";
-import {Router} from "@angular/router";
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {SearchService} from '../../../core/service/search.service';
+import {debounceTime} from 'rxjs/operators';
+import {HelperService} from '../../../shared/helper.service';
+import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 
 
@@ -21,15 +21,16 @@ export class SearchMainComponent implements OnInit {
   selectedWorkspace: any;
   loadingMore = false;
   searchedItems = [];
+  globalSearchItem = '';
   currentWorkspace = null;
   columns = [
-    { field: 'id', header: 'Id', width: '150px', display:true, sorted:false, filtered:false },
-    { field: 'countryName', header: 'Country', width: '110px', display:true, sorted:false, filtered:true },
-    { field: 'cedantCode', header: 'Cedant', width: '110px', display:true, sorted:false, filtered:true  },
-    { field: 'cedantName', header: '', width: '110px', display:false, sorted:false, filtered:false  },
-    { field: 'uwYear', header: 'Uw Year', width: '110px', display:true, sorted:false, filtered:true  },
-    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display:true, sorted:false, filtered:true  },
-    { field: 'workspaceName', header: '', width: '110px', display:false, sorted:false, filtered:false  },
+    { field: 'id', header: 'Id', width: '150px', display: true, sorted: false, filtered: false },
+    { field: 'countryName', header: 'Country', width: '110px', display: true, sorted: false, filtered: true },
+    { field: 'cedantCode', header: 'Cedant', width: '110px', display: true, sorted: false, filtered: true  },
+    { field: 'cedantName', header: '', width: '110px', display: false, sorted: false, filtered: false  },
+    { field: 'uwYear', header: 'Uw Year', width: '110px', display: true, sorted: false, filtered: true  },
+    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display: true, sorted: false, filtered: true  },
+    { field: 'workspaceName', header: '', width: '110px', display: false, sorted: false, filtered: false  },
   ];
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
@@ -39,9 +40,16 @@ export class SearchMainComponent implements OnInit {
 
   ngOnInit() {
     this.searchedItems = this._searchService.searchedItems;
+    this.globalSearchItem =  this._searchService.globalSearchItem;
     this._searchService.items.subscribe(
       () =>  {
         this.searchedItems = [...this._searchService.searchedItems];
+        this._loadContracts();
+      }
+    );
+    this._searchService.globalSearch$.subscribe(
+      () => {
+        this.globalSearchItem =  this._searchService.globalSearchItem;
         this._loadContracts();
       }
     );
@@ -77,8 +85,8 @@ export class SearchMainComponent implements OnInit {
 
   openWorkspace(wsId, year) {
     this.searchData(wsId, year).subscribe(
-      (dt:any) => {
-        let workspace = {
+      (dt: any) => {
+        const workspace = {
           uwYear: year,
           workSpaceId: wsId,
           cedantCode: dt.cedantCode,
@@ -94,7 +102,7 @@ export class SearchMainComponent implements OnInit {
           years: dt.years
         };
         console.log(workspace);
-        this._helperService.affectItems([workspace])
+        this._helperService.affectItems([workspace]);
         this._router.navigate(['/workspace']);
       }
     );
@@ -113,8 +121,8 @@ export class SearchMainComponent implements OnInit {
 
   popUpWorkspace(wsId, year) {
     this.searchData(wsId, year).subscribe(
-      (dt:any) => {
-        let workspace = {
+      (dt: any) => {
+        const workspace = {
           uwYear: wsId,
           workSpaceId: year,
           cedantCode: dt.cedantCode,
@@ -127,7 +135,7 @@ export class SearchMainComponent implements OnInit {
           years: dt.years
         };
         console.log(workspace);
-        this._helperService.affectItems([workspace])
+        this._helperService.affectItems([workspace]);
         window.open('/workspace/' + wsId);
       }
     );
@@ -135,20 +143,19 @@ export class SearchMainComponent implements OnInit {
   }
 
   private _loadContracts(size = '20') {
-    console.log('Try to load contracts');
-    console.log(this.searchedItems);
     this.clearSearch();
     if (this.searchedItems.length > 0 ) {
-      let keys = [];
-      let values = [];
+      const keys = [];
+      const values = [];
       this.searchedItems.forEach(
         (e) => {
-          if ( e.key === 'UW/Year')
-            keys.push('year');
-          else if ( e.key === 'PROGRAM')
-            keys.push('programId')
-          else
-            keys.push(e.key.toLowerCase());
+          if ( e.key === 'UW/Year') {
+              keys.push('year');
+            } else if ( e.key === 'PROGRAM') {
+              keys.push('programId');
+            } else {
+              keys.push(e.key.toLowerCase());
+            }
           values.push(e.value);
         }
       );
@@ -157,13 +164,29 @@ export class SearchMainComponent implements OnInit {
           this.contractFilterFormGroup.value[e] = values[index];
         }
       );
+      this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
+        .subscribe((data: any) => {
+          this.contracts = data.content;
+          this.loadingMore = false;
+          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+        });
+    } else if (this.globalSearchItem !== '') {
+      this._searchService.searchGlobal(this.globalSearchItem)
+        .subscribe((data: any) => {
+            this.contracts = data.content;
+            this.loadingMore = false;
+            this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+          }
+        );
+    } else {
+      this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
+        .subscribe((data: any) => {
+          this.contracts = data.content;
+          this.loadingMore = false;
+          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+        });
     }
-    this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
-      .subscribe((data: any) => {
-        this.contracts = data.content;
-        this.loadingMore = false;
-        this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-    });
+    console.log(this.globalSearchItem);
     console.log(this.contracts);
   }
 
