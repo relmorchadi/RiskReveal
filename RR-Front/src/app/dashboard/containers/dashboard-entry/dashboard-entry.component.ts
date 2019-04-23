@@ -277,7 +277,7 @@ export class DashboardEntryComponent implements OnInit {
           dashboard.items = _.merge(dashboard.items,{[index]:{name:newName}})
       }
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData()
+    this.updateDashboardMockData();
   //this.editName = false;
   }
   duplicate(dashboardId:any, itemName:any) {

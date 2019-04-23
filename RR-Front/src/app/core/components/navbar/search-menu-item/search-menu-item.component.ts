@@ -62,7 +62,7 @@ export class SearchMenuItemComponent implements OnInit {
       .subscribe((param) => {
         this._selectedSearch(param);
       });
-    this.store.dispatch(new LoadRecentSearchAction);
+    this.store.dispatch(new LoadRecentSearchAction());
     this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
       .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
   }

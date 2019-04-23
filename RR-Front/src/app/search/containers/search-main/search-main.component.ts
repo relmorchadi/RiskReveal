@@ -37,11 +37,10 @@ export class SearchMainComponent implements OnInit {
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router,private _location: Location) {
-      this.clearSearch();
+      this.initSearchForm();
   }
 
   ngOnInit() {
-    this.clearSearch();
     this.searchedItems = this._searchService.searchedItems;
     this.globalSearchItem =  this._searchService.globalSearchItem;
     this._searchService.items.subscribe(
@@ -50,12 +49,7 @@ export class SearchMainComponent implements OnInit {
         this._loadContracts();
       }
     );
-    this.contractFilterFormGroup
-      .valueChanges
-      .pipe(debounceTime(500))
-      .subscribe((param) => {
-        this._loadContracts();
-      });
+
     this._searchService.globalSearch$.subscribe(
       () => {
         this.globalSearchItem =  this._searchService.globalSearchItem;
@@ -69,7 +63,7 @@ export class SearchMainComponent implements OnInit {
     //   .subscribe(() => this._loadContracts());
   }
 
-  clearSearch() {
+  initSearchForm() {
     this.contractFilterFormGroup = this._fb.group({
       globalKeyword: [],
       cedantCode: null,
@@ -85,6 +79,12 @@ export class SearchMainComponent implements OnInit {
       workspaceName: null,
       year: null
     });
+    this.contractFilterFormGroup
+      .valueChanges
+      .pipe(debounceTime(500))
+      .subscribe((param) => {
+        this._loadContracts();
+      });
   }
 
   private searchData(id, year) {
@@ -207,7 +207,7 @@ export class SearchMainComponent implements OnInit {
           }
         );
     } else {
-      this.clearSearch();
+      //this.initSearchForm();
       this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
         .subscribe((data: any) => {
           this.contracts = data.content;
