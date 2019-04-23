@@ -30,9 +30,11 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   ngOnInit() {
     this._helperService.test$.subscribe((ws: any) => {
-      this.workspaces = ws;
-      this.numberofElement = this.workspaces.length;
-      this.workspaces[0].selected = true;
+      this.workspaces = ws || [];
+      if(this.workspaces.length > 0) {
+        this.numberofElement = this.workspaces.length;
+        this.workspaces[0].selected = true;
+      }
     });
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
 
@@ -68,12 +70,12 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   searchWorkspace(size: string = '10') {
     this.workspaces = [];
-    const items = JSON.parse(localStorage.getItem('usedWorkspaces'));
+    const items = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
     items.forEach(
       ws => {
         this.workspaces = [...this.workspaces, {...ws, selected: false, timeStamp: Date.now()}];
     });
-    if (this.selectedItems.length === 0) {
+    if (this.selectedItems.length === 0 && this.workspaces.length > 0) {
       this.workspaces[0].selected = true;
       this.selectedItems = [...this.selectedItems, this.workspaces[0]];
     } else {

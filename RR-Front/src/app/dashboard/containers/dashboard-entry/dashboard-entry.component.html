@@ -34,7 +34,10 @@
               <gridster [options]="options" style="background-color: transparent;">
                 <ng-container *ngFor="let item of dashboard.items" >
                   <gridster-item  *ngIf="item.selected" [item]="item?.position ">
-                      <renewal-contract-scope [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name" (delete)="delete(dashboard.id, item)" (duplicate)="duplicate(dashboard.id,item)" class="no-drag"></renewal-contract-scope>
+                      <renewal-contract-scope [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                                              (delete)="delete(dashboard.id, $event)"
+                                              (changeName) ="changeName(dashboard.id,$event)"
+                                              (duplicate)="duplicate(dashboard.id,$event)" class="no-drag"></renewal-contract-scope>
                   </gridster-item>
                 </ng-container>
               </gridster>
@@ -70,7 +73,7 @@
         </div>
       </div>
       <div class="slider-content">
-        <div>
+        <div style="flex:1">
           <nz-select  (ngModelChange)="dashboardChange($event)" style="width: 200px;"
                       nzShowSearch nzAllowClear
                       nzPlaceHolder="Select Dashboard" [ngModel]="0">
