@@ -290,7 +290,8 @@ export class DashboardEntryComponent implements OnInit {
         dashboard.items.push(copy);
         newItem[0].selected = false;
       }else {
-          let index = _.indexOf(dashboard.items,{id:itemId})
+        console.log(_.findIndex(dashboard.items,{id:itemId}))
+          let index = _.findIndex(dashboard.items,{id:itemId})
           dashboard.items = _.merge(dashboard.items,{[index]:{name:newName}})
       }
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));

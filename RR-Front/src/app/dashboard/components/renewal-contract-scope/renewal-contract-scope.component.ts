@@ -91,6 +91,7 @@ export class RenewalContractScopeComponent implements OnInit {
 
     if (keyboardMap.key === 'Enter') {
       this.changeName.emit({itemId:id,newName:keyboardMap.target.value})
+      this.editName = false
     /*  const newItem = this.newDashboard.items.filter(ds => ds.id === id);
       const copy = Object.assign({}, newItem[0], {
         name: this.itemName,
