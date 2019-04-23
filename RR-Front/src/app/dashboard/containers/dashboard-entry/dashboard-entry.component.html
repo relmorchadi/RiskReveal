@@ -73,7 +73,7 @@
         <div>
           <nz-select  (ngModelChange)="dashboardChange($event)" style="width: 200px;"
                       nzShowSearch nzAllowClear
-                      nzPlaceHolder="Select Dashboard" [(ngModel)]="idSelected">
+                      nzPlaceHolder="Select Dashboard" [ngModel]="0">
             <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
               {{d.name}}
               <i *ngIf="d.visible" (click)="closeTab(d)" class="icon-remove_red_eye_24px selected-item-icon"></i>

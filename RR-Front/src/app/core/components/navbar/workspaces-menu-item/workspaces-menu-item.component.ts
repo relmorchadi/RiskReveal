@@ -16,14 +16,12 @@ import {Store} from '@ngxs/store';
 export class WorkspacesMenuItemComponent implements OnInit {
   contractFilterFormGroup: FormGroup;
   workspaces: any = [];
-  workspaces$: Observable<any>;
   selectedWorkspace = null;
   selectedItems = [];
   numberofElement: number;
   lastOnes = 10;
   visible: any;
   labels: any = [];
-  workspaceData: any;
 
   constructor(private _helperService: HelperService, private router:Router, private _searchService: SearchService,
               private _fb: FormBuilder, private store: Store) {
@@ -31,16 +29,13 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._helperService.test$.subscribe((ws:any)=>{
+    this._helperService.test$.subscribe((ws: any) => {
       this.workspaces = ws;
-    })
+      this.numberofElement = this.workspaces.length;
+      this.workspaces[0].selected = true;
+    });
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
-/*    this._helperService.subjectRecent.subscribe(
-      ds => {
-        // this.workspaces = this._helperService.getrecentWorkspaces();
-        console.log(this._helperService.getrecentWorkspaces());
-      }
-    );*/
+
     if (this.numberofElement > 10) {
       this.labels.push('Last 10');
     }
@@ -73,23 +68,11 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   searchWorkspace(size: string = '10') {
     this.workspaces = [];
-    if (localStorage.getItem('usedWorkspaces') === null) {
-  /*  this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
-      .subscribe((data: any) => {
-        data.content.forEach(
-          ws => {
-            this.workspaces = [...this.workspaces, {...ws, selected: false}];
-          }
-        );
-      });*/
-    } else {
-      const items = JSON.parse(localStorage.getItem('usedWorkspaces'));
-      items.forEach(
-        ws => {
-          this.workspaces = [...this.workspaces, {...ws, selected: false, timeStamp: Date.now()}];
-        }
-      );
-    }
+    const items = JSON.parse(localStorage.getItem('usedWorkspaces'));
+    items.forEach(
+      ws => {
+        this.workspaces = [...this.workspaces, {...ws, selected: false, timeStamp: Date.now()}];
+    });
     if (this.selectedItems.length === 0) {
       this.workspaces[0].selected = true;
       this.selectedItems = [...this.selectedItems, this.workspaces[0]];

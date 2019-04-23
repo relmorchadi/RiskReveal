@@ -226,13 +226,14 @@ export class DashboardEntryComponent implements OnInit {
   dashboardChange(id: any) {
     const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
+    this.idSelected = id;
+    console.log(id, this.idSelected);
     if (this.dashboards[id].visible === true) {
       let idSel = 0;
       this.dashboards.forEach(
         ds => {
           if (ds.visible === true && ds.id < id) {
             ++idSel;
-            console.log('toto', ds.id, id);
           }
         },
       );
@@ -248,10 +249,10 @@ export class DashboardEntryComponent implements OnInit {
         ++overall;
         if (ds.visible === true) {
           ++idSel;
-          console.log(idSel === tabSelected.index, idSel, overall);
+          // console.log(idSel === tabSelected.index, overall, this.idSelected);
         }
         if (idSel === tabSelected.index) {
-          this.idSelected = overall;
+          this.dashboardChange(overall);
         }
       }
     );
