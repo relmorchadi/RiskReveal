@@ -2,20 +2,26 @@ import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, Subject} from 'rxjs';
 import * as _ from 'lodash';
 import {of} from 'rxjs';
+import {map} from 'rxjs/operators';
 
 @Injectable({providedIn: 'root'})
 export class HelperService {
-  items = [];
+  items = JSON.parse(localStorage.getItem('workspaces')) || [];
+  recentWorkspaces$: Observable<any>;
+  test$: BehaviorSubject<any>;
 
-  public items$: Observable<any>;
-
-  constructor() {}
+  constructor() {
+    const obs$: any =  of(localStorage.getItem('usedWorkspaces')).pipe(map( ls => JSON.parse(ls)));
+    this.recentWorkspaces$ = obs$;
+    this.test$ = new BehaviorSubject(JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
+  }
 
   collapseLeftMenu$ = new Subject<void>();
   openWorkspaces = new BehaviorSubject<any>([]);
 
   affectItems(item) {
-    this.items = item;
+    localStorage.setItem('workspaces', JSON.stringify(item));
+    this.items = JSON.parse(localStorage.getItem('workspaces'));
   }
 
   getSearchedWorkspaces() {
@@ -27,7 +33,12 @@ export class HelperService {
       if (ws.workSpaceId === item.workSpaceId && ws.uwYear == item.uwYear) {return ws; }
       }
     );
-    if (alreadyImported.length === 0 ) {this.items.push(item); }
+    if (alreadyImported.length === 0 ) {
+      this.items.push(item);
+      const savedWorkspaces: any = localStorage.getItem('workspaces');
+      savedWorkspaces.push(item);
+      localStorage.setItem('workspaces', JSON.stringify(savedWorkspaces));
+    }
   }
 
   itemsRemove( wsId, year) {
@@ -37,4 +48,8 @@ export class HelperService {
     );
   }
 
+  updateRecentWorkspaces(data) {
+    localStorage.setItem('usedWorkspaces', JSON.stringify(data));
+    this.test$.next(data);
+  }
 }

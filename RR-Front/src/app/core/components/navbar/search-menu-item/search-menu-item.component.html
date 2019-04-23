@@ -61,9 +61,9 @@
         <ng-template #basicTable>
           <div class="result-wrapper" *ngIf="state?.data?.length > 0; else loading">
             <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
-                <span class="search-result-span" *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
+                <span class="search-result-span" *ngIf="state?.data[i].length > 0">{{stringUpdate(state?.tables[i])}}</span>
                 <ul class="search-result-list" >
-                  <li  *ngFor="let val of state?.data[i]" (click)="selectSearchBadge(state.tables[i],val.label)">
+                  <li  *ngFor="let val of state?.data[i]" (click)="selectSearchBadge(stringUpdate(state?.tables[i]), val.label)">
                     <span>{{val.countOccur}}</span>{{val.label}}
                   </li>
                 </ul>

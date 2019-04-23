@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
+import { NzMessageService } from 'ng-zorro-antd';
+
 @Component({
   selector: 'app-dashboard-entry',
   templateUrl: './dashboard-entry.component.html',
@@ -117,7 +119,11 @@ export class DashboardEntryComponent implements OnInit {
   ];
 
   dashboardsMockData = [];
-  visibleTabs = [];
+  dashboardTitle = 'Dashboard N°1';
+  tabs = [1, 2, 3];
+  idSelected = 0;
+  idTab = 0;
+  rightSliderCollapsed = false;
 
   widgetsMockData = {
     treaty: [
@@ -140,15 +146,9 @@ export class DashboardEntryComponent implements OnInit {
 
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
-  dashboardTitle = 'Dashboard N°1';
-  tabs = [1, 2, 3];
 
-  idSelected = 0;
-  idTab = 0;
 
-  rightSliderCollapsed = false;
-
-  constructor() {
+  constructor(private nzMessageService: NzMessageService) {
   }
 
   ngOnInit() {
@@ -174,64 +174,88 @@ export class DashboardEntryComponent implements OnInit {
     };
 
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
-    this.visibleTabs = this.dashboards.filter(ds => ds.visible === true);
     this.updateDashboardMockData();
     this.dashboardChange(this.idSelected);
   }
 
   addDashboard() {
-    let {treaty, fac}: any = this.widgetsMockData;
-    let selectedTreatyComponent = _.filter(treaty, (e: any) => e.selected);
-    let selectedFacComponent = _.filter(fac, (e: any) => e.selected);
-    let item = {
+    const {treaty, fac}: any = this.widgetsMockData;
+    const selectedTreatyComponent = _.filter(treaty, (e: any) => e.selected);
+    const selectedFacComponent = _.filter(fac, (e: any) => e.selected);
+    const item = {
       id: this.dashboards.length,
       name: this.newDashboardTitle,
       visible: true,
-      items:_.concat(_.map(selectedTreatyComponent,
-        ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title,icon: icon,selected: true, position: {rows: 5, cols: 5}})),
+      items: _.concat(_.map(selectedTreatyComponent,
+        ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title, icon: icon, selected: true, position: {rows: 5, cols: 5}})),
         _.map(selectedFacComponent,
-          ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title,icon: icon, selected: true, position: {rows: 5, cols: 5}}))
+          ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title, icon: icon, selected: true, position: {rows: 5, cols: 5}}))
       )
     };
     this.dashboards = [...this.dashboards, item];
-    this.visibleTabs = [...this.visibleTabs, item];
-    this.idSelected = this.visibleTabs.length - 1;
     this.dashboardTitle = this.newDashboardTitle || '';
-    this.updateDashboardMockData()
+    this.updateDashboardMockData();
     this.newDashboardTitle = '';
   }
 
   deleteDashboard() {
     this.dashboards = _.filter(this.dashboards, (e: any) => this.idSelected != e.id);
-    this.visibleTabs = _.filter(this.visibleTabs, (e: any) => this.idSelected != e.id);
-    localStorage.setItem('dashboard',JSON.stringify(this.dashboards));
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
 
     this.idSelected = _.get(this.dashboards, '[0].id', '');
-    console.log({id:this.idSelected});
     this.dashboardChange(this.idSelected);
+    this.nzMessageService.info('delete dashboard Success');
   }
 
   changeDashboardName(name) {
-    let dashIndex = _.findIndex(this.dashboards,{id:this.idSelected})
-    if(dashIndex != -1) this.dashboards[dashIndex].name = name
-    this.visibleTabs.forEach((vt => vt.id === this.dashboards[dashIndex] ? vt.name = name : null))
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards))
+    const dashIndex = _.findIndex(this.dashboards, {id: this.idSelected});
+    if (dashIndex != -1) this.dashboards[dashIndex].name = name;
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
   }
 
-  updateDashboardMockData(){
+  updateDashboardMockData() {
     this.dashboardsMockData = _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
   }
 
   itemChanges() {
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards))
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
   }
 
   dashboardChange(id: any) {
-    let name: any =  _.get(_.find(this.dashboards, {id}), 'name');
+    const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
     this.idSelected = id;
+    console.log(id, this.idSelected);
+    if (this.dashboards[id].visible === true) {
+      let idSel = 0;
+      this.dashboards.forEach(
+        ds => {
+          if (ds.visible === true && ds.id < id) {
+            ++idSel;
+          }
+        },
+      );
+      this.idTab = idSel;
+    }
+  }
+
+  tabChange(tabSelected) {
+    let idSel = -1;
+    let overall = -1;
+    this.dashboards.forEach(
+      ds => {
+        ++overall;
+        if (ds.visible === true) {
+          ++idSel;
+          // console.log(idSel === tabSelected.index, overall, this.idSelected);
+        }
+        if (idSel === tabSelected.index) {
+          this.dashboardChange(overall);
+        }
+      }
+    );
   }
 
   delete(id, item) {
@@ -247,27 +271,25 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   activeView(tab) {
-    let item = {id: tab.id, visible:true, name: tab.name, items: tab.items};
-    this.visibleTabs.splice(tab.id,0,item)
     this.dashboards.forEach(ds => ds.id === tab.id ? ds.visible = true : null);
-    localStorage.setItem('dashboard',JSON.stringify(this.dashboards));
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
     this.idSelected = tab.id;
+    this.idTab = tab.id;
   }
 
   closeTab(tab): void {
-    this.visibleTabs = this.visibleTabs.filter(ds => ds.id !== tab.id);
     this.dashboards.forEach(ds => ds.id === tab.id ? ds.visible = false : null);
-    localStorage.setItem('dashboard',JSON.stringify(this.dashboards));
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
   }
 
   addRemoveItem(item) {
-    item.selected = !item.selected
+    item.selected = !item.selected;
   }
 
   onEnterAdd(keyEvent) {
-    if(keyEvent.key === 'Enter' ){
+    if (keyEvent.key === 'Enter' ) {
       this.addDashboard();
     }
   }

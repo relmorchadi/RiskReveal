@@ -12,8 +12,8 @@ const routes: Routes = [
     data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
     children: [
       {path: '', component: WorkspaceProjectComponent},
-      {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch:'full'},
-      {path: ':id', component: WorkspaceProjectComponent},
+      {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch: 'full'},
+      {path: ':id',  redirectTo: '/', pathMatch: 'full'},
     ]
   }
 ];
@@ -28,7 +28,8 @@ const routes: Routes = [
     RouterModule.forChild(routes)
   ],
   exports: [
-    RouterModule
+    RouterModule,
+    HighlightDirective
   ]
 })
 export class WorkspaceModule {

@@ -1,11 +1,12 @@
 import {Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../../shared/helper.service';
 import {Router} from '@angular/router';
-import {SearchService} from '../../../service/search.service'
-import {FormBuilder, FormGroup} from "@angular/forms";
+import {SearchService} from '../../../service/search.service';
+import {FormBuilder, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
-import {forkJoin} from "rxjs";
-import {PatchSearchStateAction} from "../../../store/actions";
+import {forkJoin, Observable, of} from 'rxjs';
+import {PatchSearchStateAction} from '../../../store/actions';
+import {Store} from '@ngxs/store';
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -17,18 +18,35 @@ export class WorkspacesMenuItemComponent implements OnInit {
   workspaces: any = [];
   selectedWorkspace = null;
   selectedItems = [];
+  numberofElement: number;
   lastOnes = 10;
-  visible: boolean = false;
-  workspaceData: any;
+  visible: any;
+  labels: any = [];
 
-  constructor(private _helperService: HelperService,private router:Router, private _searchService: SearchService,
-              private _fb: FormBuilder) {
+  constructor(private _helperService: HelperService, private router:Router, private _searchService: SearchService,
+              private _fb: FormBuilder, private store: Store) {
     this.setForm();
   }
 
   ngOnInit() {
-    this.searchWorkspace('10');
+    this._helperService.test$.subscribe((ws: any) => {
+      this.workspaces = ws;
+      this.numberofElement = this.workspaces.length;
+      this.workspaces[0].selected = true;
+    });
+    this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
 
+    if (this.numberofElement > 10) {
+      this.labels.push('Last 10');
+    }
+    if (this.numberofElement > 50) {
+      this.labels.push('Last 50');
+    }
+    if (this.numberofElement > 100) {
+      this.labels.push('Last 100');
+    }
+
+    this.searchWorkspace('10');
   }
 
   private searchData(id, year) {
@@ -50,50 +68,33 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   searchWorkspace(size: string = '10') {
     this.workspaces = [];
-    this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
-      .subscribe((data: any) => {
-        console.log(data);
-        data.content.forEach(
-          ws => {
-            const item = {
-              id: ws.workSpaceId,
-              workspaceName: ws.workspaceName,
-              programName: ws.programName,
-              countryName: ws.countryName,
-              expiryDate: ws.expiryDate,
-              subsidiaryLedgerid: ws.subsidiaryLedgerid,
-              subsidiaryid: ws.subsidiaryid,
-              treatyName: ws.treatyName,
-              cedantName: ws.cedantName,
-              year: ws.uwYear,
-              selected: false
-            };
-            this.workspaces = [...this.workspaces, item];
-          }
-        );
-        if (this.selectedItems.length === 0) {
-          this.workspaces[0].selected = true;
-          this.selectedItems = [...this.selectedItems, this.workspaces[0]];
-        } else {
-          this.workspaces.forEach((ws) => {
-              this.selectedItems.forEach((si) => ws.id === si.id ? ws.selected = true : null);
-            }
-          );
+    const items = JSON.parse(localStorage.getItem('usedWorkspaces'));
+    items.forEach(
+      ws => {
+        this.workspaces = [...this.workspaces, {...ws, selected: false, timeStamp: Date.now()}];
+    });
+    if (this.selectedItems.length === 0) {
+      this.workspaces[0].selected = true;
+      this.selectedItems = [...this.selectedItems, this.workspaces[0]];
+    } else {
+      this.workspaces.forEach((ws) => {
+          this.selectedItems.forEach((si) => ws.workSpaceId === si.workSpaceId ? ws.selected = true : null);
         }
-      });
+      );
+    }
   }
 
   searchNewWorkspace(search) {
     // let selectedItems =[ ...this.workspaces.filter(ws => ws.selected)];
     this.contractFilterFormGroup.patchValue({cedant: search.target.value});
-    this.searchWorkspace();
+    // this.searchWorkspace();
   }
 
   toggleWorkspace(workspace) {
     if (workspace.selected === true) {
       this.selectedItems = [...this.selectedItems, workspace];
     } else {
-      this.selectedItems.filter(ws => ws.id !== workspace.id);
+      this.selectedItems.filter(ws => ws.workSpaceId !== workspace.workSpaceId);
     }
     workspace.selected = !workspace.selected;
   }
@@ -101,21 +102,21 @@ export class WorkspacesMenuItemComponent implements OnInit {
   popOutWorkspaces() {
     this.visible = false;
     this.workspaces.filter(ws => ws.selected).forEach(ws => {
-      window.open('/workspace/' + ws.id);
+      window.open('/workspace/' + ws.id+'/'+ws.year);
       console.log('try to open', ws);
     });
   }
 
   async openWorkspaces() {
-    let selectedItems =[ ...this.workspaces.filter(ws => ws.selected)];
+    const selectedItems = [ ...this.workspaces.filter(ws => ws.selected)];
     let workspaces = [];
     selectedItems.forEach(
       (SI) => {
-        this.searchData(SI.id, SI.year).subscribe(
-          (dt:any) => {
-            let workspace = {
-              workSpaceId: SI.id,
-              uwYear: SI.year,
+        this.searchData(SI.workSpaceId, SI.uwYear).subscribe(
+          (dt: any) => {
+            const workspace = {
+              workSpaceId: SI.workSpaceId,
+              uwYear: SI.uwYear,
               cedantCode: dt.cedantCode,
               cedantName: dt.cedantName,
               ledgerName: dt.ledgerName,
@@ -128,15 +129,29 @@ export class WorkspacesMenuItemComponent implements OnInit {
               workspaceName: dt.worspaceName,
               years: dt.years
             };
-            workspaces = [workspace,...workspaces];
-            if(workspaces.length === selectedItems.length){
-              this._helperService.affectItems(workspaces)
+            workspaces = [workspace, ...workspaces];
+            if (workspaces.length === selectedItems.length) {
+              this._helperService.affectItems(workspaces);
+              if ( JSON.parse(localStorage.getItem('usedWorkspaces')) === null ) {
+                this._helperService.updateRecentWorkspaces(workspaces);
+                // localStorage.setItem('usedWorkspaces', JSON.stringify(workspaces));
+              } else {
+                let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces'));
+                usedWorkspaces = _.pullAllWith(usedWorkspaces, workspaces, _.isEqual);
+                usedWorkspaces.unshift(...workspaces);
+                this._helperService.updateRecentWorkspaces(usedWorkspaces);
+                // localStorage.setItem('usedWorkspaces', JSON.stringify(usedWorkspaces));
+              }
               this.router.navigate(['/workspace']);
               this.visible = false;
+              this.selectedItems = [];
+              this.workspaces.forEach(ws => ws.selected = false);
+              this.searchWorkspace('10');
             }
           }
         );
       }
     );
+
   }
 }

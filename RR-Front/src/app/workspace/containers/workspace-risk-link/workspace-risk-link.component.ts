@@ -2,12 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
-let staticTabs: any = [{title: '02PY376', year: '2019'},
-  {title: '02PY376', year: '2018'},
-  {title: '02PY376', year: '2019'},
-  {title: '06YE736', year: '2018'},
-  {title: '19IT762', year: '2018'}
-];
+
 @Component({
   selector: 'app-workspace-risk-link',
   templateUrl: './workspace-risk-link.component.html',
@@ -15,7 +10,6 @@ let staticTabs: any = [{title: '02PY376', year: '2019'},
 })
 export class WorkspaceRiskLinkComponent implements OnInit {
   leftNavbarIsCollapsed: boolean = false;
-  tabs:any =staticTabs;
   collapseWorkspaceDetail: boolean = true;
   componentSubscription: any = [];
   selectedPrStatus = '1';
@@ -92,7 +86,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   SummaryInfo: any = [
     {status : true, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'},
     {status : false, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'}
-  ]
+  ];
 
   displayDropdownEDM: boolean = false;
   displayDropdownRDM: boolean = false;
@@ -116,29 +110,11 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     this._helper.collapseLeftMenu$.subscribe((e) => {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
-    this._helper.openWorkspaces.subscribe(workspaces => this.tabs = workspaces);
-    const pathName: any = window.location.pathname || '';
-    if (pathName.includes('workspace')) {
-      const workspaceId: any = pathName[pathName.length - 1];
-      if (workspaceId !=null ) this.tabs = [staticTabs[0]];
-    }
-
-  }
-  close(item){
-    this.tabs = _.filter(this.tabs,(i)=> i != item)
   }
 
-  ngOnDestroy (): void {
+/*  ngOnDestroy (): void {
     _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
-  }
-
-  addWs(title, year) {
-    this.tabs = [...this.tabs, {title, year}];
-  }
-
-  generateYears(year) {
-    return _.range(year - 1, 2013);
-  }
+  }*/
 
   toggleItems(RDM) {
     RDM.selected = !RDM.selected;
@@ -221,12 +197,12 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     }
   }
 
-  selectedItem(value){
+  selectedItem(value) {
     if (value === 1) {
       this.listEDM = [];
       this.EDM.forEach((e) => {
         if (e.selected === true) {
-          let newItem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
+          const newItem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
           this.listEDM = [...this.listEDM , newItem];
         }
       });
@@ -236,7 +212,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       this.listRDM = [];
       this.RDM.forEach((e) => {
         if (e.selected === true) {
-          let newitem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
+          const newitem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
           this.listRDM = [...this.listRDM, newitem];
         }
       });

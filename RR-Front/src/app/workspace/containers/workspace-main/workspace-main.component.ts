@@ -1,6 +1,7 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
+import {of} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
 import {SearchService} from "../../../core/service/search.service";
@@ -36,7 +37,6 @@ export class WorkspaceMainComponent implements OnInit {
     this._helper.collapseLeftMenu$.subscribe((e) => {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
-
     const pathName: any = window.location.pathname || '';
     if (pathName.includes('workspace')) {
       const workspaceId: any = pathName[pathName.length - 1];
@@ -45,6 +45,7 @@ export class WorkspaceMainComponent implements OnInit {
             }*/
     }
   }
+
   getSearchedWorkspaces() {
     return this._helper.getSearchedWorkspaces();
   }
