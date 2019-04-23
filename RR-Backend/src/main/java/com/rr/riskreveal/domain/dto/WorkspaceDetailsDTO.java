@@ -4,6 +4,7 @@ import com.rr.riskreveal.domain.ContractSearchResult;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
@@ -33,8 +34,8 @@ public class WorkspaceDetailsDTO {
         this.subsidiaryId = ofNullable(first.getSubsidiaryid()).map(String::valueOf).orElse(null);
         this.subsidiaryName = first.getSubsidiaryName();
         this.ledgerName = first.getSubsidiaryLedgerName();
-        this.treatySections = items.stream().filter(item -> item != null).map(item -> item.getSectionid())
-                .map(String::valueOf).distinct().sorted().collect(Collectors.toList());
+        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())) ) ).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid()))  )
+        ).distinct().collect(Collectors.toList());
         this.years= years;
         this.inceptionDate= first.getInceptionDate();
         this.expiryDate = first.getExpiryDate();

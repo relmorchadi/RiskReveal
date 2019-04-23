@@ -135,8 +135,8 @@ public class SearchService {
 
     }
 
-    public Page<WorkspaceView> globalSearchWorkspaces(String keyword, int size) {
-        return workspaceViewRepository.findAll(WorkspaceViewSpecification.filter(keyword), PageRequest.of(0, size));
+    public Page<WorkspaceProjection> globalSearchWorkspaces(String keyword, int size) {
+        return contractSearchResultRepository.globalSearch("%"+keyword+"%", PageRequest.of(0, size));
     }
 
     public Page<?> countInWorkspace(TableNames table, String keyword, int size) {
@@ -146,7 +146,7 @@ public class SearchService {
     }
 
     public Optional<WorkspaceDetailsDTO> getWorkspaceDetails(String worspaceId, String uwy) {
-        List<ContractSearchResult> items = contractSearchResultRepository.findAll(filterByWorkspaceIdAndUwy(worspaceId, uwy));
+        List<ContractSearchResult> items = contractSearchResultRepository.findByTreatyidAndUwYear(worspaceId, uwy);
         if (items == null || items.isEmpty())
             return Optional.empty();
         List<String> years = contractSearchResultRepository.findDistinctByWorkSpaceId(worspaceId).map(item -> item.getUwYear()).filter(Objects::nonNull).map(String::valueOf).distinct().sorted().collect(toList());
