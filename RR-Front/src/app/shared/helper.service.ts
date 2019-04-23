@@ -21,8 +21,18 @@ export class HelperService {
   collapseLeftMenu$ = new Subject<void>();
   openWorkspaces = new BehaviorSubject<any>([]);
 
-  affectItems(item) {
-    localStorage.setItem('workspaces', JSON.stringify(item));
+  affectItems(item , newWorkspaces = false) {
+    if (newWorkspaces) {
+      localStorage.setItem('workspaces', JSON.stringify(item));
+    } else {
+      if (this.items.length === 0) {
+        localStorage.setItem('workspaces', JSON.stringify(item));
+      } else {
+        this.items = this.items.filter(dt => dt);
+        const listItems = [...this.items, ...item];
+        localStorage.setItem('workspaces', JSON.stringify(_.uniqBy(listItems, (a) => a.workSpaceId)));
+      }
+    }
     this.items = JSON.parse(localStorage.getItem('workspaces')) || [];
     this.changeSelectedWorkspace$.next();
   }

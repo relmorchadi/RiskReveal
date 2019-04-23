@@ -30,6 +30,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   ngOnInit() {
     this._helperService.test$.subscribe((ws: any) => {
+      console.log(ws);
       this.workspaces = ws || [];
       if(this.workspaces.length > 0) {
         this.numberofElement = this.workspaces.length;
@@ -133,7 +134,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
             };
             workspaces = [workspace, ...workspaces];
             if (workspaces.length === selectedItems.length) {
-              this._helperService.affectItems(workspaces);
+              this._helperService.affectItems(workspaces, true);
               if ( JSON.parse(localStorage.getItem('usedWorkspaces')) === null ) {
                 this._helperService.updateRecentWorkspaces(workspaces);
                 // localStorage.setItem('usedWorkspaces', JSON.stringify(workspaces));

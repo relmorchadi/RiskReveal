@@ -228,6 +228,7 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   dashboardChange(id: any) {
+    console.log({id})
     const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
     this.idSelected = id;
@@ -240,48 +241,29 @@ export class DashboardEntryComponent implements OnInit {
           }
         },
       );
-      console.log('2', id, this.idSelected, this.dashboardsMockData[this.idSelected], idSel);
       this.idTab = idSel;
     }
   }
 
-  tabChange(tabSelected) {
-    console.log(tabSelected.index);
-    let idSel = -1;
-    let overall = -1;
-    this.dashboards.forEach(
-      ds => {
-        ++overall;
-        if (ds.visible === true) {
-          ++idSel;
-          // console.log(idSel === tabSelected.index, overall, this.idSelected);
-        }
-        if (idSel === tabSelected.index) {
-          this.dashboardChange(overall);
-        }
-      }
-    );
-  }
-
-  delete(dashboardId:any, itemId:any) {
-    //console.log({id,item})
+  delete(dashboardId: any, itemId: any) {
+    // console.log({id,item})
  /*   this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
     this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));*/
-    let dashboard:any = this.dashboards[dashboardId];
-    if(itemId > 5){
+    let dashboard: any = this.dashboards[dashboardId];
+    if (itemId > 5) {
       dashboard.items = dashboard.items.filter(ds => ds.id !== itemId);
       /*   console.log('this is dashboard new', this.newDashboard);
          console.log(this.dashboard);*/
-    }else {
-      dashboard.items[itemId-1].selected = false;
+    } else {
+      dashboard.items[itemId - 1].selected = false;
     }
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData()
   }
-  changeName(dashboardId:any,{itemId,newName}:any){
-      console.log({itemId,newName,dashboardId})
-    let dashboard:any = this.dashboards[dashboardId];
-      if(itemId <=5) {
+  changeName(dashboardId: any, {itemId, newName}: any) {
+      console.log({itemId, newName, dashboardId})
+    let dashboard: any = this.dashboards[dashboardId];
+      if (itemId <= 5) {
         const newItem = dashboard.items.filter(ds => ds.id === itemId);
         const copy = Object.assign({}, newItem[0], {
           name: newName,
@@ -289,7 +271,7 @@ export class DashboardEntryComponent implements OnInit {
         });
         dashboard.items.push(copy);
         newItem[0].selected = false;
-      }else {
+      } else {
         console.log(_.findIndex(dashboard.items,{id:itemId}))
           let index = _.findIndex(dashboard.items,{id:itemId})
           dashboard.items = _.merge(dashboard.items,{[index]:{name:newName}})

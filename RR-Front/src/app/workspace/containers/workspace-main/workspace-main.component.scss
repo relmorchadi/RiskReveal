@@ -50,11 +50,23 @@
 }
 .btn-detail{
   background: #F8E71C;
-  z-index: 1000;
+  display: flex !important;
+  width: 27px;
+  height: 27px;
   color: white;
-  position:absolute;right:0;top:-20px; border: 4px solid rgb(240, 242, 248);
-  box-shadow:none;
+  box-shadow: none;
   text-shadow: none;
+}
+.detail-wrapper{
+  display:flex;
+  flex-direction: column;
+  padding-top: 12px;
+}
+.span-detail{
+  text-align: center;
+  margin-top: 4px;
+  color: #f8e71c;
+  font-size: 11px;
 }
 .plus-btn{
   background: rgb(0, 195, 169);

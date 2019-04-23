@@ -24,6 +24,7 @@ export class SearchMainComponent implements OnInit {
   searchedItems = [];
   globalSearchItem = '';
   currentWorkspace = null;
+  loading = false;
   columns = [
     { field: 'id', header: 'Id', width: '150px', display: true, sorted: false, filtered: false },
     { field: 'countryName', header: 'Country', width: '110px', display: true, sorted: false, filtered: true },
@@ -171,6 +172,7 @@ export class SearchMainComponent implements OnInit {
   }
 
   private _loadContracts(size = '20') {
+    this.loading = true;
     if (this.searchedItems.length > 0 ) {
       const keys = [];
       const values = [];
@@ -192,6 +194,7 @@ export class SearchMainComponent implements OnInit {
           this.contracts = data.content;
           console.log(this.contracts);
           this.loadingMore = false;
+          this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
         });
     } else if (this.globalSearchItem !== '') {
@@ -200,6 +203,7 @@ export class SearchMainComponent implements OnInit {
             this.contracts = data.content;
             this.loadingMore = false;
             this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+            this.loading = false;
           }
         );
     } else {
@@ -208,6 +212,7 @@ export class SearchMainComponent implements OnInit {
         .subscribe((data: any) => {
           this.contracts = data.content;
           this.loadingMore = false;
+          this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
         });
     }

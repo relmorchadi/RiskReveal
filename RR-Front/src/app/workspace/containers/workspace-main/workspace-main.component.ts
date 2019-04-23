@@ -40,6 +40,7 @@ export class WorkspaceMainComponent implements OnInit {
 
   ngOnInit() {
     this._helper.changeSelectedWorkspace$.subscribe((e: any) => {
+      this.fromSingleWorkspace = false;
       this.getSearchedWorkspaces();
     });
     this._helper.collapseLeftMenu$.subscribe((e) => {
@@ -64,7 +65,7 @@ export class WorkspaceMainComponent implements OnInit {
   }
 
   getSearchedWorkspaces() {
-    if (this.wsId != undefined) {
+    if (this.wsId != undefined && this.fromSingleWorkspace == true) {
       this.searchData(this.wsId, this.year).pipe(
         mergeMap((content: any) => {
           const item = {
@@ -81,10 +82,12 @@ export class WorkspaceMainComponent implements OnInit {
             treatySections: content.treatySections,
             workspaceName: content.worspaceName,
             years: content.years
-          }
+          };
           this.ws = [item];
+          this._helper.affectItems([item], true);
           this.ws$ = of(this.ws);
-          return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));
+          return of();
+/*          return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));*/
         })
       ).subscribe((content) => {
         this.wsId = undefined;

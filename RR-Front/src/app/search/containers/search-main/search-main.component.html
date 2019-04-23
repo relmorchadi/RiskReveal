@@ -119,7 +119,7 @@
                     [tableHeight]="'300px'" >
         </app-table>-->
 
-        <table class="table search-table">
+        <table *ngIf="!loading" class="table search-table">
           <thead [formGroup]="contractFilterFormGroup">
           <tr>
             <th></th>
@@ -198,6 +198,10 @@
           </tr>
           </tbody>
         </table>
+        <div *ngIf="loading">
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+        </div>
 
       </div>
 
@@ -277,7 +281,7 @@
 
               <div class="row mt-4 ml-4 d-column">
                 <span class="workspace-title">Treaty Section :</span>
-                <span *ngFor="let section of selectedWorkspace?.treatySections" class="workspace-value">Treaty Section N°{{section}}</span>
+                <span *ngFor="let section of selectedWorkspace?.treatySections" class="workspace-value">{{section}}</span>
                 <span class="treaty-sect-see-all mt-2">See all</span>
               </div>
 
