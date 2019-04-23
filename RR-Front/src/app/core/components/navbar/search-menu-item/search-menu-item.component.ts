@@ -10,13 +10,12 @@ import {
   PatchSearchStateAction,
   SearchContractsCountAction
 } from "../../../store/actions/search-nav-bar.state";
+import {SearchNavBarState} from "../../../store/states/search-nav-bar.state";
 
 import {Select, Store} from "@ngxs/store";
 import {SearchNavBar} from "../../../model/search-nav-bar";
-import {} from "../../../store/actions/search-nav-bar.state";
 import * as _ from 'lodash';
 import {Observable} from "rxjs";
-import {SearchNavBarState} from "../../../store/states/search-nav-bar.state";
 
 
 @Component({
@@ -133,8 +132,8 @@ export class SearchMenuItemComponent implements OnInit {
     if (this.state.badges.length > 0) {
       this.store.dispatch(new PatchSearchStateAction({
         key: 'recentSearch',
-        value: [[...this.state.badges], ...this.state.recentSearch]
-      }))
+        value: _.uniqWith([[...this.state.badges], ...this.state.recentSearch], _.isEqual)
+      }));
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
     }

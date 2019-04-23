@@ -122,7 +122,7 @@
         <table class="table search-table">
           <thead [formGroup]="contractFilterFormGroup">
           <tr>
-            <th></th>
+            <th>#</th>
             <th>Country</th>
             <th colspan="2">Cedant</th>
             <th>Uw Year</th>
@@ -172,9 +172,9 @@
           </thead>
           <tbody>
 
-          <tr *ngFor="let contract of contracts | contractFilter:contractFilterFormGroup.value" style="cursor: pointer" (click)="openWorkspaceInSlider(contract)"
+          <tr *ngFor="let contract of contracts | contractFilter:contractFilterFormGroup.value; let i=index" style="cursor: pointer" (click)="openWorkspaceInSlider(contract)"
             [ngClass]="{'acive_contract_item': currentWorkspace?.workSpaceId == contract.workSpaceId && currentWorkspace?.uwYear == contract.uwYear }">
-            <td></td>
+            <td>{{i+1}}</td>
             <td>{{contract?.countryName}}</td>
             <td>{{contract?.cedantCode}}</td>
             <td>{{contract?.cedantName}}</td>

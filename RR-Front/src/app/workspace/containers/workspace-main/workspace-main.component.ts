@@ -1,9 +1,9 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
-import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
+import {SearchService} from "../../../core/service/search.service";
 
 @Component({
   selector: 'app-workspace-main',

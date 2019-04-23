@@ -101,7 +101,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   popOutWorkspaces() {
     this.visible = false;
     this.workspaces.filter(ws => ws.selected).forEach(ws => {
-      window.open('/workspace/' + ws.id+'/'+ws.year);
+      window.open('/workspace/' + ws.id);
       console.log('try to open', ws);
     });
   }

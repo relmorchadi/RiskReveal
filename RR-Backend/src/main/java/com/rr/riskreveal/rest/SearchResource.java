@@ -1,6 +1,7 @@
 package com.rr.riskreveal.rest;
 
 import com.rr.riskreveal.domain.*;
+import com.rr.riskreveal.domain.dto.NewWorkspaceFilter;
 import com.rr.riskreveal.domain.dto.WorkspaceDetailsDTO;
 import com.rr.riskreveal.domain.dto.WorkspaceFilter;
 import com.rr.riskreveal.service.SearchService;
@@ -10,6 +11,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -39,9 +42,15 @@ public class SearchResource {
         return searchService.getWorkspaceYear(keyword, size);
     }
 
+    @GetMapping("workspace")
+//    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
+    Page<WorkspaceView> globalSearchWorkspace(@RequestParam String keyword, int size){
+        return searchService.globalSearchWorkspaces(keyword, size);
+    }
+
     @PostMapping("workspace")
 //    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<WorkspaceView> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
+    Page<WorkspaceProjection> searchWorkspace(@RequestBody NewWorkspaceFilter filter, int size){
         return searchService.getWorkspaces(filter, size);
     }
 

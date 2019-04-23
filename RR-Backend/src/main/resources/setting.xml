@@ -19,7 +19,7 @@
       <mapping class="com.rr.riskreveal.domain.WorkspaceYears"/>
     <mapping class="com.rr.riskreveal.domain.Treaty"/>
       <mapping class="com.rr.riskreveal.domain.ContractSearchResult"/>
-      <mapping class="com.rr.riskreveal.domain.counter.CedantCountView"/>
+      <mapping class="com.rr.riskreveal.domain.counter.CedantNameCountView"/>
       <mapping class="com.rr.riskreveal.domain.counter.CountryCountView"/>
       <mapping class="com.rr.riskreveal.domain.counter.TreatyCountView"/>
       <mapping class="com.rr.riskreveal.domain.counter.UwyCountView"/>

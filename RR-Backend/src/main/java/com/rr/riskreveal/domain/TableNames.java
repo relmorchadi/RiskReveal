@@ -1,11 +1,13 @@
 package com.rr.riskreveal.domain;
 
 public enum TableNames {
-    CEDANT("cedant"),
+    CEDANT_CODE("cedant_code"),
+    CEDANT_NAME("cedant_name"),
     COUNTRY("country"),
-    TREATY("treaty"),
-    YEAR("treaty"),
-    PROGRAM("program");
+    WORKSPACE_ID("workspace_id"),
+    WORKSPACE_NAME("workspace_name"),
+//    TREATY("treaty"),
+    YEAR("year");
 
     private String value;
     TableNames(String value) {
