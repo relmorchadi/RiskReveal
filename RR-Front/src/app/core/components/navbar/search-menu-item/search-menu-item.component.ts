@@ -110,7 +110,7 @@ export class SearchMenuItemComponent implements OnInit {
     this._clearFilters();
     if (keyboardEvent.key === 'Enter') {
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
-      if (this.contractFilterFormGroup.get('switchValue')) {
+      if (this.contractFilterFormGroup.get('switchValue').value) {
         this.examinateExpression(searchExpression);
       } else {
         this._searchService.globalSearchItem = searchExpression;

@@ -207,16 +207,12 @@
 
     </div>
     <div [ngStyle]="{'width': expandWorkspaceDetails ? '25%' : '6%' }" class="right-column">
-
       <div *ngIf="!expandWorkspaceDetails; else workspaceDetails" class="navigation-icons mt-5"
            style="min-height: 100px">
         <i class="icon-map-pin-alt"></i>
         <i *ngIf="currentWorkspace" class="icon-arrow_back_ios_24px" (click)="expandWorkspaceDetails=!expandWorkspaceDetails"></i>
       </div>
-
       <ng-template #workspaceDetails>
-
-
         <div class="row title-section mt-4">
           <div class="col-md-8 ml-4 mt-2">
             <h4>Workspace detail</h4>
@@ -226,9 +222,7 @@
             <i class="icon-map-pin-alt"></i>
             <i class="icon-arrow_forward_ios_24px" (click)="expandWorkspaceDetails=!expandWorkspaceDetails"></i>
           </div>
-
         </div>
-
         <nz-tabset>
           <nz-tab nzTitle="Summary">
             <div class="summary-content">
