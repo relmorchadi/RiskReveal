@@ -12,6 +12,7 @@ const routes: Routes = [
     data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
     children: [
       {path: '', component: WorkspaceProjectComponent},
+      {path: ':wsId/:year', component: WorkspaceProjectComponent},
       {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch: 'full'},
       {path: ':id',  redirectTo: '/', pathMatch: 'full'},
     ]

@@ -126,7 +126,6 @@ export class SearchMainComponent implements OnInit {
         });
         usedWorkspaces.unshift(workspace);
         this._helperService.updateRecentWorkspaces(usedWorkspaces);
-        // localStorage.setItem('usedWorkspaces', JSON.stringify(usedWorkspaces));
         this._helperService.affectItems([workspace]);
         this._router.navigate(['/workspace']);
       }
@@ -160,7 +159,7 @@ export class SearchMainComponent implements OnInit {
           years: dt.years
         };
         this._helperService.affectItems([workspace]);
-        window.open('/workspace/' + wsId);
+        window.open('/workspace/' + wsId + '/' + year);
       }
     );
 
@@ -204,6 +203,7 @@ export class SearchMainComponent implements OnInit {
           }
         );
     } else {
+      this.clearSearch();
       this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
         .subscribe((data: any) => {
           this.contracts = data.content;

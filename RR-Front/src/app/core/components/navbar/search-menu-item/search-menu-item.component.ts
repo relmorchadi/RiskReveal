@@ -143,6 +143,7 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   redirectToSearchPage() {
+    this._searchService.setvisibleDropdown( false );
     if (this.state.badges.length > 0) {
       this.store.dispatch(new PatchSearchStateAction({
         key: 'recentSearch',

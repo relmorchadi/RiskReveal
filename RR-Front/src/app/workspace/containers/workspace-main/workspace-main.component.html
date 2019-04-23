@@ -1,14 +1,14 @@
 <div class="card-container">
   <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of (getSearchedWorkspaces() | async)">
+    <ng-container *ngFor="let tab of (ws$ | async)">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
           [ngTemplateOutletContext]="{index:tab,
-          tabsLength:(getSearchedWorkspaces() | async).length,
-          title:tab.workSpaceId,
-          year:tab.uwYear,
-          years:tab.years
+          tabsLength:(ws$ | async).length,
+          title:tab?.workSpaceId,
+          year:tab?.uwYear,
+          years:tab?.years
           }"
         ></ng-container>
       </ng-template>
@@ -18,8 +18,8 @@
             <div  class="row tab-detail p-2">
               <div class="col-md-12 pl-md-4 col-lg-6" >
                 <div class="d-inline-flex flex-column">
-                  <h3 class="workspace-title">{{tab.workspaceName}} <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
-                  <h4 class="workspace-title"> {{tab.cedantCode}} | {{tab.cedantName}} </h4>
+                  <h3 class="workspace-title">{{tab?.workspaceName}} <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
+                  <h4 class="workspace-title"> {{tab?.cedantCode}} | {{tab?.cedantName}} </h4>
                 </div>
               </div>
               <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >

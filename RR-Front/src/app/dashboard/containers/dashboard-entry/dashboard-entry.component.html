@@ -81,7 +81,7 @@
             </nz-option>
           </nz-select>
           <div class="edit-dashboard-section">
-            <input style="width: 80%" class="hover-input" placeholder="" (change)="changeDashboardName($event.target.value)" [(ngModel)]=" dashboardsMockData[idSelected].name">
+            <input style="width: 80%" class="hover-input" placeholder="" (change)="changeDashboardName($event.target.value)" [ngModel]=" dashboardsMockData[idSelected].name">
             <i nz-popconfirm  nzPlacement="top" nzTitle="Do you want to delete this dashboard?" (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"></i>
           </div>
           <div class="highlight">
@@ -111,9 +111,9 @@
             </li>
           </ul>
         </div>
-        <div style="margin-bottom: 15px">
+<!--        <div style="margin-bottom: 15px">
           <button class="button-apply-function">Apply</button>
-        </div>
+        </div>-->
         <div class="collapse-command" (click)="rightSliderCollapsed= !rightSliderCollapsed">
           <i class="icon-arrow_forward_ios_24px"></i> Collapse
         </div>

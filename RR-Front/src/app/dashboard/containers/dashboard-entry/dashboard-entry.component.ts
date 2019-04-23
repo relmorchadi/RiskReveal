@@ -192,10 +192,12 @@ export class DashboardEntryComponent implements OnInit {
           ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title, icon: icon, selected: true, position: {rows: 5, cols: 5}}))
       )
     };
-    this.dashboards = [...this.dashboards, item];
-    this.dashboardTitle = this.newDashboardTitle || '';
-    this.updateDashboardMockData();
-    this.newDashboardTitle = '';
+    if (item.name != null) {
+      this.dashboards = [...this.dashboards, item];
+      this.dashboardTitle = this.newDashboardTitle || '';
+      this.updateDashboardMockData();
+      this.newDashboardTitle = '';
+    }
   }
 
   deleteDashboard() {
@@ -209,10 +211,12 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   changeDashboardName(name) {
-    const dashIndex = _.findIndex(this.dashboards, {id: this.idSelected});
-    if (dashIndex != -1) this.dashboards[dashIndex].name = name;
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
+    if (name != '') {
+      const dashIndex = _.findIndex(this.dashboards, {id: this.idSelected});
+      if (dashIndex != -1) this.dashboards[dashIndex].name = name;
+      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+      this.updateDashboardMockData();
+    }
   }
 
   updateDashboardMockData() {
@@ -226,8 +230,8 @@ export class DashboardEntryComponent implements OnInit {
   dashboardChange(id: any) {
     const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
-    this.idSelected = id;
-    console.log(id, this.idSelected);
+    // this.idSelected = id;
+
     if (this.dashboards[id].visible === true) {
       let idSel = 0;
       this.dashboards.forEach(
@@ -237,11 +241,13 @@ export class DashboardEntryComponent implements OnInit {
           }
         },
       );
+      console.log('2', id, this.idSelected, this.dashboardsMockData[this.idSelected], idSel);
       this.idTab = idSel;
     }
   }
 
   tabChange(tabSelected) {
+    console.log(tabSelected.index);
     let idSel = -1;
     let overall = -1;
     this.dashboards.forEach(
@@ -290,7 +296,7 @@ export class DashboardEntryComponent implements OnInit {
 
   onEnterAdd(keyEvent) {
     if (keyEvent.key === 'Enter' ) {
-      this.addDashboard();
+      keyEvent.target.value !== '' ? this.addDashboard() : null;
     }
   }
 

@@ -9,6 +9,8 @@ export class HelperService {
   items = JSON.parse(localStorage.getItem('workspaces')) || [];
   recentWorkspaces$: Observable<any>;
   test$: BehaviorSubject<any>;
+  changeSelectedWorkspace$: Subject<void> = new Subject();
+
 
   constructor() {
     const obs$: any =  of(localStorage.getItem('usedWorkspaces')).pipe(map( ls => JSON.parse(ls)));
@@ -21,10 +23,12 @@ export class HelperService {
 
   affectItems(item) {
     localStorage.setItem('workspaces', JSON.stringify(item));
-    this.items = JSON.parse(localStorage.getItem('workspaces'));
+    this.items = JSON.parse(localStorage.getItem('workspaces')) || [];
+    this.changeSelectedWorkspace$.next();
   }
 
   getSearchedWorkspaces() {
+    console.log(this.items);
     return of(this.items);
   }
 
@@ -35,7 +39,7 @@ export class HelperService {
     );
     if (alreadyImported.length === 0 ) {
       this.items.push(item);
-      const savedWorkspaces: any = localStorage.getItem('workspaces');
+      const savedWorkspaces: any = JSON.parse(localStorage.getItem('workspaces')) || [];
       savedWorkspaces.push(item);
       localStorage.setItem('workspaces', JSON.stringify(savedWorkspaces));
     }
@@ -46,6 +50,8 @@ export class HelperService {
         if (ws.workSpaceId === wsId && ws.uwYear == year) { return null; } else {return ws; }
       }
     );
+    this.changeSelectedWorkspace$.next();
+    localStorage.setItem('workspaces', JSON.stringify(this.items));
   }
 
   updateRecentWorkspaces(data) {

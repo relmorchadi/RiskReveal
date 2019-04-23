@@ -2,9 +2,10 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
-import {of} from 'rxjs';
+import {forkJoin, of} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
+import {mergeMap} from "rxjs/internal/operators/mergeMap";
 
 @Component({
   selector: 'app-workspace-main',
@@ -17,7 +18,8 @@ export class WorkspaceMainComponent implements OnInit {
   collapseWorkspaceDetail = true;
   componentSubscription: any = [];
   selectedPrStatus = '1';
-
+  wsId: any;
+  year: any;
   selectedWorkspaces: any = [];
   WorkspaceData: any;
 
@@ -28,12 +30,18 @@ export class WorkspaceMainComponent implements OnInit {
     {id: 'project4', selected: false},
   ];
 
+  ws$: Observable<any>;
+  ws = [];
+  fromSingleWorkspace = false;
 
   constructor(private _helper: HelperService, private route: ActivatedRoute, private _searchService: SearchService) {
 
   }
 
   ngOnInit() {
+    this._helper.changeSelectedWorkspace$.subscribe((e: any) => {
+      this.getSearchedWorkspaces();
+    });
     this._helper.collapseLeftMenu$.subscribe((e) => {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
@@ -44,10 +52,49 @@ export class WorkspaceMainComponent implements OnInit {
               this.tabs = [staticTabs[0]];
             }*/
     }
+    this.route.children[0] && this.route.children[0].params.subscribe(
+      ({wsId, year}: any) => {
+        console.log({wsId, year});
+        this.wsId = wsId;
+        this.year = year;
+        this.wsId != null ? this.fromSingleWorkspace = true : this.fromSingleWorkspace = false;
+        this.getSearchedWorkspaces();
+        // console.log( this.searchData(wsId, year));
+      });
   }
 
   getSearchedWorkspaces() {
-    return this._helper.getSearchedWorkspaces();
+    if (this.wsId != undefined) {
+      this.searchData(this.wsId, this.year).pipe(
+        mergeMap((content: any) => {
+          const item = {
+            uwYear: this.year,
+            workSpaceId: this.wsId,
+            cedantCode: content.cedantCode,
+            cedantName: content.cedantName,
+            ledgerName: content.ledgerName,
+            ledgerId: content.subsidiaryLedgerId,
+            subsidiaryName: content.subsidiaryName,
+            subsidiaryId: content.subsidiaryId,
+            expiryDate: content.expiryDate,
+            inceptionDate: content.inceptionDate,
+            treatySections: content.treatySections,
+            workspaceName: content.worspaceName,
+            years: content.years
+          }
+          this.ws = [item];
+          this.ws$ = of(this.ws);
+          return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));
+        })
+      ).subscribe((content) => {
+        this.wsId = undefined;
+        this.year = undefined;
+        this.fromSingleWorkspace = true;
+      });
+    } else {
+      this.fromSingleWorkspace = false;
+      this.ws$ = this._helper.getSearchedWorkspaces();
+    }
   }
 
   private searchData(id, year) {
@@ -59,30 +106,65 @@ export class WorkspaceMainComponent implements OnInit {
   }
 
   close(title, year) {
-    this._helper.itemsRemove(title, year);
+    console.log(this.fromSingleWorkspace);
+    if (this.fromSingleWorkspace === false) {
+      this._helper.itemsRemove(title, year);
+    } else {
+      this.ws = _.filter(this.ws, ws => {
+        if (ws.workSpaceId === title && ws.uwYear == year) { return null; } else {return ws; }});
+      this.ws$ = of(this.ws);
+    }
   }
 
   addWs(title, year) {
-    this.searchData(title, year).subscribe(
-      (dt: any) => {
-        const workspace = {
-          uwYear: year,
-          workSpaceId: title,
-          cedantCode: dt.cedantCode,
-          cedantName: dt.cedantName,
-          ledgerName: dt.ledgerName,
-          ledgerId: dt.subsidiaryLedgerId,
-          subsidiaryName: dt.subsidiaryName,
-          subsidiaryId: dt.subsidiaryId,
-          expiryDate: dt.expiryDate,
-          inceptionDate: dt.inceptionDate,
-          treatySections: dt.treatySections,
-          workspaceName: dt.worspaceName,
-          years: dt.years
-        };
-        this._helper.itemsAppend(workspace);
-      }
-    );
+    if (this.fromSingleWorkspace === false) {
+      this.searchData(title, year).subscribe(
+        (dt: any) => {
+          const workspace = {
+            uwYear: year,
+            workSpaceId: title,
+            cedantCode: dt.cedantCode,
+            cedantName: dt.cedantName,
+            ledgerName: dt.ledgerName,
+            ledgerId: dt.subsidiaryLedgerId,
+            subsidiaryName: dt.subsidiaryName,
+            subsidiaryId: dt.subsidiaryId,
+            expiryDate: dt.expiryDate,
+            inceptionDate: dt.inceptionDate,
+            treatySections: dt.treatySections,
+            workspaceName: dt.worspaceName,
+            years: dt.years
+          };
+          this._helper.itemsAppend(workspace);
+        }
+      );
+    } else {
+      this.searchData(title, year).subscribe(
+        (dt: any) => {
+          const workspace = {
+            uwYear: year,
+            workSpaceId: title,
+            cedantCode: dt.cedantCode,
+            cedantName: dt.cedantName,
+            ledgerName: dt.ledgerName,
+            ledgerId: dt.subsidiaryLedgerId,
+            subsidiaryName: dt.subsidiaryName,
+            subsidiaryId: dt.subsidiaryId,
+            expiryDate: dt.expiryDate,
+            inceptionDate: dt.inceptionDate,
+            treatySections: dt.treatySections,
+            workspaceName: dt.worspaceName,
+            years: dt.years
+          };
+          this.ws = _.filter(this.ws, ws => {
+            if (ws.workSpaceId == title && ws.uwYear == year) { return null; } else {return ws; }});
+          this.ws = [...this.ws, workspace];
+          this.ws$ = of(this.ws);
+        }
+      );
+    }
+
+
   }
 
   generateYear(year, years) {
