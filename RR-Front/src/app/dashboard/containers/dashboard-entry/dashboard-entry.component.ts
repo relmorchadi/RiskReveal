@@ -230,8 +230,7 @@ export class DashboardEntryComponent implements OnInit {
   dashboardChange(id: any) {
     const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
-    // this.idSelected = id;
-
+    this.idSelected = id;
     if (this.dashboards[id].visible === true) {
       let idSel = 0;
       this.dashboards.forEach(
