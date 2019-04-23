@@ -1,4 +1,4 @@
-<nz-badge style="cursor: pointer; margin-top: 7px;" [nzCount]="5" nz-popover [nzContent]="notificationsPopoverContent" nzTrigger="click">
+<nz-badge style="cursor: pointer; margin-top: 7px;" [nzCount]="5" [(nzVisible)]="visible" nz-popover [nzContent]="notificationsPopoverContent" nzTrigger="click">
   <i class="icon-notifications_24px icon-size"></i>
 </nz-badge>
 <ng-template #notificationsPopoverContent>

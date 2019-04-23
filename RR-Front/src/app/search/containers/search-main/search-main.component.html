@@ -134,37 +134,37 @@
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" formControlName="country">
+                <input type="text" (input)="changeForm($event, 'innerCountryName')" formControlName="innerCountryName">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" formControlName="cedantCode">
+                <input type="text" (input)="changeForm($event, 'innerCedantCode')" formControlName="innerCedantCode">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" formControlName="cedant">
+                <input type="text" (input)="changeForm($event, 'innerCedantName')" formControlName="innerCedantName">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" formControlName="year">
+                <input type="text" (input)="changeForm($event, 'innerYear')" formControlName="innerYear">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" formControlName="workspaceId">
+                <input type="text" (input)="changeForm($event, 'innerWorkspaceId')" formControlName="innerWorkspaceId">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" formControlName="workspaceName">
+                <input type="text" (input)="changeForm($event, 'innerWorkspaceName')" formControlName="innerWorkspaceName">
               </div>
             </th>
             <th></th>

@@ -38,13 +38,19 @@ export class SearchMenuItemComponent implements OnInit {
               private _notifcationService: NotificationService, private store: Store) {
     this.contractFilterFormGroup = this._fb.group({
       switchValue: false,
-      globalKeyword: [],
-      workspaceId: [],
-      workspaceName: [],
-      year: [],
-      treaty: [],
-      cedant: [],
-      country: []
+      globalKeyword: '',
+      cedantCode: '',
+      cedantName: '',
+      countryName: '',
+      innerCedantCode: '',
+      innerCedantName: '',
+      innerCountryName: '',
+      innerWorkspaceId: '',
+      innerWorkspaceName: '',
+      innerYear: '',
+      workspaceId: '',
+      workspaceName: '',
+      year: ''
     });
   }
 
@@ -59,6 +65,12 @@ export class SearchMenuItemComponent implements OnInit {
     this.store.dispatch(new LoadRecentSearchAction);
     this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
       .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
+  }
+
+  stringUpdate(value) {
+    let newString = _.lowerCase(value);
+    newString = newString.split(' ').map(_.upperFirst).join(' ');
+    return newString;
   }
 
   isSearchRoute() {
@@ -196,13 +208,18 @@ export class SearchMenuItemComponent implements OnInit {
   private _clearFilters() {
     this.contractFilterFormGroup.patchValue({
       // globalKeyword: '',
+      cedantCode: '',
+      cedantName: '',
+      countryName: '',
+      innerCedantCode: '',
+      innerCedantName: '',
+      innerCountryName: '',
+      innerWorkspaceId: '',
+      innerWorkspaceName: '',
+      innerYear: '',
       workspaceId: '',
       workspaceName: '',
-      year: '',
-      treaty: '',
-      programId: '',
-      cedant: '',
-      country: ''
+      year: ''
     });
   }
 
@@ -213,6 +230,7 @@ export class SearchMenuItemComponent implements OnInit {
   // }
 
   focusInput(event) {
+    this._searchService.setvisibleDropdown( false );
     if (this.contractFilterFormGroup.get('switchValue').value) {
       this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
         key: 'showResult',

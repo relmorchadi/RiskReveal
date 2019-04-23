@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {SearchService} from '../../../service/search.service';
 
 @Component({
   selector: 'tasks-menu-item',
@@ -6,9 +7,10 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./tasks-menu-item.component.scss']
 })
 export class TasksMenuItemComponent implements OnInit {
-  formatter = (_)=> ""
 
-  lastOnes= 4;
+  formatter = (_) => '';
+  visible: boolean;
+  lastOnes = 4;
 
   readonly tasks = {
     active: [
@@ -41,9 +43,10 @@ export class TasksMenuItemComponent implements OnInit {
 
 
 
-  constructor() { }
+  constructor(private _searchService: SearchService) { }
 
   ngOnInit() {
+    this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
   }
 
   toggleActiveTask(activeTask){

@@ -62,7 +62,7 @@
   .edit-dashboard-section {
     width:100%;
     input{
-      width: 90%;
+      width: 100%;
       border: none;
       &:focus{
         outline:0;
@@ -71,6 +71,7 @@
     }
   }
   .title-wrapper-name{
+    flex: 1;
     cursor: pointer;
     user-select: none;
   }

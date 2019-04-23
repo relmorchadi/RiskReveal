@@ -3,16 +3,18 @@ import { Injectable } from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
+import {of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
 
-
+  private visibleDropdown = false;
   private _searchedItems = [];
   private _globalSearchItem = '';
 
+  public infodropdown = new Subject<any>();
   public items = new Subject<any>();
   public globalSearch$ = new Subject<any>();
 
@@ -71,4 +73,12 @@ export class SearchService {
     return this._searchedItems;
   }
 
+  getvisibleDropdown() {
+    return this.visibleDropdown;
+  }
+
+  setvisibleDropdown(value: boolean) {
+    this.visibleDropdown = value;
+    this.infodropdown.next();
+  }
 }

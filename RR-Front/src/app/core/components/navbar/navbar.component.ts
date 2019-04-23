@@ -1,7 +1,9 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
-import {fromEvent} from "rxjs";
-import {debounceTime} from "rxjs/operators";
+import {fromEvent} from 'rxjs';
+import {debounceTime} from 'rxjs/operators';
 import {HelperService} from '../../../shared/helper.service';
+import {Store} from '@ngxs/store';
+import {PatchSearchStateAction} from "../../store/actions";
 
 @Component({
   selector: 'app-navbar',
@@ -10,24 +12,23 @@ import {HelperService} from '../../../shared/helper.service';
 })
 export class NavbarComponent implements OnInit {
   expandMenu = false;
-  formatter = (_)=> ""
+  formatter = (_) => '';
 
-  constructor(private _helper:HelperService) { }
+  constructor(private _helper:HelperService, private store: Store) { }
 
-  collapseLeftNavbar(){
-    this._helper.collapseLeftMenu$.next()
-    console.log("hey")
+  collapseLeftNavbar() {
+    this._helper.collapseLeftMenu$.next();
   }
 
   ngOnInit() {
-    fromEvent(window,'resize')
+    fromEvent(window, 'resize')
       .pipe(debounceTime(200))
-      .subscribe(({target:{innerWidth}}:any)=>{
-        this.expandMenu = this.expandMenu ? !(innerWidth > 768) : this.expandMenu
-    })
+      .subscribe(({target: {innerWidth}}: any) => {
+        this.expandMenu = this.expandMenu ? !(innerWidth > 768) : this.expandMenu;
+    });
   }
-  wiki(){
-    window.open("http://wikipedia.com",'_blank')
+  wiki() {
+    window.open('http://wikipedia.com', '_blank');
   }
 
 }

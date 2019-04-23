@@ -27,7 +27,7 @@ const initiaState: SearchNavBar = {
   data: [],
   recentSearch: [],
   showRecentSearch: [],
-  tables: ['CEDANT', 'COUNTRY', 'TREATY', 'YEAR', 'PROGRAM'],
+  tables: ['CEDANT_CODE', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME', 'YEAR', 'COUNTRY'],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {SearchService} from '../../../service/search.service';
 
 @Component({
   selector: 'user-menu-item',
@@ -6,10 +7,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./user-menu-item.component.scss']
 })
 export class UserMenuItemComponent implements OnInit {
-
-  constructor() { }
+  visible: boolean;
+  constructor( private _searchService: SearchService) { }
 
   ngOnInit() {
+    this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
   }
 
 }
