@@ -31,13 +31,16 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._helperService.test$.subscribe((ws:any)=>{
+      this.workspaces = ws;
+    })
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
-    this._helperService.subjectRecent.subscribe(
+/*    this._helperService.subjectRecent.subscribe(
       ds => {
         // this.workspaces = this._helperService.getrecentWorkspaces();
         console.log(this._helperService.getrecentWorkspaces());
       }
-    );
+    );*/
     if (this.numberofElement > 10) {
       this.labels.push('Last 10');
     }
@@ -71,14 +74,14 @@ export class WorkspacesMenuItemComponent implements OnInit {
   searchWorkspace(size: string = '10') {
     this.workspaces = [];
     if (localStorage.getItem('usedWorkspaces') === null) {
-    this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
+  /*  this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
       .subscribe((data: any) => {
         data.content.forEach(
           ws => {
             this.workspaces = [...this.workspaces, {...ws, selected: false}];
           }
         );
-      });
+      });*/
     } else {
       const items = JSON.parse(localStorage.getItem('usedWorkspaces'));
       items.forEach(

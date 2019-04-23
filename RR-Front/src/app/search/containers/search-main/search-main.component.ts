@@ -114,7 +114,7 @@ export class SearchMainComponent implements OnInit {
           workspaceName: dt.worspaceName,
           years: dt.years
         };
-        let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces'));
+        let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
         usedWorkspaces.forEach( ws => {
             let filter = false;
             if (workspace.workSpaceId === ws.workSpaceId) {
