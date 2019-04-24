@@ -10,6 +10,7 @@ import * as _ from 'lodash';
 export class RenewalContractScopeComponent implements OnInit {
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
+  @Output('changeName') changeName: any = new EventEmitter<any>();
   private dropdown: NzDropdownContextComponent;
   renewalPeriod = '1';
   uwyUnits = '1';
@@ -66,19 +67,15 @@ export class RenewalContractScopeComponent implements OnInit {
     this.newDashboard = this.dashboard;
   }
 
-  duplicateItem(item): void {
-    console.log(this.dashboard);
-    const duplicatedItem = this.dashboard.items.filter(ds => ds.name === item);
-    const copy = Object.assign({}, duplicatedItem[0], {
-      id: this.newDashboard.items.length + 1
-    });
-    this.newDashboard.items.push(copy);
+  duplicateItem(itemName:any): void {
+    //console.log(this.dashboard);
+    this.duplicate.emit(itemName)
   }
 
   deleteItem(id): void {
-    this.newDashboard.items = this.dashboard.items.filter(ds => ds.id !== id);
-    console.log('this is dashboard new', this.newDashboard);
-    console.log(this.dashboard);
+
+    this.delete.emit(id);
+
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
@@ -91,15 +88,18 @@ export class RenewalContractScopeComponent implements OnInit {
   }
 
   validateName(keyboardMap, id) {
+
     if (keyboardMap.key === 'Enter') {
-      const newItem = this.newDashboard.items.filter(ds => ds.id === id);
+      this.changeName.emit({itemId:id,newName:keyboardMap.target.value})
+      this.editName = false
+    /*  const newItem = this.newDashboard.items.filter(ds => ds.id === id);
       const copy = Object.assign({}, newItem[0], {
         name: this.itemName,
         id: this.newDashboard.items.length + 1
       });
       this.newDashboard.items.push(copy);
       newItem[0].selected = false;
-      this.editName = false;
+      this.editName = false;*/
     }
   }
 

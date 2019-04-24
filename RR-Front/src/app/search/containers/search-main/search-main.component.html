@@ -119,7 +119,7 @@
                     [tableHeight]="'300px'" >
         </app-table>-->
 
-        <table class="table search-table">
+        <table *ngIf="!loading" class="table search-table">
           <thead [formGroup]="contractFilterFormGroup">
           <tr>
             <th>#</th>
@@ -198,21 +198,21 @@
           </tr>
           </tbody>
         </table>
+        <div *ngIf="loading">
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+        </div>
 
       </div>
 
     </div>
     <div [ngStyle]="{'width': expandWorkspaceDetails ? '25%' : '6%' }" class="right-column">
-
       <div *ngIf="!expandWorkspaceDetails; else workspaceDetails" class="navigation-icons mt-5"
            style="min-height: 100px">
         <i class="icon-map-pin-alt"></i>
         <i *ngIf="currentWorkspace" class="icon-arrow_back_ios_24px" (click)="expandWorkspaceDetails=!expandWorkspaceDetails"></i>
       </div>
-
       <ng-template #workspaceDetails>
-
-
         <div class="row title-section mt-4">
           <div class="col-md-8 ml-4 mt-2">
             <h4>Workspace detail</h4>
@@ -222,9 +222,7 @@
             <i class="icon-map-pin-alt"></i>
             <i class="icon-arrow_forward_ios_24px" (click)="expandWorkspaceDetails=!expandWorkspaceDetails"></i>
           </div>
-
         </div>
-
         <nz-tabset>
           <nz-tab nzTitle="Summary">
             <div class="summary-content">
@@ -277,7 +275,7 @@
 
               <div class="row mt-4 ml-4 d-column">
                 <span class="workspace-title">Treaty Section :</span>
-                <span *ngFor="let section of selectedWorkspace?.treatySections" class="workspace-value">Treaty Section N°{{section}}</span>
+                <span *ngFor="let section of selectedWorkspace?.treatySections" class="workspace-value">{{section}}</span>
                 <span class="treaty-sect-see-all mt-2">See all</span>
               </div>
 

@@ -62,7 +62,7 @@ export class SearchMenuItemComponent implements OnInit {
       .subscribe((param) => {
         this._selectedSearch(param);
       });
-    this.store.dispatch(new LoadRecentSearchAction);
+    this.store.dispatch(new LoadRecentSearchAction());
     this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
       .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
   }
@@ -110,7 +110,7 @@ export class SearchMenuItemComponent implements OnInit {
     this._clearFilters();
     if (keyboardEvent.key === 'Enter') {
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
-      if (this.contractFilterFormGroup.get('switchValue')) {
+      if (this.contractFilterFormGroup.get('switchValue').value) {
         this.examinateExpression(searchExpression);
       } else {
         this._searchService.globalSearchItem = searchExpression;
@@ -143,6 +143,7 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   redirectToSearchPage() {
+    this._searchService.setvisibleDropdown( false );
     if (this.state.badges.length > 0) {
       this.store.dispatch(new PatchSearchStateAction({
         key: 'recentSearch',

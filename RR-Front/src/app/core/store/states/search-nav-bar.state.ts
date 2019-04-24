@@ -49,12 +49,12 @@ const initiaState: SearchNavBar = {
     {tag: 'UW Unit', value: 'C:'},
   ],
   sortcutFormKeysMapper: {
-    c: 'cedant',
+    c: 'cedantName',
+    cid: 'cedantCode',
     uwy: 'year',
-    tid: 'treaty',
     wn: 'workspaceName',
     wid: 'workspaceId',
-    ctr: 'country'
+    ctr: 'countryName'
   }
 };
 
@@ -106,7 +106,7 @@ export class SearchNavBarState implements NgxsOnInit {
     ).subscribe(payload => {
       ctx.dispatch(new PatchSearchStateAction({
         key: 'data',
-        value: _.concat(ctx.getState().data, _.map(payload, 'content'))
+        value: _.map(payload, 'content')
       }));
     });
   }

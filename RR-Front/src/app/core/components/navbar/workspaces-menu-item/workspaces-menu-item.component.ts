@@ -30,9 +30,12 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   ngOnInit() {
     this._helperService.test$.subscribe((ws: any) => {
-      this.workspaces = ws;
-      this.numberofElement = this.workspaces.length;
-      this.workspaces[0].selected = true;
+      console.log(ws);
+      this.workspaces = ws || [];
+      if(this.workspaces.length > 0) {
+        this.numberofElement = this.workspaces.length;
+        this.workspaces[0].selected = true;
+      }
     });
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
 
@@ -68,12 +71,12 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   searchWorkspace(size: string = '10') {
     this.workspaces = [];
-    const items = JSON.parse(localStorage.getItem('usedWorkspaces'));
+    const items = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
     items.forEach(
       ws => {
         this.workspaces = [...this.workspaces, {...ws, selected: false, timeStamp: Date.now()}];
     });
-    if (this.selectedItems.length === 0) {
+    if (this.selectedItems.length === 0 && this.workspaces.length > 0) {
       this.workspaces[0].selected = true;
       this.selectedItems = [...this.selectedItems, this.workspaces[0]];
     } else {
@@ -102,7 +105,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   popOutWorkspaces() {
     this.visible = false;
     this.workspaces.filter(ws => ws.selected).forEach(ws => {
-      window.open('/workspace/' + ws.id+'/'+ws.year);
+      window.open('/workspace/' + (ws.id || ws.workSpaceId)+'/'+(ws.year ||ws.uwYear));
       console.log('try to open', ws);
     });
   }
@@ -131,7 +134,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
             };
             workspaces = [workspace, ...workspaces];
             if (workspaces.length === selectedItems.length) {
-              this._helperService.affectItems(workspaces);
+              this._helperService.affectItems(workspaces, true);
               if ( JSON.parse(localStorage.getItem('usedWorkspaces')) === null ) {
                 this._helperService.updateRecentWorkspaces(workspaces);
                 // localStorage.setItem('usedWorkspaces', JSON.stringify(workspaces));

@@ -192,10 +192,12 @@ export class DashboardEntryComponent implements OnInit {
           ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title, icon: icon, selected: true, position: {rows: 5, cols: 5}}))
       )
     };
-    this.dashboards = [...this.dashboards, item];
-    this.dashboardTitle = this.newDashboardTitle || '';
-    this.updateDashboardMockData();
-    this.newDashboardTitle = '';
+    if (item.name != null) {
+      this.dashboards = [...this.dashboards, item];
+      this.dashboardTitle = this.newDashboardTitle || '';
+      this.updateDashboardMockData();
+      this.newDashboardTitle = '';
+    }
   }
 
   deleteDashboard() {
@@ -209,10 +211,12 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   changeDashboardName(name) {
-    const dashIndex = _.findIndex(this.dashboards, {id: this.idSelected});
-    if (dashIndex != -1) this.dashboards[dashIndex].name = name;
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
+    if (name != '') {
+      const dashIndex = _.findIndex(this.dashboards, {id: this.idSelected});
+      if (dashIndex != -1) this.dashboards[dashIndex].name = name;
+      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+      this.updateDashboardMockData();
+    }
   }
 
   updateDashboardMockData() {
@@ -224,10 +228,10 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   dashboardChange(id: any) {
+    console.log({id})
     const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
     this.idSelected = id;
-    console.log(id, this.idSelected);
     if (this.dashboards[id].visible === true) {
       let idSel = 0;
       this.dashboards.forEach(
@@ -241,33 +245,56 @@ export class DashboardEntryComponent implements OnInit {
     }
   }
 
-  tabChange(tabSelected) {
-    let idSel = -1;
-    let overall = -1;
-    this.dashboards.forEach(
-      ds => {
-        ++overall;
-        if (ds.visible === true) {
-          ++idSel;
-          // console.log(idSel === tabSelected.index, overall, this.idSelected);
-        }
-        if (idSel === tabSelected.index) {
-          this.dashboardChange(overall);
-        }
+  delete(dashboardId: any, itemId: any) {
+    // console.log({id,item})
+ /*   this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
+    this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));*/
+    let dashboard: any = this.dashboards[dashboardId];
+    if (itemId > 5) {
+      dashboard.items = dashboard.items.filter(ds => ds.id !== itemId);
+      /*   console.log('this is dashboard new', this.newDashboard);
+         console.log(this.dashboard);*/
+    } else {
+      dashboard.items[itemId - 1].selected = false;
+    }
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    this.updateDashboardMockData()
+  }
+  changeName(dashboardId: any, {itemId, newName}: any) {
+      console.log({itemId, newName, dashboardId})
+    let dashboard: any = this.dashboards[dashboardId];
+      if (itemId <= 5) {
+        const newItem = dashboard.items.filter(ds => ds.id === itemId);
+        const copy = Object.assign({}, newItem[0], {
+          name: newName,
+          id: dashboard.items.length + 1
+        });
+        dashboard.items.push(copy);
+        newItem[0].selected = false;
+      } else {
+        console.log(_.findIndex(dashboard.items,{id:itemId}))
+          let index = _.findIndex(dashboard.items,{id:itemId})
+          dashboard.items = _.merge(dashboard.items,{[index]:{name:newName}})
       }
-    );
-  }
-
-  delete(id, item) {
-    this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
-    this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    this.updateDashboardMockData();
+  //this.editName = false;
   }
-
-  duplicate(id, item) {
-    this.dashboards[id].items = _.concat(this.dashboards[id].items, [{...item, id: this.dashboards[id].items.length + 1}])
-    this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));
+  duplicate(dashboardId:any, itemName:any) {
+    console.log({dashboardId,itemName})
+    let dashboard :any = this.dashboards[dashboardId];
+    const duplicatedItem:any = dashboard.items.filter(ds => ds.name === itemName);
+    const copy = Object.assign({}, duplicatedItem[0], {
+      id: dashboard.items.length + 1,
+      selected:true,
+    });
+   // dashboard.items.push(copy);
+    dashboard.items = [...dashboard.items,copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    this.updateDashboardMockData()
+  /*  this.dashboards[id].items = _.concat(this.dashboards[id].items, [{...item, id: this.dashboards[id].items.length + 1}])
+    this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));*/
   }
 
   activeView(tab) {
@@ -290,7 +317,7 @@ export class DashboardEntryComponent implements OnInit {
 
   onEnterAdd(keyEvent) {
     if (keyEvent.key === 'Enter' ) {
-      this.addDashboard();
+      keyEvent.target.value !== '' ? this.addDashboard() : null;
     }
   }
 
