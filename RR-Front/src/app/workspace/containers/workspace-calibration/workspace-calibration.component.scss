@@ -50,7 +50,6 @@
 }
 .btn-detail{
   background: #F8E71C;
-  z-index: 1000;
   color: white;
   position:absolute;right:0;top:-20px; border: 4px solid rgb(240, 242, 248);
   box-shadow:none;
@@ -118,7 +117,7 @@
 .card-container {
   ::ng-deep {
     .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
-      background: #14617A ;
+      background: #14617A !important;
     }
     .ant-dropdown-menu{
       padding:0 ;

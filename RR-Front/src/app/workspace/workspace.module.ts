@@ -1,7 +1,13 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {COMPONENTS} from './components';
-import {CONTAINERS, WorkspaceMainComponent, WorkspaceRiskLinkComponent, WorkspaceProjectComponent} from './containers';
+import {
+  CONTAINERS,
+  WorkspaceMainComponent,
+  WorkspaceRiskLinkComponent,
+  WorkspaceProjectComponent,
+  WorkspacePltBrowserComponent
+} from './containers';
 import {RouterModule, Routes} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
 import {HighlightDirective} from './highlight.directive';
@@ -11,9 +17,12 @@ const routes: Routes = [
   {
     data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
     children: [
+
       {path: '', component: WorkspaceProjectComponent},
       {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch: 'full'},
+      {path: 'PltBrowser', component: WorkspacePltBrowserComponent, pathMatch:'full'},
       {path: ':id', component: WorkspaceProjectComponent},
+
     ]
   }
 ];
