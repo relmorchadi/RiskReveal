@@ -15,7 +15,7 @@ import {Select, Store} from "@ngxs/store";
 import {SearchNavBar} from "../../../model/search-nav-bar";
 import {} from "../../../store/actions/search-nav-bar.state";
 import * as _ from 'lodash';
-import {Observable} from "rxjs";
+import {Observable, Subscription} from "rxjs";
 import {SearchNavBarState} from "../../../store/states/search-nav-bar.state";
 
 
@@ -33,6 +33,7 @@ export class SearchMenuItemComponent implements OnInit {
   @Select(SearchNavBarState)
   state$: Observable<SearchNavBar>;
   state: SearchNavBar = null;
+
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
               private _notifcationService: NotificationService, private store: Store) {
@@ -54,18 +55,25 @@ export class SearchMenuItemComponent implements OnInit {
     });
   }
 
+
+
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
+    this._subscribeGlobalKeywordChanges();
+    this.store.dispatch(new LoadRecentSearchAction());
+    this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
+      .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
+  }
+
+  private _subscribeGlobalKeywordChanges(){
     this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((param) => {
         this._selectedSearch(param);
       });
-    this.store.dispatch(new LoadRecentSearchAction());
-    this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
-      .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
   }
+
 
   stringUpdate(value) {
     let newString = _.lowerCase(value);
@@ -142,7 +150,10 @@ export class SearchMenuItemComponent implements OnInit {
     this.selectChoice({label: this.contractFilterFormGroup.get('globalKeyword').value})*/
   }
 
+
+
   redirectToSearchPage() {
+    this._openWorkspaceIfSuffisantBadges();
     this._searchService.setvisibleDropdown( false );
     if (this.state.badges.length > 0) {
       this.store.dispatch(new PatchSearchStateAction({
@@ -154,8 +165,20 @@ export class SearchMenuItemComponent implements OnInit {
     }
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.clearValue();
+
     this.router.navigate(['/search']);
   }
+
+  private _openWorkspaceIfSuffisantBadges():boolean{
+    let yearBadge= this.state.badges.find(badge => badge.key=='Year');
+    let workpaceNameBadge= this.state.badges.find(badge => badge.key=='Workspace Id');
+    if(yearBadge && workpaceNameBadge){
+      window.open(`/workspace/${workpaceNameBadge.value}/${yearBadge.value}`);
+      return true;
+    }
+    return false;
+  }
+
 
   redirectWithSearch(items) {
     this._searchService.affectItems(items);
@@ -182,7 +205,12 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   private _selectedSearch(keyword) {
-    this.store.dispatch(new SearchContractsCountAction(keyword));
+    if(keyword && keyword.length)
+      this.store.dispatch(new SearchContractsCountAction(keyword));
+  }
+
+  addBadgeFromResultList(key){
+    this.selectSearchBadge(this.stringUpdate(key), this.state.actualGlobalKeyword );
   }
 
   closeSearchBadge(status, index) {

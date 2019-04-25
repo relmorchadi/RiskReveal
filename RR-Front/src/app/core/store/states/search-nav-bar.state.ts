@@ -27,7 +27,7 @@ const initiaState: SearchNavBar = {
   data: [],
   recentSearch: [],
   showRecentSearch: [],
-  tables: ['CEDANT_CODE', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME', 'YEAR', 'COUNTRY'],
+  tables: ['YEAR', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME',  'COUNTRY', 'CEDANT_CODE'],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
@@ -99,11 +99,13 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchContractsCountAction)
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
     ctx.dispatch(new PatchSearchStateAction({key: 'data', value: []}));
+    console.log('search contracts', keyword)
     forkJoin(
       ...ctx.getState().tables.map(
         tableName => this.searchLoader(keyword, tableName)
       )
     ).subscribe(payload => {
+      console.log('Patch value', payload)
       ctx.dispatch(new PatchSearchStateAction({
         key: 'data',
         value: _.map(payload, 'content')
