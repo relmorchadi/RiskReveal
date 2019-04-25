@@ -97,7 +97,6 @@ export class SearchMainComponent implements OnInit {
   }
 
   openWorkspace(wsId, year) {
-
     this.searchData(wsId, year).subscribe(
       (dt: any) => {
         const workspace = {

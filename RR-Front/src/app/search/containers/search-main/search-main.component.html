@@ -107,6 +107,9 @@
         <!--</nz-table>-->
 
         <div class="chips-wrapper">
+          <div *ngIf="globalSearchItem" style="padding: 15px 4px;">
+            <app-chip-tag key='Global Search' (onclick)="globalSearchItem=''; _loadContracts()" [value]="globalSearchItem" [closeStatus]="true"></app-chip-tag>
+          </div>
           <div *ngFor="let items of searchedItems; let i = index" style="padding: 15px 4px;">
             <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i)" [value]="items.value" [closeStatus]="true"></app-chip-tag>
           </div>
@@ -118,7 +121,6 @@
                     [tableWidth]="'1000px'"
                     [tableHeight]="'300px'" >
         </app-table>-->
-
         <table *ngIf="!loading" class="table search-table">
           <thead [formGroup]="contractFilterFormGroup">
           <tr>
