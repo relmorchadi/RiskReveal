@@ -90,8 +90,13 @@
 
                     <tr *ngFor="let plt of plts " style="cursor: pointer" (click)="openPltInDrawer(plt)"
                         [ngClass]="{'active_plt_item': plt.selected }">
-                      <td>
-                        <div class="td-wrapper"><i nz-icon nzType="eye" nzTheme="outline"></i></div>
+                      <td [ngClass]="{'active_plt_item_eye': plt.selected }">
+                        <div *ngIf="plt.selected">
+                          <i nz-icon nzType="eye" nzTheme="outline"></i>
+                        </div>
+                        <div *ngIf="!plt.selected">
+                          <i nz-icon nzType="eye-invisible" nzTheme="outline"></i>
+                        </div>
                       </td>
                       <td>
                         <div class="td-wrapper"></div>
@@ -121,13 +126,21 @@
                         <div class="td-wrapper">{{plt.rap}}</div>
                       </td>
                       <td>
-                        <div class="td-wrapper">_</div>
+                        <div class="td-wrapper-check">
+                          <div>
+                            <i [ngClass]="{'icon-check-circle': plt.d, 'icon-remove_24px': !plt.d }"></i>
+                          </div>
+                        </div>
                       </td>
                       <td>
-                        <div class="td-wrapper">_</div>
+                        <div  class="td-wrapper-check">
+                          <i [ngClass]="{'icon-check-circle': plt.note, 'icon-remove_24px': !plt.note }"></i>
+                        </div>
                       </td>
                       <td>
-                        <div class="td-wrapper">_</div>
+                        <div  class="td-wrapper-check">
+                          <i [ngClass]="{'icon-check-circle': plt.checked, 'icon-remove_24px': !plt.checked }"></i>
+                        </div>
                       </td>
                     </tbody>
                   </table>

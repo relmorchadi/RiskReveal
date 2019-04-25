@@ -8,13 +8,22 @@ import { Component, OnInit } from '@angular/core';
 export class WorkspacePltBrowserComponent implements OnInit {
 
   currentPlt = null;
+  notChecked = false;
+  checked = true;
 
   plts : any = [
-    {pltId: 1 , pltName:"NATC-USM", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic"},
-    {pltId: 2 , pltName:"NATC-USM", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RS RiskLink", rap:"North Atlantic"},
-    {pltId: 3 , pltName:"NATC-USM", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic"},
-    {pltId: 4 , pltName:"NATC-USM", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic"},
-    {pltId: 5 , pltName:"NATC-USM", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic"}
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: true, checked: false},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: true, note: false, checked: true},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: false, checked: false},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: true, note: true, checked: true},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: false, checked: false},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: true, note: true, checked: false},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: true, checked: true},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: true, note: false, checked: false},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: true, checked: false},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: true, note: true, checked: false},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: true, checked: true},
+    {pltId: 1 , pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: true, note: true, checked: false}
   ]
 
   systemTags = [
