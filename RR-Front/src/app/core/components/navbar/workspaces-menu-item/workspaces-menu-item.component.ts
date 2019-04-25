@@ -19,7 +19,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   selectedWorkspace = null;
   selectedItems = [];
   numberofElement: number;
-  lastOnes = 10;
+  lastOnes = 0;
   visible: any;
   labels: any = [];
 
@@ -39,7 +39,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
     });
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
 
-    if (this.numberofElement > 10) {
+    if (this.numberofElement > 0) {
       this.labels.push('Last 10');
     }
     if (this.numberofElement > 50) {

@@ -247,10 +247,10 @@
       <h3 class="tab-title">{{title}}</h3>
       <nz-dropdown [nzTrigger]="'click'">
         <a nz-dropdown>
-          <h6 style="line-height: 15px" class="d-flex align-items-center sub-title">{{year}}<i class="pl-3" *ngIf="generateYear(year, years).length >0" nz-icon type="down"></i></h6>
+          <h6 style="line-height: 15px" class="d-flex align-items-center sub-title">{{year}}<i class="pl-3" *ngIf="generateYear(year, years, title).length >0" nz-icon type="down"></i></h6>
         </a>
         <ul style="padding:0" nz-menu>
-          <li (click)="addWs(title,y)" *ngFor="let y of generateYear(year, years)" nz-menu-item>{{y}}</li>
+          <li (click)="addWs(title,y)" *ngFor="let y of generateYear(year, years, title)" nz-menu-item>{{y}}</li>
         </ul>
       </nz-dropdown>
       <div (click)="close(title, year)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>

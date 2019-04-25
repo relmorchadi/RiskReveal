@@ -163,8 +163,17 @@ export class WorkspaceMainComponent implements OnInit {
     }
   }
 
-  generateYear(year, years) {
-    const generatedYears = years.filter(y => y < year);
+  generateYear(year, years, title = '') {
+    let itemImported = JSON.parse(localStorage.getItem('workspaces')) || [];
+    let generatedYears = years.filter(y => y != year ) || [];
+    if (title !== '') {
+      itemImported = itemImported.filter( dt => dt.workSpaceId === title);
+      if (itemImported.length > 0) {
+        itemImported.forEach( item => {
+          generatedYears = generatedYears.filter(y =>  y != item.uwYear);
+        });
+      }
+    }
     return generatedYears;
   }
 
