@@ -6,6 +6,7 @@ import {forkJoin, of} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
 import {mergeMap} from "rxjs/internal/operators/mergeMap";
+import {delay} from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace-main',
@@ -20,6 +21,8 @@ export class WorkspaceMainComponent implements OnInit {
   selectedPrStatus = '1';
   wsId: any;
   year: any;
+  loading = false;
+  sliceValidator = true;
   selectedWorkspaces: any = [];
   WorkspaceData: any;
 
@@ -39,20 +42,10 @@ export class WorkspaceMainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._helper.changeSelectedWorkspace$.subscribe((e: any) => {
-      this.fromSingleWorkspace = false;
-      this.getSearchedWorkspaces();
-    });
     this._helper.collapseLeftMenu$.subscribe((e) => {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
     const pathName: any = window.location.pathname || '';
-    if (pathName.includes('workspace')) {
-      const workspaceId: any = pathName[pathName.length - 1];
-      /*      if (workspaceId != null ) {
-              this.tabs = [staticTabs[0]];
-            }*/
-    }
     this.route.children[0] && this.route.children[0].params.subscribe(
       ({wsId, year}: any) => {
         console.log({wsId, year});
@@ -60,12 +53,17 @@ export class WorkspaceMainComponent implements OnInit {
         this.year = year;
         this.wsId != null ? this.fromSingleWorkspace = true : this.fromSingleWorkspace = false;
         this.getSearchedWorkspaces();
-        // console.log( this.searchData(wsId, year));
       });
+    this._helper.changeSelectedWorkspace$.subscribe((e: any) => {
+      this.loading = false;
+      this.fromSingleWorkspace = false;
+      this.getSearchedWorkspaces();
+    });
   }
 
   getSearchedWorkspaces() {
     if (this.wsId != undefined && this.fromSingleWorkspace == true) {
+      this.loading = true;
       this.searchData(this.wsId, this.year).pipe(
         mergeMap((content: any) => {
           const item = {
@@ -86,6 +84,7 @@ export class WorkspaceMainComponent implements OnInit {
           this.ws = [item];
           this._helper.affectItems([item], true);
           this.ws$ = of(this.ws);
+          // this.loading = false;
           return of();
 /*          return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));*/
         })
@@ -102,10 +101,6 @@ export class WorkspaceMainComponent implements OnInit {
 
   private searchData(id, year) {
     return this._searchService.searchWorkspace(id || '', year || '2019');
-  }
-
-  ngOnDestroy(): void {
-    _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
   }
 
   close(title, year) {
@@ -166,13 +161,19 @@ export class WorkspaceMainComponent implements OnInit {
         }
       );
     }
-
-
   }
 
   generateYear(year, years) {
     const generatedYears = years.filter(y => y < year);
     return generatedYears;
+  }
+
+  sliceContent(content: any, valid: boolean) {
+    if (valid && content) {
+      return content.slice(0, 3);
+    } else {
+      return content;
+    }
   }
 
   selectproject(id) {

@@ -23,7 +23,7 @@ export class HelperService {
 
   affectItems(item , newWorkspaces = false) {
     if (newWorkspaces) {
-      localStorage.setItem('workspaces', JSON.stringify(item));
+      localStorage.setItem('workspaces', JSON.stringify(_.uniqBy(item, (a) => a.workSpaceId) ));
     } else {
       if (this.items.length === 0) {
         localStorage.setItem('workspaces', JSON.stringify(item));
@@ -44,7 +44,7 @@ export class HelperService {
 
   itemsAppend(item) {
     const alreadyImported = _.filter(this.items, ws => {
-      if (ws.workSpaceId === item.workSpaceId && ws.uwYear == item.uwYear) {return ws; }
+        if (ws.workSpaceId === item.workSpaceId && ws.uwYear == item.uwYear) {return ws; }
       }
     );
     if (alreadyImported.length === 0 ) {

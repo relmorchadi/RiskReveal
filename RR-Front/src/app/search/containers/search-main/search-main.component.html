@@ -15,7 +15,7 @@
 
         <div class="title-wrapper" nz-row style="margin-top: 50px;">
           <div class="title-section">
-            <h3>Showing {{paginationOption?.page + '-' + paginationOption?.size + ' of ' + paginationOption?.total}}
+            <h3>Showing {{paginationOption?.page + '-' + paginationOption?.size + ' of ' }}{{paginationOption?.total}}
             results</h3>
           </div>
 
@@ -277,8 +277,11 @@
 
               <div class="row mt-4 ml-4 d-column">
                 <span class="workspace-title">Treaty Section :</span>
-                <span *ngFor="let section of selectedWorkspace?.treatySections" class="workspace-value">{{section}}</span>
-                <span class="treaty-sect-see-all mt-2">See all</span>
+                <span *ngFor="let section of sliceContent(selectedWorkspace?.treatySections, sliceValidator)" class="workspace-value">{{section}}</span>
+                <ng-container *ngIf="selectedWorkspace?.treatySections?.length > 3">
+                  <span (click)="sliceValidator = false" *ngIf="sliceValidator" class="treaty-sect-see-all mt-2">See all</span>
+                  <span (click)="sliceValidator = true" *ngIf="!sliceValidator" class="treaty-sect-see-all mt-2">Hide</span>
+                </ng-container>
               </div>
 
               <div class="divider"></div>

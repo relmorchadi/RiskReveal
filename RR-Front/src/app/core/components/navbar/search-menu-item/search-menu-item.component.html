@@ -6,8 +6,7 @@
                   [nzSuffix]="suffixIconSearch"
                   [nzAddOnBefore]="prefixIconTag">
     <input [ngClass]="{'search-page-active-border': isSearchRoute()}" (keydown)="filterContracts($event)"
-           (input)="onInput($event)" #searchInput [(nzVisible)]="state.visibleSearch"
-           nz-popover [nzContent]="searchDropdown"  nzPlacement="bottomLeft" nzTrigger="click"
+           (input)="onInput($event)" #searchInput
            formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="state.searchValue"
            class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
@@ -19,6 +18,9 @@
     <div class="prefix-wrapper">
       <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
         <i class="icon-code_24px"></i>
+      </button>
+      <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
+              nz-popover [nzContent]="searchDropdown"  nzPlacement="bottomLeft" nzTrigger="click">
       </button>
       <div class="chips-wrapper">
         <app-chip-tag *ngFor="let items of state?.badges; let i = index" (onclick)="closeSearchBadge($event, i)" [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>

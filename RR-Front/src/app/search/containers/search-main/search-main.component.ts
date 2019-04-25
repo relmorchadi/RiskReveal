@@ -18,9 +18,10 @@ export class SearchMainComponent implements OnInit {
   contractFilterFormGroup: FormGroup;
   expandWorkspaceDetails = false;
   contracts = [];
-  paginationOption = {page: 0, size: 20, total: null};
+  paginationOption = {page: 0, size: 20, total: '-'};
   selectedWorkspace: any;
   loadingMore = false;
+  sliceValidator = true;
   searchedItems = [];
   globalSearchItem = '';
   currentWorkspace = null;
@@ -134,6 +135,7 @@ export class SearchMainComponent implements OnInit {
 
   openWorkspaceInSlider(contract) {
     this.currentWorkspace = contract;
+    this.sliceValidator = true;
     this.expandWorkspaceDetails = true;
     this.searchData(contract.workSpaceId, contract.uwYear).subscribe(
       dt => {
@@ -191,7 +193,6 @@ export class SearchMainComponent implements OnInit {
       this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
         .subscribe((data: any) => {
           this.contracts = data.content;
-          console.log(this.contracts);
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
@@ -206,7 +207,7 @@ export class SearchMainComponent implements OnInit {
           }
         );
     } else {
-      //this.initSearchForm();
+      // this.initSearchForm();
       this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
         .subscribe((data: any) => {
           this.contracts = data.content;
@@ -215,8 +216,6 @@ export class SearchMainComponent implements OnInit {
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
         });
     }
-    // console.log(this.searchedItems, this.contractFilterFormGroup.value);
-    console.log(this.contracts);
   }
 
   navigateBack() {
@@ -226,6 +225,14 @@ export class SearchMainComponent implements OnInit {
   clearChips() {
     this.searchedItems = [];
     this._loadContracts();
+  }
+
+  sliceContent(content: any, valid: boolean) {
+    if (valid && content) {
+      return content.slice(0, 3);
+    } else {
+      return content;
+    }
   }
 
   closeSearchBadge(status, index) {

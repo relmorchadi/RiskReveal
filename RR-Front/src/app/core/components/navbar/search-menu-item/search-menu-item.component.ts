@@ -125,6 +125,9 @@ export class SearchMenuItemComponent implements OnInit {
       }
       event.preventDefault();
       this.redirectToSearchPage();
+    } else if (keyboardEvent.key === 'Delete' && keyboardEvent.target.value === '') {
+      this.state.badges.pop();
+      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
     }
     if (this.state.deleteBlock === true) {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
@@ -135,19 +138,12 @@ export class SearchMenuItemComponent implements OnInit {
     } else {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.badges.pop();
+        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
         this.state.deleteBlock = true;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: true}));
-        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
-
         console.log(this.state.deleteBlock);
       }
     }
-    if (keyboardEvent.key === 'Delete' && keyboardEvent.target.value === '') {
-      this.state.badges.pop();
-      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
-    }
-    /* if(this.currentBadge)
-    this.selectChoice({label: this.contractFilterFormGroup.get('globalKeyword').value})*/
   }
 
 
@@ -275,7 +271,7 @@ export class SearchMenuItemComponent implements OnInit {
         }]));
       }
     }
-    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
+    this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: true}, {key: 'visible', value: false}]));
   }
 
   onInput(event) {
@@ -300,11 +296,11 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   openClose(): void {
-    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: !this.state.visible}));
+    this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: false}, {key: 'visible', value: !this.state.visible}]));
   }
 
   clearValue(): void {
-    this.store.dispatch(new ClearSearchValuesAction);
+    this.store.dispatch(new ClearSearchValuesAction());
     this._clearFilters();
   }
 }
