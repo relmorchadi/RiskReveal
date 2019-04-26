@@ -21,7 +21,7 @@ export class SearchMainComponent implements OnInit {
   loadingMore = false;
   searchedItems = [];
   currentWorkspace= null;
-  /*columns = [
+  /*basis = [
     { field: 'id', header: 'Id', width: '150px', display:true, sorted:false, filtered:false },
     { field: 'countryName', header: 'Country', width: '110px', display:true, sorted:true, filtered:true },
     { field: 'cedantCode', header: 'Cedant', width: '110px', display:true, sorted:true, filtered:true  },

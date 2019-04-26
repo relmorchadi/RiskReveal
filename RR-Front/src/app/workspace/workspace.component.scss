@@ -117,7 +117,7 @@
 .card-container {
   ::ng-deep {
     .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
-      background: #14617A !important;
+      background: #14617A ;
     }
     .ant-dropdown-menu{
       padding:0 ;
@@ -159,10 +159,10 @@
       border-color: transparent;
       background: transparent;
     }
-    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+   /* .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
       border-color: #fff;
       background: #fff;
-    }
+    }*/
     .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
       padding: 0;
     }

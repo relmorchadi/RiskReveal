@@ -214,9 +214,9 @@ $container-max-widths: (
 @include _assert-ascending($container-max-widths, "$container-max-widths");
 
 
-// Grid columns
+// Grid basis
 //
-// Set the number of columns and specify the width of the gutters.
+// Set the number of basis and specify the width of the gutters.
 
 $grid-columns:                12 !default;
 $grid-gutter-width:           30px !default;

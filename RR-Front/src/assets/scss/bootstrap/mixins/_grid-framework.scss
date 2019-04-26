@@ -1,7 +1,7 @@
 // Framework grid generation
 //
 // Used only by Bootstrap to generate the correct number of grid classes given
-// any value of `$grid-columns`.
+// any value of `$grid-basis`.
 
 @mixin make-grid-columns($columns: $grid-columns, $gutter: $grid-gutter-width, $breakpoints: $grid-breakpoints) {
   // Common properties for all breakpoints
@@ -15,7 +15,7 @@
   @each $breakpoint in map-keys($breakpoints) {
     $infix: breakpoint-infix($breakpoint, $breakpoints);
 
-    // Allow columns to stretch full width below their breakpoints
+    // Allow basis to stretch full width below their breakpoints
     @for $i from 1 through $columns {
       .col#{$infix}-#{$i} {
         @extend %grid-column;
@@ -27,7 +27,7 @@
     }
 
     @include media-breakpoint-up($breakpoint, $breakpoints) {
-      // Provide basic `.col-{bp}` classes for equal-width flexbox columns
+      // Provide basic `.col-{bp}` classes for equal-width flexbox basis
       .col#{$infix} {
         flex-basis: 0;
         flex-grow: 1;
@@ -53,7 +53,7 @@
         .order#{$infix}-#{$i} { order: $i; }
       }
 
-      // `$columns - 1` because offsetting by the width of an entire row isn't possible
+      // `$basis - 1` because offsetting by the width of an entire row isn't possible
       @for $i from 0 through ($columns - 1) {
         @if not ($infix == "" and $i == 0) { // Avoid emitting useless .offset-0
           .offset#{$infix}-#{$i} {
