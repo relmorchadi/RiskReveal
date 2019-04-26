@@ -70,15 +70,12 @@
   <i nz-icon type="search"></i>
 </ng-template-->
 
-
-
-
 <p-table *ngIf="virtualScroll"
-  [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
-  [scrollable]="true" [scrollHeight]="tableHeight" [rows]="20" [totalRecords]="totalRecords"
-  [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
-  [lazy]="true" [virtualRowHeight]="50" [showLoader]="false"
-  >
+         [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
+         [scrollable]="true" [scrollHeight]="tableHeight" [rows]="30" [totalRecords]="totalRecords"
+         [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
+         [lazy]="true" [virtualRowHeight]="50" [showLoader]="false"
+>
 
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -86,31 +83,35 @@
     </colgroup>
   </ng-template>
   <ng-template pTemplate="header" let-columns>
-     <tr *ngIf="!sortable">
-       <th *ngFor="let col of columns" pResizableColumn>
-         <span *ngIf="col.display">{{col.header}}</span>
-         <div class="search-bar-table" *ngIf="col.filtered">
-           <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-           <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
-         </div>
-       </th>
+    <tr *ngIf="!sortable">
+      <th *ngFor="let col of columns" pResizableColumn>
+        <span *ngIf="col.display">{{col.header}}</span>
+        <div class="search-bar-table" *ngIf="col.filtered">
+          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+          <input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">
+        </div>
+      </th>
     </tr>
     <tr *ngIf="sortable">
-      <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sorted ? col.field : null">
-        <span *ngIf="col.display">{{col.header}}</span><p-sortIcon *ngIf="col.sorted" [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+      <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col?.sorted ? col.field : null">
+        <span *ngIf="col?.display">{{col?.header}}</span>
+        <p-sortIcon *ngIf="col?.sorted" [field]="col?.field" ariaLabel="Activate to sort"
+                    ariaLabelDesc="Activate to sort in descending order"
+                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
       </th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-columns="columns">
-      <tr>
-        <td *ngFor="let col of columns" >
-          <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col.field]}}
-        </td>
-      </tr>
+    <tr [ngClass]="{'active_contract_item': currentSelectedItem === rowData }" (click)="selectRow(rowData)">
+      <td *ngFor="let col of columns">
+        <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col?.field]}}
+        <i (click)="col?.handler(rowData)" [ngClass]="col?.class"></i>
+      </td>
+    </tr>
   </ng-template>
   <ng-template pTemplate="loadingbody" let-columns="columns">
     <tr style="height:34px">
-      <td *ngFor="let col of columns">
+      <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
         <div class="loading-text"></div>
       </td>
     </tr>
@@ -132,21 +133,25 @@
       <th *ngFor="let col of columns" pResizableColumn>
         <span *ngIf="col.display">{{col.header}}</span>
         <div class="search-bar-table" *ngIf="col.filtered">
-          <i  class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
           <input pInputText type="text" (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
         </div>
       </th>
     </tr>
     <tr *ngIf="sortable">
       <th *ngFor="let col of columns" pResizableColumn [pSortableColumn]="col.sorted ? col.field : null">
-        <span *ngIf="col?.display">{{col.header}}</span><p-sortIcon *ngIf="col?.sorted" [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+        <span *ngIf="col?.display">{{col.header}}</span>
+        <p-sortIcon *ngIf="col?.sorted" [field]="col.field" ariaLabel="Activate to sort"
+                    ariaLabelDesc="Activate to sort in descending order"
+                    ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
       </th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-columns="columns">
     <tr>
-      <td *ngFor="let col of columns" >
-        <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i> {{rowData[col.field]}}
+      <td *ngFor="let col of columns">
+        <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col?.field]}}
+        <i (click)="col?.handler(rowData)" [ngClass]="col?.class"></i>
       </td>
     </tr>
   </ng-template>

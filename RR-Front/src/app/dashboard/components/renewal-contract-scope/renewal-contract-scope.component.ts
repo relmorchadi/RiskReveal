@@ -67,15 +67,12 @@ export class RenewalContractScopeComponent implements OnInit {
     this.newDashboard = this.dashboard;
   }
 
-  duplicateItem(itemName:any): void {
-    //console.log(this.dashboard);
-    this.duplicate.emit(itemName)
+  duplicateItem(itemName: any): void {
+    this.duplicate.emit(itemName);
   }
 
   deleteItem(id): void {
-
     this.delete.emit(id);
-
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
@@ -90,8 +87,8 @@ export class RenewalContractScopeComponent implements OnInit {
   validateName(keyboardMap, id) {
 
     if (keyboardMap.key === 'Enter') {
-      this.changeName.emit({itemId:id,newName:keyboardMap.target.value})
-      this.editName = false
+      this.changeName.emit({itemId: id, newName: keyboardMap.target.value});
+      this.editName = false ;
     /*  const newItem = this.newDashboard.items.filter(ds => ds.id === id);
       const copy = Object.assign({}, newItem[0], {
         name: this.itemName,

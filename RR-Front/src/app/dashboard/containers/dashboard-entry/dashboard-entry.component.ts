@@ -228,7 +228,7 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   dashboardChange(id: any) {
-    console.log({id})
+    console.log({id});
     const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
     this.idSelected = id;
@@ -258,10 +258,10 @@ export class DashboardEntryComponent implements OnInit {
       dashboard.items[itemId - 1].selected = false;
     }
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData()
+    this.updateDashboardMockData();
   }
   changeName(dashboardId: any, {itemId, newName}: any) {
-      console.log({itemId, newName, dashboardId})
+      console.log({itemId, newName, dashboardId});
     let dashboard: any = this.dashboards[dashboardId];
       if (itemId <= 5) {
         const newItem = dashboard.items.filter(ds => ds.id === itemId);
@@ -272,26 +272,26 @@ export class DashboardEntryComponent implements OnInit {
         dashboard.items.push(copy);
         newItem[0].selected = false;
       } else {
-        console.log(_.findIndex(dashboard.items,{id:itemId}))
-          let index = _.findIndex(dashboard.items,{id:itemId})
-          dashboard.items = _.merge(dashboard.items,{[index]:{name:newName}})
+        console.log(_.findIndex(dashboard.items, {id: itemId}));
+        let index = _.findIndex(dashboard.items, {id: itemId});
+        dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
       }
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
-  //this.editName = false;
+      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+      this.updateDashboardMockData();
+      // this.editName = false;
   }
-  duplicate(dashboardId:any, itemName:any) {
-    console.log({dashboardId,itemName})
-    let dashboard :any = this.dashboards[dashboardId];
-    const duplicatedItem:any = dashboard.items.filter(ds => ds.name === itemName);
+  duplicate(dashboardId: any, itemName: any) {
+    console.log({dashboardId, itemName});
+    let dashboard: any = this.dashboards[dashboardId];
+    const duplicatedItem: any = dashboard.items.filter(ds => ds.name === itemName);
     const copy = Object.assign({}, duplicatedItem[0], {
       id: dashboard.items.length + 1,
-      selected:true,
+      selected: true,
     });
    // dashboard.items.push(copy);
-    dashboard.items = [...dashboard.items,copy];
+    dashboard.items = [...dashboard.items, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData()
+    this.updateDashboardMockData();
   /*  this.dashboards[id].items = _.concat(this.dashboards[id].items, [{...item, id: this.dashboards[id].items.length + 1}])
     this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));*/
