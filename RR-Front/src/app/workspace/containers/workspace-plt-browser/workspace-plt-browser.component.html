@@ -88,9 +88,9 @@
                     </thead>
                     <tbody>
 
-                    <tr *ngFor="let plt of plts " style="cursor: pointer" (click)="openPltInDrawer(plt)"
+                    <tr *ngFor="let plt of plts " style="cursor: pointer"
                         [ngClass]="{'active_plt_item': plt.selected }">
-                      <td [ngClass]="{'active_plt_item_eye': plt.selected }">
+                      <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
                         <div *ngIf="plt.selected">
                           <i nz-icon nzType="eye" nzTheme="outline"></i>
                         </div>
