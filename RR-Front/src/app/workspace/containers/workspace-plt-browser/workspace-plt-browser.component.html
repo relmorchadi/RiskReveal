@@ -40,7 +40,7 @@
 
                   <div nz-row class="tags-title-section">User tags <i class="icon-plus-circle"></i></div>
                   <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
-                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}">
+                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor, 'border-color': tag.border}">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -56,7 +56,7 @@
             <nz-tabset class="tabset-right">
               <nz-tab nzTitle="PLTs">
                 <div class="PLTs-content">
-                  <table class="table plt-table">
+                  <table class="table plt-table scrollTable">
                     <thead>
                     <tr>
                       <th></th>
@@ -99,7 +99,14 @@
                         </div>
                       </td>
                       <td>
-                        <div class="td-wrapper"></div>
+                        <div class="td-wrapper-tags">
+                          <span *ngFor="let tag of plt.systemTags"
+                                [ngStyle]="{'background-color': getColor(tag.tagId, 'system')}">&nbsp;</span>
+
+                          <span *ngFor="let tag of plt.userTags"
+                                [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}">&nbsp;</span>
+                          <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
+                        </div>
                       </td>
                       <td>
                         <div class="td-wrapper">{{plt.pltId}}</div>
@@ -133,12 +140,12 @@
                         </div>
                       </td>
                       <td>
-                        <div  class="td-wrapper-check">
+                        <div class="td-wrapper-check">
                           <i [ngClass]="{'icon-check-circle': plt.note, 'icon-remove_24px': !plt.note }"></i>
                         </div>
                       </td>
                       <td>
-                        <div  class="td-wrapper-check">
+                        <div class="td-wrapper-check">
                           <i [ngClass]="{'icon-check-circle': plt.checked, 'icon-remove_24px': !plt.checked }"></i>
                         </div>
                       </td>
@@ -289,20 +296,51 @@
                 <div class="ep-metrics-content">
                   <div nz-row>
                     <div nz-col [nzSpan]="6">
-                      <div class="body-wraper-search" clickOutside (clickOutside)="closeDropdown(2)"
-                           [ngClass]="{'body-wraper-search-active': displayDropdownRDM ,'body-wraper-search-display': displayListRDM}">
-                        <div class="search-bar">
-                          <div class="search-bar-text">Select RDM</div>
-                          <div class="search-bar-text displayed-info">
-                            <span class="search-bar-text-title">RDM</span>
-                            <span class="search-bar-text-subtitle">Add RDM</span>
-                          </div>
-                          <i class="search-bar-icon-down" nz-icon nzType="down" nzTheme="outline"></i>
-                        </div>
-
+                      <div class="dropdown-currency">
+                        <nz-dropdown [nzTrigger]="'click'">
+                          <a nz-dropdown>
+                            <div style="display:flex">
+                              <div class="dropdown-currency-title">
+                                <span class="dropdown-currency-header">Display Currency</span>
+                                <span class="dropdown-currency-subtitle"
+                                      style="font-weight: bold;">{{currencySelected}}</span>
+                              </div>
+                              <i nz-icon type="down"></i>
+                            </div>
+                          </a>
+                          <ul nz-menu>
+                            <li nz-menu-item (click)="currencySelected = currency?.label"
+                                *ngFor="let currency of currencies">{{currency?.label}}</li>
+                          </ul>
+                        </nz-dropdown>
                       </div>
                     </div>
+                    <div nz-col [nzSpan]="1">&nbsp;</div>
+                    <div nz-col [nzSpan]="6">
+                      <div class="dropdown-financial-unit">
+                        <nz-dropdown [nzTrigger]="'click'">
+                          <a nz-dropdown>
+                            <div style="display:flex">
+                              <div class="dropdown-unit-title">
+                                <span class="dropdown-unit-header">Financial Unit</span>
+                                <span class="dropdown-unit-subtitle"
+                                      style="font-weight: bold;">{{financialUnitSelected}}</span>
+                              </div>
+                              <i nz-icon type="down"></i>
+                            </div>
+                          </a>
+                          <ul nz-menu>
+                            <li nz-menu-item (click)="financialUnitSelected = unit?.label"
+                                *ngFor="let unit of units">{{unit?.label}}</li>
+                          </ul>
+                        </nz-dropdown>
+                      </div>
+                    </div>
+                    <div nz-col [nzSpan]="6">
+                      <div class="dropdown-ep-metric"></div>
+                    </div>
                   </div>
+
                 </div>
               </nz-tab>
               <nz-tab nzTitle="Other Metrics">
