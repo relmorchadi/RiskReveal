@@ -77,7 +77,7 @@
             <nz-skeleton [nzActive]="true"></nz-skeleton>
         </ng-template>
       <div class="more-results-sction">
-        <button routerLink="/search" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
+        <button (click)="redirectToSearchPage()" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
       </div>
     </div>
   </ng-template>

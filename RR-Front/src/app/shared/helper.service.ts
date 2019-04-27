@@ -23,7 +23,7 @@ export class HelperService {
 
   affectItems(item , newWorkspaces = false) {
     if (newWorkspaces) {
-      localStorage.setItem('workspaces', JSON.stringify(_.uniqBy(item, (a) => a.workSpaceId) ));
+      localStorage.setItem('workspaces', JSON.stringify(_.uniqBy(item, (a:any) => a.workSpaceId) ));
     } else {
       if (this.items.length === 0) {
         localStorage.setItem('workspaces', JSON.stringify(item));
