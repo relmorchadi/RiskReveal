@@ -80,7 +80,7 @@
             <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
               {{d.name}}
               <i *ngIf="d.visible" (click)="closeTab(d)" class="icon-remove_red_eye_24px selected-item-icon"></i>
-              <i *ngIf="!d.visible" nz-icon (click)="activeView(d)" nzType="eye-invisible" class="selected-item-icon" nzTheme="outline"></i>
+              <i *ngIf="!d.visible" (click)="activeView(d)" class="icon-visibility_off_24px selected-item-icon"></i>
             </nz-option>
           </nz-select>
           <div class="edit-dashboard-section">

@@ -9,14 +9,14 @@ import {
   AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
   PatchSearchStateAction,
   SearchContractsCountAction
-} from "../../../store/actions/search-nav-bar.state";
+} from '../../../store/index';
 
-import {Select, Store} from "@ngxs/store";
-import {SearchNavBar} from "../../../model/search-nav-bar";
-import {} from "../../../store/actions/search-nav-bar.state";
+import {Select, Store} from '@ngxs/store';
+import {SearchNavBar} from '../../../model/search-nav-bar';
+import {} from '../../../store/actions/search-nav-bar.state';
 import * as _ from 'lodash';
-import {Observable, Subscription} from "rxjs";
-import {SearchNavBarState} from "../../../store/states/search-nav-bar.state";
+import {Observable, Subscription} from 'rxjs';
+import {SearchNavBarState} from '../../../store/index';
 
 
 @Component({
@@ -65,7 +65,7 @@ export class SearchMenuItemComponent implements OnInit {
       .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
   }
 
-  private _subscribeGlobalKeywordChanges(){
+  private _subscribeGlobalKeywordChanges() {
     this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
       .pipe(debounceTime(500))
@@ -146,29 +146,26 @@ export class SearchMenuItemComponent implements OnInit {
     }
   }
 
-
-
   redirectToSearchPage() {
     this._openWorkspaceIfSuffisantBadges();
     this._searchService.setvisibleDropdown( false );
     if (this.state.badges.length > 0) {
       this.store.dispatch(new PatchSearchStateAction({
         key: 'recentSearch',
-        value: _.uniqWith([[...this.state.badges], ...this.state.recentSearch], _.isEqual)
+        value: _.uniqWith([[...this.state.badges], ...this.state.recentSearch].slice(0, 3), _.isEqual)
       }));
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
     }
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.clearValue();
-
     this.router.navigate(['/search']);
   }
 
-  private _openWorkspaceIfSuffisantBadges():boolean{
-    let yearBadge= this.state.badges.find(badge => badge.key=='Year');
-    let workpaceNameBadge= this.state.badges.find(badge => badge.key=='Workspace Id');
-    if(yearBadge && workpaceNameBadge){
+  private _openWorkspaceIfSuffisantBadges(): boolean {
+    let yearBadge = this.state.badges.find(badge => badge.key == 'Year');
+    let workpaceNameBadge = this.state.badges.find(badge => badge.key == 'Workspace Id');
+    if (yearBadge && workpaceNameBadge) {
       window.open(`/workspace/${workpaceNameBadge.value}/${yearBadge.value}`);
       return true;
     }
@@ -201,11 +198,11 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   private _selectedSearch(keyword) {
-    if(keyword && keyword.length)
+    if (keyword && keyword.length)
       this.store.dispatch(new SearchContractsCountAction(keyword));
   }
 
-  addBadgeFromResultList(key){
+  addBadgeFromResultList(key) {
     this.selectSearchBadge(this.stringUpdate(key), this.state.actualGlobalKeyword );
   }
 

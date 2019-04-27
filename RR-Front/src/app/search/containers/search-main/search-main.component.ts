@@ -18,7 +18,7 @@ export class SearchMainComponent implements OnInit {
   contractFilterFormGroup: FormGroup;
   expandWorkspaceDetails = false;
   contracts = [];
-  paginationOption = {page: 0, size: 20, total: '-'};
+  paginationOption = {page: 0, size: 40, total: '-'};
   selectedWorkspace: any;
   loadingMore = false;
   sliceValidator = true;
@@ -27,13 +27,14 @@ export class SearchMainComponent implements OnInit {
   currentWorkspace = null;
   loading = false;
   columns = [
-    { field: 'id', header: 'Id', width: '150px', display: true, sorted: false, filtered: false },
-    { field: 'countryName', header: 'Country', width: '110px', display: true, sorted: false, filtered: true },
-    { field: 'cedantCode', header: 'Cedant', width: '110px', display: true, sorted: false, filtered: true  },
-    { field: 'cedantName', header: '', width: '110px', display: false, sorted: false, filtered: false  },
-    { field: 'uwYear', header: 'Uw Year', width: '110px', display: true, sorted: false, filtered: true  },
-    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display: true, sorted: false, filtered: true  },
-    { field: 'workspaceName', header: '', width: '110px', display: false, sorted: false, filtered: false  },
+    { field: 'countryName', header: 'Country', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerCountryName' },
+    { field: 'cedantCode', header: 'Cedant', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerCedantCode' },
+    { field: 'cedantName', header: '', width: '110px', display: false, sorted: false, filtered: false, filterParam: 'innerCedantName'  },
+    { field: 'uwYear', header: 'Uw Year', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerYear'  },
+    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerWorkspaceId' },
+    { field: 'workspaceName', header: '', width: '110px', display: false, sorted: false, filtered: false, filterParam: 'innerWorkspaceName' },
+    { field: 'openInHere', header: '', width: '20px', class: 'icon-fullscreen_24px', handler: (option) => this.openWorkspace(option.workSpaceId, option.uwYear) , display: false, sorted: false, filtered: false, filterParam: '' },
+    { field: 'openInPopup', header: '', width: '20px', class: 'icon-open_in_new_24px', handler: (option) => this.popUpWorkspace(option.workSpaceId, option.uwYear), display: false, sorted: false, filtered: false, filterParam: '' },
   ];
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
@@ -95,6 +96,10 @@ export class SearchMainComponent implements OnInit {
   loadMoreItems() {
     this._loadContracts(String(this.paginationOption.size + 20));
     this.loadingMore = true;
+  }
+
+  loadMore(size) {
+    this._loadContracts(String(this.paginationOption.size + size));
   }
 
   openWorkspace(wsId, year) {
@@ -168,7 +173,7 @@ export class SearchMainComponent implements OnInit {
   }
 
   changeForm($event, target) {
-    this.contractFilterFormGroup.get(target).patchValue($event.target.value);
+    this.contractFilterFormGroup.get(target).patchValue($event);
     console.log(this.contractFilterFormGroup.value);
   }
 

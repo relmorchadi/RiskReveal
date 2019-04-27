@@ -116,11 +116,11 @@
           <span (click)="clearChips()" *ngIf="searchedItems.length > 0">Clear All</span>
         </div>
 
-<!--        <app-table  [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total"
-                    [listOfData]="contracts" [virtualScroll]="true"
-                    [tableWidth]="'1000px'"
-                    [tableHeight]="'300px'" >
-        </app-table>-->
+        <app-table  [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total"
+                    [listOfData]="contracts" [virtualScroll]="paginationOption?.total > 20" (selectOne)="openWorkspaceInSlider($event)"
+                    [tableWidth]="'1000px'" (loadMore)="loadMore($event)" (filterData)="changeForm($event.searchValue, $event.searchAddress)"
+                    [tableHeight]="'1000px'" >
+        </app-table>
         <table *ngIf="!loading" class="table search-table">
           <thead [formGroup]="contractFilterFormGroup">
           <tr>
@@ -136,37 +136,37 @@
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" (input)="changeForm($event, 'innerCountryName')" formControlName="innerCountryName">
+                <input type="text" (input)="changeForm($event.target.value, 'innerCountryName')" formControlName="innerCountryName">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" (input)="changeForm($event, 'innerCedantCode')" formControlName="innerCedantCode">
+                <input type="text" (input)="changeForm($event.target.value, 'innerCedantCode')" formControlName="innerCedantCode">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" (input)="changeForm($event, 'innerCedantName')" formControlName="innerCedantName">
+                <input type="text" (input)="changeForm($event.target.value, 'innerCedantName')" formControlName="innerCedantName">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" (input)="changeForm($event, 'innerYear')" formControlName="innerYear">
+                <input type="text" (input)="changeForm($event.target.value, 'innerYear')" formControlName="innerYear">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" (input)="changeForm($event, 'innerWorkspaceId')" formControlName="innerWorkspaceId">
+                <input type="text" (input)="changeForm($event.target.value, 'innerWorkspaceId')" formControlName="innerWorkspaceId">
               </div>
             </th>
             <th>
               <div class="filter-input">
                 <i class="icon-search"></i>
-                <input type="text" (input)="changeForm($event, 'innerWorkspaceName')" formControlName="innerWorkspaceName">
+                <input type="text" (input)="changeForm($event.target.value, 'innerWorkspaceName')" formControlName="innerWorkspaceName">
               </div>
             </th>
             <th></th>
