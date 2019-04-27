@@ -100,7 +100,7 @@ public class SearchService {
     }
 
 
-    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int size) {
+    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
 //    public Page<ContractSearchResult> getWorkspaces(WorkspaceFilter filter, int size) {
 //        if (filter.isEmpty())
 //            return contractSearchResultRepository.findAll(PageRequest.of(0, size));
@@ -112,8 +112,8 @@ public class SearchService {
 
 //        return contractSearchResultRepository.customQuery(PageRequest.of(0, size));
         return new PageImpl<WorkspaceProjection>(
-                contractSearchResultRepository.getContracts(filter, size),
-                PageRequest.of(0, size),
+                contractSearchResultRepository.getContracts(filter, offset,size),
+                PageRequest.of(offset/size, size),
                 contractSearchResultRepository.countContracts(filter)
         );
 

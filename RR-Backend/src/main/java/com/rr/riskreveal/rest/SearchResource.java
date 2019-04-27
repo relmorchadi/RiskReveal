@@ -50,8 +50,8 @@ public class SearchResource {
 
     @PostMapping("workspace")
 //    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<WorkspaceProjection> searchWorkspace(@RequestBody NewWorkspaceFilter filter, int size){
-        return searchService.getWorkspaces(filter, size);
+    Page<WorkspaceProjection> searchWorkspace(@RequestBody NewWorkspaceFilter filter, int offset, int size){
+        return searchService.getWorkspaces(filter, offset,size);
     }
 
     @GetMapping("searchcount")
