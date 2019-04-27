@@ -6,6 +6,7 @@ import {HelperService} from '../../../shared/helper.service';
 import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import * as _ from 'lodash';
+import {LazyLoadEvent} from "primeng/api";
 
 
 @Component({
@@ -27,26 +28,94 @@ export class SearchMainComponent implements OnInit {
   currentWorkspace = null;
   loading = false;
   columns = [
-    { field: 'countryName', header: 'Country', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerCountryName' },
-    { field: 'cedantCode', header: 'Cedant', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerCedantCode' },
-    { field: 'cedantName', header: '', width: '110px', display: false, sorted: false, filtered: false, filterParam: 'innerCedantName'  },
-    { field: 'uwYear', header: 'Uw Year', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerYear'  },
-    { field: 'workSpaceId', header: 'Workspace Context', width: '110px', display: true, sorted: false, filtered: true, filterParam: 'innerWorkspaceId' },
-    { field: 'workspaceName', header: '', width: '110px', display: false, sorted: false, filtered: false, filterParam: 'innerWorkspaceName' },
-    { field: 'openInHere', header: '', width: '20px', class: 'icon-fullscreen_24px', handler: (option) => this.openWorkspace(option.workSpaceId, option.uwYear) , display: false, sorted: false, filtered: false, filterParam: '' },
-    { field: 'openInPopup', header: '', width: '20px', class: 'icon-open_in_new_24px', handler: (option) => this.popUpWorkspace(option.workSpaceId, option.uwYear), display: false, sorted: false, filtered: false, filterParam: '' },
+    {
+      field: 'countryName',
+      header: 'Country',
+      width: '110px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'innerCountryName'
+    },
+    {
+      field: 'cedantCode',
+      header: 'Cedant',
+      width: '110px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'innerCedantCode'
+    },
+    {
+      field: 'cedantName',
+      header: '',
+      width: '110px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      filterParam: 'innerCedantName'
+    },
+    {
+      field: 'uwYear',
+      header: 'Uw Year',
+      width: '110px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'innerYear'
+    },
+    {
+      field: 'workSpaceId',
+      header: 'Workspace Context',
+      width: '110px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'innerWorkspaceId'
+    },
+    {
+      field: 'workspaceName',
+      header: '',
+      width: '110px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      filterParam: 'innerWorkspaceName'
+    },
+    {
+      field: 'openInHere',
+      header: '',
+      width: '20px',
+      class: 'icon-fullscreen_24px',
+      handler: (option) => this.openWorkspace(option.workSpaceId, option.uwYear),
+      display: false,
+      sorted: false,
+      filtered: false,
+      filterParam: ''
+    },
+    {
+      field: 'openInPopup',
+      header: '',
+      width: '20px',
+      class: 'icon-open_in_new_24px',
+      handler: (option) => this.popUpWorkspace(option.workSpaceId, option.uwYear),
+      display: false,
+      sorted: false,
+      filtered: false,
+      filterParam: ''
+    },
   ];
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
-              private _router: Router,private _location: Location) {
-      this.initSearchForm();
+              private _router: Router, private _location: Location) {
+    this.initSearchForm();
   }
 
   ngOnInit() {
     this.searchedItems = this._searchService.searchedItems;
-    this.globalSearchItem =  this._searchService.globalSearchItem;
+    this.globalSearchItem = this._searchService.globalSearchItem;
     this._searchService.items.subscribe(
-      () =>  {
+      () => {
         this.searchedItems = [...this._searchService.searchedItems];
         this._loadContracts();
       }
@@ -54,7 +123,7 @@ export class SearchMainComponent implements OnInit {
 
     this._searchService.globalSearch$.subscribe(
       () => {
-        this.globalSearchItem =  this._searchService.globalSearchItem;
+        this.globalSearchItem = this._searchService.globalSearchItem;
         this._loadContracts();
       }
     );
@@ -94,12 +163,17 @@ export class SearchMainComponent implements OnInit {
   }
 
   loadMoreItems() {
-    this._loadContracts(String(this.paginationOption.size + 20));
+    let {page,size}= this.paginationOption;
+    this._loadContracts(String(page), String(size));
     this.loadingMore = true;
   }
 
-  loadMore(size) {
-    this._loadContracts(String(this.paginationOption.size + size));
+  loadMore(event:LazyLoadEvent) {
+    console.log('Load more', event);
+    // this.paginationOption.size= event.rows;
+    // this.paginationOption.page+=1;
+    // this.paginationOption.page= event.rows;
+    this._loadContracts(String(event.first), String(event.rows));
   }
 
   openWorkspace(wsId, year) {
@@ -121,14 +195,15 @@ export class SearchMainComponent implements OnInit {
           years: dt.years
         };
         let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
-        usedWorkspaces.forEach( ws => {
-            let filter = false;
-            if (workspace.workSpaceId === ws.workSpaceId) {
-              filter = true;
-            }
-            if (
-              filter === true) {usedWorkspaces = usedWorkspaces.filter( items => items !== ws);
-            }
+        usedWorkspaces.forEach(ws => {
+          let filter = false;
+          if (workspace.workSpaceId === ws.workSpaceId) {
+            filter = true;
+          }
+          if (
+            filter === true) {
+            usedWorkspaces = usedWorkspaces.filter(items => items !== ws);
+          }
         });
         usedWorkspaces.unshift(workspace);
         this._helperService.updateRecentWorkspaces(usedWorkspaces);
@@ -173,29 +248,30 @@ export class SearchMainComponent implements OnInit {
   }
 
   changeForm($event, target) {
+    console.log('filter data', $event, target);
     this.contractFilterFormGroup.get(target).patchValue($event);
     console.log(this.contractFilterFormGroup.value);
   }
 
-  private _loadContracts(size = '20') {
+  private _loadContracts(offset = '0', size = '50') {
     this.loading = true;
-    if (this.searchedItems.length > 0 ) {
+    if (this.searchedItems.length > 0) {
       const keys = [];
       const values = [];
       this.searchedItems.forEach(
         (e) => {
-            const key = _.camelCase(e.key);
-            keys.push(key);
-            values.push(e.value);
+          const key = _.camelCase(e.key);
+          keys.push(key);
+          values.push(e.value);
         }
       );
       keys.forEach(
-        (e , index) => {
+        (e, index) => {
           this.contractFilterFormGroup.value[e] = values[index];
           console.log(this.contractFilterFormGroup.value);
         }
       );
-      this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
+      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset,size)
         .subscribe((data: any) => {
           this.contracts = data.content;
           this.loadingMore = false;
@@ -213,7 +289,7 @@ export class SearchMainComponent implements OnInit {
         );
     } else {
       // this.initSearchForm();
-      this._searchService.searchContracts(this.contractFilterFormGroup.value, size)
+      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset,size)
         .subscribe((data: any) => {
           this.contracts = data.content;
           this.loadingMore = false;

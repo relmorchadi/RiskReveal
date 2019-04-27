@@ -69,10 +69,10 @@
 <ng-template #suffixIconSearch>
   <i nz-icon type="search"></i>
 </ng-template-->
-
+Total records : {{totalRecords |json}}
 <p-table *ngIf="virtualScroll"
          [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
-         [scrollable]="true" [scrollHeight]="tableHeight" [rows]="30" [totalRecords]="totalRecords"
+         [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
          [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
          [lazy]="true" [virtualRowHeight]="50" [showLoader]="false"
 >

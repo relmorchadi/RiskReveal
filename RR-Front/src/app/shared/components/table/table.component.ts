@@ -45,16 +45,18 @@ export class TableComponent implements OnInit {
   }
 
   loadDataOnScroll(event: LazyLoadEvent) {
-      this.loading = true;
-      console.log({event});
-      setTimeout(() => {
-          if (event.first == this.totalRecords) {
-            this.loadMore.emit(20);
-          } else {
-            this.loadMore.emit(20);
-          }
-          this.loading = false;
-        }, 250);
+      // this.loading = true;
+      console.log('lazy load', event);
+      this.loadMore.emit(event);
+      //
+      // setTimeout(() => {
+      //     if (event.first == this.totalRecords) {
+      //       this.loadMore.emit(20);
+      //     } else {
+      //       this.loadMore.emit(20);
+      //     }
+      //     // this.loading = false;
+      //   }, 250);
   }
 
   selectRow(row: any) {
