@@ -14,6 +14,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
   financialUnitSelected: any;
   visible = false;
   size = 'large';
+  currentTag=null;
 
   plts : any = [
     {pltId: 1 ,systemTags:[{tagId: 1}, {tagId: 2}, {tagId: 3}], userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}], pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: true, checked: false},
@@ -86,6 +87,11 @@ metrics = [
   {metricID: '4',retrunPeriod: '2', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'}
 ];
 
+theads = [
+  {title: 'base', cards: [
+      {id: 'ID: 222881'}
+    ]}
+]
 
 
   constructor() { }

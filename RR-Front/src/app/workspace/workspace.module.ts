@@ -13,6 +13,7 @@ import {SharedModule} from '../shared/shared.module';
 import {HighlightDirective} from './highlight.directive';
 import {TableModule} from 'primeng/table';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
+import { FilterByBadgePipe } from './pipes/filter-by-badge.pipe';
 const routes: Routes = [
   {
     data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
@@ -28,7 +29,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [...COMPONENTS, ...CONTAINERS, HighlightDirective
+  declarations: [...COMPONENTS, ...CONTAINERS, HighlightDirective, FilterByBadgePipe
   ],
   imports: [
     SharedModule,

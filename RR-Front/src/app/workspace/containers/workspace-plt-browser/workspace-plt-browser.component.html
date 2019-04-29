@@ -29,9 +29,14 @@
               </nz-tab>
               <nz-tab nzTitle="Tags">
                 <div class="Tags-content">
-                  <div nz-row class="tags-title-section">System Tags</div>
+                  <div nz-row class="button-reset-filter-by-tag">
+                    <button (click)="currentTag= null" nz-button nzType="default" nzShape="circle"
+                            style=" float: right; border: 0px solid;">
+                      <i nz-icon nzType="undo" nzTheme="outline"></i></button>
+                  </div>
+                  <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
                   <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}">
+                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}" (click)="currentTag= tag">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -87,8 +92,8 @@
                     </tr>
                     </thead>
                     <tbody>
-
-                    <tr *ngFor="let plt of plts " style="cursor: pointer"
+                    <!--| filterByBagde: currentTag-->
+                    <tr *ngFor="let plt of plts | filterByBadge: currentTag" style="cursor: pointer"
                         [ngClass]="{'active_plt_item': plt.selected }">
                       <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
                         <div *ngIf="plt.selected">
@@ -435,11 +440,15 @@
                     <nz-tab nzTitle="Thread">
                       <div class="thread-content">
 
-                        <nz-tag [nzColor]="'magenta'">ID </nz-tag>
-                        <nz-tag [nzColor]="'red'">red</nz-tag>
-                        <nz-tag [nzColor]="'volcano'">volcano</nz-tag>
+                        <div nz-row *ngFor="let thead of theads">
+                          <div nz-col nzSpan="6" class="title">
+                            {{thead.title}}
+                          </div>
 
-
+                          <div nz-col nzSpan="6" class="cards" *ngFor="let card of thead.cards">
+                            <nz-tag [nzColor]="'#000'">{{card.id}}</nz-tag>
+                          </div>
+                        </div>
 
                       </div>
                     </nz-tab>
