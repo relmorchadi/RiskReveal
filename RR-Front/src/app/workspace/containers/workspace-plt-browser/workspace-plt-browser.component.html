@@ -18,8 +18,8 @@
                       <i class="icon-window-section"></i>
                       02PY376 - 2019
                     </span>
-                    <ul class="title-list">
-                      <li *ngFor="let path of paths">
+                    <ul class="title-list" >
+                      <li *ngFor="let path of paths" (click)="selectPath(path)" [ngClass]="{'active-path': path.selected}">
                         <i [ngClass]="path.icon"></i>
                         {{path.text}}
                       </li>
@@ -36,7 +36,7 @@
                   </div>
                   <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
                   <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}" (click)="currentTag= tag">
+                    <span [ngClass]="{'active-tag': tag === currentTag}" class="chips" [ngStyle]="{'background-color': tag.tagColor}" (click)="currentTag= tag">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -441,13 +441,19 @@
                       <div class="thread-content">
 
                         <div nz-row *ngFor="let thead of theads">
-                          <div nz-col nzSpan="6" class="title">
-                            {{thead.title}}
+                          <div nz-col nzSpan="12" class="title">
+                            <span >
+                              {{thead.title}}
+                            </span>
                           </div>
-
-                          <div nz-col nzSpan="6" class="cards" *ngFor="let card of thead.cards">
-                            <nz-tag [nzColor]="'#000'">{{card.id}}</nz-tag>
+                          <div nz-col nzSpan="3"></div>
+                          <div nz-col nzSpan="6" >
+                            <div  class="card" *ngFor="let card of thead.cards">
+                              <span>{{card.content}}</span>
+                              <nz-tag [nzColor]="'#e5e9fa'">{{card.chip}}</nz-tag>
+                            </div>
                           </div>
+                          <div nz-col nzSpan="3"></div>
                         </div>
 
                       </div>

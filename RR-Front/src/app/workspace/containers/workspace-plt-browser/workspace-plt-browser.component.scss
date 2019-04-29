@@ -16,6 +16,13 @@ nz-layout {
     .path-content {
       cursor: pointer;
 
+      .active-path{
+        background-color: #fdfbdf;
+        border: 1px solid #fdc228;
+        border-radius: 10px;
+        padding: 0px 0px 0px 3px;
+      }
+
       .title {
         span {
           letter-spacing: 0.2px;
@@ -243,6 +250,7 @@ nz-layout {
   font-family: rubik;
   border-radius: 10px;
   font-size: 12px;
+  cursor: pointer;
 
   .inner-chip {
     margin-left: 5px;
@@ -493,3 +501,37 @@ nz-layout {
   }
 }
 
+.thread-content{
+  .title{
+    border-top: 1px solid #acacac;
+    padding: 11px 0px 0px 18px;
+    font-size: 16px;
+    font-family: rubik;
+    font-weight: bold;
+    ::ng-deep{
+      span{
+        font-size: 11px;
+        font-weight: bold;
+        font-family: rubik;
+        padding: 5px 0px 15px 0px;
+      }
+    }
+  }
+  .card{
+    padding: 8px 10px 12px 10px;
+    border: 2px solid #03dac4;
+    background: #f4f6fc;
+    margin: 0px -15px 10px -15px;
+    nz-tag{
+      color: #7876e4;
+      width: 60%;
+      border-radius: 22px;
+      border: 1px solid #7876e4;
+    }
+  }
+}
+
+.active-tag{
+  border: 2px solid #666666;
+  border-radius: 18px;
+}
