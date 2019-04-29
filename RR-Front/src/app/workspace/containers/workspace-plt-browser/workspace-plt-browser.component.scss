@@ -322,39 +322,173 @@ nz-layout {
   }
 }
 
-.dropdown-currency {
-  border: 2px solid #00c4aa;
-  height: 45px;
-  font-size: 12px;
-  font-family: rubik;
-  padding: 5px;
-  .dropdown-currency-title{
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-  }
-  ::ng-deep{
-    .anticon{
-      margin-top: 10px;
-      margin-right: 5px;
+::ng-deep {
+  .tabset-plt-details {
+    .ant-tabs-ink-bar {
+      display: block;
+      transform: translate3d(0px, 0px, 0px);
+      width: 95px !important;
+      background-color: #0700cf;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab{
+      font-size: 11px;
+      font-family: rubik;
+      font-weight: bold;
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      height: 100%;
+      margin: 0 0px 0px 0px;
+      padding: 10px 20px;
+      .ant-tabs-tab-active {
+        color: #0700cf;
+      }
     }
   }
 }
-.dropdown-financial-unit {
-  border: 2px solid #00c4aa;
-  height: 45px;
-  font-size: 12px;
-  font-family: rubik;
-  padding: 5px;
-  .dropdown-unit-title{
-    display: flex;
-    flex-direction: column;
-    flex: 1;
+
+
+.dropdowns {
+
+  border-bottom: 1px solid #aeaeae;
+  padding-bottom: 10px;
+
+  .dropdown-currency {
+    border: 2px solid #00c4aa;
+    height: 45px;
+    font-size: 12px;
+    font-family: rubik;
+    padding: 5px;
+
+    .dropdown-currency-title {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    ::ng-deep {
+      .anticon {
+        margin-top: 10px;
+        margin-right: 5px;
+      }
+    }
   }
-  ::ng-deep{
-    .anticon{
-      margin-top: 10px;
-      margin-right: 5px;
+
+  .dropdown-financial-unit {
+    border: 2px solid #00c4aa;
+    height: 45px;
+    font-size: 12px;
+    font-family: rubik;
+    padding: 5px;
+
+    .dropdown-unit-title {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    ::ng-deep {
+      .anticon {
+        margin-top: 10px;
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .dropdown-ep-metric {
+    border-bottom: 2px solid #140ed1;
+    height: 40px;
+    font-size: 12px;
+    font-family: rubik;
+    padding: 12px 5px 1px 10px;
+    color: #140ed1;
+  }
+}
+
+
+
+::ng-deep {
+  .ep-metric-tabset {
+    .ant-tabs-ink-bar {
+      display: none;
+      transform: translate3d(0px, 0px, 0px);
+      width: 0px !important;
+      background-color: #000c17;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab{
+      font-size: 25px;
+      font-family: rubik;
+      font-weight: bold;
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      height: 100%;
+      margin: 2px 4px 2px 4px;
+      padding: 1px 16px;
+      color: #0700cf;
+      .ant-tabs-tab-active {
+        color: #0700cf;
+      }
+    }
+  }
+}
+
+.metric-table-content{
+  border-bottom: 2px solid;
+  .metric-table{
+    font-size: 12px;
+    font-family: Rubik;
+    th{
+      font-weight: bold;
+      color: #898989;
+      padding: 3px 0px 5px 3px;
+      i{
+        font-size: 16px;
+        color: #000;
+        cursor: pointer;
+        padding: 0px 0px 0px 3px;
+      }
+    }
+    td{
+      padding: 2px 25px 2px 2px;
+    }
+  }
+}
+
+.metric-table-footer{
+  color: #000;
+  font-size: 12px;
+  font-family: Rubik;
+  font-weight: bold;
+  padding: 2px 5px 2px 5px;
+  margin: 5px 0px 0px 10px;
+}
+
+::ng-deep {
+  .impact-tabset {
+    .ant-tabs-ink-bar {
+      display: none;
+      transform: translate3d(0px, 0px, 0px);
+      width: 0px !important;
+      background-color: #000c17;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab{
+      font-size: 25px;
+      font-family: rubik;
+      font-weight: bold;
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      height: 100%;
+      margin: 2px 4px 2px 4px;
+      padding: 1px 16px;
+      color: #0700cf;
+      .ant-tabs-tab-active {
+        color: #0700cf;
+      }
     }
   }
 }

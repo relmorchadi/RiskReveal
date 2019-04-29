@@ -12,6 +12,8 @@ export class WorkspacePltBrowserComponent implements OnInit {
   checked = true;
   currencySelected: any;
   financialUnitSelected: any;
+  visible = false;
+  size = 'large';
 
   plts : any = [
     {pltId: 1 ,systemTags:[{tagId: 1}, {tagId: 2}, {tagId: 3}], userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}], pltName:"NATC-USM_RL_Imf.T1", peril:"TC" , regionPerilCode:"NATC-USM", regionPerilName: "North Atlantic", selected: false, grain:"liberty-NAHU", vendorSystem:"RMS RiskLink", rap:"North Atlantic", d: false, note: true, checked: false},
@@ -70,6 +72,21 @@ units = [
   {id: '5', label: 'Trillion'}
 ];
 
+metrics = [
+  {metricID: '1',retrunPeriod: '10000', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '2',retrunPeriod: '5000', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '3',retrunPeriod: '1000', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '3',retrunPeriod: '500', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '3',retrunPeriod: '250', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '3',retrunPeriod: '100', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '3',retrunPeriod: '50', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '3',retrunPeriod: '25', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '3',retrunPeriod: '10', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '4',retrunPeriod: '5', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'},
+  {metricID: '4',retrunPeriod: '2', OEP: '291621,790', AEP: '291621,790', TVaR_OEP: '321654789', TVaR_AEP: '458711620'}
+];
+
+
 
   constructor() { }
 
@@ -77,8 +94,7 @@ units = [
   ngOnInit() {
   }
 
-  visible = false;
-  size = 'large';
+
 
   openDrawer(): void {
     this.visible = true;

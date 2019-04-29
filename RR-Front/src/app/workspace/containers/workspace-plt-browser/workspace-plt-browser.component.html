@@ -56,7 +56,7 @@
             <nz-tabset class="tabset-right">
               <nz-tab nzTitle="PLTs">
                 <div class="PLTs-content">
-                  <table class="table plt-table scrollTable">
+                  <table class="table plt-table">
                     <thead>
                     <tr>
                       <th></th>
@@ -294,7 +294,7 @@
               </nz-tab>
               <nz-tab nzTitle="EP Metrics">
                 <div class="ep-metrics-content">
-                  <div nz-row>
+                  <div nz-row class="dropdowns">
                     <div nz-col [nzSpan]="6">
                       <div class="dropdown-currency">
                         <nz-dropdown [nzTrigger]="'click'">
@@ -310,7 +310,8 @@
                           </a>
                           <ul nz-menu>
                             <li nz-menu-item (click)="currencySelected = currency?.label"
-                                *ngFor="let currency of currencies">{{currency?.label}}</li>
+                                *ngFor="let currency of currencies">{{currency?.label}}
+                            </li>
                           </ul>
                         </nz-dropdown>
                       </div>
@@ -331,16 +332,97 @@
                           </a>
                           <ul nz-menu>
                             <li nz-menu-item (click)="financialUnitSelected = unit?.label"
-                                *ngFor="let unit of units">{{unit?.label}}</li>
+                                *ngFor="let unit of units">{{unit?.label}}
+                            </li>
                           </ul>
                         </nz-dropdown>
                       </div>
                     </div>
+                    <div nz-col [nzSpan]="4">&nbsp;</div>
                     <div nz-col [nzSpan]="6">
-                      <div class="dropdown-ep-metric"></div>
+                      <div class="dropdown-ep-metric">
+                        <nz-dropdown [nzTrigger]="'click'">
+                          <a nz-dropdown nz-row>
+                            <div nz-col [nzSpan]="12">
+                              Metric
+                            </div>
+                            <div nz-col [nzSpan]="6">&nbsp;</div>
+                            <i nz-icon type="down" nz-col [nzSpan]="6"></i>
+                          </a>
+                          <ul nz-menu>
+                            <li nz-menu-item>Metric 1</li>
+                            <li nz-menu-item>Metric 2</li>
+                            <li nz-menu-item>Metric 3</li>
+                          </ul>
+                        </nz-dropdown>
+                      </div>
                     </div>
+                    <div nz-col [nzSpan]="1">&nbsp;</div>
                   </div>
+                  <div class="ep-metric-tabset">
+                    <nz-tabset>
+                      <nz-tab [nzTitle]="table">
+                        <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
+                        <div class="metric-table-content">
+                          <table class="table metric-table">
+                            <thead>
+                            <tr>
+                              <th>Retrun Period <i class="icon-plus-circle"></i></th>
+                              <th>OEP</th>
+                              <th>AEP</th>
+                              <th>TVaR-OEP</th>
+                              <th>TVaR-AEP</th>
+                            </tr>
+                            </thead>
+                            <tbody *ngFor="let metric of metrics">
+                            <tr>
+                              <td align="right">{{metric.retrunPeriod}}</td>
+                              <td>{{metric.OEP}}</td>
+                              <td>{{metric.AEP}}</td>
+                              <td>{{metric.TVaR_AEP}}</td>
+                              <td>{{metric.TVaR_OEP}}</td>
+                            </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="metric-table-footer">
+                          <div nz-row>
+                            <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
+                            <div nz-col nzSpan="1">&nbsp;</div>
+                            <div nz-col nzSpan="5">323,849</div>
+                            <div nz-col nzSpan="5">323,884</div>
+                            <div nz-col nzSpan="5">323,8894</div>
+                            <div nz-col nzSpan="3">&nbsp;</div>
+                          </div>
+                          <div nz-row>
+                            <div nz-col nzSpan="5" style="text-align: right">Standart Deviation</div>
+                            <div nz-col nzSpan="1">&nbsp;</div>
+                            <div nz-col nzSpan="5">5,806,767</div>
+                            <div nz-col nzSpan="5">5,806,767</div>
+                            <div nz-col nzSpan="5">5,806,767</div>
+                            <div nz-col nzSpan="3">&nbsp;</div>
+                          </div>
+                          <div nz-row>
+                            <div nz-col nzSpan="5" style="text-align: right">Cov</div>
+                            <div nz-col nzSpan="1">&nbsp;</div>
+                            <div nz-col nzSpan="5">17.83</div>
+                            <div nz-col nzSpan="5">17.83</div>
+                            <div nz-col nzSpan="5">17.83</div>
+                            <div nz-col nzSpan="3">&nbsp;</div>
+                          </div>
 
+                        </div>
+                      </nz-tab>
+                      <nz-tab [nzTitle]="chart">
+                        <ng-template #chart><i class="icon-show_chart_24px"
+                                               style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
+                        </ng-template>
+                        <div class="metric-chart-content">
+                          <img src="../../../../assets/images/RRchartInVision.png">
+                        </div>
+                      </nz-tab>
+                    </nz-tabset>
+                  </div>
                 </div>
               </nz-tab>
               <nz-tab nzTitle="Other Metrics">
@@ -349,12 +431,153 @@
               <nz-tab nzTitle="Calibration">
                 <div class="calibration-content">
                   <nz-tabset>
+
                     <nz-tab nzTitle="Thread">
-                      <div class="thread-content"></div>
+                      <div class="thread-content">
+
+                        <nz-tag [nzColor]="'magenta'">ID </nz-tag>
+                        <nz-tag [nzColor]="'red'">red</nz-tag>
+                        <nz-tag [nzColor]="'volcano'">volcano</nz-tag>
+
+
+
+                      </div>
                     </nz-tab>
+
                     <nz-tab nzTitle="Impact">
-                      <div class="impact-content"></div>
+                      <div class="impact-content">
+                        <div nz-row class="dropdowns">
+                          <div nz-col [nzSpan]="6">
+                            <div class="dropdown-currency">
+                              <nz-dropdown [nzTrigger]="'click'">
+                                <a nz-dropdown>
+                                  <div style="display:flex">
+                                    <div class="dropdown-currency-title">
+                                      <span class="dropdown-currency-header">Display Currency</span>
+                                      <span class="dropdown-currency-subtitle"
+                                            style="font-weight: bold;">{{currencySelected}}</span>
+                                    </div>
+                                    <i nz-icon type="down"></i>
+                                  </div>
+                                </a>
+                                <ul nz-menu>
+                                  <li nz-menu-item (click)="currencySelected = currency?.label"
+                                      *ngFor="let currency of currencies">{{currency?.label}}
+                                  </li>
+                                </ul>
+                              </nz-dropdown>
+                            </div>
+                          </div>
+                          <div nz-col [nzSpan]="1">&nbsp;</div>
+                          <div nz-col [nzSpan]="6">
+                            <div class="dropdown-financial-unit">
+                              <nz-dropdown [nzTrigger]="'click'">
+                                <a nz-dropdown>
+                                  <div style="display:flex">
+                                    <div class="dropdown-unit-title">
+                                      <span class="dropdown-unit-header">Financial Unit</span>
+                                      <span class="dropdown-unit-subtitle"
+                                            style="font-weight: bold;">{{financialUnitSelected}}</span>
+                                    </div>
+                                    <i nz-icon type="down"></i>
+                                  </div>
+                                </a>
+                                <ul nz-menu>
+                                  <li nz-menu-item (click)="financialUnitSelected = unit?.label"
+                                      *ngFor="let unit of units">{{unit?.label}}
+                                  </li>
+                                </ul>
+                              </nz-dropdown>
+                            </div>
+                          </div>
+                          <div nz-col [nzSpan]="4">&nbsp;</div>
+                          <div nz-col [nzSpan]="6">
+                            <div class="dropdown-ep-metric">
+                              <nz-dropdown [nzTrigger]="'click'">
+                                <a nz-dropdown nz-row>
+                                  <div nz-col [nzSpan]="12">
+                                    Metric
+                                  </div>
+                                  <div nz-col [nzSpan]="6">&nbsp;</div>
+                                  <i nz-icon type="down" nz-col [nzSpan]="6"></i>
+                                </a>
+                                <ul nz-menu>
+                                  <li nz-menu-item>Metric 1</li>
+                                  <li nz-menu-item>Metric 2</li>
+                                  <li nz-menu-item>Metric 3</li>
+                                </ul>
+                              </nz-dropdown>
+                            </div>
+                          </div>
+                          <div nz-col [nzSpan]="1">&nbsp;</div>
+                        </div>
+                        <div class="impact-tabset">
+                          <nz-tabset>
+                            <nz-tab [nzTitle]="table">
+                              <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
+                              <div class="metric-table-content">
+                                <table class="table metric-table">
+                                  <thead>
+                                  <tr>
+                                    <th>Retrun Period <i class="icon-plus-circle"></i></th>
+                                    <th>OEP</th>
+                                    <th>AEP</th>
+                                    <th>TVaR-OEP</th>
+                                    <th>TVaR-AEP</th>
+                                  </tr>
+                                  </thead>
+                                  <tbody *ngFor="let metric of metrics">
+                                  <tr>
+                                    <td align="right">{{metric.retrunPeriod}}</td>
+                                    <td>{{metric.OEP}}</td>
+                                    <td>{{metric.AEP}}</td>
+                                    <td>{{metric.TVaR_AEP}}</td>
+                                    <td>{{metric.TVaR_OEP}}</td>
+                                  </tr>
+                                  </tbody>
+                                </table>
+                              </div>
+                              <div class="metric-table-footer">
+                                <div nz-row>
+                                  <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
+                                  <div nz-col nzSpan="1">&nbsp;</div>
+                                  <div nz-col nzSpan="5">323,849</div>
+                                  <div nz-col nzSpan="5">323,884</div>
+                                  <div nz-col nzSpan="5">323,8894</div>
+                                  <div nz-col nzSpan="3">&nbsp;</div>
+                                </div>
+                                <div nz-row>
+                                  <div nz-col nzSpan="5" style="text-align: right">Standart Deviation</div>
+                                  <div nz-col nzSpan="1">&nbsp;</div>
+                                  <div nz-col nzSpan="5">5,806,767</div>
+                                  <div nz-col nzSpan="5">5,806,767</div>
+                                  <div nz-col nzSpan="5">5,806,767</div>
+                                  <div nz-col nzSpan="3">&nbsp;</div>
+                                </div>
+                                <div nz-row>
+                                  <div nz-col nzSpan="5" style="text-align: right">Cov</div>
+                                  <div nz-col nzSpan="1">&nbsp;</div>
+                                  <div nz-col nzSpan="5">17.83</div>
+                                  <div nz-col nzSpan="5">17.83</div>
+                                  <div nz-col nzSpan="5">17.83</div>
+                                  <div nz-col nzSpan="3">&nbsp;</div>
+                                </div>
+
+                              </div>
+                            </nz-tab>
+                            <nz-tab [nzTitle]="chart">
+                              <ng-template #chart><i class="icon-show_chart_24px"
+                                                     style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
+                              </ng-template>
+                              <div class="metric-chart-content">
+                                <img src="../../../../assets/images/RRchartInVision.png">
+                              </div>
+                            </nz-tab>
+                          </nz-tabset>
+                        </div>
+                      </div>
                     </nz-tab>
+
                   </nz-tabset>
                 </div>
               </nz-tab>
