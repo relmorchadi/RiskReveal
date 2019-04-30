@@ -519,19 +519,56 @@ nz-layout {
   }
   .card{
     padding: 8px 10px 12px 10px;
-    border: 2px solid #03dac4;
-    background: #f4f6fc;
-    margin: 0px -15px 10px -15px;
+    border: 2px solid;
+    margin: 5px -15px 10px -15px;
+    cursor: pointer;
     nz-tag{
       color: #7876e4;
       width: 60%;
       border-radius: 22px;
       border: 1px solid #7876e4;
     }
+    span{
+      font-size: 11px;
+      margin: 0px 0px 20px 0px;
+    }
+
   }
 }
 
 .active-tag{
   border: 2px solid #666666;
   border-radius: 18px;
+}
+
+.active-card{
+  background-color: #fff;
+}
+
+
+.dependencies-content{
+  .dependency-card{
+    padding: 8px 10px 12px 10px;
+    border: 2px solid #cea7fe;
+    margin: 5px -15px 10px -15px;
+    cursor: pointer;
+    background: #f4f6fc;
+    nz-tag{
+      color: #7876e4;
+      width: 60%;
+      border-radius: 22px;
+      border: 1px solid #7876e4;
+    }
+    .title{
+      font-size: 15px;
+      color: #0700cf;
+    }
+    .content{
+      color: #4a4a4c;
+      font-size: 10px;
+      font-weight: bold;
+      margin: 0px 0px 18px 0px;
+    }
+  }
+
 }

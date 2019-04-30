@@ -440,7 +440,7 @@
                     <nz-tab nzTitle="Thread">
                       <div class="thread-content">
 
-                        <div nz-row *ngFor="let thead of theads">
+                        <div nz-row *ngFor="let thead of theads"  >
                           <div nz-col nzSpan="12" class="title">
                             <span >
                               {{thead.title}}
@@ -448,7 +448,8 @@
                           </div>
                           <div nz-col nzSpan="3"></div>
                           <div nz-col nzSpan="6" >
-                            <div  class="card" *ngFor="let card of thead.cards">
+                            <div  class="card" *ngFor="let card of thead.cards" [ngStyle]="{'border-color': card.borderColor, 'background-color': getCardBackground(card.selected)}"
+                                  (click)="selectCardThead(card)">
                               <span>{{card.content}}</span>
                               <nz-tag [nzColor]="'#e5e9fa'">{{card.chip}}</nz-tag>
                             </div>
@@ -600,7 +601,21 @@
                 <div class="lineage-content">
                   <nz-tabset>
                     <nz-tab nzTitle="Dependencies">
-                      <div class="dependencies-content"></div>
+                      <div class="dependencies-content">
+                        <div nz-row>
+                          <div nz-col nzSpan="7">&nbsp;</div>
+                          <div nz-col nzSpan="10" class="dependecies">
+                            <div  class="dependency-card" *ngFor="let dependency of dependencies" >
+                              <div nz-row>
+                                <div nz-col nzSpan="8" class="title">{{dependency.title}}</div>
+                                <div nz-col nzSpan="16" class="content">{{dependency.content}}</div>
+                              </div>
+                              <nz-tag [nzColor]="'#e5e9fa'">{{dependency.chip}}</nz-tag>
+                            </div>
+                          </div>
+                          <div nz-col nzSpan="7">&nbsp;</div>
+                        </div>
+                      </div>
                     </nz-tab>
                     <nz-tab nzTitle="Usage">
                       <div class="usage-content"></div>

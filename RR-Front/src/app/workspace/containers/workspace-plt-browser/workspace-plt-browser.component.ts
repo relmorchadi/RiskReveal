@@ -89,19 +89,26 @@ metrics = [
 
 theads = [
   {title: 'Base', cards: [
-      {chip: 'ID: 222881', content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729'},
-      {chip: '1.25', content: 'Portfolio Evolution'}
+      {chip: 'ID: 222881', content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729', borderColor: '#03dac4', selected: false},
+      {chip: '1.25', content: 'Portfolio Evolution', borderColor: '#03dac4', selected: false}
     ]},
   {title: 'Default', cards: [
-      {chip: 'Event', content: 'Tsunami'}
+      {chip: 'Event', content: 'Tsunami', borderColor: '#03dac4', selected: false}
     ]},
   {title: 'Analyst', cards: [
-      {chip: '1.13', content: 'ALAE'}
+      {chip: '1.13', content: 'ALAE', borderColor: '#03dac4', selected: false}
     ]},
   {title: 'Client', cards: [
-      {chip: '0.95', content: 'Cedant QI'},
-      {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766'}
+      {chip: '0.95', content: 'Cedant QI', borderColor: '#6e6cc0', selected: false},
+      {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766', borderColor: '#6e6cc0', selected: false}
     ]}
+];
+
+dependencies = [
+  {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analisis ID: 149'},
+  {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
+  {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
+  {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
 ]
 
 
@@ -144,6 +151,22 @@ theads = [
     pa.selected = false;
   })
     path.selected = true;
+  }
+
+  selectCardThead(card){
+    this.theads.forEach(thead => {
+      thead.cards.forEach( card =>{
+        card.selected = false;
+        console.log(card.selected)
+      })
+    })
+    card.selected = true;
+    console.log(card.selected)
+    console.log(this.theads)
+  }
+  getCardBackground(selected){
+      if(selected) return "#FFF";
+      else return "#f4f6fc";
   }
 }
 
