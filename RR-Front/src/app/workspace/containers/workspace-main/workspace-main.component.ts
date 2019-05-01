@@ -46,6 +46,11 @@ export class WorkspaceMainComponent implements OnInit {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
     const pathName: any = window.location.pathname || '';
+    this._helper.changeSelectedWorkspace$.subscribe(() => {
+      this.loading = false;
+      this.fromSingleWorkspace = false;
+      this.getSearchedWorkspaces();
+    });
     this.route.children[0] && this.route.children[0].params.subscribe(
       ({wsId, year}: any) => {
         console.log({wsId, year});
@@ -54,11 +59,7 @@ export class WorkspaceMainComponent implements OnInit {
         this.wsId != null ? this.fromSingleWorkspace = true : this.fromSingleWorkspace = false;
         this.getSearchedWorkspaces();
       });
-    this._helper.changeSelectedWorkspace$.subscribe((e: any) => {
-      this.loading = false;
-      this.fromSingleWorkspace = false;
-      this.getSearchedWorkspaces();
-    });
+
   }
 
   getSearchedWorkspaces() {
@@ -85,8 +86,8 @@ export class WorkspaceMainComponent implements OnInit {
           this._helper.affectItems([item], true);
           this.ws$ = of(this.ws);
           // this.loading = false;
-          return of();
-/*          return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));*/
+          // return of();
+          return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));
         })
       ).subscribe((content) => {
         this.wsId = undefined;

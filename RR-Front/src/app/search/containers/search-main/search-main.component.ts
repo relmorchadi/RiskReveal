@@ -6,7 +6,7 @@ import {HelperService} from '../../../shared/helper.service';
 import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import * as _ from 'lodash';
-import {LazyLoadEvent} from "primeng/api";
+import {LazyLoadEvent} from 'primeng/api';
 
 
 @Component({
@@ -24,10 +24,21 @@ export class SearchMainComponent implements OnInit {
   loadingMore = false;
   sliceValidator = true;
   searchedItems = [];
+  currentPage = 0;
   globalSearchItem = '';
   currentWorkspace = null;
   loading = false;
   columns = [
+    {
+      field: 'checkbox',
+      header: 'checkbox',
+      width: '15px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'checkbox',
+      class: 'icon-check_24px',
+    },
     {
       field: 'countryName',
       header: 'Country',
@@ -86,24 +97,24 @@ export class SearchMainComponent implements OnInit {
       field: 'openInHere',
       header: '',
       width: '20px',
+      type: 'icon',
       class: 'icon-fullscreen_24px',
-      handler: (option) => this.openWorkspace(option.workSpaceId, option.uwYear),
+      handler: (option) =>  option.forEach( dt => this.openWorkspace(dt.workSpaceId, dt.uwYear)),
       display: false,
       sorted: false,
-      filtered: false,
-      filterParam: ''
+      filtered: false
     },
     {
       field: 'openInPopup',
       header: '',
       width: '20px',
+      type: 'icon',
       class: 'icon-open_in_new_24px',
-      handler: (option) => this.popUpWorkspace(option.workSpaceId, option.uwYear),
+      handler: (option) => option.forEach( dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)),
       display: false,
       sorted: false,
-      filtered: false,
-      filterParam: ''
-    },
+      filtered: false
+    }
   ];
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
@@ -116,6 +127,8 @@ export class SearchMainComponent implements OnInit {
     this.globalSearchItem = this._searchService.globalSearchItem;
     this._searchService.items.subscribe(
       () => {
+        this.initSearchForm();
+        this.globalSearchItem = '';
         this.searchedItems = [...this._searchService.searchedItems];
         this._loadContracts();
       }
@@ -123,11 +136,12 @@ export class SearchMainComponent implements OnInit {
 
     this._searchService.globalSearch$.subscribe(
       () => {
+        // this.initSearchForm();
         this.globalSearchItem = this._searchService.globalSearchItem;
-        this._loadContracts();
+        this.searchedItems = [];
+        this.globalSearchItem !== '' ? this._loadContracts() : null;
       }
     );
-    this._loadContracts();
     // this.contractFilterFormGroup
     //   .valueChanges
     //   .pipe(debounceTime(500))
@@ -163,13 +177,13 @@ export class SearchMainComponent implements OnInit {
   }
 
   loadMoreItems() {
-    let {page,size}= this.paginationOption;
+    let {page, size} = this.paginationOption;
     this._loadContracts(String(page), String(size));
     this.loadingMore = true;
   }
 
-  loadMore(event:LazyLoadEvent) {
-    console.log('Load more', event);
+  loadMore(event: LazyLoadEvent) {
+    this.currentPage = event.first ;
     // this.paginationOption.size= event.rows;
     // this.paginationOption.page+=1;
     // this.paginationOption.page= event.rows;
@@ -229,8 +243,8 @@ export class SearchMainComponent implements OnInit {
     this.searchData(wsId, year).subscribe(
       (dt: any) => {
         const workspace = {
-          uwYear: wsId,
-          workSpaceId: year,
+          uwYear: year,
+          workSpaceId: wsId,
           cedantCode: dt.cedantCode,
           cedantName: dt.cedantName,
           ledgerName: dt.ledgerName,
@@ -244,13 +258,10 @@ export class SearchMainComponent implements OnInit {
         window.open('/workspace/' + wsId + '/' + year);
       }
     );
-
   }
 
   changeForm($event, target) {
-    console.log('filter data', $event, target);
-    this.contractFilterFormGroup.get(target).patchValue($event);
-    console.log(this.contractFilterFormGroup.value);
+    $event === '' ? this.contractFilterFormGroup.get(target).patchValue(null) : this.contractFilterFormGroup.get(target).patchValue($event);
   }
 
   private _loadContracts(offset = '0', size = '50') {
@@ -271,9 +282,9 @@ export class SearchMainComponent implements OnInit {
           console.log(this.contractFilterFormGroup.value);
         }
       );
-      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset,size)
+      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset, size)
         .subscribe((data: any) => {
-          this.contracts = data.content;
+          this.contracts = data.content.map(item => ({...item, selected: false}));
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
@@ -281,17 +292,18 @@ export class SearchMainComponent implements OnInit {
     } else if (this.globalSearchItem !== '') {
       this._searchService.searchGlobal(this.globalSearchItem)
         .subscribe((data: any) => {
-            this.contracts = data.content;
+            this.contracts = data.content.map(item => ({...item, selected: false}));
             this.loadingMore = false;
             this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
             this.loading = false;
           }
         );
     } else {
-      // this.initSearchForm();
-      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset,size)
+      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset, size)
         .subscribe((data: any) => {
-          this.contracts = data.content;
+          this.contracts = data.content.map(item => ({...item, selected: false}));
+          console.log({items: this.contractFilterFormGroup.value});
+          console.log(this.contracts);
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
@@ -305,6 +317,7 @@ export class SearchMainComponent implements OnInit {
 
   clearChips() {
     this.searchedItems = [];
+    this.initSearchForm();
     this._loadContracts();
   }
 
@@ -318,6 +331,7 @@ export class SearchMainComponent implements OnInit {
 
   closeSearchBadge(status, index) {
     if (status) {
+      this.initSearchForm();
       this.searchedItems.splice(index, 1);
       this._loadContracts();
     }

@@ -80,7 +80,10 @@
       border: none !important;
       background-color: #fff !important;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
       div {
         width: 100%;
         height: 20px;
@@ -97,7 +100,10 @@
       border: none;
       background-color: #fff !important;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
       div {
         width: 100%;
         height: 20px;
@@ -122,5 +128,26 @@
       }
     }
   }
+  .ant-table-tbody {
+    tr.active_contract_item {
+      td {
+        background-color: #FCF9D6 !important;
+      }
+    }
+  }
+}
 
+.icon-check_24px {
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  padding: 2px 0px;
+  width: 16px;
+  height: 17px;
+  border-radius: 26px;
+  background-color: #008694;
+}
+
+.icon-check_circle_24px {
+  font-size: 17px;
 }

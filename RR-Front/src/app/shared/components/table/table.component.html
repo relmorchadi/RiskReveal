@@ -1,6 +1,6 @@
-<!-- <nz-table
-  *ngIf ="virtualScroll"
-  nzVirtualScroll
+<!--<nz-table
+  *ngIf="virtualScroll"
+  nzVirtualScroll #dt
   [nzVirtualItemSize]="12"
   [nzData]="listOfData"
   [nzFrontPagination]="false"
@@ -8,27 +8,30 @@
   [nzScroll]="{ x: tableWidth, y: tableHeight }"
 >
   <thead>
-    <tr >
-      <th *ngFor="let col of tableColumn"
-          [nzWidth]="col.width"
-          [nzShowSort]="col.sorted"
-          [nzSortKey]="col.field"
-      >
-        <span *ngIf="col.display">{{col.header}}</span>
-        <div class="search-bar-table" *ngIf="col.filtered">
-          <nz-input-group [nzPrefix]="suffixIconSearch">
-            <input type="text" nz-input />
-          </nz-input-group>
-        </div>
-      </th>
-    </tr>
+  <tr>
+    <th *ngFor="let col of tableColumn"
+        [nzWidth]="col.width"
+        [nzShowSort]="col.sorted"
+        [nzSortKey]="col.field"
+    >
+      <span *ngIf="col.display">{{col.header}}</span>
+      <div class="search-bar-table" *ngIf="col.filtered">
+        <nz-input-group [nzPrefix]="suffixIconSearch">
+          <input type="text" (input)="filterCol($event.target.value, col?.filterParam)" nz-input/>
+        </nz-input-group>
+      </div>
+    </th>
+  </tr>
   </thead>
   <tbody>
   <ng-template nz-virtual-scroll let-data let-index="index">
-    <tr>
+    <tr [ngClass]="{'active_contract_item': currentSelectedItem === data }" (click)="selectRow(data)"
+        *ngFor="let data of dt.data">
       <td *ngFor="let col of tableColumn">
-      <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i>
-      {{ data[col.field] }}</td>
+        <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i>
+        <i (click)="col?.handler(data)" [ngClass]="col?.class"></i>
+        {{ data[col.field] }}
+      </td>
     </tr>
   </ng-template>
   </tbody>
@@ -42,7 +45,7 @@
   [nzPageSize]="totalRecords"
 >
   <thead>
-  <tr >
+  <tr>
     <th *ngFor="let col of tableColumn"
         [nzWidth]="col.width"
         [nzShowSort]="col.sorted"
@@ -51,25 +54,28 @@
       <span *ngIf="col.display">{{col.header}}</span>
       <div class="search-bar-table" *ngIf="col.filtered">
         <nz-input-group [nzPrefix]="suffixIconSearch">
-          <input type="text" nz-input />
+          <input type="text" (input)="filterCol($event.target.value, col?.filterParam)" nz-input/>
         </nz-input-group>
       </div>
     </th>
   </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let data of dt.data">
-      <td *ngFor="let col of tableColumn">
+  <tr [ngClass]="{'active_contract_item': currentSelectedItem === data }" (click)="selectRow(data)"
+      *ngFor="let data of dt.data">
+    <td *ngFor="let col of tableColumn">
       <i *ngIf="col.type === 'date'" class="icon-calendar-alt"></i>
-      {{ data[col.field] }}</td>
-    </tr>
+      <i (click)="col?.handler(tableColumn)" [ngClass]="col?.class"></i>
+      {{ data[col.field] }}
+    </td>
+  </tr>
   </tbody>
 </nz-table>
 
 <ng-template #suffixIconSearch>
   <i nz-icon type="search"></i>
-</ng-template-->
-Total records : {{totalRecords |json}}
+</ng-template>-->
+<!--Total records : {{totalRecords |json}}-->
 <p-table *ngIf="virtualScroll"
          [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
@@ -101,11 +107,19 @@ Total records : {{totalRecords |json}}
       </th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr [ngClass]="{'active_contract_item': currentSelectedItem === rowData }" (click)="selectRow(rowData)">
+  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+    <tr [ngClass]="{'active_contract_item': rowData?.selected }"
+        (click)="selectRow(rowData, i)"
+    >
       <td *ngFor="let col of columns">
+        <span *ngIf="col?.type ==='checkbox'">
+          <i *ngIf="rowData?.selected" (click)="rowData.selected = false"
+                     [ngClass]="col?.class"></i>
+          <i *ngIf="!rowData?.selected" (click)="rowData.selected = true"
+                     [ngClass]="'icon-check_circle_24px'"></i>
+        </span>
         <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col?.field]}}
-        <i (click)="col?.handler(rowData)" [ngClass]="col?.class"></i>
+        <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
       </td>
     </tr>
   </ng-template>
@@ -119,7 +133,7 @@ Total records : {{totalRecords |json}}
 </p-table>
 
 <p-table *ngIf="!virtualScroll"
-         [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
+         [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
 >
 
@@ -147,11 +161,15 @@ Total records : {{totalRecords |json}}
       </th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr>
+  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+    <tr [ngClass]="{'active_contract_item': rowData?.selected }" (click)="selectRow(rowData, i)">
       <td *ngFor="let col of columns">
+        <i *ngIf="col?.type === 'checkbox' && rowData?.selected" (click)="rowData.selected = false"
+           [ngClass]="col?.class"></i>
+        <i *ngIf="col?.type === 'checkbox' && !rowData?.selected" (click)="rowData.selected = true"
+           [ngClass]="'icon-check_circle_24px'"></i>
         <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col?.field]}}
-        <i (click)="col?.handler(rowData)" [ngClass]="col?.class"></i>
+        <i *ngIf="col?.type === 'icon'" (click)="col?.handler(selectedRows)" [ngClass]="col?.class"></i>
       </td>
     </tr>
   </ng-template>

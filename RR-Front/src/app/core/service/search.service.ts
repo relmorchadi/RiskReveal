@@ -51,8 +51,8 @@ export class SearchService {
     return this._http.get(`${this.api}worspace/${id}/${year}`);
   }
 
-  searchGlobal(keyword, offset='0', size = '20') {
-    return this._http.get(`${this.api}workspace`, {params: {keyword,offset, size}});
+  searchGlobal(keyword, offset= '0', size = '20') {
+    return this._http.get(`${this.api}workspace`, {params: {keyword, offset, size}});
   }
 
   affectItems(item) {

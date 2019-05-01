@@ -23,14 +23,14 @@ export class HelperService {
 
   affectItems(item , newWorkspaces = false) {
     if (newWorkspaces) {
-      localStorage.setItem('workspaces', JSON.stringify(_.uniqBy(item, (a:any) => a.workSpaceId) ));
+      localStorage.setItem('workspaces', JSON.stringify(_.uniqWith(item, _.isEqual )));
     } else {
       if (this.items.length === 0) {
         localStorage.setItem('workspaces', JSON.stringify(item));
       } else {
         this.items = this.items.filter(dt => dt);
         const listItems = [...this.items, ...item];
-        localStorage.setItem('workspaces', JSON.stringify(_.uniqBy(listItems, (a) => a.workSpaceId)));
+        localStorage.setItem('workspaces', JSON.stringify(_.uniqWith(listItems, _.isEqual )));
       }
     }
     this.items = JSON.parse(localStorage.getItem('workspaces')) || [];

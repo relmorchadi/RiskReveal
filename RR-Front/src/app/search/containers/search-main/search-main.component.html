@@ -15,8 +15,9 @@
 
         <div class="title-wrapper" nz-row style="margin-top: 50px;">
           <div class="title-section">
-            <h3>Showing {{paginationOption?.page + '-' + paginationOption?.size + ' of ' }}{{paginationOption?.total}}
+            <h3>Showing {{currentPage + '-' + (currentPage + 100) + ' of ' }}{{paginationOption?.total}}
             results</h3>
+<!--            /*( paginationOption?.total / 50 | number:'1.0-0' )*/-->
           </div>
 
           <div class="search-actions-container">
@@ -29,82 +30,82 @@
         </div>
 
 
-        <!--<nz-table-->
-        <!--nzVirtualScroll-->
-        <!--[nzVirtualItemSize]="5"-->
-        <!--[nzData]="contracts"-->
-        <!--[nzFrontPagination]="false"-->
-        <!--[nzShowPagination]="false"-->
-        <!--[nzScroll]="{ x: '1200px', y: '240px' }"-->
-        <!--(scroll)="contractsDatatableScroll($event)">-->
-        <!--<thead [formGroup]="contractFilterFormGroup">-->
-        <!--<tr>-->
-        <!--<th>ID</th>-->
-        <!--<th>Country</th>-->
-        <!--<th colspan="2">Cedant</th>-->
-        <!--<th>Uw Year</th>-->
-        <!--<th colspan="2">Workspace Context</th>-->
-        <!--<th></th>-->
-        <!--</tr>-->
-        <!--<tr>-->
-        <!--<th></th>-->
-        <!--<th>-->
-        <!--<div class="filter-input">-->
-        <!--<i class="icon-search"></i>-->
-        <!--<input type="text" formControlName="country">-->
-        <!--</div>-->
-        <!--</th>-->
-        <!--<th>-->
-        <!--<div class="filter-input">-->
-        <!--<i class="icon-search"></i>-->
-        <!--<input type="text" formControlName="cedant">-->
-        <!--</div>-->
-        <!--</th>-->
-        <!--<th>-->
-        <!--<div class="filter-input">-->
-        <!--<i class="icon-search"></i>-->
-        <!--<input type="text">-->
-        <!--</div>-->
-        <!--</th>-->
-        <!--<th>-->
-        <!--<div class="filter-input">-->
-        <!--<i class="icon-search"></i>-->
-        <!--<input type="text" formControlName="year">-->
-        <!--</div>-->
-        <!--</th>-->
-        <!--<th>-->
-        <!--<div class="filter-input">-->
-        <!--<i class="icon-search"></i>-->
-        <!--<input type="text" formControlName="workspaceId">-->
-        <!--</div>-->
-        <!--</th>-->
-        <!--<th>-->
-        <!--<div class="filter-input">-->
-        <!--<i class="icon-search"></i>-->
-        <!--<input type="text" formControlName="workspaceName">-->
-        <!--</div>-->
-        <!--</th>-->
-        <!--<th></th>-->
-        <!--</tr>-->
-        <!--</thead>-->
-        <!--<tbody>-->
-        <!--<ng-template nz-virtual-scroll let-contract>-->
-        <!--<tr>-->
-        <!--<td>{{contract?.id}}</td>-->
-        <!--<td>{{contract?.countryName}}</td>-->
-        <!--<td>{{contract?.cedantCode}}</td>-->
-        <!--<td>{{contract?.cedantName}}</td>-->
-        <!--<td>{{contract?.uwYear}}</td>-->
-        <!--<td>{{contract?.workSpaceId}}</td>-->
-        <!--<td>{{contract?.workspaceName}}</td>-->
-        <!--<td class="actions-td">-->
-        <!--<i class="icon-fullscreen_24px"></i>-->
-        <!--<i class="icon-open_in_new_24px"></i>-->
-        <!--</td>-->
-        <!--</tr>-->
-        <!--</ng-template>-->
-        <!--</tbody>-->
-        <!--</nz-table>-->
+      <!--  <nz-table
+        nzVirtualScroll
+        [nzVirtualItemSize]="5"
+        [nzData]="contracts"
+        [nzFrontPagination]="false"
+        [nzShowPagination]="false"
+        [nzScroll]="{ x: '1200px', y: '240px' }"
+        (scroll)="contractsDatatableScroll($event)">
+        <thead [formGroup]="contractFilterFormGroup">
+        <tr>
+        <th>ID</th>
+        <th>Country</th>
+        <th colspan="2">Cedant</th>
+        <th>Uw Year</th>
+        <th colspan="2">Workspace Context</th>
+        <th></th>
+        </tr>
+        <tr>
+        <th></th>
+        <th>
+        <div class="filter-input">
+        <i class="icon-search"></i>
+        <input type="text" formControlName="country">
+        </div>
+        </th>
+        <th>
+        <div class="filter-input">
+        <i class="icon-search"></i>
+        <input type="text" formControlName="cedant">
+        </div>
+        </th>
+        <th>
+        <div class="filter-input">
+        <i class="icon-search"></i>
+        <input type="text">
+        </div>
+        </th>
+        <th>
+        <div class="filter-input">
+        <i class="icon-search"></i>
+        <input type="text" formControlName="year">
+        </div>
+        </th>
+        <th>
+        <div class="filter-input">
+        <i class="icon-search"></i>
+        <input type="text" formControlName="workspaceId">
+        </div>
+        </th>
+        <th>
+        <div class="filter-input">
+        <i class="icon-search"></i>
+        <input type="text" formControlName="workspaceName">
+        </div>
+        </th>
+        <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <ng-template nz-virtual-scroll let-contract>
+        <tr>
+        <td>{{contract?.id}}</td>
+        <td>{{contract?.countryName}}</td>
+        <td>{{contract?.cedantCode}}</td>
+        <td>{{contract?.cedantName}}</td>
+        <td>{{contract?.uwYear}}</td>
+        <td>{{contract?.workSpaceId}}</td>
+        <td>{{contract?.workspaceName}}</td>
+        <td class="actions-td">
+        <i class="icon-fullscreen_24px"></i>
+        <i class="icon-open_in_new_24px"></i>
+        </td>
+        </tr>
+        </ng-template>
+        </tbody>
+        </nz-table>-->
 
         <div class="chips-wrapper">
           <div *ngIf="globalSearchItem" style="padding: 15px 4px;">
@@ -117,93 +118,96 @@
         </div>
 
         <app-table  [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total"
-                    [listOfData]="contracts" [virtualScroll]="paginationOption?.total > 50" (selectOne)="openWorkspaceInSlider($event)"
+                    [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                     [tableWidth]="'1000px'" (loadMore)="loadMore($event)" (filterData)="changeForm($event.searchValue, $event.searchAddress)"
                     [tableHeight]="'500px'" >
         </app-table>
-        <!--<table *ngIf="!loading" class="table search-table">-->
-          <!--<thead [formGroup]="contractFilterFormGroup">-->
-          <!--<tr>-->
-            <!--<th>#</th>-->
-            <!--<th>Country</th>-->
-            <!--<th colspan="2">Cedant</th>-->
-            <!--<th>Uw Year</th>-->
-            <!--<th colspan="2">Workspace Context</th>-->
-            <!--<th></th>-->
-          <!--</tr>-->
-          <!--<tr>-->
-            <!--<th></th>-->
-            <!--<th>-->
-              <!--<div class="filter-input">-->
-                <!--<i class="icon-search"></i>-->
-                <!--<input type="text" (input)="changeForm($event.target.value, 'innerCountryName')" formControlName="innerCountryName">-->
-              <!--</div>-->
-            <!--</th>-->
-            <!--<th>-->
-              <!--<div class="filter-input">-->
-                <!--<i class="icon-search"></i>-->
-                <!--<input type="text" (input)="changeForm($event.target.value, 'innerCedantCode')" formControlName="innerCedantCode">-->
-              <!--</div>-->
-            <!--</th>-->
-            <!--<th>-->
-              <!--<div class="filter-input">-->
-                <!--<i class="icon-search"></i>-->
-                <!--<input type="text" (input)="changeForm($event.target.value, 'innerCedantName')" formControlName="innerCedantName">-->
-              <!--</div>-->
-            <!--</th>-->
-            <!--<th>-->
-              <!--<div class="filter-input">-->
-                <!--<i class="icon-search"></i>-->
-                <!--<input type="text" (input)="changeForm($event.target.value, 'innerYear')" formControlName="innerYear">-->
-              <!--</div>-->
-            <!--</th>-->
-            <!--<th>-->
-              <!--<div class="filter-input">-->
-                <!--<i class="icon-search"></i>-->
-                <!--<input type="text" (input)="changeForm($event.target.value, 'innerWorkspaceId')" formControlName="innerWorkspaceId">-->
-              <!--</div>-->
-            <!--</th>-->
-            <!--<th>-->
-              <!--<div class="filter-input">-->
-                <!--<i class="icon-search"></i>-->
-                <!--<input type="text" (input)="changeForm($event.target.value, 'innerWorkspaceName')" formControlName="innerWorkspaceName">-->
-              <!--</div>-->
-            <!--</th>-->
-            <!--<th></th>-->
-          <!--</tr>-->
-          <!--</thead>-->
-          <!--<tbody>-->
 
-          <!--<tr *ngFor="let contract of contracts | contractFilter:contractFilterFormGroup.value; let i=index" style="cursor: pointer" (click)="openWorkspaceInSlider(contract)"-->
-            <!--[ngClass]="{'acive_contract_item': currentWorkspace?.workSpaceId == contract.workSpaceId && currentWorkspace?.uwYear == contract.uwYear }">-->
-            <!--<td>{{i+1}}</td>-->
-            <!--<td>{{contract?.countryName}}</td>-->
-            <!--<td>{{contract?.cedantCode}}</td>-->
-            <!--<td>{{contract?.cedantName}}</td>-->
-            <!--<td>{{contract?.uwYear}}</td>-->
-            <!--<td>{{contract?.workSpaceId}}</td>-->
-            <!--<td>{{contract?.workspaceName}}</td>-->
-            <!--<td class="actions-td">-->
-              <!--<i class="icon-fullscreen_24px" (click)="openWorkspace(contract.workSpaceId, contract.uwYear)"></i>-->
-              <!--<i class="icon-open_in_new_24px" (click)="popUpWorkspace(contract.workSpaceId, contract.uwYear)"></i>-->
-            <!--</td>-->
-          <!--</tr>-->
-          <!--<tr *ngIf="paginationOption.total> paginationOption.size">-->
-            <!--<td colspan="8">-->
-              <!--<nz-skeleton *ngIf="loadingMore; else seeMore" [nzActive]="true"></nz-skeleton>-->
-              <!--<ng-template #seeMore>-->
-                <!--<button class="show-more-btn" nz-button (click)="loadMoreItems()">-->
-                  <!--<span>See More</span>-->
-                <!--</button>-->
-              <!--</ng-template>-->
-            <!--</td>-->
-          <!--</tr>-->
-          <!--</tbody>-->
-        <!--</table>-->
-        <!--<div *ngIf="loading">-->
-          <!--<nz-skeleton [nzActive]="true"></nz-skeleton>-->
-          <!--<nz-skeleton [nzActive]="true"></nz-skeleton>-->
-        <!--</div>-->
+        <!--
+        <table *ngIf="!loading" class="table search-table">
+          <thead [formGroup]="contractFilterFormGroup">
+          <tr>
+            <th>#</th>
+            <th>Country</th>
+            <th colspan="2">Cedant</th>
+            <th>Uw Year</th>
+            <th colspan="2">Workspace Context</th>
+            <th></th>
+          </tr>
+          <tr>
+            <th></th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" (input)="changeForm($event.target.value, 'innerCountryName')" formControlName="innerCountryName">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" (input)="changeForm($event.target.value, 'innerCedantCode')" formControlName="innerCedantCode">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" (input)="changeForm($event.target.value, 'innerCedantName')" formControlName="innerCedantName">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" (input)="changeForm($event.target.value, 'innerYear')" formControlName="innerYear">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" (input)="changeForm($event.target.value, 'innerWorkspaceId')" formControlName="innerWorkspaceId">
+              </div>
+            </th>
+            <th>
+              <div class="filter-input">
+                <i class="icon-search"></i>
+                <input type="text" (input)="changeForm($event.target.value, 'innerWorkspaceName')" formControlName="innerWorkspaceName">
+              </div>
+            </th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+
+          <tr *ngFor="let contract of contracts | contractFilter:contractFilterFormGroup.value; let i=index" style="cursor: pointer" (click)="openWorkspaceInSlider(contract)"
+            [ngClass]="{'acive_contract_item': currentWorkspace?.workSpaceId == contract.workSpaceId && currentWorkspace?.uwYear == contract.uwYear }">
+            <td>{{i+1}}</td>
+            <td>{{contract?.countryName}}</td>
+            <td>{{contract?.cedantCode}}</td>
+            <td>{{contract?.cedantName}}</td>
+            <td>{{contract?.uwYear}}</td>
+            <td>{{contract?.workSpaceId}}</td>
+            <td>{{contract?.workspaceName}}</td>
+            <td class="actions-td">
+              <i class="icon-fullscreen_24px" (click)="openWorkspace(contract.workSpaceId, contract.uwYear)"></i>
+              <i class="icon-open_in_new_24px" (click)="popUpWorkspace(contract.workSpaceId, contract.uwYear)"></i>
+            </td>
+          </tr>
+          <tr *ngIf="paginationOption.total> paginationOption.size">
+            <td colspan="8">
+              <nz-skeleton *ngIf="loadingMore; else seeMore" [nzActive]="true"></nz-skeleton>
+              <ng-template #seeMore>
+                <button class="show-more-btn" nz-button (click)="loadMoreItems()">
+                  <span>See More</span>
+                </button>
+              </ng-template>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+        <div *ngIf="loading">
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+        </div>
+-->
 
       </div>
 
