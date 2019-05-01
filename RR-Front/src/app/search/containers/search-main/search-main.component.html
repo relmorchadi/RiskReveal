@@ -15,7 +15,7 @@
 
         <div class="title-wrapper" nz-row style="margin-top: 50px;">
           <div class="title-section">
-            <h3>Showing {{currentPage + '-' + (currentPage + 100) + ' of ' }}{{paginationOption?.total}}
+            <h3>Showing {{currentPage + '-' }}{{paginationOption?.total > currentPage + 100 ? (currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
             results</h3>
 <!--            /*( paginationOption?.total / 50 | number:'1.0-0' )*/-->
           </div>
@@ -117,7 +117,7 @@
           <span (click)="clearChips()" *ngIf="searchedItems.length > 0">Clear All</span>
         </div>
 
-        <app-table  [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total"
+        <app-table  [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                     [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                     [tableWidth]="'1000px'" (loadMore)="loadMore($event)" (filterData)="changeForm($event.searchValue, $event.searchAddress)"
                     [tableHeight]="'500px'" >

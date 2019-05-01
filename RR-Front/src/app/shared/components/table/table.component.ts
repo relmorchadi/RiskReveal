@@ -39,6 +39,7 @@ export class TableComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
+
   }
 
   sort(sort: { key: string; value: string }): void {
@@ -87,7 +88,7 @@ export class TableComponent implements OnInit {
   }
 
   handler(tableColumn, row) {
-
+    this.selectedRows = this.listOfData.filter(dt =>  dt.selected);
     const data = this.selectedRows.filter(dt => dt === row) || [];
     data.length === 0 ? this.selectedRows = [...this.selectedRows, row] : null;
     console.log(this.selectedRows);

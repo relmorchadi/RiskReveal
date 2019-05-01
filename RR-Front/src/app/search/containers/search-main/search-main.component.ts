@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit} from '@angular/core';
+import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../core/service/search.service';
 import {debounceTime} from 'rxjs/operators';
@@ -15,6 +15,7 @@ import {LazyLoadEvent} from 'primeng/api';
   styleUrls: ['./search-main.component.scss']
 })
 export class SearchMainComponent implements OnInit {
+  @ViewChild('dt') table;
 
   contractFilterFormGroup: FormGroup;
   expandWorkspaceDetails = false;
@@ -136,16 +137,11 @@ export class SearchMainComponent implements OnInit {
 
     this._searchService.globalSearch$.subscribe(
       () => {
-        // this.initSearchForm();
         this.globalSearchItem = this._searchService.globalSearchItem;
         this.searchedItems = [];
         this.globalSearchItem !== '' ? this._loadContracts() : null;
       }
     );
-    // this.contractFilterFormGroup
-    //   .valueChanges
-    //   .pipe(debounceTime(500))
-    //   .subscribe(() => this._loadContracts());
   }
 
   initSearchForm() {
@@ -168,6 +164,7 @@ export class SearchMainComponent implements OnInit {
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((param) => {
+        this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
         this._loadContracts();
       });
   }
@@ -184,10 +181,7 @@ export class SearchMainComponent implements OnInit {
 
   loadMore(event: LazyLoadEvent) {
     this.currentPage = event.first ;
-    // this.paginationOption.size= event.rows;
-    // this.paginationOption.page+=1;
-    // this.paginationOption.page= event.rows;
-    this._loadContracts(String(event.first), String(event.rows));
+    this._loadContracts(String(event.first));
   }
 
   openWorkspace(wsId, year) {
@@ -264,7 +258,7 @@ export class SearchMainComponent implements OnInit {
     $event === '' ? this.contractFilterFormGroup.get(target).patchValue(null) : this.contractFilterFormGroup.get(target).patchValue($event);
   }
 
-  private _loadContracts(offset = '0', size = '50') {
+  private _loadContracts(offset = '0', size = '100') {
     this.loading = true;
     if (this.searchedItems.length > 0) {
       const keys = [];
@@ -292,21 +286,21 @@ export class SearchMainComponent implements OnInit {
     } else if (this.globalSearchItem !== '') {
       this._searchService.searchGlobal(this.globalSearchItem)
         .subscribe((data: any) => {
-            this.contracts = data.content.map(item => ({...item, selected: false}));
-            this.loadingMore = false;
-            this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-            this.loading = false;
+          this.contracts = data.content.map(item => ({...item, selected: false}));
+          this.loadingMore = false;
+          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+          this.loading = false;
           }
         );
     } else {
       this._searchService.searchContracts(this.contractFilterFormGroup.value, offset, size)
         .subscribe((data: any) => {
           this.contracts = data.content.map(item => ({...item, selected: false}));
-          console.log({items: this.contractFilterFormGroup.value});
-          console.log(this.contracts);
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+          // let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
+          // body.scrollTop = 0;
         });
     }
   }

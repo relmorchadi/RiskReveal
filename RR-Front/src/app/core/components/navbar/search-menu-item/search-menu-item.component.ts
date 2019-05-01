@@ -102,7 +102,7 @@ export class SearchMenuItemComponent implements OnInit {
     const correspondingKey: string = this.state.sortcutFormKeysMapper[shortcut];
     if (correspondingKey) {
       this.contractFilterFormGroup.get(correspondingKey).patchValue(keyword);
-      const instance = {key: correspondingKey, value: keyword};
+      const instance = {key: this.stringUpdate(correspondingKey), value: keyword};
       this.state.badges.push(instance);
       this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
     } else {
