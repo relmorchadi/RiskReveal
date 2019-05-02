@@ -1,194 +1,206 @@
-<nz-layout>
-  <div nz-row>
-    <div nz-col nzSpan="22">
-      <div class="mr-3 ml-3">
-        <div class="title-wrapper" nz-row style="margin-top: 50px;">
-          <div class="title-section">
-            <h3>PLT Manager</h3>
-          </div>
-        </div>
+<nz-layout style="display: flex; flex-direction: row; width: 100%;">
 
-        <div nz-row class="my-tabs">
-          <div nz-col nzSpan="4">
-            <nz-tabset class="tabset-left">
-              <nz-tab nzTitle="Path">
-                <div class="path-content">
-                  <div class="title">
+  <div class="mr-3 ml-3" style="flex: 1;">
+    <div class="title-wrapper" nz-row style="margin-top: 50px;">
+      <div class="title-section">
+        <h3>PLT Manager</h3>
+      </div>
+    </div>
+
+    <div class="my-tabs" style="display: flex; flex-direction: row; width: 100%;">
+      <div class="noMargin" style="width: 190px">
+        <nz-tabset class="tabset-left">
+          <nz-tab [nzTitle]="path">
+            <ng-template #path>
+              <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
+            </ng-template>
+            <div class="path-content">
+              <div class="title">
                     <span>
                       <i class="icon-window-section"></i>
                       02PY376 - 2019
                     </span>
-                    <ul class="title-list" >
-                      <li *ngFor="let path of paths" (click)="selectPath(path)" [ngClass]="{'active-path': path.selected}">
-                        <i [ngClass]="path.icon"></i>
-                        {{path.text}}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </nz-tab>
-              <nz-tab nzTitle="Tags">
-                <div class="Tags-content">
-                  <div nz-row class="button-reset-filter-by-tag">
-                    <button (click)="currentTag= null" nz-button nzType="default" nzShape="circle"
-                            style=" float: right; border: 0px solid;">
-                      <i nz-icon nzType="undo" nzTheme="outline"></i></button>
-                  </div>
-                  <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
-                  <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === currentTag}" class="chips" [ngStyle]="{'background-color': tag.tagColor}" (click)="currentTag= tag">
+                <ul class="title-list">
+                  <li *ngFor="let path of paths" (click)="selectPath(path)" [ngClass]="{'active-path': path.selected}">
+                    <i [ngClass]="path.icon"></i>
+                    {{path.text}}
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab [nzTitle]="tags">
+            <ng-template #tags>
+              <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;"> Tags</span>
+            </ng-template>
+            <div class="Tags-content">
+              <div nz-row class="button-reset-filter-by-tag">
+                <button (click)="currentTag= null" nz-button nzType="default" nzShape="circle"
+                        style=" float: right; border: 0px solid;">
+                  <i nz-icon nzType="undo" nzTheme="outline"></i></button>
+              </div>
+              <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
+              <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
+                    <span [ngClass]="{'active-tag': tag === currentTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentTag= tag">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
                     </span>
-                  </div>
+              </div>
 
-                  <div nz-row class="tags-title-section">User tags <i class="icon-plus-circle"></i></div>
-                  <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
+              <div nz-row class="tags-title-section">User tags <i class="icon-plus-circle"></i></div>
+              <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
                     <span class="chips" [ngStyle]="{'background-color': tag.tagColor, 'border-color': tag.border}">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
                     </span>
-                  </div>
+              </div>
 
-                </div>
-              </nz-tab>
-            </nz-tabset>
-          </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
 
-          <div nz-col nzSpan="20">
-            <nz-tabset class="tabset-right">
-              <nz-tab nzTitle="PLTs">
-                <div class="PLTs-content">
-                  <table class="table plt-table">
-                    <thead>
-                    <tr>
-                      <th></th>
-                      <th>User Tags</th>
-                      <th>
-                        PLT ID
-                        <div class="filter-input">
-                          <i class="icon-search"></i>
-                          <input type="text">
-                        </div>
-                      </th>
-                      <th>
-                        PLT Name
-                        <div class="filter-input">
-                          <i class="icon-search"></i>
-                          <input type="text">
-                        </div>
-                      </th>
-                      <th>Peril</th>
-                      <th>Region Peril Code</th>
-                      <th>Region Peril Name</th>
-                      <th>Grain</th>
-                      <th>Vendor System</th>
-                      <th>RAP</th>
-                      <th><i nz-icon><i class="icon-focus-add"></i></i></th>
-                      <th><i nz-icon><i class="icon-note"></i></i></th>
-                      <th><i nz-icon><i class="icon-focus-add"></i></i></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <!--| filterByBagde: currentTag-->
-                    <tr *ngFor="let plt of plts | filterByBadge: currentTag" style="cursor: pointer"
-                        [ngClass]="{'active_plt_item': plt.selected }">
-                      <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
-                        <div *ngIf="plt.selected">
-                          <i nz-icon nzType="eye" nzTheme="outline"></i>
-                        </div>
-                        <div *ngIf="!plt.selected">
-                          <i nz-icon nzType="eye-invisible" nzTheme="outline"></i>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper-tags">
+      <div style="flex: 1">
+        <nz-tabset class="tabset-right">
+          <nz-tab [nzTitle]="PLTs">
+            <ng-template #PLTs>
+              <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
+            </ng-template>
+            <div class="PLTs-content">
+              <table class="table plt-table">
+                <thead>
+                <tr>
+                  <th></th>
+                  <th>User Tags</th>
+                  <th>
+                    PLT ID
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
+                  <th>
+                    PLT Name
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
+                  <th>Peril</th>
+                  <th>Region Peril Code</th>
+                  <th>Region Peril Name</th>
+                  <th>Grain</th>
+                  <th>Vendor System</th>
+                  <th>RAP</th>
+                  <th><i nz-icon><i class="icon-focus-add"></i></i></th>
+                  <th><i nz-icon><i class="icon-note"></i></i></th>
+                  <th><i nz-icon><i class="icon-focus-add"></i></i></th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--| filterByBagde: currentTag-->
+                <tr *ngFor="let plt of plts | filterByBadge: currentTag" style="cursor: pointer"
+                    [ngClass]="{'active_plt_item': plt.selected }">
+                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
+                    <div *ngIf="plt.selected">
+                      <i nz-icon nzType="eye" nzTheme="outline"></i>
+                    </div>
+                    <div *ngIf="!plt.selected">
+                      <i nz-icon nzType="eye-invisible" nzTheme="outline"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper-tags">
                           <span *ngFor="let tag of plt.systemTags"
                                 [ngStyle]="{'background-color': getColor(tag.tagId, 'system')}">&nbsp;</span>
 
-                          <span *ngFor="let tag of plt.userTags"
-                                [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}">&nbsp;</span>
-                          <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
-                        </div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.pltId}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.pltName}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.peril}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.regionPerilCode}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.regionPerilName}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.grain}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.vendorSystem}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper">{{plt.rap}}</div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper-check">
-                          <div>
-                            <i [ngClass]="{'icon-check-circle': plt.d, 'icon-remove_24px': !plt.d }"></i>
-                          </div>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper-check">
-                          <i [ngClass]="{'icon-check-circle': plt.note, 'icon-remove_24px': !plt.note }"></i>
-                        </div>
-                      </td>
-                      <td>
-                        <div class="td-wrapper-check">
-                          <i [ngClass]="{'icon-check-circle': plt.checked, 'icon-remove_24px': !plt.checked }"></i>
-                        </div>
-                      </td>
-                    </tbody>
-                  </table>
-                </div>
-              </nz-tab>
-            </nz-tabset>
-          </div>
-
-        </div>
+                      <span *ngFor="let tag of plt.userTags"
+                            [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}">&nbsp;</span>
+                      <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
+                    </div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.pltId}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.pltName}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.peril}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.regionPerilCode}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.regionPerilName}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.grain}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.vendorSystem}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper">{{plt.rap}}</div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper-check">
+                      <div>
+                        <i [ngClass]="{'icon-check-circle': plt.d, 'icon-remove_24px': !plt.d }"></i>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper-check">
+                      <i [ngClass]="{'icon-check-circle': plt.note, 'icon-remove_24px': !plt.note }"></i>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="td-wrapper-check">
+                      <i [ngClass]="{'icon-check-circle': plt.checked, 'icon-remove_24px': !plt.checked }"></i>
+                    </div>
+                  </td>
+                </tbody>
+              </table>
+            </div>
+          </nz-tab>
+        </nz-tabset>
       </div>
-    </div>
 
-    <div nz-col nzSpan="2">
-      <div class="right-column">
-        <div class="navigation-icons pt-5" style="min-height: 100px">
-          <i class="icon-map-pin-alt"></i>
-          <i class="icon-arrow_back_ios_24px mt-2" (click)="openDrawer()"></i>
-        </div>
+    </div>
+  </div>
+
+  <div nz-col style="width: 60px;">
+    <div class="right-column">
+      <div class="navigation-icons">
+        <i class="icon-map-pin-alt"></i>
+        <i class="icon-arrow_back_ios_24px" (click)="openDrawer()"></i>
       </div>
     </div>
   </div>
+
 </nz-layout>
 
 
-<nz-drawer [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" (nzOnClose)="closeDrawer()" [nzWidth]=650
-           [nzZIndex]="2000">
+<nz-drawer [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" (nzOnClose)="closeDrawer()" [nzWidth]=650>
 
-  <div>
+  <div class="drawer">
 
     <div class="navigation-icons-drawer">
-      <i class="icon-arrow_forward_ios_24px mt-2" (click)="closeDrawer()"></i>
+      <i class="icon-arrow_forward_ios_24px" (click)="closeDrawer()"></i>
     </div>
 
-    <div class="tabset-drawer">
-      <nz-tabset>
-        <nz-tab nzTitle="Basket">
+    <div class="noMargin">
+      <nz-tabset class="tabset-drawer">
+        <nz-tab [nzTitle]="basket">
+          <ng-template #basket>
+            <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
+              Basket
+            </span>
+          </ng-template>
           <div class="basket-content" nz-row>
             <div class="title-section-drawer">
               <div nz-col nzSpan="18">
@@ -221,17 +233,24 @@
                   <span>CANCEL</span>
                 </button>
               </div>
+              <div nz-col nzSpan="1">&nbsp;</div>
               <div nz-col nzSpan="4" class="add">
                 <button>
                   <span>ADD</span>
                 </button>
               </div>
-              <div nz-col nzSpan="2">&nbsp;</div>
+              <div nz-col nzSpan="1">&nbsp;</div>
             </div>
           </div>
         </nz-tab>
 
-        <nz-tab nzTitle="PLT Details">
+        <nz-tab [nzTitle]="pltDetails">
+          <ng-template #pltDetails>
+            <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
+              PLT Details
+            </span>
+            <i class="icon-remove_red_eye_24px" style="font-size: 16px; margin: 3px 5px 3px 15px;"></i>
+          </ng-template>
           <div nz-row>
             <div class="title-section-drawer">
               <div nz-col nzSpan="18">
@@ -257,42 +276,52 @@
                   </div>
                   <div class="summary-table">
                     <div nz-row>
-                      <span nz-col nzSpan="6">PLT ID:</span>
-                      <span nz-col nzSpan="18">*********</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">PLT ID:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.pltId}}</span>
                     </div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">PLT File Name:</span>
-                      <span nz-col nzSpan="18">*********</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">PLT File Name:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.pltName}}</span>
                     </div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">Target RAP:</span>
-                      <span nz-col nzSpan="18">*****<br>****</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">Target RAP:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.rap}}</span>
                     </div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">Peril:</span>
-                      <span nz-col nzSpan="18">*********</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">Peril:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.peril}}</span>
                     </div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">Region Peril:</span>
-                      <span nz-col nzSpan="18">*********</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">Region Peril:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.regionPerilCode}}</span>
                     </div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">Currency:</span>
-                      <span nz-col nzSpan="18">*********</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">Currency:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">EUR</span>
                     </div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">Grain:</span>
-                      <span nz-col nzSpan="18">*********</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">Grain:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.grain}}</span>
                     </div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">Representation</span>
-                      <span nz-col nzSpan="18">*********</span></div>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">Representation</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">*********</span></div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">User Notes:</span>
-                      <span nz-col nzSpan="18">*********</span></div>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">User Notes:</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">
+                        <p>
+                          Lorem ipsum dolor sit amet,
+                        </p>
+                      </span></div>
                     <div nz-row>
-                      <span nz-col nzSpan="6">Sourced From</span>
-                      <span nz-col nzSpan="18">*********</span>
+                      <span nz-col nzSpan="6" class="summaryTableHeader">Sourced From</span>
+                      <span nz-col nzSpan="6" class="summaryTableBody">
+                        <p>
+                          Lorem ipsum dolor sit amet,
+                          consectetur adipiscing elit,
+                          sed do eiusmod tempor incididunt
+                        </p>
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -440,16 +469,17 @@
                     <nz-tab nzTitle="Thread">
                       <div class="thread-content">
 
-                        <div nz-row *ngFor="let thead of theads"  >
+                        <div nz-row *ngFor="let thead of theads">
                           <div nz-col nzSpan="12" class="title">
-                            <span >
+                            <span>
                               {{thead.title}}
                             </span>
                           </div>
                           <div nz-col nzSpan="3"></div>
-                          <div nz-col nzSpan="6" >
-                            <div  class="card" *ngFor="let card of thead.cards" [ngStyle]="{'border-color': card.borderColor, 'background-color': getCardBackground(card.selected)}"
-                                  (click)="selectCardThead(card)">
+                          <div nz-col nzSpan="6">
+                            <div class="card" *ngFor="let card of thead.cards"
+                                 [ngStyle]="{'border-color': card.borderColor, 'background-color': getCardBackground(card.selected)}"
+                                 (click)="selectCardThead(card)">
                               <span>{{card.content}}</span>
                               <nz-tag [nzColor]="'#e5e9fa'">{{card.chip}}</nz-tag>
                             </div>
@@ -603,17 +633,22 @@
                     <nz-tab nzTitle="Dependencies">
                       <div class="dependencies-content">
                         <div nz-row>
-                          <div nz-col nzSpan="7">&nbsp;</div>
-                          <div nz-col nzSpan="10" class="dependecies">
-                            <div  class="dependency-card" *ngFor="let dependency of dependencies" >
-                              <div nz-row>
+                          <div nz-col nzSpan="8">&nbsp;</div>
+                          <div nz-col nzSpan="8" class="dependecies">
+                            <div class="dependency-card" *ngFor="let dependency of dependencies">
+                              <div nz-row class="card-content">
                                 <div nz-col nzSpan="8" class="title">{{dependency.title}}</div>
                                 <div nz-col nzSpan="16" class="content">{{dependency.content}}</div>
                               </div>
-                              <nz-tag [nzColor]="'#e5e9fa'">{{dependency.chip}}</nz-tag>
+                              <div nz-row>
+                                <div nz-col nzSpan="8">&nbsp;</div>
+                                <div nz-col nzSpan="16">
+                                  <nz-tag [nzColor]="'#e5e9fa'">{{dependency.chip}}</nz-tag>
+                                </div>
+                              </div>
                             </div>
                           </div>
-                          <div nz-col nzSpan="7">&nbsp;</div>
+                          <div nz-col nzSpan="8">&nbsp;</div>
                         </div>
                       </div>
                     </nz-tab>

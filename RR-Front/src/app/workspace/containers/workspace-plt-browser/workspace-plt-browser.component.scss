@@ -16,7 +16,7 @@ nz-layout {
     .path-content {
       cursor: pointer;
 
-      .active-path{
+      .active-path {
         background-color: #fdfbdf;
         border: 1px solid #fdc228;
         border-radius: 10px;
@@ -224,6 +224,8 @@ nz-layout {
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
+      padding: 47px 0px 0px 0px;
+      min-height: 100px;
 
       i {
         padding: 5px;
@@ -232,16 +234,43 @@ nz-layout {
         color: #9C99EC;
         font-size: 24px;
         cursor: pointer;
+        margin-bottom: 20px;
       }
     }
   }
 }
 
+.navigation-icons-drawer {
+  i {
+    padding: 5px;
+    border-radius: 25px;
+    border: 2px solid #F5F5F5;
+    color: #9C99EC;
+    font-size: 24px;
+    cursor: pointer;
+    float: right;
+  }
+}
 
-.summary-table .ant-row {
-  border-bottom: 1px solid #000;
-  padding: 0px 0px 0px 0px;
-  margin: 6px 0px 2px 0px;
+
+.summary-table {
+  .ant-row {
+    border-bottom: 1px solid #000;
+
+    .summaryTableHeader {
+      padding: 5px 5px 5px 5px;
+      font-size: 16px;
+      font-family: rubik;
+      //font-weight: bold;
+      min-height: 30px;
+    }
+    .summaryTableBody{
+      font-size: 13px;
+      color: #000;
+      padding: 5px 5px 5px 15px;
+      margin: 3px 5px 15px 6px;
+    }
+  }
 }
 
 .chips {
@@ -330,32 +359,6 @@ nz-layout {
   }
 }
 
-::ng-deep {
-  .tabset-plt-details {
-    .ant-tabs-ink-bar {
-      display: block;
-      transform: translate3d(0px, 0px, 0px);
-      width: 95px !important;
-      background-color: #0700cf;
-    }
-
-    .ant-tabs-nav .ant-tabs-tab{
-      font-size: 11px;
-      font-family: rubik;
-      font-weight: bold;
-      position: relative;
-      display: inline-block;
-      box-sizing: border-box;
-      height: 100%;
-      margin: 0 0px 0px 0px;
-      padding: 10px 20px;
-      .ant-tabs-tab-active {
-        color: #0700cf;
-      }
-    }
-  }
-}
-
 
 .dropdowns {
 
@@ -415,7 +418,6 @@ nz-layout {
 }
 
 
-
 ::ng-deep {
   .ep-metric-tabset {
     .ant-tabs-ink-bar {
@@ -425,7 +427,7 @@ nz-layout {
       background-color: #000c17;
     }
 
-    .ant-tabs-nav .ant-tabs-tab{
+    .ant-tabs-nav .ant-tabs-tab {
       font-size: 25px;
       font-family: rubik;
       font-weight: bold;
@@ -436,6 +438,7 @@ nz-layout {
       margin: 2px 4px 2px 4px;
       padding: 1px 16px;
       color: #0700cf;
+
       .ant-tabs-tab-active {
         color: #0700cf;
       }
@@ -443,29 +446,33 @@ nz-layout {
   }
 }
 
-.metric-table-content{
+.metric-table-content {
   border-bottom: 2px solid;
-  .metric-table{
+
+  .metric-table {
     font-size: 12px;
     font-family: Rubik;
-    th{
+
+    th {
       font-weight: bold;
       color: #898989;
       padding: 3px 0px 5px 3px;
-      i{
+
+      i {
         font-size: 16px;
         color: #000;
         cursor: pointer;
         padding: 0px 0px 0px 3px;
       }
     }
-    td{
+
+    td {
       padding: 2px 25px 2px 2px;
     }
   }
 }
 
-.metric-table-footer{
+.metric-table-footer {
   color: #000;
   font-size: 12px;
   font-family: Rubik;
@@ -483,7 +490,7 @@ nz-layout {
       background-color: #000c17;
     }
 
-    .ant-tabs-nav .ant-tabs-tab{
+    .ant-tabs-nav .ant-tabs-tab {
       font-size: 25px;
       font-family: rubik;
       font-weight: bold;
@@ -494,6 +501,7 @@ nz-layout {
       margin: 2px 4px 2px 4px;
       padding: 1px 16px;
       color: #0700cf;
+
       .ant-tabs-tab-active {
         color: #0700cf;
       }
@@ -501,15 +509,16 @@ nz-layout {
   }
 }
 
-.thread-content{
-  .title{
+.thread-content {
+  .title {
     border-top: 1px solid #acacac;
     padding: 11px 0px 0px 18px;
     font-size: 16px;
     font-family: rubik;
     font-weight: bold;
-    ::ng-deep{
-      span{
+
+    ::ng-deep {
+      span {
         font-size: 11px;
         font-weight: bold;
         font-family: rubik;
@@ -517,58 +526,128 @@ nz-layout {
       }
     }
   }
-  .card{
+
+  .card {
     padding: 8px 10px 12px 10px;
-    border: 2px solid;
+    border: 1px solid;
     margin: 5px -15px 10px -15px;
     cursor: pointer;
-    nz-tag{
+
+    nz-tag {
       color: #7876e4;
       width: 60%;
       border-radius: 22px;
       border: 1px solid #7876e4;
     }
-    span{
+
+    span {
       font-size: 11px;
+      font-weight: bold;
+      font-family: Rubik;
       margin: 0px 0px 20px 0px;
     }
 
   }
 }
 
-.active-tag{
+.active-tag {
   border: 2px solid #666666;
   border-radius: 18px;
 }
 
-.active-card{
-  background-color: #fff;
-}
 
-
-.dependencies-content{
-  .dependency-card{
-    padding: 8px 10px 12px 10px;
-    border: 2px solid #cea7fe;
-    margin: 5px -15px 10px -15px;
+.dependencies-content {
+  .dependency-card {
+    padding: 4px 4px 17px 7px;
+    border: 1px solid #d3b1fe;
+    margin: 10px 2px 15px 2px;
     cursor: pointer;
     background: #f4f6fc;
-    nz-tag{
+
+    nz-tag {
       color: #7876e4;
       width: 60%;
       border-radius: 22px;
       border: 1px solid #7876e4;
     }
-    .title{
-      font-size: 15px;
-      color: #0700cf;
-    }
-    .content{
-      color: #4a4a4c;
-      font-size: 10px;
-      font-weight: bold;
-      margin: 0px 0px 18px 0px;
+
+    .card-content {
+      min-height: 55px;
+
+      .title {
+        font-size: 15px;
+        color: #0700cf;
+      }
+
+      .content {
+        color: #4a4a4c;
+        font-size: 10px;
+        font-weight: bold;
+        margin: 5px 0px 0px 0px;
+      }
     }
   }
 
+}
+
+::ng-deep {
+  .noMargin {
+    .ant-tabs-nav .ant-tabs-tab {
+      margin: 0;
+    }
+  }
+}
+
+.tabset-drawer {
+  padding: 0px 10px 10px 10px;
+
+  ::ng-deep {
+    .ant-tabs-ink-bar {
+      position: absolute;
+      top: 1px;
+      background-color: #0700CF;
+    }
+
+    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
+      background: #fff !important;
+      color: rgba(0, 0, 0, 0.87);
+      font-family: Rubik;
+      width: content-box;
+      font-size: 20.54px;
+      font-weight: 300;
+      letter-spacing: 0.25px;
+      margin-bottom: 17px;
+      padding-top: 22px;
+    }
+
+
+  }
+}
+
+.tabset-plt-details {
+  ::ng-deep {
+    .ant-tabs-ink-bar {
+      display: none !important;
+    }
+
+    .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
+      border-bottom: 3px solid #0700cf;
+      color: #0700cf;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab {
+      font-size: 12px;
+      font-family: rubik;
+      position: relative;
+      display: inline-block;
+      box-sizing: border-box;
+      height: 100%;
+      margin: 0 0px 0px 0px;
+      padding: 3px 9px;
+
+      .ant-tabs-tab-active {
+        color: #0700cf;
+      }
+    }
+  }
 }
