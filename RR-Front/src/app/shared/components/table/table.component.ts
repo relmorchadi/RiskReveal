@@ -69,20 +69,22 @@ export class TableComponent implements OnInit {
       event.preventDefault();
       if (this.lastSelectedIndex) {
         this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
+        this.lastSelectedIndex = null;
       } else {
         this.lastSelectedIndex = index;
       }
     }
+    this.currentSelectedItem = row;
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
     this.selectOne.emit(row);
   }
 
   private selectSection(from, to) {
     if (from == to) {
-      this.listOfData[from].selected = true;
+      this.listOfData[from].selected = !this.listOfData[from].selected;
     } else {
       for (let i = from; i <= to; i++) {
-        this.listOfData[i].selected = true;
+        this.listOfData[i].selected = !this.listOfData[i].selected;
       }
     }
   }

@@ -4,10 +4,12 @@ import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {COMPONENTS} from './components';
 import {TableModule} from 'primeng/table';
+import {RouterModule} from '@angular/router';
+import {HighlightDirective} from './highlight.directive';
 
 
 @NgModule({
-  declarations: [...COMPONENTS],
+  declarations: [...COMPONENTS, HighlightDirective],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -19,6 +21,7 @@ import {TableModule} from 'primeng/table';
   exports: [
     CommonModule,
     NgZorroAntdModule,
+    HighlightDirective,
     ReactiveFormsModule,
     FormsModule,
     ...COMPONENTS

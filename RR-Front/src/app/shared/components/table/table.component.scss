@@ -7,6 +7,10 @@
     background: #fff !important;
   }
 
+  .ui-table-scrollable-view {
+    min-height: 750px;
+  }
+
   .ui-table-thead {
     th {
       padding: 7px !important;
@@ -72,17 +76,15 @@
   }
 
   .ui-table-tbody {
+    tr{
+      background-color: #fff !important;
+    }
     td {
       padding-left: 7px !important;
       cursor: pointer;
       font-size: 14px;
-      height: 25px;
       border: none !important;
-      background-color: #fff !important;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
       user-select: none;
       div {
         width: 100%;
@@ -92,17 +94,15 @@
   }
 
   .ant-table-tbody {
+    tr{
+      background-color: #fff !important;
+    }
     td {
       padding-left: 3px;
       cursor: pointer;
       font-size: 14px;
-      height: 25px;
       border: none;
-      background-color: #fff !important;
       border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-      -webkit-user-select: none;
-      -moz-user-select: none;
-      -ms-user-select: none;
       user-select: none;
       div {
         width: 100%;
@@ -123,16 +123,18 @@
 ::ng-deep {
   .ui-table-tbody {
     tr.active_contract_item {
-      td {
-        background-color: #FCF9D6 !important;
-      }
+      background-color: #FCF9D6 !important;
+    }
+    tr.selected_contract_item {
+      background-color: #E9E9E9 !important;
     }
   }
   .ant-table-tbody {
     tr.active_contract_item {
-      td {
-        background-color: #FCF9D6 !important;
-      }
+      background-color: #FCF9D6 !important;
+    }
+    tr.selected_contract_item {
+      background-color: #E9E9E9 !important;
     }
   }
 }
@@ -150,4 +152,10 @@
 
 .icon-check_circle_24px {
   font-size: 17px;
+}
+
+.text-wrapper{
+  overflow: hidden !important;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }

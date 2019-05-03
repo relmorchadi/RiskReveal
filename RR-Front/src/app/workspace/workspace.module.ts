@@ -4,7 +4,6 @@ import {COMPONENTS} from './components';
 import {CONTAINERS, WorkspaceMainComponent, WorkspaceRiskLinkComponent, WorkspaceProjectComponent} from './containers';
 import {RouterModule, Routes} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
-import {HighlightDirective} from './highlight.directive';
 import {TableModule} from 'primeng/table';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
 const routes: Routes = [
@@ -19,7 +18,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  declarations: [...COMPONENTS, ...CONTAINERS, HighlightDirective
+  declarations: [...COMPONENTS, ...CONTAINERS
   ],
   imports: [
     SharedModule,
@@ -28,8 +27,7 @@ const routes: Routes = [
     RouterModule.forChild(routes)
   ],
   exports: [
-    RouterModule,
-    HighlightDirective
+    RouterModule
   ]
 })
 export class WorkspaceModule {

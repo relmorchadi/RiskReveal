@@ -41,14 +41,14 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   ];
 
   EDM: any = [
-    {id: 1, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', selected: false, Reference: '413'},
-    {id: 2, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '2/3'},
-    {id: 3, name: 'CF1803_PORT_R', selected: false, Reference: '33/4'},
-    {id: 4, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', selected: false, Reference: '425'},
-    {id: 5, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '12/1'},
-    {id: 6, name: 'CF1803_PORT_R', selected: false, Reference: '4/25'},
-    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '4/12'},
-    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '7/15'}
+    {id: 1, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM', selected: false, Reference: '413'},
+    {id: 2, name: 'Anxin_NMQSS_ZJ_Training_E', selected: false, Reference: '2/3'},
+    {id: 3, name: 'CF1803_PORT_E', selected: false, Reference: '33/4'},
+    {id: 4, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM', selected: false, Reference: '425'},
+    {id: 5, name: 'Anxin_NMQSS_ZJ_Training_E', selected: false, Reference: '12/1'},
+    {id: 6, name: 'CF1803_PORT_E', selected: false, Reference: '4/25'},
+    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_E', selected: false, Reference: '4/12'},
+    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', selected: false, Reference: '7/15'}
   ];
   /* tslint:disable */
   tableLeft: any = [

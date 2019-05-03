@@ -108,18 +108,21 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-    <tr [ngClass]="{'active_contract_item': rowData?.selected }"
+    <tr [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}"
         (click)="selectRow(rowData, i)"
     >
       <td *ngFor="let col of columns">
-        <span *ngIf="col?.type ==='checkbox'">
-          <i *ngIf="rowData?.selected" (click)="rowData.selected = false"
-                     [ngClass]="col?.class"></i>
-          <i *ngIf="!rowData?.selected" (click)="rowData.selected = true"
-                     [ngClass]="'icon-check_circle_24px'"></i>
-        </span>
-        <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col?.field]}}
-        <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+        <div style="display:flex">
+          <span *ngIf="col?.type ==='checkbox'">
+            <i *ngIf="rowData?.selected" (click)="rowData.selected = false"
+                       [ngClass]="col?.class"></i>
+            <i *ngIf="!rowData?.selected" (click)="rowData.selected = true"
+                       [ngClass]="'icon-check_circle_24px'"></i>
+          </span>
+          <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+          <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+          <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+        </div>
       </td>
     </tr>
   </ng-template>
@@ -162,14 +165,20 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-    <tr [ngClass]="{'active_contract_item': rowData?.selected }" (click)="selectRow(rowData, i)">
+    <tr [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem }"
+        (click)="selectRow(rowData, i)">
       <td *ngFor="let col of columns">
-        <i *ngIf="col?.type === 'checkbox' && rowData?.selected" (click)="rowData.selected = false"
-           [ngClass]="col?.class"></i>
-        <i *ngIf="col?.type === 'checkbox' && !rowData?.selected" (click)="rowData.selected = true"
-           [ngClass]="'icon-check_circle_24px'"></i>
-        <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>  {{rowData[col?.field]}}
-        <i *ngIf="col?.type === 'icon'" (click)="col?.handler(selectedRows)" [ngClass]="col?.class"></i>
+        <div style="display:flex">
+          <span *ngIf="col?.type ==='checkbox'">
+            <i *ngIf="rowData?.selected" (click)="rowData.selected = false"
+               [ngClass]="col?.class"></i>
+            <i *ngIf="!rowData?.selected" (click)="rowData.selected = true"
+               [ngClass]="'icon-check_circle_24px'"></i>
+          </span>
+          <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+          <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+          <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+        </div>
       </td>
     </tr>
   </ng-template>
