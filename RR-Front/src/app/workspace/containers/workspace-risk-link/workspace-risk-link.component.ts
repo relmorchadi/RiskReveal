@@ -14,15 +14,17 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   componentSubscription: any = [];
   selectedPrStatus = '1';
 
-  list1: any = ['RMS Instance', 'item 1', 'item 2'];
-  list2: any = ['Financial Perspective', 'item 1', 'item 2'];
-  list3: any = ['Currency', 'item 1', 'item 2'];
-  list4: any = ['Currently Imported', 'item 1', 'item 2'];
-  list5: any = ['Add calibration', 'item 1', 'item 2'];
+  list1 = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
+  list2 = ['Net Loss Pre Cat (RL)', 'Net Loss Pre Cat (RL)', 'Net Loss Pre Cat (RL)'];
+  list3 = ['Facultative Reinsurance Loss', 'item 1', 'item 2'];
+  list4 = ['MLC (USD)', 'item 1', 'item 2'];
+  list5: any = ['Currently Imported', 'item 1', 'item 2'];
+  list6: any = ['Add calibration', 'item 1', 'item 2'];
 
-  list1value: string = 'RMS Instance';
-  list2value: string = 'Financial Perspective';
-  list3value: string = 'Currency';
+  selectedRMS: string;
+  selectedPrELT: string;
+  selectedPrEPM: string;
+  selectedTarget: string;
   list4value: string = 'Currently Imported';
   list5value: string = 'Add calibration';
 

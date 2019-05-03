@@ -39,15 +39,62 @@
         </div>
       </div>
       <div class="body-wrap-dropDowns">
-        <nz-select nzShowSearch nzAllowClear [(ngModel)]="list1value">
-          <nz-option *ngFor="let op of list1" [nzLabel]="op" [nzValue]="op"></nz-option>
-        </nz-select>
-        <nz-select nzShowSearch nzAllowClear [(ngModel)]="list2value">
-          <nz-option *ngFor="let op of list2" [nzLabel]="op" [nzValue]="op"></nz-option>
-        </nz-select>
-        <nz-select nzShowSearch nzAllowClear [(ngModel)]="list3value">
-          <nz-option *ngFor="let op of list3" [nzLabel]="op" [nzValue]="op"></nz-option>
-        </nz-select>
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">RMS Instance</span>
+              <span class="dropdown-item-selected" *ngIf="selectedRMS">{{selectedRMS}}</span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li (click)="selectedRMS = item" *ngFor="let item of list1">{{item}}</li>
+          </ul>
+        </nz-dropdown>
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Financial Perspective ELT</span>
+              <span class="dropdown-item-selected" *ngIf="selectedRMS">{{selectedPrELT}}</span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li (click)="selectedPrELT = item" *ngFor="let item of list2">{{item}}</li>
+          </ul>
+        </nz-dropdown>
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Financial Perspective EPMetrics</span>
+              <span class="dropdown-item-selected" *ngIf="selectedRMS">{{selectedPrEPM}}</span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li (click)="selectedPrEPM = item" *ngFor="let item of list3">{{item}}</li>
+          </ul>
+        </nz-dropdown>
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Target Currency</span>
+              <span class="dropdown-item-selected" *ngIf="selectedRMS">{{selectedTarget}}</span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li (click)="selectedTarget = item" *ngFor="let item of list4">{{item}}</li>
+          </ul>
+        </nz-dropdown>
       </div>
       <div class="body-wrap-body">
         <div class="body-wrapper">
