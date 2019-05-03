@@ -50,11 +50,25 @@
 }
 .btn-detail{
   background: #F8E71C;
-  z-index: 1000;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 27px;
+  height: 27px;
   color: white;
-  position:absolute;right:0;top:-20px; border: 4px solid rgb(240, 242, 248);
-  box-shadow:none;
+  box-shadow: none;
   text-shadow: none;
+}
+.detail-wrapper{
+  display:flex;
+  flex-direction: column;
+  padding-top: 12px;
+}
+.span-detail{
+  text-align: center;
+  margin-top: 4px;
+  color: #f8e71c;
+  font-size: 11px;
 }
 .plus-btn{
   background: rgb(0, 195, 169);
@@ -113,6 +127,14 @@
   letter-spacing: 0.5px;
   line-height: 28px;
   text-transform: uppercase;
+}
+
+.treaty-list{
+  list-style: none;
+  font-size: 11px;
+  padding-left: 0;
+  overflow: auto;
+  height: 65px;
 }
 
 .card-container {
@@ -180,7 +202,7 @@
       color: #FFFFFF;	font-size: 11px;	letter-spacing: 0.25px;	line-height: 20px;
     }
     .tab-metadata-more{
-      color: #03DAC4;	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px;
+      color: #03DAC4;	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px; cursor:pointer; user-select: none;
     }
     .tab-kpi-title{
       opacity: 0.5; padding-left: 35px; padding-bottom: 20px;
@@ -204,6 +226,44 @@
       @media screen and (max-width: 1024px) and (min-width: 769px) {
         font-size: 22px;
       }
+    }
+  }
+}
+
+.skeleton-title{
+  ::ng-deep{
+    .ant-skeleton-header{
+      display: none !important;
+    }
+    .ant-skeleton-paragraph{
+      display: none !important;
+    }
+    h3.ant-skeleton-title{
+      width: 300px !important;
+      opacity: 0.7;
+      border-radius: 4px;
+    }
+    .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-title, .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-paragraph > li  {
+      background: linear-gradient(90deg, #f2f2f2 25%, #14617a 37%, #f2f2f2 63%) !important;
+    }
+  }
+}
+
+.skeleton-title-header{
+  ::ng-deep{
+    .ant-skeleton-header{
+      display: none !important;
+    }
+    .ant-skeleton-paragraph{
+      display: none !important;
+    }
+    h3.ant-skeleton-title{
+      width: 80% !important;
+      opacity: 0.7;
+      border-radius: 4px;
+    }
+    .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-title, .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-paragraph > li  {
+      background: linear-gradient(90deg, #f2f2f2 25%, #14617a 37%, #f2f2f2 63%) !important;
     }
   }
 }
@@ -410,3 +470,5 @@
     }
   }
 }
+
+

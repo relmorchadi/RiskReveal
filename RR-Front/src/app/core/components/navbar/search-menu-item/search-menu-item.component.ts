@@ -15,7 +15,7 @@ import {Select, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import {} from '../../../store/actions/search-nav-bar.state';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs';
+import {Observable, Subscription} from 'rxjs';
 import {SearchNavBarState} from '../../../store/index';
 
 
@@ -34,31 +34,51 @@ export class SearchMenuItemComponent implements OnInit {
   state$: Observable<SearchNavBar>;
   state: SearchNavBar = null;
 
+
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
               private _notifcationService: NotificationService, private store: Store) {
     this.contractFilterFormGroup = this._fb.group({
       switchValue: false,
-      globalKeyword: [],
-      workspaceId: [],
-      workspaceName: [],
-      year: [],
-      treaty: [],
-      cedant: [],
-      country: []
+      globalKeyword: '',
+      cedantCode: '',
+      cedantName: '',
+      countryName: '',
+      innerCedantCode: '',
+      innerCedantName: '',
+      innerCountryName: '',
+      innerWorkspaceId: '',
+      innerWorkspaceName: '',
+      innerYear: '',
+      workspaceId: '',
+      workspaceName: '',
+      year: ''
     });
   }
 
+
+
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
+    this._subscribeGlobalKeywordChanges();
+    this.store.dispatch(new LoadRecentSearchAction());
+    this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
+      .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
+  }
+
+  private _subscribeGlobalKeywordChanges() {
     this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((param) => {
         this._selectedSearch(param);
       });
-    this.store.dispatch(new LoadRecentSearchAction);
-    this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
-      .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
+  }
+
+
+  stringUpdate(value) {
+    let newString = _.lowerCase(value);
+    newString = newString.split(' ').map(_.upperFirst).join(' ');
+    return newString;
   }
 
   isSearchRoute() {
@@ -82,7 +102,7 @@ export class SearchMenuItemComponent implements OnInit {
     const correspondingKey: string = this.state.sortcutFormKeysMapper[shortcut];
     if (correspondingKey) {
       this.contractFilterFormGroup.get(correspondingKey).patchValue(keyword);
-      const instance = {key: correspondingKey, value: keyword};
+      const instance = {key: this.stringUpdate(correspondingKey), value: keyword};
       this.state.badges.push(instance);
       this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
     } else {
@@ -98,13 +118,16 @@ export class SearchMenuItemComponent implements OnInit {
     this._clearFilters();
     if (keyboardEvent.key === 'Enter') {
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
-      if (this.contractFilterFormGroup.get('switchValue')) {
+      if (this.contractFilterFormGroup.get('switchValue').value) {
         this.examinateExpression(searchExpression);
       } else {
         this._searchService.globalSearchItem = searchExpression;
       }
       event.preventDefault();
       this.redirectToSearchPage();
+    } else if (keyboardEvent.key === 'Delete' && keyboardEvent.target.value === '') {
+      this.state.badges.pop();
+      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
     }
     if (this.state.deleteBlock === true) {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
@@ -115,26 +138,21 @@ export class SearchMenuItemComponent implements OnInit {
     } else {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.badges.pop();
+        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
         this.state.deleteBlock = true;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: true}));
-        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
-
         console.log(this.state.deleteBlock);
       }
     }
-    if (keyboardEvent.key === 'Delete' && keyboardEvent.target.value === '') {
-      this.state.badges.pop();
-      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
-    }
-    /* if(this.currentBadge)
-    this.selectChoice({label: this.contractFilterFormGroup.get('globalKeyword').value})*/
   }
 
   redirectToSearchPage() {
+    this._openWorkspaceIfSuffisantBadges();
+    this._searchService.setvisibleDropdown( false );
     if (this.state.badges.length > 0) {
       this.store.dispatch(new PatchSearchStateAction({
         key: 'recentSearch',
-        value: [[...this.state.badges], ...this.state.recentSearch]
+        value: _.uniqWith([[...this.state.badges], ...this.state.recentSearch].slice(0, 3), _.isEqual)
       }));
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
@@ -143,6 +161,17 @@ export class SearchMenuItemComponent implements OnInit {
     this.clearValue();
     this.router.navigate(['/search']);
   }
+
+  private _openWorkspaceIfSuffisantBadges(): boolean {
+    let yearBadge = this.state.badges.find(badge => badge.key == 'Year');
+    let workpaceNameBadge = this.state.badges.find(badge => badge.key == 'Workspace Id');
+    if (yearBadge && workpaceNameBadge) {
+      window.open(`/workspace/${workpaceNameBadge.value}/${yearBadge.value}`);
+      return true;
+    }
+    return false;
+  }
+
 
   redirectWithSearch(items) {
     this._searchService.affectItems(items);
@@ -169,7 +198,12 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   private _selectedSearch(keyword) {
-    this.store.dispatch(new SearchContractsCountAction(keyword));
+    if (keyword && keyword.length)
+      this.store.dispatch(new SearchContractsCountAction(keyword));
+  }
+
+  addBadgeFromResultList(key) {
+    this.selectSearchBadge(this.stringUpdate(key), this.state.actualGlobalKeyword );
   }
 
   closeSearchBadge(status, index) {
@@ -196,13 +230,18 @@ export class SearchMenuItemComponent implements OnInit {
   private _clearFilters() {
     this.contractFilterFormGroup.patchValue({
       // globalKeyword: '',
+      cedantCode: '',
+      cedantName: '',
+      countryName: '',
+      innerCedantCode: '',
+      innerCedantName: '',
+      innerCountryName: '',
+      innerWorkspaceId: '',
+      innerWorkspaceName: '',
+      innerYear: '',
       workspaceId: '',
       workspaceName: '',
-      year: '',
-      treaty: '',
-      programId: '',
-      cedant: '',
-      country: ''
+      year: ''
     });
   }
 
@@ -213,6 +252,7 @@ export class SearchMenuItemComponent implements OnInit {
   // }
 
   focusInput(event) {
+    this._searchService.setvisibleDropdown( false );
     if (this.contractFilterFormGroup.get('switchValue').value) {
       this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
         key: 'showResult',
@@ -228,7 +268,7 @@ export class SearchMenuItemComponent implements OnInit {
         }]));
       }
     }
-    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
+    this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: true}, {key: 'visible', value: false}]));
   }
 
   onInput(event) {
@@ -253,11 +293,11 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   openClose(): void {
-    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: !this.state.visible}));
+    this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: false}, {key: 'visible', value: !this.state.visible}]));
   }
 
   clearValue(): void {
-    this.store.dispatch(new ClearSearchValuesAction);
+    this.store.dispatch(new ClearSearchValuesAction());
     this._clearFilters();
   }
 }

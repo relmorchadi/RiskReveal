@@ -207,10 +207,42 @@
                 <h3>4 PLTs selected</h3>
               </div>
               <div nz-col nzSpan="4">
-                <button>
-                  <i class="icon-menu_24px"></i>
-                  <span>ACTIONS</span>
-                </button>
+                <nz-dropdown [nzTrigger]="'click'">
+                  <a nz-dropdown>
+                    <button>
+                      <i class="icon-menu_24px"></i>
+                      <span>ACTIONS</span>
+                    </button>
+                  </a>
+                  <ul nz-menu style="font-size: 12px">
+                    <li nz-menu-item>Calibrate</li>
+                    <li nz-menu-item>Publish To Pricing</li>
+                    <li nz-menu-item>Publish To Accumulation</li>
+                    <li nz-menu-item>Add To Injuring Node</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Alternate RAP</li>
+                    <li nz-menu-item>Link To Exposure</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Add To Comparer</li>
+                    <li nz-menu-item>Export</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Copy</li>
+                    <li nz-menu-item>Paste</li>
+                    <li nz-menu-item>Remove</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Unselect All</li>
+                    <li nz-menu-item>Save Basket</li>
+
+                  </ul>
+                </nz-dropdown>
               </div>
             </div>
             <div>
@@ -249,7 +281,7 @@
             <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
               PLT Details
             </span>
-            <i class="icon-remove_red_eye_24px" style="font-size: 16px; margin: 3px 5px 3px 15px;"></i>
+            <i class="icon-remove_red_eye_24px" style="font-size: 16px; margin: 3px 5px 3px 15px; color: #06b8ff;"></i>
           </ng-template>
           <div nz-row>
             <div class="title-section-drawer">

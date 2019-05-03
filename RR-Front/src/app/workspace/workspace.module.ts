@@ -22,8 +22,7 @@ const routes: Routes = [
       {path: '', component: WorkspaceProjectComponent},
       {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch: 'full'},
       {path: 'PltBrowser', component: WorkspacePltBrowserComponent, pathMatch:'full'},
-      {path: ':id', component: WorkspaceProjectComponent},
-
+      {path: ':wsId/:year', component: WorkspaceProjectComponent},
     ]
   }
 ];
@@ -38,7 +37,8 @@ const routes: Routes = [
     RouterModule.forChild(routes)
   ],
   exports: [
-    RouterModule
+    RouterModule,
+    HighlightDirective
   ]
 })
 export class WorkspaceModule {

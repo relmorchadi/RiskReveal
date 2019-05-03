@@ -35,6 +35,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       note: true,
       checked: false
     },
+
     {
       pltId: 2,
       systemTags: [],
@@ -451,7 +452,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
 
     let c = 209;
     addEventListener('scroll', function () {
-      let x = document.getElementsByClassName("ant-drawer-content")[0].style = "position:absolute;top:" + c + "px";
+      let x =  document.getElementsByClassName("ant-drawer-content")[0].style = "position:absolute;top:" + c + "px";
       var y = 209 - pageYOffset
       c = y;
     });
@@ -508,6 +509,12 @@ export class WorkspacePltBrowserComponent implements OnInit {
   getCardBackground(selected) {
     if (selected) return "#FFF";
     else return "#f4f6fc";
+  }
+
+  deselectPlt(){
+    this.plts.forEach(pt => pt.selected = false);
+    this.visible = false;
+    this.sumnaryPltDetails = null;
   }
 
 }

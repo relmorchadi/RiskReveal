@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CEDANT_COUNT_VIEW", schema = "dbo", catalog = "RR")
-public class CedantCountView {
+@Table(name = "CEDANT_NAME_CNT_VW", schema = "dbo", catalog = "RR")
+public class CedantNameCountView {
 
     @Id
     @Column(name = "label")
@@ -14,7 +14,7 @@ public class CedantCountView {
     @Column(name = "count_occur")
     private Integer countOccur;
 
-    public CedantCountView() {
+    public CedantNameCountView() {
     }
 
     public Integer getCountOccur() {
@@ -38,7 +38,7 @@ public class CedantCountView {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        CedantCountView that = (CedantCountView) o;
+        CedantNameCountView that = (CedantNameCountView) o;
         return Objects.equals(countOccur, that.countOccur) &&
                 Objects.equals(label, that.label);
     }

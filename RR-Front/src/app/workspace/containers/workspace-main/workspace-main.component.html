@@ -1,51 +1,63 @@
 <div class="card-container">
-  <nz-tabset [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of (getSearchedWorkspaces() | async)">
+  <nz-tabset *ngIf="!loading" [nzTabPosition]="'top'" [nzType]="'card'">
+    <ng-container *ngFor="let tab of (ws$ | async)">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
           [ngTemplateOutletContext]="{index:tab,
-          tabsLength:(getSearchedWorkspaces() | async).length,
-          title:tab.workSpaceId,
-          year:tab.uwYear,
-          years:tab.years
+          tabsLength:(ws$ | async).length,
+          title:tab?.workSpaceId,
+          year:tab?.uwYear,
+          years:tab?.years
           }"
         ></ng-container>
       </ng-template>
-      <nz-tab  [nzTitle]="titleTemplate">
+      <nz-tab [nzTitle]="titleTemplate">
         <div nz-row>
           <div nz-col nzSpan="24">
             <div  class="row tab-detail p-2">
-              <div class="col-md-12 pl-md-4 col-lg-6" >
-                <div class="d-inline-flex flex-column">
-                  <h3 class="workspace-title">{{tab.workspaceName}} <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
-                  <h4 class="workspace-title"> {{tab.cedantCode}} | {{tab.cedantName}} </h4>
-                </div>
+              <div class="detail-wrapper">
+                <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
+                        class="mx-4 btn-detail d-flex justify-content-center align-items-center"
+                        nz-button nzType="primary" nzSize="default" nzShape="circle">
+                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
+                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
+                </button>
+                <span *ngIf="collapseWorkspaceDetail" class="span-detail">Detail</span>
+                <span *ngIf="!collapseWorkspaceDetail" class="span-detail">Hide</span>
               </div>
-              <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
-                <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
-                  <span><b>-</b></span>
+              <div style="display: flex; flex: 1;">
+                <div class="col-md-12 pl-md-4 col-lg-6" >
+                  <div class="d-inline-flex flex-column">
+                    <h3 class="workspace-title">{{tab?.workspaceName}} <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
+                    <h4 class="workspace-title"> {{tab?.cedantCode}} | {{tab?.cedantName}} </h4>
+                  </div>
                 </div>
-                <div  nzTitle="Exposures" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
-                  <span><b>-</b></span>
-                </div>
-                <div  nzTitle="Qualifying PLTs" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-box mb-2"></i>
-                  <span><b>-</b></span>
-                </div>
-                <div  nzTitle="Published For Pricing" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-note mb-2"></i>
-                  <span><b>-</b></span>
-                </div>
-                <div  nzTitle="Priced" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
-                  <span><b>-</b></span>
-                </div>
-                <div  nzTitle="Published For Accumulation" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
-                  <span><b>-</b></span>
+                <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
+                  <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Exposures" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Qualifying PLTs" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-box mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Published For Pricing" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-note mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Priced" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Published For Accumulation" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
                 </div>
               </div>
             </div>
@@ -58,11 +70,11 @@
                   <div nz-col nz-row [nzSpan]="12">
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
-                      <span class="col-5 tab-metadata-value">{{tab.subsidiaryId}}-{{tab.subsidiaryName}}</span>
+                      <span class="col-5 tab-metadata-value">{{tab?.subsidiaryId}} - {{tab?.subsidiaryName}}</span>
                     </div>
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary Leger :</span>
-                      <span class="col-5 tab-metadata-value">{{tab.ledgerId}} - {{tab.ledgerName}}</span>
+                      <span class="col-5 tab-metadata-value">{{tab?.ledgerId}} - {{tab?.ledgerName}}</span>
                     </div>
                     <div class="row">
                       <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Contract Source Type :</span>
@@ -79,8 +91,15 @@
                     </div>
                     <div nz-col class="border-left pl-3" [nzSpan]="12">
                       <span class="d-block tab-metadata-title">Treaty Section :</span>
-                      <span *ngFor="let section of tab.treatySections.slice(0,3)" class="d-block tab-metadata-value">Treaty Section N°{{section}}</span>
-                      <a *ngIf="tab.treatySections.length > 2" class="tab-metadata-more">See All</a>
+                      <ul class="treaty-list">
+                        <li *ngFor="let section of sliceContent(tab?.treatySections, sliceValidator)">
+                          {{section}}
+                        </li>
+                      </ul>
+                      <ng-container *ngIf="tab?.treatySections?.length > 2" >
+                        <span *ngIf="sliceValidator" (click)="sliceValidator = false" class="tab-metadata-more">See All</span>
+                        <span *ngIf="!sliceValidator" (click)="sliceValidator = true" class="tab-metadata-more">Hide</span>
+                      </ng-container>
                     </div>
                   </div>
                 </div>
@@ -133,12 +152,6 @@
               <div style="flex: 0">
                 <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
               </div>
-              <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
-                      class="mx-4 btn-detail d-flex justify-content-center align-items-center"
-                      nz-button nzType="primary" nzSize="default" nzShape="circle">
-                <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
-                <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
-              </button>
               <router-outlet></router-outlet>
             </div>
           </div>
@@ -146,18 +159,104 @@
       </nz-tab>
     </ng-container>
   </nz-tabset>
+  <nz-tabset *ngIf="loading" [nzTabPosition]="'top'" [nzType]="'card'">
+      <ng-template #titleTemplate>
+        <ng-container
+          [ngTemplateOutlet]="tabTitle"
+          [ngTemplateOutletContext]="{
+          tabsLength:1
+          }"
+        ></ng-container>
+      </ng-template>
+      <nz-tab [nzTitle]="titleTemplate">
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <div  class="row tab-detail p-2">
+              <div class="detail-wrapper">
+                <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
+                        class="mx-4 btn-detail d-flex justify-content-center align-items-center"
+                        nz-button nzType="primary" nzSize="default" nzShape="circle">
+                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
+                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
+                </button>
+                <span *ngIf="collapseWorkspaceDetail" class="span-detail">Detail</span>
+                <span *ngIf="!collapseWorkspaceDetail" class="span-detail">Hide</span>
+              </div>
+              <div style="display: flex; flex: 1;">
+                <div class="col-md-12 pl-md-4 col-lg-6" >
+                  <div class="d-inline-flex flex-column">
+                    <h3 class="workspace-title" style="display:flex"><nz-skeleton class="skeleton-title" [nzActive]="true"></nz-skeleton> <nz-rate style="padding-top:7px" class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate></h3>
+                    <h4 class="workspace-title"><nz-skeleton class="skeleton-title" [nzActive]="true"></nz-skeleton> </h4>
+                  </div>
+                </div>
+                <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
+                  <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Exposures" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Qualifying PLTs" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-box mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Published For Pricing" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-note mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Priced" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                  <div  nzTitle="Published For Accumulation" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                    <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
+                    <span><b>-</b></span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div [ngClass]="{'collapse':collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
+            <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
+              <div class="pl-md-4 col-md-12 col-lg-6">
+                <nz-skeleton [nzActive]="true"></nz-skeleton>
+              </div>
+              <div class="pl-md-4 col-md-12 col-lg-6" style="margin-top: -60px;" >
+                <nz-skeleton [nzActive]="true"></nz-skeleton>
+              </div>
+            </div>
+          </div>
+          <div nz-col [nzSpan]="24">
+            <div style="display: flex">
+              <div style="flex: 0">
+                <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
+              </div>
+              <router-outlet></router-outlet>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+  </nz-tabset>
 </div>
+
 <ng-template let-title='title' let-year='year' let-years='years' let-tabsLength='tabsLength' let-index='index' #tabTitle>
   <div class="tab-title-container pl-3">
-    <h3 class="tab-title">{{title}}</h3>
-    <nz-dropdown [nzTrigger]="'click'">
-      <a nz-dropdown>
-        <h6 style="line-height: 15px" class="d-flex align-items-center sub-title">{{year}}<i class="pl-3" *ngIf="generateYear(year, years).length >0" nz-icon type="down"></i></h6>
-      </a>
-      <ul style="padding:0" nz-menu>
-        <li (click)="addWs(title,y)" *ngFor="let y of generateYear(year, years)" nz-menu-item>{{y}}</li>
-      </ul>
-    </nz-dropdown>
-    <div (click)="close(title, year)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
+    <ng-container *ngIf="!loading">
+      <h3 class="tab-title">{{title}}</h3>
+      <nz-dropdown [nzTrigger]="'click'">
+        <a nz-dropdown>
+          <h6 style="line-height: 15px" class="d-flex align-items-center sub-title">{{year}}<i class="pl-3" *ngIf="generateYear(year, years, title).length >0" nz-icon type="down"></i></h6>
+        </a>
+        <ul style="padding:0" nz-menu>
+          <li (click)="addWs(title,y)" *ngFor="let y of generateYear(year, years, title)" nz-menu-item>{{y}}</li>
+        </ul>
+      </nz-dropdown>
+      <div (click)="close(title, year)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
+    </ng-container>
+    <ng-container *ngIf="loading">
+      <nz-skeleton class="skeleton-title-header"></nz-skeleton>
+    </ng-container>
   </div>
 </ng-template>

@@ -1,6 +1,6 @@
 
 <div style="color: rgba(0,0,0,0.6); cursor: pointer;display: flex; user-select: none" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click" >
-  <div class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}} &nbsp;&nbsp; </div>
+  <div class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}}</div>
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 5px"></i>
 </div>
 <ng-template #workspacePopoverContent>
@@ -29,16 +29,13 @@
                 </div>
               </div>
               <div class="items-popover-info">
-                {{workspace?.year}} - {{workspace?.id}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
+                {{workspace?.uwYear}} - {{workspace?.workSpaceId}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
               </div>
             </li>
           </ul>
           <div class="mt-2">
             <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false" class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-              <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
-              <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
-              <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>
-              <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>
+              <nz-option *ngFor="let label of labels ; let i = index" [nzValue]="i" [nzLabel]="label"></nz-option>
             </nz-select>
             <div class="float-right">
               <button (click)="popOutWorkspaces()" class="popover-menu-control-button" nz-button nzType="default">POP OUT</button>
@@ -130,7 +127,7 @@
 
 
   <ng-template #RecentHeaderContent>
-    <span style="width: 5px">Recent &nbsp; <span class="badge badge-light tab-badge">12</span></span>
+    <span style="width: 5px">Recent &nbsp; <span class="badge badge-light tab-badge">{{numberofElement}}</span></span>
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>

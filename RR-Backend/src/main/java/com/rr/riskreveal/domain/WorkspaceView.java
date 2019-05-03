@@ -27,12 +27,6 @@ public class WorkspaceView implements Serializable{
     private String treatyid;
     @Column(name = "TreatyName")
     private String treatyName;
-    @Column(name = "ExpiryDate")
-    private Timestamp expiryDate;
-    @Column(name = "Subsidiaryid")
-    private Integer subsidiaryid;
-    @Column(name = "SubsidiaryLedgerid")
-    private String subsidiaryLedgerid;
     @Column(name = "cedantCode")
     private String cedantCode;
     @Column(name = "cedantName")
@@ -107,33 +101,6 @@ public class WorkspaceView implements Serializable{
         this.workspaceName = workspaceName;
     }
 
-
-    public Timestamp getExpiryDate() {
-        return expiryDate;
-    }
-
-    public void setExpiryDate(Timestamp expiryDate) {
-        this.expiryDate = expiryDate;
-    }
-
-
-    public Integer getSubsidiaryid() {
-        return subsidiaryid;
-    }
-
-    public void setSubsidiaryid(Integer subsidiaryid) {
-        this.subsidiaryid = subsidiaryid;
-    }
-
-
-    public String getSubsidiaryLedgerid() {
-        return subsidiaryLedgerid;
-    }
-
-    public void setSubsidiaryLedgerid(String subsidiaryLedgerid) {
-        this.subsidiaryLedgerid = subsidiaryLedgerid;
-    }
-
     public String getCedantCode() {
         return cedantCode;
     }
@@ -155,20 +122,18 @@ public class WorkspaceView implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         WorkspaceView that = (WorkspaceView) o;
-        return Objects.equals(programid, that.programid) &&
+        return
+                Objects.equals(programid, that.programid) &&
                 Objects.equals(programName, that.programName) &&
                 Objects.equals(countryName, that.countryName) &&
                 Objects.equals(treatyid, that.treatyid) &&
                 Objects.equals(treatyName, that.treatyName) &&
-                Objects.equals(workspaceName, that.workspaceName) &&
-                Objects.equals(expiryDate, that.expiryDate) &&
-                Objects.equals(subsidiaryid, that.subsidiaryid) &&
-                Objects.equals(subsidiaryLedgerid, that.subsidiaryLedgerid);
+                Objects.equals(workspaceName, that.workspaceName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(programid, programName, countryName, treatyid, treatyName, workspaceName, expiryDate, subsidiaryid, subsidiaryLedgerid);
+        return Objects.hash( countryName, treatyid, treatyName, workspaceName);
     }
 
 

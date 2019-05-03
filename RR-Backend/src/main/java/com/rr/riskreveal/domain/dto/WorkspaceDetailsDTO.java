@@ -2,7 +2,9 @@ package com.rr.riskreveal.domain.dto;
 
 import com.rr.riskreveal.domain.ContractSearchResult;
 
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
@@ -15,7 +17,9 @@ public class WorkspaceDetailsDTO {
     private String subsidiaryId;
     private String subsidiaryName;
     private String ledgerName;
-
+    private Date inceptionDate;
+    private Date expiryDate;
+    private String subsidiaryLedgerId;
     List<String> treatySections;
     List<String> years;
 
@@ -24,15 +28,18 @@ public class WorkspaceDetailsDTO {
 
     public WorkspaceDetailsDTO(List<ContractSearchResult> items, List<String> years) {
         ContractSearchResult first = items.get(0);
-        worspaceName = first.getWorkspaceName();
-        cedantCode = first.getCedantCode();
-        cedantName = first.getCedantName();
-        subsidiaryId = ofNullable(first.getSubsidiaryid()).map(String::valueOf).orElse(null);
-        subsidiaryName = first.getSubsidiaryName();
-        ledgerName = first.getSubsidiaryLedgerName();
-        treatySections = items.stream().filter(item -> item != null).map(item -> item.getSectionid())
-                .map(String::valueOf).distinct().sorted().collect(Collectors.toList());
+        this.worspaceName = first.getWorkspaceName();
+        this.cedantCode = first.getCedantCode();
+        this.cedantName = first.getCedantName();
+        this.subsidiaryId = ofNullable(first.getSubsidiaryid()).map(String::valueOf).orElse(null);
+        this.subsidiaryName = first.getSubsidiaryName();
+        this.ledgerName = first.getSubsidiaryLedgerName();
+        this.treatySections = items.stream().filter(Objects::nonNull).map(item -> ofNullable(item.getSectionLabel()).map(sectLabel -> sectLabel.concat(" ").concat(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid())) ) ).orElse(item.getTreatyid().concat("/ ").concat(String.valueOf(item.getSectionid()))  )
+        ).distinct().collect(Collectors.toList());
         this.years= years;
+        this.inceptionDate= first.getInceptionDate();
+        this.expiryDate = first.getExpiryDate();
+        this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
     }
 
     public String getWorspaneName() {
@@ -101,5 +108,29 @@ public class WorkspaceDetailsDTO {
 
     public void setYears(List<String> years) {
         this.years = years;
+    }
+
+    public Date getInceptionDate() {
+        return inceptionDate;
+    }
+
+    public void setInceptionDate(Date inceptionDate) {
+        this.inceptionDate = inceptionDate;
+    }
+
+    public Date getExpiryDate() {
+        return expiryDate;
+    }
+
+    public void setExpiryDate(Date expiryDate) {
+        this.expiryDate = expiryDate;
+    }
+
+    public String getSubsidiaryLedgerId() {
+        return subsidiaryLedgerId;
+    }
+
+    public void setSubsidiaryLedgerId(String subsidiaryLedgerId) {
+        this.subsidiaryLedgerId = subsidiaryLedgerId;
     }
 }

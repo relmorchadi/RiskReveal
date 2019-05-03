@@ -27,34 +27,35 @@ const initiaState: SearchNavBar = {
   data: [],
   recentSearch: [],
   showRecentSearch: [],
-  tables: ['CEDANT', 'COUNTRY', 'TREATY', 'YEAR', 'PROGRAM'],
+  tables: ['YEAR', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME',  'COUNTRY', 'CEDANT_CODE'],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Country', value: 'Japan'}, {key: 'Program', value: 'Prog Name'}]
   ],
   tagShortcuts: [
-    {tag: 'Cedant', value: 'To be defined'},
+    {tag: 'Cedant Name', value: 'c:'},
+    {tag: 'Cedant Code', value: 'cid:'},
     {tag: 'Country', value: 'ctr:'},
-    {tag: 'Contract', value: 'C:'},
-    {tag: 'Project', value: 'C:'},
+    {tag: 'UW Year', value: 'uwy:'},
+    {tag: 'Workspace Name', value: 'wn:'},
+    {tag: 'Workspace Code', value: 'wid:'},
     {tag: 'Program', value: 'C:'},
     {tag: 'PLT', value: 'C:'},
     {tag: 'Section', value: 'C:'},
     {tag: 'Subsidiary', value: 'C:'},
     {tag: 'Ledger', value: 'C:'},
     {tag: 'Bouquet', value: 'C:'},
-    {tag: 'Workspace', value: 'wid:'},
-    {tag: 'UW Year', value: 'uwy:'},
-    {tag: 'UW Unit', value: 'C:'},
+    {tag: 'Contract', value: 'C:'},
+    {tag: 'UW Unit', value: 'C:'}
   ],
   sortcutFormKeysMapper: {
-    c: 'cedant',
+    c: 'cedantName',
+    cid: 'cedantCode',
     uwy: 'year',
-    tid: 'treaty',
     wn: 'workspaceName',
     wid: 'workspaceId',
-    ctr: 'country'
+    ctr: 'countryName'
   }
 };
 
@@ -99,14 +100,16 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchContractsCountAction)
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
     ctx.dispatch(new PatchSearchStateAction({key: 'data', value: []}));
+    console.log('search contracts', keyword);
     forkJoin(
       ...ctx.getState().tables.map(
         tableName => this.searchLoader(keyword, tableName)
       )
     ).subscribe(payload => {
+      console.log('Patch value', payload);
       ctx.dispatch(new PatchSearchStateAction({
         key: 'data',
-        value: _.concat(ctx.getState().data, _.map(payload, 'content'))
+        value: _.map(payload, 'content')
       }));
     });
   }

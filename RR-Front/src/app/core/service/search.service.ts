@@ -1,43 +1,46 @@
-import { Subject } from 'rxjs';
-import { Injectable } from '@angular/core';
+import {Subject} from 'rxjs';
+import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
+import {of} from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
 
-
+  private visibleDropdown = false;
   private _searchedItems = [];
   private _globalSearchItem = '';
 
+  public infodropdown = new Subject<any>();
   public items = new Subject<any>();
   public globalSearch$ = new Subject<any>();
 
   private readonly api = environment.API_URI + 'search/';
 
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient) {
+  }
 
-  searchCedent(keyword= '', size= '20') {
+  searchCedent(keyword = '', size = '20') {
     return this._http.get(`${this.api}cedant`, {params: {keyword, size}});
   }
 
-  searchCountry(keyword= '', size= '20') {
+  searchCountry(keyword = '', size = '20') {
     return this._http.get(`${this.api}/country`, {params: {keyword, size}});
   }
 
-  searchTreaty(keyword= '', size= '20') {
+  searchTreaty(keyword = '', size = '20') {
     return this._http.get(`${this.api}treaty`, {params: {keyword, size}});
   }
 
-  searchYear(keyword= '', size= '20') {
+  searchYear(keyword = '', size = '20') {
     return this._http.get(`${this.api}year`, {params: {keyword, size}});
   }
 
-  searchContracts(filter: WorkspaceFilter, size= '20') {
-    return this._http.post(`${this.api}workspace`, filter, {params: {size}});
+  searchContracts(filter: WorkspaceFilter, offset = '0', size = '20') {
+    return this._http.post(`${this.api}workspace`, filter, {params: {offset,size}});
   }
 
   searchByTable(keyword = '', size = '5', table = 'country') {
@@ -48,8 +51,8 @@ export class SearchService {
     return this._http.get(`${this.api}worspace/${id}/${year}`);
   }
 
-  searchGlobal(keyword, size = '20') {
-    return this._http.get(`${this.api}workspace`, {params: {keyword, size}});
+  searchGlobal(keyword, offset= '0', size = '20') {
+    return this._http.get(`${this.api}workspace`, {params: {keyword, offset, size}});
   }
 
   affectItems(item) {
@@ -71,4 +74,12 @@ export class SearchService {
     return this._searchedItems;
   }
 
+  getvisibleDropdown() {
+    return this.visibleDropdown;
+  }
+
+  setvisibleDropdown(value: boolean) {
+    this.visibleDropdown = value;
+    this.infodropdown.next();
+  }
 }

@@ -212,6 +212,16 @@ ul.widgets-list {
   }
 }
 
+.button-apply-function{
+  width: 100%;
+  border: none;
+  background-color: #008694;
+  color: #fff;
+  padding: 5px;
+  border-radius: 3px;
+}
+
+
 ::ng-deep .dashboard-content {
   padding: 20px 30px !important;
 }
