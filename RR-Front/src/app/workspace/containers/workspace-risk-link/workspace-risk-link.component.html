@@ -50,49 +50,49 @@
             </div>
           </div>
           <ul nz-menu>
-            <li (click)="selectedRMS = item" *ngFor="let item of list1">{{item}}</li>
+            <li nz-menu-item (click)="selectedRMS = item" *ngFor="let item of list1">{{item}}</li>
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective ELT</span>
-              <span class="dropdown-item-selected" *ngIf="selectedRMS">{{selectedPrELT}}</span>
+              <span class="dropdown-item-selected" *ngIf="selectedPrELT">{{selectedPrELT}}</span>
             </div>
             <div class="dropdown-icon">
               <i nz-icon type="down"></i>
             </div>
           </div>
           <ul nz-menu>
-            <li (click)="selectedPrELT = item" *ngFor="let item of list2">{{item}}</li>
+            <li nz-menu-item (click)="selectedPrELT = item" *ngFor="let item of list2">{{item}}</li>
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective EPMetrics</span>
-              <span class="dropdown-item-selected" *ngIf="selectedRMS">{{selectedPrEPM}}</span>
+              <span class="dropdown-item-selected" *ngIf="selectedPrEPM">{{selectedPrEPM}}</span>
             </div>
             <div class="dropdown-icon">
               <i nz-icon type="down"></i>
             </div>
           </div>
           <ul nz-menu>
-            <li (click)="selectedPrEPM = item" *ngFor="let item of list3">{{item}}</li>
+            <li nz-menu-item (click)="selectedPrEPM = item" *ngFor="let item of list3">{{item}}</li>
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Target Currency</span>
-              <span class="dropdown-item-selected" *ngIf="selectedRMS">{{selectedTarget}}</span>
+              <span class="dropdown-item-selected" *ngIf="selectedTarget">{{selectedTarget}}</span>
             </div>
             <div class="dropdown-icon">
               <i nz-icon type="down"></i>
             </div>
           </div>
           <ul nz-menu>
-            <li (click)="selectedTarget = item" *ngFor="let item of list4">{{item}}</li>
+            <li nz-menu-item (click)="selectedTarget = item" *ngFor="let item of list4">{{item}}</li>
           </ul>
         </nz-dropdown>
       </div>
@@ -126,7 +126,7 @@
               <div class="search-bar-result" *ngIf="displayDropdownRDMEDM">
                 <div class="search-bar-result-icon">
                   <i style="font-size: 1.6em; margin-right:15px; cursor:pointer" nz-tooltip nzTitle="Refresh"
-                     (click)="selectAll()" nzPlacement="bottom" class="icon-refresh"></i>
+                     (click)="refreshAll()" nzPlacement="bottom" class="icon-refresh"></i>
                   <i style="font-size: 1.6em; margin-right:15px; cursor:pointer" nz-tooltip nzTitle="Select All"
                      (click)="selectAll()" nzPlacement="bottom" class="icon-focus-add"></i>
                   <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All" (click)="unselectAll()"
@@ -137,16 +137,16 @@
                     <div class="search-bar-result-list">
                       <ul>
                         <li *ngFor="let item of listEdmRdm" class="poover-menu-item" (click)="toggleItems(item)"
-                            [ngClass]="{'poover-menu-item-active': item?.selected}">
+                            [ngClass]="{'poover-menu-item-active': item?.selected || item?.scanned}">
                           <span class="logo" *ngIf="item?.type === 'RDM'" style="background: #03DAC4">R</span>
                           <span class="logo" *ngIf="item?.type === 'EDM'" style="background: #0700CF">E</span>
                           <span>{{item?.name}}</span> <i class="float-right mr-1 mt-1"
-                                                         [ngClass]="{'icon-check_24px': item?.selected}"></i>
+                                                         [ngClass]="{'icon-check_24px': item?.selected || item?.scanned}"></i>
                         </li>
                       </ul>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>SELECT</button>
+                      <button (click)="selectedItem()" nz-button>ADD</button>
                     </div>
                   </nz-tab>
                   <nz-tab nzTitle="EDM">
@@ -154,16 +154,16 @@
                       <ul>
                         <ng-container *ngFor="let item of listEdmRdm">
                           <li *ngIf="item?.type === 'EDM'" class="poover-menu-item" (click)="toggleItems(item)"
-                              [ngClass]="{'poover-menu-item-active': item?.selected}">
+                              [ngClass]="{'poover-menu-item-active': item?.selected || item?.scanned}">
                             <span class="logo" style="background: #0700CF">E</span>
                             <span>{{item?.name}}</span> <i class="float-right mr-1 mt-1"
-                                                           [ngClass]="{'icon-check_24px': item?.selected}"></i>
+                                                           [ngClass]="{'icon-check_24px': item?.selected || item?.scanned}"></i>
                           </li>
                         </ng-container>
                       </ul>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>SELECT</button>
+                      <button (click)="selectedItem()" nz-button>ADD</button>
                     </div>
                   </nz-tab>
                   <nz-tab nzTitle="RDM">
@@ -171,16 +171,16 @@
                       <ul>
                         <ng-container *ngFor="let item of listEdmRdm">
                           <li *ngIf="item?.type === 'RDM'" class="poover-menu-item" (click)="toggleItems(item)"
-                              [ngClass]="{'poover-menu-item-active': item?.selected}">
+                              [ngClass]="{'poover-menu-item-active': item?.selected || item?.scanned}">
                             <span class="logo" style="background: #03DAC4">R</span>
                             <span>{{item?.name}}</span> <i class="float-right mr-1 mt-1"
-                                                           [ngClass]="{'icon-check_24px': item?.selected}"></i>
+                                                           [ngClass]="{'icon-check_24px': item?.selected || item?.scanned}"></i>
                           </li>
                         </ng-container>
                       </ul>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>SELECT</button>
+                      <button (click)="selectedItem()" nz-button>ADD</button>
                     </div>
                   </nz-tab>
                 </nz-tabset>
@@ -193,7 +193,7 @@
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
-                  <div>Selected EDMs & RDMs</div>
+                  <span>Selected EDMs & RDMs</span>
                 </div>
               </div>
               <div class="list-items" *ngIf="displayListRDMEDM">
@@ -202,13 +202,14 @@
                   <li *ngFor="let itemsE of listEDM" class="poover-menu-item"
                       [ngClass]="{'poover-menu-item-active': itemsE.selected}">
                     <span (click)="toggleItemsListRDM(itemsE)" class="logo" style="background: #0700CF;">E</span>
-                    <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name" class="text">{{itemsE?.name}}</span>
-                    <ng-container *ngIf="!itemsE?.synchronized">
+                    <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
+                          class="text">{{itemsE?.name}}</span>
+                    <ng-container *ngIf="itemsE?.scanned">
                       <span class="reference">{{itemsE?.Reference}}</span>
                       <!--<i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                       <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                     </ng-container>
-                    <ng-container *ngIf="itemsE?.synchronized">
+                    <ng-container *ngIf="!itemsE?.scanned">
                       <span class="loading">Scanning</span>
                       <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
                     </ng-container>
@@ -221,12 +222,13 @@
                   <li *ngFor="let itemsR of listRDM" class="poover-menu-item"
                       [ngClass]="{'poover-menu-item-active': itemsR.selected}">
                     <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #03DAC4">R</span>
-                    <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name" class="text">{{itemsR?.name}}</span>
-                    <ng-container *ngIf="!itemsR?.synchronized">
+                    <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
+                          class="text">{{itemsR?.name}}</span>
+                    <ng-container *ngIf="itemsR?.scanned">
                       <span class="reference">{{itemsR?.Reference}}</span>
                       <i (click)="scanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                     </ng-container>
-                    <ng-container *ngIf="itemsR?.synchronized">
+                    <ng-container *ngIf="!itemsR?.scanned">
                       <span class="loading">Scanning</span>
                       <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
                     </ng-container>
@@ -239,7 +241,8 @@
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
-                  <div>Select For Import</div>
+                  <span *ngIf="selectedEDMOrRDM === 'RDM'">Select Analysis For Import</span>
+                  <span *ngIf="selectedEDMOrRDM === 'EDM'">Select Portfolio For Import</span>
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter"></i>
@@ -248,7 +251,7 @@
               </div>
               <div class="show-table">
                 <p-table #dt [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="tableLeft"
-                         [scrollable]="true" scrollHeight="340px" frozenWidth="275px">
+                         [scrollable]="true" scrollHeight="340px" frozenWidth="240px">
                   <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
                       <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -257,9 +260,9 @@
                   <ng-template pTemplate="header" let-columns>
                     <tr>
                       <th *ngFor="let col of columns">
-                        <div *ngIf="col.header !== 'checked'">{{col.header}}</div>
+                        <div *ngIf="col.header !== 'selected'">{{col.header}}</div>
                         <div class="search-bar-table"
-                             *ngIf="col.header !== 'checked' && col.header !== 'id' && col.header !== 'Already Imported'">
+                             *ngIf="col.header !== 'selected' && col.header !== 'id'">
                           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                           <input pInputText type="text"
                                  (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
@@ -267,21 +270,20 @@
                       </th>
                     </tr>
                   </ng-template>
-                  <ng-template pTemplate="body" let-rowData let-columns="columns">
-                    <tr>
+                  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                    <tr (click)="selectRow(rowData, i)">
                       <td *ngFor="let col of columns"
+                          [ngClass]="{'selected-item': rowData?.selected}"
                           [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
-                        <div style=" margin-top: -12px; font-size:12px;" *ngIf="col.field === 'checked'">
-                          <i nz-icon *ngIf="!rowData[col.field]" nzType="check-circle" nzTheme="outline"></i></div>
-                        <div *ngIf="col.field === 'id'">{{rowData[col.field]}}</div>
-                        <div *ngIf="col.field === 'name'">{{rowData[col.field]}}</div>
+                        <div style=" display: flex;" *ngIf="col.field === 'selected'">
+                          <i *ngIf="!rowData.selected" (click)="rowData.selected = true"
+                             class="icon-check_circle_24px"></i>
+                          <i *ngIf="rowData.selected" (click)="rowData.selected = false" class="icon-check_24px"></i>
+                        </div>
+                        <div *ngIf="col.field !== 'selected'">{{rowData[col.field]}}</div>
                         <div style="font-size:20px; color: #0700CF; text-align: center;"
                              *ngIf="col.field === 'AlreadyImported'">
                           <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}"></i></div>
-                        <div *ngIf="col.field === 'description'">{{rowData[col.field]}}</div>
-                        <div *ngIf="col.field === 'engineVersion'">{{rowData[col.field]}}</div>
-                        <div *ngIf="col.field === 'groupeType'">{{rowData[col.field]}}</div>
-                        <div *ngIf="col.field === 'cedant'">{{rowData[col.field]}}</div>
                       </td>
                     </tr>
                   </ng-template>
@@ -304,9 +306,7 @@
               <div>Exposure Summaries</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <nz-select *ngIf="collapsefooter" nzShowSearch nzAllowClear [(ngModel)]="list4value">
-                <nz-option *ngFor="let op of list4" [nzLabel]="op" [nzValue]="op"></nz-option>
-              </nz-select>
+              <button *ngIf="collapsefooter" nz-button> ADVANCED</button>
               <div class="icon-drop">
                 <i *ngIf="collapsefooter" nz-icon nzType="up" (click)="collapseFooter()" nzTheme="outline"></i>
                 <i nz-icon *ngIf="!collapsefooter" (click)="collapseFooter()"
@@ -318,29 +318,55 @@
             <table>
               <thead>
               <tr>
+                <th></th>
                 <th style="min-width:60px">Status</th>
-                <th style="min-width:220px">Portfolio</th>
-                <th style="min-width:120px">Exposed Currency</th>
-                <th style="min-width:120px">Target Currency</th>
-                <th style="min-width:60px">EDM</th>
-                <th style="min-width:70px">Import ID</th>
-                <th style="min-width:220px">Date Import</th>
-                <th style="min-width:90px">User 1</th>
+                <th style="min-width:40px">
+                  ID <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:120px">
+                  Number <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:120px">
+                  Name <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:60px">
+                  Exposed Location <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:60px">
+                  Exposure Currency <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:60px">
+                  Target Currency <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:60px">
+                  Unit Multiplier <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:60px">
+                  Proportion <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:120px">
+                  EDM <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
                 <th style="min-width:35px"></th>
               </tr>
               </thead>
               <tbody>
               <tr *ngFor="let items of SummaryInfo">
+                <th><i class="icon-loop_24px"></i></th>
                 <th style="text-align: center">
-                  <div class="state" [ngClass]="{'state-false': !items.status}"></div>
+                  <nz-progress [nzPercent]="items?.status" [nzWidth]="20" nzType="circle"></nz-progress>
                 </th>
-                <th>{{items.portfolio}}</th>
-                <th>{{items.exposedCurrency}}</th>
-                <th>{{items.TargetCurrency}}</th>
-                <th>{{items.EDM}}</th>
-                <th>{{items.importID}}</th>
-                <th><i class="icon-event-outlined"></i>{{items.dateImport}}</th>
-                <th>{{items.User1}}</th>
+                <th>{{items?.id}}</th>
+                <th>{{items?.number}}</th>
+                <th>{{items?.name}}</th>
+                <th>
+                  <div class="state" [ngClass]="{'state-false': !items?.exposedLocation}"></div>
+                </th>
+                <th>{{items?.exposedCurrency}}</th>
+                <th>{{items?.TargetCurrency}}</th>
+                <th>{{items?.unitMultiplier}}</th>
+                <th>{{items?.proportion}}</th>
+                <th>{{items?.EDM}}</th>
                 <th><i class="icon-trash-alt"></i></th>
               </tr>
               </tbody>
@@ -352,7 +378,7 @@
         <div class="body-wrap-footer">
           <div class="body-wrap-footer-left">
             <nz-select nzShowSearch nzAllowClear [(ngModel)]="list5value">
-              <nz-option *ngFor="let op of list5" [nzLabel]="op" [nzValue]="op"></nz-option>
+              <nz-option *ngFor="let op of list6" [nzLabel]="op" [nzValue]="op"></nz-option>
             </nz-select>
             <label nz-radio [ngStyle]="" nzValue="A">Publish to ARC</label>
             <label nz-radio [ngStyle]="" nzValue="B">Publish for Pricing</label>
@@ -367,3 +393,10 @@
 </div>
 
 
+<ng-template let-search='search' #search>
+  <div class="search-bar-table">
+    <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+    <input type="text" >
+    <!--(input)="filterCol(search,)-->
+  </div>
+</ng-template>

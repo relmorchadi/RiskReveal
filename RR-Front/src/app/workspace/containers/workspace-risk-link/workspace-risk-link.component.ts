@@ -9,53 +9,56 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./workspace-risk-link.component.scss']
 })
 export class WorkspaceRiskLinkComponent implements OnInit {
-  leftNavbarIsCollapsed: boolean = false;
-  collapseWorkspaceDetail: boolean = true;
+  leftNavbarIsCollapsed = false;
+  lastSelectedIndex = null;
   componentSubscription: any = [];
   selectedPrStatus = '1';
 
   list1 = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
-  list2 = ['Net Loss Pre Cat (RL)', 'Net Loss Pre Cat (RL)', 'Net Loss Pre Cat (RL)'];
-  list3 = ['Facultative Reinsurance Loss', 'item 1', 'item 2'];
-  list4 = ['MLC (USD)', 'item 1', 'item 2'];
+  list2 = ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'];
+  list3 = ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'];
+  list4 = ['MLC (USD)', 'MLC (EUR)', 'YEN'];
   list5: any = ['Currently Imported', 'item 1', 'item 2'];
   list6: any = ['Add calibration', 'item 1', 'item 2'];
 
-  selectedRMS: string;
-  selectedPrELT: string;
-  selectedPrEPM: string;
-  selectedTarget: string;
-  list4value: string = 'Currently Imported';
-  list5value: string = 'Add calibration';
+  selectedRMS = 'AZU-P-RL17-SQL14';
+  selectedPrELT = 'Net Loss Pre Cat (RL)';
+  selectedPrEPM = 'Facultative Reinsurance Loss';
+  selectedTarget = 'MLC (USD)';
+  list4value = 'Currently Imported';
+  list5value = 'Add calibration';
 
   listEDM: any = [];
   listRDM: any = [];
+  selectedEDMOrRDM: string;
+
+  selectedAnalysis: any = [];
+  selectedPortfolio: any = [];
 
   listEdmRdm: any = [
-    {id: 1, name: 'AA2012_syntheticCurve_E', type: 'EDM', selected: false, Reference: '0/13'},
-    {id: 2, name: 'AA2012_syntheticCurve_R', type: 'RDM', selected: false, Reference: '0/5'},
-    {id: 3, name: 'AA2016_syntheticCurve_R', type: 'RDM', selected: false, Reference: '0/13'},
-    {id: 4, name: 'AA2017_SEA_syntheticCurve_R', type: 'RDM', selected: false, Reference: '0/13'},
-    {id: 5, name: 'ALMF_test_E', type: 'EDM', selected: false, Reference: '0/25'},
-    {id: 6, name: 'ALMF_test_R', type: 'RDM', selected: false, Reference: '0/12'},
-    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, Reference: '0/3'},
-    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, Reference: '0/4'},
-    {id: 9, name: 'Aon_IF_Flood_Example_E', type: 'EDM', selected: false, Reference: '0/2'},
-    {id: 10, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM', type: 'EDM', selected: false, Reference: '0/15'},
-    {id: 11, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', type: 'RDM', selected: false, Reference: '0/13'},
-    {id: 12, name: 'CC_ALMF_test_E', type: 'EDM', selected: false, Reference: '0/13'},
-    {id: 13, name: 'CG1801_DEU_Allianz_DEFL_R', type: 'RDM', selected: false, Reference: '0/41'},
-    {id: 14, name: 'CG1801_DEU_Allianz_DEFL_E', type: 'EDM', selected: false, Reference: '0/41'},
-    {id: 15, name: 'Anxin_2018_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, Reference: '0/15'},
-    {id: 16, name: 'Anxin_2018_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, Reference: '0/17'},
-    {id: 17, name: 'CF1803_PORT_R', type: 'RDM', selected: false, Reference: '0/3'},
-    {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, Reference: '0/25'}
+    {id: 1, name: 'AA2012_syntheticCurve_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 2, name: 'AA2012_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/5'},
+    {id: 3, name: 'AA2016_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 4, name: 'AA2017_SEA_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 5, name: 'ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'},
+    {id: 6, name: 'ALMF_test_R', type: 'RDM', selected: false, scanned: false, Reference: '0/12'},
+    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
+    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/4'},
+    {id: 9, name: 'Aon_IF_Flood_Example_E', type: 'EDM', selected: false, scanned: false, Reference: '0/2'},
+    {id: 10, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM', type: 'EDM', selected: false, scanned: false, Reference: '0/15'},
+    {id: 11, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 12, name: 'CC_ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 13, name: 'CG1801_DEU_Allianz_DEFL_R', type: 'RDM', selected: false, scanned: false, Reference: '0/41'},
+    {id: 14, name: 'CG1801_DEU_Allianz_DEFL_E', type: 'EDM', selected: false, scanned: false, Reference: '0/41'},
+    {id: 15, name: 'Anxin_2018_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/15'},
+    {id: 16, name: 'Anxin_2018_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/17'},
+    {id: 17, name: 'CF1803_PORT_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
+    {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
   ];
 
-  /* tslint:disable */
   tableLeft: any = [
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -65,7 +68,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -75,7 +78,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -85,7 +88,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: true,
@@ -95,7 +98,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -105,7 +108,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: true,
@@ -115,7 +118,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -125,7 +128,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -135,7 +138,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -145,7 +148,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -155,7 +158,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: true,
@@ -165,7 +168,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: true,
@@ -175,7 +178,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -185,7 +188,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
     {
-      checked: false,
+      selected: false,
       id: '10',
       name: 'Europe All Lines, EP Wind Only',
       AlreadyImported: false,
@@ -195,7 +198,6 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       cedant: 'RMS_EUWS_industry'
     },
   ];
-  /* tslint:enable */
 
   scrollableCols = [
     {field: 'description', header: 'Description', width: '150px'},
@@ -205,33 +207,51 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   ];
 
   frozenCols = [
-    {field: 'checked', header: 'checked', width: '20px'},
+    {field: 'selected', header: 'selected', width: '20px'},
     {field: 'id', header: 'id', width: '30px'},
-    {field: 'name', header: 'name', width: '160px'},
-    {field: 'AlreadyImported', header: 'Already Imported', width: '55px'}
+    {field: 'name', header: 'name', width: '190px'}
   ];
   /* tslint:disable */
   SummaryInfo: any = [
     {
-      status: true,
-      portfolio: 'Portfolio 2',
+      scanned: true,
+      status: 100,
+      id: '286',
+      number: 'EUGU_CHIPZCP_CDSC_PR',
+      name: 'AUWS_PR_20170930',
+      exposedLocation: true,
       exposedCurrency: 'USD',
       TargetCurrency: 'USD',
-      EDM: 'EDM2',
-      importID: '1',
-      dateImport: 'Wed Nov 14 13:08:59 CET 2018',
-      User1: 'Nathalie Dulac'
+      unitMultiplier: 1.0,
+      proportion: '100%',
+      EDM: 'AA2012_SyntheticCurve_E'
     },
     {
-      status: false,
-      portfolio: 'Portfolio 2',
+      scanned: true,
+      status: 60,
+      id: '325',
+      number: 'EUGU_CHIPZCP_CDSC_PR',
+      name: 'AUWS_PR_20170930',
+      exposedLocation: true,
       exposedCurrency: 'USD',
       TargetCurrency: 'USD',
-      EDM: 'EDM2',
-      importID: '1',
-      dateImport: 'Wed Nov 14 13:08:59 CET 2018',
-      User1: 'Nathalie Dulac'
-    }
+      unitMultiplier: 1.0,
+      proportion: '100%',
+      EDM: 'AA2012_SyntheticCurve_E'
+    },
+    {
+      scanned: true,
+      status: 0,
+      id: '284',
+      number: 'EUGU_CHIPZCP_CDSC_PR',
+      name: 'AUWS_PR_20170930',
+      exposedLocation: true,
+      exposedCurrency: 'USD',
+      TargetCurrency: 'USD',
+      unitMultiplier: 1.0,
+      proportion: '100%',
+      EDM: 'AA2012_SyntheticCurve_E'
+    },
   ];
 
   displayDropdownRDMEDM: boolean = false;
@@ -260,39 +280,22 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   toggleItemsListRDM(RDM) {
-    let nbrSelected = 0;
-    this.listRDM.forEach((e) => {
-        e.selected === true ? nbrSelected = nbrSelected + 1 : null;
-      }
-    );
-    this.listEDM.forEach((e) => {
-        e.selected === true ? nbrSelected = nbrSelected + 1 : null;
-      }
-    );
+    const selectedRDMItems = this.listRDM.filter( RM => RM.selected);
+    const selectedEDMItems = this.listEDM.filter( EM => EM.selected);
+    const nbrSelected = selectedEDMItems.length + selectedRDMItems.length;
     if (nbrSelected === 0) {
       RDM.selected = true;
+      this.selectedEDMOrRDM = RDM.type;
       this.displayTable = true;
     } else {
       if (!RDM.selected) {
-        this.listRDM.forEach((e) => {
-            e.selected = false;
-          }
-        );
-        this.listEDM.forEach((e) => {
-            e.selected = false;
-          }
-        );
+        this.unselectEDMRDM();
         RDM.selected = true;
+        this.selectedEDMOrRDM = RDM.type;
       } else {
-        this.listRDM.forEach((e) => {
-            e.selected = false;
-          }
-        );
-        this.listEDM.forEach((e) => {
-            e.selected = false;
-          }
-        );
+        this.unselectEDMRDM();
         this.displayTable = false;
+        this.selectedEDMOrRDM = null;
       }
     }
   }
@@ -309,6 +312,24 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     });
   }
 
+  unselectEDMRDM() {
+    this.listRDM.forEach((e) => {
+        e.selected = false;
+      }
+    );
+    this.listEDM.forEach((e) => {
+        e.selected = false;
+      }
+    );
+  }
+
+  refreshAll() {
+    this.listEdmRdm.forEach((e) => {
+      e.scanned = false;
+      e.selected = false;
+    });
+  }
+
   openCloseDropdown() {
     this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
   }
@@ -321,12 +342,29 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     this.listEDM = [];
     this.listRDM = [];
     this.listEdmRdm.forEach((e) => {
-      if (e.selected === true && e.type === 'EDM') {
-        const newItem = {id: e.id, name: e.name, type: e.type, selected: false, synchronized: false, Reference: e.Reference};
-        this.listEDM = [...this.listEDM, newItem];
-      } else if (e.selected === true && e.type === 'RDM') {
-        const newItem = {id: e.id, name: e.name, type: e.type, selected: false, synchronized: false, Reference: e.Reference};
-        this.listRDM = [...this.listRDM, newItem];
+      if (e.selected === true || e.scanned === true) {
+        if (e.type === 'EDM') {
+          const newItem = {
+            id: e.id,
+            name: e.name,
+            type: e.type,
+            selected: false,
+            scanned: true,
+            Reference: e.Reference
+          };
+          this.listEDM = [...this.listEDM, newItem];
+        } else {
+          const newItem = {
+            id: e.id,
+            name: e.name,
+            type: e.type,
+            selected: false,
+            scanned: true,
+            Reference: e.Reference
+          };
+          this.listRDM = [...this.listRDM, newItem];
+        }
+        e.scanned = true;
       }
     });
   }
@@ -340,20 +378,17 @@ export class WorkspaceRiskLinkComponent implements OnInit {
 
   scanItem(item) {
     console.log('i here');
-    item.synchronized = true;
+    item.scanned = false;
     setTimeout(() =>
-      item.synchronized = false, 1000
+      item.scanned = true, 1000
     );
   }
 
   selectStep(value) {
     if (value === 0 && this.currentStep === 1) {
-      this.currentStep = 0;
-      this.listEDM = [];
-      this.listRDM = [];
-      this.displayListRDMEDM = false;
       this.displayTable = false;
-      this.unselectAll();
+      this.refreshAll();
+      this.selectedItem();
     }
     if (value === 1 && this.currentStep === 2) {
       this.currentStep = 1;
@@ -387,5 +422,33 @@ export class WorkspaceRiskLinkComponent implements OnInit {
 
   collapseFooter() {
     this.collapsefooter = !this.collapsefooter;
+  }
+
+  selectRow(row: any, index: number) {
+    if ((window as any).event.ctrlKey) {
+      row.selected = !row.selected;
+    }
+    if ((window as any).event.shiftKey) {
+      event.preventDefault();
+      if (this.lastSelectedIndex) {
+        this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
+        this.lastSelectedIndex = null;
+      } else {
+        this.lastSelectedIndex = index;
+      }
+    }
+    // this.currentSelectedItem = row;
+    const selectedRows = this.tableLeft.filter(ws => ws.selected === true);
+    this.selectedEDMOrRDM === 'RDM' ? this.selectedAnalysis = selectedRows : this.selectedPortfolio = selectedRows;
+  }
+
+  private selectSection(from, to) {
+    if (from == to) {
+      this.tableLeft[from].selected = !this.tableLeft[from].selected;
+    } else {
+      for (let i = from; i <= to; i++) {
+        this.tableLeft[i].selected = !this.tableLeft[i].selected;
+      }
+    }
   }
 }
