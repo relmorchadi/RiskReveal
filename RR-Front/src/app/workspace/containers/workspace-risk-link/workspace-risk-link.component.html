@@ -25,7 +25,7 @@
     <div class="body-wrap">
       <div class="body-wrap-header">
         <div class="body-wrap-header-text">
-          <span class="body-wrap-header-text-title">TREATY</span>
+<!--          <span class="body-wrap-header-text-title">TREATY</span>-->
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
         <div class="body-wrap-header-step">
@@ -105,12 +105,12 @@
             </div>
             <div class="body-wrapper-header-right">
               <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-              <i nz-icon *ngIf="collapsehead" (click)="collapseHead()" nzType="up" nzTheme="outline"></i>
-              <i nz-icon *ngIf="!collapsehead" (click)="collapseHead()"
+              <i nz-icon *ngIf="collapseHead" (click)="collapseHead = !collapseHead" nzType="up" nzTheme="outline"></i>
+              <i nz-icon *ngIf="!collapseHead" (click)="collapseHead = !collapseHead"
                  style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
             </div>
           </div>
-          <div *ngIf="collapsehead" class="body-wrapper-body">
+          <div *ngIf="collapseHead" class="body-wrapper-body">
             <div class="body-wrapper-search" clickOutside (clickOutside)="closeDropdown()"
                  [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': displayListRDMEDM}">
               <div class="search-bar" (click)="openCloseDropdown()"
@@ -189,7 +189,7 @@
           </div>
         </div>
         <div class="body-main-wrapper" style="" *ngIf="displayListRDMEDM">
-          <div class="left" *ngIf="collapsehead">
+          <div class="left" *ngIf="collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
@@ -237,7 +237,7 @@
               </div>
             </div>
           </div>
-          <div class="right" *ngIf="displayTable && collapsehead">
+          <div class="right" *ngIf="displayTable && collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
@@ -246,7 +246,7 @@
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter"></i>
-                  <button nz-button> ADVANCED</button>
+                  <button class="modal-button" nz-button> ADVANCED</button>
                 </div>
               </div>
               <div class="show-table">
@@ -306,55 +306,55 @@
               <div>Exposure Summaries</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button *ngIf="collapsefooter" nz-button> ADVANCED</button>
+              <button class="modal-button" *ngIf="collapseFooter" nz-button> ADVANCED</button>
               <div class="icon-drop">
-                <i *ngIf="collapsefooter" nz-icon nzType="up" (click)="collapseFooter()" nzTheme="outline"></i>
-                <i nz-icon *ngIf="!collapsefooter" (click)="collapseFooter()"
+                <i *ngIf="collapseFooter" nz-icon nzType="up" (click)="collapseFooter = !collapseFooter" nzTheme="outline"></i>
+                <i nz-icon *ngIf="!collapseFooter" (click)="collapseFooter = ! collapseFooter"
                    style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
               </div>
             </div>
           </div>
-          <div class="summary-info" *ngIf="collapsefooter">
+          <div class="summary-info" *ngIf="collapseFooter">
             <table>
               <thead>
               <tr>
                 <th></th>
-                <th style="min-width:60px">Status</th>
-                <th style="min-width:40px">
+                <th style="width:45px">Status</th>
+                <th style="width:50px">
                   ID <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:120px">
+                <th style="min-width:160px">
                   Number <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:120px">
+                <th style="width:120px">
                   Name <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:60px">
+                <th style="min-width:120px">
                   Exposed Location <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:60px">
+                <th style="min-width:120px">
                   Exposure Currency <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:60px">
+                <th style="min-width:120px">
                   Target Currency <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:60px">
+                <th style="min-width:120px">
                   Unit Multiplier <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:60px">
+                <th style="min-width:100px">
                   Proportion <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:120px">
+                <th style="min-width:140px">
                   EDM <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="min-width:35px"></th>
+                <th style="min-width:25px"><i class="icon-menu_24px"></i></th>
               </tr>
               </thead>
               <tbody>
-              <tr *ngFor="let items of SummaryInfo">
+              <tr *ngFor="let items of summaryInfo">
                 <th><i class="icon-loop_24px"></i></th>
                 <th style="text-align: center">
-                  <nz-progress [nzPercent]="items?.status" [nzWidth]="20" nzType="circle"></nz-progress>
+                  <nz-progress [nzPercent]="items?.status" [ngClass]="{'hidden-text': items.status < 100 }" [nzWidth]="20" nzType="circle"></nz-progress>
                 </th>
                 <th>{{items?.id}}</th>
                 <th>{{items?.number}}</th>
@@ -363,8 +363,8 @@
                   <div class="state" [ngClass]="{'state-false': !items?.exposedLocation}"></div>
                 </th>
                 <th>{{items?.exposedCurrency}}</th>
-                <th>{{items?.TargetCurrency}}</th>
-                <th>{{items?.unitMultiplier}}</th>
+                <th>{{items?.targetCurrency}}</th>
+                <th>{{items?.unitMultiplier | number:'1.1-1'}}</th>
                 <th>{{items?.proportion}}</th>
                 <th>{{items?.EDM}}</th>
                 <th><i class="icon-trash-alt"></i></th>
@@ -374,14 +374,92 @@
           </div>
         </div>
       </div>
+
+
       <div class="body-wrap-body" *ngIf="displayImport">
+        <div class="body-wrapper">
+          <div class="body-wrapper-header">
+            <div class="body-wrapper-header-left">
+              <hr>
+              <div>Analysis Results</div>
+            </div>
+            <div class="body-wrapper-header-right-summary">
+              <button class="modal-button" *ngIf="collapseResult" nz-button> ADVANCED</button>
+              <div class="icon-drop">
+                <i *ngIf="collapseResult" nz-icon nzType="up" (click)="collapseResult = !collapseResult" nzTheme="outline"></i>
+                <i nz-icon *ngIf="!collapseResult" (click)="collapseResult = !collapseResult"
+                   style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
+              </div>
+            </div>
+          </div>
+          <div class="summary-info" *ngIf="collapseResult">
+            <table>
+              <thead>
+              <tr>
+                <th></th>
+                <th style="width:45px">Status</th>
+                <th style="width:50px">
+                  ID <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:190px">
+                  Name <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="width:220px">
+                  Description <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:100px">
+                  Region Peril <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:100px">
+                  Analysis Currency <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:100px">
+                  Target Currency <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:100px">
+                  ELT FIN PERSP <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:100px">
+                  Occurrence Basis <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:90px">
+                  Unit Miltiplier <ng-container *ngTemplateOutlet="search"></ng-container>
+                </th>
+                <th style="min-width:25px"><i class="icon-menu_24px"></i></th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr *ngFor="let items of resultsInfo">
+                <th><i class="icon-loop_24px"></i></th>
+                <th style="text-align: center">
+                  <nz-progress [nzPercent]="items?.status" [ngClass]="{'hidden-text': items.status < 100 }" [nzWidth]="20" nzType="circle"></nz-progress>
+                </th>
+                <th>{{items?.id}}</th>
+                <th>{{items?.name}}</th>
+                <th>{{items?.description}}</th>
+                <th>{{items?.regionPeril}}</th>
+                <th>{{items?.analysisCurrency}}</th>
+                <th>{{items?.targetCurrency}}</th>
+                <th>{{items?.ELT}}</th>
+                <th>{{items?.occurrenceBasis}}</th>
+                <th>{{items?.unitMultiplier | number:'1.1-1'}}</th>
+                <th><i class="icon-trash-alt"></i></th>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="footer-section" *ngIf="displayImport">
         <div class="body-wrap-footer">
           <div class="body-wrap-footer-left">
             <nz-select nzShowSearch nzAllowClear [(ngModel)]="list5value">
               <nz-option *ngFor="let op of list6" [nzLabel]="op" [nzValue]="op"></nz-option>
             </nz-select>
-            <label nz-radio [ngStyle]="" nzValue="A">Publish to ARC</label>
-            <label nz-radio [ngStyle]="" nzValue="B">Publish for Pricing</label>
+            <label nz-checkbox [(ngModel)]="checkedARC">Publish to ARC</label>
+            <label nz-checkbox [(ngModel)]="checkedPricing">Publish for Pricing</label>
           </div>
           <div class="body-wrap-footer-right">
             <button nz-button>IMPORT</button>

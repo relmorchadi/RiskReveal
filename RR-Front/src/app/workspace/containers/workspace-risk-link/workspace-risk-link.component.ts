@@ -13,6 +13,8 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   lastSelectedIndex = null;
   componentSubscription: any = [];
   selectedPrStatus = '1';
+  checkedARC = false;
+  checkedPricing = false;
 
   list1 = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
   list2 = ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'];
@@ -212,7 +214,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {field: 'name', header: 'name', width: '190px'}
   ];
   /* tslint:disable */
-  SummaryInfo: any = [
+  summaryInfo: any = [
     {
       scanned: true,
       status: 100,
@@ -221,7 +223,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       name: 'AUWS_PR_20170930',
       exposedLocation: true,
       exposedCurrency: 'USD',
-      TargetCurrency: 'USD',
+      targetCurrency: 'USD',
       unitMultiplier: 1.0,
       proportion: '100%',
       EDM: 'AA2012_SyntheticCurve_E'
@@ -234,7 +236,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       name: 'AUWS_PR_20170930',
       exposedLocation: true,
       exposedCurrency: 'USD',
-      TargetCurrency: 'USD',
+      targetCurrency: 'USD',
       unitMultiplier: 1.0,
       proportion: '100%',
       EDM: 'AA2012_SyntheticCurve_E'
@@ -247,10 +249,52 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       name: 'AUWS_PR_20170930',
       exposedLocation: true,
       exposedCurrency: 'USD',
-      TargetCurrency: 'USD',
+      targetCurrency: 'USD',
       unitMultiplier: 1.0,
       proportion: '100%',
       EDM: 'AA2012_SyntheticCurve_E'
+    },
+  ];
+
+  resultsInfo: any = [
+    {
+      scanned: false,
+      status: 100,
+      id: '286',
+      name: 'Europe All Lines, EP Wind Only',
+      description: 'Europe All Lines, EP Wind Only',
+      regionPeril: 'DEFL',
+      analysisCurrency: 'USD',
+      targetCurrency: 'USD',
+      ELT: 'GR',
+      occurrenceBasis: 'PerEvent',
+      unitMultiplier: 1.0
+    },
+    {
+      scanned: false,
+      status: 50,
+      id: '285',
+      name: 'Europe All Lines, EP Wind Only',
+      description: 'Europe All Lines, EP Wind Only',
+      regionPeril: 'DEFL',
+      analysisCurrency: 'USD',
+      targetCurrency: 'USD',
+      ELT: 'GR',
+      occurrenceBasis: 'PerEvent',
+      unitMultiplier: 1.0
+    },
+    {
+      scanned: false,
+      status: 20,
+      id: '284',
+      name: 'Europe All Lines, EP Wind Only',
+      description: 'Europe All Lines, EP Wind Only',
+      regionPeril: 'DEFL',
+      analysisCurrency: 'USD',
+      targetCurrency: 'USD',
+      ELT: 'GR',
+      occurrenceBasis: 'PerEvent',
+      unitMultiplier: 1.0
     },
   ];
 
@@ -260,8 +304,9 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   displayImport: boolean = false;
 
 
-  collapsehead: boolean = true;
-  collapsefooter: boolean = true;
+  collapseHead: boolean = true;
+  collapseFooter: boolean = true;
+  collapseResult: boolean = true;
   /* tslint:enable */
   currentStep = 0;
 
@@ -414,14 +459,6 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       this.currentStep = 2;
       this.displayImport = true;
     }
-  }
-
-  collapseHead() {
-    this.collapsehead = !this.collapsehead;
-  }
-
-  collapseFooter() {
-    this.collapsefooter = !this.collapsefooter;
   }
 
   selectRow(row: any, index: number) {
