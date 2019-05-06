@@ -42,10 +42,23 @@ export class TableComponent implements OnInit {
 
   }
 
-  sort(sort: { key: string; value: string }): void {
-    /*this.sortName = sort.key;
-    this.sortValue = sort.value;
-    this.search();*/
+  sort(): void {
+    this.listOfData = _.sortBy(this.listOfData, [(o) => {
+      return !o.selected;
+    }]);
+    console.log(this.listOfData);
+  }
+
+  selectAll() {
+    this.listOfData.forEach(
+      ws => ws.selected = true
+    );
+  }
+
+  unselectAll() {
+    this.listOfData.forEach(
+      ws => ws.selected = false
+    );
   }
 
   filterCol(searchValue: string, searchAddress: string): void {
@@ -64,27 +77,30 @@ export class TableComponent implements OnInit {
   selectRow(row: any, index: number) {
     if ((window as any).event.ctrlKey) {
       row.selected = !row.selected;
-    }
-    if ((window as any).event.shiftKey) {
+    } else if ((window as any).event.shiftKey) {
       event.preventDefault();
       if (this.lastSelectedIndex) {
         this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
         this.lastSelectedIndex = null;
       } else {
         this.lastSelectedIndex = index;
+        row.selected = true;
       }
+    } else {
+      this.currentSelectedItem = row;
+      this.selectOne.emit(row);
     }
-    this.currentSelectedItem = row;
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
-    this.selectOne.emit(row);
   }
 
   private selectSection(from, to) {
     if (from == to) {
-      this.listOfData[from].selected = !this.listOfData[from].selected;
+      // this.listOfData[from].selected = !this.listOfData[from].selected;
+      this.listOfData[from].selected = true;
     } else {
       for (let i = from; i <= to; i++) {
-        this.listOfData[i].selected = !this.listOfData[i].selected;
+        // this.listOfData[i].selected = !this.listOfData[i].selected;
+        this.listOfData[i].selected = true;
       }
     }
   }
