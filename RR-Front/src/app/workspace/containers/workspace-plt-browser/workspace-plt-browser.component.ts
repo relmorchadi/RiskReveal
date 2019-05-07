@@ -503,6 +503,10 @@ export class WorkspacePltBrowserComponent implements OnInit {
         this.visible = false;
         this.sumnaryPltDetails = null;
         this.pltDetailsPermission = false;
+      } else {
+        this.plts.forEach( pt => pt.selected = false);
+        plt.selected = true;
+        this.sumnaryPltDetails = plt;
       }
     } else {
       this.plts.forEach(pt => pt.selected = false);
