@@ -1,7 +1,6 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, HostListener} from '@angular/core';
 import { LazyLoadEvent } from 'primeng/primeng';
 import * as _ from 'lodash';
-import {of} from 'rxjs/internal/observable/of';
 
 @Component({
   selector: 'app-table',
@@ -15,13 +14,22 @@ export class TableComponent implements OnInit {
 
   @ViewChild('dt') table;
 
+  contextSelectedItem: any;
+
   loading: boolean;
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
   indeterminate = false;
 
-  data$: any;
+  items = [
+    { label: 'View Detail', icon: 'pi pi-search', command: (event) => {
+        this.currentSelectedItem = this.contextSelectedItem;
+        this.selectOne.emit(this.contextSelectedItem);
+      } },
+    { label: 'Open', icon: 'pi pi-times', command: (event) => this.handler('openInHere', this.contextSelectedItem) },
+    { label: 'Pop Out', icon: 'pi pi-times', command: (event) => this.handler('openInPopup', this.contextSelectedItem) },
+    ];
 
   @Input()
   totalRecords;
@@ -103,8 +111,8 @@ export class TableComponent implements OnInit {
         row.selected = true;
       }
     } else {
-      this.currentSelectedItem = row;
-      this.selectOne.emit(row);
+      this.listOfData.forEach( res => res.selected = false);
+      row.selected = true;
     }
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
     this.isIndeterminate();
@@ -150,10 +158,10 @@ export class TableComponent implements OnInit {
     tableColumn.handler(this.selectedRows);
   }
 
-  @HostListener('keyup', ['$event']) keyup(e) {
+/*  @HostListener('keyup', ['$event']) keyup(e) {
     console.log('Keyup', JSON.stringify(e.code) );
     if (e.code.match('Shift')) {
       this.lastSelectedIndex = null;
     }
-  }
+  }*/
 }
