@@ -76,6 +76,12 @@
   <i nz-icon type="search"></i>
 </ng-template>-->
 <!--Total records : {{totalRecords |json}}-->
+
+<!--<div>
+  <i nz-tooltip nzTitle="Select All" nzPlacement="bottom" (click)="selectAll()" class="icon-focus-add icons-font"></i>
+  <i nz-tooltip nzTitle="Unselect All" nzPlacement="bottom" (click)="unselectAll()" class="icon-minus-square icons-font"></i>
+</div>-->
+
 <p-table *ngIf="virtualScroll"
          [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
@@ -91,9 +97,15 @@
   <ng-template pTemplate="header" let-columns>
     <tr *ngIf="!sortable">
       <th *ngFor="let col of columns" pResizableColumn>
-        <span *ngIf="col?.display">
+        <span *ngIf="col?.display" style="display:flex">
           {{col?.header}}
-          <i *ngIf="col.type === 'checkbox'" (click)="sort()" class="icon-sort-amount-down"></i>
+          <ng-container *ngIf="col.type === 'checkbox'" >
+            <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
+                   [nzIndeterminate]="indeterminate"></label>
+<!--            <i *ngIf="col.type === 'checkbox'" nz-tooltip nzTitle="Sort/unSort" nzPlacement="bottom" (click)="sort()"
+               class="icon-sort-amount-down"></i>-->
+            <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
+          </ng-container>
         </span>
         <div class="search-bar-table" *ngIf="col?.filtered">
           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -111,14 +123,13 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-    <tr [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+    <tr
+      [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
         <td *ngIf="col?.type ==='checkbox'">
           <div style="display:flex">
-            <i *ngIf="rowData?.selected" (click)="rowData.selected = false"
-               [ngClass]="col?.class"></i>
-            <i *ngIf="!rowData?.selected" (click)="rowData.selected = true"
-               [ngClass]="'icon-check_circle_24px'"></i>
+
+            <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
         <td (click)="selectRow(rowData, i)" *ngIf="col?.type !=='checkbox'">
@@ -170,8 +181,9 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-    <tr [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem }"
-        (click)="selectRow(rowData, i)">
+    <tr
+      [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem }"
+      (click)="selectRow(rowData, i)">
       <ng-container *ngFor="let col of columns">
         <td *ngIf="col?.type ==='checkbox'">
           <div style="display:flex">
@@ -192,3 +204,8 @@
     </tr>
   </ng-template>
 </p-table>
+
+<!--            <i *ngIf="rowData?.selected" (click)="uncheckRow(rowData)"
+               [ngClass]="col?.class"></i>
+            <i *ngIf="!rowData?.selected" (click)="uncheckRow(rowData)"
+               [ngClass]="'icon-check_circle_24px'"></i>-->

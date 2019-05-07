@@ -1,6 +1,7 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, HostListener} from '@angular/core';
 import { LazyLoadEvent } from 'primeng/primeng';
 import * as _ from 'lodash';
+import {of} from 'rxjs/internal/observable/of';
 
 @Component({
   selector: 'app-table',
@@ -16,11 +17,16 @@ export class TableComponent implements OnInit {
 
   loading: boolean;
   currentSelectedItem: any;
+  dataCashed: any;
+  allChecked = false;
+  indeterminate = false;
+
+  data$: any;
 
   @Input()
   totalRecords;
   @Input()
-  sortable: boolean = false;
+  sortable = false;
   @Input()
   listOfData: any[];
   @Input()
@@ -39,14 +45,23 @@ export class TableComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-
   }
 
   sort(): void {
-    this.listOfData = _.sortBy(this.listOfData, [(o) => {
-      return !o.selected;
-    }]);
-    console.log(this.listOfData);
+    if (this.dataCashed) {
+      this.listOfData = this.dataCashed;
+      this.dataCashed = null;
+    } else {
+      this.dataCashed = this.listOfData;
+      this.listOfData = _.sortBy(this.listOfData, [(o) => {
+        return !o.selected;
+      }]);
+    }
+  }
+
+  updateAllChecked() {
+    this.indeterminate = false;
+    this.allChecked ? this.selectAll() : this.unselectAll();
   }
 
   selectAll() {
@@ -69,9 +84,10 @@ export class TableComponent implements OnInit {
   }
 
   loadDataOnScroll(event: LazyLoadEvent) {
-      console.log('lazy load', event);
       this.event = event;
       this.loadMore.emit(event);
+      this.selectedRows = null;
+      this.isIndeterminate();
   }
 
   selectRow(row: any, index: number) {
@@ -79,7 +95,7 @@ export class TableComponent implements OnInit {
       row.selected = !row.selected;
     } else if ((window as any).event.shiftKey) {
       event.preventDefault();
-      if (this.lastSelectedIndex) {
+      if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
         this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
         this.lastSelectedIndex = null;
       } else {
@@ -91,6 +107,26 @@ export class TableComponent implements OnInit {
       this.selectOne.emit(row);
     }
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
+    this.isIndeterminate();
+  }
+
+  isIndeterminate() {
+    if (this.selectedRows) {
+      if ( this.selectedRows.length === this.listOfData.length ) {
+        this.allChecked = true;
+        this.indeterminate = false;
+      } else if ( this.selectedRows.length === 0) {
+        this.allChecked = false;
+        this.indeterminate = false;
+      } else {
+        this.indeterminate = true;
+      }
+    }
+  }
+
+  uncheckRow() {
+    this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
+    this.isIndeterminate();
   }
 
   private selectSection(from, to) {
@@ -114,10 +150,10 @@ export class TableComponent implements OnInit {
     tableColumn.handler(this.selectedRows);
   }
 
-/*  @HostListener('keyup', ['$event']) keyup(e) {
+  @HostListener('keyup', ['$event']) keyup(e) {
     console.log('Keyup', JSON.stringify(e.code) );
     if (e.code.match('Shift')) {
       this.lastSelectedIndex = null;
     }
-  }*/
+  }
 }
