@@ -97,7 +97,9 @@ nz-layout {
   .plt-table {
     background-color: #FFFFFF;
     min-height: 350px;
-    max-height: 750px;;
+    max-height: 750px;
+
+
 
     .active_plt_item {
       border: 6px solid #06b8ff;
@@ -131,6 +133,13 @@ nz-layout {
       color: rgba(0, 0, 0, 0.38);
       font-size: 11px;
       letter-spacing: 0.08px;
+
+      ::ng-deep{
+        ant-table-column-sorter{
+          display: flex;
+          flex-direction: column;
+        }
+      }
 
       .filter-input {
         width: 100%;
@@ -255,21 +264,20 @@ nz-layout {
 
 .summary-table {
   .ant-row {
-    border-bottom: 1px solid #000;
+    border-bottom: 1px solid #bfbfbf;
 
     .summaryTableHeader {
-      padding: 5px 5px 5px 5px;
-      font-size: 16px;
+      padding: 1px 1px 1px 1px;
+      font-size: 12px;
       font-family: rubik;
-      //font-weight: bold;
-      min-height: 30px;
+      min-height: 12px;
     }
 
     .summaryTableBody {
-      font-size: 13px;
+      font-size: 12px;
       color: #000;
       padding: 5px 5px 5px 15px;
-      margin: 3px 5px 15px 6px;
+      margin: 2px 2px 2px 2px;
     }
   }
 }
@@ -448,11 +456,13 @@ nz-layout {
 }
 
 .metric-table-content {
-  border-bottom: 2px solid;
 
   .metric-table {
     font-size: 12px;
     font-family: Rubik;
+    display: block;
+    overflow: auto;
+    padding-bottom: 4px;
 
     th {
       font-weight: bold;
@@ -464,12 +474,23 @@ nz-layout {
         color: #000;
         cursor: pointer;
         padding: 0px 0px 0px 3px;
+        cursor: pointer;
       }
     }
 
     td {
       padding: 2px 25px 2px 2px;
     }
+
+    input {
+      border-right: 0px;
+      border-left: 0px;
+      border-top: 0px;
+      border-bottom: 1px solid #4540db;
+      background: #f4f6fc;
+    }
+
+
   }
 }
 
@@ -567,7 +588,8 @@ nz-layout {
 
     nz-tag {
       color: #7876e4;
-      width: 60%;
+      width: 80%;
+      font-size: 9px;
       border-radius: 22px;
       border: 1px solid #7876e4;
     }

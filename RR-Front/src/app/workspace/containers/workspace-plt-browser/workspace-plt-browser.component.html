@@ -16,7 +16,7 @@
             </ng-template>
             <div class="path-content">
               <div class="title">
-                    <span>
+                    <span (click)="resetPath()">
                       <i class="icon-window-section"></i>
                       02PY376 - 2019
                     </span>
@@ -29,29 +29,31 @@
               </div>
             </div>
           </nz-tab>
+
           <nz-tab [nzTitle]="tags">
             <ng-template #tags>
               <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;"> Tags</span>
             </ng-template>
             <div class="Tags-content">
               <div nz-row class="button-reset-filter-by-tag">
-                <button (click)="currentTag= null" nz-button nzType="default" nzShape="circle"
+                <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle"
                         style=" float: right; border: 0px solid;">
                   <i nz-icon nzType="undo" nzTheme="outline"></i></button>
               </div>
               <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
               <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === currentTag}" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentTag= tag">
+                    <span [ngClass]="{'active-tag': tag === currentSystemTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentSystemTag = tag">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
                     </span>
               </div>
 
-              <div nz-row class="tags-title-section">User tags <i class="icon-plus-circle"></i></div>
+              <div nz-row class="tags-title-section">User tags<i class="icon-plus-circle"></i></div>
               <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
-                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor, 'border-color': tag.border}">
+                    <span [ngClass]="{'active-tag': tag === currentUserTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentUserTag = tag">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -70,16 +72,18 @@
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
-              <table class="table plt-table">
+              <table class="table plt-table" style="display: table">
                 <thead>
                 <tr>
                   <th></th>
                   <th>User Tags</th>
                   <th>
-                    PLT ID
-                    <div class="filter-input">
-                      <i class="icon-search"></i>
-                      <input type="text">
+                    <div>
+                      PLT ID
+                      <div class="filter-input">
+                        <i class="icon-search"></i>
+                        <input type="text">
+                      </div>
                     </div>
                   </th>
                   <th>
@@ -89,21 +93,60 @@
                       <input type="text">
                     </div>
                   </th>
-                  <th>Peril</th>
-                  <th>Region Peril Code</th>
-                  <th>Region Peril Name</th>
-                  <th>Grain</th>
-                  <th>Vendor System</th>
-                  <th>RAP</th>
+                  <th>
+                    Peril
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
+                  <th>
+                    Region Peril Code
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
+                  <th>
+                    Region Peril Name
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
+                  <th>
+                    Grain
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
+                  <th>
+                    Vendor System
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
+                  <th>
+                    RAP
+                    <div class="filter-input">
+                      <i class="icon-search"></i>
+                      <input type="text">
+                    </div>
+                  </th>
                   <th><i nz-icon><i class="icon-focus-add"></i></i></th>
                   <th><i nz-icon><i class="icon-note"></i></i></th>
                   <th><i nz-icon><i class="icon-focus-add"></i></i></th>
                 </tr>
                 </thead>
                 <tbody>
-                <!--| filterByBagde: currentTag-->
-                <tr *ngFor="let plt of plts | filterByBadge: currentTag" style="cursor: pointer"
-                    [ngClass]="{'active_plt_item': plt.selected }">
+                <!--| filterByBagde: currentTag -->
+                <!--| filterByPath: currentPath-->
+                <tr
+                  *ngFor="let plt of plts | filterBySystemTag: currentSystemTag | filterByUserTag: currentUserTag | filterByPath: currentPathId"
+                  style="cursor: pointer"
+                  [ngClass]="{'active_plt_item': plt.selected }">
                   <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
                     <div *ngIf="plt.selected">
                       <i nz-icon nzType="eye" nzTheme="outline"></i>
@@ -114,11 +157,8 @@
                   </td>
                   <td>
                     <div class="td-wrapper-tags">
-                          <span *ngFor="let tag of plt.systemTags"
-                                [ngStyle]="{'background-color': getColor(tag.tagId, 'system')}">&nbsp;</span>
-
                       <span *ngFor="let tag of plt.userTags"
-                            [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}">&nbsp;</span>
+                            [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
                       <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
                     </div>
                   </td>
@@ -276,12 +316,25 @@
           </div>
         </nz-tab>
 
-        <nz-tab [nzTitle]="pltDetails">
+        <nz-tab [nzTitle]="pltDetails" [nzDisabled]="!pltDetailsPermission">
           <ng-template #pltDetails>
-            <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
+
+            <div *ngIf="pltDetailsPermission; else noPermission">
+              <span *ngIf="pltDetailsPermission" style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
+                PLT Details
+              </span>
+              <i class="icon-remove_red_eye_24px"
+                 style="font-size: 16px; margin: 3px 5px 3px 15px; color: #06b8ff;"></i>
+            </div>
+
+            <ng-template #noPermission>
+              <span *ngIf="!pltDetailsPermission" style="font-size: 16px; padding: 3px 5px 3px 5px;">
               PLT Details
-            </span>
-            <i class="icon-remove_red_eye_24px" style="font-size: 16px; margin: 3px 5px 3px 15px; color: #06b8ff;"></i>
+              </span>
+              <i *ngIf="!pltDetailsPermission" nz-icon nzType="eye-invisible" nzTheme="fill"
+                 style="font-size: 16px; margin: 3px 5px 3px 15px;"></i>
+            </ng-template>
+
           </ng-template>
           <div nz-row>
             <div class="title-section-drawer">
@@ -369,13 +422,13 @@
                               <div class="dropdown-currency-title">
                                 <span class="dropdown-currency-header">Display Currency</span>
                                 <span class="dropdown-currency-subtitle"
-                                      style="font-weight: bold;">{{currencySelected}}</span>
+                                      style="font-weight: bold;">{{epMetricsCurrencySelected}}</span>
                               </div>
                               <i nz-icon type="down"></i>
                             </div>
                           </a>
                           <ul nz-menu>
-                            <li nz-menu-item (click)="currencySelected = currency?.label"
+                            <li nz-menu-item (click)="epMetricsCurrencySelected= currency?.label"
                                 *ngFor="let currency of currencies">{{currency?.label}}
                             </li>
                           </ul>
@@ -391,13 +444,13 @@
                               <div class="dropdown-unit-title">
                                 <span class="dropdown-unit-header">Financial Unit</span>
                                 <span class="dropdown-unit-subtitle"
-                                      style="font-weight: bold;">{{financialUnitSelected}}</span>
+                                      style="font-weight: bold;">{{epMetricsFinancialUnitSelected}}</span>
                               </div>
                               <i nz-icon type="down"></i>
                             </div>
                           </a>
                           <ul nz-menu>
-                            <li nz-menu-item (click)="financialUnitSelected = unit?.label"
+                            <li nz-menu-item (click)="epMetricsFinancialUnitSelected = unit?.label"
                                 *ngFor="let unit of units">{{unit?.label}}
                             </li>
                           </ul>
@@ -430,10 +483,11 @@
                       <nz-tab [nzTitle]="table">
                         <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
                         <div class="metric-table-content">
-                          <table class="table metric-table">
+                          <table class="table metric-table" >
                             <thead>
                             <tr>
-                              <th>Retrun Period <i class="icon-plus-circle"></i></th>
+                              <th>&nbsp;</th>
+                              <th>Retrun Period</th>
                               <th>OEP</th>
                               <th>AEP</th>
                               <th>TVaR-OEP</th>
@@ -442,6 +496,7 @@
                             </thead>
                             <tbody *ngFor="let metric of metrics">
                             <tr>
+                              <td>&nbsp;</td>
                               <td align="right">{{metric.retrunPeriod}}</td>
                               <td>{{metric.OEP}}</td>
                               <td>{{metric.AEP}}</td>
@@ -449,6 +504,16 @@
                               <td>{{metric.TVaR_OEP}}</td>
                             </tr>
                             </tbody>
+                            <tfoot>
+                            <tr>
+                              <td><i class="icon-plus-circle"></i></td>
+                              <td><input type="text"></td>
+                              <td><input type="text"></td>
+                              <td><input type="text"></td>
+                              <td><input type="text"></td>
+                              <td><input type="text"></td>
+                            </tr>
+                            </tfoot>
                           </table>
                         </div>
                         <div class="metric-table-footer">
@@ -502,7 +567,7 @@
                       <div class="thread-content">
 
                         <div nz-row *ngFor="let thead of theads">
-                          <div nz-col nzSpan="12" class="title">
+                          <div nz-col nzSpan="6" class="title">
                             <span>
                               {{thead.title}}
                             </span>
@@ -510,13 +575,13 @@
                           <div nz-col nzSpan="3"></div>
                           <div nz-col nzSpan="6">
                             <div class="card" *ngFor="let card of thead.cards"
-                                 [ngStyle]="{'border-color': card.borderColor, 'background-color': getCardBackground(card.selected)}"
+                                 [ngStyle]="{'border-color': card.borderColor, 'background-color': getCardBackground(card.selected), 'box-shadow': getBoxShadow(card.selected)}"
                                  (click)="selectCardThead(card)">
                               <span>{{card.content}}</span>
                               <nz-tag [nzColor]="'#e5e9fa'">{{card.chip}}</nz-tag>
                             </div>
                           </div>
-                          <div nz-col nzSpan="3"></div>
+                          <div nz-col nzSpan="9i"></div>
                         </div>
 
                       </div>
@@ -533,13 +598,13 @@
                                     <div class="dropdown-currency-title">
                                       <span class="dropdown-currency-header">Display Currency</span>
                                       <span class="dropdown-currency-subtitle"
-                                            style="font-weight: bold;">{{currencySelected}}</span>
+                                            style="font-weight: bold;">{{CalibrationImpactCurrencySelected}}</span>
                                     </div>
                                     <i nz-icon type="down"></i>
                                   </div>
                                 </a>
                                 <ul nz-menu>
-                                  <li nz-menu-item (click)="currencySelected = currency?.label"
+                                  <li nz-menu-item (click)="CalibrationImpactCurrencySelected = currency?.label"
                                       *ngFor="let currency of currencies">{{currency?.label}}
                                   </li>
                                 </ul>
@@ -555,13 +620,13 @@
                                     <div class="dropdown-unit-title">
                                       <span class="dropdown-unit-header">Financial Unit</span>
                                       <span class="dropdown-unit-subtitle"
-                                            style="font-weight: bold;">{{financialUnitSelected}}</span>
+                                            style="font-weight: bold;">{{CalibrationImpactFinancialUnitSelected}}</span>
                                     </div>
                                     <i nz-icon type="down"></i>
                                   </div>
                                 </a>
                                 <ul nz-menu>
-                                  <li nz-menu-item (click)="financialUnitSelected = unit?.label"
+                                  <li nz-menu-item (click)="CalibrationImpactFinancialUnitSelected = unit?.label"
                                       *ngFor="let unit of units">{{unit?.label}}
                                   </li>
                                 </ul>
@@ -597,7 +662,7 @@
                                 <table class="table metric-table">
                                   <thead>
                                   <tr>
-                                    <th>Retrun Period <i class="icon-plus-circle"></i></th>
+                                    <th>Retrun Period</th>
                                     <th>OEP</th>
                                     <th>AEP</th>
                                     <th>TVaR-OEP</th>

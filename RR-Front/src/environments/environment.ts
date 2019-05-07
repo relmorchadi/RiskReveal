@@ -4,8 +4,12 @@
 
 export const environment = {
   production: false,
-  API_URI:'http://192.168.1.8:8080/api/',
+  API_URI:'http://192.168.1.8:8081/api/',
+
   // API_URI:'http://e51556b3.ngrok.io/api/',
+  // API_URI:'http://5584db5c.ngrok.io/api/',
+  // API_URI:'http://0ea63928.ngrok.io/api/',
+
   hmr:false,
 };
 

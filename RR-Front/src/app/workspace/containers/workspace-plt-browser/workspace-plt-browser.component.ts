@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import * as _ from 'lodash';
+import {style} from "@angular/animations";
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -11,18 +12,33 @@ export class WorkspacePltBrowserComponent implements OnInit {
   currentPlt = null;
   notChecked = false;
   checked = true;
-  currencySelected: any;
-  financialUnitSelected: any;
+
+  epMetricsCurrencySelected: any = 'EUR';
+  CalibrationImpactCurrencySelected: any = 'EUR';
+  epMetricsFinancialUnitSelected: any = 'Million';
+  CalibrationImpactFinancialUnitSelected: any = 'Million';
+
+  currentPath:any = null;
+  currentPathId:any = null;
+
   visible = false;
   size = 'large';
-  currentTag = null;
+  currentSystemTag = null;
+  currentUserTag = null;
   sumnaryPltDetails: any = null;
+
+  pltDetailsPermission: boolean ;
+
+  epMetricInputValue: string | null;
+
+
 
   plts: any = [
     {
       pltId: 1,
       systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
       userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+      pathId: 1,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -35,11 +51,11 @@ export class WorkspacePltBrowserComponent implements OnInit {
       note: true,
       checked: false
     },
-
     {
       pltId: 2,
       systemTags: [],
       userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+      pathId: 2,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -56,6 +72,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 3,
       systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 7}],
       userTags: [{tagId: 3}],
+      pathId: 3,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -72,6 +89,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 4,
       systemTags: [],
       userTags: [],
+      pathId: 4,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -88,6 +106,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 5,
       systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 5}],
       userTags: [{tagId: 1}, {tagId: 2}],
+      pathId: 5,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -104,6 +123,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 6,
       systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
       userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+      pathId: 1,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -120,6 +140,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 7,
       systemTags: [{tagId: 5}, {tagId: 7}, {tagId: 3}],
       userTags: [{tagId: 1}, {tagId: 2}],
+      pathId: 2,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -136,6 +157,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 8,
       systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
       userTags: [{tagId: 1}, {tagId: 2}],
+      pathId: 3,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -168,6 +190,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 10,
       systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
       userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+      pathId: 2,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -184,6 +207,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 11,
       systemTags: [],
       userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+      pathId: 5,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -200,6 +224,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 12,
       systemTags: [{tagId: 5}, {tagId: 2}, {tagId: 7}],
       userTags: [{tagId: 2}, {tagId: 3}],
+      pathId: 3,
       pltName: "NATC-USM_RL_Imf.T1",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -289,11 +314,11 @@ export class WorkspacePltBrowserComponent implements OnInit {
   ];
 
   paths = [
-    {id: '1', icon: 'icon-assignment_24px', text: 'P-1686 Ameriprise 2018', selected: false},
-    {id: '2', icon: 'icon-assignment_24px', text: 'P-1724 Trinity Kemper 2018', selected: false},
-    {id: '3', icon: 'icon-assignment_24px', text: 'P-8592 TWIA 2018', selected: false},
-    {id: '4', icon: 'icon-assignment_24px', text: 'P-9035 Post-insured PLTs', selected: false},
-    {id: '5', icon: 'icon-sitemap', text: 'IP-1135 CXL2 Cascading 2018', selected: false}
+    {id: 1, icon: 'icon-assignment_24px', text: 'P-1686 Ameriprise 2018', selected: false},
+    {id: 2, icon: 'icon-assignment_24px', text: 'P-1724 Trinity Kemper 2018', selected: false },
+    {id: 3, icon: 'icon-assignment_24px', text: 'P-8592 TWIA 2018', selected: false },
+    {id: 4, icon: 'icon-assignment_24px', text: 'P-9035 Post-insured PLTs', selected: false },
+    {id: 5, icon: 'icon-sitemap', text: 'IP-1135 CXL2 Cascading 2018', selected: false }
   ];
 
   currencies = [
@@ -304,105 +329,105 @@ export class WorkspacePltBrowserComponent implements OnInit {
     {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
     {id: '5', name: 'Swiss Franc', label: 'CHF'},
     {id: '5', name: 'Saudi Riyal', label: 'SAR'},
-    {id: '6', name: 'Bitcoin', label: 'XBT'}
+    {id: '6', name: 'Bitcoin', label: 'XBT'},
+    {id: '7', name: 'Hungarian forint', label: 'HUF'},
+    {id: '8', name: 'Singapore Dollars', label: 'SGD'}
   ];
 
   units = [
-    {id: '1', label: 'Hundred'},
-    {id: '2', label: 'Thousand'},
-    {id: '3', label: 'Million'},
-    {id: '4', label: 'Billion'},
-    {id: '5', label: 'Trillion'}
+    {id: '1', label: 'Thousands'},
+    {id: '2', label: 'Million'},
+    {id: '3', label: 'Billion'}
   ];
 
   metrics = [
     {
       metricID: '1',
       retrunPeriod: '10000',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
       metricID: '2',
-      retrunPeriod: '5000',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      retrunPeriod: '5.000',
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '3',
-      retrunPeriod: '1000',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      metricID: '4',
+      retrunPeriod: '1.000',
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '3',
+      metricID: '5',
       retrunPeriod: '500',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '3',
+      metricID: '6',
       retrunPeriod: '250',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '3',
+      metricID: '7',
       retrunPeriod: '100',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '3',
+      metricID: '8',
       retrunPeriod: '50',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '3',
+      metricID: '9',
       retrunPeriod: '25',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '3',
+      metricID: '10',
       retrunPeriod: '10',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '4',
+      metricID: '11',
       retrunPeriod: '5',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     },
     {
-      metricID: '4',
+      metricID: '12',
       retrunPeriod: '2',
-      OEP: '291621,790',
-      AEP: '291621,790',
-      TVaR_OEP: '321654789',
-      TVaR_AEP: '458711620'
+      OEP: '291.621,790',
+      AEP: '291.621,790',
+      TVaR_OEP: '321.654.789',
+      TVaR_AEP: '458.711.620'
     }
   ];
 
@@ -412,7 +437,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
         {
           chip: 'ID: 222881',
           content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729',
-          borderColor: '#03dac4',
+          borderColor: '#6e6cc0',
           selected: false
         },
         {chip: '1.25', content: 'Portfolio Evolution', borderColor: '#03dac4', selected: false}
@@ -430,7 +455,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
     },
     {
       title: 'Client', cards: [
-        {chip: '0.95', content: 'Cedant QI', borderColor: '#6e6cc0', selected: false},
+        {chip: '0.95', content: 'Cedant QI', borderColor: '#03dac4', selected: false},
         {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766', borderColor: '#6e6cc0', selected: false}
       ]
     }
@@ -456,6 +481,9 @@ export class WorkspacePltBrowserComponent implements OnInit {
       var y = 209 - pageYOffset
       c = y;
     });
+
+
+    console.log(this.pltDetailsPermission)
   }
 
 
@@ -468,11 +496,23 @@ export class WorkspacePltBrowserComponent implements OnInit {
   }
 
   openPltInDrawer(plt) {
-    this.plts.forEach(pt => pt.selected = false);
-    plt.selected = true;
-    this.visible = true;
-    console.log(plt.pltId);
-    this.sumnaryPltDetails = plt;
+    let selectedPlts = this.plts.filter(pt => pt.selected === true);
+    if (selectedPlts.length > 0) {
+      if (selectedPlts[0] === plt) {
+        plt.selected = false;
+        this.visible = false;
+        this.sumnaryPltDetails = null;
+        this.pltDetailsPermission = false;
+      }
+    } else {
+      this.plts.forEach(pt => pt.selected = false);
+      plt.selected = true;
+      this.visible = true;
+      this.sumnaryPltDetails = plt;
+      this.pltDetailsPermission = true;
+    }
+
+
   }
 
   getColor(id, type) {
@@ -492,18 +532,17 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pa.selected = false;
     })
     path.selected = true;
+    this.currentPath = path;
+    this.currentPathId = path.id
   }
 
   selectCardThead(card) {
     this.theads.forEach(thead => {
       thead.cards.forEach(card => {
         card.selected = false;
-        console.log(card.selected)
       })
     })
     card.selected = true;
-    console.log(card.selected)
-    console.log(this.theads)
   }
 
   getCardBackground(selected) {
@@ -511,10 +550,22 @@ export class WorkspacePltBrowserComponent implements OnInit {
     else return "#f4f6fc";
   }
 
-  deselectPlt(){
-    this.plts.forEach(pt => pt.selected = false);
-    this.visible = false;
-    this.sumnaryPltDetails = null;
+  getBoxShadow(selected){
+    if (selected) return "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
+    else return "none"
+  }
+
+  resetFilterByTags(){
+    this.currentSystemTag = null;
+    this.currentUserTag = null;
+  }
+
+  resetPath(){
+    this.paths.forEach(path => {
+      path.selected = false;
+    })
+    this.currentPath = null;
+    this.currentPathId = null;
   }
 
 }
