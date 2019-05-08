@@ -9,6 +9,7 @@ export const environment = {
   // API_URI:'http://e51556b3.ngrok.io/api/',
   // API_URI:'http://5584db5c.ngrok.io/api/',
   // API_URI:'http://0ea63928.ngrok.io/api/',
+  // API_URI:'http://0ea63928.ngrok.io/api/',
 
   hmr:false,
 };

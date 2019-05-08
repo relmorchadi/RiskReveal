@@ -128,6 +128,7 @@ nz-layout {
 
     th {
       padding: 3px;
+      padding-right: 0 !important;
       vertical-align: top;
       line-height: 17px !important;
       color: rgba(0, 0, 0, 0.38);
@@ -135,10 +136,10 @@ nz-layout {
       letter-spacing: 0.08px;
 
       ::ng-deep{
-        ant-table-column-sorter{
-          display: flex;
-          flex-direction: column;
+        .ant-table-column-sorter{
+          top: 20%;
         }
+
       }
 
       .filter-input {

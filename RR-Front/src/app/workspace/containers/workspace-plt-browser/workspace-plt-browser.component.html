@@ -72,79 +72,24 @@
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
-              <table class="table plt-table" style="display: table">
-                <thead>
-                <tr>
-                  <th></th>
-                  <th>User Tags</th>
-                  <th>
-                    <div>
-                      PLT ID
-                      <div class="filter-input">
-                        <i class="icon-search"></i>
-                        <input type="text">
-                      </div>
-                    </div>
-                  </th>
-                  <th>
-                    PLT Name
-                    <div class="filter-input">
+              <nz-table #pltTable [nzData]="listOfDisplayPlts" class="table plt-table" [nzFrontPagination]="false" [nzShowPagination]="false"
+                        [nzScroll]="{ y: '480px' }">
+                <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <tr >
+                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted" [nzSortKey]="col.fields">
+                    {{col.header}}
+                    <div *ngIf="col.filtred" class="filter-input">
                       <i class="icon-search"></i>
                       <input type="text">
                     </div>
+                    <i *ngIf="col.icon" [ngClass]="col.icon" ></i>
                   </th>
-                  <th>
-                    Peril
-                    <div class="filter-input">
-                      <i class="icon-search"></i>
-                      <input type="text">
-                    </div>
-                  </th>
-                  <th>
-                    Region Peril Code
-                    <div class="filter-input">
-                      <i class="icon-search"></i>
-                      <input type="text">
-                    </div>
-                  </th>
-                  <th>
-                    Region Peril Name
-                    <div class="filter-input">
-                      <i class="icon-search"></i>
-                      <input type="text">
-                    </div>
-                  </th>
-                  <th>
-                    Grain
-                    <div class="filter-input">
-                      <i class="icon-search"></i>
-                      <input type="text">
-                    </div>
-                  </th>
-                  <th>
-                    Vendor System
-                    <div class="filter-input">
-                      <i class="icon-search"></i>
-                      <input type="text">
-                    </div>
-                  </th>
-                  <th>
-                    RAP
-                    <div class="filter-input">
-                      <i class="icon-search"></i>
-                      <input type="text">
-                    </div>
-                  </th>
-                  <th><i nz-icon><i class="icon-focus-add"></i></i></th>
-                  <th><i nz-icon><i class="icon-note"></i></i></th>
-                  <th><i nz-icon><i class="icon-focus-add"></i></i></th>
                 </tr>
                 </thead>
+
                 <tbody>
-                <!--| filterByBagde: currentTag -->
-                <!--| filterByPath: currentPath-->
                 <tr
-                  *ngFor="let plt of plts | filterBySystemTag: currentSystemTag | filterByUserTag: currentUserTag | filterByPath: currentPathId"
+                  *ngFor="let plt of pltTable.data | filterBySystemTag: currentSystemTag | filterByUserTag: currentUserTag | filterByPath: currentPathId"
                   style="cursor: pointer"
                   [ngClass]="{'active_plt_item': plt.selected }">
                   <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
@@ -158,7 +103,7 @@
                   <td>
                     <div class="td-wrapper-tags">
                       <span *ngFor="let tag of plt.userTags"
-                            [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
+                      [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
                       <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
                     </div>
                   </td>
@@ -204,7 +149,7 @@
                     </div>
                   </td>
                 </tbody>
-              </table>
+              </nz-table>
             </div>
           </nz-tab>
         </nz-tabset>
@@ -483,7 +428,7 @@
                       <nz-tab [nzTitle]="table">
                         <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
                         <div class="metric-table-content">
-                          <table class="table metric-table" >
+                          <table class="table metric-table">
                             <thead>
                             <tr>
                               <th>&nbsp;</th>
