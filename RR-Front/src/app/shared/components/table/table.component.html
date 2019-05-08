@@ -82,11 +82,14 @@
   <i nz-tooltip nzTitle="Unselect All" nzPlacement="bottom" (click)="unselectAll()" class="icon-minus-square icons-font"></i>
 </div>-->
 
-<p-table *ngIf="virtualScroll"
+<p-contextMenu #cm [model]="items"></p-contextMenu>
+
+<p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
          [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
          [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
-         [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem" [contextMenu]="cm"
+         [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
+         [contextMenu]="cm"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -98,11 +101,11 @@
       <th *ngFor="let col of columns" pResizableColumn>
         <span *ngIf="col?.display" style="display:flex">
           {{col?.header}}
-          <ng-container *ngIf="col.type === 'checkbox'" >
+          <ng-container *ngIf="col.type === 'checkbox'">
             <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
                    [nzIndeterminate]="indeterminate"></label>
-<!--            <i *ngIf="col.type === 'checkbox'" nz-tooltip nzTitle="Sort/unSort" nzPlacement="bottom" (click)="sort()"
-               class="icon-sort-amount-down"></i>-->
+            <!--            <i *ngIf="col.type === 'checkbox'" nz-tooltip nzTitle="Sort/unSort" nzPlacement="bottom" (click)="sort()"
+                           class="icon-sort-amount-down"></i>-->
             <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
           </ng-container>
         </span>
@@ -121,9 +124,9 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns" >
     <tr [pContextMenuRow]="rowData"
-      [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+        [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
         <td *ngIf="col?.type ==='checkbox'">
           <div style="display:flex">
@@ -149,7 +152,6 @@
   </ng-template>
 </p-table>
 
-<p-contextMenu #cm [model]="items"></p-contextMenu>
 
 <p-table *ngIf="!virtualScroll"
          [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"

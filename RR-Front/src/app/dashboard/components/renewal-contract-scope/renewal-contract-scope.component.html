@@ -35,10 +35,8 @@
   </div>
 </ng-template>
 
-
-
-
-<!--p-table #dt [columns]="cols" [value]="mockData" [responsive]="true" [resizableColumns]="true">
+<!--
+p-table #dt [columns]="cols" [value]="mockData" [responsive]="true" [resizableColumns]="true">
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th *ngFor="let col of columns" [pSortableColumn]="col.field" pResizableColumn>
@@ -56,9 +54,7 @@
       </td>
     </tr>
   </ng-template>
-</p-table-->
-
-<!--
+</p-table
 <table class="table">
   <thead>
     <th>Country</th>
@@ -183,10 +179,10 @@
     </tr>
   </tbody>
 </table>
+<ng-template #template>
+  <ul nz-menu nzInDropDown (nzClick)="close($event)">
+    <li (click)="duplicate.emit('')" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>
+    <li (click)="delete.emit('')" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>
+  </ul>
+</ng-template>
 -->
-<!--<ng-template #template>-->
-<!--  <ul nz-menu nzInDropDown (nzClick)="close($event)">-->
-<!--    <li (click)="duplicate.emit('')" nz-menu-item><i class="icon-file_copy_24px"></i> Duplicate</li>-->
-<!--    <li (click)="delete.emit('')" nz-menu-item><i class="icon-trash-alt"></i> Delete</li>-->
-<!--  </ul>-->
-<!--</ng-template>-->

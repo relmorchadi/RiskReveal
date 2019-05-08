@@ -1,5 +1,9 @@
 ::ng-deep {
 
+  .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
+    margin-top: -100px;
+  }
+
   .ant-checkbox-checked .ant-checkbox-inner {
     background-color: #0700cf;
     border-color: #0700cf;
@@ -111,6 +115,9 @@
         width: 100%;
         height: 20px;
       }
+    }
+    .ui-contextmenu-selected {
+      color: inherit !important;
     }
   }
 

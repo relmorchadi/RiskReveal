@@ -1,5 +1,5 @@
 import {Component, OnInit, Input, Output, EventEmitter, ViewChild, HostListener} from '@angular/core';
-import { LazyLoadEvent } from 'primeng/primeng';
+import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
 
 @Component({
@@ -13,6 +13,7 @@ export class TableComponent implements OnInit {
   @Output('loadMore') loadMore: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
+  @ViewChild('cm') contextMenu;
 
   contextSelectedItem: any;
 
@@ -23,13 +24,28 @@ export class TableComponent implements OnInit {
   indeterminate = false;
 
   items = [
-    { label: 'View Detail', icon: 'pi pi-search', command: (event) => {
+    {
+      label: 'View Detail', icon: 'pi pi-eye', command: (event) => {
         this.currentSelectedItem = this.contextSelectedItem;
         this.selectOne.emit(this.contextSelectedItem);
-      } },
-    { label: 'Open', icon: 'pi pi-times', command: (event) => this.handler('openInHere', this.contextSelectedItem) },
-    { label: 'Pop Out', icon: 'pi pi-times', command: (event) => this.handler('openInPopup', this.contextSelectedItem) },
-    ];
+      }
+    },
+    {
+      label: 'Select item',
+      icon: 'pi pi-check',
+      command: () => this.selectRow(this.contextSelectedItem , 0)
+    },
+    {
+      label: 'Open item',
+      icon: 'pi pi-eject',
+      command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInHere')[0], this.contextSelectedItem)
+    },
+    {
+      label: 'Pop Out',
+      icon: 'pi pi-eject',
+      command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInPopup')[0], this.contextSelectedItem)
+    },
+  ];
 
   @Input()
   totalRecords;
@@ -50,7 +66,8 @@ export class TableComponent implements OnInit {
   selectedRows: any = [];
   lastSelectedIndex = null;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
   }
@@ -92,10 +109,10 @@ export class TableComponent implements OnInit {
   }
 
   loadDataOnScroll(event: LazyLoadEvent) {
-      this.event = event;
-      this.loadMore.emit(event);
-      this.selectedRows = null;
-      this.isIndeterminate();
+    this.event = event;
+    this.loadMore.emit(event);
+    this.selectedRows = null;
+    this.isIndeterminate();
   }
 
   selectRow(row: any, index: number) {
@@ -105,13 +122,14 @@ export class TableComponent implements OnInit {
       event.preventDefault();
       if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
         this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
-        this.lastSelectedIndex = null;
+        // this.lastSelectedIndex = null;
       } else {
         this.lastSelectedIndex = index;
         row.selected = true;
       }
     } else {
-      this.listOfData.forEach( res => res.selected = false);
+      this.listOfData.forEach(res => res.selected = false);
+      this.lastSelectedIndex = index;
       row.selected = true;
     }
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
@@ -120,10 +138,10 @@ export class TableComponent implements OnInit {
 
   isIndeterminate() {
     if (this.selectedRows) {
-      if ( this.selectedRows.length === this.listOfData.length ) {
+      if (this.selectedRows.length === this.listOfData.length) {
         this.allChecked = true;
         this.indeterminate = false;
-      } else if ( this.selectedRows.length === 0) {
+      } else if (this.selectedRows.length === 0) {
         this.allChecked = false;
         this.indeterminate = false;
       } else {
@@ -138,19 +156,18 @@ export class TableComponent implements OnInit {
   }
 
   private selectSection(from, to) {
-    if (from == to) {
-      // this.listOfData[from].selected = !this.listOfData[from].selected;
+    this.listOfData.forEach(dt => dt.selected = false);
+    if (from === to) {
       this.listOfData[from].selected = true;
     } else {
       for (let i = from; i <= to; i++) {
-        // this.listOfData[i].selected = !this.listOfData[i].selected;
         this.listOfData[i].selected = true;
       }
     }
   }
 
   handler(tableColumn, row) {
-    this.selectedRows = this.listOfData.filter(dt =>  dt.selected);
+    this.selectedRows = this.listOfData.filter(dt => dt.selected);
     const data = this.selectedRows.filter(dt => dt === row) || [];
     data.length === 0 ? this.selectedRows = [...this.selectedRows, row] : null;
     console.log(this.selectedRows);
@@ -158,10 +175,7 @@ export class TableComponent implements OnInit {
     tableColumn.handler(this.selectedRows);
   }
 
-/*  @HostListener('keyup', ['$event']) keyup(e) {
-    console.log('Keyup', JSON.stringify(e.code) );
-    if (e.code.match('Shift')) {
-      this.lastSelectedIndex = null;
-    }
-  }*/
+  @HostListener('wheel', ['$event']) onElementScroll(event) {
+    this.contextMenu.hide();
+  }
 }
