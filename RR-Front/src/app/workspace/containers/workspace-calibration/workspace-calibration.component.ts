@@ -401,7 +401,10 @@ export class WorkspaceCalibrationComponent implements OnInit {
       } else {
         this.colunmName = nameOfColumn;
       }
-
+      console.log("******************")
+      console.log("1st col: ", this.colunmName)
+      console.log("2nd col: ", this.stockedColumnName)
+      console.log("******************")
     }
   }
 
@@ -414,14 +417,13 @@ export class WorkspaceCalibrationComponent implements OnInit {
     } else {
       return " "
     }
-    ;
   }
 
   hideCatgegory(names: string) {
     console.log(names);
       this.hideAllCategories();
       for (let i = 0; i < names.length; i++) {
-        let a = _.findIndex(this.pure.category, function (o) {
+        let a = _.findIndex(this.pure.category, function (o: any) {
           return o.name == names[i]
         });
         console.log(a);
@@ -438,7 +440,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     )
   }
   feedCatgegoryNameForHide(name){
-    let a = _.findIndex(this.pure.category, function (o) {
+    let a = _.findIndex(this.pure.category, function (o: any) {
       return o.name == name
     });
     this.pure.category[a].showBol=false;
@@ -463,11 +465,11 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   deleteColumn(name: string, name2: string) {
     console.log(name,name2,"here");
-    let o=_.findIndex(this.pure.category,function (o) {
+    let o=_.findIndex(this.pure.category,function (o:any) {
       return o.name==name
     });
     console.log(o,"category");
-    let a=_.findIndex(this.pure.category[o].basis,function (o) {
+    let a=_.findIndex(this.pure.category[o].basis,function (o:any) {
       return o.name==name2
     });
     console.log(a,"basis");
