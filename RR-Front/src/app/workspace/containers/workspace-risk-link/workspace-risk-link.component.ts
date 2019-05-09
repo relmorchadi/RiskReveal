@@ -480,7 +480,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   private selectSection(from, to) {
-    if (from == to) {
+    if (from === to) {
       this.tableLeft[from].selected = !this.tableLeft[from].selected;
     } else {
       for (let i = from; i <= to; i++) {
