@@ -4,6 +4,7 @@ import {COMPONENTS} from "./components"
 import {CONTAINERS, WorkspaceMainComponent, WorkspaceProjectComponent, WorkspaceRiskLinkComponent} from "./containers";
 import {RouterModule, Routes} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
+import {HighlightDirective} from './highlight.directive';
 import {TableModule} from 'primeng/table';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
 import {WorkspaceCalibrationComponent} from './containers/workspace-calibration/workspace-calibration.component';
@@ -13,6 +14,7 @@ import { ScrolltableDirective } from './scrolltable.directive';
 import {GridsterModule} from "angular-gridster2";
 
 
+import { FilterByBadgePipe } from './pipes/filter-by-badge.pipe';
 const routes: Routes = [
   {
     data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
@@ -20,6 +22,7 @@ const routes: Routes = [
       {path: '', component: WorkspaceProjectComponent},
       {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch: 'full'},
       {path: 'Calibration', component: WorkspaceCalibrationComponent, pathMatch: 'full'},
+      {path: 'PltBrowser', component: WorkspacePltBrowserComponent, pathMatch:'full'},
       {path: ':wsId/:year', component: WorkspaceProjectComponent},
     ]
   }
@@ -29,7 +32,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkComponent, WorkspaceMainComponent, WorkspaceCalibrationComponent, CalibrationDirective
+    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkComponent, WorkspaceMainComponent, WorkspaceCalibrationComponent, CalibrationDirective, FilterByBadgePipe
   ],
   imports: [
     GridsterModule,
