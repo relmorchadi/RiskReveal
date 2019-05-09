@@ -10,6 +10,10 @@ import {NgMasonryGridModule} from 'ng-masonry-grid';
 import {WorkspaceComponent} from './workspace.component';
 import {WorkspaceCalibrationComponent} from './containers/workspace-calibration/workspace-calibration.component';
 import { CalibrationDirective } from './calibration.directive';
+import {ForNumberPipe} from "./for-number.pipe";
+import { ScrolltableDirective } from './scrolltable.directive';
+import {GridsterModule} from "angular-gridster2";
+
 
 const routes: Routes = [
   {
@@ -25,9 +29,10 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkComponent, HighlightDirective, WorkspaceMainComponent, WorkspaceComponent, WorkspaceCalibrationComponent, CalibrationDirective
+    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkComponent, HighlightDirective, WorkspaceMainComponent, WorkspaceComponent, WorkspaceCalibrationComponent, CalibrationDirective, ForNumberPipe, ScrolltableDirective
   ],
   imports: [
+    GridsterModule,
     SharedModule,
     TableModule,
     NgMasonryGridModule,

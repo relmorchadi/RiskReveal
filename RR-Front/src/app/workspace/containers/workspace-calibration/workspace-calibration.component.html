@@ -15,11 +15,11 @@
           <div nz-row>
             <div nz-col nzSpan="8">
               <div
-                style="padding-top: 24px;
-    padding-left: 24px; background: #fff; min-height:460px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
+                style="padding-top: 39px; padding-left: 24px; background: #fff; min-height:460px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
                 <div nz-row>
                   <div nz-col nzSpan="10" style="">
-                    <hr style="height: 4px;background-color: #0700CF;margin: -24px;">
+                    <hr
+                      style="height: 4px;background-color: #0700CF;margin-top: -40px;margin-left: -24px;width: 200px;">
                   </div>
                 </div>
                 <div nz-row>
@@ -42,7 +42,10 @@
                     &nbsp;
                   </div>
                   <div nz-col nzSpan="5" style="position:relative; top:8px; font-size: 13px;color: #0700CF">
-                    select All
+                    <a (click)="selectAllBool?selectAllThread('selected'):selectAllThread('deselected')">
+                      <span *ngIf="selectAllBool" style="white-space: nowrap;font-size: 12px">Select All</span>
+                      <span *ngIf="!selectAllBool" style="white-space: nowrap;font-size: 12px">Unselect All</span>
+                    </a>
                   </div>
                   <div nz-col nzSpan="2" style="font-size: 18px;color: #0700CF">
                     <i (click)="afficheTree()" nz-icon nzTheme="outline" nzType="menu-unfold"></i>
@@ -64,12 +67,17 @@
                     <hr style="margin: 0px">
                   </div>
                 </div>
+                <!-- Table de PLT Selection -->
                 <div nz-row>
-                  <div nz-col nzSpan="24">
-                    <nz-table #basicTable *ngIf="tree" [nzData]="pure.dataTable" [nzShowPagination]="false">
-                      <tbody *ngFor="let data of basicTable.data">
+                  <div #scrollTwo (scroll)="updateScroll2()" nz-col nzSpan="24"
+                       style="overflow-y: auto;overflow-x: auto;max-width:450px;max-height: 250px">
+                    <!--- List With Tree --->
+                    <nz-table #fixedTable1 *ngIf="tree" [nzData]="pure.dataTable"
+                              [nzShowPagination]="false">
+                      <tbody *ngFor="let data of fixedTable1.data; let pureIndex = index">
                       <tr>
                         <td style="width: 50px;color: #0700CF">
+                          <i (click)="open()" [ngClass]="eyeVisible()" style="margin-right: 10px;font-size: 18px"></i>
                           <i (click)="hide(data.name)" class="icon-cube"
                              style="background: #0700cf;color: white;font-size: 16px;"></i>
                         </td>
@@ -77,28 +85,73 @@
                           <b> {{ data.name }}</b>
                         </td>
                         <td>
-                          &nbsp;
+
+                        </td>
+                        <td>
+
+                          <i class="icon-menu_24px" nz-dropdown style="font-size: 20px"></i>
                         </td>
                       </tr>
                       <ng-container *ngIf="returnHideThread(data.name)">
-                        <tr *ngFor="let dataT of data.thread">
-                          <td>&nbsp;</td>
-                          <td>{{ dataT.threadName }}</td>
-                          <td><i [class]="dataT.icon" style="font-size: 20px"></i></td>
-                          <td><i class="icon-menu_24px" style="font-size: 20px"></i></td>
-                        </tr>
+                        <ng-container *ngFor="let dataT of data.thread; let threadIndex = index">
+                          <tr (click)="changeBackgroud(dataT)"
+                              [ngStyle]="{'background':setBackgroud(dataT.backgoundIcon)}"
+                          >
+                            <td>&nbsp;</td>
+                            <td>{{ dataT.threadName }}</td>
+                            <td><i [class]="dataT.icon" style="font-size: 20px"></i></td>
+                            <td>
+                              <nz-dropdown [nzPlacement]="'bottomLeft'">
+                                <i class="icon-menu_24px" nz-dropdown style="font-size: 20px"></i>
+                                <ul nz-menu>
+                                  <li nz-menu-item>
+                                    <a (click)="cloneThread(data.thread.length,dataT, pureIndex, threadIndex)">Clone</a>
+                                  </li>
+                                  <li nz-menu-item>
+                                    <a
+                                      (click)="deleteThread(data.thread.length,dataT, pureIndex, threadIndex)">Delete</a>
+                                  </li>
+                                  <li nz-menu-item>
+                                    <a>Copy</a>
+                                  </li>
+                                </ul>
+                              </nz-dropdown>
+                            </td>
+                          </tr>
+                        </ng-container>
                       </ng-container>
                       </tbody>
                     </nz-table>
-                    <nz-table #basicTable *ngIf="!tree" [nzData]="pure.dataTable" [nzShowPagination]="false">
+                    <!--- List Without Tree --->
+                    <nz-table #fixedTable *ngIf="!tree" [nzData]="pure.dataTable"
+                              [nzShowPagination]="false">
                       <tbody>
-                      <ng-container *ngFor="let data of basicTable.data">
-                        <tr *ngFor="let dataTable1 of data.thread">
-                          <td>{{ dataTable1.id }}</td>
-                          <td>{{ dataTable1.threadName }}</td>
-                          <td><i [class]="dataTable1.icon" style="font-size: 20px"></i></td>
-                          <td><i class="icon-menu_24px" style="font-size: 20px"></i></td>
-                        </tr>
+                      <ng-container *ngFor="let data of fixedTable.data;let pureIndex=index">
+                        <ng-container *ngFor="let dataTable1 of data.thread;let threadIndex=index">
+                          <tr (click)="changeBackgroud(dataTable1)"
+                              [ngStyle]="{'background':setBackgroud(dataTable1.backgoundIcon)}">
+                            <td>{{ dataTable1.id }}</td>
+                            <td>{{ dataTable1.threadName }}</td>
+                            <td><i [class]="dataTable1.icon" style="font-size: 20px"></i></td>
+                            <td>
+                              <nz-dropdown [nzPlacement]="'bottomLeft'">
+                                <i class="icon-menu_24px" nz-dropdown style="font-size: 20px"></i>
+                                <ul nz-menu>
+                                  <li nz-menu-item>
+                                    <a
+                                      (click)="cloneThread(data.thread.length,dataTable1, pureIndex, threadIndex)">Clone</a>
+                                  </li>
+                                  <li nz-menu-item>
+                                    <a (click)="deleteThread(data.thread.length,dataTable1, pureIndex, threadIndex)">Delete</a>
+                                  </li>
+                                  <li nz-menu-item>
+                                    <a>Copy</a>
+                                  </li>
+                                </ul>
+                              </nz-dropdown>
+                            </td>
+                          </tr>
+                        </ng-container>
                       </ng-container>
 
                       </tbody>
@@ -127,111 +180,147 @@
             </div>
             <div nz-col nzSpan="16">
               <div class="test"
-                   style=" background: #fff; min-height:460px; min-width: 350px; box-shadow: 0px 1px 20px 0px #dcdada; ">
+                   style=" background: #fff; min-height:460px; min-width: 350px; box-shadow: 0px 1px 20px 0px #dcdada; margin-left: -4px">
                 <div nz-row>
-                  <div nz-col nzSpan="26" style="">
+                  <div nz-col nzSpan="26">
                     <nz-tabset class="card1">
                       <nz-tab nzTitle="Template 1">
-                        <div nz-row>
-                          <!-- <nz-table *ngIf="!tree" #basicTable [nzData]="pure.dataTable" [nzPaginationPosition]="false">
-                             <thead>
-                             <tr>
-                               <ng-container *ngFor="let category of pure.category">
-                                 <th [colSpan]="category.basis.length"><b>{{category.name}}</b></th>
-                               </ng-container>
-                             </tr>
-                             <tr style="border: none">
-                               <ng-container *ngFor="let category of pure.category">
-                                 <ng-container *ngFor="let column of category.basis">
-                                   <th colspan="1">{{column.name}}</th>
-                                 </ng-container>
-                               </ng-container>
-                             </tr>
-                             </thead>
-                             <tbody>
-                             <ng-container *ngFor="let data of basicTable.data">
-                               <tr *ngFor="let dataTable1 of data.thread" >
-                                 <ng-container *ngFor="let column of pure.category">
-                                   <ng-container *ngFor="let field of column.basis ">
-                                     <td colspan="1">
-                                       <nz-input-group [nzSuffix]="suffixTemplate">
-                                         <input nz-input placeholder="" type="text"/>
-                                       </nz-input-group>
-                                       <ng-template #suffixTemplate>
-                                         <i class="icon-menu_24px"></i>
-                                       </ng-template>
-                                     </td>
-                                   </ng-container>
-                                 </ng-container>
-                               </tr>
-                             </ng-container>
-                             </tbody>
-                           </nz-table>-->
-                          <!-- Table de Template 1 -->
-                          <nz-table #basicTable [nzData]="pure.dataTable" [nzPaginationPosition]="false">
+                        <!-- Table de Template 1   -->
+                        <div #scrollOne (scroll)="updateScroll()"
+                             nz-row
+                             style=" max-width: 825px; min-width: 825px;overflow-y: auto;max-height: 329px;min-height:329px">
+                          <nz-table #rightTable #te [nzData]="pure.dataTable"
+                                    [nzPaginationPosition]="false" class="fixedHeadder">
                             <thead>
-                            <tr>
-                              <ng-container *ngFor="let category of pure.category">
-                                <th [colSpan]="category.basis.length" columnWidth="15px"><b>{{category.name}}</b></th>
+                            <tr nzWidth="200px">
+                              <ng-container *ngFor="let category of pure.category;trackBy: trackByFn">
+                                <th *ngIf="category.showBol" [colSpan]="category.basis.length" columnWidth="15px"
+                                    style="border-right: 1px solid rgb(232, 232, 232);"><b>{{category.name}}</b>
+                                  <i (click)="feedCatgegoryNameForHide(category.name)" [ngClass]="eyeVisible()"
+                                     style="float: right;margin-top: 5px;"></i>
+                                </th>
                               </ng-container>
-                              <th (click)="showModal()" colspan="1"><i (click)="addColumn()" class="icon-plus-circle"
-                                                                       style="font-size: 22px"></i></th>
+                              <th (click)="showModal()" colspan="1"
+                                  style="border-right: 1px solid rgb(232, 232, 232);">
+                                <i (click)="addColumn()" class="icon-plus-circle"
+                                   style="font-size: 22px"></i></th>
                               <th colspan="1"><b>Overall LMF</b></th>
                             </tr>
-                            <tr style="border: none">
-                              <ng-container *ngFor="let category of pure.category">
-                                <ng-container *ngFor="let column of category.basis">
-                                  <th colspan="1">{{column.name}}</th>
+                            <tr style="border: none;">
+                              <ng-container *ngFor="let category of pure.category;trackBy: trackByFn">
+                                <ng-container *ngFor="let column of category.basis ;let i = index;trackBy: trackByFn">
+                                  <th *ngIf="category.showBol"
+                                      [ngStyle]="{'border-right':styleBorder(i,category.basis.length),'padding-right':'1px'}"
+                                      colspan="1">{{column.name}}
+                                    <span style="float: right">
+                                      <nz-dropdown [nzPlacement]="'bottomLeft'">
+                                        <i class="icon-menu_24px" nz-dropdown
+                                           style="font-size: 12px;margin-right: 5px;"></i>
+                                        <ul nz-menu>
+                                          <li nz-menu-item>
+                                            <a (click)="feedColunmName(category.name,column.name)">Clear
+                                              Adjustment</a>
+                                          </li>
+                                          <li nz-menu-item>
+                                            <a (click)="deleteColumn(category.name,column.name)">Delete</a>
+                                          </li>
+                                          <li nz-menu-item>
+                                            <a>hide Category</a>
+                                          </li>
+                                        </ul>
+                                      </nz-dropdown>
+                                    </span>
+                                  </th>
                                 </ng-container>
                               </ng-container>
-                              <th colspan="1">&nbsp;</th>
-                              <th colspan="1">&nbsp;</th>
+                              <th colspan="1" style="border-right: 1px solid rgb(232, 232, 232);">&nbsp;</th>
+                              <th colspan="1" style="border-right: 1px solid rgb(232, 232, 232);">&nbsp;</th>
                             </tr>
                             </thead>
-                            <tbody *ngFor="let data of basicTable.data">
-                            <tr *ngIf="tree">
-                              <td [colSpan]="returnBasis()">
-                                <p style="margin-top: 2px;background: rgb(243, 244, 247);margin-bottom: 2px;">&nbsp;</p>
-                              </td>
-                            </tr>
-                            <ng-container *ngIf="returnHideThread(data.name) || !tree ">
-                              <tr *ngFor="let dataT of data.thread">
-                                <ng-container *ngFor="let column of pure.category">
-                                  <ng-container *ngFor="let field of column.basis ">
-                                    <td colspan="1">
-                                      <nz-input-group>
-                                        <span (visibleIcon)="visibledIcon()" [appCalibration]="column.name"
-                                              [typePlte]="dataT.icon">
-                                          <input nz-input placeholder="" type="text"/>
-                                          <i class="icon-menu_24px" style="position: absolute;
-                                             top: 50%;
-                                             right: 10%;
-                                            z-index: 2;
-                                            color: rgba(0, 0, 0, 0.65);
-                                            line-height: 0;"></i>
-                                        </span>
-                                      </nz-input-group>
-
+                            <tbody #scrollOne (scroll)="updateScroll()"
+                                   style=" max-width: 825px; min-width: 825px;overflow-y: auto;max-height: 340px">
+                            <ng-container *ngFor="let data of te.data">
+                              <tr *ngIf="tree">
+                                <ng-container *ngFor="let column of pure.category ;trackBy: trackByFn">
+                                  <ng-container *ngFor="let field of column.basis ;let i =index;trackBy: trackByFn">
+                                    <td *ngIf="column.showBol"
+                                        [ngStyle]="{'border-right':styleBorder(i,column.basis.length)}"
+                                        style="padding-right: 0px;padding-left:0px;">
+                                      <p style="margin-top: 2px;background: rgb(243, 244, 247);margin-bottom: 2px;">
+                                        &nbsp;</p>
                                     </td>
                                   </ng-container>
                                 </ng-container>
-                                <td colspan="1" > &nbsp;</td>
+                                <td colspan="1"
+                                    style="padding-right: 0px;padding-left:0px;border-right: 1px solid rgb(232, 232, 232)">
+                                  <p style="margin-top: 2px;background: rgb(243, 244, 247);margin-bottom: 2px;">
+                                    &nbsp;</p></td>
                                 <td colspan="1" style="background: #F9F9F9"> &nbsp;</td>
                               </tr>
+                              <ng-container *ngIf="returnHideThread(data.name) || !tree ">
+                                <ng-container *ngFor="let dataT of data.thread">
+                                  <tr [ngStyle]="{'background':setBackgroud(dataT.backgoundIcon)}">
+                                    <ng-container *ngFor="let column of pure.category ;trackBy: trackByFn">
+                                      <ng-container
+                                        *ngFor="let field of column.basis ;let i =index;trackBy: trackByFn">
+                                        <td *ngIf="column.showBol"
+                                            [ngStyle]="{'border-right':styleBorder(i,column.basis.length)}"
+                                            colspan="1">
+                                          <nz-input-group>
+                                          <span [appCalibration]="column.name"
+                                                [typePlte]="dataT.icon">
+                                            <input [ngStyle]="{'visibility':iClearAdjustment(field.name,dataT.icon)}"
+                                                   nz-input placeholder=""
+                                                   type="text"/>
+                                            <i [ngStyle]="{'visibility':iClearAdjustment(field.name,dataT.icon)}"
+                                               class="icon-menu_24px" style="position: absolute;
+                                               top: 50%;
+                                               right: 10%;
+                                              z-index: 2;
+                                              color: rgba(0, 0, 0, 0.65);
+                                              line-height: 0;"></i>
+                                          </span>
+                                          </nz-input-group>
+                                        </td>
+                                      </ng-container>
+                                    </ng-container>
+                                    <td colspan="1" style="border-right: 1px solid rgb(232, 232, 232) "> &nbsp;</td>
+                                    <td colspan="1" style="background: #F9F9F9"> &nbsp;</td>
+                                  </tr>
+                                </ng-container>
+                              </ng-container>
                             </ng-container>
                             </tbody>
                           </nz-table>
                         </div>
+                        <!-- Button of Table de Template 1 -->
                         <div nz-row style="margin: 6px">
-                          <button class="ant-btn ant-btn-default"
-                                  style="background-color: #ffffff !important;color: #070acf;border-color:#070acf;margin-right: 20px; width: 100px;height: 30px; ">
-                            Export
-                          </button>
-                          <button class="ant-btn ant-btn-default"
-                                  style="background-color: #ffffff !important;color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 100px;height: 30px; ">
-                            Save As
-                          </button>
-                          <button class="ant-btn ant-btn-default" style="width: 100px;height: 30px; ">APPLY</button>
+                          <div nz-col nzSpan="12">
+                            <button class="ant-btn ant-btn-default"
+                                    style="background-color: #ffffff !important;color: #070acf;border-color:#070acf;margin-right: 20px; width: 100px;height: 30px; ">
+                              Export
+                            </button>
+                            <button class="ant-btn ant-btn-default"
+                                    style="background-color: #ffffff !important;color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 100px;height: 30px; ">
+                              Save As
+                            </button>
+                            <button class="ant-btn ant-btn-default" style="width: 100px;height: 30px; ">APPLY</button>
+                          </div>
+                          <div nz-col nzOffset="4" nzSpan="6">
+                            <nz-select
+                              (ngModelChange)="hideCatgegory(listOfSelectedValue)"
+                              [(ngModel)]="listOfSelectedValue"
+                              [nzMaxTagCount]="2"
+                              nzMode="multiple"
+                              nzPlaceHolder="Please select Category"
+                              style="width: 260px;"
+                            >
+                              <nz-option *ngFor="let option of pure.category" [nzLabel]="option.name"
+                                         [nzValue]="option.name"></nz-option>
+                            </nz-select>
+                            <ng-template #tagPlaceHolder let-selectedList> and {{ selectedList.length }} more selected
+                            </ng-template>
+                          </div>
                         </div>
                       </nz-tab>
                       <nz-tab nzTitle="Template 2">
@@ -355,7 +444,7 @@
     <div nz-col nzSpan="2">
       <div class="right-column">
         <div class="navigation-icons pt-5" style="min-height: 100px">
-          <i class="icon-map-pin-alt"></i>
+          <i class="icon-map-pin-alt" id="alt"></i>
           <i (click)="open()" class="icon-arrow_back_ios_24px mt-2"></i>
         </div>
       </div>
@@ -375,7 +464,8 @@
   nzPlacement="right"
   (nzOnClose)="close()"
   [nzWidth]=650
-  [nzZIndex]="1100"
+  [nzZIndex]=1100
+  [nzHeight]=1000
 >
 
   <div>
@@ -442,7 +532,7 @@ cursor: pointer;"></i>
 </nz-drawer>
 <!-- Model add Column-->
 <nz-modal class="modelAdjustment" [(nzVisible)]="isVisible" nzTitle="Add Adjustment Basic" nzClosable="false"
-           [nzFooter]="modalFooter">
+          [nzFooter]="modalFooter">
   <div nz-row>
     <div nz-col nzSpan="24">
       &nbsp;
@@ -464,9 +554,12 @@ cursor: pointer;"></i>
       &nbsp;
     </div>
     <div nz-col nzSpan="19">
-      <nz-select style="width: 260px;" [(ngModel)]="categorySelectedFromBasis" [nzPlaceHolder]="'Choose a category'"
+      <nz-select style="width: 260px;" [ngModel]="categorySelectedFromBasis" [nzPlaceHolder]="'Choose a category'"
                  (ngModelChange)="selectCategory(categorySelectedFromBasis)" [nzSize]="size">
-        <nz-option *ngFor="let option of pure.category" [nzLabel]="option.name" [nzValue]="option.name"></nz-option>
+        <ng-container *ngFor="let option of pure.category">
+          <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
+                     [nzValue]="option.name"></nz-option>
+        </ng-container>
       </nz-select>
     </div>
   </div>
@@ -508,15 +601,19 @@ cursor: pointer;"></i>
     </div>
   </div>
   <ng-template #modalFooter>
-      <button class="ant-btn"
-              (click)="handleCancel()"
-              style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL </button>
-      <button class="ant-btn ant-btn-default"
-              (click)="addColumnToTable(singleValue,categorySelectedFromBasis)"
-              style="background-color: #ffffff !important; color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 70px;height: 30px; "> ADD </button>
-      <button class="ant-btn ant-btn-default"
-              (click)="addColumnToTableAndClose(singleValue,categorySelectedFromBasis)"
-              style="width: 130px; height: 30px; ">ADD & CLOSE</button>
+    <button class="ant-btn"
+            (click)="handleCancel()"
+            style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
+    </button>
+    <button class="ant-btn ant-btn-default"
+            (click)="addColumnToTable(singleValue,categorySelectedFromBasis)"
+            style="background-color: #ffffff !important; color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 70px;height: 30px; ">
+      ADD
+    </button>
+    <button class="ant-btn ant-btn-default"
+            (click)="addColumnToTableAndClose(singleValue,categorySelectedFromBasis)"
+            style="width: 130px; height: 30px; ">ADD & CLOSE
+    </button>
   </ng-template>
 </nz-modal>
 
