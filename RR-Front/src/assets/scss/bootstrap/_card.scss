@@ -247,7 +247,7 @@
     widows: 1;
 
     .card {
-      display: inline-block; // Don't let them vertically span multiple columns
+      display: inline-block; // Don't let them vertically span multiple basis
       width: 100%; // Don't let their width change
     }
   }

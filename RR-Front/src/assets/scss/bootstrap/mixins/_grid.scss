@@ -1,6 +1,6 @@
 /// Grid system
 //
-// Generate semantic grid columns with these mixins.
+// Generate semantic grid basis with these mixins.
 
 @mixin make-container($gutter: $grid-gutter-width) {
   width: 100%;
@@ -29,7 +29,7 @@
 
 @mixin make-col-ready($gutter: $grid-gutter-width) {
   position: relative;
-  // Prevent columns from becoming too narrow when at smaller grid tiers by
+  // Prevent basis from becoming too narrow when at smaller grid tiers by
   // always setting `width: 100%;`. This works because we use `flex` values
   // later on to override this initial width.
   width: 100%;
