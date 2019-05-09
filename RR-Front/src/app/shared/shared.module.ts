@@ -6,6 +6,7 @@ import {COMPONENTS} from './components';
 import {TableModule} from 'primeng/table';
 import {RouterModule} from '@angular/router';
 import {HighlightDirective} from './highlight.directive';
+import {ContextMenuModule} from 'primeng/primeng';
 
 
 @NgModule({
@@ -14,6 +15,7 @@ import {HighlightDirective} from './highlight.directive';
     CommonModule,
     NgZorroAntdModule,
     ReactiveFormsModule,
+    ContextMenuModule,
     TableModule,
     FormsModule
   ],

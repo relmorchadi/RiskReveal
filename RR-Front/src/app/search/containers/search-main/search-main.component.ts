@@ -32,9 +32,9 @@ export class SearchMainComponent implements OnInit {
   columns = [
     {
       field: 'checkbox',
-      header: 'checkbox',
+      header: '',
       width: '20px',
-      display: false,
+      display: true,
       sorted: false,
       filtered: false,
       type: 'checkbox',
