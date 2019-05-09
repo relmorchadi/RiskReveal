@@ -117,8 +117,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
   listOfSelectedValue=[];
   @ViewChild('scrollOne') scrollOne: ElementRef;
   @ViewChild('scrollTwo') scrollTwo: ElementRef;
-  protected options: GridsterConfig;
-  protected item: any = {x: 0, y: 0, cols: 15, rows: 5};
+
   constructor() {
     this.cols = [
       {field: 'vin', header: 'Vin'},

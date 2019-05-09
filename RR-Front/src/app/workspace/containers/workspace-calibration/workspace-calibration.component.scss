@@ -1,9 +1,16 @@
 :host {
   width: 100%;
 }
-
+.calibration{
+  ::ng-deep{
+    .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
+      background: #f0f2f5 !important;
+    }
+  }
+}
 
 ::ng-deep {
+
   nz-layout.ant-layout {
     width: 100% !important;
   }
@@ -43,13 +50,7 @@
   .card-container[_ngcontent-c14] .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
     background: #f0f2f5;
     height: 100%;
-    // padding: 16px;
   }
-
-  /*.card-container[_ngcontent-c14] .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
-
-    background-color: #f0f2f5 !important;
-  }*/
 
   .textLastAdjustement {
     color: rgba(0, 0, 0, 0.87);
@@ -155,16 +156,17 @@
       }
     }
   }
-}
-
-::ng-deep {
-
   .ant-drawer .ant-drawer-content {
     width: 100%;
     height: 100%;
     position: absolute;
     top: 209px;
   }
+}
+
+::ng-deep {
+
+
 
 }
 
@@ -180,15 +182,6 @@
 .ant-modal-content {
   border-radius: 0px;
 }
-
-/*  .ant-select-selection {
-    margin: 10px;
-    border: 1px solid #36d8c2;
-    height: 39px;
-  }*/
-
-
-
 
 .card1 {
   ::ng-deep {
@@ -227,8 +220,9 @@
       -webkit-transform-origin: 0 0;
       transform-origin: 0 0;
     }
-
-
+    .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
+      background: #ffffff !important;
+    }
     .ant-tabs-bar.ant-tabs-top-bar.ant-tabs-default-bar {
       border-bottom: none !important;;
     }
@@ -463,4 +457,5 @@
   text-align: left;
   width: 200px;
 }
+
 
