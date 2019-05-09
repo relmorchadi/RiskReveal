@@ -1,12 +1,11 @@
 import {NgModule} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {COMPONENTS} from "./components"
-import {CONTAINERS, WorkspaceMainComponent} from "./containers";
+import {CONTAINERS, WorkspaceMainComponent, WorkspaceProjectComponent, WorkspaceRiskLinkComponent} from "./containers";
 import {RouterModule, Routes} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
 import {TableModule} from 'primeng/table';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
-import {WorkspaceComponent} from './workspace.component';
 import {WorkspaceCalibrationComponent} from './containers/workspace-calibration/workspace-calibration.component';
 import { CalibrationDirective } from './calibration.directive';
 
