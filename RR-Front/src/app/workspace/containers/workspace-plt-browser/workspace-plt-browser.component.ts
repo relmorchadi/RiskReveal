@@ -20,8 +20,8 @@ export class WorkspacePltBrowserComponent implements OnInit {
 
   listOfPlts: Array<{
     pltId: number;
-    systemTags: [];
-    userTags: [];
+    systemTags: any;
+    userTags: any;
     pathId: number; pltName: string;
     peril: string;
     regionPerilCode: string;
@@ -36,7 +36,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
     [key: string]:any;}> = [
     {
       pltId: 1,
-      systemTgs: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
       userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
       pathId: 1,
       pltName: "NATC-USM_RL_Imf.T1",
@@ -174,6 +174,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 9,
       systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 3}],
       userTags: [{tagId: 2}],
+      pathId: 3,
       pltName: "NATC-USM_RL_Imf.T9",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -241,6 +242,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       pltId: 13,
       systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
       userTags: [{tagId: 1}, {tagId: 2}],
+      pathId: 4,
       pltName: "NATC-USM_RL_Imf.T13",
       peril: "TC",
       regionPerilCode: "NATC-USM",
@@ -310,8 +312,8 @@ export class WorkspacePltBrowserComponent implements OnInit {
 
   pltColumns = [
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: null},
-    {fields:'' , header:'User Tags' , width: '7%', sorted: false, filtred: false, icon: null},
-    {fields:'pltId' , header:'PLT ID' , width: '5%', sorted: true, filtred: true, icon: null},
+    {fields:'' , header:'User Tags' , width: '6%', sorted: false, filtred: false, icon: null},
+    {fields:'pltId' , header:'PLT ID' , width: '6%', sorted: true, filtred: true, icon: null},
     {fields:'pltName' , header:'PLT Name' , width: '14%', sorted: true, filtred: true, icon: null},
     {fields:'peril' , header:'Peril' , width: '7%', sorted: true, filtred: true, icon: null},
     {fields:'regionPerilCode' , header:'Region Peril Code' , width: '13%', sorted: true, filtred: true, icon: null},
@@ -322,16 +324,8 @@ export class WorkspacePltBrowserComponent implements OnInit {
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-note"},
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
-    ]
+    ];
 
-
-
-
-
-
-
-
-  // ************************
 
   currentPlt = null;
   notChecked = false;
@@ -820,7 +814,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
   }
 
   openPltInDrawer(plt) {
-    let selectedPlts = this.plts.filter(pt => pt.selected === true);
+    let selectedPlts = this.listOfDisplayPlts.filter(pt => pt.selected === true);
     if (selectedPlts.length > 0) {
       if (selectedPlts[0] === plt) {
         plt.selected = false;
@@ -828,12 +822,12 @@ export class WorkspacePltBrowserComponent implements OnInit {
         this.sumnaryPltDetails = null;
         this.pltDetailsPermission = false;
       } else {
-        this.plts.forEach( pt => pt.selected = false);
+        this.listOfDisplayPlts.forEach( pt => pt.selected = false);
         plt.selected = true;
         this.sumnaryPltDetails = plt;
       }
     } else {
-      this.plts.forEach(pt => pt.selected = false);
+      this.listOfDisplayPlts.forEach(pt => pt.selected = false);
       plt.selected = true;
       this.visible = true;
       this.sumnaryPltDetails = plt;
