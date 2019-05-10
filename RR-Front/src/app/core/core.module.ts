@@ -17,7 +17,7 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
 import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
-import {SearchNavBarState} from "./store/states/search-nav-bar.state";
+import {WorkspaceMainState, SearchNavBarState} from './store/states';
 
 registerLocaleData(en);
 
@@ -31,7 +31,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    NgxsModule.forRoot([SearchNavBarState], {developmentMode: !environment.production}),
+    NgxsModule.forRoot([SearchNavBarState, WorkspaceMainState], {developmentMode: !environment.production}),
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
   exports: [

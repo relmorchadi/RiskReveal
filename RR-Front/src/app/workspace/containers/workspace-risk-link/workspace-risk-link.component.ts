@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -11,8 +11,6 @@ import {ActivatedRoute} from '@angular/router';
 export class WorkspaceRiskLinkComponent implements OnInit {
   leftNavbarIsCollapsed = false;
   lastSelectedIndex = null;
-  componentSubscription: any = [];
-  selectedPrStatus = '1';
   checkedARC = false;
   checkedPricing = false;
 
@@ -20,14 +18,12 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   list2 = ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'];
   list3 = ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'];
   list4 = ['MLC (USD)', 'MLC (EUR)', 'YEN'];
-  list5: any = ['Currently Imported', 'item 1', 'item 2'];
   list6: any = ['Add calibration', 'item 1', 'item 2'];
 
   selectedRMS = 'AZU-P-RL17-SQL14';
   selectedPrELT = 'Net Loss Pre Cat (RL)';
   selectedPrEPM = 'Facultative Reinsurance Loss';
   selectedTarget = 'MLC (USD)';
-  list4value = 'Currently Imported';
   list5value = 'Add calibration';
 
   listEDM: any = [];
@@ -213,7 +209,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {field: 'id', header: 'id', width: '30px'},
     {field: 'name', header: 'name', width: '190px'}
   ];
-  /* tslint:disable */
+
   summaryInfo: any = [
     {
       scanned: true,
@@ -298,16 +294,16 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     },
   ];
 
-  displayDropdownRDMEDM: boolean = false;
-  displayListRDMEDM: boolean = false;
-  displayTable: boolean = false;
-  displayImport: boolean = false;
+  displayDropdownRDMEDM = false;
+  displayListRDMEDM = false;
+  displayTable = false;
+  displayImport = false;
 
 
-  collapseHead: boolean = true;
-  collapseFooter: boolean = true;
-  collapseResult: boolean = true;
-  /* tslint:enable */
+  collapseHead = true;
+  collapseAnalysis = true;
+  collapseResult = true;
+
   currentStep = 0;
 
   constructor(private _helper: HelperService, private route: ActivatedRoute) {
@@ -479,7 +475,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     this.selectedEDMOrRDM === 'RDM' ? this.selectedAnalysis = selectedRows : this.selectedPortfolio = selectedRows;
   }
 
-  private selectSection(from, to) {
+  selectSection(from, to) {
     if (from === to) {
       this.tableLeft[from].selected = !this.tableLeft[from].selected;
     } else {

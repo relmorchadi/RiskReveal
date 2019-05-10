@@ -5,8 +5,11 @@ import * as _ from 'lodash';
 import {forkJoin, of} from 'rxjs';
 import {ActivatedRoute} from '@angular/router';
 import {Observable} from 'rxjs';
-import {mergeMap} from "rxjs/internal/operators/mergeMap";
+import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 import {delay} from 'rxjs/operators';
+import {OpenWorkspaceMainAction} from '../../../core/store/actions';
+import {Select, Store} from '@ngxs/store';
+import {Location} from "@angular/common";
 
 @Component({
   selector: 'app-workspace-main',
@@ -17,27 +20,16 @@ export class WorkspaceMainComponent implements OnInit {
   leftNavbarIsCollapsed = false;
   tabs: any = [];
   collapseWorkspaceDetail = true;
-  componentSubscription: any = [];
-  selectedPrStatus = '1';
   wsId: any;
   year: any;
   loading = false;
   sliceValidator = true;
-  selectedWorkspaces: any = [];
-  WorkspaceData: any;
-
-  ProjectStatus: any = [
-    {id: 'project1', selected: false},
-    {id: 'project2', selected: false},
-    {id: 'project3', selected: false},
-    {id: 'project4', selected: false},
-  ];
 
   ws$: Observable<any>;
   ws = [];
   fromSingleWorkspace = false;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute, private _searchService: SearchService) {
+  constructor(private _helper: HelperService, private route: ActivatedRoute, private _searchService: SearchService, private store: Store) {
 
   }
 
@@ -68,20 +60,11 @@ export class WorkspaceMainComponent implements OnInit {
       this.searchData(this.wsId, this.year).pipe(
         mergeMap((content: any) => {
           const item = {
-            uwYear: this.year,
             workSpaceId: this.wsId,
-            cedantCode: content.cedantCode,
-            cedantName: content.cedantName,
-            ledgerName: content.ledgerName,
-            ledgerId: content.subsidiaryLedgerId,
-            subsidiaryName: content.subsidiaryName,
-            subsidiaryId: content.subsidiaryId,
-            expiryDate: content.expiryDate,
-            inceptionDate: content.inceptionDate,
-            treatySections: content.treatySections,
-            workspaceName: content.worspaceName,
-            years: content.years
+            uwYear: this.year,
+            ...content
           };
+          this.store.dispatch(new OpenWorkspaceMainAction(item));
           this.ws = [item];
           this._helper.affectItems([item], true);
           this.ws$ = of(this.ws);
@@ -120,41 +103,23 @@ export class WorkspaceMainComponent implements OnInit {
       this.searchData(title, year).subscribe(
         (dt: any) => {
           const workspace = {
-            uwYear: year,
             workSpaceId: title,
-            cedantCode: dt.cedantCode,
-            cedantName: dt.cedantName,
-            ledgerName: dt.ledgerName,
-            ledgerId: dt.subsidiaryLedgerId,
-            subsidiaryName: dt.subsidiaryName,
-            subsidiaryId: dt.subsidiaryId,
-            expiryDate: dt.expiryDate,
-            inceptionDate: dt.inceptionDate,
-            treatySections: dt.treatySections,
-            workspaceName: dt.worspaceName,
-            years: dt.years
+            uwYear: year,
+            ...dt
           };
           this._helper.itemsAppend(workspace);
+          this.store.dispatch(new OpenWorkspaceMainAction(workspace));
         }
       );
     } else {
       this.searchData(title, year).subscribe(
         (dt: any) => {
           const workspace = {
-            uwYear: year,
             workSpaceId: title,
-            cedantCode: dt.cedantCode,
-            cedantName: dt.cedantName,
-            ledgerName: dt.ledgerName,
-            ledgerId: dt.subsidiaryLedgerId,
-            subsidiaryName: dt.subsidiaryName,
-            subsidiaryId: dt.subsidiaryId,
-            expiryDate: dt.expiryDate,
-            inceptionDate: dt.inceptionDate,
-            treatySections: dt.treatySections,
-            workspaceName: dt.worspaceName,
-            years: dt.years
+            uwYear: year,
+            ...dt
           };
+          this.store.dispatch(new OpenWorkspaceMainAction(workspace));
           this.ws = _.filter(this.ws, ws => {
             if (ws.workSpaceId == title && ws.uwYear == year) { return null; } else {return ws; }});
           this.ws = [...this.ws, workspace];
@@ -184,14 +149,6 @@ export class WorkspaceMainComponent implements OnInit {
     } else {
       return content;
     }
-  }
-
-  selectproject(id) {
-    this.ProjectStatus.array.forEach(e => {
-      if (e.id === id) {
-        e.selected = !e.selected;
-      }
-    });
   }
 
 }

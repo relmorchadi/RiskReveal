@@ -5,7 +5,7 @@ import {SearchService} from '../../../service/search.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
 import {forkJoin, Observable, of} from 'rxjs';
-import {PatchSearchStateAction} from '../../../store/actions';
+import {OpenWorkspaceMainAction, PatchSearchStateAction} from '../../../store/actions';
 import {Store} from '@ngxs/store';
 
 @Component({
@@ -38,16 +38,6 @@ export class WorkspacesMenuItemComponent implements OnInit {
       }
     });
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
-
-    if (this.numberofElement > 0) {
-      this.labels.push('Last 10');
-    }
-    if (this.numberofElement > 50) {
-      this.labels.push('Last 50');
-    }
-    if (this.numberofElement > 100) {
-      this.labels.push('Last 100');
-    }
 
     this.searchWorkspace('10');
   }
@@ -105,7 +95,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   popOutWorkspaces() {
     this.visible = false;
     this.workspaces.filter(ws => ws.selected).forEach(ws => {
-      window.open('/workspace/' + (ws.id || ws.workSpaceId)+'/'+(ws.year ||ws.uwYear));
+      window.open('/workspace/' + (ws.id || ws.workSpaceId) + '/' + (ws.year || ws.uwYear));
       console.log('try to open', ws);
     });
   }
@@ -120,18 +110,9 @@ export class WorkspacesMenuItemComponent implements OnInit {
             const workspace = {
               workSpaceId: SI.workSpaceId,
               uwYear: SI.uwYear,
-              cedantCode: dt.cedantCode,
-              cedantName: dt.cedantName,
-              ledgerName: dt.ledgerName,
-              ledgerId: dt.subsidiaryLedgerId,
-              subsidiaryName: dt.subsidiaryName,
-              subsidiaryId: dt.subsidiaryId,
-              expiryDate: dt.expiryDate,
-              inceptionDate: dt.inceptionDate,
-              treatySections: dt.treatySections,
-              workspaceName: dt.worspaceName,
-              years: dt.years
+              ...dt
             };
+            this.store.dispatch(new OpenWorkspaceMainAction(workspace));
             workspaces = [workspace, ...workspaces];
             if (workspaces.length === selectedItems.length) {
               this._helperService.affectItems(workspaces, true);
