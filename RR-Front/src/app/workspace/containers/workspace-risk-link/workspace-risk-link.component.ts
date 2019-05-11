@@ -9,96 +9,304 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./workspace-risk-link.component.scss']
 })
 export class WorkspaceRiskLinkComponent implements OnInit {
-  leftNavbarIsCollapsed: boolean = false;
-  collapseWorkspaceDetail: boolean = true;
+  leftNavbarIsCollapsed = false;
+  lastSelectedIndex = null;
   componentSubscription: any = [];
   selectedPrStatus = '1';
+  checkedARC = false;
+  checkedPricing = false;
 
-  list1: any = ['RMS Instance', 'item 1', 'item 2'];
-  list2: any = ['Financial Perspective', 'item 1', 'item 2'];
-  list3: any = ['Currency', 'item 1', 'item 2'];
-  list4: any = ['Currently Imported', 'item 1', 'item 2'];
-  list5: any = ['Add calibration', 'item 1', 'item 2'];
+  list1 = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
+  list2 = ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'];
+  list3 = ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'];
+  list4 = ['MLC (USD)', 'MLC (EUR)', 'YEN'];
+  list5: any = ['Currently Imported', 'item 1', 'item 2'];
+  list6: any = ['Add calibration', 'item 1', 'item 2'];
 
-  list1value: string = 'RMS Instance';
-  list2value: string = 'Financial Perspective';
-  list3value: string = 'Currency';
-  list4value: string = 'Currently Imported';
-  list5value: string = 'Add calibration';
+  selectedRMS = 'AZU-P-RL17-SQL14';
+  selectedPrELT = 'Net Loss Pre Cat (RL)';
+  selectedPrEPM = 'Facultative Reinsurance Loss';
+  selectedTarget = 'MLC (USD)';
+  list4value = 'Currently Imported';
+  list5value = 'Add calibration';
 
   listEDM: any = [];
   listRDM: any = [];
+  selectedEDMOrRDM: string;
 
-  RDM: any = [
-    {id: 1, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', selected: false, Reference: '413'},
-    {id: 2, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '3'},
-    {id: 3, name: 'CF1803_PORT_R', selected: false, Reference: '3'},
-    {id: 4, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', selected: false, Reference: '425'},
-    {id: 5, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '12'},
-    {id: 6, name: 'CF1803_PORT_R', selected: false, Reference: '4/25'},
-    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '4/12'},
-    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '7/15'}
+  selectedAnalysis: any = [];
+  selectedPortfolio: any = [];
+
+  listEdmRdm: any = [
+    {id: 1, name: 'AA2012_syntheticCurve_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 2, name: 'AA2012_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/5'},
+    {id: 3, name: 'AA2016_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 4, name: 'AA2017_SEA_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 5, name: 'ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'},
+    {id: 6, name: 'ALMF_test_R', type: 'RDM', selected: false, scanned: false, Reference: '0/12'},
+    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
+    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/4'},
+    {id: 9, name: 'Aon_IF_Flood_Example_E', type: 'EDM', selected: false, scanned: false, Reference: '0/2'},
+    {id: 10, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM', type: 'EDM', selected: false, scanned: false, Reference: '0/15'},
+    {id: 11, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 12, name: 'CC_ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
+    {id: 13, name: 'CG1801_DEU_Allianz_DEFL_R', type: 'RDM', selected: false, scanned: false, Reference: '0/41'},
+    {id: 14, name: 'CG1801_DEU_Allianz_DEFL_E', type: 'EDM', selected: false, scanned: false, Reference: '0/41'},
+    {id: 15, name: 'Anxin_2018_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/15'},
+    {id: 16, name: 'Anxin_2018_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/17'},
+    {id: 17, name: 'CF1803_PORT_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
+    {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
   ];
 
-  EDM: any = [
-    {id: 1, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', selected: false, Reference: '413'},
-    {id: 2, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '2/3'},
-    {id: 3, name: 'CF1803_PORT_R', selected: false, Reference: '33/4'},
-    {id: 4, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', selected: false, Reference: '425'},
-    {id: 5, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '12/1'},
-    {id: 6, name: 'CF1803_PORT_R', selected: false, Reference: '4/25'},
-    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '4/12'},
-    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_R', selected: false, Reference: '7/15'}
-  ];
-  /* tslint:disable */
   tableLeft: any = [
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false, description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: true ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
-    {checked: false, id: '10', name: 'Europe All Lines, EP Wind Only', AlreadyImported: false ,description: 'EUWS_EP_PLA_DLM110', engineVersion: '11.0.141 1.2', groupeType: 'Analysis', cedant: 'RMS_EUWS_industry'},
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: true,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: true,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: true,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: true,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '10',
+      name: 'Europe All Lines, EP Wind Only',
+      AlreadyImported: false,
+      description: 'EUWS_EP_PLA_DLM110',
+      engineVersion: '11.0.141 1.2',
+      groupeType: 'Analysis',
+      cedant: 'RMS_EUWS_industry'
+    },
   ];
-  /* tslint:enable */
 
   scrollableCols = [
-    { field: 'description', header: 'Description', width: '150px' },
-    { field: 'engineVersion', header: 'Engine Version', width: '110px' },
-    { field: 'groupeType', header: 'Groupe Type', width: '110px' },
-    { field: 'cedant', header: 'cedant', width: '110px' },
+    {field: 'description', header: 'Description', width: '150px'},
+    {field: 'engineVersion', header: 'Engine Version', width: '110px'},
+    {field: 'groupeType', header: 'Groupe Type', width: '110px'},
+    {field: 'cedant', header: 'cedant', width: '110px'},
   ];
 
   frozenCols = [
-    { field: 'checked', header: 'checked', width: '20px' },
-    { field: 'id', header: 'id', width: '30px' },
-    { field: 'name', header: 'name', width: '160px' },
-    { field: 'AlreadyImported', header: 'Already Imported', width: '55px' }
+    {field: 'selected', header: 'selected', width: '20px'},
+    {field: 'id', header: 'id', width: '30px'},
+    {field: 'name', header: 'name', width: '190px'}
   ];
   /* tslint:disable */
-  SummaryInfo: any = [
-    {status : true, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'},
-    {status : false, portfolio: 'Portfolio 2', exposedCurrency: 'USD', TargetCurrency: 'USD', EDM: 'EDM2', importID: '1', dateImport: 'Wed Nov 14 13:08:59 CET 2018', User1 : 'Nathalie Dulac'}
+  summaryInfo: any = [
+    {
+      scanned: true,
+      status: 100,
+      id: '286',
+      number: 'EUGU_CHIPZCP_CDSC_PR',
+      name: 'AUWS_PR_20170930',
+      exposedLocation: true,
+      exposedCurrency: 'USD',
+      targetCurrency: 'USD',
+      unitMultiplier: 1.0,
+      proportion: '100%',
+      EDM: 'AA2012_SyntheticCurve_E'
+    },
+    {
+      scanned: true,
+      status: 60,
+      id: '325',
+      number: 'EUGU_CHIPZCP_CDSC_PR',
+      name: 'AUWS_PR_20170930',
+      exposedLocation: true,
+      exposedCurrency: 'USD',
+      targetCurrency: 'USD',
+      unitMultiplier: 1.0,
+      proportion: '100%',
+      EDM: 'AA2012_SyntheticCurve_E'
+    },
+    {
+      scanned: true,
+      status: 0,
+      id: '284',
+      number: 'EUGU_CHIPZCP_CDSC_PR',
+      name: 'AUWS_PR_20170930',
+      exposedLocation: true,
+      exposedCurrency: 'USD',
+      targetCurrency: 'USD',
+      unitMultiplier: 1.0,
+      proportion: '100%',
+      EDM: 'AA2012_SyntheticCurve_E'
+    },
   ];
 
-  displayDropdownEDM: boolean = false;
-  displayDropdownRDM: boolean = false;
-  displayListRDM: boolean = false;
-  displayListEDM: boolean = false;
+  resultsInfo: any = [
+    {
+      scanned: false,
+      status: 100,
+      id: '286',
+      name: 'Europe All Lines, EP Wind Only',
+      description: 'Europe All Lines, EP Wind Only',
+      regionPeril: 'DEFL',
+      analysisCurrency: 'USD',
+      targetCurrency: 'USD',
+      ELT: 'GR',
+      occurrenceBasis: 'PerEvent',
+      unitMultiplier: 1.0
+    },
+    {
+      scanned: false,
+      status: 50,
+      id: '285',
+      name: 'Europe All Lines, EP Wind Only',
+      description: 'Europe All Lines, EP Wind Only',
+      regionPeril: 'DEFL',
+      analysisCurrency: 'USD',
+      targetCurrency: 'USD',
+      ELT: 'GR',
+      occurrenceBasis: 'PerEvent',
+      unitMultiplier: 1.0
+    },
+    {
+      scanned: false,
+      status: 20,
+      id: '284',
+      name: 'Europe All Lines, EP Wind Only',
+      description: 'Europe All Lines, EP Wind Only',
+      regionPeril: 'DEFL',
+      analysisCurrency: 'USD',
+      targetCurrency: 'USD',
+      ELT: 'GR',
+      occurrenceBasis: 'PerEvent',
+      unitMultiplier: 1.0
+    },
+  ];
+
+  displayDropdownRDMEDM: boolean = false;
+  displayListRDMEDM: boolean = false;
   displayTable: boolean = false;
   displayImport: boolean = false;
 
 
-  collapsehead: boolean = true;
-  collapseright: boolean = true;
-  collapsefooter: boolean = true;
+  collapseHead: boolean = true;
+  collapseFooter: boolean = true;
+  collapseResult: boolean = true;
   /* tslint:enable */
   currentStep = 0;
 
@@ -112,126 +320,120 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     });
   }
 
-/*  ngOnDestroy (): void {
-    _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
-  }*/
-
   toggleItems(RDM) {
     RDM.selected = !RDM.selected;
   }
 
   toggleItemsListRDM(RDM) {
-    let nbrSelected = 0;
-    this.listRDM.forEach((e) => {
-        e.selected === true ? nbrSelected = nbrSelected + 1 : null;
-      }
-    );
-    this.listEDM.forEach((e) => {
-       e.selected === true ? nbrSelected = nbrSelected + 1 : null;
-      }
-    );
+    const selectedRDMItems = this.listRDM.filter( RM => RM.selected);
+    const selectedEDMItems = this.listEDM.filter( EM => EM.selected);
+    const nbrSelected = selectedEDMItems.length + selectedRDMItems.length;
     if (nbrSelected === 0) {
       RDM.selected = true;
+      this.selectedEDMOrRDM = RDM.type;
       this.displayTable = true;
     } else {
       if (!RDM.selected) {
-        this.listRDM.forEach((e) => {
-            e.selected = false;
-          }
-        );
-        this.listEDM.forEach((e) => {
-            e.selected = false;
-          }
-        );
+        this.unselectEDMRDM();
         RDM.selected = true;
+        this.selectedEDMOrRDM = RDM.type;
       } else {
-        this.listRDM.forEach((e) => {
-          e.selected = false;
-        }
-      );
-        this.listEDM.forEach((e) => {
-            e.selected = false;
-          }
-        );
+        this.unselectEDMRDM();
         this.displayTable = false;
+        this.selectedEDMOrRDM = null;
       }
     }
   }
 
-  selectAll(value) {
-    if (value === 1) {
-      this.EDM.forEach((e) => {
-        e.selected = true;
-      });
-    } else {
-      this.RDM.forEach((e) => {
-        e.selected = true;
-      });
-    }
+  selectAll() {
+    this.listEdmRdm.forEach((e) => {
+      e.selected = true;
+    });
   }
-  unselectAll(value) {
-    if (value === 1) {
-      this.EDM.forEach((e) => {
+
+  unselectAll() {
+    this.listEdmRdm.forEach((e) => {
+      e.selected = false;
+    });
+  }
+
+  unselectEDMRDM() {
+    this.listRDM.forEach((e) => {
         e.selected = false;
-      });
-    } else {
-      this.RDM.forEach((e) => {
+      }
+    );
+    this.listEDM.forEach((e) => {
         e.selected = false;
-      });
-    }
+      }
+    );
   }
 
-  openCloseDropdown(value) {
-    if (value === 1) {
-      this.displayDropdownEDM = !this.displayDropdownEDM;
-    } else {
-      this.displayDropdownRDM = !this.displayDropdownRDM;
-    }
+  refreshAll() {
+    this.listEdmRdm.forEach((e) => {
+      e.scanned = false;
+      e.selected = false;
+    });
   }
 
-  closeDropdown(value) {
-    if (value === 1) {
-      this.displayDropdownEDM = false;
-    } else {
-      this.displayDropdownRDM = false;
-    }
+  openCloseDropdown() {
+    this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
   }
 
-  selectedItem(value) {
-    if (value === 1) {
-      this.listEDM = [];
-      this.EDM.forEach((e) => {
-        if (e.selected === true) {
-          const newItem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
-          this.listEDM = [...this.listEDM , newItem];
+  closeDropdown() {
+    this.displayDropdownRDMEDM = false;
+  }
+
+  fillLists() {
+    this.listEDM = [];
+    this.listRDM = [];
+    this.listEdmRdm.forEach((e) => {
+      if (e.selected === true || e.scanned === true) {
+        if (e.type === 'EDM') {
+          const newItem = {
+            id: e.id,
+            name: e.name,
+            type: e.type,
+            selected: false,
+            scanned: true,
+            Reference: e.Reference
+          };
+          this.listEDM = [...this.listEDM, newItem];
+        } else {
+          const newItem = {
+            id: e.id,
+            name: e.name,
+            type: e.type,
+            selected: false,
+            scanned: true,
+            Reference: e.Reference
+          };
+          this.listRDM = [...this.listRDM, newItem];
         }
-      });
-      this.displayDropdownEDM = false;
-      this.listEDM.length === 0 ? this.displayListEDM = false : this.displayListEDM = true;
-    } else {
-      this.listRDM = [];
-      this.RDM.forEach((e) => {
-        if (e.selected === true) {
-          const newitem = {id: e.id, name: e.name, selected: false, Reference: e.Reference};
-          this.listRDM = [...this.listRDM, newitem];
-        }
-      });
-      this.displayDropdownRDM = false;
-      this.listRDM.length === 0 ? this.displayListRDM = false : this.displayListRDM = true;
-      this.listRDM.length > 0 && this.listEDM.length > 0 ? this.currentStep = 1 : this.currentStep = 0;
-    }
-    this.collapseright = true;
+        e.scanned = true;
+      }
+    });
   }
+
+  selectedItem() {
+    this.fillLists();
+    this.displayDropdownRDMEDM = false;
+    this.listRDM.length > 0 && this.listEDM.length > 0 ? this.currentStep = 1 : this.currentStep = 0;
+    this.listRDM.length > 0 || this.listEDM.length > 0 ? this.displayListRDMEDM = true : this.displayListRDMEDM = false;
+  }
+
+  scanItem(item) {
+    console.log('i here');
+    item.scanned = false;
+    setTimeout(() =>
+      item.scanned = true, 1000
+    );
+  }
+
   selectStep(value) {
     if (value === 0 && this.currentStep === 1) {
-      this.currentStep = 0;
-      this.listEDM = [];
-      this.listRDM = [];
-      this.displayListEDM = false;
-      this.displayListRDM = false;
       this.displayTable = false;
-      this.unselectAll(1);
-      this.unselectAll(2);
+      this.refreshAll();
+      this.selectedItem();
     }
     if (value === 1 && this.currentStep === 2) {
       this.currentStep = 1;
@@ -243,7 +445,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
           e.selected = false;
         }
       );
-      this.displayImport =  false;
+      this.displayImport = false;
       this.displayTable = false;
     }
     if (value === 0 && this.currentStep === 2) {
@@ -251,19 +453,39 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       this.selectStep(0);
     }
   }
+
   displayImported() {
-    if ( this.currentStep === 1) {
+    if (this.currentStep === 1) {
       this.currentStep = 2;
       this.displayImport = true;
     }
   }
-  collapseHead() {
-    this.collapsehead = !this.collapsehead;
+
+  selectRow(row: any, index: number) {
+    if ((window as any).event.ctrlKey) {
+      row.selected = !row.selected;
+    }
+    if ((window as any).event.shiftKey) {
+      event.preventDefault();
+      if (this.lastSelectedIndex) {
+        this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
+        this.lastSelectedIndex = null;
+      } else {
+        this.lastSelectedIndex = index;
+      }
+    }
+    // this.currentSelectedItem = row;
+    const selectedRows = this.tableLeft.filter(ws => ws.selected === true);
+    this.selectedEDMOrRDM === 'RDM' ? this.selectedAnalysis = selectedRows : this.selectedPortfolio = selectedRows;
   }
-  collapseRight() {
-    this.collapseright = !this.collapseright;
-  }
-  collapseFooter() {
-    this.collapsefooter = !this.collapsefooter;
+
+  private selectSection(from, to) {
+    if (from === to) {
+      this.tableLeft[from].selected = !this.tableLeft[from].selected;
+    } else {
+      for (let i = from; i <= to; i++) {
+        this.tableLeft[i].selected = !this.tableLeft[i].selected;
+      }
+    }
   }
 }

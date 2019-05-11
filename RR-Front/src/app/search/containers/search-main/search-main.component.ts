@@ -32,9 +32,9 @@ export class SearchMainComponent implements OnInit {
   columns = [
     {
       field: 'checkbox',
-      header: 'checkbox',
-      width: '15px',
-      display: false,
+      header: '',
+      width: '20px',
+      display: true,
       sorted: false,
       filtered: false,
       type: 'checkbox',
@@ -43,7 +43,7 @@ export class SearchMainComponent implements OnInit {
     {
       field: 'countryName',
       header: 'Country',
-      width: '110px',
+      width: '90px',
       display: true,
       sorted: false,
       filtered: true,
@@ -52,7 +52,7 @@ export class SearchMainComponent implements OnInit {
     {
       field: 'cedantCode',
       header: 'Cedant',
-      width: '110px',
+      width: '90px',
       display: true,
       sorted: false,
       filtered: true,
@@ -61,7 +61,7 @@ export class SearchMainComponent implements OnInit {
     {
       field: 'cedantName',
       header: '',
-      width: '110px',
+      width: '90px',
       display: false,
       sorted: false,
       filtered: false,
@@ -70,7 +70,7 @@ export class SearchMainComponent implements OnInit {
     {
       field: 'uwYear',
       header: 'Uw Year',
-      width: '110px',
+      width: '90px',
       display: true,
       sorted: false,
       filtered: true,
@@ -79,7 +79,7 @@ export class SearchMainComponent implements OnInit {
     {
       field: 'workSpaceId',
       header: 'Workspace Context',
-      width: '110px',
+      width: '90px',
       display: true,
       sorted: false,
       filtered: true,
@@ -88,7 +88,7 @@ export class SearchMainComponent implements OnInit {
     {
       field: 'workspaceName',
       header: '',
-      width: '110px',
+      width: '160px',
       display: false,
       sorted: false,
       filtered: false,
@@ -204,12 +204,7 @@ export class SearchMainComponent implements OnInit {
         };
         let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
         usedWorkspaces.forEach(ws => {
-          let filter = false;
           if (workspace.workSpaceId === ws.workSpaceId) {
-            filter = true;
-          }
-          if (
-            filter === true) {
             usedWorkspaces = usedWorkspaces.filter(items => items !== ws);
           }
         });
@@ -235,20 +230,7 @@ export class SearchMainComponent implements OnInit {
 
   popUpWorkspace(wsId, year) {
     this.searchData(wsId, year).subscribe(
-      (dt: any) => {
-        const workspace = {
-          uwYear: year,
-          workSpaceId: wsId,
-          cedantCode: dt.cedantCode,
-          cedantName: dt.cedantName,
-          ledgerName: dt.ledgerName,
-          subsidiaryId: dt.subsidiaryId,
-          subsidiaryName: dt.subsidiaryName,
-          treatySections: dt.treatySections,
-          workspaceName: dt.worspaceName,
-          years: dt.years
-        };
-        this._helperService.affectItems([workspace]);
+      () => {
         window.open('/workspace/' + wsId + '/' + year);
       }
     );
@@ -265,8 +247,7 @@ export class SearchMainComponent implements OnInit {
       const values = [];
       this.searchedItems.forEach(
         (e) => {
-          const key = _.camelCase(e.key);
-          keys.push(key);
+          keys.push(_.camelCase(e.key));
           values.push(e.value);
         }
       );
@@ -286,10 +267,10 @@ export class SearchMainComponent implements OnInit {
     } else if (this.globalSearchItem !== '') {
       this._searchService.searchGlobal(this.globalSearchItem)
         .subscribe((data: any) => {
-          this.contracts = data.content.map(item => ({...item, selected: false}));
-          this.loadingMore = false;
-          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-          this.loading = false;
+            this.contracts = data.content.map(item => ({...item, selected: false}));
+            this.loadingMore = false;
+            this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+            this.loading = false;
           }
         );
     } else {
@@ -299,8 +280,6 @@ export class SearchMainComponent implements OnInit {
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-          // let body = this.table.containerViewChild.nativeElement.getElementsByClassName('ui-table-scrollable-body')[0];
-          // body.scrollTop = 0;
         });
     }
   }
@@ -329,6 +308,11 @@ export class SearchMainComponent implements OnInit {
       this.searchedItems.splice(index, 1);
       this._loadContracts();
     }
+  }
+
+  closeSlider() {
+    console.log('this is outside');
+    this.expandWorkspaceDetails = false;
   }
 
 }

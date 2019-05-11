@@ -102,11 +102,8 @@ nz-layout {
 
 
     .active_plt_item {
-      border: 6px solid #06b8ff;
-    }
-
-    .active_plt_item_eye {
-      background-color: #06B8FF;
+      border: 2px solid #99bbf2;
+      background-color: #fcf9d6;
     }
 
     ::ng-deep {
@@ -374,6 +371,7 @@ nz-layout {
 
   border-bottom: 1px solid #aeaeae;
   padding-bottom: 10px;
+  margin-top: 15px;
 
   .dropdown-currency {
     border: 2px solid #00c4aa;
@@ -674,4 +672,14 @@ nz-layout {
       }
     }
   }
+}
+
+.drawer{
+  position: absolute;
+  right: 0;
+  width: 650px;
+  height: 100%;
+  padding: 10px 10px;
+  background: #fff;
+  box-shadow: -2px 0px 7px rgba(0,0,0,0.3);
 }

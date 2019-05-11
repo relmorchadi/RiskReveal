@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, TemplateRef} from '@angular/core';
 import * as _ from 'lodash';
 import {style} from "@angular/animations";
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -9,6 +10,7 @@ import {style} from "@angular/animations";
 })
 export class WorkspacePltBrowserComponent implements OnInit {
 
+  private dropdown: NzDropdownContextComponent;
 
   sortName: string | null = null;
   sortValue: string | null = null;
@@ -326,11 +328,6 @@ export class WorkspacePltBrowserComponent implements OnInit {
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
     ];
 
-
-  currentPlt = null;
-  notChecked = false;
-  checked = true;
-
   epMetricsCurrencySelected: any = 'EUR';
   CalibrationImpactCurrencySelected: any = 'EUR';
   epMetricsFinancialUnitSelected: any = 'Million';
@@ -349,229 +346,8 @@ export class WorkspacePltBrowserComponent implements OnInit {
 
   epMetricInputValue: string | null;
 
-
-
-  plts: any = [
-    {
-      pltId: 1,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 1,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 2,
-      systemTags: [],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: false,
-      checked: true
-    },
-    {
-      pltId: 3,
-      systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 7}],
-      userTags: [{tagId: 3}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 4,
-      systemTags: [],
-      userTags: [],
-      pathId: 4,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 5,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 5}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 5,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 6,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 1,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 7,
-      systemTags: [{tagId: 5}, {tagId: 7}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 8,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 9,
-      systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 3}],
-      userTags: [{tagId: 2}],
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 10,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 11,
-      systemTags: [],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 5,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 12,
-      systemTags: [{tagId: 5}, {tagId: 2}, {tagId: 7}],
-      userTags: [{tagId: 2}, {tagId: 3}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 13,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    }
-  ];
+  pltdetailsSystemTags: any = [];
+  pltdetailsUserTags: any = [];
 
   systemTags = [
     {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
@@ -626,9 +402,9 @@ export class WorkspacePltBrowserComponent implements OnInit {
   ];
 
   userTags = [
-    {tagId: '1', tagName: 'Pricing V1', tagColor: '#893eff', innerTagContent: '1', innerTagColor: '#ac78ff'},
-    {tagId: '2', tagName: 'Pricing V2', tagColor: '#06b8ff', innerTagContent: '2', innerTagColor: '#51cdff'},
-    {tagId: '3', tagName: 'Final Princing', tagColor: '#c38fff', innerTagContent: '5', innerTagColor: '#d5b0ff'}
+    {tagId: '1', tagName: 'Pricing V1', tagColor: '#893eff', innerTagContent: '1', innerTagColor: '#ac78ff', selected: false},
+    {tagId: '2', tagName: 'Pricing V2', tagColor: '#06b8ff', innerTagContent: '2', innerTagColor: '#51cdff', selected: false},
+    {tagId: '3', tagName: 'Final Princing', tagColor: '#c38fff', innerTagContent: '5', innerTagColor: '#d5b0ff', selected: false}
   ];
 
   paths = [
@@ -751,13 +527,17 @@ export class WorkspacePltBrowserComponent implements OnInit {
 
   theads = [
     {
-      title: 'Base', cards: [
+      title: '', cards: [
         {
           chip: 'ID: 222881',
           content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729',
           borderColor: '#6e6cc0',
           selected: false
         },
+      ]
+    },
+    {
+      title: 'Base', cards: [
         {chip: '1.25', content: 'Portfolio Evolution', borderColor: '#03dac4', selected: false}
       ]
     },
@@ -773,7 +553,11 @@ export class WorkspacePltBrowserComponent implements OnInit {
     },
     {
       title: 'Client', cards: [
-        {chip: '0.95', content: 'Cedant QI', borderColor: '#03dac4', selected: false},
+        {chip: '0.95', content: 'Cedant QI', borderColor: '#03dac4', selected: false}
+      ]
+    },
+    {
+      title: '', cards: [
         {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766', borderColor: '#6e6cc0', selected: false}
       ]
     }
@@ -787,7 +571,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
   ]
 
 
-  constructor() {
+  constructor( private nzDropdownService: NzDropdownService ) {
   }
 
 
@@ -834,6 +618,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       this.pltDetailsPermission = true;
     }
 
+    this.getTagsForSummary(plt);
 
   }
 
@@ -847,6 +632,26 @@ export class WorkspacePltBrowserComponent implements OnInit {
     if (item.length > 0)
       return item[0].tagColor;
     return null
+  }
+
+  getTagsForSummary(plt){
+    this.pltdetailsSystemTags = this.pltdetailsUserTags = [];
+    let findSysTags = plt.systemTags.map(item => item.tagId);
+    let findUserTags = plt.userTags.map(item => item.tagId);
+    findSysTags.forEach(
+      sysTag => {
+        this.pltdetailsSystemTags = [...this.pltdetailsSystemTags, this.systemTags.filter(
+          item => item.tagId == sysTag
+        )[0]]
+      }
+    )
+    findUserTags.forEach(
+      uTag => {
+        this.pltdetailsUserTags = [...this.pltdetailsUserTags, this.userTags.filter(
+          item => item.tagId == uTag
+        )[0]]
+      }
+    )
   }
 
   selectPath(path) {
@@ -888,6 +693,15 @@ export class WorkspacePltBrowserComponent implements OnInit {
     })
     this.currentPath = null;
     this.currentPathId = null;
+  }
+
+  contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
+    this.dropdown = this.nzDropdownService.create($event, template);
+  }
+
+  close(e: NzMenuItemDirective): void {
+    console.log(e);
+    this.dropdown.close();
   }
 
 }

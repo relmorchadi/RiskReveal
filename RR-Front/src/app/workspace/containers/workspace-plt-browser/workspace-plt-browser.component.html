@@ -72,17 +72,19 @@
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
-              <nz-table #pltTable [nzData]="listOfDisplayPlts" class="table plt-table" [nzFrontPagination]="false" [nzShowPagination]="false"
+              <nz-table #pltTable [nzData]="listOfDisplayPlts" class="table plt-table" [nzFrontPagination]="false"
+                        [nzShowPagination]="false"
                         [nzScroll]="{ y: '480px' }">
                 <thead (nzSortChange)="sort($event)" nzSingleSort>
-                <tr >
-                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted" [nzSortKey]="col.fields">
+                <tr>
+                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted"
+                      [nzSortKey]="col.fields">
                     {{col.header}}
                     <div *ngIf="col.filtred" class="filter-input">
                       <i class="icon-search"></i>
                       <input type="text">
                     </div>
-                    <i *ngIf="col.icon" [ngClass]="col.icon" ></i>
+                    <i *ngIf="col.icon" [ngClass]="col.icon"></i>
                   </th>
                 </tr>
                 </thead>
@@ -90,20 +92,32 @@
                 <tbody>
                 <tr
                   *ngFor="let plt of pltTable.data | filterBySystemTag: currentSystemTag | filterByUserTag: currentUserTag | filterByPath: currentPathId"
-                  style="cursor: pointer"
+                  style="cursor: pointer" (contextmenu)="contextMenuPltTable($event, template)"
                   [ngClass]="{'active_plt_item': plt.selected }">
-                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
-                    <div *ngIf="plt.selected">
-                      <i nz-icon nzType="eye" nzTheme="outline"></i>
-                    </div>
-                    <div *ngIf="!plt.selected">
-                      <i nz-icon nzType="eye-invisible" nzTheme="outline"></i>
-                    </div>
+                  <ng-template #template>
+                    <ul nz-menu nzInDropDown (nzClick)="close($event)">
+                      <li nz-menu-item> <i nz-icon nzType="plus-circle" nzTheme="fill"></i> Add to Basket</li>
+                      <li nz-menu-item> <i nz-icon nzType="delete" nzTheme="fill"></i> Delete</li>
+                      <li nz-menu-divider></li>
+                      <li nz-menu-item (click)="openPltInDrawer(plt)"><i nz-icon nzType="eye" nzTheme="fill"></i> View Details</li>
+                    </ul>
+                  </ng-template>
+                  <!--<td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">-->
+                    <!--<div *ngIf="plt.selected">-->
+                      <!--<i nz-icon nzType="eye" nzTheme="outline"></i>-->
+                    <!--</div>-->
+                    <!--<div *ngIf="!plt.selected">-->
+                      <!--<i nz-icon nzType="eye-invisible" nzTheme="outline"></i>-->
+                    <!--</div>-->
+                  <!--</td>-->
+
+                  <td>
+                    <label nz-checkbox [(ngModel)]="plt.selected"></label>
                   </td>
                   <td>
                     <div class="td-wrapper-tags">
                       <span *ngFor="let tag of plt.userTags"
-                      [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
+                            [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
                       <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
                     </div>
                   </td>
@@ -170,9 +184,11 @@
 </nz-layout>
 
 
-<nz-drawer [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" (nzOnClose)="closeDrawer()" [nzWidth]=650>
+<!--<nz-drawer [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" (nzOnClose)="closeDrawer()" [nzWidth]=650>-->
 
-  <div class="drawer">
+
+<div *ngIf="visible" class="drawer">
+  <div class="drawer-content">
 
     <div class="navigation-icons-drawer">
       <i class="icon-arrow_forward_ios_24px" (click)="closeDrawer()"></i>
@@ -298,11 +314,23 @@
             <nz-tabset class="tabset-plt-details">
               <nz-tab nzTitle="Summary">
                 <div class="summary-content">
-                  <div class="summary-tags mt-2 mb-3">
-                    <nz-tag [nzColor]="'#7BBE31'">TC</nz-tag>
-                    <nz-tag [nzColor]="'#7BBE31'">NATC-USM</nz-tag>
-                    <nz-tag [nzColor]="'#06B8FF'">Default</nz-tag>
-                    <nz-tag [nzColor]="'#893EFF'">Pricing V1</nz-tag>
+                  <div class="summary-tags">
+
+                    <div style="display: flex">
+                      <div *ngFor="let tag of pltdetailsSystemTags" style="margin: 4px 5px 5px 4px;">
+                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}">
+                      {{tag.tagName}}
+                    </span>
+                      </div>
+                    </div>
+
+                    <div style="display: flex">
+                      <div *ngFor="let tag of pltdetailsUserTags" style="margin: 4px 5px 5px 4px;">
+                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}">
+                      {{tag.tagName}}
+                    </span>
+                      </div>
+                    </div>
                   </div>
                   <div class="summary-table">
                     <div nz-row>
@@ -710,7 +738,5 @@
     </div>
 
   </div>
-</nz-drawer>
-
-
+</div>
 
