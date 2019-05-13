@@ -14,7 +14,7 @@
             <span>Workspace</span>
           </span>
     <ul>
-      <li nz-menu-item>Projects</li>
+      <li nz-menu-item routerLink="/workspace">Projects</li>
       <li nz-menu-item>Contract</li>
       <li nz-menu-item>Activity</li>
     </ul>
@@ -56,8 +56,8 @@
             <span>Results</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
-          <span title routerLink="Calibration"  >
+  <li routerLink="Calibration"  nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
+          <span title  >
             <i nz-icon><i class="icon-sitemap"></i></i>
             <span>Calibration</span>
           </span>

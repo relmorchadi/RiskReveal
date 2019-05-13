@@ -619,6 +619,14 @@ nz-layout {
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
     }
+
+  }
+}
+.noMargin, .tabset-right{
+  ::ng-deep{
+    .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted{
+      background-color: #fff !important;
+    }
   }
 }
 

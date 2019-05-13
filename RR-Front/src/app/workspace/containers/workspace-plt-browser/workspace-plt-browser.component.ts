@@ -295,10 +295,11 @@ export class WorkspacePltBrowserComponent implements OnInit {
 
   search(): void {
     /** filter data **/
-    const filterFunc = (item: { name: string; age: number; address: string }) =>
-      (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) &&
-      (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
-    const data = this.listOfPlts.filter(item => filterFunc(item));
+    // const filterFunc = (item: { name: string; age: number; address: string }) =>
+    //   (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) &&
+    //   (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
+    const data = this.listOfPlts;
+    // .filter(item => filterFunc(item));
     /** sort data **/
     if (this.sortName && this.sortValue) {
       this.listOfDisplayPlts = data.sort((a, b) =>
