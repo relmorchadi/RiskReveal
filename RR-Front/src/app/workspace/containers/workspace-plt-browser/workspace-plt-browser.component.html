@@ -96,8 +96,8 @@
                   [ngClass]="{'active_plt_item': plt.selected }">
                   <ng-template #template>
                     <ul nz-menu nzInDropDown (nzClick)="close($event)">
-                      <li nz-menu-item> <i nz-icon nzType="plus-circle" nzTheme="fill"></i> Add to Basket</li>
-                      <li nz-menu-item> <i nz-icon nzType="delete" nzTheme="fill"></i> Delete</li>
+                      <li nz-menu-item nzDisabled nz-tooltip nzTitle="not yet implemented"> <i nz-icon nzType="plus-circle" nzTheme="fill"></i> Add to Basket</li>
+                      <li nz-menu-item nzDisabled nz-tooltip nzTitle="not yet implemented"> <i nz-icon nzType="delete" nzTheme="fill"></i> Delete</li>
                       <li nz-menu-divider></li>
                       <li nz-menu-item (click)="openPltInDrawer(plt)"><i nz-icon nzType="eye" nzTheme="fill"></i> View Details</li>
                     </ul>
@@ -707,7 +707,7 @@
                           <div nz-col nzSpan="8" class="dependecies">
                             <div class="dependency-card" *ngFor="let dependency of dependencies">
                               <div nz-row class="card-content">
-                                <div nz-col nzSpan="8" class="title">{{dependency.title}}</div>
+                                <div nz-col nzSpan="7" class="title">{{dependency.title}}</div>
                                 <div nz-col nzSpan="16" class="content">{{dependency.content}}</div>
                               </div>
                               <div nz-row>

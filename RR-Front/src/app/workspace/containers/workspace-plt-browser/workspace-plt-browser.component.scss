@@ -606,6 +606,8 @@ nz-layout {
         font-size: 10px;
         font-weight: bold;
         margin: 5px 0px 0px 0px;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
     }
   }

@@ -24,7 +24,8 @@ export class WorkspacePltBrowserComponent implements OnInit {
     pltId: number;
     systemTags: any;
     userTags: any;
-    pathId: number; pltName: string;
+    pathId: number;
+    pltName: string;
     peril: string;
     regionPerilCode: string;
     regionPerilName: string;
@@ -259,6 +260,8 @@ export class WorkspacePltBrowserComponent implements OnInit {
     }
 
   ];
+
+
   listOfDisplayPlts: Array<{
     pltId: number;
     systemTags: [];
@@ -575,18 +578,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
   }
 
 
-  ngOnInit() {
-
-    let c = 209;
-    addEventListener('scroll', function () {
-      let x =  document.getElementsByClassName("ant-drawer-content")[0].style = "position:absolute;top:" + c + "px";
-      var y = 209 - pageYOffset
-      c = y;
-    });
-
-
-    console.log(this.pltDetailsPermission)
-  }
+  ngOnInit(){};
 
 
   openDrawer(): void {
