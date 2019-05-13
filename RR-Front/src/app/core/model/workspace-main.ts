@@ -6,6 +6,7 @@ export class WorkspaceMain {
   sliceValidator: boolean;
   wsId: string;
   year: any;
-  openedWs: any[];
+  openedWs: any;
   openedTabs: any[];
+  recentWs: any[];
 }

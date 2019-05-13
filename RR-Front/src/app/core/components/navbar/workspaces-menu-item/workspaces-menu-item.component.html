@@ -20,7 +20,7 @@
             nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"
           ></nz-alert>
           <ul>
-            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)" [ngClass]="{'poover-menu-item-active': workspace.selected}" >
+            <li *ngFor="let workspace of state.recentWs" class="poover-menu-item" (click)="toggleWorkspace(workspace)" [ngClass]="{'poover-menu-item-active': workspace.selected}" >
               <div class="items-popover-wrapper">
                 <i class="icon-window-section"></i>
                 <div class="item-popover-context">

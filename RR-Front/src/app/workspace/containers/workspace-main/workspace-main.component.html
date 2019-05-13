@@ -1,11 +1,11 @@
 <div class="card-container">
-  <nz-tabset *ngIf="!loading" [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of (ws$ | async)">
+  <nz-tabset *ngIf="!state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
+    <ng-container *ngFor="let tab of state.openedTabs">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
           [ngTemplateOutletContext]="{index:tab,
-          tabsLength:(ws$ | async).length,
+          tabsLength: state.openedTabs.length,
           title:tab?.workSpaceId,
           year:tab?.uwYear,
           years:tab?.years
@@ -17,14 +17,14 @@
           <div nz-col nzSpan="24">
             <div  class="row tab-detail p-2">
               <div class="detail-wrapper">
-                <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
+                <button (click)="patchWorkspaceDetail()"
                         class="mx-4 btn-detail d-flex justify-content-center align-items-center"
                         nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
-                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
+                  <i *ngIf="state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
+                  <i *ngIf="!state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
                 </button>
-                <span *ngIf="collapseWorkspaceDetail" class="span-detail">Detail</span>
-                <span *ngIf="!collapseWorkspaceDetail" class="span-detail">Hide</span>
+                <span *ngIf="state.collapseWorkspaceDetail" class="span-detail">Detail</span>
+                <span *ngIf="!state.collapseWorkspaceDetail" class="span-detail">Hide</span>
               </div>
               <div style="display: flex; flex: 1;">
                 <div class="col-md-12 pl-md-4 col-lg-6" >
@@ -33,7 +33,7 @@
                     <h4 class="workspace-title"> {{tab?.cedantCode}} | {{tab?.cedantName}} </h4>
                   </div>
                 </div>
-                <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
+                <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
                   <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
                     <span><b>-</b></span>
@@ -62,10 +62,10 @@
               </div>
             </div>
           </div>
-          <div [ngClass]="{'collapse':collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
+          <div [ngClass]="{'collapse':state.collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
             <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
 
-              <div class="pl-md-4 col-md-12 col-lg-6">
+              <div class="pl-md-4 col-md-12 col-lg-6 ">
                 <div nz-row class="pt-lg-5 pt-md-0" style="padding-top:0px !important;">
                   <div nz-col nz-row [nzSpan]="12">
                     <div class="row">
@@ -82,23 +82,23 @@
                     </div>
                   </div>
                   <div nz-col nz-row [nzSpan]="12">
-                    <div nz-col [nzSpan]="12">
+                    <div nz-col [nzSpan]="9">
                       <i style="font-size: 1.6em; position:absolute; margin-left:-30px;" class="icon-calendar-alt mb-4"></i>
                       <span class="d-block tab-metadata-title">Inception Date :</span>
                       <span class="d-block tab-metadata-value">{{tab?.inceptionDate | date:'dd/MM/yyyy'}}</span>
                       <span class="d-block tab-metadata-title">Expiry Date :</span>
                       <span class="d-block tab-metadata-value">{{tab?.expiryDate | date:'dd/MM/yyyy'}}</span>
                     </div>
-                    <div nz-col class="border-left pl-3" [nzSpan]="12">
+                    <div nz-col class="border-left pl-3" [nzSpan]="15">
                       <span class="d-block tab-metadata-title">Treaty Section :</span>
                       <ul class="treaty-list">
-                        <li *ngFor="let section of sliceContent(tab?.treatySections, sliceValidator)">
+                        <li *ngFor="let section of sliceContent(tab?.treatySections, state.sliceValidator)">
                           {{section}}
                         </li>
                       </ul>
                       <ng-container *ngIf="tab?.treatySections?.length > 2" >
-                        <span *ngIf="sliceValidator" (click)="sliceValidator = false" class="tab-metadata-more">See All</span>
-                        <span *ngIf="!sliceValidator" (click)="sliceValidator = true" class="tab-metadata-more">Hide</span>
+                        <span *ngIf="state.sliceValidator" (click)="patchSliceValue(false)" class="tab-metadata-more">See All</span>
+                        <span *ngIf="!state.sliceValidator" (click)="patchSliceValue(true)" class="tab-metadata-more">Hide</span>
                       </ng-container>
                     </div>
                   </div>
@@ -159,7 +159,7 @@
       </nz-tab>
     </ng-container>
   </nz-tabset>
-  <nz-tabset *ngIf="loading" [nzTabPosition]="'top'" [nzType]="'card'">
+  <nz-tabset *ngIf="state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
@@ -173,14 +173,14 @@
           <div nz-col nzSpan="24">
             <div  class="row tab-detail p-2">
               <div class="detail-wrapper">
-                <button (click)="collapseWorkspaceDetail = !collapseWorkspaceDetail"
+                <button (click)="patchWorkspaceDetail()"
                         class="mx-4 btn-detail d-flex justify-content-center align-items-center"
                         nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i *ngIf="collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
-                  <i *ngIf="!collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
+                  <i *ngIf="state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down" theme="outline"></i>
+                  <i *ngIf="!state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up" theme="outline"></i>
                 </button>
-                <span *ngIf="collapseWorkspaceDetail" class="span-detail">Detail</span>
-                <span *ngIf="!collapseWorkspaceDetail" class="span-detail">Hide</span>
+                <span *ngIf="state.collapseWorkspaceDetail" class="span-detail">Detail</span>
+                <span *ngIf="!state.collapseWorkspaceDetail" class="span-detail">Hide</span>
               </div>
               <div style="display: flex; flex: 1;">
                 <div class="col-md-12 pl-md-4 col-lg-6" >
@@ -189,7 +189,7 @@
                     <h4 class="workspace-title"><nz-skeleton class="skeleton-title" [nzActive]="true"></nz-skeleton> </h4>
                   </div>
                 </div>
-                <div [ngClass]="{'collapse':!collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
+                <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4" >
                   <div  nzTitle="Scope" nzPlacement="bottom"  nz-tooltip  class="text-center border-left my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
                     <span><b>-</b></span>
@@ -218,7 +218,7 @@
               </div>
             </div>
           </div>
-          <div [ngClass]="{'collapse':collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
+          <div [ngClass]="{'collapse':state.collapseWorkspaceDetail}" nz-col  [nzSpan]="24">
             <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
               <div class="pl-md-4 col-md-12 col-lg-6">
                 <nz-skeleton [nzActive]="true"></nz-skeleton>
@@ -243,7 +243,7 @@
 
 <ng-template let-title='title' let-year='year' let-years='years' let-tabsLength='tabsLength' let-index='index' #tabTitle>
   <div class="tab-title-container pl-3">
-    <ng-container *ngIf="!loading">
+    <ng-container *ngIf="!state.loading">
       <h3 class="tab-title">{{title}}</h3>
       <nz-dropdown [nzTrigger]="'click'">
         <a nz-dropdown>
@@ -255,7 +255,7 @@
       </nz-dropdown>
       <div (click)="close(title, year)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white" class="close-tab-btn">x</div>
     </ng-container>
-    <ng-container *ngIf="loading">
+    <ng-container *ngIf="state.loading">
       <nz-skeleton class="skeleton-title-header"></nz-skeleton>
     </ng-container>
   </div>

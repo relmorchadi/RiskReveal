@@ -192,18 +192,12 @@ export class SearchMainComponent implements OnInit {
         const workspace = {
           workSpaceId: wsId,
           uwYear: year,
+          selected: false,
           ...dt
         };
         this.store.dispatch(new OpenWorkspaceMainAction(workspace));
-        let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
-        usedWorkspaces.forEach(ws => {
-          if (workspace.workSpaceId === ws.workSpaceId) {
-            usedWorkspaces = usedWorkspaces.filter(items => items !== ws);
-          }
-        });
-        usedWorkspaces.unshift(workspace);
-        this._helperService.updateRecentWorkspaces(usedWorkspaces);
-        this._helperService.affectItems([workspace]);
+        this._helperService.updateRecentWorkspaces();
+        this._helperService.updateWorkspaceItems();
         this._router.navigate(['/workspace']);
       }
     );
