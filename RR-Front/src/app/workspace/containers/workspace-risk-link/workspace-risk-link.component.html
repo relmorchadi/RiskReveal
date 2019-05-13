@@ -306,15 +306,15 @@
               <div>Exposure Summaries</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="modal-button" *ngIf="collapseFooter" nz-button> ADVANCED</button>
+              <button class="modal-button" *ngIf="collapseAnalysis" nz-button> ADVANCED</button>
               <div class="icon-drop">
-                <i *ngIf="collapseFooter" nz-icon nzType="up" (click)="collapseFooter = !collapseFooter" nzTheme="outline"></i>
-                <i nz-icon *ngIf="!collapseFooter" (click)="collapseFooter = ! collapseFooter"
+                <i *ngIf="collapseAnalysis" nz-icon nzType="up" (click)="collapseAnalysis = !collapseAnalysis" nzTheme="outline"></i>
+                <i nz-icon *ngIf="!collapseAnalysis" (click)="collapseAnalysis = ! collapseAnalysis"
                    style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
               </div>
             </div>
           </div>
-          <div class="summary-info" *ngIf="collapseFooter">
+          <div class="summary-info" *ngIf="collapseAnalysis">
             <table>
               <thead>
               <tr>

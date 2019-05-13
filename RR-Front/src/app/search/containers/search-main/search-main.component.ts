@@ -7,6 +7,8 @@ import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
+import {Select, Store} from '@ngxs/store';
+import {OpenWorkspaceMainAction} from '../../../core/store/actions';
 
 
 @Component({
@@ -119,7 +121,7 @@ export class SearchMainComponent implements OnInit {
   ];
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
-              private _router: Router, private _location: Location) {
+              private _router: Router, private _location: Location, private store: Store) {
     this.initSearchForm();
   }
 
@@ -188,20 +190,11 @@ export class SearchMainComponent implements OnInit {
     this.searchData(wsId, year).subscribe(
       (dt: any) => {
         const workspace = {
-          uwYear: year,
           workSpaceId: wsId,
-          cedantCode: dt.cedantCode,
-          cedantName: dt.cedantName,
-          ledgerName: dt.ledgerName,
-          ledgerId: dt.subsidiaryLedgerId,
-          subsidiaryName: dt.subsidiaryName,
-          subsidiaryId: dt.subsidiaryId,
-          expiryDate: dt.expiryDate,
-          inceptionDate: dt.inceptionDate,
-          treatySections: dt.treatySections,
-          workspaceName: dt.worspaceName,
-          years: dt.years
+          uwYear: year,
+          ...dt
         };
+        this.store.dispatch(new OpenWorkspaceMainAction(workspace));
         let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
         usedWorkspaces.forEach(ws => {
           if (workspace.workSpaceId === ws.workSpaceId) {
