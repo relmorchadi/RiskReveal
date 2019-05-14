@@ -3,10 +3,20 @@ import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
 import {forkJoin, of} from 'rxjs';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
-import {mergeMap} from "rxjs/internal/operators/mergeMap";
+import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 import {delay} from 'rxjs/operators';
+import {
+  CloseWorkspaceMainAction,
+  LoadWorkspacesAction, OpenNewWorkspacesAction,
+  OpenWorkspaceMainAction,
+  PatchWorkspaceMainStateAction
+} from '../../../core/store/actions';
+import {Select, Store} from '@ngxs/store';
+import {Location} from '@angular/common';
+import {WorkspaceMain} from '../../../core/model/workspace-main';
+import {WorkspaceMainState} from '../../../core/store/states';
 
 @Component({
   selector: 'app-workspace-main',
@@ -15,78 +25,57 @@ import {delay} from 'rxjs/operators';
 })
 export class WorkspaceMainComponent implements OnInit {
   leftNavbarIsCollapsed = false;
-  tabs: any = [];
-  collapseWorkspaceDetail = true;
-  componentSubscription: any = [];
-  selectedPrStatus = '1';
   wsId: any;
   year: any;
-  loading = false;
-  sliceValidator = true;
-  selectedWorkspaces: any = [];
-  WorkspaceData: any;
 
-  ProjectStatus: any = [
-    {id: 'project1', selected: false},
-    {id: 'project2', selected: false},
-    {id: 'project3', selected: false},
-    {id: 'project4', selected: false},
-  ];
+  @Select(WorkspaceMainState)
+  state$: Observable<WorkspaceMain>;
+  state: WorkspaceMain = null;
 
-  ws$: Observable<any>;
-  ws = [];
-  fromSingleWorkspace = false;
-
-  constructor(private _helper: HelperService, private route: ActivatedRoute, private _searchService: SearchService) {
+  constructor(private _helper: HelperService, private route: ActivatedRoute, private _searchService: SearchService, private store: Store, private _router: Router) {
 
   }
 
   ngOnInit() {
+    this.store.dispatch(new LoadWorkspacesAction());
+    this.state$.subscribe(value => this.state = _.merge({}, value));
     this._helper.collapseLeftMenu$.subscribe((e) => {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
     const pathName: any = window.location.pathname || '';
     this._helper.changeSelectedWorkspace$.subscribe(() => {
-      this.loading = false;
-      this.fromSingleWorkspace = false;
+      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
       this.getSearchedWorkspaces();
     });
     this.route.children[0] && this.route.children[0].params.subscribe(
       ({wsId, year}: any) => {
-        console.log({wsId, year});
         this.wsId = wsId;
         this.year = year;
-        this.wsId != null ? this.fromSingleWorkspace = true : this.fromSingleWorkspace = false;
         this.getSearchedWorkspaces();
       });
 
   }
 
   getSearchedWorkspaces() {
-    if (this.wsId != undefined && this.fromSingleWorkspace == true) {
-      this.loading = true;
+    if (this.wsId != undefined) {
+      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(this.wsId, this.year).pipe(
         mergeMap((content: any) => {
           const item = {
-            uwYear: this.year,
             workSpaceId: this.wsId,
+            uwYear: this.year,
+            selected: false,
             ...content
           };
-          this.ws = [item];
-          this._helper.affectItems([item], true);
-          this.ws$ = of(this.ws);
-          // this.loading = false;
-          // return of();
+          this.store.dispatch(new OpenNewWorkspacesAction([item]));
+          this._helper.updateWorkspaceItems();
           return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));
         })
       ).subscribe((content) => {
         this.wsId = undefined;
         this.year = undefined;
-        this.fromSingleWorkspace = true;
+        this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
       });
-    } else {
-      this.fromSingleWorkspace = false;
-      this.ws$ = this._helper.getSearchedWorkspaces();
     }
   }
 
@@ -95,53 +84,34 @@ export class WorkspaceMainComponent implements OnInit {
   }
 
   close(title, year) {
-    console.log(this.fromSingleWorkspace);
-    if (this.fromSingleWorkspace === false) {
-      this._helper.itemsRemove(title, year);
-    } else {
-      this.ws = _.filter(this.ws, ws => {
-        if (ws.workSpaceId === title && ws.uwYear == year) { return null; } else {return ws; }});
-      this.ws$ = of(this.ws);
-    }
+    this.store.dispatch(new CloseWorkspaceMainAction({workSpaceId: title, uwYear: year}));
+    this._helper.updateWorkspaceItems();
   }
 
   addWs(title, year) {
-    if (this.fromSingleWorkspace === false) {
-      this.searchData(title, year).subscribe(
-        (dt: any) => {
-          const workspace = {
-            uwYear: year,
-            workSpaceId: title,
-            ...dt
-          };
-          this._helper.itemsAppend(workspace);
-        }
-      );
-    } else {
-      this.searchData(title, year).subscribe(
-        (dt: any) => {
-          const workspace = {
-            uwYear: year,
-            workSpaceId: title,
-            ...dt
-          };
-          this.ws = _.filter(this.ws, ws => {
-            if (ws.workSpaceId == title && ws.uwYear == year) { return null; } else {return ws; }});
-          this.ws = [...this.ws, workspace];
-          this.ws$ = of(this.ws);
-        }
-      );
-    }
+    this.searchData(title, year).subscribe(
+      (dt: any) => {
+        const workspace = {
+          workSpaceId: title,
+          uwYear: year,
+          selected: false,
+          ...dt
+        };
+        this.store.dispatch(new OpenWorkspaceMainAction(workspace));
+        this._helper.updateWorkspaceItems();
+        this._helper.updateRecentWorkspaces();
+      }
+    );
   }
 
   generateYear(year, years, title = '') {
-    let itemImported = JSON.parse(localStorage.getItem('workspaces')) || [];
-    let generatedYears = years.filter(y => y != year ) || [];
+    let itemImported = this.state.openedTabs || [];
+    let generatedYears = years.filter(y => y != year) || [];
     if (title !== '') {
-      itemImported = itemImported.filter( dt => dt.workSpaceId === title);
+      itemImported = itemImported.filter(dt => dt.workSpaceId === title);
       if (itemImported.length > 0) {
-        itemImported.forEach( item => {
-          generatedYears = generatedYears.filter(y =>  y != item.uwYear);
+        itemImported.forEach(item => {
+          generatedYears = generatedYears.filter(y => y != item.uwYear);
         });
       }
     }
@@ -156,12 +126,20 @@ export class WorkspaceMainComponent implements OnInit {
     }
   }
 
-  selectproject(id) {
-    this.ProjectStatus.array.forEach(e => {
-      if (e.id === id) {
-        e.selected = !e.selected;
-      }
-    });
+  patchSliceValue(value) {
+    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'sliceValidator', value: value}));
+  }
+
+  patchWorkspaceDetail() {
+    this.store.dispatch(new PatchWorkspaceMainStateAction({
+      key: 'collapseWorkspaceDetail',
+      value: !this.state.collapseWorkspaceDetail
+    }));
+  }
+
+  selectWorkspace(workspace) {
+    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: workspace}));
+    this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${this.state.openedWs.routing}`]);
   }
 
 }

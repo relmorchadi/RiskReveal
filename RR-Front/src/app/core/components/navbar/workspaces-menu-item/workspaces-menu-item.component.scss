@@ -76,6 +76,7 @@ nz-alert{
       display:flex;
       flex-direction: column;
       .item-popover-context-header{
+        white-space: nowrap; text-overflow: ellipsis;
         color: rgba(0,0,0,0.87);	font-family: Rubik; font-weight: 500 ;font-size: 13px;	letter-spacing: 0.08px;	line-height: 24px;
       }
       .item-popover-context-footer{

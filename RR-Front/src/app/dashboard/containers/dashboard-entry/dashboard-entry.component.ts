@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
-import { NzMessageService } from 'ng-zorro-antd';
+import {NzMessageService} from 'ng-zorro-antd';
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -61,8 +61,10 @@ export class DashboardEntryComponent implements OnInit {
         }
       ],
       fac: [
-        {id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-          componentName: 'RenewalContractScopeComponent', selected: false}
+        {
+          id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          componentName: 'RenewalContractScopeComponent', selected: false
+        }
       ]
     },
     {
@@ -112,8 +114,10 @@ export class DashboardEntryComponent implements OnInit {
         }
       ],
       fac: [
-        {id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-          componentName: 'RenewalContractScopeComponent', selected: false}
+        {
+          id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          componentName: 'RenewalContractScopeComponent', selected: false
+        }
       ]
     },
   ];
@@ -127,25 +131,36 @@ export class DashboardEntryComponent implements OnInit {
 
   widgetsMockData = {
     treaty: [
-      {id: 1, icon: 'icon-window-section', title: 'Renewal Contract Scope',
-       componentName: 'RenewalContractScopeComponent', selected: true},
-      {id: 2, icon: 'icon-sliders-v-alt', title: 'Priced PLTs Changed',
-      componentName: 'Priced PLTs Changed', selected: true},
-      {id: 3, icon: 'icon-adjust-circle', title: 'Contract Scope Changed',
-       componentName: 'Contract Scope Changed', selected: true},
-      {id: 4, icon: 'icon-window-grid', title: 'Latest Published PLTs',
-       componentName: 'Latest Published PLTs', selected: true},
-      {id: 5, icon: 'icon-history-alt', title: 'Renewal Tracker',
-       componentName: 'Renewal Tracker', selected: true},
+      {
+        id: 1, icon: 'icon-window-section', title: 'Renewal Contract Scope',
+        componentName: 'RenewalContractScopeComponent', selected: true
+      },
+      {
+        id: 2, icon: 'icon-sliders-v-alt', title: 'Priced PLTs Changed',
+        componentName: 'Priced PLTs Changed', selected: true
+      },
+      {
+        id: 3, icon: 'icon-adjust-circle', title: 'Contract Scope Changed',
+        componentName: 'Contract Scope Changed', selected: true
+      },
+      {
+        id: 4, icon: 'icon-window-grid', title: 'Latest Published PLTs',
+        componentName: 'Latest Published PLTs', selected: true
+      },
+      {
+        id: 5, icon: 'icon-history-alt', title: 'Renewal Tracker',
+        componentName: 'Renewal Tracker', selected: true
+      },
     ],
     fac: [
-      {id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-       componentName: 'RenewalContractScopeComponent', selected: false}
+      {
+        id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
+        componentName: 'RenewalContractScopeComponent', selected: false
+      }
     ]
   };
 
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
-
 
 
   constructor(private nzMessageService: NzMessageService) {
@@ -155,11 +170,12 @@ export class DashboardEntryComponent implements OnInit {
     this.options = {
       gridType: GridType.Fit,
       enableEmptyCellDrop: true,
-      emptyCellDropCallback: () => {},
+      emptyCellDropCallback: () => {
+      },
       pushItems: true,
       swap: true,
-      pushDirections: { north: true, east: true, south: true, west: true },
-      resizable: { enabled: true },
+      pushDirections: {north: true, east: true, south: true, west: true},
+      resizable: {enabled: true},
       itemChangeCallback: this.itemChanges.bind(this),
       draggable: {
         enabled: true,
@@ -187,14 +203,28 @@ export class DashboardEntryComponent implements OnInit {
       name: this.newDashboardTitle,
       visible: true,
       items: _.concat(_.map(selectedTreatyComponent,
-        ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title, icon: icon, selected: true, position: {rows: 5, cols: 5}})),
+        ({componentName, title, icon}: any, key) => ({
+          id: key,
+          componentName,
+          name: title,
+          icon: icon,
+          selected: false,
+          position: {rows: 5, cols: 5}
+        })),
         _.map(selectedFacComponent,
-          ({componentName, title, icon}: any, key) => ({id: key, componentName, name: title, icon: icon, selected: true, position: {rows: 5, cols: 5}}))
+          ({componentName, title, icon}: any, key) => ({
+            id: key,
+            componentName,
+            name: title,
+            icon: icon,
+            selected: false,
+            position: {rows: 5, cols: 5}
+          }))
       )
     };
     if (item.name != null) {
       this.dashboards = [...this.dashboards, item];
-      this.dashboardTitle = this.newDashboardTitle || '';
+      this.dashboardTitle = this.newDashboardTitle || '';
       this.updateDashboardMockData();
       this.newDashboardTitle = '';
     }
@@ -229,8 +259,8 @@ export class DashboardEntryComponent implements OnInit {
 
   dashboardChange(id: any) {
     console.log({id});
-    const name: any =  _.get(_.find(this.dashboards, {id}), 'name');
-    this.dashboardTitle = name || '';
+    const name: any = _.get(_.find(this.dashboards, {id}), 'name');
+    this.dashboardTitle = name || '';
     this.idSelected = id;
     if (this.dashboards[id].visible === true) {
       let idSel = 0;
@@ -247,8 +277,8 @@ export class DashboardEntryComponent implements OnInit {
 
   delete(dashboardId: any, itemId: any) {
     // console.log({id,item})
- /*   this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
-    this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));*/
+    /*   this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
+       this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));*/
     let dashboard: any = this.dashboards[dashboardId];
     if (itemId > 5) {
       dashboard.items = dashboard.items.filter(ds => ds.id !== itemId);
@@ -260,26 +290,28 @@ export class DashboardEntryComponent implements OnInit {
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
   }
+
   changeName(dashboardId: any, {itemId, newName}: any) {
-      console.log({itemId, newName, dashboardId});
+    console.log({itemId, newName, dashboardId});
     let dashboard: any = this.dashboards[dashboardId];
-      if (itemId <= 5) {
-        const newItem = dashboard.items.filter(ds => ds.id === itemId);
-        const copy = Object.assign({}, newItem[0], {
-          name: newName,
-          id: dashboard.items.length + 1
-        });
-        dashboard.items.push(copy);
-        newItem[0].selected = false;
-      } else {
-        console.log(_.findIndex(dashboard.items, {id: itemId}));
-        let index = _.findIndex(dashboard.items, {id: itemId});
-        dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
-      }
-      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-      this.updateDashboardMockData();
-      // this.editName = false;
+    if (itemId <= 5) {
+      const newItem = dashboard.items.filter(ds => ds.id === itemId);
+      const copy = Object.assign({}, newItem[0], {
+        name: newName,
+        id: dashboard.items.length + 1
+      });
+      dashboard.items.push(copy);
+      newItem[0].selected = false;
+    } else {
+      console.log(_.findIndex(dashboard.items, {id: itemId}));
+      let index = _.findIndex(dashboard.items, {id: itemId});
+      dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
+    }
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    this.updateDashboardMockData();
+    // this.editName = false;
   }
+
   duplicate(dashboardId: any, itemName: any) {
     console.log({dashboardId, itemName});
     let dashboard: any = this.dashboards[dashboardId];
@@ -288,13 +320,13 @@ export class DashboardEntryComponent implements OnInit {
       id: dashboard.items.length + 1,
       selected: true,
     });
-   // dashboard.items.push(copy);
+    // dashboard.items.push(copy);
     dashboard.items = [...dashboard.items, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
-  /*  this.dashboards[id].items = _.concat(this.dashboards[id].items, [{...item, id: this.dashboards[id].items.length + 1}])
-    this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));*/
+    /*  this.dashboards[id].items = _.concat(this.dashboards[id].items, [{...item, id: this.dashboards[id].items.length + 1}])
+      this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));
+      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));*/
   }
 
   activeView(tab) {
@@ -316,7 +348,7 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   onEnterAdd(keyEvent) {
-    if (keyEvent.key === 'Enter' ) {
+    if (keyEvent.key === 'Enter') {
       keyEvent.target.value !== '' ? this.addDashboard() : null;
     }
   }

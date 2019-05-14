@@ -4,7 +4,7 @@ import {
   PatchSearchStateAction,
   SearchContractsCountAction, SearchContractsCountErrorAction,
   SearchContractsCountSuccessAction
-} from '../actions/search-nav-bar.state';
+} from '../actions';
 import {SearchService} from '../../service/search.service';
 import {catchError, mergeMap} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
