@@ -190,17 +190,7 @@ export class SearchMainComponent implements OnInit {
         const workspace = {
           uwYear: year,
           workSpaceId: wsId,
-          cedantCode: dt.cedantCode,
-          cedantName: dt.cedantName,
-          ledgerName: dt.ledgerName,
-          ledgerId: dt.subsidiaryLedgerId,
-          subsidiaryName: dt.subsidiaryName,
-          subsidiaryId: dt.subsidiaryId,
-          expiryDate: dt.expiryDate,
-          inceptionDate: dt.inceptionDate,
-          treatySections: dt.treatySections,
-          workspaceName: dt.worspaceName,
-          years: dt.years
+          ...dt
         };
         let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
         usedWorkspaces.forEach(ws => {

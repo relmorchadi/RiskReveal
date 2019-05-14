@@ -120,17 +120,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
             const workspace = {
               workSpaceId: SI.workSpaceId,
               uwYear: SI.uwYear,
-              cedantCode: dt.cedantCode,
-              cedantName: dt.cedantName,
-              ledgerName: dt.ledgerName,
-              ledgerId: dt.subsidiaryLedgerId,
-              subsidiaryName: dt.subsidiaryName,
-              subsidiaryId: dt.subsidiaryId,
-              expiryDate: dt.expiryDate,
-              inceptionDate: dt.inceptionDate,
-              treatySections: dt.treatySections,
-              workspaceName: dt.worspaceName,
-              years: dt.years
+              ...dt
             };
             workspaces = [workspace, ...workspaces];
             if (workspaces.length === selectedItems.length) {

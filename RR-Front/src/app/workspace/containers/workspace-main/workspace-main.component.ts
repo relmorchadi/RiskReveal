@@ -70,17 +70,7 @@ export class WorkspaceMainComponent implements OnInit {
           const item = {
             uwYear: this.year,
             workSpaceId: this.wsId,
-            cedantCode: content.cedantCode,
-            cedantName: content.cedantName,
-            ledgerName: content.ledgerName,
-            ledgerId: content.subsidiaryLedgerId,
-            subsidiaryName: content.subsidiaryName,
-            subsidiaryId: content.subsidiaryId,
-            expiryDate: content.expiryDate,
-            inceptionDate: content.inceptionDate,
-            treatySections: content.treatySections,
-            workspaceName: content.worspaceName,
-            years: content.years
+            ...content
           };
           this.ws = [item];
           this._helper.affectItems([item], true);
@@ -122,17 +112,7 @@ export class WorkspaceMainComponent implements OnInit {
           const workspace = {
             uwYear: year,
             workSpaceId: title,
-            cedantCode: dt.cedantCode,
-            cedantName: dt.cedantName,
-            ledgerName: dt.ledgerName,
-            ledgerId: dt.subsidiaryLedgerId,
-            subsidiaryName: dt.subsidiaryName,
-            subsidiaryId: dt.subsidiaryId,
-            expiryDate: dt.expiryDate,
-            inceptionDate: dt.inceptionDate,
-            treatySections: dt.treatySections,
-            workspaceName: dt.worspaceName,
-            years: dt.years
+            ...dt
           };
           this._helper.itemsAppend(workspace);
         }
@@ -143,17 +123,7 @@ export class WorkspaceMainComponent implements OnInit {
           const workspace = {
             uwYear: year,
             workSpaceId: title,
-            cedantCode: dt.cedantCode,
-            cedantName: dt.cedantName,
-            ledgerName: dt.ledgerName,
-            ledgerId: dt.subsidiaryLedgerId,
-            subsidiaryName: dt.subsidiaryName,
-            subsidiaryId: dt.subsidiaryId,
-            expiryDate: dt.expiryDate,
-            inceptionDate: dt.inceptionDate,
-            treatySections: dt.treatySections,
-            workspaceName: dt.worspaceName,
-            years: dt.years
+            ...dt
           };
           this.ws = _.filter(this.ws, ws => {
             if (ws.workSpaceId == title && ws.uwYear == year) { return null; } else {return ws; }});
