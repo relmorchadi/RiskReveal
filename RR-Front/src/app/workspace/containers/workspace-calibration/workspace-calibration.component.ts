@@ -1,9 +1,8 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import * as _ from 'lodash'
-import {NzTableComponent} from "ng-zorro-antd";
-import {takeUntil} from "rxjs/operators";
-import {Subject} from "rxjs";
-import {GridsterConfig} from "angular-gridster2";
+import {fromEvent, Subscription} from "rxjs";
+import {filter, switchMap, takeWhile} from "rxjs/operators";
+
 
 @Component({
   selector: 'app-workspace-calibration',
@@ -109,14 +108,17 @@ export class WorkspaceCalibrationComponent implements OnInit {
   isVisible = false;
   singleValue: string = " ";
   basises: any[];
-  categorySelectedFromBasis: string[]= [];
+  categorySelectedFromBasis: string[] = [];
   columnPosition: number;
   selectAllBool = true;
   colunmName = null;
   stockedColumnName: string;
-  listOfSelectedValue=[];
+  listOfSelectedValue = [];
   @ViewChild('scrollOne') scrollOne: ElementRef;
   @ViewChild('scrollTwo') scrollTwo: ElementRef;
+  divIn: boolean = false;
+  supscription1:Subscription;
+  supscription2:Subscription;
 
   constructor() {
     this.cols = [
@@ -197,7 +199,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
             {
               id: "122252", threadName: "APEQ-ID_GULM", icon: 'icon-lock-alt iconRed',
               backgoundIcon: "deselected"
-            },{
+            }, {
               id: "122252", threadName: "APEQ-ID_GULM", icon: 'icon-lock-alt iconRed',
               backgoundIcon: "deselected"
             },
@@ -210,7 +212,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
             {
               id: "12299892", threadName: "Apk lap okol Pm 1", icon: 'icon-history-alt iconYellow',
               backgoundIcon: "deselected"
-            },{
+            }, {
               id: "12299892", threadName: "Apk lap okol Pm 1", icon: 'icon-history-alt iconYellow',
               backgoundIcon: "deselected"
             }
@@ -222,7 +224,29 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   ngOnInit() {
+    /** scroll principe ****/
+    const scrollOne = this.scrollOne.nativeElement as HTMLElement;
+    const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
+    let scroll2Event$ = fromEvent(scrollTwo, 'scroll');
+    let scroll1Event$ = fromEvent(scrollOne, 'scroll');
+    let supscription1 = scroll2Event$.pipe(
+      filter(() => this.divIn === true)
+    ).subscribe(
+      value => {
+        scrollOne.scrollTop = scrollTwo.scrollTop;
+      }
+    )
+    let supscription2 = scroll1Event$.pipe(
+      filter(() => this.divIn === false)
+    ).subscribe(
+      value => {
+        scrollTwo.scrollTop = scrollOne.scrollTop;
+      });
+
     this.getAllBasises();
+
+    /** drawer principe **/
+
     let c = 209;
     addEventListener('scroll', function () {
       let x = (document as any).getElementsByClassName("ant-drawer-content")[0].style = " height: 120%;position:absolute;top:" + c + "px";
@@ -395,9 +419,10 @@ export class WorkspaceCalibrationComponent implements OnInit {
       return;
     } else {
       if (this.colunmName == nameOfColumn) {
-        console.log("already feeded!")
+        console.log("already feeded!");
         this.colunmName = null;
       } else {
+        this.stockedColumnName = null;
         this.colunmName = nameOfColumn;
       }
       console.log("******************")
@@ -420,58 +445,79 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   hideCatgegory(names: string) {
     console.log(names);
-      this.hideAllCategories();
-      for (let i = 0; i < names.length; i++) {
-        let a = _.findIndex(this.pure.category, function (o: any) {
-          return o.name == names[i]
-        });
-        console.log(a);
-        this.pure.category[a].showBol=true;
-        // _.set(this.pure.category[a], 'showBol', true);
+    this.hideAllCategories();
+    for (let i = 0; i < names.length; i++) {
+      let a = _.findIndex(this.pure.category, function (o: any) {
+        return o.name == names[i]
+      });
+      console.log(a);
+      this.pure.category[a].showBol = true;
+      // _.set(this.pure.category[a], 'showBol', true);
     }
 
   }
 
   hideAllCategories() {
-    _.forIn(this.pure.category, function (value,key) {
+    _.forIn(this.pure.category, function (value, key) {
         _.set(value, 'showBol', false);
       }
     )
   }
-  feedCatgegoryNameForHide(name){
+
+  feedCatgegoryNameForHide(name) {
     let a = _.findIndex(this.pure.category, function (o: any) {
       return o.name == name
     });
-    this.pure.category[a].showBol=false;
-    for (let i=0;i<this.listOfSelectedValue.length;i++){
-      if(this.listOfSelectedValue[i]==name){
-        this.listOfSelectedValue.splice(i,1);
+    this.pure.category[a].showBol = false;
+    for (let i = 0; i < this.listOfSelectedValue.length; i++) {
+      if (this.listOfSelectedValue[i] == name) {
+        this.listOfSelectedValue.splice(i, 1);
       }
     }
   }
 
-  updateScroll(){
-    const scrollOne = this.scrollOne.nativeElement as HTMLElement;
-    const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-    scrollTwo.scrollTop= scrollOne.scrollTop;
+  updateScroll() {
+    /*  const scrollOne = this.scrollOne.nativeElement as HTMLElement;
+      const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
+      //scrollOne.scrollTop= scrollTwo.scrollTop; const scroll1Event$ =  fromEvent(scrollOne, 'scroll');
+      */
   }
+
 
   updateScroll2() {
     const scrollOne = this.scrollOne.nativeElement as HTMLElement;
     const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-     scrollOne.scrollTop=scrollTwo.scrollTop;
+    //scrollOne.scrollTop= scrollTwo.scrollTop;
+    const scroll1Event$ = fromEvent(scrollOne, 'scroll');
+    const scroll2Event$ = fromEvent(scrollTwo, 'scroll');
+    scroll2Event$.pipe(
+      switchMap(event => {
+        return scroll1Event$;
+      })
+    ).subscribe(
+      value => {
+        scrollTwo.scrollTop = scrollOne.scrollTop
+      }
+    )
+
   }
 
   deleteColumn(name: string, name2: string) {
-    console.log(name,name2,"here");
-    let o=_.findIndex(this.pure.category,function (o:any) {
-      return o.name==name
+
+    let o = _.findIndex(this.pure.category, function (o: any) {
+      return o.name == name
     });
-    console.log(o,"category");
-    let a=_.findIndex(this.pure.category[o].basis,function (o:any) {
-      return o.name==name2
+    let a = _.findIndex(this.pure.category[o].basis, function (o: any) {
+      return o.name == name2
     });
-    console.log(a,"basis");
-    this.pure.category[o].basis.splice(a,1);
+    this.pure.category[o].basis.splice(a, 1);
+  }
+
+  cursorOntable1() {
+    this.divIn = true;
+  }
+
+  cursorOntable2() {
+    this.divIn = false;
   }
 }
