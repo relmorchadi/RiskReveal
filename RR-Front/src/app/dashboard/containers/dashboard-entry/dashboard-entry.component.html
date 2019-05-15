@@ -75,7 +75,7 @@
       <div class="slider-content">
         <div style="flex:1">
           <nz-select  (ngModelChange)="dashboardChange($event)" style="width: 200px;"
-                      nzShowSearch nzAllowClear
+                      nzShowSearch
                       nzPlaceHolder="Select Dashboard" [ngModel]="idSelected">
             <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
               {{d.name}}
@@ -96,7 +96,7 @@
             <li *ngFor="let treaty of dashboardsMockData[idSelected].items;" class="widget-item"
                 (click)="addRemoveItem(treaty) "
                 [ngClass]="{'active-widget-item': treaty?.selected}">
-              <i [ngClass]="treaty.icon"></i> {{treaty?.name}}
+              <!--<i [ngClass]="treaty.icon"></i> -->{{treaty?.name}}
               <i class="float-right mr-1 mt-1"
                  [ngClass]="{'icon-check_24px': treaty.selected, 'icon-radio_button_unchecked_24px': !treaty.selected}"></i>
             </li>

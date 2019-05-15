@@ -1,4 +1,7 @@
-
+:host::-webkit-scrollbar {
+  width: 5px !important;
+  height: 3px;
+}
 
 nz-layout {
   //height: 90%;
@@ -239,7 +242,6 @@ nz-layout {
           color: white;
           font-size: 2rem;
         }
-
         .d-column {
           height: 80px;
           align-items: baseline;
@@ -256,10 +258,11 @@ nz-layout {
           font-size: 0.9rem;
         }
       }
-
     }
 
     .uwyear-content {
+      display:flex;
+      flex-direction: column-reverse;
       .year-item {
         height: 30px;
         display: flex;

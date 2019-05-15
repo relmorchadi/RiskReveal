@@ -17,12 +17,13 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
 import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
+import { BoldSpanPipe } from './pipes/bold-span.pipe';
 import {WorkspaceMainState, SearchNavBarState} from './store/states';
 
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe],
+  declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe, BoldSpanPipe],
   imports: [
     NgZorroAntdModule,
     RouterModule,

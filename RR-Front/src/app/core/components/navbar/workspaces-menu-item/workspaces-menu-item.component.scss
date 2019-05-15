@@ -2,8 +2,8 @@
 
 .pointer{
   cursor: pointer;
-  padding-right: 11px;
-  border-right: 1px solid rgba(0,0,0,0.2);
+  padding: 5px 11px 5px 0;
+  border-right: 1px solid rgba(0,0,0,0.1);
   user-select: none;
   &:focus{
     outline: 0;
