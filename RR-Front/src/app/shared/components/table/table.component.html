@@ -113,7 +113,7 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns" >
+  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
     <tr [pContextMenuRow]="rowData"
         [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
@@ -122,11 +122,15 @@
             <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
-        <td (click)="selectRow(rowData, i)" *ngIf="col?.type !=='checkbox'">
+        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
           <div style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-            <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+          </div>
+        </td>
+        <td *ngIf="col?.type === 'icon'">
+          <div style="display:flex">
+            <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
           </div>
         </td>
       </ng-container>
@@ -178,11 +182,15 @@
             <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
-        <td (click)="selectRow(rowData, i)" *ngIf="col?.type !=='checkbox'">
+        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
           <div style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-            <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+          </div>
+        </td>
+        <td *ngIf="col?.type === 'icon'">
+          <div style="display:flex">
+            <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
           </div>
         </td>
       </ng-container>

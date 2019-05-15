@@ -3,6 +3,7 @@ import {GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
+import {NotificationService} from "../../../shared/notification.service";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -163,7 +164,7 @@ export class DashboardEntryComponent implements OnInit {
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
 
-  constructor(private nzMessageService: NzMessageService) {
+  constructor(private nzMessageService: NzMessageService, private notificationService: NotificationService) {
   }
 
   ngOnInit() {
@@ -227,17 +228,28 @@ export class DashboardEntryComponent implements OnInit {
       this.dashboardTitle = this.newDashboardTitle || '';
       this.updateDashboardMockData();
       this.newDashboardTitle = '';
+      this.idTab = this.dashboards.length - 1;
+      this.idSelected = this.idTab;
     }
   }
 
   deleteDashboard() {
-    this.dashboards = _.filter(this.dashboards, (e: any) => this.idSelected != e.id);
-    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    this.updateDashboardMockData();
+    if (this.dashboards.length > 1) {
+      this.dashboards = _.filter(this.dashboards, (e: any) => this.idSelected != e.id);
+      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+      this.updateDashboardMockData();
 
-    this.idSelected = _.get(this.dashboards, '[0].id', '');
-    this.dashboardChange(this.idSelected);
-    this.nzMessageService.info('delete dashboard Success');
+      this.idSelected = _.get(this.dashboards, '[0].id', '');
+      this.dashboardChange(this.idSelected);
+      this.notificationService.createNotification('Information',
+        'The dashboard has been deleted successfully.',
+        'info', 'bottomRight', 4000);
+    } else {
+      this.notificationService.createNotification('Information',
+        'you can not delete this dashboard you need at least one!',
+        'error', 'bottomRight', 4000);
+    }
+
   }
 
   changeDashboardName(name) {
@@ -258,7 +270,6 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   dashboardChange(id: any) {
-    console.log({id});
     const name: any = _.get(_.find(this.dashboards, {id}), 'name');
     this.dashboardTitle = name || '';
     this.idSelected = id;

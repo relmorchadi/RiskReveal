@@ -3,7 +3,7 @@ import {WorkspaceMain} from '../../model/workspace-main';
 import {Observable} from 'rxjs';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
-  OpenWorkspaceMainAction,
+  AppendNewWorkspaceMainAction,
   PatchWorkspaceMainStateAction, SelectWorkspaceAction,
 } from '../actions';
 import * as _ from 'lodash';
@@ -13,8 +13,6 @@ const initiaState: WorkspaceMain = {
   collapseWorkspaceDetail: true,
   sliceValidator: true,
   loading: false,
-  wsId: null,
-  year: null,
   openedWs: null,
   openedTabs: [],
   recentWs: []
@@ -54,8 +52,8 @@ export class WorkspaceMainState implements NgxsOnInit {
       ctx.patchState({[payload.key]: payload.value});
   }
 
-  @Action(OpenWorkspaceMainAction)
-  OpenWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: OpenWorkspaceMainAction) {
+  @Action(AppendNewWorkspaceMainAction)
+  AppendNewWorkspaces(ctx: StateContext<WorkspaceMain>, {payload}: AppendNewWorkspaceMainAction) {
     const state = ctx.getState();
     let recentlyOpenedWs = _.filter(state.recentWs, ws => {
       if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) {return null; } else {return ws; }
@@ -63,8 +61,7 @@ export class WorkspaceMainState implements NgxsOnInit {
     recentlyOpenedWs.unshift(payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
     recentlyOpenedWs[0].selected = true;
-    let openedWs = [...state.openedTabs, payload];
-    openedWs = openedWs.map(ws => _.merge({}, ws, {routing: ''}));
+    const openedWs = [...state.openedTabs, _.merge({}, payload, {routing: ''})];
     ctx.patchState({
       openedWs: payload,
       openedTabs: _.uniqWith(openedWs, (x, y) => (x.workSpaceId === y.workSpaceId && x.uwYear == y.uwYear)),
@@ -107,9 +104,18 @@ export class WorkspaceMainState implements NgxsOnInit {
   @Action(CloseWorkspaceMainAction)
   CloseWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: CloseWorkspaceMainAction) {
     const state = ctx.getState();
+    let opened = null;
+    if (payload.same) {
+      const index = _.findIndex(state.openedTabs, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear);
+      index === state.openedTabs.length - 1 ? opened = state.openedTabs[index - 1] : opened = state.openedTabs[index + 1];
+    } else {
+      opened = state.openedWs;
+    }
     ctx.patchState(
       {openedTabs: _.filter(state.openedTabs, ws => {
-          if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) { return null; } else {return ws; }})}
+          if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) { return null; } else {return ws; }}),
+        openedWs: opened
+      }
     );
   }
 
