@@ -1,13 +1,11 @@
 import {Component, Input, OnInit} from '@angular/core';
-import {Location} from '@angular/common';
 import {Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
-import {WorkspaceMainState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as _ from 'lodash';
-import {SearchService} from "../../../core/service/search.service";
-import {SelectWorkspaceAction} from "../../../core/store/actions";
+import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
+import {SelectWorkspaceAction} from "../../../core/store/actions/workspace-main.action";
 
 
 @Component({

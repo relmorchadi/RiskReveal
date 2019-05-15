@@ -1,12 +1,14 @@
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import {WorkspaceMain} from '../../model/workspace-main';
 import {Observable} from 'rxjs';
-import {
-  CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
-  OpenWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction,
-} from '../actions';
+
 import * as _ from 'lodash';
+import {WorkspaceMain} from "../../../core/model/workspace-main";
+import {
+  CloseWorkspaceMainAction, LoadWorkspacesAction,
+  OpenNewWorkspacesAction,
+  OpenWorkspaceMainAction,
+  PatchWorkspaceMainStateAction, SelectWorkspaceAction
+} from "../actions/workspace-main.action";
 
 const initiaState: WorkspaceMain = {
   leftNavbarIsCollapsed: false,

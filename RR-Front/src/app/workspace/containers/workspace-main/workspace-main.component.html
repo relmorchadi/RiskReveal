@@ -4,11 +4,12 @@
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
-          [ngTemplateOutletContext]="{index:tab,
-          tabsLength: state.openedTabs.length,
-          title:tab?.workSpaceId,
-          year:tab?.uwYear,
-          years:tab?.years
+          [ngTemplateOutletContext]="{
+            index:tab,
+            tabsLength: state.openedTabs.length,
+            title:tab?.workSpaceId,
+            year:tab?.uwYear,
+            years:tab?.years
           }"
         ></ng-container>
       </ng-template>

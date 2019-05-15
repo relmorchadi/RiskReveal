@@ -5,10 +5,10 @@ import {SearchService} from '../../../service/search.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
 import {forkJoin, Observable, of} from 'rxjs';
-import {LoadWorkspacesAction, OpenNewWorkspacesAction, PatchWorkspaceMainStateAction} from '../../../store/actions';
 import {Select, Store} from '@ngxs/store';
-import {WorkspaceMainState} from '../../../store/states';
 import {WorkspaceMain} from '../../../model/workspace-main';
+import {WorkspaceMainState} from "../../../store/states/workspace-main.state";
+import {LoadWorkspacesAction, OpenNewWorkspacesAction} from "../../../store/actions/workspace-main.action";
 
 @Component({
   selector: 'workspaces-menu-item',

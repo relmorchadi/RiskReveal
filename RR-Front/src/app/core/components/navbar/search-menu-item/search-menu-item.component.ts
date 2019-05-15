@@ -3,19 +3,15 @@ import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../service/search.service';
 import {debounceTime} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
-
 import {Router} from '@angular/router';
 import {
   AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
-  PatchSearchStateAction,
-  SearchContractsCountAction
+  PatchSearchStateAction, SearchContractsCountAction
 } from '../../../store/index';
-
 import {Select, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
-import {} from '../../../store/actions/search-nav-bar.state';
 import * as _ from 'lodash';
-import {Observable, Subscription} from 'rxjs';
+import {Observable} from 'rxjs';
 import {SearchNavBarState} from '../../../store/index';
 
 

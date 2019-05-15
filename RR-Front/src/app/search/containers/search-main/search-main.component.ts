@@ -7,8 +7,8 @@ import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
-import {Select, Store} from '@ngxs/store';
-import {OpenWorkspaceMainAction} from '../../../core/store/actions';
+import {Store} from '@ngxs/store';
+import {OpenWorkspaceMainAction} from "../../../core/store/actions/workspace-main.action";
 
 
 @Component({

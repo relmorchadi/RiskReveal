@@ -1,22 +1,22 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component,OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
-import {forkJoin, of} from 'rxjs';
+import {forkJoin} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/internal/operators/mergeMap';
-import {delay} from 'rxjs/operators';
+
+import {Select, Store} from '@ngxs/store';
+import {WorkspaceMain} from '../../../core/model/workspace-main';
+import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
 import {
   CloseWorkspaceMainAction,
-  LoadWorkspacesAction, OpenNewWorkspacesAction,
-  OpenWorkspaceMainAction,
+  LoadWorkspacesAction,
+  OpenNewWorkspacesAction, OpenWorkspaceMainAction,
   PatchWorkspaceMainStateAction
-} from '../../../core/store/actions';
-import {Select, Store} from '@ngxs/store';
-import {Location} from '@angular/common';
-import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {WorkspaceMainState} from '../../../core/store/states';
+} from "../../../core/store/actions/workspace-main.action";
+
 
 @Component({
   selector: 'app-workspace-main',
@@ -42,18 +42,10 @@ export class WorkspaceMainComponent implements OnInit {
     this._helper.collapseLeftMenu$.subscribe((e) => {
       this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
     });
-    const pathName: any = window.location.pathname || '';
     this._helper.changeSelectedWorkspace$.subscribe(() => {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
       this.getSearchedWorkspaces();
     });
-    this.route.children[0] && this.route.children[0].params.subscribe(
-      ({wsId, year}: any) => {
-        this.wsId = wsId;
-        this.year = year;
-        this.getSearchedWorkspaces();
-      });
-
   }
 
   getSearchedWorkspaces() {

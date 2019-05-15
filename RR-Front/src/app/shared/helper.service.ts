@@ -1,12 +1,13 @@
 import {Injectable} from '@angular/core';
-import {BehaviorSubject, Observable, Subject} from 'rxjs';
+import { Observable, Subject} from 'rxjs';
 import * as _ from 'lodash';
 import {of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Select, Store} from '@ngxs/store';
-import {WorkspaceMainState} from '../core/store/states';
-import {WorkspaceMain} from '../core/model/workspace-main';
-import {LoadWorkspacesAction} from '../core/store/actions';
+import {WorkspaceMainState} from "../core/store/states/workspace-main.state";
+import {WorkspaceMain} from "../core/model/workspace-main";
+import {LoadWorkspacesAction} from "../core/store/actions/workspace-main.action";
+
 
 @Injectable({providedIn: 'root'})
 export class HelperService {

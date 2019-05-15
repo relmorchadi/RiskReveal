@@ -7,7 +7,6 @@ import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {NgxsFormPluginModule} from '@ngxs/form-plugin';
 import {NgxsRouterPluginModule, RouterStateSerializer} from '@ngxs/router-plugin';
 import {CustomRouterStateSerializer} from './service/router/RouterStateSerializer'
-import {CommonModule} from '@angular/common';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import {en_US, NgZorroAntdModule, NZ_I18N} from 'ng-zorro-antd';
@@ -17,7 +16,7 @@ import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
 import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
-import {WorkspaceMainState, SearchNavBarState} from './store/states';
+import {CORE_STATES} from './store/states';
 
 registerLocaleData(en);
 
@@ -31,7 +30,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    NgxsModule.forRoot([SearchNavBarState, WorkspaceMainState], {developmentMode: !environment.production}),
+    NgxsModule.forRoot(CORE_STATES, {developmentMode: !environment.production}),
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
   exports: [
