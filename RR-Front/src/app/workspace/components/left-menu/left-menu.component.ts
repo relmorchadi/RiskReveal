@@ -6,6 +6,8 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as _ from 'lodash';
 import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
 import {SelectWorkspaceAction} from "../../../core/store/actions/workspace-main.action";
+import {SearchService} from "../../../core/service/search.service";
+import {HelperService} from "../../../shared/helper.service";
 
 
 @Component({
@@ -18,7 +20,7 @@ export class LeftMenuComponent implements OnInit {
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
-  constructor(private _router: Router, private store: Store) { }
+  constructor(private _router: Router, private _helper: HelperService, private store: Store) { }
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
   }
@@ -30,15 +32,16 @@ export class LeftMenuComponent implements OnInit {
   }
 
   routerNavigate(routerLink) {
+    let patchRouting;
     if (routerLink ) {
       this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${routerLink}`]);
-      const patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
-      this.store.dispatch(new SelectWorkspaceAction(patchRouting));
+      patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
     } else {
       this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
-      const patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
-      this.store.dispatch(new SelectWorkspaceAction(patchRouting));
+      patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
     }
+    this.store.dispatch(new SelectWorkspaceAction(patchRouting));
+    this._helper.updateWorkspaceItems();
   }
 
 }

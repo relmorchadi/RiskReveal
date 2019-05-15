@@ -1,7 +1,6 @@
-
-<div style="color: rgba(0,0,0,0.6); cursor: pointer;display: flex; user-select: none" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click" >
-  <div class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}}</div>
-  <i nz-icon type="down" theme="outline" style="float: right; margin-top: 5px"></i>
+<div (click)="redirectWorkspace()" class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}}</div>
+<div class="dropdown-icon" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click" >
+  <i nz-icon type="down" theme="outline" style="float: right; margin-top: 8px"></i>
 </div>
 <ng-template #workspacePopoverContent>
 

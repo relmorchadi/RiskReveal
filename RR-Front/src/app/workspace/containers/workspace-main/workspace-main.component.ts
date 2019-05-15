@@ -12,8 +12,8 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
 import {
   CloseWorkspaceMainAction,
-  LoadWorkspacesAction,
-  OpenNewWorkspacesAction, OpenWorkspaceMainAction,
+  LoadWorkspacesAction, OpenNewWorkspacesAction,
+  AppendNewWorkspaceMainAction,
   PatchWorkspaceMainStateAction
 } from "../../../core/store/actions/workspace-main.action";
 
@@ -27,6 +27,7 @@ export class WorkspaceMainComponent implements OnInit {
   leftNavbarIsCollapsed = false;
   wsId: any;
   year: any;
+  tabIndex = 0;
 
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
@@ -46,6 +47,13 @@ export class WorkspaceMainComponent implements OnInit {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
       this.getSearchedWorkspaces();
     });
+    /*    this.route.children[0] && this.route.children[0].params.subscribe(
+          ({wsId, year}: any) => {
+            this.wsId = wsId;
+            this.year = year;
+            this.getSearchedWorkspaces();
+          });*/
+
   }
 
   getSearchedWorkspaces() {
@@ -76,29 +84,52 @@ export class WorkspaceMainComponent implements OnInit {
   }
 
   close(title, year) {
-    this.store.dispatch(new CloseWorkspaceMainAction({workSpaceId: title, uwYear: year}));
+    const state = this.state.openedWs;
+    if (state.workSpaceId === title && state.uwYear == year) {
+      this.store.dispatch(new CloseWorkspaceMainAction({workSpaceId: title, uwYear: year, same: true}));
+      this.navigateToTab();
+    } else {
+      this.store.dispatch(new CloseWorkspaceMainAction({workSpaceId: title, uwYear: year, same: false}));
+    }
     this._helper.updateWorkspaceItems();
   }
 
+  navigateToTab() {
+    if (this.state.openedWs.routing) {
+      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${this.state.openedWs.routing}`]);
+    } else {
+      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
+    }
+  }
+
   addWs(title, year) {
-    this.searchData(title, year).subscribe(
-      (dt: any) => {
-        const workspace = {
-          workSpaceId: title,
-          uwYear: year,
-          selected: false,
-          ...dt
-        };
-        this.store.dispatch(new OpenWorkspaceMainAction(workspace));
-        this._helper.updateWorkspaceItems();
-        this._helper.updateRecentWorkspaces();
-      }
-    );
+    const alreadyOpened = this.state.openedTabs.filter(ws => ws.workSpaceId === title && ws.uwYear == year);
+    const index = _.findIndex(this.state.openedTabs, ws => ws.workSpaceId === title && ws.uwYear == year);
+    if (alreadyOpened.length > 0) {
+      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: alreadyOpened[0]}));
+      this.tabIndex = index;
+    } else {
+      this.searchData(title, year).subscribe(
+        (dt: any) => {
+          const workspace = {
+            workSpaceId: title,
+            uwYear: year,
+            selected: false,
+            ...dt
+          };
+          this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
+          this._helper.updateWorkspaceItems();
+          this._helper.updateRecentWorkspaces();
+          this.tabIndex = this.state.openedTabs.length;
+        }
+      );
+    }
+    this.navigateToTab();
   }
 
   generateYear(year, years, title = '') {
+/*    let generatedYears = years.filter(y => y != year) || [];
     let itemImported = this.state.openedTabs || [];
-    let generatedYears = years.filter(y => y != year) || [];
     if (title !== '') {
       itemImported = itemImported.filter(dt => dt.workSpaceId === title);
       if (itemImported.length > 0) {
@@ -106,8 +137,8 @@ export class WorkspaceMainComponent implements OnInit {
           generatedYears = generatedYears.filter(y => y != item.uwYear);
         });
       }
-    }
-    return generatedYears;
+    }*/
+    return years.filter(y => y != year) || [];
   }
 
   sliceContent(content: any, valid: boolean) {
@@ -131,7 +162,7 @@ export class WorkspaceMainComponent implements OnInit {
 
   selectWorkspace(workspace) {
     this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: workspace}));
-    this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${this.state.openedWs.routing}`]);
+    this.navigateToTab();
   }
 
 }

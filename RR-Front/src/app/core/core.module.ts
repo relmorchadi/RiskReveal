@@ -17,11 +17,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
 import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
 import {CORE_STATES} from './store/states';
+import { BoldSpanPipe } from './pipes/bold-span.pipe';
 
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe],
+  declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe, BoldSpanPipe],
   imports: [
     NgZorroAntdModule,
     RouterModule,

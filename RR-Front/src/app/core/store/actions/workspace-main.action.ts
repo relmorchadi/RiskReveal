@@ -4,13 +4,13 @@ export class PatchWorkspaceMainStateAction {
   constructor(public payload: any) {}
 }
 
-export class OpenWorkspaceMainAction {
-  static readonly type = '[Workspace Main] Open Workspace';
+export class AppendNewWorkspaceMainAction {
+  static readonly type = '[Workspace Main] Append New Workspaces';
   constructor(public payload: any) {}
 }
 
 export class OpenNewWorkspacesAction {
-  static readonly type = '[Workspace Main] Open New Workspace';
+  static readonly type = '[Workspace Main] Open New Workspaces';
   constructor(public payload: any) {}
 }
 

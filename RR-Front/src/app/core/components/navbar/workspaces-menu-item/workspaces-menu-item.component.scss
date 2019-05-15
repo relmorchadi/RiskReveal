@@ -2,10 +2,22 @@
 
 .pointer{
   cursor: pointer;
+  padding: 5px 11px 5px 0;
+  border-right: 1px solid rgba(0,0,0,0.1);
+  user-select: none;
   &:focus{
     outline: 0;
   }
 }
+
+.dropdown-icon{
+  color: rgba(0,0,0,0.6);
+  cursor: pointer;
+  display: flex;
+  user-select: none;
+  padding-left: 11px;
+}
+
 :host{
   ::ng-deep {
     i.ant-menu-submenu-arrow{

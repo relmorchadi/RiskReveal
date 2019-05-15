@@ -3,7 +3,7 @@ import {fromEvent} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
 import {HelperService} from '../../../shared/helper.service';
 import {Store} from '@ngxs/store';
-import {PatchSearchStateAction} from "../../store/actions";
+import {PatchSearchStateAction} from '../../store/actions';
 
 @Component({
   selector: 'app-navbar',
@@ -14,7 +14,7 @@ export class NavbarComponent implements OnInit {
   expandMenu = false;
   formatter = (_) => '';
 
-  constructor(private _helper:HelperService, private store: Store) { }
+  constructor(private _helper: HelperService, private store: Store) { }
 
   collapseLeftNavbar() {
     this._helper.collapseLeftMenu$.next();
@@ -28,7 +28,7 @@ export class NavbarComponent implements OnInit {
     });
   }
   wiki() {
-    window.open('http://wikipedia.com', '_blank');
+    window.open('http://dcvprdwiki/rrwiki/index.php/Main_Page', '_blank');
   }
 
 }

@@ -9,6 +9,7 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../model/workspace-main';
 import {WorkspaceMainState} from "../../../store/states/workspace-main.state";
 import {LoadWorkspacesAction, OpenNewWorkspacesAction} from "../../../store/actions/workspace-main.action";
+import {NotificationService} from "../../../../shared/notification.service";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -29,7 +30,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   state: WorkspaceMain = null;
 
   constructor(private _helperService: HelperService, private router:Router, private _searchService: SearchService,
-              private _fb: FormBuilder, private store: Store) {
+              private _fb: FormBuilder, private store: Store, private notificationService: NotificationService) {
     this.setForm();
   }
 
@@ -98,6 +99,29 @@ export class WorkspacesMenuItemComponent implements OnInit {
         );
       }
     );
+  }
+
+  navigateToTab(value) {
+    if (value.routing == 0) {
+      this.router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}`]);
+    } else {
+      this.router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}/${value.routing}`]);
+    }
+  }
+
+  redirectWorkspace() {
+    if (this.state.openedTabs.length > 0) {
+      this.navigateToTab(this.state.openedTabs[0]);
+      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: this.state.openedTabs[0]}));
+    } else {
+      this.notificationService.createNotification('Information',
+        'There is no Opened Workspaces please try searching for some before!',
+        'error', 'bottomRight', 4000);
+    }
+  }
+
+  searchWorkspace(value) {
 
   }
+
 }
