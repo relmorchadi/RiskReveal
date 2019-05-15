@@ -7,9 +7,13 @@ import * as _ from 'lodash';
 import {forkJoin, Observable, of} from 'rxjs';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../model/workspace-main';
-import {WorkspaceMainState} from "../../../store/states/workspace-main.state";
-import {LoadWorkspacesAction, OpenNewWorkspacesAction} from "../../../store/actions/workspace-main.action";
-import {NotificationService} from "../../../../shared/notification.service";
+import {WorkspaceMainState} from '../../../store/states/workspace-main.state';
+import {NotificationService} from '../../../../shared/notification.service';
+import {
+  LoadWorkspacesAction,
+  OpenNewWorkspacesAction,
+  PatchWorkspaceMainStateAction
+} from '../../../store/actions/workspace-main.action';
 
 @Component({
   selector: 'workspaces-menu-item',

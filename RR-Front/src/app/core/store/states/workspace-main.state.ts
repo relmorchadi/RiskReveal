@@ -1,8 +1,7 @@
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import {Observable} from 'rxjs';
 
-import * as _ from 'lodash';
-import {WorkspaceMain} from "../../../core/model/workspace-main";
+import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
