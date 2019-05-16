@@ -125,7 +125,9 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   searchWorkspace(value) {
-
+    const paginationOption = this.state.workspacePagination.paginationList.filter(page => page.id === value);
+    console.log({shownElement: paginationOption[0].shownElement});
+    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'appliedFilter', value: {shownElement: paginationOption[0].shownElement}}));
   }
 
 }
