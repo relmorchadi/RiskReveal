@@ -63,10 +63,14 @@
     width:100%;
     input{
       width: 100%;
+      color: rgba(0,0,0,0.4);
       border: none;
       &:focus{
         outline:0;
-        border-bottom: 2px solid #0700cf;
+        border-bottom: 2px dotted rgba(0,0,0,0.25);
+      }
+      &:hover{
+        border-bottom: 2px dotted rgba(0,0,0,0.25);
       }
     }
   }

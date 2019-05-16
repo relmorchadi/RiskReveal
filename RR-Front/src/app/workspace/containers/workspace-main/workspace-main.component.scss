@@ -43,6 +43,12 @@
   font-size: 9px;
   letter-spacing: 0.25px;
   line-height: 0px;
+  &:hover{
+    color: #fff;
+  }
+  &:active{
+    color: #fff;
+  }
 }
 .tab-detail{
   background: #14617A;
@@ -471,4 +477,8 @@
   }
 }
 
+.drop-icon{
+  margin-top: -4px !important;
+  padding-left: 7px !important;
+}
 

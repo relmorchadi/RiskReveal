@@ -12,7 +12,7 @@ import {NotificationService} from "../../../shared/notification.service";
 })
 export class DashboardEntryComponent implements OnInit {
   protected options: GridsterConfig;
-  protected item: any = {x: 0, y: 0, cols: 10, rows: 5};
+  protected item: any = {x: 0, y: 0, cols: 3, rows: 5};
   newDashboardTitle: any;
   dashboards: any = [
     {
@@ -26,7 +26,7 @@ export class DashboardEntryComponent implements OnInit {
           selected: true,
           icon: 'icon-window-section',
           componentName: 'RenewalContractScopeComponent',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 2,
@@ -34,7 +34,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-sliders-v-alt',
           selected: false,
           componentName: 'Priced PLTs Changed',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 3,
@@ -42,7 +42,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-adjust-circle',
           selected: false,
           componentName: 'Contract Scope Changed',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 4,
@@ -50,7 +50,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-window-grid',
           selected: false,
           componentName: 'Latest Published PLTs',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 5,
@@ -58,7 +58,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-history-alt',
           selected: false,
           componentName: 'Renewal Tracker',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         }
       ],
       fac: [
@@ -79,7 +79,7 @@ export class DashboardEntryComponent implements OnInit {
           selected: true,
           icon: 'icon-window-section',
           componentName: 'RenewalContractScopeComponent',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 2,
@@ -87,7 +87,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-sliders-v-alt',
           selected: false,
           componentName: 'Priced PLTs Changed',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 3,
@@ -95,7 +95,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-adjust-circle',
           selected: false,
           componentName: 'Contract Scope Changed',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 4,
@@ -103,7 +103,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-window-grid',
           selected: false,
           componentName: 'Latest Published PLTs',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         },
         {
           id: 5,
@@ -111,7 +111,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-history-alt',
           selected: false,
           componentName: 'Renewal Tracker',
-          position: {cols: 10, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 5, col: 0, row: 0}
         }
       ],
       fac: [
@@ -186,8 +186,9 @@ export class DashboardEntryComponent implements OnInit {
         ignoreContentClass: 'no-drag',
       },
       displayGrid: 'always',
-      minCols: 10,
-      minRows: 10
+      minCols: 3,
+      minRows: 10,
+      maxCols: 3,
     };
 
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
@@ -210,7 +211,7 @@ export class DashboardEntryComponent implements OnInit {
           name: title,
           icon: icon,
           selected: false,
-          position: {rows: 5, cols: 5}
+          position: {rows: 5, cols: 3}
         })),
         _.map(selectedFacComponent,
           ({componentName, title, icon}: any, key) => ({
@@ -219,7 +220,7 @@ export class DashboardEntryComponent implements OnInit {
             name: title,
             icon: icon,
             selected: false,
-            position: {rows: 5, cols: 5}
+            position: {rows: 5, cols: 3}
           }))
       )
     };
