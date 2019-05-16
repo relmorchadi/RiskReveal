@@ -1,318 +1,61 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
-import * as _ from 'lodash';
-import {style} from "@angular/animations";
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
+import * as _ from 'lodash'
+import {Observable} from "rxjs";
+import {Select, Store} from "@ngxs/store";
+import * as fromWorkspaceStore from '../../store'
 
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
   styleUrls: ['./workspace-plt-browser.component.scss']
 })
-export class WorkspacePltBrowserComponent implements OnInit {
+export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   private dropdown: NzDropdownContextComponent;
-
-  sortName: string | null = null;
-  sortValue: string | null = null;
+  private Subscriptions: any[] = [];
   searchAddress: string;
 
-  listOfName = [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }];
-  listOfAddress = [{ text: 'London', value: 'London' }, { text: 'Sidney', value: 'Sidney' }];
-  listOfSearchName: string[] = [];
+  @Select(state => state.pltMainModel.data) listOfPlts$: Observable<any[]>;
+  listOfPlts: any[] = [];
 
-  listOfPlts: Array<{
-    pltId: number;
-    systemTags: any;
-    userTags: any;
-    pathId: number;
-    pltName: string;
-    peril: string;
-    regionPerilCode: string;
-    regionPerilName: string;
-    selected: boolean;
-    grain: string;
-    vendorSystem: string;
-    rap: string;
-    d: boolean;
-    note: boolean;
-    checked: boolean;
-    [key: string]:any;}> = [
-    {
-      pltId: 1,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 1,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 2,
-      systemTags: [],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T2",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: false,
-      checked: true
-    },
-    {
-      pltId: 3,
-      systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 7}],
-      userTags: [{tagId: 3}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T3",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 4,
-      systemTags: [],
-      userTags: [],
-      pathId: 4,
-      pltName: "NATC-USM_RL_Imf.T4",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 5,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 5}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 5,
-      pltName: "NATC-USM_RL_Imf.T5",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 6,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 1,
-      pltName: "NATC-USM_RL_Imf.T6",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 7,
-      systemTags: [{tagId: 5}, {tagId: 7}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T7",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 8,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T8",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 9,
-      systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 3}],
-      userTags: [{tagId: 2}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T9",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 10,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T10",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 11,
-      systemTags: [],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 5,
-      pltName: "NATC-USM_RL_Imf.T11",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 12,
-      systemTags: [{tagId: 5}, {tagId: 2}, {tagId: 7}],
-      userTags: [{tagId: 2}, {tagId: 3}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T12",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 13,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 4,
-      pltName: "NATC-USM_RL_Imf.T13",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
+  sortMap = {
+    pltId: null,
+    systemTags: null,
+    userTags: null,
+    pathId: null,
+    pltName: null,
+    peril: null,
+    regionPerilCode: null,
+    regionPerilName: null,
+    selected: null,
+    grain: null,
+    vendorSystem: null,
+    rap: null,
+    d: null,
+    note: null,
+  };
+
+  filterData;
+  sortData;
+
+  sort(sort: { key: string, value: string }): void {
+    if(sort.value){
+      this.sortData= _.merge({},this.sortData, {
+        [sort.key]: sort.value === "descend" ? 'desc' : 'asc'
+      })
+    }else{
+      this.sortData= _.omit(this.sortData, [sort.key])
     }
-
-  ];
-
-
-  listOfDisplayPlts: Array<{
-    pltId: number;
-    systemTags: [];
-    userTags: [];
-    pathId: number; pltName: string;
-    peril: string;
-    regionPerilCode: string;
-    regionPerilName: string;
-    selected: boolean;
-    grain: string;
-    vendorSystem: string;
-    rap: string;
-    d: boolean;
-    note: boolean;
-    checked: boolean;
-    [key: string]: any;}> = [
-    ...this.listOfPlts
-  ];
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortName = sort.key;
-    this.sortValue = sort.value;
-    this.search();
   }
 
-  filter(listOfSearchName: string[], searchAddress: string): void {
-    this.listOfSearchName = listOfSearchName;
-    this.searchAddress = searchAddress;
-    this.search();
-  }
-
-  search(): void {
-    /** filter data **/
-    // const filterFunc = (item: { name: string; age: number; address: string }) =>
-    //   (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) &&
-    //   (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
-    const data = this.listOfPlts;
-    // .filter(item => filterFunc(item));
-    /** sort data **/
-    if (this.sortName && this.sortValue) {
-      this.listOfDisplayPlts = data.sort((a, b) =>
-        this.sortValue === 'ascend'
-          ? a[this.sortName!] > b[this.sortName!]
-          ? 1
-          : -1
-          : b[this.sortName!] > a[this.sortName!]
-          ? 1
-          : -1
-      );
-    } else {
-      this.listOfDisplayPlts = data;
+  filter(key: string, value) {
+    if(value){
+      this.filterData= _.merge({},this.filterData, {
+        [key]: value
+      })
+    }else{
+      this.filterData= _.omit(this.filterData, [key])
     }
   }
 
@@ -338,12 +81,13 @@ export class WorkspacePltBrowserComponent implements OnInit {
   CalibrationImpactFinancialUnitSelected: any = 'Million';
 
   currentPath:any = null;
-  currentPathId:any = null;
 
   visible = false;
   size = 'large';
-  currentSystemTag = null;
-  currentUserTag = null;
+  filters: {
+    currentSystemTag: any,
+    currentUserTag: any
+  }
   sumnaryPltDetails: any = null;
 
   pltDetailsPermission: boolean ;
@@ -575,11 +319,27 @@ export class WorkspacePltBrowserComponent implements OnInit {
   ]
 
 
-  constructor( private nzDropdownService: NzDropdownService ) {
+  constructor( private nzDropdownService: NzDropdownService, private store$: Store,private zone: NgZone, private cdRef: ChangeDetectorRef) {
+    this.filters = {
+      currentSystemTag: null,
+        currentUserTag: null
+    }
+
+    this.sortData={};
+    this.filterData={};
   }
 
 
-  ngOnInit(){};
+  ngOnInit(){
+    this.Subscriptions.push(
+      this.store$.select( state => state.pltMainModel.data ).subscribe( data => {
+        console.log(data)
+        this.listOfPlts = data
+        this.detectChanges();
+      })
+    )
+    this.store$.dispatch(new fromWorkspaceStore.LoadPltData());
+  };
 
 
   openDrawer(): void {
@@ -591,7 +351,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
   }
 
   openPltInDrawer(plt) {
-    let selectedPlts = this.listOfDisplayPlts.filter(pt => pt.selected === true);
+    let selectedPlts = this.listOfPlts.filter(pt => pt.selected === true);
     if (selectedPlts.length > 0) {
       if (selectedPlts[0] === plt) {
         plt.selected = false;
@@ -599,12 +359,12 @@ export class WorkspacePltBrowserComponent implements OnInit {
         this.sumnaryPltDetails = null;
         this.pltDetailsPermission = false;
       } else {
-        this.listOfDisplayPlts.forEach( pt => pt.selected = false);
+        this.listOfPlts = this.listOfPlts.map( pt => pt.selected = false);
         plt.selected = true;
         this.sumnaryPltDetails = plt;
       }
     } else {
-      this.listOfDisplayPlts.forEach(pt => pt.selected = false);
+      this.listOfPlts =this.listOfPlts.map(pt => pt.selected = false);
       plt.selected = true;
       this.visible = true;
       this.sumnaryPltDetails = plt;
@@ -648,12 +408,12 @@ export class WorkspacePltBrowserComponent implements OnInit {
   }
 
   selectPath(path) {
-    this.paths.forEach(pa => {
-      pa.selected = false;
-    })
-    path.selected = true;
     this.currentPath = path;
-    this.currentPathId = path.id
+
+    _.forEach(this.paths, (el) => {
+      _.set(el, 'selected',el.id === path.id)
+    })
+
   }
 
   selectCardThead(card) {
@@ -676,16 +436,15 @@ export class WorkspacePltBrowserComponent implements OnInit {
   }
 
   resetFilterByTags(){
-    this.currentSystemTag = null;
-    this.currentUserTag = null;
+    this.filters = _.assign({}, this.filters, {
+      currentSystemTag: null,
+      currentUserTag: null
+    })
   }
 
   resetPath(){
-    this.paths.forEach(path => {
-      path.selected = false;
-    })
     this.currentPath = null;
-    this.currentPathId = null;
+    _.forEach(this.paths, el => _.set(el, 'selected', false))
   }
 
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
@@ -697,6 +456,25 @@ export class WorkspacePltBrowserComponent implements OnInit {
     this.dropdown.close();
   }
 
+  setFilter(filter: string, tag) {
+    _.set(this.filters, filter, tag);
+  }
+
+  runInNewConext(task) {
+    this.zone.runOutsideAngular(() => {
+      task();
+      this.detectChanges()
+    });
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe())
+  }
 }
 
 

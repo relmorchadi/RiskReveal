@@ -42,8 +42,8 @@
               </div>
               <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
               <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === currentSystemTag}" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentSystemTag = tag">
+                    <span [ngClass]="{'active-tag': tag === filters.currentSystemTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('currentSystemTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -52,8 +52,8 @@
 
               <div nz-row class="tags-title-section">User tags<i class="icon-plus-circle"></i></div>
               <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === currentUserTag}" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentUserTag = tag">
+                    <span [ngClass]="{'active-tag': tag === filters.currentSystemTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('currentUserTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -72,26 +72,29 @@
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
-              <nz-table #pltTable [nzData]="listOfDisplayPlts" class="table plt-table" [nzFrontPagination]="false"
+              <nz-table #pltTable [nzData]="listOfPlts | tableSortAndFilter: [sortData, filterData]" class="table plt-table" [nzFrontPagination]="false"
                         [nzShowPagination]="false"
                         [nzScroll]="{ y: '480px' }">
-                <thead (nzSortChange)="sort($event)" nzSingleSort>
+                <thead (nzSortChange)="sort($event)">
                 <tr>
-                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted"
-                      [nzSortKey]="col.fields">
+                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted" [nzSortKey]="col.fields" [(nzSort)]="sortMap[col.fields]">
                     {{col.header}}
+                    <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+                  </th>
+                </tr>
+                <tr>
+                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width">
                     <div *ngIf="col.filtred" class="filter-input">
                       <i class="icon-search"></i>
-                      <input type="text">
+                      <input type="text" [ngModel]="''" (ngModelChange)="filter(col.fields,$event)">
                     </div>
-                    <i *ngIf="col.icon" [ngClass]="col.icon"></i>
                   </th>
                 </tr>
                 </thead>
 
                 <tbody>
                 <tr
-                  *ngFor="let plt of pltTable.data | filterBySystemTag: currentSystemTag | filterByUserTag: currentUserTag | filterByPath: currentPathId"
+                  *ngFor="let plt of pltTable.data | filterBySystemTag: filters.currentSystemTag | filterByUserTag: filters.currentUserTag | filterByPath: currentPath?.id"
                   style="cursor: pointer" (contextmenu)="contextMenuPltTable($event, template)"
                   [ngClass]="{'active_plt_item': plt.selected }">
                   <ng-template #template>
@@ -249,7 +252,7 @@
             <div>
               <table class="table">
                 <tbody>
-                <tr *ngFor="let plt of listOfDisplayPlts">
+                <tr *ngFor="let plt of listOfPlts">
                   <td>{{plt.pltId}}</td>
                   <td>{{plt.pltName}}</td>
                   <td>{{plt.peril}}</td>
