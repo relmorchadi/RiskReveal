@@ -88,7 +88,7 @@
          [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
          [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
          [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
-         [contextMenu]="cm"
+         [contextMenu]="cm" class="table-ngPrime"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -148,6 +148,7 @@
 <p-table *ngIf="!virtualScroll"
          [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
+         class="table-ngPrime"
 >
 
   <ng-template pTemplate="colgroup" let-columns>

@@ -250,7 +250,7 @@
                 </div>
               </div>
               <div class="show-table">
-                <p-table #dt [columns]="scrollableCols" [frozenColumns]="frozenCols" [value]="tableLeft"
+                <p-table #dt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
                          [scrollable]="true" scrollHeight="340px" frozenWidth="240px">
                   <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
@@ -276,9 +276,7 @@
                           [ngClass]="{'selected-item': rowData?.selected}"
                           [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
                         <div style=" display: flex;" *ngIf="col.field === 'selected'">
-                          <i *ngIf="!rowData.selected" (click)="rowData.selected = true"
-                             class="icon-check_circle_24px"></i>
-                          <i *ngIf="rowData.selected" (click)="rowData.selected = false" class="icon-check_24px"></i>
+                          <label nz-checkbox [(ngModel)]="rowData.selected" ></label>
                         </div>
                         <div *ngIf="col.field !== 'selected'">{{rowData[col.field]}}</div>
                         <div style="font-size:20px; color: #0700CF; text-align: center;"

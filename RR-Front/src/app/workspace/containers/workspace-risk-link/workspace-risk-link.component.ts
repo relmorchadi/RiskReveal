@@ -54,7 +54,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
   ];
 
-  tableLeft: any = [
+  tableLeftAnalysis: any = [
     {
       selected: false,
       id: '10',
@@ -197,17 +197,69 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     },
   ];
 
-  scrollableCols = [
+  tableLeftProtfolio: any = [
+    {
+      selected: false,
+      id: '760',
+      number: 'FA0020553_01',
+      name: 'FA0020553_01',
+      creationDate: '2019-01-03T00:57:10.840Z',
+      descriptionType: 'DET',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '761',
+      number: 'FA0056486_01',
+      name: 'FA0056486_01',
+      creationDate: '2019-01-03T00:57:10.840Z',
+      descriptionType: 'DET',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '762',
+      number: 'FA0040287_01',
+      name: 'FA0040287_01',
+      creationDate: '2019-01-03T00:57:10.840Z',
+      descriptionType: 'DET',
+      cedant: 'RMS_EUWS_industry'
+    },
+    {
+      selected: false,
+      id: '763',
+      number: 'FA0023693_01',
+      name: 'FA0023693_01',
+      creationDate: '2019-01-03T00:57:10.840Z',
+      descriptionType: 'DET',
+      cedant: 'RMS_EUWS_industry'
+    },
+  ]
+
+  scrollableColsAnalysis = [
     {field: 'description', header: 'Description', width: '150px'},
     {field: 'engineVersion', header: 'Engine Version', width: '110px'},
     {field: 'groupeType', header: 'Groupe Type', width: '110px'},
     {field: 'cedant', header: 'cedant', width: '110px'},
   ];
 
-  frozenCols = [
+  frozenColsAnalysis = [
     {field: 'selected', header: 'selected', width: '20px'},
     {field: 'id', header: 'id', width: '30px'},
     {field: 'name', header: 'name', width: '190px'}
+  ];
+
+  scrollableColsPortfolio = [
+    {field: 'name', header: 'Name', width: '150px'},
+    {field: 'creationDate', header: 'Creation Date', width: '180px'},
+    {field: 'descriptionType', header: 'Description Type', width: '180px'},
+    {field: 'cedant', header: 'cedant', width: '120px'},
+  ];
+
+  frozenColsPortfolio = [
+    {field: 'selected', header: 'selected', width: '20px'},
+    {field: 'id', header: 'id', width: '30px'},
+    {field: 'number', header: 'Number', width: '190px'}
   ];
 
   summaryInfo: any = [
@@ -471,17 +523,36 @@ export class WorkspaceRiskLinkComponent implements OnInit {
       }
     }
     // this.currentSelectedItem = row;
-    const selectedRows = this.tableLeft.filter(ws => ws.selected === true);
-    this.selectedEDMOrRDM === 'RDM' ? this.selectedAnalysis = selectedRows : this.selectedPortfolio = selectedRows;
+    const selectedRowsAnalysis = this.tableLeftAnalysis.filter(ws => ws.selected === true);
+    const selectedRowsPortfolio = this.tableLeftProtfolio.filter(ws => ws.selected === true);
+    this.selectedEDMOrRDM === 'RDM' ? this.selectedAnalysis = selectedRowsAnalysis : this.selectedPortfolio = selectedRowsPortfolio;
   }
 
   selectSection(from, to) {
+    let tableUpdated: any ;
+    if (this.selectedEDMOrRDM === 'RDM') {
+      tableUpdated = this.tableLeftAnalysis;
+    } else {
+      tableUpdated = this.tableLeftProtfolio;
+    }
     if (from === to) {
-      this.tableLeft[from].selected = !this.tableLeft[from].selected;
+      tableUpdated[from].selected = !tableUpdated[from].selected;
     } else {
       for (let i = from; i <= to; i++) {
-        this.tableLeft[i].selected = !this.tableLeft[i].selected;
+        tableUpdated[i].selected = !tableUpdated[i].selected;
       }
     }
+  }
+
+  getScrollableCols() {
+    if (this.selectedEDMOrRDM === 'RDM') { return this.scrollableColsAnalysis; } else { return this.scrollableColsPortfolio; }
+  }
+
+  getFrozenCols() {
+    if (this.selectedEDMOrRDM === 'RDM') { return this.frozenColsAnalysis; } else { return this.frozenColsPortfolio; }
+  }
+
+  getTableData() {
+    if (this.selectedEDMOrRDM === 'RDM') { return this.tableLeftAnalysis; } else { return this.tableLeftProtfolio; }
   }
 }
