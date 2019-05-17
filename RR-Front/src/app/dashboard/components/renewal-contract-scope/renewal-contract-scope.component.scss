@@ -7,9 +7,9 @@
       background-color: #c8c8c8;
       color: #333333;
     }
-     .ui-table .ui-table-thead:nth-child(1) > tr > th{
-       color: rgba(0,0,0,0.6); font-size: 11px;
-       letter-spacing: 0.08px;	line-height: 14px
+    .ui-table .ui-table-thead:nth-child(1) > tr > th{
+      color: rgba(0,0,0,0.6); font-size: 11px;
+      letter-spacing: 0.08px;    line-height: 14px
     }
     .ui-table-resizable>.ui-table-wrapper{
       table thead:nth-child(1){
@@ -63,10 +63,14 @@
     width:100%;
     input{
       width: 100%;
+      color: rgba(0,0,0,0.4);
       border: none;
       &:focus{
         outline:0;
-        border-bottom: 2px solid #0700cf;
+        border-bottom: 2px dotted rgba(0,0,0,0.25);
+      }
+      &:hover{
+        border-bottom: 2px dotted rgba(0,0,0,0.25);
       }
     }
   }
@@ -147,6 +151,3 @@ app-table{
     }
   }
 }
-
-
-

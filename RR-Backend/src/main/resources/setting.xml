@@ -6,25 +6,25 @@
   <session-factory>
     <property name="connection.url">jdbc:sqlserver://localhost;database=RR</property>
     <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-      <mapping class="com.rr.riskreveal.domain.Contract"/>
-      <mapping class="com.rr.riskreveal.domain.Country"/>
-      <mapping class="com.rr.riskreveal.domain.OmegaCedant"/>
-      <mapping class="com.rr.riskreveal.domain.Project"/>
-      <mapping class="com.rr.riskreveal.domain.Workspace"/>
-      <mapping class="com.rr.riskreveal.domain.Users"/>
-      <mapping class="com.rr.riskreveal.domain.WorkspaceProjectMapping"/>
-      <mapping class="com.rr.riskreveal.domain.Reinstatement"/>
-      <mapping class="com.rr.riskreveal.domain.Section"/>
-      <mapping class="com.rr.riskreveal.domain.Cedant"/>
-      <mapping class="com.rr.riskreveal.domain.WorkspaceYears"/>
-    <mapping class="com.rr.riskreveal.domain.Treaty"/>
-      <mapping class="com.rr.riskreveal.domain.ContractSearchResult"/>
-      <mapping class="com.rr.riskreveal.domain.counter.CedantNameCountView"/>
-      <mapping class="com.rr.riskreveal.domain.counter.CountryCountView"/>
-      <mapping class="com.rr.riskreveal.domain.counter.TreatyCountView"/>
-      <mapping class="com.rr.riskreveal.domain.counter.UwyCountView"/>
-      <mapping class="com.rr.riskreveal.domain.WorkspaceView"/>
-      <mapping class="com.rr.riskreveal.domain.counter.ProgramView"/>
+      <mapping class="com.scor.rr.domain.Contract"/>
+      <mapping class="com.scor.rr.domain.Country"/>
+      <mapping class="com.scor.rr.domain.OmegaCedant"/>
+      <mapping class="com.scor.rr.domain.Project"/>
+      <mapping class="com.scor.rr.domain.Workspace"/>
+      <mapping class="com.scor.rr.domain.Users"/>
+      <mapping class="com.scor.rr.domain.WorkspaceProjectMapping"/>
+      <mapping class="com.scor.rr.domain.Reinstatement"/>
+      <mapping class="com.scor.rr.domain.Section"/>
+      <mapping class="com.scor.rr.domain.Cedant"/>
+      <mapping class="com.scor.rr.domain.WorkspaceYears"/>
+    <mapping class="com.scor.rr.domain.Treaty"/>
+      <mapping class="com.scor.rr.domain.ContractSearchResult"/>
+      <mapping class="com.scor.rr.domain.counter.CedantNameCountView"/>
+      <mapping class="com.scor.rr.domain.counter.CountryCountView"/>
+      <mapping class="com.scor.rr.domain.counter.TreatyCountView"/>
+      <mapping class="com.scor.rr.domain.counter.UwyCountView"/>
+      <mapping class="com.scor.rr.domain.WorkspaceView"/>
+      <mapping class="com.scor.rr.domain.counter.ProgramView"/>
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
