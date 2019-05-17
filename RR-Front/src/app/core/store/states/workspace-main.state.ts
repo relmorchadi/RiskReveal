@@ -14,6 +14,8 @@ const initiaState: WorkspaceMain = {
   collapseWorkspaceDetail: true,
   sliceValidator: true,
   loading: false,
+  appliedFilter: {shownElement: 10},
+  workspacePagination: {paginationList: [], shownElement: 0, numberOfElement: 0},
   openedWs: null,
   openedTabs: [],
   recentWs: []
@@ -62,11 +64,14 @@ export class WorkspaceMainState implements NgxsOnInit {
     recentlyOpenedWs.unshift(payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
     recentlyOpenedWs[0].selected = true;
+    recentlyOpenedWs = _.uniqWith(recentlyOpenedWs, _.isEqual );
+    const paginationList = this.makePagination(recentlyOpenedWs);
     const openedWs = [...state.openedTabs, _.merge({}, payload, {routing: ''})];
     ctx.patchState({
+      workspacePagination: paginationList,
       openedWs: payload,
       openedTabs: _.uniqWith(openedWs, (x, y) => (x.workSpaceId === y.workSpaceId && x.uwYear == y.uwYear)),
-      recentWs: _.uniqWith(recentlyOpenedWs, _.isEqual )
+      recentWs: recentlyOpenedWs
     });
   }
 
@@ -84,10 +89,13 @@ export class WorkspaceMainState implements NgxsOnInit {
     recentlyOpenedWs.unshift(...payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
     recentlyOpenedWs[0].selected = true;
+    recentlyOpenedWs = _.uniqWith(recentlyOpenedWs, _.isEqual );
+    const paginationList = this.makePagination(recentlyOpenedWs);
     ctx.patchState({
+      workspacePagination: paginationList,
       openedWs: _.merge({}, payload[payload.length - 1], {routing: ''}),
       openedTabs: _.uniqWith(openedWs, _.isEqual),
-      recentWs: _.uniqWith(recentlyOpenedWs, _.isEqual )
+      recentWs: recentlyOpenedWs
     });
   }
 
@@ -122,10 +130,30 @@ export class WorkspaceMainState implements NgxsOnInit {
 
   @Action(LoadWorkspacesAction)
   LoadWorkspaces(ctx: StateContext<WorkspaceMain>) {
+    const recentlyOpenedWs = (JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
+    const paginationList = this.makePagination(recentlyOpenedWs)
     ctx.patchState( {
+      workspacePagination: paginationList,
       openedTabs: (JSON.parse(localStorage.getItem('workspaces')) || []),
-      recentWs: (JSON.parse(localStorage.getItem('usedWorkspaces')) || [])
+      recentWs: recentlyOpenedWs
     });
+  }
+
+  private makePagination(recentlyOpenedWs) {
+    const paginationList = [];
+    if (recentlyOpenedWs.length > 0 ) {
+      paginationList.push({id: 0, shownElement: 10, value: 'Last 10'});
+    }
+    if (recentlyOpenedWs.length > 10) {
+      paginationList.push({id: 1, shownElement: 50, value: 'Last 50'});
+    }
+    if (recentlyOpenedWs.length > 50) {
+      paginationList.push({id: 2, shownElement: 100, value: 'Last 100'});
+    }
+    if (recentlyOpenedWs.length > 100) {
+      paginationList.push({id: 3, shownElement: 150, value: 'Last 150'});
+    }
+    return {paginationList: paginationList, numberOfElement: recentlyOpenedWs.length};
   }
 
 }

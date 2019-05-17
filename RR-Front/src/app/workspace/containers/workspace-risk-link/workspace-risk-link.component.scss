@@ -634,7 +634,13 @@
             }
 
             .ui-table-scrollable-view {
-              min-height: 250px;
+              min-height: 425px;
+            }
+
+            .ui-table-scrollable-body {
+              min-height: 365px;
+              margin-left: 3px;
+              margin-right: 3px;
             }
 
             .ui-table-thead {

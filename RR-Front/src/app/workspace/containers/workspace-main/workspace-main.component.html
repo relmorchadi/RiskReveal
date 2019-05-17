@@ -17,7 +17,7 @@
         <ng-template nz-tab>
           <div nz-row>
             <div nz-col nzSpan="24">
-              <div class="row tab-detail p-2">
+              <div class="row tab-detail p-2 header-tab-wrapper">
                 <div class="detail-wrapper">
                   <button (click)="patchWorkspaceDetail()"
                           class="mx-4 btn-detail d-flex justify-content-center align-items-center"
@@ -39,34 +39,34 @@
                       <h4 class="workspace-title"> {{tab?.cedantCode}} | {{tab?.cedantName}} </h4>
                     </div>
                   </div>
-                  <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4">
+                  <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="header-tab-right">
                     <div nzTitle="Scope" nzPlacement="bottom" nz-tooltip
-                         class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                      <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
+                         class="text-center my-2 px-4 d-inline-flex flex-column">
+                      <i style="font-size: 1.6em" class="icon-location_searching_24px mb-2"></i>
                       <span><b>-</b></span>
                     </div>
                     <div nzTitle="Exposures" nzPlacement="bottom" nz-tooltip
-                         class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                      <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
+                         class="text-center my-2 px-4 d-inline-flex flex-column">
+                      <i style="font-size: 1.6em" class="icon-adjust-half mb-2"></i>
                       <span><b>-</b></span>
                     </div>
                     <div nzTitle="Qualifying PLTs" nzPlacement="bottom" nz-tooltip
-                         class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                         class="text-center my-2 px-4 d-inline-flex flex-column">
                       <i style="font-size: 1.6em" class="icon-box mb-2"></i>
                       <span><b>-</b></span>
                     </div>
                     <div nzTitle="Published For Pricing" nzPlacement="bottom" nz-tooltip
-                         class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                         class="text-center my-2 px-4 d-inline-flex flex-column">
                       <i style="font-size: 1.6em" class="icon-note mb-2"></i>
                       <span><b>-</b></span>
                     </div>
                     <div nzTitle="Priced" nzPlacement="bottom" nz-tooltip
-                         class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                         class="text-center my-2 px-4 d-inline-flex flex-column">
                       <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
                       <span><b>-</b></span>
                     </div>
                     <div nzTitle="Published For Accumulation" nzPlacement="bottom" nz-tooltip
-                         class="text-center border-left my-2 px-4 d-inline-flex flex-column">
+                         class="text-center my-2 px-4 d-inline-flex flex-column" style="border-right: 1px solid rgba(255,255,255,0.5);">
                       <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
                       <span><b>-</b></span>
                     </div>
@@ -77,9 +77,9 @@
             <div [ngClass]="{'collapse':state.collapseWorkspaceDetail}" nz-col [nzSpan]="24">
               <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
 
-                <div class="pl-md-4 col-md-12 col-lg-6 ">
+                <div class="col-md-12 col-lg-6 " style="padding-left: 90px; padding-right: 0;">
                   <div nz-row class="pt-lg-5 pt-md-0" style="padding-top:0px !important;">
-                    <div nz-col nz-row [nzSpan]="12">
+                    <div nz-col nz-row [nzSpan]="10">
                       <div class="row">
                         <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
                         <span class="col-5 tab-metadata-value">{{tab?.subsidiaryId}} - {{tab?.subsidiaryName}}</span>
@@ -94,17 +94,19 @@
                         <span class="col-5 tab-metadata-value">Omega</span>
                       </div>
                     </div>
-                    <div nz-col nz-row [nzSpan]="12">
-                      <div nz-col [nzSpan]="9">
-                        <i style="font-size: 1.6em; position:absolute; margin-left:-30px;"
+                    <div nz-col style="padding-left: 5px; border-left: 1px solid rgba(255,255,255,0.5);" nz-row [nzSpan]="14">
+                      <div style="display:flex;" nz-col [nzSpan]="9">
+                        <i style="font-size: 1.6em;"
                            class="icon-calendar-alt mb-4"></i>
-                        <span class="d-block tab-metadata-title">Inception Date :</span>
-                        <span class="d-block tab-metadata-value">{{tab?.inceptionDate | date:'dd/MM/yyyy'}}</span>
-                        <span class="d-block tab-metadata-title">Expiry Date :</span>
-                        <span class="d-block tab-metadata-value">{{tab?.expiryDate | date:'dd/MM/yyyy'}}</span>
+                        <div style="display:flex; flex-direction: column; padding-left: 15px;">
+                          <span class="d-block tab-metadata-title">Inception Date :</span>
+                          <span class="d-block tab-metadata-value">{{tab?.inceptionDate | date:'dd/MM/yyyy'}}</span>
+                          <span class="d-block tab-metadata-title">Expiry Date :</span>
+                          <span class="d-block tab-metadata-value">{{tab?.expiryDate | date:'dd/MM/yyyy'}}</span>
+                        </div>
                       </div>
-                      <div nz-col class="border-left pl-3" [nzSpan]="15">
-                        <span class="d-block tab-metadata-title">Treaty Section :</span>
+                      <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" [nzSpan]="15">
+                        <span style="line-height: 35px;" class="d-block tab-metadata-title">Treaty Section :</span>
                         <ul class="treaty-list">
                           <li *ngFor="let section of sliceContent(tab?.treatySections, state.sliceValidator)">
                             {{section}}
@@ -121,40 +123,35 @@
                 <div class="pl-md-4 col-md-12 col-lg-6" style="margin-top: -60px;">
                   <h5 class="tab-kpi-title">In Scope Region Perils</h5>
                   <div class="d-flex">
-                    <div style="flex:1" class="text-center d-inline-flex flex-column justify-content-end">
-                      <i style="font-size: 1.6em" class="icon-my_location_24px mb-4"></i>
-                      <span style="flex:1" class="d-flex align-items-start mb-1 justify-content-center kpi-icon-title">Scope</span>
+                    <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                      <i style="font-size: 1.6em" class="icon-location_searching_24px mb-5"></i>
+                      <span style="flex:1; margin-top: 13px;" class="d-flex align-items-start mb-1 kpi-icon-title">Scope</span>
                       <span class="kpi-icon-value"><b>-</b></span>
                     </div>
-                    <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                      <i style="font-size: 1.6em" class="icon-design-tool mb-4"></i>
-                      <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Exposures</span>
+                    <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                      <i style="font-size: 1.6em" class="icon-adjust-half mb-5"></i>
+                      <span style="flex:1; margin-top: 13px;" class="d-flex align-items-start mb-1 kpi-icon-title">Exposures</span>
                       <span class="kpi-icon-value"><b>-</b></span>
                     </div>
-                    <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                      <i style="font-size: 1.6em" class="icon-box mb-4"></i>
-                      <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Qualifying PLTs</span>
-                      <span class="kpi-icon-value"><b>-</b>
-                </span>
+                    <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                      <i style="font-size: 1.6em" class="icon-box mb-5"></i>
+                      <span style="flex:1" class="d-flex align-items-start mb-1 kpi-icon-title">Qualifying PLTs</span>
+                      <span class="kpi-icon-value"><b>-</b></span>
                     </div>
-                    <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                      <i style="font-size: 1.6em" class="icon-note mb-4"></i>
-                      <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Published For Pricing</span>
-                      <span class="kpi-icon-value"><b>-</b>
-                </span>
+                    <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                      <i style="font-size: 1.6em" class="icon-note mb-5"></i>
+                      <span style="flex:1" class="d-flex align-items-start mb-1 kpi-icon-title">Published For Pricing</span>
+                      <span class="kpi-icon-value"><b>-</b></span>
                     </div>
-                    <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                      <i style="font-size: 1.6em" class="icon-dollar-alt mb-4"></i>
-                      <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Priced</span>
-                      <span class="kpi-icon-value"><b>-</b>
-                </span>
+                    <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                      <i style="font-size: 1.6em" class="icon-dollar-alt mb-5"></i>
+                      <span style="flex:1; margin-top: 13px;" class="d-flex align-items-start mb-1 kpi-icon-title">Priced</span>
+                      <span class="kpi-icon-value"><b>-</b></span>
                     </div>
-                    <div style="flex:1" class="text-center border-left  d-inline-flex flex-column justify-content-end">
-                      <i style="font-size: 1.6em" class="icon-focus-add mb-4"></i>
-                      <span style="flex:1" class="d-flex justify-content-center align-items-start mb-1 kpi-icon-title">Published For Accumulation</span>
-                      <span class="kpi-icon-value">
-                  <b>-</b>
-                </span>
+                    <div style="flex:1" class="d-inline-flex flex-column justify-content-end pl-md-3">
+                      <i style="font-size: 1.6em" class="icon-focus-add mb-5"></i>
+                      <span style="flex:1" class="d-flex align-items-start mb-1 kpi-icon-title">Published For Accumulation</span>
+                      <span class="kpi-icon-value"><b>-</b></span>
                     </div>
                   </div>
                 </div>

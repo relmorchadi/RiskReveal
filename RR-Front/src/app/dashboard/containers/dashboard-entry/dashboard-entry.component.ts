@@ -14,6 +14,7 @@ export class DashboardEntryComponent implements OnInit {
   protected options: GridsterConfig;
   protected item: any = {x: 0, y: 0, cols: 3, rows: 5};
   newDashboardTitle: any;
+  selectedDashboard: any;
   dashboards: any = [
     {
       id: 0,
@@ -126,7 +127,7 @@ export class DashboardEntryComponent implements OnInit {
   dashboardsMockData = [];
   dashboardTitle = 'Dashboard N°1';
   tabs = [1, 2, 3];
-  idSelected = 0;
+  idSelected: number;
   idTab = 0;
   rightSliderCollapsed = false;
 
@@ -177,7 +178,7 @@ export class DashboardEntryComponent implements OnInit {
       swap: true,
       pushDirections: {north: true, east: true, south: true, west: true},
       resizable: {enabled: true},
-      itemChangeCallback: this.itemChanges.bind(this),
+      itemChangeCallback: this.changeItemPosition.bind(this),
       draggable: {
         enabled: true,
         ignoreContent: true,
@@ -193,6 +194,7 @@ export class DashboardEntryComponent implements OnInit {
 
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
     this.updateDashboardMockData();
+    this.idSelected = this.dashboardsMockData[0].id;
     this.dashboardChange(this.idSelected);
   }
 
@@ -201,7 +203,7 @@ export class DashboardEntryComponent implements OnInit {
     const selectedTreatyComponent = _.filter(treaty, (e: any) => e.selected);
     const selectedFacComponent = _.filter(fac, (e: any) => e.selected);
     const item = {
-      id: this.dashboards.length,
+      id: this.dashboards[this.dashboards.length - 1 ].id + 1,
       name: this.newDashboardTitle,
       visible: true,
       items: _.concat(_.map(selectedTreatyComponent,
@@ -230,7 +232,8 @@ export class DashboardEntryComponent implements OnInit {
       this.updateDashboardMockData();
       this.newDashboardTitle = '';
       this.idTab = this.dashboards.length - 1;
-      this.idSelected = this.idTab;
+      this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
+      this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
     }
   }
 
@@ -266,17 +269,44 @@ export class DashboardEntryComponent implements OnInit {
     this.dashboardsMockData = _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
   }
 
+  changeItemPosition() {
+    console.log('here');
+    let rowEmpty = true;
+    this.selectedDashboard.items.forEach(ds => {
+      if (ds.selected && ds.position.y === 0 ) {
+        rowEmpty = false;
+      }
+    });
+    if (rowEmpty) {
+      const selectedItem = this.selectedDashboard.items.filter(ds => ds.selected === true);
+      this.selectedDashboard.items.forEach(ds => {
+        if  (ds.id === selectedItem[0].id) {
+          ds.position.y = 0;
+        }
+      });
+    }
+    this.itemChanges();
+  }
+
   itemChanges() {
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
   }
 
+  selectTab(id: any) {
+    this.idSelected = id;
+    const filterData = this.dashboards.filter(ds => ds.id === id);
+    this.selectedDashboard = filterData[0];
+  }
+
   dashboardChange(id: any) {
-    const name: any = _.get(_.find(this.dashboards, {id}), 'name');
+    const name: any = _.get(_.find(this.dashboardsMockData, {id}), 'name');
     this.dashboardTitle = name || '';
     this.idSelected = id;
-    if (this.dashboards[id].visible === true) {
+    const filterData = this.dashboardsMockData.filter(ds => ds.id === id);
+    this.selectedDashboard = filterData[0];
+    if (filterData[0].visible === true) {
       let idSel = 0;
-      this.dashboards.forEach(
+      this.dashboardsMockData.forEach(
         ds => {
           if (ds.visible === true && ds.id < id) {
             ++idSel;
@@ -288,14 +318,11 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   delete(dashboardId: any, itemId: any) {
-    // console.log({id,item})
     /*   this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
        this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));*/
-    let dashboard: any = this.dashboards[dashboardId];
+    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
     if (itemId > 5) {
       dashboard.items = dashboard.items.filter(ds => ds.id !== itemId);
-      /*   console.log('this is dashboard new', this.newDashboard);
-         console.log(this.dashboard);*/
     } else {
       dashboard.items[itemId - 1].selected = false;
     }
@@ -304,8 +331,7 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   changeName(dashboardId: any, {itemId, newName}: any) {
-    console.log({itemId, newName, dashboardId});
-    let dashboard: any = this.dashboards[dashboardId];
+    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
     if (itemId <= 5) {
       const newItem = dashboard.items.filter(ds => ds.id === itemId);
       const copy = Object.assign({}, newItem[0], {
@@ -326,19 +352,15 @@ export class DashboardEntryComponent implements OnInit {
 
   duplicate(dashboardId: any, itemName: any) {
     console.log({dashboardId, itemName});
-    let dashboard: any = this.dashboards[dashboardId];
+    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
     const duplicatedItem: any = dashboard.items.filter(ds => ds.name === itemName);
     const copy = Object.assign({}, duplicatedItem[0], {
       id: dashboard.items.length + 1,
       selected: true,
     });
-    // dashboard.items.push(copy);
     dashboard.items = [...dashboard.items, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
-    /*  this.dashboards[id].items = _.concat(this.dashboards[id].items, [{...item, id: this.dashboards[id].items.length + 1}])
-      this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));
-      localStorage.setItem('dashboard', JSON.stringify(this.dashboards));*/
   }
 
   activeView(tab) {
@@ -353,6 +375,8 @@ export class DashboardEntryComponent implements OnInit {
     this.dashboards.forEach(ds => ds.id === tab.id ? ds.visible = false : null);
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
+    const filterData = this.dashboards.filter(ds => ds.id === tab.id);
+    this.selectedDashboard = filterData[0];
   }
 
   addRemoveItem(item) {

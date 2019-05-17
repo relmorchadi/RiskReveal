@@ -4,8 +4,8 @@ import {
   WorkspacePltBrowserComponent,
   WorkspaceProjectComponent,
   WorkspaceRiskLinkComponent
-} from "./containers";
-import {WorkspaceCalibrationComponent} from "./containers/workspace-calibration/workspace-calibration.component";
+} from './containers';
+import {WorkspaceCalibrationComponent} from './containers/workspace-calibration/workspace-calibration.component';
 
 
 export const workspaceRoutes: Routes = [

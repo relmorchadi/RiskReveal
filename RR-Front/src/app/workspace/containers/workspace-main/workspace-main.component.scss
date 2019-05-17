@@ -127,7 +127,8 @@
 }
 
 .workspace-title{
-  height: 28px;
+  height: 20px;
+  padding-top: 4px;
   color: #FFFFFF;
   font-size: 16.26px;
   letter-spacing: 0.5px;
@@ -140,7 +141,7 @@
   font-size: 11px;
   padding-left: 0;
   overflow: auto;
-  height: 65px;
+  height: 90px;
 }
 
 .card-container {
@@ -211,11 +212,11 @@
       color: #03DAC4;	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px; cursor:pointer; user-select: none;
     }
     .tab-kpi-title{
-      opacity: 0.5; padding-left: 35px; padding-bottom: 20px;
+      opacity: 0.5; padding: 10px 0;
       color: #FFFFFF;	font-size: 16.26px;	letter-spacing: 0.08px;	line-height: 28px;
     }
     .kpi-icon-title{
-      color: #FFFFFF;	font-family: Rubik;	font-size: 12.75px;	letter-spacing: 0.08px;	line-height: 16px;
+      color: rgba(255,255,255,0.5);	font-family: Rubik;	font-size: 12.75px;	letter-spacing: 0.08px;	line-height: 16px;
       word-break: break-word;
       @media screen and (max-width: 768px)  {
         font-size: 11px;
@@ -482,3 +483,17 @@
   padding-left: 7px !important;
 }
 
+.header-tab-wrapper {
+  padding: 0 !important;
+  .header-tab-right {
+    padding-right: 20px;
+    .text-center.my-2.px-4.d-inline-flex.flex-column {
+      padding-right: 75px !important;
+      border-left: 1px solid rgba(255,255,255,0.5);
+    }
+  }
+}
+
+.d-inline-flex.flex-column.justify-content-end {
+  border-left: 1px solid rgba(255,255,255,0.5);
+}

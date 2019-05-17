@@ -23,7 +23,7 @@
       </nz-tabset> -->
       <nz-tabset [(nzSelectedIndex)]="idTab" class="dashboard-content">
         <ng-container *ngFor="let dashboard of dashboardsMockData">
-          <nz-tab (nzClick)="idSelected=dashboard?.id" [nzForceRender]="true" *ngIf="dashboard?.visible"
+          <nz-tab (nzClick)="selectTab(dashboard?.id)" [nzForceRender]="true" *ngIf="dashboard?.visible"
                   [nzTitle]="titleTemplate">
             <ng-template #titleTemplate>
               <div class="tabs-header-wrapper">
@@ -79,16 +79,16 @@
         <div style="flex:1">
           <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;"
                      nzShowSearch
-                     nzPlaceHolder="Select Dashboard" [ngModel]="idSelected">
-            <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d.name" [nzValue]="d.id">
-              {{d.name}}
+                     nzPlaceHolder="Select Dashboard" [(ngModel)]="idSelected">
+            <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d?.name" [nzValue]="d?.id">
+              {{d?.name}}
               <i *ngIf="d.visible" (click)="closeTab(d)" class="icon-remove_red_eye_24px selected-item-icon"></i>
               <i *ngIf="!d.visible" (click)="activeView(d)" class="icon-visibility_off_24px selected-item-icon"></i>
             </nz-option>
           </nz-select>
           <div class="edit-dashboard-section">
             <input style="width: 80%" class="hover-input" placeholder=""
-                   (change)="changeDashboardName($event.target.value)" [ngModel]="dashboardsMockData[idSelected].name">
+                   (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard.name">
             <i nz-popconfirm nzPlacement="top" nzTitle="Do you want to delete this dashboard?"
                (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"></i>
           </div>
@@ -98,7 +98,7 @@
             <span class="title">TREATY</span>
           </div>
           <ul class="widgets-list">
-            <ng-container *ngFor="let treaty of dashboardsMockData[idSelected].items; let i = index">
+            <ng-container *ngFor="let treaty of selectedDashboard.items; let i = index">
               <li *ngIf="i < 5" class="widget-item"
                   (click)="addRemoveItem(treaty) "
                   [ngClass]="{'active-widget-item': treaty?.selected}">

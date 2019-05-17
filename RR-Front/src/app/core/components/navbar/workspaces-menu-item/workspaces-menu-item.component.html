@@ -1,5 +1,6 @@
-<div (click)="redirectWorkspace()" class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}}</div>
-<div class="dropdown-icon" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click" >
+<div (click)="redirectWorkspace()"
+     class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}}</div>
+<div class="dropdown-icon" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click">
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 8px"></i>
 </div>
 <ng-template #workspacePopoverContent>
@@ -19,26 +20,37 @@
             nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"
           ></nz-alert>
           <ul>
-            <li *ngFor="let workspace of state.recentWs" class="poover-menu-item" (click)="toggleWorkspace(workspace)" [ngClass]="{'poover-menu-item-active': workspace.selected}" >
-              <div class="items-popover-wrapper">
-                <i class="icon-window-section"></i>
-                <div class="item-popover-context">
-                  <span class="item-popover-context-header">{{workspace?.worspaceName}}</span>
-                  <span class="item-popover-context-footer">{{workspace?.cedantName}} {{workspace?.programName}}</span>
+            <ng-container *ngFor="let workspace of state.recentWs; let i = index">
+              <li *ngIf="i < state.appliedFilter.shownElement" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
+                  [ngClass]="{'poover-menu-item-active': workspace.selected}">
+                <div class="items-popover-wrapper">
+                  <i class="icon-window-section"></i>
+                  <div class="item-popover-context">
+                    <span class="item-popover-context-header">{{workspace?.worspaceName}}</span>
+                    <span
+                      class="item-popover-context-footer">{{workspace?.cedantName}} {{workspace?.programName}}</span>
+                  </div>
                 </div>
-              </div>
-              <div class="items-popover-info">
-                {{workspace?.uwYear}} - {{workspace?.workSpaceId}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
-              </div>
-            </li>
+                <div class="items-popover-info">
+                  {{workspace?.uwYear}} - {{workspace?.workSpaceId}} <i class="float-right mr-1 mt-1"
+                                                                        [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
+                </div>
+              </li>
+            </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false" class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-              <nz-option *ngFor="let label of labels ; let i = index" [nzValue]="i" [nzLabel]="label"></nz-option>
+            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"
+                       class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear
+                       nzPlaceHolder="Choose">
+              <nz-option *ngFor="let label of state.workspacePagination.paginationList ; let i = index"
+                         [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>
             </nz-select>
             <div class="float-right">
-              <button (click)="popOutWorkspaces()" class="popover-menu-control-button" nz-button nzType="default">POP OUT</button>
-              <button (click)="openWorkspaces()" class="popover-menu-control-button" nz-button nzType="default">OPEN</button>
+              <button (click)="popOutWorkspaces()" class="popover-menu-control-button" nz-button nzType="default">POP
+                OUT
+              </button>
+              <button (click)="openWorkspaces()" class="popover-menu-control-button" nz-button nzType="default">OPEN
+              </button>
             </div>
           </div>
         </div>
@@ -50,12 +62,15 @@
             <input class="gray-search-input"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)" [ngClass]="{'poover-menu-item-active': workspace.selected}" >
-              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
+            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
+                [ngClass]="{'poover-menu-item-active': workspace.selected}">
+              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
+                                                                                [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
             </li>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
               <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
@@ -76,12 +91,15 @@
             <input class="gray-search-input"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)" [ngClass]="{'poover-menu-item-active': workspace.selected}" >
-              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
+            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
+                [ngClass]="{'poover-menu-item-active': workspace.selected}">
+              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
+                                                                                [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
             </li>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
               <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
@@ -102,12 +120,15 @@
             <input class="gray-search-input"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)" [ngClass]="{'poover-menu-item-active': workspace.selected}" >
-              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}" ></i>
+            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
+                [ngClass]="{'poover-menu-item-active': workspace.selected}">
+              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
+                                                                                [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
             </li>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
               <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
@@ -126,7 +147,8 @@
 
 
   <ng-template #RecentHeaderContent>
-    <span style="width: 5px">Recent &nbsp; <span class="badge badge-light tab-badge">{{numberofElement}}</span></span>
+    <span style="width: 5px">Recent &nbsp; <span
+      class="badge badge-light tab-badge">{{state.workspacePagination.numberOfElement}}</span></span>
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>
