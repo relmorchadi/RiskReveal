@@ -1,15 +1,11 @@
 import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
 import {
   AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
-  PatchSearchStateAction,
-  SearchContractsCountAction, SearchContractsCountErrorAction,
-  SearchContractsCountSuccessAction
+  PatchSearchStateAction, SearchContractsCountAction
 } from '../actions';
 import {SearchService} from '../../service/search.service';
-import {catchError, mergeMap} from 'rxjs/operators';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
-import {WorkspaceFilter} from '../../model';
 import * as _ from 'lodash';
 
 const initiaState: SearchNavBar = {
@@ -27,7 +23,7 @@ const initiaState: SearchNavBar = {
   data: [],
   recentSearch: [],
   showRecentSearch: [],
-  tables: ['YEAR', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME',  'COUNTRY', 'CEDANT_CODE'],
+  tables: ['YEAR', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME', 'COUNTRY', 'CEDANT_CODE'],
   savedSearch: [
     // [{key: 'Cedant', value: 'HDI Global'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
@@ -134,7 +130,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(LoadRecentSearchAction)
   loadRecentSearch(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState( {recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 3) });
+    ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 3)});
   }
 
   private searchLoader(keyword, table) {

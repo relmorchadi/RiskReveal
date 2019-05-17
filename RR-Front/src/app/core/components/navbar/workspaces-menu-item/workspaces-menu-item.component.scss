@@ -2,10 +2,22 @@
 
 .pointer{
   cursor: pointer;
+  padding: 5px 11px 5px 0;
+  border-right: 1px solid rgba(0,0,0,0.1);
+  user-select: none;
   &:focus{
     outline: 0;
   }
 }
+
+.dropdown-icon{
+  color: rgba(0,0,0,0.6);
+  cursor: pointer;
+  display: flex;
+  user-select: none;
+  padding-left: 11px;
+}
+
 :host{
   ::ng-deep {
     i.ant-menu-submenu-arrow{
@@ -76,6 +88,7 @@ nz-alert{
       display:flex;
       flex-direction: column;
       .item-popover-context-header{
+        white-space: nowrap; text-overflow: ellipsis;
         color: rgba(0,0,0,0.87);	font-family: Rubik; font-weight: 500 ;font-size: 13px;	letter-spacing: 0.08px;	line-height: 24px;
       }
       .item-popover-context-footer{

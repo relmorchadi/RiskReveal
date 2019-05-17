@@ -8,7 +8,10 @@ import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
-import {OpenWorkspaceMainAction} from '../../../core/store/actions';
+import {AppendNewWorkspaceMainAction} from '../../../core/store/actions/workspace-main.action';
+import {WorkspaceMainState} from "../../../core/store/states";
+import {Observable} from "rxjs";
+import {WorkspaceMain} from "../../../core/model/workspace-main";
 
 
 @Component({
@@ -120,12 +123,17 @@ export class SearchMainComponent implements OnInit {
     }
   ];
 
+  @Select(WorkspaceMainState)
+  state$: Observable<WorkspaceMain>;
+  state: WorkspaceMain = null;
+
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store) {
     this.initSearchForm();
   }
 
   ngOnInit() {
+    this.state$.subscribe(value => this.state = _.merge({}, value));
     this.searchedItems = this._searchService.searchedItems;
     this.globalSearchItem = this._searchService.globalSearchItem;
     this._searchService.items.subscribe(
@@ -192,21 +200,23 @@ export class SearchMainComponent implements OnInit {
         const workspace = {
           workSpaceId: wsId,
           uwYear: year,
+          selected: false,
           ...dt
         };
-        this.store.dispatch(new OpenWorkspaceMainAction(workspace));
-        let usedWorkspaces = JSON.parse(localStorage.getItem('usedWorkspaces')) || [];
-        usedWorkspaces.forEach(ws => {
-          if (workspace.workSpaceId === ws.workSpaceId) {
-            usedWorkspaces = usedWorkspaces.filter(items => items !== ws);
-          }
-        });
-        usedWorkspaces.unshift(workspace);
-        this._helperService.updateRecentWorkspaces(usedWorkspaces);
-        this._helperService.affectItems([workspace]);
-        this._router.navigate(['/workspace']);
+        this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
+        this._helperService.updateRecentWorkspaces();
+        this._helperService.updateWorkspaceItems();
+        this.navigateToTab(this.state.openedTabs[0]);
       }
     );
+  }
+
+  navigateToTab(value) {
+    if (value.routing == 0) {
+      this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}`]);
+    } else {
+      this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}/${value.routing}`]);
+    }
   }
 
   openWorkspaceInSlider(contract) {

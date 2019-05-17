@@ -1,42 +1,27 @@
 import {NgModule} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {COMPONENTS} from "./components"
-import {CONTAINERS, WorkspaceMainComponent, WorkspaceProjectComponent, WorkspaceRiskLinkComponent} from "./containers";
-import {RouterModule, Routes} from '@angular/router';
+import {COMPONENTS} from './components'
+import {CONTAINERS} from './containers';
+import { DIRECTIVES} from './directives';
+import {PIPES} from "./pipes";
+import {RouterModule} from '@angular/router';
 import {SharedModule} from '../shared/shared.module';
 import {TableModule} from 'primeng/table';
 import {NgMasonryGridModule} from 'ng-masonry-grid';
-import {WorkspaceCalibrationComponent} from './containers/workspace-calibration/workspace-calibration.component';
-import { CalibrationDirective } from './calibration.directive';
-import {ForNumberPipe} from "./for-number.pipe";
-import { ScrolltableDirective } from './scrolltable.directive';
-import {GridsterModule} from "angular-gridster2";
-
-
-const routes: Routes = [
-  {
-    data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
-    children: [
-      {path: '', component: WorkspaceProjectComponent},
-      {path: 'RiskLink', component: WorkspaceRiskLinkComponent, pathMatch: 'full'},
-      {path: 'Calibration', component: WorkspaceCalibrationComponent, pathMatch: 'full'},
-      {path: ':wsId/:year', component: WorkspaceProjectComponent},
-    ]
-  }
-];
-
-// To importt : WorkspaceRiskLinkComponent, HighlightDirective, WorkspaceMainComponent, WorkspaceComponent, WorkspaceCalibrationComponent, CalibrationDirective
+import {GridsterModule} from 'angular-gridster2';
+import {workspaceRoutes} from "./workspace.route";
+import {NgxsModule} from "@ngxs/store";
 
 @NgModule({
   declarations: [
-    ...COMPONENTS, ...CONTAINERS, WorkspaceRiskLinkComponent, WorkspaceMainComponent, WorkspaceCalibrationComponent, CalibrationDirective
+    ...COMPONENTS, ...CONTAINERS,
+    ...PIPES, ...DIRECTIVES
   ],
   imports: [
     GridsterModule,
     SharedModule,
     TableModule,
     NgMasonryGridModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(workspaceRoutes)
   ],
   exports: [
     RouterModule

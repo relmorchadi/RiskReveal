@@ -14,7 +14,7 @@
             <span>Workspace</span>
           </span>
     <ul>
-      <li nz-menu-item>Projects</li>
+      <li nz-menu-item (click)="routerNavigate(null)">Projects</li>
       <li nz-menu-item>Contract</li>
       <li nz-menu-item>Activity</li>
     </ul>
@@ -25,7 +25,7 @@
             <span>Scope of Completeness</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT browser' : ''">
+  <li (click)="routerNavigate('PltBrowser')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT browser' : ''">
           <span title>
             <i nz-icon><i class="icon-file-search-alt"></i></i>
             <span>PLT browser</span>
@@ -38,7 +38,7 @@
             <span>Data sources Import</span>
           </span>
     <ul>
-      <li routerLink="RiskLink" nz-menu-item>Risk Link Import</li>
+      <li (click)="routerNavigate('RiskLink')" nz-menu-item>Risk Link Import</li>
       <li nz-menu-item>File Base Import</li>
       <li nz-menu-item>Clone Data</li>
     </ul>
@@ -56,8 +56,8 @@
             <span>Results</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
-          <span title routerLink="Calibration"  >
+  <li (click)="routerNavigate('Calibration')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
+          <span title  >
             <i nz-icon><i class="icon-sitemap"></i></i>
             <span>Calibration</span>
           </span>

@@ -11,8 +11,18 @@
     }
 
     .ant-tabs-close-x{
-      margin-left: 8px;
+      color: rgba(0,0,0,0.5);
+      margin-left: 20px;
       margin-top: 6px;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab:hover {
+      color: rgba(0,0,0,0.7);
+      background-color: #E7E9F8;
+    }
+
+    .ant-tabs-nav .ant-tabs-tab {
+      padding: 5px 1px 5px 16px;
     }
   }
 }
@@ -31,6 +41,7 @@ nz-header {
 }
 
 .closed-slider {
+  height:100vh;
   min-width: 85px !important;
   flex: 0 0 85px !important;
   background-color: #008694 !important;
@@ -182,7 +193,7 @@ nz-header {
 ul.widgets-list {
   list-style: none;
   padding-left: 5px;
-  height: 160px;
+  height: 170px;
   overflow-y: auto;
   .widget-item {
     margin: 5px 0px;

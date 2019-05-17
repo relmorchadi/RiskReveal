@@ -88,7 +88,7 @@
          [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
          [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
          [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
-         [contextMenu]="cm"
+         [contextMenu]="cm" class="table-ngPrime"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -113,7 +113,7 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns" >
+  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
     <tr [pContextMenuRow]="rowData"
         [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
@@ -122,11 +122,15 @@
             <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
-        <td (click)="selectRow(rowData, i)" *ngIf="col?.type !=='checkbox'">
+        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
           <div style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-            <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+          </div>
+        </td>
+        <td *ngIf="col?.type === 'icon'">
+          <div style="display:flex">
+            <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
           </div>
         </td>
       </ng-container>
@@ -144,6 +148,7 @@
 <p-table *ngIf="!virtualScroll"
          [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
+         class="table-ngPrime"
 >
 
   <ng-template pTemplate="colgroup" let-columns>
@@ -178,11 +183,15 @@
             <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
-        <td (click)="selectRow(rowData, i)" *ngIf="col?.type !=='checkbox'">
+        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
           <div style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-            <i *ngIf="col?.type === 'icon'" (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+          </div>
+        </td>
+        <td *ngIf="col?.type === 'icon'">
+          <div style="display:flex">
+            <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
           </div>
         </td>
       </ng-container>

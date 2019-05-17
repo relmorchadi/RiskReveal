@@ -4,8 +4,9 @@ export class WorkspaceMain {
   collapseWorkspaceDetail: boolean;
   loading: boolean;
   sliceValidator: boolean;
-  wsId: string;
-  year: any;
-  openedWs: any[];
+  appliedFilter: any;
+  workspacePagination: any;
+  openedWs: any;
   openedTabs: any[];
+  recentWs: any[];
 }
