@@ -12,7 +12,6 @@ import {LoadWorkspacesAction} from "../core/store/actions/workspace-main.action"
 @Injectable({providedIn: 'root'})
 export class HelperService {
   recentWorkspaces$: Observable<any>;
-  changeSelectedWorkspace$: Subject<void> = new Subject();
   collapseLeftMenu$ = new Subject<void>();
 
 

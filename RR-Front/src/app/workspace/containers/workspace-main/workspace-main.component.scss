@@ -8,17 +8,26 @@
     //border-left: 4px solid #00c2a8;
   }
 }
-.tab-title-container{
-  position:relative;text-align: left;
-}
-.close-tab-btn{
+
+.icon-clear_24px{
   position: absolute;
-  top: -14px;
+  top: 0;
+  font-size: 17px;
+  color: rgba(255,255,255,0.5);
   width: 10px;
   height: 10px;
   right: 9px;
   display: none;
   cursor: pointer;
+}
+
+.tab-title-container{
+  position:relative;text-align: left;
+  &:hover {
+    .icon-clear_24px{
+      display: unset;
+    }
+  }
 }
 .tab-title-container:hover .close-tab-btn{
   display: block;
@@ -28,7 +37,7 @@
   color: #FFFFFF;
   font-family: Rubik;
   font-size: 14px;
-  line-height: 29px;
+  line-height: 24px;
   margin-bottom: 0;
   ::ng-deep{
     .ant-dropdown-menu{
@@ -40,9 +49,8 @@
 .sub-title {
   color: rgba(255, 255, 255, 0.6);
   font-family: Rubik;
-  font-size: 9px;
+  font-size: 12px;
   letter-spacing: 0.25px;
-  line-height: 0px;
   &:hover{
     color: #fff;
   }
@@ -134,6 +142,16 @@
   letter-spacing: 0.5px;
   line-height: 28px;
   text-transform: uppercase;
+  .icon-star_border_24px {
+    color: #F8E71C;
+    cursor: pointer;
+    font-size: 18px;
+  }
+  .icon-star_24px {
+    color: #F8E71C;
+    cursor: pointer;
+    font-size: 18px;
+  }
 }
 
 .treaty-list{
@@ -198,6 +216,7 @@
     }
     .tab-metadata-title{
       color: rgba(255,255,255,0.6);		font-size: 13px;	letter-spacing: 0.25px;	line-height: 20px;
+      padding-right: 0;
       @media screen and (max-width: 768px)  {
         font-size: 12px;
       }
@@ -486,7 +505,7 @@
 .header-tab-wrapper {
   padding: 0 !important;
   .header-tab-right {
-    padding-right: 20px;
+    padding-right: 25px;
     .text-center.my-2.px-4.d-inline-flex.flex-column {
       padding-right: 75px !important;
       border-left: 1px solid rgba(255,255,255,0.5);

@@ -131,15 +131,17 @@ export class WorkspaceMainState implements NgxsOnInit {
   @Action(LoadWorkspacesAction)
   LoadWorkspaces(ctx: StateContext<WorkspaceMain>) {
     const recentlyOpenedWs = (JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
+    const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || []);
     const paginationList = this.makePagination(recentlyOpenedWs)
     ctx.patchState( {
       workspacePagination: paginationList,
-      openedTabs: (JSON.parse(localStorage.getItem('workspaces')) || []),
+      openedWs: currentOpenedWs[0] || null,
+      openedTabs: currentOpenedWs,
       recentWs: recentlyOpenedWs
     });
   }
 
-  private makePagination(recentlyOpenedWs) {
+   private makePagination(recentlyOpenedWs) {
     const paginationList = [];
     if (recentlyOpenedWs.length > 0 ) {
       paginationList.push({id: 0, shownElement: 10, value: 'Last 10'});

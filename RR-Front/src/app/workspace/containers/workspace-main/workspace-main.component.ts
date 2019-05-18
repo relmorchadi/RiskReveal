@@ -1,4 +1,4 @@
-import {Component,OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
@@ -9,13 +9,13 @@ import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
+import {WorkspaceMainState} from '../../../core/store/states/workspace-main.state';
 import {
   CloseWorkspaceMainAction,
   LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
   PatchWorkspaceMainStateAction
-} from "../../../core/store/actions/workspace-main.action";
+} from '../../../core/store/actions/workspace-main.action';
 
 
 @Component({
@@ -24,10 +24,8 @@ import {
   styleUrls: ['./workspace-main.component.scss']
 })
 export class WorkspaceMainComponent implements OnInit {
-  leftNavbarIsCollapsed = false;
-  wsId: any;
-  year: any;
   tabIndex = 0;
+  liked = false;
 
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
@@ -40,40 +38,28 @@ export class WorkspaceMainComponent implements OnInit {
   ngOnInit() {
     this.store.dispatch(new LoadWorkspacesAction());
     this.state$.subscribe(value => this.state = _.merge({}, value));
-    this._helper.collapseLeftMenu$.subscribe((e) => {
-      this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
-    });
-    this._helper.changeSelectedWorkspace$.subscribe(() => {
-      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
-      this.getSearchedWorkspaces();
-    });
-    /*    this.route.children[0] && this.route.children[0].params.subscribe(
-          ({wsId, year}: any) => {
-            this.wsId = wsId;
-            this.year = year;
-            this.getSearchedWorkspaces();
-          });*/
-
+    this.route.children[0].params.subscribe(
+      ({wsId, year}: any) => {
+        this.getSearchedWorkspaces(wsId, year);
+      });
   }
 
-  getSearchedWorkspaces() {
-    if (this.wsId != undefined) {
+  getSearchedWorkspaces(wsId = null, year = null) {
+    const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
+    if (popConfirm) {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
-      this.searchData(this.wsId, this.year).pipe(
+      this.searchData(wsId, year).pipe(
         mergeMap((content: any) => {
           const item = {
-            workSpaceId: this.wsId,
-            uwYear: this.year,
+            workSpaceId: wsId,
+            uwYear: year,
             selected: false,
             ...content
           };
           this.store.dispatch(new OpenNewWorkspacesAction([item]));
-          this._helper.updateWorkspaceItems();
-          return forkJoin(...content.years.map((year) => this.searchData(this.wsId, year)));
+          return forkJoin(...content.years.map((years) => this.searchData(wsId, years)));
         })
       ).subscribe((content) => {
-        this.wsId = undefined;
-        this.year = undefined;
         this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
       });
     }
@@ -109,6 +95,7 @@ export class WorkspaceMainComponent implements OnInit {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: alreadyOpened[0]}));
       this.tabIndex = index;
     } else {
+      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(title, year).subscribe(
         (dt: any) => {
           const workspace = {
@@ -118,6 +105,7 @@ export class WorkspaceMainComponent implements OnInit {
             ...dt
           };
           this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
+          this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
           this._helper.updateWorkspaceItems();
           this._helper.updateRecentWorkspaces();
           this.tabIndex = this.state.openedTabs.length;
@@ -128,16 +116,16 @@ export class WorkspaceMainComponent implements OnInit {
   }
 
   generateYear(year, years, title = '') {
-/*    let generatedYears = years.filter(y => y != year) || [];
-    let itemImported = this.state.openedTabs || [];
-    if (title !== '') {
-      itemImported = itemImported.filter(dt => dt.workSpaceId === title);
-      if (itemImported.length > 0) {
-        itemImported.forEach(item => {
-          generatedYears = generatedYears.filter(y => y != item.uwYear);
-        });
-      }
-    }*/
+    /*    let generatedYears = years.filter(y => y != year) || [];
+        let itemImported = this.state.openedTabs || [];
+        if (title !== '') {
+          itemImported = itemImported.filter(dt => dt.workSpaceId === title);
+          if (itemImported.length > 0) {
+            itemImported.forEach(item => {
+              generatedYears = generatedYears.filter(y => y != item.uwYear);
+            });
+          }
+        }*/
     return years.filter(y => y != year) || [];
   }
 
