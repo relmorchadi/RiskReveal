@@ -464,6 +464,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
+    console.log(template,$event);
     this.dropdown = this.nzDropdownService.create($event, template);
   }
 
@@ -529,7 +530,29 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   private handlePLTClickWithKey(i: number,isSelected: boolean, $event: MouseEvent) {
-    console.log($event);
+    if($event.ctrlKey){
+      this.selectSinglePLT(i,isSelected);
+      this.lastSelectedId=i;
+      return;
+    }
+
+    if($event.shiftKey) {
+      if(!this.lastSelectedId) this.lastSelectedId =0;
+      if(this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId])
+        const min = _.min([i, this.lastSelectedId])
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(this.listOfPlts, (plt,i) => i),
+            _.range(this.listOfPlts.length).map((el,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )
+            )
+          )
+        )
+      }else{
+        this.lastSelectedId= i;
+      }
+      return;
+    }
   }
 }
 
