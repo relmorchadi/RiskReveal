@@ -77,12 +77,21 @@
                         [nzScroll]="{ y: '480px' }">
                 <thead (nzSortChange)="sort($event)">
                 <tr>
+                  <label
+                    nz-checkbox
+                    #selectAllCheckbox
+                    [ngModel]="selectAll"
+                    [nzIndeterminate]="someItemsAreSelected"
+                    (nzCheckedChange)="checkAll($event)"
+                  ></label>
+
                   <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted" [nzSortKey]="col.fields" [(nzSort)]="sortMap[col.fields]">
                     {{col.header}}
                     <i *ngIf="col.icon" [ngClass]="col.icon"></i>
                   </th>
                 </tr>
                 <tr>
+                  <th></th>
                   <th *ngFor="let col of pltColumns" [nzWidth]="col.width">
                     <div *ngIf="col.filtred" class="filter-input">
                       <i class="icon-search"></i>
@@ -94,7 +103,7 @@
 
                 <tbody>
                 <tr
-                  *ngFor="let plt of pltTable.data | filterBySystemTag: filters.currentSystemTag | filterByUserTag: filters.currentUserTag | filterByPath: currentPath?.id"
+                  *ngFor="let plt of pltTable.data | filterBySystemTag: filters.currentSystemTag | filterByUserTag: filters.currentUserTag | filterByPath: currentPath?.id;let i = index"
                   style="cursor: pointer" (contextmenu)="contextMenuPltTable($event, template)"
                   [ngClass]="{'active_plt_item': plt.selected }">
                   <ng-template #template>
@@ -113,10 +122,7 @@
                       <!--<i nz-icon nzType="eye-invisible" nzTheme="outline"></i>-->
                     <!--</div>-->
                   <!--</td>-->
-
-                  <td>
-                    <label nz-checkbox [(ngModel)]="plt.selected"></label>
-                  </td>
+                  <td nzShowCheckbox [nzChecked]="plt.selected" (nzCheckedChange)="selectSinglePLT(i, $event)"></td>
                   <td>
                     <div class="td-wrapper-tags">
                       <span *ngFor="let tag of plt.userTags"
@@ -124,28 +130,28 @@
                       <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
                     </div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.pltId}}</div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.pltName}}</div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.peril}}</div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.regionPerilCode}}</div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.regionPerilName}}</div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.grain}}</div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.vendorSystem}}</div>
                   </td>
-                  <td>
+                  <td (click)="handlePLTClick(i, !plt.selected,$event)">
                     <div class="td-wrapper">{{plt.rap}}</div>
                   </td>
                   <td>
@@ -162,7 +168,7 @@
                   </td>
                   <td>
                     <div class="td-wrapper-check">
-                      <i [ngClass]="{'icon-check-circle': plt.checked, 'icon-remove_24px': !plt.checked }"></i>
+                      <i [ngClass]="{'icon-check-circle': plt.selected, 'icon-remove_24px': !plt.selected }"></i>
                     </div>
                   </td>
                 </tbody>
@@ -252,7 +258,7 @@
             <div>
               <table class="table">
                 <tbody>
-                <tr *ngFor="let plt of listOfPlts">
+                <tr *ngFor="let plt of selectedListOfPlts">
                   <td>{{plt.pltId}}</td>
                   <td>{{plt.pltName}}</td>
                   <td>{{plt.peril}}</td>

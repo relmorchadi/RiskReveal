@@ -17,3 +17,8 @@ export class LoadPltDataFail {
   static readonly  type = '[PLT Main] Load Plt Data Fail'
   constructor(public payload?: any) {}
 }
+
+export class ToggleSelectPlts {
+  static readonly  type = '[PLT Main] Toggle Select Plts'
+  constructor(public payload?: any) {}
+}

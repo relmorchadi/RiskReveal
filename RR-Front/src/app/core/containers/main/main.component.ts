@@ -9,6 +9,7 @@ export class MainComponent implements OnInit {
   leftNavbarIsCollapsed:boolean = false;
   tabs = [ 1, 2, 3 ];
   constructor() {
+    localStorage.removeItem('pltData');
     localStorage.setItem('pltData', JSON.stringify([
       {
         pltId: 1,
@@ -25,14 +26,13 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: false,
         note: true,
-        checked: false
       },
       {
         pltId: 2,
         systemTags: [],
         userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
         pathId: 2,
-        pltName: "NATC-USM_RL_Imf.T2",
+        pltName: "NATC-USM_RL_Imf.T1",
         peril: "TC",
         regionPerilCode: "NATC-USM",
         regionPerilName: "North Atlantic",
@@ -42,7 +42,6 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: true,
         note: false,
-        checked: true
       },
       {
         pltId: 3,
@@ -59,7 +58,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: false,
         note: false,
-        checked: false
+        
       },
       {
         pltId: 4,
@@ -76,7 +75,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: true,
         note: true,
-        checked: true
+        
       },
       {
         pltId: 5,
@@ -93,7 +92,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: false,
         note: false,
-        checked: false
+        
       },
       {
         pltId: 6,
@@ -110,7 +109,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: true,
         note: true,
-        checked: false
+        
       },
       {
         pltId: 7,
@@ -127,7 +126,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: true,
         note: true,
-        checked: false
+        
       },
       {
         pltId: 8,
@@ -144,7 +143,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: false,
         note: true,
-        checked: true
+        
       },
       {
         pltId: 9,
@@ -161,7 +160,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: true,
         note: false,
-        checked: false
+        
       },
       {
         pltId: 10,
@@ -178,7 +177,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: false,
         note: true,
-        checked: false
+        
       },
       {
         pltId: 11,
@@ -195,7 +194,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: true,
         note: true,
-        checked: false
+        
       },
       {
         pltId: 12,
@@ -212,7 +211,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: false,
         note: true,
-        checked: true
+        
       },
       {
         pltId: 13,
@@ -229,7 +228,7 @@ export class MainComponent implements OnInit {
         rap: "North Atlantic",
         d: true,
         note: true,
-        checked: false
+        
       }
 
     ]))

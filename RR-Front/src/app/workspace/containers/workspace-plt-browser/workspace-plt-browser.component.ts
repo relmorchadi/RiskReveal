@@ -1,9 +1,10 @@
-import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as _ from 'lodash'
-import {Observable} from "rxjs";
+import {Observable, of} from 'rxjs';
 import {Select, Store} from "@ngxs/store";
 import * as fromWorkspaceStore from '../../store'
+import {filter, mapTo, mergeMap} from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -17,8 +18,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   searchAddress: string;
 
   @Select(state => state.pltMainModel.data) listOfPlts$: Observable<any[]>;
-  listOfPlts: any[] = [];
-
+  listOfPlts: any[];
+  selectedListOfPlts: any[];
+  filterData;
+  sortData;
+  mapSelectedIds: any;
   sortMap = {
     pltId: null,
     systemTags: null,
@@ -35,9 +39,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     d: null,
     note: null,
   };
-
-  filterData;
-  sortData;
+  lastSelectedId;
 
   sort(sort: { key: string, value: string }): void {
     if(sort.value){
@@ -60,7 +62,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   pltColumns = [
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: null},
     {fields:'' , header:'User Tags' , width: '6%', sorted: false, filtred: false, icon: null},
     {fields:'pltId' , header:'PLT ID' , width: '6%', sorted: true, filtred: true, icon: null},
     {fields:'pltName' , header:'PLT Name' , width: '14%', sorted: true, filtred: true, icon: null},
@@ -317,6 +318,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
     {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
   ]
+  someItemsAreSelected: boolean;
+  selectAll: boolean;
 
 
   constructor( private nzDropdownService: NzDropdownService, private store$: Store,private zone: NgZone, private cdRef: ChangeDetectorRef) {
@@ -327,14 +330,27 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
     this.sortData={};
     this.filterData={};
+    this.someItemsAreSelected= false;
+    this.selectAll= false;
+    this.listOfPlts= [];
+    this.selectedListOfPlts= [];
+    this.lastSelectedId = null;
   }
 
 
   ngOnInit(){
     this.Subscriptions.push(
       this.store$.select( state => state.pltMainModel.data ).subscribe( data => {
-        console.log(data)
-        this.listOfPlts = data
+        this.listOfPlts = data;
+        this.detectChanges();
+      }),
+      this.store$.select(state => state.pltMainModel.data).pipe(
+        mergeMap( (plts) => of(_.filter(plts, ['selected', true])))
+      ).subscribe( data => {
+        this.selectedListOfPlts = data;
+        this.selectAll = this.selectedListOfPlts.length > 0 || this.selectedListOfPlts.length == this.listOfPlts.length;
+        this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
+        console.log(this.selectAll,this.someItemsAreSelected);
         this.detectChanges();
       })
     )
@@ -474,6 +490,46 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   ngOnDestroy(): void {
     this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe())
+  }
+
+  checkAll($event: boolean) {
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map(this.listOfPlts, (plt,i) => i),
+        _.range(this.listOfPlts.length).map(el => ({type : !this.selectAll && !this.someItemsAreSelected ? 'select' : 'unselect'}))
+      )
+    )
+  }
+
+  toggleSelectPlts(plts: any){
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}))
+  }
+
+  selectSinglePLT(i: number, $event: boolean) {
+    this.toggleSelectPlts({
+      [i]: {
+        type: $event ? 'select' : 'unselect'
+      }
+    })
+  }
+
+  handlePLTClick(pltIndex: number, isSelected: boolean, $event: MouseEvent) {
+    if($event.ctrlKey || $event.shiftKey) {
+      this.handlePLTClickWithKey(pltIndex,isSelected, $event);
+    }else{
+      this.toggleSelectPlts(
+        _.zipObject(
+          _.map(this.listOfPlts, (plt,i) => i),
+          _.range(this.listOfPlts.length).map((el,i) =>
+            ( i == pltIndex ? ({type: 'select'}) : ({type: 'unselect'}) )
+          )
+        )
+      )
+    }
+  }
+
+  private handlePLTClickWithKey(i: number,isSelected: boolean, $event: MouseEvent) {
+    console.log($event);
   }
 }
 
