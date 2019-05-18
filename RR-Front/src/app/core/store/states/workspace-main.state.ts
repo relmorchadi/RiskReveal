@@ -29,7 +29,6 @@ export class WorkspaceMainState implements NgxsOnInit {
   ctx = null;
 
   constructor() {
-
   }
 
   ngxsOnInit(ctx?: StateContext<WorkspaceMainState>): void | any {

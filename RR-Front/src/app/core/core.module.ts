@@ -18,7 +18,7 @@ import {SharedModule} from '../shared/shared.module';
 import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
 import {CORE_STATES} from './store/states';
 import { BoldSpanPipe } from './pipes/bold-span.pipe';
-import {WORKSPACE_STATES} from "../workspace/store/states";
+import {WORKSPACE_STATES} from '../workspace/store/states';
 import {TableSortAndFilterPipe} from './pipes/table-sort-and-filter.pipe';
 
 registerLocaleData(en);
@@ -33,7 +33,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    NgxsModule.forRoot([...CORE_STATES,...WORKSPACE_STATES], {developmentMode: !environment.production}),
+    NgxsModule.forRoot([...CORE_STATES, ...WORKSPACE_STATES], {developmentMode: !environment.production}),
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
   exports: [

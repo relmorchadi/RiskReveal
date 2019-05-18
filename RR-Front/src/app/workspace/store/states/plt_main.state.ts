@@ -1,9 +1,9 @@
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
-import {pltMainModel} from "../../model";
-import * as fromPlt from '../actions'
-import {of} from "rxjs";
-import {map, mergeMap} from "rxjs/operators";
+import {pltMainModel} from '../../model';
+import * as fromPlt from '../actions';
+import {of} from 'rxjs';
+import {map, mergeMap} from 'rxjs/operators';
 
 const initiaState: pltMainModel = {
   data: []
@@ -36,7 +36,7 @@ export class PltMainState implements NgxsOnInit {
     return of(JSON.parse(localStorage.getItem('pltData')))
       .pipe(
         map( (data) => of(ctx.setState({data: _.map(data, e=> ({...e,selected: false}))})))
-      )
+      );
   }
 
   @Action(fromPlt.ToggleSelectPlts)
@@ -48,15 +48,15 @@ export class PltMainState implements NgxsOnInit {
 
     let newData = {};
 
-    _.forEach( plts,(v,k) => {
+    _.forEach( plts, (v, k) => {
       newData[k] = {
         selected: v.type === 'select'
-      }
-    })
+      };
+    });
 
     ctx.patchState({
-      data: _.map(state.data, (el,i) => newData[i] ? {...el,...newData[i]} : el )
-    })
+      data: _.map(state.data, (el,i) => newData[i] ? {...el, ...newData[i]} : el )
+    });
 
   }
 

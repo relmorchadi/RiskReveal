@@ -1,3 +1,3 @@
 export class pltMainModel {
-  data: any[]
+  data: any[];
 }
