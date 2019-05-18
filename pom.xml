@@ -12,6 +12,7 @@
 
     <modules>
         <module>RR-Backend</module>
+        <module>RR-Front</module>
     </modules>
 
     
