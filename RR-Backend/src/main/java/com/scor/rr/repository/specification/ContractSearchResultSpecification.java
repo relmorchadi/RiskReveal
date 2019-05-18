@@ -3,8 +3,10 @@ package com.scor.rr.repository.specification;
 import com.google.common.base.Supplier;
 import com.scor.rr.domain.ContractSearchResult;
 import com.scor.rr.domain.ContractSearchResult_;
+import com.scor.rr.domain.dto.NewWorkspaceFilter;
 import com.scor.rr.domain.dto.WorkspaceFilter;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.criteria.*;
 import javax.persistence.metamodel.SingularAttribute;
@@ -16,6 +18,7 @@ import java.util.stream.Stream;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.Optional.ofNullable;
 
+@Component
 public class ContractSearchResultSpecification {
 
     public static Specification<ContractSearchResult> filter(WorkspaceFilter workspaceFilter) {
@@ -76,4 +79,57 @@ public class ContractSearchResultSpecification {
     }
 
 
+    public Specification<ContractSearchResult> getFilter(NewWorkspaceFilter filter) {
+        return (root, query, cb) -> Specification.where(Specification.where(
+                (contractSearchResultContains(ContractSearchResult_.cedantName,filter.getKeyword()))
+                        .or(contractSearchResultContains(ContractSearchResult_.countryName,filter.getKeyword()))
+                        .or(contractSearchResultContains(ContractSearchResult_.programName,filter.getKeyword()))
+                        .or(contractSearchResultContains(ContractSearchResult_.treatyName,filter.getKeyword()))
+                        .or(contractSearchResultContains(ContractSearchResult_.cedantCode,filter.getKeyword()))
+                        .or(contractSearchResultYearEquals(ContractSearchResult_.uwYear,filter.getKeyword())))
+                .and(contractSearchResultYearEquals(ContractSearchResult_.uwYear,filter.getInnerYear()))
+                .and(contractSearchResultYearEquals(ContractSearchResult_.uwYear,filter.getYear()))
+                .and(contractSearchResultContains(ContractSearchResult_.cedantName,filter.getInnerCedantName()))
+                .and(contractSearchResultContains(ContractSearchResult_.cedantName,filter.getCedantName()))
+                .and(contractSearchResultContains(ContractSearchResult_.countryName,filter.getCountryName()))
+                .and(contractSearchResultContains(ContractSearchResult_.countryName,filter.getInnerCountryName()))
+                .and(contractSearchResultContains(ContractSearchResult_.workSpaceId,filter.getInnerWorkspaceId()))
+                .and(contractSearchResultContains(ContractSearchResult_.workSpaceId,filter.getWorkspaceId()))
+                .and(contractSearchResultContains(ContractSearchResult_.cedantCode,filter.getCedantCode()))
+                .and(contractSearchResultContains(ContractSearchResult_.cedantCode,filter.getInnerCedantCode()))
+
+        ).toPredicate(root, query, cb);
+
+    }
+
+    private Specification<ContractSearchResult> contractSearchResultContains(SingularAttribute attribute, String value) {
+        return (root, query, cb) -> {
+            if (value == null) {
+                return null;
+            }
+            return cb.like(
+                    cb.lower(root.get(attribute)),
+                    containsLowerCase(value)
+            );
+        };
+    }
+
+    private Specification<ContractSearchResult> contractSearchResultYearEquals(SingularAttribute attribute, String value) {
+        return (root, query, cb) -> {
+            Integer year;
+            try{
+                year=Integer.parseInt(value);
+            }catch (Exception e){
+                return null;
+            }
+            return cb.equal(
+                    root.get(attribute),
+                    year
+            );
+        };
+    }
+
+    private String containsLowerCase(String searchField) {
+        return  "%" + searchField.toLowerCase() + "%";
+    }
 }

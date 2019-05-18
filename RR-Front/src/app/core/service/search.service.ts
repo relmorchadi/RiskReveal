@@ -4,6 +4,7 @@ import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
 import {of} from 'rxjs';
+import * as _ from 'lodash'
 
 @Injectable({
   providedIn: 'root'
@@ -51,8 +52,8 @@ export class SearchService {
     return this._http.get(`${this.api}worspace/${id}/${year}`);
   }
 
-  searchGlobal(keyword, offset= '0', size = '20') {
-    return this._http.get(`${this.api}workspace`, {params: {keyword, offset, size}});
+  searchGlobal(filter, offset= '0', size = '100') {
+    return this._http.get(`${this.api}workspace`, {params: _.pickBy({...filter, offset, size},_.identity())});
   }
 
   affectItems(item) {

@@ -1,10 +1,13 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContractSearchResult {
     @Column(name = "WorkSpaceId")
     private String workSpaceId;
@@ -109,6 +112,14 @@ public class ContractSearchResult {
     public ContractSearchResult() {
     }
 
+    public ContractSearchResult(String countryName, String workSpaceId, String workspaceName, String cedantCode, String cedantName, Integer uwYear) {
+        this.countryName = countryName;
+        this.workSpaceId = workSpaceId;
+        this.workspaceName = workspaceName;
+        this.cedantName = cedantName;
+        this.cedantCode = cedantCode;
+        this.uwYear = uwYear;
+    }
     public String getWorkSpaceId() {
         return workSpaceId;
     }
