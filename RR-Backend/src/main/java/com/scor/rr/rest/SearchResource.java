@@ -39,8 +39,8 @@ public class SearchResource {
 
     @GetMapping("workspace")
 //    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<WorkspaceProjection> globalSearchWorkspace(@RequestParam String keyword, int size){
-        return searchService.globalSearchWorkspaces(keyword, size);
+    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size){
+        return searchService.globalSearchWorkspaces(filter, offset, size);
     }
 
     @PostMapping("workspace")

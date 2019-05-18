@@ -1,6 +1,7 @@
 package com.scor.rr.domain.dto;
 
 public class NewWorkspaceFilter {
+    private String keyword;
     private String workspaceId;
     private String innerWorkspaceId;
     private String workspaceName;
@@ -15,6 +16,14 @@ public class NewWorkspaceFilter {
     private String innerCountryName;
 
     public NewWorkspaceFilter() {
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public String getWorkspaceId() {

@@ -8,6 +8,7 @@ import com.scor.rr.repository.counter.*;
 import com.scor.rr.domain.*;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.counter.*;
+import com.scor.rr.util.QueryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -20,6 +21,7 @@ import javax.persistence.*;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
@@ -67,6 +69,8 @@ public class SearchService {
     @PersistenceContext
     EntityManager entityManager;
 
+    @Autowired
+    QueryHelper queryHelper;
 
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
@@ -136,8 +140,17 @@ public class SearchService {
 
     }
 
-    public Page<WorkspaceProjection> globalSearchWorkspaces(String keyword, int size) {
-        return contractSearchResultRepository.globalSearch("%"+keyword+"%", PageRequest.of(0, size));
+    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter,int offset, int size) {
+        String resultsQueryString= queryHelper.generateSqlQuery(filter, offset, size);
+        String countQueryString= queryHelper.generateCountQuery(filter);
+        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+        Query countQuery = entityManager.createNativeQuery(countQueryString);
+        List<Object[]> resultList = resultsQuery.getResultList();
+        Object total = countQuery.getSingleResult();
+        List<ContractSearchResult> contractSearchResult = resultList.stream().map((r) ->
+                new ContractSearchResult((String)r[0],(String)r[1],(String)r[2],(String)r[3],(String)r[4],(Integer)r[5])
+        ).collect(Collectors.toList());
+        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
     }
 
     public Page<?> countInWorkspace(TableNames table, String keyword, int size) {

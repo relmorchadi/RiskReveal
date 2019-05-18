@@ -1,2 +1,7 @@
 .idea
 .idea/
+*.iws
+*.iml
+*.ipr
+RR-Front/node/
+RR-Front/node/**
