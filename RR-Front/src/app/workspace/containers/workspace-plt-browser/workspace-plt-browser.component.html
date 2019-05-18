@@ -72,18 +72,20 @@
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
-              <nz-table #pltTable [nzData]="listOfPlts | tableSortAndFilter: [sortData, filterData]" class="table plt-table" [nzFrontPagination]="false"
+              <nz-table #pltTable
+                        [nzData]="listOfPlts | tableSortAndFilter: [sortData, filterData]"
+                        class="table plt-table"
+                        [nzFrontPagination]="false"
                         [nzShowPagination]="false"
-                        [nzScroll]="{ y: '480px' }">
+                        [nzScroll]="{ y: '480px'}">
                 <thead (nzSortChange)="sort($event)">
                 <tr>
-                  <label
-                    nz-checkbox
-                    #selectAllCheckbox
-                    [ngModel]="selectAll"
+                  <th
+                    nzShowCheckbox
+                    [nzChecked]="selectAll"
                     [nzIndeterminate]="someItemsAreSelected"
                     (nzCheckedChange)="checkAll($event)"
-                  ></label>
+                  ></th>
 
                   <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted" [nzSortKey]="col.fields" [(nzSort)]="sortMap[col.fields]">
                     {{col.header}}
