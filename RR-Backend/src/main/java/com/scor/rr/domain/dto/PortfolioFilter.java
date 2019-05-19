@@ -1,0 +1,57 @@
+package com.scor.rr.domain.dto;
+
+
+import org.springframework.util.StringUtils;
+
+import java.sql.Timestamp;
+
+public class PortfolioFilter {
+    private String id;
+    private Integer dataSourceId;
+    private String dataSourceName;
+    private Timestamp creationDate;
+    private String descriptionType;
+
+    public PortfolioFilter() {
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = StringUtils.isEmpty(id) ? null: id;
+    }
+
+    public Integer getDataSourceId() {
+        return dataSourceId;
+    }
+
+    public void setDataSourceId(Integer dataSourceId) {
+        this.dataSourceId = StringUtils.isEmpty(dataSourceId) ? null: dataSourceId;
+    }
+
+    public String getDataSourceName() {
+        return dataSourceName;
+    }
+
+    public void setDataSourceName(String dataSourceName) {
+        this.dataSourceName = StringUtils.isEmpty(dataSourceName) ? null: dataSourceName;
+    }
+
+    public Timestamp getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Timestamp creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public String getDescriptionType() {
+        return descriptionType;
+    }
+
+    public void setDescriptionType(String descriptionType) {
+        this.descriptionType = StringUtils.isEmpty(descriptionType) ? null: descriptionType;
+    }
+}

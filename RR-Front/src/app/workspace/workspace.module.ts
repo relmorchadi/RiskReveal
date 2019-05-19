@@ -10,6 +10,7 @@ import {NgMasonryGridModule} from 'ng-masonry-grid';
 import {GridsterModule} from 'angular-gridster2';
 import {workspaceRoutes} from './workspace.route';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {SERVICE} from './services';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,9 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
   ],
   exports: [
     RouterModule
+  ],
+  providers: [
+    ...SERVICE
   ]
 })
 export class WorkspaceModule {
