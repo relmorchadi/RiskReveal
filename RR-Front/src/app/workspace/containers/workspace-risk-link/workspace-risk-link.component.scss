@@ -807,6 +807,11 @@
           ::ng-deep {
             .ant-progress-text {
               display: block;
+              color: #03DAC4;
+            }
+            .ant-progress-circle-path {
+              stroke: #03DAC4;
+              stroke-width: 8px;
             }
           }
 

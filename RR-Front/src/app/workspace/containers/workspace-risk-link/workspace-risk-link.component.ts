@@ -2,6 +2,16 @@ import {Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
+import {Select, Store} from '@ngxs/store';
+import {Observable} from 'rxjs';
+import {RiskLinkState} from '../../store/states';
+import {RiskLinkModel} from '../../model/risk_link.model';
+import {
+  LoadRiskLinkDataAction,
+  PatchRiskLinkAction,
+  PatchRiskLinkCollapseAction, PatchRiskLinkDisplayAction,
+  PatchRiskLinkFinancialPerspectiveAction, SelectRiskLinkEDMAndRDM, ToggleRiskLinkEDMAndRDM
+} from '../../store/actions';
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -9,22 +19,10 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./workspace-risk-link.component.scss']
 })
 export class WorkspaceRiskLinkComponent implements OnInit {
-  leftNavbarIsCollapsed = false;
+
   lastSelectedIndex = null;
-  checkedARC = false;
-  checkedPricing = false;
 
-  list1 = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
-  list2 = ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'];
-  list3 = ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'];
-  list4 = ['MLC (USD)', 'MLC (EUR)', 'YEN'];
-  list6: any = ['Add calibration', 'item 1', 'item 2'];
-
-  selectedRMS = 'AZU-P-RL17-SQL14';
-  selectedPrELT = 'Net Loss Pre Cat (RL)';
-  selectedPrEPM = 'Facultative Reinsurance Loss';
-  selectedTarget = 'MLC (USD)';
-  list5value = 'Add calibration';
+  closePrevent = false;
 
   listEDM: any = [];
   listRDM: any = [];
@@ -346,30 +344,30 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     },
   ];
 
-  displayDropdownRDMEDM = false;
-  displayListRDMEDM = false;
-  displayTable = false;
-  displayImport = false;
-
-
-  collapseHead = true;
-  collapseAnalysis = true;
-  collapseResult = true;
-
   currentStep = 0;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute) {
+  @Select(RiskLinkState)
+  state$: Observable<RiskLinkModel>;
+  state: RiskLinkModel = null;
 
+  constructor(private _helper: HelperService, private route: ActivatedRoute, private store: Store) {
   }
 
   ngOnInit() {
-    this._helper.collapseLeftMenu$.subscribe((e) => {
-      this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
-    });
+    this.store.dispatch(new LoadRiskLinkDataAction());
+    this.state$.subscribe(value => this.state = _.merge({}, value));
+  }
+
+  dataList(data = null) {
+    if (data) {
+      return _.toArray(data);
+    }
+    return _.toArray(this.state.listEdmRdm.data);
   }
 
   toggleItems(RDM) {
-    RDM.selected = !RDM.selected;
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({RDM}));
+    this.closePrevent = false;
   }
 
   toggleItemsListRDM(RDM) {
@@ -379,7 +377,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     if (nbrSelected === 0) {
       RDM.selected = true;
       this.selectedEDMOrRDM = RDM.type;
-      this.displayTable = true;
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: true}));
     } else {
       if (!RDM.selected) {
         this.unselectEDMRDM();
@@ -387,7 +385,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
         this.selectedEDMOrRDM = RDM.type;
       } else {
         this.unselectEDMRDM();
-        this.displayTable = false;
+        this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
         this.selectedEDMOrRDM = null;
       }
     }
@@ -424,49 +422,33 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   openCloseDropdown() {
-    this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: !this.state.display.displayDropdownRDMEDM}));
   }
 
   closeDropdown() {
-    this.displayDropdownRDMEDM = false;
+    if(this.state.display.displayDropdownRDMEDM && this.closePrevent)
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: false}));
+    this.closePrevent = true;
   }
 
   fillLists() {
-    this.listEDM = [];
-    this.listRDM = [];
-    this.listEdmRdm.forEach((e) => {
-      if (e.selected === true || e.scanned === true) {
-        if (e.type === 'EDM') {
-          const newItem = {
-            id: e.id,
-            name: e.name,
-            type: e.type,
-            selected: false,
-            scanned: true,
-            Reference: e.Reference
-          };
-          this.listEDM = [...this.listEDM, newItem];
-        } else {
-          const newItem = {
-            id: e.id,
-            name: e.name,
-            type: e.type,
-            selected: false,
-            scanned: true,
-            Reference: e.Reference
-          };
-          this.listRDM = [...this.listRDM, newItem];
-        }
-        e.scanned = true;
-      }
-    });
+    this.store.dispatch(new SelectRiskLinkEDMAndRDM());
   }
 
   selectedItem() {
     this.fillLists();
-    this.displayDropdownRDMEDM = false;
-    this.listRDM.length > 0 && this.listEDM.length > 0 ? this.currentStep = 1 : this.currentStep = 0;
-    this.listRDM.length > 0 || this.listEDM.length > 0 ? this.displayListRDMEDM = true : this.displayListRDMEDM = false;
+    this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: false}));
+    if (this.listRDM.length > 0 && this.listEDM.length > 0) {
+      this.currentStep = 1;
+    } else {
+      this.currentStep = 0;
+    }
+    const array = _.toArray(this.state.listEdmRdm.selectedListEDMAndRDM);
+    if (array.length > 0)  {
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
+    } else {
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: false}));
+    }
   }
 
   scanItem(item) {
@@ -479,7 +461,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
 
   selectStep(value) {
     if (value === 0 && this.currentStep === 1) {
-      this.displayTable = false;
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
       this.refreshAll();
       this.selectedItem();
     }
@@ -493,8 +475,8 @@ export class WorkspaceRiskLinkComponent implements OnInit {
           e.selected = false;
         }
       );
-      this.displayImport = false;
-      this.displayTable = false;
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: false}));
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
     }
     if (value === 0 && this.currentStep === 2) {
       this.selectStep(1);
@@ -505,7 +487,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   displayImported() {
     if (this.currentStep === 1) {
       this.currentStep = 2;
-      this.displayImport = true;
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     }
   }
 
@@ -554,5 +536,13 @@ export class WorkspaceRiskLinkComponent implements OnInit {
 
   getTableData() {
     if (this.selectedEDMOrRDM === 'RDM') { return this.tableLeftAnalysis; } else { return this.tableLeftProtfolio; }
+  }
+
+  changeCollapse(value) {
+    this.store.dispatch(new PatchRiskLinkCollapseAction({key: value}));
+  }
+
+  changeFinancialValidator(value, item) {
+    this.store.dispatch(new PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
   }
 }

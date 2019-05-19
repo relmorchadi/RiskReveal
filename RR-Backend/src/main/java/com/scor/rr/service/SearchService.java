@@ -2,12 +2,12 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.NewWorkspaceFilter;
+import com.scor.rr.domain.dto.VwFacTreatyFilter;
 import com.scor.rr.domain.dto.WorkspaceDetailsDTO;
+import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.counter.*;
-import com.scor.rr.domain.*;
-import com.scor.rr.repository.*;
-import com.scor.rr.repository.counter.*;
+import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -68,9 +70,12 @@ public class SearchService {
 
     @PersistenceContext
     EntityManager entityManager;
-
     @Autowired
     QueryHelper queryHelper;
+    @Autowired
+    VwFacTreatyRepository vwFacTreatyRepository;
+    @Autowired
+    VwFacTreatySpecification vwFacTreatySpecification;
 
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
@@ -167,4 +172,7 @@ public class SearchService {
         return Optional.of(new WorkspaceDetailsDTO(items, years));
     }
 
+    public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
+        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter),pageable);
+    }
 }

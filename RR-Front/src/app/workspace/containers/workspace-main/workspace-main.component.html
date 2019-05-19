@@ -31,12 +31,13 @@
                   <span *ngIf="!state.collapseWorkspaceDetail" class="span-detail">Hide</span>
                 </div>
                 <div style="display: flex; flex: 1;">
-                  <div class="col-md-12 pl-md-4 col-lg-6">
+                  <div style="flex:1">
                     <div class="d-inline-flex flex-column">
                       <h3 class="workspace-title">{{tab?.worspaceName}}
-                        <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate>
+                        <i *ngIf="!liked" (click)="liked = true" class="icon-star_border_24px"></i>
+                        <i *ngIf="liked" (click)="liked = false" class="icon-star_24px"></i>
                       </h3>
-                      <h4 class="workspace-title"> {{tab?.cedantCode}} | {{tab?.cedantName}} </h4>
+                      <h4 class="workspace-title"> {{tab?.cedantCode}} | {{tab?.cedantName}} | </h4>
                     </div>
                   </div>
                   <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="header-tab-right">
@@ -75,27 +76,27 @@
               </div>
             </div>
             <div [ngClass]="{'collapse':state.collapseWorkspaceDetail}" nz-col [nzSpan]="24">
-              <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
+              <div class="row tab-detail p-2 pb-6" style="padding-bottom: 2rem !important;">
 
-                <div class="col-md-12 col-lg-6 " style="padding-left: 90px; padding-right: 0;">
+                <div class="col-md-12 col-lg-6 " style="padding-left: 65px; padding-right: 0;">
                   <div nz-row class="pt-lg-5 pt-md-0" style="padding-top:0px !important;">
                     <div nz-col nz-row [nzSpan]="10">
                       <div class="row">
-                        <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
+                        <span style="flex: 0 0 50.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
                         <span class="col-5 tab-metadata-value">{{tab?.subsidiaryId}} - {{tab?.subsidiaryName}}</span>
                       </div>
                       <div class="row">
-                        <span style="flex: 0 0 47.333333%;" class="col-7 tab-metadata-title">Subsidary Leger :</span>
+                        <span style="flex: 0 0 50.333333%;" class="col-7 tab-metadata-title">Subsidary Leger :</span>
                         <span class="col-5 tab-metadata-value">{{tab?.subsidiaryLedgerId}} - {{tab?.ledgerName}}</span>
                       </div>
                       <div class="row">
-                        <span style="flex: 0 0 47.333333%;"
+                        <span style="flex: 0 0 50.333333%;"
                               class="col-7 tab-metadata-title">Contract Source Type :</span>
                         <span class="col-5 tab-metadata-value">Omega</span>
                       </div>
                     </div>
-                    <div nz-col style="padding-left: 5px; border-left: 1px solid rgba(255,255,255,0.5);" nz-row [nzSpan]="14">
-                      <div style="display:flex;" nz-col [nzSpan]="9">
+                    <div nz-col style="padding-left: 20px; border-left: 1px solid rgba(255,255,255,0.5);" nz-row [nzSpan]="14">
+                      <div style="display:flex;" nz-col [nzSpan]="10">
                         <i style="font-size: 1.6em;"
                            class="icon-calendar-alt mb-4"></i>
                         <div style="display:flex; flex-direction: column; padding-left: 15px;">
@@ -105,7 +106,7 @@
                           <span class="d-block tab-metadata-value">{{tab?.expiryDate | date:'dd/MM/yyyy'}}</span>
                         </div>
                       </div>
-                      <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" [nzSpan]="15">
+                      <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" [nzSpan]="14">
                         <span style="line-height: 35px;" class="d-block tab-metadata-title">Treaty Section :</span>
                         <ul class="treaty-list">
                           <li *ngFor="let section of sliceContent(tab?.treatySections, state.sliceValidator)">
@@ -161,7 +162,7 @@
             <div nz-col [nzSpan]="24">
               <div style="display: flex">
                 <div style="flex: 0">
-                  <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
+                  <app-left-menu></app-left-menu>
                 </div>
                 <router-outlet></router-outlet>
               </div>
@@ -256,7 +257,7 @@
         <div nz-col [nzSpan]="24">
           <div style="display: flex">
             <div style="flex: 0">
-              <app-left-menu [isCollapsed]="leftNavbarIsCollapsed"></app-left-menu>
+              <app-left-menu></app-left-menu>
             </div>
             <router-outlet></router-outlet>
           </div>
@@ -273,18 +274,16 @@
       <h3 class="tab-title">{{title}}</h3>
       <nz-dropdown [nzTrigger]="'click'">
         <a nz-dropdown>
-          <h6 style="line-height: 15px" class="d-flex align-items-center sub-title">{{year}}<i class="pl-3 drop-icon"
-                                                                                               *ngIf="generateYear(year, years, title).length >0"
-                                                                                               nz-icon type="down"></i>
+          <h6 class="d-flex align-items-center sub-title">{{year}}
+            <i class="pl-3 drop-icon" *ngIf="generateYear(year, years, title).length >0"
+              nz-icon type="down"></i>
           </h6>
         </a>
         <ul style="padding:0" nz-menu>
           <li (click)="addWs(title,y)" *ngFor="let y of generateYear(year, years, title)" nz-menu-item>{{y}}</li>
         </ul>
       </nz-dropdown>
-      <div (click)="close(title, year)" [ngStyle]="{'display':tabsLength > 1 ? 'auto' : 'none'}" style="color: white"
-           class="close-tab-btn">x
-      </div>
+      <i (click)="close(title, year)" class="icon-clear_24px"></i>
     </ng-container>
     <ng-container *ngIf="state.loading">
       <nz-skeleton class="skeleton-title-header"></nz-skeleton>
