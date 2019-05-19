@@ -10,11 +10,13 @@ import {
   PatchRiskLinkFinancialPerspectiveAction, SelectRiskLinkEDMAndRDM, ToggleRiskLinkEDMAndRDM
 } from '../actions';
 import {SearchService} from '../../../core/service/search.service';
+import { ToggleRiskLinkEDMAndRDMSelected, LoadRiskLinkAnalysisDataAction, LoadRiskLinkPortfolioDataAction } from '../actions/risk_link.actions';
 
 const initiaState: RiskLinkModel = {
   listEdmRdm: {
     data: null,
     selectedListEDMAndRDM: null,
+    selectedEDMOrRDM: null,
   },
   display: {
     displayDropdownRDMEDM: false,
@@ -123,39 +125,180 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(ToggleRiskLinkEDMAndRDM)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDM) {
     const state = ctx.getState();
-    const item = payload.RDM.id;
-    const {selected} = state.listEdmRdm.data[item];
-    ctx.patchState({
-      listEdmRdm: {
-        data: {
-          ...state.listEdmRdm.data,
-          [item]: {...state.listEdmRdm.data[item],
-            selected: !selected}
-            },
-        selectedListEDMAndRDM: state.listEdmRdm.selectedListEDMAndRDM
+    const action = payload.action;
+    let array = _.toArray(state.listEdmRdm.data);
+    let newData = {}
+    if (action === 'selectOne') {
+      const item = payload.RDM.id;
+      const {selected} = state.listEdmRdm.data[item];
+      ctx.patchState({
+        listEdmRdm: {
+          ...state.listEdmRdm,
+          data: {
+            ...state.listEdmRdm.data,
+            [item]: {...state.listEdmRdm.data[item],selected: !selected}
+          },
+        }
+      });
+    } else {
+        if (action === 'selectAll') {
+        array.forEach(dt => {
+          newData = _.merge(newData, {
+            [dt.id]: {
+              ...dt,
+              selected: true,
+            }
+          });
+        })
+      } else if (action === 'unselectAll') {
+        array.forEach(dt => {
+          newData = _.merge(newData, {
+            [dt.id]: {
+              ...dt,
+              selected: false,
+            }
+          });
+          })
+        }
+        ctx.patchState({
+          listEdmRdm: {
+            ...state.listEdmRdm,
+            data: newData
+          }
+        });
+    }
+  }
+
+  @Action(LoadRiskLinkAnalysisDataAction)
+  loadRiskLinkAnalysisDataAction(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkAnalysisDataAction) {
+    const state = ctx.getState();
+    let searchedData = {};
+    this.searchRiskLinkAnalysis().subscribe(
+      (content: any) => {
+        content.content.map(
+          data =>
+            searchedData = _.merge(searchedData, {
+              [data.analysisId]: {
+                ...data,
+                selected: false,
+              }
+            })
+        );
+        ctx.patchState({
+          selectedAnalysisAndPortoflio: {
+            ...state.selectedAnalysisAndPortoflio,
+            selectedAnalysis: {data: searchedData, lastSelectedIndex: null}
+          }
+        });
       }
-    });
+    );
+  }
+
+  @Action(LoadRiskLinkPortfolioDataAction)
+  loadRiskLinkPortfolioDataAction(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkPortfolioDataAction) {
+    const state = ctx.getState();
+    let searchedData = {};
+    this.searchRiskLinkPortfolio().subscribe(
+      (content: any) => {
+        content.content.map(
+          data =>
+            searchedData = _.merge(searchedData, {
+              [data.dataSourceId]: {
+                ...data,
+                number: 'FA0020553_01',
+                selected: false
+              }
+            })
+        );
+        ctx.patchState({
+          selectedAnalysisAndPortoflio: {
+            ...state.selectedAnalysisAndPortoflio,
+            selectedPortfolio: {data: searchedData, lastSelectedIndex: null}
+          }
+        });
+      }
+    );
+  }
+
+  @Action(ToggleRiskLinkEDMAndRDMSelected)
+  ToggleRiskLinkEDMAndRDMSelected(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMSelected) {
+    const state = ctx.getState();
+    let array = _.toArray(state.listEdmRdm.selectedListEDMAndRDM);
+    const item = payload.RDM.id;
+    const {selected} = state.listEdmRdm.selectedListEDMAndRDM[item];
+    let newDataSelected = {};
+    if (selected) {
+      array.forEach(dt => {
+        newDataSelected = _.merge(newDataSelected, {
+          [dt.id]: {
+            ...dt,
+            selected: false,
+          }
+        });
+      })
+      ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+      ctx.patchState({
+        listEdmRdm: {
+          data: state.listEdmRdm.selectedListEDMAndRDM,
+          selectedListEDMAndRDM: newDataSelected,
+          selectedEDMOrRDM: null
+        },
+      });
+    } else {
+      array.forEach(dt => {
+        newDataSelected = _.merge(newDataSelected, {
+          [dt.id]: {
+            ...dt,
+            selected: false,
+          }
+        });
+      });
+      if (payload.RDM.type === 'rdm') {
+        ctx.dispatch(new LoadRiskLinkAnalysisDataAction({}));
+      } else if (payload.RDM.type === 'edm') {
+        ctx.dispatch(new LoadRiskLinkPortfolioDataAction({}));
+      }
+      ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: true}));
+      ctx.patchState({
+        listEdmRdm: {
+          data: state.listEdmRdm.data,
+          selectedListEDMAndRDM: {
+            ...newDataSelected,
+            [item]: {...newDataSelected[item], selected: true}
+          },
+          selectedEDMOrRDM: payload.RDM.type
+        },
+      });
+    }
   }
 
   @Action(SelectRiskLinkEDMAndRDM)
   selectRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
     const listDataToArray = _.toArray(state.listEdmRdm.data);
+    let rdmValidator = false , emdValidator = false;
     let listSelected = {};
     listDataToArray.forEach(
       dt => {
         if (dt.selected) {
+          if (dt.type === 'rdm') { rdmValidator = true }
+          if (dt.type === 'edm') { emdValidator = true }
           listSelected = _.merge(listSelected, {
             [dt.id]: {
               ...dt,
-              selected: false,
               scanned: true,
+              selected: false,
             }
           });
         }
       }
     );
-    ctx.patchState({listEdmRdm: {data: state.listEdmRdm.data, selectedListEDMAndRDM: listSelected}});
+    ctx.patchState({
+      listEdmRdm: { ...state.listEdmRdm,
+      selectedListEDMAndRDM: listSelected
+    },
+    currentStep: (rdmValidator && emdValidator) ? 1 : 0
+  });
   }
 
   @Action(LoadRiskLinkDataAction)
@@ -177,8 +320,8 @@ export class RiskLinkState implements NgxsOnInit {
         );
         ctx.patchState({
           listEdmRdm: {
-            data: searchedData,
-            selectedListEDMAndRDM: state.listEdmRdm.selectedListEDMAndRDM
+            ...state.listEdmRdm,
+            data: searchedData
           }
         });
       }
@@ -187,5 +330,13 @@ export class RiskLinkState implements NgxsOnInit {
 
   private searchRiskLink() {
     return this._searchService.searchRiskLinkData();
+  }
+
+  private searchRiskLinkAnalysis() {
+    return this._searchService.searchRiskLinkAnalysis();
+  }
+
+  private searchRiskLinkPortfolio() {
+    return this._searchService.searchRiskLinkPortfolio();
   }
 }

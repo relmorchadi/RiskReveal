@@ -5,7 +5,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction,
+  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -55,7 +55,7 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Action(AppendNewWorkspaceMainAction)
-  AppendNewWorkspaces(ctx: StateContext<WorkspaceMain>, {payload}: AppendNewWorkspaceMainAction) {
+  appendNewWorkspaces(ctx: StateContext<WorkspaceMain>, {payload}: AppendNewWorkspaceMainAction) {
     const state = ctx.getState();
     let recentlyOpenedWs = _.filter(state.recentWs, ws => {
       if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) {return null; } else {return ws; }
@@ -65,25 +65,31 @@ export class WorkspaceMainState implements NgxsOnInit {
     recentlyOpenedWs[0].selected = true;
     recentlyOpenedWs = _.uniqWith(recentlyOpenedWs, _.isEqual );
     const paginationList = this.makePagination(recentlyOpenedWs);
-    const openedWs = [...state.openedTabs, _.merge({}, payload, {routing: ''})];
+    const projectFormat = payload.projects.map(prj => prj = {...prj, selected: false});
+    const openedTabs = [...state.openedTabs, _.merge({}, payload, {routing: ''})];
+    const opened = {...payload, projects: projectFormat };
     ctx.patchState({
       workspacePagination: paginationList,
-      openedWs: payload,
-      openedTabs: _.uniqWith(openedWs, (x, y) => (x.workSpaceId === y.workSpaceId && x.uwYear == y.uwYear)),
+      openedWs: opened,
+      openedTabs: _.uniqWith(openedTabs, (x, y) => (x.workSpaceId === y.workSpaceId && x.uwYear == y.uwYear)),
       recentWs: recentlyOpenedWs
     });
   }
 
   @Action(OpenNewWorkspacesAction)
-  OpenNewWorkspaces(ctx: StateContext<WorkspaceMain>, {payload}: OpenNewWorkspacesAction) {
+  openNewWorkspaces(ctx: StateContext<WorkspaceMain>, {payload}: OpenNewWorkspacesAction) {
     const state = ctx.getState();
     let recentlyOpenedWs = [...state.recentWs];
-    let openedWs = [];
+    let openedTabs = [];
+    let opened =  _.merge({}, payload[payload.length - 1], {routing: ''});
+    const projectFormat = opened.projects.map(prj => prj = {...prj, selected: false});
+    opened = {...opened, projects: projectFormat };
     payload.forEach( data => {
         recentlyOpenedWs =  _.filter(recentlyOpenedWs, ws => {
           if (ws.workSpaceId === data.workSpaceId && ws.uwYear == data.uwYear) {return null; } else {return ws; }
         });
-        openedWs = [...openedWs, _.merge({}, data, {routing: ''})];
+        openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
+        openedTabs.map(dt => dt.projects = dt.projects.map(prj => prj = {...prj, selected: false}));
     });
     recentlyOpenedWs.unshift(...payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
@@ -92,25 +98,38 @@ export class WorkspaceMainState implements NgxsOnInit {
     const paginationList = this.makePagination(recentlyOpenedWs);
     ctx.patchState({
       workspacePagination: paginationList,
-      openedWs: _.merge({}, payload[payload.length - 1], {routing: ''}),
-      openedTabs: _.uniqWith(openedWs, _.isEqual),
+      openedWs: opened,
+      openedTabs: _.uniqWith(openedTabs, _.isEqual),
       recentWs: recentlyOpenedWs
     });
   }
 
   @Action(SelectWorkspaceAction)
-  SelectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SelectWorkspaceAction) {
+  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SelectWorkspaceAction) {
     const state = ctx.getState();
-    const newState = state.openedTabs.map(ws => {
+    let newState = state.openedTabs.map(ws => {
       if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) { return payload; } else { return ws; }
     });
+    const projectFormat = payload.projects.map(prj => prj = {...prj, selected: false});
+    const opened = {...payload, projects: projectFormat };
     ctx.patchState(
-      {openedWs: payload, openedTabs: newState}
+      {openedWs: opened, openedTabs: newState}
     );
   }
 
+  @Action(SelectProjectAction)
+  selectProjectAction(ctx: StateContext<WorkspaceMain>, {payload}: SelectProjectAction) {
+    const state = ctx.getState();
+    payload.selected = !payload.selected;
+    let opened: any = state.openedWs.projects;
+    opened = opened.map(prj => {if (prj.projectId === payload.projectId) {return payload} else {return {...prj, selected: false}}});
+    ctx.patchState({
+      openedWs: {...state.openedWs, projects: opened}
+      });
+    }
+
   @Action(CloseWorkspaceMainAction)
-  CloseWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: CloseWorkspaceMainAction) {
+  closeWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: CloseWorkspaceMainAction) {
     const state = ctx.getState();
     let opened = null;
     if (payload.same) {
@@ -119,6 +138,8 @@ export class WorkspaceMainState implements NgxsOnInit {
     } else {
       opened = state.openedWs;
     }
+    const projectFormat = opened.projects.map(prj => prj = {...prj, selected: false});
+    opened = {...opened, projects: projectFormat };
     ctx.patchState(
       {openedTabs: _.filter(state.openedTabs, ws => {
           if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) { return null; } else {return ws; }}),
@@ -128,13 +149,16 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Action(LoadWorkspacesAction)
-  LoadWorkspaces(ctx: StateContext<WorkspaceMain>) {
+  loadWorkspaces(ctx: StateContext<WorkspaceMain>) {
     const recentlyOpenedWs = (JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
     const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || []);
-    const paginationList = this.makePagination(recentlyOpenedWs)
+    const paginationList = this.makePagination(recentlyOpenedWs);
+    const projectFormat = currentOpenedWs[0].projects.map(prj => prj = {...prj, selected: false});
+    const opened = {...currentOpenedWs[0], projects: projectFormat };
+    currentOpenedWs.map(dt => dt.projects = dt.projects.map(prj => prj = {...prj, selected: false}));
     ctx.patchState( {
       workspacePagination: paginationList,
-      openedWs: currentOpenedWs[0] || null,
+      openedWs: opened,
       openedTabs: currentOpenedWs,
       recentWs: recentlyOpenedWs
     });

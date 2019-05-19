@@ -33,7 +33,7 @@
                 <div style="display: flex; flex: 1;">
                   <div style="flex:1">
                     <div class="d-inline-flex flex-column">
-                      <h3 class="workspace-title">{{tab?.worspaceName}}
+                      <h3 class="workspace-title">{{tab?.workspaceName}}
                         <i *ngIf="!liked" (click)="liked = true" class="icon-star_border_24px"></i>
                         <i *ngIf="liked" (click)="liked = false" class="icon-star_24px"></i>
                       </h3>
@@ -161,9 +161,7 @@
             </div>
             <div nz-col [nzSpan]="24">
               <div style="display: flex">
-                <div style="flex: 0">
-                  <app-left-menu></app-left-menu>
-                </div>
+                <app-left-menu></app-left-menu>
                 <router-outlet></router-outlet>
               </div>
             </div>
@@ -256,9 +254,7 @@
         </div>
         <div nz-col [nzSpan]="24">
           <div style="display: flex">
-            <div style="flex: 0">
-              <app-left-menu></app-left-menu>
-            </div>
+            <app-left-menu></app-left-menu>
             <router-outlet></router-outlet>
           </div>
         </div>

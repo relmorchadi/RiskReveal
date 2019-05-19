@@ -24,6 +24,12 @@ export class SelectWorkspaceAction {
   constructor(public payload: any) {}
 }
 
+
+export class SelectProjectAction {
+  static readonly type = '[Workspace Project] Select Project';
+  constructor(public payload: any) {}
+}
+
 export class LoadWorkspacesAction {
   static readonly type = '[Workspace Main] Load Workspace From Local';
   constructor() {}

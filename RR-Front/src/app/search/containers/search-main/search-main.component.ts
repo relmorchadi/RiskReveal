@@ -203,6 +203,7 @@ export class SearchMainComponent implements OnInit {
           selected: false,
           ...dt
         };
+        workspace.projects = workspace.projects.map(prj => prj = {...prj, selected: false});
         this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
         this._helperService.updateRecentWorkspaces();
         this._helperService.updateWorkspaceItems();
