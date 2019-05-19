@@ -1,10 +1,11 @@
-import {ChangeDetectorRef, Component, ElementRef, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as _ from 'lodash'
 import {Observable, of} from 'rxjs';
 import {Select, Store} from "@ngxs/store";
 import * as fromWorkspaceStore from '../../store'
-import {filter, mapTo, mergeMap} from 'rxjs/operators';
+import {PltMainState} from '../../store';
+import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -16,13 +17,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   private dropdown: NzDropdownContextComponent;
   private Subscriptions: any[] = [];
   searchAddress: string;
-
-  @Select(state => state.pltMainModel.data) listOfPlts$: Observable<any[]>;
   listOfPlts: any[];
   selectedListOfPlts: any[];
   filterData;
   sortData;
-  mapSelectedIds: any;
+  params: any;
   sortMap = {
     pltId: null,
     systemTags: null,
@@ -41,35 +40,15 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   };
   lastSelectedId;
 
-  sort(sort: { key: string, value: string }): void {
-    if(sort.value){
-      this.sortData= _.merge({},this.sortData, {
-        [sort.key]: sort.value === "descend" ? 'desc' : 'asc'
-      })
-    }else{
-      this.sortData= _.omit(this.sortData, [sort.key])
-    }
-  }
-
-  filter(key: string, value) {
-    if(value){
-      this.filterData= _.merge({},this.filterData, {
-        [key]: value
-      })
-    }else{
-      this.filterData= _.omit(this.filterData, [key])
-    }
-  }
-
   pltColumns = [
     {fields:'' , header:'User Tags' , width: '6%', sorted: false, filtred: false, icon: null},
-    {fields:'pltId' , header:'PLT ID' , width: '6%', sorted: true, filtred: true, icon: null},
-    {fields:'pltName' , header:'PLT Name' , width: '14%', sorted: true, filtred: true, icon: null},
+    {fields:'pltId' , header:'PLT ID' , width: '10%', sorted: true, filtred: true, icon: null},
+    {fields:'pltName' , header:'PLT Name' , width: '20%', sorted: true, filtred: true, icon: null},
     {fields:'peril' , header:'Peril' , width: '7%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '13%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilName' , header:'Region Peril Name' , width: '13%', sorted: true, filtred: true, icon: null},
-    {fields:'grain' , header:'Grain' , width: '9%', sorted: true, filtred: true, icon: null},
-    {fields:'vendorSystem' , header:'Vendor System' , width: '11%', sorted: true, filtred: true, icon: null},
+    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '5%', sorted: true, filtred: true, icon: null},
+    {fields:'regionPerilName' , header:'Region Peril Name' , width: '5%', sorted: true, filtred: true, icon: null},
+    {fields:'grain' , header:'Grain' , width: '10%', sorted: true, filtred: true, icon: null},
+    {fields:'vendorSystem' , header:'Vendor System' , width: '10%', sorted: true, filtred: true, icon: null},
     {fields:'rap' , header:'RAP' , width: '9%', sorted: true, filtred: true, icon: null},
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-note"},
@@ -89,9 +68,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     currentSystemTag: any,
     currentUserTag: any
   }
-  sumnaryPltDetails: any = null;
-
-  pltDetailsPermission: boolean ;
+  sumnaryPltDetailsPltId: any = null;
 
   epMetricInputValue: string | null;
 
@@ -320,75 +297,109 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ]
   someItemsAreSelected: boolean;
   selectAll: boolean;
+  drawerIndex: any;
 
 
   constructor( private nzDropdownService: NzDropdownService, private store$: Store,private zone: NgZone, private cdRef: ChangeDetectorRef) {
     this.filters = {
       currentSystemTag: null,
         currentUserTag: null
-    }
-
-    this.sortData={};
+    };
+    this.sortData={}
     this.filterData={};
     this.someItemsAreSelected= false;
     this.selectAll= false;
     this.listOfPlts= [];
     this.selectedListOfPlts= [];
     this.lastSelectedId = null;
+    this.drawerIndex= 0;
+    this.params= {};
+    this.loading= true;
   }
 
+  @Select(PltMainState.data) data$;
+  loading: boolean;
 
   ngOnInit(){
     this.Subscriptions.push(
-      this.store$.select( state => state.pltMainModel.data ).subscribe( data => {
-        this.listOfPlts = data;
-        this.detectChanges();
-      }),
-      this.store$.select(state => state.pltMainModel.data).pipe(
-        mergeMap( (plts) => of(_.filter(plts, ['selected', true])))
-      ).subscribe( data => {
-        this.selectedListOfPlts = data;
+      this.data$.subscribe( data => {
+        this.listOfPlts = _.keys(data);
+        this.selectedListOfPlts = _.filter(_.keys(data), k => data[k].selected);
+        this.sumnaryPltDetailsPltId = _.filter(this.selectedListOfPlts, k => data[k].opened)[0] || null;
         this.selectAll = this.selectedListOfPlts.length > 0 || this.selectedListOfPlts.length == this.listOfPlts.length;
         this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
-        console.log(this.selectAll,this.someItemsAreSelected);
         this.detectChanges();
-      })
+      }),
+      this.getAttr('loading').subscribe( l => this.loading =l)
     )
-    this.store$.dispatch(new fromWorkspaceStore.LoadPltData());
-  };
+    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({}));
+  }
 
+  getAttr(path){
+    return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)))
+  }
 
-  openDrawer(): void {
+  sort(sort: { key: string, value: string }): void {
+    let sortField = sort.key;
+    let sortOrder = sort.value;
+    if (sortField && sortOrder) {
+      this.sortMap[sort.key] = sort.key;
+      (sortOrder === 'ascend') ? sortOrder = 'asc' : sortOrder = 'desc';
+      this.params = {
+        ...this.params,
+        page: 0,
+        sort: sortField + "," + sortOrder,
+        size: this.size,
+        sortCompany: null
+      };
+      this.loadData(this.params);
+    }
+    else {
+      this.params = {...this.params, sort: 'pltId,desc', sortCompany: '', size: this.size};
+      this.loadData(this.params);
+    }
+  }
+
+  filter = _.debounce( (key: string, value) => {
+    if(value){
+      this.filterData= _.merge({},this.filterData, {
+        [key]: value
+      })
+    }else{
+      this.filterData= _.omit(this.filterData, [key])
+    }
+  },500);
+
+  selectPltById(pltId){
+    return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`))
+  }
+
+  openDrawer(index): void {
     this.visible = true;
+    this.drawerIndex= index;
   }
 
   closeDrawer(): void {
     this.visible = false;
   }
 
+  closePltInDrawer(){
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer())
+  }
+
   openPltInDrawer(plt) {
-    let selectedPlts = this.listOfPlts.filter(pt => pt.selected === true);
-    if (selectedPlts.length > 0) {
-      if (selectedPlts[0] === plt) {
-        plt.selected = false;
-        this.visible = false;
-        this.sumnaryPltDetails = null;
-        this.pltDetailsPermission = false;
-      } else {
-        this.listOfPlts = this.listOfPlts.map( pt => pt.selected = false);
-        plt.selected = true;
-        this.sumnaryPltDetails = plt;
-      }
-    } else {
-      this.listOfPlts =this.listOfPlts.map(pt => pt.selected = false);
-      plt.selected = true;
-      this.visible = true;
-      this.sumnaryPltDetails = plt;
-      this.pltDetailsPermission = true;
+    this.closePltInDrawer();
+    if(_.findIndex(this.selectedListOfPlts,el => el == plt) == -1) {
+      this.toggleSelectPlts(
+        _.zipObject(
+          this.selectedListOfPlts,
+          _.range(this.selectedListOfPlts.length).map(el => ({type : 'unselect'}))
+        )
+      )
     }
-
-    this.getTagsForSummary(plt);
-
+    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}))
+    this.openDrawer(1);
+    this.getTagsForSummary();
   }
 
   getColor(id, type) {
@@ -403,24 +414,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     return null
   }
 
-  getTagsForSummary(plt){
-    this.pltdetailsSystemTags = this.pltdetailsUserTags = [];
-    let findSysTags = plt.systemTags.map(item => item.tagId);
-    let findUserTags = plt.userTags.map(item => item.tagId);
-    findSysTags.forEach(
-      sysTag => {
-        this.pltdetailsSystemTags = [...this.pltdetailsSystemTags, this.systemTags.filter(
-          item => item.tagId == sysTag
-        )[0]]
-      }
-    )
-    findUserTags.forEach(
-      uTag => {
-        this.pltdetailsUserTags = [...this.pltdetailsUserTags, this.userTags.filter(
-          item => item.tagId == uTag
-        )[0]]
-      }
-    )
+  getTagsForSummary(){
+    this.pltdetailsSystemTags = this.systemTags;
+    this.pltdetailsUserTags= this.userTags;
   }
 
   selectPath(path) {
@@ -464,7 +460,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
-    console.log(template,$event);
     this.dropdown = this.nzDropdownService.create($event, template);
   }
 
@@ -496,7 +491,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   checkAll($event: boolean) {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map(this.listOfPlts, (plt,i) => i),
+        _.map(this.listOfPlts, plt => plt),
         _.range(this.listOfPlts.length).map(el => ({type : !this.selectAll && !this.someItemsAreSelected ? 'select' : 'unselect'}))
       )
     )
@@ -506,32 +501,31 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}))
   }
 
-  selectSinglePLT(i: number, $event: boolean) {
+  selectSinglePLT(pltId: number, $event: boolean) {
     this.toggleSelectPlts({
-      [i]: {
+      [pltId]: {
         type: $event ? 'select' : 'unselect'
       }
     })
   }
 
-  handlePLTClick(pltIndex: number, isSelected: boolean, $event: MouseEvent) {
+  handlePLTClick(pltId,i: number, $event: MouseEvent) {
+    const isSelected= _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
     if($event.ctrlKey || $event.shiftKey) {
-      this.handlePLTClickWithKey(pltIndex,isSelected, $event);
+      this.handlePLTClickWithKey(pltId,i,!isSelected, $event);
     }else{
       this.toggleSelectPlts(
         _.zipObject(
-          _.map(this.listOfPlts, (plt,i) => i),
-          _.range(this.listOfPlts.length).map((el,i) =>
-            ( i == pltIndex ? ({type: 'select'}) : ({type: 'unselect'}) )
-          )
+          _.map(this.listOfPlts, plt => plt),
+          _.map(this.listOfPlts, plt =>  plt == pltId ? ({type: 'select'}) : ({type: 'unselect'}) )
         )
       )
     }
   }
 
-  private handlePLTClickWithKey(i: number,isSelected: boolean, $event: MouseEvent) {
+  private handlePLTClickWithKey(pltId: number,i: number,isSelected: boolean, $event: MouseEvent) {
     if($event.ctrlKey){
-      this.selectSinglePLT(i,isSelected);
+      this.selectSinglePLT(pltId,isSelected);
       this.lastSelectedId=i;
       return;
     }
@@ -543,9 +537,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         const min = _.min([i, this.lastSelectedId])
         this.toggleSelectPlts(
           _.zipObject(
-            _.map(this.listOfPlts, (plt,i) => i),
-            _.range(this.listOfPlts.length).map((el,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )
-            )
+            _.map(this.listOfPlts, plt => plt),
+            _.map(this.listOfPlts,(plt,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )),
           )
         )
       }else{
@@ -553,6 +546,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       }
       return;
     }
+  }
+
+  private loadData(params: any) {
+    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}))
   }
 }
 
