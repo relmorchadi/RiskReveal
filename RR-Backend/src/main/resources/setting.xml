@@ -4,9 +4,9 @@
     "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-    <property name="connection.url">jdbc:sqlserver://localhost;database=RR</property>
+    <property name="connection.url">jdbc:sqlserver://localhost\SQLEXPRESS:1433;database=RR</property>
     <property name="connection.driver_class">com.microsoft.sqlserver.jdbc.SQLServerDriver</property>
-      <mapping class="com.scor.rr.domain.Contract"/>
+    <mapping class="com.scor.rr.domain.Contract"/>
       <mapping class="com.scor.rr.domain.Country"/>
       <mapping class="com.scor.rr.domain.OmegaCedant"/>
       <mapping class="com.scor.rr.domain.Project"/>
@@ -25,7 +25,11 @@
       <mapping class="com.scor.rr.domain.counter.UwyCountView"/>
       <mapping class="com.scor.rr.domain.WorkspaceView"/>
       <mapping class="com.scor.rr.domain.counter.ProgramView"/>
-      <!-- <property name="connection.username"/> -->
+      <mapping class="com.scor.rr.domain.RrAnalysis"/>
+      <mapping class="com.scor.rr.domain.RrPortfolio"/>
+    <mapping class="com.scor.rr.domain.AnalysisView"/>
+    <mapping class="com.scor.rr.domain.PortfolioView"/>
+    <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
     <!-- DB schema will be updated if needed -->

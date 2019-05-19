@@ -1,6 +1,10 @@
 package com.scor.rr.rest;
 
+import com.scor.rr.domain.AnalysisView;
 import com.scor.rr.domain.EdmRdm;
+import com.scor.rr.domain.PortfolioView;
+import com.scor.rr.domain.dto.AnalysisFilter;
+import com.scor.rr.domain.dto.PortfolioFilter;
 import com.scor.rr.service.RiskLinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +24,16 @@ public class RiskLinkResource {
     @GetMapping("edm-rdm")
     public Page<EdmRdm> searchEdmRdm(String keyword, @PageableDefault(size = 100) Pageable pageable) {
         return riskLinkService.searchEdmRdm(keyword, pageable);
+    }
+
+    @GetMapping("analysis")
+    public Page<AnalysisView> searchAnalysis(AnalysisFilter filter, @PageableDefault Pageable pageable){
+        return riskLinkService.searchAnalysis(filter, pageable);
+    }
+
+    @GetMapping("portfolio")
+    public Page<PortfolioView> searchPortfolio(PortfolioFilter filter, @PageableDefault Pageable pageable){
+        return riskLinkService.searchPortflio(filter, pageable);
     }
 
 }
