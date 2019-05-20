@@ -320,30 +320,6 @@
     }
 
   }
-  .card-holder-wrap{
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 1440px;
-    padding: 20px;
-    margin: auto;
-    @media screen  and (min-width: 2200px) {
-      width: 2250px ;
-    }
-    @media screen and (max-width: 1650px) and (min-width: 1500px) {
-      width: 1315px ;
-    }
-    @media screen and (max-width: 1500px) and (min-width: 1350px) {
-      width: 1200px ;
-    }
-    @media screen and (max-width: 1350px) and (min-width: 1024px) {
-      width: 970px;
-    }
-    @media screen and (max-width: 1024px) and (min-width: 780px) {
-      width: 95%;
-      margin: 15px auto;
-    }
-  }
   .card-holder{
     margin:10px 0;
     @media screen and (max-width: 1024px) and (min-width: 780px) {
@@ -369,30 +345,6 @@
       margin: auto;
       min-width: 300px !important;
       max-width: 500px !important;
-    }
-    .project-header {
-      height: 80px;
-      display: flex;
-      margin-left: -3px;
-      margin-top: -3px;
-      .project-header-icon{
-        background-color: #F5A623;
-        width: 80px;
-        i{
-          color: white;
-          font-size: 2em;
-        }
-      }
-      .project-header-title {
-        span:nth-child(1){
-          color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 18px;	font-weight: 500;	letter-spacing: 0.25px;	line-height: 24px;
-        }
-        span:nth-child(2){
-          color: rgba(0,0,0,0.6);		font-size: 14px;	letter-spacing: 0.5px;	line-height: 28px;
-        }
-        flex:1;
-        background: #F4F6FC;
-      }
     }
     .project-progress{
       // zoom: 0.6;
