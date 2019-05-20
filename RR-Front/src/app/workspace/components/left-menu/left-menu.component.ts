@@ -28,7 +28,7 @@ export class LeftMenuComponent implements OnInit {
   collapse($event){
     $event.stopPropagation();
     $event.preventDefault();
-    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'leftNavbarIsCollapsed', value: !this.state.leftNavbarIsCollapsed}))
+    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'leftNavbarIsCollapsed', value: !this.state.leftNavbarIsCollapsed}));
   }
 
   routerNavigate(routerLink) {

@@ -1,16 +1,16 @@
-import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef} from '@angular/core';
-import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
-import * as _ from 'lodash'
-import {Observable, of} from 'rxjs';
-import {Select, Store} from "@ngxs/store";
-import * as fromWorkspaceStore from '../../store'
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
+import * as _ from 'lodash';
+import {Select, Store} from '@ngxs/store';
+import * as fromWorkspaceStore from '../../store';
 import {PltMainState} from '../../store';
 import {map} from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
-  styleUrls: ['./workspace-plt-browser.component.scss']
+  styleUrls: ['./workspace-plt-browser.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
@@ -19,7 +19,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   searchAddress: string;
   listOfPlts: any[];
   selectedListOfPlts: any[];
-  filterData;
   sortData;
   params: any;
   sortMap = {
@@ -65,8 +64,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   visible = false;
   size = 'large';
   filters: {
-    currentSystemTag: any,
-    currentUserTag: any
+    systemTag: [],
+    userTag: []
   }
   sumnaryPltDetailsPltId: any = null;
 
@@ -298,15 +297,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
+  private pageSize: number = 20;
 
 
   constructor( private nzDropdownService: NzDropdownService, private store$: Store,private zone: NgZone, private cdRef: ChangeDetectorRef) {
-    this.filters = {
-      currentSystemTag: null,
-        currentUserTag: null
-    };
-    this.sortData={}
-    this.filterData={};
     this.someItemsAreSelected= false;
     this.selectAll= false;
     this.listOfPlts= [];
@@ -315,6 +309,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.drawerIndex= 0;
     this.params= {};
     this.loading= true;
+    this.filters= {
+      systemTag: [],
+      userTag: []
+    }
   }
 
   @Select(PltMainState.data) data$;
@@ -347,28 +345,39 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       (sortOrder === 'ascend') ? sortOrder = 'asc' : sortOrder = 'desc';
       this.params = {
         ...this.params,
-        page: 0,
+        pageNumber: 0,
+        pageSize: this.pageSize,
         sort: sortField + "," + sortOrder,
-        size: this.size,
-        sortCompany: null
       };
-      this.loadData(this.params);
+      //this.loadData(this.params);
+    } else {
+      this.params = {...this.params, sort: 'pltId,desc', sortCompany: '', pageSize: this.pageSize};
+      //this.loadData(this.params);
     }
-    else {
-      this.params = {...this.params, sort: 'pltId,desc', sortCompany: '', size: this.size};
-      this.loadData(this.params);
-    }
+    this.loadData(this.params)
   }
 
   filter = _.debounce( (key: string, value) => {
     if(value){
-      this.filterData= _.merge({},this.filterData, {
-        [key]: value
-      })
+      this.params= _.merge({},this.params, {[key]: value })
     }else{
-      this.filterData= _.omit(this.filterData, [key])
+      this.params= _.omit(this.params, [key])
     }
+    this.loadData(this.params)
   },500);
+
+  setFilter(filter: string, tag) {
+      this.filters =
+        _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
+        _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
+        _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
+
+    console.log(this.filters)
+
+      this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
+        filters: this.filters
+      }))
+  }
 
   selectPltById(pltId){
     return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`))
@@ -449,8 +458,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   resetFilterByTags(){
     this.filters = _.assign({}, this.filters, {
-      currentSystemTag: null,
-      currentUserTag: null
+      systemTag: null,
+      userTag: null
     })
   }
 
@@ -466,10 +475,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   close(e: NzMenuItemDirective): void {
     console.log(e);
     this.dropdown.close();
-  }
-
-  setFilter(filter: string, tag) {
-    _.set(this.filters, filter, tag);
   }
 
   runInNewConext(task) {
@@ -549,6 +554,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   private loadData(params: any) {
+    console.log(params)
     this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}))
   }
 }
