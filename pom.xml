@@ -9,6 +9,7 @@
     <version>0.0.1-SNAPSHOT</version>
     <description>Risk Reveal project by Scor</description>
     <packaging>pom</packaging>
+    <name>Risk-Reveal</name>
 
     <modules>
         <module>RR-Backend</module>
