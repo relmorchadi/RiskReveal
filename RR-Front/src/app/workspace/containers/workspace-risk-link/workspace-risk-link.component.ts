@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -52,211 +52,33 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
   ];
 
-  tableLeftAnalysis: any = [
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-  ];
+  tableLeftAnalysis: any = [ ];
 
-  tableLeftProtfolio: any = [
-    {
-      selected: false,
-      id: '760',
-      number: 'FA0020553_01',
-      name: 'FA0020553_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '761',
-      number: 'FA0056486_01',
-      name: 'FA0056486_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '762',
-      number: 'FA0040287_01',
-      name: 'FA0040287_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '763',
-      number: 'FA0023693_01',
-      name: 'FA0023693_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-  ]
+  tableLeftProtfolio: any = [ ];
 
   scrollableColsAnalysis = [
     {field: 'description', header: 'Description', width: '150px'},
     {field: 'engineVersion', header: 'Engine Version', width: '110px'},
-    {field: 'groupeType', header: 'Groupe Type', width: '110px'},
+    {field: 'groupType', header: 'Group Type', width: '110px'},
     {field: 'cedant', header: 'cedant', width: '110px'},
   ];
 
   frozenColsAnalysis = [
     {field: 'selected', header: 'selected', width: '20px'},
-    {field: 'id', header: 'id', width: '30px'},
-    {field: 'name', header: 'name', width: '190px'}
+    {field: 'analysisId', header: 'id', width: '30px'},
+    {field: 'analysisName', header: 'name', width: '190px'}
   ];
 
   scrollableColsPortfolio = [
-    {field: 'name', header: 'Name', width: '150px'},
+    {field: 'dataSourceName', header: 'Name', width: '150px'},
     {field: 'creationDate', header: 'Creation Date', width: '180px'},
-    {field: 'descriptionType', header: 'Description Type', width: '180px'},
+    {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'date'},
     {field: 'cedant', header: 'cedant', width: '120px'},
   ];
 
   frozenColsPortfolio = [
     {field: 'selected', header: 'selected', width: '20px'},
-    {field: 'id', header: 'id', width: '30px'},
+    {field: 'dataSourceId', header: 'id', width: '30px'},
     {field: 'number', header: 'Number', width: '190px'}
   ];
 
@@ -348,12 +170,20 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   state$: Observable<RiskLinkModel>;
   state: RiskLinkModel = null;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute, private store: Store) {
+  constructor(private _helper: HelperService, private route: ActivatedRoute, private store: Store, private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.state$.subscribe(value => this.state = _.merge({}, value));
+    this.store.select(st => st.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe( dt => {
+      this.tableLeftAnalysis = _.toArray(dt);
+      this.cdRef.detectChanges();
+    });
+    this.store.select(st => st.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe( dt => {
+      this.tableLeftProtfolio = _.toArray(dt);
+      this.cdRef.detectChanges();
+    });
   }
 
   dataList(data = null) {
@@ -481,7 +311,11 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   getTableData() {
-    if (this.state.listEdmRdm.selectedEDMOrRDM=== 'rdm') { return this.tableLeftAnalysis; } else { return this.tableLeftProtfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+      return _.toArray(this.state.selectedAnalysisAndPortoflio.selectedAnalysis.data);
+    } else {
+      return _.toArray(this.state.selectedAnalysisAndPortoflio.selectedPortfolio.data);
+    }
   }
 
   changeCollapse(value) {

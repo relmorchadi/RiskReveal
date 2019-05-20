@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
@@ -40,17 +40,7 @@ export class SearchService {
     return this._http.get(`${this.api}workspace`, {params: _.pickBy({...filter, offset, size},_.identity())});
   }
 
-  searchRiskLinkData() {
-    return this._http.get(`${environment.API_URI}risk-link/edm-rdm`);
-  }
 
-  searchRiskLinkAnalysis() {
-    return this._http.get(`${environment.API_URI}risk-link/analysis`);
-  }
-
-  searchRiskLinkPortfolio() {
-    return this._http.get(`${environment.API_URI}risk-link/portfolio`);
-  }
 
   affectItems(item) {
     this._searchedItems = item;

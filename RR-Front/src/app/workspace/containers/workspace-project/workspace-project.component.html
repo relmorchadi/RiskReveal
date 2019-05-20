@@ -98,14 +98,13 @@
         </div>
     </div>
   </div>
-<!--  <div style="width:80%;margin:auto;">
+  <!--<div style="width:80%;margin:auto;">
     <ng-masonry-grid
     [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }"
     [useAnimation]="true"
     [useImagesLoaded]="true"
     [scrollAnimationOptions]="{ animationEffect: 'effect-4', minDuration : 0.4, maxDuration : 0.7 }">
-      <ng-container *ngFor="state.openedWs.projects">
-        <ng-masonry-grid-item  id="{{'masonry-item-'+1}}" >
+        <ng-masonry-grid-item *ngFor="let project of state.openedWs.projects" >
           <div (contextmenu)="contextMenu($event, template)" class="card-holder">
             <div class="project-card mx-1" (click)="selectProject(project)" [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
               <div class="project-header">
@@ -175,7 +174,6 @@
             </div>
           </div>
         </ng-masonry-grid-item>
-      </ng-container>
     </ng-masonry-grid>
   </div>-->
 </div>
