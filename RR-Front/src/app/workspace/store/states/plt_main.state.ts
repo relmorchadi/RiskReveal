@@ -8,7 +8,11 @@ import {PltApi} from '../../services/plt.api';
 
 const initiaState: pltMainModel = {
   data: {},
-  loading: false
+  loading: false,
+  filters: {
+    systemTag: [],
+    userTag: []
+  }
 };
 
 @State<pltMainModel>({
@@ -47,6 +51,57 @@ export class PltMainState implements NgxsOnInit {
     {tagId: '2', tagName: 'Pricing V2', tagColor: '#06b8ff', innerTagContent: '2', innerTagColor: '#51cdff', selected: false},
     {tagId: '3', tagName: 'Final Princing', tagColor: '#c38fff', innerTagContent: '5', innerTagColor: '#d5b0ff', selected: false}
   ];
+  systemTags = [
+    {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
+    {
+      tagId: '2',
+      tagName: 'NATC-USM',
+      tagColor: '#7bbe31',
+      innerTagContent: '2',
+      innerTagColor: '#a2d16f',
+      selected: false
+    },
+    {
+      tagId: '3',
+      tagName: 'Post-Inured',
+      tagColor: '#006249',
+      innerTagContent: '9',
+      innerTagColor: '#4d917f',
+      selected: false
+    },
+    {
+      tagId: '4',
+      tagName: 'Pricing',
+      tagColor: '#009575',
+      innerTagContent: '0',
+      innerTagColor: '#4db59e',
+      selected: false
+    },
+    {
+      tagId: '5',
+      tagName: 'Accumulation',
+      tagColor: '#009575',
+      innerTagContent: '2',
+      innerTagColor: '#4db59e',
+      selected: false
+    },
+    {
+      tagId: '6',
+      tagName: 'Default',
+      tagColor: '#06b8ff',
+      innerTagContent: '1',
+      innerTagColor: '#51cdff',
+      selected: false
+    },
+    {
+      tagId: '7',
+      tagName: 'Non-Default',
+      tagColor: '#f5a623',
+      innerTagContent: '0',
+      innerTagColor: '#f8c065',
+      selected: false
+    },
+  ];
 
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
@@ -63,8 +118,16 @@ export class PltMainState implements NgxsOnInit {
         mergeMap( (data) => {
           ctx.patchState({
             data: Object.assign({},
-              ...data.content.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,userTags: _.range(_.random(3) || _.random(2)).map(i => this.userTags[i])}}) )
-            )
+              ...data.content.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,
+                  userTag: _.range(_.random(3) || _.random(2)).map(i => this.userTags[i]),
+                  systemTag: _.range(_.random(7) || _.random(5)).map(i => this.systemTags[i])
+                }})
+              )
+            ),
+            filters: {
+              systemTag: [],
+              userTag: []
+            }
           })
           return ctx.dispatch(new fromPlt.loadAllPltsSuccess())
         }),
@@ -104,7 +167,6 @@ export class PltMainState implements NgxsOnInit {
   OpenPltinDrawer(ctx: StateContext<pltMainModel>, { payload }: fromPlt.OpenPLTinDrawer) {
     const state = ctx.getState();
 
-    console.log(payload);
     ctx.patchState({
       data: _.merge({}, state.data,{[payload.pltId]: {opened: true,selected:true}})
     })
@@ -125,28 +187,70 @@ export class PltMainState implements NgxsOnInit {
     })
   }
 
-  @Action(fromPlt.SortAndFilterPlts)
-  SortAndFilterPlts(ctx: StateContext<pltMainModel>, { payload }: fromPlt.SortAndFilterPlts) {
+  @Action(fromPlt.setFilterPlts)
+  setFilterPlts(ctx: StateContext<pltMainModel>, { payload }: fromPlt.setFilterPlts) {
     const state = ctx.getState();
-    let res= _.merge({}, state.data);
-
-    const {
-      sortData,
-      filterData
+    const{
+      filters
     } = payload;
 
-    const sortDataKeys =_.keys(sortData);
-    const filterDataKeys = _.keys(filterData);
+    ctx.patchState({
+      filters: _.assign({}, state.filters, filters)
+    })
 
-    if(filterDataKeys.length > 0 ){
-      _.forEach(filterDataKeys, (key) => {
-        res = _.filter(res, (el) => _.includes(_.toLower(_.toString(el[key])), _.toLower(_.toString(filterData[key]))))
+    return ctx.dispatch(new fromPlt.FilterPlts())
+
+  }
+
+  @Action(fromPlt.FilterPlts)
+  FilterPlts(ctx: StateContext<pltMainModel>, action : fromPlt.FilterPlts) {
+    const state = ctx.getState();
+    const {
+      filters
+    } = state;
+
+    let newData = {};
+
+    if([...filters.systemTag,...filters.userTag].length > 0){
+        _.forEach(state.data, (plt,k) => {
+          if(_.some([...filters.userTag,...filters.systemTag], (userTag) => _.find([...plt.userTag,...plt.systemTag], tag => {
+            console.log([...plt.userTag,...plt.systemTag]);
+            return tag.tagId == userTag;
+          }))) {
+            newData[k] = {...plt, visible: true};
+          }else {
+            newData[k] = {...plt, visible: false};
+          }
+        })
+    } else {
+      _.forEach(state.data, (plt,k) => {
+        newData[k] = {...plt, visible: true};
       })
     }
 
-    if(sortDataKeys.length > 0){
-      res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
-    }
+    /*if(!_.some(_.values(filters), filterArrays => filterArrays.length > 0)){
+      _.forEach(state.data, (plt,k) => {
+        newData[k] = {...plt, visible: true};
+      })
+    }else{
+      _.forEach(filters, (filterArray, filterKey) => {
+        _.forEach(state.data, (plt,k) => {
+          if(_.every(filters[filterKey], (userTag) => _.find(plt[filterKey], tag => tag.tagId == userTag))) {
+            newData[k] = {...plt, visible: true};
+          }else {
+            newData[k] = {...plt, visible: false};
+          }
+        })
+      })
+    }*/
+
+    _.forEach(newData, (v,k) => {
+      console.log(newData[k].visible)
+    })
+
+    ctx.patchState({
+      data: newData
+    })
   }
 
 }
