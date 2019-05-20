@@ -32,7 +32,7 @@ public class VwFacTreaty {
   private Integer analysisCtrYear;
   private String assignDate;
   private String assignedTo;
-  private String lastUpdateDate;
+  // private String lastUpdateDate;
   private String lastUpdatedBy;
   private String modellingSystemInstance;
 

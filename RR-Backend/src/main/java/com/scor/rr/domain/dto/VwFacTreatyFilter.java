@@ -23,7 +23,7 @@ public class VwFacTreatyFilter {
     public Integer analysisCtrYear;
     public String assignDate;
     public String assignedTo;
-    public String lastUpdateDate;
+    // public String lastUpdateDate;
     public String lastUpdatedBy;
     public String modellingSystemInstance;
 }
