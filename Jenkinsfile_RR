@@ -228,7 +228,6 @@ node ('dcvprdadm04') {
  
         stage ('backend deployment') {
         parallel stepsForParallel
-        step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
         }
  
         stage ('frontend deployment') {
@@ -242,11 +241,11 @@ node ('dcvprdadm04') {
             SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "front deployment", "${rootpom.name}")
         throw (error)  
         }       
-        step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
         }
         
         //End of pipeline reached if no errors
         currentBuild.result = "SUCCESS"
+        step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
         SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "final step", "${rootpom.name}")
     }
 }
