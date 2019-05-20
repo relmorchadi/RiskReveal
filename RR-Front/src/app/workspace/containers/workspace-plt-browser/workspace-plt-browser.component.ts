@@ -40,18 +40,18 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   lastSelectedId;
 
   pltColumns = [
-    {fields:'' , header:'User Tags' , width: '4%', sorted: false, filtred: false, icon: null},
-    {fields:'pltId' , header:'PLT ID' , width: '9%', sorted: true, filtred: true, icon: null},
-    {fields:'pltName' , header:'PLT Name' , width: '20%', sorted: true, filtred: true, icon: null},
-    {fields:'peril' , header:'Peril' , width: '8%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '10%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilName' , header:'Region Peril Name' , width: '10%', sorted: true, filtred: true, icon: null},
-    {fields:'grain' , header:'Grain' , width: '10%', sorted: true, filtred: true, icon: null},
-    {fields:'vendorSystem' , header:'Vendor System' , width: '9%', sorted: true, filtred: true, icon: null},
-    {fields:'rap' , header:'RAP' , width: '9%', sorted: true, filtred: true, icon: null},
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-note"},
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
+    {fields:'' , header:'User Tags' , width: '10px',sorted: false, filtred: false, icon: null,type: 'checkbox'},
+    {fields:'pltId' , header:'PLT ID' , width: '80px', sorted: true, filtred: true, icon: null, type:'field'},
+    {fields:'pltName' , header:'PLT Name' , width: '110px', sorted: true, filtred: true, icon: null,type:'field'},
+    {fields:'peril' , header:'Peril' , width: '60px', sorted: true, filtred: true, icon: null,type:'field'},
+    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '80px', sorted: true, filtred: true, icon: null,type:'field'},
+    {fields:'regionPerilName' , header:'Region Peril Name' , width: '80px', sorted: true, filtred: true, icon: null,type:'field'},
+    {fields:'grain' , header:'Grain' , width: '90px', sorted: true, filtred: true, icon: null,type:'field'},
+    {fields:'vendorSystem' , header:'Vendor System' , width: '70px', sorted: true, filtred: true, icon: null,type:'field'},
+    {fields:'rap' , header:'RAP' , width: '70px', sorted: true, filtred: true, icon: null,type:'field'},
+    {fields:'' , header:'' , width: '5px', sorted: false, filtred: false, icon: "icon-focus-add",type:'icon'},
+    {fields:'' , header:'' , width: '5px', sorted: false, filtred: false, icon: "icon-note",type:'icon'},
+    {fields:'' , header:'' , width: '5px', sorted: false, filtred: false, icon: "icon-focus-add",type:'icon'},
     ];
 
   epMetricsCurrencySelected: any = 'EUR';
