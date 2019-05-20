@@ -20,6 +20,8 @@ public class AnalysisSpecification extends BaseSpecification<AnalysisView, Analy
                 .and(ofNullable(request.getDescription()).map(description -> AttributeContains(AnalysisView_.description, description)).orElse(null) )
                 .and(ofNullable(request.getEngineVersion()).map(engV -> AttributeContains(AnalysisView_.engineVersion, engV)).orElse(null))
                 .and(ofNullable(request.getGroupType()).map(gt -> AttributeContains(AnalysisView_.groupType, gt)).orElse(null))
-                .and(ofNullable(request.getCedant()).map(cdt -> AttributeContains(AnalysisView_.cedant, cdt)).orElse(null));
+                .and(ofNullable(request.getCedant()).map(cdt -> AttributeContains(AnalysisView_.cedant, cdt)).orElse(null))
+                .and(ofNullable(request.getRdmId()).map(rdmId -> AttributeEquals( AnalysisView_.rdmId, rdmId)).orElse(null))
+                .and(ofNullable(request.getRdmName()).map(rdmName -> AttributeEquals(AnalysisView_.rdmName, rdmName)).orElse(null));
     }
 }

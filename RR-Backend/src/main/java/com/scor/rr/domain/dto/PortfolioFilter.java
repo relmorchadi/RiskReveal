@@ -11,6 +11,8 @@ public class PortfolioFilter {
     private String dataSourceName;
     private Timestamp creationDate;
     private String descriptionType;
+    private Integer edmId;
+    private String edmName;
 
     public PortfolioFilter() {
     }
@@ -53,5 +55,21 @@ public class PortfolioFilter {
 
     public void setDescriptionType(String descriptionType) {
         this.descriptionType = StringUtils.isEmpty(descriptionType) ? null: descriptionType;
+    }
+
+    public Integer getEdmId() {
+        return edmId;
+    }
+
+    public void setEdmId(Integer edmId) {
+        this.edmId = edmId;
+    }
+
+    public String getEdmName() {
+        return edmName;
+    }
+
+    public void setEdmName(String edmName) {
+        this.edmName = edmName;
     }
 }

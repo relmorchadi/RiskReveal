@@ -21,6 +21,10 @@ public class PortfolioView {
     private Timestamp creationDate;
     @Column(name = "descriptionType")
     private String descriptionType;
+    @Column(name = "edmId")
+    private Integer edmId;
+    @Column(name = "edmName")
+    private String edmName;
 
     public PortfolioView() {
     }
@@ -69,20 +73,19 @@ public class PortfolioView {
         this.descriptionType = descriptionType;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PortfolioView that = (PortfolioView) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(dataSourceId, that.dataSourceId) &&
-                Objects.equals(dataSourceName, that.dataSourceName) &&
-                Objects.equals(creationDate, that.creationDate) &&
-                Objects.equals(descriptionType, that.descriptionType);
+    public Integer getEdmId() {
+        return edmId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, dataSourceId, dataSourceName, creationDate, descriptionType);
+    public void setEdmId(Integer edmId) {
+        this.edmId = edmId;
+    }
+
+    public String getEdmName() {
+        return edmName;
+    }
+
+    public void setEdmName(String edmName) {
+        this.edmName = edmName;
     }
 }
