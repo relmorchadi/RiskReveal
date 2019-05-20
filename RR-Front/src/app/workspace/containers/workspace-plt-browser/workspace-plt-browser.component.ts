@@ -41,14 +41,14 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   lastSelectedId;
 
   pltColumns = [
-    {fields:'' , header:'User Tags' , width: '6%', sorted: false, filtred: false, icon: null},
-    {fields:'pltId' , header:'PLT ID' , width: '10%', sorted: true, filtred: true, icon: null},
+    {fields:'' , header:'User Tags' , width: '4%', sorted: false, filtred: false, icon: null},
+    {fields:'pltId' , header:'PLT ID' , width: '9%', sorted: true, filtred: true, icon: null},
     {fields:'pltName' , header:'PLT Name' , width: '20%', sorted: true, filtred: true, icon: null},
-    {fields:'peril' , header:'Peril' , width: '7%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '5%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilName' , header:'Region Peril Name' , width: '5%', sorted: true, filtred: true, icon: null},
+    {fields:'peril' , header:'Peril' , width: '8%', sorted: true, filtred: true, icon: null},
+    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '10%', sorted: true, filtred: true, icon: null},
+    {fields:'regionPerilName' , header:'Region Peril Name' , width: '10%', sorted: true, filtred: true, icon: null},
     {fields:'grain' , header:'Grain' , width: '10%', sorted: true, filtred: true, icon: null},
-    {fields:'vendorSystem' , header:'Vendor System' , width: '10%', sorted: true, filtred: true, icon: null},
+    {fields:'vendorSystem' , header:'Vendor System' , width: '9%', sorted: true, filtred: true, icon: null},
     {fields:'rap' , header:'RAP' , width: '9%', sorted: true, filtred: true, icon: null},
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
     {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-note"},

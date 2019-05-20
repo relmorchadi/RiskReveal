@@ -134,7 +134,7 @@ nz-layout {
 
       ::ng-deep{
         .ant-table-column-sorter{
-          top: 20%;
+          top: 9%;
         }
 
       }
@@ -692,4 +692,43 @@ nz-layout {
   padding: 10px 10px;
   background: #fff;
   box-shadow: -2px 0px 7px rgba(0,0,0,0.3);
+}
+
+
+.PLTs-content{
+  ::ng-deep{
+    .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
+      background-color: #fff !important;
+    }
+    thead{
+      th {
+        background-color: #fff !important;
+        border: none;
+        .header-tab{
+          display: flex;
+          i{
+            font-size: 22px;
+          }
+        }
+      }
+      .ant-checkbox-indeterminate .ant-checkbox-inner {
+        background-color: #0700cf;
+        border-color: #0700cf;
+      }
+      .ant-checkbox-indeterminate .ant-checkbox-inner::after {
+        height: 4px;
+        background-color: #ffffff;
+      }
+      .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #0700cf;
+        border-color: #0700cf;
+      }
+    }
+    tbody{
+      .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #0700cf;
+        border-color: #0700cf;
+      }
+    }
+  }
 }
