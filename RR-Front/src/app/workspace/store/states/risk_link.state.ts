@@ -189,7 +189,7 @@ export class RiskLinkState implements NgxsOnInit {
                 selectedAnalysis: {
                   data: Object.assign({},
                     ...data.content.map(Analysis => ({
-                        [Analysis.dataSourceId]: {
+                        [Analysis.analysisId]: {
                           ...Analysis,
                           selected: false
                         }
@@ -318,27 +318,25 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(LoadRiskLinkDataAction)
   loadRiskLinkData(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
-    let searchedData = {};
-    this.riskApi.searchRiskLinkData().subscribe(
-      (content: any) => {
-        content.content.map(
-          data =>
-            searchedData = _.merge(searchedData, {
-              [data.id]: {
-                ...data,
-                selected: false,
-                scanned: false,
-                Reference: '0/13'
-              }
-            })
-        );
-        ctx.patchState({
-          listEdmRdm: {
-            ...state.listEdmRdm,
-            data: searchedData
-          }
-        });
-      }
+    return this.riskApi.searchRiskLinkData().pipe(
+      mergeMap(
+        data =>
+          of(ctx.patchState(
+            {
+              listEdmRdm: {
+                ...state.listEdmRdm,
+                data: Object.assign({},
+                  ...data.content.map(item => ({
+                      [item.id]: {
+                        ...item,
+                        selected: false,
+                        scanned: false,
+                        Reference: '0/13'
+                      }
+                    }
+                  )))
+              }}))
+      )
     );
   }
 }
