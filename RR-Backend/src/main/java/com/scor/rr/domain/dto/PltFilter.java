@@ -13,8 +13,35 @@ public class PltFilter {
     private String grain;
     private String vendorSystem;
     private String rap;
+    private String workspaceId;
+    private Integer uwy;
+    private String project;
 
     public PltFilter() {
+    }
+
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
+    public Integer getUwy() {
+        return uwy;
+    }
+
+    public void setUwy(Integer uwy) {
+        this.uwy = uwy;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
     }
 
     public String getPltId() {
