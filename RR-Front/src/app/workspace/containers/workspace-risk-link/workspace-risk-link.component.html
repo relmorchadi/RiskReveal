@@ -1,3 +1,4 @@
+<app-left-menu></app-left-menu>
 <div class="workspace-main-content">
   <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
            nz-button nzType="primary" nzSize="large" nzShape="circle">
@@ -295,7 +296,7 @@
                         <div style=" display: flex;" *ngIf="col.field === 'selected'">
                           <label nz-checkbox [(ngModel)]="rowData.selected"></label>
                         </div>
-                        <div *ngIf="col.field !== 'selected'">{{rowData[col.field]}}</div>
+                        <div class="text-data" *ngIf="col.field !== 'selected'">{{rowData[col.field]}}</div>
                         <div style="font-size:20px; color: #0700CF; text-align: center;"
                              *ngIf="col.field === 'AlreadyImported'">
                           <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}"></i></div>

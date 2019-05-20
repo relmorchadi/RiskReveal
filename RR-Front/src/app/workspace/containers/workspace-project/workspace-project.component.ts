@@ -8,8 +8,8 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {WorkspaceMainState} from '../../../core/store/states/workspace-main.state';
 
-import { NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective } from 'ng-zorro-antd';
-import { SelectProjectAction } from '../../../core/store/actions/workspace-main.action';
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
+import {SelectProjectAction} from '../../../core/store/actions/workspace-main.action';
 
 @Component({
   selector: 'app-workspace-project',
@@ -28,16 +28,11 @@ export class WorkspaceProjectComponent implements OnInit {
   state: WorkspaceMain = null;
 
   constructor(private _helper: HelperService, private route: ActivatedRoute, private nzDropdownService: NzDropdownService, private store: Store) {
-
+    console.log('init project');
   }
 
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
-    const pathName: any = window.location.pathname || '';
-  }
-
-  ngOnDestroy(): void {
-    _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
   }
 
   selectProject(project) {

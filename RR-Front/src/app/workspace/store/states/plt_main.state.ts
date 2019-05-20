@@ -107,11 +107,11 @@ export class PltMainState implements NgxsOnInit {
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
     const {
       params
-    }= payload;
+    } = payload;
 
     ctx.patchState({
       loading: true
-    })
+    });
 
     return this.pltApi.getAllPlts(params)
       .pipe(
@@ -128,18 +128,18 @@ export class PltMainState implements NgxsOnInit {
               systemTag: [],
               userTag: []
             }
-          })
-          return ctx.dispatch(new fromPlt.loadAllPltsSuccess())
+          });
+          return ctx.dispatch(new fromPlt.loadAllPltsSuccess());
         }),
         catchError( err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
-      )
+      );
   }
 
   @Action(fromPlt.loadAllPltsSuccess)
   LoadAllPltsSuccess(ctx: StateContext<pltMainModel>, action: fromPlt.loadAllPltsSuccess) {
     ctx.patchState({
       loading: false
-    })
+    });
   }
 
   @Action(fromPlt.ToggleSelectPlts)
@@ -159,7 +159,7 @@ export class PltMainState implements NgxsOnInit {
 
     ctx.patchState({
       data: _.merge({}, state.data, inComingData)
-    })
+    });
 
   }
 
@@ -168,23 +168,23 @@ export class PltMainState implements NgxsOnInit {
     const state = ctx.getState();
 
     ctx.patchState({
-      data: _.merge({}, state.data,{[payload.pltId]: {opened: true,selected:true}})
-    })
+      data: _.merge({}, state.data, {[payload.pltId]: {opened: true, selected: true}})
+    });
   }
 
   @Action(fromPlt.ClosePLTinDrawer)
   ClosePLTinDrawer(ctx: StateContext<pltMainModel>, { payload }: fromPlt.ClosePLTinDrawer) {
     const state = ctx.getState();
 
-    let newData ={};
+    let newData = {};
 
-    _.forEach(state.data, (v,k) => {
+    _.forEach(state.data, (v, k) => {
       newData[k] = !v.opened ? newData[k] : _.omit(v, 'opened');
-    })
+    });
 
     ctx.patchState({
       data: _.merge({}, state.data, newData)
-    })
+    });
   }
 
   @Action(fromPlt.setFilterPlts)
@@ -196,14 +196,14 @@ export class PltMainState implements NgxsOnInit {
 
     ctx.patchState({
       filters: _.assign({}, state.filters, filters)
-    })
+    });
 
-    return ctx.dispatch(new fromPlt.FilterPlts())
+    return ctx.dispatch(new fromPlt.FilterPlts());
 
   }
 
   @Action(fromPlt.FilterPlts)
-  FilterPlts(ctx: StateContext<pltMainModel>, action : fromPlt.FilterPlts) {
+  FilterPlts(ctx: StateContext<pltMainModel>, action: fromPlt.FilterPlts) {
     const state = ctx.getState();
     const {
       filters
@@ -211,21 +211,21 @@ export class PltMainState implements NgxsOnInit {
 
     let newData = {};
 
-    if([...filters.systemTag,...filters.userTag].length > 0){
-        _.forEach(state.data, (plt,k) => {
-          if(_.some([...filters.userTag,...filters.systemTag], (userTag) => _.find([...plt.userTag,...plt.systemTag], tag => {
-            console.log([...plt.userTag,...plt.systemTag]);
+    if ([...filters.systemTag, ...filters.userTag].length > 0) {
+        _.forEach(state.data, (plt, k) => {
+          if (_.some([...filters.userTag, ...filters.systemTag], (userTag) => _.find([...plt.userTag, ...plt.systemTag], tag => {
+            console.log([...plt.userTag, ...plt.systemTag]);
             return tag.tagId == userTag;
           }))) {
             newData[k] = {...plt, visible: true};
-          }else {
+          } else {
             newData[k] = {...plt, visible: false};
           }
-        })
+        });
     } else {
-      _.forEach(state.data, (plt,k) => {
+      _.forEach(state.data, (plt, k) => {
         newData[k] = {...plt, visible: true};
-      })
+      });
     }
 
     /*if(!_.some(_.values(filters), filterArrays => filterArrays.length > 0)){
@@ -244,13 +244,13 @@ export class PltMainState implements NgxsOnInit {
       })
     }*/
 
-    _.forEach(newData, (v,k) => {
-      console.log(newData[k].visible)
-    })
+    _.forEach(newData, (v, k) => {
+      console.log(newData[k].visible);
+    });
 
     ctx.patchState({
       data: newData
-    })
+    });
   }
 
 }
