@@ -192,14 +192,18 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this.serviceSubscription = [
-    this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe(dt => {
-      this.tableLeftAnalysis = _.toArray(dt);
-      this.cdRef.detectChanges();
-    }),
-    this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe(dt => {
-      this.tableLeftProtfolio = _.toArray(dt);
-      this.cdRef.detectChanges();
-    })];
+      this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe(dt => {
+        this.tableLeftAnalysis = _.toArray(dt);
+        this.cdRef.detectChanges();
+      }),
+      this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe(dt => {
+        this.tableLeftProtfolio = _.toArray(dt);
+        this.cdRef.detectChanges();
+      }),
+      this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
+        this.cdRef.detectChanges();
+      })
+    ];
   }
 
   ngOnDestroy() {

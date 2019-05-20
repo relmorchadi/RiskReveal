@@ -7,7 +7,7 @@ import {HttpClient} from '@angular/common/http';
   providedIn: 'root'
 })
 export class RiskApi {
-  protected URL = `${environment.API_URI}/risk-link/`;
+  protected URL = `${environment.API_URI}risk-link/`;
 
   constructor(private http: HttpClient) {
   }

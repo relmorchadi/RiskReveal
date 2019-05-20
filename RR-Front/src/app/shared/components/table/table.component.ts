@@ -1,11 +1,20 @@
-import {Component, OnInit, Input, Output, EventEmitter, ViewChild, HostListener} from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  ViewChild,
+  HostListener,
+  ChangeDetectionStrategy
+} from '@angular/core';
 import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
 
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styleUrls: ['./table.component.scss']
+  styleUrls: ['./table.component.scss'],
 })
 export class TableComponent implements OnInit {
   @Output('filterData') filterData: any = new EventEmitter<any>();
