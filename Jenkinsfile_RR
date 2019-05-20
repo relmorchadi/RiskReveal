@@ -7,7 +7,7 @@ node ('dcvprdadm04') {
     Test_Profile = "coverage"
 //add SonarQube
     def scannerHome = tool name: 'sonar-scanner'
-    Sonar_GateId = "low-restriction-blocking"
+    Sonar_GateId = "low-restriction-not-blocking"
 //set global variables
     def isLinux = env.windir == null
     def workspace = pwd()
