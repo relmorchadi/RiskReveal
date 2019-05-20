@@ -12,11 +12,11 @@ export const workspaceRoutes: Routes = [
   {
     data: {title: 'RR- Workspace'}, path: '', component: WorkspaceMainComponent,
     children: [
-      {path: ':wsId/:year', component: WorkspaceProjectComponent},
-      {path: ':wsId/:year/RiskLink', component: WorkspaceRiskLinkComponent},
-      {path: ':wsId/:year/Calibration', component: WorkspaceCalibrationComponent},
-      {path: ':wsId/:year/PltBrowser', component: WorkspacePltBrowserComponent},
-      {path: ':wsId/:year/PopOut', component: WorkspaceProjectComponent},
+      {data: {title: 'RR- Workspace'}, path: ':wsId/:year', component: WorkspaceProjectComponent},
+      {data: {title: 'RR- Risk Link'}, path: ':wsId/:year/RiskLink', component: WorkspaceRiskLinkComponent},
+      {data: {title: 'RR- Calibration'}, path: ':wsId/:year/Calibration', component: WorkspaceCalibrationComponent},
+      {data: {title: 'RR- Plt Browser'}, path: ':wsId/:year/PltBrowser', component: WorkspacePltBrowserComponent},
+      {data: {title: 'RR- Workspace'}, path: ':wsId/:year/PopOut', component: WorkspaceProjectComponent},
     ]
   }
 ];

@@ -39,7 +39,7 @@ public abstract class BaseSpecification<T, U> {
     protected Specification<T> AttributeEquals(SingularAttribute attribute, String value) {
         return (root, query, cb) -> {
             if(value == null) { return null; }
-            return cb.like(cb.lower(root.get(attribute)), containsLowerCase(value));
+            return cb.equal(root.get(attribute), value);
         };
     }
 
