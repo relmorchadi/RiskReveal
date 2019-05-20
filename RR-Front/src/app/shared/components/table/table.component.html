@@ -114,8 +114,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-    <tr [pContextMenuRow]="rowData"
-        [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+    <tr [pContextMenuRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
         <td *ngIf="col?.type ==='checkbox'">
           <div style="display:flex">
