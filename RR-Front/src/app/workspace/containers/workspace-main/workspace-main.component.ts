@@ -1,19 +1,19 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
-import {forkJoin} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable} from 'rxjs';
 import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {WorkspaceMainState} from '../../../core/store/states/workspace-main.state';
 import {
-  CloseWorkspaceMainAction,
-  LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
+  CloseWorkspaceMainAction,
+  LoadWorkspacesAction,
+  OpenNewWorkspacesAction,
   PatchWorkspaceMainStateAction
 } from '../../../core/store/actions/workspace-main.action';
 
@@ -21,7 +21,8 @@ import {
 @Component({
   selector: 'app-workspace-main',
   templateUrl: './workspace-main.component.html',
-  styleUrls: ['./workspace-main.component.scss']
+  styleUrls: ['./workspace-main.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceMainComponent implements OnInit {
   tabIndex = 0;

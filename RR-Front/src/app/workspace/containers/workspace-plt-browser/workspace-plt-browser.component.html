@@ -41,20 +41,20 @@
                         style=" float: right; border: 0px solid;">
                   <i nz-icon nzType="undo" nzTheme="outline"></i></button>
               </div>
-              <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
-              <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === filters.currentSystemTag}" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('currentSystemTag', tag)">
+              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i class="icon-plus-circle"></i></div>
+              <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
+                    <span [ngClass]="{'active-tag': tag === filters.currentUserTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('userTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
                     </span>
               </div>
 
-              <div nz-row class="tags-title-section">User tags<i class="icon-plus-circle"></i></div>
-              <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
+              <div nz-row class="tags-title-section">System Tags</div>
+              <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
                     <span [ngClass]="{'active-tag': tag === filters.currentSystemTag}" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('currentUserTag', tag)">
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('systemTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -75,12 +75,12 @@
             <div class="PLTs-content">
               <nz-table #pltTable
                         [nzData]="listOfPlts"
-                        class="table plt-table"
+                        class="plt-table"
                         [nzLoading]="loading"
                         [nzFrontPagination]="false"
                         [nzShowPagination]="false"
                         [nzScroll]="{ y: '480px'}">
-                <thead (nzSortChange)="sort($event)">
+                <thead (nzSortChange)="sort($event)" nzSingleSort>
                 <tr>
                   <th
                     nzShowCheckbox
@@ -110,7 +110,7 @@
 
                 <tbody>
                 <tr
-                  *ngFor="let pltId of pltTable.data | filterBySystemTag: filters.currentSystemTag | filterByUserTag: filters.currentUserTag | filterByPath: currentPath?.id;let i = index"
+                  *ngFor="let pltId of pltTable.data ;let i = index"
                   style="cursor: pointer" (contextmenu)="contextMenuPltTable($event, template)"
                   [ngClass]="{'active_plt_item': (selectPltById(pltId) | async)?.selected }">
                   <ng-template #template>
@@ -142,7 +142,7 @@
                       <div class="td-wrapper">{{pltId}}</div>
                     </td>
                     <td (click)="handlePLTClick(pltId,i,$event)">
-                      <div class="td-wrapper">{{(selectPltById(pltId) | async)?.pltName | textLength: [32]}}</div>
+                      <div class="td-wrapper">{{(selectPltById(pltId) | async)?.pltName | textLength: [10]}}</div>
                     </td>
                     <td (click)="handlePLTClick(pltId,i,$event)">
                       <div class="td-wrapper">{{(selectPltById(pltId) | async)?.peril | textLength: [16]}}</div>
@@ -165,18 +165,18 @@
                     <td>
                       <div class="td-wrapper-check">
                         <div>
-                          <i [ngClass]="{'icon-check-circle': (selectPltById(pltId) | async)?.isScorCurrent, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorCurrent }"></i>
+                          <i [ngClass]="{'icon-check': (selectPltById(pltId) | async)?.isScorCurrent, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorCurrent }"></i>
                         </div>
                       </div>
                     </td>
                     <td>
                       <div class="td-wrapper-check">
-                        <i [ngClass]="{'icon-check-circle': (selectPltById(pltId) | async)?.isScorDefault, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorDefault }"></i>
+                        <i [ngClass]="{'icon-check': (selectPltById(pltId) | async)?.isScorDefault, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorDefault }"></i>
                       </div>
                     </td>
                     <td>
                       <div class="td-wrapper-check">
-                        <i [ngClass]="{'icon-check-circle': (selectPltById(pltId) | async)?.isScorGenerated, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorGenerated }"></i>
+                        <i [ngClass]="{'icon-check': (selectPltById(pltId) | async)?.isScorGenerated, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorGenerated }"></i>
                       </div>
                     </td>
                   </ng-container>
