@@ -1,15 +1,16 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import java.util.Objects;
 
 @Entity
 public class PltManagerView {
 
+    @Column(name = "workspaceId")
+    private String workspaceId;
+    @Column(name = "uwy")
+    private Integer uwy;
     @Id
     @Column(name = "id")
     private String pltId;
@@ -34,26 +35,45 @@ public class PltManagerView {
     @Column(name = "isScorGenerated")
     private String isScorGenerated;
 
+    @Column(name = "project")
+    private String project;
+    @Column(name = "pltType")
+    private String pltType;
+
     public PltManagerView() {
+    }
+
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
+
+    public void setWorkspaceId(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
+    public Integer getUwy() {
+        return uwy;
+    }
+
+    public void setUwy(Integer uwy) {
+        this.uwy = uwy;
     }
 
     public String getPltId() {
         return pltId;
     }
 
-    public void setPltId(String id) {
-        this.pltId = id;
+    public void setPltId(String pltId) {
+        this.pltId = pltId;
     }
-
 
     public String getPltName() {
         return pltName;
     }
 
-    public void setPltName(String name) {
-        this.pltName = name;
+    public void setPltName(String pltName) {
+        this.pltName = pltName;
     }
-
 
     public String getPeril() {
         return peril;
@@ -63,7 +83,6 @@ public class PltManagerView {
         this.peril = peril;
     }
 
-
     public String getRegionPerilCode() {
         return regionPerilCode;
     }
@@ -71,7 +90,6 @@ public class PltManagerView {
     public void setRegionPerilCode(String regionPerilCode) {
         this.regionPerilCode = regionPerilCode;
     }
-
 
     public String getRegionPerilName() {
         return regionPerilName;
@@ -81,7 +99,6 @@ public class PltManagerView {
         this.regionPerilName = regionPerilName;
     }
 
-
     public String getGrain() {
         return grain;
     }
@@ -89,7 +106,6 @@ public class PltManagerView {
     public void setGrain(String grain) {
         this.grain = grain;
     }
-
 
     public String getVendorSystem() {
         return vendorSystem;
@@ -99,7 +115,6 @@ public class PltManagerView {
         this.vendorSystem = vendorSystem;
     }
 
-
     public String getRap() {
         return rap;
     }
@@ -107,7 +122,6 @@ public class PltManagerView {
     public void setRap(String rap) {
         this.rap = rap;
     }
-
 
     public String getIsScorCurrent() {
         return isScorCurrent;
@@ -117,7 +131,6 @@ public class PltManagerView {
         this.isScorCurrent = isScorCurrent;
     }
 
-
     public String getIsScorDefault() {
         return isScorDefault;
     }
@@ -125,7 +138,6 @@ public class PltManagerView {
     public void setIsScorDefault(String isScorDefault) {
         this.isScorDefault = isScorDefault;
     }
-
 
     public String getIsScorGenerated() {
         return isScorGenerated;
@@ -135,26 +147,19 @@ public class PltManagerView {
         this.isScorGenerated = isScorGenerated;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        PltManagerView that = (PltManagerView) o;
-        return Objects.equals(pltId, that.pltId) &&
-                Objects.equals(pltName, that.pltName) &&
-                Objects.equals(peril, that.peril) &&
-                Objects.equals(regionPerilCode, that.regionPerilCode) &&
-                Objects.equals(regionPerilName, that.regionPerilName) &&
-                Objects.equals(grain, that.grain) &&
-                Objects.equals(vendorSystem, that.vendorSystem) &&
-                Objects.equals(rap, that.rap) &&
-                Objects.equals(isScorCurrent, that.isScorCurrent) &&
-                Objects.equals(isScorDefault, that.isScorDefault) &&
-                Objects.equals(isScorGenerated, that.isScorGenerated);
+    public String getProject() {
+        return project;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(pltId, pltName, peril, regionPerilCode, regionPerilName, grain, vendorSystem, rap, isScorCurrent, isScorDefault, isScorGenerated);
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getPltType() {
+        return pltType;
+    }
+
+    public void setPltType(String pltType) {
+        this.pltType = pltType;
     }
 }
