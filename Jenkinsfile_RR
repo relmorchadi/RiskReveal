@@ -237,6 +237,7 @@ node ('dcvprdadm04') {
             }
             } catch (error) {
             currentBuild.result = "FAILURE"
+            step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
             SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "front deployment", "${rootpom.name}")
         throw (error)  
         }       
