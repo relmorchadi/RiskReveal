@@ -6,7 +6,7 @@
 
   <groupId>com.scor.rr</groupId>
   <artifactId>risk-reveal-front</artifactId>
-  <version>${rr_version}</version>
+  <version>0.0.1-SNAPSHOT</version>
   <name>Risk reveal Front</name>
   <packaging>pom</packaging>
 
