@@ -236,6 +236,7 @@ node ('dcvprdadm04') {
             sh "ansible-playbook -i hosts/hosts playbook_nginx.yml -e app_version=${rootpom.properties.rr_version} -e env=${Cur_Environment} -e app_name=${frontpom.artifactId} -e app_groupid=${frontpom.groupId} -e app_artifactid=${frontpom.artifactId} -e group_hosts=${frontpom.artifactId}_${Cur_Environment} -e app_extension=tar -e app_classifier=front"
             }
             } catch (error) {
+            currentBuild.result = "FAILURE"
             SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "front deployment", "${rootpom.name}")
         throw (error)  
         }       
