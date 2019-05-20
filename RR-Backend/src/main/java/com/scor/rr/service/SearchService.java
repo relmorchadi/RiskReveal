@@ -68,6 +68,9 @@ public class SearchService {
     @Autowired
     WorkspaceNameCountViewRepository workspaceNameCountViewRepository;
 
+    @Autowired
+    ProjectViewRepository projectViewRepository;
+
     @PersistenceContext
     EntityManager entityManager;
     @Autowired
@@ -169,7 +172,8 @@ public class SearchService {
         if (items == null || items.isEmpty())
             return Optional.empty();
         List<String> years = contractSearchResultRepository.findDistinctByWorkSpaceId(worspaceId).map(item -> item.getUwYear()).filter(Objects::nonNull).map(String::valueOf).distinct().sorted().collect(toList());
-        return Optional.of(new WorkspaceDetailsDTO(items, years));
+        List<ProjectView> projects= projectViewRepository.findByWorkspaceIdAndUwy(worspaceId, Integer.valueOf(uwy));
+        return Optional.of(new WorkspaceDetailsDTO(items, years, projects));
     }
 
     public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {

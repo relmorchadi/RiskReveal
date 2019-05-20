@@ -83,14 +83,17 @@
                 <tr>
                   <th
                     nzShowCheckbox
+                    [nzWidth]="'2%'"
                     [nzChecked]="selectAll"
                     [nzIndeterminate]="someItemsAreSelected"
                     (nzCheckedChange)="checkAll($event)"
                   ></th>
 
-                  <th *ngFor="let col of pltColumns" [nzShowSort]="col.sorted" [nzSortKey]="col.fields">
-                    {{col.header}}
-                    <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted" [nzSortKey]="col.fields" [(nzSort)]="sortMap[col.fields]">
+                    <div class="header-tab">
+                      <span *ngIf="col.header.length > 0" style="width: 80%">{{col.header}}</span>
+                      <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+                    </div>
                   </th>
                 </tr>
                 <tr>

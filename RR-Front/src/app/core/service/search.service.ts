@@ -44,6 +44,14 @@ export class SearchService {
     return this._http.get(`${environment.API_URI}risk-link/edm-rdm`);
   }
 
+  searchRiskLinkAnalysis() {
+    return this._http.get(`${environment.API_URI}risk-link/analysis`);
+  }
+
+  searchRiskLinkPortfolio() {
+    return this._http.get(`${environment.API_URI}risk-link/portfolio`);
+  }
+
   affectItems(item) {
     this._searchedItems = item;
     this.items.next();

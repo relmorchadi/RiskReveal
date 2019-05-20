@@ -28,7 +28,22 @@ export class ToggleRiskLinkEDMAndRDM {
   constructor(public payload: any) {}
 }
 
+export class ToggleRiskLinkEDMAndRDMSelected {
+  static readonly type = '[Risk Link] Toggle Risk Link Selected EDM And RDM';
+  constructor(public payload: any) {}
+}
+
 export class LoadRiskLinkDataAction {
   static readonly type = '[Risk Link] Load Risk Link Data';
   constructor() {}
+}
+
+export class LoadRiskLinkAnalysisDataAction {
+  static readonly type = '[Risk Link] Load Risk Link Analysis Data';
+  constructor(public payload: any) {}
+}
+
+export class LoadRiskLinkPortfolioDataAction {
+  static readonly type = '[Risk Link] Load Risk Link portfolio Data';
+  constructor(public payload: any) {}
 }

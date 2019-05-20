@@ -99,12 +99,13 @@ export class WorkspaceMainComponent implements OnInit {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(title, year).subscribe(
         (dt: any) => {
-          const workspace = {
+          let workspace = {
             workSpaceId: title,
             uwYear: year,
             selected: false,
             ...dt
           };
+          workspace.projects = workspace.projects.map(prj => prj = {...prj, selected: false});
           this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
           this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
           this._helper.updateWorkspaceItems();

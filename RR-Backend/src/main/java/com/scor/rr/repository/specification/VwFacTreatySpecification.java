@@ -27,7 +27,7 @@ public class VwFacTreatySpecification extends BaseSpecification<VwFacTreaty,VwFa
                  .or(AttributeContainsInteger(VwFacTreaty_.analysisCtrYear, filter.keyword))
                  .or(AttributeContains(VwFacTreaty_.assignDate, filter.keyword))
                  .or(AttributeContains(VwFacTreaty_.assignedTo, filter.keyword))
-                 .or(AttributeContains(VwFacTreaty_.lastUpdateDate, filter.keyword))
+                 //.or(AttributeContains(VwFacTreaty_.lastUpdateDate, filter.keyword))
                  .or(AttributeContains(VwFacTreaty_.lastUpdatedBy, filter.keyword))
                  .or(AttributeContains(VwFacTreaty_.modellingSystemInstance, filter.keyword))
          )
@@ -45,7 +45,7 @@ public class VwFacTreatySpecification extends BaseSpecification<VwFacTreaty,VwFa
                 .and(AttributeEquals(VwFacTreaty_.analysisCtrYear, filter.analysisCtrYear))
                 .and(AttributeContains(VwFacTreaty_.assignDate, filter.assignDate))
                 .and(AttributeContains(VwFacTreaty_.assignedTo, filter.assignedTo))
-                .and(AttributeContains(VwFacTreaty_.lastUpdateDate, filter.lastUpdateDate))
+                //.and(AttributeContains(VwFacTreaty_.lastUpdateDate, filter.lastUpdateDate))
                 .and(AttributeContains(VwFacTreaty_.lastUpdatedBy, filter.lastUpdatedBy))
                 .and(AttributeContains(VwFacTreaty_.modellingSystemInstance, filter.modellingSystemInstance))
                 .toPredicate(root, query, cb);

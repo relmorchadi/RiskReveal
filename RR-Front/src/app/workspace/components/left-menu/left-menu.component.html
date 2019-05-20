@@ -1,14 +1,14 @@
-<ul nz-menu [nzMode]="'inline'"  [nzInlineCollapsed]="isCollapsed">
+<ul nz-menu [nzMode]="'inline'"  [nzInlineCollapsed]="state.leftNavbarIsCollapsed">
   <li (click)="collapse($event)" style="text-align: right"  nz-menu-item nz-tooltip nzPlacement="right">
           <span  title>
             <i nz-icon>
-              <i *ngIf="!isCollapsed" (click)="collapse($event)" class="icon-chevron_left_24px"></i>
+              <i *ngIf="!state.leftNavbarIsCollapsed" (click)="collapse($event)" class="icon-chevron_left_24px"></i>
               <!--i *ngIf="!isCollapsed" (click)="collapse($event)" nz-icon nzType="double-left" nzTheme="outline"></i-->
-              <i *ngIf="isCollapsed" (click)="collapse($event)" class="icon-chevron_right_24px"></i>
+              <i *ngIf="state.leftNavbarIsCollapsed" (click)="collapse($event)" class="icon-chevron_right_24px"></i>
             </i>
           </span>
   </li>
-  <li nz-submenu="" nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Workspace' : ''">
+  <li nz-submenu="" nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Workspace' : ''">
           <span title>
             <i nz-icon><i class="icon-window-section"></i></i>
             <span>Workspace</span>
@@ -19,20 +19,20 @@
       <li nz-menu-item>Activity</li>
     </ul>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT browser' : ''">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'PLT browser' : ''">
           <span title>
             <i nz-icon><i class="icon-location_searching_24px"></i></i>
             <span>Scope of Completeness</span>
           </span>
   </li>
-  <li (click)="routerNavigate('PltBrowser')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT browser' : ''">
+  <li (click)="routerNavigate('PltBrowser')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'PLT browser' : ''">
           <span title>
             <i nz-icon><i class="icon-file-search-alt"></i></i>
             <span>PLT browser</span>
           </span>
   </li>
   <hr class="col-xs-12">
-  <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Data sources Import' : ''">
+  <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Data sources Import' : ''">
           <span title>
             <i nz-icon><i class="icon-call_merge_24px"></i></i>
             <span>Data sources Import</span>
@@ -44,38 +44,38 @@
     </ul>
   </li>
   <hr class="col-xs-12">
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Exposure' : ''">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Exposure' : ''">
           <span title>
             <i nz-icon><i class="icon-adjust-half"></i></i>
             <span>Exposure</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Results' : ''">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Results' : ''">
           <span title>
             <i nz-icon><i class="icon-chart-growth"></i></i>
             <span>Results</span>
           </span>
   </li>
-  <li (click)="routerNavigate('Calibration')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
+  <li (click)="routerNavigate('Calibration')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Calibration' : ''">
           <span title  >
             <i nz-icon><i class="icon-sitemap"></i></i>
             <span>Calibration</span>
           </span>
   </li>
   <hr class="col-xs-12">
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Inuring' : ''">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Inuring' : ''">
           <span title>
             <i nz-icon><i class="fa fa-code-fork"></i></i>
             <span>Inuring</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Pricing' : ''">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Pricing' : ''">
           <span title>
             <i nz-icon><i class="icon-dollar-alt"></i></i>
             <span>Pricing</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Accumulation' : ''">
+  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Accumulation' : ''">
           <span title>
             <i nz-icon><i class="icon-focus-add"></i></i>
             <span>Accumulation</span>

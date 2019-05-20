@@ -6,6 +6,7 @@ import {Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
+import { ToggleRiskLinkEDMAndRDMSelected } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
   PatchRiskLinkAction,
@@ -26,7 +27,6 @@ export class WorkspaceRiskLinkComponent implements OnInit {
 
   listEDM: any = [];
   listRDM: any = [];
-  selectedEDMOrRDM: string;
 
   selectedAnalysis: any = [];
   selectedPortfolio: any = [];
@@ -344,8 +344,6 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     },
   ];
 
-  currentStep = 0;
-
   @Select(RiskLinkState)
   state$: Observable<RiskLinkModel>;
   state: RiskLinkModel = null;
@@ -359,48 +357,25 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   dataList(data = null) {
-    if (data) {
-      return _.toArray(data);
-    }
+    if (data) { return _.toArray(data); }
     return _.toArray(this.state.listEdmRdm.data);
   }
 
   toggleItems(RDM) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({RDM}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({RDM, action: 'selectOne'}));
     this.closePrevent = false;
   }
 
   toggleItemsListRDM(RDM) {
-    const selectedRDMItems = this.listRDM.filter( RM => RM.selected);
-    const selectedEDMItems = this.listEDM.filter( EM => EM.selected);
-    const nbrSelected = selectedEDMItems.length + selectedRDMItems.length;
-    if (nbrSelected === 0) {
-      RDM.selected = true;
-      this.selectedEDMOrRDM = RDM.type;
-      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: true}));
-    } else {
-      if (!RDM.selected) {
-        this.unselectEDMRDM();
-        RDM.selected = true;
-        this.selectedEDMOrRDM = RDM.type;
-      } else {
-        this.unselectEDMRDM();
-        this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-        this.selectedEDMOrRDM = null;
-      }
-    }
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelected({RDM}));
   }
 
   selectAll() {
-    this.listEdmRdm.forEach((e) => {
-      e.selected = true;
-    });
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({action: 'selectAll'}));
   }
 
   unselectAll() {
-    this.listEdmRdm.forEach((e) => {
-      e.selected = false;
-    });
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({action: 'unselectAll'}));
   }
 
   unselectEDMRDM() {
@@ -438,11 +413,6 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   selectedItem() {
     this.fillLists();
     this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: false}));
-    if (this.listRDM.length > 0 && this.listEDM.length > 0) {
-      this.currentStep = 1;
-    } else {
-      this.currentStep = 0;
-    }
     const array = _.toArray(this.state.listEdmRdm.selectedListEDMAndRDM);
     if (array.length > 0)  {
       this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
@@ -452,7 +422,6 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   scanItem(item) {
-    console.log('i here');
     item.scanned = false;
     setTimeout(() =>
       item.scanned = true, 1000
@@ -460,33 +429,10 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   selectStep(value) {
-    if (value === 0 && this.currentStep === 1) {
-      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-      this.refreshAll();
-      this.selectedItem();
-    }
-    if (value === 1 && this.currentStep === 2) {
-      this.currentStep = 1;
-      this.listEDM.forEach((e) => {
-          e.selected = false;
-        }
-      );
-      this.listRDM.forEach((e) => {
-          e.selected = false;
-        }
-      );
-      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: false}));
-      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-    }
-    if (value === 0 && this.currentStep === 2) {
-      this.selectStep(1);
-      this.selectStep(0);
-    }
   }
 
   displayImported() {
-    if (this.currentStep === 1) {
-      this.currentStep = 2;
+    if (this.state.currentStep === 1) {
       this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     }
   }
@@ -507,12 +453,12 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     // this.currentSelectedItem = row;
     const selectedRowsAnalysis = this.tableLeftAnalysis.filter(ws => ws.selected === true);
     const selectedRowsPortfolio = this.tableLeftProtfolio.filter(ws => ws.selected === true);
-    this.selectedEDMOrRDM === 'RDM' ? this.selectedAnalysis = selectedRowsAnalysis : this.selectedPortfolio = selectedRowsPortfolio;
+    this.state.listEdmRdm.selectedEDMOrRDM === 'rdm' ? this.selectedAnalysis = selectedRowsAnalysis : this.selectedPortfolio = selectedRowsPortfolio;
   }
 
   selectSection(from, to) {
     let tableUpdated: any ;
-    if (this.selectedEDMOrRDM === 'RDM') {
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
       tableUpdated = this.tableLeftAnalysis;
     } else {
       tableUpdated = this.tableLeftProtfolio;
@@ -527,15 +473,15 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   getScrollableCols() {
-    if (this.selectedEDMOrRDM === 'RDM') { return this.scrollableColsAnalysis; } else { return this.scrollableColsPortfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') { return this.scrollableColsAnalysis; } else { return this.scrollableColsPortfolio; }
   }
 
   getFrozenCols() {
-    if (this.selectedEDMOrRDM === 'RDM') { return this.frozenColsAnalysis; } else { return this.frozenColsPortfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') { return this.frozenColsAnalysis; } else { return this.frozenColsPortfolio; }
   }
 
   getTableData() {
-    if (this.selectedEDMOrRDM === 'RDM') { return this.tableLeftAnalysis; } else { return this.tableLeftProtfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM=== 'rdm') { return this.tableLeftAnalysis; } else { return this.tableLeftProtfolio; }
   }
 
   changeCollapse(value) {

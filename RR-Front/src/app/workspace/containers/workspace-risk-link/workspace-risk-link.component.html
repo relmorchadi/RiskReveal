@@ -29,7 +29,7 @@
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
         <div class="body-wrap-header-step">
-          <nz-steps [nzCurrent]="currentStep" nzProgressDot>
+          <nz-steps [nzCurrent]="state.currentStep" nzProgressDot>
             <nz-step style="cursor: pointer" (click)="selectStep(0)" nzTitle="Step 1"
                      nzDescription="Select EDM & RDM"></nz-step>
             <nz-step style="cursor: pointer" class="coming-up" (click)="selectStep(1)" nzTitle="Step 2"
@@ -258,8 +258,8 @@
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
-                  <span *ngIf="selectedEDMOrRDM === 'RDM'">Select Analysis For Import</span>
-                  <span *ngIf="selectedEDMOrRDM === 'EDM'">Select Portfolio For Import</span>
+                  <span *ngIf="state.listEdmRdm.selectedEDMOrRDM === 'rdm'">Select Analysis For Import</span>
+                  <span *ngIf="state.listEdmRdm.selectedEDMOrRDM === 'edm'">Select Portfolio For Import</span>
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter"></i>

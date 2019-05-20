@@ -1,6 +1,7 @@
 package com.scor.rr.domain.dto;
 
 import com.scor.rr.domain.ContractSearchResult;
+import com.scor.rr.domain.ProjectView;
 
 import java.util.Date;
 import java.util.List;
@@ -11,7 +12,7 @@ import static java.util.Optional.ofNullable;
 
 public class WorkspaceDetailsDTO {
 
-    private String worspaceName;
+    private String workspaceName;
     private String cedantCode;
     private String cedantName;
     private String subsidiaryId;
@@ -22,13 +23,14 @@ public class WorkspaceDetailsDTO {
     private String subsidiaryLedgerId;
     List<String> treatySections;
     List<String> years;
+    List<ProjectView> projects;
 
     public WorkspaceDetailsDTO() {
     }
 
-    public WorkspaceDetailsDTO(List<ContractSearchResult> items, List<String> years) {
+    public WorkspaceDetailsDTO(List<ContractSearchResult> items, List<String> years, List<ProjectView> projects) {
         ContractSearchResult first = items.get(0);
-        this.worspaceName = first.getWorkspaceName();
+        this.workspaceName = first.getWorkspaceName();
         this.cedantCode = first.getCedantCode();
         this.cedantName = first.getCedantName();
         this.subsidiaryId = ofNullable(first.getSubsidiaryid()).map(String::valueOf).orElse(null);
@@ -40,14 +42,15 @@ public class WorkspaceDetailsDTO {
         this.inceptionDate= first.getInceptionDate();
         this.expiryDate = first.getExpiryDate();
         this.subsidiaryLedgerId= first.getSubsidiaryLedgerid();
+        this.projects= projects;
     }
 
-    public String getWorspaneName() {
-        return worspaceName;
+    public String getWorkspaceName() {
+        return workspaceName;
     }
 
-    public void setWorspaceName(String worspaceName) {
-        this.worspaceName = worspaceName;
+    public void setWorkspaceName(String workspaceName) {
+        this.workspaceName = workspaceName;
     }
 
     public String getCedantCode() {
@@ -90,26 +93,6 @@ public class WorkspaceDetailsDTO {
         this.ledgerName = ledgerName;
     }
 
-    public List<String> getTreatySections() {
-        return treatySections;
-    }
-
-    public void setTreatySections(List<String> treatySections) {
-        this.treatySections = treatySections;
-    }
-
-    public String getWorspaceName() {
-        return worspaceName;
-    }
-
-    public List<String> getYears() {
-        return years;
-    }
-
-    public void setYears(List<String> years) {
-        this.years = years;
-    }
-
     public Date getInceptionDate() {
         return inceptionDate;
     }
@@ -132,5 +115,29 @@ public class WorkspaceDetailsDTO {
 
     public void setSubsidiaryLedgerId(String subsidiaryLedgerId) {
         this.subsidiaryLedgerId = subsidiaryLedgerId;
+    }
+
+    public List<String> getTreatySections() {
+        return treatySections;
+    }
+
+    public void setTreatySections(List<String> treatySections) {
+        this.treatySections = treatySections;
+    }
+
+    public List<String> getYears() {
+        return years;
+    }
+
+    public void setYears(List<String> years) {
+        this.years = years;
+    }
+
+    public List<ProjectView> getProjects() {
+        return projects;
+    }
+
+    public void setProjects(List<ProjectView> projects) {
+        this.projects = projects;
     }
 }

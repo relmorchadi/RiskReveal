@@ -6,9 +6,7 @@
 .table-ngPrime {
   ::ng-deep {
 
-    .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
-      margin-top: -100px;
-    }
+
 
     .ant-checkbox-checked .ant-checkbox-inner {
       background-color: #0700cf;
@@ -210,4 +208,8 @@
   font-size: 28px;
   margin-right: 10px;
   cursor: pointer;
+}
+
+.ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
+  margin-top: -100px;
 }
