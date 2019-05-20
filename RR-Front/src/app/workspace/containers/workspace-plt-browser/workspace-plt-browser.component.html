@@ -164,18 +164,18 @@
                     <td>
                       <div class="td-wrapper-check">
                         <div>
-                          <i [ngClass]="{'icon-check-circle': (selectPltById(pltId) | async)?.isScorCurrent, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorCurrent }"></i>
+                          <i [ngClass]="{'icon-check': (selectPltById(pltId) | async)?.isScorCurrent, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorCurrent }"></i>
                         </div>
                       </div>
                     </td>
                     <td>
                       <div class="td-wrapper-check">
-                        <i [ngClass]="{'icon-check-circle': (selectPltById(pltId) | async)?.isScorDefault, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorDefault }"></i>
+                        <i [ngClass]="{'icon-check': (selectPltById(pltId) | async)?.isScorDefault, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorDefault }"></i>
                       </div>
                     </td>
                     <td>
                       <div class="td-wrapper-check">
-                        <i [ngClass]="{'icon-check-circle': (selectPltById(pltId) | async)?.isScorGenerated, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorGenerated }"></i>
+                        <i [ngClass]="{'icon-check': (selectPltById(pltId) | async)?.isScorGenerated, 'icon-remove_24px': !(selectPltById(pltId) | async)?.isScorGenerated }"></i>
                       </div>
                     </td>
                   </ng-container>
