@@ -13,14 +13,14 @@ export class RiskApi {
   }
 
   searchRiskLinkData(): Observable<any> {
-    return this.http.get(`${environment.API_URI}edm-rdm`);
+    return this.http.get(`${this.URL}edm-rdm`);
   }
 
   searchRiskLinkAnalysis(): Observable<any> {
-    return this.http.get(`${environment.API_URI}analysis`);
+    return this.http.get(`${this.URL}analysis`);
   }
 
   searchRiskLinkPortfolio(): Observable<any> {
-    return this.http.get(`${environment.API_URI}portfolio`);
+    return this.http.get(`${this.URL}portfolio`);
   }
 }
