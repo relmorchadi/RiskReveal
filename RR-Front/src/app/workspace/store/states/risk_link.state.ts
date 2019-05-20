@@ -306,6 +306,7 @@ export class RiskLinkState implements NgxsOnInit {
         }
       }
     );
+    ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
     ctx.patchState({
       listEdmRdm: {
         ...state.listEdmRdm,

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -6,20 +6,23 @@ import {Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
-import { ToggleRiskLinkEDMAndRDMSelected } from '../../store/actions/risk_link.actions';
+import {ToggleRiskLinkEDMAndRDMSelected} from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
-  PatchRiskLinkAction,
-  PatchRiskLinkCollapseAction, PatchRiskLinkDisplayAction,
-  PatchRiskLinkFinancialPerspectiveAction, SelectRiskLinkEDMAndRDM, ToggleRiskLinkEDMAndRDM
+  PatchRiskLinkCollapseAction,
+  PatchRiskLinkDisplayAction,
+  PatchRiskLinkFinancialPerspectiveAction,
+  SelectRiskLinkEDMAndRDM,
+  ToggleRiskLinkEDMAndRDM
 } from '../../store/actions';
 
 @Component({
   selector: 'app-workspace-risk-link',
   templateUrl: './workspace-risk-link.component.html',
-  styleUrls: ['./workspace-risk-link.component.scss']
+  styleUrls: ['./workspace-risk-link.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspaceRiskLinkComponent implements OnInit {
+export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   lastSelectedIndex = null;
 
@@ -27,9 +30,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
 
   listEDM: any = [];
   listRDM: any = [];
-
-  selectedAnalysis: any = [];
-  selectedPortfolio: any = [];
+  serviceSubscription: any;
 
   listEdmRdm: any = [
     {id: 1, name: 'AA2012_syntheticCurve_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
@@ -41,8 +42,22 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
     {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/4'},
     {id: 9, name: 'Aon_IF_Flood_Example_E', type: 'EDM', selected: false, scanned: false, Reference: '0/2'},
-    {id: 10, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM', type: 'EDM', selected: false, scanned: false, Reference: '0/15'},
-    {id: 11, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {
+      id: 10,
+      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM',
+      type: 'EDM',
+      selected: false,
+      scanned: false,
+      Reference: '0/15'
+    },
+    {
+      id: 11,
+      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM',
+      type: 'RDM',
+      selected: false,
+      scanned: false,
+      Reference: '0/13'
+    },
     {id: 12, name: 'CC_ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
     {id: 13, name: 'CG1801_DEU_Allianz_DEFL_R', type: 'RDM', selected: false, scanned: false, Reference: '0/41'},
     {id: 14, name: 'CG1801_DEU_Allianz_DEFL_E', type: 'EDM', selected: false, scanned: false, Reference: '0/41'},
@@ -52,9 +67,9 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
   ];
 
-  tableLeftAnalysis: any = [ ];
+  tableLeftAnalysis: any = [];
 
-  tableLeftProtfolio: any = [ ];
+  tableLeftProtfolio: any = [];
 
   scrollableColsAnalysis = [
     {field: 'description', header: 'Description', width: '150px'},
@@ -176,18 +191,25 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   ngOnInit() {
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.state$.subscribe(value => this.state = _.merge({}, value));
-    this.store.select(st => st.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe( dt => {
+    this.serviceSubscription = [
+    this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe(dt => {
       this.tableLeftAnalysis = _.toArray(dt);
       this.cdRef.detectChanges();
-    });
-    this.store.select(st => st.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe( dt => {
+    }),
+    this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe(dt => {
       this.tableLeftProtfolio = _.toArray(dt);
       this.cdRef.detectChanges();
-    });
+    })];
+  }
+
+  ngOnDestroy() {
+    this.serviceSubscription.forEach(sub => sub.unsubscribe());
   }
 
   dataList(data = null) {
-    if (data) { return _.toArray(data); }
+    if (data) {
+      return _.toArray(data);
+    }
     return _.toArray(this.state.listEdmRdm.data);
   }
 
@@ -227,11 +249,14 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   openCloseDropdown() {
-    this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: !this.state.display.displayDropdownRDMEDM}));
+    this.store.dispatch(new PatchRiskLinkDisplayAction({
+      key: 'displayDropdownRDMEDM',
+      value: !this.state.display.displayDropdownRDMEDM
+    }));
   }
 
   closeDropdown() {
-    if(this.state.display.displayDropdownRDMEDM && this.closePrevent)
+    if (this.state.display.displayDropdownRDMEDM && this.closePrevent)
       this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: false}));
     this.closePrevent = true;
   }
@@ -244,7 +269,7 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     this.fillLists();
     this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: false}));
     const array = _.toArray(this.state.listEdmRdm.selectedListEDMAndRDM);
-    if (array.length > 0)  {
+    if (array.length > 0) {
       this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
     } else {
       this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: false}));
@@ -283,11 +308,11 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     // this.currentSelectedItem = row;
     const selectedRowsAnalysis = this.tableLeftAnalysis.filter(ws => ws.selected === true);
     const selectedRowsPortfolio = this.tableLeftProtfolio.filter(ws => ws.selected === true);
-    this.state.listEdmRdm.selectedEDMOrRDM === 'rdm' ? this.selectedAnalysis = selectedRowsAnalysis : this.selectedPortfolio = selectedRowsPortfolio;
+
   }
 
   selectSection(from, to) {
-    let tableUpdated: any ;
+    let tableUpdated: any;
     if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
       tableUpdated = this.tableLeftAnalysis;
     } else {
@@ -303,18 +328,26 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   getScrollableCols() {
-    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') { return this.scrollableColsAnalysis; } else { return this.scrollableColsPortfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+      return this.scrollableColsAnalysis;
+    } else {
+      return this.scrollableColsPortfolio;
+    }
   }
 
   getFrozenCols() {
-    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') { return this.frozenColsAnalysis; } else { return this.frozenColsPortfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+      return this.frozenColsAnalysis;
+    } else {
+      return this.frozenColsPortfolio;
+    }
   }
 
   getTableData() {
     if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
-      return _.toArray(this.state.selectedAnalysisAndPortoflio.selectedAnalysis.data);
+      return this.tableLeftAnalysis;
     } else {
-      return _.toArray(this.state.selectedAnalysisAndPortoflio.selectedPortfolio.data);
+      return this.tableLeftProtfolio;
     }
   }
 
