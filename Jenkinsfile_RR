@@ -225,7 +225,7 @@ node ('dcvprdadm04') {
         ["${module}" : transformIntoStep(module, "${pompath}")]
         }
  
-        /*stage ('backend deployment') {
+        stage ('backend deployment') {
         parallel stepsForParallel
         step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
         }
@@ -240,7 +240,7 @@ node ('dcvprdadm04') {
         throw (error)  
         }       
         step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
-        }*/
+        }
         
         //End of pipeline reached if no errors
         currentBuild.result = "SUCCESS"
