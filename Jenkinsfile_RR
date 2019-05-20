@@ -58,7 +58,7 @@ node ('dcvprdadm04') {
         }  
         // The properties rootpomxml, rootpompath and application_name is specific to the project, indicate the right path to reach the root pom
         rootpomxml = "${workspace}/pom.xml"
-        frontpomxml = "${workspace}/webui/pom.xml"
+        frontpomxml = "${workspace}/RR-Front/pom.xml"
         rootpompath = "${workspace}"
         rootpom = readMavenPom file: "${rootpomxml}"
         frontpom = readMavenPom file: "${frontpomxml}"
