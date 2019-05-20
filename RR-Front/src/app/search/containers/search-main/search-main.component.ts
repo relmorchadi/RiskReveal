@@ -246,46 +246,27 @@ export class SearchMainComponent implements OnInit {
 
   private _loadContracts(offset = '0', size = '100') {
     this.loading = true;
-    if (this.searchedItems.length > 0) {
-      const keys = [];
-      const values = [];
-      this.searchedItems.forEach(
+    const keys = [];
+    const values = [];
+    this.searchedItems.forEach(
         (e) => {
           keys.push(_.camelCase(e.key));
           values.push(e.value);
         }
       );
-      keys.forEach(
+    keys.forEach(
         (e, index) => {
           this.contractFilterFormGroup.value[e] = values[index];
           console.log(this.contractFilterFormGroup.value);
         }
       );
-      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset, size)
+    this._searchService.searchGlobal(_.merge({keyword: this.globalSearchItem}, this.contractFilterFormGroup.value), offset, size)
         .subscribe((data: any) => {
           this.contracts = data.content.map(item => ({...item, selected: false}));
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
         });
-    } else if (this.globalSearchItem !== '') {
-      this._searchService.searchGlobal(this.globalSearchItem)
-        .subscribe((data: any) => {
-            this.contracts = data.content.map(item => ({...item, selected: false}));
-            this.loadingMore = false;
-            this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-            this.loading = false;
-          }
-        );
-    } else {
-      this._searchService.searchContracts(this.contractFilterFormGroup.value, offset, size)
-        .subscribe((data: any) => {
-          this.contracts = data.content.map(item => ({...item, selected: false}));
-          this.loadingMore = false;
-          this.loading = false;
-          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-        });
-    }
   }
 
   navigateBack() {
