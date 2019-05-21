@@ -118,7 +118,7 @@ export class PltMainState implements NgxsOnInit {
         mergeMap( (data) => {
           ctx.patchState({
             data: Object.assign({},
-              ...data.content.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,
+              ...data.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,opened: false,
                   userTag: _.range(_.random(3) || _.random(2)).map(i => this.userTags[i]),
                   systemTag: _.range(_.random(7) || _.random(5)).map(i => this.systemTags[i])
                 }})
@@ -168,22 +168,19 @@ export class PltMainState implements NgxsOnInit {
     const state = ctx.getState();
 
     ctx.patchState({
-      data: _.merge({}, state.data, {[payload.pltId]: {opened: true, selected: true}})
+      data: _.merge({}, state.data, {[payload.pltId]: {opened: true}})
     });
   }
 
   @Action(fromPlt.ClosePLTinDrawer)
   ClosePLTinDrawer(ctx: StateContext<pltMainModel>, { payload }: fromPlt.ClosePLTinDrawer) {
     const state = ctx.getState();
-
-    let newData = {};
-
-    _.forEach(state.data, (v, k) => {
-      newData[k] = !v.opened ? newData[k] : _.omit(v, 'opened');
-    });
+    const {
+      pltId
+    } = payload;
 
     ctx.patchState({
-      data: _.merge({}, state.data, newData)
+      data: _.merge({}, state.data,{[pltId]: {opened: false}} )
     });
   }
 
@@ -213,10 +210,8 @@ export class PltMainState implements NgxsOnInit {
 
     if ([...filters.systemTag, ...filters.userTag].length > 0) {
         _.forEach(state.data, (plt, k) => {
-          if (_.some([...filters.userTag, ...filters.systemTag], (userTag) => _.find([...plt.userTag, ...plt.systemTag], tag => {
-            console.log([...plt.userTag, ...plt.systemTag]);
-            return tag.tagId == userTag;
-          }))) {
+          console.log(_.some([...filters.userTag, ...filters.systemTag], (userTag) => _.find([...plt.userTag, ...plt.systemTag], tag => tag.tagId == userTag)))
+          if (_.some([...filters.userTag, ...filters.systemTag], (userTag) => _.find([...plt.userTag, ...plt.systemTag], tag => tag.tagId == userTag))) {
             newData[k] = {...plt, visible: true};
           } else {
             newData[k] = {...plt, visible: false};
@@ -243,11 +238,6 @@ export class PltMainState implements NgxsOnInit {
         })
       })
     }*/
-
-    _.forEach(newData, (v, k) => {
-      console.log(newData[k].visible);
-    });
-
     ctx.patchState({
       data: newData
     });

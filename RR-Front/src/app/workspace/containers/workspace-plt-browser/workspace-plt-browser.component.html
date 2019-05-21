@@ -122,7 +122,7 @@
                       <li nz-menu-item (click)="openPltInDrawer(pltId)"><i nz-icon nzType="eye" nzTheme="fill"></i> View Details</li>
                     </ul>
                   </ng-template>
-                  <!--<td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">-->
+                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
               <!--<div *ngIf="plt.selected">-->
               <!--<i nz-icon nzType="eye" nzTheme="outline"></i>-->
               <!--</div>-->
@@ -167,42 +167,57 @@
             </tr>
             </tbody>
           </nz-table-->
-              <p-table [columns]="pltColumns" [value]="listOfPlts"  [resizableColumns]="true">
+              <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
+              <p-table [columns]="pltColumns" [value]="listOfPltsData | tableSortAndFilter : [sortData,filterData]"
+                       [resizableColumns]="true"
+                       [(contextMenuSelection)]="selectedPlt"
+                       [contextMenu]="cm"
+                       [scrollHeight]="'520px'"
+                       [scrollable]="true"
+                       [totalRecords]="listOfPltsData.length"
+                       sortMode="multiple"
+              >
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>
                     <col style="min-width: 25px">
-                    <col *ngFor="let col of columns" [ngStyle]="{'min-width': col?.width}">
+                    <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
                   </colgroup>
                 </ng-template>
                 <ng-template pTemplate="header" let-columns>
                   <tr>
-                    <th nzShowCheckbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)"
-                        [nzIndeterminate]="someItemsAreSelected" pResizableColumn [ngStyle]="{'width': '25px'}"></th>
-                    <th *ngFor="let col of columns; let i = index" [ngStyle]="{'width': col?.width}" pResizableColumn>
-                      <span *ngIf="col.header.length > 0" style="width: 80%">{{col.header}}</span>
+                    <th nzShowCheckbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="someItemsAreSelected" pResizableColumn [ngStyle]="{'width': '25px'}"></th>
+                    <th *ngFor="let col of columns; let i = index" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
+                      <span style="display:flex">
+                        {{col?.header}}
+                        <p-sortIcon *ngIf="col?.sorted" [field]="col.fields"></p-sortIcon>
+                      </span>
                       <i *ngIf="col.icon" [ngClass]="col.icon"></i>
                     </th>
                   </tr>
+                  <!--tr *ngFor="let col of columns;">
+                    <div class="table-sort-header" *ngIf="col?.filtred">
+                      <input *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)">
+                    </div>
+                  </tr-->
                 </ng-template>
-                <ng-template pTemplate="body" let-rowData let-columns="columns">
-                  <tr>
-                    <td>
-                      <label nz-checkbox [nzChecked]="(selectPltById(rowData) | async).selected"
-                             (nzCheckedChange)="selectSinglePLT(rowData,$event)"></label>
+                <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
+                  <tr [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="rowData?.visible">
+                    <td [ngStyle]="{'width': '25px'}">
+                      <label nz-checkbox [nzChecked]="rowData.selected"
+                             (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
                     </td>
-                    <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData,i,$event)">
+                    <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
                       <ng-container *ngIf="i === 1">
-                        <div>{{rowData}}</div>
+                        <div>{{rowData.pltId | textLength}}</div>
                       </ng-container>
                       <ng-container *ngIf="i > 1">
                         <ng-container *ngIf="col?.type == 'field' && col?.type != 'checkbox'">
-                          <div>{{(selectPltById(rowData) | async)[col.fields]}}</div>
+                          <div>{{rowData[col.fields]}}</div>
                         </ng-container>
                         <ng-container *ngIf="col?.type == 'icon'">
                           <div class="td-wrapper-check">
                             <div>
-                              <i
-                                [ngClass]="{ 'icon-check': (selectPltById(rowData) | async)?.isScorCurrent, 'icon-remove_24px': !(selectPltById(rowData) | async)?.isScorCurrent }"></i>
+                              <i [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
                             </div>
                           </div>
                         </ng-container>
@@ -252,7 +267,7 @@
           <div class="basket-content" nz-row>
             <div class="title-section-drawer">
               <div nz-col nzSpan="18">
-                <h3>4 PLTs selected</h3>
+                <h3>{{ selectedListOfPlts.length }} PLT{{ selectedListOfPlts.length == 1 ? '' : 's'}} selected</h3>
               </div>
               <div nz-col nzSpan="4">
                 <nz-dropdown [nzTrigger]="'click'">
@@ -324,7 +339,7 @@
           </div>
         </nz-tab>
 
-        <nz-tab [nzTitle]="pltDetails">
+        <nz-tab [nzTitle]="pltDetails" [nzDisabled]="!sumnaryPltDetailsPltId">
           <ng-template #pltDetails>
 
             <div>

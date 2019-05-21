@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
@@ -32,7 +32,7 @@ export class WorkspaceMainComponent implements OnInit {
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute, private _searchService: SearchService, private store: Store, private _router: Router) {
+  constructor(private _helper: HelperService, private cdRef: ChangeDetectorRef, private route: ActivatedRoute, private _searchService: SearchService, private store: Store, private _router: Router) {
 
   }
 
@@ -42,7 +42,12 @@ export class WorkspaceMainComponent implements OnInit {
     this.route.children[0].params.subscribe(
       ({wsId, year}: any) => {
         this.getSearchedWorkspaces(wsId, year);
+        this.cdRef.detectChanges();
       });
+    this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
+      dt =>
+        this.cdRef.detectChanges()
+    );
   }
 
   getSearchedWorkspaces(wsId = null, year = null) {
@@ -111,6 +116,7 @@ export class WorkspaceMainComponent implements OnInit {
           this._helper.updateWorkspaceItems();
           this._helper.updateRecentWorkspaces();
           this.tabIndex = this.state.openedTabs.length;
+          this.cdRef.detectChanges();
         }
       );
     }

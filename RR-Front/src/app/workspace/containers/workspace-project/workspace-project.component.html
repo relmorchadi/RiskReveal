@@ -39,7 +39,7 @@
               <span>{{project?.projectId}}</span>
               <span>{{project?.name}}</span>
             </div>
-            <div class="icon-card-wrapper">
+            <div class="icon-card-wrapper" [ngStyle]="{'display': project?.selected ? 'flex' : 'none'}">
               <i class="icon-ellipsis-h"></i>
               <i *ngIf="project?.selected" class="icon-check_24px"></i>
               <span *ngIf="!project?.selected"></span>
@@ -81,7 +81,7 @@
             </div>
           </div>
           <div class="project-kpi-details pb-3">
-            <p *ngIf="project?.description" class="project-kpi-details-title pl-4 py-2">
+            <p class="project-kpi-details-title">
              {{project?.description}}
             </p>
             <div class="border-top d-flex project-kpi-details-content">

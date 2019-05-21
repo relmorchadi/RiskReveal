@@ -9,8 +9,7 @@ import {map} from 'rxjs/operators';
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
-  styleUrls: ['./workspace-plt-browser.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./workspace-plt-browser.component.scss']
 })
 export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
@@ -18,8 +17,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   private Subscriptions: any[] = [];
   searchAddress: string;
   listOfPlts: any[];
+  listOfPltsData: any[];
   selectedListOfPlts: any[];
+  filterData;
   sortData;
+
   params: any;
   sortMap = {
     pltId: null,
@@ -34,10 +36,16 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     grain: null,
     vendorSystem: null,
     rap: null,
-    d: null,
-    note: null,
+    isScorCurrent: null,
+    isScorDefault: null,
+    isScorGenerated: null,
   };
   lastSelectedId;
+
+  contextMenuItems = [
+    { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
+    { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) }
+  ];
 
   pltColumns = [
     {fields: '', header: 'User Tags', width: '50px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
@@ -47,7 +55,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {fields: 'regionPerilCode', header: 'Region Peril Code', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'vendorSystem', header: 'Vendor System', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'vendorSystem', header: 'Vendor System', width: '90px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
@@ -304,6 +312,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.someItemsAreSelected= false;
     this.selectAll= false;
     this.listOfPlts= [];
+    this.listOfPltsData= [];
     this.selectedListOfPlts= [];
     this.lastSelectedId = null;
     this.drawerIndex= 0;
@@ -321,11 +330,29 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ngOnInit(){
     this.Subscriptions.push(
       this.data$.subscribe( data => {
-        this.listOfPlts = _.keys(data);
-        this.selectedListOfPlts = _.filter(_.keys(data), k => data[k].selected);
-        this.sumnaryPltDetailsPltId = _.filter(this.selectedListOfPlts, k => data[k].opened)[0] || null;
+        let d1= [];
+        let d2= [];
+        _.forEach(data, (v,k) => {
+          d1.push({...v,pltId: k});
+          d2.push(k);
+          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+        })
+        this.listOfPlts= d2;
+        this.listOfPltsData= d1;
+        this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+        this.detectChanges();
+      }),
+      this.data$.subscribe( data => {
         this.selectAll = this.selectedListOfPlts.length > 0 || this.selectedListOfPlts.length == this.listOfPlts.length;
         this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
+        this.detectChanges();
+      }),
+      this.data$.subscribe( data => {
+        _.forEach(data, (v,k) => {
+          if(v.opened) {
+            this.sumnaryPltDetailsPltId= k;
+          }
+        })
         this.detectChanges();
       }),
       this.getAttr('loading').subscribe( l => this.loading =l)
@@ -337,7 +364,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)))
   }
 
-  sort(sort: { key: string, value: string }): void {
+  /*sort(sort: { key: string, value: string }): void {
     let sortField = sort.key;
     let sortOrder = sort.value;
     if (sortField && sortOrder) {
@@ -364,16 +391,35 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       this.params= _.omit(this.params, [key])
     }
     this.loadData(this.params)
-  },500);
+  },500);*/
+
+  sort(sort: { key: string, value: string }): void {
+    if(sort.value){
+      this.sortData= _.merge({},this.sortData, {
+        [sort.key]: sort.value === "descend" ? 'desc' : 'asc'
+      })
+    }else{
+      this.sortData= _.omit(this.sortData, [sort.key])
+    }
+  }
+
+  filter (key: string, value)  {
+
+    if(value) {
+      this.filterData= _.merge({},this.filterData, {[key]: value})
+    } else {
+      this.filterData= _.omit(this.filterData, [key])
+    }
+    console.log(this.filterData);
+  }
+
+  selectedPlt: any;
 
   setFilter(filter: string, tag) {
       this.filters =
         _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
         _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
         _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
-
-    console.log(this.filters)
-
       this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
         filters: this.filters
       }))
@@ -392,20 +438,16 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.visible = false;
   }
 
-  closePltInDrawer(){
-    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer())
+  closePltInDrawer(pltId){
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}))
+  }
+
+  formatId(id) {
+
   }
 
   openPltInDrawer(plt) {
-    this.closePltInDrawer();
-    if(_.findIndex(this.selectedListOfPlts,el => el == plt) == -1) {
-      this.toggleSelectPlts(
-        _.zipObject(
-          this.selectedListOfPlts,
-          _.range(this.selectedListOfPlts.length).map(el => ({type : 'unselect'}))
-        )
-      )
-    }
+    this.closePltInDrawer(this.sumnaryPltDetailsPltId);
     this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}))
     this.openDrawer(1);
     this.getTagsForSummary();
@@ -519,16 +561,18 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if($event.ctrlKey || $event.shiftKey) {
       this.handlePLTClickWithKey(pltId,i,!isSelected, $event);
     }else{
+      this.lastSelectedId = i;
       this.toggleSelectPlts(
         _.zipObject(
           _.map(this.listOfPlts, plt => plt),
-          _.map(this.listOfPlts, plt =>  plt == pltId ? ({type: 'select'}) : ({type: 'unselect'}) )
+          _.map(this.listOfPlts, plt =>  plt == pltId && !isSelected ? ({type: 'select'}) : ({type: 'unselect'}) )
         )
       )
     }
   }
 
   private handlePLTClickWithKey(pltId: number,i: number,isSelected: boolean, $event: MouseEvent) {
+    console.log(i);
     if($event.ctrlKey){
       this.selectSinglePLT(pltId,isSelected);
       this.lastSelectedId=i;
@@ -536,10 +580,14 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
 
     if($event.shiftKey) {
+      console.log('SHIFT')
+      console.log(i,this.lastSelectedId)
       if(!this.lastSelectedId) this.lastSelectedId =0;
       if(this.lastSelectedId || this.lastSelectedId == 0) {
+        console.log(i,this.lastSelectedId)
         const max = _.max([i, this.lastSelectedId])
         const min = _.min([i, this.lastSelectedId])
+        console.log(max,min)
         this.toggleSelectPlts(
           _.zipObject(
             _.map(this.listOfPlts, plt => plt),

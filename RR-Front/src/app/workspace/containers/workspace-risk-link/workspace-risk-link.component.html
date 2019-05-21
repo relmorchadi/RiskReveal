@@ -1,17 +1,15 @@
 <app-left-menu></app-left-menu>
 <div class="workspace-main-content">
-  <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
+<!--   <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
            nz-button nzType="primary" nzSize="large" nzShape="circle">
      <i style="color: white;" nz-icon type="plus" theme="outline"></i>
    </button>
-   -->
-  <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
+   <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
      <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
      <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
      <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
      <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
-   </ul>
-   -->
+   </ul>-->
   <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
           nz-button nzType="primary" nzSize="default" nzShape="circle">
     <i style="color: #16617a;" nz-icon theme="outline">
@@ -127,15 +125,16 @@
           <div *ngIf="state.collapse.collapseHead" class="body-wrapper-body">
             <div class="body-wrapper-search" clickOutside (clickOutside)="closeDropdown()"
                  [ngClass]="{'body-wrapper-search-active': state.display.displayDropdownRDMEDM ,'body-wrapper-search-display': state.display.displayListRDMEDM}">
-              <div class="search-bar" (click)="openCloseDropdown()"
+              <div class="search-bar"
                    [ngClass]="{'search-bar-active': state.display.displayDropdownRDMEDM, 'search-bar-display': state.display.displayListRDMEDM}">
-                <i class="search-bar-icon-search" nz-icon nzType="search" nzTheme="outline"></i>
-                <div class="search-bar-text" *ngIf="!state.display.displayListRDMEDM">Select RDM</div>
-                <div class="search-bar-text displayed-info" *ngIf="state.display.displayListRDMEDM">
-                  <span class="search-bar-text-title">RDM</span>
-                  <span class="search-bar-text-subtitle">Add RDM</span>
+                <i class="search-bar-icon-search" (click)="openCloseDropdown()" nz-icon nzType="search" nzTheme="outline"></i>
+                <div class="search-bar-text" [ngStyle]="{'display': state.display.displayDropdownRDMEDM ? 'none' : 'flex'}" (click)="openCloseDropdown()" *ngIf="!state.display.displayListRDMEDM">Select EDM & RDM</div>
+                <input placeholder="Select EDM & RDM" [ngStyle]="{'display': state.display.displayDropdownRDMEDM ? 'flex' : 'none'}"  (input)="onInputSearch($event)">
+                <div class="search-bar-text displayed-info" [ngStyle]="{'display': state.display.displayDropdownRDMEDM ? 'none' : 'flex'}" (click)="openCloseDropdown()" *ngIf="state.display.displayListRDMEDM">
+                  <span class="search-bar-text-title">EDM & RDM</span>
+                  <span class="search-bar-text-subtitle">Add EDM & RDM</span>
                 </div>
-                <i class="search-bar-icon-down" nz-icon nzType="down" nzTheme="outline"></i>
+                <i class="search-bar-icon-down" (click)="openCloseDropdown()" nz-icon nzType="down" nzTheme="outline"></i>
               </div>
               <div class="search-bar-result" *ngIf="state.display.displayDropdownRDMEDM">
                 <div class="search-bar-result-icon">
@@ -293,13 +292,11 @@
                       <td *ngFor="let col of columns"
                           [ngClass]="{'selected-item': rowData?.selected}"
                           [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
-                        <div style=" display: flex;" *ngIf="col.field === 'selected'">
+                        <div style=" display: flex;" *ngIf="col.type === 'select'">
                           <label nz-checkbox [(ngModel)]="rowData.selected"></label>
                         </div>
-                        <div class="text-data" *ngIf="col.field !== 'selected'">{{rowData[col.field]}}</div>
-                        <div style="font-size:20px; color: #0700CF; text-align: center;"
-                             *ngIf="col.field === 'AlreadyImported'">
-                          <i [ngClass]="{'icon-assignment_returned_24px': rowData[col.field]}"></i></div>
+                        <div class="text-data" *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                        <div class="text-data" *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                       </td>
                     </tr>
                   </ng-template>

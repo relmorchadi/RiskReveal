@@ -25,6 +25,8 @@ import { TableSortAndFilterPipe } from '../core/pipes/table-sort-and-filter.pipe
     CommonModule,
     NgZorroAntdModule,
     HighlightDirective,
+    ContextMenuModule,
+    TableModule,
     ReactiveFormsModule,
     FormsModule,
     ...COMPONENTS
