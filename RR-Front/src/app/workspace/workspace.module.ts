@@ -11,6 +11,7 @@ import {GridsterModule} from 'angular-gridster2';
 import {workspaceRoutes} from './workspace.route';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SERVICE} from './services';
+import {ContextMenuModule} from 'primeng/primeng';
 
 @NgModule({
   declarations: [
@@ -18,9 +19,8 @@ import {SERVICE} from './services';
     ...PIPES, ...DIRECTIVES
   ],
   imports: [
-    GridsterModule,
     SharedModule,
-    TableModule,
+    GridsterModule,
     FormsModule,
     ReactiveFormsModule,
     NgMasonryGridModule,

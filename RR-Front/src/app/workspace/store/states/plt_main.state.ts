@@ -118,7 +118,7 @@ export class PltMainState implements NgxsOnInit {
         mergeMap( (data) => {
           ctx.patchState({
             data: Object.assign({},
-              ...data.content.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,
+              ...data.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,
                   userTag: _.range(_.random(3) || _.random(2)).map(i => this.userTags[i]),
                   systemTag: _.range(_.random(7) || _.random(5)).map(i => this.systemTags[i])
                 }})
