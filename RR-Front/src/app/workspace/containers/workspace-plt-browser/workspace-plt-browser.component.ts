@@ -9,8 +9,7 @@ import {map} from 'rxjs/operators';
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
-  styleUrls: ['./workspace-plt-browser.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./workspace-plt-browser.component.scss']
 })
 export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
@@ -44,7 +43,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   lastSelectedId;
 
   contextMenuItems = [
-    { label: 'View Detail', icon: 'pi pi-search', command: (event) => console.log(event) },
+    { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
     { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) }
   ];
 
@@ -331,22 +330,29 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ngOnInit(){
     this.Subscriptions.push(
       this.data$.subscribe( data => {
-        const t =performance.now()
         let d1= [];
         let d2= [];
         _.forEach(data, (v,k) => {
-          d1.push({...v,pltId: k})
+          d1.push({...v,pltId: k});
           d2.push(k);
           this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+        })
+        this.listOfPlts= d2;
+        this.listOfPltsData= d1;
+        this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+        this.detectChanges();
+      }),
+      this.data$.subscribe( data => {
+        this.selectAll = this.selectedListOfPlts.length > 0 || this.selectedListOfPlts.length == this.listOfPlts.length;
+        this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
+        this.detectChanges();
+      }),
+      this.data$.subscribe( data => {
+        _.forEach(data, (v,k) => {
           if(v.opened) {
             this.sumnaryPltDetailsPltId= k;
           }
         })
-        this.listOfPlts= d2;
-        this.listOfPltsData= d1;
-        console.log(performance.now() - t);
-        this.selectAll = this.selectedListOfPlts.length > 0 || this.selectedListOfPlts.length == this.listOfPlts.length;
-        this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
         this.detectChanges();
       }),
       this.getAttr('loading').subscribe( l => this.loading =l)
@@ -432,20 +438,16 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.visible = false;
   }
 
-  closePltInDrawer(){
-    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer())
+  closePltInDrawer(pltId){
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}))
+  }
+
+  formatId(id) {
+
   }
 
   openPltInDrawer(plt) {
-    this.closePltInDrawer();
-    if(_.findIndex(this.selectedListOfPlts,el => el == plt) == -1) {
-      this.toggleSelectPlts(
-        _.zipObject(
-          this.selectedListOfPlts,
-          _.range(this.selectedListOfPlts.length).map(el => ({type : 'unselect'}))
-        )
-      )
-    }
+    this.closePltInDrawer(this.sumnaryPltDetailsPltId);
     this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}))
     this.openDrawer(1);
     this.getTagsForSummary();
