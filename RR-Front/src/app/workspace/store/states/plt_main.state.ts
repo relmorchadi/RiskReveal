@@ -49,7 +49,7 @@ export class PltMainState implements NgxsOnInit {
 
   @Selector()
   static getProjects() {
-    return createSelector([PltMainState], (state: pltMainModel) => state.workspaceMain.openedWs.projects)
+    return (state: any) => state.workspaceMain.openedWs.projects
   }
   userTags = [
     {tagId: '1', tagName: 'Pricing V1', tagColor: '#893eff', innerTagContent: '1', innerTagColor: '#ac78ff', selected: false},
