@@ -12,16 +12,23 @@ export class RiskApi {
   constructor(private http: HttpClient) {
   }
 
-  searchRiskLinkData(): Observable<any> {
+  searchRiskLinkData(keyword = null): Observable<any> {
+    if (keyword) {
+      return this.http.get(`${this.URL}edm-rdm`, {params: {keyword}});
+    }
     return this.http.get(`${this.URL}edm-rdm`);
   }
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
     console.log(paramId, paramName);
-    return this.http.get(`${this.URL}analysis`, {params: {rdmId: paramId, rdmName: paramName}});
+    return this.http.get(`${this.URL}analysis`);
   }
 
   searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
+    console.log(paramId, paramName , `${this.URL}portfolio?edmId=${paramId}&edmName=${paramName}`);
+    this.http.get(`${this.URL}portfolio?edmId=${paramId}&edmName=${paramName}`).subscribe(
+      (dt: any) => console.log(dt.content)
+    );
     return this.http.get(`${this.URL}portfolio`, {params: {edmId: paramId, edmName: paramName}});
   }
 }

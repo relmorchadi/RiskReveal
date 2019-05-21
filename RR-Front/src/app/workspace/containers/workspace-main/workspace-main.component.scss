@@ -72,6 +72,11 @@
   color: white;
   box-shadow: none;
   text-shadow: none;
+  ::ng-deep{
+    .anticon {
+      margin-left: 0 !important;
+    }
+  }
 }
 .detail-wrapper{
   display:flex;

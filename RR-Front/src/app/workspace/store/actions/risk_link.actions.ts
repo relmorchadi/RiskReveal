@@ -18,18 +18,23 @@ export class PatchRiskLinkFinancialPerspectiveAction {
   constructor(public payload: any) {}
 }
 
-export class SelectRiskLinkEDMAndRDM {
+export class SelectRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Select Risk Link EDM And RDM';
   constructor() {}
 }
 
-export class ToggleRiskLinkEDMAndRDM {
+export class ToggleRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Toggle Risk Link EDM And RDM';
   constructor(public payload: any) {}
 }
 
-export class ToggleRiskLinkEDMAndRDMSelected {
-  static readonly type = '[Risk Link] Toggle Risk Link Selected EDM And RDM';
+export class ToggleRiskLinkEDMAndRDMSelectedAction {
+  static readonly type = '[Risk Link] Select Display Portfolio Or Analysis';
+  constructor(public payload: any) {}
+}
+
+export class SearchRiskLinkEDMAndRDMAction {
+  static readonly type = '[Risk Link] Search EDMs And RDMs';
   constructor(public payload: any) {}
 }
 
