@@ -3,6 +3,9 @@
 *.iws
 *.iml
 *.ipr
-RR-Front/node/
-RR-Front/node/**
+/RR-Front/node/
+/RR-Front/node
+/RR-Front/node/**
+/RR-Front/node_modules/**
+/RR-Backend/src/main/resources/static/
 .project
