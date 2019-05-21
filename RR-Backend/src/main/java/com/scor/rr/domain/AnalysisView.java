@@ -24,7 +24,13 @@ public class AnalysisView {
     private String groupType;
     @Column(name = "cedant")
     private String cedant;
+    @Column(name = "rdmId")
+    private Integer rdmId;
+    @Column(name = "rdmName")
+    private String rdmName;
 
+    public AnalysisView() {
+    }
 
     public String getId() {
         return id;
@@ -88,22 +94,20 @@ public class AnalysisView {
         this.cedant = cedant;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        AnalysisView that = (AnalysisView) o;
-        return Objects.equals(id, that.id) &&
-                Objects.equals(analysisId, that.analysisId) &&
-                Objects.equals(analysisName, that.analysisName) &&
-                Objects.equals(description, that.description) &&
-                Objects.equals(engineVersion, that.engineVersion) &&
-                Objects.equals(groupType, that.groupType) &&
-                Objects.equals(cedant, that.cedant);
+    public Integer getRdmId() {
+        return rdmId;
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, analysisId, analysisName, description, engineVersion, groupType, cedant);
+    public void setRdmId(Integer rdmId) {
+        this.rdmId = rdmId;
     }
+
+    public String getRdmName() {
+        return rdmName;
+    }
+
+    public void setRdmName(String rdmName) {
+        this.rdmName = rdmName;
+    }
+
 }

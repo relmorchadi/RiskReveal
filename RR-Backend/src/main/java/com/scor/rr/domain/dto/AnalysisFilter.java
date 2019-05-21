@@ -11,6 +11,8 @@ public class AnalysisFilter {
     private String engineVersion;
     private String groupType;
     private String cedant;
+    private Integer rdmId;
+    private String rdmName;
 
     public AnalysisFilter() {
     }
@@ -69,5 +71,21 @@ public class AnalysisFilter {
 
     public void setCedant(String cedant) {
         this.cedant = StringUtils.isEmpty(cedant) ? null: cedant;
+    }
+
+    public Integer getRdmId() {
+        return rdmId;
+    }
+
+    public void setRdmId(Integer rdmId) {
+        this.rdmId = rdmId;
+    }
+
+    public String getRdmName() {
+        return rdmName;
+    }
+
+    public void setRdmName(String rdmName) {
+        this.rdmName = rdmName;
     }
 }
