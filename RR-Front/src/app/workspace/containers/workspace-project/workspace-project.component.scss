@@ -234,7 +234,6 @@
       .icon-card-wrapper{
         align-items: center;
         background-color: #F9FAFE;
-        display: none;
         i {
           cursor: pointer;
           margin-right: 15px;
@@ -345,6 +344,11 @@
     .project-kpi-details{
       background: #F9FAFE;
       .project-kpi-details-title{
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        height: 35px;
+        padding: 10px !important;
         font-size: 0.9em;
         @media screen and (max-width: 1500px) and (min-width: 1350px) {
           font-size: 0.7em;

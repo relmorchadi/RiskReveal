@@ -180,6 +180,7 @@
         background-color: #E9E9E9 !important;
       }
     }
+
   }
 }
 
@@ -210,6 +211,9 @@
   cursor: pointer;
 }
 
-.ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
-  margin-top: -100px;
+
+::ng-deep{
+  .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
+    margin-top: -80px;
+  }
 }

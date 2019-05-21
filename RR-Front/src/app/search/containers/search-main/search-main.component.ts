@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../core/service/search.service';
 import {debounceTime} from 'rxjs/operators';
@@ -17,7 +17,8 @@ import {WorkspaceMain} from "../../../core/model/workspace-main";
 @Component({
   selector: 'app-search-main',
   templateUrl: './search-main.component.html',
-  styleUrls: ['./search-main.component.scss']
+  styleUrls: ['./search-main.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchMainComponent implements OnInit {
   @ViewChild('dt') table;
@@ -128,7 +129,7 @@ export class SearchMainComponent implements OnInit {
   state: WorkspaceMain = null;
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
-              private _router: Router, private _location: Location, private store: Store) {
+              private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     this.initSearchForm();
   }
 
@@ -175,6 +176,7 @@ export class SearchMainComponent implements OnInit {
       .pipe(debounceTime(500))
       .subscribe((param) => {
         this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
+        this.cdRef.detectChanges();
         this._loadContracts();
       });
   }
@@ -227,9 +229,11 @@ export class SearchMainComponent implements OnInit {
     this.searchData(contract.workSpaceId, contract.uwYear).subscribe(
       dt => {
         this.selectedWorkspace = dt;
+        this.cdRef.detectChanges();
         console.log(this.selectedWorkspace);
       }
     );
+
   }
 
   popUpWorkspace(wsId, year) {
@@ -266,6 +270,7 @@ export class SearchMainComponent implements OnInit {
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+          this.cdRef.detectChanges();
         });
   }
 

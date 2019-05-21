@@ -24,6 +24,8 @@ public class PortfolioSpecification extends BaseSpecification<PortfolioView, Por
                 .and(ofNullable(request.getDataSourceId()).map(dataSourceId -> AttributeContainsInteger(PortfolioView_.dataSourceId, valueOf(dataSourceId) )).orElse(null))
                 .and(ofNullable(request.getDataSourceName()).map(datasourceName -> AttributeContains(PortfolioView_.dataSourceName, datasourceName)).orElse(null))
                 .and(ofNullable(request.getCreationDate()).map(creationDate -> AttributeEquals(PortfolioView_.creationDate, creationDate)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(descriptionType -> AttributeContains(PortfolioView_.descriptionType, descriptionType)).orElse(null));
+                .and(ofNullable(request.getDescriptionType()).map(descriptionType -> AttributeContains(PortfolioView_.descriptionType, descriptionType)).orElse(null))
+                .and(ofNullable(request.getEdmId()).map(edmId -> AttributeEquals(PortfolioView_.edmId, edmId)).orElse(null))
+                .and(ofNullable(request.getEdmName()).map(edmName -> AttributeEquals(PortfolioView_.edmName, edmName)).orElse(null));
     }
 }
