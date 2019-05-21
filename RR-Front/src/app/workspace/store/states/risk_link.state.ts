@@ -293,12 +293,8 @@ export class RiskLinkState implements NgxsOnInit {
     listDataToArray.forEach(
       dt => {
         if (dt.selected) {
-          if (dt.type === 'rdm') {
-            rdmValidator = true;
-          }
-          if (dt.type === 'edm') {
-            emdValidator = true;
-          }
+          if (dt.type === 'rdm') { rdmValidator = true; }
+          if (dt.type === 'edm') { emdValidator = true; }
           listSelected = _.merge(listSelected, {
             [dt.id]: {
               ...dt,
@@ -306,9 +302,7 @@ export class RiskLinkState implements NgxsOnInit {
               selected: false,
             }
           });
-        }
-      }
-    );
+        }});
     ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
     ctx.patchState({
       listEdmRdm: {

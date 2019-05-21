@@ -95,8 +95,8 @@ export class WorkspaceMainComponent implements OnInit {
   }
 
   addWs(title, year) {
-    const alreadyOpened = this.state.openedTabs.filter(ws => ws.workSpaceId === title && ws.uwYear == year);
-    const index = _.findIndex(this.state.openedTabs, ws => ws.workSpaceId === title && ws.uwYear == year);
+    const alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === title && ws.uwYear == year);
+    const index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === title && ws.uwYear == year);
     if (alreadyOpened.length > 0) {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: alreadyOpened[0]}));
       this.tabIndex = index;
@@ -115,7 +115,7 @@ export class WorkspaceMainComponent implements OnInit {
           this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
           this._helper.updateWorkspaceItems();
           this._helper.updateRecentWorkspaces();
-          this.tabIndex = this.state.openedTabs.length;
+          this.tabIndex = this.state.openedTabs.data.length;
           this.cdRef.detectChanges();
         }
       );

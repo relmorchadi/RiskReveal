@@ -466,6 +466,9 @@
     .text-center.my-2.px-4.d-inline-flex.flex-column {
       padding-right: 75px !important;
       border-left: 1px solid rgba(255,255,255,0.5);
+      @media screen and (max-width: 1100px) {
+        padding-right: 45px !important;
+      }
     }
   }
 }
