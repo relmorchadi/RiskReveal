@@ -47,7 +47,7 @@ export class WorkspaceMainComponent implements OnInit {
     this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
       dt =>
         this.cdRef.detectChanges()
-    )
+    );
   }
 
   getSearchedWorkspaces(wsId = null, year = null) {

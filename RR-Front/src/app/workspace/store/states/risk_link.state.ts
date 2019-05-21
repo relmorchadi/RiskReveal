@@ -7,10 +7,13 @@ import {
   PatchRiskLinkAction,
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
-  PatchRiskLinkFinancialPerspectiveAction, SelectRiskLinkEDMAndRDM, ToggleRiskLinkEDMAndRDM
+  PatchRiskLinkFinancialPerspectiveAction,
+  SearchRiskLinkEDMAndRDMAction,
+  SelectRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkEDMAndRDMAction
 } from '../actions';
 import {
-  ToggleRiskLinkEDMAndRDMSelected,
+  ToggleRiskLinkEDMAndRDMSelectedAction,
   LoadRiskLinkAnalysisDataAction,
   LoadRiskLinkPortfolioDataAction
 } from '../actions/risk_link.actions';
@@ -129,8 +132,8 @@ export class RiskLinkState implements NgxsOnInit {
     ctx.patchState({financialValidator: newValue});
   }
 
-  @Action(ToggleRiskLinkEDMAndRDM)
-  toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDM) {
+  @Action(ToggleRiskLinkEDMAndRDMAction)
+  toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
     const action = payload.action;
     let array = _.toArray(state.listEdmRdm.data);
@@ -229,8 +232,8 @@ export class RiskLinkState implements NgxsOnInit {
     );
   }
 
-  @Action(ToggleRiskLinkEDMAndRDMSelected)
-  ToggleRiskLinkEDMAndRDMSelected(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMSelected) {
+  @Action(ToggleRiskLinkEDMAndRDMSelectedAction)
+  ToggleRiskLinkEDMAndRDMSelected(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMSelectedAction) {
     const state = ctx.getState();
     let array = _.toArray(state.listEdmRdm.selectedListEDMAndRDM);
     const {id, type} = payload;
@@ -281,7 +284,7 @@ export class RiskLinkState implements NgxsOnInit {
     }
   }
 
-  @Action(SelectRiskLinkEDMAndRDM)
+  @Action(SelectRiskLinkEDMAndRDMAction)
   selectRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
     const listDataToArray = _.toArray(state.listEdmRdm.data);
@@ -314,6 +317,32 @@ export class RiskLinkState implements NgxsOnInit {
       },
       currentStep: (rdmValidator && emdValidator) ? 1 : 0
     });
+  }
+
+  @Action(SearchRiskLinkEDMAndRDMAction)
+  searchRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: SearchRiskLinkEDMAndRDMAction) {
+    const state = ctx.getState();
+    const {keyword} = payload;
+    return this.riskApi.searchRiskLinkData(keyword).pipe(
+      mergeMap(
+        data =>
+          of(ctx.patchState(
+            {
+              listEdmRdm: {
+                ...state.listEdmRdm,
+                data: Object.assign({},
+                  ...data.content.map(item => ({
+                      [item.id]: {
+                        ...item,
+                        selected: false,
+                        scanned: false,
+                        Reference: '0/13'
+                      }
+                    }
+                  )))
+              }}))
+      )
+    );
   }
 
   @Action(LoadRiskLinkDataAction)

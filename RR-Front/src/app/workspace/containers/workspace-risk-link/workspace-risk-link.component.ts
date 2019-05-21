@@ -6,14 +6,17 @@ import {Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
-import {ToggleRiskLinkEDMAndRDMSelected} from '../../store/actions/risk_link.actions';
+import {
+  SearchRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction
+} from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
   PatchRiskLinkFinancialPerspectiveAction,
-  SelectRiskLinkEDMAndRDM,
-  ToggleRiskLinkEDMAndRDM
+  SelectRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkEDMAndRDMAction
 } from '../../store/actions';
 
 @Component({
@@ -25,6 +28,8 @@ import {
 export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   lastSelectedIndex = null;
+
+  inputSwitch = true;
 
   closePrevent = false;
 
@@ -190,8 +195,8 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.store.dispatch(new LoadRiskLinkDataAction());
-    this.state$.subscribe(value => this.state = _.merge({}, value));
     this.serviceSubscription = [
+      this.state$.subscribe(value => this.state = _.merge({}, value)),
       this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe(dt => {
         this.tableLeftAnalysis = _.toArray(dt);
         this.cdRef.detectChanges();
@@ -207,7 +212,8 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.serviceSubscription.forEach(sub => sub.unsubscribe());
+    if(this.serviceSubscription)
+      this.serviceSubscription.forEach(sub => sub.unsubscribe());
   }
 
   dataList(data = null) {
@@ -218,31 +224,23 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   toggleItems(RDM) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({RDM, action: 'selectOne'}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
     this.closePrevent = false;
   }
 
   toggleItemsListRDM(RDM) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelected(RDM));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelectedAction(RDM));
   }
 
   selectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({action: 'selectAll'}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll'}));
   }
 
   unselectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDM({action: 'unselectAll'}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
   }
 
   unselectEDMRDM() {
-    this.listRDM.forEach((e) => {
-        e.selected = false;
-      }
-    );
-    this.listEDM.forEach((e) => {
-        e.selected = false;
-      }
-    );
   }
 
   refreshAll() {
@@ -266,7 +264,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   fillLists() {
-    this.store.dispatch(new SelectRiskLinkEDMAndRDM());
+    this.store.dispatch(new SelectRiskLinkEDMAndRDMAction());
   }
 
   selectedItem() {
@@ -353,6 +351,15 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     } else {
       return this.tableLeftProtfolio;
     }
+  }
+
+  onInputSearch(event) {
+    if (event.target.value.length > 2) {
+      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value}));
+    } else {
+      this.store.dispatch(new LoadRiskLinkDataAction());
+    }
+    this.cdRef.detectChanges();
   }
 
   changeCollapse(value) {
