@@ -230,8 +230,14 @@ ul.widgets-list {
   padding: 20px 30px !important;
 }
 
-.tabs-header-wrapper{
-  display:flex;
+::ng-deep {
+  .ant-tabs-nav .ant-tabs-tab {
+    &:hover {
+      .ant-tabs-close-x{
+        visibility: visible !important;
+      }
+    }
+  }
 }
 
 .dashboard-wrapper{

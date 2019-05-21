@@ -22,8 +22,15 @@
     .ant-menu .ant-menu-root .ant-menu-light .ant-menu-inline {
       padding-right: 0.5em;
     }
-    li [class^="icon-"] {
-      font-size: 1.4rem;
+
+    li {
+      ::ng-deep {
+        i {
+          font-size: 1.4rem;
+          height: 22px;
+          width: 25px;
+        }
+      }
     }
   }
 }
