@@ -457,18 +457,39 @@
 
             .search-bar-result-list {
               padding: 6px;
+              ::ng-deep {
+                .ui-virtualscroller .ui-virtualscroller-content {
+                  border: none;
+                  width: 98%;
+                  margin: auto;
+                }
+                .ui-virtualscroller .ui-virtualscroller-content .ui-virtualscroller-list li {
+                  border: none;
+                }
+              }
+              .loading-text {
+                height: 20px;
+                margin: auto;
+                margin-left: 12px;
+                width: 97%;
+                background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+                background-size: 400% 100%;
+                -webkit-animation: ant-skeleton-loading 1.4s ease infinite;
+                animation: ant-skeleton-loading 1.4s ease infinite;
+              }
 
               ul {
                 list-style: none;
-                padding: 0 20px 5px 5px;
+                padding: 0 2px 3px 0;
                 height: 305px;
                 overflow-y: auto;
-                width: 92%;
+                width: 98%;
                 margin: auto;
               }
 
               .poover-menu-item {
                 padding: 3px 5px;
+                margin: 1px 6px 0 12px;
                 cursor: pointer;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.15);
                 user-select: none;

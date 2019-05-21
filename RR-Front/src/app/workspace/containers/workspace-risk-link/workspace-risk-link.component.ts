@@ -80,12 +80,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     {field: 'description', header: 'Description', width: '150px', type: 'text'},
     {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
     {field: 'groupType', header: 'Group Type', width: '110px', type: 'text'},
-    {field: 'cedant', header: 'cedant', width: '110px', type:'text'},
+    {field: 'cedant', header: 'cedant', width: '110px', type: 'text'},
   ];
 
   frozenColsAnalysis = [
     {field: 'selected', header: 'selected', width: '20px', type: 'select'},
-    {field: 'analysisId', header: 'id', width: '30px', type:'text'},
+    {field: 'analysisId', header: 'id', width: '30px', type: 'text'},
     {field: 'analysisName', header: 'name', width: '190px', type: 'text'}
   ];
 
@@ -216,11 +216,13 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       this.serviceSubscription.forEach(sub => sub.unsubscribe());
   }
 
-  dataList(data = null) {
-    if (data) {
-      return _.toArray(data);
+  dataList(data, filter = null) {
+    const array = _.toArray(data);
+    if (filter === null) {
+      return array;
+    } else {
+      return array.filter(dt => dt.type === filter );
     }
-    return _.toArray(this.state.listEdmRdm.data);
   }
 
   toggleItems(RDM) {
@@ -360,6 +362,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       this.store.dispatch(new LoadRiskLinkDataAction());
     }
     this.cdRef.detectChanges();
+  }
+
+  loadItemsLazy(event) {
+
   }
 
   changeCollapse(value) {

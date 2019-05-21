@@ -132,11 +132,17 @@
   display: inline-block;
   color: #16617a;
 }
+
 .hide-btn:hover{
   border: 1px solid #F8E71C;
   border-radius: 18px;
   color: white;
   background-color: #F8E71C;
+}
+
+.workspace-title-wrapper {
+  flex: 1;
+  min-width: 260px;
 }
 
 .workspace-title{

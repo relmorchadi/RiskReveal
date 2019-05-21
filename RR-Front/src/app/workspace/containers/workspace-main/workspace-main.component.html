@@ -31,7 +31,7 @@
                   <span *ngIf="!state.collapseWorkspaceDetail" class="span-detail">Hide</span>
                 </div>
                 <div style="display: flex; flex: 1;">
-                  <div style="flex:1">
+                  <div class="workspace-title-wrapper">
                     <div class="d-inline-flex flex-column">
                       <h3 class="workspace-title">{{tab?.workspaceName}}
                         <i *ngIf="!liked" (click)="liked = true" class="icon-star_border_24px"></i>

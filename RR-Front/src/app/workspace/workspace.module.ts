@@ -11,7 +11,7 @@ import {GridsterModule} from 'angular-gridster2';
 import {workspaceRoutes} from './workspace.route';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SERVICE} from './services';
-import {ContextMenuModule} from 'primeng/primeng';
+import {VirtualScrollerModule} from 'primeng/virtualscroller';
 
 @NgModule({
   declarations: [
@@ -22,6 +22,7 @@ import {ContextMenuModule} from 'primeng/primeng';
     SharedModule,
     GridsterModule,
     FormsModule,
+    VirtualScrollerModule,
     ReactiveFormsModule,
     NgMasonryGridModule,
     RouterModule.forChild(workspaceRoutes)
