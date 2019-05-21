@@ -1,8 +1,11 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import java.util.Date;
 
 @Entity
 public class PltManagerView {
@@ -39,6 +42,14 @@ public class PltManagerView {
     private String project;
     @Column(name = "pltType")
     private String pltType;
+
+    @Column(name = "projectName")
+    private String projectName;
+    @Column(name = "creationDate")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
+    private Date creationDate;
+    @Column(name = "year")
+    private Integer year;
 
     public PltManagerView() {
     }
@@ -161,5 +172,29 @@ public class PltManagerView {
 
     public void setPltType(String pltType) {
         this.pltType = pltType;
+    }
+
+    public String getProjectName() {
+        return projectName;
+    }
+
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
+
+    public Integer getYear() {
+        return year;
+    }
+
+    public void setYear(Integer year) {
+        this.year = year;
     }
 }
