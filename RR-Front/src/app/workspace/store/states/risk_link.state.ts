@@ -179,9 +179,9 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(LoadRiskLinkAnalysisDataAction)
   loadRiskLinkAnalysisDataAction(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkAnalysisDataAction) {
     const state = ctx.getState();
-    return this.riskApi.searchRiskLinkAnalysis().pipe(
+    return this.riskApi.searchRiskLinkAnalysis(payload.id, payload.name).pipe(
       mergeMap(
-        data =>
+        (data: any) =>
           of(ctx.patchState(
             {
               selectedAnalysisAndPortoflio: {
@@ -205,7 +205,7 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(LoadRiskLinkPortfolioDataAction)
   loadRiskLinkPortfolioDataAction(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkPortfolioDataAction) {
     const state = ctx.getState();
-    return this.riskApi.searchRiskLinkPortfolio().pipe(
+    return this.riskApi.searchRiskLinkPortfolio(payload.id, payload.name).pipe(
       mergeMap(
         data =>
           of(ctx.patchState(
@@ -233,8 +233,8 @@ export class RiskLinkState implements NgxsOnInit {
   ToggleRiskLinkEDMAndRDMSelected(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMSelected) {
     const state = ctx.getState();
     let array = _.toArray(state.listEdmRdm.selectedListEDMAndRDM);
-    const item = payload.RDM.id;
-    const {selected} = state.listEdmRdm.selectedListEDMAndRDM[item];
+    const {id, type} = payload;
+    const {selected} = state.listEdmRdm.selectedListEDMAndRDM[id];
     let newDataSelected = {};
     if (selected) {
       array.forEach(dt => {
@@ -262,10 +262,10 @@ export class RiskLinkState implements NgxsOnInit {
           }
         });
       });
-      if (payload.RDM.type === 'rdm') {
-        ctx.dispatch(new LoadRiskLinkAnalysisDataAction({}));
-      } else if (payload.RDM.type === 'edm') {
-        ctx.dispatch(new LoadRiskLinkPortfolioDataAction({}));
+      if (type === 'rdm') {
+        ctx.dispatch(new LoadRiskLinkAnalysisDataAction(payload));
+      } else if (type === 'edm') {
+        ctx.dispatch(new LoadRiskLinkPortfolioDataAction(payload));
       }
       ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: true}));
       ctx.patchState({
@@ -273,9 +273,9 @@ export class RiskLinkState implements NgxsOnInit {
           data: state.listEdmRdm.data,
           selectedListEDMAndRDM: {
             ...newDataSelected,
-            [item]: {...newDataSelected[item], selected: true}
+            [id]: {...newDataSelected[id], selected: true}
           },
-          selectedEDMOrRDM: payload.RDM.type
+          selectedEDMOrRDM: type
         },
       });
     }
