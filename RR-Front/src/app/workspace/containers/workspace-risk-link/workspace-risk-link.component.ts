@@ -72,29 +72,29 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   tableLeftProtfolio: any = [];
 
   scrollableColsAnalysis = [
-    {field: 'description', header: 'Description', width: '150px'},
-    {field: 'engineVersion', header: 'Engine Version', width: '110px'},
-    {field: 'groupType', header: 'Group Type', width: '110px'},
-    {field: 'cedant', header: 'cedant', width: '110px'},
+    {field: 'description', header: 'Description', width: '150px', type: 'text'},
+    {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
+    {field: 'groupType', header: 'Group Type', width: '110px', type: 'text'},
+    {field: 'cedant', header: 'cedant', width: '110px', type:'text'},
   ];
 
   frozenColsAnalysis = [
-    {field: 'selected', header: 'selected', width: '20px'},
-    {field: 'analysisId', header: 'id', width: '30px'},
-    {field: 'analysisName', header: 'name', width: '190px'}
+    {field: 'selected', header: 'selected', width: '20px', type: 'select'},
+    {field: 'analysisId', header: 'id', width: '30px', type:'text'},
+    {field: 'analysisName', header: 'name', width: '190px', type: 'text'}
   ];
 
   scrollableColsPortfolio = [
-    {field: 'dataSourceName', header: 'Name', width: '150px'},
-    {field: 'creationDate', header: 'Creation Date', width: '180px'},
-    {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'date'},
-    {field: 'cedant', header: 'cedant', width: '120px'},
+    {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text'},
+    {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date'},
+    {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text'},
+    {field: 'cedant', header: 'cedant', width: '120px', type: 'text'},
   ];
 
   frozenColsPortfolio = [
-    {field: 'selected', header: 'selected', width: '20px'},
-    {field: 'dataSourceId', header: 'id', width: '30px'},
-    {field: 'number', header: 'Number', width: '190px'}
+    {field: 'selected', header: 'selected', width: '20px', type: 'select'},
+    {field: 'dataSourceId', header: 'id', width: '30px', type: 'text'},
+    {field: 'number', header: 'Number', width: '190px', type: 'text'}
   ];
 
   summaryInfo: any = [
@@ -223,7 +223,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   toggleItemsListRDM(RDM) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelected({RDM}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelected(RDM));
   }
 
   selectAll() {

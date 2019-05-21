@@ -42,8 +42,12 @@ export class WorkspaceMainComponent implements OnInit {
     this.route.children[0].params.subscribe(
       ({wsId, year}: any) => {
         this.getSearchedWorkspaces(wsId, year);
+        this.cdRef.detectChanges();
       });
-    this.store.select(dt => dt).subscribe()
+    this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
+      dt =>
+        this.cdRef.detectChanges()
+    )
   }
 
   getSearchedWorkspaces(wsId = null, year = null) {
@@ -112,6 +116,7 @@ export class WorkspaceMainComponent implements OnInit {
           this._helper.updateWorkspaceItems();
           this._helper.updateRecentWorkspaces();
           this.tabIndex = this.state.openedTabs.length;
+          this.cdRef.detectChanges();
         }
       );
     }

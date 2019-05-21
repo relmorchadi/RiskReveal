@@ -1,4 +1,4 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../service/search.service';
 import {debounceTime} from 'rxjs/operators';
@@ -18,7 +18,8 @@ import {SearchNavBarState} from '../../../store/index';
 @Component({
   selector: 'search-menu-item',
   templateUrl: './search-menu-item.component.html',
-  styleUrls: ['./search-menu-item.component.scss']
+  styleUrls: ['./search-menu-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchMenuItemComponent implements OnInit {
 
@@ -32,7 +33,7 @@ export class SearchMenuItemComponent implements OnInit {
 
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
-              private _notifcationService: NotificationService, private store: Store) {
+              private _notifcationService: NotificationService, private store: Store, private cdRef: ChangeDetectorRef) {
     this.contractFilterFormGroup = this._fb.group({
       switchValue: false,
       globalKeyword: '',
@@ -58,7 +59,13 @@ export class SearchMenuItemComponent implements OnInit {
     this._subscribeGlobalKeywordChanges();
     this.store.dispatch(new LoadRecentSearchAction());
     this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
-      .subscribe(value => this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value})));
+      .subscribe(value => {
+        this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value}));
+        this.cdRef.detectChanges();
+      });
+    this.store.select(st => st.searchBar.data).subscribe(dt => {
+      this.cdRef.detectChanges();
+    })
   }
 
   private _subscribeGlobalKeywordChanges() {
