@@ -3,8 +3,9 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
-import {PltMainState} from '../../store';
-import {map} from 'rxjs/operators';
+import {pltMainModel, PltMainState} from '../../store';
+import {map, mergeMap, tap} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -21,6 +22,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   selectedListOfPlts: any[];
   filterData;
   sortData;
+
+  workspaceId: string;
+  uwy: number;
+  projects: any[];
 
   params: any;
   sortMap = {
@@ -48,10 +53,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ];
 
   pltColumns = [
-    {fields: '', header: 'User Tags', width: '50px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
-    {fields: 'pltId', header: 'PLT ID', width: '150px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
+    {fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'peril', header: 'Peril', width: '50px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'peril', header: 'Peril', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'regionPerilCode', header: 'Region Peril Code', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
@@ -83,9 +88,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   pltdetailsUserTags: any = [];
 
   systemTags = [
-    {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
+    {tagId: '8', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
     {
-      tagId: '2',
+      tagId: '9',
       tagName: 'NATC-USM',
       tagColor: '#7bbe31',
       innerTagContent: '2',
@@ -93,7 +98,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       selected: false
     },
     {
-      tagId: '3',
+      tagId: '10',
       tagName: 'Post-Inured',
       tagColor: '#006249',
       innerTagContent: '9',
@@ -308,7 +313,12 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   private pageSize: number = 20;
 
 
-  constructor( private nzDropdownService: NzDropdownService, private store$: Store,private zone: NgZone, private cdRef: ChangeDetectorRef) {
+  constructor(
+    private nzDropdownService: NzDropdownService,
+    private store$: Store,
+    private zone: NgZone,
+    private cdRef: ChangeDetectorRef,
+    private route$: ActivatedRoute) {
     this.someItemsAreSelected= false;
     this.selectAll= false;
     this.listOfPlts= [];
@@ -322,8 +332,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       systemTag: [],
       userTag: []
     }
-  }
 
+
+  }
   @Select(PltMainState.data) data$;
   loading: boolean;
 
@@ -355,9 +366,24 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         })
         this.detectChanges();
       }),
+      this.route$.params.subscribe(
+        ({wsId, year}) => {
+          this.workspaceId = wsId;
+          this.uwy = year;
+          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+            params: {
+              workspaceId: wsId, uwy: year
+            }}))
+        }
+      ),
+      this.store$.select(PltMainState.getProjects()).subscribe(
+        (projects:any) => {
+          this.projects = projects;
+          this.detectChanges();
+        }
+      ),
       this.getAttr('loading').subscribe( l => this.loading =l)
     )
-    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({}));
   }
 
   getAttr(path){
@@ -442,10 +468,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}))
   }
 
-  formatId(id) {
-
-  }
-
   openPltInDrawer(plt) {
     this.closePltInDrawer(this.sumnaryPltDetailsPltId);
     this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}))
@@ -468,15 +490,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   getTagsForSummary(){
     this.pltdetailsSystemTags = this.systemTags;
     this.pltdetailsUserTags= this.userTags;
-  }
-
-  selectPath(path) {
-    this.currentPath = path;
-
-    _.forEach(this.paths, (el) => {
-      _.set(el, 'selected',el.id === path.id)
-    })
-
   }
 
   selectCardThead(card) {
@@ -604,6 +617,14 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   private loadData(params: any) {
     console.log(params)
     this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}))
+  }
+
+  selectProject(id: any) {
+
+  }
+
+  toDate(d){
+    return new Date(d);
   }
 }
 

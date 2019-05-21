@@ -8,7 +8,7 @@ import {HttpClient} from '@angular/common/http';
 })
 export class PltApi {
 
-  protected URL = `${environment.API_URI}/plt`;
+  protected URL = `${environment.API_URI}plt`;
 
   constructor(private http: HttpClient) {
   }

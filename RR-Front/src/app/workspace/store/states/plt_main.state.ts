@@ -1,4 +1,4 @@
-import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import {pltMainModel} from "../../model";
 import * as fromPlt from '../actions'
@@ -46,15 +46,20 @@ export class PltMainState implements NgxsOnInit {
     static getAttr(state: pltMainModel){
     return (path) => _.get(state, `${path}`)
   }
+
+  @Selector()
+  static getProjects() {
+    return createSelector([PltMainState], (state: pltMainModel) => state.workspaceMain.openedWs.projects)
+  }
   userTags = [
     {tagId: '1', tagName: 'Pricing V1', tagColor: '#893eff', innerTagContent: '1', innerTagColor: '#ac78ff', selected: false},
     {tagId: '2', tagName: 'Pricing V2', tagColor: '#06b8ff', innerTagContent: '2', innerTagColor: '#51cdff', selected: false},
     {tagId: '3', tagName: 'Final Princing', tagColor: '#c38fff', innerTagContent: '5', innerTagColor: '#d5b0ff', selected: false}
   ];
   systemTags = [
-    {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
+    {tagId: '8', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
     {
-      tagId: '2',
+      tagId: '9',
       tagName: 'NATC-USM',
       tagColor: '#7bbe31',
       innerTagContent: '2',
@@ -62,7 +67,7 @@ export class PltMainState implements NgxsOnInit {
       selected: false
     },
     {
-      tagId: '3',
+      tagId: '10',
       tagName: 'Post-Inured',
       tagColor: '#006249',
       innerTagContent: '9',
@@ -119,8 +124,8 @@ export class PltMainState implements NgxsOnInit {
           ctx.patchState({
             data: Object.assign({},
               ...data.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,opened: false,
-                  userTag: _.range(_.random(3) || _.random(2)).map(i => this.userTags[i]),
-                  systemTag: _.range(_.random(7) || _.random(5)).map(i => this.systemTags[i])
+                  userTag: _.range(_.random(3)).map(i => this.userTags[i]),
+                  systemTag: _.range(_.random(7)).map(i => this.systemTags[i])
                 }})
               )
             ),
@@ -210,11 +215,11 @@ export class PltMainState implements NgxsOnInit {
 
     if ([...filters.systemTag, ...filters.userTag].length > 0) {
         _.forEach(state.data, (plt, k) => {
-          console.log(_.some([...filters.userTag, ...filters.systemTag], (userTag) => _.find([...plt.userTag, ...plt.systemTag], tag => tag.tagId == userTag)))
           if (_.some([...filters.userTag, ...filters.systemTag], (userTag) => _.find([...plt.userTag, ...plt.systemTag], tag => tag.tagId == userTag))) {
             newData[k] = {...plt, visible: true};
           } else {
             newData[k] = {...plt, visible: false};
+            console.log(newData[k].visible,k);
           }
         });
     } else {
@@ -238,7 +243,9 @@ export class PltMainState implements NgxsOnInit {
         })
       })
     }*/
-    ctx.patchState({
+
+    ctx.setState({
+      ...state,
       data: newData
     });
   }

@@ -18,6 +18,10 @@ export class TableSortAndFilterPipe implements PipeTransform {
       })
     }
 
+    if(filterDataKeys.length > 0 ) {
+      res = _.filter(data, el => _.every(filterDataKeys, key => _.includes(_.toLower(_.toString(el[key])), _.toLower(_.toString(filterData[key])))))
+    }
+
     if(sortDataKeys.length > 0){
         res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
     }

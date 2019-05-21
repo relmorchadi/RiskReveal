@@ -9,7 +9,7 @@
     </div>
 
     <div class="my-tabs" style="display: flex; flex-direction: row; width: 100%;">
-      <div class="noMargin" style="width: 190px">
+      <div class="noMargin">
         <nz-tabset class="tabset-left">
           <nz-tab [nzTitle]="path">
             <ng-template #path>
@@ -19,12 +19,12 @@
               <div class="title">
                     <span (click)="resetPath()">
                       <i class="icon-window-section"></i>
-                      02PY376 - 2019
+                      {{workspaceId}} - {{uwy}}
                     </span>
                 <ul class="title-list">
-                  <li *ngFor="let path of paths" (click)="selectPath(path)" [ngClass]="{'active-path': path.selected}">
-                    <i [ngClass]="path.icon"></i>
-                    {{path.text}}
+                  <li *ngFor="let project of projects" (click)="selectProject(project.projectId)">
+                    <i class="icon-assignment_24px"></i>
+                    {{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}
                   </li>
                 </ul>
               </div>
@@ -74,6 +74,7 @@
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
+              <i class="icon-menu_24px" style="display:none;position: absolute;right: 7px;top: 61px;font-size: 15px;"></i>
               <!--nz-table-- #pltTable
                         [nzData]="listOfPlts"
                         class="plt-table"
@@ -172,7 +173,7 @@
                        [resizableColumns]="true"
                        [(contextMenuSelection)]="selectedPlt"
                        [contextMenu]="cm"
-                       [scrollHeight]="'520px'"
+                       [scrollHeight]="'500px'"
                        [scrollable]="true"
                        [totalRecords]="listOfPltsData.length"
                        sortMode="multiple"
@@ -185,34 +186,54 @@
                 </ng-template>
                 <ng-template pTemplate="header" let-columns>
                   <tr>
-                    <th nzShowCheckbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="someItemsAreSelected" pResizableColumn [ngStyle]="{'width': '25px'}"></th>
-                    <th *ngFor="let col of columns; let i = index" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
-                      <span style="display:flex">
+                    <th nzShowCheckbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="someItemsAreSelected" [pSortableColumn]="'selected'" [ngStyle]="{'width': '25px'}"></th>
+                    <th [ngStyle]="{'width': '60px'}">
+                      <span style="display:flex;justify-content: space-between;">
+                        User Tags
+                      </span>
+                    </th>
+
+                    <ng-container *ngFor="let col of columns; let i = index">
+                      <th  *ngIf="i > 0" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
+                      <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <p-sortIcon *ngIf="col?.sorted" [field]="col.fields"></p-sortIcon>
                       </span>
-                      <i *ngIf="col.icon" [ngClass]="col.icon"></i>
-                    </th>
+                        <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+                      </th>
+                    </ng-container>
                   </tr>
-                  <!--tr *ngFor="let col of columns;">
-                    <div class="table-sort-header" *ngIf="col?.filtred">
-                      <input *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)">
-                    </div>
-                  </tr-->
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <ng-container *ngFor="let col of columns;">
+                      <th *ngIf="col?.filtred">
+                        <div class="filter-input">
+                          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                          <input  *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)">
+                        </div>
+                      </th>
+                    </ng-container>
+                  </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
                   <tr [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="rowData?.visible">
                     <td [ngStyle]="{'width': '25px'}">
-                      <label nz-checkbox [nzChecked]="rowData.selected"
-                             (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+                      <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
                     </td>
                     <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
+                      <ng-container *ngIf="i === 0">
+                        <div class="td-wrapper-tags">
+                        <span *ngFor="let tag of rowData.userTag" [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
+                          <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
+                        </div>
+                      </ng-container>
                       <ng-container *ngIf="i === 1">
-                        <div>{{rowData.pltId | textLength}}</div>
+                        <div class="text-elipsice" style="font-weight: bold">{{rowData.pltId | textLength}}</div>
                       </ng-container>
                       <ng-container *ngIf="i > 1">
                         <ng-container *ngIf="col?.type == 'field' && col?.type != 'checkbox'">
-                          <div>{{rowData[col.fields]}}</div>
+                          <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
                         </ng-container>
                         <ng-container *ngIf="col?.type == 'icon'">
                           <div class="td-wrapper-check">
@@ -312,7 +333,7 @@
               <table class="table">
                 <tbody>
                 <tr *ngFor="let plt of selectedListOfPlts">
-                  <td>{{plt}}</td>
+                  <td>{{plt | textLength}}</td>
                   <td>{{(selectPltById(plt) | async)?.pltName}}</td>
                   <td>{{(selectPltById(plt) | async)?.peril}}</td>
                   <td>{{(selectPltById(plt) | async)?.regionPerilName}}</td>
@@ -395,57 +416,54 @@
                     </div>
                   </div>
                   <div class="summary-table">
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">PLT ID:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetailsPltId}}</span>
+                      <span nz-col  class="summaryTableBody">{{sumnaryPltDetailsPltId}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">PLT File Name:</span>
-                      <span nz-col nzSpan="6"
+                      <span nz-col
                             class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltName}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Target RAP:</span>
-                      <span nz-col nzSpan="6"
+                      <span nz-col
                             class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.rap}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Peril:</span>
-                      <span nz-col nzSpan="6"
+                      <span nz-col
                             class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.peril}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Region Peril:</span>
-                      <span nz-col nzSpan="6"
+                      <span nz-col
                             class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.regionPerilCode}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Currency:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">EUR</span>
+                      <span nz-col  class="summaryTableBody">EUR</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Grain:</span>
-                      <span nz-col nzSpan="6"
+                      <span nz-col
                             class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.grain}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Representation</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">*********</span></div>
-                    <div nz-row>
+                      <span nz-col  class="summaryTableBody">Unspecified Representation </span></div>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">User Notes:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">
-                        <p>
-                          Lorem ipsum dolor sit amet,
-                        </p>
-                      </span></div>
-                    <div nz-row>
+                      <span nz-col class="summaryTableBody">
+
+                      </span>
+                    </div>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Sourced From</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">
-                        <p>
+                      <span nz-col  class="summaryTableBody">
                           Lorem ipsum dolor sit amet,
                           consectetur adipiscing elit,
                           sed do eiusmod tempor incididunt
-                        </p>
                       </span>
                     </div>
                   </div>
