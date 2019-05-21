@@ -194,11 +194,11 @@
                       <i *ngIf="col.icon" [ngClass]="col.icon"></i>
                     </th>
                   </tr>
-                  <tr *ngFor="let col of columns;">
+                  <!--tr *ngFor="let col of columns;">
                     <div class="table-sort-header" *ngIf="col?.filtred">
                       <input *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)">
                     </div>
-                  </tr>
+                  </tr-->
                 </ng-template>
                 <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
                   <tr [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="rowData?.visible">
