@@ -1,5 +1,5 @@
 <div class="card-container">
-  <nz-tabset [(nzSelectedIndex)]="tabIndex" *ngIf="!state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
+  <nz-tabset [nzSelectedIndex]="state.openedTabs.tabsIndex" *ngIf="!state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
     <ng-container *ngFor="let tab of state.openedTabs.data">
       <ng-template #titleTemplate>
         <ng-container

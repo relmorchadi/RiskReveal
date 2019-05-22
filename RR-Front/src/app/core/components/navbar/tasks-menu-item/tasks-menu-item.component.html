@@ -18,7 +18,7 @@
           </div>
           <ul>
             <li *ngFor="let activeTask of tasks.active" class="poover-menu-item" (click)="toggleActiveTask(activeTask)">
-              <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-pause_circle_outline_24px"></i>
+              <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-clock"></i>
               <ng-template #taskProgress>
                 <nz-progress class="circular-progress-bar" [nzPercent]="activeTask.progress"
                              [nzFormat]="formatter"
@@ -38,11 +38,19 @@
           <div class="mt-2">
             <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
-              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
-              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
-              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
-              <nz-option [nzValue]="4" nzLabel="Today"></nz-option>
+              <nz-option [nzValue]="1" nzLabel="Today"></nz-option>
+              <nz-option [nzValue]="2" nzLabel="Yesterday"></nz-option>
+              <nz-option [nzValue]="3" nzLabel="Last Week"></nz-option>
+              <nz-option [nzValue]="4" nzLabel="Last Month"></nz-option>
+            </nz-select>
+
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-option [nzValue]="1" nzLabel="All"></nz-option>
+              <nz-option [nzValue]="2" nzLabel="Import"></nz-option>
+              <nz-option [nzValue]="3" nzLabel="Iniuring"></nz-option>
+              <nz-option [nzValue]="4" nzLabel="Calibration"></nz-option>
+
             </nz-select>
 
             <div class="float-right">
@@ -53,15 +61,6 @@
       </nz-tab>
       <nz-tab [nzTitle]="CompletedHeaderContent">
         Tab 2 content
-      </nz-tab>
-      <nz-tab [nzTitle]="ImportHeaderContent">
-        Tab 3 content
-      </nz-tab>
-      <nz-tab [nzTitle]="CalibrationHeaderContent">
-        Tab 4 content
-      </nz-tab>
-      <nz-tab [nzTitle]="InuringHeaderContent">
-        Tab 5 content
       </nz-tab>
     </nz-tabset>
   </div>
