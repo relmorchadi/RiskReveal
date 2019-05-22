@@ -8,7 +8,10 @@ import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
-import {AppendNewWorkspaceMainAction} from '../../../core/store/actions/workspace-main.action';
+import {
+  AppendNewWorkspaceMainAction,
+  PatchWorkspaceMainStateAction
+} from '../../../core/store/actions/workspace-main.action';
 import {WorkspaceMainState} from "../../../core/store/states";
 import {Observable} from "rxjs";
 import {WorkspaceMain} from "../../../core/model/workspace-main";
@@ -206,10 +209,18 @@ export class SearchMainComponent implements OnInit {
           ...dt
         };
         workspace.projects = workspace.projects.map(prj => prj = {...prj, selected: false});
-        this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
-        this._helperService.updateRecentWorkspaces();
-        this._helperService.updateWorkspaceItems();
-        this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
+        const alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === wsId && ws.uwYear == year);
+        const index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === wsId && ws.uwYear == year);
+        if (alreadyOpened.length > 0) {
+          this.store.dispatch(new PatchWorkspaceMainStateAction([{key: 'openedWs', value: alreadyOpened[0]},
+            {key: 'openedTabs', value: {data: this.state.openedTabs.data, tabsIndex: index}}]));
+          this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.tabsIndex]);
+        } else {
+          this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
+          this._helperService.updateRecentWorkspaces();
+          this._helperService.updateWorkspaceItems();
+          this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
+        }
       }
     );
   }

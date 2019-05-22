@@ -197,6 +197,7 @@ export class SearchMenuItemComponent implements OnInit {
       ]),
       new AddBadgeSearchStateAction(item)]
     );
+    this.searchInput.nativeElement.focus();
     this._selectedSearch(this.contractFilterFormGroup.get('globalKeyword').value);
   }
 
