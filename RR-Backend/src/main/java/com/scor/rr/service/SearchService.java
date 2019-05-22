@@ -1,9 +1,7 @@
 package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.NewWorkspaceFilter;
-import com.scor.rr.domain.dto.VwFacTreatyFilter;
-import com.scor.rr.domain.dto.WorkspaceDetailsDTO;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.counter.*;
@@ -155,9 +153,7 @@ public class SearchService {
         Query countQuery = entityManager.createNativeQuery(countQueryString);
         List<Object[]> resultList = resultsQuery.getResultList();
         Object total = countQuery.getSingleResult();
-        List<ContractSearchResult> contractSearchResult = resultList.stream().map((r) ->
-                new ContractSearchResult((String)r[0],(String)r[1],(String)r[2],(String)r[3],(String)r[4],(Integer)r[5])
-        ).collect(Collectors.toList());
+        List<ContractSearchResult> contractSearchResult = map(resultList);
         return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
     }
 
@@ -178,5 +174,22 @@ public class SearchService {
 
     public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
         return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter),pageable);
+    }
+
+    public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
+        String resultsQueryString= queryHelper.generateSqlQuery(request.getFilter(),request.getKeyword(), request.getOffset(), request.getSize());
+        String countQueryString= queryHelper.generateCountQuery(request.getFilter(),request.getKeyword());
+        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+        Query countQuery = entityManager.createNativeQuery(countQueryString);
+        List<Object[]> resultList = resultsQuery.getResultList();
+        Object total = countQuery.getSingleResult();
+        List<ContractSearchResult> contractSearchResult = map(resultList);
+        return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+    }
+
+    private List<ContractSearchResult> map(List<Object[]> resultList) {
+        return resultList.stream().map((r) ->
+                new ContractSearchResult((String) r[0], (String) r[1], (String) r[2], (String) r[3], (String) r[4], (Integer) r[5])
+        ).collect(Collectors.toList());
     }
 }
