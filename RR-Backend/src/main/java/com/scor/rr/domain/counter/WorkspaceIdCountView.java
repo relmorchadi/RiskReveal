@@ -7,7 +7,7 @@ import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "WKSP_ID_CNT_VW", schema = "dbo", catalog = "RR")
+@Table(name = "WKSP_ID_CNT_VW", schema = "dbo")
 public class WorkspaceIdCountView {
 
     @Id
