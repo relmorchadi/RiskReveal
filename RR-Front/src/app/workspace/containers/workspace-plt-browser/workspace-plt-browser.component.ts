@@ -20,9 +20,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   searchAddress: string;
   listOfPlts: any[];
   listOfPltsData: any[];
+  listOfPltsCache: any[];
   selectedListOfPlts: any[];
-  filterData;
+  filterData: any;
   sortData;
+  activeCheckboxSort: boolean;
   @ViewChild('dt')
   private table: Table;
 
@@ -336,8 +338,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       systemTag: [],
       userTag: []
     }
-
-
+    this.filterData= {}
+    this.activeCheckboxSort=false;
   }
   @Select(PltMainState.data) data$;
   loading: boolean;
@@ -353,7 +355,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
         })
         this.listOfPlts= d2;
-        this.listOfPltsData= d1;
+        this.listOfPltsData= this.listOfPltsCache = d1;
         this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
         this.detectChanges();
       }),
@@ -435,12 +437,20 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   filter (key: string, value)  {
 
-    if(value) {
-      this.filterData= _.merge({},this.filterData, {[key]: value})
-    } else {
-      this.filterData= _.omit(this.filterData, [key])
+    if(key == 'project') {
+      if(this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
+        this.filterData= _.omit(this.filterData, [key])
+      }else{
+        this.filterData= _.merge({},this.filterData, {[key]: value})
+      }
+    }else {
+      if(value) {
+        this.filterData= _.merge({},this.filterData, {[key]: value})
+      } else {
+        this.filterData= _.omit(this.filterData, [key])
+      }
     }
-    console.log(this.filterData);
+    console.log(this.filterData)
   }
 
   selectedPlt: any;
@@ -647,6 +657,17 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   logSort($event) {
     console.log($event);
+  }
+
+  checkBoxsort() {
+    this.activeCheckboxSort= !this.activeCheckboxSort;
+    if(this.activeCheckboxSort){
+      this.listOfPltsData = _.sortBy( this.listOfPltsData, [(o) => {
+        return !o.selected;
+      }])
+    }else{
+      this.listOfPltsData = this.listOfPltsCache;
+    }
   }
 }
 

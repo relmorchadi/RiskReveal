@@ -134,7 +134,7 @@ export class WorkspaceMainComponent implements OnInit {
             });
           }
         }*/
-    return years.filter(y => y != year) || [];
+    return (years || []).filter(y => y != year) || [];
   }
 
   sliceContent(content: any, valid: boolean) {

@@ -22,7 +22,7 @@
                       {{workspaceId}} - {{uwy}}
                     </span>
                 <ul class="title-list">
-                  <li *ngFor="let project of projects" (click)="selectProject(project.projectId)">
+                  <li *ngFor="let project of projects" (click)="filter('project',project.projectId)">
                     <i class="icon-assignment_24px"></i>
                     {{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}
                   </li>
@@ -181,14 +181,15 @@
               >
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>
-                    <col style="min-width: 25px">
+                    <col style="min-width: 43px">
                     <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
                   </colgroup>
                 </ng-template>
                 <ng-template pTemplate="header" let-columns>
                   <tr>
-                    <th [ngStyle]="{'width': '25px'}">
+                    <th [ngStyle]="{'width': '43px'}" class="checkBoxHead">
                       <label nz-checkbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="someItemsAreSelected"></label>
+                      <i (click)="checkBoxsort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
                     </th>
                     <th [ngStyle]="{'width': '60px'}">
                       <span style="display:flex;justify-content: space-between;">
@@ -221,7 +222,7 @@
                 </ng-template>
                 <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
                   <tr [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="rowData?.visible">
-                    <td [ngStyle]="{'width': '25px'}">
+                    <td [ngStyle]="{'width': '43px'}">
                       <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
                     </td>
                     <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
@@ -426,7 +427,7 @@
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">PLT File Name:</span>
                       <span nz-col
-                            class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltName}}</span>
+                            class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.fileName}}</span>
                     </div>
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Target RAP:</span>

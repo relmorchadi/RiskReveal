@@ -3,8 +3,8 @@
   display: flex;
   width: 100%;
   ::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
-    margin-top: -26%;
-    margin-left: -48%;
+    margin-top: -362px;
+    margin-left: -473px;
   }
 }
 
@@ -729,6 +729,12 @@ nz-layout {
     }
 
     .ui-table-thead {
+
+      .checkBoxHead div{
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
 
       th {
         padding: 15px 0 5px 7px !important;
