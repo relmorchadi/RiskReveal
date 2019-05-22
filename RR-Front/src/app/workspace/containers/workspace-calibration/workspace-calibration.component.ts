@@ -12,9 +12,9 @@ import {GridsterConfig} from "angular-gridster2";
 })
 export class WorkspaceCalibrationComponent implements OnInit {
 
-
+  disabled;
+  size;
   visibleIcon: Boolean;
-
   cols: any[];
   visible: Boolean = false;
   tree: Boolean = false;
@@ -418,7 +418,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     }
   }
 
-  hideCatgegory(names: string) {
+  hideCatgegory(names: any[]) {
     console.log(names);
       this.hideAllCategories();
       for (let i = 0; i < names.length; i++) {

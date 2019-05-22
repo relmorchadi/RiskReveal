@@ -1,12 +1,12 @@
 <div class="card-container">
-  <nz-tabset [(nzSelectedIndex)]="tabIndex" *ngIf="!state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of state.openedTabs">
+  <nz-tabset [nzSelectedIndex]="state.openedTabs.tabsIndex" *ngIf="!state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
+    <ng-container *ngFor="let tab of state.openedTabs.data">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
           [ngTemplateOutletContext]="{
             index:tab,
-            tabsLength: state.openedTabs.length,
+            tabsLength: state.openedTabs.data.length,
             title:tab?.workSpaceId,
             year:tab?.uwYear,
             years:tab?.years

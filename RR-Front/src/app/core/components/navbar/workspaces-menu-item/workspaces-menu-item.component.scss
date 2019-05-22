@@ -77,8 +77,9 @@ nz-alert{
   justify-content: space-between;
   padding: 0 7px;
   .items-popover-wrapper{
-    display:flex;
-    flex:1;
+    display: flex;
+    width: 65%;
+    flex: 1;
     .icon-window-section{
       font-size: 22px;
       color: #40e2c8;
@@ -87,8 +88,9 @@ nz-alert{
     .item-popover-context{
       display:flex;
       flex-direction: column;
+      width:87%;
       .item-popover-context-header{
-        white-space: nowrap; text-overflow: ellipsis;
+        white-space: nowrap; text-overflow: ellipsis; overflow: hidden; width: 100%;
         color: rgba(0,0,0,0.87);	font-family: Rubik; font-weight: 500 ;font-size: 13px;	letter-spacing: 0.08px;	line-height: 24px;
       }
       .item-popover-context-footer{

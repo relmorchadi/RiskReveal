@@ -113,9 +113,9 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   redirectWorkspace() {
-    if (this.state.openedTabs.length > 0) {
-      this.navigateToTab(this.state.openedTabs[0]);
-      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: this.state.openedTabs[0]}));
+    if (this.state.openedTabs.data.length > 0) {
+      this.navigateToTab(this.state.openedTabs.data[0]);
+      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: this.state.openedTabs.data[0]}));
     } else {
       this.notificationService.createNotification('Information',
         'There is no Opened Workspaces please try searching for some before!',

@@ -209,7 +209,7 @@ export class SearchMainComponent implements OnInit {
         this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
         this._helperService.updateRecentWorkspaces();
         this._helperService.updateWorkspaceItems();
-        this.navigateToTab(this.state.openedTabs[0]);
+        this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
       }
     );
   }
