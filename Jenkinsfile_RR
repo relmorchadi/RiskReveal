@@ -242,11 +242,16 @@ node ('dcvprdadm04') {
         throw (error)  
         }       
         }
+
+        stage ('clean workspace') { 
+        cleanWs()
+        }
         
         //End of pipeline reached if no errors
         currentBuild.result = "SUCCESS"
         step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
         SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "final step", "${rootpom.name}")
+
     }
 }
  
