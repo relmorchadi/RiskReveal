@@ -10,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "VW_FAC_TREATY", schema = "dbo", catalog = "RR")
+@Table(name = "VW_FAC_TREATY", schema = "dbo")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @IdClass(ProjectViewId.class)
-@Table(name = "PROJECTS_VIEW", schema = "dbo", catalog = "RR")
+@Table(name = "PROJECTS_VIEW", schema = "dbo")
 public class ProjectView implements Serializable {
 
     @Id
