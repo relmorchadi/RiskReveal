@@ -26,7 +26,7 @@ export class TableComponent implements OnInit {
 
   contextSelectedItem: any;
 
-  loading: boolean;
+  @Input() loading: boolean;
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;

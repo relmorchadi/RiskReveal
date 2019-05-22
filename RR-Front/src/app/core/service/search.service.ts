@@ -5,6 +5,8 @@ import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
 import {of} from 'rxjs';
 import * as _ from 'lodash'
+import {Store} from '@ngxs/store';
+import {SetLoadingState} from '../store/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -19,9 +21,12 @@ export class SearchService {
   public items = new Subject<any>();
   public globalSearch$ = new Subject<any>();
 
+  public loading$ = new Subject<any>();
+  public loading = false;
+
   private readonly api = environment.API_URI + 'search/';
 
-  constructor(private _http: HttpClient) {
+  constructor(private _http: HttpClient, private store$: Store) {
   }
 
   searchContracts(filter: WorkspaceFilter, offset = '0', size = '20') {
@@ -39,8 +44,6 @@ export class SearchService {
   searchGlobal(filter, offset= '0', size = '100') {
     return this._http.get(`${this.api}workspace`, {params: _.pickBy({...filter, offset, size},_.identity())});
   }
-
-
 
   affectItems(item) {
     this._searchedItems = item;
@@ -68,5 +71,9 @@ export class SearchService {
   setvisibleDropdown(value: boolean) {
     this.visibleDropdown = value;
     this.infodropdown.next();
+  }
+
+  setLoading(value) {
+    this.store$.dispatch(new SetLoadingState(value))
   }
 }

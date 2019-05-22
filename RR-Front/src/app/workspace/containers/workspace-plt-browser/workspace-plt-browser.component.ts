@@ -85,7 +85,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     systemTag: [],
     userTag: []
   }
-  sumnaryPltDetailsPltId: any = null;
+  sumnaryPltDetailsPltId: any;
 
   epMetricInputValue: string | null;
 

@@ -43,6 +43,11 @@ export class WorkspaceMainState implements NgxsOnInit {
     return state;
   }
 
+  @Selector()
+  static getLoadingWS(state: WorkspaceMain){
+    return state.loading;
+  }
+
   /**
    * Commands
    */

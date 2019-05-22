@@ -123,7 +123,9 @@
                    [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                    [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                    (filterData)="changeForm($event.searchValue, $event.searchAddress)"
-                   [tableHeight]="'640px'">
+                   [tableHeight]="'640px'"
+                   [loading]="loading"
+        >
         </app-table>
 
 

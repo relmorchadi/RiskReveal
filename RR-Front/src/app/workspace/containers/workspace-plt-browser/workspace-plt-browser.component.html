@@ -465,10 +465,10 @@
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Sourced From</span>
                       <span nz-col  class="summaryTableBody">
-                          Modelling Vendor: RMS <br>
-                          Modelling System: RiskLink V17 <br>
-                          Data Source Name: RR2_500_1609_PControl_R <br>
-                          Analysis Id: 3
+                          Modelling Vendor: {{(selectPltById(sumnaryPltDetailsPltId) | async)?.modellingVendor}} <br>
+                          Modelling System: {{(selectPltById(sumnaryPltDetailsPltId) | async)?.modellingSystem}} <br>
+                          Data Source Name: {{(selectPltById(sumnaryPltDetailsPltId) | async)?.dataSourceName}} <br>
+                          Analysis Id: {{(selectPltById(sumnaryPltDetailsPltId) | async)?.analysisId}}
                       </span>
                     </div>
                   </div>

@@ -31,7 +31,7 @@ nz-layout {
         span {
           letter-spacing: 0.2px;
           line-height: 27px;
-          font-size: 11px;
+          font-size: 13px;
           font-family: rubik;
           padding-left: 9px;
           font-weight: bold;
@@ -48,6 +48,9 @@ nz-layout {
           font-weight: bold;
           overflow: auto;
           max-height: 600px;
+          li {
+            font-size: 11px;
+          }
         }
 
         .icon-window-section {
