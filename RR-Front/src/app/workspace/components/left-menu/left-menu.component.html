@@ -63,7 +63,7 @@
           </span>
   </li>
   <hr class="col-xs-12">
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Inuring' : ''">
+  <li (click)="routerNavigate('Inuring')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Inuring' : ''">
           <span title>
             <i nz-icon><i class="fa fa-code-fork"></i></i>
             <span>Inuring</span>
