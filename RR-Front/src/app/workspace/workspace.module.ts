@@ -16,7 +16,7 @@ import {VirtualScrollerModule} from 'primeng/virtualscroller';
 @NgModule({
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES
+    ...PIPES, ...DIRECTIVES,
   ],
   imports: [
     SharedModule,

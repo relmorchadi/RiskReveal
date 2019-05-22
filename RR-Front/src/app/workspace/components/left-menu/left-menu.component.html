@@ -14,12 +14,12 @@
             <span>Workspace</span>
           </span>
     <ul>
-      <li nz-menu-item (click)="routerNavigate(null)">Projects</li>
-      <li nz-menu-item>Contract</li>
-      <li nz-menu-item>Activity</li>
+      <li (click)="routerNavigate(null)" nz-menu-item >Projects</li>
+      <li (click)="routerNavigate('Contract')" nz-menu-item>Contract</li>
+      <li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>
     </ul>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'PLT browser' : ''">
+  <li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Scope Of Completeness' : ''">
           <span title>
             <i nz-icon><i class="icon-location_searching_24px"></i></i>
             <span>Scope of Completeness</span>
@@ -39,18 +39,18 @@
           </span>
     <ul>
       <li (click)="routerNavigate('RiskLink')" nz-menu-item>Risk Link Import</li>
-      <li nz-menu-item>File Base Import</li>
-      <li nz-menu-item>Clone Data</li>
+      <li (click)="routerNavigate('FileBasedImport')" nz-menu-item>File Based Import</li>
+      <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>
     </ul>
   </li>
   <hr class="col-xs-12">
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Exposure' : ''">
+  <li (click)="routerNavigate('Exposures')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Exposure' : ''">
           <span title>
             <i nz-icon><i class="icon-adjust-half"></i></i>
             <span>Exposure</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Results' : ''">
+  <li (click)="routerNavigate('Results')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Results' : ''">
           <span title>
             <i nz-icon><i class="icon-chart-growth"></i></i>
             <span>Results</span>
@@ -63,19 +63,19 @@
           </span>
   </li>
   <hr class="col-xs-12">
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Inuring' : ''">
+  <li (click)="routerNavigate('Inuring')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Inuring' : ''">
           <span title>
             <i nz-icon><i class="fa fa-code-fork"></i></i>
             <span>Inuring</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Pricing' : ''">
+  <li (click)="routerNavigate('Pricing')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Pricing' : ''">
           <span title>
             <i nz-icon><i class="icon-dollar-alt"></i></i>
             <span>Pricing</span>
           </span>
   </li>
-  <li nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Accumulation' : ''">
+  <li (click)="routerNavigate('Accumulation')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Accumulation' : ''">
           <span title>
             <i nz-icon><i class="icon-focus-add"></i></i>
             <span>Accumulation</span>
