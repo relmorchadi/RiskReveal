@@ -56,22 +56,22 @@ export class SearchMainComponent implements OnInit {
       filterParam: 'innerCountryName'
     },
     {
-      field: 'cedantCode',
-      header: 'Cedant',
+      field: 'cedantName',
+      header: 'Cedent Name',
       width: '90px',
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerCedantCode'
+      filterParam: 'innerCedantName'
     },
     {
-      field: 'cedantName',
-      header: '',
+      field: 'cedantCode',
+      header: 'Cedant',
       width: '90px',
       display: false,
       sorted: false,
-      filtered: false,
-      filterParam: 'innerCedantName'
+      filtered: true,
+      filterParam: 'innerCedantCode'
     },
     {
       field: 'uwYear',
@@ -83,22 +83,22 @@ export class SearchMainComponent implements OnInit {
       filterParam: 'innerYear'
     },
     {
-      field: 'workSpaceId',
-      header: 'Workspace Context',
-      width: '90px',
+      field: 'workspaceName',
+      header: 'Workspace Name',
+      width: '160px',
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerWorkspaceId'
+      filterParam: 'innerWorkspaceName'
     },
     {
-      field: 'workspaceName',
-      header: '',
-      width: '160px',
+      field: 'workSpaceId',
+      header: 'Workspace Context',
+      width: '90px',
       display: false,
       sorted: false,
-      filtered: false,
-      filterParam: 'innerWorkspaceName'
+      filtered: true,
+      filterParam: 'innerWorkspaceId'
     },
     {
       field: 'openInHere',

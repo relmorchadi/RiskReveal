@@ -67,6 +67,7 @@ export class WorkspaceMainComponent implements OnInit {
         })
       ).subscribe((content) => {
         this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
+        this.cdRef.detectChanges();
       });
     }
   }

@@ -3,17 +3,19 @@
     .ant-progress-circle-path {
       stroke: #03DAC4;
     }
-    .ant-badge-count{
+
+    .ant-badge-count {
       background: #03DAC4;
     }
   }
 }
 
-.circular-progress-bar{
+.circular-progress-bar {
   position: relative;
   font-family: 'Scor_fonticon' !important;
 }
-.circular-progress-bar:after{
+
+.circular-progress-bar:after {
   display: none;
   content: "\ea1d";
   position: absolute;
@@ -21,21 +23,120 @@
   left: 6px;
 }
 
-::ng-deep span.ant-progress-text{
+::ng-deep span.ant-progress-text {
   display: none;
 }
 
 
-.task-duration{
-  color: rgba(0,0,0,0.38);
-  font-size: 10px;
-}
-
-.task-item-right-icon{
+.task-item-right-icon {
   line-height: 10px;
   vertical-align: middle;
 }
 
-i.icon-pause_circle_outline_24px{
+i.icon-pause_circle_outline_24px {
   font-size: 18px;
+}
+
+.popover-menu-item {
+  display: flex;
+  height: 40px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+
+  .icon-clock {
+    font-size: 20px;
+    color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+  }
+
+  .list-item-left {
+    display: flex;
+    width: 50%;
+
+    .item-list-title-wrapper {
+      display: flex;
+      flex-direction: column;
+      margin-left: 5px;
+
+      .item-list-title {
+        height: 15px;
+        color: rgba(0, 0, 0, 0.87);
+        font-family: Rubik;
+        font-size: 13px;
+        letter-spacing: 0.08px;
+        line-height: 24px;
+      }
+
+      .item-list-subtitle {
+        height: 24px;
+        color: rgba(0, 0, 0, 0.3);
+        font-family: Rubik;
+        font-size: 11px;
+        letter-spacing: 0.08px;
+        line-height: 24px;
+      }
+    }
+    ::ng-deep {
+      .ant-progress-text {
+        display: block;
+        color: #03DAC4;
+      }
+      .ant-progress-circle-path {
+        stroke: #03DAC4;
+        stroke-width: 8px;
+      }
+    }
+  }
+
+  .list-item-right {
+    display: flex;
+    width: 50%;
+    justify-content: flex-end;
+
+    .list-item-info {
+      font-size: 11px;
+      display: flex;
+      align-items: center;
+    }
+
+    .task-duration {
+      color: rgba(0, 0, 0, 0.38);
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 0.8;
+    }
+
+    i {
+      display: flex;
+      align-items: center;
+      font-size: 23px;
+    }
+
+  }
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  ::ng-deep {
+    .ant-select-selection.ant-select-selection--single {
+      border: none;
+      border-bottom: 2px solid #0700cf;
+      border-radius: 0;
+      margin-right: 7px;
+    }
+  }
+}
+
+
+.dropdown-icons {
+  font-size: 19px;
+  margin-right: 8px;
+}
+
+.dropdown-title {
+
 }

@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CEDANT_NAME_CNT_VW", schema = "dbo", catalog = "RR")
+@Table(name = "CEDANT_NAME_CNT_VW", schema = "dbo")
 public class CedantNameCountView {
 
     @Id
