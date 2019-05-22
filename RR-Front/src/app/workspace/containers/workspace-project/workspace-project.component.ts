@@ -1,7 +1,7 @@
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 import {Observable} from 'rxjs';
 import {Select, Store} from '@ngxs/store';
@@ -27,7 +27,9 @@ export class WorkspaceProjectComponent implements OnInit {
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute, private nzDropdownService: NzDropdownService, private store: Store) {
+  constructor(private _helper: HelperService, private route: ActivatedRoute,
+              private nzDropdownService: NzDropdownService, private store: Store,
+              private router:Router) {
     console.log('init project');
   }
 
@@ -37,6 +39,7 @@ export class WorkspaceProjectComponent implements OnInit {
 
   selectProject(project) {
     this.store.dispatch(new SelectProjectAction(project));
+    this.router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/RiskLink`]);
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
