@@ -98,7 +98,7 @@
   <ng-template pTemplate="header" let-columns>
     <tr *ngIf="!sortable">
       <th *ngFor="let col of columns" pResizableColumn>
-        <span *ngIf="col?.display" style="display:flex">
+        <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex">
           {{col?.header}}
           <ng-container *ngIf="col.type === 'checkbox'">
             <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"

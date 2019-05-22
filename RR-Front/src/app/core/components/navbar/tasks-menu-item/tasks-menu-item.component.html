@@ -1,4 +1,4 @@
-<nz-badge style="cursor: pointer" [nzCount]="5" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent" nzTrigger="click">
+<nz-badge style="cursor: pointer" [nzCount]="5" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent" nzPlacement="bottomRight" nzTrigger="click">
   <!-- <a href="#"
       class="icon-help_outline_24px icon-size"></a>-->
   <nz-progress class="circular-progress-bar" [nzPercent]="60"
@@ -8,7 +8,7 @@
   </nz-progress>
 </nz-badge>
 <ng-template #tasksPopoverContent>
-  <div class="tabs-popover-content" style="width: 465px">
+  <div class="tabs-popover-content" style="width: 565px">
     <nz-tabset>
       <nz-tab [nzTitle]="ActiveHeaderContent">
         <div class="popup-tab-content">
@@ -17,25 +17,101 @@
             <input class="gray-search-input"/>
           </div>
           <ul>
-            <li *ngFor="let activeTask of tasks.active" class="poover-menu-item" (click)="toggleActiveTask(activeTask)">
-              <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-clock"></i>
-              <ng-template #taskProgress>
-                <nz-progress class="circular-progress-bar" [nzPercent]="activeTask.progress"
-                             [nzFormat]="formatter"
-                             [nzStrokeWidth]="8"
-                             nzType="circle" [nzWidth]="15">
-                </nz-progress>
-              </ng-template>
-              <!--<i class="icon-window-section"></i> -->
-              &nbsp; {{activeTask?.name}}
-
-              <span class="float-right mr-1">
+            <li *ngFor="let activeTask of tasks.active" class="popover-menu-item" (click)="toggleActiveTask(activeTask)">
+              <div class="list-item-left">
+                <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-clock"></i>
+                <ng-template #taskProgress>
+                  <nz-progress style="display: flex; align-items: center" class="circular-progress-bar" [nzPercent]="activeTask.progress"
+                               [nzFormat]="formatter"
+                               [nzStrokeWidth]="8"
+                               nzType="circle" [nzWidth]="15">
+                  </nz-progress>
+                </ng-template>
+                <!--<i class="icon-window-section"></i> -->
+                <div class="item-list-title-wrapper">
+                  <span class="item-list-title">{{activeTask?.name}} - {{activeTask?.year}}</span>
+                  <span class="item-list-subtitle">{{activeTask?.description}}</span>
+                </div>
+              </div>
+              <div class="list-item-right">
+                <span class="list-item-info">{{activeTask?.specific}}</span>
                 <span class="task-duration mr-2">{{activeTask?.duration}}</span>
-                <i class="icon-arrow_right_24px mt-2 task-item-right-icon"></i>
-              </span>
+                <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                  <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
+                  <ul nz-menu >
+                    <li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span class="dropdown-title">Cancel</span></li>
+                    <li style="display:flex" nz-menu-item><i class="icon-pause_circle_outline_24px dropdown-icons"></i><span class="dropdown-title">Pause</span></li>
+                    <li style="display:flex" nz-menu-item><i class="icon-trash-alt dropdown-icons"></i><span class="dropdown-title">Delete</span></li>
+                  </ul>
+                </nz-dropdown>
+                <i class="icon-keyboard_arrow_down_24px"></i>
+              </div>
             </li>
           </ul>
-          <div class="mt-2">
+          <div class="mt-2 task-footer">
+            <div>
+              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="popover-menu-control-select"
+                         style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
+                <nz-option [nzValue]="1" nzLabel="Today"></nz-option>
+                <nz-option [nzValue]="2" nzLabel="Yesterday"></nz-option>
+                <nz-option [nzValue]="3" nzLabel="Last Week"></nz-option>
+                <nz-option [nzValue]="4" nzLabel="Last Month"></nz-option>
+              </nz-select>
+
+              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="popover-menu-control-select"
+                         style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
+                <nz-option [nzValue]="1" nzLabel="All"></nz-option>
+                <nz-option [nzValue]="2" nzLabel="Import"></nz-option>
+                <nz-option [nzValue]="3" nzLabel="Iniuring"></nz-option>
+                <nz-option [nzValue]="4" nzLabel="Calibration"></nz-option>
+
+              </nz-select>
+            </div>
+            <div class="task-button">
+              <button class="popover-menu-control-button" nz-button nzType="default">SEE ALL</button>
+            </div>
+          </div>
+        </div>
+      </nz-tab>
+      <nz-tab [nzTitle]="CompletedHeaderContent">
+        <div class="popup-tab-content">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="gray-search-input"/>
+          </div>
+          <ul>
+            <li *ngFor="let activeTask of tasks.active" class="popover-menu-item" (click)="toggleActiveTask(activeTask)">
+              <div class="list-item-left">
+                <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-clock"></i>
+                <ng-template #taskProgress>
+                  <nz-progress style="display: flex; align-items: center" class="circular-progress-bar" [nzPercent]="activeTask.progress"
+                               [nzFormat]="formatter"
+                               [nzStrokeWidth]="8"
+                               nzType="circle" [nzWidth]="15">
+                  </nz-progress>
+                </ng-template>
+                <!--<i class="icon-window-section"></i> -->
+                <div class="item-list-title-wrapper">
+                  <span class="item-list-title">{{activeTask?.name}} - {{activeTask?.year}}</span>
+                  <span class="item-list-subtitle">{{activeTask?.description}}</span>
+                </div>
+              </div>
+              <div class="list-item-right">
+                <span class="list-item-info">{{activeTask?.specific}}</span>
+                <span class="task-duration mr-2">{{activeTask?.duration}}</span>
+                <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                  <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
+                  <ul nz-menu >
+                    <li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span class="dropdown-title">Cancel</span></li>
+                    <li style="display:flex" nz-menu-item><i class="icon-pause_circle_outline_24px dropdown-icons"></i><span class="dropdown-title">Pause</span></li>
+                    <li style="display:flex" nz-menu-item><i class="icon-trash-alt dropdown-icons"></i><span class="dropdown-title">Delete</span></li>
+                  </ul>
+                </nz-dropdown>
+                <i class="icon-keyboard_arrow_down_24px"></i>
+              </div>
+            </li>
+          </ul>
+          <div class="mt-2 task-footer">
             <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="1" nzLabel="Today"></nz-option>
@@ -59,9 +135,6 @@
           </div>
         </div>
       </nz-tab>
-      <nz-tab [nzTitle]="CompletedHeaderContent">
-        Tab 2 content
-      </nz-tab>
     </nz-tabset>
   </div>
   `
@@ -72,18 +145,6 @@
 
   <ng-template #CompletedHeaderContent>
     <span style="width: 90px">Completed &nbsp; <span class="badge badge-light tab-badge">6</span></span>
-  </ng-template>
-
-  <ng-template #ImportHeaderContent>
-    <span style="width: 80px">Import &nbsp; <span class="badge badge-light tab-badge">6</span></span>
-  </ng-template>
-
-  <ng-template #CalibrationHeaderContent>
-    <span style="width: 72px">Calibration &nbsp; <span class="badge badge-light tab-badge">4</span></span>
-  </ng-template>
-
-  <ng-template #InuringHeaderContent>
-    <span style="width: 72px">Inuring &nbsp; <span class="badge badge-light tab-badge">3</span></span>
   </ng-template>
 
 </ng-template>

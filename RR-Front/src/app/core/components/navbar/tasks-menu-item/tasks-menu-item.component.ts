@@ -14,15 +14,14 @@ export class TasksMenuItemComponent implements OnInit {
 
   readonly tasks = {
     active: [
-      {progress: 75, name:'ALABAMA INS.UA', duration: '1 min remaining', sepecific: 'Import - P009873', isPaused: false },
-      {progress: 50, name:'ALLSTATES INCO', duration: '1 min remaining', isPaused: false },
-      {progress: 25, name:'ALTE LEIPZIGER VERS', duration: '1 min remaining', isPaused: false },
-      {progress: 0, name:'Calibration_P7774673', duration: '4/12 Pending', isPaused: true },
-      {progress: 0, name:'AMERICAN FAMILY MUTUAL', duration: '4/12 Pending', isPaused: true },
-      {progress: 0, name:'AXA GLOBAL RE', duration: '4/12 Pending', isPaused: true },
-      {progress: 0, name:'CONCORDIA VERS', duration: '4/12 Pending', isPaused: true },
-      {progress: 0, name:'AIG', duration: '5/12 Pending', isPaused: true },
-      {progress: 0, name:'AXA GLOBAL', duration: '5/12 Pending', isPaused: true },
+      {progress: 75, name: 'ALABAMA INS.UA', year: '2018', description: 'Cat Program, 1st/4th 1year,2nd/3rd year ' , duration: '1 min remaining', specific: 'Import - P009873', isPaused: false },
+      {progress: 50, name: 'ALLSTATES INCO', year: '2018', description: 'Nationwide ex NJ/FL, MY (2/3)', duration: '1 min remaining', specific: 'Import - P009873', isPaused: false },
+      {progress: 25, name: 'ALTE LEIPZIGER VERS', year: '2018', description: 'Property XL Bouquet', duration: '1 min remaining', specific: 'Import - P009873', isPaused: false },
+      {progress: 0, name: 'AMERICAN FAMILY MUTUAL', year: '2019', description: 'American Family Annual Cat XL', duration: '4/12 Pending', specific: 'Import - P009873', isPaused: true },
+      {progress: 0, name: 'AXA GLOBAL RE', year: '2019', description: 'XL Property CAT ESP', duration: '4/12 Pending', specific: 'Import - P009873', isPaused: true },
+      {progress: 0, name: 'CONCORDIA VERS', year: '2017', description: 'Elementar XL Programm', duration: '4/12 Pending', specific: 'Import - P009873', isPaused: true },
+      {progress: 0, name: 'AIG', year: '2017', description: 'AIG Cat XL', duration: '5/12 Pending', specific: 'Import - P009873', isPaused: true },
+      {progress: 0, name: 'AXA GLOBAL', year: '2018', description: 'XL Property CAT ESP', duration: '5/12 Pending', specific: 'Import - P009873', isPaused: true },
     ]
   };
 
