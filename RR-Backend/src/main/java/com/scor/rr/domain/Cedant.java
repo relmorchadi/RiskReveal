@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CEDANT_VIEW", schema = "dbo", catalog = "RR")
+@Table(name = "CEDANT_VIEW", schema = "dbo")
 public class Cedant {
 
     @Id

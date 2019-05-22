@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  API_URI: 'http://dcvdevalmf1:8880/risk-reveal/api/',
+  API_URI: 'http://7007b0d5.ngrok.io/api/',
   hmr: false,
 };
 
