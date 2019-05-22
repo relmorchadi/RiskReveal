@@ -2,10 +2,13 @@ package com.scor.rr.rest;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.NewWorkspaceFilter;
+import com.scor.rr.domain.dto.VwFacTreatyFilter;
 import com.scor.rr.domain.dto.WorkspaceDetailsDTO;
+import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.service.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -61,6 +64,9 @@ public class SearchResource {
                     .orElse(ResponseEntity.notFound().build());
     }
 
-
+    @GetMapping("fac-treaties")
+    Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable){
+        return searchService.getAllFacTreaties(filter, pageable);
+    }
 
 }

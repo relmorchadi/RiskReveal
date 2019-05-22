@@ -1,4 +1,4 @@
-import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../core/service/search.service';
 import {debounceTime} from 'rxjs/operators';
@@ -17,7 +17,8 @@ import {WorkspaceMain} from "../../../core/model/workspace-main";
 @Component({
   selector: 'app-search-main',
   templateUrl: './search-main.component.html',
-  styleUrls: ['./search-main.component.scss']
+  styleUrls: ['./search-main.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchMainComponent implements OnInit {
   @ViewChild('dt') table;
@@ -128,7 +129,7 @@ export class SearchMainComponent implements OnInit {
   state: WorkspaceMain = null;
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
-              private _router: Router, private _location: Location, private store: Store) {
+              private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
     this.initSearchForm();
   }
 
@@ -174,7 +175,8 @@ export class SearchMainComponent implements OnInit {
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((param) => {
-        //this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
+        this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
+        this.cdRef.detectChanges();
         this._loadContracts();
       });
   }
@@ -203,10 +205,11 @@ export class SearchMainComponent implements OnInit {
           selected: false,
           ...dt
         };
+        workspace.projects = workspace.projects.map(prj => prj = {...prj, selected: false});
         this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
         this._helperService.updateRecentWorkspaces();
         this._helperService.updateWorkspaceItems();
-        this.navigateToTab(this.state.openedTabs[0]);
+        this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
       }
     );
   }
@@ -226,15 +229,17 @@ export class SearchMainComponent implements OnInit {
     this.searchData(contract.workSpaceId, contract.uwYear).subscribe(
       dt => {
         this.selectedWorkspace = dt;
+        this.cdRef.detectChanges();
         console.log(this.selectedWorkspace);
       }
     );
+
   }
 
   popUpWorkspace(wsId, year) {
     this.searchData(wsId, year).subscribe(
       () => {
-        window.open('/workspace/' + wsId + '/' + year);
+        window.open(`/workspace/${wsId}/${year}/PopOut`);
       }
     );
   }
@@ -245,47 +250,28 @@ export class SearchMainComponent implements OnInit {
 
   private _loadContracts(offset = '0', size = '100') {
     this.loading = true;
-    //if (this.searchedItems.length > 0) {
-      const keys = [];
-      const values = [];
-      this.searchedItems.forEach(
+    const keys = [];
+    const values = [];
+    this.searchedItems.forEach(
         (e) => {
           keys.push(_.camelCase(e.key));
           values.push(e.value);
         }
       );
-      keys.forEach(
+    keys.forEach(
         (e, index) => {
           this.contractFilterFormGroup.value[e] = values[index];
           console.log(this.contractFilterFormGroup.value);
         }
       );
     this._searchService.searchGlobal(_.merge({keyword: this.globalSearchItem}, this.contractFilterFormGroup.value), offset, size)
-      .subscribe((data: any) => {
+        .subscribe((data: any) => {
           this.contracts = data.content.map(item => ({...item, selected: false}));
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-        }
-      );
-    // } else if (this.globalSearchItem !== '') {
-    //   this._searchService.searchGlobal(this.globalSearchItem)
-    //     .subscribe((data: any) => {
-    //         this.contracts = data.content.map(item => ({...item, selected: false}));
-    //         this.loadingMore = false;
-    //         this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-    //         this.loading = false;
-    //       }
-    //     );
-    // } else {
-    //   this._searchService.searchContracts(this.contractFilterFormGroup.value, offset, size)
-    //     .subscribe((data: any) => {
-    //       this.contracts = data.content.map(item => ({...item, selected: false}));
-    //       this.loadingMore = false;
-    //       this.loading = false;
-    //       this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-    //     });
-    // }
+          this.cdRef.detectChanges();
+        });
   }
 
   navigateBack() {

@@ -1,37 +1,41 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
+import {Select, Store} from '@ngxs/store';
+import {Observable} from 'rxjs';
+import {RiskLinkState} from '../../store/states';
+import {RiskLinkModel} from '../../model/risk_link.model';
+import {
+  SearchRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction
+} from '../../store/actions/risk_link.actions';
+import {
+  LoadRiskLinkDataAction,
+  PatchRiskLinkCollapseAction,
+  PatchRiskLinkDisplayAction,
+  PatchRiskLinkFinancialPerspectiveAction,
+  SelectRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkEDMAndRDMAction
+} from '../../store/actions';
 
 @Component({
   selector: 'app-workspace-risk-link',
   templateUrl: './workspace-risk-link.component.html',
-  styleUrls: ['./workspace-risk-link.component.scss']
+  styleUrls: ['./workspace-risk-link.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspaceRiskLinkComponent implements OnInit {
-  leftNavbarIsCollapsed = false;
+export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
+
   lastSelectedIndex = null;
-  checkedARC = false;
-  checkedPricing = false;
 
-  list1 = ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'];
-  list2 = ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'];
-  list3 = ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'];
-  list4 = ['MLC (USD)', 'MLC (EUR)', 'YEN'];
-  list6: any = ['Add calibration', 'item 1', 'item 2'];
+  inputSwitch = true;
 
-  selectedRMS = 'AZU-P-RL17-SQL14';
-  selectedPrELT = 'Net Loss Pre Cat (RL)';
-  selectedPrEPM = 'Facultative Reinsurance Loss';
-  selectedTarget = 'MLC (USD)';
-  list5value = 'Add calibration';
+  closePrevent = false;
 
   listEDM: any = [];
   listRDM: any = [];
-  selectedEDMOrRDM: string;
-
-  selectedAnalysis: any = [];
-  selectedPortfolio: any = [];
+  serviceSubscription: any;
 
   listEdmRdm: any = [
     {id: 1, name: 'AA2012_syntheticCurve_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
@@ -43,8 +47,22 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
     {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/4'},
     {id: 9, name: 'Aon_IF_Flood_Example_E', type: 'EDM', selected: false, scanned: false, Reference: '0/2'},
-    {id: 10, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM', type: 'EDM', selected: false, scanned: false, Reference: '0/15'},
-    {id: 11, name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
+    {
+      id: 10,
+      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM',
+      type: 'EDM',
+      selected: false,
+      scanned: false,
+      Reference: '0/15'
+    },
+    {
+      id: 11,
+      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM',
+      type: 'RDM',
+      selected: false,
+      scanned: false,
+      Reference: '0/13'
+    },
     {id: 12, name: 'CC_ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
     {id: 13, name: 'CG1801_DEU_Allianz_DEFL_R', type: 'RDM', selected: false, scanned: false, Reference: '0/41'},
     {id: 14, name: 'CG1801_DEU_Allianz_DEFL_E', type: 'EDM', selected: false, scanned: false, Reference: '0/41'},
@@ -54,212 +72,34 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
   ];
 
-  tableLeftAnalysis: any = [
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: true,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '10',
-      name: 'Europe All Lines, EP Wind Only',
-      AlreadyImported: false,
-      description: 'EUWS_EP_PLA_DLM110',
-      engineVersion: '11.0.141 1.2',
-      groupeType: 'Analysis',
-      cedant: 'RMS_EUWS_industry'
-    },
-  ];
+  tableLeftAnalysis: any = [];
 
-  tableLeftProtfolio: any = [
-    {
-      selected: false,
-      id: '760',
-      number: 'FA0020553_01',
-      name: 'FA0020553_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '761',
-      number: 'FA0056486_01',
-      name: 'FA0056486_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '762',
-      number: 'FA0040287_01',
-      name: 'FA0040287_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-    {
-      selected: false,
-      id: '763',
-      number: 'FA0023693_01',
-      name: 'FA0023693_01',
-      creationDate: '2019-01-03T00:57:10.840Z',
-      descriptionType: 'DET',
-      cedant: 'RMS_EUWS_industry'
-    },
-  ]
+  tableLeftProtfolio: any = [];
 
   scrollableColsAnalysis = [
-    {field: 'description', header: 'Description', width: '150px'},
-    {field: 'engineVersion', header: 'Engine Version', width: '110px'},
-    {field: 'groupeType', header: 'Groupe Type', width: '110px'},
-    {field: 'cedant', header: 'cedant', width: '110px'},
+    {field: 'description', header: 'Description', width: '150px', type: 'text'},
+    {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
+    {field: 'groupType', header: 'Group Type', width: '110px', type: 'text'},
+    {field: 'cedant', header: 'cedant', width: '110px', type: 'text'},
   ];
 
   frozenColsAnalysis = [
-    {field: 'selected', header: 'selected', width: '20px'},
-    {field: 'id', header: 'id', width: '30px'},
-    {field: 'name', header: 'name', width: '190px'}
+    {field: 'selected', header: 'selected', width: '20px', type: 'select'},
+    {field: 'analysisId', header: 'id', width: '30px', type: 'text'},
+    {field: 'analysisName', header: 'name', width: '190px', type: 'text'}
   ];
 
   scrollableColsPortfolio = [
-    {field: 'name', header: 'Name', width: '150px'},
-    {field: 'creationDate', header: 'Creation Date', width: '180px'},
-    {field: 'descriptionType', header: 'Description Type', width: '180px'},
-    {field: 'cedant', header: 'cedant', width: '120px'},
+    {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text'},
+    {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date'},
+    {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text'},
+    {field: 'cedant', header: 'cedant', width: '120px', type: 'text'},
   ];
 
   frozenColsPortfolio = [
-    {field: 'selected', header: 'selected', width: '20px'},
-    {field: 'id', header: 'id', width: '30px'},
-    {field: 'number', header: 'Number', width: '190px'}
+    {field: 'selected', header: 'selected', width: '20px', type: 'select'},
+    {field: 'dataSourceId', header: 'id', width: '30px', type: 'text'},
+    {field: 'number', header: 'Number', width: '190px', type: 'text'}
   ];
 
   summaryInfo: any = [
@@ -346,74 +186,63 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     },
   ];
 
-  displayDropdownRDMEDM = false;
-  displayListRDMEDM = false;
-  displayTable = false;
-  displayImport = false;
+  @Select(RiskLinkState)
+  state$: Observable<RiskLinkModel>;
+  state: RiskLinkModel = null;
 
-
-  collapseHead = true;
-  collapseAnalysis = true;
-  collapseResult = true;
-
-  currentStep = 0;
-
-  constructor(private _helper: HelperService, private route: ActivatedRoute) {
-
+  constructor(private _helper: HelperService, private route: ActivatedRoute, private store: Store, private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
-    this._helper.collapseLeftMenu$.subscribe((e) => {
-      this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
-    });
+    this.store.dispatch(new LoadRiskLinkDataAction());
+    this.serviceSubscription = [
+      this.state$.subscribe(value => this.state = _.merge({}, value)),
+      this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe(dt => {
+        this.tableLeftAnalysis = _.toArray(dt);
+        this.cdRef.detectChanges();
+      }),
+      this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe(dt => {
+        this.tableLeftProtfolio = _.toArray(dt);
+        this.cdRef.detectChanges();
+      }),
+      this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
+        this.cdRef.detectChanges();
+      })
+    ];
   }
 
-  toggleItems(RDM) {
-    RDM.selected = !RDM.selected;
+  ngOnDestroy() {
+    if(this.serviceSubscription)
+      this.serviceSubscription.forEach(sub => sub.unsubscribe());
   }
 
-  toggleItemsListRDM(RDM) {
-    const selectedRDMItems = this.listRDM.filter( RM => RM.selected);
-    const selectedEDMItems = this.listEDM.filter( EM => EM.selected);
-    const nbrSelected = selectedEDMItems.length + selectedRDMItems.length;
-    if (nbrSelected === 0) {
-      RDM.selected = true;
-      this.selectedEDMOrRDM = RDM.type;
-      this.displayTable = true;
+  dataList(data, filter = null) {
+    const array = _.toArray(data);
+    if (filter === null) {
+      return array;
     } else {
-      if (!RDM.selected) {
-        this.unselectEDMRDM();
-        RDM.selected = true;
-        this.selectedEDMOrRDM = RDM.type;
-      } else {
-        this.unselectEDMRDM();
-        this.displayTable = false;
-        this.selectedEDMOrRDM = null;
-      }
+      return array.filter(dt => dt.type === filter );
     }
   }
 
+  toggleItems(RDM) {
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
+    this.closePrevent = false;
+  }
+
+  toggleItemsListRDM(RDM) {
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelectedAction(RDM));
+  }
+
   selectAll() {
-    this.listEdmRdm.forEach((e) => {
-      e.selected = true;
-    });
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll'}));
   }
 
   unselectAll() {
-    this.listEdmRdm.forEach((e) => {
-      e.selected = false;
-    });
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
   }
 
   unselectEDMRDM() {
-    this.listRDM.forEach((e) => {
-        e.selected = false;
-      }
-    );
-    this.listEDM.forEach((e) => {
-        e.selected = false;
-      }
-    );
   }
 
   refreshAll() {
@@ -424,53 +253,34 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   openCloseDropdown() {
-    this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    this.store.dispatch(new PatchRiskLinkDisplayAction({
+      key: 'displayDropdownRDMEDM',
+      value: !this.state.display.displayDropdownRDMEDM
+    }));
   }
 
   closeDropdown() {
-    this.displayDropdownRDMEDM = false;
+    if (this.state.display.displayDropdownRDMEDM && this.closePrevent)
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: false}));
+    this.closePrevent = true;
   }
 
   fillLists() {
-    this.listEDM = [];
-    this.listRDM = [];
-    this.listEdmRdm.forEach((e) => {
-      if (e.selected === true || e.scanned === true) {
-        if (e.type === 'EDM') {
-          const newItem = {
-            id: e.id,
-            name: e.name,
-            type: e.type,
-            selected: false,
-            scanned: true,
-            Reference: e.Reference
-          };
-          this.listEDM = [...this.listEDM, newItem];
-        } else {
-          const newItem = {
-            id: e.id,
-            name: e.name,
-            type: e.type,
-            selected: false,
-            scanned: true,
-            Reference: e.Reference
-          };
-          this.listRDM = [...this.listRDM, newItem];
-        }
-        e.scanned = true;
-      }
-    });
+    this.store.dispatch(new SelectRiskLinkEDMAndRDMAction());
   }
 
   selectedItem() {
     this.fillLists();
-    this.displayDropdownRDMEDM = false;
-    this.listRDM.length > 0 && this.listEDM.length > 0 ? this.currentStep = 1 : this.currentStep = 0;
-    this.listRDM.length > 0 || this.listEDM.length > 0 ? this.displayListRDMEDM = true : this.displayListRDMEDM = false;
+    this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayDropdownRDMEDM', value: false}));
+    const array = _.toArray(this.state.listEdmRdm.selectedListEDMAndRDM);
+    if (array.length > 0) {
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
+    } else {
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: false}));
+    }
   }
 
   scanItem(item) {
-    console.log('i here');
     item.scanned = false;
     setTimeout(() =>
       item.scanned = true, 1000
@@ -478,34 +288,11 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   selectStep(value) {
-    if (value === 0 && this.currentStep === 1) {
-      this.displayTable = false;
-      this.refreshAll();
-      this.selectedItem();
-    }
-    if (value === 1 && this.currentStep === 2) {
-      this.currentStep = 1;
-      this.listEDM.forEach((e) => {
-          e.selected = false;
-        }
-      );
-      this.listRDM.forEach((e) => {
-          e.selected = false;
-        }
-      );
-      this.displayImport = false;
-      this.displayTable = false;
-    }
-    if (value === 0 && this.currentStep === 2) {
-      this.selectStep(1);
-      this.selectStep(0);
-    }
   }
 
   displayImported() {
-    if (this.currentStep === 1) {
-      this.currentStep = 2;
-      this.displayImport = true;
+    if (this.state.currentStep === 1) {
+      this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     }
   }
 
@@ -525,12 +312,12 @@ export class WorkspaceRiskLinkComponent implements OnInit {
     // this.currentSelectedItem = row;
     const selectedRowsAnalysis = this.tableLeftAnalysis.filter(ws => ws.selected === true);
     const selectedRowsPortfolio = this.tableLeftProtfolio.filter(ws => ws.selected === true);
-    this.selectedEDMOrRDM === 'RDM' ? this.selectedAnalysis = selectedRowsAnalysis : this.selectedPortfolio = selectedRowsPortfolio;
+
   }
 
   selectSection(from, to) {
-    let tableUpdated: any ;
-    if (this.selectedEDMOrRDM === 'RDM') {
+    let tableUpdated: any;
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
       tableUpdated = this.tableLeftAnalysis;
     } else {
       tableUpdated = this.tableLeftProtfolio;
@@ -545,14 +332,47 @@ export class WorkspaceRiskLinkComponent implements OnInit {
   }
 
   getScrollableCols() {
-    if (this.selectedEDMOrRDM === 'RDM') { return this.scrollableColsAnalysis; } else { return this.scrollableColsPortfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+      return this.scrollableColsAnalysis;
+    } else {
+      return this.scrollableColsPortfolio;
+    }
   }
 
   getFrozenCols() {
-    if (this.selectedEDMOrRDM === 'RDM') { return this.frozenColsAnalysis; } else { return this.frozenColsPortfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+      return this.frozenColsAnalysis;
+    } else {
+      return this.frozenColsPortfolio;
+    }
   }
 
   getTableData() {
-    if (this.selectedEDMOrRDM === 'RDM') { return this.tableLeftAnalysis; } else { return this.tableLeftProtfolio; }
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+      return this.tableLeftAnalysis;
+    } else {
+      return this.tableLeftProtfolio;
+    }
+  }
+
+  onInputSearch(event) {
+    if (event.target.value.length > 2) {
+      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value}));
+    } else {
+      this.store.dispatch(new LoadRiskLinkDataAction());
+    }
+    this.cdRef.detectChanges();
+  }
+
+  loadItemsLazy(event) {
+
+  }
+
+  changeCollapse(value) {
+    this.store.dispatch(new PatchRiskLinkCollapseAction({key: value}));
+  }
+
+  changeFinancialValidator(value, item) {
+    this.store.dispatch(new PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
   }
 }

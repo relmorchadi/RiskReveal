@@ -1,4 +1,4 @@
-import {Subject} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
@@ -24,22 +24,6 @@ export class SearchService {
   constructor(private _http: HttpClient) {
   }
 
-  searchCedent(keyword = '', size = '20') {
-    return this._http.get(`${this.api}cedant`, {params: {keyword, size}});
-  }
-
-  searchCountry(keyword = '', size = '20') {
-    return this._http.get(`${this.api}/country`, {params: {keyword, size}});
-  }
-
-  searchTreaty(keyword = '', size = '20') {
-    return this._http.get(`${this.api}treaty`, {params: {keyword, size}});
-  }
-
-  searchYear(keyword = '', size = '20') {
-    return this._http.get(`${this.api}year`, {params: {keyword, size}});
-  }
-
   searchContracts(filter: WorkspaceFilter, offset = '0', size = '20') {
     return this._http.post(`${this.api}workspace`, filter, {params: {offset,size}});
   }
@@ -55,6 +39,8 @@ export class SearchService {
   searchGlobal(filter, offset= '0', size = '100') {
     return this._http.get(`${this.api}workspace`, {params: _.pickBy({...filter, offset, size},_.identity())});
   }
+
+
 
   affectItems(item) {
     this._searchedItems = item;

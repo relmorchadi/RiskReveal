@@ -2,12 +2,12 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.NewWorkspaceFilter;
+import com.scor.rr.domain.dto.VwFacTreatyFilter;
 import com.scor.rr.domain.dto.WorkspaceDetailsDTO;
+import com.scor.rr.domain.views.VwFacTreaty;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.counter.*;
-import com.scor.rr.domain.*;
-import com.scor.rr.repository.*;
-import com.scor.rr.repository.counter.*;
+import com.scor.rr.repository.specification.VwFacTreatySpecification;
 import com.scor.rr.util.QueryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,7 +17,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -66,11 +68,17 @@ public class SearchService {
     @Autowired
     WorkspaceNameCountViewRepository workspaceNameCountViewRepository;
 
+    @Autowired
+    ProjectViewRepository projectViewRepository;
+
     @PersistenceContext
     EntityManager entityManager;
-
     @Autowired
     QueryHelper queryHelper;
+    @Autowired
+    VwFacTreatyRepository vwFacTreatyRepository;
+    @Autowired
+    VwFacTreatySpecification vwFacTreatySpecification;
 
     Map<TableNames, BiFunction<String, Pageable, Page>> countMapper = new HashMap<>();
 
@@ -164,7 +172,11 @@ public class SearchService {
         if (items == null || items.isEmpty())
             return Optional.empty();
         List<String> years = contractSearchResultRepository.findDistinctByWorkSpaceId(worspaceId).map(item -> item.getUwYear()).filter(Objects::nonNull).map(String::valueOf).distinct().sorted().collect(toList());
-        return Optional.of(new WorkspaceDetailsDTO(items, years));
+        List<ProjectView> projects= projectViewRepository.findByWorkspaceIdAndUwy(worspaceId, Integer.valueOf(uwy));
+        return Optional.of(new WorkspaceDetailsDTO(items, years, projects));
     }
 
+    public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
+        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter),pageable);
+    }
 }

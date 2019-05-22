@@ -227,7 +227,7 @@
         <div class="row title-section mt-4">
           <div class="col-md-8 ml-4 mt-2">
             <h4>Workspace detail</h4>
-            <h3>{{currentWorkspace?.workSpaceId}} - {{currentWorkspace?.uwYear}}</h3>
+            <h3>{{selectedWorkspace?.cedantName}} - {{currentWorkspace?.uwYear}}</h3>
           </div>
           <div class="col-md-3 navigation-icons">
             <i class="icon-map-pin-alt"></i>
@@ -238,11 +238,10 @@
           <nz-tab nzTitle="Summary">
             <div class="summary-content">
               <div class="d-inline-flex flex-column ml-4">
-                <h3 class="workspace-value">{{selectedWorkspace?.worspaceName}}
+                <h3 class="workspace-value">{{selectedWorkspace?.workspaceName}}
                   <nz-rate class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate>
                 </h3>
-                <h4 class="workspace-value"> {{selectedWorkspace?.cedantCode}}
-                  | {{selectedWorkspace?.cedantName}} </h4>
+                <h4 class="workspace-value"> {{currentWorkspace?.workSpaceId}} | {{selectedWorkspace?.cedantCode}} |</h4>
               </div>
               <div class="divider"></div>
               <div class="row ml-2">

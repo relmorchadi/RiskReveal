@@ -345,6 +345,28 @@
             background-color: #F4F6FC;
             border-bottom: 2px solid #0700CF;
 
+            input {
+              flex: 1;
+              border: none;
+              &:focus {
+                outline: 0;
+              }
+            }
+
+            ::-webkit-input-placeholder {
+              color: #0700CF;
+            }
+
+            ::-moz-placeholder {
+              color: #0700CF;
+            }
+            :-ms-input-placeholder {
+              color: #0700CF;
+            }
+            :-moz-placeholder {
+              color: #0700CF;
+            }
+
             .search-bar-icon-search {
               padding: 10px;
               color: rgba(0, 0, 0, 0.35);
@@ -404,7 +426,7 @@
             position: absolute;
             width: 600px;
             background-color: #fff;
-            margin-top: 32px;
+            margin-top: 35px;
             margin-left: -3px;
             border: 3px solid #06b8ff;
             border-top: none;
@@ -435,18 +457,39 @@
 
             .search-bar-result-list {
               padding: 6px;
+              ::ng-deep {
+                .ui-virtualscroller .ui-virtualscroller-content {
+                  border: none;
+                  width: 98%;
+                  margin: auto;
+                }
+                .ui-virtualscroller .ui-virtualscroller-content .ui-virtualscroller-list li {
+                  border: none;
+                }
+              }
+              .loading-text {
+                height: 20px;
+                margin: auto;
+                margin-left: 12px;
+                width: 97%;
+                background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
+                background-size: 400% 100%;
+                -webkit-animation: ant-skeleton-loading 1.4s ease infinite;
+                animation: ant-skeleton-loading 1.4s ease infinite;
+              }
 
               ul {
                 list-style: none;
-                padding: 0 20px 5px 5px;
+                padding: 0 2px 3px 0;
                 height: 305px;
                 overflow-y: auto;
-                width: 92%;
+                width: 98%;
                 margin: auto;
               }
 
               .poover-menu-item {
                 padding: 3px 5px;
+                margin: 1px 6px 0 12px;
                 cursor: pointer;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.15);
                 user-select: none;
@@ -510,6 +553,7 @@
 
         .body-wrapper-search-active {
           border: 3px solid #06B8FF;
+          border-bottom: 1px solid rgba(0,0,0,0.05);
         }
       }
     }
@@ -645,8 +689,7 @@
 
             .ui-table-thead {
               th {
-                padding-top: 15px;
-                padding-right: 30px;
+                padding: 15px 10px 5px 3px;
                 font-size: 10px;
                 vertical-align: top;
                 color: rgba(0, 0, 0, 0.38);
@@ -682,7 +725,7 @@
               }
 
               td {
-                padding-left: 10px;
+                padding: 0;
                 cursor: pointer;
                 font-size: 10px;
                 height: 25px;
@@ -691,7 +734,15 @@
 
                 div {
                   width: 100%;
-                  height: 20px;
+                  height: 30px;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
+                  overflow: hidden;
+                  padding-top: 4px;
+                }
+
+                .text-data {
+                  padding-top:8px;
                 }
               }
 
@@ -807,6 +858,11 @@
           ::ng-deep {
             .ant-progress-text {
               display: block;
+              color: #03DAC4;
+            }
+            .ant-progress-circle-path {
+              stroke: #03DAC4;
+              stroke-width: 8px;
             }
           }
 

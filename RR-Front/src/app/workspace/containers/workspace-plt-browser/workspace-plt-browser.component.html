@@ -1,3 +1,4 @@
+<app-left-menu></app-left-menu>
 <nz-layout style="display: flex; flex-direction: row; width: 100%;">
 
   <div class="mr-3 ml-3" style="flex: 1;">
@@ -8,7 +9,7 @@
     </div>
 
     <div class="my-tabs" style="display: flex; flex-direction: row; width: 100%;">
-      <div class="noMargin" style="width: 190px">
+      <div class="noMargin">
         <nz-tabset class="tabset-left">
           <nz-tab [nzTitle]="path">
             <ng-template #path>
@@ -18,12 +19,12 @@
               <div class="title">
                     <span (click)="resetPath()">
                       <i class="icon-window-section"></i>
-                      02PY376 - 2019
+                      {{workspaceId}} - {{uwy}}
                     </span>
                 <ul class="title-list">
-                  <li *ngFor="let path of paths" (click)="selectPath(path)" [ngClass]="{'active-path': path.selected}">
-                    <i [ngClass]="path.icon"></i>
-                    {{path.text}}
+                  <li *ngFor="let project of projects" (click)="selectProject(project.projectId)">
+                    <i class="icon-assignment_24px"></i>
+                    {{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}
                   </li>
                 </ul>
               </div>
@@ -40,20 +41,21 @@
                         style=" float: right; border: 0px solid;">
                   <i nz-icon nzType="undo" nzTheme="outline"></i></button>
               </div>
-              <div nz-row class="tags-title-section" style="margin-top: -20px;">System Tags</div>
-              <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === currentSystemTag}" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentSystemTag = tag">
+              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i
+                class="icon-plus-circle"></i></div>
+              <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
+                    <span [ngClass]="{'active-tag': tag === filters.currentUserTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('userTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
                     </span>
               </div>
 
-              <div nz-row class="tags-title-section">User tags<i class="icon-plus-circle"></i></div>
-              <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === currentUserTag}" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="currentUserTag = tag">
+              <div nz-row class="tags-title-section">System Tags</div>
+              <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
+                    <span [ngClass]="{'active-tag': tag === filters.currentSystemTag}" class="chips"
+                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('systemTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -66,104 +68,185 @@
       </div>
 
       <div class="tabset-right" style="flex: 1">
-        <nz-tabset >
+        <nz-tabset>
           <nz-tab [nzTitle]="PLTs">
             <ng-template #PLTs>
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
-              <nz-table #pltTable [nzData]="listOfDisplayPlts" class="table plt-table" [nzFrontPagination]="false"
+              <i class="icon-menu_24px" style="display:none;position: absolute;right: 7px;top: 61px;font-size: 15px;"></i>
+              <!--nz-table-- #pltTable
+                        [nzData]="listOfPlts"
+                        class="plt-table"
+                        [nzLoading]="loading"
+                        [nzFrontPagination]="false"
                         [nzShowPagination]="false"
-                        [nzScroll]="{ y: '480px' }">
+                        [nzScroll]="{ y: '480px'}">
                 <thead (nzSortChange)="sort($event)" nzSingleSort>
                 <tr>
-                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted"
-                      [nzSortKey]="col.fields">
-                    {{col.header}}
+                  <th
+                    nzShowCheckbox
+                    [nzWidth]="'2%'"
+                    [nzChecked]="selectAll"
+                    [nzIndeterminate]="someItemsAreSelected"
+                    (nzCheckedChange)="checkAll($event)"
+                  ></th>
+
+                  <th *ngFor="let col of pltColumns" [nzWidth]="col.width" [nzShowSort]="col.sorted" [nzSortKey]="col.fields" [(nzSort)]="sortMap[col.fields]">
+                    <div class="header-tab">
+                      <span *ngIf="col.header.length > 0" style="width: 80%">{{col.header}}</span>
+                      <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+                    </div>
+                  </th>
+                </tr>
+                <tr>
+                  <th></th>
+                  <th *ngFor="let col of pltColumns">
                     <div *ngIf="col.filtred" class="filter-input">
                       <i class="icon-search"></i>
-                      <input type="text">
+                      <input type="text" [ngModel]="''" (ngModelChange)="filter(col.fields,$event)">
                     </div>
-                    <i *ngIf="col.icon" [ngClass]="col.icon"></i>
                   </th>
                 </tr>
                 </thead>
 
                 <tbody>
                 <tr
-                  *ngFor="let plt of pltTable.data | filterBySystemTag: currentSystemTag | filterByUserTag: currentUserTag | filterByPath: currentPathId"
+                  *ngFor="let pltId of pltTable.data ;let i = index"
                   style="cursor: pointer" (contextmenu)="contextMenuPltTable($event, template)"
-                  [ngClass]="{'active_plt_item': plt.selected }">
+                  [ngClass]="{'active_plt_item': (selectPltById(pltId) | async)?.selected }">
                   <ng-template #template>
                     <ul nz-menu nzInDropDown (nzClick)="close($event)">
                       <li nz-menu-item nzDisabled nz-tooltip nzTitle="not yet implemented"> <i nz-icon nzType="plus-circle" nzTheme="fill"></i> Add to Basket</li>
                       <li nz-menu-item nzDisabled nz-tooltip nzTitle="not yet implemented"> <i nz-icon nzType="delete" nzTheme="fill"></i> Delete</li>
                       <li nz-menu-divider></li>
-                      <li nz-menu-item (click)="openPltInDrawer(plt)"><i nz-icon nzType="eye" nzTheme="fill"></i> View Details</li>
+                      <li nz-menu-item (click)="openPltInDrawer(pltId)"><i nz-icon nzType="eye" nzTheme="fill"></i> View Details</li>
                     </ul>
                   </ng-template>
-                  <!--<td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">-->
-                    <!--<div *ngIf="plt.selected">-->
-                      <!--<i nz-icon nzType="eye" nzTheme="outline"></i>-->
-                    <!--</div>-->
-                    <!--<div *ngIf="!plt.selected">-->
-                      <!--<i nz-icon nzType="eye-invisible" nzTheme="outline"></i>-->
-                    <!--</div>-->
-                  <!--</td>-->
+                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
+              <!--<div *ngIf="plt.selected">-->
+              <!--<i nz-icon nzType="eye" nzTheme="outline"></i>-->
+              <!--</div>-->
+              <!--<div *ngIf="!plt.selected">-->
+              <!--<i nz-icon nzType="eye-invisible" nzTheme="outline"></i>-->
+              <!--</div>-->
+              <!--</td>>
+              <ng-container *ngIf="(selectPltById(pltId) | async)?.visible">
+                <td nzShowCheckbox [nzChecked]="(selectPltById(pltId) | async)?.selected" (nzCheckedChange)="selectSinglePLT(pltId, $event)"></td>
+                <td>
+                  <div class="td-wrapper-tags">
+                  <span *ngFor="let tag of (selectPltById(pltId) | async)?.userTags"
+                        [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
+                    <!--<span style ="background-color: #0b97c4">&nbsp;</span>>
+                  </div>
+                </td>
+                <td  (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{pltId}}</div>
+                </td>
+                <td (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{(selectPltById(pltId) | async)?.pltName | textLength: [36]}}</div>
+                </td>
+                <td (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{(selectPltById(pltId) | async)?.peril | textLength: [16]}}</div>
+                </td>
+                <td (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{(selectPltById(pltId) | async)?.regionPerilCode | textLength: [16]}}</div>
+                </td>
+                <td (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{(selectPltById(pltId) | async)?.regionPerilName | textLength: [16]}}</div>
+                </td>
+                <td (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{(selectPltById(pltId) | async)?.grain | textLength: [16]}}</div>
+                </td>
+                <td (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{(selectPltById(pltId) | async)?.vendorSystem | textLength: [16]}}</div>
+                </td>
+                <td (click)="handlePLTClick(pltId,i,$event)">
+                  <div class="td-wrapper">{{(selectPltById(pltId) | async)?.rap | textLength: [17]}}</div>
+                </td>
+              </ng-container>
+            </tr>
+            </tbody>
+          </nz-table-->
+              <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
+              <p-table [columns]="pltColumns" [value]="listOfPltsData | tableSortAndFilter : [sortData,filterData]"
+                       [resizableColumns]="true"
+                       [(contextMenuSelection)]="selectedPlt"
+                       [contextMenu]="cm"
+                       [scrollHeight]="'500px'"
+                       [scrollable]="true"
+                       [totalRecords]="listOfPltsData.length"
+                       sortMode="multiple"
+              >
+                <ng-template pTemplate="colgroup" let-columns>
+                  <colgroup>
+                    <col style="min-width: 25px">
+                    <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
+                  </colgroup>
+                </ng-template>
+                <ng-template pTemplate="header" let-columns>
+                  <tr>
+                    <th nzShowCheckbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="someItemsAreSelected" [pSortableColumn]="'selected'" [ngStyle]="{'width': '25px'}"></th>
+                    <th [ngStyle]="{'width': '60px'}">
+                      <span style="display:flex;justify-content: space-between;">
+                        User Tags
+                      </span>
+                    </th>
 
-                  <td>
-                    <label nz-checkbox [(ngModel)]="plt.selected"></label>
-                  </td>
-                  <td>
-                    <div class="td-wrapper-tags">
-                      <span *ngFor="let tag of plt.userTags"
-                            [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
-                      <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
-                    </div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.pltId}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.pltName}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.peril}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.regionPerilCode}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.regionPerilName}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.grain}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.vendorSystem}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper">{{plt.rap}}</div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper-check">
-                      <div>
-                        <i [ngClass]="{'icon-check-circle': plt.d, 'icon-remove_24px': !plt.d }"></i>
-                      </div>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper-check">
-                      <i [ngClass]="{'icon-check-circle': plt.note, 'icon-remove_24px': !plt.note }"></i>
-                    </div>
-                  </td>
-                  <td>
-                    <div class="td-wrapper-check">
-                      <i [ngClass]="{'icon-check-circle': plt.checked, 'icon-remove_24px': !plt.checked }"></i>
-                    </div>
-                  </td>
-                </tbody>
-              </nz-table>
+                    <ng-container *ngFor="let col of columns; let i = index">
+                      <th  *ngIf="i > 0" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
+                      <span style="display:flex;justify-content: space-between;">
+                        {{col?.header}}
+                        <p-sortIcon *ngIf="col?.sorted" [field]="col.fields"></p-sortIcon>
+                      </span>
+                        <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+                      </th>
+                    </ng-container>
+                  </tr>
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <ng-container *ngFor="let col of columns;">
+                      <th *ngIf="col?.filtred">
+                        <div class="filter-input">
+                          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                          <input  *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)">
+                        </div>
+                      </th>
+                    </ng-container>
+                  </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
+                  <tr [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="rowData?.visible">
+                    <td [ngStyle]="{'width': '25px'}">
+                      <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+                    </td>
+                    <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
+                      <ng-container *ngIf="i === 0">
+                        <div class="td-wrapper-tags">
+                        <span *ngFor="let tag of rowData.userTag" [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
+                          <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
+                        </div>
+                      </ng-container>
+                      <ng-container *ngIf="i === 1">
+                        <div class="text-elipsice" style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+                      </ng-container>
+                      <ng-container *ngIf="i > 1">
+                        <ng-container *ngIf="col?.type == 'field' && col?.type != 'checkbox'">
+                          <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+                        </ng-container>
+                        <ng-container *ngIf="col?.type == 'icon'">
+                          <div class="td-wrapper-check">
+                            <div>
+                              <i [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
+                            </div>
+                          </div>
+                        </ng-container>
+                      </ng-container>
+                    </td>
+                  </tr>
+                </ng-template>
+              </p-table>
             </div>
           </nz-tab>
         </nz-tabset>
@@ -195,7 +278,7 @@
     </div>
 
     <div class="noMargin">
-      <nz-tabset class="tabset-drawer">
+      <nz-tabset [nzSelectedIndex]="drawerIndex" class="tabset-drawer">
         <nz-tab [nzTitle]="basket">
           <ng-template #basket>
             <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
@@ -205,7 +288,7 @@
           <div class="basket-content" nz-row>
             <div class="title-section-drawer">
               <div nz-col nzSpan="18">
-                <h3>4 PLTs selected</h3>
+                <h3>{{ selectedListOfPlts.length }} PLT{{ selectedListOfPlts.length == 1 ? '' : 's'}} selected</h3>
               </div>
               <div nz-col nzSpan="4">
                 <nz-dropdown [nzTrigger]="'click'">
@@ -249,12 +332,12 @@
             <div>
               <table class="table">
                 <tbody>
-                <tr *ngFor="let plt of listOfDisplayPlts">
-                  <td>{{plt.pltId}}</td>
-                  <td>{{plt.pltName}}</td>
-                  <td>{{plt.peril}}</td>
-                  <td>{{plt.regionPerilName}}</td>
-                  <td>{{plt.rap}}</td>
+                <tr *ngFor="let plt of selectedListOfPlts">
+                  <td>{{plt | textLength}}</td>
+                  <td>{{(selectPltById(plt) | async)?.pltName}}</td>
+                  <td>{{(selectPltById(plt) | async)?.peril}}</td>
+                  <td>{{(selectPltById(plt) | async)?.regionPerilName}}</td>
+                  <td>{{(selectPltById(plt) | async)?.rap}}</td>
                 </tr>
                 </tbody>
               </table>
@@ -277,11 +360,11 @@
           </div>
         </nz-tab>
 
-        <nz-tab [nzTitle]="pltDetails" [nzDisabled]="!pltDetailsPermission">
+        <nz-tab [nzTitle]="pltDetails" [nzDisabled]="!sumnaryPltDetailsPltId">
           <ng-template #pltDetails>
 
-            <div *ngIf="pltDetailsPermission; else noPermission">
-              <span *ngIf="pltDetailsPermission" style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
+            <div>
+              <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
                 PLT Details
               </span>
               <i class="icon-remove_red_eye_24px"
@@ -333,52 +416,54 @@
                     </div>
                   </div>
                   <div class="summary-table">
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">PLT ID:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.pltId}}</span>
+                      <span nz-col  class="summaryTableBody">{{sumnaryPltDetailsPltId}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">PLT File Name:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.pltName}}</span>
+                      <span nz-col
+                            class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltName}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Target RAP:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.rap}}</span>
+                      <span nz-col
+                            class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.rap}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Peril:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.peril}}</span>
+                      <span nz-col
+                            class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.peril}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Region Peril:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.regionPerilCode}}</span>
+                      <span nz-col
+                            class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.regionPerilCode}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Currency:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">EUR</span>
+                      <span nz-col  class="summaryTableBody">EUR</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Grain:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">{{sumnaryPltDetails?.grain}}</span>
+                      <span nz-col
+                            class="summaryTableBody">{{(selectPltById(sumnaryPltDetailsPltId) | async)?.grain}}</span>
                     </div>
-                    <div nz-row>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Representation</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">*********</span></div>
-                    <div nz-row>
+                      <span nz-col  class="summaryTableBody">Unspecified Representation </span></div>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">User Notes:</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">
-                        <p>
-                          Lorem ipsum dolor sit amet,
-                        </p>
-                      </span></div>
-                    <div nz-row>
+                      <span nz-col class="summaryTableBody">
+
+                      </span>
+                    </div>
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Sourced From</span>
-                      <span nz-col nzSpan="6" class="summaryTableBody">
-                        <p>
+                      <span nz-col  class="summaryTableBody">
                           Lorem ipsum dolor sit amet,
                           consectetur adipiscing elit,
                           sed do eiusmod tempor incididunt
-                        </p>
                       </span>
                     </div>
                   </div>

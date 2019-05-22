@@ -12,8 +12,8 @@
     <name>Risk-Reveal</name>
 
     <modules>
-        <module>RR-Backend</module>
         <module>RR-Front</module>
+        <module>RR-Backend</module>
     </modules>
 
     <properties>

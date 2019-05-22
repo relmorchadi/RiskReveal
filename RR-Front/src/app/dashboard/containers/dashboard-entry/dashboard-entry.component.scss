@@ -40,17 +40,9 @@ nz-header {
   background-color: transparent;
 }
 
-.closed-slider {
-  height:100vh;
-  min-width: 85px !important;
-  flex: 0 0 85px !important;
-  background-color: #008694 !important;
-}
 
-.collapsed-slider {
-  min-width: 300px !important;
-  flex: 0 0 300px !important;
-}
+
+
 
 .dashboard-slider {
   background-color: #FFF;
@@ -119,7 +111,8 @@ nz-header {
   flex-direction: column;
   background: #FFFFFF;
   height: 100%;
-  padding: 30px 24px
+  padding: 30px 24px;
+  padding-bottom: 500px;
 }
 
 .add-workspace-btn {
@@ -237,6 +230,33 @@ ul.widgets-list {
   padding: 20px 30px !important;
 }
 
-.tabs-header-wrapper{
-  display:flex;
+::ng-deep {
+  .ant-tabs-nav .ant-tabs-tab {
+    &:hover {
+      .ant-tabs-close-x{
+        visibility: visible !important;
+      }
+    }
+  }
+}
+
+.dashboard-wrapper{
+  display: flex;
+  background-color: #F4F6FC;
+  flex: 1;
+  .collapsed-slider {
+    min-width: 300px !important;
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    right: 0;
+    z-index: 100;
+    background: #fff;
+    box-shadow: -2px 0px 7px rgba(0,0,0,0.3);
+  }
+
+  .closed-slider {
+    min-width: 85px;
+    background-color: #008694;
+  }
 }

@@ -7,6 +7,6 @@ export class WorkspaceMain {
   appliedFilter: any;
   workspacePagination: any;
   openedWs: any;
-  openedTabs: any[];
+  openedTabs: {data: any[], tabsIndex: number};
   recentWs: any[];
 }

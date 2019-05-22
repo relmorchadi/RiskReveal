@@ -1,335 +1,70 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
-import {style} from "@angular/animations";
-import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
+import {Select, Store} from '@ngxs/store';
+import * as fromWorkspaceStore from '../../store';
+import {pltMainModel, PltMainState} from '../../store';
+import {map, mergeMap, tap} from 'rxjs/operators';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
   styleUrls: ['./workspace-plt-browser.component.scss']
 })
-export class WorkspacePltBrowserComponent implements OnInit {
+export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   private dropdown: NzDropdownContextComponent;
-
-  sortName: string | null = null;
-  sortValue: string | null = null;
+  private Subscriptions: any[] = [];
   searchAddress: string;
+  listOfPlts: any[];
+  listOfPltsData: any[];
+  selectedListOfPlts: any[];
+  filterData;
+  sortData;
 
-  listOfName = [{ text: 'Joe', value: 'Joe' }, { text: 'Jim', value: 'Jim' }];
-  listOfAddress = [{ text: 'London', value: 'London' }, { text: 'Sidney', value: 'Sidney' }];
-  listOfSearchName: string[] = [];
+  workspaceId: string;
+  uwy: number;
+  projects: any[];
 
-  listOfPlts: Array<{
-    pltId: number;
-    systemTags: any;
-    userTags: any;
-    pathId: number;
-    pltName: string;
-    peril: string;
-    regionPerilCode: string;
-    regionPerilName: string;
-    selected: boolean;
-    grain: string;
-    vendorSystem: string;
-    rap: string;
-    d: boolean;
-    note: boolean;
-    checked: boolean;
-    [key: string]:any;}> = [
-    {
-      pltId: 1,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 1,
-      pltName: "NATC-USM_RL_Imf.T1",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 2,
-      systemTags: [],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T2",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: false,
-      checked: true
-    },
-    {
-      pltId: 3,
-      systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 7}],
-      userTags: [{tagId: 3}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T3",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 4,
-      systemTags: [],
-      userTags: [],
-      pathId: 4,
-      pltName: "NATC-USM_RL_Imf.T4",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 5,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 5}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 5,
-      pltName: "NATC-USM_RL_Imf.T5",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 6,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 1,
-      pltName: "NATC-USM_RL_Imf.T6",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 7,
-      systemTags: [{tagId: 5}, {tagId: 7}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T7",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 8,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T8",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 9,
-      systemTags: [{tagId: 1}, {tagId: 5}, {tagId: 3}],
-      userTags: [{tagId: 2}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T9",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: false,
-      checked: false
-    },
-    {
-      pltId: 10,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 2,
-      pltName: "NATC-USM_RL_Imf.T10",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 11,
-      systemTags: [],
-      userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      pathId: 5,
-      pltName: "NATC-USM_RL_Imf.T11",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    },
-    {
-      pltId: 12,
-      systemTags: [{tagId: 5}, {tagId: 2}, {tagId: 7}],
-      userTags: [{tagId: 2}, {tagId: 3}],
-      pathId: 3,
-      pltName: "NATC-USM_RL_Imf.T12",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: false,
-      note: true,
-      checked: true
-    },
-    {
-      pltId: 13,
-      systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
-      userTags: [{tagId: 1}, {tagId: 2}],
-      pathId: 4,
-      pltName: "NATC-USM_RL_Imf.T13",
-      peril: "TC",
-      regionPerilCode: "NATC-USM",
-      regionPerilName: "North Atlantic",
-      selected: false,
-      grain: "liberty-NAHU",
-      vendorSystem: "RMS RiskLink",
-      rap: "North Atlantic",
-      d: true,
-      note: true,
-      checked: false
-    }
+  params: any;
+  sortMap = {
+    pltId: null,
+    systemTags: null,
+    userTags: null,
+    pathId: null,
+    pltName: null,
+    peril: null,
+    regionPerilCode: null,
+    regionPerilName: null,
+    selected: null,
+    grain: null,
+    vendorSystem: null,
+    rap: null,
+    isScorCurrent: null,
+    isScorDefault: null,
+    isScorGenerated: null,
+  };
+  lastSelectedId;
 
+  contextMenuItems = [
+    { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
+    { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) }
   ];
-
-
-  listOfDisplayPlts: Array<{
-    pltId: number;
-    systemTags: [];
-    userTags: [];
-    pathId: number; pltName: string;
-    peril: string;
-    regionPerilCode: string;
-    regionPerilName: string;
-    selected: boolean;
-    grain: string;
-    vendorSystem: string;
-    rap: string;
-    d: boolean;
-    note: boolean;
-    checked: boolean;
-    [key: string]: any;}> = [
-    ...this.listOfPlts
-  ];
-
-  sort(sort: { key: string; value: string }): void {
-    this.sortName = sort.key;
-    this.sortValue = sort.value;
-    this.search();
-  }
-
-  filter(listOfSearchName: string[], searchAddress: string): void {
-    this.listOfSearchName = listOfSearchName;
-    this.searchAddress = searchAddress;
-    this.search();
-  }
-
-  search(): void {
-    /** filter data **/
-    // const filterFunc = (item: { name: string; age: number; address: string }) =>
-    //   (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) &&
-    //   (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
-    const data = this.listOfPlts;
-    // .filter(item => filterFunc(item));
-    /** sort data **/
-    if (this.sortName && this.sortValue) {
-      this.listOfDisplayPlts = data.sort((a, b) =>
-        this.sortValue === 'ascend'
-          ? a[this.sortName!] > b[this.sortName!]
-          ? 1
-          : -1
-          : b[this.sortName!] > a[this.sortName!]
-          ? 1
-          : -1
-      );
-    } else {
-      this.listOfDisplayPlts = data;
-    }
-  }
 
   pltColumns = [
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: null},
-    {fields:'' , header:'User Tags' , width: '6%', sorted: false, filtred: false, icon: null},
-    {fields:'pltId' , header:'PLT ID' , width: '6%', sorted: true, filtred: true, icon: null},
-    {fields:'pltName' , header:'PLT Name' , width: '14%', sorted: true, filtred: true, icon: null},
-    {fields:'peril' , header:'Peril' , width: '7%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '13%', sorted: true, filtred: true, icon: null},
-    {fields:'regionPerilName' , header:'Region Peril Name' , width: '13%', sorted: true, filtred: true, icon: null},
-    {fields:'grain' , header:'Grain' , width: '9%', sorted: true, filtred: true, icon: null},
-    {fields:'vendorSystem' , header:'Vendor System' , width: '11%', sorted: true, filtred: true, icon: null},
-    {fields:'rap' , header:'RAP' , width: '9%', sorted: true, filtred: true, icon: null},
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-note"},
-    {fields:'' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add"},
+    {fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
+    {fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'peril', header: 'Peril', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'regionPerilCode', header: 'Region Peril Code', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'vendorSystem', header: 'Vendor System', width: '90px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
+    {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     ];
 
   epMetricsCurrencySelected: any = 'EUR';
@@ -338,15 +73,14 @@ export class WorkspacePltBrowserComponent implements OnInit {
   CalibrationImpactFinancialUnitSelected: any = 'Million';
 
   currentPath:any = null;
-  currentPathId:any = null;
 
   visible = false;
   size = 'large';
-  currentSystemTag = null;
-  currentUserTag = null;
-  sumnaryPltDetails: any = null;
-
-  pltDetailsPermission: boolean ;
+  filters: {
+    systemTag: [],
+    userTag: []
+  }
+  sumnaryPltDetailsPltId: any = null;
 
   epMetricInputValue: string | null;
 
@@ -354,9 +88,9 @@ export class WorkspacePltBrowserComponent implements OnInit {
   pltdetailsUserTags: any = [];
 
   systemTags = [
-    {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
+    {tagId: '8', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
     {
-      tagId: '2',
+      tagId: '9',
       tagName: 'NATC-USM',
       tagColor: '#7bbe31',
       innerTagContent: '2',
@@ -364,7 +98,7 @@ export class WorkspacePltBrowserComponent implements OnInit {
       selected: false
     },
     {
-      tagId: '3',
+      tagId: '10',
       tagName: 'Post-Inured',
       tagColor: '#006249',
       innerTagContent: '9',
@@ -573,46 +307,172 @@ export class WorkspacePltBrowserComponent implements OnInit {
     {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
     {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
   ]
+  someItemsAreSelected: boolean;
+  selectAll: boolean;
+  drawerIndex: any;
+  private pageSize: number = 20;
 
 
-  constructor( private nzDropdownService: NzDropdownService ) {
+  constructor(
+    private nzDropdownService: NzDropdownService,
+    private store$: Store,
+    private zone: NgZone,
+    private cdRef: ChangeDetectorRef,
+    private route$: ActivatedRoute) {
+    this.someItemsAreSelected= false;
+    this.selectAll= false;
+    this.listOfPlts= [];
+    this.listOfPltsData= [];
+    this.selectedListOfPlts= [];
+    this.lastSelectedId = null;
+    this.drawerIndex= 0;
+    this.params= {};
+    this.loading= true;
+    this.filters= {
+      systemTag: [],
+      userTag: []
+    }
+
+
+  }
+  @Select(PltMainState.data) data$;
+  loading: boolean;
+
+  ngOnInit(){
+    this.Subscriptions.push(
+      this.data$.subscribe( data => {
+        let d1= [];
+        let d2= [];
+        _.forEach(data, (v,k) => {
+          d1.push({...v,pltId: k});
+          d2.push(k);
+          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+        })
+        this.listOfPlts= d2;
+        this.listOfPltsData= d1;
+        this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+        this.detectChanges();
+      }),
+      this.data$.subscribe( data => {
+        this.selectAll = this.selectedListOfPlts.length > 0 || this.selectedListOfPlts.length == this.listOfPlts.length;
+        this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
+        this.detectChanges();
+      }),
+      this.data$.subscribe( data => {
+        _.forEach(data, (v,k) => {
+          if(v.opened) {
+            this.sumnaryPltDetailsPltId= k;
+          }
+        })
+        this.detectChanges();
+      }),
+      this.route$.params.subscribe(
+        ({wsId, year}) => {
+          this.workspaceId = wsId;
+          this.uwy = year;
+          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+            params: {
+              workspaceId: wsId, uwy: year
+            }}))
+        }
+      ),
+      this.store$.select(PltMainState.getProjects()).subscribe(
+        (projects:any) => {
+          this.projects = projects;
+          this.detectChanges();
+        }
+      ),
+      this.getAttr('loading').subscribe( l => this.loading =l)
+    )
   }
 
+  getAttr(path){
+    return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)))
+  }
 
-  ngOnInit(){};
+  /*sort(sort: { key: string, value: string }): void {
+    let sortField = sort.key;
+    let sortOrder = sort.value;
+    if (sortField && sortOrder) {
+      this.sortMap[sort.key] = sort.key;
+      (sortOrder === 'ascend') ? sortOrder = 'asc' : sortOrder = 'desc';
+      this.params = {
+        ...this.params,
+        pageNumber: 0,
+        pageSize: this.pageSize,
+        sort: sortField + "," + sortOrder,
+      };
+      //this.loadData(this.params);
+    } else {
+      this.params = {...this.params, sort: 'pltId,desc', sortCompany: '', pageSize: this.pageSize};
+      //this.loadData(this.params);
+    }
+    this.loadData(this.params)
+  }
 
+  filter = _.debounce( (key: string, value) => {
+    if(value){
+      this.params= _.merge({},this.params, {[key]: value })
+    }else{
+      this.params= _.omit(this.params, [key])
+    }
+    this.loadData(this.params)
+  },500);*/
 
-  openDrawer(): void {
+  sort(sort: { key: string, value: string }): void {
+    if(sort.value){
+      this.sortData= _.merge({},this.sortData, {
+        [sort.key]: sort.value === "descend" ? 'desc' : 'asc'
+      })
+    }else{
+      this.sortData= _.omit(this.sortData, [sort.key])
+    }
+  }
+
+  filter (key: string, value)  {
+
+    if(value) {
+      this.filterData= _.merge({},this.filterData, {[key]: value})
+    } else {
+      this.filterData= _.omit(this.filterData, [key])
+    }
+    console.log(this.filterData);
+  }
+
+  selectedPlt: any;
+
+  setFilter(filter: string, tag) {
+      this.filters =
+        _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
+        _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
+        _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
+      this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
+        filters: this.filters
+      }))
+  }
+
+  selectPltById(pltId){
+    return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`))
+  }
+
+  openDrawer(index): void {
     this.visible = true;
+    this.drawerIndex= index;
   }
 
   closeDrawer(): void {
     this.visible = false;
   }
 
+  closePltInDrawer(pltId){
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}))
+  }
+
   openPltInDrawer(plt) {
-    let selectedPlts = this.listOfDisplayPlts.filter(pt => pt.selected === true);
-    if (selectedPlts.length > 0) {
-      if (selectedPlts[0] === plt) {
-        plt.selected = false;
-        this.visible = false;
-        this.sumnaryPltDetails = null;
-        this.pltDetailsPermission = false;
-      } else {
-        this.listOfDisplayPlts.forEach( pt => pt.selected = false);
-        plt.selected = true;
-        this.sumnaryPltDetails = plt;
-      }
-    } else {
-      this.listOfDisplayPlts.forEach(pt => pt.selected = false);
-      plt.selected = true;
-      this.visible = true;
-      this.sumnaryPltDetails = plt;
-      this.pltDetailsPermission = true;
-    }
-
-    this.getTagsForSummary(plt);
-
+    this.closePltInDrawer(this.sumnaryPltDetailsPltId);
+    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}))
+    this.openDrawer(1);
+    this.getTagsForSummary();
   }
 
   getColor(id, type) {
@@ -627,33 +487,9 @@ export class WorkspacePltBrowserComponent implements OnInit {
     return null
   }
 
-  getTagsForSummary(plt){
-    this.pltdetailsSystemTags = this.pltdetailsUserTags = [];
-    let findSysTags = plt.systemTags.map(item => item.tagId);
-    let findUserTags = plt.userTags.map(item => item.tagId);
-    findSysTags.forEach(
-      sysTag => {
-        this.pltdetailsSystemTags = [...this.pltdetailsSystemTags, this.systemTags.filter(
-          item => item.tagId == sysTag
-        )[0]]
-      }
-    )
-    findUserTags.forEach(
-      uTag => {
-        this.pltdetailsUserTags = [...this.pltdetailsUserTags, this.userTags.filter(
-          item => item.tagId == uTag
-        )[0]]
-      }
-    )
-  }
-
-  selectPath(path) {
-    this.paths.forEach(pa => {
-      pa.selected = false;
-    })
-    path.selected = true;
-    this.currentPath = path;
-    this.currentPathId = path.id
+  getTagsForSummary(){
+    this.pltdetailsSystemTags = this.systemTags;
+    this.pltdetailsUserTags= this.userTags;
   }
 
   selectCardThead(card) {
@@ -676,16 +512,15 @@ export class WorkspacePltBrowserComponent implements OnInit {
   }
 
   resetFilterByTags(){
-    this.currentSystemTag = null;
-    this.currentUserTag = null;
+    this.filters = _.assign({}, this.filters, {
+      systemTag: null,
+      userTag: null
+    })
   }
 
   resetPath(){
-    this.paths.forEach(path => {
-      path.selected = false;
-    })
     this.currentPath = null;
-    this.currentPathId = null;
+    _.forEach(this.paths, el => _.set(el, 'selected', false))
   }
 
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
@@ -697,6 +532,100 @@ export class WorkspacePltBrowserComponent implements OnInit {
     this.dropdown.close();
   }
 
+  runInNewConext(task) {
+    this.zone.runOutsideAngular(() => {
+      task();
+      this.detectChanges()
+    });
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
+  }
+
+  ngOnDestroy(): void {
+    this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe())
+  }
+
+  checkAll($event: boolean) {
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map(this.listOfPlts, plt => plt),
+        _.range(this.listOfPlts.length).map(el => ({type : !this.selectAll && !this.someItemsAreSelected ? 'select' : 'unselect'}))
+      )
+    )
+  }
+
+  toggleSelectPlts(plts: any){
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}))
+  }
+
+  selectSinglePLT(pltId: number, $event: boolean) {
+    this.toggleSelectPlts({
+      [pltId]: {
+        type: $event ? 'select' : 'unselect'
+      }
+    })
+  }
+
+  handlePLTClick(pltId,i: number, $event: MouseEvent) {
+    const isSelected= _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
+    if($event.ctrlKey || $event.shiftKey) {
+      this.handlePLTClickWithKey(pltId,i,!isSelected, $event);
+    }else{
+      this.lastSelectedId = i;
+      this.toggleSelectPlts(
+        _.zipObject(
+          _.map(this.listOfPlts, plt => plt),
+          _.map(this.listOfPlts, plt =>  plt == pltId && !isSelected ? ({type: 'select'}) : ({type: 'unselect'}) )
+        )
+      )
+    }
+  }
+
+  private handlePLTClickWithKey(pltId: number,i: number,isSelected: boolean, $event: MouseEvent) {
+    console.log(i);
+    if($event.ctrlKey){
+      this.selectSinglePLT(pltId,isSelected);
+      this.lastSelectedId=i;
+      return;
+    }
+
+    if($event.shiftKey) {
+      console.log('SHIFT')
+      console.log(i,this.lastSelectedId)
+      if(!this.lastSelectedId) this.lastSelectedId =0;
+      if(this.lastSelectedId || this.lastSelectedId == 0) {
+        console.log(i,this.lastSelectedId)
+        const max = _.max([i, this.lastSelectedId])
+        const min = _.min([i, this.lastSelectedId])
+        console.log(max,min)
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(this.listOfPlts, plt => plt),
+            _.map(this.listOfPlts,(plt,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )),
+          )
+        )
+      }else{
+        this.lastSelectedId= i;
+      }
+      return;
+    }
+  }
+
+  private loadData(params: any) {
+    console.log(params)
+    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}))
+  }
+
+  selectProject(id: any) {
+
+  }
+
+  toDate(d){
+    return new Date(d);
+  }
 }
 
 

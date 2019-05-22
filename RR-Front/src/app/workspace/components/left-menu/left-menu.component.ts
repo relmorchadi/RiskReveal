@@ -5,7 +5,7 @@ import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as _ from 'lodash';
 import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
-import {SelectWorkspaceAction} from "../../../core/store/actions/workspace-main.action";
+import { SelectWorkspaceAction, PatchWorkspaceMainStateAction } from '../../../core/store/actions/workspace-main.action';
 import {SearchService} from "../../../core/service/search.service";
 import {HelperService} from "../../../shared/helper.service";
 
@@ -16,7 +16,7 @@ import {HelperService} from "../../../shared/helper.service";
   styleUrls: ['./left-menu.component.scss']
 })
 export class LeftMenuComponent implements OnInit {
-  @Input('isCollapsed') isCollapsed  = false;
+
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
@@ -28,7 +28,7 @@ export class LeftMenuComponent implements OnInit {
   collapse($event){
     $event.stopPropagation();
     $event.preventDefault();
-    this.isCollapsed = !this.isCollapsed;
+    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'leftNavbarIsCollapsed', value: !this.state.leftNavbarIsCollapsed}));
   }
 
   routerNavigate(routerLink) {

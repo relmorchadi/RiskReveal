@@ -1,11 +1,12 @@
-import { Component } from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'risk-reveal-root',
-  template:`<router-outlet></router-outlet>`
+  template:`<router-outlet></router-outlet>`,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EntryComponent {
   constructor(

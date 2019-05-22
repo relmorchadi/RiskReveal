@@ -7,6 +7,7 @@ import {TableModule} from 'primeng/table';
 import {RouterModule} from '@angular/router';
 import {HighlightDirective} from './highlight.directive';
 import {ContextMenuModule} from 'primeng/primeng';
+import { TableSortAndFilterPipe } from '../core/pipes/table-sort-and-filter.pipe';
 
 
 @NgModule({
@@ -24,6 +25,8 @@ import {ContextMenuModule} from 'primeng/primeng';
     CommonModule,
     NgZorroAntdModule,
     HighlightDirective,
+    ContextMenuModule,
+    TableModule,
     ReactiveFormsModule,
     FormsModule,
     ...COMPONENTS

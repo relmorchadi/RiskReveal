@@ -1,7 +1,16 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
+
+import {Observable} from 'rxjs';
+import {Select, Store} from '@ngxs/store';
+import {WorkspaceMain} from '../../../core/model/workspace-main';
+import {WorkspaceMainState} from '../../../core/store/states/workspace-main.state';
+
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
+import {SelectProjectAction} from '../../../core/store/actions/workspace-main.action';
+
 @Component({
   selector: 'app-workspace-project',
   templateUrl: './workspace-project.component.html',
@@ -12,34 +21,31 @@ export class WorkspaceProjectComponent implements OnInit {
   collapseWorkspaceDetail = true;
   componentSubscription: any = [];
   selectedPrStatus = '1';
+  private dropdown: NzDropdownContextComponent;
 
-  ProjectStatus: any = [
-    {id: 'project1', selected: false},
-    {id: 'project2', selected: false},
-    {id: 'project3', selected: false},
-    {id: 'project4', selected: false},
-  ];
+  @Select(WorkspaceMainState)
+  state$: Observable<WorkspaceMain>;
+  state: WorkspaceMain = null;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute) {
-
+  constructor(private _helper: HelperService, private route: ActivatedRoute, private nzDropdownService: NzDropdownService, private store: Store) {
+    console.log('init project');
   }
 
   ngOnInit() {
-    this._helper.collapseLeftMenu$.subscribe((e) => {
-      this.leftNavbarIsCollapsed = !this.leftNavbarIsCollapsed;
-    });
-    const pathName: any = window.location.pathname || '';
-  }
-  ngOnDestroy(): void {
-    _.forEach(this.componentSubscription, (e) => _.invoke(e, 'unsubscribe'));
-  }
-  selectproject(id) {
-    this.ProjectStatus.array.forEach(e => {
-      if (e.id === id) {
-        e.selected = !e.selected;
-      }
-    });
+    this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
+  selectProject(project) {
+    this.store.dispatch(new SelectProjectAction(project));
+  }
+
+  contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
+    this.dropdown = this.nzDropdownService.create($event, template);
+  }
+
+  close(e: NzMenuItemDirective): void {
+    console.log(e);
+    this.dropdown.close();
+  }
 
 }
