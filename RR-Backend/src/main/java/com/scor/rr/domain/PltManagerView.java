@@ -1,6 +1,8 @@
 package com.scor.rr.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import java.util.Date;
 
 @Entity
+@Data
+@AllArgsConstructor
 public class PltManagerView {
 
     @Column(name = "workspaceId")
@@ -50,6 +54,16 @@ public class PltManagerView {
     private Date creationDate;
     @Column(name = "year")
     private Integer year;
+    @Column(name = "fileName")
+    private String fileName;
+    @Column(name = "modellingVendor")
+    private String  modellingVendor;
+    @Column(name = "modellingSystem")
+    private String  modellingSystem;
+    @Column(name = "dataSourceName")
+    private String  dataSourceName;
+    @Column(name = "analysisId")
+    private String  analysisId;
 
     public PltManagerView() {
     }
