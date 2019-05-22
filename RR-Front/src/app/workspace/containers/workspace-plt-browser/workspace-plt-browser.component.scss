@@ -3,8 +3,8 @@
   display: flex;
   width: 100%;
   ::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
-    margin-top: -280px;
-    margin-left: -435px;
+    margin-top: -26%;
+    margin-left: -48%;
   }
 }
 
@@ -454,8 +454,8 @@ nz-layout {
     th {
       font-weight: bold;
       color: #898989;
-      padding: 3px 0px 5px 3px;
-
+      padding: 3px 0px;
+      text-align: center;
       i {
         font-size: 16px;
         color: #000;
@@ -465,8 +465,9 @@ nz-layout {
       }
     }
 
-    td {
-      padding: 2px 25px 2px 2px;
+    td{
+      padding: 7px 5px 1px 2px;
+      text-align: right;
     }
 
     input {
@@ -788,6 +789,10 @@ nz-layout {
 
       tr.opened_plt_item {
         background-color: #E9E9E9 !important;
+      }
+
+      tr:hover {
+        background-color: #F7F8FD!important;
       }
 
 

@@ -177,6 +177,7 @@
                        [scrollable]="true"
                        [totalRecords]="listOfPltsData.length"
                        sortMode="multiple"
+                       (onSort)="onSort($event)"
               >
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>
@@ -186,7 +187,9 @@
                 </ng-template>
                 <ng-template pTemplate="header" let-columns>
                   <tr>
-                    <th nzShowCheckbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="someItemsAreSelected" [pSortableColumn]="'selected'" [ngStyle]="{'width': '25px'}"></th>
+                    <th [ngStyle]="{'width': '25px'}">
+                      <label nz-checkbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="someItemsAreSelected"></label>
+                    </th>
                     <th [ngStyle]="{'width': '60px'}">
                       <span style="display:flex;justify-content: space-between;">
                         User Tags
@@ -383,7 +386,7 @@
           <div nz-row>
             <div class="title-section-drawer">
               <div nz-col nzSpan="18">
-                <h3>NATC-USM</h3>
+                <h3>{{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltName}}</h3>
               </div>
               <div nz-col nzSpan="4">
                 <button>
@@ -418,7 +421,7 @@
                   <div class="summary-table">
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">PLT ID:</span>
-                      <span nz-col  class="summaryTableBody">{{sumnaryPltDetailsPltId}}</span>
+                      <span nz-col  class="summaryTableBody">{{sumnaryPltDetailsPltId | textLength}}</span>
                     </div>
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">PLT File Name:</span>
@@ -461,9 +464,10 @@
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Sourced From</span>
                       <span nz-col  class="summaryTableBody">
-                          Lorem ipsum dolor sit amet,
-                          consectetur adipiscing elit,
-                          sed do eiusmod tempor incididunt
+                          Modelling Vendor: RMS <br>
+                          Modelling System: RiskLink V17 <br>
+                          Data Source Name: RR2_500_1609_PControl_R <br>
+                          Analysis Id: 3
                       </span>
                     </div>
                   </div>
@@ -527,9 +531,8 @@
                             <i nz-icon type="down" nz-col [nzSpan]="6"></i>
                           </a>
                           <ul nz-menu>
-                            <li nz-menu-item>Metric 1</li>
-                            <li nz-menu-item>Metric 2</li>
-                            <li nz-menu-item>Metric 3</li>
+                            <li nz-menu-item>AEP</li>
+                            <li nz-menu-item>OEP</li>
                           </ul>
                         </nz-dropdown>
                       </div>
@@ -541,21 +544,21 @@
                       <nz-tab [nzTitle]="table">
                         <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
                         <div class="metric-table-content">
-                          <table class="table metric-table">
+                          <nz-table [nzData]="metrics" [nzShowPagination]="false" class="table metric-table">
                             <thead>
                             <tr>
                               <th>&nbsp;</th>
-                              <th>Retrun Period</th>
+                              <th style="max-width: 70px !important;">Retrun Period</th>
                               <th>OEP</th>
                               <th>AEP</th>
                               <th>TVaR-OEP</th>
                               <th>TVaR-AEP</th>
                             </tr>
                             </thead>
-                            <tbody *ngFor="let metric of metrics">
-                            <tr>
+                            <tbody>
+                            <tr *ngFor="let metric of metrics">
                               <td>&nbsp;</td>
-                              <td align="right">{{metric.retrunPeriod}}</td>
+                              <td>{{metric.retrunPeriod}}</td>
                               <td>{{metric.OEP}}</td>
                               <td>{{metric.AEP}}</td>
                               <td>{{metric.TVaR_AEP}}</td>
@@ -565,37 +568,31 @@
                             <tfoot>
                             <tr>
                               <td><i class="icon-plus-circle"></i></td>
-                              <td><input type="text"></td>
-                              <td><input type="text"></td>
-                              <td><input type="text"></td>
-                              <td><input type="text"></td>
-                              <td><input type="text"></td>
+                              <td style="width: 20% !important;" ><input style="width: 100% !important;" type="text"></td>
+                              <td style="width: 20% !important;"><input style="width: 100% !important;" type="text"></td>
+                              <td style="width: 20% !important;"><input style="width: 100% !important;" type="text"></td>
+                              <td style="width: 20% !important;"><input style="width: 100% !important;" type="text"></td>
+                              <td style="width: 20% !important;"><input  style="width: 100% !important;" type="text"></td>
                             </tr>
                             </tfoot>
-                          </table>
+                          </nz-table>
                         </div>
                         <div class="metric-table-footer">
                           <div nz-row>
                             <div nz-col nzSpan="5" style="text-align: right">Pure Premium</div>
                             <div nz-col nzSpan="1">&nbsp;</div>
                             <div nz-col nzSpan="5">323,849</div>
-                            <div nz-col nzSpan="5">323,884</div>
-                            <div nz-col nzSpan="5">323,8894</div>
                             <div nz-col nzSpan="3">&nbsp;</div>
                           </div>
                           <div nz-row>
-                            <div nz-col nzSpan="5" style="text-align: right">Standart Deviation</div>
+                            <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
                             <div nz-col nzSpan="1">&nbsp;</div>
-                            <div nz-col nzSpan="5">5,806,767</div>
-                            <div nz-col nzSpan="5">5,806,767</div>
                             <div nz-col nzSpan="5">5,806,767</div>
                             <div nz-col nzSpan="3">&nbsp;</div>
                           </div>
                           <div nz-row>
-                            <div nz-col nzSpan="5" style="text-align: right">Cov</div>
+                            <div nz-col nzSpan="5" style="text-align: right">CoV</div>
                             <div nz-col nzSpan="1">&nbsp;</div>
-                            <div nz-col nzSpan="5">17.83</div>
-                            <div nz-col nzSpan="5">17.83</div>
                             <div nz-col nzSpan="5">17.83</div>
                             <div nz-col nzSpan="3">&nbsp;</div>
                           </div>
@@ -697,15 +694,14 @@
                               <nz-dropdown [nzTrigger]="'click'">
                                 <a nz-dropdown nz-row>
                                   <div nz-col [nzSpan]="12">
-                                    Metric
+                                    EP Metric
                                   </div>
                                   <div nz-col [nzSpan]="6">&nbsp;</div>
                                   <i nz-icon type="down" nz-col [nzSpan]="6"></i>
                                 </a>
                                 <ul nz-menu>
-                                  <li nz-menu-item>Metric 1</li>
-                                  <li nz-menu-item>Metric 2</li>
-                                  <li nz-menu-item>Metric 3</li>
+                                  <li nz-menu-item>AEP</li>
+                                  <li nz-menu-item>OEP</li>
                                 </ul>
                               </nz-dropdown>
                             </div>
@@ -748,7 +744,7 @@
                                   <div nz-col nzSpan="3">&nbsp;</div>
                                 </div>
                                 <div nz-row>
-                                  <div nz-col nzSpan="5" style="text-align: right">Standart Deviation</div>
+                                  <div nz-col nzSpan="5" style="text-align: right">Standard Deviation</div>
                                   <div nz-col nzSpan="1">&nbsp;</div>
                                   <div nz-col nzSpan="5">5,806,767</div>
                                   <div nz-col nzSpan="5">5,806,767</div>
@@ -756,7 +752,7 @@
                                   <div nz-col nzSpan="3">&nbsp;</div>
                                 </div>
                                 <div nz-row>
-                                  <div nz-col nzSpan="5" style="text-align: right">Cov</div>
+                                  <div nz-col nzSpan="5" style="text-align: right">CoV</div>
                                   <div nz-col nzSpan="1">&nbsp;</div>
                                   <div nz-col nzSpan="5">17.83</div>
                                   <div nz-col nzSpan="5">17.83</div>
