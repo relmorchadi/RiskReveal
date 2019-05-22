@@ -1,8 +1,9 @@
 import {WorkspaceMainComponent} from './workspace-main/workspace-main.component';
 import {WorkspaceProjectComponent} from './workspace-project/workspace-project.component';
 import {WorkspaceRiskLinkComponent} from './workspace-risk-link/workspace-risk-link.component';
-import {WorkspacePltBrowserComponent} from './workspace-plt-browser/workspace-plt-browser.component';
-import {WorkspaceCalibrationComponent} from './workspace-calibration/workspace-calibration.component';
+import {WorkspacePltBrowserComponent} from "./workspace-plt-browser/workspace-plt-browser.component";
+import {WorkspaceCalibrationComponent} from "./workspace-calibration/workspace-calibration.component";
+import {WorkspqceInuringPackageComponent} from "./workspqce-inuring-package/workspqce-inuring-package.component";
 import {WorkspaceAccumulationComponent} from './workspace-accumulation/workspace-accumulation.component';
 import {WorkspaceActivityComponent} from './workspace-activity/workspace-activity.component';
 import {WorkspaceCloneDataComponent} from './workspace-clone-data/workspace-clone-data.component';
@@ -21,6 +22,7 @@ export const CONTAINERS = [
   WorkspaceRiskLinkComponent,
   WorkspacePltBrowserComponent,
   WorkspaceCalibrationComponent,
+  WorkspqceInuringPackageComponent,
   WorkspaceAccumulationComponent,
   WorkspaceActivityComponent,
   WorkspaceCloneDataComponent,
