@@ -173,6 +173,8 @@ i.icon-pause_circle_outline_24px {
   margin-right: 8px;
 }
 
-.dropdown-title {
-
+.gray-search-input {
+  &:focus {
+    outline: 0;
+  }
 }
