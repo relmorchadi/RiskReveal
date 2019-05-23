@@ -349,47 +349,22 @@
             </div>
           </nz-tab>
           <nz-tab nzTitle="Projects">
-            <div class="projects-content">
-              <div nz-row class="project-item mr-4 ml-4">
-                <div nz-col nzSpan="6" class="project-icon" style="background-color: #B481FE">
-                  <i class="fa fa-code-fork" aria-hidden="true"></i>
+            <div *ngIf="selectedWorkspace?.projects.length > 0" class="projects-content">
+              <ng-container *ngFor="let item of selectedWorkspace?.projects">
+                <div nz-row class="project-item mr-4 ml-4">
+                  <div nz-col nzSpan="6" class="project-icon" style="background-color: #B481FE">
+                    <i class="fa fa-code-fork" aria-hidden="true"></i>
+                  </div>
+                  <div nz-col nzSpan="18" class="d-column pl-4">
+                    <span class="project-title">{{item?.name}}</span>
+                    <span class="project-id">{{item?.projectId}}</span>
+                  </div>
                 </div>
-                <div nz-col nzSpan="18" class="d-column pl-4">
-                  <span class="project-title">Post Inured PLT</span>
-                  <span class="project-id">P-9035</span>
-                </div>
-              </div>
-              <div class="divider"></div>
-              <div nz-row class="project-item mr-4 ml-4">
-                <div nz-col nzSpan="6" class="project-icon" style="background-color: #F5B74E">
-                  <i class="fa fa-file-text" aria-hidden="true"></i>
-                </div>
-                <div nz-col nzSpan="18" class="d-column pl-4">
-                  <span class="project-title">TIWA 2018</span>
-                  <span class="project-id">P-5892</span>
-                </div>
-              </div>
-              <div class="divider"></div>
-              <div nz-row class="project-item mr-4 ml-4">
-                <div nz-col nzSpan="6" class="project-icon" style="background-color: #F5B74E">
-                  <i class="fa fa-file-text" aria-hidden="true"></i>
-                </div>
-                <div nz-col nzSpan="18" class="d-column pl-4">
-                  <span class="project-title">Ameriprise 208</span>
-                  <span class="project-id">P-1686</span>
-                </div>
-              </div>
-              <div class="divider"></div>
-              <div nz-row class="project-item mr-4 ml-4">
-                <div nz-col nzSpan="6" class="project-icon" style="background-color: #36C6FE">
-                  <i class="icon-link_24px"></i>
-                </div>
-                <div nz-col nzSpan="18" class="d-column pl-4">
-                  <span class="project-title">Trinity Kemper 2018(2)</span>
-                  <span class="project-id">P-1724</span>
-                </div>
-              </div>
-              <div class="divider"></div>
+                <div class="divider"></div>
+              </ng-container>
+            </div>
+            <div *ngIf="selectedWorkspace?.projects.length === 0">
+              <nz-empty></nz-empty>
             </div>
           </nz-tab>
           <nz-tab nzTitle="UW Years">

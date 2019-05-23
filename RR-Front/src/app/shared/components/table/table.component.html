@@ -207,9 +207,6 @@
 </p-table>
 </nz-spin>
 
-<div *ngIf="listOfData.length == 0" style="position: absolute;
-    top: 50%;
-    right: 50%;
-    font-size: 34px;">
-  No Result
+<div *ngIf="listOfData.length == 0">
+  <nz-empty></nz-empty>
 </div>
