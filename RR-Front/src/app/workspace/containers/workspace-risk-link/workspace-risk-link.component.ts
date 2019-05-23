@@ -199,14 +199,14 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       this.state$.subscribe(value => this.state = _.merge({}, value)),
       this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe(dt => {
         this.tableLeftAnalysis = _.toArray(dt);
-        this.cdRef.detectChanges();
+        this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe(dt => {
         this.tableLeftProtfolio = _.toArray(dt);
-        this.cdRef.detectChanges();
+        this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
-        this.cdRef.detectChanges();
+        this.detectChanges();
       })
     ];
   }
@@ -361,7 +361,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     } else {
       this.store.dispatch(new LoadRiskLinkDataAction());
     }
-    this.cdRef.detectChanges();
+    this.detectChanges();
   }
 
   loadItemsLazy(event) {
@@ -374,5 +374,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   changeFinancialValidator(value, item) {
     this.store.dispatch(new PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed']) {
+      this.cdRef.detectChanges();
+    }
   }
 }

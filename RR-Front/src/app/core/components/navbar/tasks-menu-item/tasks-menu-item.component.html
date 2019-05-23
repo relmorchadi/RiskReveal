@@ -50,12 +50,8 @@
                   </div>
                 </div>
                 <div class="list-item-right">
-                  <span
-                    (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)"
-                    class="list-item-info">{{activeTask?.specific.type}} - {{activeTask?.specific.id}}</span>
-                  <span
-                    (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)"
-                    class="task-duration mr-2">{{activeTask?.duration}}</span>
+                  <span (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="list-item-info">{{activeTask?.specific.type}} - {{activeTask?.data.workSpaceId}}</span>
+                  <span (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">{{activeTask?.duration}}</span>
                   <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                     <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                     <ul nz-menu>
@@ -90,8 +86,10 @@
                         <span class="item-list-subtitle">{{item.projectId}} | {{item.createdBy}}</span>
                       </div>
                     </div>
-                    <div style="display: flex; align-items: center; flex:1">
+                    <div class="list-item-info" style="display: flex; align-items: center; flex:1">
                       <span class="task-duration">{{item.duration}}</span>
+                      <i *ngIf="item.progress === 100" class="icon-file-check-alt"></i>
+                      <i *ngIf="item.progress < 100" nz-icon [nzType]="'loading'"></i>
                     </div>
                   </li>
                 </ul>
@@ -131,7 +129,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="gray-search-input"/>
+            <input (input)="searchJobs($event)" class="gray-search-input"/>
           </div>
           <ul>
             <li *ngFor="let activeTask of tasks.active" class="popover-menu-item">
@@ -230,13 +228,9 @@
                   </div>
                 </div>
                 <div class="list-item-right">
-                  <span
-                    (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)"
-                    class="list-item-info">{{activeTask?.specific.type}} - {{activeTask?.specific.id}}</span>
-                  <span
-                    (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)"
-                    class="task-duration mr-2">Done</span>
-                  <!--<nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                  <span (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="list-item-info">{{activeTask?.specific.type}} - {{activeTask?.data.workSpaceId}}</span>
+                  <span (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">{{activeTask?.duration}}</span>
+                  <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                     <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                     <ul nz-menu>
                       <li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span
