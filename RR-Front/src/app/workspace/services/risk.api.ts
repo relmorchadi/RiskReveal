@@ -21,7 +21,10 @@ export class RiskApi {
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
     console.log(paramId, paramName);
-    return this.http.get(`${this.URL}analysis`, {params: {rdmId: paramId, rdmName: paramName}});
+    this.http.get(`${this.URL}analysis?rdmId=${paramId}&rdmName=${paramName}`).subscribe(
+      (dt: any) => console.log(dt.content)
+    );
+    return this.http.get(`${this.URL}analysis?rdmId=${paramId}&rdmName=${paramName}`);
   }
 
   searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
