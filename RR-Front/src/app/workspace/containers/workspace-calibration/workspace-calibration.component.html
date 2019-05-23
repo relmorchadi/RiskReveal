@@ -874,107 +874,76 @@ cursor: pointer;"></i>
                       <nz-tabset>
                         <nz-tab nzTitle="Template 1">
                           <!-- Table de Template 1   -->
-                          <div #scrollOne (mouseover)="cursorOntable2()" nz-row
-                               style="margin-top: 5px;overflow-y: auto;max-height: 351px;min-height:351px;width: 79%;">
-                            <nz-table #rightTable #te [nzData]="pure.dataTable"
-                                      [nzPaginationPosition]="false" class="fixedHeadder">
-                              <thead>
-                              <tr nzWidth="100px">
-                                <ng-container *ngFor="let category of pure.category;trackBy: trackByFn">
-                                  <th *ngIf="category.showBol" [colSpan]="category.basis.length" columnWidth="15px"
-                                      style="border-right: 1px solid rgb(232, 232, 232);"
-                                      [ngStyle]="{background:InuringBack(category.name) }"><b>{{category.name}}</b>
-                                    <!-- <i (click)="feedCatgegoryNameForHide(category.name)" [ngClass]="eyeVisible()"
-                                        style="float: right;margin-top: 5px;"></i>-->
-                                  </th>
-                                </ng-container>
-                              </tr>
-                              </thead>
-                              <tbody style="overflow-x:auto;max-width: 825px; min-width: 825px;">
-                              <ng-container *ngFor="let data of pure.dataTable;let pureIndex=index">
-                                <ng-container *ngFor="let dataTable1 of data.thread;let threadIndex=index">
-                                  <tr (click)="changeBackgroud(dataTable1)"
-                                      [ngStyle]="{'background':setBackgroud(dataTable1.checked)}">
-                                    <td (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
-                                        id="bd">
-                                      <div (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
-                                           id="bd1" style="display: flex;height: max-content">
-                                        <div class="dndPlaceholder" dndPlaceholderRef></div>
-                                        <ng-container *ngFor="let adj of dataTable1.adj">
-                                          <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
-                                               (dndEnd)="onDragEnd($event)"
-                                               (dndMoved)="onDragged($event,adj, dataTable1.adj, 'move','td1')"
-                                               (dndStart)="onDragStart($event)" *ngIf="adj.category=='bd'"
-                                               [dndDraggable]="adj"
-                                               class="divInTd"
-                                               dndEffectAllowed="move">
+
+                          <div nz-row>
+                            <div nz-col nzSpan="20">
+                              <div #scrollOne (mouseover)="cursorOntable2()" nz-row
+                                   style="margin-top: 5px;overflow-y: auto;max-height: 351px;min-height:351px;width: 100%;">
+
+                                <nz-table #rightTable #te [nzData]="pure.dataTable"
+                                          [nzPaginationPosition]="false" class="fixedHeadder">
+                                  <thead>
+                                  <tr nzWidth="100px">
+                                    <ng-container *ngFor="let category of pure.category;trackBy: trackByFn">
+                                      <th *ngIf="category.showBol" [colSpan]="category.basis.length"
+                                          style="border-right: 1px solid rgb(232, 232, 232);" [style.width]="category.width"
+                                          [ngStyle]="{background:InuringBack(category.name) }"><b>{{category.name}}</b>
+                                        <!-- <i (click)="feedCatgegoryNameForHide(category.name)" [ngClass]="eyeVisible()"
+                                            style="float: right;margin-top: 5px;"></i>-->
+                                      </th>
+                                    </ng-container>
+                                  </tr>
+                                  </thead>
+                                  <tbody style="overflow-x:auto;max-width: 825px; min-width: 825px;">
+                                  <ng-container *ngFor="let data of pure.dataTable;let pureIndex=index">
+                                    <ng-container *ngFor="let dataTable1 of data.thread;let threadIndex=index">
+                                      <tr (click)="changeBackgroud(dataTable1)"
+                                          [ngStyle]="{'background':setBackgroud(dataTable1.checked)}">
+                                        <td (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                            id="bd">
+                                          <div (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                               id="bd1" style="display: flex;height: max-content">
+                                            <div class="dndPlaceholder" dndPlaceholderRef></div>
+                                            <ng-container *ngFor="let adj of dataTable1.adj">
+                                              <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
+                                                   (dndEnd)="onDragEnd($event)"
+                                                   (dndMoved)="onDragged($event,adj, dataTable1.adj, 'move','td1')"
+                                                   (dndStart)="onDragStart($event)" *ngIf="adj.category=='bd'"
+                                                   [dndDraggable]="adj"
+                                                   class="divInTd"
+                                                   dndEffectAllowed="move">
                                             <span
                                               class="spanStyle">{{adj.name}}</span>
-                                            <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
-                                              <i class="icon-menu_24px" nz-dropdown
-                                                 style="font-size: 18px;float: right"></i>
-                                              <ul nz-menu>
-                                                <li nz-menu-item>
-                                                  <a (click)="addAdjustmenet(adj)">add adjustement</a>
-                                                </li>
-                                                <li nz-menu-item>
-                                                  <a
-                                                  >Delete</a>
-                                                </li>
-                                                <li nz-menu-item>
-                                                  <a>Copy</a>
-                                                </li>
-                                              </ul>
-                                            </nz-dropdown>
-                                            <input [disabled]="adj.linear" [value]="adj.value" class="inputOfdachboard"
-                                            >
+                                                <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
+                                                  <i class="icon-menu_24px" nz-dropdown
+                                                     style="font-size: 18px;float: right"></i>
+                                                  <ul nz-menu>
+                                                    <li nz-menu-item>
+                                                      <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                                                    </li>
+                                                    <li nz-menu-item>
+                                                      <a
+                                                      >Delete</a>
+                                                    </li>
+                                                    <li nz-menu-item>
+                                                      <a>Copy</a>
+                                                    </li>
+                                                  </ul>
+                                                </nz-dropdown>
+                                                <input [disabled]="adj.linear" [value]="adj.value" class="inputOfdachboard"
+                                                >
+                                              </div>
+                                            </ng-container>
                                           </div>
-                                        </ng-container>
-                                      </div>
-                                    </td>
-                                    <td>
-                                      <div style="display: flex;height: max-content">
-                                        <div
-                                          class="divInTd">
+                                        </td>
+                                        <td>
+                                          <div style="display: flex;height: max-content">
+                                            <div
+                                              class="divInTd">
                                           <span
                                             class="spanStyle">Model Calib</span>
-                                          <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
-                                            <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
-                                               style="font-size: 18px;float: right"></i>
-                                            <ul nz-menu>
-                                              <li nz-menu-item>
-                                                <a (click)="addAdjustmenet(adj)">add adjustement</a>
-                                              </li>
-                                              <li nz-menu-item>
-                                                <a
-                                                >Delete</a>
-                                              </li>
-                                              <li nz-menu-item>
-                                                <a>Copy</a>
-                                              </li>
-                                            </ul>
-                                          </nz-dropdown>
-                                          <input class="inputOfdachboard" disabled
-                                                 value="2.1">
-                                        </div>
-                                      </div>
-                                    </td>
-                                    <td (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
-                                        id="pd">
-                                      <div (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
-                                           id="pd1" style="display: flex;height: max-content">
-                                        <div class="dndPlaceholder" dndPlaceholderRef id="dndPlaceholder"></div>
-                                        <ng-container *ngFor="let adj of dataTable1.adj ;let adjindex=index">
-                                          <ng-container *ngIf="adj.category=='pd'">
-                                            <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
-                                                 (dndMoved)="onDragged($event,adj, dataTable1.adj, 'move','td2')"
-                                                 [dndDraggable]="adj"
-                                                 class="divInTd"
-                                                 dndEffectAllowed="move">
-                                              <span
-                                                class="spanStyle">{{adj.name}}</span>
                                               <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
-                                                <i class="icon-menu_24px" nz-dropdown
+                                                <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
                                                    style="font-size: 18px;float: right"></i>
                                                 <ul nz-menu>
                                                   <li nz-menu-item>
@@ -982,55 +951,117 @@ cursor: pointer;"></i>
                                                   </li>
                                                   <li nz-menu-item>
                                                     <a
-                                                      (click)="deleAdjustment(pureIndex,threadIndex,adjindex)">Delete</a>
+                                                    >Delete</a>
                                                   </li>
                                                   <li nz-menu-item>
                                                     <a>Copy</a>
                                                   </li>
                                                 </ul>
                                               </nz-dropdown>
-                                              <input [disabled]="adj.linear" [value]="adj.value"
-                                                     class="inputOfdachboard"
-                                              >
+                                              <input class="inputOfdachboard" disabled
+                                                     value="2.1">
                                             </div>
-                                          </ng-container>
-                                        </ng-container>
-                                      </div>
-                                    </td>
-                                    <td style="background: antiquewhite">
-                                      <div style="display: flex;height: max-content">
-                                        <div
-                                          class="divInTd">
+                                          </div>
+                                        </td>
+                                        <td (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                            id="pd">
+                                          <div (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                               id="pd1" style="display: flex;height: max-content">
+                                            <div class="dndPlaceholder" dndPlaceholderRef id="dndPlaceholder"></div>
+                                            <ng-container *ngFor="let adj of dataTable1.adj ;let adjindex=index">
+                                              <ng-container *ngIf="adj.category=='pd'">
+                                                <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
+                                                     (dndMoved)="onDragged($event,adj, dataTable1.adj, 'move','td2')"
+                                                     [dndDraggable]="adj"
+                                                     class="divInTd"
+                                                     dndEffectAllowed="move">
+                                              <span
+                                                class="spanStyle">{{adj.name}}</span>
+                                                  <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
+                                                    <i class="icon-menu_24px" nz-dropdown
+                                                       style="font-size: 18px;float: right"></i>
+                                                    <ul nz-menu>
+                                                      <li nz-menu-item>
+                                                        <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                                                      </li>
+                                                      <li nz-menu-item>
+                                                        <a
+                                                          (click)="deleAdjustment(pureIndex,threadIndex,adjindex)">Delete</a>
+                                                      </li>
+                                                      <li nz-menu-item>
+                                                        <a>Copy</a>
+                                                      </li>
+                                                    </ul>
+                                                  </nz-dropdown>
+                                                  <input [disabled]="adj.linear" [value]="adj.value"
+                                                         class="inputOfdachboard"
+                                                  >
+                                                </div>
+                                              </ng-container>
+                                            </ng-container>
+                                          </div>
+                                        </td>
+                                        <td style="background: antiquewhite">
+                                          <div style="display: flex;height: max-content">
+                                            <div
+                                              class="divInTd">
                                           <span
                                             class="spanStyle"></span>
-                                          <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
-                                            <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
-                                               style="font-size: 18px;float: right"></i>
-                                            <ul nz-menu>
-                                              <li nz-menu-item>
-                                                <a (click)="addAdjustmenet(adj)">add adjustement</a>
-                                              </li>
-                                              <li nz-menu-item>
-                                                <a
-                                                >Delete</a>
-                                              </li>
-                                              <li nz-menu-item>
-                                                <a>Copy</a>
-                                              </li>
-                                            </ul>
-                                          </nz-dropdown>
-                                          <input class="inputOfdachboard" disabled
-                                                 value="P00002">
-                                        </div>
-                                      </div>
-                                    </td>
-                                  </tr>
-                                </ng-container>
-                              </ng-container>
-                              </tbody>
+                                              <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
+                                                <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
+                                                   style="font-size: 18px;float: right"></i>
+                                                <ul nz-menu>
+                                                  <li nz-menu-item>
+                                                    <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                                                  </li>
+                                                  <li nz-menu-item>
+                                                    <a
+                                                    >Delete</a>
+                                                  </li>
+                                                  <li nz-menu-item>
+                                                    <a>Copy</a>
+                                                  </li>
+                                                </ul>
+                                              </nz-dropdown>
+                                              <input class="inputOfdachboard" disabled
+                                                     value="P00002">
+                                            </div>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    </ng-container>
+                                  </ng-container>
+                                  </tbody>
 
-                            </nz-table>
+                                </nz-table>
+                              </div>
+                            </div>
+                            <div nz-col nzSpan="4">
+                              <div style="margin-top: 5px;overflow-y: auto;max-height: 351px;min-height:351px;width: 100%;">
+                                <nz-table class="fixedHeadder" [nzPaginationPosition]="false"  [nzData]="pure.dataTable">
+                                  <thead>
+                                  <tr nzWidth="100px">
+                                    <th style="background-color: #FFFBF2"><b>Inuring ID</b>
+                                      <!-- <i (click)="feedCatgegoryNameForHide(category.name)" [ngClass]="eyeVisible()"
+                                          style="float: right;margin-top: 5px;"></i>-->
+                                    </th>
+                                  </tr>
+                                  </thead>
+                                  <tbody style="overflow-x:auto;max-width: 825px; min-width: 825px;">
+                                    <ng-container *ngFor="let data of pure.dataTable;let pureIndex=index">
+                                      <ng-container *ngFor="let dataTable1 of data.thread;let threadIndex=index">
+                                    <tr>
+                                              <td style="background-color: #FFFBF2"></td>
+                                    </tr>
+                                    </ng-container>
+                                    </ng-container>
+                                  </tbody>
+
+                                </nz-table>
+                              </div>
+                            </div>
                           </div>
+
                           <!-- Button of Table de Template 1 -->
                           <div nz-row style="margin: 6px">
                             <div nz-col nzSpan="12">
