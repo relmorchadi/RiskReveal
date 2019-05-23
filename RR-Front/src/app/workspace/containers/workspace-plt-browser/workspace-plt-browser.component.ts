@@ -438,8 +438,13 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       }else{
         this.filterData= _.merge({},this.filterData, {[key]: value})
       }
-
-      this.projects = _.map(this.projects, t => t.projectId == value ? {...t,selected: !t.selected} : t)
+      this.projects = _.map(this.projects, t => {
+        if(t.projectId == value){
+            return ({...t,selected: !t.selected})
+        }else if(t.selected) {
+          return ({...t,selected: false})
+        }else return t;
+      })
 
     }else {
       if(value) {
@@ -543,6 +548,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   resetPath(){
     this.filterData = _.omit(this.filterData, 'project')
+    this.projects = _.map(this.projects, p => ({...p, selected: false}))
   }
 
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
