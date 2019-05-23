@@ -170,7 +170,7 @@
             </tr>
             </tbody>
           </nz-table-->
-              <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
+              <p-contextMenu #cm appendTo="body" [model]="contextMenuItems"></p-contextMenu>
               <p-table [columns]="pltColumns" [value]="listOfPltsData | tableSortAndFilter : [sortData,filterData]"
                        [resizableColumns]="true"
                        [(contextMenuSelection)]="selectedPlt"
@@ -180,6 +180,7 @@
                        [totalRecords]="listOfPltsData.length"
                        sortMode="multiple"
                        (onSort)="onSort($event)"
+                       [responsive]="true"
               >
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>

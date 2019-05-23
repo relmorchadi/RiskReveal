@@ -2,10 +2,10 @@
 :host {
   display: flex;
   width: 100%;
-  ::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
-    margin-top: -362px;
-    margin-left: -473px;
-  }
+  /*::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
+    margin-top: -288px;
+    margin-left: -517px;
+  }*/
 }
 
 
@@ -21,9 +21,7 @@ nz-layout {
       cursor: pointer;
 
       .active-path {
-        background-color: #fdfbdf;
-        border: 1px solid #fdc228;
-        padding: 0px 0px 0px 3px;
+        background-color: #FDFBDF;
         margin-top:1px;
         margin-bottom: 1px;
       }
@@ -46,12 +44,12 @@ nz-layout {
           font-family: rubik;
           list-style: none;
           padding-left: 20px;
+          padding-right: 7px;
           font-weight: bold;
           overflow: auto;
           max-height: 600px;
           li {
-            font-size: 11px;
-            width: max-content;
+            font-size: 10px;
           }
         }
 
