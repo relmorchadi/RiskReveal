@@ -203,10 +203,11 @@
     }
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
       border-radius: 0px !important;
-      background: #326F88;
+      //background: #326F88;
+      background: transparent;
       border: 0;
       margin: 0;
-      width: 190px;
+      width: 210px;
       flex-direction: column;
       display: inline-flex;
       text-align: center;
@@ -217,7 +218,8 @@
       height: 70px;
     }
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
-      background: #326F88;
+      //background: #326F88;
+      background: rgba(50,111,136,0.8);
     }
     .ant-tabs-card .ant-tabs-content {
       height: 100%;
