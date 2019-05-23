@@ -99,6 +99,9 @@
 */
 :host {
   width: 100%;
+  @media  screen and (min-width: 1900px) {
+    height: 100vh;
+  }
 }
 
 .calibration {

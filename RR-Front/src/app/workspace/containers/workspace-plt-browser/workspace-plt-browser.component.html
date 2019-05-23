@@ -22,9 +22,9 @@
                       {{workspaceId}} - {{uwy}}
                     </span>
                 <ul class="title-list">
-                  <li *ngFor="let project of projects" (click)="filter('project',project.projectId)">
+                  <li *ngFor="let project of projects" (click)="filter('project',project.projectId)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;" [ngClass]="{'active-path': project.selected}">
                     <i class="icon-assignment_24px"></i>
-                    {{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}
+                    <span [nz-tooltip]="project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
                   </li>
                 </ul>
               </div>
@@ -38,13 +38,15 @@
             <div class="Tags-content">
               <div nz-row class="button-reset-filter-by-tag">
                 <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle"
-                        style=" float: right; border: 0px solid;">
+                        style=" float: right; border: 0px solid;position: relative;
+    top: 14px;
+    right: 2px;">
                   <i nz-icon nzType="undo" nzTheme="outline"></i></button>
               </div>
               <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i
                 class="icon-plus-circle"></i></div>
               <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === filters.currentUserTag}" class="chips"
+                    <span [ngClass]="{'active-tag': tag.selected}" class="chips"
                           [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('userTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
@@ -54,7 +56,7 @@
 
               <div nz-row class="tags-title-section">System Tags</div>
               <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag === filters.currentSystemTag}" class="chips"
+                    <span [ngClass]="{'active-tag': tag.selected }" class="chips"
                           [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('systemTag', tag)">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
@@ -123,7 +125,7 @@
                       <li nz-menu-item (click)="openPltInDrawer(pltId)"><i nz-icon nzType="eye" nzTheme="fill"></i> View Details</li>
                     </ul>
                   </ng-template>
-                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
+                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">-->
               <!--<div *ngIf="plt.selected">-->
               <!--<i nz-icon nzType="eye" nzTheme="outline"></i>-->
               <!--</div>-->
@@ -136,7 +138,7 @@
                 <td>
                   <div class="td-wrapper-tags">
                   <span *ngFor="let tag of (selectPltById(pltId) | async)?.userTags"
-                        [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
+                        [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>-->
                     <!--<span style ="background-color: #0b97c4">&nbsp;</span>>
                   </div>
                 </td>
@@ -168,7 +170,7 @@
             </tr>
             </tbody>
           </nz-table-->
-              <p-contextMenu #cm [model]="contextMenuItems"></p-contextMenu>
+              <p-contextMenu #cm appendTo="body" [model]="contextMenuItems"></p-contextMenu>
               <p-table [columns]="pltColumns" [value]="listOfPltsData | tableSortAndFilter : [sortData,filterData]"
                        [resizableColumns]="true"
                        [(contextMenuSelection)]="selectedPlt"
@@ -178,6 +180,7 @@
                        [totalRecords]="listOfPltsData.length"
                        sortMode="multiple"
                        (onSort)="onSort($event)"
+                       [responsive]="true"
               >
                 <ng-template pTemplate="colgroup" let-columns>
                   <colgroup>

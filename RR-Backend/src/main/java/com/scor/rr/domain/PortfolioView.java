@@ -1,13 +1,19 @@
 package com.scor.rr.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.Objects;
 
 @Entity
+@Data
+@AllArgsConstructor
 public class PortfolioView {
 
     @Id
@@ -25,6 +31,20 @@ public class PortfolioView {
     private Integer edmId;
     @Column(name = "edmName")
     private String edmName;
+    @Column(name = "agCedent")
+    private String agCedent;
+    @Column(name = "agCurrency")
+    private String agCurrency;
+    @Column(name = "agSource")
+    private String agSource;
+    @Column(name = "number")
+    private String number;
+    @Column(name = "peril")
+    private String peril;
+    @Column(name = "portfolioId")
+    private String portfolioId;
+    @Column(name = "type")
+    private String type;
 
     public PortfolioView() {
     }

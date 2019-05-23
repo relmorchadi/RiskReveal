@@ -38,7 +38,7 @@
           </span>
   </li-->
   <hr class="col-xs-12">
-  <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Data sources Import' : ''">
+  <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" (click)="riskLinkImportNavigation()" [nzTitle]="state.leftNavbarIsCollapsed ? 'Data sources Import' : ''">
           <span title>
             <i nz-icon><i class="icon-call_merge_24px"></i></i>
             <span>Data sources Import</span>

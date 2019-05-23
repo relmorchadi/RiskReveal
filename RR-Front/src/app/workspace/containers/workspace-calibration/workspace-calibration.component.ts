@@ -615,19 +615,23 @@ export class WorkspaceCalibrationComponent implements OnInit {
         {
           name: "Pre-Default",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '32.5%'
         }, {
           name: "Default",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '10%'
         }, {
           name: "Post-Default",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '32.5%'
         }, {
           name: "Inuring",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '25%'
         }
       ],
       dataTable: [

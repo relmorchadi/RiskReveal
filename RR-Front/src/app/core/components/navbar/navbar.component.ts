@@ -13,11 +13,12 @@ import {PatchSearchStateAction} from '../../store/actions';
 export class NavbarComponent implements OnInit {
   expandMenu = false;
   formatter = (_) => '';
+  defaultImport;
 
-  constructor(private _helper: HelperService, private store: Store) { }
+  constructor(private store: Store) { }
 
   collapseLeftNavbar() {
-    this._helper.collapseLeftMenu$.next();
+    // @TODO
   }
 
   ngOnInit() {
@@ -30,5 +31,6 @@ export class NavbarComponent implements OnInit {
   wiki() {
     window.open('http://dcvprdwiki/rrwiki/index.php/Main_Page', '_blank');
   }
+
 
 }
