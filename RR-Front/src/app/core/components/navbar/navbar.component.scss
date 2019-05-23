@@ -22,3 +22,13 @@ a.nav-link {
   line-height: 2.3rem;
 }
 
+::ng-deep{
+  .ant-modal-mask{
+    background-color: transparent !important;
+  }
+
+  .ant-modal-wrap{
+    background-color: transparent !important;
+  }
+}
+

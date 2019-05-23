@@ -52,7 +52,8 @@ nz-layout {
           font-weight: bold;
           overflow: auto;
           max-height: 600px;
-          li {
+          max-width: 190px;
+          li * {
             font-size: 10px;
           }
         }

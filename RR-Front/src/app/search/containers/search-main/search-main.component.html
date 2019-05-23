@@ -123,6 +123,7 @@
                    [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                    [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                    (filterData)="changeForm($event.searchValue, $event.searchAddress)"
+                   (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
                    [tableHeight]="'640px'"
                    [loading]="loading"
         >

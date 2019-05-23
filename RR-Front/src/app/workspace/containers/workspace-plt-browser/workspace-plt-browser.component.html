@@ -22,9 +22,9 @@
                       {{workspaceId}} - {{uwy}}
                     </span>
                 <ul class="title-list">
-                  <li *ngFor="let project of projects" (click)="filter('project',project.projectId)" [ngClass]="{'active-path': project.selected}">
+                  <li *ngFor="let project of projects" (click)="filter('project',project.projectId)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;" [ngClass]="{'active-path': project.selected}">
                     <i class="icon-assignment_24px"></i>
-                    {{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}
+                    <span [nz-tooltip]="project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
                   </li>
                 </ul>
               </div>
@@ -125,7 +125,7 @@
                       <li nz-menu-item (click)="openPltInDrawer(pltId)"><i nz-icon nzType="eye" nzTheme="fill"></i> View Details</li>
                     </ul>
                   </ng-template>
-                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">
+                  <td [ngClass]="{'active_plt_item_eye': plt.selected }" (click)="openPltInDrawer(plt)">-->
               <!--<div *ngIf="plt.selected">-->
               <!--<i nz-icon nzType="eye" nzTheme="outline"></i>-->
               <!--</div>-->
@@ -138,7 +138,7 @@
                 <td>
                   <div class="td-wrapper-tags">
                   <span *ngFor="let tag of (selectPltById(pltId) | async)?.userTags"
-                        [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
+                        [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>-->
                     <!--<span style ="background-color: #0b97c4">&nbsp;</span>>
                   </div>
                 </td>
