@@ -1,4 +1,4 @@
-import {Routes} from '@angular/router';
+import {Routes} from "@angular/router";
 import {
   WorkspaceAccumulationComponent,
   WorkspaceActivityComponent,
@@ -21,7 +21,7 @@ export const workspaceRoutes: Routes = [
       {data: {title: 'RR- Workspace'}, path: ':wsId/:year', component: WorkspaceProjectComponent},
       {data: {title: 'RR- Risk Link'}, path: ':wsId/:year/RiskLink', component: WorkspaceRiskLinkComponent},
       {data: {title: 'RR- Calibration'}, path: ':wsId/:year/Calibration', component: WorkspaceCalibrationComponent},
-      {data: {title: 'RR- Plt Browser'}, path: ':wsId/:year/PltBrowser', component: WorkspacePltBrowserComponent},
+      {data: {title: 'RR- Plt Manager'}, path: ':wsId/:year/PltBrowser', component: WorkspacePltBrowserComponent},
       {data: {title: 'RR- Accumulation'}, path: ':wsId/:year/Accumulation', component: WorkspaceAccumulationComponent},
       {data: {title: 'RR- Activity'}, path: ':wsId/:year/Activity', component: WorkspaceActivityComponent},
       {data: {title: 'RR- Clone Data'}, path: ':wsId/:year/CloneData', component: WorkspaceCloneDataComponent},

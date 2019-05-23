@@ -32,25 +32,31 @@
     <div class="search-contextual-table"
          nz-menu style="height: 300px; overflow: auto; width: 750px">
          <div class="search-history" *ngIf="state?.showLastSearch; else basicTable">
-          <div class="search-history-component">
+          <div class="search-history-component" style="position: relative;">
               <div class="header-wrapper">
                 <span class="search-history-header">RECENT SEARCH</span>
                 <span class="search-history-viewAll">See All</span>
               </div>
-              <ul>
+              <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
                 <li *ngFor="let items of state?.recentSearch" (click)="redirectWithSearch(items)">
                   <div class="chip-container" *ngFor="let instance of items">
                     <app-chip-tag  [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
                   </div>
                 </li>
               </ul>
+
+            <ng-template #emptyRecent>
+              <div>
+                <nz-empty></nz-empty>
+              </div>
+            </ng-template>
           </div>
-          <div class="search-history-component">
+          <div class="search-history-component" style="position: relative;">
               <div class="header-wrapper">
                 <span class="search-history-header">SAVED SEARCH</span>
                 <span class="search-history-viewAll">See All</span>
               </div>
-              <ul style="line-height: normal">
+              <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
                   <li *ngFor="let items of state?.savedSearch" (click)="redirectWithSearch(items)">
                     <div class="chip-container" *ngFor="let instance of items">
                       <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
@@ -61,7 +67,7 @@
         </div>
 
         <ng-template #basicTable>
-          <div class="result-wrapper" *ngIf="state?.data?.length > 0; else loading">
+          <div class="result-wrapper" *ngIf="state?.data?.length > 0; else loadingTemp">
             <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
                 <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span" *ngIf="state?.data[i].length > 0">{{stringUpdate(state?.tables[i])}}</span>
                 <ul class="search-result-list" >
@@ -72,9 +78,16 @@
             </div>
           </div>
         </ng-template>
-        <ng-template #loading>
-            <nz-skeleton [nzActive]="true"></nz-skeleton>
-            <nz-skeleton [nzActive]="true"></nz-skeleton>
+        <ng-template #loadingTemp>
+            <ng-container *ngIf="loading;else emptyState">
+              <nz-skeleton [nzActive]="true"></nz-skeleton>
+              <nz-skeleton [nzActive]="true"></nz-skeleton>
+            </ng-container>
+          <ng-template #emptyState>
+            <div>
+              <nz-empty></nz-empty>
+            </div>
+          </ng-template>
         </ng-template>
       <div class="more-results-sction">
         <button (click)="redirectToSearchPage()" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>

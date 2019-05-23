@@ -8,8 +8,12 @@ import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
-import {AppendNewWorkspaceMainAction} from '../../../core/store/actions/workspace-main.action';
+import {
+  AppendNewWorkspaceMainAction,
+  PatchWorkspaceMainStateAction
+} from '../../../core/store/actions/workspace-main.action';
 import {WorkspaceMainState} from "../../../core/store/states";
+import * as fromWS from '../../../core/store'
 import {Observable} from "rxjs";
 import {WorkspaceMain} from "../../../core/model/workspace-main";
 
@@ -34,7 +38,7 @@ export class SearchMainComponent implements OnInit {
   currentPage = 0;
   globalSearchItem = '';
   currentWorkspace = null;
-  loading = false;
+  loading = true;
   columns = [
     {
       field: 'checkbox',
@@ -68,7 +72,7 @@ export class SearchMainComponent implements OnInit {
       field: 'cedantCode',
       header: 'Cedant',
       width: '90px',
-      display: false,
+      display: true,
       sorted: false,
       filtered: true,
       filterParam: 'innerCedantCode'
@@ -95,7 +99,7 @@ export class SearchMainComponent implements OnInit {
       field: 'workSpaceId',
       header: 'Workspace Context',
       width: '90px',
-      display: false,
+      display: true,
       sorted: false,
       filtered: true,
       filterParam: 'innerWorkspaceId'
@@ -134,9 +138,14 @@ export class SearchMainComponent implements OnInit {
   }
 
   ngOnInit() {
+    this._searchService.setLoading(true);
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this.searchedItems = this._searchService.searchedItems;
     this.globalSearchItem = this._searchService.globalSearchItem;
+    this.store.select(fromWS.SearchNavBarState.getLoadingState).subscribe( l => {
+      console.log('loading',l);
+      this.detectChanges();
+    })
     this._searchService.items.subscribe(
       () => {
         this.initSearchForm();
@@ -176,10 +185,16 @@ export class SearchMainComponent implements OnInit {
       .pipe(debounceTime(500))
       .subscribe((param) => {
         this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
-        this.cdRef.detectChanges();
+        this.detectChanges();
         this._loadContracts();
       });
   }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
+  }
+
 
   private searchData(id, year) {
     return this._searchService.searchWorkspace(id || '', year || '2019');
@@ -206,10 +221,18 @@ export class SearchMainComponent implements OnInit {
           ...dt
         };
         workspace.projects = workspace.projects.map(prj => prj = {...prj, selected: false});
-        this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
-        this._helperService.updateRecentWorkspaces();
-        this._helperService.updateWorkspaceItems();
-        this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
+        const alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === wsId && ws.uwYear == year);
+        const index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === wsId && ws.uwYear == year);
+        if (alreadyOpened.length > 0) {
+          this.store.dispatch(new PatchWorkspaceMainStateAction([{key: 'openedWs', value: alreadyOpened[0]},
+            {key: 'openedTabs', value: {data: this.state.openedTabs.data, tabsIndex: index}}]));
+          this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.tabsIndex]);
+        } else {
+          this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
+          this._helperService.updateRecentWorkspaces();
+          this._helperService.updateWorkspaceItems();
+          this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
+        }
       }
     );
   }
@@ -264,13 +287,15 @@ export class SearchMainComponent implements OnInit {
           console.log(this.contractFilterFormGroup.value);
         }
       );
+    this._searchService.setLoading(true);
     this._searchService.searchGlobal(_.merge({keyword: this.globalSearchItem}, this.contractFilterFormGroup.value), offset, size)
         .subscribe((data: any) => {
           this.contracts = data.content.map(item => ({...item, selected: false}));
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-          this.cdRef.detectChanges();
+          this._searchService.setLoading(false);
+          this.detectChanges();
         });
   }
 

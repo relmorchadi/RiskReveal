@@ -99,8 +99,8 @@ export class WorkspaceMainComponent implements OnInit {
     const alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === title && ws.uwYear == year);
     const index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === title && ws.uwYear == year);
     if (alreadyOpened.length > 0) {
-      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: alreadyOpened[0]}));
-      this.tabIndex = index;
+      this.store.dispatch(new PatchWorkspaceMainStateAction([{key: 'openedWs', value: alreadyOpened[0]},
+        {key: 'openedTabs', value: {data: this.state.openedTabs.data, tabsIndex: index}}]));
     } else {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(title, year).subscribe(
@@ -135,7 +135,7 @@ export class WorkspaceMainComponent implements OnInit {
             });
           }
         }*/
-    return years.filter(y => y != year) || [];
+    return (years || []).filter(y => y != year) || [];
   }
 
   sliceContent(content: any, valid: boolean) {

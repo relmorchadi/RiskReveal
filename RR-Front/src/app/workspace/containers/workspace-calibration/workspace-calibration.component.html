@@ -1,3 +1,4 @@
+<!--
 <nz-layout class="layoutCalibration">
   <div nz-row>
     <div nz-col nzSpan="22" class="calibration">
@@ -66,11 +67,11 @@
                     <hr style="margin: 0px">
                   </div>
                 </div>
-                <!-- Table de PLT Selection -->
+                &lt;!&ndash; Table de PLT Selection &ndash;&gt;
                 <div nz-row>
-                  <div #scrollTwo (scroll)="updateScroll2()" nz-col nzSpan="24"
+                  <div #scrollTwo  nz-col nzSpan="24" (mouseover)="cursorOntable1()"
                        style="overflow-y: auto;overflow-x: auto;max-width:450px;max-height: 250px">
-                    <!--- List With Tree --->
+                    &lt;!&ndash;- List With Tree -&ndash;&gt;
                     <nz-table #fixedTable1 *ngIf="tree" [nzData]="pure.dataTable"
                               [nzShowPagination]="false">
                       <tbody *ngFor="let data of fixedTable1.data; let pureIndex = index">
@@ -121,7 +122,7 @@
                       </ng-container>
                       </tbody>
                     </nz-table>
-                    <!--- List Without Tree --->
+                    &lt;!&ndash;- List Without Tree -&ndash;&gt;
                     <nz-table #fixedTable *ngIf="!tree" [nzData]="pure.dataTable"
                               [nzShowPagination]="false">
                       <tbody>
@@ -184,10 +185,10 @@
                   <div nz-col nzSpan="26" class="card1">
                     <nz-tabset >
                       <nz-tab nzTitle="Template 1">
-                        <!-- Table de Template 1   -->
-                        <div #scrollOne (scroll)="updateScroll()"
-                             nz-row
-                             style=" max-width: 825px; min-width: 825px;overflow-y: auto;max-height: 329px;min-height:329px">
+                        &lt;!&ndash; Table de Template 1   &ndash;&gt;
+                        <div #scrollOne
+                             nz-row (mouseover)="cursorOntable2()"
+                             style=" overflow-y: auto;max-height: 329px;min-height:329px">
                           <nz-table #rightTable #te [nzData]="pure.dataTable"
                                     [nzPaginationPosition]="false" class="fixedHeadder">
                             <thead>
@@ -236,8 +237,8 @@
                               <th colspan="1" style="border-right: 1px solid rgb(232, 232, 232);">&nbsp;</th>
                             </tr>
                             </thead>
-                            <tbody #scrollOne (scroll)="updateScroll()"
-                                   style=" max-width: 825px; min-width: 825px;overflow-y: auto;max-height: 340px">
+                            <tbody
+                                   style=" overflow-y: auto;max-height: 340px">
                             <ng-container *ngFor="let data of te.data">
                               <tr *ngIf="tree">
                                 <ng-container *ngFor="let column of pure.category ;trackBy: trackByFn">
@@ -292,7 +293,7 @@
                             </tbody>
                           </nz-table>
                         </div>
-                        <!-- Button of Table de Template 1 -->
+                        &lt;!&ndash; Button of Table de Template 1 &ndash;&gt;
                         <div nz-row style="margin: 6px">
                           <div nz-col nzSpan="12">
                             <button class="ant-btn ant-btn-default"
@@ -529,7 +530,7 @@ cursor: pointer;"></i>
     </nz-tabset>
   </div>
 </nz-drawer>
-<!-- Model add Column-->
+&lt;!&ndash; Model add Column&ndash;&gt;
 <nz-modal class="modelAdjustment" [(nzVisible)]="isVisible" nzTitle="Add Adjustment Basic" nzClosable="false"
           [nzFooter]="modalFooter">
   <div nz-row>
@@ -616,4 +617,742 @@ cursor: pointer;"></i>
   </ng-template>
 </nz-modal>
 
+
+-->
+<!--
+<nz-layout class="layoutCalibration">
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      &nbsp;
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <div
+        style=" background: #fff; min-height:700px;width: 300px;  box-shadow: 0px 1px 20px 0px #dcdada; ">
+
+      </div>
+    </div>
+    <div nz-col nzSpan="16">
+      <div style="background: #fff; min-height:700px;width: 900px;  box-shadow: 0px 1px 20px 0px #dcdada; ">
+        <div nz-row>
+          <div nz-col nzSpan="16">
+            <hr class="hrStyle">
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="16" class="textStyle">
+            IP000000000555 Structure Graph
+          </div>
+        </div>
+        <div nz-row>
+          <div nz-col nzSpan="24">
+            <nz-collapse [nzBordered]="false">
+              <nz-collapse-panel
+                #p
+                *ngFor="let panel of panels; let isFirst = first"
+                [ngStyle]="panel.customStyle"
+                [nzActive]="panel.active"
+                [nzExpandedIcon]="!isFirst && (panel.icon || expandedIcon)"
+                [nzHeader]="panel.name"
+              >
+                <textarea rows="4" nz-input ></textarea>
+                <ng-template #expandedIcon let-active>
+                  {{ active }}
+                  <i [nzRotate]="p.nzActive ? 90 : -90" class="ant-collapse-arrow" nz-icon type="caret-right"></i>
+                </ng-template>
+              </nz-collapse-panel>
+            </nz-collapse>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</nz-layout>
+-->
+<app-left-menu></app-left-menu>
+<div style="position: relative; flex: 1">
+  <nz-layout class="layoutCalibration">
+    <div nz-row>
+      <div class="calibration" nz-col nzSpan="22">
+        <nz-tabset class="card2">
+          <nz-tab nzTitle="Global Adjustement Matrix">
+            <div nz-row>
+              <div nz-col nzSpan="24">&nbsp;</div>
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="24">&nbsp;</div>
+            </div>
+            <div nz-row>
+              <div class="textCalibrationMatrix" nz-col nzSpan="6">Calibration Matrix</div>
+              <div class="textCalibrationMatrix" nz-col nzSpan="2">&nbsp;</div>
+              <div class="textCalibrationMatrix" nz-col nzSpan="2" style="font-size: 25px">Global:</div>
+              <div class="textCalibrationMatrix" nz-col nzSpan="14">
+                <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
+                  <div
+                    style=" margin: 4px; border: solid 1px #3d7bb3;font-size: 17px;background: white;width: max-content;display: inline-block;"
+                  >
+                    <span style="height: 30px;margin: 0px 2px 0px 2px;">{{adj.name}}</span>
+                    <nz-dropdown [nzPlacement]="'bottomLeft'">
+                      <i class="icon-menu_24px" nz-dropdown style="font-size: 18px"></i>
+                      <ul nz-menu>
+                        <li nz-menu-item>
+                          <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                        </li>
+                        <li nz-menu-item>
+                          <a
+                          >Delete</a>
+                        </li>
+                        <li nz-menu-item>
+                          <a>Copy</a>
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                    <input [disabled]="adj.linear" [value]="adj.value" class="inputOfdachboard" style="height: 17px;">
+                  </div>
+                </ng-container>
+              </div>
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="8">
+                <div
+                  style="padding-top: 39px; padding-left: 24px; background: #fff; min-height:480px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
+                  <div nz-row>
+                    <div nz-col nzSpan="10" style="">
+                      <hr
+                        style="height: 4px;background-color: #0700CF;margin-top: -40px;margin-left: -24px;width: 200px;">
+                    </div>
+                  </div>
+                  <div nz-row>
+                    <div class="textLastAdjustement" nz-col nzSpan="10">
+                      PLT Selection
+                    </div>
+                    <div nz-col nzSpan="10">
+                      <i class="icon-menu_24px" style="font-size: 30px"></i>
+                    </div>
+                  </div>
+                  <div nz-row>
+                    <!--<div nz-col nzSpan="10">
+                      <nz-select nzAllowClear nzPlaceHolder="Filter" style="width: 120px;">
+                        <nz-option nzLabel="Jack" nzValue="jack"></nz-option>
+                        <nz-option nzLabel="Lucy" nzValue="lucy"></nz-option>
+                        <nz-option nzDisabled nzLabel="Disabled" nzValue="disabled"></nz-option>
+                      </nz-select>
+                    </div>-->
+                    <div nz-col nzSpan="2" style="position:relative; top:8px; font-size: 13px;color: #0700CF">
+                      <a>
+                        <label nz-checkbox [nzIndeterminate]="indeterminate()"
+                               (nzCheckedChange)="selectAllBool?selectAllThread(true):selectAllThread(false)">
+                        </label>
+                      </a>
+                    </div>
+                    <div nz-col nzSpan="2" style="font-size: 18px;color: #0700CF">
+                      <i (click)="afficheTree()" nz-icon nzTheme="outline" nzType="menu-unfold"></i>
+                    </div>
+                    <div nz-col nzSpan="2" style="font-size: 18px;color: #0700CF">
+                      <i (click)="CloseTree()" nz-icon nzTheme="outline" nzType="database"></i>
+                    </div>
+                    <div nz-col nzSpan="2" style="padding-top: 2px">
+                      <i class="icon-arrows-right-down" style="font-size: 25px;color: #0700CF"></i>
+                    </div>
+                  </div>
+                  <div nz-row>
+                    <div nz-col nzSpan="24">
+                      <hr style="margin: 0px">
+                    </div>
+                  </div>
+                  <!-- Table de PLT Selection -->
+                  <div class="tablePlt" nz-row>
+                    <div #scrollTwo (mouseover)="cursorOntable1()" nz-col nzSpan="24"
+                         style="overflow-y: auto;overflow-x: auto;max-width:450px;max-height: 310px">
+                      <!--- List With Tree --->
+                      <nz-table #fixedTable1 *ngIf="tree" [nzData]="pure.dataTable"
+                                [nzShowPagination]="false">
+                        <tbody *ngFor="let data of fixedTable1.data; let pureIndex = index">
+                        <tr>
+                          <td style="width: 50px;color: #0700CF">
+                            <i (click)="open()" [ngClass]="eyeVisible()" style="margin-right: 10px;font-size: 18px"></i>
+                            <i (click)="hide(data.name)" class="icon-cube"
+                               style="background: #0700cf;color: white;font-size: 16px;"></i>
+                          </td>
+                          <td>
+                            <b> {{ data.name }}</b>
+                          </td>
+                          <td>
+
+                          </td>
+                          <td>
+
+                            <i class="icon-menu_24px" nz-dropdown style="font-size: 20px"></i>
+                          </td>
+                        </tr>
+                        <ng-container *ngIf="returnHideThread(data.name)">
+                          <ng-container *ngFor="let dataT of data.thread; let threadIndex = index">
+                            <tr (click)="changeBackgroud(dataT)"
+                                [ngStyle]="{'background':setBackgroud(dataT.checked)}"
+                            >
+                              <td>&nbsp;</td>
+                              <td>{{ dataT.threadName }}</td>
+                              <td><i [class]="dataT.icon" style="font-size: 20px"></i></td>
+                              <td>
+                                <nz-dropdown [nzPlacement]="'bottomLeft'">
+                                  <i class="icon-menu_24px" nz-dropdown style="font-size: 20px"></i>
+                                  <ul nz-menu>
+                                    <li nz-menu-item>
+                                      <a
+                                        (click)="cloneThread(data.thread.length,dataT, pureIndex, threadIndex)">Clone</a>
+                                    </li>
+                                    <li nz-menu-item>
+                                      <a
+                                        (click)="deleteThread(data.thread.length,dataT, pureIndex, threadIndex)">Delete</a>
+                                    </li>
+                                    <li nz-menu-item>
+                                      <a>Copy</a>
+                                    </li>
+                                  </ul>
+                                </nz-dropdown>
+                              </td>
+                            </tr>
+                          </ng-container>
+                        </ng-container>
+                        </tbody>
+                      </nz-table>
+                      <!--- List Without Tree --->
+                      <nz-table #fixedTable *ngIf="!tree" [nzData]="pure.dataTable"
+                                [nzShowPagination]="false">
+                        <tbody>
+                        <ng-container *ngFor="let data of fixedTable.data;let pureIndex=index">
+                          <ng-container *ngFor="let dataTable1 of data.thread;let threadIndex=index">
+                            <tr
+                              [ngStyle]="{'background':setBackgroud(dataTable1.checked)}">
+                              <td class="checkboxInput">
+
+                                <label nz-checkbox [nzChecked]="dataTable1.checked"
+                                       (nzCheckedChange)="changeBackgroundCheckBox($event,dataTable1)">
+                                </label>
+                              </td>
+                              <td (click)="changeBackgroud($event,dataTable1)">{{ dataTable1.id }}</td>
+                              <td (click)="changeBackgroud($event,dataTable1)">{{ dataTable1.threadName }}</td>
+                              <td><i [class]="dataTable1.icon" style="font-size: 20px"></i></td>
+                              <td>
+                                <i class="icon-plus-circle" nz-dropdown style="font-size: 20px;color: #000;"></i>
+                              </td>
+                            </tr>
+                          </ng-container>
+                        </ng-container>
+
+                        </tbody>
+                      </nz-table>
+                    </div>
+                  </div>
+                  <div nz-row style="margin: 6px">
+                    <div nz-col nzSpan="10">
+                      &nbsp;
+                    </div>
+                    <div nz-col nzSpan="7" style="color: #0700CF; font-size: 14px">
+                      <button class="ant-btn ant-btn-default"
+                              style="background-color: #ffffff !important; color: #0b2ccf;  margin-right: 20px; border: none;font-weight: 600; ">
+                        Publish
+                      </button>
+
+                    </div>
+                    <div nz-col nzSpan="7" style="color: #0700CF;  font-size: 14px">
+                      <button class="ant-btn ant-btn-default"
+                              style="background-color: #ffffff !important; color: #0b2ccf;  margin-right: 20px; border: none;font-weight: 600;">
+                        Add PLTS
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div nz-col nzSpan="16">
+                <div class="test"
+                     style=" background: #fff; min-height:460px; min-width: 350px; box-shadow: 0px 1px 20px 0px #dcdada; margin-left: -4px">
+                  <div nz-row>
+                    <div class="card1" nz-col nzSpan="26">
+                      <nz-tabset>
+                        <nz-tab nzTitle="Template 1">
+                          <!-- Table de Template 1   -->
+                          <div #scrollOne (mouseover)="cursorOntable2()" nz-row
+                               style="margin-top: 5px;overflow-y: auto;max-height: 351px;min-height:351px;width: 79%;">
+                            <nz-table #rightTable #te [nzData]="pure.dataTable"
+                                      [nzPaginationPosition]="false" class="fixedHeadder">
+                              <thead>
+                              <tr nzWidth="100px">
+                                <ng-container *ngFor="let category of pure.category;trackBy: trackByFn">
+                                  <th *ngIf="category.showBol" [colSpan]="category.basis.length" columnWidth="15px"
+                                      style="border-right: 1px solid rgb(232, 232, 232);"
+                                      [ngStyle]="{background:InuringBack(category.name) }"><b>{{category.name}}</b>
+                                    <!-- <i (click)="feedCatgegoryNameForHide(category.name)" [ngClass]="eyeVisible()"
+                                        style="float: right;margin-top: 5px;"></i>-->
+                                  </th>
+                                </ng-container>
+                              </tr>
+                              </thead>
+                              <tbody style="overflow-x:auto;max-width: 825px; min-width: 825px;">
+                              <ng-container *ngFor="let data of pure.dataTable;let pureIndex=index">
+                                <ng-container *ngFor="let dataTable1 of data.thread;let threadIndex=index">
+                                  <tr (click)="changeBackgroud(dataTable1)"
+                                      [ngStyle]="{'background':setBackgroud(dataTable1.checked)}">
+                                    <td (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                        id="bd">
+                                      <div (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                           id="bd1" style="display: flex;height: max-content">
+                                        <div class="dndPlaceholder" dndPlaceholderRef></div>
+                                        <ng-container *ngFor="let adj of dataTable1.adj">
+                                          <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
+                                               (dndEnd)="onDragEnd($event)"
+                                               (dndMoved)="onDragged($event,adj, dataTable1.adj, 'move','td1')"
+                                               (dndStart)="onDragStart($event)" *ngIf="adj.category=='bd'"
+                                               [dndDraggable]="adj"
+                                               class="divInTd"
+                                               dndEffectAllowed="move">
+                                            <span
+                                              class="spanStyle">{{adj.name}}</span>
+                                            <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
+                                              <i class="icon-menu_24px" nz-dropdown
+                                                 style="font-size: 18px;float: right"></i>
+                                              <ul nz-menu>
+                                                <li nz-menu-item>
+                                                  <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                                                </li>
+                                                <li nz-menu-item>
+                                                  <a
+                                                  >Delete</a>
+                                                </li>
+                                                <li nz-menu-item>
+                                                  <a>Copy</a>
+                                                </li>
+                                              </ul>
+                                            </nz-dropdown>
+                                            <input [disabled]="adj.linear" [value]="adj.value" class="inputOfdachboard"
+                                            >
+                                          </div>
+                                        </ng-container>
+                                      </div>
+                                    </td>
+                                    <td>
+                                      <div style="display: flex;height: max-content">
+                                        <div
+                                          class="divInTd">
+                                          <span
+                                            class="spanStyle">Model Calib</span>
+                                          <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
+                                            <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
+                                               style="font-size: 18px;float: right"></i>
+                                            <ul nz-menu>
+                                              <li nz-menu-item>
+                                                <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                                              </li>
+                                              <li nz-menu-item>
+                                                <a
+                                                >Delete</a>
+                                              </li>
+                                              <li nz-menu-item>
+                                                <a>Copy</a>
+                                              </li>
+                                            </ul>
+                                          </nz-dropdown>
+                                          <input class="inputOfdachboard" disabled
+                                                 value="2.1">
+                                        </div>
+                                      </div>
+                                    </td>
+                                    <td (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                        id="pd">
+                                      <div (dndDrop)="onDrop($event,dataTable1.adj)" dndDropzone dndEffectAllowed="move"
+                                           id="pd1" style="display: flex;height: max-content">
+                                        <div class="dndPlaceholder" dndPlaceholderRef id="dndPlaceholder"></div>
+                                        <ng-container *ngFor="let adj of dataTable1.adj ;let adjindex=index">
+                                          <ng-container *ngIf="adj.category=='pd'">
+                                            <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
+                                                 (dndMoved)="onDragged($event,adj, dataTable1.adj, 'move','td2')"
+                                                 [dndDraggable]="adj"
+                                                 class="divInTd"
+                                                 dndEffectAllowed="move">
+                                              <span
+                                                class="spanStyle">{{adj.name}}</span>
+                                              <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
+                                                <i class="icon-menu_24px" nz-dropdown
+                                                   style="font-size: 18px;float: right"></i>
+                                                <ul nz-menu>
+                                                  <li nz-menu-item>
+                                                    <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                                                  </li>
+                                                  <li nz-menu-item>
+                                                    <a
+                                                      (click)="deleAdjustment(pureIndex,threadIndex,adjindex)">Delete</a>
+                                                  </li>
+                                                  <li nz-menu-item>
+                                                    <a>Copy</a>
+                                                  </li>
+                                                </ul>
+                                              </nz-dropdown>
+                                              <input [disabled]="adj.linear" [value]="adj.value"
+                                                     class="inputOfdachboard"
+                                              >
+                                            </div>
+                                          </ng-container>
+                                        </ng-container>
+                                      </div>
+                                    </td>
+                                    <td style="background: antiquewhite">
+                                      <div style="display: flex;height: max-content">
+                                        <div
+                                          class="divInTd">
+                                          <span
+                                            class="spanStyle"></span>
+                                          <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
+                                            <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
+                                               style="font-size: 18px;float: right"></i>
+                                            <ul nz-menu>
+                                              <li nz-menu-item>
+                                                <a (click)="addAdjustmenet(adj)">add adjustement</a>
+                                              </li>
+                                              <li nz-menu-item>
+                                                <a
+                                                >Delete</a>
+                                              </li>
+                                              <li nz-menu-item>
+                                                <a>Copy</a>
+                                              </li>
+                                            </ul>
+                                          </nz-dropdown>
+                                          <input class="inputOfdachboard" disabled
+                                                 value="P00002">
+                                        </div>
+                                      </div>
+                                    </td>
+                                  </tr>
+                                </ng-container>
+                              </ng-container>
+                              </tbody>
+
+                            </nz-table>
+                          </div>
+                          <!-- Button of Table de Template 1 -->
+                          <div nz-row style="margin: 6px">
+                            <div nz-col nzSpan="12">
+                              <button class="ant-btn ant-btn-default"
+                                      style="background-color: #ffffff !important;color: #070acf;border-color:#070acf;margin-right: 20px; width: 100px;height: 30px; ">
+                                Export
+                              </button>
+                              <button class="ant-btn ant-btn-default"
+                                      style="background-color: #ffffff !important;color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 100px;height: 30px; ">
+                                Save As
+                              </button>
+                              <button class="ant-btn ant-btn-default" style="width: 100px;height: 30px; ">APPLY</button>
+                            </div>
+                            <!-- <div nz-col nzOffset="4" nzSpan="6">
+                               <nz-select
+                                 (ngModelChange)="hideCatgegory(listOfSelectedValue)"
+                                 [(ngModel)]="listOfSelectedValue"
+                                 [nzMaxTagCount]="2"
+                                 nzMode="multiple"
+                                 nzPlaceHolder="Please select Category"
+                                 style="width: 260px;"
+                               >
+                                 <nz-option *ngFor="let option of pure.category" [nzLabel]="option.name"
+                                            [nzValue]="option.name"></nz-option>
+                               </nz-select>
+                               <ng-template #tagPlaceHolder let-selectedList> and {{ selectedList.length }} more selected
+                               </ng-template>
+                             </div>-->
+                          </div>
+                        </nz-tab>
+                        <nz-tab nzTitle="Template 2">
+                          Content of Tab Pane 2
+                        </nz-tab>
+                        <nz-tab nzTitle="Template 3">
+                          Content of Tab Pane 3
+                        </nz-tab>
+                      </nz-tabset>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div nz-row>
+              <div nz-col nzSpan="24" style="margin-top: 25px;">
+                <div style="padding:24px; background: #fff; min-height:130px; box-shadow: 0px 1px 20px 0px #dcdada; ">
+                  <div nz-col nzSpan="10" style="height: 10px">
+                    <hr style="height: 4px;background-color: #00c4aa;margin: -24px;width: 288px;">
+                  </div>
+                  <div nz-row style="margin-top: -35px;">
+                    <div class="textLastAdjustement" nz-col nzSpan="24" style="margin-top: 2px;">
+                      Last Adjustment Matrix
+                    </div>
+                  </div>
+                  <div nz-row>
+                    <div nz-col nzSpan="24">
+                      <div class="AdjustementTextGray" style="padding:24px; background: #f0f2f5; min-height:60px;">
+                        <div nz-col nzSpan="4">
+                          <b>Apply Adjustment Matrix</b>
+                        </div>
+                        <div nz-col nzSpan="7">
+                          <i class="icon-event_note_24px"></i>Started:<b>Mon Feb 04 16:19:39 UTC 2019</b>
+                        </div>
+                        <div nz-col nzSpan="7">
+                          <i class="icon-event_note_24px"></i>Ended:<b>Mon Feb 04 16:20:00 UTC 2019</b>
+                        </div>
+                        <div nz-col nzSpan="6"
+                             style="color: #00C4AA;white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
+                          Adjustment Matrix Completed succesfly
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+          <nz-tab nzTitle="Adjustment Canvas">
+            <div
+              style="padding:50px; background: #fff; min-height:700px;margin-top: 25px; margin-right: 15px; box-shadow: 0px 1px 20px 0px #dcdada;">
+              <hr style="height: 4px;background-color: #0700CF;margin: -24px;margin: -50px; width: 20%;">
+              <div nz-col nzSpan="17" style="margin-left:-40px;">
+                <div nz-row>
+                  <div nz-col nzSpan="6">&nbsp;</div>
+                </div>
+                <div nz-row>
+                  <div class="textLastAdjustement" nz-col nzSpan="6">Canvas</div>
+                </div>
+                <div nz-row>
+                  <div nz-col nzSpan="12" style="font-weight: 300">NATC-USM_RL_lmf.T1</div>
+                </div>
+                <div nz-row>
+                  <div class="AdjustmentCanvas" nz-col nzSpan="18">
+                    <nz-tabset>
+                      <nz-tab nzTitle="PLT Overview">
+                      </nz-tab>
+                      <nz-tab nzTitle="Adjustment">
+
+                      </nz-tab>
+                    </nz-tabset>
+                  </div>
+                </div>
+              </div>
+              <div nz-col nzSpan="7" style="margin-left:-40px;">
+                <div nz-row>
+                  <div nz-col nzSpan="24">
+                    <div
+                      style="padding: 5px;
+                    width: 370px;
+                    background: #f0f2f59e;
+                    min-height: 600px;
+                    margin-top: 25px;
+                    margin-right: 15px;
+                    box-shadow: 0px 0px 2px 0px #dcdada; ">
+                      <div nz-row>
+                        <div nz-col nzSpan="6">&nbsp;</div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="6" style="font-weight: 900; margin: 10px;">Adjustment
+                        </div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="6" style="height: 420px ">&nbsp;</div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="6">&nbsp;</div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="6">&nbsp;</div>
+                      </div>
+                      <div nz-row>
+                        <div nz-col nzSpan="2">&nbsp;</div>
+                        <div nz-col nzSpan="6">
+                          <button class="ant-btn ant-btn-default"
+                                  style="background-color: #070acf !important;color: #ffffff;border-color:#070acf;margin-right: 20px;border-radius: 17px">
+                            Actions
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+      <div nz-col nzSpan="2">
+        <div class="right-column">
+          <div class="navigation-icons pt-5" style="min-height: 100px">
+            <i class="icon-map-pin-alt" id="alt"></i>
+            <i (click)="open()" class="icon-arrow_back_ios_24px mt-2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nz-layout>
+  <nz-layout class="calibration-Tab" style="width: 1000px;height: 100%">
+    <nz-content style="margin:0 16px;">
+      <nz-breadcrumb style="margin:16px 0;">
+
+      </nz-breadcrumb>
+    </nz-content>
+  </nz-layout>
+  <nz-drawer
+    [nzClosable]="false"
+    [nzVisible]="visible"
+    nzPlacement="right"
+    (nzOnClose)="close()"
+    [nzWidth]=650
+    [nzZIndex]=1100
+    [nzHeight]=1000
+  >
+
+    <div>
+      <div class="navigation-icons-drawer" style="display: flex;
+flex-direction: column;
+justify-content: space-between;
+align-items: flex-end;">
+        <i class="icon-arrow_forward_ios_24px mt-2" (click)="close()" style="padding: 5px;
+border-radius: 25px;
+border: 2px solid #F5F5F5;
+color: #9C99EC;
+font-size: 24px;
+cursor: pointer;"></i>
+      </div>
+      <nz-tabset class="tabset-drawer">
+        <nz-tab nzTitle="Basket">
+          <div class="basket-content"></div>
+        </nz-tab>
+        <nz-tab nzTitle="Calibration Detaills">
+          <div class="plt-details-content">
+            <nz-tabset class="tabset-plt-details">
+              <nz-tab nzTitle="Summary">
+                <div class="summary-content"></div>
+              </nz-tab>
+              <nz-tab nzTitle="EP Metrics">
+                <div class="ep-metrics-content"></div>
+              </nz-tab>
+              <nz-tab nzTitle="Other Metrics">
+                <div class="other-metrics-content"></div>
+              </nz-tab>
+              <nz-tab nzTitle="Calibration">
+                <div class="calibration-content">
+                  <nz-tabset>
+                    <nz-tab nzTitle="Thread">
+                      <div class="thread-content"></div>
+                    </nz-tab>
+                    <nz-tab nzTitle="Impact">
+                      <div class="impact-content"></div>
+                    </nz-tab>
+                  </nz-tabset>
+                </div>
+              </nz-tab>
+              <nz-tab nzTitle="Lineage">
+                <div class="lineage-content">
+                  <nz-tab>
+                    <nz-tab nzTitle="Dependencies">
+                      <div class="dependencies-content"></div>
+                    </nz-tab>
+                    <nz-tab nzTitle="Usage">
+                      <div class="usage-content"></div>
+                    </nz-tab>
+                  </nz-tab>
+                </div>
+              </nz-tab>
+              <nz-tab nzTitle="Impact to layer">
+                <div class="impact-to-layer-content"></div>
+              </nz-tab>
+            </nz-tabset>
+          </div>
+        </nz-tab>
+
+      </nz-tabset>
+    </div>
+  </nz-drawer>
+  <!-- Model add Column-->
+  <nz-modal class="modelAdjustment" [(nzVisible)]="isVisible" nzTitle="Add Adjustment Basic" nzClosable="false"
+            [nzFooter]="modalFooter">
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        &nbsp;
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="5">
+        &nbsp;
+      </div>
+      <div nz-col nzSpan="19">
+        <nz-select style="width: 260px;" [(ngModel)]="singleValue" [nzPlaceHolder]="'Choose a basis'"
+                   (ngModelChange)="selectBasis(singleValue)" [nzSize]="size">
+          <nz-option *ngFor="let option of basises" [nzLabel]="option.name" [nzValue]="option.name"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="5">
+        &nbsp;
+      </div>
+      <div nz-col nzSpan="19">
+        <nz-select style="width: 260px;" [ngModel]="categorySelectedFromBasis" [nzPlaceHolder]="'Choose a category'"
+                   (ngModelChange)="selectCategory(categorySelectedFromBasis)" [nzSize]="size">
+          <ng-container *ngFor="let option of pure.category">
+            <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
+                       [nzValue]="option.name"></nz-option>
+          </ng-container>
+        </nz-select>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="5" style="margin: 5px;">
+        &nbsp;
+      </div>
+      <div nz nzSpan="19">
+        Sequence :
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="5" style="margin: 5px;">
+        &nbsp;
+      </div>
+      <div nz nzSpan="19">
+        <input
+          #inputElement
+          style="width: 60px;
+        height: 40px;
+        background: #f9f9f9;
+        border-radius: 0;
+        border:0;
+        border-bottom: 1px solid black;
+        color:#0700CF"
+          nz-input
+          nz-tooltip
+          [(ngModel)]="columnPosition"
+        />
+      </div>
+    </div>
+    <div nz-row style="margin-top: 20px;">
+      <div nz-col nzSpan="5" style="margin: 5px;">
+        &nbsp;
+      </div>
+      <div nz nzSpan="19">
+        Capped:
+        <nz-switch nzSize="small" [(ngModel)]="disabled" style="margin-left: 15px;"></nz-switch>
+      </div>
+    </div>
+    <ng-template #modalFooter>
+      <button class="ant-btn"
+              (click)="handleCancel()"
+              style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
+      </button>
+      <button class="ant-btn ant-btn-default"
+              (click)="addColumnToTable(singleValue,categorySelectedFromBasis)"
+              style="background-color: #ffffff !important; color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 70px;height: 30px; ">
+        ADD
+      </button>
+      <button class="ant-btn ant-btn-default"
+              (click)="addColumnToTableAndClose(singleValue,categorySelectedFromBasis)"
+              style="width: 130px; height: 30px; ">ADD & CLOSE
+      </button>
+    </ng-template>
+  </nz-modal>
+</div>
 

@@ -83,21 +83,23 @@
 
 <p-contextMenu #cm [model]="items"></p-contextMenu>
 
-<p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
-         [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
-         [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
-         [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
-         [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
-         [contextMenu]="cm" class="table-ngPrime"
->
-  <ng-template pTemplate="colgroup" let-columns>
-    <colgroup>
-      <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
-    </colgroup>
-  </ng-template>
-  <ng-template pTemplate="header" let-columns>
-    <tr *ngIf="!sortable">
-      <th *ngFor="let col of columns" pResizableColumn>
+<nz-spin [nzSpinning]="loading" [nzDelay]="700">
+  <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
+           [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
+           [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
+           [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
+           [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
+           [contextMenu]="cm" class="table-ngPrime"
+           [loading]="loading"
+  >
+    <ng-template pTemplate="colgroup" let-columns>
+      <colgroup>
+        <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
+      </colgroup>
+    </ng-template>
+    <ng-template pTemplate="header" let-columns>
+      <tr *ngIf="!sortable">
+        <th *ngFor="let col of columns" pResizableColumn>
         <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex">
           {{col?.header}}
           <ng-container *ngIf="col.type === 'checkbox'">
@@ -106,47 +108,50 @@
             <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
           </ng-container>
         </span>
-        <div class="search-bar-table" *ngIf="col?.filtered">
-          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-          <input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">
-        </div>
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-    <tr [pContextMenuRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
-      <ng-container *ngFor="let col of columns">
-        <td *ngIf="col?.type ==='checkbox'">
-          <div style="display:flex">
-            <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
+          <div class="search-bar-table" *ngIf="col?.filtered">
+            <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+            <input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">
           </div>
+        </th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+      <tr [pContextMenuRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+        <ng-container *ngFor="let col of columns">
+          <td *ngIf="col?.type ==='checkbox'">
+            <div style="display:flex">
+              <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
+            </div>
+          </td>
+          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
+            <div style="display:flex">
+              <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+              <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
+            </div>
+          </td>
+          <td *ngIf="col?.type === 'icon'">
+            <div style="display:flex">
+              <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+            </div>
+          </td>
+        </ng-container>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="loadingbody" let-columns="columns">
+      <tr style="height:34px">
+        <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
+          <div class="loading-text"></div>
         </td>
-        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
-          <div style="display:flex">
-            <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
-            <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
-          </div>
-        </td>
-        <td *ngIf="col?.type === 'icon'">
-          <div style="display:flex">
-            <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
-          </div>
-        </td>
-      </ng-container>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="loadingbody" let-columns="columns">
-    <tr style="height:34px">
-      <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
-        <div class="loading-text"></div>
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+      </tr>
+    </ng-template>
+  </p-table>
+</nz-spin>
 
+<nz-spin [nzSpinning]="loading" [nzDelay]="700">
 <p-table *ngIf="!virtualScroll"
          [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
+         [loading]="loading"
          class="table-ngPrime"
 >
 
@@ -174,6 +179,9 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+    <div *ngIf="listOfData.length == 0">
+      No Result
+    </div>
     <tr [pContextMenuRow]="rowData"
         [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
@@ -197,3 +205,8 @@
     </tr>
   </ng-template>
 </p-table>
+</nz-spin>
+
+<div *ngIf="listOfData.length == 0">
+  <nz-empty></nz-empty>
+</div>

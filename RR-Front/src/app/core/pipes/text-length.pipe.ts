@@ -6,7 +6,7 @@ import * as _ from 'lodash'
 export class TextLengthPipe implements PipeTransform {
 
   transform(value: any, args?: any): any {
-    return _.trimStart(value.split('-')[1], '0')
+    return value ? _.trimStart(value.split('-')[1], '0') : value;
   }
 
 }

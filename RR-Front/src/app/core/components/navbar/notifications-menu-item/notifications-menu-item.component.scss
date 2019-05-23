@@ -31,3 +31,20 @@ i.notifications_24px {
 .notification-content{
   font-size: 14.22px;
 }
+
+.notification-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+::ng-deep{
+  .ant-select-selection.ant-select-selection--single {
+    border: none;
+    border-radius: 0;
+    border-bottom: 2px solid #070acf;
+    color: #070acf;
+    &:focus{
+      outline: 0;
+    }
+  }
+}

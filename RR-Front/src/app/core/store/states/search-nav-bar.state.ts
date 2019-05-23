@@ -1,7 +1,7 @@
 import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
 import {
   AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
-  PatchSearchStateAction, SearchContractsCountAction
+  PatchSearchStateAction, SearchContractsCountAction, SetLoadingState
 } from '../actions';
 import {SearchService} from '../../service/search.service';
 import {forkJoin, of} from 'rxjs';
@@ -21,6 +21,7 @@ const initiaState: SearchNavBar = {
   searchValue: '',
   badges: [],
   data: [],
+  loading: false,
   recentSearch: [],
   showRecentSearch: [],
   tables: ['YEAR', 'CEDANT_NAME', 'WORKSPACE_ID', 'WORKSPACE_NAME', 'COUNTRY', 'CEDANT_CODE'],
@@ -80,6 +81,11 @@ export class SearchNavBarState implements NgxsOnInit {
     return state;
   }
 
+  @Selector()
+  static getLoadingState(state: SearchNavBar) {
+    return state.loading;
+  }
+
 
   /**
    * Commands
@@ -96,18 +102,29 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchContractsCountAction)
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
     ctx.dispatch(new PatchSearchStateAction({key: 'data', value: []}));
-    console.log('search contracts', keyword);
+    ctx.patchState({
+      loading: true
+    })
     forkJoin(
       ...ctx.getState().tables.map(
         tableName => this.searchLoader(keyword, tableName)
       )
     ).subscribe(payload => {
-      console.log('Patch value', payload);
       ctx.dispatch(new PatchSearchStateAction({
         key: 'data',
         value: _.map(payload, 'content')
       }));
+      ctx.patchState({
+        loading: false
+      })
     });
+  }
+
+  @Action(SetLoadingState)
+  setLoadingState(ctx: StateContext<SearchNavBar>, { payload } : SetLoadingState) {
+    ctx.patchState({
+      loading: payload
+    })
   }
 
   @Action(AddBadgeSearchStateAction)

@@ -26,7 +26,7 @@ export class TableComponent implements OnInit {
 
   contextSelectedItem: any;
 
-  loading: boolean;
+  @Input() loading: boolean;
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
@@ -127,6 +127,7 @@ export class TableComponent implements OnInit {
   selectRow(row: any, index: number) {
     if ((window as any).event.ctrlKey) {
       row.selected = !row.selected;
+      this.lastSelectedIndex = index;
     } else if ((window as any).event.shiftKey) {
       event.preventDefault();
       if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {

@@ -9,6 +9,7 @@ import {SearchService} from "../../../service/search.service";
 export class NotificationsMenuItemComponent implements OnInit {
   lastOnes = 5;
   visible: boolean;
+  notifCount = 5;
   notification = {
     all: {
       today: [
@@ -18,6 +19,15 @@ export class NotificationsMenuItemComponent implements OnInit {
       yesterday: [
         {avatar: null, icon: 'icon-check_circle_24px', iconColor: '#7ED321', content: 'Calculation on Inuring Package IP-2645 is now complete', backgroundColor: '#F4F6FC', textColor: 'rgba(0,0,0,0.6)'},
         {avatar: null, icon: 'icon-poll_24px', iconColor: '#FFFFFF', content: 'Project P-8687 : <br/>7PLTs have been successfully published to pricing' , backgroundColor: '#0700CF', textColor: '#FFFFFF'}
+      ]
+    },
+    warning: {
+      today: [
+        {avatar: 'H.P', icon: 'icon-warning_amber_24px', iconColor: '#FFFFFF', content: 'Project P-003458 Has been paused for 1 week please resume or cancel Job.', backgroundColor: '#D0021B', textColor: '#FFFFFF'},
+        {avatar: null, icon: 'icon-graph-bar', iconColor: '#DCAA2B', content: 'You have many jobs in need of completion.', backgroundColor: '#D1F4DA', textColor: '#477938'}
+      ],
+      yesterday: [
+        {avatar: null, icon: 'icon-check_circle_24px', iconColor: '#7ED321', content: 'You need to resume Action From yesterday', backgroundColor: '#F4F6FC', textColor: 'rgba(0,0,0,0.6)'},
       ]
     }
   };
@@ -30,6 +40,10 @@ export class NotificationsMenuItemComponent implements OnInit {
 
   toggleNotificaion(notification) {
 
+  }
+
+  updateNotif() {
+    this.notifCount = 0;
   }
 
 }

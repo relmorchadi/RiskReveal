@@ -30,6 +30,7 @@ export class SearchMenuItemComponent implements OnInit {
   @Select(SearchNavBarState)
   state$: Observable<SearchNavBar>;
   state: SearchNavBar = null;
+  loading: any;
 
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
@@ -55,17 +56,32 @@ export class SearchMenuItemComponent implements OnInit {
 
 
   ngOnInit() {
-    this.state$.subscribe(value => this.state = _.merge({}, value));
+    this.state$.subscribe(value => {
+      if(value.data && _.every(value.data, d => d && d.length ==0)){
+        this.state = _.merge({}, {
+          ...value,
+          data: []
+        })
+      }else{
+        this.state = _.merge({}, value)
+      }
+    });
     this._subscribeGlobalKeywordChanges();
     this.store.dispatch(new LoadRecentSearchAction());
     this.contractFilterFormGroup.get('globalKeyword').valueChanges.pipe(debounceTime(500))
       .subscribe(value => {
         this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value}));
-        this.cdRef.detectChanges();
+        this.detectChanges();
       });
     this.store.select(st => st.searchBar.data).subscribe(dt => {
-      this.cdRef.detectChanges();
+      this.detectChanges();
     })
+
+    this.store.select(SearchNavBarState.getLoadingState).subscribe( l => {
+      console.log('SEARCH BAR', l);
+      this.loading =l;
+      this.detectChanges()
+    });
   }
 
   private _subscribeGlobalKeywordChanges() {
@@ -115,6 +131,11 @@ export class SearchMenuItemComponent implements OnInit {
     }
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
     return '';
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
   }
 
   filterContracts(keyboardEvent) {
@@ -197,6 +218,7 @@ export class SearchMenuItemComponent implements OnInit {
       ]),
       new AddBadgeSearchStateAction(item)]
     );
+    this.searchInput.nativeElement.focus();
     this._selectedSearch(this.contractFilterFormGroup.get('globalKeyword').value);
   }
 
@@ -274,7 +296,7 @@ export class SearchMenuItemComponent implements OnInit {
     this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: true}, {key: 'visible', value: false}]));
   }
 
-  onInput(event) {
+  onInput(event)  {
     event.target.value === '' ? this.state.showClearIcon = false : this.state.showClearIcon = true;
     if (!this.contractFilterFormGroup.get('switchValue').value) {
       if (event.target.value === '' || event.target.value.length < 2) {

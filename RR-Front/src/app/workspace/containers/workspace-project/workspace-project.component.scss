@@ -244,8 +244,8 @@
   }
 
   .project-card {
-    min-width: 350px;
-    max-width: 450px;
+    min-width: 450px;
+    max-width: 470px;
     border: 3px solid transparent;
     border-radius: 2px;
     background-color: #FAFAFA;
@@ -331,75 +331,29 @@
     }
 
     .project-progress {
-      height: 70px;
+      height: 80px;
       background-color: #fff;
 
-      ::ng-deep {
-        .ant-steps-item-tail {
-          margin-left: 50px;
-          @media screen and (max-width: 1650px) and (min-width: 1500px) {
-            margin-left: 45px;
-          }
-          @media screen and (max-width: 1500px) and (min-width: 1350px) {
-            margin-left: 40px;
-          }
+      .project-flag {
+        width: 25%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        text-align: center;
+        hr{
+          border-top: 2px solid #03DAC4;
         }
-
-        .ant-steps-item-icon {
-          margin-left: 50px;
-          @media screen and (max-width: 1650px) and (min-width: 1500px) {
-            margin-left: 45px;
-          }
-          @media screen and (max-width: 1500px) and (min-width: 1350px) {
-            margin-left: 40px;
-          }
-        }
-
-        .ant-steps-item-finish {
-          .ant-steps-item-tail::after {
-            background-color: #03DAC4 !important;
-          }
-
-          .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
-            background: #03DAC4 !important;
-          }
-        }
-
-        .ant-steps-item-process > .ant-steps-item-content > .ant-steps-item-title {
-          font-weight: bold !important;
-          color: rgba(0, 0, 0, 0.95) !important;
-        }
-
-        .ant-steps-dot .ant-steps-item-content {
-          width: 110px;
-          @media screen and (max-width: 1650px) and (min-width: 1500px) {
-            width: 100px;
-          }
-          @media screen and (max-width: 1500px) and (min-width: 1350px) {
-            width: 90px;
-          }
-          @media screen and (max-width: 768px) {
-            width: 140px;
-          }
-        }
-
-        .ant-steps-item-title {
-          font-size: 12px;
-          @media screen and (max-width: 1500px) and (min-width: 1350px) {
-            font-size: 11px;
-          }
-          @media screen and (max-width: 1024px) and (min-width: 780px) {
-            font-size: 13px;
-          }
-          @media screen and (max-width: 768px) {
-            font-size: 16px;
-          }
-        }
-
-        .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
-          background: #00d9c3 !important;
-        }
-
+      }
+      .steper-icon {
+        width: 15px;
+        height: 15px;
+        border: 2px solid #03DAC4;
+        border-radius: 20px;
+        display: flex;
+        position: absolute;
+        margin-top: -24px;
+        margin-left: 46px;
+        background: #fff;
       }
     }
 

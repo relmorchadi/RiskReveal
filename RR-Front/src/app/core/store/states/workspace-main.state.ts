@@ -43,6 +43,16 @@ export class WorkspaceMainState implements NgxsOnInit {
     return state;
   }
 
+  @Selector()
+  static getLoadingWS(state: WorkspaceMain){
+    return state.loading;
+  }
+
+  @Selector()
+  static getCurrentWS(state: WorkspaceMain){
+    return state.openedWs;
+  }
+
   /**
    * Commands
    */
@@ -177,8 +187,8 @@ export class WorkspaceMainState implements NgxsOnInit {
     const recentlyOpenedWs = (JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
     const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || []);
     const paginationList = this.makePagination(recentlyOpenedWs);
-    const projectFormat = currentOpenedWs.data[0].projects.map(prj => prj = {...prj, selected: false});
-    const opened = {...currentOpenedWs.data[0], projects: projectFormat};
+    const projectFormat = currentOpenedWs.data[state.openedTabs.tabsIndex].projects.map(prj => prj = {...prj, selected: false});
+    const opened = {...currentOpenedWs.data[state.openedTabs.tabsIndex], projects: projectFormat};
     currentOpenedWs.data.map(dt => dt.projects = dt.projects.map(prj => prj = {...prj, selected: false}));
     ctx.patchState({
       workspacePagination: paginationList,

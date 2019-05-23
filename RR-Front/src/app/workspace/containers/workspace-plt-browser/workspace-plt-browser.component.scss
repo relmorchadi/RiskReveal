@@ -3,8 +3,8 @@
   display: flex;
   width: 100%;
   ::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
-    margin-top: -280px;
-    margin-left: -435px;
+    margin-top: -362px;
+    margin-left: -473px;
   }
 }
 
@@ -31,7 +31,7 @@ nz-layout {
         span {
           letter-spacing: 0.2px;
           line-height: 27px;
-          font-size: 11px;
+          font-size: 13px;
           font-family: rubik;
           padding-left: 9px;
           font-weight: bold;
@@ -48,6 +48,9 @@ nz-layout {
           font-weight: bold;
           overflow: auto;
           max-height: 600px;
+          li {
+            font-size: 11px;
+          }
         }
 
         .icon-window-section {
@@ -454,8 +457,8 @@ nz-layout {
     th {
       font-weight: bold;
       color: #898989;
-      padding: 3px 0px 5px 3px;
-
+      padding: 3px 0px;
+      text-align: center;
       i {
         font-size: 16px;
         color: #000;
@@ -465,8 +468,9 @@ nz-layout {
       }
     }
 
-    td {
-      padding: 2px 25px 2px 2px;
+    td{
+      padding: 7px 5px 1px 2px;
+      text-align: right;
     }
 
     input {
@@ -729,6 +733,12 @@ nz-layout {
 
     .ui-table-thead {
 
+      .checkBoxHead div{
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+
       th {
         padding: 15px 0 5px 7px !important;
         font-size: 12px;
@@ -788,6 +798,10 @@ nz-layout {
 
       tr.opened_plt_item {
         background-color: #E9E9E9 !important;
+      }
+
+      tr:hover {
+        background-color: #F7F8FD!important;
       }
 
 
