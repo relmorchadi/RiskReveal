@@ -454,6 +454,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   selectedPlt: any;
 
   setFilter(filter: string, tag) {
+    console.log(this.filters)
       this.filters =
         _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
         _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
@@ -531,10 +532,13 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   resetFilterByTags(){
-    this.filters = _.assign({}, this.filters, {
-      systemTag: null,
-      userTag: null
-    })
+    this.filters= {
+      systemTag: [],
+      userTag: []
+    }
+    this.userTags = _.map(this.userTags, t => ({...t,selected: false}))
+    this.systemTags = _.map(this.systemTags, t => ({...t,selected: false}))
+    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({filters: this.filters}))
   }
 
   resetPath(){
