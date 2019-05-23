@@ -7,6 +7,7 @@ import {SearchService} from '../../service/search.service';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
 import * as _ from 'lodash';
+import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -86,6 +87,11 @@ export class SearchNavBarState implements NgxsOnInit {
     return state.loading;
   }
 
+  @Selector()
+  static getData(state: SearchNavBar){
+    return state.data;
+  }
+
 
   /**
    * Commands
@@ -108,6 +114,10 @@ export class SearchNavBarState implements NgxsOnInit {
     forkJoin(
       ...ctx.getState().tables.map(
         tableName => this.searchLoader(keyword, tableName)
+          .pipe(
+            debounceTime(400),
+            switchMap( (payload) => of(payload))
+          )
       )
     ).subscribe(payload => {
       ctx.dispatch(new PatchSearchStateAction({

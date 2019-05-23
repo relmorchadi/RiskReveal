@@ -31,6 +31,9 @@ export class SearchMenuItemComponent implements OnInit {
   state$: Observable<SearchNavBar>;
   state: SearchNavBar = null;
   loading: any;
+  scrollTo: number;
+  private listLength: number;
+  private pos:any;
 
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
@@ -51,8 +54,13 @@ export class SearchMenuItemComponent implements OnInit {
       workspaceName: '',
       year: ''
     });
+    this.scrollTo=0;
+    this.listLength=0;
+    this.pos = {
+      i:0,
+      j:0
+    }
   }
-
 
 
   ngOnInit() {
@@ -62,9 +70,18 @@ export class SearchMenuItemComponent implements OnInit {
           ...value,
           data: []
         })
+
       }else{
         this.state = _.merge({}, value)
       }
+      if(this.state.data && this.state.data.length > 0){
+        this.listLength = _.reduce(this.state.data, (sum, n) => {
+          return sum + (n.length > 5 ? 5 : n.length);
+        }, 0);
+
+        console.log(this.listLength)
+      }
+      this.detectChanges()
     });
     this._subscribeGlobalKeywordChanges();
     this.store.dispatch(new LoadRecentSearchAction());
@@ -140,6 +157,24 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
+    if(keyboardEvent.key == 'ArrowDown') {
+      if(this.scrollTo > 0) {
+        this.scrollTo = this.scrollTo - 1;
+      }else{
+        this.scrollTo = 0
+      }
+      //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
+      console.log(this.pos,this.state.data)
+    }
+    if(keyboardEvent.key == 'ArrowUp'){
+      if(this.scrollTo < this.listLength) {
+        this.scrollTo = this.scrollTo + 1;
+      }else{
+        this.scrollTo = 0
+      }
+      //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
+      console.log(this.pos,this.state.data)
+    }
     if (keyboardEvent.key === 'Enter') {
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
       if (this.contractFilterFormGroup.get('switchValue').value) {
@@ -324,5 +359,15 @@ export class SearchMenuItemComponent implements OnInit {
   clearValue(): void {
     this.store.dispatch(new ClearSearchValuesAction());
     this._clearFilters();
+  }
+
+  handleScroll($event: KeyboardEvent) {
+    console.log($event);
+  }
+
+
+  setPos($event) {
+    console.log($event);
+    this.pos = $event
   }
 }
