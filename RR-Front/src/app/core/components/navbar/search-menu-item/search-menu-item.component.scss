@@ -157,6 +157,7 @@ ul.badges-list {
 
 .global-search-input-grp-active{
   border: 1px solid #008694;
+
 }
 
 .search-history{
@@ -295,7 +296,11 @@ ul.badges-list {
     border-bottom: 1px solid rgba(0,0,0,0.15); width:100%; padding:10px 20px;
     cursor: pointer;
   }
+
   .search-result-list{
+    .highlight-scroll-item {
+      background-color: #F4F6FC !important;
+    }
     li{
       padding: 0px 20px; padding-top: 8px; cursor: pointer;
       color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 24px;

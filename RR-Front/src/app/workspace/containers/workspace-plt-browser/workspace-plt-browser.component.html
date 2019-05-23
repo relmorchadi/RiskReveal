@@ -24,7 +24,7 @@
                 <ul class="title-list">
                   <li *ngFor="let project of projects" (click)="filter('project',project.projectId)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;" [ngClass]="{'active-path': project.selected}">
                     <i class="icon-assignment_24px"></i>
-                    <span [nz-tooltip]="project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+                    <span class="tooltipMsg" [nz-tooltip]="project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
                   </li>
                 </ul>
               </div>
@@ -76,7 +76,11 @@
               <span style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;">PLTs</span>
             </ng-template>
             <div class="PLTs-content">
-              <i class="icon-menu_24px" style="display:none;position: absolute;right: 7px;top: 61px;font-size: 15px;"></i>
+              <i class="icon-menu_24px" style="position: absolute;
+    right: 7px;
+    top: 59px;
+    font-size: 18px;
+    width: 14px;"></i>
               <!--nz-table-- #pltTable
                         [nzData]="listOfPlts"
                         class="plt-table"
