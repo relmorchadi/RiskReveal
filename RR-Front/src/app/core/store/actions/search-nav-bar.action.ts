@@ -38,5 +38,7 @@ export class LoadRecentSearchAction {
   constructor() {}
 }
 
-
-
+export class SetLoadingState {
+  static readonly type = '[Search Nav Bar] Set Loading State'
+  constructor(public payload?: any) {}
+}

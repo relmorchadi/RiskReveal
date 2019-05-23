@@ -13,6 +13,7 @@ export class SearchNavBar {
   searchValue: string;
   badges: any[];
   data: any[];
+  loading: boolean;
   recentSearch: any[];
   showRecentSearch: any[];
   tables: any[];

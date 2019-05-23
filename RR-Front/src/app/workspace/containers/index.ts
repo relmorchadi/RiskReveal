@@ -14,6 +14,7 @@ import {WorkspaceInuringComponent} from './workspace-inuring/workspace-inuring.c
 import {WorkspacePricingComponent} from './workspace-pricing/workspace-pricing.component';
 import {WorkspaceResultsComponent} from './workspace-results/workspace-results.component';
 import {WorkspaceScopeCompletenceComponent} from './workspace-scope-completence/workspace-scope-completence.component';
+import {WorkspaceJobManagerComponent} from './workspace-job-manager/workspace-job-manager.component';
 
 
 export const CONTAINERS = [
@@ -32,9 +33,12 @@ export const CONTAINERS = [
   WorkspaceInuringComponent,
   WorkspacePricingComponent,
   WorkspaceResultsComponent,
-  WorkspaceScopeCompletenceComponent
+  WorkspaceScopeCompletenceComponent,
+  WorkspaceJobManagerComponent
 ];
 
+
+export * from './workspace-job-manager/workspace-job-manager.component';
 export * from './workspace-risk-link/workspace-risk-link.component';
 export * from './workspace-main/workspace-main.component';
 export * from './workspace-project/workspace-project.component';

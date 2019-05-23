@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
@@ -6,6 +6,7 @@ import * as fromWorkspaceStore from '../../store';
 import {pltMainModel, PltMainState} from '../../store';
 import {map, mergeMap, tap} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
+import {Table} from 'primeng/table';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -19,9 +20,13 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   searchAddress: string;
   listOfPlts: any[];
   listOfPltsData: any[];
+  listOfPltsCache: any[];
   selectedListOfPlts: any[];
-  filterData;
+  filterData: any;
   sortData;
+  activeCheckboxSort: boolean;
+  @ViewChild('dt')
+  private table: Table;
 
   workspaceId: string;
   uwy: number;
@@ -80,7 +85,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     systemTag: [],
     userTag: []
   }
-  sumnaryPltDetailsPltId: any = null;
+  sumnaryPltDetailsPltId: any;
 
   epMetricInputValue: string | null;
 
@@ -167,99 +172,100 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ];
 
   units = [
+    {id: '3', label: 'Billion'},
     {id: '1', label: 'Thousands'},
     {id: '2', label: 'Million'},
-    {id: '3', label: 'Billion'}
+    {id: '4', label: 'Unit'}
   ];
 
   metrics = [
     {
       metricID: '1',
       retrunPeriod: '10000',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '2',
-      retrunPeriod: '5.000',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      retrunPeriod: '5,000',
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '4',
-      retrunPeriod: '1.000',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      retrunPeriod: '1,000',
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '5',
       retrunPeriod: '500',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '6',
       retrunPeriod: '250',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '7',
       retrunPeriod: '100',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '8',
       retrunPeriod: '50',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '9',
       retrunPeriod: '25',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '10',
       retrunPeriod: '10',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '11',
       retrunPeriod: '5',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     },
     {
       metricID: '12',
       retrunPeriod: '2',
-      OEP: '291.621,790',
-      AEP: '291.621,790',
-      TVaR_OEP: '321.654.789',
-      TVaR_AEP: '458.711.620'
+      OEP: '291,621.790',
+      AEP: '291,621.790',
+      TVaR_OEP: '3214,654.789',
+      TVaR_AEP: '458,711.620'
     }
   ];
 
@@ -302,7 +308,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ];
 
   dependencies = [
-    {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analisis ID: 149'},
+    {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analysis ID: 149'},
     {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
     {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
     {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
@@ -332,8 +338,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       systemTag: [],
       userTag: []
     }
-
-
+    this.filterData= {}
+    this.activeCheckboxSort=false;
   }
   @Select(PltMainState.data) data$;
   loading: boolean;
@@ -349,7 +355,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
         })
         this.listOfPlts= d2;
-        this.listOfPltsData= d1;
+        this.listOfPltsData= this.listOfPltsCache = d1;
         this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
         this.detectChanges();
       }),
@@ -431,12 +437,20 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   filter (key: string, value)  {
 
-    if(value) {
-      this.filterData= _.merge({},this.filterData, {[key]: value})
-    } else {
-      this.filterData= _.omit(this.filterData, [key])
+    if(key == 'project') {
+      if(this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
+        this.filterData= _.omit(this.filterData, [key])
+      }else{
+        this.filterData= _.merge({},this.filterData, {[key]: value})
+      }
+    }else {
+      if(value) {
+        this.filterData= _.merge({},this.filterData, {[key]: value})
+      } else {
+        this.filterData= _.omit(this.filterData, [key])
+      }
     }
-    console.log(this.filterData);
+    console.log(this.filterData)
   }
 
   selectedPlt: any;
@@ -625,6 +639,35 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   toDate(d){
     return new Date(d);
+  }
+
+  onSort($event: any) {
+    console.log($event)
+    const {
+      multisortmeta
+    } = $event;
+
+    /*if(_.find(multisortmeta, col => col.field == 'selected' && col.order == 1)){
+      this.table.reset();
+    }
+    this.multiSortMeta = multisortmeta;*/
+  }
+
+  multiSortMeta: any[];
+
+  logSort($event) {
+    console.log($event);
+  }
+
+  checkBoxsort() {
+    this.activeCheckboxSort= !this.activeCheckboxSort;
+    if(this.activeCheckboxSort){
+      this.listOfPltsData = _.sortBy( this.listOfPltsData, [(o) => {
+        return !o.selected;
+      }])
+    }else{
+      this.listOfPltsData = this.listOfPltsCache;
+    }
   }
 }
 

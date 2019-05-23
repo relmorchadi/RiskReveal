@@ -28,7 +28,13 @@
   <li (click)="routerNavigate('PltBrowser')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'PLT browser' : ''">
           <span title>
             <i nz-icon><i class="icon-file-search-alt"></i></i>
-            <span>PLT browser</span>
+            <span>PLT Manager</span>
+          </span>
+  </li>
+  <li (click)="routerNavigate('JobManager')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Job Manager' : ''">
+          <span title>
+            <i nz-icon><i class="icon-bag-alt"></i></i>
+            <span>Job Manager</span>
           </span>
   </li>
   <hr class="col-xs-12">
