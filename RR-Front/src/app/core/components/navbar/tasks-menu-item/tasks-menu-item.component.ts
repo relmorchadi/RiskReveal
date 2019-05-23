@@ -297,6 +297,6 @@ export class TasksMenuItemComponent implements OnInit {
   }
 
   navigateToJOBmanager() {
-    this.router.navigateByUrl(`workspace/${this.wsId}/${this.year}/JobManager`)
+    this.router.navigateByUrl(`/jobManager`)
   }
 }
