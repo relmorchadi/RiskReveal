@@ -31,11 +31,11 @@ export class TasksMenuItemComponent implements OnInit {
     active: [
       {
         progress: 75,
-        name: 'ALABAMA INS.UA',
+        name: 'SCOR SE',
         year: '2018',
-        description: 'Cat Program, 1st/4th 1year,2nd/3rd year ',
+        description: 'SBS-SCOR ASIA PACIF...',
         duration: '5 min remaining',
-        specific: {type: 'Import', link: 'RiskLink', id: 'P009873'},
+        specific: {type: 'Import', link: 'RiskLink', id: '00F0006'},
         append: false,
         data: {
           workSpaceId: '00F0006',
@@ -76,11 +76,11 @@ export class TasksMenuItemComponent implements OnInit {
       },
       {
         progress: 50,
-        name: 'ALLSTATES INCO',
-        year: '2018',
-        description: 'Nationwide ex NJ/FL, MY (2/3)',
+        name: 'NFU MUTUAL',
+        year: '2017',
+        description: 'NFU Mtr & Liab XL',
         duration: '1 min remaining',
-        specific: {type: 'Calibration', link: 'Calibration', id: 'P009873'},
+        specific: {type: 'Calibration', link: 'Calibration', id: '01P4134'},
         append: false,
         data: {
           workSpaceId: '01P4134',
@@ -103,11 +103,11 @@ export class TasksMenuItemComponent implements OnInit {
       },
       {
         progress: 25,
-        name: 'ALTE LEIPZIGER VERS',
-        year: '2018',
-        description: 'Property XL Bouquet',
+        name: 'NFU MUTUAL',
+        year: '2017',
+        description: 'NFU PROPERTY CAT UK',
         duration: '1 min remaining',
-        specific: {type: 'Inuring', link: 'Inuring', id: 'P009873'},
+        specific: {type: 'Inuring', link: 'Inuring', id: '01P4466'},
         append: false,
         data: {
           workSpaceId: '01P4466',
@@ -139,11 +139,11 @@ export class TasksMenuItemComponent implements OnInit {
       },
       {
         progress: 0,
-        name: 'AMERICAN FAMILY MUTUAL',
-        year: '2019',
-        description: 'American Family Annual Cat XL',
+        name: 'CALIFORNIA EQ AUTHORITY',
+        year: '2016',
+        description: 'CEA Program: Private Plac',
         duration: '4/12 Pending',
-        specific: {type: 'Import', link: 'RiskLink', id: 'P009873'},
+        specific: {type: 'Import', link: 'RiskLink', id: 'TP05413 '},
         append: false,
         data: {
           workSpaceId: 'TP05413',
@@ -184,11 +184,11 @@ export class TasksMenuItemComponent implements OnInit {
       },
       {
         progress: 0,
-        name: 'AXA GLOBAL RE',
+        name: 'SCOR SE',
         year: '2019',
-        description: 'XL Property CAT ESP',
+        description: 'CFS-SCOR ITALIA-SCOR',
         duration: '4/12 Pending',
-        specific: {type: 'Calibration', link: 'Calibration', id: 'P009873'},
+        specific: {type: 'Calibration', link: 'Calibration', id: '00C0024'},
         append: false,
         data: {
           workSpaceId: '00C0024',
