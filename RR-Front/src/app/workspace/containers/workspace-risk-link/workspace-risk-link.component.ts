@@ -80,7 +80,24 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     {field: 'description', header: 'Description', width: '150px', type: 'text'},
     {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
     {field: 'groupType', header: 'Group Type', width: '110px', type: 'text'},
-    {field: 'cedant', header: 'cedant', width: '110px', type: 'text'},
+    {field: 'cedant', header: 'Cedant', width: '110px', type: 'text'},
+    {field: 'lobName', header: 'LOB', width: '110px', type: 'text'},
+    {field: 'engineType', header: 'Engine Type', width: '110px', type: 'text'},
+    {field: 'runDate', header: 'Run Date', width: '110px', type: 'text'},
+    {field: 'typeName', header: 'Type', width: '110px', type: 'text'},
+    {field: 'peril', header: 'Peril', width: '110px', type: 'text'},
+    {field: 'subPeril', header: 'Sub Peril', width: '110px', type: 'text'},
+    {field: 'lossAmplification', header: 'Loss Amplification', width: '110px', type: 'text'},
+    {field: 'region', header: 'User 4', width: '110px', type: 'text'},
+    {field: 'modeName', header: 'Mode', width: '110px', type: 'text'},
+    {field: 'user1', header: 'User 1', width: '110px', type: 'text'},
+    {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
+    {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
+    {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
+    {field: 'analysisCurrency', header: 'Analysis Currency', width: '110px', type: 'text'},
+    {field: 'regionName', header: 'User 4', width: '110px', type: 'text'},
+    {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
+    {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
   ];
 
   frozenColsAnalysis = [
@@ -93,7 +110,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text'},
     {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date'},
     {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text'},
-    {field: 'cedant', header: 'cedant', width: '120px', type: 'text'},
+    {field: 'type', header: 'Type', width: '180px', type: 'text'},
+    {field: 'agCedent', header: 'Cedant', width: '120px', type: 'text'},
+    {field: 'agCurrency', header: 'Currency', width: '120px', type: 'text'},
+    {field: 'agSource', header: 'Source', width: '120px', type: 'text'},
+    {field: 'peril', header: 'Peril', width: '120px', type: 'text'},
   ];
 
   frozenColsPortfolio = [
