@@ -20,6 +20,7 @@ export class TableComponent implements OnInit {
   @Output('filterData') filterData: any = new EventEmitter<any>();
   @Output('selectOne') selectOne: any = new EventEmitter<any>();
   @Output('loadMore') loadMore: any = new EventEmitter<any>();
+  @Output('dbClickItem') doubleClick: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -122,6 +123,10 @@ export class TableComponent implements OnInit {
     this.loadMore.emit(event);
     this.selectedRows = null;
     this.isIndeterminate();
+  }
+
+  doubleClickRow(rowData){
+    this.doubleClick.emit(rowData);
   }
 
   selectRow(row: any, index: number) {
