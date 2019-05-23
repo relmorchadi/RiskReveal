@@ -42,16 +42,17 @@ export class WorkspaceMainComponent implements OnInit {
     this.route.children[0].params.subscribe(
       ({wsId, year}: any) => {
         this.getSearchedWorkspaces(wsId, year);
-        this.cdRef.detectChanges();
+        this.detectChanges();
       });
     this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
       dt =>
-        this.cdRef.detectChanges()
+        this.detectChanges()
     );
   }
 
   getSearchedWorkspaces(wsId = null, year = null) {
     const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
+    console.log(popConfirm)
     if (popConfirm) {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(wsId, year).pipe(
@@ -67,7 +68,7 @@ export class WorkspaceMainComponent implements OnInit {
         })
       ).subscribe((content) => {
         this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
-        this.cdRef.detectChanges();
+        this.detectChanges();
       });
     }
   }
@@ -117,7 +118,7 @@ export class WorkspaceMainComponent implements OnInit {
           this._helper.updateWorkspaceItems();
           this._helper.updateRecentWorkspaces();
           this.tabIndex = this.state.openedTabs.data.length;
-          this.cdRef.detectChanges();
+          this.detectChanges();
         }
       );
     }
@@ -160,6 +161,12 @@ export class WorkspaceMainComponent implements OnInit {
   selectWorkspace(workspace) {
     this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: workspace}));
     this.navigateToTab();
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed']) {
+      this.cdRef.detectChanges();
+    }
   }
 
 }

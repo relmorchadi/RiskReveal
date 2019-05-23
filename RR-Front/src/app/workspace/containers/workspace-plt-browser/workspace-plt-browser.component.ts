@@ -317,27 +317,27 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     private zone: NgZone,
     private cdRef: ChangeDetectorRef,
     private route$: ActivatedRoute) {
-    this.someItemsAreSelected= false;
-    this.selectAll= false;
-    this.listOfPlts= [];
-    this.listOfPltsData= [];
-    this.selectedListOfPlts= [];
+    this.someItemsAreSelected = false;
+    this.selectAll = false;
+    this.listOfPlts = [];
+    this.listOfPltsData = [];
+    this.selectedListOfPlts = [];
     this.lastSelectedId = null;
-    this.drawerIndex= 0;
-    this.params= {};
-    this.loading= true;
-    this.filters= {
+    this.drawerIndex = 0;
+    this.params = {};
+    this.loading = true;
+    this.filters = {
       systemTag: [],
       userTag: []
     }
-    this.filterData= {}
-    this.activeCheckboxSort=false;
-    this.loading= true;
+    this.filterData = {};
+    this.activeCheckboxSort = false;
+    this.loading = true;
   }
   @Select(PltMainState.data) data$;
   loading: boolean;
 
-  ngOnInit(){
+  ngOnInit() {
     this.Subscriptions.push(
       this.data$.subscribe( data => {
         let d1= [];
@@ -347,9 +347,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           d1.push({...v,pltId: k});
           d2.push(k);
           this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
-        })
-        this.listOfPlts= d2;
-        this.listOfPltsData= this.listOfPltsCache = d1;
+        });
+        this.listOfPlts = d2;
+        this.listOfPltsData = this.listOfPltsCache = d1;
         this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
         this.detectChanges();
       }),
@@ -359,36 +359,37 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         this.detectChanges();
       }),
       this.data$.subscribe( data => {
-        _.forEach(data, (v,k) => {
-          if(v.opened) {
-            this.sumnaryPltDetailsPltId= k;
+        _.forEach(data, (v, k) => {
+          if (v.opened) {
+            this.sumnaryPltDetailsPltId = k;
           }
-        })
+        });
         this.detectChanges();
       }),
       this.route$.params.subscribe(
         ({wsId, year}) => {
+          console.log(wsId);
           this.workspaceId = wsId;
           this.uwy = year;
           this.loading= true;
           this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
             params: {
               workspaceId: wsId, uwy: year
-            }}))
+            }}));
         }
       ),
       this.store$.select(PltMainState.getProjects()).subscribe(
-        (projects:any) => {
+        (projects: any) => {
           this.projects = projects;
           this.detectChanges();
         }
       ),
-      this.getAttr('loading').subscribe( l => this.loading =l)
-    )
+      this.getAttr('loading').subscribe( l => this.loading = l)
+    );
   }
 
-  getAttr(path){
-    return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)))
+  getAttr(path) {
+    return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)));
   }
 
   /*sort(sort: { key: string, value: string }): void {
@@ -421,22 +422,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   },500);*/
 
   sort(sort: { key: string, value: string }): void {
-    if(sort.value){
-      this.sortData= _.merge({},this.sortData, {
-        [sort.key]: sort.value === "descend" ? 'desc' : 'asc'
-      })
-    }else{
-      this.sortData= _.omit(this.sortData, [sort.key])
+    if (sort.value) {
+      this.sortData = _.merge({}, this.sortData, {
+        [sort.key]: sort.value === 'descend' ? 'desc' : 'asc'
+      });
+    } else {
+      this.sortData = _.omit(this.sortData, [sort.key]);
     }
   }
 
-  filter (key: string, value)  {
-
-    if(key == 'project') {
-      if(this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
-        this.filterData= _.omit(this.filterData, [key])
-      }else{
-        this.filterData= _.merge({},this.filterData, {[key]: value})
+  filter(key: string, value) {
+    if (key == 'project') {
+      if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
+        this.filterData = _.omit(this.filterData, [key]);
+      } else {
+        this.filterData = _.merge({}, this.filterData, {[key]: value});
       }
       this.projects = _.map(this.projects, t => {
         if(t.projectId == value){
@@ -450,10 +450,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       if(value) {
         this.filterData= _.merge({},this.filterData, {[key]: value})
       } else {
-        this.filterData= _.omit(this.filterData, [key])
+        this.filterData = _.omit(this.filterData, [key]);
       }
     }
-    console.log(this.filterData)
+    console.log(this.filterData);
   }
 
   selectedPlt: any;
@@ -476,26 +476,26 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }))
   }
 
-  selectPltById(pltId){
-    return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`))
+  selectPltById(pltId) {
+    return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`));
   }
 
   openDrawer(index): void {
     this.visible = true;
-    this.drawerIndex= index;
+    this.drawerIndex = index;
   }
 
   closeDrawer(): void {
     this.visible = false;
   }
 
-  closePltInDrawer(pltId){
-    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}))
+  closePltInDrawer(pltId) {
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}));
   }
 
   openPltInDrawer(plt) {
     this.closePltInDrawer(this.sumnaryPltDetailsPltId);
-    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}))
+    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}));
     this.openDrawer(1);
     this.getTagsForSummary();
   }
@@ -509,41 +509,41 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
     if (item.length > 0)
       return item[0].tagColor;
-    return null
+    return null;
   }
 
-  getTagsForSummary(){
+  getTagsForSummary() {
     this.pltdetailsSystemTags = this.systemTags;
-    this.pltdetailsUserTags= this.userTags;
+    this.pltdetailsUserTags = this.userTags;
   }
 
   selectCardThead(card) {
     this.theads.forEach(thead => {
       thead.cards.forEach(card => {
         card.selected = false;
-      })
-    })
+      });
+    });
     card.selected = true;
   }
 
   getCardBackground(selected) {
-    if (selected) return "#FFF";
-    else return "#f4f6fc";
+    if (selected) return '#FFF';
+    else return '#f4f6fc';
   }
 
-  getBoxShadow(selected){
-    if (selected) return "0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)";
-    else return "none"
+  getBoxShadow(selected) {
+    if (selected) return '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
+    else return 'none';
   }
 
-  resetFilterByTags(){
-    this.filters= {
+  resetFilterByTags() {
+    this.filters = {
       systemTag: [],
       userTag: []
     }
-    this.userTags = _.map(this.userTags, t => ({...t,selected: false}))
-    this.systemTags = _.map(this.systemTags, t => ({...t,selected: false}))
-    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({filters: this.filters}))
+    this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
+    this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
+    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({filters: this.filters}));
   }
 
   resetPath(){
@@ -563,7 +563,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   runInNewConext(task) {
     this.zone.runOutsideAngular(() => {
       task();
-      this.detectChanges()
+      this.detectChanges();
     });
   }
 
@@ -573,7 +573,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe())
+    this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe());
   }
 
   checkAll($event: boolean) {
@@ -582,11 +582,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         _.map(this.listOfPlts, plt => plt),
         _.range(this.listOfPlts.length).map(el => ({type : !this.selectAll && !this.someItemsAreSelected ? 'select' : 'unselect'}))
       )
-    )
+    );
   }
 
-  toggleSelectPlts(plts: any){
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}))
+  toggleSelectPlts(plts: any) {
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}));
   }
 
   selectSinglePLT(pltId: number, $event: boolean) {
@@ -594,69 +594,69 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       [pltId]: {
         type: $event ? 'select' : 'unselect'
       }
-    })
+    });
   }
 
-  handlePLTClick(pltId,i: number, $event: MouseEvent) {
-    const isSelected= _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
-    if($event.ctrlKey || $event.shiftKey) {
-      this.handlePLTClickWithKey(pltId,i,!isSelected, $event);
-    }else{
+  handlePLTClick(pltId, i: number, $event: MouseEvent) {
+    const isSelected = _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
+    if ($event.ctrlKey || $event.shiftKey) {
+      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
+    } else {
       this.lastSelectedId = i;
       this.toggleSelectPlts(
         _.zipObject(
           _.map(this.listOfPlts, plt => plt),
           _.map(this.listOfPlts, plt =>  plt == pltId && !isSelected ? ({type: 'select'}) : ({type: 'unselect'}) )
         )
-      )
+      );
     }
   }
 
-  private handlePLTClickWithKey(pltId: number,i: number,isSelected: boolean, $event: MouseEvent) {
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
     console.log(i);
-    if($event.ctrlKey){
-      this.selectSinglePLT(pltId,isSelected);
-      this.lastSelectedId=i;
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
       return;
     }
 
     if($event.shiftKey) {
-      console.log('SHIFT')
-      console.log(i,this.lastSelectedId)
-      if(!this.lastSelectedId) this.lastSelectedId =0;
+      console.log('SHIFT');
+      console.log(i, this.lastSelectedId);
+      if(!this.lastSelectedId) this.lastSelectedId = 0;
       if(this.lastSelectedId || this.lastSelectedId == 0) {
-        console.log(i,this.lastSelectedId)
-        const max = _.max([i, this.lastSelectedId])
-        const min = _.min([i, this.lastSelectedId])
-        console.log(max,min)
+        console.log(i, this.lastSelectedId)
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        console.log(max, min)
         this.toggleSelectPlts(
           _.zipObject(
             _.map(this.listOfPlts, plt => plt),
             _.map(this.listOfPlts,(plt,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )),
           )
-        )
-      }else{
-        this.lastSelectedId= i;
+        );
+      } else {
+        this.lastSelectedId = i;
       }
       return;
     }
   }
 
   private loadData(params: any) {
-    console.log(params)
-    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}))
+    console.log(params);
+    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}));
   }
 
   selectProject(id: any) {
 
   }
 
-  toDate(d){
+  toDate(d) {
     return new Date(d);
   }
 
   onSort($event: any) {
-    console.log($event)
+    console.log($event);
     const {
       multisortmeta
     } = $event;
@@ -667,19 +667,13 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.multiSortMeta = multisortmeta;*/
   }
 
-  multiSortMeta: any[];
-
-  logSort($event) {
-    console.log($event);
-  }
-
   checkBoxsort() {
-    this.activeCheckboxSort= !this.activeCheckboxSort;
-    if(this.activeCheckboxSort){
+    this.activeCheckboxSort = !this.activeCheckboxSort;
+    if (this.activeCheckboxSort) {
       this.listOfPltsData = _.sortBy( this.listOfPltsData, [(o) => {
         return !o.selected;
-      }])
-    }else{
+      }]);
+    } else {
       this.listOfPltsData = this.listOfPltsCache;
     }
   }

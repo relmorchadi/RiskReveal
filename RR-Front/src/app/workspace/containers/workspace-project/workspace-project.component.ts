@@ -29,7 +29,7 @@ export class WorkspaceProjectComponent implements OnInit {
 
   constructor(private _helper: HelperService, private route: ActivatedRoute,
               private nzDropdownService: NzDropdownService, private store: Store,
-              private router:Router) {
+              private router: Router) {
     console.log('init project');
   }
 
