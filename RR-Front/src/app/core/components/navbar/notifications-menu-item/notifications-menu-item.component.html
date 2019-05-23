@@ -1,4 +1,4 @@
-<nz-badge style="cursor: pointer; margin-top: 7px;" [nzCount]="5" [(nzVisible)]="visible" nz-popover [nzContent]="notificationsPopoverContent" nzTrigger="click">
+<nz-badge (click)="updateNotif()" style="cursor: pointer; margin-top: 7px;" [nzCount]="notifCount" [(nzVisible)]="visible" nz-popover [nzContent]="notificationsPopoverContent" nzTrigger="click">
   <i class="icon-notifications_24px icon-size"></i>
 </nz-badge>
 <ng-template #notificationsPopoverContent>
@@ -58,20 +58,195 @@
               <nz-option [nzValue]="5" nzLabel="Last 7 days"></nz-option>
             </nz-select>
 
-            <div class="float-right">
+            <div class="notification-footer">
+              <button class="popover-menu-control-button" nz-button nzType="default">CLEAR ALL</button>
               <button class="popover-menu-control-button" nz-button nzType="default">SEE ALL</button>
             </div>
           </div>
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="ErrorsHeaderContent">
-        Tab 2 content
+        <div class="popup-tab-content">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="gray-search-input"/>
+          </div>
+          <p class="notification-title mt-2">
+            Today
+          </p>
+          <ul style="height: 151px">
+            <li *ngFor="let notification of notification.warning.today" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+          <p class="notification-title mt-2">
+            Yesterday
+          </p>
+
+          <ul style="height: 172px">
+            <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+
+
+          <div class="mt-2 footer-wrapper">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
+              <nz-option [nzValue]="4" nzLabel="Today"></nz-option>
+              <nz-option [nzValue]="5" nzLabel="Last 7 days"></nz-option>
+            </nz-select>
+
+            <div class="notification-footer">
+              <button class="popover-menu-control-button" nz-button nzType="default">CLEAR ALL</button>
+              <button class="popover-menu-control-button" nz-button nzType="default">SEE ALL</button>
+            </div>
+          </div>
+        </div>
       </nz-tab>
       <nz-tab [nzTitle]="WarningsHeaderContent">
-        Tab 3 content
+        <div class="popup-tab-content">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="gray-search-input"/>
+          </div>
+          <p class="notification-title mt-2">
+            Today
+          </p>
+          <ul style="height: 151px">
+            <li *ngFor="let notification of notification.all.today" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+          <p class="notification-title mt-2">
+            Yesterday
+          </p>
+
+          <ul style="height: 172px">
+            <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+
+
+          <div class="mt-2">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
+              <nz-option [nzValue]="4" nzLabel="Today"></nz-option>
+              <nz-option [nzValue]="5" nzLabel="Last 7 days"></nz-option>
+            </nz-select>
+
+            <div class="notification-footer">
+              <button class="popover-menu-control-button" nz-button nzType="default">CLEAR ALL</button>
+              <button class="popover-menu-control-button" nz-button nzType="default">SEE ALL</button>
+            </div>
+          </div>
+        </div>
       </nz-tab>
       <nz-tab [nzTitle]="InformationalHeaderContent">
-        Tab 4 content
+        <div class="popup-tab-content">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="gray-search-input"/>
+          </div>
+          <p class="notification-title mt-2">
+            Today
+          </p>
+          <ul style="height: 151px">
+            <li *ngFor="let notification of notification.all.today" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+          <p class="notification-title mt-2">
+            Yesterday
+          </p>
+
+          <ul style="height: 172px">
+            <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
+                (click)="toggleNotificaion(notification)"
+                [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
+              <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
+                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
+              </div>
+              <div class="col-md-10">
+                <span class="notification-content" [innerHtml]="notification?.content"></span>
+              </div>
+            </li>
+          </ul>
+
+
+
+          <div class="mt-2">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
+              <nz-option [nzValue]="4" nzLabel="Today"></nz-option>
+              <nz-option [nzValue]="5" nzLabel="Last 7 days"></nz-option>
+            </nz-select>
+
+            <div class="notification-footer">
+              <button class="popover-menu-control-button" nz-button nzType="default">CLEAR ALL</button>
+              <button class="popover-menu-control-button" nz-button nzType="default">SEE ALL</button>
+            </div>
+          </div>
+        </div>
       </nz-tab>
     </nz-tabset>
   </div>

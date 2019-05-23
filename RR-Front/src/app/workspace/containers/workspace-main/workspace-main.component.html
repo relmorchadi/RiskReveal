@@ -7,7 +7,9 @@
           [ngTemplateOutletContext]="{
             index:tab,
             tabsLength: state.openedTabs.data.length,
-            title:tab?.workSpaceId,
+            title:tab?.cedantName,
+            workspaceName: tab?.workspaceName,
+            workSpaceId: tab?.workSpaceId,
             year:tab?.uwYear,
             years:tab?.years
           }"
@@ -33,11 +35,11 @@
                 <div style="display: flex; flex: 1;">
                   <div class="workspace-title-wrapper">
                     <div class="d-inline-flex flex-column">
-                      <h3 class="workspace-title">{{tab?.workspaceName}}
+                      <h3 class="workspace-title">{{tab?.cedantName}}
                         <i *ngIf="!liked" (click)="liked = true" class="icon-star_border_24px"></i>
                         <i *ngIf="liked" (click)="liked = false" class="icon-star_24px"></i>
                       </h3>
-                      <h4 class="workspace-title"> {{tab?.cedantCode}} | {{tab?.cedantName}} | </h4>
+                      <h4 class="workspace-title"> {{tab?.workspaceName}} | {{tab?.uwYear}} | {{tab?.workSpaceId}} | </h4>
                     </div>
                   </div>
                   <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="header-tab-right">
@@ -262,23 +264,26 @@
   </nz-tabset>
 </div>
 
-<ng-template let-title='title' let-year='year' let-years='years' let-tabsLength='tabsLength' let-index='index'
+<ng-template let-title='title' let-name="workspaceName" let-workSpaceId="workSpaceId" let-year='year' let-years='years' let-tabsLength='tabsLength' let-index='index'
              #tabTitle>
   <div class="tab-title-container pl-3">
     <ng-container *ngIf="!state.loading">
-      <h3 class="tab-title">{{title}}</h3>
+      <div class="tab-title">
+        <span class="tab-title-main">{{title}}</span>
+        <span class="tab-title-sub">{{name}}</span>
+      </div>
       <nz-dropdown [nzTrigger]="'click'">
         <a nz-dropdown>
           <h6 class="d-flex align-items-center sub-title">{{year}}
-            <i class="pl-3 drop-icon" *ngIf="generateYear(year, years, title).length >0"
+            <i class="pl-3 drop-icon" *ngIf="generateYear(year, years, workSpaceId).length >0"
               nz-icon type="down"></i>
           </h6>
         </a>
         <ul style="padding:0" nz-menu>
-          <li (click)="addWs(title,y)" *ngFor="let y of generateYear(year, years, title)" nz-menu-item>{{y}}</li>
+          <li (click)="addWs(workSpaceId, y)" *ngFor="let y of generateYear(year, years, workSpaceId)" nz-menu-item>{{y}}</li>
         </ul>
       </nz-dropdown>
-      <i (click)="close(title, year)" class="icon-clear_24px"></i>
+      <i (click)="close(workSpaceId, year)" class="icon-clear_24px"></i>
     </ng-container>
     <ng-container *ngIf="state.loading">
       <nz-skeleton class="skeleton-title-header"></nz-skeleton>

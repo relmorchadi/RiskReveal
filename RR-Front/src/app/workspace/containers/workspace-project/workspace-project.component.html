@@ -46,12 +46,34 @@
             </div>
           </div>
           <div class="project-progress d-flex justify-content-center align-items-center">
-            <nz-steps [nzCurrent]="3" nzProgressDot>
-              <nz-step nzTitle="Imported"></nz-step>
-              <nz-step nzTitle="Published"></nz-step>
-              <nz-step nzTitle="Priced"></nz-step>
-              <nz-step nzTitle="Accumulated"></nz-step>
-            </nz-steps>
+            <div class="project-flag">
+              <div [ngStyle]="{'visibility': project.linkFlag ? 'inherit' : 'hidden'}">
+                <hr>
+                <span class="steper-icon"></span>
+              </div>
+              <span>Imported</span>
+            </div>
+            <div class="project-flag">
+              <div [ngStyle]="{'visibility': project.publishFlag ? 'inherit' : 'hidden'}">
+                <hr>
+                <span class="steper-icon"></span>
+              </div>
+              <span>Published to XAcT</span>
+            </div>
+            <div class="project-flag">
+              <div>
+                <hr>
+                <span class="steper-icon"></span>
+              </div>
+              <span>Priced</span>
+            </div>
+            <div class="project-flag">
+              <div>
+                <hr>
+                <span class="steper-icon"></span>
+              </div>
+              <span>Accumulated</span>
+            </div>
           </div>
           <div class="project-kpi border-top d-flex">
             <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
@@ -60,7 +82,7 @@
               <span class="project-kpi-span"><b>{{project?.regionPerilSum}}</b></span>
             </div>
             <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-design-tool mb-1"></i>
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
               <span class="project-kpi-span">Exp</span>
               <span class="project-kpi-span"><b>-</b></span>
             </div>
@@ -68,6 +90,11 @@
               <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
               <span class="project-kpi-span">PLT</span>
               <span class="project-kpi-span"><b>{{project?.pltThreadSum}}</b></span>
+            </div>
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+              <span class="project-kpi-span">XAcT</span>
+              <span class="project-kpi-span"><b>{{project?.xactSum}}</b></span>
             </div>
             <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
               <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>

@@ -71,7 +71,7 @@ export class SearchMainComponent implements OnInit {
       field: 'cedantCode',
       header: 'Cedant',
       width: '90px',
-      display: false,
+      display: true,
       sorted: false,
       filtered: true,
       filterParam: 'innerCedantCode'
@@ -98,7 +98,7 @@ export class SearchMainComponent implements OnInit {
       field: 'workSpaceId',
       header: 'Workspace Context',
       width: '90px',
-      display: false,
+      display: true,
       sorted: false,
       filtered: true,
       filterParam: 'innerWorkspaceId'
