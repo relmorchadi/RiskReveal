@@ -5,7 +5,8 @@
                   [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
                   [nzSuffix]="suffixIconSearch"
                   [nzAddOnBefore]="prefixIconTag">
-    <input [ngClass]="{'search-page-active-border': isSearchRoute()}" (keydown)="filterContracts($event)"
+    <input [ngClass]="{'search-page-active-border': isSearchRoute()}"
+           (keydown)="filterContracts($event)"
            (input)="onInput($event)" #searchInput
            formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="state.searchValue"
            class="search-input" type="text" nz-input placeholder="Search">
@@ -57,7 +58,7 @@
                 <span class="search-history-viewAll">See All</span>
               </div>
               <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
-                  <li *ngFor="let items of state?.savedSearch" (click)="redirectWithSearch(items)">
+                  <li *ngFor="let items of state?.savedSearch;let i= index" (click)="redirectWithSearch(items)">
                     <div class="chip-container" *ngFor="let instance of items">
                       <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
                     </div>
@@ -71,7 +72,7 @@
             <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
                 <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span" *ngIf="state?.data[i].length > 0">{{stringUpdate(state?.tables[i])}}</span>
                 <ul class="search-result-list" >
-                  <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i]" (click)="selectSearchBadge(stringUpdate(state?.tables[i]), val.label)">
+                  <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index" [scrollTo]="scrollTo" [i]="i" [k]="k" [data]="state?.data" (setPos)="setPos($event)" appKeyDownScroll (click)="selectSearchBadge(stringUpdate(state?.tables[i]), val.label)">
                     <span>{{val.countOccur}}</span> <p [innerHtml]="val.label| boldSpan: state.actualGlobalKeyword"></p><!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
                   </li>
                 </ul>
