@@ -46,8 +46,8 @@
               </ul>
 
             <ng-template #emptyRecent>
-              <div style="position: relative;margin: 5% 50% 5% 50%;">
-                EMPTY
+              <div>
+                <nz-empty></nz-empty>
               </div>
             </ng-template>
           </div>
@@ -84,8 +84,8 @@
               <nz-skeleton [nzActive]="true"></nz-skeleton>
             </ng-container>
           <ng-template #emptyState>
-            <div style="position: absolute;top:50%;left: 50%;">
-              EMPTY
+            <div>
+              <nz-empty></nz-empty>
             </div>
           </ng-template>
         </ng-template>
