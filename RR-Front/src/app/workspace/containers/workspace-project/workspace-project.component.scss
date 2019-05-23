@@ -209,9 +209,12 @@
   .card-holder-wrap {
     display: flex;
     flex-wrap: wrap;
-    width: 1440px;
+    //width: 1440px;
+    width: 97%;
     padding: 20px;
     margin: auto;
+    justify-content: space-between;
+    /*
     @media screen and (min-width: 2200px) {
       width: 2250px;
     }
@@ -228,6 +231,7 @@
       width: 95%;
       margin: 15px auto;
     }
+    */
   }
 
   .card-holder {
