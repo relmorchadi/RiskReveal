@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {SearchService} from '../../../service/search.service';
 import * as _ from 'lodash';
 import {
@@ -11,7 +11,7 @@ import {Observable} from "rxjs";
 import {WorkspaceMain} from "../../../model/workspace-main";
 import {Location} from "@angular/common";
 import {HelperService} from "../../../../shared/helper.service";
-import {Router} from "@angular/router";
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'tasks-menu-item',
@@ -24,6 +24,9 @@ export class TasksMenuItemComponent implements OnInit {
   visible: boolean;
   lastOnes = 1;
   savedtasks: any;
+
+  wsId: any;
+
   readonly tasks = {
     active: [
       {
@@ -221,17 +224,27 @@ export class TasksMenuItemComponent implements OnInit {
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
-  constructor(private _searchService: SearchService, private store: Store, private helperService: HelperService, private router: Router) {
+  private year: any;
+  constructor(private _searchService: SearchService,private route: ActivatedRoute, private store: Store, private helperService: HelperService, private router: Router,private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
     this.savedtasks = this.tasks;
+    this.store.select(WorkspaceMainState.getCurrentWS).subscribe( (ws) => {
+      this.wsId = ws.workSpaceId;
+      this.year = ws.uwYear;
+    })
   }
 
   private searchData(id, year) {
     return this._searchService.searchWorkspace(id || '', year || '2019');
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
   }
 
   toggleActiveTask(activeTask) {
@@ -283,4 +296,7 @@ export class TasksMenuItemComponent implements OnInit {
     }
   }
 
+  navigateToJOBmanager() {
+    this.router.navigateByUrl(`workspace/${this.wsId}/${this.year}/JobManager`)
+  }
 }

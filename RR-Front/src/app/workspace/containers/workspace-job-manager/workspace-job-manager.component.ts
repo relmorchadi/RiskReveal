@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Location } from '@angular/common'
 
 @Component({
   selector: 'app-workspace-job-manager',
@@ -7,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class WorkspaceJobManagerComponent implements OnInit {
 
-  constructor() { }
+  constructor(public _location: Location) { }
 
   ngOnInit() {
   }
 
+  navigateBack() {
+    this._location.back();
+  }
 }
