@@ -1,7 +1,12 @@
 package com.scor.rr.domain.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.util.StringUtils;
 
+
+@Data
+@AllArgsConstructor
 public class AnalysisFilter {
 
     private String id;
@@ -13,6 +18,23 @@ public class AnalysisFilter {
     private String cedant;
     private Integer rdmId;
     private String rdmName;
+    private String lobName;
+    private String statusDescription;
+    private String analysisCurrency;
+    private String engineType;
+    private String grouping;
+    private String lossAmplification;
+    private String modeName;
+    private String peril;
+    private String region;
+    private String regionName;
+    private String runDate;
+    private String subPeril;
+    private String typeName;
+    private String user1;
+    private String user2;
+    private String user3;
+    private String user4;
 
     public AnalysisFilter() {
     }

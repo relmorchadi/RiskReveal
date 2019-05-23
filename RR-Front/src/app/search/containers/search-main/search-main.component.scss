@@ -252,10 +252,12 @@ nz-layout {
           font-size: 1.1rem;
           font-weight: bold;
           color: black;
+          text-overflow: ellipsis;
         }
 
         .project-id {
           font-size: 0.9rem;
+          text-overflow: ellipsis;
         }
       }
     }

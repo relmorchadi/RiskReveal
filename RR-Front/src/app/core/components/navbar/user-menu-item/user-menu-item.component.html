@@ -8,6 +8,9 @@
     <nz-tabset>
       <nz-tab [nzTitle]="userPrefHeaderContent">
         <div style="height: 200px"></div>
+        <div nz-row>
+          <button nz-button (click)="isVisible=true" >Configure</button>
+        </div>
       </nz-tab>
     </nz-tabset>
   </div>
@@ -18,3 +21,39 @@
     </span>
   </ng-template>
 </ng-template>
+
+
+<nz-modal
+  [(nzVisible)]="isVisible"
+  [nzTitle]="preferencesConfig"
+  (nzOnCancel)="handleCancel()"
+  (nzOnOk)="handleOk()"
+  [nzOkLoading]="isOkLoading"
+>
+  <div nz-row>
+    <div nz-col nzSpan="12">
+      Default Import
+    </div>
+    <div nz-col nzSpan="12">
+      <nz-select
+        style="width: 200px;"
+        nzShowSearch
+        nzAllowClear
+        nzPlaceHolder="Select an import"
+        [(ngModel)]="defaultImport"
+      >
+        <nz-option nzLabel="RiskLink" nzValue="RiskLink"></nz-option>
+        <nz-option nzLabel="Import" nzValue="FileBasedImport"></nz-option>
+        <nz-option nzLabel="Clone" nzValue="CloneData"></nz-option>
+      </nz-select>
+    </div>
+  </div>
+</nz-modal>
+
+
+<ng-template #preferencesConfig>
+  <span>
+    <i class="icon-settings_24px"></i> User Preferences
+  </span>
+</ng-template>
+

@@ -8,10 +8,27 @@ import {SearchService} from '../../../service/search.service';
 })
 export class UserMenuItemComponent implements OnInit {
   visible: boolean;
-  constructor( private _searchService: SearchService) { }
+  defaultImport;
+
+  constructor( private _searchService: SearchService) {}
 
   ngOnInit() {
+    this.defaultImport=localStorage.getItem('importConfig');
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
+  }
+
+
+  isVisible = false;
+  isOkLoading = false;
+
+
+  handleOk(): void {
+    localStorage.setItem('importConfig', this.defaultImport);
+    this.isVisible = false;
+  }
+
+  handleCancel(): void {
+    this.isVisible = false;
   }
 
 }
