@@ -30,7 +30,7 @@ export class SearchService {
   }
 
   searchContracts(filter: WorkspaceFilter, offset = '0', size = '20') {
-    return this._http.post(`${this.api}workspace`, filter, {params: {offset,size}});
+    return this._http.post(`${this.api}workspace`, filter, {params: {offset, size}});
   }
 
   searchByTable(keyword = '', size = '5', table = 'country') {

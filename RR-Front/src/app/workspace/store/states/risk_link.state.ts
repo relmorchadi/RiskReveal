@@ -18,15 +18,16 @@ import {
   LoadRiskLinkPortfolioDataAction
 } from '../actions/risk_link.actions';
 import {mergeMap} from 'rxjs/operators';
-import {Observable} from "rxjs";
+import {Observable} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
-import {RiskApi} from "../../services/risk.api";
+import {RiskApi} from '../../services/risk.api';
 
 const initiaState: RiskLinkModel = {
   listEdmRdm: {
     data: null,
     selectedListEDMAndRDM: null,
     selectedEDMOrRDM: null,
+    totalNumberElement: 0
   },
   display: {
     displayDropdownRDMEDM: false,
@@ -251,9 +252,10 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
       ctx.patchState({
         listEdmRdm: {
+          ...state.listEdmRdm,
           data: state.listEdmRdm.selectedListEDMAndRDM,
           selectedListEDMAndRDM: newDataSelected,
-          selectedEDMOrRDM: null
+          selectedEDMOrRDM: null,
         },
       });
     } else {
@@ -273,7 +275,7 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: true}));
       ctx.patchState({
         listEdmRdm: {
-          data: state.listEdmRdm.data,
+          ...state.listEdmRdm,
           selectedListEDMAndRDM: {
             ...newDataSelected,
             [id]: {...newDataSelected[id], selected: true}
@@ -316,10 +318,10 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(SearchRiskLinkEDMAndRDMAction)
   searchRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: SearchRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
-    const {keyword} = payload;
-    return this.riskApi.searchRiskLinkData(keyword).pipe(
+    const {keyword, size} = payload;
+    return this.riskApi.searchRiskLinkData(keyword, size).pipe(
       mergeMap(
-        data =>
+        (data: any) =>
           of(ctx.patchState(
             {
               listEdmRdm: {
@@ -333,7 +335,8 @@ export class RiskLinkState implements NgxsOnInit {
                         Reference: '0/13'
                       }
                     }
-                  )))
+                  ))),
+                totalNumberElement: data.totalElements
               }}))
       )
     );
@@ -344,7 +347,7 @@ export class RiskLinkState implements NgxsOnInit {
     const state = ctx.getState();
     return this.riskApi.searchRiskLinkData().pipe(
       mergeMap(
-        data =>
+        (data: any) =>
           of(ctx.patchState(
             {
               listEdmRdm: {
@@ -358,7 +361,8 @@ export class RiskLinkState implements NgxsOnInit {
                         Reference: '0/13'
                       }
                     }
-                  )))
+                  ))),
+                totalNumberElement: data.totalElements
               }}))
       )
     );

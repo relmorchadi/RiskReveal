@@ -378,7 +378,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   onInputSearch(event) {
     if (event.target.value.length > 2) {
-      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value}));
+      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
     } else {
       this.store.dispatch(new LoadRiskLinkDataAction());
     }
