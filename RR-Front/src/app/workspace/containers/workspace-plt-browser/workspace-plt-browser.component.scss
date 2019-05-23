@@ -25,10 +25,9 @@ nz-layout {
       cursor: pointer;
 
       .active-path {
-        background-color: #fdfbdf;
-        border: 1px solid #fdc228;
-        border-radius: 10px;
-        padding: 0px 0px 0px 3px;
+        background-color: #FDFBDF;
+        margin-top:1px;
+        margin-bottom: 1px;
       }
 
       .title {
@@ -49,11 +48,12 @@ nz-layout {
           font-family: rubik;
           list-style: none;
           padding-left: 20px;
+          padding-right: 7px;
           font-weight: bold;
           overflow: auto;
           max-height: 600px;
           li {
-            font-size: 11px;
+            font-size: 10px;
           }
         }
 
@@ -276,7 +276,7 @@ nz-layout {
 }
 
 .chips {
-  padding: 4px 10px;
+  padding: 2px 14px;
   color: #fff;
   font-family: rubik;
   border-radius: 10px;
@@ -569,7 +569,7 @@ nz-layout {
 
 .active-tag {
   border: 2px solid #666666;
-  border-radius: 18px;
+  border-radius: 25px;
 }
 
 

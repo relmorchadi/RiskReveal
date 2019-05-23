@@ -150,14 +150,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {tagId: '3', tagName: 'Final Princing', tagColor: '#c38fff', innerTagContent: '5', innerTagColor: '#d5b0ff', selected: false}
   ];
 
-  paths = [
-    {id: 1, icon: 'icon-assignment_24px', text: 'P-1686 Ameriprise 2018', selected: false},
-    {id: 2, icon: 'icon-assignment_24px', text: 'P-1724 Trinity Kemper 2018', selected: false },
-    {id: 3, icon: 'icon-assignment_24px', text: 'P-8592 TWIA 2018', selected: false },
-    {id: 4, icon: 'icon-assignment_24px', text: 'P-9035 Post-insured PLTs', selected: false },
-    {id: 5, icon: 'icon-sitemap', text: 'IP-1135 CXL2 Cascading 2018', selected: false }
-  ];
-
   currencies = [
     {id: '1', name: 'Euro', label: 'EUR'},
     {id: '2', name: 'Us Dollar', label: 'USD'},
@@ -337,9 +329,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.filters = {
       systemTag: [],
       userTag: []
-    };
+    }
     this.filterData = {};
     this.activeCheckboxSort = false;
+    this.loading = true;
   }
   @Select(PltMainState.data) data$;
   loading: boolean;
@@ -347,10 +340,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ngOnInit() {
     this.Subscriptions.push(
       this.data$.subscribe( data => {
-        let d1 = [];
-        let d2 = [];
-        _.forEach(data, (v, k) => {
-          d1.push({...v, pltId: k});
+        let d1= [];
+        let d2= [];
+        this.loading= false;
+        _.forEach(data, (v,k) => {
+          d1.push({...v,pltId: k});
           d2.push(k);
           this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
         });
@@ -360,7 +354,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         this.detectChanges();
       }),
       this.data$.subscribe( data => {
-        this.selectAll = this.selectedListOfPlts.length > 0 || this.selectedListOfPlts.length == this.listOfPlts.length;
+        this.selectAll = (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0 ;
         this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
         this.detectChanges();
       }),
@@ -377,6 +371,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           console.log(wsId);
           this.workspaceId = wsId;
           this.uwy = year;
+          this.loading= true;
           this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
             params: {
               workspaceId: wsId, uwy: year
@@ -443,9 +438,17 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       } else {
         this.filterData = _.merge({}, this.filterData, {[key]: value});
       }
-    } else {
-      if (value) {
-        this.filterData = _.merge({}, this.filterData, {[key]: value});
+      this.projects = _.map(this.projects, t => {
+        if(t.projectId == value){
+            return ({...t,selected: !t.selected})
+        }else if(t.selected) {
+          return ({...t,selected: false})
+        }else return t;
+      })
+
+    }else {
+      if(value) {
+        this.filterData= _.merge({},this.filterData, {[key]: value})
       } else {
         this.filterData = _.omit(this.filterData, [key]);
       }
@@ -456,13 +459,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   selectedPlt: any;
 
   setFilter(filter: string, tag) {
+    console.log(this.filters)
       this.filters =
         _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
         _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
-        _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)});
-      this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
-        filters: this.filters
-      }));
+        _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
+
+    if(filter == 'userTag'){
+      this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
+    }
+    if(filter == 'systemTag') {
+      this.systemTags = _.map(this.systemTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
+    }
+    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
+      filters: this.filters
+    }))
   }
 
   selectPltById(pltId) {
@@ -526,15 +537,18 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   resetFilterByTags() {
-    this.filters = _.assign({}, this.filters, {
-      systemTag: null,
-      userTag: null
-    });
+    this.filters = {
+      systemTag: [],
+      userTag: []
+    }
+    this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
+    this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
+    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({filters: this.filters}));
   }
 
-  resetPath() {
-    this.currentPath = null;
-    _.forEach(this.paths, el => _.set(el, 'selected', false));
+  resetPath(){
+    this.filterData = _.omit(this.filterData, 'project')
+    this.projects = _.map(this.projects, p => ({...p, selected: false}))
   }
 
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {

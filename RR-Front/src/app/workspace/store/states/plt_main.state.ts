@@ -228,22 +228,6 @@ export class PltMainState implements NgxsOnInit {
       });
     }
 
-    /*if(!_.some(_.values(filters), filterArrays => filterArrays.length > 0)){
-      _.forEach(state.data, (plt,k) => {
-        newData[k] = {...plt, visible: true};
-      })
-    }else{
-      _.forEach(filters, (filterArray, filterKey) => {
-        _.forEach(state.data, (plt,k) => {
-          if(_.every(filters[filterKey], (userTag) => _.find(plt[filterKey], tag => tag.tagId == userTag))) {
-            newData[k] = {...plt, visible: true};
-          }else {
-            newData[k] = {...plt, visible: false};
-          }
-        })
-      })
-    }*/
-
     ctx.setState({
       ...state,
       data: newData
