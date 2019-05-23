@@ -1,10 +1,15 @@
 package com.scor.rr.domain.dto;
 
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.springframework.util.StringUtils;
 
+import javax.persistence.Column;
 import java.sql.Timestamp;
 
+@Data
+@AllArgsConstructor
 public class PortfolioFilter {
     private String id;
     private Integer dataSourceId;
@@ -13,6 +18,13 @@ public class PortfolioFilter {
     private String descriptionType;
     private Integer edmId;
     private String edmName;
+    private String agCedent;
+    private String agCurrency;
+    private String agSource;
+    private String number;
+    private String peril;
+    private String portfolioId;
+    private String type;
 
     public PortfolioFilter() {
     }

@@ -1,5 +1,8 @@
 package com.scor.rr.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -7,6 +10,8 @@ import javax.persistence.Id;
 import java.util.Objects;
 
 @Entity
+@Data
+@AllArgsConstructor
 public class AnalysisView {
 
     @Id
@@ -28,6 +33,40 @@ public class AnalysisView {
     private Integer rdmId;
     @Column(name = "rdmName")
     private String rdmName;
+    @Column(name = "lobName")
+    private String lobName;
+    @Column(name = "statusDescription")
+    private String statusDescription;
+    @Column(name = "analysisCurrency")
+    private String analysisCurrency;
+    @Column(name = "engineType")
+    private String engineType;
+    @Column(name = "grouping")
+    private String grouping;
+    @Column(name = "lossAmplification")
+    private String lossAmplification;
+    @Column(name = "modeName")
+    private String modeName;
+    @Column(name = "peril")
+    private String peril;
+    @Column(name = "region")
+    private String region;
+    @Column(name = "regionName")
+    private String regionName;
+    @Column(name = "runDate")
+    private String runDate;
+    @Column(name = "subPeril")
+    private String subPeril;
+    @Column(name = "typeName")
+    private String typeName;
+    @Column(name = "user1")
+    private String user1;
+    @Column(name = "user2")
+    private String user2;
+    @Column(name = "user3")
+    private String user3;
+    @Column(name = "user4")
+    private String user4;
 
     public AnalysisView() {
     }
