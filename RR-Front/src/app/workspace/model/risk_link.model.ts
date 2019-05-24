@@ -1,8 +1,12 @@
 export class RiskLinkModel {
   listEdmRdm: {
     data: any,
+    dataSelected: any,
     selectedListEDMAndRDM: any,
     selectedEDMOrRDM: string,
+    totalNumberElement: number,
+    searchValue: string,
+    dataLength: number
   };
   display: {
     displayDropdownRDMEDM: boolean,

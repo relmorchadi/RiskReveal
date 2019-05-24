@@ -27,12 +27,12 @@ public class PortfolioSpecification extends BaseSpecification<PortfolioView, Por
                 .and(ofNullable(request.getDescriptionType()).map(descriptionType -> AttributeContains(PortfolioView_.descriptionType, descriptionType)).orElse(null))
                 .and(ofNullable(request.getEdmId()).map(edmId -> AttributeEquals(PortfolioView_.edmId, edmId)).orElse(null))
                 .and(ofNullable(request.getEdmName()).map(edmName -> AttributeEquals(PortfolioView_.edmName, edmName)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(agCedent -> AttributeContains(PortfolioView_.agCedent, agCedent)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(agCurrency -> AttributeContains(PortfolioView_.agCurrency, agCurrency)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(agSource -> AttributeContains(PortfolioView_.agSource, agSource)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(number -> AttributeContains(PortfolioView_.number, number)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(peril -> AttributeContains(PortfolioView_.peril, peril)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(portfolioId -> AttributeContains(PortfolioView_.portfolioId, portfolioId)).orElse(null))
-                .and(ofNullable(request.getDescriptionType()).map(type -> AttributeContains(PortfolioView_.type, type)).orElse(null));
+                .and(ofNullable(request.getAgCedent()).map(agCedent -> AttributeContains(PortfolioView_.agCedent, agCedent)).orElse(null))
+                .and(ofNullable(request.getAgCurrency()).map(agCurrency -> AttributeContains(PortfolioView_.agCurrency, agCurrency)).orElse(null))
+                .and(ofNullable(request.getAgSource()).map(agSource -> AttributeContains(PortfolioView_.agSource, agSource)).orElse(null))
+                .and(ofNullable(request.getNumber()).map(number -> AttributeContains(PortfolioView_.number, number)).orElse(null))
+                .and(ofNullable(request.getPeril()).map(peril -> AttributeContains(PortfolioView_.peril, peril)).orElse(null))
+                .and(ofNullable(request.getPortfolioId()).map(portfolioId -> AttributeContains(PortfolioView_.portfolioId, portfolioId)).orElse(null))
+                .and(ofNullable(request.getType()).map(type -> AttributeContains(PortfolioView_.type, type)).orElse(null));
     }
 }

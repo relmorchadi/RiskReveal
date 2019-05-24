@@ -12,11 +12,8 @@ export class RiskApi {
   constructor(private http: HttpClient) {
   }
 
-  searchRiskLinkData(keyword = null): Observable<any> {
-    if (keyword) {
-      return this.http.get(`${this.URL}edm-rdm`, {params: {keyword}});
-    }
-    return this.http.get(`${this.URL}edm-rdm`);
+  searchRiskLinkData(Keyword = '', PageSize = '20', offset = '0', Page = '0'): Observable<any> {
+    return this.http.get(`${this.URL}edm-rdm?keyword=${Keyword}&size=${PageSize}&page=${Page}`);
   }
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
@@ -24,7 +21,7 @@ export class RiskApi {
     this.http.get(`${this.URL}analysis?rdmId=${paramId}&rdmName=${paramName}`).subscribe(
       (dt: any) => console.log(dt.content)
     );
-    return this.http.get(`${this.URL}analysis?rdmId=${paramId}&rdmName=${paramName}`);
+    return this.http.get(`${this.URL}analysis`);
   }
 
   searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
