@@ -29,11 +29,9 @@
         </div>
         <div class="body-wrap-header-step">
           <nz-steps [nzCurrent]="state.currentStep" nzProgressDot>
-            <nz-step style="cursor: pointer" (click)="selectStep(0)" nzTitle="Step 1"
-                     nzDescription="Select EDM & RDM"></nz-step>
-            <nz-step style="cursor: pointer" class="coming-up" (click)="selectStep(1)" nzTitle="Step 2"
-                     nzDescription="Portfolios & Analysis"></nz-step>
-            <nz-step style="cursor: pointer" nzTitle="Step 3" nzDescription="Import"></nz-step>
+            <nz-step style="cursor: pointer" (click)="selectStep(0)" nzDescription="Select EDM & RDM"></nz-step>
+            <nz-step style="cursor: pointer" (click)="selectStep(1)" nzTitle="Portfolios & Analysis"></nz-step>
+            <nz-step style="cursor: pointer" nzDescription="Import"></nz-step>
           </nz-steps>
         </div>
       </div>
@@ -361,10 +359,10 @@
                   Name
                   <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="width:11%">
+                <!--<th style="width:11%">
                   Exposed Location
                   <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
+                </th>-->
                 <th style="width:11%">
                   Exposure Currency
                   <ng-container *ngTemplateOutlet="search"></ng-container>
@@ -398,9 +396,9 @@
                 <th>{{items?.id}}</th>
                 <th>{{items?.number}}</th>
                 <th>{{items?.name}}</th>
-                <th>
+                <!--<th>
                   <div class="state" [ngClass]="{'state-false': !items?.exposedLocation}"></div>
-                </th>
+                </th>-->
                 <th>{{items?.exposedCurrency}}</th>
                 <th>{{items?.targetCurrency}}</th>
                 <th>{{items?.unitMultiplier | number:'1.1-1'}}</th>

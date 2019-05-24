@@ -495,7 +495,7 @@
                 user-select: none;
 
                 span {
-                  font-size: 11px;
+                  font-size: 12px;
                 }
 
                 .logo {
@@ -605,7 +605,8 @@
 
             .text {
               padding-top: 3px;
-              font-size: 11px;
+              font-size: 13px;
+              color: rgb(0,0,0);
               overflow: hidden;
               white-space: nowrap;
               text-overflow: ellipsis;
@@ -727,7 +728,9 @@
               td {
                 padding: 0;
                 cursor: pointer;
-                font-size: 10px;
+                color: rgb(0, 0, 0);
+                font-size: 12px;
+                letter-spacing: 0.08px;
                 height: 25px;
                 border: none;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.15);
