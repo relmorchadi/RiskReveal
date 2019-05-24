@@ -382,12 +382,21 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     } else {
       this.store.dispatch(new LoadRiskLinkDataAction());
     }
+    this.detectChanges();
   }
 
   loadItemsLazy(event) {
-    const listvalue = this.state.listEdmRdm.dataLength + 20;
-    this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: this.state.listEdmRdm.searchValue, size: listvalue.toString()}))
-    this.detectChanges();
+    let sizePage = '';
+    if (event.first + event.rows > this.state.listEdmRdm.totalNumberElement) {
+      sizePage  = this.state.listEdmRdm.totalNumberElement.toString();
+    } else {
+      sizePage = event.first === 0 ? '20' : (event.first + event.rows).toString();
+    }
+    if (this.state.listEdmRdm.dataLength < event.first + event.rows) {
+      console.log('you called for :' + sizePage);
+      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: this.state.listEdmRdm.searchValue, size: sizePage}));
+    }
+
   }
 
   changeCollapse(value) {
