@@ -27,7 +27,7 @@ export class KeyDownScrollDirective implements OnChanges{
       this.elRef.nativeElement.scrollIntoView();
 
       this.setPos.emit({
-        i: this.i-1,
+        i: this.i,
         j: this.k
       });
       this.renderer.addClass(this.elRef.nativeElement,'highlight-scroll-item');

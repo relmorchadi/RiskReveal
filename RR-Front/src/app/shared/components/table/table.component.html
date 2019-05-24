@@ -83,14 +83,13 @@
 
 <p-contextMenu #cm [model]="items"></p-contextMenu>
 
-<nz-spin [nzSpinning]="loading" [nzDelay]="700">
+<nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700">
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
            [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
            [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
            [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
            [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
            [contextMenu]="cm" class="table-ngPrime"
-           [loading]="loading"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
@@ -147,11 +146,10 @@
   </p-table>
 </nz-spin>
 
-<nz-spin [nzSpinning]="loading" [nzDelay]="700">
+<nz-spin [nzSpinning]="loading && !virtualScroll" [nzDelay]="700">
 <p-table *ngIf="!virtualScroll"
          [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
-         [loading]="loading"
          class="table-ngPrime"
 >
 
