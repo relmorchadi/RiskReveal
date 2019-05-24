@@ -17,7 +17,7 @@ import {
   LoadRiskLinkAnalysisDataAction,
   LoadRiskLinkPortfolioDataAction
 } from '../actions/risk_link.actions';
-import {mergeMap} from 'rxjs/operators';
+import {mergeMap, switchMap} from 'rxjs/operators';
 import {Observable} from 'rxjs';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from '../../services/risk.api';
@@ -333,7 +333,6 @@ export class RiskLinkState implements NgxsOnInit {
     const state = ctx.getState();
     const {keyword, size} = payload;
     const array = state.listEdmRdm.dataSelected;
-    console.log(array);
     return this.riskApi.searchRiskLinkData(keyword, size).pipe(
       mergeMap(
         (data: any) =>
@@ -343,7 +342,7 @@ export class RiskLinkState implements NgxsOnInit {
                 ...state.listEdmRdm,
                 data: Object.assign({},
                   ...data.content.map(item => {
-                    const validator = array.filter(data => data.id == item.id);
+                    const validator = array.filter(vd => vd.id == item.id);
                     const validate =  validator.length === 1;
                     return({
                       [item.id]: {
@@ -353,7 +352,8 @@ export class RiskLinkState implements NgxsOnInit {
                         Reference: '0/13'
                       }
                     }
-                  )})),
+                  );
+                  })),
                 totalNumberElement: data.totalElements,
                 searchValue: keyword,
                 dataLength: data.size
@@ -382,6 +382,7 @@ export class RiskLinkState implements NgxsOnInit {
                       }
                     }
                   ))),
+                searchValue: '',
                 totalNumberElement: data.totalElements,
                 dataLength: data.size
               }}))
