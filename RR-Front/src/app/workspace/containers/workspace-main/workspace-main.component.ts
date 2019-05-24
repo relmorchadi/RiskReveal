@@ -14,7 +14,7 @@ import {
   CloseWorkspaceMainAction,
   LoadWorkspacesAction,
   OpenNewWorkspacesAction,
-  PatchWorkspaceMainStateAction
+  PatchWorkspaceMainStateAction, setTabsIndex
 } from '../../../core/store/actions/workspace-main.action';
 import {distinctUntilChanged, filter, flatMap, map, merge, toArray} from 'rxjs/operators';
 
@@ -54,23 +54,35 @@ export class WorkspaceMainComponent implements OnInit {
     );
   }
 
-  /*@HostListener('window:keyup', ['$event'])
+  @HostListener('window:keyup', ['$event'])
   keyEvent(e: KeyboardEvent) {
-    if(e.key == 'ArrowRight' && e.ctrlKey) {
-      if(this.state.openedTabs.data && this.state.openedTabs.data.length > this.state.openedTabs.tabsIndex){
+    if(e.key == 'ArrowRight' && e.ctrlKey && this.state.openedTabs.data) {
+      if( this.state.openedTabs.data.length - 1 > this.state.openedTabs.tabsIndex){
         this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex+1])
+        this.store.dispatch(new setTabsIndex({
+          index: this.state.openedTabs.tabsIndex+1
+        }))
       }else{
         this.selectWorkspace(this.state.openedTabs.data[0])
+        this.store.dispatch(new setTabsIndex({
+          index: 0
+        }))
       }
     }
-    if(e.key == 'ArrowLeft' && e.ctrlKey) {
-      if(this.state.openedTabs.data && 0 < this.state.openedTabs.tabsIndex){
+    if(e.key == 'ArrowLeft' && e.ctrlKey && this.state.openedTabs.data) {
+      if(0 < this.state.openedTabs.tabsIndex){
         this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex - 1])
+        this.store.dispatch(new setTabsIndex({
+          index: this.state.openedTabs.tabsIndex - 1
+        }))
       }else{
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length])
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length - 1])
+        this.store.dispatch(new setTabsIndex({
+          index: this.state.openedTabs.data.length - 1
+        }))
       }
     }
-  }*/
+  }
 
   getSearchedWorkspaces(wsId = null, year = null) {
     const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
