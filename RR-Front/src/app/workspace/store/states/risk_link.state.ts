@@ -382,6 +382,7 @@ export class RiskLinkState implements NgxsOnInit {
                       }
                     }
                   ))),
+                searchValue: '',
                 totalNumberElement: data.totalElements,
                 dataLength: data.size
               }}))
