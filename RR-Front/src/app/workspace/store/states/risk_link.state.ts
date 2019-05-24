@@ -8,8 +8,8 @@ import {
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
   PatchRiskLinkFinancialPerspectiveAction,
-  SearchRiskLinkEDMAndRDMAction,
-  SelectRiskLinkEDMAndRDMAction,
+  SearchRiskLinkEDMAndRDMAction, SelectRiskLinkAnalysisAndPortfolioAction,
+  SelectRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAndPortfolioAction,
   ToggleRiskLinkEDMAndRDMAction
 } from '../actions';
 import {
@@ -139,11 +139,11 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(ToggleRiskLinkEDMAndRDMAction)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
-    const action = payload.action;
+    const {action, RDM} = payload;
     let array = _.toArray(state.listEdmRdm.data);
     let newData = {};
     if (action === 'selectOne') {
-      const item = payload.RDM.id;
+      const item = RDM.id;
       const {selected} = state.listEdmRdm.data[item];
       if (selected) {
         array = array.filter(data => data.id !== item && data.selected === true);
@@ -170,7 +170,7 @@ export class RiskLinkState implements NgxsOnInit {
               selected: true,
             }
           });
-          dt = {...dt, selected: true}
+          dt = {...dt, selected: true};
         });
       } else if (action === 'unselectAll') {
         array.forEach(dt => {
@@ -192,6 +192,100 @@ export class RiskLinkState implements NgxsOnInit {
         }
       });
     }
+  }
+
+  @Action(ToggleRiskLinkAnalysisAndPortfolioAction)
+  toggleRiskLinkAnalysisAndPortfolio(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkAnalysisAndPortfolioAction) {
+    const state = ctx.getState();
+    const {action, dataSource, item} = payload;
+    let portfolios = _.toArray(state.selectedAnalysisAndPortoflio.selectedPortfolio.data);
+    let analysis = _.toArray(state.selectedAnalysisAndPortoflio.selectedAnalysis.data);
+    let newData = {};
+    let dataSelected = null;
+    if (action === 'selectOne') {
+      if (dataSource === 'Analysis') {
+        dataSelected = state.selectedAnalysisAndPortoflio.selectedPortfolio;
+        const {selected} = dataSelected.data[item.id];
+        if (selected) {
+          // array = array.filter(data => data.id !== item && data.selected === true);
+        } else {
+          // array = array.filter(data => data.id == item || data.selected === true);
+        }
+        // console.log(array);
+        ctx.patchState({
+          selectedAnalysisAndPortoflio: {
+            ...state.selectedAnalysisAndPortoflio,
+            selectedAnalysis: {
+              ...state.selectedAnalysisAndPortoflio.selectedAnalysis,
+              data: {
+                ...state.selectedAnalysisAndPortoflio.selectedAnalysis.data,
+                [item.analysisId]: {
+                  ...state.selectedAnalysisAndPortoflio.selectedAnalysis.data[item.analysisId],
+                  selected: !selected
+                }
+              },
+            },
+          }
+        });
+
+      } else if (dataSource === 'portfolio') {
+        dataSelected = state.selectedAnalysisAndPortoflio.selectedAnalysis;
+        const {selected} = dataSelected.data[item.dataSourceId];
+        if (selected) {
+          // array = array.filter(data => data.id !== item && data.selected === true);
+        } else {
+          // array = array.filter(data => data.id == item || data.selected === true);
+        }
+        // console.log(array);
+        ctx.patchState({
+          selectedAnalysisAndPortoflio: {
+            ...state.selectedAnalysisAndPortoflio,
+            selectedPortfolio: {
+              ...state.selectedAnalysisAndPortoflio.selectedPortfolio,
+              data: {
+                ...state.selectedAnalysisAndPortoflio.selectedPortfolio.data,
+                [item.dataSourceId]: {
+                  ...state.selectedAnalysisAndPortoflio.selectedPortfolio.data[item.dataSourceId],
+                  selected: !selected
+                }
+              },
+            },
+          }
+        });
+      }
+    } else {
+      if (action === 'selectAll') {
+        /*array.forEach(dt => {
+          newData = _.merge(newData, {
+            [dt.id]: {
+              ...dt,
+              selected: true,
+            }
+          });
+          dt = {...dt, selected: true};
+        });*/
+      } else if (action === 'unselectAll') {
+        /*array.forEach(dt => {
+          newData = _.merge(newData, {
+            [dt.id]: {
+              ...dt,
+              selected: false,
+            }
+          });
+        });
+        array = [];*/
+      }
+      // console.log(array);
+      ctx.patchState({
+
+      });
+    }
+  }
+
+  @Action(SelectRiskLinkAnalysisAndPortfolioAction)
+  selectRiskLinkAnalysisAndPortfolio(ctx: StateContext<RiskLinkModel>, {payload}: SelectRiskLinkAnalysisAndPortfolioAction) {
+    const state = ctx.getState();
+
   }
 
   @Action(LoadRiskLinkAnalysisDataAction)
