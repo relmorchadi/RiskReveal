@@ -157,7 +157,7 @@
                 <nz-tabset>
                   <nz-tab nzTitle="EDM & RDM">
                     <div class="search-bar-result-list">
-                      <p-virtualScroller [value]="dataList(state.listEdmRdm.data)" scrollHeight="305px" [itemSize]="30"  [rows]="20"
+                      <p-virtualScroller [value]="dataList(state.listEdmRdm.data)" scrollHeight="305px" [itemSize]="30"  [rows]="state.listEdmRdm.dataLength"
                                          [lazy]="true" (onLazyLoad)="loadItemsLazy($event)" [totalRecords]="state.listEdmRdm.totalNumberElement">
                         <ng-template let-item pTemplate="item">
                           <div class="poover-menu-item" (click)="toggleItems(item)" [ngClass]="{'poover-menu-item-active': item?.selected || item?.scanned}">

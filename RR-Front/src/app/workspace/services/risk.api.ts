@@ -12,7 +12,7 @@ export class RiskApi {
   constructor(private http: HttpClient) {
   }
 
-  searchRiskLinkData(Keyword = '', PageSize = '20', offset = '0', Page = '1'): Observable<any> {
+  searchRiskLinkData(Keyword = '', PageSize = '20', offset = '0', Page = '0'): Observable<any> {
     return this.http.get(`${this.URL}edm-rdm?keyword=${Keyword}&size=${PageSize}&page=${Page}`);
   }
 
