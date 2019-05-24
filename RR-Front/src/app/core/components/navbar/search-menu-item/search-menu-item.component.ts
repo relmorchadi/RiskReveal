@@ -54,7 +54,7 @@ export class SearchMenuItemComponent implements OnInit {
       workspaceName: '',
       year: ''
     });
-    this.scrollTo=0;
+    this.scrollTo=-1;
     this.listLength=0;
     this.pos = {
       i:0,
@@ -175,10 +175,10 @@ export class SearchMenuItemComponent implements OnInit {
       //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
       event.stopPropagation();
     }
-    if(keyboardEvent.key == ' ') {
+    if(keyboardEvent.key == ' ' && this.scrollTo >= 0) {
       if(this.pos){
         this.addBadgeFromResultList(this.state.tables[this.pos.i]);
-        this.scrollTo =0;
+        this.scrollTo =-1;
       }
     }
     if (keyboardEvent.key === 'Enter') {
