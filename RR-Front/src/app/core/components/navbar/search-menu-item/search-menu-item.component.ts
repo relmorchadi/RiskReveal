@@ -177,7 +177,7 @@ export class SearchMenuItemComponent implements OnInit {
     }
     if(keyboardEvent.key == ' ' && this.scrollTo >= 0) {
       if(this.pos){
-        this.addBadgeFromResultList(this.state.tables[this.pos.i]);
+        this.selectSearchBadge(this.stringUpdate(this.state.tables[this.pos.i]), this.state.data[this.pos.i][this.pos.j].label );
         this.scrollTo =-1;
       }
     }
