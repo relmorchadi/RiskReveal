@@ -157,7 +157,7 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    if(keyboardEvent.key == 'ArrowUp') {g
+    if(keyboardEvent.key == 'ArrowUp') {
       if(this.scrollTo > 0) {
         this.scrollTo = this.scrollTo - 1;
       }else{
