@@ -382,11 +382,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     } else {
       this.store.dispatch(new LoadRiskLinkDataAction());
     }
-    this.detectChanges();
   }
 
   loadItemsLazy(event) {
-
+    const listvalue = this.state.listEdmRdm.dataLength + 20;
+    this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: this.state.listEdmRdm.searchValue, size: listvalue.toString()}))
+    this.detectChanges();
   }
 
   changeCollapse(value) {

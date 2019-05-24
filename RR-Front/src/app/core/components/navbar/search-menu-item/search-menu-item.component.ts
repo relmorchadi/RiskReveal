@@ -157,7 +157,7 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    if(keyboardEvent.key == 'ArrowDown') {
+    if(keyboardEvent.key == 'ArrowUp') {
       if(this.scrollTo > 0) {
         this.scrollTo = this.scrollTo - 1;
       }else{
@@ -166,7 +166,7 @@ export class SearchMenuItemComponent implements OnInit {
       //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
       console.log(this.pos,this.state.data)
     }
-    if(keyboardEvent.key == 'ArrowUp'){
+    if(keyboardEvent.key == 'ArrowDown'){
       if(this.scrollTo < this.listLength) {
         this.scrollTo = this.scrollTo + 1;
       }else{

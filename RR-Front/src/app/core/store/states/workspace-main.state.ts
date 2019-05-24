@@ -5,7 +5,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction,
+  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -57,11 +57,21 @@ export class WorkspaceMainState implements NgxsOnInit {
    * Commands
    */
   @Action(PatchWorkspaceMainStateAction)
-  patchWorkspaceMainState(ctx: StateContext<WorkspaceMainState>, {payload}: PatchWorkspaceMainStateAction) {
+  patchWorkspaceMainState(ctx: StateContext<WorkspaceMain>, {payload}: PatchWorkspaceMainStateAction) {
     if (_.isArray(payload))
       payload.forEach(item => ctx.patchState({[item.key]: item.value}));
     else
       ctx.patchState({[payload.key]: payload.value});
+  }
+
+  @Action(setTabsIndex)
+  selectTabsIndex(ctx: StateContext<WorkspaceMain>, {payload}: setTabsIndex) {
+    ctx.patchState({
+      openedTabs: {
+        ...ctx.getState().openedTabs,
+        tabsIndex: payload.index
+      }
+    })
   }
 
   @Action(AppendNewWorkspaceMainAction)
