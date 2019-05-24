@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
-import {forkJoin, Observable} from 'rxjs';
+import {combineLatest, forkJoin, from, fromEvent, Observable, of, Subscription} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 
@@ -16,6 +16,7 @@ import {
   OpenNewWorkspacesAction,
   PatchWorkspaceMainStateAction
 } from '../../../core/store/actions/workspace-main.action';
+import {distinctUntilChanged, filter, flatMap, map, merge, toArray} from 'rxjs/operators';
 
 
 @Component({
@@ -31,6 +32,9 @@ export class WorkspaceMainComponent implements OnInit {
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
+  private keyEvents: Observable<any>;
+  private keyDowns: any;
+  private keyUps: any;
 
   constructor(private _helper: HelperService, private cdRef: ChangeDetectorRef, private route: ActivatedRoute, private _searchService: SearchService, private store: Store, private _router: Router) {
 
@@ -49,6 +53,24 @@ export class WorkspaceMainComponent implements OnInit {
         this.detectChanges()
     );
   }
+
+  /*@HostListener('window:keyup', ['$event'])
+  keyEvent(e: KeyboardEvent) {
+    if(e.key == 'ArrowRight' && e.ctrlKey) {
+      if(this.state.openedTabs.data && this.state.openedTabs.data.length > this.state.openedTabs.tabsIndex){
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex+1])
+      }else{
+        this.selectWorkspace(this.state.openedTabs.data[0])
+      }
+    }
+    if(e.key == 'ArrowLeft' && e.ctrlKey) {
+      if(this.state.openedTabs.data && 0 < this.state.openedTabs.tabsIndex){
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex - 1])
+      }else{
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length])
+      }
+    }
+  }*/
 
   getSearchedWorkspaces(wsId = null, year = null) {
     const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
