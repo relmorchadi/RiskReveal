@@ -6,7 +6,6 @@ import {WorkspaceFilter} from '../model/workspace-filter';
 import {of} from 'rxjs';
 import * as _ from 'lodash'
 import {Store} from '@ngxs/store';
-import {SetLoadingState} from '../store/actions';
 
 @Injectable({
   providedIn: 'root'
@@ -73,7 +72,4 @@ export class SearchService {
     this.infodropdown.next();
   }
 
-  setLoading(value) {
-    this.store$.dispatch(new SetLoadingState(value))
-  }
 }
