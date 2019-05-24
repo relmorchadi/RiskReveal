@@ -371,6 +371,6 @@ export class SearchMenuItemComponent implements OnInit {
 
 
   setPos($event) {
-    this.pos = $event
+    this.pos = $event;
   }
 }
