@@ -133,7 +133,8 @@ export class SearchMenuItemComponent implements OnInit {
           operator: this.getOperator(_.trim(keyword),field)})
         return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword));
       }).trim();
-      setTimeout(()=> this._searchService.addSearchedItems({key: 'Global Search', value: this._searchService.keyword}))
+      if(this._searchService.keyword)
+        setTimeout(()=> this._searchService.addSearchedItems({key: 'Global Search', value: this._searchService.keyword}))
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}));
     } else {
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: expression}));
