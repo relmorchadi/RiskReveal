@@ -7,8 +7,8 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  SearchRiskLinkEDMAndRDMAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction
+  SearchRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
@@ -434,7 +434,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkRow(event) {
+  checkRow(event, rowData) {
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'edm') {
+      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
+    } else {
+      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+    }
     console.log(event);
   }
 

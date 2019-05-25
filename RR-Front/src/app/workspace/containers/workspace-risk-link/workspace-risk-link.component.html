@@ -307,7 +307,7 @@
                           [ngClass]="{'selected-item': rowData?.selected}"
                           [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
                         <div style=" display: flex;" *ngIf="col.type === 'select'">
-                          <label nz-checkbox (ngModelChange)="checkRow($event)" [ngModel]="rowData.selected"></label>
+                          <label nz-checkbox (ngModelChange)="checkRow($event, rowData)" [ngModel]="rowData.selected"></label>
                         </div>
                         <div class="text-data" (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                         <div class="text-data" (click)="selectRows(rowData, i)" *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
