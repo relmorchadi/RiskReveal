@@ -16,6 +16,9 @@ export class SearchService {
   private visibleDropdown = false;
   private _searchedItems = [];
   private _globalSearchItem = '';
+  public expertModeFilter: any[] = [];
+  public expertModeEnabled = false;
+  public keyword = null;
 
   public infodropdown = new Subject<any>();
   public items = new Subject<any>();
@@ -43,6 +46,10 @@ export class SearchService {
 
   searchGlobal(filter, offset= '0', size = '100') {
     return this._http.get(`${this.api}workspace`, {params: _.pickBy({...filter, offset, size},_.identity())});
+  }
+
+  expertModeSearch(filter) {
+    return this._http.post(`${this.api}workspace/expert-mode`, filter);
   }
 
   affectItems(item) {
@@ -75,5 +82,9 @@ export class SearchService {
 
   setLoading(value) {
     this.store$.dispatch(new SetLoadingState(value))
+  }
+  addSearchedItems(itm) {
+    this._searchedItems.push(itm);
+    this.items.next();
   }
 }

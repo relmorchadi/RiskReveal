@@ -123,11 +123,19 @@ export class SearchMenuItemComponent implements OnInit {
 
   examinateExpression(expression: string) {
     if (this.contractFilterFormGroup.get('switchValue').value) {
-      const regExp = /(\w*:){1}((\w*\s)*)/g;
+      const regExp = /(\w*:){1}(((\w|\")*\s)*)/g;
       const globalKeyword = `${expression} `.replace(regExp, (match, shortcut, keyword) => {
-        console.log({shortcut, keyword});
+        // console.log({shortcut, keyword});
+        this._searchService.keyword=expression.trim().split(" ")[0];
+        if (this._searchService.keyword.indexOf(':') > -1) this._searchService.keyword=null;
+        let field = this.state.sortcutFormKeysMapper[_.trim(shortcut, ':')];
+        this._searchService.expertModeFilter.push({
+          field : this.state.sortcutFormKeysMapper[_.trim(shortcut, ':')],
+          value: _.trim(_.trim(_.trim(keyword),'"')),
+          operator: this.getOperator(_.trim(keyword),field)})
         return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword));
       }).trim();
+      setTimeout(()=>this._searchService.addSearchedItems({key: 'actualGlobalKeyword', value: this._searchService.keyword}))
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}));
     } else {
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: expression}));
@@ -176,6 +184,7 @@ export class SearchMenuItemComponent implements OnInit {
       console.log(this.pos,this.state.data)
     }
     if (keyboardEvent.key === 'Enter') {
+      this._searchService.expertModeFilter = []
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
       if (this.contractFilterFormGroup.get('switchValue').value) {
         this.examinateExpression(searchExpression);
@@ -268,8 +277,14 @@ export class SearchMenuItemComponent implements OnInit {
 
   closeSearchBadge(status, index) {
     if (status) {
-      this.state.badges.splice(index, 1);
-      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
+      if (!this._searchService.expertModeEnabled){
+        this.state.badges.splice(index, 1);
+        this._searchService.expertModeFilter.splice(index,1);
+      }
+      else{
+        this.state.badges.splice(index, 1);
+        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
+      }
     }
   }
 
@@ -277,10 +292,12 @@ export class SearchMenuItemComponent implements OnInit {
     if (this.contractFilterFormGroup.get('switchValue').value) {
       this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
       // this.state.visibleSearch = false;
+      this._searchService.expertModeEnabled = true;
       this._notifcationService.createNotification('Information',
         'the export mode is now enabled',
         'info', 'bottomRight', 2000);
     } else {
+      this._searchService.expertModeEnabled = false;
       this._notifcationService.createNotification('Information',
         'the export mode is now disabled',
         'info', 'bottomRight', 2000);
@@ -369,5 +386,12 @@ export class SearchMenuItemComponent implements OnInit {
   setPos($event) {
     console.log($event);
     this.pos = $event
+  }
+
+  getOperator(str: string, field: string) {
+    if(field=="year") return 'EQUAL';
+    if (str.endsWith('\"') && str.indexOf('\"') === 0) {
+      return 'EQUAL';
+    } else { return 'LIKE'; }
   }
 }

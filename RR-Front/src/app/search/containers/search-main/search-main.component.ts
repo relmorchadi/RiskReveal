@@ -127,7 +127,6 @@ export class SearchMainComponent implements OnInit {
       filtered: false
     }
   ];
-
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
@@ -272,23 +271,24 @@ export class SearchMainComponent implements OnInit {
   }
 
   private _loadContracts(offset = '0', size = '100') {
-    this.loading = true;
-    const keys = [];
-    const values = [];
-    this.searchedItems.forEach(
+    if (!this._searchService.expertModeEnabled) {
+      this.loading = true;
+      const keys = [];
+      const values = [];
+      this.searchedItems.forEach(
         (e) => {
           keys.push(_.camelCase(e.key));
           values.push(e.value);
         }
       );
-    keys.forEach(
+      keys.forEach(
         (e, index) => {
           this.contractFilterFormGroup.value[e] = values[index];
           console.log(this.contractFilterFormGroup.value);
         }
       );
-    this._searchService.setLoading(true);
-    this._searchService.searchGlobal(_.merge({keyword: this.globalSearchItem}, this.contractFilterFormGroup.value), offset, size)
+      this._searchService.setLoading(true);
+      this._searchService.searchGlobal(_.merge({keyword: this.globalSearchItem}, this.contractFilterFormGroup.value), offset, size)
         .subscribe((data: any) => {
           this.contracts = data.content.map(item => ({...item, selected: false}));
           this.loadingMore = false;
@@ -297,6 +297,18 @@ export class SearchMainComponent implements OnInit {
           this._searchService.setLoading(false);
           this.detectChanges();
         });
+    } else {
+      this._searchService.setLoading(true);
+      this._searchService.expertModeSearch(_.merge({keyword: this._searchService.keyword, filter : this._searchService.expertModeFilter, offset, size}))
+        .subscribe((data: any) => {
+          this.contracts = data.content.map(item => ({...item, selected: false}));
+          this.loadingMore = false;
+          this.loading = false;
+          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+          this._searchService.setLoading(false);
+          this.detectChanges();
+        });
+    }
   }
 
   navigateBack() {
@@ -305,6 +317,7 @@ export class SearchMainComponent implements OnInit {
 
   clearChips() {
     this.searchedItems = [];
+    this._searchService.expertModeFilter = [];
     this.initSearchForm();
     this._loadContracts();
   }
@@ -317,8 +330,15 @@ export class SearchMainComponent implements OnInit {
     }
   }
 
-  closeSearchBadge(status, index) {
+  closeSearchBadge(status, index, key?) {
     if (status) {
+      if(key=="actualGlobalKeyword") {
+        this._searchService.keyword = null;
+      }
+      else
+      if (this._searchService.expertModeEnabled){
+        this._searchService.expertModeFilter.splice(index,1);
+      }
       this.initSearchForm();
       this.searchedItems.splice(index, 1);
       this._loadContracts();
