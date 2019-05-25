@@ -54,7 +54,7 @@ export class SearchMenuItemComponent implements OnInit {
       workspaceName: '',
       year: ''
     });
-    this.scrollTo=0;
+    this.scrollTo=-1;
     this.listLength=0;
     this.pos = {
       i:0,
@@ -79,7 +79,6 @@ export class SearchMenuItemComponent implements OnInit {
           return sum + (n.length > 5 ? 5 : n.length);
         }, 0);
 
-        console.log(this.listLength)
       }
       this.detectChanges()
     });
@@ -95,7 +94,6 @@ export class SearchMenuItemComponent implements OnInit {
     })
 
     this.store.select(SearchNavBarState.getLoadingState).subscribe( l => {
-      console.log('SEARCH BAR', l);
       this.loading =l;
       this.detectChanges()
     });
@@ -135,7 +133,7 @@ export class SearchMenuItemComponent implements OnInit {
           operator: this.getOperator(_.trim(keyword),field)})
         return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword));
       }).trim();
-      setTimeout(()=>this._searchService.addSearchedItems({key: 'actualGlobalKeyword', value: this._searchService.keyword}))
+      setTimeout(()=> this._searchService.addSearchedItems({key: 'Global Search', value: this._searchService.keyword}))
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}));
     } else {
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: expression}));
@@ -165,26 +163,36 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    if(keyboardEvent.key == 'ArrowDown') {
+    console.log(keyboardEvent)
+    if(keyboardEvent.key == 'ArrowUp') {
+      event.preventDefault();
       if(this.scrollTo > 0) {
         this.scrollTo = this.scrollTo - 1;
       }else{
-        this.scrollTo = 0
+        this.scrollTo = this.listLength - 1
       }
       //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
-      console.log(this.pos,this.state.data)
+      event.stopPropagation();
     }
-    if(keyboardEvent.key == 'ArrowUp'){
+    if(keyboardEvent.key == 'ArrowDown'){
+      event.preventDefault();
       if(this.scrollTo < this.listLength) {
         this.scrollTo = this.scrollTo + 1;
       }else{
         this.scrollTo = 0
       }
       //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
-      console.log(this.pos,this.state.data)
+      event.stopPropagation();
+    }
+    if(keyboardEvent.key == ' ' && this.scrollTo >= 0) {
+      if(this.pos){
+        this.selectSearchBadge(this.stringUpdate(this.state.tables[this.pos.i]), this.state.data[this.pos.i][this.pos.j].label );
+        this.scrollTo =-1;
+      }
     }
     if (keyboardEvent.key === 'Enter') {
       this._searchService.expertModeFilter = []
+      this._searchService.resetSearchedItems();
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
       if (this.contractFilterFormGroup.get('switchValue').value) {
         this.examinateExpression(searchExpression);
@@ -201,7 +209,6 @@ export class SearchMenuItemComponent implements OnInit {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.deleteBlock = false;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: false}));
-        console.log(this.state.deleteBlock);
       }
     } else {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
@@ -209,7 +216,6 @@ export class SearchMenuItemComponent implements OnInit {
         this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
         this.state.deleteBlock = true;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: true}));
-        console.log(this.state.deleteBlock);
       }
     }
   }
@@ -384,8 +390,7 @@ export class SearchMenuItemComponent implements OnInit {
 
 
   setPos($event) {
-    console.log($event);
-    this.pos = $event
+    this.pos = $event;
   }
 
   getOperator(str: string, field: string) {

@@ -81,10 +81,14 @@ export class SearchService {
   }
 
   setLoading(value) {
-    this.store$.dispatch(new SetLoadingState(value))
+    this.store$.dispatch(new SetLoadingState(value));
   }
   addSearchedItems(itm) {
     this._searchedItems.push(itm);
+    this.items.next();
+  }
+  resetSearchedItems() {
+    this._searchedItems = [];
     this.items.next();
   }
 }

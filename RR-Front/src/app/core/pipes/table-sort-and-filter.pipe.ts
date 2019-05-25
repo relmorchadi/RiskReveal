@@ -12,10 +12,17 @@ export class TableSortAndFilterPipe implements PipeTransform {
     const filterDataKeys = _.keys(filterData)
     let res=data;
 
-    console.log(filterData)
 
     if(filterDataKeys.length > 0 ) {
-      res = _.filter(data, el => _.every(filterDataKeys, key => _.includes(_.toLower(_.toString(el[key])), _.toLower(_.toString(filterData[key])))))
+
+      res = _.filter(data, row =>
+        _.every(
+          filterDataKeys,
+            filteredCol => _.some(
+              _.split(filterData[filteredCol],/[,;]/g), strs =>
+              _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)))
+            )
+        ))
     }
 
     if(sortDataKeys.length > 0){
