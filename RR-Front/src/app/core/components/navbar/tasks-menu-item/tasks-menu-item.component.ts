@@ -132,7 +132,7 @@ export class TasksMenuItemComponent implements OnInit {
             contentId: 'For ARC',
             contentName: 'Clone',
             createdAt: 1542882354617,
-            duration: 'Finished',
+            duration: 'Processed',
             createdBy: 'Ghada CHOUK'
           }],
         isPaused: false
@@ -168,7 +168,7 @@ export class TasksMenuItemComponent implements OnInit {
             contentId: 'For ARC',
             contentName: 'Clone',
             createdAt: 1542882354617,
-            duration: 'Finished',
+            duration: 'Processed',
             createdBy: 'Ghada CHOUK'
           },
           {
@@ -177,7 +177,7 @@ export class TasksMenuItemComponent implements OnInit {
             contentId: 'For ARC',
             contentName: 'Clone',
             createdAt: 1542882354617,
-            duration: 'Finished',
+            duration: 'Processed',
             createdBy: 'Ghada CHOUK'
           }],
         isPaused: true
