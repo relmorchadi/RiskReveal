@@ -42,19 +42,40 @@
   .app-header {
     display: flex;
     flex-direction: column;
-    width: 90%;
+    width: 95%;
     margin: 20px auto;
 
-    .app-title {
-      height: 65px;
-      width: 643px;
-      color: rgba(0, 0, 0, 0.5);
+    .app-title-manager {
+      display: flex;
+      justify-content: space-between;
+      height: 120px;
+      color: rgba(0, 0, 0, 0.75);
       font-family: Rubik;
       font-size: 34.54px;
-      font-weight: 300;
+      font-weight: 200;
       letter-spacing: 0.25px;
       line-height: 41px;
       margin-top: 15px;
+      display: flex;
+      padding-top: 30px;
+      button {
+        position: absolute;
+        right: 0;
+        top: 110px;
+        background-color: #f5f5f5;
+        font-size: 20px;
+        width: 45px;
+        height: 45px;
+        border: 1px solid rgba(0,0,0,0.1);
+      }
+      ::ng-deep {
+        .ant-select {
+          margin-right: 70px;
+        }
+        .ant-select-selection {
+          background-color: #f5f5f5;
+        }
+      }
     }
   }
 

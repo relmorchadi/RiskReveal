@@ -7,8 +7,8 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  SearchRiskLinkEDMAndRDMAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction
+  SearchRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
@@ -88,14 +88,14 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     {field: 'peril', header: 'Peril', width: '110px', type: 'text'},
     {field: 'subPeril', header: 'Sub Peril', width: '110px', type: 'text'},
     {field: 'lossAmplification', header: 'Loss Amplification', width: '110px', type: 'text'},
-    {field: 'region', header: 'User 4', width: '110px', type: 'text'},
+    {field: 'region', header: 'Region', width: '110px', type: 'text'},
     {field: 'modeName', header: 'Mode', width: '110px', type: 'text'},
     {field: 'user1', header: 'User 1', width: '110px', type: 'text'},
     {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
     {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
     {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
     {field: 'analysisCurrency', header: 'Analysis Currency', width: '110px', type: 'text'},
-    {field: 'regionName', header: 'User 4', width: '110px', type: 'text'},
+    {field: 'regionName', header: 'Region Name', width: '110px', type: 'text'},
     {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
     {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
   ];
@@ -317,7 +317,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
-  selectRow(row: any, index: number) {
+/*  selectRow(row: any, index: number) {
     if ((window as any).event.ctrlKey) {
       row.selected = !row.selected;
     }
@@ -350,7 +350,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         tableUpdated[i].selected = !tableUpdated[i].selected;
       }
     }
-  }
+  }*/
 
   getScrollableCols() {
     if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
@@ -397,6 +397,50 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: this.state.listEdmRdm.searchValue, size: sizePage}));
     }
 
+  }
+
+  selectRows(row: any, index: number) {
+    if ((window as any).event.ctrlKey) {
+      // row.selected = !row.selected;
+      this.lastSelectedIndex = index;
+    } else if ((window as any).event.shiftKey) {
+      event.preventDefault();
+      if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
+        this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
+        // this.lastSelectedIndex = null;
+      } else {
+        this.lastSelectedIndex = index;
+        // row.selected = true;
+      }
+    } else {
+      this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
+      this.lastSelectedIndex = index;
+      row.selected = true;
+    }
+    // this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
+    // this.isIndeterminate();
+  }
+
+  private selectSection(from, to) {
+    // this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
+    if (from === to) {
+      // this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
+      // this.listOfData[from].selected = true;
+    } else {
+      for (let i = from; i <= to; i++) {
+        // this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
+        // this.listOfData[i].selected = true;
+      }
+    }
+  }
+
+  checkRow(event, rowData) {
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'edm') {
+      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
+    } else {
+      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+    }
+    console.log(event);
   }
 
   changeCollapse(value) {

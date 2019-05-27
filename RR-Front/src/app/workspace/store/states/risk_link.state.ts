@@ -8,9 +8,9 @@ import {
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
   PatchRiskLinkFinancialPerspectiveAction,
-  SearchRiskLinkEDMAndRDMAction,
-  SelectRiskLinkEDMAndRDMAction,
-  ToggleRiskLinkEDMAndRDMAction
+  SearchRiskLinkEDMAndRDMAction, SelectRiskLinkAnalysisAndPortfolioAction,
+  SelectRiskLinkEDMAndRDMAction, ToggleRiskLinkPortfolioAction,
+  ToggleRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction
 } from '../actions';
 import {
   ToggleRiskLinkEDMAndRDMSelectedAction,
@@ -139,11 +139,11 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(ToggleRiskLinkEDMAndRDMAction)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
-    const action = payload.action;
+    const {action, RDM} = payload;
     let array = _.toArray(state.listEdmRdm.data);
     let newData = {};
     if (action === 'selectOne') {
-      const item = payload.RDM.id;
+      const item = RDM.id;
       const {selected} = state.listEdmRdm.data[item];
       if (selected) {
         array = array.filter(data => data.id !== item && data.selected === true);
@@ -170,7 +170,7 @@ export class RiskLinkState implements NgxsOnInit {
               selected: true,
             }
           });
-          dt = {...dt, selected: true}
+          dt = {...dt, selected: true};
         });
       } else if (action === 'unselectAll') {
         array.forEach(dt => {
@@ -194,6 +194,126 @@ export class RiskLinkState implements NgxsOnInit {
     }
   }
 
+  @Action(ToggleRiskLinkPortfolioAction)
+  toggleRiskLinkPortfolio(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkPortfolioAction) {
+    const state = ctx.getState();
+    const {action, value, item} = payload;
+    console.log(action, value, item);
+    const portfolios = _.toArray(state.selectedAnalysisAndPortoflio.selectedPortfolio.data);
+    let newData = {};
+    if (action === 'selectOne') {
+      if (value) {
+        // array = array.filter(data => data.id !== item && data.selected === true);
+      } else {
+        // array = array.filter(data => data.id == item || data.selected === true);
+      }
+      ctx.patchState({
+        selectedAnalysisAndPortoflio: {
+          ...state.selectedAnalysisAndPortoflio,
+          selectedPortfolio: {
+            ...state.selectedAnalysisAndPortoflio.selectedPortfolio,
+            data: {
+              ...state.selectedAnalysisAndPortoflio.selectedPortfolio.data,
+              [item.dataSourceId]: {
+                ...state.selectedAnalysisAndPortoflio.selectedPortfolio.data[item.dataSourceId],
+                selected: value
+              }
+            },
+          },
+        }
+      });
+    } else {
+      let selected: boolean;
+      if (action === 'selectAll') {
+        selected = true;
+      } else if (action === 'unselectAll') {
+        selected = false;
+      }
+      portfolios.forEach((dt: any) => {
+          newData = _.merge(newData, {
+            [dt.dataSourceId]: {
+              ...dt,
+              selected: selected
+            }
+          });
+        }
+      );
+      ctx.patchState({
+        selectedAnalysisAndPortoflio: {
+          ...state.selectedAnalysisAndPortoflio,
+          selectedPortfolio: {
+            ...state.selectedAnalysisAndPortoflio.selectedPortfolio,
+            data: newData
+          },
+        },
+      });
+
+    }
+  }
+
+  @Action(ToggleRiskLinkAnalysisAction)
+  toggleRiskLinkAnalysis(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkAnalysisAction) {
+    const state = ctx.getState();
+    const {action, value, item} = payload;
+    const analysis = _.toArray(state.selectedAnalysisAndPortoflio.selectedAnalysis.data);
+    let newData = {};
+    const dataSelected = state.selectedAnalysisAndPortoflio.selectedAnalysis;
+    if (action === 'selectOne') {
+      if (value) {
+        // array = array.filter(data => data.id !== item && data.selected === true);
+      } else {
+        // array = array.filter(data => data.id == item || data.selected === true);
+      }
+      ctx.patchState({
+        selectedAnalysisAndPortoflio: {
+          ...state.selectedAnalysisAndPortoflio,
+          selectedAnalysis: {
+            ...state.selectedAnalysisAndPortoflio.selectedAnalysis,
+            data: {
+              ...state.selectedAnalysisAndPortoflio.selectedAnalysis.data,
+              [item.analysisId]: {
+                ...state.selectedAnalysisAndPortoflio.selectedAnalysis.data[item.analysisId],
+                selected: value
+              }
+            },
+          },
+        }});
+    } else {
+      let selected: boolean;
+      if (action === 'selectAll') {
+        selected = true;
+      } else if (action === 'unselectAll') {
+        selected = false;
+      }
+      analysis.forEach((st: any) => {
+          newData = _.merge(newData, {
+            [st.analysisId]: {
+              ...st,
+              selected: selected
+            }
+          });
+        }
+      );
+      console.log(analysis);
+      ctx.patchState({
+        selectedAnalysisAndPortoflio: {
+          ...state.selectedAnalysisAndPortoflio,
+          selectedAnalysis: {
+            ...state.selectedAnalysisAndPortoflio.selectedAnalysis,
+            data: newData
+          },
+        },
+      });
+
+    }
+  }
+
+  @Action(SelectRiskLinkAnalysisAndPortfolioAction)
+  selectRiskLinkAnalysisAndPortfolio(ctx: StateContext<RiskLinkModel>, {payload}: SelectRiskLinkAnalysisAndPortfolioAction) {
+    const state = ctx.getState();
+
+  }
+
   @Action(LoadRiskLinkAnalysisDataAction)
   loadRiskLinkAnalysisDataAction(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkAnalysisDataAction) {
     const state = ctx.getState();
@@ -215,7 +335,8 @@ export class RiskLinkState implements NgxsOnInit {
                     ))),
                   lastSelectedIndex: null
                 }
-              }}))
+              }
+            }))
       )
     );
   }
@@ -241,7 +362,8 @@ export class RiskLinkState implements NgxsOnInit {
                     ))),
                   lastSelectedIndex: null
                 }
-              }}))
+              }
+            }))
       )
     );
   }
@@ -308,8 +430,12 @@ export class RiskLinkState implements NgxsOnInit {
     listDataToArray.forEach(
       dt => {
         if (dt.selected) {
-          if (dt.type === 'rdm') { rdmValidator = true; }
-          if (dt.type === 'edm') { emdValidator = true; }
+          if (dt.type === 'rdm') {
+            rdmValidator = true;
+          }
+          if (dt.type === 'edm') {
+            emdValidator = true;
+          }
           listSelected = _.merge(listSelected, {
             [dt.id]: {
               ...dt,
@@ -317,7 +443,8 @@ export class RiskLinkState implements NgxsOnInit {
               selected: false,
             }
           });
-        }});
+        }
+      });
     ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
     ctx.patchState({
       listEdmRdm: {
@@ -343,21 +470,22 @@ export class RiskLinkState implements NgxsOnInit {
                 data: Object.assign({},
                   ...data.content.map(item => {
                     const validator = array.filter(vd => vd.id == item.id);
-                    const validate =  validator.length === 1;
-                    return({
-                      [item.id]: {
-                        ...item,
-                        selected: validate,
-                        scanned: false,
-                        Reference: '0/13'
+                    const validate = validator.length === 1;
+                    return ({
+                        [item.id]: {
+                          ...item,
+                          selected: validate,
+                          scanned: false,
+                          Reference: '0/13'
+                        }
                       }
-                    }
-                  );
+                    );
                   })),
                 totalNumberElement: data.totalElements,
                 searchValue: keyword,
                 dataLength: data.size
-              }}))
+              }
+            }))
       )
     );
   }
@@ -385,7 +513,8 @@ export class RiskLinkState implements NgxsOnInit {
                 searchValue: '',
                 totalNumberElement: data.totalElements,
                 dataLength: data.size
-              }}))
+              }
+            }))
       )
     );
   }

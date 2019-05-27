@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 export class WorkspaceJobManagerComponent implements OnInit {
   loading = false;
   contextSelectedItem: any;
+  Users = '1';
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -43,20 +44,20 @@ export class WorkspaceJobManagerComponent implements OnInit {
   ];
 
   tableColumn = [
-    {
+/*    {
       field: 'checkbox',
       header: '',
-      width: '20px',
+      width: '25px',
       display: true,
       sorted: false,
       filtered: false,
       type: 'checkbox',
       class: 'icon-check_24px',
-    },
+    },*/
     {
       field: 'state',
       header: 'State',
-      width: '50px',
+      width: '90px',
       display: true,
       sorted: false,
       filtered: false,
@@ -157,7 +158,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   listOfData = [
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -170,7 +171,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -183,7 +184,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -196,7 +197,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -209,7 +210,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -222,7 +223,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -235,7 +236,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -248,7 +249,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -261,7 +262,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -274,7 +275,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -287,7 +288,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -300,7 +301,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',

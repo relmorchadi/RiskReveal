@@ -14,7 +14,7 @@
    -->
   <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
           nz-button nzType="primary" nzSize="default" nzShape="circle">
-    <i style="color: #16617a;" nz-icon theme="outline">
+    <i style="color: #9592E6" nz-icon theme="outline">
       <i class="icon-map-pin-alt"></i>
     </i>
   </button>
@@ -23,7 +23,7 @@
       <span class="projects-title">Projects</span> <i class="icon-plus-circle icon-generic" style="font-size: 25px;"></i>
       <i class="icon-grid float-right mt-2 icon-generic" style="transform: rotate(90deg)" ></i>
       <i nz-icon class="float-right mt-2 icon-generic" nzType="appstore" nzTheme="outline"></i>
-      <nz-select class="float-right mt-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="selectedPrStatus">
+      <nz-select class="float-right mt-2" style="width: 140px; margin-right: 70px;" nzShowSearch nzAllowClear  [(ngModel)]="selectedPrStatus">
         <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
       </nz-select>
     </div>
@@ -117,7 +117,7 @@
               <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
             </div>
             <div class="border-top d-flex project-kpi-details-content">
-              <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Owner</span>
+              <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Last modified</span>
               <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
               <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px;	line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
             </div>
@@ -125,6 +125,19 @@
         </div>
     </div>
   </div>
+</div>
+
+<ng-template #template>
+  <ul nz-menu nzInDropDown (nzClick)="close($event)">
+    <li nz-menu-item class="contextMenu"><i class="icon-arrow-from-top"></i>Import</li>
+    <li nz-menu-item class="contextMenu"><i class="icon-copy-landscape"></i>Clone</li>
+    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-sitemap"></i>Calibrate</li>
+    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-export"></i>Publish To Pricing</li>
+    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
+    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-trash-alt"></i>Delete</li>
+    <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
+  </ul>
+</ng-template>
 <!--  <div style="width:94%;margin:auto;">
     <ng-masonry-grid
     [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }"
@@ -230,16 +243,4 @@
         </ng-masonry-grid-item>
     </ng-masonry-grid>
   </div>-->
-</div>
 
-<ng-template #template>
-  <ul nz-menu nzInDropDown (nzClick)="close($event)">
-    <li nz-menu-item class="contextMenu"><i class="icon-arrow-from-top"></i>Import</li>
-    <li nz-menu-item class="contextMenu"><i class="icon-copy-landscape"></i>Clone</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-sitemap"></i>Calibrate</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-export"></i>Publish To Pricing</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-trash-alt"></i>Delete</li>
-    <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
-  </ul>
-</ng-template>

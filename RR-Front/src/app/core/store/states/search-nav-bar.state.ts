@@ -88,7 +88,7 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Selector()
-  static getData(state: SearchNavBar){
+  static getData(state: SearchNavBar) {
     return state.data;
   }
 
@@ -150,7 +150,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(LoadRecentSearchAction)
   loadRecentSearch(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 3)});
+    ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 5)});
   }
 
   private searchLoader(keyword, table) {

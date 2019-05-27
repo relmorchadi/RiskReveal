@@ -125,7 +125,7 @@ export class TableComponent implements OnInit {
     this.isIndeterminate();
   }
 
-  doubleClickRow(rowData){
+  doubleClickRow(rowData) {
     this.doubleClick.emit(rowData);
   }
 
