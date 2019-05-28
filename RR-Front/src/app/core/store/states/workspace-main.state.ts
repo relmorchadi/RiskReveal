@@ -5,7 +5,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction,
+  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -57,11 +57,21 @@ export class WorkspaceMainState implements NgxsOnInit {
    * Commands
    */
   @Action(PatchWorkspaceMainStateAction)
-  patchWorkspaceMainState(ctx: StateContext<WorkspaceMainState>, {payload}: PatchWorkspaceMainStateAction) {
+  patchWorkspaceMainState(ctx: StateContext<WorkspaceMain>, {payload}: PatchWorkspaceMainStateAction) {
     if (_.isArray(payload))
       payload.forEach(item => ctx.patchState({[item.key]: item.value}));
     else
       ctx.patchState({[payload.key]: payload.value});
+  }
+
+  @Action(setTabsIndex)
+  selectTabsIndex(ctx: StateContext<WorkspaceMain>, {payload}: setTabsIndex) {
+    ctx.patchState({
+      openedTabs: {
+        ...ctx.getState().openedTabs,
+        tabsIndex: payload.index
+      }
+    })
   }
 
   @Action(AppendNewWorkspaceMainAction)
@@ -76,6 +86,9 @@ export class WorkspaceMainState implements NgxsOnInit {
     recentlyOpenedWs = _.uniqWith(recentlyOpenedWs, _.isEqual);
     const paginationList = this.makePagination(recentlyOpenedWs);
     const projectFormat = payload.projects.map(prj => prj = {...prj, selected: false});
+    if (projectFormat.length > 0) {
+      projectFormat[0] = {...projectFormat[0], selected: true};
+    }
     const openedTabs = [...state.openedTabs.data, _.merge({}, payload, {routing: ''})];
     const opened = {...payload, projects: projectFormat};
     ctx.patchState({
@@ -96,6 +109,7 @@ export class WorkspaceMainState implements NgxsOnInit {
     let openedTabs = [];
     let opened = _.merge({}, payload[payload.length - 1], {routing: ''});
     const projectFormat = opened.projects.map(prj => prj = {...prj, selected: false});
+    projectFormat[0] = {...projectFormat[0], selected: true};
     opened = {...opened, projects: projectFormat};
     payload.forEach(data => {
       recentlyOpenedWs = _.filter(recentlyOpenedWs, ws => {
@@ -106,7 +120,10 @@ export class WorkspaceMainState implements NgxsOnInit {
         }
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
-      openedTabs.map(dt => dt.projects = dt.projects.map(prj => prj = {...prj, selected: false}));
+      openedTabs.map(dt => {
+        dt.projects = dt.projects.map(prj => prj = {...prj, selected: false});
+        if (dt.projects.length > 0) { dt.projects[0] = {...dt.projects[0], selected: true}; }
+      });
     });
     recentlyOpenedWs.unshift(...payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
@@ -132,6 +149,9 @@ export class WorkspaceMainState implements NgxsOnInit {
       }
     });
     const projectFormat = payload.projects.map(prj => prj = {...prj, selected: false});
+    if (projectFormat.length > 0) {
+      projectFormat[0] = {...projectFormat[0], selected: true};
+    }
     const opened = {...payload, projects: projectFormat};
     ctx.patchState(
       {openedWs: opened, openedTabs: {data: newState, tabsIndex: state.openedTabs.tabsIndex}}
@@ -188,8 +208,14 @@ export class WorkspaceMainState implements NgxsOnInit {
     const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || []);
     const paginationList = this.makePagination(recentlyOpenedWs);
     const projectFormat = currentOpenedWs.data[state.openedTabs.tabsIndex].projects.map(prj => prj = {...prj, selected: false});
+    if (projectFormat.length > 0) {
+      projectFormat[0] = {...projectFormat[0], selected: true};
+    }
     const opened = {...currentOpenedWs.data[state.openedTabs.tabsIndex], projects: projectFormat};
-    currentOpenedWs.data.map(dt => dt.projects = dt.projects.map(prj => prj = {...prj, selected: false}));
+    currentOpenedWs.data.map(dt => {
+      dt.projects = dt.projects.map(prj => prj = {...prj, selected: false});
+      if (dt.projects.length > 0) { dt.projects[0] = {...dt.projects[0], selected: true}; }
+    });
     ctx.patchState({
       workspacePagination: paginationList,
       openedWs: opened,

@@ -1,4 +1,4 @@
-<nz-badge (click)="updateNotif()" style="cursor: pointer; margin-top: 7px;" [nzCount]="notifCount" [(nzVisible)]="visible" nz-popover [nzContent]="notificationsPopoverContent" nzTrigger="click">
+<nz-badge (click)="updateNotif()" style="cursor: pointer; margin-top: 7px;" [nzCount]="notifCount" nzPlacement="bottomRight" [(nzVisible)]="visible" nz-popover [nzContent]="notificationsPopoverContent" nzTrigger="click">
   <i class="icon-notifications_24px icon-size"></i>
 </nz-badge>
 <ng-template #notificationsPopoverContent>
@@ -59,8 +59,8 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="popover-menu-control-button" nz-button nzType="default">CLEAR ALL</button>
-              <button class="popover-menu-control-button" nz-button nzType="default">SEE ALL</button>
+              <button class="button-no-outline">CLEAR ALL</button>
+              <button class="button-no-outline">SEE ALL</button>
             </div>
           </div>
         </div>

@@ -16,6 +16,7 @@ import {WorkspaceMainState} from "../../../core/store/states";
 import * as fromWS from '../../../core/store'
 import {Observable} from "rxjs";
 import {WorkspaceMain} from "../../../core/model/workspace-main";
+import {PatchSearchStateAction} from "../../../core/store";
 
 
 @Component({
@@ -138,12 +139,12 @@ export class SearchMainComponent implements OnInit {
   }
 
   ngOnInit() {
-    this._searchService.setLoading(true);
+    this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: true}));
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this.searchedItems = this._searchService.searchedItems;
     this.globalSearchItem = this._searchService.globalSearchItem;
     this.store.select(fromWS.SearchNavBarState.getLoadingState).subscribe( l => {
-      console.log('loading',l);
+      console.log('loading', l);
       this.detectChanges();
     })
     this._searchService.items.subscribe(
@@ -272,6 +273,7 @@ export class SearchMainComponent implements OnInit {
   }
 
   private _loadContracts(offset = '0', size = '100') {
+    this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
     this.loading = true;
     const keys = [];
     const values = [];
@@ -287,14 +289,14 @@ export class SearchMainComponent implements OnInit {
           console.log(this.contractFilterFormGroup.value);
         }
       );
-    this._searchService.setLoading(true);
+    this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: true}));
     this._searchService.searchGlobal(_.merge({keyword: this.globalSearchItem}, this.contractFilterFormGroup.value), offset, size)
         .subscribe((data: any) => {
           this.contracts = data.content.map(item => ({...item, selected: false}));
           this.loadingMore = false;
           this.loading = false;
           this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-          this._searchService.setLoading(false);
+          this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: false}));
           this.detectChanges();
         });
   }

@@ -83,14 +83,13 @@
 
 <p-contextMenu #cm [model]="items"></p-contextMenu>
 
-<nz-spin [nzSpinning]="loading" [nzDelay]="700">
+<nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700">
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
            [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
            [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
            [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
            [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
            [contextMenu]="cm" class="table-ngPrime"
-           [loading]="loading"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
@@ -116,14 +115,14 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-      <tr (dblclick)="doubleClickRow(rowData)" [pContextMenuRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+      <tr [pContextMenuRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
         <ng-container *ngFor="let col of columns">
           <td *ngIf="col?.type ==='checkbox'">
             <div style="display:flex">
               <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
             </div>
           </td>
-          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
+          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (dblclick)="doubleClickRow(rowData)" (click)="selectRow(rowData, i)">
             <div style="display:flex">
               <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
               <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
@@ -147,11 +146,10 @@
   </p-table>
 </nz-spin>
 
-<nz-spin [nzSpinning]="loading" [nzDelay]="700">
+<nz-spin [nzSpinning]="loading && !virtualScroll" [nzDelay]="700">
 <p-table *ngIf="!virtualScroll"
          [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
-         [loading]="loading"
          class="table-ngPrime"
 >
 

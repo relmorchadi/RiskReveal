@@ -24,6 +24,11 @@ export class SelectWorkspaceAction {
   constructor(public payload: any) {}
 }
 
+export class setTabsIndex {
+  static readonly type = '[Workspace Main] Select Tabs Index';
+  constructor(public payload: any) {}
+}
+
 
 export class SelectProjectAction {
   static readonly type = '[Workspace Project] Select Project';

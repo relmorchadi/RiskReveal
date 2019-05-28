@@ -29,11 +29,9 @@
         </div>
         <div class="body-wrap-header-step">
           <nz-steps [nzCurrent]="state.currentStep" nzProgressDot>
-            <nz-step style="cursor: pointer" (click)="selectStep(0)" nzTitle="Step 1"
-                     nzDescription="Select EDM & RDM"></nz-step>
-            <nz-step style="cursor: pointer" class="coming-up" (click)="selectStep(1)" nzTitle="Step 2"
-                     nzDescription="Portfolios & Analysis"></nz-step>
-            <nz-step style="cursor: pointer" nzTitle="Step 3" nzDescription="Import"></nz-step>
+            <nz-step style="cursor: pointer" (click)="selectStep(0)" nzDescription="Select EDM & RDM"></nz-step>
+            <nz-step style="cursor: pointer" (click)="selectStep(1)" nzTitle="Portfolios & Analysis"></nz-step>
+            <nz-step style="cursor: pointer" nzDescription="Import"></nz-step>
           </nz-steps>
         </div>
       </div>
@@ -157,7 +155,7 @@
                 <nz-tabset>
                   <nz-tab nzTitle="EDM & RDM">
                     <div class="search-bar-result-list">
-                      <p-virtualScroller [value]="dataList(state.listEdmRdm.data)" scrollHeight="305px" [itemSize]="30"  [rows]="20"
+                      <p-virtualScroller [value]="dataList(state.listEdmRdm.data)" scrollHeight="305px" [itemSize]="30"  [rows]="state.listEdmRdm.dataLength"
                                          [lazy]="true" (onLazyLoad)="loadItemsLazy($event)" [totalRecords]="state.listEdmRdm.totalNumberElement">
                         <ng-template let-item pTemplate="item">
                           <div class="poover-menu-item" (click)="toggleItems(item)" [ngClass]="{'poover-menu-item-active': item?.selected || item?.scanned}">
@@ -173,7 +171,7 @@
                       </p-virtualScroller>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>ADD</button>
+                      <button (click)="selectedItem()" class="button-standard">ADD</button>
                     </div>
                   </nz-tab>
                   <nz-tab nzTitle="EDM">
@@ -190,7 +188,7 @@
                       </ul>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>ADD</button>
+                      <button (click)="selectedItem()" class="button-standard">ADD</button>
                     </div>
                   </nz-tab>
                   <nz-tab nzTitle="RDM">
@@ -207,7 +205,7 @@
                       </ul>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>ADD</button>
+                      <button (click)="selectedItem()" class="button-standard">ADD</button>
                     </div>
                   </nz-tab>
                 </nz-tabset>
@@ -277,7 +275,7 @@
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter"></i>
-                  <button class="modal-button" nz-button> ADVANCED</button>
+                  <button class="button-outlined"> ADVANCED</button>
                 </div>
               </div>
               <div class="show-table">
@@ -302,23 +300,22 @@
                     </tr>
                   </ng-template>
                   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-                    <tr (click)="selectRow(rowData, i)">
+                    <tr >
                       <td *ngFor="let col of columns"
                           [ngClass]="{'selected-item': rowData?.selected}"
                           [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
                         <div style=" display: flex;" *ngIf="col.type === 'select'">
-                          <label nz-checkbox [(ngModel)]="rowData.selected"></label>
+                          <label nz-checkbox (ngModelChange)="checkRow($event, rowData)" [ngModel]="rowData.selected"></label>
                         </div>
-                        <div class="text-data" *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                        <div class="text-data"
-                             *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                        <div class="text-data" (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                        <div class="text-data" (click)="selectRows(rowData, i)" *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                       </td>
                     </tr>
                   </ng-template>
                 </p-table>
               </div>
               <div class="import-button" (click)="displayImported()">
-                <button>ADD TO BASKET</button>
+                <button class="button-standard">ADD TO BASKET</button>
               </div>
             </div>
           </div>
@@ -334,7 +331,7 @@
               <div>Exposure Summaries</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="modal-button" *ngIf="state.collapse.collapseResult" nz-button> ADVANCED</button>
+              <button class="button-outlined" *ngIf="state.collapse.collapseResult"> ADVANCED</button>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseResult" nz-icon nzType="up" (click)="changeCollapse('collapseResult')"
                    nzTheme="outline"></i>
@@ -361,10 +358,10 @@
                   Name
                   <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
-                <th style="width:11%">
+                <!--<th style="width:11%">
                   Exposed Location
                   <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
+                </th>-->
                 <th style="width:11%">
                   Exposure Currency
                   <ng-container *ngTemplateOutlet="search"></ng-container>
@@ -398,9 +395,9 @@
                 <th>{{items?.id}}</th>
                 <th>{{items?.number}}</th>
                 <th>{{items?.name}}</th>
-                <th>
+                <!--<th>
                   <div class="state" [ngClass]="{'state-false': !items?.exposedLocation}"></div>
-                </th>
+                </th>-->
                 <th>{{items?.exposedCurrency}}</th>
                 <th>{{items?.targetCurrency}}</th>
                 <th>{{items?.unitMultiplier | number:'1.1-1'}}</th>
@@ -423,7 +420,7 @@
               <div>Analysis Results</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="modal-button" *ngIf="state.collapse.collapseAnalysis" nz-button> ADVANCED</button>
+              <button class="button-outlined" *ngIf="state.collapse.collapseAnalysis"> ADVANCED</button>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseAnalysis" nz-icon nzType="up"
                    (click)="changeCollapse('collapseAnalysis')" nzTheme="outline"></i>

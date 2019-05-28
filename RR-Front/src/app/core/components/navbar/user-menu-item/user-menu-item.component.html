@@ -1,4 +1,4 @@
-<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover [nzContent]="userPopoverContent" nzPlacment="bottomLeft" nzTrigger="click">
+<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover [nzContent]="userPopoverContent" nzPlacement="bottomRight" nzTrigger="click">
   <nz-avatar nzText="N.D" nzSize="large" ></nz-avatar>
   Nathalie Dulac &nbsp;&nbsp;
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 12px;"></i>
@@ -43,7 +43,7 @@
         [(ngModel)]="defaultImport"
       >
         <nz-option nzLabel="RiskLink" nzValue="RiskLink"></nz-option>
-        <nz-option nzLabel="Import" nzValue="FileBasedImport"></nz-option>
+        <nz-option nzLabel="File Based Import" nzValue="FileBasedImport"></nz-option>
         <nz-option nzLabel="Clone" nzValue="CloneData"></nz-option>
       </nz-select>
     </div>

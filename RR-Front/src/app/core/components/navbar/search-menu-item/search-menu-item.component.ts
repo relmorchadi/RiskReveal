@@ -54,34 +54,33 @@ export class SearchMenuItemComponent implements OnInit {
       workspaceName: '',
       year: ''
     });
-    this.scrollTo=0;
-    this.listLength=0;
+    this.scrollTo = -1;
+    this.listLength = 0;
     this.pos = {
-      i:0,
-      j:0
-    }
+      i: 0,
+      j: 0
+    };
   }
 
 
   ngOnInit() {
     this.state$.subscribe(value => {
-      if(value.data && _.every(value.data, d => d && d.length ==0)){
+      if (value.data && _.every(value.data, d => d && d.length == 0)) {
         this.state = _.merge({}, {
           ...value,
           data: []
-        })
+        });
 
-      }else{
-        this.state = _.merge({}, value)
+      } else {
+        this.state = _.merge({}, value);
       }
-      if(this.state.data && this.state.data.length > 0){
+      if (this.state.data && this.state.data.length > 0) {
         this.listLength = _.reduce(this.state.data, (sum, n) => {
           return sum + (n.length > 5 ? 5 : n.length);
         }, 0);
 
-        console.log(this.listLength)
       }
-      this.detectChanges()
+      this.detectChanges();
     });
     this._subscribeGlobalKeywordChanges();
     this.store.dispatch(new LoadRecentSearchAction());
@@ -92,12 +91,11 @@ export class SearchMenuItemComponent implements OnInit {
       });
     this.store.select(st => st.searchBar.data).subscribe(dt => {
       this.detectChanges();
-    })
+    });
 
     this.store.select(SearchNavBarState.getLoadingState).subscribe( l => {
-      console.log('SEARCH BAR', l);
-      this.loading =l;
-      this.detectChanges()
+      this.loading = l;
+      this.detectChanges();
     });
   }
 
@@ -125,7 +123,6 @@ export class SearchMenuItemComponent implements OnInit {
     if (this.contractFilterFormGroup.get('switchValue').value) {
       const regExp = /(\w*:){1}((\w*\s)*)/g;
       const globalKeyword = `${expression} `.replace(regExp, (match, shortcut, keyword) => {
-        console.log({shortcut, keyword});
         return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword));
       }).trim();
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}));
@@ -157,23 +154,32 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    if(keyboardEvent.key == 'ArrowDown') {
-      if(this.scrollTo > 0) {
+    console.log(keyboardEvent);
+    if (keyboardEvent.key == 'ArrowUp') {
+      event.preventDefault();
+      if (this.scrollTo > 0) {
         this.scrollTo = this.scrollTo - 1;
-      }else{
-        this.scrollTo = 0
+      } else {
+        this.scrollTo = this.listLength - 1;
       }
-      //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
-      console.log(this.pos,this.state.data)
+      // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
+      event.stopPropagation();
     }
-    if(keyboardEvent.key == 'ArrowUp'){
-      if(this.scrollTo < this.listLength) {
+    if (keyboardEvent.key == 'ArrowDown') {
+      event.preventDefault();
+      if (this.scrollTo < this.listLength) {
         this.scrollTo = this.scrollTo + 1;
-      }else{
-        this.scrollTo = 0
+      } else {
+        this.scrollTo = 0;
       }
-      //this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
-      console.log(this.pos,this.state.data)
+      // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
+      event.stopPropagation();
+    }
+    if (keyboardEvent.key == ' ' && this.scrollTo >= 0) {
+      if (this.pos) {
+        this.selectSearchBadge(this.stringUpdate(this.state.tables[this.pos.i]), this.state.data[this.pos.i][this.pos.j].label );
+        this.scrollTo = -1;
+      }
     }
     if (keyboardEvent.key === 'Enter') {
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
@@ -192,7 +198,6 @@ export class SearchMenuItemComponent implements OnInit {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
         this.state.deleteBlock = false;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: false}));
-        console.log(this.state.deleteBlock);
       }
     } else {
       if (keyboardEvent.key === 'Backspace' && keyboardEvent.target.value === '') {
@@ -200,7 +205,6 @@ export class SearchMenuItemComponent implements OnInit {
         this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
         this.state.deleteBlock = true;
         this.store.dispatch(new PatchSearchStateAction({key: 'deleteBlock', value: true}));
-        console.log(this.state.deleteBlock);
       }
     }
   }
@@ -211,7 +215,7 @@ export class SearchMenuItemComponent implements OnInit {
     if (this.state.badges.length > 0) {
       this.store.dispatch(new PatchSearchStateAction({
         key: 'recentSearch',
-        value: _.uniqWith([[...this.state.badges], ...this.state.recentSearch].slice(0, 3), _.isEqual)
+        value: _.uniqWith([[...this.state.badges], ...this.state.recentSearch].slice(0, 5), _.isEqual)
       }));
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
@@ -278,11 +282,11 @@ export class SearchMenuItemComponent implements OnInit {
       this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
       // this.state.visibleSearch = false;
       this._notifcationService.createNotification('Information',
-        'the export mode is now enabled',
+        'the expert mode is now enabled',
         'info', 'bottomRight', 2000);
     } else {
       this._notifcationService.createNotification('Information',
-        'the export mode is now disabled',
+        'the expert mode is now disabled',
         'info', 'bottomRight', 2000);
     }
   }
@@ -367,7 +371,6 @@ export class SearchMenuItemComponent implements OnInit {
 
 
   setPos($event) {
-    console.log($event);
-    this.pos = $event
+    this.pos = $event;
   }
 }

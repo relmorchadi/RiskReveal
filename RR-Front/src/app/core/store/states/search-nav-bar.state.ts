@@ -1,13 +1,13 @@
 import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
 import {
   AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
-  PatchSearchStateAction, SearchContractsCountAction, SetLoadingState
+  PatchSearchStateAction, SearchContractsCountAction
 } from '../actions';
 import {SearchService} from '../../service/search.service';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
 import * as _ from 'lodash';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {catchError, debounceTime, distinctUntilChanged, mergeMap, switchMap, tap} from 'rxjs/operators';
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -88,7 +88,7 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Selector()
-  static getData(state: SearchNavBar){
+  static getData(state: SearchNavBar) {
     return state.data;
   }
 
@@ -105,36 +105,30 @@ export class SearchNavBarState implements NgxsOnInit {
       ctx.patchState({[payload.key]: payload.value});
   }
 
-  @Action(SearchContractsCountAction)
+  @Action(SearchContractsCountAction, {cancelUncompleted: true})
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
     ctx.dispatch(new PatchSearchStateAction({key: 'data', value: []}));
     ctx.patchState({
       loading: true
-    })
-    forkJoin(
-      ...ctx.getState().tables.map(
-        tableName => this.searchLoader(keyword, tableName)
-          .pipe(
-            debounceTime(400),
-            switchMap( (payload) => of(payload))
-          )
-      )
-    ).subscribe(payload => {
-      ctx.dispatch(new PatchSearchStateAction({
-        key: 'data',
-        value: _.map(payload, 'content')
-      }));
-      ctx.patchState({
-        loading: false
-      })
     });
-  }
-
-  @Action(SetLoadingState)
-  setLoadingState(ctx: StateContext<SearchNavBar>, { payload } : SetLoadingState) {
-    ctx.patchState({
-      loading: payload
-    })
+    return forkJoin(
+      ...ctx.getState().tables.map(tableName => this.searchLoader(keyword, tableName))
+    ).pipe(
+      switchMap(payload => {
+        ctx.patchState({
+          loading: false
+        });
+        return ctx.dispatch(new PatchSearchStateAction({
+          key: 'data',
+          value: _.map(payload, 'content')
+        }));
+      }),
+      catchError(err => {
+        //@TODO Handle error case
+        console.error('Failed to search contracts Count');
+        return of();
+      })
+    );
   }
 
   @Action(AddBadgeSearchStateAction)
@@ -157,7 +151,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(LoadRecentSearchAction)
   loadRecentSearch(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 3)});
+    ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 5)});
   }
 
   private searchLoader(keyword, table) {

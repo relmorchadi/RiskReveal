@@ -36,7 +36,7 @@
           <div class="search-history-component" style="position: relative;">
               <div class="header-wrapper">
                 <span class="search-history-header">RECENT SEARCH</span>
-                <span class="search-history-viewAll">See All</span>
+<!--                <span class="search-history-viewAll">See All</span>-->
               </div>
               <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
                 <li *ngFor="let items of state?.recentSearch" (click)="redirectWithSearch(items)">

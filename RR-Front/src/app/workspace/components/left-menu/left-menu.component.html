@@ -19,13 +19,7 @@
       <li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>
     </ul>
   </li>
-  <li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Scope Of Completeness' : ''">
-          <span title>
-            <i nz-icon><i class="icon-location_searching_24px"></i></i>
-            <span>Scope of Completeness</span>
-          </span>
-  </li>
-  <li (click)="routerNavigate('PltBrowser')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'PLT browser' : ''">
+  <li (click)="routerNavigate('PltBrowser')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'PLT Manager' : ''">
           <span title>
             <i nz-icon><i class="icon-file-search-alt"></i></i>
             <span>PLT Manager</span>
@@ -38,10 +32,10 @@
           </span>
   </li-->
   <hr class="col-xs-12">
-  <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" (click)="riskLinkImportNavigation()" [nzTitle]="state.leftNavbarIsCollapsed ? 'Data sources Import' : ''">
+  <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Data sources Import' : ''">
           <span title>
-            <i nz-icon><i class="icon-call_merge_24px"></i></i>
-            <span>Data sources Import</span>
+            <i style="z-index: 99" nz-icon><i class="icon-call_merge_24px"></i></i>
+            <span (click)="riskLinkImportNavigation()">Data sources Import</span>
           </span>
     <ul>
       <li (click)="routerNavigate('RiskLink')" nz-menu-item>Risk Link Import</li>
@@ -75,10 +69,10 @@
             <span>Inuring</span>
           </span>
   </li>
-  <li (click)="routerNavigate('Pricing')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Pricing' : ''">
+  <li (click)="routerNavigate('ScopeCompleteness')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Scope Of Completeness' : ''">
           <span title>
-            <i nz-icon><i class="icon-dollar-alt"></i></i>
-            <span>Pricing</span>
+            <i nz-icon><i class="icon-location_searching_24px"></i></i>
+            <span>Scope of Completeness</span>
           </span>
   </li>
   <li (click)="routerNavigate('Accumulation')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Accumulation' : ''">

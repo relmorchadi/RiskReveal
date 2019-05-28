@@ -8,7 +8,7 @@ import {
   WorkspaceExposuresComponent,
   WorkspaceFileBaseImportComponent, WorkspaceInuringComponent,
   WorkspaceMainComponent,
-  WorkspacePltBrowserComponent, WorkspacePricingComponent,
+  WorkspacePltBrowserComponent,
   WorkspaceProjectComponent, WorkspaceResultsComponent,
   WorkspaceRiskLinkComponent, WorkspaceScopeCompletenceComponent
 } from './containers';
@@ -29,7 +29,6 @@ export const workspaceRoutes: Routes = [
       {data: {title: 'RR- Exposures'}, path: ':wsId/:year/Exposures', component: WorkspaceExposuresComponent},
       {data: {title: 'RR- File Based Import'}, path: ':wsId/:year/FileBasedImport', component: WorkspaceFileBaseImportComponent},
       {data: {title: 'RR- Inuring'}, path: ':wsId/:year/Inuring', component: WorkspaceInuringComponent},
-      {data: {title: 'RR- Pricing'}, path: ':wsId/:year/Pricing', component: WorkspacePricingComponent},
       {data: {title: 'RR- Results'}, path: ':wsId/:year/Results', component: WorkspaceResultsComponent},
       {data: {title: 'RR- Scope Completeness'}, path: ':wsId/:year/ScopeCompleteness', component: WorkspaceScopeCompletenceComponent},
       {data: {title: 'RR- Workspace'}, path: ':wsId/:year/PopOut', component: WorkspaceProjectComponent},
