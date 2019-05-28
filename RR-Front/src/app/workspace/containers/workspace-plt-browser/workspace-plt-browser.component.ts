@@ -457,6 +457,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   selectedPlt: any;
+  addTagModalIndex: any;
+  addTagModal: boolean;
+  addModalInput: any;
+  inputValue: null;
+  addModalSelect: any;
 
   setFilter(filter: string, tag) {
     console.log(this.filters)

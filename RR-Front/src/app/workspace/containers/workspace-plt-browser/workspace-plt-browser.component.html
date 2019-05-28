@@ -119,9 +119,9 @@
               <div nz-row class="tags-title-section">System Tags</div>
               <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
                     <span  [ngClass]="{'active-tag': tag.selected }" class="chips"
-                           [ngStyle]="{'background-color': systemTagsCount[tag.tagId] ? tag.tagColor : 'grey', 'cursor': systemTagsCount[tag.tagId] ? 'cursor' : 'not-allowed'}" (click)="setFilter('systemTag', tag)">
+                           [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('systemTag', tag)">
                       {{tag.tagName}}
-                      <span [ngStyle]="{'background-color': tag.innerTagColor }" class="inner-chip">{{systemTagsCount[tag.tagId]}}</span>
+                      <span [ngStyle]="{'background-color': tag.innerTagColor }" class="inner-chip">{{tag.innerTagContent}}</span>
                     </span>
               </div>
 
