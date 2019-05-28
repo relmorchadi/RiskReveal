@@ -13,7 +13,7 @@ export class UserMenuItemComponent implements OnInit {
   constructor( private _searchService: SearchService) {}
 
   ngOnInit() {
-    this.defaultImport=localStorage.getItem('importConfig');
+    this.defaultImport = localStorage.getItem('importConfig');
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
   }
 

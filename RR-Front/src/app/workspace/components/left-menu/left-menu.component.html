@@ -32,14 +32,14 @@
           </span>
   </li-->
   <hr class="col-xs-12">
-  <li class="pr-1" nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Data sources Import' : ''">
+  <li class="pr-1"  nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Data sources Import' : ''">
           <span title>
-            <i style="z-index: 99" nz-icon><i class="icon-call_merge_24px"></i></i>
-            <span (click)="riskLinkImportNavigation()">Data sources Import</span>
+            <i style="z-index: 99" (click)="riskLinkImportNavigation()" nz-icon><i class="icon-call_merge_24px"></i></i>
+            <span (click)="riskLinkImportNavigation()">Data Sources Import</span>
           </span>
     <ul>
-      <li (click)="routerNavigate('RiskLink')" nz-menu-item>Risk Link Import</li>
-      <li (click)="routerNavigate('FileBasedImport')" nz-menu-item>File Based Import</li>
+      <li (click)="routerNavigate('RiskLink')" nz-menu-item>RiskLink Import</li>
+      <li (click)="routerNavigate('FileBasedImport')" nz-menu-item>File-Based Import</li>
       <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>
     </ul>
   </li>
@@ -47,7 +47,7 @@
   <li (click)="routerNavigate('Exposures')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Exposure' : ''">
           <span title>
             <i nz-icon><i class="icon-adjust-half"></i></i>
-            <span>Exposure</span>
+            <span>Exposures</span>
           </span>
   </li>
   <li (click)="routerNavigate('Results')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Results' : ''">
