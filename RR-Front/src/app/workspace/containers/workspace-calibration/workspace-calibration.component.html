@@ -672,12 +672,12 @@ cursor: pointer;"></i>
 </nz-layout>
 -->
 <app-left-menu></app-left-menu>
-<div style="position: relative; flex: 1">
+<div style="position: relative; flex: 1;">
   <nz-layout class="layoutCalibration">
     <div nz-row>
-      <div class="calibration" nz-col nzSpan="22">
-        <nz-tabset class="card2">
-          <nz-tab nzTitle="Global Adjustement Matrix">
+      <div class="calibration" nz-col nzSpan="23">
+        <!--<nz-tabset class="card2">-->
+          <!--<nz-tab nzTitle="Global Adjustement Matrix">-->
             <div nz-row>
               <div nz-col nzSpan="24">&nbsp;</div>
             </div>
@@ -685,7 +685,7 @@ cursor: pointer;"></i>
               <div nz-col nzSpan="24">&nbsp;</div>
             </div>
             <div nz-row>
-              <div class="textCalibrationMatrix" nz-col nzSpan="6">Calibration Matrix</div>
+              <h4 nz-col nzSpan="6">Calibration Editor</h4>
               <div class="textCalibrationMatrix" nz-col nzSpan="2">&nbsp;</div>
             </div>
             <div nz-row>
@@ -728,7 +728,8 @@ cursor: pointer;"></i>
                       <i (click)="CloseTree()" nz-icon nzTheme="outline" nzType="database"></i>
                     </div>
                     <div nz-col nzSpan="2" style="padding-top: 2px">
-                      <i class="icon-arrows-right-down" style="font-size: 25px;color: #0700CF"></i>
+                      <!--<i class="icon-arrows-right-down" style="font-size: 25px;color: #0700CF"></i>-->
+                      <i class="icon-arrows-right-down" style="font-size: 25px;color: #FFF"></i>
                     </div>
                   </div>
                   <div nz-row>
@@ -1054,7 +1055,7 @@ cursor: pointer;"></i>
                             <nz-table class="fixedHeadder" [nzPaginationPosition]="false" [nzData]="pure.dataTable">
                               <thead>
                               <tr nzWidth="100px">
-                                <th style="background-color: #FFFBF2"><b>Inuring ID</b>
+                                <th style="background-color: #FFFBF2"><b>Post-Inuring</b>
                                   <!-- <i (click)="feedCatgegoryNameForHide(category.name)" [ngClass]="eyeVisible()"
                                       style="float: right;margin-top: 5px;"></i>-->
                                 </th>
@@ -1142,7 +1143,8 @@ cursor: pointer;"></i>
                 </div>
               </div>
             </div>
-          </nz-tab>
+          <!--</nz-tab>-->
+        <!--
           <nz-tab nzTitle="Adjustment Canvas">
             <div
               style="padding:50px; background: #fff; min-height:700px;margin-top: 25px; margin-right: 15px; box-shadow: 0px 1px 20px 0px #dcdada;">
@@ -1213,12 +1215,13 @@ cursor: pointer;"></i>
             </div>
           </nz-tab>
         </nz-tabset>
+        -->
       </div>
-      <div nz-col nzSpan="2">
+      <div nz-col nzSpan="1">
         <div class="right-column">
           <div class="navigation-icons pt-5" style="min-height: 100px">
             <i class="icon-map-pin-alt" id="alt"></i>
-            <i (click)="open()" class="icon-arrow_back_ios_24px mt-2"></i>
+            <!--<i (click)="open()" class="icon-arrow_back_ios_24px mt-2"></i>-->
           </div>
         </div>
       </div>

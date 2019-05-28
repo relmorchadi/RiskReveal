@@ -57,7 +57,7 @@ const initiaState: RiskLinkModel = {
       data: ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'],
       selected: 'Facultative Reinsurance Loss'
     },
-    targetCurrency: {data: ['MLC (USD)', 'MLC (EUR)', 'YEN'], selected: 'MLC (USD)'},
+    targetCurrency: {data: ['MLC', 'User Defined', 'Underling Currency'], selected: 'MLC'},
     calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
   },
   selectedAnalysisAndPortoflio: {

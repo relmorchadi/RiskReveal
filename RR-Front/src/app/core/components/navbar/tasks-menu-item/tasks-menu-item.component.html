@@ -33,25 +33,23 @@
                   </ng-template>
                   <ng-template #tooltipInfo>
                     <span>
-                      <span *ngIf="activeTask.specific.type === 'Import'">{{activeTask.status.completed}}
-                        /{{activeTask.status.total}} Analysis Imported</span>
-                      <span *ngIf="activeTask.specific.type === 'Calibration'">{{activeTask.status.completed}}
-                        /{{activeTask.status.total}} Calibration Imported</span>
-                      <span *ngIf="activeTask.specific.type === 'Inuring'">{{activeTask.status.completed}}
-                        /{{activeTask.status.total}} Inuring Imported</span>
+                      <span *ngIf="activeTask.specific.type === 'Import'">Import: {{activeTask.status.completed}} of {{activeTask.status.total}} Portfolios,
+                      {{activeTask.status.completed}} of {{activeTask.status.total}} Analysis</span>
+                      <span *ngIf="activeTask.specific.type === 'Calibration'">Calibration: {{activeTask.status.completed}} of {{activeTask.status.total}} PLTs</span>
+                      <span *ngIf="activeTask.specific.type === 'Inuring'">Inuring: {{activeTask.status.completed}} of {{activeTask.status.total}} Contract</span>
                     </span>
                   </ng-template>
                   <!--<i class="icon-window-section"></i> -->
                   <div [nzTitle]="tooltipInfo" nzPlacement="bottom" nz-tooltip
-                       (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)"
+                       (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)"
                        class="item-list-title-wrapper">
                     <span class="item-list-title">{{activeTask?.name}}</span>
                     <span class="item-list-subtitle">{{activeTask?.year}} - {{activeTask?.description}}</span>
                   </div>
                 </div>
                 <div class="list-item-right">
-                  <span (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="list-item-info">{{activeTask?.specific.type}} - {{activeTask?.data.workSpaceId}}</span>
-                  <span (click)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">{{activeTask?.duration}}</span>
+                  <span (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="list-item-info">{{activeTask?.specific.type}} - {{activeTask?.data.workSpaceId}}</span>
+                  <span (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">{{activeTask?.duration}}</span>
                   <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                     <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                     <ul nz-menu>
@@ -110,15 +108,13 @@
                          style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Import"></nz-option>
-                <nz-option [nzValue]="3" nzLabel="Iniuring"></nz-option>
+                <nz-option [nzValue]="3" nzLabel="Inuring"></nz-option>
                 <nz-option [nzValue]="4" nzLabel="Calibration"></nz-option>
 
               </nz-select>
             </div>
             <div class="task-button">
-              <button class="popover-menu-control-button" nz-button nzType="default" (click)="navigateToJOBmanager()">
-                SEE ALL
-              </button>
+              <button class="button-no-outline" (click)="navigateToJOBmanager()">SEE ALL</button>
             </div>
           </div>
         </div>
@@ -286,7 +282,7 @@
                          style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Import"></nz-option>
-                <nz-option [nzValue]="3" nzLabel="Iniuring"></nz-option>
+                <nz-option [nzValue]="3" nzLabel="Inuring"></nz-option>
                 <nz-option [nzValue]="4" nzLabel="Calibration"></nz-option>
 
               </nz-select>

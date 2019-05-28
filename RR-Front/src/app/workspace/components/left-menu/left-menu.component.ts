@@ -44,10 +44,10 @@ export class LeftMenuComponent implements OnInit {
     this._helper.updateWorkspaceItems();
   }
 
-  riskLinkImportNavigation(){
-    let userPref= localStorage.getItem('importConfig');
-    console.log('tt', userPref);
-    if(userPref && ['RiskLink', 'FileBasedImport', 'CloneData'].includes(userPref)){
+  riskLinkImportNavigation() {
+    let userPref = localStorage.getItem('importConfig');
+    console.log(userPref, ['RiskLink', 'FileBasedImport', 'CloneData'].includes(userPref));
+    if (userPref && ['RiskLink', 'FileBasedImport', 'CloneData'].includes(userPref)) {
       this.routerNavigate(userPref);
     }
   }

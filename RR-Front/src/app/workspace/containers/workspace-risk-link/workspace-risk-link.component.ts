@@ -377,12 +377,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   onInputSearch(event) {
-    console.log('the searched Item is:', event.target.value);
     if (event.target.value.length > 2) {
       this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
     } else {
       this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: '', size: '20'}));
     }
+    this.detectChanges();
   }
 
   loadItemsLazy(event) {
