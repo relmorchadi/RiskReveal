@@ -13,6 +13,8 @@ import {stringify} from "querystring";
 })
 export class WorkspaceCalibrationComponent implements OnInit {
 
+  size;
+  disabled;
 
   visibleIcon: Boolean;
 
