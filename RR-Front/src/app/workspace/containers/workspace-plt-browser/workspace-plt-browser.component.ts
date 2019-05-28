@@ -258,7 +258,6 @@ export class WorkspacePltBrowserComponent implements OnInit {
       note: true,
       checked: false
     }
-
   ];
 
 
@@ -590,7 +589,10 @@ export class WorkspacePltBrowserComponent implements OnInit {
     this.visible = false;
   }
 
-  openPltInDrawer(plt) {
+  openPltInDrawer(plt)
+
+
+  {
     let selectedPlts = this.listOfDisplayPlts.filter(pt => pt.selected === true);
     if (selectedPlts.length > 0) {
       if (selectedPlts[0] === plt) {
@@ -599,7 +601,9 @@ export class WorkspacePltBrowserComponent implements OnInit {
         this.sumnaryPltDetails = null;
         this.pltDetailsPermission = false;
       } else {
-        this.listOfDisplayPlts.forEach( pt => pt.selected = false);
+        this.listOfDisplayPlts.forEach( pt =>
+
+          pt.selected = false);
         plt.selected = true;
         this.sumnaryPltDetails = plt;
       }
