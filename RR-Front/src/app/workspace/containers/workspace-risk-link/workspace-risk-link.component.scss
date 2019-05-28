@@ -257,6 +257,7 @@
           justify-content: flex-end;
           flex: 1;
           padding-right: 10px;
+          align-items: center;
 
           .icon-filter {
             margin: 19px 15px 0;
@@ -286,6 +287,7 @@
           display: flex;
           flex: 1;
           justify-content: flex-end;
+          align-items: center;
 
           ::ng-deep {
             .ant-select {
@@ -306,6 +308,7 @@
           }
 
           .icon-drop {
+            margin-bottom: 25px;
             ::ng-deep {
               .anticon {
                 cursor: pointer;
@@ -528,20 +531,9 @@
               justify-content: flex-end;
               width: 100%;
               padding: 10px 12px;
-
               button {
-                background-color: #0700CF;
-                color: #FFFFFF;
-                font-family: Rubik;
-                font-size: 14.22px;
-                font-weight: 500;
-                letter-spacing: 1.25px;
-                line-height: 16px;
-                text-align: center;
-                height: 36px;
-                width: 96px;
-                border-radius: 18px;
-                box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
+                padding: 9px 25px 7px;
+                margin-right: 10px;
               }
             }
           }
@@ -777,25 +769,6 @@
           width: 97%;
           margin: auto;
           justify-content: flex-end;
-
-          button {
-            width: 160px;
-            height: 36px;
-            font-family: Rubik;
-            font-size: 14.22px;
-            font-weight: bold;
-            letter-spacing: 1.25px;
-            line-height: 16px;
-            text-align: center;
-            background-color: #0700CF;
-            color: #fff;
-            border-radius: 18px;
-            box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-
-            &:focus {
-              outline: 0;
-            }
-          }
         }
       }
     }

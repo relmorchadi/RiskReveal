@@ -282,11 +282,11 @@ export class SearchMenuItemComponent implements OnInit {
       this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
       // this.state.visibleSearch = false;
       this._notifcationService.createNotification('Information',
-        'the export mode is now enabled',
+        'the expert mode is now enabled',
         'info', 'bottomRight', 2000);
     } else {
       this._notifcationService.createNotification('Information',
-        'the export mode is now disabled',
+        'the expert mode is now disabled',
         'info', 'bottomRight', 2000);
     }
   }

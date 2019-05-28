@@ -156,6 +156,76 @@ export class WorkspaceJobManagerComponent implements OnInit {
     }
   ];
 
+  tableColumnDetail = [
+    {
+      field: 'taskNumber',
+      header: 'Task N°',
+      width: '50px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'state'
+    },
+    {
+      field: 'taskName',
+      header: 'Task Name',
+      width: '200px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'job'
+    },
+    {
+      field: 'status',
+      header: 'Status',
+      width: '120px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'jobOwner'
+    },
+    {
+      field: 'startDate',
+      header: 'Start Date',
+      width: '120px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'jobType'
+    },
+    {
+      field: 'completedDate',
+      header: 'Completed Date',
+      width: '120px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'innerCedantName'
+    },
+  ];
+
+  detailData = [
+    {
+      taskNumber: '1',
+      taskName: 'Import Portfolio XYZ from "EDM Name"',
+      status: '2019-01-03 T 09:57:10',
+      startDate: '2019-01-03 T 09:57:10',
+      completedDate: '2019-01-03 T 09:57:10',
+    },
+    {
+      taskNumber: '2',
+      taskName: 'Import Analysis ABC (ID 30) from "RDM Name"',
+      status: '2019-01-03 T 09:57:10',
+      startDate: '2019-01-03 T 09:57:10',
+      completedDate: '2019-01-03 T 09:57:10',
+    }
+  ];
+
   listOfData = [
     {
 /*      selected: false,*/

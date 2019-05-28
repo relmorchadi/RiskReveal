@@ -19,11 +19,11 @@
     </i>
   </button>
   <div class="row pl-2 ml-4 mt-4">
-    <div class="col-11 pr-4">
-      <span class="projects-title">Projects</span> <i class="icon-plus-circle icon-generic" style="font-size: 25px;"></i>
-      <i class="icon-grid float-right mt-2 icon-generic" style="transform: rotate(90deg)" ></i>
-      <i nz-icon class="float-right mt-2 icon-generic" nzType="appstore" nzTheme="outline"></i>
-      <nz-select class="float-right mt-2" style="width: 140px; margin-right: 70px;" nzShowSearch nzAllowClear  [(ngModel)]="selectedPrStatus">
+    <div class="title-project-wrapper">
+      <div style="display: flex;">
+        <h4>Projects</h4> <i class="icon-plus-circle icon-generic" style="font-size: 25px;"></i>
+      </div>
+      <nz-select class="float-right mt-2" style="width: 140px; margin-right: 70px;" nzShowSearch [(ngModel)]="selectedPrStatus">
         <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
       </nz-select>
     </div>

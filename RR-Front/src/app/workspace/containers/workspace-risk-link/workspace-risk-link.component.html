@@ -171,7 +171,7 @@
                       </p-virtualScroller>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>ADD</button>
+                      <button (click)="selectedItem()" class="button-standard">ADD</button>
                     </div>
                   </nz-tab>
                   <nz-tab nzTitle="EDM">
@@ -188,7 +188,7 @@
                       </ul>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>ADD</button>
+                      <button (click)="selectedItem()" class="button-standard">ADD</button>
                     </div>
                   </nz-tab>
                   <nz-tab nzTitle="RDM">
@@ -205,7 +205,7 @@
                       </ul>
                     </div>
                     <div class="search-bar-result-button">
-                      <button (click)="selectedItem()" nz-button>ADD</button>
+                      <button (click)="selectedItem()" class="button-standard">ADD</button>
                     </div>
                   </nz-tab>
                 </nz-tabset>
@@ -275,7 +275,7 @@
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter"></i>
-                  <button class="modal-button" nz-button> ADVANCED</button>
+                  <button class="button-outlined"> ADVANCED</button>
                 </div>
               </div>
               <div class="show-table">
@@ -315,7 +315,7 @@
                 </p-table>
               </div>
               <div class="import-button" (click)="displayImported()">
-                <button>ADD TO BASKET</button>
+                <button class="button-standard">ADD TO BASKET</button>
               </div>
             </div>
           </div>
@@ -331,7 +331,7 @@
               <div>Exposure Summaries</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="modal-button" *ngIf="state.collapse.collapseResult" nz-button> ADVANCED</button>
+              <button class="button-outlined" *ngIf="state.collapse.collapseResult"> ADVANCED</button>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseResult" nz-icon nzType="up" (click)="changeCollapse('collapseResult')"
                    nzTheme="outline"></i>
@@ -420,7 +420,7 @@
               <div>Analysis Results</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="modal-button" *ngIf="state.collapse.collapseAnalysis" nz-button> ADVANCED</button>
+              <button class="button-outlined" *ngIf="state.collapse.collapseAnalysis"> ADVANCED</button>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseAnalysis" nz-icon nzType="up"
                    (click)="changeCollapse('collapseAnalysis')" nzTheme="outline"></i>

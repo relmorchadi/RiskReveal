@@ -89,8 +89,9 @@
 
 .table-ngPrime {
   ::ng-deep {
-    .ui-table-scrollable-view {
-      min-height: 750px;
+    .ui-table-scrollable-body {
+      overflow: auto;
+      height: 425px;
     }
 
     .ui-table-thead {
@@ -211,6 +212,19 @@
   }
 }
 
+.detail-Job-wrapper {
+  background-color: #fff;
+  padding: 20px;
+}
+
+.detail-Job {
+  padding: 25px;
+  border: 1px solid rgba(0,0,0,0.1);
+  .detail-Job-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+}
 
 .loading-text {
   height: 20px;
