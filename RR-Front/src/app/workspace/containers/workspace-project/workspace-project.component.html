@@ -76,32 +76,32 @@
             </div>
           </div>
           <div class="project-kpi border-top d-flex">
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
               <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
-              <span class="project-kpi-span">RP</span>
-              <span class="project-kpi-span"><b>{{project?.regionPerilSum}}</b></span>
+              <span class="project-kpi-span">Region Peril</span>
+              <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
             </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
               <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
               <span class="project-kpi-span">Exp</span>
               <span class="project-kpi-span"><b>-</b></span>
             </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
               <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
               <span class="project-kpi-span">PLT</span>
-              <span class="project-kpi-span"><b>{{project?.pltThreadSum}}</b></span>
+              <span class="project-kpi-span"><b>{{project?.pltThreadSum || 0}}</b></span>
             </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
-              <span class="project-kpi-span">Publish</span>
-              <span class="project-kpi-span"><b>{{project?.xactSum}}</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
               <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+              <span class="project-kpi-span">Publish</span>
+              <span class="project-kpi-span"><b>{{project?.xactSum || 0}}</b></span>
+            </div>
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
               <span class="project-kpi-span">Pricing</span>
               <span class="project-kpi-span"><b>-</b></span>
             </div>
-            <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
+            <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
               <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
               <span class="project-kpi-span">Accum</span>
               <span class="project-kpi-span"><b>-</b></span>

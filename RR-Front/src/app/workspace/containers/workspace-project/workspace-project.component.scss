@@ -354,7 +354,10 @@
       font-size: 0.7em;
       background-color: #fff;
 
-      div {
+      .project-component {
+        justify-content: space-between;
+      }
+       div {
         i {
           height: 19.89px;
           width: 16.89px;
@@ -362,7 +365,7 @@
 
         .project-kpi-span {
           padding-top: 12px;
-          font-size: 17px;
+          font-size: 15px;
           letter-spacing: 0.5px;
           line-height: 20px;
         }
