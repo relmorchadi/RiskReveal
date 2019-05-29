@@ -17,4 +17,9 @@ export class PltApi {
     return this.http.get(`${this.URL}/`, {params: params});
   }
 
+  public assignPltsToTag(params?): Observable<any> {
+    console.log(params);
+    return this.http.post(`${this.URL}/assign-user-tag`, params)
+  }
+
 }

@@ -12,7 +12,9 @@ const initiaState: pltMainModel = {
   filters: {
     systemTag: [],
     userTag: []
-  }
+  },
+  systemTags: {},
+  userTags: {}
 };
 
 @State<pltMainModel>({
@@ -51,62 +53,31 @@ export class PltMainState implements NgxsOnInit {
   static getProjects() {
     return (state: any) => state.workspaceMain.openedWs.projects
   }
-  userTags = [
-    {tagId: '1', tagName: 'Pricing V1', tagColor: '#893eff', innerTagContent: '1', innerTagColor: '#ac78ff', selected: false},
-    {tagId: '2', tagName: 'Pricing V2', tagColor: '#06b8ff', innerTagContent: '2', innerTagColor: '#51cdff', selected: false},
-    {tagId: '3', tagName: 'Final Princing', tagColor: '#c38fff', innerTagContent: '5', innerTagColor: '#d5b0ff', selected: false}
-  ];
-  systemTags = [
-    {tagId: '8', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
-    {
-      tagId: '9',
-      tagName: 'NATC-USM',
-      tagColor: '#7bbe31',
-      innerTagContent: '2',
-      innerTagColor: '#a2d16f',
-      selected: false
-    },
-    {
-      tagId: '10',
-      tagName: 'Post-Inured',
-      tagColor: '#006249',
-      innerTagContent: '9',
-      innerTagColor: '#4d917f',
-      selected: false
-    },
-    {
-      tagId: '4',
-      tagName: 'Pricing',
-      tagColor: '#009575',
-      innerTagContent: '0',
-      innerTagColor: '#4db59e',
-      selected: false
-    },
-    {
-      tagId: '5',
-      tagName: 'Accumulation',
-      tagColor: '#009575',
-      innerTagContent: '2',
-      innerTagColor: '#4db59e',
-      selected: false
-    },
-    {
-      tagId: '6',
-      tagName: 'Default',
-      tagColor: '#06b8ff',
-      innerTagContent: '1',
-      innerTagColor: '#51cdff',
-      selected: false
-    },
-    {
-      tagId: '7',
-      tagName: 'Non-Default',
-      tagColor: '#f5a623',
-      innerTagContent: '0',
-      innerTagColor: '#f8c065',
-      selected: false
-    },
-  ];
+  @Selector()
+    static getUserTags(state: pltMainModel){
+    return _.get(state,'userTags',{})
+  }
+
+  @Selector()
+    static  getSystemTags(state: pltMainModel){
+    return _.get(state,'systemTags',{})
+  }
+
+  systemTagsMapping = {
+    regionPerilCode: 'Region Peril',
+    financialPerspective: 'financialPerspective',
+    currency: 'Currency',
+    sourceModellingVendor: 'Modelling Vendor',
+    sourceModellingSystem: 'Model System',
+    generatedFromDefaultAdjustement: 'Default',
+    pltType: 'Loss Asset Type',
+    originalTarget: 'Loss Asset Type',
+    targetRapCode: 'Target RAP',
+    xActAvailable: 'Published to Pricing',
+    xActUsed: 'Used in Pricing',
+    pltGrouping: 'Grouped',
+    userOccurenceBasis: 'userOccurenceBasis'
+  };
 
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
@@ -123,28 +94,26 @@ export class PltMainState implements NgxsOnInit {
         mergeMap( (data) => {
           ctx.patchState({
             data: Object.assign({},
-              ...data.map(plt => ({[plt.pltId]: { ..._.omit(plt, 'pltId'), selected: false, visible: true,opened: false,
-                  userTag: _.range(_.random(3)).map(i => this.userTags[i]),
-                  systemTag: _.range(_.random(7)).map(i => this.systemTags[i])
-                }})
-              )
+              ...data.plts.map(plt => ({[plt.pltId]: { ...plt, selected: false, visible: true,opened: false }}))
             ),
             filters: {
               systemTag: [],
               userTag: []
             }
           });
-          return ctx.dispatch(new fromPlt.loadAllPltsSuccess());
+          return ctx.dispatch(new fromPlt.loadAllPltsSuccess({userTags: data.userTags}));
         }),
         catchError( err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
       );
   }
 
   @Action(fromPlt.loadAllPltsSuccess)
-  LoadAllPltsSuccess(ctx: StateContext<pltMainModel>, action: fromPlt.loadAllPltsSuccess) {
+  LoadAllPltsSuccess(ctx: StateContext<pltMainModel>, { payload }: fromPlt.loadAllPltsSuccess) {
     ctx.patchState({
       loading: false
     });
+
+    ctx.dispatch(new fromPlt.constructUserTags({userTags: payload.userTags}))
   }
 
   @Action(fromPlt.ToggleSelectPlts)
@@ -213,13 +182,12 @@ export class PltMainState implements NgxsOnInit {
 
     let newData = {};
 
-    if ([...filters.systemTag, ...filters.userTag].length > 0) {
+    if ([...filters.userTag].length > 0) {
         _.forEach(state.data, (plt, k) => {
-          if (_.some([...filters.userTag, ...filters.systemTag], (userTag) => _.find([...plt.userTag, ...plt.systemTag], tag => tag.tagId == userTag))) {
+          if (_.some([...filters.userTag], (userTag) => _.find([...plt.userTags], tag => tag.tagId == userTag))) {
             newData[k] = {...plt, visible: true};
           } else {
             newData[k] = {...plt, visible: false};
-            console.log(newData[k].visible,k);
           }
         });
     } else {
@@ -234,4 +202,72 @@ export class PltMainState implements NgxsOnInit {
     });
   }
 
+  @Action(fromPlt.assignPltsToTag)
+  assignPltsToTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTag){
+
+    return this.pltApi.assignPltsToTag(payload).pipe(
+      tap( r => console.log(r)),
+      mergeMap( (userTag) => {
+        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
+          userTag,
+          plts: payload.plts
+        }))
+      }),
+      catchError( () => of(new fromPlt.assignPltsToTagFail()))
+    )
+
+  }
+
+  @Action(fromPlt.constructUserTags)
+  constructUserTags(ctx: StateContext<pltMainModel>, { payload }: fromPlt.constructUserTags){
+    const {
+      data,
+      userTags
+    } = ctx.getState()
+
+    let uesrTagsSummary = {};
+
+
+    _.forEach(payload.userTags, (payloadTag) => {
+
+      const {
+        tagId,
+        pltHeaders,
+        ...rest
+      } = payloadTag
+
+      uesrTagsSummary[tagId] = {tagId,...rest, count: pltHeaders.length, selected: false}
+    })
+
+    ctx.patchState({
+      userTags: uesrTagsSummary
+    })
+
+  }
+
+  @Action(fromPlt.assignPltsToTagSuccess)
+  assignPltsToTagSucess(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTagSuccess){
+    const {
+      userTag: {
+        pltHeaders,
+        ...rest
+      }
+    } = payload;
+
+    const {
+      data,
+      userTags
+    } = ctx.getState()
+
+    let newData = {};
+
+    _.forEach(pltHeaders, (v,k) => {
+      newData[v.id] = _.merge({},data[v.id],{userTags: [...data[v.id].userTags, rest] })
+    })
+
+    ctx.patchState({
+      data: _.merge({},data, newData),
+      userTags: {...userTags, [rest.tagId]: {...rest, selected: false,count: pltHeaders.length}}
+    })
+  }
 }

@@ -55,7 +55,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   contextMenuItems = [
     { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
     { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) },
-    { label: 'Add/Assign Tag', icon: 'pi pi-tags', command: (event) => this.addTagModal= true},
+    { label: 'Add/Assign Tag', icon: 'pi pi-tags', command: (event) => this.addTagModal= true}
   ];
 
   pltColumns = [
@@ -93,63 +93,13 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   pltdetailsSystemTags: any = [];
   pltdetailsUserTags: any = [];
 
-  systemTags = [
-    {tagId: '8', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
-    {
-      tagId: '9',
-      tagName: 'NATC-USM',
-      tagColor: '#7bbe31',
-      innerTagContent: '2',
-      innerTagColor: '#a2d16f',
-      selected: false
-    },
-    {
-      tagId: '10',
-      tagName: 'Post-Inured',
-      tagColor: '#006249',
-      innerTagContent: '9',
-      innerTagColor: '#4d917f',
-      selected: false
-    },
-    {
-      tagId: '4',
-      tagName: 'Pricing',
-      tagColor: '#009575',
-      innerTagContent: '0',
-      innerTagColor: '#4db59e',
-      selected: false
-    },
-    {
-      tagId: '5',
-      tagName: 'Accumulation',
-      tagColor: '#009575',
-      innerTagContent: '2',
-      innerTagColor: '#4db59e',
-      selected: false
-    },
-    {
-      tagId: '6',
-      tagName: 'Default',
-      tagColor: '#06b8ff',
-      innerTagContent: '1',
-      innerTagColor: '#51cdff',
-      selected: false
-    },
-    {
-      tagId: '7',
-      tagName: 'Non-Default',
-      tagColor: '#f5a623',
-      innerTagContent: '0',
-      innerTagColor: '#f8c065',
-      selected: false
-    },
-  ];
+  systemTags: any;
 
-  userTags = [
-    {tagId: '1', tagName: 'Pricing V1', tagColor: '#893eff', innerTagContent: '1', innerTagColor: '#ac78ff', selected: false},
-    {tagId: '2', tagName: 'Pricing V2', tagColor: '#06b8ff', innerTagContent: '2', innerTagColor: '#51cdff', selected: false},
-    {tagId: '3', tagName: 'Final Princing', tagColor: '#c38fff', innerTagContent: '5', innerTagColor: '#d5b0ff', selected: false}
-  ];
+  systemTagsCount: any;
+
+  userTags: any;
+
+  userTagsCount: any;
 
   currencies = [
     {id: '1', name: 'Euro', label: 'EUR'},
@@ -334,9 +284,29 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.filterData = {};
     this.activeCheckboxSort = false;
     this.loading = true;
+    this.addTagModal = false;
+    this.systemTagsCount= {};
+    this.userTagsCount= {};
+    this.addTagModalIndex = 0;
   }
+
+  @Select(PltMainState.getUserTags) userTags$;
   @Select(PltMainState.data) data$;
   loading: boolean;
+
+  systemTagsMapping = {
+    grouped: {
+      regionPerilCode: 'Region Peril',
+      currency: 'Currency',
+      sourceModellingVendor: 'Modelling Vendor',
+      sourceModellingSystem: 'Model System',
+      targetRapCode: 'Target RAP',
+      userOccurrenceBasis: 'User Occurence Basis',
+      pltType: 'Loss Asset Type',
+    },
+    nonGrouped: {
+    }
+  };
 
   ngOnInit() {
     this.Subscriptions.push(
@@ -344,11 +314,37 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         let d1= [];
         let d2= [];
         this.loading= false;
+        this.systemTagsCount = {};
         _.forEach(data, (v,k) => {
           d1.push({...v,pltId: k});
           d2.push(k);
-          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+
+          if(v.visible) {
+            //Grouped Sys Tags
+            _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
+              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+              const tag = v[section];
+              if(this.systemTagsCount[sectionName][tag]){
+                this.systemTagsCount[sectionName][tag] = this.systemTagsCount[sectionName][tag] + 1;
+              }else{
+                this.systemTagsCount[sectionName][tag] = 1
+              }
+            })
+
+            //NONE grouped Sys Tags
+            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+              const tag = v[section];
+              if(this.systemTagsCount[sectionName][tag]){
+                this.systemTagsCount[sectionName][section] = (this.systemTagsCount[sectionName][section] || 0) + 1;
+              }else{
+                this.systemTagsCount[sectionName]['non-'+section] = (this.systemTagsCount[sectionName]['non-'+section] || 0) + 1;
+              }
+            })
+          }
+
         });
+        console.log(this.systemTagsCount)
         this.listOfPlts = d2;
         this.listOfPltsData = this.listOfPltsCache = d1;
         this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
@@ -367,8 +363,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         });
         this.detectChanges();
       }),
-      this.route$.params.subscribe(
-        ({wsId, year}) => {
+      this.route$.params.subscribe(({wsId, year}) => {
           console.log(wsId);
           this.workspaceId = wsId;
           this.uwy = year;
@@ -377,15 +372,17 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
             params: {
               workspaceId: wsId, uwy: year
             }}));
-        }
-      ),
-      this.store$.select(PltMainState.getProjects()).subscribe(
-        (projects: any) => {
+        }),
+      this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
           this.projects = projects;
           this.detectChanges();
-        }
-      ),
-      this.getAttr('loading').subscribe( l => this.loading = l)
+        }),
+      this.getAttr('loading').subscribe( l => this.loading = l),
+      this.userTags$.subscribe( userTags => {
+        console.log(userTags)
+        this.userTags = userTags || {};
+        this.detectChanges();
+      })
     );
   }
 
@@ -465,7 +462,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   addModalSelect: any;
 
   setFilter(filter: string, tag) {
-    console.log(this.filters)
       this.filters =
         _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
         _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
@@ -474,9 +470,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if(filter == 'userTag'){
       this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
     }
-    if(filter == 'systemTag') {
+    /*if(filter == 'systemTag') {
       this.systemTags = _.map(this.systemTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
-    }
+    }*/
     this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
       filters: this.filters
     }))
@@ -682,6 +678,27 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     } else {
       this.listOfPltsData = this.listOfPltsCache;
     }
+  }
+
+  assignPltsToTag() {
+    if(this.addTagModalIndex > 0 ){
+      this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+        plts: this.selectedListOfPlts,
+        wsId: this.workspaceId,
+        uwYear: this.uwy,
+        tag: this.addModalSelect
+      }))
+    }else{
+      this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+        plts: this.selectedListOfPlts,
+        wsId: this.workspaceId,
+        uwYear: this.uwy,
+        tag: {
+          tagName: this.addModalInput
+        }
+      }))
+    }
+    this.addTagModal = false;
   }
 }
 
