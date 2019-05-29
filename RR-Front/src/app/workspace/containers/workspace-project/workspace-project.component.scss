@@ -25,8 +25,11 @@
 
 .workspace-main-content {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
   flex: 1;
-  background: rgb(244, 246, 252);
+  background: #f4f6fc;
 }
 
 .pine-btn {
@@ -185,13 +188,6 @@
       color: rgb(5, 37, 216) !important;
     }
 
-    .ant-select-selection {
-      background-color: transparent;
-      border: none;
-      border-radius: 0;
-      border-bottom: 2px solid #0700CF;
-    }
-
     .ant-select-selection__rendered {
       color: #0700CF;
     }
@@ -202,8 +198,9 @@
     display: flex;
     flex-wrap: wrap;
     width: 95%;
-    padding: 0 20px 20px;
-    margin: auto;
+    flex: 1;
+    padding: 0 20px 300px;
+    margin: 0 auto;
     justify-content: flex-start;
     @media screen and (max-width: 1550px) and (min-width: 1200px) {
       justify-content: space-between;
@@ -231,8 +228,18 @@
 
   .card-holder {
     margin: 10px 0;
-    @media screen and (max-width: 1024px) and (min-width: 780px) {
-      margin: 15px auto;
+    width: 50%;
+    @media screen and (min-width: 2200px) {
+      width: 25%;
+    }
+
+    @media screen and (min-width: 1800px) and (max-width: 2200px) {
+      width: 33%;
+    }
+
+    @media screen and (max-width: 1350px) {
+      margin: 10px auto;
+      width: 60%;
     }
 
     &:hover {
@@ -243,8 +250,7 @@
   }
 
   .project-card {
-    min-width: 450px;
-    max-width: 470px;
+    width: 95%;
     border: 3px solid transparent;
     border-radius: 2px;
     background-color: #FAFAFA;

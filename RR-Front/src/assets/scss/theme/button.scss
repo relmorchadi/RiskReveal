@@ -114,3 +114,23 @@
   line-height: 16px;
   text-align: center;
 }
+
+.button-icon-default {
+  background-color: #0700CF;
+  color: #FFFFFF;
+  padding: 1px;
+  font-size: 17px;
+  border: none;
+  border-radius: 20px;
+  &:focus {
+    outline: 0 !important;
+  }
+}
+
+.button-icon-outlined {
+
+}
+
+.button-icon-disabled {
+
+}

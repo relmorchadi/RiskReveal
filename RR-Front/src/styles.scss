@@ -3,6 +3,13 @@
 @import "assets/scss/theme/font";
 @import "assets/scss/theme/button";
 @import "assets/scss/theme/input";
+@import "assets/scss/theme/dropdown";
+
+body {
+  @media screen and (min-width: 1800px) {
+    overflow: hidden;
+  }
+}
 
 .ant-avatar {
   display: inline-flex;

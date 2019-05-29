@@ -15,7 +15,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input (input)="searchJobs($event)" class="gray-search-input"/>
+            <input (input)="searchJobs($event)" class="input-search"/>
           </div>
           <ul>
             <li *ngFor="let activeTask of savedtasks.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
@@ -96,15 +96,15 @@
           </ul>
           <div class="mt-2 task-footer">
             <div>
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="popover-menu-control-select"
-                         style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
+                         style="width: 140px; margin-right: 10px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="Today"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Yesterday"></nz-option>
                 <nz-option [nzValue]="3" nzLabel="Last Week"></nz-option>
                 <nz-option [nzValue]="4" nzLabel="Last Month"></nz-option>
               </nz-select>
 
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="popover-menu-control-select"
+              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
                          style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Import"></nz-option>
@@ -191,7 +191,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input (input)="searchJobs($event)" class="gray-search-input"/>
+            <input (input)="searchJobs($event)" class="input-search"/>
           </div>
           <ul>
             <li *ngFor="let activeTask of savedtasks.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
@@ -270,7 +270,7 @@
           </ul>
           <div class="mt-2 task-footer">
             <div>
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="popover-menu-control-select"
+              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
                          style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="Today"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Yesterday"></nz-option>
@@ -278,7 +278,7 @@
                 <nz-option [nzValue]="4" nzLabel="Last Month"></nz-option>
               </nz-select>
 
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="popover-menu-control-select"
+              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
                          style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Import"></nz-option>

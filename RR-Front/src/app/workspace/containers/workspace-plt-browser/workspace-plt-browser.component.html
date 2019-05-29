@@ -1,8 +1,7 @@
 <app-left-menu></app-left-menu>
-<nz-layout style="display: flex; flex-direction: row; width: 100%;">
-
+<div class="plt-browser-wrapper">
   <div class="mr-3 ml-3" style="flex: 1;">
-    <div class="title-wrapper" nz-row style="margin-top: 50px;">
+    <div class="title-wrapper" nz-row>
       <div class="title-section">
         <h4>PLT Manager</h4>
       </div>
@@ -213,7 +212,7 @@
                   <div class="td-wrapper-tags">
                   <span *ngFor="let tag of (selectPltById(pltId) | async)?.userTags"
                         [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>-->
-                    <!--<span style ="background-color: #0b97c4">&nbsp;</span>>
+              <!--<span style ="background-color: #0b97c4">&nbsp;</span>>
                   </div>
                 </td>
                 <td  (click)="handlePLTClick(pltId,i,$event)">
@@ -344,8 +343,7 @@
       </div>
     </div>
   </div>
-
-</nz-layout>
+</div>
 
 
 <!--<nz-drawer [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" (nzOnClose)="closeDrawer()" [nzWidth]=650>-->
