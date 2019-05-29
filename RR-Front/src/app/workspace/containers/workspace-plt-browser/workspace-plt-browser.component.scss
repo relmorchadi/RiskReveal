@@ -2,10 +2,11 @@
 :host {
   display: flex;
   width: 100%;
-  @media  screen and (min-width: 1900px) {
+  @media screen and (min-width: 1900px) {
     height: 100vh;
   }
   height: 100vh;
+
   ::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
     margin-top: -362px;
     margin-left: -473px;
@@ -13,7 +14,10 @@
 }
 
 
-nz-layout {
+.plt-browser-wrapper {
+  display: flex;
+  flex-direction: row;
+  background-color: #F4F6FC;
   width: 100%;
 
   .tabset-left {
@@ -26,7 +30,7 @@ nz-layout {
 
       .active-path {
         background-color: #FDFBDF;
-        margin-top:1px;
+        margin-top: 1px;
         margin-bottom: 1px;
       }
 
@@ -53,6 +57,7 @@ nz-layout {
           overflow: auto;
           max-height: 600px;
           max-width: 190px;
+
           li * {
             font-size: 10px;
           }
@@ -145,8 +150,8 @@ nz-layout {
       font-size: 11px;
       letter-spacing: 0.08px;
 
-      ::ng-deep{
-        .ant-table-column-sorter{
+      ::ng-deep {
+        .ant-table-column-sorter {
           top: 9%;
         }
 
@@ -177,6 +182,7 @@ nz-layout {
 
   .title-wrapper {
     display: flex;
+    margin-top: 50px;
   }
 
   .tags-title-section {
@@ -464,6 +470,7 @@ nz-layout {
       color: #898989;
       padding: 3px 0px;
       text-align: center;
+
       i {
         font-size: 16px;
         color: #000;
@@ -473,7 +480,7 @@ nz-layout {
       }
     }
 
-    td{
+    td {
       padding: 7px 5px 1px 2px;
       text-align: right;
     }
@@ -619,9 +626,10 @@ nz-layout {
 
   }
 }
-.noMargin, .tabset-right{
-  ::ng-deep{
-    .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted{
+
+.noMargin, .tabset-right {
+  ::ng-deep {
+    .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
       background-color: #fff !important;
     }
   }
@@ -681,48 +689,55 @@ nz-layout {
   }
 }
 
-.drawer{
+.drawer {
   position: absolute;
   right: 0;
   width: 650px;
   height: 100%;
   padding: 10px 10px;
   background: #fff;
-  box-shadow: -2px 0px 7px rgba(0,0,0,0.3);
+  box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
 }
 
-:host .PLTs-content{
+:host .PLTs-content {
   padding: 0 16px 0 16px !important;
 
-  ::ng-deep{
+  ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
       background-color: #fff !important;
     }
-    thead{
+
+    thead {
       th {
         background-color: #fff !important;
         border: none;
-        .header-tab{
+
+        .header-tab {
           display: flex;
-          i{
+
+          i {
             font-size: 22px;
           }
         }
       }
+
       .ant-checkbox-indeterminate .ant-checkbox-inner {
         background-color: #0700cf;
         border-color: #0700cf;
       }
+
       .ant-checkbox-indeterminate .ant-checkbox-inner::after {
         height: 4px;
         background-color: #ffffff;
       }
+
       .ant-checkbox-checked .ant-checkbox-inner {
         background-color: #0700cf;
         border-color: #0700cf;
       }
     }
-    tbody{
+
+    tbody {
       .ant-checkbox-checked .ant-checkbox-inner {
         background-color: #0700cf;
         border-color: #0700cf;
@@ -738,7 +753,7 @@ nz-layout {
 
     .ui-table-thead {
 
-      .checkBoxHead div{
+      .checkBoxHead div {
         display: flex;
         align-items: center;
         justify-content: space-around;
@@ -806,7 +821,7 @@ nz-layout {
       }
 
       tr:hover {
-        background-color: #F7F8FD!important;
+        background-color: #F7F8FD !important;
       }
 
 
@@ -831,8 +846,9 @@ nz-layout {
           padding: 4px 0px 0px 5px !important;
           position: relative;
           top: -4px;
+
           span {
-            border-radius: 20px ;
+            border-radius: 20px;
             border: 2px solid #fff;
             font-size: 10px;
             margin-left: -8px;
@@ -844,6 +860,7 @@ nz-layout {
       .ui-contextmenu-selected {
         color: inherit !important;
       }
+
       tr.active_contract_item {
         background-color: #FCF9D6 !important;
       }
@@ -865,31 +882,39 @@ nz-layout {
     .ant-modal {
       top: 0;
     }
+
     .ant-modal-header {
       border-bottom: none;
     }
+
     .ant-modal-body {
       padding: 0;
     }
-    .header{
+
+    .header {
       display: flex;
       justify-content: space-between;
       flex-wrap: nowrap;
     }
+
     .content {
       display: flex;
       justify-content: center;
       padding: 25px;
     }
-    .ant-input-affix-wrapper{
+
+    .ant-input-affix-wrapper {
       width: auto;
     }
-    .footer{
+
+    .footer {
       padding: 7px;
     }
+
     .ant-modal-footer {
       border-top: none;
     }
+
     .ant-btn {
       background-color: #0700CF;
       color: #FFFFFF;

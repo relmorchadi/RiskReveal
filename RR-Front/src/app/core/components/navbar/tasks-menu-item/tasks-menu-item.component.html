@@ -15,7 +15,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input (input)="searchJobs($event)" class="gray-search-input"/>
+            <input (input)="searchJobs($event)" class="input-search"/>
           </div>
           <ul>
             <li *ngFor="let activeTask of savedtasks.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
@@ -191,7 +191,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input (input)="searchJobs($event)" class="gray-search-input"/>
+            <input (input)="searchJobs($event)" class="input-search"/>
           </div>
           <ul>
             <li *ngFor="let activeTask of savedtasks.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"

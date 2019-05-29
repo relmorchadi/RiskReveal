@@ -1,0 +1,72 @@
+/*@import "../scor_icons";*/
+
+.tab-search-input {
+  height: 24px;
+  width: 100%;
+  background-color: #F5F5F5;
+  margin-left: 3px;
+  margin-bottom: 10px;
+  display: flex;
+
+  i {
+    font-size: 17px;
+    margin-left: 5px;
+    align-items: center;
+    display: flex;
+  }
+}
+
+.input-default {
+  border: none;
+  border-bottom: 2px solid #0700CF;
+  background-color: #F4F6FC;
+  color: #0700CF;
+  padding-left: 5px;
+
+  &::-webkit-input-placeholder {
+    color: #0700CF;
+  }
+
+  &::-moz-placeholder {
+    color: #0700CF;
+  }
+
+  &:-ms-input-placeholder {
+    color: #0700CF;
+  }
+
+  &:-moz-placeholder {
+    color: #0700CF;
+  }
+
+  &:focus {
+    outline: 0;
+  }
+
+}
+
+.input-search {
+  border: none;
+  background-color: #F5F5F5;
+  padding-left: 5px;
+  flex: 1;
+
+  &:focus {
+    outline: 0;
+  }
+}
+
+.switch-input {
+  .ant-switch {
+    background-color: #E5E9FA;
+  }
+  .ant-switch-checked {
+    background-color: #E5E9FA;
+  }
+  .ant-switch-checked::after {
+    font-family: 'scor_fonticon' !important;
+    content: "e9b4";
+    color: #FFFFFF;
+    background-color: #0700CF;
+  }
+}
