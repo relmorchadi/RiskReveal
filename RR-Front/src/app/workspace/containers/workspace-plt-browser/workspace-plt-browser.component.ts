@@ -54,7 +54,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   contextMenuItems = [
     { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
-    { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) }
+    { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) },
+    { label: 'Add/Assign Tag', icon: 'pi pi-tags', command: (event) => this.addTagModal= true},
   ];
 
   pltColumns = [
@@ -457,6 +458,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   selectedPlt: any;
+  addTagModalIndex: any;
+  addTagModal: boolean;
+  addModalInput: any;
+  inputValue: null;
+  addModalSelect: any;
 
   setFilter(filter: string, tag) {
     console.log(this.filters)

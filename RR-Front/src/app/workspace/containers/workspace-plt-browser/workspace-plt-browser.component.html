@@ -43,8 +43,70 @@
     right: 2px;">
                   <i nz-icon nzType="undo" nzTheme="outline"></i></button>
               </div>
-              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i
-                class="icon-plus-circle"></i></div>
+              <nz-modal nzWrapClassName="addTagModal"
+                        [nzVisible]="addTagModal"
+                        [nzTitle]="addTagModalTitle"
+                        (nzOnCancel)="addTagModal = false"
+                        [nzClosable]="false"
+                        [nzFooter]="addTagModalFooter"
+                        [nzContent]="addTagModalContent"
+                        (nzOnOk)="handleOk()">
+              </nz-modal>
+
+              <ng-template #addTagModalTitle>
+                <div class="header">
+                  <span>
+                    Tag manager
+                  </span>
+                  <i style="cursor: pointer" (click)="addTagModal =false" class="icon-close_24px"></i>
+                </div>
+              </ng-template>
+
+              <ng-template #addTagModalContent>
+                <nz-tabset [(nzSelectedIndex)]="addTagModalIndex">
+                  <nz-tab nzTitle="Create new Tag">
+                    <div class="content">
+                      <nz-form-label>Tag Name</nz-form-label>
+                      <nz-input-group [nzSuffix]="suffixTemplate">
+                        <input  [(ngModel)]="addModalInput" type="text" nz-input />
+                      </nz-input-group>
+                      <ng-template #suffixTemplate
+                      ><i
+                        nz-icon
+                        nz-tooltip
+                        class="ant-input-clear-icon"
+                        nzTheme="fill"
+                        nzType="close-circle"
+                        *ngIf="false"
+                        (click)="inputValue = null"
+                      ></i
+                      ></ng-template>
+                    </div>
+                  </nz-tab>
+                  <nz-tab nzTitle="Assign Plts">
+                    <div class="content">
+                      <nz-select
+                        style="width: 200px;"
+                        nzShowSearch
+                        nzAllowClear
+                        nzPlaceHolder="Select a tag"
+                        [(ngModel)]="addModalSelect"
+                      >
+                        <nz-option *ngFor="let tag of userTags" [nzLabel]="tag.tagName" [nzValue]="tag"></nz-option>
+                      </nz-select>
+                    </div>
+                  </nz-tab>
+                </nz-tabset>
+              </ng-template>
+
+              <ng-template #addTagModalFooter>
+                <div class="footer">
+                  <button (click)="assignPltsToTag()" nz-button>
+                    {{addTagModalIndex == 0 ? 'Add & ' : ''}} Assign
+                  </button>
+                </div>
+              </ng-template>
+              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i (click)="addTagModal = true" style="cursor:pointer;" class="icon-plus-circle"></i></div>
               <div *ngFor="let tag of userTags" nz-row class="ml-3 mt-1">
                     <span [ngClass]="{'active-tag': tag.selected}" class="chips"
                           [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('userTag', tag)">
@@ -56,11 +118,10 @@
 
               <div nz-row class="tags-title-section">System Tags</div>
               <div *ngFor="let tag of systemTags" nz-row class="ml-3 mt-1">
-                    <span [ngClass]="{'active-tag': tag.selected }" class="chips"
-                          [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('systemTag', tag)">
+                    <span  [ngClass]="{'active-tag': tag.selected }" class="chips"
+                           [ngStyle]="{'background-color': tag.tagColor}" (click)="setFilter('systemTag', tag)">
                       {{tag.tagName}}
-                      <span [ngStyle]="{'background-color': tag.innerTagColor}"
-                            class="inner-chip">{{tag.innerTagContent}}</span>
+                      <span [ngStyle]="{'background-color': tag.innerTagColor }" class="inner-chip">{{tag.innerTagContent}}</span>
                     </span>
               </div>
 
