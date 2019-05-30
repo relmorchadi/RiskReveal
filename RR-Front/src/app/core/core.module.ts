@@ -1,7 +1,7 @@
 import {NgModule} from '@angular/core';
 
 import {NgxsModule, StateContext} from '@ngxs/store';
-import {environment} from '../../environments/environment'
+import {environment} from '../../environments/environment';
 import {NgxsHmrLifeCycle, NgxsHmrSnapshot as Snapshot} from '@ngxs/hmr-plugin';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {NgxsFormPluginModule} from '@ngxs/form-plugin';
