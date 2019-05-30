@@ -38,11 +38,15 @@ export class SelectRiskLinkAnalysisAndPortfolioAction {
   constructor(public payload: any) {}
 }
 
-export class ToggleRiskLinkAnalysisAndPortfolioAction {
+export class ToggleRiskLinkPortfolioAction {
   static readonly type = '[Risk Link] Toggle Analysis And Portfolio';
   constructor(public payload: any) {}
 }
 
+export class ToggleRiskLinkAnalysisAction {
+  static readonly type = '[Risk Link] Toggle Analysis';
+  constructor(public payload: any) {}
+}
 
 export class SearchRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Search EDMs And RDMs';

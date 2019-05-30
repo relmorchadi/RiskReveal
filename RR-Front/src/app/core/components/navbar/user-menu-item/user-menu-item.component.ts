@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import {SearchService} from '../../../service/search.service';
+import {ActivatedRoute, Router} from "@angular/router";
+import {HelperService} from "../../../../shared/helper.service";
 
 @Component({
   selector: 'user-menu-item',
@@ -9,18 +11,15 @@ import {SearchService} from '../../../service/search.service';
 export class UserMenuItemComponent implements OnInit {
   visible: boolean;
   defaultImport;
-
-  constructor( private _searchService: SearchService) {}
-
-  ngOnInit() {
-    this.defaultImport=localStorage.getItem('importConfig');
-    this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
-  }
-
-
   isVisible = false;
   isOkLoading = false;
 
+  constructor( private _searchService: SearchService, private route: ActivatedRoute, private router: Router) {}
+
+  ngOnInit() {
+    this.defaultImport = localStorage.getItem('importConfig');
+    this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
+  }
 
   handleOk(): void {
     localStorage.setItem('importConfig', this.defaultImport);
@@ -29,6 +28,10 @@ export class UserMenuItemComponent implements OnInit {
 
   handleCancel(): void {
     this.isVisible = false;
+  }
+
+  navigateToUserPreference() {
+    this.router.navigateByUrl(`/userPreference`);
   }
 
 }

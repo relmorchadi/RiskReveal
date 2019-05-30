@@ -1,31 +1,105 @@
 :host {
   display: flex;
   width: 100%;
-  @media  screen and (min-width: 1900px) {
+  @media screen and (min-width: 1900px) {
     height: 100vh;
   }
 }
 
-.app-wrapper{
+.app-wrapper {
   background-color: #F4F6FC;
   display: flex;
   flex-direction: column;
-  width:100%;
+  width: 100%;
   height: 100%;
   margin: auto;
-  .app-header{
+
+  .app-header {
     display: flex;
     width: 90%;
     margin: 20px auto;
-    .app-title{
-      height: 65px;	width: 643px;	color: rgba(0,0,0,0.5);	font-family: Rubik;	font-size: 34.54px;	font-weight: 300;	letter-spacing: 0.25px;	line-height: 41px;
-      margin-top: 15px;
-    }
   }
-  .app-body{
-    height:500px;
+
+  .app-body {
     width: 90%;
     margin: 0 auto;
-    background-color: #fff;
+
+    .active-body {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 15px;
+      margin: 15px 0;
+      background-color: #FFFFFF;
+
+      .body-1 {
+        color: rgba(0, 0, 0, 0.87);
+        margin: 4px 0;
+      }
+
+      .item-wrapper {
+        display: flex;
+        flex-direction: column;
+        margin: 5px 0;
+
+        .border-wrap {
+          display: flex;
+          width: 100%;
+
+          .border-wrap-inner {
+            display: flex;
+            justify-content: space-between;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            border-left: none;
+            padding: 15px;
+            width: 100%;
+            cursor: pointer;
+          }
+
+          .item-left {
+            display: flex;
+            align-items: center;
+
+            i {
+              padding: 7px;
+              color: #FFFFFF;
+              border-radius: 20px;
+              margin-right: 5px;
+              font-size: 17px;
+            }
+          }
+
+          .item-right {
+            display: flex;
+            align-items: center;
+
+            i {
+              font-size: 17px;
+              color: #0700CF;
+            }
+          }
+        }
+
+        .item-project-info {
+          border: 1px solid rgba(0, 0, 0, 0.15);
+
+          table {
+            width: 100%;
+
+            thead {
+              th {
+                padding-left: 55px;
+              }
+            }
+
+            tbody {
+              td {
+                padding-left: 55px;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }

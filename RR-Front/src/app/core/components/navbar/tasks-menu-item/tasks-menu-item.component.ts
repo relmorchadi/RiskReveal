@@ -4,13 +4,13 @@ import * as _ from 'lodash';
 import {
   AppendNewWorkspaceMainAction,
   PatchWorkspaceMainStateAction, SelectWorkspaceAction
-} from "../../../store/actions/workspace-main.action";
-import {Select, Store} from "@ngxs/store";
-import {WorkspaceMainState} from "../../../store/states";
-import {Observable} from "rxjs";
-import {WorkspaceMain} from "../../../model/workspace-main";
-import {Location} from "@angular/common";
-import {HelperService} from "../../../../shared/helper.service";
+} from '../../../store/actions/workspace-main.action';
+import {Select, Store} from '@ngxs/store';
+import {WorkspaceMainState} from '../../../store/states';
+import {Observable} from 'rxjs';
+import {WorkspaceMain} from '../../../model/workspace-main';
+import {Location} from '@angular/common';
+import {HelperService} from '../../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
@@ -132,7 +132,7 @@ export class TasksMenuItemComponent implements OnInit {
             contentId: 'For ARC',
             contentName: 'Clone',
             createdAt: 1542882354617,
-            duration: 'Finished',
+            duration: 'Processed',
             createdBy: 'Ghada CHOUK'
           }],
         isPaused: false
@@ -168,7 +168,7 @@ export class TasksMenuItemComponent implements OnInit {
             contentId: 'For ARC',
             contentName: 'Clone',
             createdAt: 1542882354617,
-            duration: 'Finished',
+            duration: 'Processed',
             createdBy: 'Ghada CHOUK'
           },
           {
@@ -177,7 +177,7 @@ export class TasksMenuItemComponent implements OnInit {
             contentId: 'For ARC',
             contentName: 'Clone',
             createdAt: 1542882354617,
-            duration: 'Finished',
+            duration: 'Processed',
             createdBy: 'Ghada CHOUK'
           }],
         isPaused: true
@@ -225,7 +225,7 @@ export class TasksMenuItemComponent implements OnInit {
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
   private year: any;
-  constructor(private _searchService: SearchService,private route: ActivatedRoute, private store: Store, private helperService: HelperService, private router: Router,private cdRef: ChangeDetectorRef) {
+  constructor(private _searchService: SearchService, private route: ActivatedRoute, private store: Store, private helperService: HelperService, private router: Router,private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -233,8 +233,8 @@ export class TasksMenuItemComponent implements OnInit {
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
     this.savedtasks = this.tasks;
     this.store.select(WorkspaceMainState.getCurrentWS).subscribe( (ws) => {
-      this.wsId = ws.workSpaceId;
-      this.year = ws.uwYear;
+      this.wsId = _.get(ws, 'workSpaceId', null);
+      this.year = _.get(ws, 'uwYear', null);
     })
   }
 
@@ -296,7 +296,7 @@ export class TasksMenuItemComponent implements OnInit {
     }
   }
 
-  navigateToJOBmanager() {
-    this.router.navigateByUrl(`/jobManager`)
+  navigateToJOBManager() {
+    this.router.navigateByUrl(`/jobManager`);
   }
 }

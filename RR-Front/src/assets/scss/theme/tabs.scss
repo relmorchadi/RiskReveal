@@ -1,0 +1,42 @@
+.tabs-main-component {
+  .ant-tabs-nav .ant-tabs-tab-active {
+    background: #1C607C !important;
+  }
+}
+
+.tabs-standard {
+  .ant-tabs-nav .ant-tabs-tab-active {
+    color: #0700CF;
+    background: transparent !important;
+    .tags-info {
+      background-color: #D5D6F6;
+      color: #0700CF;
+    }
+  }
+  .ant-tabs-nav .ant-tabs-tab {
+    margin: 0;
+  }
+
+  .ant-tabs-ink-bar {
+    background-color: #0700CF;
+  }
+}
+
+.tabs-standard-top {
+  .ant-tabs-nav .ant-tabs-tab-active {
+    color: #0700CF;
+    background: transparent !important;
+    .tags-info {
+      background-color: #D5D6F6;
+      color: #0700CF;
+    }
+  }
+  .ant-tabs-nav .ant-tabs-tab {
+    margin: 0;
+  }
+
+  .ant-tabs-ink-bar {
+    top: 0;
+    background-color: #0700CF;
+  }
+}

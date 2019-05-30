@@ -1,10 +1,280 @@
 
-div.blank-space{
+:host {
+  display: flex;
+  height: 100%;
+}
+
+.layout-comparer {
+  display: flex;
+  flex-direction: column;
+  background-color: #F4F6FC;
+  width: 100%;
+}
+
+.button-toggle {
+  margin-right: 10px;
+}
+
+/* Drop Drown of the Risk Link Page  */
+.body-wrap-dropDowns-comparer {
+  display: flex;
+
+  .dropdown-wrap-comparer {
+    display: flex;
+    width: 150px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title-comparer {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title-comparer {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected-comparer {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}
+
+.button-plus-icon {
+  background-color: #0700CF;
+  color: #FFFFFF;
+  padding: 1px;
+  font-size: 17px;
+  border: none;
+  border-radius: 20px;
+
+  &:focus {
+    outline: 0 !important;
+
+  }
+
+}
+
+div.blank-space {
   background-color: #FFFFFF;
   height: 350px;
 }
 
+.header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 99%;
+  margin: 28px auto 0;
+  height: 60px;
+}
 
-.content{
+.content {
   padding: 70px 200px;
+}
+
+
+.title-section-comparer {
+  display: flex;
+  color: rgba(0, 0, 0, 0.87);
+  font-size: 34.54px;
+  font-weight: 300;
+  letter-spacing: 0.25px;
+  line-height: 41px;
+  height: 50px;
+  align-items: center;
+
+  i {
+    color: #FFFFFF;
+    background-color: #0700CF;
+    border: 2px solid #FFFFFF;
+    border-radius: 32px;
+    font-size: 18px;
+    padding: 4px 3px 2px;
+    display: flex;
+    cursor: pointer;
+    margin-bottom: 12px;
+  }
+
+  h3 {
+    color: rgba(0, 0, 0, 0.38);
+    font-family: Rubik;
+    font-size: 24.38px;
+    line-height: 29px;
+  }
+}
+
+.Deltas {
+  display: flex;
+  color: rgba(0, 0, 0, 0.6);
+  font-family: Rubik;
+  font-size: 18.26px;
+  letter-spacing: 0.5px;
+  line-height: 45px;
+}
+
+.dropdown-group {
+  display: flex;
+  justify-content: space-between;
+  margin-right: 120px;
+}
+
+.body {
+  display: flex;
+  justify-content: normal;
+
+  .ng-star-inserted.selected-item {
+    border: 3px solid #03DAC4;
+  }
+
+  ::ng-deep{
+    ::-webkit-scrollbar {
+      height: 8px;
+    }
+  }
+
+  .card-header-title {
+    display: flex;
+    color: rgba(0, 0, 0, 0.87);
+    font-family: Rubik;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    margin: 12px 1px 3px 9px;
+
+    .card-header-detail {
+      flex: 1;
+    }
+
+    .card-header-icons {
+      width: 10%;
+      display: flex;
+      text-align: center;
+      flex-direction: column;
+
+      .icon-check-circle {
+        font-size: 20px;
+        color: #E5E9FA;
+        cursor: pointer;
+      }
+
+      ::ng-deep {
+        .anticon {
+          font-size: 20px;
+          color: #0700CF;
+          cursor: pointer;
+
+
+        }
+      }
+
+      span {
+        color: #E5E9FA;
+        line-height: 15px;
+        margin-bottom: 10px;
+      }
+    }
+
+  }
+
+  .card-table {
+    margin-left: 8px;
+  }
+
+  .card-footer-detail {
+    display: flex;
+    justify-content: space-between;
+    margin: 0px 5px 0px 5px;
+    font-weight: bold;
+    font-size: 15px;
+    color: black;
+  }
+
+  .card-table-row {
+    width: 116px;
+    margin-left: 5px;
+
+
+  }
+
+  .card-table-row1 {
+    width: 123px;
+
+  }
+
+  .cards-wrapper {
+    background-color: #FFFFFF;
+    margin: 5px;
+    border: 3px solid transparent;
+    border-top: 3px solid;
+    padding: 5px;
+    height: 510px;
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15), -3px 0px 5px rgba(0, 0, 0, 0.15);
+
+
+    table {
+      width: 90%;
+
+
+      thead {
+        tr {
+          height: 40px;
+          border-top: 1px solid rgba(0, 0, 0, 0.2);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+          font-weight: normal !important;
+        }
+      }
+
+      tbody {
+        tr {
+          color: #000;
+          font-size: 11px;
+          height: 20px;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+          th {
+            font-weight: lighter;
+            padding: 3px;
+            width: 20px;
+
+          }
+        }
+      }
+    }
+  }
+
+}
+
+.lefter {
+  margin-left: 10px;
+  display: -webkit-box;
+
+}
+
+.righter {
+  flex: 1;
+  margin-left: 10px;
+  display: -webkit-box;
+  overflow: auto;
+
+
 }

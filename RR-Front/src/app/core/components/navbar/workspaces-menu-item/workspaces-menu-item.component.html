@@ -11,7 +11,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="gray-search-input" (input)="searchNewWorkspace($event)"/>
+            <input class="input-search" (input)="searchNewWorkspace($event)"/>
           </div>
           <nz-alert
             nzType="info"
@@ -40,17 +40,14 @@
           </ul>
           <div class="mt-2">
             <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"
-                       class="float-left popover-menu-control-select" style="width: 120px;" nzAllowClear
+                       class="float-left dropdown-default" style="width: 120px;" nzAllowClear
                        nzPlaceHolder="Choose">
               <nz-option *ngFor="let label of state.workspacePagination.paginationList ; let i = index"
                          [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>
             </nz-select>
             <div class="float-right">
-              <button (click)="popOutWorkspaces()" class="popover-menu-control-button" nz-button nzType="default">POP
-                OUT
-              </button>
-              <button (click)="openWorkspaces()" class="popover-menu-control-button" nz-button nzType="default">OPEN
-              </button>
+              <button (click)="popOutWorkspaces()" class="button-no-outline">POP OUT</button>
+              <button (click)="openWorkspaces()" class="button-no-outline">OPEN</button>
             </div>
           </div>
         </div>
@@ -59,17 +56,17 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="gray-search-input"/>
+            <input class="input-search"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
+            <li *ngFor="let workspace of favorites" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
                 [ngClass]="{'poover-menu-item-active': workspace.selected}">
               <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
                                                                                 [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
             </li>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
@@ -88,7 +85,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="gray-search-input"/>
+            <input class="input-search"/>
           </div>
           <ul>
             <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
@@ -98,7 +95,7 @@
             </li>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
@@ -117,7 +114,7 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="gray-search-input"/>
+            <input class="input-search"/>
           </div>
           <ul>
             <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
@@ -127,7 +124,7 @@
             </li>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left popover-menu-control-select"
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
@@ -152,7 +149,7 @@
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>
-    <span style="width: 90px">Favourites &nbsp; <span class="badge badge-light tab-badge">0</span></span>
+    <span style="width: 90px">Favorites &nbsp; <span class="badge badge-light tab-badge">0</span></span>
   </ng-template>
 
   <ng-template #AssignedHeaderContent>

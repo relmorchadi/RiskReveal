@@ -3,7 +3,6 @@ export class pltMainModel {
   data: any;
   loading: boolean;
   filters: any;
+  userTags: any;
+  systemTags: any;
 }
-
-export const getPLTData = state => state.data;
-export const getAttrfromState = (path,state) => _.get(state, `${path}`)

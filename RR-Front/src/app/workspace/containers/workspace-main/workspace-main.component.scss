@@ -1,15 +1,17 @@
 :host {
   overflow: hidden;
   display: block;
-  ::ng-deep submenu-inline > .ant-menu-submenu-title .ant-menu-submenu-arrow  {
+
+  ::ng-deep submenu-inline > .ant-menu-submenu-title .ant-menu-submenu-arrow {
     padding-right: 15px !important;
   }
+
   ::ng-deep .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
     //border-left: 4px solid #00c2a8;
   }
 }
 
-.icon-clear_24px{
+.icon-clear_24px {
   position: absolute;
   top: 6px;
   font-size: 17px;
@@ -21,15 +23,18 @@
   cursor: pointer;
 }
 
-.tab-title-container{
-  position:relative;text-align: left;
+.tab-title-container {
+  position: relative;
+  text-align: left;
+
   &:hover {
-    .icon-clear_24px{
+    .icon-clear_24px {
       display: unset;
     }
   }
 }
-.tab-title-container:hover .close-tab-btn{
+
+.tab-title-container:hover .close-tab-btn {
   display: block;
 }
 
@@ -41,6 +46,7 @@
   height: 50px;
   margin-bottom: 0;
   cursor: pointer;
+
   .tab-title-main {
     line-height: 18px;
     padding-top: 8px;
@@ -49,18 +55,20 @@
     text-overflow: ellipsis;
     width: 92%;
   }
+
   .tab-title-sub {
     line-height: 18px;
     font-size: 13px;
     font-weight: 200;
-    color: rgba(255,255,255,0.6);
+    color: rgba(255, 255, 255, 0.6);
     width: 90%;
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
   }
-  ::ng-deep{
-    .ant-dropdown-menu{
+
+  ::ng-deep {
+    .ant-dropdown-menu {
       padding: 0;
     }
   }
@@ -71,18 +79,22 @@
   font-family: Rubik;
   font-size: 12px;
   letter-spacing: 0.25px;
-  &:hover{
+
+  &:hover {
     color: #fff;
   }
-  &:active{
+
+  &:active {
     color: #fff;
   }
 }
-.tab-detail{
+
+.tab-detail {
   background: #14617A;
   color: white;
 }
-.btn-detail{
+
+.btn-detail {
   background: #F8E71C;
   display: flex !important;
   justify-content: center !important;
@@ -92,45 +104,55 @@
   color: white;
   box-shadow: none;
   text-shadow: none;
-  ::ng-deep{
+
+  ::ng-deep {
     .anticon {
       margin-left: 0 !important;
     }
   }
 }
-.detail-wrapper{
-  display:flex;
+
+.detail-wrapper {
+  display: flex;
   flex-direction: column;
   padding-top: 12px;
 }
-.span-detail{
+
+.span-detail {
   text-align: center;
   margin-top: 4px;
   color: #f8e71c;
   font-size: 11px;
 }
-.plus-btn{
+
+.plus-btn {
   background: rgb(0, 195, 169);
   color: white;
   border: 0;
-  position:absolute;right:0;top:-20px; border: 4px solid rgb(240, 242, 248);
-  box-shadow:none;
+  position: absolute;
+  right: 0;
+  top: -20px;
+  border: 4px solid rgb(240, 242, 248);
+  box-shadow: none;
   text-shadow: none;
 }
-.plus-btn-icon{
+
+.plus-btn-icon {
   color: white;
 }
-.btn-detail-color{
-  color:#F8E71C
+
+.btn-detail-color {
+  color: #F8E71C
 }
-.workspace-main-content{
+
+.workspace-main-content {
   position: relative;
   flex: 1;
   background: rgb(244, 246, 252);
 
 }
 
-.pine-btn{
+.pine-btn {
   box-sizing: border-box;
   height: 57px;
   width: 57px;
@@ -140,6 +162,7 @@
   right: 0;
   top: 20px;
 }
+
 .hide-btn {
   border: 1px solid #F8E71C;
   border-radius: 18px;
@@ -153,7 +176,7 @@
   color: #16617a;
 }
 
-.hide-btn:hover{
+.hide-btn:hover {
   border: 1px solid #F8E71C;
   border-radius: 18px;
   color: white;
@@ -165,7 +188,7 @@
   min-width: 260px;
 }
 
-.workspace-title{
+.workspace-title {
   height: 20px;
   padding-top: 4px;
   color: #FFFFFF;
@@ -173,11 +196,13 @@
   letter-spacing: 0.5px;
   line-height: 28px;
   text-transform: uppercase;
+
   .icon-star_border_24px {
     color: #F8E71C;
     cursor: pointer;
     font-size: 18px;
   }
+
   .icon-star_24px {
     color: #F8E71C;
     cursor: pointer;
@@ -185,26 +210,22 @@
   }
 }
 
-.treaty-list{
+.treaty-list {
   list-style: none;
   font-size: 11px;
   padding-left: 0;
   overflow: auto;
-  height: 90px;
+  height: 70px;
 }
 
 .card-container {
   ::ng-deep {
-    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
-      background: #1C607C !important;
+    .ant-dropdown-menu {
+      padding: 0;
     }
-    .ant-dropdown-menu{
-      padding:0 ;
-    }
+
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
-      border-radius: 0px !important;
-      //background: #326F88;
-      background: transparent;
+      border-radius: 0 !important;
       border: 0;
       margin: 0;
       width: 210px;
@@ -217,69 +238,100 @@
       color: white;
       height: 70px;
     }
+
+    .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {
+      background-color: transparent;
+    }
+
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
       //background: #326F88;
-      background: rgba(50,111,136,0.8);
+      background: rgba(50, 111, 136, 0.8);
     }
+
     .ant-tabs-card .ant-tabs-content {
       height: 100%;
       margin-top: -16px;
     }
+
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-nav-container {
       height: auto;
     }
+
     .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
-      background: #fff;
       height: 100%;
       padding: 16px;
     }
+
     .ant-tabs-card .ant-tabs-bar {
       border-color: #fff;
     }
-    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab {
-      border-color: transparent;
-      background: transparent;
-    }
-    .ant-tabs-card .ant-tabs-bar .ant-tabs-tab-active {
-      border-color: #fff;
-      background: #fff;
-    }
+
     .ant-tabs-card .ant-tabs-content .ant-tabs-tabpane {
       padding: 0;
     }
-    .tab-metadata-title{
-      color: rgba(255,255,255,0.6);		font-size: 13px;	letter-spacing: 0.25px;	line-height: 20px;
+
+    .tab-metadata-title {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+      letter-spacing: 0.25px;
+      line-height: 20px;
       padding-right: 0;
-      @media screen and (max-width: 768px)  {
+      @media screen and (max-width: 768px) {
         font-size: 12px;
       }
       @media screen and (max-width: 1024px) and (min-width: 769px) {
         font-size: 11px;
       }
     }
-    .tab-metadata-value{
-      color: #FFFFFF;	font-size: 11px;	letter-spacing: 0.25px;	line-height: 20px;
+
+    .tab-metadata-value {
+      color: #FFFFFF;
+      font-size: 11px;
+      letter-spacing: 0.25px;
+      line-height: 20px;
     }
-    .tab-metadata-more{
-      color: #03DAC4;	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 20px; cursor:pointer; user-select: none;
+
+    .tab-metadata-more {
+      color: #03DAC4;
+      font-family: Rubik;
+      font-size: 14.22px;
+      letter-spacing: 0.25px;
+      line-height: 20px;
+      cursor: pointer;
+      user-select: none;
     }
-    .tab-kpi-title{
-      opacity: 0.5; padding: 10px 0;
-      color: #FFFFFF;	font-size: 16.26px;	letter-spacing: 0.08px;	line-height: 28px;
+
+    .tab-kpi-title {
+      opacity: 0.5;
+      padding: 5px 0 3px;
+      color: #FFFFFF;
+      font-size: 16.26px;
+      letter-spacing: 0.08px;
+      line-height: 28px;
     }
-    .kpi-icon-title{
-      color: rgba(255,255,255,0.5);	font-family: Rubik;	font-size: 12.75px;	letter-spacing: 0.08px;	line-height: 16px;
+
+    .kpi-icon-title {
+      color: rgba(255, 255, 255, 0.5);
+      font-family: Rubik;
+      font-size: 12.75px;
+      letter-spacing: 0.08px;
+      line-height: 16px;
       word-break: break-word;
-      @media screen and (max-width: 768px)  {
+      @media screen and (max-width: 768px) {
         font-size: 11px;
       }
       @media screen and (max-width: 1024px) and (min-width: 769px) {
         font-size: 9px;
       }
     }
-    .kpi-icon-value{
-      color: #FFFFFF;	font-family: Rubik;	font-size: 28.54px;	letter-spacing: 0.25px;	line-height: 41px;
-      @media screen and (max-width: 768px)  {
+
+    .kpi-icon-value {
+      color: #FFFFFF;
+      font-family: Rubik;
+      font-size: 28.54px;
+      letter-spacing: 0.25px;
+      line-height: 41px;
+      @media screen and (max-width: 768px) {
         font-size: 24px;
       }
       @media screen and (max-width: 1024px) and (min-width: 769px) {
@@ -289,101 +341,117 @@
   }
 }
 
-.skeleton-title{
-  ::ng-deep{
-    .ant-skeleton-header{
+
+.skeleton-title {
+  ::ng-deep {
+    .ant-skeleton-header {
       display: none !important;
     }
-    .ant-skeleton-paragraph{
+
+    .ant-skeleton-paragraph {
       display: none !important;
     }
-    h3.ant-skeleton-title{
+
+    h3.ant-skeleton-title {
       width: 300px !important;
       opacity: 0.7;
       border-radius: 4px;
     }
-    .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-title, .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-paragraph > li  {
+
+    .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-title, .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-paragraph > li {
       background: linear-gradient(90deg, #f2f2f2 25%, #14617a 37%, #f2f2f2 63%) !important;
     }
   }
 }
 
-.skeleton-title-header{
-  ::ng-deep{
-    .ant-skeleton-header{
+.skeleton-title-header {
+  ::ng-deep {
+    .ant-skeleton-header {
       display: none !important;
     }
-    .ant-skeleton-paragraph{
+
+    .ant-skeleton-paragraph {
       display: none !important;
     }
-    h3.ant-skeleton-title{
+
+    h3.ant-skeleton-title {
       width: 80% !important;
       opacity: 0.7;
       border-radius: 4px;
     }
-    .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-title, .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-paragraph > li  {
+
+    .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-title, .ant-skeleton.ant-skeleton-active .ant-skeleton-content .ant-skeleton-paragraph > li {
       background: linear-gradient(90deg, #f2f2f2 25%, #14617a 37%, #f2f2f2 63%) !important;
     }
   }
 }
 
-.workspace-main-content{
+.workspace-main-content {
   ::ng-deep {
     .ant-menu-horizontal > .ant-menu-item {
       color: rgb(115, 115, 118);
     }
-    .ant-menu-horizontal > .ant-menu-item:hover,.ant-menu-horizontal > .ant-menu-item-selected{
+
+    .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-item-selected {
       color: rgb(5, 37, 216);
       border-bottom: 2px solid rgb(5, 37, 216);
     }
-    .ant-menu-horizontal > .ant-menu-item:hover,.ant-menu-horizontal > .ant-menu-item-selected i{
+
+    .ant-menu-horizontal > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-item-selected i {
       color: rgb(5, 37, 216) !important;
     }
 
-    .projects-title{
-      color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 34.54px;	font-weight: 300;	letter-spacing: 0.25px;	line-height: 41px;
+    .projects-title {
+      color: rgba(0, 0, 0, 0.87);
+      font-family: Rubik;
+      font-size: 34.54px;
+      font-weight: 300;
+      letter-spacing: 0.25px;
+      line-height: 41px;
     }
+
     .ant-select-selection {
       background-color: transparent;
       border: none;
       border-bottom: 2px solid #0700CF;
     }
-    .ant-select-selection__rendered{
+
+    .ant-select-selection__rendered {
       color: #0700CF;
     }
 
   }
-  .card-holder{
-    margin:10px 0;
-    @media screen and (max-width: 1024px) and (min-width: 780px) {
-      margin: 15px auto;
-    }
-  }
-  .project-card{
+
+  .project-card {
     min-width: 350px;
     max-width: 450px;
-    border:3px solid transparent;
-    border-radius: 2px;	background-color: #FAFAFA;
-    box-shadow: 0 9px 12px 1px rgba(0,0,0,0.1), 0 3px 16px 2px rgba(0,0,0,0.08), 0 5px 6px -3px rgba(0,0,0,0.1);
-    &:hover{
-      box-shadow:0 9px 12px 1px rgba(0, 0, 0, 0.3), 0 3px 16px 2px rgba(0, 0, 0, 0.2), 0 5px 6px -3px rgba(0, 0, 0, 0.2);
+    border: 3px solid transparent;
+    border-radius: 2px;
+    background-color: #FAFAFA;
+    box-shadow: 0 9px 12px 1px rgba(0, 0, 0, 0.1), 0 3px 16px 2px rgba(0, 0, 0, 0.08), 0 5px 6px -3px rgba(0, 0, 0, 0.1);
+
+    &:hover {
+      box-shadow: 0 9px 12px 1px rgba(0, 0, 0, 0.3), 0 3px 16px 2px rgba(0, 0, 0, 0.2), 0 5px 6px -3px rgba(0, 0, 0, 0.2);
     }
+
     @media screen and (max-width: 1650px) and (min-width: 1500px) {
       max-width: 420px !important;
     }
     @media screen and (max-width: 1500px) and (min-width: 1350px) {
       max-width: 370px !important;
     }
-    @media screen and (max-width: 768px)  {
+    @media screen and (max-width: 768px) {
       margin: auto;
       min-width: 300px !important;
       max-width: 500px !important;
     }
-    .project-progress{
+
+    .project-progress {
       // zoom: 0.6;
       height: 70px;
+
       ::ng-deep {
-        .ant-steps-item-tail{
+        .ant-steps-item-tail {
           margin-left: 50px;
           @media screen and (max-width: 1650px) and (min-width: 1500px) {
             margin-left: 45px;
@@ -392,7 +460,8 @@
             margin-left: 40px;
           }
         }
-        .ant-steps-item-icon{
+
+        .ant-steps-item-icon {
           margin-left: 50px;
           @media screen and (max-width: 1650px) and (min-width: 1500px) {
             margin-left: 45px;
@@ -401,31 +470,36 @@
             margin-left: 40px;
           }
         }
+
         .ant-steps-item-finish {
           .ant-steps-item-tail::after {
-            background-color:#03DAC4 !important;
+            background-color: #03DAC4 !important;
           }
+
           .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
             background: #03DAC4 !important;
           }
         }
+
         .ant-steps-item-process > .ant-steps-item-content > .ant-steps-item-title {
           font-weight: bold !important;
           color: rgba(0, 0, 0, 0.95) !important;
         }
+
         .ant-steps-dot .ant-steps-item-content {
           width: 110px;
           @media screen and (max-width: 1650px) and (min-width: 1500px) {
-            width:100px;
+            width: 100px;
           }
           @media screen and (max-width: 1500px) and (min-width: 1350px) {
-            width: 90px ;
+            width: 90px;
           }
-          @media screen and (max-width: 768px)  {
+          @media screen and (max-width: 768px) {
             width: 140px;
           }
         }
-        .ant-steps-item-title{
+
+        .ant-steps-item-title {
           font-size: 12px;
           @media screen and (max-width: 1500px) and (min-width: 1350px) {
             font-size: 11px;
@@ -433,41 +507,52 @@
           @media screen and (max-width: 1024px) and (min-width: 780px) {
             font-size: 13px;
           }
-          @media screen and (max-width: 768px)  {
+          @media screen and (max-width: 768px) {
             font-size: 16px;
           }
         }
+
         .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon .ant-steps-icon-dot {
           background: #00d9c3 !important;
         }
 
       }
     }
+
     .project-kpi {
       font-size: 0.7em;
+
       div {
-        i{
-          height: 19.89px;	width: 16.89px;
+        i {
+          height: 19.89px;
+          width: 16.89px;
         }
-        .project-kpi-span{
+
+        .project-kpi-span {
           padding-top: 12px;
-          font-size: 17px;	letter-spacing: 0.5px;	line-height: 20px;
+          font-size: 17px;
+          letter-spacing: 0.5px;
+          line-height: 20px;
         }
-        span:nth-child(3){
+
+        span:nth-child(3) {
           font-size: 30px;
         }
       }
-      .badge{
+
+      .badge {
         margin-top: 11px;
         background: #e700104f;
         border-radius: 12px;
         font-size: 15px !important;
       }
     }
-    .project-kpi-details{
+
+    .project-kpi-details {
       background: #F4F6FC;
-      .dt-11{
-        font-size:11px;
+
+      .dt-11 {
+        font-size: 11px;
         @media screen and (max-width: 1500px) and (min-width: 1350px) {
           font-size: 10px;
         }
@@ -476,18 +561,20 @@
   }
 }
 
-.drop-icon{
+.drop-icon {
   margin-top: -4px !important;
   padding-left: 7px !important;
 }
 
 .header-tab-wrapper {
   padding: 0 !important;
+
   .header-tab-right {
     padding-right: 25px;
+
     .text-center.my-2.px-4.d-inline-flex.flex-column {
       padding-right: 75px !important;
-      border-left: 1px solid rgba(255,255,255,0.5);
+      border-left: 1px solid rgba(255, 255, 255, 0.5);
       @media screen and (max-width: 1100px) {
         padding-right: 45px !important;
       }
@@ -496,5 +583,5 @@
 }
 
 .d-inline-flex.flex-column.justify-content-end {
-  border-left: 1px solid rgba(255,255,255,0.5);
+  border-left: 1px solid rgba(255, 255, 255, 0.5);
 }

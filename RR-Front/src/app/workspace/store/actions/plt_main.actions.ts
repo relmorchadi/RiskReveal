@@ -57,3 +57,38 @@ export class setFilterPlts{
   static readonly  type = '[PLT Main] set Filter Plts'
   constructor(public payload?: any) {}
 }
+
+export class assignPltsToTag {
+  static readonly type = '[PLT Main] Assign plts to Tag'
+  constructor(public payload?: any) {}
+}
+
+export class assignPltsToTagSuccess {
+  static readonly type = '[PLT Main] Assign plts to Tag Success'
+  constructor(public payload?: any) {}
+}
+
+export class assignPltsToTagFail {
+  static readonly type = '[PLT Main] Assign plts to Tag Fail'
+  constructor(public payload?: any) {}
+}
+
+export class constructUserTags {
+  static readonly type = '[PLT Main] constructUserTags'
+  constructor(public payload?: any) {}
+}
+
+export class deleteUserTag {
+  static readonly type = '[PLT Main] delete User Tag'
+  constructor(public payload?: any) {}
+}
+
+export class deleteUserTagSuccess {
+  static readonly type = '[PLT Main] delete User Tag Success'
+  constructor(public payload?: any) {}
+}
+
+export class deleteUserTagFail {
+  static readonly type = '[PLT Main] delete User Tag Fail'
+  constructor(public payload?: any) {}
+}

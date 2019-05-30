@@ -12,11 +12,13 @@ import {SERVICE} from './services';
 import {VirtualScrollerModule} from 'primeng/virtualscroller';
 import {workspaceRoutes} from './workspace.route';
 import {DndModule} from 'ngx-drag-drop';
+import { KeysPipe } from './pipes/keys.pipe';
+import { SystemTagFilterPipe } from './pipes/system-tag-filter.pipe';
 
 @NgModule({
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES
+    ...PIPES, ...DIRECTIVES, KeysPipe, SystemTagFilterPipe
   ],
   imports: [
     GridsterModule,

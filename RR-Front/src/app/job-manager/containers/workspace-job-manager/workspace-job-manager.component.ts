@@ -11,6 +11,7 @@ import * as _ from 'lodash';
 export class WorkspaceJobManagerComponent implements OnInit {
   loading = false;
   contextSelectedItem: any;
+  Users = '1';
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -43,20 +44,20 @@ export class WorkspaceJobManagerComponent implements OnInit {
   ];
 
   tableColumn = [
-    {
+/*    {
       field: 'checkbox',
       header: '',
-      width: '20px',
+      width: '25px',
       display: true,
       sorted: false,
       filtered: false,
       type: 'checkbox',
       class: 'icon-check_24px',
-    },
+    },*/
     {
       field: 'state',
       header: 'State',
-      width: '50px',
+      width: '90px',
       display: true,
       sorted: false,
       filtered: false,
@@ -155,9 +156,79 @@ export class WorkspaceJobManagerComponent implements OnInit {
     }
   ];
 
+  tableColumnDetail = [
+    {
+      field: 'taskNumber',
+      header: 'Task N°',
+      width: '50px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'state'
+    },
+    {
+      field: 'taskName',
+      header: 'Task Name',
+      width: '200px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'job'
+    },
+    {
+      field: 'status',
+      header: 'Status',
+      width: '120px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'jobOwner'
+    },
+    {
+      field: 'startDate',
+      header: 'Start Date',
+      width: '120px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'jobType'
+    },
+    {
+      field: 'completedDate',
+      header: 'Completed Date',
+      width: '120px',
+      display: true,
+      sorted: false,
+      filtered: false,
+      type: 'text',
+      filterParam: 'innerCedantName'
+    },
+  ];
+
+  detailData = [
+    {
+      taskNumber: '1',
+      taskName: 'Import Portfolio XYZ from "EDM Name"',
+      status: '2019-01-03 T 09:57:10',
+      startDate: '2019-01-03 T 09:57:10',
+      completedDate: '2019-01-03 T 09:57:10',
+    },
+    {
+      taskNumber: '2',
+      taskName: 'Import Analysis ABC (ID 30) from "RDM Name"',
+      status: '2019-01-03 T 09:57:10',
+      startDate: '2019-01-03 T 09:57:10',
+      completedDate: '2019-01-03 T 09:57:10',
+    }
+  ];
+
   listOfData = [
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -170,7 +241,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -183,7 +254,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -196,7 +267,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -209,7 +280,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -222,7 +293,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -235,7 +306,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -248,7 +319,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -261,7 +332,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -274,7 +345,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -287,7 +358,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
@@ -300,7 +371,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
-      selected: false,
+/*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',

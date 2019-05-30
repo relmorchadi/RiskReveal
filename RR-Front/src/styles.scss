@@ -1,23 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
 @import "assets/fonts/Rubik/rubik.css";
-.ant-avatar{
+@import "assets/scss/theme/font";
+@import "assets/scss/theme/button";
+@import "assets/scss/theme/input";
+@import "assets/scss/theme/dropdown";
+@import "assets/scss/theme/tabs";
+@import "assets/scss/theme/tags";
+
+body {
+  @media screen and (min-width: 1800px) {
+    overflow: hidden;
+  }
+}
+
+.ant-avatar {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
+
 //.ant-avatar-string{
 //  position: webkit sticky !important;
 //}
-.ant-menu-item-group-title{
+.ant-menu-item-group-title {
   padding: 0 !important;
 }
+
 .ant-menu-inline-collapsed {
   width: 89px;
 }
 
 
 .ant-tooltip {
-  .ant-tooltip-content{
+  .ant-tooltip-content {
     .ant-tooltip-inner {
       color: #2900ff !important;
       background-color: white !important;
@@ -26,15 +41,20 @@
   }
 }
 
-.ant-tooltip-placement-bottom .ant-tooltip-arrow{
+.ant-tooltip-placement-bottom .ant-tooltip-arrow {
   border-bottom-color: white !important;
 }
-.ant-tooltip-placement-top .ant-tooltip-arrow{
+
+.ant-tooltip-placement-top .ant-tooltip-arrow {
   border-top-color: white !important;
 }
-.ant-tooltip-placement-right .ant-tooltip-arrow{
+
+.ant-tooltip-placement-right .ant-tooltip-arrow {
   border-right-color: white !important;
 }
-.ant-tooltip-placement-left .ant-tooltip-arrow{
+
+.ant-tooltip-placement-left .ant-tooltip-arrow {
   border-left-color: white !important;
 }
+
+

@@ -13,6 +13,8 @@ import {stringify} from "querystring";
 })
 export class WorkspaceCalibrationComponent implements OnInit {
 
+  size;
+  disabled;
 
   visibleIcon: Boolean;
 
@@ -100,21 +102,25 @@ export class WorkspaceCalibrationComponent implements OnInit {
     this.pure = {
       category: [
         {
-          name: "Pre-Default",
+          name: "Base",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '40%'
         }, {
           name: "Default",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '10%'
         }, {
-          name: "Post-Default",
+          name: "Client",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '40%'
         }, {
           name: "Inuring",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '10%'
         }
       ],
       dataTable: [

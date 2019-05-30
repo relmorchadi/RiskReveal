@@ -7,8 +7,8 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  SearchRiskLinkEDMAndRDMAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction
+  SearchRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
@@ -377,12 +377,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   onInputSearch(event) {
-    console.log('the searched Item is:', event.target.value);
     if (event.target.value.length > 2) {
       this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
     } else {
       this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: '', size: '20'}));
     }
+    this.detectChanges();
   }
 
   loadItemsLazy(event) {
@@ -434,7 +434,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
-  checkRow(event) {
+  checkRow(event, rowData) {
+    if (this.state.listEdmRdm.selectedEDMOrRDM === 'edm') {
+      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
+    } else {
+      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+    }
     console.log(event);
   }
 

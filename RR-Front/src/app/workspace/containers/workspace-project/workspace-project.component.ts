@@ -39,7 +39,6 @@ export class WorkspaceProjectComponent implements OnInit {
 
   selectProject(project) {
     this.store.dispatch(new SelectProjectAction(project));
-    this.router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/RiskLink`]);
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
