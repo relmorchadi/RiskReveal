@@ -1,24 +1,21 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {HelperService} from '../../../../shared/helper.service';
 import {Router} from '@angular/router';
 import {SearchService} from '../../../service/search.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
-import {forkJoin, Observable, of} from 'rxjs';
+import {Observable} from 'rxjs';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../model/workspace-main';
 import {WorkspaceMainState} from '../../../store/states/workspace-main.state';
 import {NotificationService} from '../../../../shared/notification.service';
-import {
-  LoadWorkspacesAction,
-  OpenNewWorkspacesAction,
-  PatchWorkspaceMainStateAction
-} from '../../../store/actions/workspace-main.action';
+import {LoadWorkspacesAction, OpenNewWorkspacesAction, PatchWorkspaceMainStateAction} from '../../../store/actions/workspace-main.action';
 
 @Component({
   selector: 'workspaces-menu-item',
   templateUrl: './workspaces-menu-item.component.html',
-  styleUrls: ['./workspaces-menu-item.component.scss']
+  styleUrls: ['./workspaces-menu-item.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspacesMenuItemComponent implements OnInit {
   contractFilterFormGroup: FormGroup;
@@ -32,16 +29,29 @@ export class WorkspacesMenuItemComponent implements OnInit {
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
+  favorites: any;
 
   constructor(private _helperService: HelperService, private router:Router, private _searchService: SearchService,
-              private _fb: FormBuilder, private store: Store, private notificationService: NotificationService) {
+              private _fb: FormBuilder, private store: Store, private notificationService: NotificationService,private cdRef: ChangeDetectorRef) {
     this.setForm();
   }
+
+  @Select(WorkspaceMainState.getFavorite) favorites$;
 
   ngOnInit() {
     this.store.dispatch(new LoadWorkspacesAction());
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
+    this.favorites$.subscribe( fv => {
+      console.log(fv);
+      this.favorites= fv
+      this.detectChanges();
+    });
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
   }
 
   private searchData(id, year) {

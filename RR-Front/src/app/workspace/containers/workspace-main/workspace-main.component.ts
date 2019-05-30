@@ -13,7 +13,7 @@ import {
   AppendNewWorkspaceMainAction,
   CloseWorkspaceMainAction,
   LoadWorkspacesAction,
-  OpenNewWorkspacesAction,
+  OpenNewWorkspacesAction, PatchWorkspace,
   PatchWorkspaceMainStateAction, setTabsIndex
 } from '../../../core/store/actions/workspace-main.action';
 import {distinctUntilChanged, filter, flatMap, map, merge, toArray} from 'rxjs/operators';
@@ -203,4 +203,22 @@ export class WorkspaceMainComponent implements OnInit {
     }
   }
 
+  addToFavorite(tab: any,k,liked) {
+    this.liked = liked;
+    this.store.dispatch(new PatchWorkspace({
+      key: 'favorite',
+      value: liked,
+      k,
+      ws: tab
+    }))
+
+    let workspaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
+
+    if(liked){
+      workspaceMenuItem[tab.workspaceId + '-'+ tab.uwYear] = {...tab,favorite: true};
+    }else{
+      workspaceMenuItem = _.omit(workspaceMenuItem, `${tab.workspaceId}-${tab.uwYear}`);
+    }
+    localStorage.setItem('workSpaceMenuItem',JSON.stringify(workspaceMenuItem));
+  }
 }

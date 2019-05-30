@@ -39,3 +39,8 @@ export class LoadWorkspacesAction {
   static readonly type = '[Workspace Main] Load Workspace From Local';
   constructor() {}
 }
+
+export class PatchWorkspace {
+  static readonly type = '[Workspace Main] Patch Workspace';
+  constructor(public payload?: any) {}
+}
