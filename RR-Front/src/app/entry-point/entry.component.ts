@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {filter, map, mergeMap} from 'rxjs/operators';
 import {ActivatedRoute, NavigationEnd, Router} from '@angular/router';
 import {Title} from '@angular/platform-browser';
@@ -8,7 +8,7 @@ import {Title} from '@angular/platform-browser';
   template:`<router-outlet></router-outlet>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntryComponent {
+export class EntryComponent implements OnInit{
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,

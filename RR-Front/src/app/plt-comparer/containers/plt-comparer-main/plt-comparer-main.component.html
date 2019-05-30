@@ -1,6 +1,130 @@
-<nz-layout style="height: 90%">
-  <div class="content">
-    <h2>PLT Comparer</h2>
-    <div class="blank-space"></div>
+<div class="layout-comparer">
+  <div class="header">
+    <div class="title-section-comparer">
+      <h4>PLT Comparer &nbsp;</h4>
+      <i class="icon-plus"></i>
+
+      <!--        <button class="button-plus-icon">+</button>-->
+    </div>
+
+    <div class="Deltas">Deltas &nbsp;
+      <div class="button-toggle">
+        <nz-switch class="switch-input" [(ngModel)]="switchValue"></nz-switch>
+      </div>
+      <div style="width: 200px;">
+        <nz-select *ngIf="switchValue"
+
+                   nzShowSearch
+                   nzAllowClear
+                   class="dropdown-default"
+                   nzPlaceHolder="Baseline"
+                   [(ngModel)]="defaultImport" style="width: 140px;"
+        >
+          <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
+          <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
+          <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
+        </nz-select>
+      </div>
+    </div>
+    <div class="dropdown-group">
+      <div class="body-wrap-dropDowns-comparer">
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap-comparer" nz-dropdown>
+            <div class="dropdown-wrap-title-comparer">
+              <span class="dropdown-title-comparer">Display Currency</span>
+              <span class="dropdown-item-selected-comparer">
+              EUR
+              </span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li nz-menu-item s
+            >items
+            </li>
+          </ul>
+        </nz-dropdown>
+      </div>
+      <div class="body-wrap-dropDowns-comparer">
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap-comparer" nz-dropdown>
+            <div class="dropdown-wrap-title-comparer">
+              <span class="dropdown-title-comparer">Financial Unit</span>
+              <span class="dropdown-item-selected-comparer">
+              Millions
+              </span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li nz-menu-item s
+            >items
+            </li>
+          </ul>
+        </nz-dropdown>
+      </div>
+      <nz-select
+        style="width: 200px;"
+        nzShowSearch
+        nzAllowClear
+        class="dropdown-default"
+        nzPlaceHolder="Baseline"
+        [(ngModel)]="defaultImport" style="width: 140px;"
+      >
+        <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
+        <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
+        <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
+      </nz-select>
+    </div>
+
+    <div class="export">
+      <button class="button-outlined">
+        EXPORT
+      </button>
+    </div>
   </div>
-</nz-layout>
+  <div class="body">
+
+    <div class="cards-wrapper" *ngFor="let item of cardContainer" [ngStyle]="">
+      <div class="card-header-title">
+        <span style="font-weight: bold;">{{item.title}}</span><br>
+        <span>{{item.subtitle}}</span><br>
+      </div>
+      <div class="card-table">
+        <span style="font-size: 10px;">{{item.tableHeader}}</span>
+        <table>
+          <thead>
+          <tr>
+            <th>OEP</th>
+            <th>AEP</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let row of item.table">
+            <th>{{row[0]}}</th>
+            <th>{{row[2]}}</th>
+          </tr>
+          <tr>
+            <th><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
+            <th><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card-footer-detail">
+        <div class="card-table-row">
+          <div  *ngFor="let row of item.result">{{row[0]}}</div>
+        </div>
+        <div class="card-table-row1">
+          <div  *ngFor="let row of item.result">{{row[2]}}</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

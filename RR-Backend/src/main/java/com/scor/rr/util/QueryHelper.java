@@ -120,6 +120,7 @@ public class QueryHelper {
     }
 
     private String generateClause(String columnName, String keyword, Operator operator){
+        if(columnName.equals("year")) columnName="uwYear";
         switch (operator) {
             case EQUAL:
                 return " c." + columnName + " = '" + escape(keyword) + "' ";
@@ -142,6 +143,7 @@ public class QueryHelper {
     private Collection<? extends String> generateGlobalSearchClause(String keyword) {
         List<String> gsc = new ArrayList<>();
         if(Objects.nonNull(keyword))
+            if(!keyword.trim().equals(""))
             Arrays.asList(globalSearchColumns).forEach(s -> gsc.add(generateLikeClause(s,keyword)));
         return gsc;
     }

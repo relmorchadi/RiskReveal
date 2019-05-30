@@ -325,7 +325,7 @@ export class PltMainState implements NgxsOnInit {
     _.forEach(userTags[payload].pltHeaders, (plt) => {
       newData[plt.id] = {...data[plt.id], userTags: _.toArray(_.omit(data[plt.id].userTags, _.findIndex(data[plt.id].userTags, (userTag: any) => userTag.tagId == payload)))}
     })
-    
+
     ctx.patchState({
       data: {...data,...newData},
       userTags: _.omit(userTags, payload)
