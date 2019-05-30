@@ -114,7 +114,7 @@
                           [value]="globalSearchItem" [closeStatus]="true"></app-chip-tag>
           </div>
           <div *ngFor="let items of searchedItems; let i = index" style="padding: 15px 4px;">
-            <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i)" [value]="items.value"
+            <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i, items.key)" [value]="items.value"
                           [closeStatus]="true"></app-chip-tag>
           </div>
           <span (click)="clearChips()" *ngIf="searchedItems.length > 0">Clear All</span>

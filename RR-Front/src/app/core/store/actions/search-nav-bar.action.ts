@@ -37,3 +37,8 @@ export class LoadRecentSearchAction {
   static readonly type = '[Search Nav Bar] Load Recent Search from storage';
   constructor() {}
 }
+
+export class SetLoadingState {
+  static readonly type = '[Search Nav Bar] Set Loading State'
+  constructor(public payload?: any) {}
+}
