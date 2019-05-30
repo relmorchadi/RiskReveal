@@ -124,17 +124,17 @@ export class SearchMenuItemComponent implements OnInit {
       const regExp = /(\w*:){1}(((\w|\")*\s)*)/g;
       const globalKeyword = `${expression} `.replace(regExp, (match, shortcut, keyword) => {
         // console.log({shortcut, keyword});
-        this._searchService.keyword=expression.trim().split(" ")[0];
-        if (this._searchService.keyword.indexOf(':') > -1) this._searchService.keyword=null;
+        this._searchService.keyword = expression.trim().split(" ")[0];
+        if (this._searchService.keyword.indexOf(':') > -1) this._searchService.keyword = null;
         let field = this.state.sortcutFormKeysMapper[_.trim(shortcut, ':')];
         this._searchService.expertModeFilter.push({
           field : this.state.sortcutFormKeysMapper[_.trim(shortcut, ':')],
           value: _.trim(_.trim(_.trim(keyword),'"')),
-          operator: this.getOperator(_.trim(keyword),field)})
+          operator: this.getOperator(_.trim(keyword), field)});
         return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword));
       }).trim();
-      if(this._searchService.keyword)
-        setTimeout(()=> this._searchService.addSearchedItems({key: 'Global Search', value: this._searchService.keyword}))
+      if (this._searchService.keyword)
+        setTimeout(() => this._searchService.addSearchedItems({key: 'Global Search', value: this._searchService.keyword}));
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}));
     } else {
       this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: expression}));
@@ -165,7 +165,7 @@ export class SearchMenuItemComponent implements OnInit {
   filterContracts(keyboardEvent) {
     this._clearFilters();
     console.log(keyboardEvent);
-    if (keyboardEvent.key == 'ArrowUp') {
+    if (keyboardEvent.key === 'ArrowUp') {
       event.preventDefault();
       if (this.scrollTo > 0) {
         this.scrollTo = this.scrollTo - 1;
@@ -175,7 +175,7 @@ export class SearchMenuItemComponent implements OnInit {
       // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
       event.stopPropagation();
     }
-    if (keyboardEvent.key == 'ArrowDown') {
+    if (keyboardEvent.key === 'ArrowDown') {
       event.preventDefault();
       if (this.scrollTo < this.listLength) {
         this.scrollTo = this.scrollTo + 1;
@@ -185,14 +185,14 @@ export class SearchMenuItemComponent implements OnInit {
       // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
       event.stopPropagation();
     }
-    if (keyboardEvent.key == ' ' && this.scrollTo >= 0) {
+    if (keyboardEvent.key === ' ' && this.scrollTo >= 0) {
       if (this.pos) {
         this.selectSearchBadge(this.stringUpdate(this.state.tables[this.pos.i]), this.state.data[this.pos.i][this.pos.j].label );
         this.scrollTo = -1;
       }
     }
     if (keyboardEvent.key === 'Enter') {
-      this._searchService.expertModeFilter = []
+      this._searchService.expertModeFilter = [];
       this._searchService.resetSearchedItems();
       const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
       if (this.contractFilterFormGroup.get('switchValue').value) {
@@ -232,8 +232,6 @@ export class SearchMenuItemComponent implements OnInit {
       this._searchService.affectItems([...this.state.badges]);
       localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
     }
-    this.contractFilterFormGroup.patchValue({globalKeyword: ''});
-    this.clearValue();
     this.router.navigate(['/search']);
   }
 
@@ -250,7 +248,7 @@ export class SearchMenuItemComponent implements OnInit {
 
   redirectWithSearch(items) {
     this._searchService.affectItems(items);
-    this.clearValue();
+    this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: items}));
     this.router.navigate(['/search']);
   }
 
@@ -284,13 +282,12 @@ export class SearchMenuItemComponent implements OnInit {
 
   closeSearchBadge(status, index) {
     if (status) {
-      if (!this._searchService.expertModeEnabled){
+      if (this._searchService.expertModeEnabled) {
         this.state.badges.splice(index, 1);
-        this._searchService.expertModeFilter.splice(index,1);
-      }
-      else{
-        this.state.badges.splice(index, 1);
-        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: this.state.badges}));
+        this._searchService.expertModeFilter.splice(index, 1);
+      } else {
+        const badges = _.toArray(_.omit(this.state.badges, index));
+        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: badges}));
       }
     }
   }
@@ -309,6 +306,11 @@ export class SearchMenuItemComponent implements OnInit {
         'the expert mode is now disabled',
         'info', 'bottomRight', 2000);
     }
+  }
+
+  clearValue(): void {
+    this.store.dispatch(new ClearSearchValuesAction());
+    this._clearFilters();
   }
 
   private _clearFilters() {
@@ -380,11 +382,6 @@ export class SearchMenuItemComponent implements OnInit {
     this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: false}, {key: 'visible', value: !this.state.visible}]));
   }
 
-  clearValue(): void {
-    this.store.dispatch(new ClearSearchValuesAction());
-    this._clearFilters();
-  }
-
   handleScroll($event: KeyboardEvent) {
     console.log($event);
   }
@@ -395,7 +392,7 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   getOperator(str: string, field: string) {
-    if(field=="year") return 'EQUAL';
+    if (field == 'year') return 'EQUAL';
     if (str.endsWith('\"') && str.indexOf('\"') === 0) {
       return 'EQUAL';
     } else { return 'LIKE'; }
