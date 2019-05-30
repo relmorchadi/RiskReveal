@@ -94,7 +94,7 @@ export class PltMainState implements NgxsOnInit {
         mergeMap( (data) => {
           ctx.patchState({
             data: Object.assign({},
-              ...data.plts.map(plt => ({[plt.pltId]: { ...plt, selected: false, visible: true,opened: false }}))
+              ...data.plts.map(plt => ({[plt.pltId]: { ...plt, selected: false, visible: true,tagFilterActive: false,opened: false,  }}))
             ),
             filters: {
               systemTag: [],
@@ -173,6 +173,21 @@ export class PltMainState implements NgxsOnInit {
 
   }
 
+
+  reverseSystemTagsMapping = {
+    grouped: {
+      'Region Peril': 'regionPerilCode',
+      'Currency': 'currency',
+      'Modelling Vendor': 'sourceModellingVendor',
+      'Model System': 'sourceModellingSystem',
+      'Target RAP':'targetRapCode',
+      'User Occurence Basis': 'userOccurrenceBasis',
+      'Loss Asset Type': 'pltType',
+    },
+    nonGrouped: {
+    }
+  };
+
   @Action(fromPlt.FilterPlts)
   FilterPlts(ctx: StateContext<pltMainModel>, action: fromPlt.FilterPlts) {
     const state = ctx.getState();
@@ -182,9 +197,30 @@ export class PltMainState implements NgxsOnInit {
 
     let newData = {};
 
-    if ([...filters.userTag].length > 0) {
-        _.forEach(state.data, (plt, k) => {
-          if (_.some([...filters.userTag], (userTag) => _.find([...plt.userTags], tag => tag.tagId == userTag))) {
+    /*if(filters.systemTag.length > 0 ){
+      _.forEach( state.data , (plt: any, k) => {
+        if(plt.visible) {
+          if (_.some(filters.systemTag, (systemTag) => {
+            const key = _.keys(systemTag)[0];
+            return plt[this.reverseSystemTagsMapping.grouped[systemTag[key]]] === key
+          })) {
+            newData[k] = {...plt, tagFilterActive: true};
+          } else {
+            newData[k] = {...plt, tagFilterActive: false};
+          }
+        }else{
+          newData[k] = {...plt, tagFilterActive: false};
+        }
+      });
+    }else{
+      _.forEach(state.data, (plt, k) => {
+        newData[k] = {...plt,visible: plt.visible, tagFilterActive: false};
+      });
+    }*/
+
+    if (filters.userTag.length > 0) {
+        _.forEach(state.data, (plt: any, k) => {
+          if (_.some(filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
             newData[k] = {...plt, visible: true};
           } else {
             newData[k] = {...plt, visible: false};
@@ -236,7 +272,7 @@ export class PltMainState implements NgxsOnInit {
         ...rest
       } = payloadTag
 
-      uesrTagsSummary[tagId] = {tagId,...rest, count: pltHeaders.length, selected: false}
+      uesrTagsSummary[tagId] = {tagId,...rest, selected: false, count: pltHeaders.length,pltHeaders}
     })
 
     ctx.patchState({
@@ -270,4 +306,32 @@ export class PltMainState implements NgxsOnInit {
       userTags: {...userTags, [rest.tagId]: {...rest, selected: false,count: pltHeaders.length}}
     })
   }
+  @Action(fromPlt.deleteUserTag)
+  deleteUserTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.deleteUserTag){
+    return this.pltApi.deleteUserTag(payload).pipe(
+      mergeMap( () => ctx.dispatch(new fromPlt.deleteUserTagSuccess(payload)))
+    )
+  }
+
+  @Action(fromPlt.deleteUserTagSuccess)
+  deleteUserTagFromPlts(ctx: StateContext<pltMainModel>, { payload }: fromPlt.deleteUserTagSuccess){
+    const {
+      data,
+      userTags
+    } = ctx.getState();
+
+    let newData= {};
+
+    _.forEach(userTags[payload].pltHeaders, (plt) => {
+      newData[plt.id] = {...data[plt.id], userTags: _.toArray(_.omit(data[plt.id].userTags, _.findIndex(data[plt.id].userTags, (userTag: any) => userTag.tagId == payload)))}
+    })
+    
+    ctx.patchState({
+      data: {...data,...newData},
+      userTags: _.omit(userTags, payload)
+    })
+  }
+
+
 }
+

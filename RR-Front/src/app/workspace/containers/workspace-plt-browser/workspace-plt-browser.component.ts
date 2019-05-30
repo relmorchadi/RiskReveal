@@ -58,6 +58,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     { label: 'Add/Assign Tag', icon: 'pi pi-tags', command: (event) => this.addTagModal= true}
   ];
 
+  tagContextMenu = [
+    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))}
+  ]
+
   pltColumns = [
     {fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
     {fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
@@ -460,19 +464,44 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   addModalInput: any;
   inputValue: null;
   addModalSelect: any;
+  tagFormenu: any;
 
-  setFilter(filter: string, tag) {
-      this.filters =
-        _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
-        _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
-        _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
+  setFilter(filter: string, tag,section) {
+      if(filter === 'userTag'){
+        this.filters =
+          _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
+            _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
+            _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
 
-    if(filter == 'userTag'){
-      this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
-    }
-    /*if(filter == 'systemTag') {
-      this.systemTags = _.map(this.systemTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
-    }*/
+        if(filter == 'userTag'){
+          this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
+        }
+      }else{
+        console.log(tag,section)
+        const {
+          systemTag
+        } = this.filters;
+        /*this.filters =
+          _.findIndex(systemTag, e => e == tag.tagId) < 0 ?
+            _.merge({},
+              this.filters, {
+              systemTag: _.merge([], systemTag, {
+                [systemTag.length] : {section, }
+              } )
+            }) :
+            _.assign({}, this.filters, {systemTag: _.filter(systemTag, e => e.section != section)})*/
+
+        this.filters = _.findIndex(systemTag, sectionFilter => sectionFilter[tag] === section ) < 0 ?
+          _.merge({},this.filters,{
+            systemTag: _.merge([], systemTag, {
+              [systemTag.length]: { [tag] : section }
+            })
+          }):
+          _.assign({}, this.filters,{ systemTag: _.filter( systemTag, sectionFilter => sectionFilter[tag] != section)})
+      }
+
+      console.log(this.filters)
+
     this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
       filters: this.filters
     }))
