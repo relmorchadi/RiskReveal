@@ -864,11 +864,11 @@ export class WorkspaceCalibrationComponent implements OnInit {
       })
       this.lastCheckedBool = false;
     }
+    this.cheackBoxPrincipe();
   }
 
   changeBackgroundCheckBox(event, a) {
-    let inder=false;
-    let selectedAll=false;
+
     let checked = a.checked;
     console.log("event Check")
     let o = 0;
@@ -897,6 +897,11 @@ export class WorkspaceCalibrationComponent implements OnInit {
         }
       })
     }
+    this.cheackBoxPrincipe();
+  }
+  cheackBoxPrincipe(){
+    let inder=false;
+    let selectedAll=false;
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (plt, key) {
           if (plt.checked) {
@@ -918,7 +923,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
       this.checkedAll=true;
       this.indereterminate=false;
     }
-
   }
 
   setBackgroud(a) {
