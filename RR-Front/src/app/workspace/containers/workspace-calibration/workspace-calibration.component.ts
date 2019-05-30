@@ -90,7 +90,16 @@ export class WorkspaceCalibrationComponent implements OnInit {
   currentSystemTag = null;
   currentUserTag = null;
   private currentDraggableEvent: DragEvent;
-  /*listOfPlts: Array<{
+  sortName: string | null = null;
+  sortValue: string | null = null;
+  searchAddress: string;
+  tagSpan:number=3;
+  pltSpan:number=7;
+  templateSpan:number=14;
+  pltSelectionSpan;
+  extended:boolean=false;
+
+  listOfPlts: Array<{
     pltId: number;
     systemTags: any;
     userTags: any;
@@ -346,15 +355,29 @@ export class WorkspaceCalibrationComponent implements OnInit {
     checked: boolean;
     [key: string]: any;}> = [
     ...this.listOfPlts
-  ];*/
-
+  ];
+  pltColumns = [
+    {fields:'check' , header:'' , width: '1%', sorted: false, filtred: false, icon: null,extended:true},
+    {fields:'' , header:'User Tags' , width: '10%', sorted: false, filtred: false, icon: null,extended:true},
+    {fields:'pltId' , header:'PLT ID' , width: '12%', sorted: true, filtred: true, icon: null,extended:true},
+    {fields:'pltName' , header:'PLT Name' , width: '14%', sorted: true, filtred: true, icon: null,extended:true},
+    {fields:'peril' , header:'Peril' , width: '7%', sorted: true, filtred: true, icon: null,extended:false},
+    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '13%', sorted: true, filtred: true, icon: null,extended:false},
+    {fields:'regionPerilName' , header:'Region Peril Name' , width: '13%', sorted: true, filtred: true, icon: null,extended:false},
+    {fields:'grain' , header:'Grain' , width: '9%', sorted: true, filtred: true, icon: null,extended:false},
+    {fields:'vendorSystem' , header:'Vendor System' , width: '11%', sorted: true, filtred: true, icon: null,extended:false},
+    {fields:'rap' , header:'RAP' , width: '9%', sorted: true, filtred: true, icon: null,extended:false},
+    {fields:'action' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add",extended:true},
+    {fields:'action' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-note",extended:true}
+  ]
+  ColpasBool: boolean=true;
   constructor() {
 
     this.adjsArray = [
-      {id: 1, name: 'Missing Exp', value: 2.1, linear: false, category: "pd", hover: false},
-      {id: 2, name: 'Port. Evo', value: 2.1, linear: false, category: "poin", hover: false},
-      {id: 3, name: 'ALAE', value: 1.75, linear: false, category: "pd", hover: false},
-      {id: 4, name: 'Model Calib', value: "RPB (EEF)", linear: true, category: "bd", hover: false}
+      {id: 1, name: 'Missing Exp', value: 2.1, linear: false, category: "pd", hover: false,idAdjustementType:1},
+      {id: 2, name: 'Port. Evo', value: 2.1, linear: false, category: "bd", hover: false,idAdjustementType:2},
+      {id: 3, name: 'ALAE', value: 1.75, linear: false, category: "pd", hover: false,idAdjustementType:3},
+      {id: 4, name: 'Model Calib', value: "RPB (EEF)", linear: true, category: "bd", hover: false,idAdjustementType:4}
     ];
     this.pure = {
       category: [
@@ -362,10 +385,12 @@ export class WorkspaceCalibrationComponent implements OnInit {
           name: "Base",
           basis: [],
           showBol: true
+
         }, {
           name: "Default",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '10%'
         }, {
           name: "Client",
           basis: [],
@@ -373,11 +398,12 @@ export class WorkspaceCalibrationComponent implements OnInit {
         }, {
           name: "Inuring",
           basis: [],
-          showBol: true
+          showBol: true,
+          width: '10%'
         },{
           name: "Post-Inuring ",
           basis: [],
-          showBol: true
+          showBol: true,
         },
       ],
       dataTable: [
@@ -393,6 +419,13 @@ export class WorkspaceCalibrationComponent implements OnInit {
               adj: [],
               systemTags: [{tagId: 6}, {tagId: 7}],
               userTags: [{tagId: 1}, {tagId: 2}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             }, {
               id: "122222",
               threadName: "APEQ-ID_GU_CFS PORT 2",
@@ -401,7 +434,14 @@ export class WorkspaceCalibrationComponent implements OnInit {
               locked: false,
               adj: [],
               systemTags: [{tagId: 1}],
-              userTags: [{tagId: 1}]
+              userTags: [{tagId: 1}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             }, {
               id: "122222",
               threadName: "APEQ-ID_GU_CFS PORT 3",
@@ -410,7 +450,14 @@ export class WorkspaceCalibrationComponent implements OnInit {
               locked: false,
               adj: [],
               systemTags: [{tagId: 2}, {tagId: 6}, {tagId: 1}],
-              userTags: [{tagId: 1}, {tagId: 2}]
+              userTags: [{tagId: 1}, {tagId: 2}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             },
             {
               id: "122223",
@@ -420,7 +467,14 @@ export class WorkspaceCalibrationComponent implements OnInit {
               locked: false,
               adj: [],
               systemTags: [{tagId: 3}, {tagId: 5}],
-              userTags: [{tagId: 2}, {tagId: 1}]
+              userTags: [{tagId: 2}, {tagId: 1}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             },
             {
               id: "122224",
@@ -430,7 +484,14 @@ export class WorkspaceCalibrationComponent implements OnInit {
               locked: false,
               adj: [],
               systemTags: [{tagId: 3}, {tagId: 4}, {tagId: 2}],
-              userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}]
+              userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             }
 
           ]
@@ -444,14 +505,28 @@ export class WorkspaceCalibrationComponent implements OnInit {
               locked: true,
               adj: [],
               systemTags: [{tagId: 3}, {tagId: 6}, {tagId: 7}],
-              userTags: [{tagId: 2}, {tagId: 3}]
+              userTags: [{tagId: 2}, {tagId: 3}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             }, {
               id: "122252", threadName: "APEQ-ID_GULM 2", icon: 'icon-lock-alt iconRed',
               checked: false,
               locked: true,
               adj: [],
               systemTags: [{tagId: 3}, {tagId: 4}, {tagId: 6}],
-              userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}]
+              userTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             },
 
           ]
@@ -465,14 +540,28 @@ export class WorkspaceCalibrationComponent implements OnInit {
               locked: false,
               adj: [],
               systemTags: [{tagId: 4}, {tagId: 6}, {tagId: 3}],
-              userTags: [{tagId: 1}, {tagId: 3}]
+              userTags: [{tagId: 1}, {tagId: 3}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             }, {
               id: "12299892", threadName: "Apk lap okol Pm 2", icon: 'icon-history-alt iconYellow',
               checked: false,
               locked: false,
               adj: [],
               systemTags: [{tagId: 7}, {tagId: 4}, {tagId: 5}],
-              userTags: [{tagId: 1}, {tagId: 2}]
+              userTags: [{tagId: 1}, {tagId: 2}],
+              peril: "TC",
+              regionPerilCode: "NATC-USM",
+              regionPerilName: "North Atlantic",
+              selected: false,
+              grain: "liberty-NAHU",
+              vendorSystem: "RMS RiskLink",
+              rap: "North Atlantic"
             }
 
           ]
@@ -778,6 +867,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   changeBackgroundCheckBox(event, a) {
+    let inder=false;
+    let selectedAll=false;
     let checked = a.checked;
     console.log("event Check")
     let o = 0;
@@ -806,6 +897,28 @@ export class WorkspaceCalibrationComponent implements OnInit {
         }
       })
     }
+    _.forIn(this.pure.dataTable, function (value, key) {
+      _.forIn(value.thread, function (plt, key) {
+          if (plt.checked) {
+            inder=true;
+          }else{
+            selectedAll=true;
+          }
+        }
+      )
+    })
+    if(inder){
+      this.indereterminate=true;
+    }else{
+      this.indereterminate=false;
+    }
+    if(selectedAll){
+      this.checkedAll=false;
+    } else{
+      this.checkedAll=true;
+      this.indereterminate=false;
+    }
+
   }
 
   setBackgroud(a) {
@@ -831,11 +944,11 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   selectAllThread(selected) {
+    this.indereterminate=false;
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (value, key) {
         value.checked = selected;
       })
-
     })
     this.selectAllBool = !this.selectAllBool;
     _.forIn(this.pure.dataTable, function (value1, key) {
@@ -960,8 +1073,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
     var today = new Date();
     var milliseconds = today.getMilliseconds();
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
-    console.log(numberAdjs, "numberAdjs");
-    console.log(adj, "numberAdjs");
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (thraed, key) {
           let myThread = thraed;
@@ -1004,7 +1115,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
     if (effect == "none") return;
     if (this.dndBool) {
-      console.log("here1", this.dndBool)
       const index = list.indexOf(item);
       list.splice(index, 1);
 
@@ -1019,6 +1129,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   onDrop(event: DndDropEvent, list: any[]) {
+    console.log("ondrag")
 
     let index = event.index;
 
@@ -1027,10 +1138,35 @@ export class WorkspaceCalibrationComponent implements OnInit {
       index = list.length;
     }
     let id = event.event.toElement.id;
-    event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
+    console.log("heeeee.1 ", event.data.category)
+    //event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
+    console.log("heeeee.2 ", event.data.category)
+
+    if (event.data.category == "bd" || event.data.category == "pd"  ) {
+      console.log("dropTrue", this.dndBool)
+      this.dndBool = true;
+      list.splice(index, 0, event.data);
+    } else {
+      this.dndBool = false;
+      console.log("dropFalse", this.dndBool)
+    }
+
+  }
+
+  onDropDiv(event: DndDropEvent, list: any[]) {
+    console.log("ondragDiv")
+
+    let index = event.index;
+
+    if (typeof index === "undefined") {
+
+      index = list.length;
+    }
+    let id = event.event.toElement.id;
+    //event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
     console.log("heeeee. ", event.data.category)
 
-    if (event.data.category == "bd" || event.data.category == "pd" || event.data.category=="" ) {
+    if (event.data.category == "bd" || event.data.category == "pd" || event.data.category == "poin") {
       console.log("dropTrue", this.dndBool)
       this.dndBool = true;
       list.splice(index, 0, event.data);
@@ -1143,5 +1279,142 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   getColorTag(tag) {
     return _.find(this.userTags, function(o) { return o.tagId == tag.tagId; }).tagColor;
+  }
+
+  applyToAllAdjustement(adjustement,valueOfAdj) {
+     _.forIn(this.pure.dataTable,function (value,key) {
+       _.forIn(value.thread,function (thread,key) {
+         _.forIn(thread.adj,function (adj,key) {
+           console.log("yes1")
+             if(adj.idAdjustementType==adjustement.idAdjustementType){
+               console.log(valueOfAdj);
+               adj.value=valueOfAdj;
+             }
+         })
+       })
+     })
+  }
+  onChangeAdjValue(adj,event){
+    adj.value=event.target.value;
+  }
+
+  applyToSelectedPlt(adjustement,valueOfAdj) {
+    _.forIn(this.pure.dataTable,function (value,key) {
+      _.forIn(value.thread,function (thread,key) {
+        _.forIn(thread.adj,function (adj,key) {
+          console.log("yes1")
+          if(adj.idAdjustementType==adjustement.idAdjustementType && thread.checked==true){
+            adj.value=valueOfAdj;
+          }
+        })
+      })
+    })
+  }
+  sort(sort: { key: string; value: string }): void {
+    this.sortName = sort.key;
+    this.sortValue = sort.value;
+    this.search();
+  }
+  search(): void {
+    /** filter data **/
+      // const filterFunc = (item: { name: string; age: number; address: string }) =>
+      //   (this.searchAddress ? item.address.indexOf(this.searchAddress) !== -1 : true) &&
+      //   (this.listOfSearchName.length ? this.listOfSearchName.some(name => item.name.indexOf(name) !== -1) : true);
+    const data = this.listOfPlts;
+    // .filter(item => filterFunc(item));
+    /** sort data **/
+    if (this.sortName && this.sortValue) {
+      this.listOfDisplayPlts = data.sort((a, b) =>
+        this.sortValue === 'ascend'
+          ? a[this.sortName!] > b[this.sortName!]
+          ? 1
+          : -1
+          : b[this.sortName!] > a[this.sortName!]
+          ? 1
+          : -1
+      );
+    } else {
+      this.listOfDisplayPlts = data;
+    }
+  }
+
+  applyToAll(adj) {
+    var today = new Date();
+    var milliseconds = today.getMilliseconds();
+    let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    _.forIn(this.pure.dataTable, function (value, key) {
+      _.forIn(value.thread, function (thraed, key) {
+          let myThread = thraed;
+            let newAdj = {...adj};
+            newAdj.id = numberAdjs;
+            myThread.adj.push(newAdj);
+        }
+      )
+    })
+  }
+
+  Colpa() {
+    this.ColpasBool=!this.ColpasBool;
+    console.log(this.extended,"extended1");
+    console.log(this.ColpasBool,"ColpasBool1");
+    if(this.ColpasBool==true){
+      if(this.extended){
+        this.pltSpan=14;
+        this.templateSpan=7;
+      }else {
+        this.pltSpan=7;
+        this.templateSpan=14;
+      }
+    }
+    else {
+      if(this.extended){
+        this.pltSpan=15;
+        this.templateSpan=9;
+      }else {
+        this.pltSpan=9;
+        this.templateSpan=15;
+      }
+    }
+
+  }
+
+  exetende() {
+    this.extended=!this.extended;
+    console.log(this.extended,"extended2");
+    console.log(this.ColpasBool,"ColpasBool2");
+    if(this.extended){
+       if(!this.ColpasBool){
+         this.pltSpan=15;
+         this.templateSpan=9;
+       }else {
+         this.pltSpan=14;
+         this.templateSpan=7;
+       }
+      _.forIn(this.pltColumns,function (value:any,key) {
+            value.extended=true;
+      })
+    }else{
+      if(this.ColpasBool==true){
+        this.pltSpan=7;
+        this.templateSpan=14;
+      }
+      else {
+        this.pltSpan=9;
+        this.templateSpan=15;
+      }
+      _.forIn(this.pltColumns,function (value:any,key) {
+        if(value.fields=="check" || value.header=="User Tags" ||value.fields=="pltId" ||value.fields=="pltName"|| value.fields=="action" ){
+          value.extended=true;
+        }
+        else{
+          value.extended=false;
+        }
+
+      })
+    }
+  }
+
+  changeValue(adj: any,event) {
+    adj.value=event.target.value;
   }
 }
