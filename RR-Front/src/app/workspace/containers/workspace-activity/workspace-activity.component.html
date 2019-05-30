@@ -4,6 +4,35 @@
     <h4>Activity</h4>
   </div>
   <div class="app-body">
-
+    <nz-tabset class="tabs-standard">
+      <nz-tab [nzTitle]="titleFirst">
+        Content of Tab Pane 1
+        <ng-template #titleFirst>
+          <span>All Notifications</span>
+          <span class="tags-info">9</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="titleSecond">
+        Content of Tab Pane 2
+        <ng-template #titleSecond>
+          <span>Error</span>
+          <span class="tags-info">2</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="titleThird">
+        Content of Tab Pane 3
+        <ng-template #titleThird>
+          <span>Warning</span>
+          <span class="tags-info">3</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="titleFourth">
+        Content of Tab Pane 4
+        <ng-template #titleFourth>
+          <span>Informational</span>
+          <span class="tags-info">3</span>
+        </ng-template>
+      </nz-tab>
+    </nz-tabset>
   </div>
 </div>

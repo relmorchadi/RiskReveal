@@ -71,7 +71,7 @@ export class SearchMainComponent implements OnInit {
     },
     {
       field: 'cedantCode',
-      header: 'Cedant',
+      header: 'Cedant Code',
       width: '90px',
       display: true,
       sorted: false,
