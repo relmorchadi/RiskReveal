@@ -1,6 +1,6 @@
 <div class="card-container">
   <nz-tabset class="tabs-main-component" [nzSelectedIndex]="state.openedTabs.tabsIndex" *ngIf="!state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of state.openedTabs.data">
+    <ng-container *ngFor="let tab of state.openedTabs.data;let k= index;">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
@@ -36,8 +36,8 @@
                   <div class="workspace-title-wrapper">
                     <div class="d-inline-flex flex-column">
                       <h3 class="workspace-title">{{tab?.cedantName}}
-                        <i *ngIf="!liked" (click)="liked = true" class="icon-star_border_24px"></i>
-                        <i *ngIf="liked" (click)="liked = false" class="icon-star_24px"></i>
+                        <i *ngIf="!tab.favorite" (click)="addToFavorite(tab,k,true)" class="icon-star_border_24px"></i>
+                        <i *ngIf="tab.favorite" (click)="addToFavorite(tab,k,false)" class="icon-star_24px"></i>
                       </h3>
                       <h4 class="workspace-title"> {{tab?.workspaceName}} | {{tab?.uwYear}} | {{tab?.workSpaceId}} | </h4>
                     </div>

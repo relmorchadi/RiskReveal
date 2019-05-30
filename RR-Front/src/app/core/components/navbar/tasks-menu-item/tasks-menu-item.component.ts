@@ -233,8 +233,8 @@ export class TasksMenuItemComponent implements OnInit {
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
     this.savedtasks = this.tasks;
     this.store.select(WorkspaceMainState.getCurrentWS).subscribe( (ws) => {
-      this.wsId = ws.workSpaceId;
-      this.year = ws.uwYear;
+      this.wsId = _.get(ws,'workSpaceId',null);
+      this.year = _.get(ws,'uwYear',null);
     })
   }
 

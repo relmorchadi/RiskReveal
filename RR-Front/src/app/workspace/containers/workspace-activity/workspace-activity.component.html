@@ -6,28 +6,432 @@
   <div class="app-body">
     <nz-tabset class="tabs-standard">
       <nz-tab [nzTitle]="titleFirst">
-        Content of Tab Pane 1
+        <div class="active-body">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="input-search"/>
+          </div>
+          <span class="body-1">Today</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.today">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Yesterday</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.yesterday">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Monday July 03rd</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.date">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <ng-template #titleFirst>
           <span>All Notifications</span>
           <span class="tags-info">9</span>
         </ng-template>
       </nz-tab>
       <nz-tab [nzTitle]="titleSecond">
-        Content of Tab Pane 2
+        <div class="active-body">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="input-search"/>
+          </div>
+          <span class="body-1">Today</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.today">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Yesterday</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.yesterday">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Monday July 03rd</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.date">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <ng-template #titleSecond>
           <span>Error</span>
           <span class="tags-info">2</span>
         </ng-template>
       </nz-tab>
       <nz-tab [nzTitle]="titleThird">
-        Content of Tab Pane 3
+        <div class="active-body">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="input-search"/>
+          </div>
+          <span class="body-1">Today</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.today">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Yesterday</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.yesterday">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Monday July 03rd</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.date">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <ng-template #titleThird>
           <span>Warning</span>
           <span class="tags-info">3</span>
         </ng-template>
       </nz-tab>
       <nz-tab [nzTitle]="titleFourth">
-        Content of Tab Pane 4
+        <div class="active-body">
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="input-search"/>
+          </div>
+          <span class="body-1">Today</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.today">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Yesterday</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.yesterday">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <span class="body-1">Monday July 03rd</span>
+          <div class="item-wrapper" *ngFor="let items of contentActive.date">
+            <div class="border-wrap" (click)="items.expanded = !items.expanded" [ngStyle]="{'border-left': '5px solid' + items.color }" >
+              <div class="border-wrap-inner">
+                <div class="item-left">
+                  <i [ngStyle]="{'background-color': items.color}" [ngClass]="items.icon"></i>
+                  <span>{{items.text}}</span>
+                </div>
+                <div class="item-right">
+                  <span>{{items.timeStamp}}</span>
+                  <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="items.projectInfo.length > 0 && items.expanded" class="item-project-info">
+              <table>
+                <thead>
+                <tr>
+                  <th>PLT ID</th>
+                  <th>PLT NAME</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let project of items.projectInfo">
+                  <td>{{project[0]}}</td>
+                  <td>{{project[1]}}</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
         <ng-template #titleFourth>
           <span>Informational</span>
           <span class="tags-info">3</span>

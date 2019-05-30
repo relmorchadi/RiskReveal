@@ -5,7 +5,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex,
+  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -44,6 +44,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Selector()
+  static getFavorite(state: WorkspaceMain) {
+    return state.openedTabs.data.filter( dt => dt.favorite);
+  }
+
+  @Selector()
   static getLoadingWS(state: WorkspaceMain){
     return state.loading;
   }
@@ -52,6 +57,7 @@ export class WorkspaceMainState implements NgxsOnInit {
   static getCurrentWS(state: WorkspaceMain){
     return state.openedWs;
   }
+
 
   /**
    * Commands
@@ -120,10 +126,13 @@ export class WorkspaceMainState implements NgxsOnInit {
         }
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
-      openedTabs.map(dt => {
-        dt.projects = dt.projects.map(prj => prj = {...prj, selected: false});
-        if (dt.projects.length > 0) { dt.projects[0] = {...dt.projects[0], selected: true}; }
-      });
+      const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem'));
+      openedTabs.map(dt => ({
+        ...dt,
+        projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
+        pinged: _.get( workSpaceMenuItem[dt.workSpaceId+'-'+dt.uwYear],'pinged',false),
+        favorite: _.get( workSpaceMenuItem[dt.workSpaceId+'-'+dt.uwYear],'favorite',false)
+      }))
     });
     recentlyOpenedWs.unshift(...payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
@@ -201,24 +210,38 @@ export class WorkspaceMainState implements NgxsOnInit {
     );
   }
 
+  @Action(PatchWorkspace)
+  patchWorkspace(ctx: StateContext<WorkspaceMain>, { payload } : PatchWorkspace) {
+    const {
+      ws,
+      key,
+      value,
+      k
+    } = payload;
+
+    const {
+      openedTabs
+    } = ctx.getState()
+
+    ctx.patchState({
+      openedTabs: {
+        ...openedTabs,
+        data: _.merge([], openedTabs.data, { [k]: {...ws, [key]: value} })
+      }
+    })
+
+  }
+
   @Action(LoadWorkspacesAction)
   loadWorkspaces(ctx: StateContext<WorkspaceMain>) {
     const state = ctx.getState();
     const recentlyOpenedWs = (JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
-    const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || []);
+    const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || {data: []});
     const paginationList = this.makePagination(recentlyOpenedWs);
-    const projectFormat = currentOpenedWs.data[state.openedTabs.tabsIndex].projects.map(prj => prj = {...prj, selected: false});
-    if (projectFormat.length > 0) {
-      projectFormat[0] = {...projectFormat[0], selected: true};
-    }
-    const opened = {...currentOpenedWs.data[state.openedTabs.tabsIndex], projects: projectFormat};
-    currentOpenedWs.data.map(dt => {
-      dt.projects = dt.projects.map(prj => prj = {...prj, selected: false});
-      if (dt.projects.length > 0) { dt.projects[0] = {...dt.projects[0], selected: true}; }
-    });
+    const projects =_.get(currentOpenedWs.data[state.openedTabs.tabsIndex],'projects',[])
     ctx.patchState({
       workspacePagination: paginationList,
-      openedWs: opened,
+      openedWs: {...currentOpenedWs.data[state.openedTabs.tabsIndex],projects: projects.map((prj,i) => ({...prj, selected: projects.length > 0 && i == 0}))},
       openedTabs: {data: currentOpenedWs.data, tabsIndex: state.openedTabs.tabsIndex},
       recentWs: recentlyOpenedWs
     });

@@ -59,7 +59,7 @@
             <input class="input-search"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
+            <li *ngFor="let workspace of favorites" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
                 [ngClass]="{'poover-menu-item-active': workspace.selected}">
               <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
                                                                                 [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
@@ -149,7 +149,7 @@
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>
-    <span style="width: 90px">Favourites &nbsp; <span class="badge badge-light tab-badge">0</span></span>
+    <span style="width: 90px">Favorites &nbsp; <span class="badge badge-light tab-badge">0</span></span>
   </ng-template>
 
   <ng-template #AssignedHeaderContent>
