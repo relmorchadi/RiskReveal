@@ -29,14 +29,14 @@
 
 .input-default {
   border: none;
-  border-bottom: 2px solid #0700CF;
+  border-bottom: 1px solid #0700CF;
   background-color: #F4F6FC;
   color: #0700CF;
   padding-left: 5px;
 
   &:hover {
     cursor: pointer;
-    border-bottom: 2px solid #666666;
+    border-bottom: 1px solid #666666;
   }
 
   &::-webkit-input-placeholder {
@@ -71,7 +71,7 @@
   }
   .ant-switch-checked::after {
     font-family: 'scor_fonticon' !important;
-    content: "e9b4";
+    content: "\e9b4";
     color: #FFFFFF;
     background-color: #0700CF;
   }
