@@ -279,7 +279,9 @@ export class SearchMenuItemComponent implements OnInit {
   closeSearchBadge(status, index) {
     if (status) {
       if (this._searchService.expertModeEnabled) {
-        this.state.badges.splice(index, 1);
+        const badges = _.toArray(_.omit(this.state.badges, index));
+        this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: badges}));
+        // this.state.badges.splice(index, 1);
         this._searchService.expertModeFilter.splice(index, 1);
       } else {
         const badges = _.toArray(_.omit(this.state.badges, index));
