@@ -169,8 +169,6 @@ export class SearchMenuItemComponent implements OnInit {
       event.preventDefault();
       if (this.scrollTo > 0) {
         this.scrollTo = this.scrollTo - 1;
-      } else {
-        this.scrollTo = this.listLength - 1;
       }
       // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
       event.stopPropagation();
@@ -179,8 +177,6 @@ export class SearchMenuItemComponent implements OnInit {
       event.preventDefault();
       if (this.scrollTo < this.listLength) {
         this.scrollTo = this.scrollTo + 1;
-      } else {
-        this.scrollTo = 0;
       }
       // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
       event.stopPropagation();
