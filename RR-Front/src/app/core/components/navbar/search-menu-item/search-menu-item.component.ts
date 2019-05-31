@@ -164,7 +164,7 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    console.log(keyboardEvent);
+    // console.log(keyboardEvent);
     if (keyboardEvent.key === 'ArrowUp') {
       event.preventDefault();
       if (this.scrollTo > 0) {
@@ -383,7 +383,7 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   handleScroll($event: KeyboardEvent) {
-    console.log($event);
+    // console.log($event);
   }
 
 
@@ -392,7 +392,6 @@ export class SearchMenuItemComponent implements OnInit {
   }
 
   getOperator(str: string, field: string) {
-    if (field == 'year') return 'EQUAL';
     if (str.endsWith('\"') && str.indexOf('\"') === 0) {
       return 'EQUAL';
     } else { return 'LIKE'; }

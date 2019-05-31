@@ -48,7 +48,7 @@ public class QueryHelper {
         }catch (Exception e){
             return null;
         }
-        return " c." + columnName + " = " + year + " ";
+        return " c." + columnName + " like '%" + year + "%' ";
     }
     private String generateGroupByClause(){
         return Arrays.stream(groupByColumns).map(s-> "c."+s).collect(Collectors.joining(","));
@@ -60,12 +60,18 @@ public class QueryHelper {
 
     private Collection<? extends String> generateSearchClause(NewWorkspaceFilter filter) {
         List<String> sc = new ArrayList<>();
-        addSearchClause(filter.getWorkspaceId(),filter.getInnerWorkspaceId(),"WorkSpaceId",sc);
-        addSearchClause(filter.getWorkspaceName(),filter.getInnerWorkspaceName(),"WorkspaceName",sc);
-        addSearchClauseYear(filter.getYear(),filter.getInnerYear(),"UwYear",sc); // year
-        addSearchClause(filter.getCedantCode(),filter.getInnerCedantCode(),"CedantCode",sc);
-        addSearchClause(filter.getCedantName(),filter.getInnerCedantName(),"CedantName",sc);
-        addSearchClause(filter.getCountryName(),filter.getInnerCountryName(),"CountryName",sc);
+        addSearchClause(filter.getWorkspaceId(),"WorkSpaceId",sc);
+        addSearchClause(filter.getInnerWorkspaceId(),"WorkSpaceId",sc);
+        addSearchClause(filter.getWorkspaceName(),"WorkspaceName",sc);
+        addSearchClause(filter.getInnerWorkspaceName(),"WorkspaceName",sc);
+        addSearchClauseYear(filter.getYear(),"UwYear",sc); // year
+        addSearchClauseYear(filter.getInnerYear(),"UwYear",sc); // year
+        addSearchClause(filter.getCedantCode(),"CedantCode",sc);
+        addSearchClause(filter.getInnerCedantCode(),"CedantCode",sc);
+        addSearchClause(filter.getCedantName(),"CedantName",sc);
+        addSearchClause(filter.getInnerCedantName(),"CedantName",sc);
+        addSearchClause(filter.getCountryName(),"CountryName",sc);
+        addSearchClause(filter.getInnerCountryName(),"CountryName",sc);
         return sc;
     }
 
@@ -77,9 +83,19 @@ public class QueryHelper {
             sc.add(generateLikeClause(columnName,getFirstNonNull(s1,s2)));
     }
 
+    private void addSearchClause(String s1, String columnName, List<String> sc){
+        if(Objects.nonNull(s1))
+            sc.add(generateLikeClause(columnName,s1));
+    }
+
     private void addSearchClauseYear(String s1, String s2,String columnName, List<String> sc){
         if(Objects.nonNull(s1) || Objects.nonNull(s2))
             sc.add(generateYearEqualClause(columnName,getFirstNonNull(s1,s2)));
+    }
+
+    private void addSearchClauseYear(String s1,String columnName, List<String> sc){
+        if(Objects.nonNull(s1))
+            sc.add(generateYearEqualClause(columnName,s1));
     }
     private String escape(String str){
         return str.replaceAll("'", "''");

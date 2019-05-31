@@ -110,7 +110,7 @@
 
         <div class="chips-wrapper">
           <div *ngIf="globalSearchItem" style="padding: 15px 4px;">
-            <app-chip-tag key='Global Search' (onclick)="globalSearchItem=''; _loadContracts()"
+            <app-chip-tag key='Global Search' (onclick)="closeGlobalSearch()"
                           [value]="globalSearchItem" [closeStatus]="true"></app-chip-tag>
           </div>
           <div *ngFor="let items of searchedItems; let i = index" style="padding: 15px 4px;">

@@ -25,7 +25,7 @@ public class Workspace implements Serializable{
   @EmbeddedId
   WorkspaceId workspaceId;
   private String id;
-  private String audit;
+  // private String audit;
   private String cedantName;
   private String contractId;
   private String workspaceContextFlag;

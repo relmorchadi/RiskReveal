@@ -12,11 +12,11 @@ import {
   AppendNewWorkspaceMainAction,
   PatchWorkspaceMainStateAction
 } from '../../../core/store/actions/workspace-main.action';
-import {WorkspaceMainState} from "../../../core/store/states";
-import * as fromWS from '../../../core/store'
-import {Observable} from "rxjs";
-import {WorkspaceMain} from "../../../core/model/workspace-main";
-import {PatchSearchStateAction} from "../../../core/store";
+import {WorkspaceMainState} from '../../../core/store/states';
+import * as fromWS from '../../../core/store';
+import {Observable} from 'rxjs';
+import {WorkspaceMain} from '../../../core/model/workspace-main';
+import {PatchSearchStateAction} from '../../../core/store';
 
 
 @Component({
@@ -131,6 +131,7 @@ export class SearchMainComponent implements OnInit {
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
+  subscription
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
@@ -143,14 +144,14 @@ export class SearchMainComponent implements OnInit {
     this.searchedItems = this._searchService.searchedItems;
     this.globalSearchItem = this._searchService.globalSearchItem;
     this.store.select(fromWS.SearchNavBarState.getLoadingState).subscribe(l => {
-      console.log('loading', l);
+      // console.log('loading', l);
       this.detectChanges();
     });
     this._searchService.items
       .pipe(debounceTime(200))
       .subscribe(
       () => {
-        console.log('Emitted')
+        // console.log('Emitted')
         this.initSearchForm();
         this.globalSearchItem = '';
         this.searchedItems = [...this._searchService.searchedItems];
@@ -158,13 +159,13 @@ export class SearchMainComponent implements OnInit {
       }
     );
 
-    // this._searchService.globalSearch$.subscribe(
-    //   () => {
-    //     this.globalSearchItem = this._searchService.globalSearchItem;
-    //     this.searchedItems = [];
-    //     this.globalSearchItem !== '' ? this._loadContracts() : null;
-    //   }
-    // );
+    this._searchService.globalSearch$.subscribe(
+      () => {
+        this.globalSearchItem = this._searchService.globalSearchItem;
+        this.searchedItems = [];
+        this.globalSearchItem !== '' ? this._loadContracts() : null;
+      }
+    );
   }
 
   initSearchForm() {
@@ -187,7 +188,7 @@ export class SearchMainComponent implements OnInit {
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((param) => {
-        this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
+        // this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
         this.detectChanges();
         this._loadContracts();
       });
@@ -275,9 +276,9 @@ export class SearchMainComponent implements OnInit {
   }
 
   private _loadContracts(offset = '0', size = '100') {
-    console.log('Load contracts');
+    // console.log('Load contracts');
     this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
-    // if (!this._searchService.expertModeEnabled) {
+     if (!this._searchService.expertModeEnabled) {
       this.loading = true;
       const keys = [];
       const values = [];
@@ -290,14 +291,17 @@ export class SearchMainComponent implements OnInit {
       keys.forEach(
         (e, index) => {
           this.contractFilterFormGroup.value[e] = values[index];
-          console.log(this.contractFilterFormGroup.value);
+          // console.log(this.contractFilterFormGroup.value);
         }
       );
       this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: true}));
       this._searchService.setLoading(true);
-      const globalSearchParams= _.merge({keyword: this.globalSearchItem}, this.contractFilterFormGroup.value);
-      console.log('Global search params', globalSearchParams)
-      this._searchService.searchGlobal(globalSearchParams, offset, size)
+      this.globalSearchItem = this._searchService.globalSearchItem;
+      const globalSearchParams = _.merge({keyword: this._searchService.globalSearchItem}, this.contractFilterFormGroup.value);
+      if ( this.subscription ) {
+         this.subscription.unsubscribe();
+       }
+      this.subscription = this._searchService.searchGlobal(globalSearchParams, offset, size)
         .subscribe((data: any) => {
           this.contracts = data.content.map(item => ({...item, selected: false}));
           this.loadingMore = false;
@@ -306,19 +310,23 @@ export class SearchMainComponent implements OnInit {
           this._searchService.setLoading(false);
           this.detectChanges();
         });
-    // } else {
-    //   this._searchService.setLoading(true);
-    //   _.debounce(() => this._searchService.searchGlobal(_.merge(
-    //     {keyword: this._searchService.keyword, filter: this._searchService.expertModeFilter, offset, size}))
-    //     .subscribe((data: any) => {
-    //       this.contracts = data.content.map(item => ({...item, selected: false}));
-    //       this.loadingMore = false;
-    //       this.loading = false;
-    //       this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-    //       this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: false}));
-    //       this.detectChanges();
-    //     }), 500)();
-    // }
+    } else {
+      if ( this.subscription ) {
+        this.subscription.unsubscribe();
+      }
+      this._searchService.setLoading(true);
+      const filter = [...this._searchService.expertModeFilter, ...this.getInnerFilter()]
+      this.subscription = this._searchService.expertModeSearch(_.merge(
+        {keyword: this._searchService.keyword, filter, offset, size}))
+        .subscribe((data: any) => {
+          this.contracts = data.content.map(item => ({...item, selected: false}));
+          this.loadingMore = false;
+          this.loading = false;
+          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
+          this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: false}));
+          this.detectChanges();
+        });
+    }
   }
 
   navigateBack() {
@@ -326,6 +334,7 @@ export class SearchMainComponent implements OnInit {
   }
 
   clearChips() {
+    this.closeGlobalSearch();
     this.searchedItems = [];
     this._searchService.expertModeFilter = [];
     this._searchService.keyword = null;
@@ -355,8 +364,22 @@ export class SearchMainComponent implements OnInit {
   }
 
   closeSlider() {
-    console.log('this is outside');
+    // console.log('this is outside');
     this.expandWorkspaceDetails = false;
+  }
+
+  getInnerFilter() {
+    const filter = [];
+    _.reduce(this.contractFilterFormGroup.value, (result, value, key) => {
+      if (!_.isNil(value)) {
+        const field = _(this.columns).filter(['filterParam', key]).map((o) => o.field).value()[0];
+        filter.push({ field, value, operator: 'LIKE'}); }});
+    return filter;
+  }
+  closeGlobalSearch() {
+    this.globalSearchItem = '';
+    this._searchService.globalSearchItem = '';
+    this._loadContracts();
   }
 
 }
