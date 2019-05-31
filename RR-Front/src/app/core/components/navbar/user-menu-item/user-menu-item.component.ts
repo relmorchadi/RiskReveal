@@ -32,6 +32,7 @@ export class UserMenuItemComponent implements OnInit {
 
   navigateToUserPreference() {
     this.router.navigateByUrl(`/userPreference`);
+    this.visible = false;
   }
 
 }
