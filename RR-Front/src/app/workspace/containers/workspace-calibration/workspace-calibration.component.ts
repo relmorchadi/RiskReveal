@@ -12,6 +12,8 @@ import {DndDropEvent, DropEffect} from "ngx-drag-drop";
 })
 export class WorkspaceCalibrationComponent implements OnInit {
 
+  size;
+  disabled;
 
   visibleIcon: Boolean;
 
