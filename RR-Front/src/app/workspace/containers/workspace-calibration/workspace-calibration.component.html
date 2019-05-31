@@ -15,11 +15,17 @@
         </div>
 
         <div nz-row>
+          <div nz-col nzSpan="1" style="text-align: center; font-size: 26px;" *ngIf="!ColpasBool">
+            <i (click)="Colpa()"  nz-icon nzTheme="outline" nzType="right-circle" ></i>
+          </div>
           <div *ngIf="ColpasBool" nz-col nzSpan="3">
             <div
               style="padding-top: 39px; padding-left: 9px; background: #fff; min-height:571px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
               <hr style="height:5px;background-color: #0700CF;margin-top: -40px;margin-left: -10px;">
-              <div (click)="Colpa()" class="textLastAdjustement" style="margin-top: 20px;">Tags</div>
+              <div (click)="Colpa()" class="textLastAdjustement" style="margin-top: 20px;">
+                <i (click)="Colpa()" *ngIf="ColpasBool" nz-icon nzTheme="outline" nzType="left-circle"  style="position: relative;
+    top: -4px;"></i> Tags
+              </div>
               <div class="Tags-content">
                 <div class="button-reset-filter-by-tag" nz-row>
                   <button (click)="resetFilterByTags()" nz-button nzShape="circle" nzType="default"
@@ -61,10 +67,6 @@
               </div>
               <div nz-row>
                 <div class="textLastAdjustement" nz-col nzSpan="22">
-                  <i (click)="Colpa()" *ngIf="!ColpasBool" nz-icon nzTheme="outline" nzType="right-circle" style="position: relative;
-    top: -4px;"></i>
-                  <i (click)="Colpa()" *ngIf="ColpasBool" nz-icon nzTheme="outline" nzType="left-circle"  style="position: relative;
-    top: -4px;"></i>
                   PLT Selection
                 </div>
                 <div nz-col nzSpan="2" style="margin-top: -14px;">
@@ -243,7 +245,7 @@
                           <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.vendorSystem }}</td>
                           <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.rap }}</td>
                           <td><i [class]="dataTable1.icon" style="font-size: 20px"></i></td>
-                          <td><i class="icon-plus-circle" nz-dropdown style="font-size: 20px;color: #000;"></i>
+                          <td><i class="icon-plus-circle" nz-dropdown style="font-size: 20px;color: #000;" (click)="clickButtonPlus(false,dataTable1)"></i>
                           </td>
                         </tr>
                       </ng-container>
@@ -273,7 +275,7 @@
               </div>
             </div>
           </div>
-          <div nz-col [nzSpan]="templateSpan">
+          <div nz-col [nzSpan]="templateSpan" >
             <div class="test"
                  style=" background: #fff; min-height:570px; min-width: 350px; box-shadow: 0px 1px 20px 0px #dcdada; margin-left: -4px">
               <div nz-row>
@@ -285,7 +287,7 @@
                 <div class="card1" nz-col nzSpan="5"
                      style="flex:auto;font-weight: 600;font-size: 20px;margin: 21px 2px 27px 7px; color: black;width: 130px;">
                   Template <i class="icon-plus-circle" nz-dropdown
-                              style="font-size: 20px;color: #000;"></i>
+                              style="font-size: 20px;color: #000;" (click)="clickButtonPlus(true)"></i>
                 </div>
                 <div class="card1" nz-col nzSpan="13" style="margin-top: 18px; margin-left: -8px;display: flex;overflow: auto; max-width: 100%;margin-top: 18px;
     margin-left: -8px;" >
@@ -365,11 +367,11 @@
                                 <td (dndDrop)="onDrop($event,dataTable1.adj)" [dndDisableIf]="dataTable1.locked"
                                     dndDropzone
                                     dndEffectAllowed="move"
-                                    id="bd">
+                                    id="Base">
                                   <div class="dndPlaceholder" dndPlaceholderRef></div>
                                   <div (dndDrop)="onDropDiv($event,dataTable1.adj)" [dndDisableIf]="dataTable1.locked"
                                        dndDropzone dndEffectAllowed="move"
-                                       id="bd1" style="display: flex;height: max-content;margin-left: 10px">
+                                       id="Base1" style="display: flex;height: max-content;margin-left: 10px">
                                     <div class="dndPlaceholder" dndPlaceholderRef></div>
                                     <ng-container *ngFor="let adj of dataTable1.adj;let adjindex=index">
                                       <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
@@ -377,7 +379,7 @@
                                            (dndMoved)="onDragged($event,adj, dataTable1.adj, 'move','td1')"
                                            (dndStart)="onDragStart($event)" (mouseout)="hideIcon(adj)"
                                            (mouseover)="adj.hover='true'"
-                                           *ngIf="adj.category=='bd'"
+                                           *ngIf="adj.category=='Base'"
                                            [dndDisableIf]="dataTable1.locked"
                                            [dndDraggable]="adj"
                                            class="divInTd"
@@ -419,15 +421,15 @@
                                 <td (dndDrop)="onDrop($event,dataTable1.adj)" [dndDisableIf]="dataTable1.locked"
                                     dndDropzone
                                     dndEffectAllowed="move"
-                                    id="pd">
+                                    id="Client">
                                   <div class="dndPlaceholder" dndPlaceholderRef></div>
                                   <div (dndDrop)="onDropDiv($event,dataTable1.adj)" [dndDisableIf]="dataTable1.locked"
                                        dndDropzone
-                                       dndEffectAllowed="move" id="pd1"
+                                       dndEffectAllowed="move" id="Client1"
                                        style="display: flex;height: max-content;margin-left: 10px">
                                     <div class="dndPlaceholder" dndPlaceholderRef></div>
                                     <ng-container *ngFor="let adj of dataTable1.adj ;let adjindex=index">
-                                      <ng-container *ngIf="adj.category=='pd'">
+                                      <ng-container *ngIf="adj.category=='Client'">
                                         <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
                                              (dndMoved)="onDragged($event,adj,dataTable1.adj, 'move','td2')"
                                              (mouseout)="hideIcon(adj)"
@@ -771,65 +773,70 @@ cursor: pointer;"></i>
   </nz-drawer>
   <!-- Model add Column-->
   <nz-modal [(nzVisible)]="isVisible" [nzFooter]="modalFooter" class="modelAdjustment" nzClosable="false"
-            nzTitle="Add Adjustment Basic">
+            nzTitle="Add New Adjustment">
     <div nz-row>
       <div nz-col nzSpan="24">
         &nbsp;
       </div>
     </div>
     <div nz-row>
-      <div nz-col nzSpan="5">
-        &nbsp;
+      <div nz-col nzSpan="8" style="margin-top: 10px">
+        <b>Adjustement Basis</b>
       </div>
-      <div nz-col nzSpan="19">
-        <nz-select (ngModelChange)="selectBasis(singleValue)" [(ngModel)]="singleValue"
-                   [nzPlaceHolder]="'Choose a basis'"
+      <div nz-col nzSpan="16">
+        <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
+        <nz-select   [(ngModel)]="categorySelectedFromAdjustement" (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
+                   [nzPlaceHolder]="'Choose Adjustement'"
                    [nzSize]="size" style="width: 260px;">
-          <nz-option *ngFor="let option of basises" [nzLabel]="option.name" [nzValue]="option.name"></nz-option>
-        </nz-select>
-      </div>
-    </div>
-    <div nz-row>
-      <div nz-col nzSpan="5">
-        &nbsp;
-      </div>
-      <div nz-col nzSpan="19">
-        <nz-select (ngModelChange)="selectCategory(categorySelectedFromBasis)" [ngModel]="categorySelectedFromBasis"
-                   [nzPlaceHolder]="'Choose a category'"
-                   [nzSize]="size" style="width: 260px;">
-          <ng-container *ngFor="let option of pure.category">
+          <ng-container *ngFor="let option of allAdjsArray">
             <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
-                       [nzValue]="option.name"></nz-option>
+                       [nzValue]="option"></nz-option>
           </ng-container>
         </nz-select>
       </div>
     </div>
     <div nz-row>
-      <div nz-col nzSpan="5" style="margin: 5px;">
+      <div nz-col nzSpan="24">
         &nbsp;
-      </div>
-      <div nz nzSpan="19">
-        Sequence :
       </div>
     </div>
     <div nz-row>
-      <div nz-col nzSpan="5" style="margin: 5px;">
+      <div nz-col nzSpan="10">
+        <b>Adjustement Category</b>
+      </div>
+      <div nz-col nzSpan="14">
+        <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
+        <b >{{categorySelected}}</b>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="24">
         &nbsp;
       </div>
-      <div nz nzSpan="19">
-        <input
-          #inputElement
-          [(ngModel)]="columnPosition"
-          nz-input
-          nz-tooltip
-          style="width: 60px;
-        height: 40px;
-        background: #f9f9f9;
-        border-radius: 0;
-        border:0;
-        border-bottom: 1px solid black;
-        color:#0700CF"
-        />
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="8" style="margin-top: 10px">
+        <b>Adjustement Narrative</b>
+      </div>
+      <div nz-col nzSpan="16">
+        <textarea rows="4" nz-input [(ngModel)]="inputValue"></textarea>
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="24">
+        &nbsp;
+      </div>
+    </div>
+    <div nz-row>
+      <div nz-col nzSpan="8" style="margin-top: 10px">
+        <b>Adjustement Type</b>
+      </div>
+      <div nz-col nzSpan="16">
+        <nz-select [(ngModel)]="singleValue" (ngModelChange)="selectBasis(singleValue)"
+                   [nzPlaceHolder]="'choose Type'"
+                   [nzSize]="size" style="width: 260px;">
+          <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+        </nz-select>
       </div>
     </div>
     <div nz-row style="margin-top: 20px;">
@@ -841,17 +848,53 @@ cursor: pointer;"></i>
         <nz-switch [(ngModel)]="disabled" nzSize="small" style="margin-left: 15px;"></nz-switch>
       </div>
     </div>
+
+    <ng-container *ngIf="linear">
+      <div nz-row>
+        <div nz-col nzSpan="24" style="margin: 5px;">
+          <hr>
+        </div>
+      </div>
+      <div nz-row >
+        <div nz-col nzSpan="24" style="margin: 5px;">
+          <b>Adjustement Parametre</b>
+        </div>
+      </div>
+      <div nz-row >
+        <div nz-col nzSpan="2" >
+          &nbsp;
+        </div>
+        <div nz-col nzSpan="11" >
+          Loss Modification Factor (LMF)
+        </div>
+        <div nz nzSpan="9">
+          <input
+            #inputElement
+            [(ngModel)]="columnPosition"
+            nz-input
+            nz-tooltip
+            style="width: 200px;
+        height: 40px;
+        background: #f9f9f9;
+        border-radius: 0;
+        border:0;
+        border-bottom: 1px solid black;
+        color:#0700CF"
+          />
+        </div>
+      </div>
+    </ng-container>
     <ng-template #modalFooter>
       <button (click)="handleCancel()"
               class="ant-btn"
               style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
       </button>
-      <button (click)="addColumnToTable(singleValue,categorySelectedFromBasis)"
+      <button (click)="addAdjustmentFromPlusIcon(false,singleValue,categorySelectedFromAdjustement)"
               class="ant-btn ant-btn-default"
               style="background-color: #ffffff !important; color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 70px;height: 30px; ">
         ADD
       </button>
-      <button (click)="addColumnToTableAndClose(singleValue,categorySelectedFromBasis)"
+      <button (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)"
               class="ant-btn ant-btn-default"
               style="width: 130px; height: 30px; ">ADD & CLOSE
       </button>
