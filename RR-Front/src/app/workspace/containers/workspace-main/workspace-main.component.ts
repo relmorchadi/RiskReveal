@@ -16,7 +16,7 @@ import {
   OpenNewWorkspacesAction, PatchWorkspace,
   PatchWorkspaceMainStateAction, setTabsIndex
 } from '../../../core/store/actions/workspace-main.action';
-import {distinctUntilChanged, filter, flatMap, map, merge, toArray} from 'rxjs/operators';
+import * as moment from 'moment'
 
 
 @Component({
@@ -206,8 +206,8 @@ export class WorkspaceMainComponent implements OnInit {
   addToFavorite(tab: any,k,liked) {
     this.liked = liked;
     this.store.dispatch(new PatchWorkspace({
-      key: 'favorite',
-      value: liked,
+      key: ['favorite','lastFModified'],
+      value: [liked,moment().format('x')],
       k,
       ws: tab
     }))
@@ -215,9 +215,9 @@ export class WorkspaceMainComponent implements OnInit {
     let workspaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
 
     if(liked){
-      workspaceMenuItem[tab.workspaceId + '-'+ tab.uwYear] = {...tab,favorite: true};
+      workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear] = {...tab,favorite: true, lastFModified: moment().format('x')};
     }else{
-      workspaceMenuItem = _.omit(workspaceMenuItem, `${tab.workspaceId}-${tab.uwYear}`);
+      workspaceMenuItem = {...workspaceMenuItem, [tab.workSpaceId + '-'+ tab.uwYear]: _.omit(workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear], ['favorite','lastFModified'])};
     }
     localStorage.setItem('workSpaceMenuItem',JSON.stringify(workspaceMenuItem));
   }

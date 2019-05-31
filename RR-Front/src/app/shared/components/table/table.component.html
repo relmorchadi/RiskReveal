@@ -146,7 +146,7 @@
   </p-table>
 </nz-spin>
 
-<nz-spin [nzSpinning]="loading && !virtualScroll" [nzDelay]="700">
+<!--<nz-spin [nzSpinning]="loading && !virtualScroll" [nzDelay]="700">-->
 <p-table *ngIf="!virtualScroll"
          [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
          [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
@@ -159,7 +159,7 @@
     </colgroup>
   </ng-template>
   <ng-template pTemplate="header" let-columns>
-    <tr *ngIf="!sortable">
+    <tr>
       <th *ngFor="let col of columns" pResizableColumn>
         <span *ngIf="col?.display" style="display:flex">
           {{col?.header}}
@@ -180,8 +180,7 @@
     <div *ngIf="listOfData.length == 0">
       No Result
     </div>
-    <tr [pContextMenuRow]="rowData"
-        [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+    <tr [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
         <td *ngIf="col?.type ==='checkbox'">
           <div style="display:flex">
@@ -203,7 +202,7 @@
     </tr>
   </ng-template>
 </p-table>
-</nz-spin>
+<!--</nz-spin>-->
 
 <div *ngIf="listOfData.length == 0">
   <nz-empty></nz-empty>

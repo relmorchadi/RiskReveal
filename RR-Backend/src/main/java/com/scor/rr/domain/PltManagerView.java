@@ -4,10 +4,9 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Data
@@ -33,8 +32,8 @@ public class PltManagerView {
     private String grain;
     @Column(name = "vendorSystem")
     private String vendorSystem;
-    @Column(name = "rap")
-    private String rap;
+    @Column(name = "targetRapCode")
+    private String targetRapCode;
     @Column(name = "isScorCurrent")
     private String isScorCurrent;
     @Column(name = "isScorDefault")
@@ -56,14 +55,27 @@ public class PltManagerView {
     private Integer year;
     @Column(name = "fileName")
     private String fileName;
-    @Column(name = "modellingVendor")
-    private String  modellingVendor;
-    @Column(name = "modellingSystem")
-    private String  modellingSystem;
+    @Column(name = "sourceModellingVendor")
+    private String  sourceModellingVendor;
+    @Column(name = "sourceModellingSystem")
+    private String  sourceModellingSystem;
     @Column(name = "dataSourceName")
     private String  dataSourceName;
     @Column(name = "analysisId")
     private String  analysisId;
+    @Column(name = "xActPublicationDate")
+    private String xActPublicationDate;
+    @Column(name = "currency")
+    private String currency;
+    @Column(name = "userOccurrenceBasis")
+    private String userOccurrenceBasis;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_tag_plt",
+            joinColumns = @JoinColumn(name = "_id"),
+            inverseJoinColumns = @JoinColumn(name = "tagId"))
+    Set<UserTag> userTags;
 
     public PltManagerView() {
     }
@@ -140,12 +152,12 @@ public class PltManagerView {
         this.vendorSystem = vendorSystem;
     }
 
-    public String getRap() {
-        return rap;
+    public String getTargetRapCode() {
+        return targetRapCode;
     }
 
-    public void setRap(String rap) {
-        this.rap = rap;
+    public void setTargetRapCode(String targetRapCode) {
+        this.targetRapCode = targetRapCode;
     }
 
     public String getIsScorCurrent() {

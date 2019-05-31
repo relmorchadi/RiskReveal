@@ -56,22 +56,34 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="input-search"/>
+            <input class="input-search" [(ngModel)]="favoriteSearch"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of favorites" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
-                [ngClass]="{'poover-menu-item-active': workspace.selected}">
-              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
-                                                                                [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
+          <ng-container *ngFor="let workspace of favorites | showLast: [favoriteSize] | inputSearch: [favoriteSearch]; let i = index">
+            <li class="poover-menu-item" (click)="toggle(workspace,'favorite',workspace?.selectedF,i)"
+                [ngClass]="{'poover-menu-item-active': workspace.selectedF}">
+              <div class="items-popover-wrapper">
+                <i class="icon-window-section"></i>
+                <div class="item-popover-context">
+                  <span class="item-popover-context-header">{{workspace?.workspaceName}}</span>
+                  <span
+                    class="item-popover-context-footer">{{workspace?.cedantName}} {{workspace?.programName}}</span>
+                </div>
+              </div>
+              <div class="items-popover-info">
+                {{workspace?.uwYear}} - {{workspace?.workSpaceId}}
+                <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selectedF, 'icon-radio_button_unchecked_24px': !workspace.selectedF}"></i>
+              </div>
             </li>
+          </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
+            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="float-left dropdown-default"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
-              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
-              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
-              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
+              <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>
             </nz-select>
 
             <div class="float-right">
@@ -90,8 +102,8 @@
           <ul>
             <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
                 [ngClass]="{'poover-menu-item-active': workspace.selected}">
-              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
-                                                                                [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
+              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}}
+              <i class="float-right mr-1 mt-1" [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
             </li>
           </ul>
           <div class="mt-2">
@@ -114,22 +126,34 @@
         <div class="popup-tab-content">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
-            <input class="input-search"/>
+            <input class="input-search" [(ngModel)]="pingedSearch"/>
           </div>
           <ul>
-            <li *ngFor="let workspace of workspaces" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
-                [ngClass]="{'poover-menu-item-active': workspace.selected}">
-              <i class="icon-window-section"></i> &nbsp; {{workspace?.name}} <i class="float-right mr-1 mt-1"
-                                                                                [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
-            </li>
+            <ng-container *ngFor="let workspace of pinged | showLast: [pingedSize] | inputSearch: [pingedSearch]; let i = index">
+              <li class="poover-menu-item" (click)="toggle(workspace,'pinged',workspace?.selectedP,i)"
+                  [ngClass]="{'poover-menu-item-active': workspace.selectedP}">
+                <div class="items-popover-wrapper">
+                  <i class="icon-window-section"></i>
+                  <div class="item-popover-context">
+                    <span class="item-popover-context-header">{{workspace?.workspaceName}}</span>
+                    <span
+                      class="item-popover-context-footer">{{workspace?.cedantName}} {{workspace?.programName}}</span>
+                  </div>
+                </div>
+                <div class="items-popover-info">
+                  {{workspace?.uwYear}} - {{workspace?.workSpaceId}} <i class="float-right mr-1 mt-1"
+                                                                        [ngClass]="{'icon-check_24px': workspace.selectedP, 'icon-radio_button_unchecked_24px': !workspace.selectedP}"></i>
+                </div>
+              </li>
+            </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
+            <nz-select [(ngModel)]="pingedSize" [nzAllowClear]="false" class="float-left dropdown-default"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-              <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
-              <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
-              <nz-option [nzValue]="2" nzLabel="Last 100"></nz-option>
-              <nz-option [nzValue]="3" nzLabel="Last 150"></nz-option>
+              <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>
             </nz-select>
 
             <div class="float-right">
@@ -149,7 +173,7 @@
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>
-    <span style="width: 90px">Favorites &nbsp; <span class="badge badge-light tab-badge">0</span></span>
+    <span style="width: 90px">Favorites &nbsp; <span class="badge badge-light tab-badge">{{(favorites | keys)?.length}}</span></span>
   </ng-template>
 
   <ng-template #AssignedHeaderContent>
@@ -157,7 +181,7 @@
   </ng-template>
 
   <ng-template #PinnedHeaderContent>
-    <span style="width: 72px">Pinned &nbsp; <span class="badge badge-light tab-badge">0</span></span>
+    <span style="width: 72px">Pinned &nbsp; <span class="badge badge-light tab-badge">{{(pinged | keys)?.length}}</span></span>
   </ng-template>
 
 </ng-template>

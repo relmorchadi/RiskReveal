@@ -225,7 +225,7 @@ export class TasksMenuItemComponent implements OnInit {
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
   private year: any;
-  constructor(private _searchService: SearchService,private route: ActivatedRoute, private store: Store, private helperService: HelperService, private router: Router,private cdRef: ChangeDetectorRef) {
+  constructor(private _searchService: SearchService, private route: ActivatedRoute, private store: Store, private helperService: HelperService, private router: Router,private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
@@ -233,8 +233,8 @@ export class TasksMenuItemComponent implements OnInit {
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
     this.savedtasks = this.tasks;
     this.store.select(WorkspaceMainState.getCurrentWS).subscribe( (ws) => {
-      this.wsId = _.get(ws,'workSpaceId',null);
-      this.year = _.get(ws,'uwYear',null);
+      this.wsId = _.get(ws, 'workSpaceId', null);
+      this.year = _.get(ws, 'uwYear', null);
     })
   }
 
@@ -296,7 +296,7 @@ export class TasksMenuItemComponent implements OnInit {
     }
   }
 
-  navigateToJOBmanager() {
-    this.router.navigateByUrl(`/jobManager`)
+  navigateToJOBManager() {
+    this.router.navigateByUrl(`/jobManager`);
   }
 }
