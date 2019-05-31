@@ -5,10 +5,10 @@ import {Title} from '@angular/platform-browser';
 
 @Component({
   selector: 'risk-reveal-root',
-  template:`<router-outlet></router-outlet>`,
+  template: `<router-outlet></router-outlet>`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EntryComponent implements OnInit{
+export class EntryComponent implements OnInit {
   constructor(
     private router: Router,
     private activatedRoute: ActivatedRoute,

@@ -686,6 +686,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     return new Date(d);
   }
 
+  handleOk(){
+
+  }
+
   onSort($event: any) {
     console.log($event);
     const {

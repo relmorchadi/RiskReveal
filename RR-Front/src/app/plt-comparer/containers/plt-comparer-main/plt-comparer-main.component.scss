@@ -11,6 +11,10 @@
   width: 100%;
 }
 
+.button-toggle {
+  margin-right: 10px;
+}
+
 /* Drop Drown of the Risk Link Page  */
 .body-wrap-dropDowns-comparer {
   display: flex;
@@ -79,7 +83,7 @@ div.blank-space {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
-  width: 96%;
+  width: 99%;
   margin: 28px auto 0;
   height: 60px;
 }
@@ -134,15 +138,22 @@ div.blank-space {
   margin-right: 120px;
 }
 
-
 .body {
-  width: 96%;
-  margin: 0 auto;
-  display: -webkit-box;
-  overflow: auto;
+  display: flex;
+  justify-content: normal;
+
+  .ng-star-inserted.selected-item {
+    border: 3px solid #03DAC4;
+  }
+
+  ::ng-deep{
+    ::-webkit-scrollbar {
+      height: 8px;
+    }
+  }
 
   .card-header-title {
-
+    display: flex;
     color: rgba(0, 0, 0, 0.87);
     font-family: Rubik;
     font-size: 12px;
@@ -150,11 +161,46 @@ div.blank-space {
     letter-spacing: 0.1px;
     margin: 12px 1px 3px 9px;
 
+    .card-header-detail {
+      flex: 1;
+    }
+
+    .card-header-icons {
+      width: 10%;
+      display: flex;
+      text-align: center;
+      flex-direction: column;
+
+      .icon-check-circle {
+        font-size: 20px;
+        color: #E5E9FA;
+        cursor: pointer;
+      }
+
+      ::ng-deep {
+        .anticon {
+          font-size: 20px;
+          color: #0700CF;
+          cursor: pointer;
+
+
+        }
+      }
+
+      span {
+        color: #E5E9FA;
+        line-height: 15px;
+        margin-bottom: 10px;
+      }
+    }
+
   }
-  .card-table{
+
+  .card-table {
     margin-left: 8px;
   }
-  .card-footer-detail{
+
+  .card-footer-detail {
     display: flex;
     justify-content: space-between;
     margin: 0px 5px 0px 5px;
@@ -162,13 +208,15 @@ div.blank-space {
     font-size: 15px;
     color: black;
   }
-  .card-table-row{
+
+  .card-table-row {
     width: 116px;
     margin-left: 5px;
 
 
   }
-  .card-table-row1{
+
+  .card-table-row1 {
     width: 123px;
 
   }
@@ -176,10 +224,11 @@ div.blank-space {
   .cards-wrapper {
     background-color: #FFFFFF;
     margin: 5px;
+    border: 3px solid transparent;
+    border-top: 3px solid;
     padding: 5px;
-    width: 260px;
     height: 510px;
-    box-shadow: 1px 2px 6px rgba(0,0,0,0.15), -3px 0px 5px rgba(0,0,0,0.15);
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15), -3px 0px 5px rgba(0, 0, 0, 0.15);
 
 
     table {
@@ -212,4 +261,20 @@ div.blank-space {
       }
     }
   }
+
+}
+
+.lefter {
+  margin-left: 10px;
+  display: -webkit-box;
+
+}
+
+.righter {
+  flex: 1;
+  margin-left: 10px;
+  display: -webkit-box;
+  overflow: auto;
+
+
 }

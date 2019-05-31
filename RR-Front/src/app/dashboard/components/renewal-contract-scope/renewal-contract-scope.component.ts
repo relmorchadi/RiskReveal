@@ -27,18 +27,18 @@ export class RenewalContractScopeComponent implements OnInit {
   editName = false;
 
   cols = [
-    {field: 'country', header: 'Country', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'cedant', header: 'Cedant', width: '100px', display: true, sorted: true, type: 'text'},
-    {field: 'treaty', header: 'Treaty', width: '100px', display: true, sorted: true, type: 'text'},
-    {field: 'year', header: 'Uw Year', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'pricingVersion', header: 'Pricing Version', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'rrStatus', header: 'RR Status', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'owner', header: 'Owner', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'date', header: 'Date', width: '50px', display: true, sorted: true, type: 'date'},
-    {field: 'exposures', header: 'Exposures', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'published', header: 'Published to Pricing', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'used', header: 'Used in Pricing', width: '50px', display: true, sorted: true, type: 'text'},
-    {field: 'accumulation', header: 'accumulation', width: '50px', display: true, sorted: true, type: 'text'},
+    {field: 'country', header: 'Country', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'cedant', header: 'Cedant', width: '100px', display: true, sorted: false, type: 'text'},
+    {field: 'treaty', header: 'Treaty', width: '100px', display: true, sorted: false, type: 'text'},
+    {field: 'year', header: 'Uw Year', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'pricingVersion', header: 'Pricing Version', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'rrStatus', header: 'RR Status', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'owner', header: 'Owner', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'date', header: 'Date', width: '50px', display: true, sorted: false, type: 'date'},
+    {field: 'exposures', header: 'Exposures', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'published', header: 'Published to Pricing', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'used', header: 'Used in Pricing', width: '50px', display: true, sorted: false, type: 'text'},
+    {field: 'accumulation', header: 'accumulation', width: '50px', display: true, sorted: false, type: 'text'},
   ];
   mockData = [];
 /*    {year: 2019, country: 'Italy', cedant: '383477 Lorem Ipsum Colores',
