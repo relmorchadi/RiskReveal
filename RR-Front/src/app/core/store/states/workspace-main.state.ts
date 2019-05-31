@@ -49,6 +49,16 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Selector()
+  static getPinged(state: WorkspaceMain) {
+    return state.openedTabs.data.filter( dt => dt.pinged);
+  }
+
+  @Selector()
+  static getData(state: WorkspaceMain) {
+    return state.openedTabs.data;
+  }
+
+  @Selector()
   static getLoadingWS(state: WorkspaceMain){
     return state.loading;
   }
@@ -223,10 +233,23 @@ export class WorkspaceMainState implements NgxsOnInit {
       openedTabs
     } = ctx.getState()
 
+    console.log(ws);
+
+    let attrs = {};
+
+    _.forEach(key, (v,i) => {
+      attrs[v] = value[i]
+    })
+
+    const index = k ? k : _.findIndex(openedTabs.data, wS => wS.workSpaceId == ws.workSpaceId && wS.uwYear == ws.uwYear);
+    console.log(index);
+
     ctx.patchState({
       openedTabs: {
         ...openedTabs,
-        data: _.merge([], openedTabs.data, { [k]: {...ws, [key]: value} })
+        data: _.merge([],
+          openedTabs.data,
+          { [index]: {...ws, ...attrs} })
       }
     })
 
@@ -242,7 +265,16 @@ export class WorkspaceMainState implements NgxsOnInit {
     ctx.patchState({
       workspacePagination: paginationList,
       openedWs: {...currentOpenedWs.data[state.openedTabs.tabsIndex],projects: projects.map((prj,i) => ({...prj, selected: projects.length > 0 && i == 0}))},
-      openedTabs: {data: currentOpenedWs.data, tabsIndex: state.openedTabs.tabsIndex},
+      openedTabs: {data: currentOpenedWs.data.map( ws => {
+        const wsFromLocal = JSON.parse(localStorage.getItem('workSpaceMenuItem'))[ws.workSpaceId+'-'+ws.uwYear]
+          return ({
+            ...ws,
+            favorite: _.get(wsFromLocal,'favorite',false),
+            lastFModified: _.get(wsFromLocal,'lastFModified',null),
+            lastPModified: _.get(wsFromLocal,'lastPModified',null),
+            pinged: _.get(wsFromLocal,'pinged',false)
+          })
+        }), tabsIndex: state.openedTabs.tabsIndex},
       recentWs: recentlyOpenedWs
     });
   }

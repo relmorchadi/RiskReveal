@@ -6,7 +6,7 @@ import {TableSortAndFilterPipe} from '../../core/pipes/table-sort-and-filter.pip
 import {TextLengthPipe} from '../../core/pipes/text-length.pipe';
 import {BoldPipe} from './bold.pipe';
 import {ForNumberPipe} from "./for-number.pipe";
-import {KeysPipe} from './keys.pipe';
+import {KeysPipe} from '../../shared/pipes/keys.pipe';
 
 export const PIPES= [
   FilterByBadgePipe,
@@ -17,10 +17,9 @@ export const PIPES= [
   TextLengthPipe,
   BoldPipe,
   ForNumberPipe,
-  KeysPipe
 ];
 
-export * from './keys.pipe'
+export * from '../../shared/pipes/keys.pipe'
 export * from '../../core/pipes/text-length.pipe'
 export * from '../../core/pipes/table-sort-and-filter.pipe';
 export * from './filter-by-badge.pipe';

@@ -9,7 +9,12 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../model/workspace-main';
 import {WorkspaceMainState} from '../../../store/states/workspace-main.state';
 import {NotificationService} from '../../../../shared/notification.service';
-import {LoadWorkspacesAction, OpenNewWorkspacesAction, PatchWorkspaceMainStateAction} from '../../../store/actions/workspace-main.action';
+import {
+  LoadWorkspacesAction,
+  OpenNewWorkspacesAction,
+  PatchWorkspace,
+  PatchWorkspaceMainStateAction
+} from '../../../store/actions/workspace-main.action';
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -30,23 +35,35 @@ export class WorkspacesMenuItemComponent implements OnInit {
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
   favorites: any;
+  pinged: any;
 
   constructor(private _helperService: HelperService, private router:Router, private _searchService: SearchService,
               private _fb: FormBuilder, private store: Store, private notificationService: NotificationService,private cdRef: ChangeDetectorRef) {
     this.setForm();
+    this.favoriteSize= 10;
+    this.pingedSize= 10;
   }
 
   @Select(WorkspaceMainState.getFavorite) favorites$;
+  @Select(WorkspaceMainState.getPinged) pinged$;
+  favoriteSize: any;
+  pingedSize: any;
+  favoriteSearch: any;
+  pingedSearch: any;
 
   ngOnInit() {
     this.store.dispatch(new LoadWorkspacesAction());
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
     this.favorites$.subscribe( fv => {
-      console.log(fv);
-      this.favorites= fv
+      this.favorites= _.orderBy(fv, ['lastFModified'],['desc'])
+      console.log(fv,this.favorites)
       this.detectChanges();
     });
+    this.pinged$.subscribe( pn => {
+      this.pinged = _.orderBy(pn, ['lastPModified'],['desc'])
+      this.detectChanges();
+    })
   }
 
   detectChanges() {
@@ -135,8 +152,25 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   searchWorkspace(value) {
     const paginationOption = this.state.workspacePagination.paginationList.filter(page => page.id === value);
-    console.log({shownElement: paginationOption[0].shownElement});
     this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'appliedFilter', value: {shownElement: paginationOption[0].shownElement}}));
   }
 
+  toggle(workspace: any,type: string,selected) {
+    switch (type) {
+      case 'favorite':
+        this.store.dispatch(new PatchWorkspace({
+          key: 'selectedF',
+          value: !selected,
+          ws: workspace,
+        }))
+        break;
+      case 'pinged':
+        this.store.dispatch(new PatchWorkspace({
+          key: 'selectedP',
+          value: !selected,
+          ws: workspace,
+        }))
+        break;
+    }
+  }
 }
