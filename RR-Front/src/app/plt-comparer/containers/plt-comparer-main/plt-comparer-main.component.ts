@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 
 @Component({
   selector: 'app-plt-comparer-main',
@@ -16,6 +16,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -41,6 +42,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -66,6 +68,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -91,6 +94,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -116,6 +120,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -141,6 +146,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -166,6 +172,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -191,6 +198,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -216,6 +224,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -241,6 +250,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -266,6 +276,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -291,6 +302,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -316,6 +328,7 @@ export class PltComparerMainComponent implements OnInit {
       subtitle: 'P - 4019 - Pricing 2018',
       tableHeader: '[84339] EUET - BE - EUWS AMMA',
       selected: false,
+      color: '',
       table: [
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
         ['291,621,790', '291,621,790', '291,621,790', '291,621,790'],
@@ -339,9 +352,22 @@ export class PltComparerMainComponent implements OnInit {
   ];
 
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
+    this.colorThePlt();
+  }
+
+  colorThePlt() {
+    while (this.cardContainer.length > this.colorSwitcher.length) {
+      this.colorSwitcher = this.colorSwitcher.concat(this.colorSwitcher);
+      console.log(this.colorSwitcher);
+    }
+    for (let i = 0; i < this.cardContainer.length; i++) {
+      this.cardContainer[i].color = this.colorSwitcher[i];
+
+    }
   }
 
 }
