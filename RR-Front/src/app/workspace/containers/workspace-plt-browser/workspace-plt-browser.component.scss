@@ -23,7 +23,8 @@
   overflow: auto;
 
   .tabset-left {
-    min-height: 600px;
+    min-height: 85vh;
+    max-height: 85vh;
     background: #fff;
     margin-right: 5px;
 
@@ -106,7 +107,7 @@
   }
 
   .tabset-right {
-    min-height: 600px;
+    min-height: 85vh;
     background: #fff;
 
     ::ng-deep .ant-tabs-ink-bar {
@@ -289,7 +290,7 @@
   color: #fff;
   font-family: Rubik;
   border-radius: 10px;
-  font-size: .7em;
+  font-size: .9em;
   display: flex;
   max-width: max-content;
   margin: 1px;
@@ -303,8 +304,8 @@
 
   .chips-counter {
     margin-left: 5px;
+    font-size: .9em;
     opacity: 0.8;
-    font-size: 0.8em;
     border-radius: 11px;
     padding: 2px 8px;
   }
@@ -931,6 +932,14 @@
 
 :host {
   ::ng-deep {
+    nz-collapse{
+      max-height: 48%;
+      overflow: auto;
+    }
+    .Tags-content {
+      max-height: 80vh;
+      height: 80vh;
+    }
     .tag-section {
       ul {
         list-style-type: none;
