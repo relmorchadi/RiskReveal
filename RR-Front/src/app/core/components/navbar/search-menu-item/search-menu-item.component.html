@@ -8,6 +8,10 @@
     <input [ngClass]="{'search-page-active-border': isSearchRoute()}"
            (keydown)="filterContracts($event)"
            (input)="onInput($event)" #searchInput
+           appScrollToParent
+           [scrollTo]="scrollTo"
+           [listLength]="listLength"
+           (emitScrollTo)="scrollTo = $event"
            formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="state.searchValue"
            class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
