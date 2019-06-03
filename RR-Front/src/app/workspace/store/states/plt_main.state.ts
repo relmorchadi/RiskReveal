@@ -13,7 +13,6 @@ const initiaState: pltMainModel = {
     systemTag: [],
     userTag: []
   },
-  systemTags: {},
   userTags: {}
 };
 

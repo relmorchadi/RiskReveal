@@ -342,20 +342,19 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
               this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
               const tag = _.toString(v[section]);
               if(tag){
-                this.systemTagsCount[sectionName][tag] = 0;
+                this.systemTagsCount[sectionName][tag] = {selected: false,count:0}
               }
             })
 
             //NONE grouped Sys Tags
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
               this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              this.systemTagsCount[sectionName][section] = 0;
-              this.systemTagsCount[sectionName]['non-'+section] = 0;
+              this.systemTagsCount[sectionName][section] = {selected: false,count:0};
+              this.systemTagsCount[sectionName]['non-'+section] = {selected: false,count:0};
             })
 
           })
         }
-
 
         _.forEach(data, (v,k) => {
           d1.push({...v,pltId: k});
@@ -366,8 +365,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
             _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
               const tag = _.toString(v[section]);
               if(tag){
-                if( this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag] === 0){
-                  this.systemTagsCount[sectionName][tag] = this.systemTagsCount[sectionName][tag] + 1;
+                if( this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0){
+                  this.systemTagsCount[sectionName][tag] = {...this.systemTagsCount[sectionName][tag],count: this.systemTagsCount[sectionName][tag].count + 1};
                 }
               }
             })
@@ -376,10 +375,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
               const tag = v[section];
               if(this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0){
-                this.systemTagsCount[sectionName][section] = (this.systemTagsCount[sectionName][section] || 0) + 1;
+                this.systemTagsCount[sectionName][section] = {...this.systemTagsCount[sectionName][section],count: this.systemTagsCount[sectionName][section].count + 1};
               }
-              if(this.systemTagsCount[sectionName]['non-'+section] || this.systemTagsCount[sectionName]['non-'+section] == 0){
-                this.systemTagsCount[sectionName]['non-'+section] = (this.systemTagsCount[sectionName]['non-'+section] || 0) + 1;
+              if(this.systemTagsCount[sectionName]['non-'+section] || this.systemTagsCount[sectionName]['non-'+section].count == 0){
+                this.systemTagsCount[sectionName]['non-'+section] = {...this.systemTagsCount[sectionName]['non-'+section],count: this.systemTagsCount[sectionName]['non-'+section].count + 1};
               }
             })
           }
@@ -507,9 +506,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
             _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
             _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
 
-        if(filter == 'userTag'){
-          this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
-        }
+        this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
+
+        this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
+          filters: this.filters
+        }))
       }else{
         const {
           systemTag
@@ -532,11 +533,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           }):
           _.assign({}, this.filters,{ systemTag: _.filter( systemTag, sectionFilter => sectionFilter[tag] != section)})
       }
-
-
-    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
-      filters: this.filters
-    }))
   }
 
   selectPltById(pltId) {
@@ -740,7 +736,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   assignPltsToTag() {
-    console.log(this.addModalSelect)
     if(this.addTagModalIndex > 0 ){
       this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
         plts: this.selectedListOfPlts,
@@ -750,12 +745,17 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         type: 'many'
       }))
     }else{
+      let color = Math.floor(Math.random()*16777215).toString(16)
+      while (_.includes(color,'fff')){
+        color = Math.floor(Math.random()*16777215).toString(16)
+      }
       this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
         plts: this.fromPlts ? this.selectedListOfPlts : [],
         wsId: this.workspaceId,
         uwYear: this.uwy,
         tag: {
-          tagName: this.addModalInput
+          tagName: this.addModalInput,
+          tagColor: '#' + color
         }
       }))
     }
@@ -770,6 +770,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       this.selectedUserTags[k] = this.userTags[k];
     }
     this.addModalSelect = this.userTags[k];
+  }
+
+  selectSystemTag(section, tag) {
+
+    _.forEach(this.systemTagsCount, (s,sKey) => {
+      _.forEach(s, (t,tKey) => {
+        if(tag == tKey && section == sKey){
+          this.systemTagsCount[sKey][tKey] = {...t,selected: !t.selected}
+          console.log(this.systemTagsCount[sKey][tKey]);
+        }else{
+          this.systemTagsCount[sKey][tKey] = {...t,selected: false}
+          console.log(this.systemTagsCount[sKey][tKey]);
+        }
+      })
+    })
   }
 }
 

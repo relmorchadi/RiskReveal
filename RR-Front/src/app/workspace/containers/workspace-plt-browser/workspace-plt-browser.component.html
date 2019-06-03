@@ -65,9 +65,8 @@
                 <nz-tabset [(nzSelectedIndex)]="addTagModalIndex">
                   <nz-tab nzTitle="Create New Tag">
                     <div class="content">
-                      <nz-form-label>Tag Name</nz-form-label>
                       <nz-input-group [nzSuffix]="suffixTemplate">
-                        <input  [(ngModel)]="addModalInput" type="text" nz-input />
+                        <input  class="input-default" [(ngModel)]="addModalInput" type="text" nz-input placeholder="Tag Name"/>
                       </nz-input-group>
                       <ng-template #suffixTemplate
                       ><i
@@ -123,7 +122,7 @@
                       (contextmenu)="tagFormenu = userTags[key]"
                       [ngClass]="{'active-tag': userTags[key]?.selected}"
                       class="chips"
-                      [ngStyle]="{'background-color': 'blue'}"
+                      [ngStyle]="{'background-color': userTags[key]?.tagColor}"
                       (click)="setFilter('userTag', userTags[key])">
                       <span class="chips-content">{{userTags[key]?.tagName}}</span>
                       <span [ngStyle]="{'background-color': 'black'}" class="chips-counter">{{userTags[key]?.count}}</span>
@@ -139,16 +138,25 @@
                     <nz-collapse-panel
                       [nzHeader]="section"
                     >
-                      <ul class="title-list">
+                      <ul class="title-list" style="position: relative;left:-24px">
                         <li *ngFor="let tag of ( systemTagsCount[section] | keys)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
                     <span
-                      [ngClass]="{'active-tag': tag.selected }"
+                      [ngClass]="{'active-tag': systemTagsCount[section][tag].selected }"
                       class="chips"
-                      [ngStyle]="{'background-color': 'orange'}"
-                      (click)="setFilter('systemTag', tag, section)"
+                      [ngStyle]="{
+                      'background-color': systemTagsCount[section][tag].count ? 'orange' : 'grey',
+                      'cursor': systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      }"
+                      (click)="setFilter('systemTag', tag, section);selectSystemTag(section,tag)"
                     >
-                      <span class="chips-content">{{tag}}</span>
-                      <span [ngStyle]="{'background-color': 'black' }" class="chips-counter">{{systemTagsCount[section][tag]}}</span>
+                      <span
+                        [ngStyle]="{
+                      'cursor': systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      }"
+                        class="chips-content">{{tag}}</span>
+                      <span [ngStyle]="{
+                      'background-color': 'black',
+                      'cursor': systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'}" class="chips-counter">{{systemTagsCount[section][tag].count}}</span>
                 </span>
                         </li>
                       </ul>
