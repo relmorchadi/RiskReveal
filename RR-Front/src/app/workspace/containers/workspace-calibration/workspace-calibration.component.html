@@ -1,4 +1,4 @@
-<!-- <app-left-menu></app-left-menu> -->
+<app-left-menu></app-left-menu>
 <div style="position: relative; flex: 1">
   <nz-layout class="layoutCalibration">
     <div nz-row>
@@ -75,8 +75,8 @@
                     <ul nz-menu>
                       <li nz-menu-item>
                         <a (click)="exetende()" >
-                          <b *ngIf="extended">Extended PLT Selection</b>
-                          <b *ngIf="!extended">collapsed PLT Selection</b>
+                          <b *ngIf="extended">Collapse PLT Selection</b>
+                          <b *ngIf="!extended">Extend PLT Selection</b>
                         </a>
                       </li>
                      <!-- <li nz-menu-item>
@@ -340,7 +340,7 @@
                                   [nzPaginationPosition]="false" class="fixedHeadder">
                           <thead class="header-text">
                           <tr style="height: 66px !important;">
-                            <th  style="border-right: 1px solid rgb(232, 232, 232);width: 15%"><b style="margin-left:10px !important;">Ovrall LMF</b></th>
+                            <th  style="border-right: 1px solid rgb(232, 232, 232);width: 15%"><b style="margin-left:10px !important;">Overall LMF</b></th>
                             <ng-container *ngFor="let category of pure.category;trackBy: trackByFn">
                               <th *ngIf="category.showBol" [colSpan]="category.basis.length"
                                   [ngStyle]="{background:InuringBack(category.name) }"
