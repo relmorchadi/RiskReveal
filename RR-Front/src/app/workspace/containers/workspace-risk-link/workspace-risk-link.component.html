@@ -27,13 +27,6 @@
           <!--          <span class="body-wrap-header-text-title">TREATY</span>-->
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
-        <div class="body-wrap-header-step">
-          <nz-steps [nzCurrent]="state.currentStep" nzProgressDot>
-            <nz-step style="cursor: pointer" (click)="selectStep(0)" nzDescription="Select EDM & RDM"></nz-step>
-            <nz-step style="cursor: pointer" (click)="selectStep(1)" nzTitle="Portfolios & Analysis"></nz-step>
-            <nz-step style="cursor: pointer" nzDescription="Import"></nz-step>
-          </nz-steps>
-        </div>
       </div>
       <div class="body-wrap-dropDowns">
         <nz-dropdown [nzTrigger]="'click'">
