@@ -8,7 +8,7 @@
   </div>
   <div class="app-header">
     <div class="app-title-manager">
-      <h4>USER Preference Settings</h4>
+      <h4>User Preference Settings</h4>
       <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
               nz-button nzType="primary" nzSize="default" nzShape="circle">
         <i style="color: #9592E6;" nz-icon theme="outline">
@@ -16,5 +16,199 @@
         </i>
       </button>
     </div>
+  </div>
+  <div>
+    <nz-tabset nzTabPosition="left">
+      <nz-tab [nzTitle]="generalConfig">
+        <div>
+          <span class="main-tab-title">General User Settings</span>
+          <div>
+            <span class="head-title">Date Settings</span>
+            <div class="settings-wrapper">
+              <div class="user-config-item"><span>Date Format</span><div></div></div>
+              <div class="user-config-item"><span>Time</span></div>
+              <div class="user-config-item"><span>Time zones</span></div>
+            </div>
+
+            <span class="head-title">Numerical Settings</span>
+            <div class="settings-wrapper">
+              <div class="user-config-item"><span>Number Format</span></div>
+              <div class="user-config-item"><span>Decimal Separator Character</span></div>
+              <div class="user-config-item"><span>Decimal Thousand Separator Character</span></div>
+              <div class="user-config-item"><span>Number of recent history items (My recent)</span></div>
+              <div class="user-config-item"><span>Number of rows displayed in a paginated grid</span></div>
+            </div>
+          </div>
+          <div class="footer-tab-settings">
+            <button class="button-standard">Save</button>
+          </div>
+        </div>
+        <ng-template #generalConfig>
+          <span>General Configuration</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="importConfig">
+        <div>
+          <span class="main-tab-title">Import Settings</span>
+          <div>
+            <span class="head-title">ShortCut Settings</span>
+            <div class="settings-wrapper">
+                <div class="user-config-item">
+                  <span>Default Import Page</span>
+                  <div>
+                    <nz-select
+                      style="width: 200px;"
+                      [(ngModel)]="defaultImport"
+                      (ngModelChange)="defaultImportChange()"
+                      nzShowSearch
+                      class="dropdown-default"
+                      nzPlaceHolder="Select an import"
+                    >
+                      <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
+                      <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
+                      <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
+                    </nz-select>
+                  </div>
+                </div>
+            </div>
+
+            <span  class="head-title">Default Settings</span>
+            <div class="settings-wrapper">
+              <div class="user-config-item">
+                <span>Default Financial Perspectives</span>
+                <div>
+                  <nz-select
+                    style="width: 200px;"
+                    [ngModel]="financialPerspectiveEPM?.selected"
+                    (ngModelChange)="changePerspective()"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option *ngFor="let item of financialPerspectiveEPM?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              <div class="user-config-item">
+                <span>Default Target Currency</span>
+                <div>
+                  <nz-select
+                    style="width: 200px;"
+                    [ngModel]="targetCurrency?.selected"
+                    (ngModelChange)="changePerspective()"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option *ngFor="let item of targetCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div></div>
+              <div class="user-config-item">
+                <span>Default RMS Instance</span>
+                <div>
+                  <nz-select
+                    style="width: 200px;"
+                    [ngModel]="rmsInstance?.selected"
+                    (ngModelChange)="changePerspective()"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option *ngFor="let item of rmsInstance?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div></div>
+              <div class="user-config-item"><span>Data Sources EDMs</span></div>
+              <div class="user-config-item"><span>Data Sources RDMs</span></div>
+            </div>
+          </div>
+          <div class="footer-tab-settings">
+            <button class="button-standard">Save</button>
+          </div>
+        </div>
+
+        <ng-template #importConfig>
+          <span>Import Configuration</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="widgetConfig">
+        <div>
+          <span class="main-tab-title">Widget Settings</span>
+          <div>
+            <span class="head-title">Widget Info</span>
+            <div class="settings-wrapper">
+              <div class="user-config-item"><span>Generation of the default thread</span></div>
+            </div>
+
+            <span  class="head-title">Default Scope Of Contract</span>
+            <div class="settings-wrapper">
+              <div class="user-config-item"><span>Default Country</span></div>
+              <div class="user-config-item"><span>Default UW Unit</span></div>
+              <div class="user-config-item"><span>Default Subsidiary Ledger</span></div>
+            </div>
+          </div>
+          <div class="footer-tab-settings">
+            <button class="button-standard">Save</button>
+          </div>
+        </div>
+        <ng-template #widgetConfig>
+          <span>Widget Configuration</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="epMetricConfig">
+        <div>
+          <span class="main-tab-title">EP Metric Settings</span>
+          <div>
+
+            <span  class="head-title">Default Settings</span>
+            <div class="settings-wrapper">
+              <div class="user-config-item"><span>Custom Return Period</span></div>
+              <div class="user-config-item"><span>Default display of EP Metrics</span></div>
+            </div>
+          </div>
+          <div class="footer-tab-settings">
+            <button class="button-standard">Save</button>
+          </div>
+        </div>
+        <ng-template #epMetricConfig>
+          <span>EP Metric Configuration</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="gamConfig">
+        <div>
+          <span class="main-tab-title">GAM Settings</span>
+          <div>
+
+            <span  class="head-title">Default Settings</span>
+            <div class="settings-wrapper">
+              <div class="user-config-item"><span>Generating the default thread</span></div>
+            </div>
+          </div>
+          <div class="footer-tab-settings">
+            <button class="button-standard">Save</button>
+          </div>
+        </div>
+        <ng-template #gamConfig>
+          <span>GAM Configuration</span>
+        </ng-template>
+      </nz-tab>
+      <nz-tab [nzTitle]="searchConfig">
+        <div>
+          <span class="main-tab-title">Search Settings</span>
+          <div>
+            <span  class="head-title">Search Result Order</span>
+
+            <div cdkDropList class="example-list" (cdkDropListDropped)="drop($event)">
+              <div class="example-box" *ngFor="let item of search" cdkDrag>{{item}}</div>
+            </div>
+          </div>
+          <div class="footer-tab-settings">
+            <button class="button-standard">Save</button>
+          </div>
+        </div>
+        <ng-template #searchConfig>
+          <span>Search Configuration</span>
+        </ng-template>
+      </nz-tab>
+    </nz-tabset>
   </div>
 </div>

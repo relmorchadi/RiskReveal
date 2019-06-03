@@ -11,14 +11,14 @@ import {DndDropEvent, DropEffect} from "ngx-drag-drop";
   styleUrls: ['./workspace-calibration.component.scss']
 })
 export class WorkspaceCalibrationComponent implements OnInit {
-
+  inputValue;
   size;
   disabled;
 
   visibleIcon: Boolean;
 
   cols: any[];
-  adjsArray: any[];
+  adjsArray: any[]=[];
   visible: Boolean = false;
   tree: Boolean = false;
   pure: any = {};
@@ -66,9 +66,9 @@ export class WorkspaceCalibrationComponent implements OnInit {
   ];
   hideThread: {};
   isVisible = false;
-  singleValue: string = " ";
+  singleValue: any = "none";
   basises: any[];
-  categorySelectedFromBasis: string[] = [];
+  categorySelectedFromAdjustement: any;
   columnPosition: number;
   selectAllBool = true;
   colunmName = null;
@@ -91,16 +91,18 @@ export class WorkspaceCalibrationComponent implements OnInit {
   userTags = [];
   currentSystemTag = null;
   currentUserTag = null;
-  private currentDraggableEvent: DragEvent;
   sortName: string | null = null;
   sortValue: string | null = null;
   searchAddress: string;
-  tagSpan:number=3;
-  pltSpan:number=7;
-  templateSpan:number=14;
+  tagSpan: number = 3;
+  pltSpan: number = 7;
+  templateSpan: number = 14;
   pltSelectionSpan;
-  extended:boolean=false;
-
+  allAdjsArray = [];
+  extended: boolean = false;
+  idPlt: string = null;
+  AdjustementType: any[];
+  categorySelected: string = "Selected Category";
   listOfPlts: Array<{
     pltId: number;
     systemTags: any;
@@ -117,7 +119,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
     d: boolean;
     note: boolean;
     checked: boolean;
-    [key: string]:any;}> = [
+    [key: string]: any;
+  }> = [
     {
       pltId: 1,
       systemTags: [{tagId: 1}, {tagId: 2}, {tagId: 3}],
@@ -355,31 +358,63 @@ export class WorkspaceCalibrationComponent implements OnInit {
     d: boolean;
     note: boolean;
     checked: boolean;
-    [key: string]: any;}> = [
+    [key: string]: any;
+  }> = [
     ...this.listOfPlts
   ];
+  addAdjustement: boolean;
   pltColumns = [
-    {fields:'check' , header:'' , width: '1%', sorted: false, filtred: false, icon: null,extended:true},
-    {fields:'' , header:'User Tags' , width: '10%', sorted: false, filtred: false, icon: null,extended:true},
-    {fields:'pltId' , header:'PLT ID' , width: '12%', sorted: true, filtred: true, icon: null,extended:true},
-    {fields:'pltName' , header:'PLT Name' , width: '14%', sorted: true, filtred: true, icon: null,extended:true},
-    {fields:'peril' , header:'Peril' , width: '7%', sorted: true, filtred: true, icon: null,extended:false},
-    {fields:'regionPerilCode' , header:'Region Peril Code' , width: '13%', sorted: true, filtred: true, icon: null,extended:false},
-    {fields:'regionPerilName' , header:'Region Peril Name' , width: '13%', sorted: true, filtred: true, icon: null,extended:false},
-    {fields:'grain' , header:'Grain' , width: '9%', sorted: true, filtred: true, icon: null,extended:false},
-    {fields:'vendorSystem' , header:'Vendor System' , width: '11%', sorted: true, filtred: true, icon: null,extended:false},
-    {fields:'rap' , header:'RAP' , width: '9%', sorted: true, filtred: true, icon: null,extended:false},
-    {fields:'action' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-focus-add",extended:true},
-    {fields:'action' , header:'' , width: '3%', sorted: false, filtred: false, icon: "icon-note",extended:true}
+    {fields: 'check', header: '', width: '1%', sorted: false, filtred: false, icon: null, extended: true},
+    {fields: '', header: 'User Tags', width: '10%', sorted: false, filtred: false, icon: null, extended: true},
+    {fields: 'pltId', header: 'PLT ID', width: '12%', sorted: true, filtred: true, icon: null, extended: true},
+    {fields: 'pltName', header: 'PLT Name', width: '14%', sorted: true, filtred: true, icon: null, extended: true},
+    {fields: 'peril', header: 'Peril', width: '7%', sorted: true, filtred: true, icon: null, extended: false},
+    {
+      fields: 'regionPerilCode',
+      header: 'Region Peril Code',
+      width: '13%',
+      sorted: true,
+      filtred: true,
+      icon: null,
+      extended: false
+    },
+    {
+      fields: 'regionPerilName',
+      header: 'Region Peril Name',
+      width: '13%',
+      sorted: true,
+      filtred: true,
+      icon: null,
+      extended: false
+    },
+    {fields: 'grain', header: 'Grain', width: '9%', sorted: true, filtred: true, icon: null, extended: false},
+    {
+      fields: 'vendorSystem',
+      header: 'Vendor System',
+      width: '11%',
+      sorted: true,
+      filtred: true,
+      icon: null,
+      extended: false
+    },
+    {fields: 'rap', header: 'RAP', width: '9%', sorted: true, filtred: true, icon: null, extended: false},
+    {fields: 'action', header: '', width: '3%', sorted: false, filtred: false, icon: "icon-focus-add", extended: true},
+    {fields: 'action', header: '', width: '3%', sorted: false, filtred: false, icon: "icon-note", extended: true}
   ]
-  ColpasBool: boolean=true;
-  constructor() {
+  ColpasBool: boolean = true;
+  linear: boolean = false;
+  private currentDraggableEvent: DragEvent;
 
-    this.adjsArray = [
-      {id: 1, name: 'Missing Exp', value: 2.1, linear: false, category: "pd", hover: false,idAdjustementType:1},
-      {id: 2, name: 'Port. Evo', value: 2.1, linear: false, category: "bd", hover: false,idAdjustementType:2},
-      {id: 3, name: 'ALAE', value: 1.75, linear: false, category: "pd", hover: false,idAdjustementType:3},
-      {id: 4, name: 'Model Calib', value: "RPB (EEF)", linear: true, category: "bd", hover: false,idAdjustementType:4}
+  constructor() {
+    this.AdjustementType = [
+      {id: 0, name: "none", abv: false},
+      {id: 1, name: "Linear", abv: false},
+      {id: 2, name: "Event Driven", abv: "Event Driven"},
+      {id: 3, name: "Return Period Banding Severity (EEF)", abv: "RP (EEF)"},
+      {id: 4, name: "Return Period Banding Severity (OEP)", abv: "RP (OEP)"},
+      {id: 4, name: "Frequency (EEF)", abv: "Freq (EEF)"},
+      {id: 4, name: "CAT XL", abv: "CAT XL"},
+      {id: 4, name: "Quota Share", abv: "QS"}
     ];
     this.pure = {
       category: [
@@ -402,7 +437,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
           basis: [],
           showBol: true,
           width: '10%'
-        },{
+        }, {
           name: "Post-Inuring ",
           basis: [],
           showBol: true,
@@ -413,7 +448,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
           name: "Misk net [12233875]",
           thread: [
             {
-              id: "122222",
+              id: "122232",
               threadName: "APEQ-ID_GU_CFS PORT 1",
               icon: 'icon-history-alt iconYellow',
               checked: false,
@@ -429,7 +464,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
             }, {
-              id: "122222",
+              id: "122242",
               threadName: "APEQ-ID_GU_CFS PORT 2",
               icon: 'icon-history-alt iconYellow',
               checked: false,
@@ -445,7 +480,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
             }, {
-              id: "122222",
+              id: "122252",
               threadName: "APEQ-ID_GU_CFS PORT 3",
               icon: 'icon-history-alt iconYellow',
               checked: false,
@@ -462,7 +497,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
               rap: "North Atlantic"
             },
             {
-              id: "122223",
+              id: "122263",
               threadName: "APEQ-ID_GU_LMF1.T1",
               icon: 'icon-history-alt iconYellow',
               checked: false,
@@ -479,7 +514,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
               rap: "North Atlantic"
             },
             {
-              id: "122224",
+              id: "122274",
               threadName: "APEQ-ID_GU_LMF1.T11687",
               icon: 'icon-check-circle iconGreen',
               checked: false,
@@ -502,7 +537,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
           name: "Misk net [12233895]",
           thread: [
             {
-              id: "122252", threadName: "APEQ-ID_GULM 1", icon: 'icon-lock-alt iconRed',
+              id: "122282", threadName: "APEQ-ID_GULM 1", icon: 'icon-lock-alt iconRed',
               checked: false,
               locked: true,
               adj: [],
@@ -516,7 +551,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
             }, {
-              id: "122252", threadName: "APEQ-ID_GULM 2", icon: 'icon-lock-alt iconRed',
+              id: "122292", threadName: "APEQ-ID_GULM 2", icon: 'icon-lock-alt iconRed',
               checked: false,
               locked: true,
               adj: [],
@@ -537,7 +572,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
           name: "CFS PORT MAR18 [12233895]",
           thread: [
             {
-              id: "12299892", threadName: "Apk lap okol Pm 1", icon: 'icon-history-alt iconYellow',
+              id: "12299192", threadName: "Apk lap okol Pm 1", icon: 'icon-history-alt iconYellow',
               checked: false,
               locked: false,
               adj: [],
@@ -551,7 +586,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
             }, {
-              id: "12299892", threadName: "Apk lap okol Pm 2", icon: 'icon-history-alt iconYellow',
+              id: "12295892", threadName: "Apk lap okol Pm 2", icon: 'icon-history-alt iconYellow',
               checked: false,
               locked: false,
               adj: [],
@@ -647,6 +682,20 @@ export class WorkspaceCalibrationComponent implements OnInit {
         selected: false
       }
     ];
+    this.allAdjsArray = [
+      {id: 1, name: 'Missing Exp ', value: 2.1, linear: false, category: "Client", hover: false, idAdjustementType: 5},
+      {id: 2, name: 'Port. Evo ', value: 2.1, linear: false, category: "Base", hover: false, idAdjustementType: 6},
+      {id: 3, name: 'ALAE ', value: 1.75, linear: false, category: "Client", hover: false, idAdjustementType: 7},
+      {
+        id: 4,
+        name: 'Model Calib ',
+        value: "RPB (EEF)",
+        linear: true,
+        category: "Base",
+        hover: false,
+        idAdjustementType: 8
+      }
+    ]
   }
 
   ngOnInit() {
@@ -749,24 +798,18 @@ export class WorkspaceCalibrationComponent implements OnInit {
     this.isVisible = false;
   }
 
-  selectBasis(basis) {
-    let x;
-    _.forIn(this.pure.category, function (value, key) {
-      if (_.findIndex(value.basis, {name: basis}) != -1) {
-        console.log(value.name);
-        x = value.name;
-      }
-    })
-    this.categorySelectedFromBasis = x;
-    let index = _.findIndex(this.pure.category, {name: x});
-    this.columnPosition = this.pure.category[index].basis.length + 1;
-
+  selectBasis(adjustement) {
+    if (adjustement.id == 1) {
+      this.linear = true;
+    } else {
+      this.linear = false;
+    }
   }
 
   selectCategory(p) {
-    let index = _.findIndex(this.pure.category, {name: p});
-    this.columnPosition = this.pure.category[index].basis.length + 1;
-    this.categorySelectedFromBasis = p;
+    this.categorySelectedFromAdjustement = p;
+    this.categorySelected = p.category;
+    console.log(p);
   }
 
   getAllBasises() {
@@ -866,11 +909,11 @@ export class WorkspaceCalibrationComponent implements OnInit {
       })
       this.lastCheckedBool = false;
     }
+    this.cheackBoxPrincipe();
   }
 
   changeBackgroundCheckBox(event, a) {
-    let inder=false;
-    let selectedAll=false;
+
     let checked = a.checked;
     console.log("event Check")
     let o = 0;
@@ -899,28 +942,33 @@ export class WorkspaceCalibrationComponent implements OnInit {
         }
       })
     }
+    this.cheackBoxPrincipe();
+  }
+
+  cheackBoxPrincipe() {
+    let inder = false;
+    let selectedAll = false;
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (plt, key) {
           if (plt.checked) {
-            inder=true;
-          }else{
-            selectedAll=true;
+            inder = true;
+          } else {
+            selectedAll = true;
           }
         }
       )
     })
-    if(inder){
-      this.indereterminate=true;
-    }else{
-      this.indereterminate=false;
+    if (inder) {
+      this.indereterminate = true;
+    } else {
+      this.indereterminate = false;
     }
-    if(selectedAll){
-      this.checkedAll=false;
-    } else{
-      this.checkedAll=true;
-      this.indereterminate=false;
+    if (selectedAll) {
+      this.checkedAll = false;
+    } else {
+      this.checkedAll = true;
+      this.indereterminate = false;
     }
-
   }
 
   setBackgroud(a) {
@@ -946,7 +994,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   selectAllThread(selected) {
-    this.indereterminate=false;
+    this.indereterminate = false;
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (value, key) {
         value.checked = selected;
@@ -1144,7 +1192,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     //event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
     console.log("heeeee.2 ", event.data.category)
 
-    if (event.data.category == "bd" || event.data.category == "pd"  ) {
+    if (event.data.category == "Base" || event.data.category == "Client") {
       console.log("dropTrue", this.dndBool)
       this.dndBool = true;
       list.splice(index, 0, event.data);
@@ -1168,7 +1216,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     //event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
     console.log("heeeee. ", event.data.category)
 
-    if (event.data.category == "bd" || event.data.category == "pd" || event.data.category == "poin") {
+    if (event.data.category == "Base" || event.data.category == "Client" || event.data.category == "poin") {
       console.log("dropTrue", this.dndBool)
       this.dndBool = true;
       list.splice(index, 0, event.data);
@@ -1232,7 +1280,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
   haveTagSystem(thread: any) {
     let currenSystemTag = this.currentSystemTag;
     let currentUserTag = this.currentUserTag;
-    if(!_.isNil(this.currentUserTag)){
+    if (!_.isNil(this.currentUserTag)) {
       var numberUsre = _.findIndex(thread.userTags, function (o: any) {
         return o.tagId == currentUserTag.tagId
       });
@@ -1252,18 +1300,18 @@ export class WorkspaceCalibrationComponent implements OnInit {
         }
       }
     } else {
-        if (numberSystem < 0) {
-          return false;
-        } else {
-          if (_.isNil(this.currentUserTag)) return true;
-          else{
-            if (numberUsre < 0) {
-              return false;
-            } else {
-              return true;
-            }
+      if (numberSystem < 0) {
+        return false;
+      } else {
+        if (_.isNil(this.currentUserTag)) return true;
+        else {
+          if (numberUsre < 0) {
+            return false;
+          } else {
+            return true;
           }
         }
+      }
     }
 
   }
@@ -1280,43 +1328,48 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   getColorTag(tag) {
-    return _.find(this.userTags, function(o) { return o.tagId == tag.tagId; }).tagColor;
+    return _.find(this.userTags, function (o) {
+      return o.tagId == tag.tagId;
+    }).tagColor;
   }
 
-  applyToAllAdjustement(adjustement,valueOfAdj) {
-     _.forIn(this.pure.dataTable,function (value,key) {
-       _.forIn(value.thread,function (thread,key) {
-         _.forIn(thread.adj,function (adj,key) {
-           console.log("yes1")
-             if(adj.idAdjustementType==adjustement.idAdjustementType){
-               console.log(valueOfAdj);
-               adj.value=valueOfAdj;
-             }
-         })
-       })
-     })
-  }
-  onChangeAdjValue(adj,event){
-    adj.value=event.target.value;
-  }
-
-  applyToSelectedPlt(adjustement,valueOfAdj) {
-    _.forIn(this.pure.dataTable,function (value,key) {
-      _.forIn(value.thread,function (thread,key) {
-        _.forIn(thread.adj,function (adj,key) {
+  applyToAllAdjustement(adjustement, valueOfAdj) {
+    _.forIn(this.pure.dataTable, function (value, key) {
+      _.forIn(value.thread, function (thread, key) {
+        _.forIn(thread.adj, function (adj, key) {
           console.log("yes1")
-          if(adj.idAdjustementType==adjustement.idAdjustementType && thread.checked==true){
-            adj.value=valueOfAdj;
+          if (adj.idAdjustementType == adjustement.idAdjustementType) {
+            console.log(valueOfAdj);
+            adj.value = valueOfAdj;
           }
         })
       })
     })
   }
+
+  onChangeAdjValue(adj, event) {
+    adj.value = event.target.value;
+  }
+
+  applyToSelectedPlt(adjustement, valueOfAdj) {
+    _.forIn(this.pure.dataTable, function (value, key) {
+      _.forIn(value.thread, function (thread, key) {
+        _.forIn(thread.adj, function (adj, key) {
+          console.log("yes1")
+          if (adj.idAdjustementType == adjustement.idAdjustementType && thread.checked == true) {
+            adj.value = valueOfAdj;
+          }
+        })
+      })
+    })
+  }
+
   sort(sort: { key: string; value: string }): void {
     this.sortName = sort.key;
     this.sortValue = sort.value;
     this.search();
   }
+
   search(): void {
     /** filter data **/
       // const filterFunc = (item: { name: string; age: number; address: string }) =>
@@ -1347,76 +1400,138 @@ export class WorkspaceCalibrationComponent implements OnInit {
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (thraed, key) {
           let myThread = thraed;
-            let newAdj = {...adj};
-            newAdj.id = numberAdjs;
-            myThread.adj.push(newAdj);
+          let newAdj = {...adj};
+          newAdj.id = numberAdjs;
+          myThread.adj.push(newAdj);
         }
       )
     })
   }
 
   Colpa() {
-    this.ColpasBool=!this.ColpasBool;
-    console.log(this.extended,"extended1");
-    console.log(this.ColpasBool,"ColpasBool1");
-    if(this.ColpasBool==true){
-      if(this.extended){
-        this.pltSpan=14;
-        this.templateSpan=7;
-      }else {
-        this.pltSpan=7;
-        this.templateSpan=14;
+    this.ColpasBool = !this.ColpasBool;
+    console.log(this.extended, "extended1");
+    console.log(this.ColpasBool, "ColpasBool1");
+    if (this.ColpasBool == true) {
+      if (this.extended) {
+        this.pltSpan = 14;
+        this.templateSpan = 7;
+      } else {
+        this.pltSpan = 7;
+        this.templateSpan = 14;
       }
-    }
-    else {
-      if(this.extended){
-        this.pltSpan=15;
-        this.templateSpan=9;
-      }else {
-        this.pltSpan=9;
-        this.templateSpan=15;
+    } else {
+      if (this.extended) {
+        this.pltSpan = 14;
+        this.templateSpan = 9;
+      } else {
+        this.pltSpan = 9;
+        this.templateSpan = 14;
       }
     }
 
   }
 
   exetende() {
-    this.extended=!this.extended;
-    console.log(this.extended,"extended2");
-    console.log(this.ColpasBool,"ColpasBool2");
-    if(this.extended){
-       if(!this.ColpasBool){
-         this.pltSpan=15;
-         this.templateSpan=9;
-       }else {
-         this.pltSpan=14;
-         this.templateSpan=7;
-       }
-      _.forIn(this.pltColumns,function (value:any,key) {
-            value.extended=true;
+    this.extended = !this.extended;
+    console.log(this.extended, "extended2");
+    console.log(this.ColpasBool, "ColpasBool2");
+    if (this.extended) {
+      if (!this.ColpasBool) {
+        this.pltSpan = 15;
+        this.templateSpan = 8;
+      } else {
+        this.pltSpan = 14;
+        this.templateSpan = 7;
+      }
+      _.forIn(this.pltColumns, function (value: any, key) {
+        value.extended = true;
       })
-    }else{
-      if(this.ColpasBool==true){
-        this.pltSpan=7;
-        this.templateSpan=14;
+    } else {
+      if (this.ColpasBool == true) {
+        this.pltSpan = 7;
+        this.templateSpan = 14;
+      } else {
+        this.pltSpan = 9;
+        this.templateSpan = 15;
       }
-      else {
-        this.pltSpan=9;
-        this.templateSpan=15;
-      }
-      _.forIn(this.pltColumns,function (value:any,key) {
-        if(value.fields=="check" || value.header=="User Tags" ||value.fields=="pltId" ||value.fields=="pltName"|| value.fields=="action" ){
-          value.extended=true;
-        }
-        else{
-          value.extended=false;
+      _.forIn(this.pltColumns, function (value: any, key) {
+        if (value.fields == "check" || value.header == "User Tags" || value.fields == "pltId" || value.fields == "pltName" || value.fields == "action") {
+          value.extended = true;
+        } else {
+          value.extended = false;
         }
 
       })
     }
   }
 
-  changeValue(adj: any,event) {
-    adj.value=event.target.value;
+  changeValue(adj: any, event) {
+    adj.value = event.target.value;
+  }
+
+  clickButtonPlus(bool, data?: any) {
+    if (!bool) {
+      this.idPlt = data.id;
+      this.addAdjustement = true;
+    } else {
+      this.addAdjustement = false;
+    }
+    this.isVisible = true;
+  }
+
+  addAdjustmentFromPlusIcon(boolAdj, adjustementType?, adjustement?) {
+    if (this.addAdjustement) {
+      if (boolAdj) {
+        this.isVisible = false;
+      }
+      let idPlt = this.idPlt;
+      var today = new Date();
+      var milliseconds = today.getMilliseconds();
+      let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+      adjustement.id = numberAdjs;
+      if (adjustementType.id == 1) {
+        adjustement.linear = false;
+        adjustement.value = this.columnPosition;
+      } else {
+        adjustement.linear = true;
+        adjustement.value = adjustementType.abv;
+      }
+      let newAdj = {...adjustement};
+      console.log(adjustement, this.idPlt);
+      _.forIn(this.pure.dataTable, function (value, key) {
+        _.forIn(value.thread, function (plt, key) {
+          console.log()
+          if (plt.id == idPlt) {
+            console.log("true");
+            plt.adj.push(newAdj);
+            return;
+          }
+        })
+      })
+    } else {
+      if (boolAdj) {
+        this.isVisible = false;
+      }
+      let idPlt = this.idPlt;
+      var today = new Date();
+      var milliseconds = today.getMilliseconds();
+      let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+      adjustement.id = numberAdjs;
+      if (adjustementType.id == 1) {
+        adjustement.linear = false;
+        adjustement.value = this.columnPosition;
+      } else {
+        adjustement.linear = true;
+        adjustement.value = adjustementType.abv;
+      }
+      let newAdj = {...adjustement};
+      this.adjsArray.push(newAdj);
+    }
+
+    this.categorySelectedFromAdjustement=null;
+    this.singleValue=null;
+    this.columnPosition=null;
+    this.linear=false;
   }
 }

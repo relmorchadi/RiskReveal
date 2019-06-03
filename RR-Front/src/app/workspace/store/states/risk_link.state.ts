@@ -89,6 +89,15 @@ export class RiskLinkState implements NgxsOnInit {
     return state;
   }
 
+  @Selector()
+  static getFinancialValidator(state: RiskLinkModel) {
+    return _.get(state, 'financialValidator', null);
+  }
+
+  @Selector()
+  static getFinancialValidatorAttr(path: string, value: any) {
+    return  (state: any) =>  _.get(state.RiskLinkModel, path, value);
+  }
   /**
    * Commands
    */

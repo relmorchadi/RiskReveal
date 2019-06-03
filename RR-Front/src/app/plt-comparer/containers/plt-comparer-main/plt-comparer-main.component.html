@@ -90,7 +90,7 @@
   <div class="body">
   <div class="lefter">
     <div class="cards-wrapper">
-      <div class="card-header-title" style="height: 65px;">
+      <div class="card-header-title" style="height: 71px;">
       </div>
       <div class="card-table">
         <table>
@@ -129,8 +129,11 @@
   </div>
   <div class="righter">
 
-
-    <div class="cards-wrapper" [class.selected-item]="item.selected == true" [ngStyle]="{'width': switchValue ? '450px' : '255px'}" *ngFor="let item of cardContainer">
+   <div [class.selected-item]="item.selected == true" *ngFor="let item of cardContainer" class="card-outer">
+    <div class="cards-wrapper" [ngStyle]="{'border-top': item.selected ? 'none' : '5px solid ' + item.color ,
+    'border-bottom': item.selected ? 'none' : '5px solid transparent',
+    'height':item.selected ? ' 500px' : '',
+     'width': (switchValue && !item.selected) ? '450px' : '255px'}" >
       <div class="card-header-title">
         <div class="card-header-detail">
           <span style="font-weight: bold; font-size:15px;">{{item.title}}</span><br>
@@ -138,8 +141,9 @@
           <span style="font-size: 10px;">{{item.tableHeader}}</span>
         </div>
         <div  class="card-header-icons">
-          <i [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden'}" class="icon-check-circle" (click)="item.selected = !item.selected"></i>
-          <span [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden'}">BL</span>
+          <i *ngIf="!item.selected" [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden'}" class="icon-check-circle" (click)="item.selected = !item.selected"></i>
+          <i *ngIf="item.selected" class="icon-check_24px" (click)="item.selected = !item.selected"></i>
+          <span [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden', 'color': item.selected? '#03DAC4' : '' }">BL</span>
           <i nz-icon nzType="line-chart" nzTheme="outline"></i>
         </div>
       </div>
@@ -148,23 +152,23 @@
           <thead>
           <tr>
             <th>OEP</th>
-            <th *ngIf="switchValue" style="background-color: #F4F6FC; color: #0700CF;"><i class="icon-triangle" style="font-size: 20px;"></i> OEP</th>
+            <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;"><i class="icon-triangle" style="font-size: 20px;"></i> OEP</th>
             <th>AEP</th>
-            <th *ngIf="switchValue" style="background-color: #F4F6FC; color: #0700CF;"><i class="icon-triangle" style="font-size: 20px;"></i> AEP</th>
+            <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;"><i class="icon-triangle" style="font-size: 20px;"></i> AEP</th>
           </tr>
           </thead>
           <tbody>
           <tr *ngFor="let row of item.table">
             <th>{{row[0]}}</th>
-            <th *ngIf="switchValue" style="background-color: #F4F6FC;">{{row[1]}}</th>
+            <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
             <th>{{row[2]}}</th>
-            <th *ngIf="switchValue" style="background-color: #F4F6FC;">{{row[3]}}</th>
+            <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[3]}}</th>
           </tr>
           <tr>
             <th><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
             <th><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
-            <th *ngIf="switchValue"><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
-            <th *ngIf="switchValue"><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
+            <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
+            <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
           </tr>
           </tbody>
         </table>
@@ -173,18 +177,24 @@
         <div class="card-table-row">
           <div  *ngFor="let row of item.result">{{row[0]}}</div>
         </div>
-        <div *ngIf="switchValue" class="card-table-row" >
+        <div *ngIf="switchValue && !item.selected" class="card-table-row" >
           <div *ngFor="let row of item.result">{{row[1]}}</div>
         </div>
         <div  class="card-table-row1">
           <div *ngFor="let row of item.result">{{row[2]}}</div>
         </div>
-        <div *ngIf="switchValue" class="card-table-row1">
+        <div *ngIf="switchValue && !item.selected" class="card-table-row1">
           <div *ngFor="let row of item.result">{{row[3]}}</div>
         </div>
       </div>
     </div>
-
+   </div>
   </div>
+  </div>
+  <div class="footer-comparer">
+    <div class="footer-title">EP Curves</div>
+    <div>
+      <img style="width: 100%" src="../../../../assets/images/Capture.PNG"/>
+    </div>
   </div>
 </div>
