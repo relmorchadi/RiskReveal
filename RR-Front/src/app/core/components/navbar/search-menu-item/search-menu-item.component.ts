@@ -32,8 +32,8 @@ export class SearchMenuItemComponent implements OnInit {
   state: SearchNavBar = null;
   loading: any;
   scrollTo: number;
-  private listLength: number;
-  private pos:any;
+  listLength: number;
+  pos:any;
 
 
   constructor(private _fb: FormBuilder, private _searchService: SearchService, private router: Router,
