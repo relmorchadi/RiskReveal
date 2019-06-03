@@ -66,47 +66,7 @@ nz-layout {
     }
   }
 
-  .right-column {
-    background-color: #FFFFFF;
-    position: absolute;
-    right: 0;
-    height: 100%;
-    overflow-y: auto;
-    overflow-x: hidden;
-    box-shadow: -2px 0px 7px rgba(0,0,0,0.3);
-    //height: 100%;
 
-    .navigation-icons {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-
-      i {
-        padding: 5px;
-        border-radius: 25px;
-        border: 2px solid #F5F5F5;
-        color: #9C99EC;
-        font-size: 24px;
-        cursor: pointer;
-      }
-    }
-
-    ::ng-deep .ant-tabs-tab {
-      font-size: 10px;
-      letter-spacing: 0.08px;
-      line-height: 10px;
-      text-align: center;
-    }
-
-    ::ng-deep .ant-tabs-tab-active {
-      color: #0700CF;
-    }
-
-    ::ng-deep .ant-tabs-ink-bar {
-      background-color: #0700CF;
-    }
-  }
 
   .title-wrapper{
     display:flex;
@@ -119,11 +79,8 @@ nz-layout {
     line-height: 41px;
     display:flex;
     flex:1;
-    h4 {
+    h5 {
       color: rgba(0, 0, 0, 0.38);
-      font-family: Rubik;
-      font-size: 24.38px;
-      line-height: 29px;
     }
   }
 
@@ -188,43 +145,7 @@ nz-layout {
       flex-direction: column;
     }
 
-    .summary-content {
 
-      .divider {
-        height: 1px;
-        background-color: #f5f5f5;
-        margin: 10px 0px;
-      }
-
-      .workspace-title, .workspace-value {
-        font-size: 11px !important;
-      }
-
-      .workspace-value {
-        color: black !important;
-        font-weight: bold;
-      }
-
-
-      i.icon-calendar-alt {
-        color: #9C99EC;
-        font-size: 22px;
-      }
-
-      .treaty-sect-see-all {
-        color: #05DAC4;
-        font-size: 12px;
-        font-weight: bold;
-        cursor: pointer;
-      }
-
-      .scope-in-rp {
-        i {
-          color: #9C99EC;
-        }
-      }
-
-    }
 
     .projects-content {
       .divider {
@@ -262,25 +183,7 @@ nz-layout {
       }
     }
 
-    .uwyear-content {
-      display:flex;
-      flex-direction: column-reverse;
-      .year-item {
-        height: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 5px 15px;
-        border-bottom: 1px solid #F5F5F5;
 
-        .actions-section {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          cursor: pointer;
-        }
-      }
-    }
 
   }
 }
