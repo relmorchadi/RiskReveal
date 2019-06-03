@@ -16,7 +16,7 @@
 
         <div nz-row>
           <div nz-col nzSpan="1" style="text-align: center; font-size: 26px;" *ngIf="!ColpasBool">
-            <i (click)="Colpa()"  nz-icon nzTheme="outline" nzType="right-circle" style="cursor: pointer" ></i>
+            <i class="expand-tags-icon" (click)="Colpa()"  nz-icon nzTheme="outline" nzType="right-circle" style="cursor: pointer" ></i>
           </div>
           <div *ngIf="ColpasBool" nz-col nzSpan="3">
             <div
@@ -245,7 +245,7 @@
                           <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.vendorSystem }}</td>
                           <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.rap }}</td>
                           <td><i [class]="dataTable1.icon" style="font-size: 20px"></i></td>
-                          <td><i class="icon-plus-circle" nz-dropdown style="font-size: 20px;color: #000;" (click)="clickButtonPlus(false,dataTable1)"></i>
+                          <td><i class="icon-plus-circle" nz-dropdown style="font-size: 20px;color: #000; cursor: pointer" (click)="clickButtonPlus(false,dataTable1)"></i>
                           </td>
                         </tr>
                       </ng-container>
@@ -287,7 +287,7 @@
                 <div class="card1" nz-col nzSpan="5"
                      style="flex:auto;font-weight: 600;font-size: 20px;margin: 21px 2px 27px 7px; color: black;width: 130px;">
                   Template <i class="icon-plus-circle" nz-dropdown
-                              style="font-size: 20px;color: #000;" (click)="clickButtonPlus(true)"></i>
+                              style="font-size: 20px;color: #000; cursor: pointer" (click)="clickButtonPlus(true)"></i>
                 </div>
                 <div class="card1" nz-col nzSpan="13" style="margin-top: 18px; margin-left: -8px;display: flex;overflow: auto; max-width: 100%;margin-top: 18px;
     margin-left: -8px;" >
@@ -772,7 +772,8 @@ cursor: pointer;"></i>
     </div>
   </nz-drawer>
   <!-- Model add Column-->
-  <nz-modal [(nzVisible)]="isVisible" [nzFooter]="modalFooter" class="modelAdjustment" nzClosable="false"
+  <nz-modal [(nzVisible)]="isVisible" [nzFooter]="modalFooter" class="modelAdjustment"
+            (nzOnCancel)="handleCancel()"
             nzTitle="Add New Adjustment">
     <div nz-row>
       <div nz-col nzSpan="24">
@@ -780,13 +781,13 @@ cursor: pointer;"></i>
       </div>
     </div>
     <div nz-row>
-      <div nz-col nzSpan="8" style="margin-top: 10px">
-        <b>Adjustement Basis</b>
+      <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
+        <b>Adjustment Basis</b>
       </div>
       <div nz-col nzSpan="16">
         <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
         <nz-select   [(ngModel)]="categorySelectedFromAdjustement" (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
-                   [nzPlaceHolder]="'Choose Adjustement'"
+                   [nzPlaceHolder]="'Select Adjustment'"
                    [nzSize]="size" style="width: 260px;">
           <ng-container *ngFor="let option of allAdjsArray">
             <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
@@ -801,12 +802,12 @@ cursor: pointer;"></i>
       </div>
     </div>
     <div nz-row>
-      <div nz-col nzSpan="10">
-        <b>Adjustement Category</b>
+      <div class="modal-left-item" nz-col nzSpan="8">
+        <b>Adjustment Category</b>
       </div>
-      <div nz-col nzSpan="14">
+      <div nz-col nzSpan="16" style="line-height: 2.2rem;">
         <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
-        <b >{{categorySelected}}</b>
+        <b style="margin-left: 10px;" >{{categorySelected}}</b>
       </div>
     </div>
     <div nz-row>
@@ -815,11 +816,11 @@ cursor: pointer;"></i>
       </div>
     </div>
     <div nz-row>
-      <div nz-col nzSpan="8" style="margin-top: 10px">
-        <b>Adjustement Narrative</b>
+      <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
+        <b>Adjustment Narrative</b>
       </div>
       <div nz-col nzSpan="16">
-        <textarea rows="4" nz-input [(ngModel)]="inputValue"></textarea>
+        <textarea style="margin-left: 10px; width: 95%" rows="4" nz-input [(ngModel)]="inputValue"></textarea>
       </div>
     </div>
     <div nz-row>
@@ -828,8 +829,8 @@ cursor: pointer;"></i>
       </div>
     </div>
     <div nz-row>
-      <div nz-col nzSpan="8" style="margin-top: 10px">
-        <b>Adjustement Type</b>
+      <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
+        <b>Adjustment Type</b>
       </div>
       <div nz-col nzSpan="16">
         <nz-select [(ngModel)]="singleValue" (ngModelChange)="selectBasis(singleValue)"
@@ -840,11 +841,10 @@ cursor: pointer;"></i>
       </div>
     </div>
     <div nz-row style="margin-top: 20px;">
-      <div nz-col nzSpan="5" style="margin: 5px;">
-        &nbsp;
+      <div class="modal-left-item" nz-col nzSpan="8" style="margin: 5px;">
+        Capped
       </div>
-      <div nz nzSpan="19">
-        Capped:
+      <div nzSpan="16" style="line-height: 2.2rem;">
         <nz-switch [(ngModel)]="disabled" nzSize="small" style="margin-left: 15px;"></nz-switch>
       </div>
     </div>
@@ -857,7 +857,7 @@ cursor: pointer;"></i>
       </div>
       <div nz-row >
         <div nz-col nzSpan="24" style="margin: 5px;">
-          <b>Adjustement Parametre</b>
+          <b>Adjustment Parameter</b>
         </div>
       </div>
       <div nz-row >
@@ -867,7 +867,7 @@ cursor: pointer;"></i>
         <div nz-col nzSpan="11" >
           Loss Modification Factor (LMF)
         </div>
-        <div nz nzSpan="9">
+        <div nz-col nzSpan="9">
           <input
             #inputElement
             [(ngModel)]="columnPosition"
