@@ -24,11 +24,11 @@ export class SearchMainDetailComponentComponent implements OnInit {
   }
 
   openWorkspace(wsId, year) {
-    this.openWorkspaceEvent({wsId, year});
+    this.openWorkspaceEvent.emit({wsId, year});
   }
 
   popUpWorkspace(wsId, year) {
-    this.popOutWorkspaceEvent({wsId, year});
+    this.popOutWorkspaceEvent.emit({wsId, year});
   }
 
   sliceContent(content: any, valid: boolean) {
