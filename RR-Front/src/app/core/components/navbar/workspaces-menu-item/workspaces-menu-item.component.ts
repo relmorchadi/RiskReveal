@@ -155,21 +155,21 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'appliedFilter', value: {shownElement: paginationOption[0].shownElement}}));
   }
 
-  toggle(workspace: any,type: string,selected) {
+  toggle(workspace: any, type: string, selected) {
     switch (type) {
       case 'favorite':
         this.store.dispatch(new PatchWorkspace({
           key: 'selectedF',
           value: !selected,
           ws: workspace,
-        }))
+        }));
         break;
       case 'pinged':
         this.store.dispatch(new PatchWorkspace({
           key: 'selectedP',
           value: !selected,
           ws: workspace,
-        }))
+        }));
         break;
     }
   }

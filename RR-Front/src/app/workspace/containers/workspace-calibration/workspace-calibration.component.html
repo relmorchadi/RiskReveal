@@ -16,14 +16,14 @@
 
         <div nz-row>
           <div nz-col nzSpan="1" style="text-align: center; font-size: 26px;" *ngIf="!ColpasBool">
-            <i (click)="Colpa()"  nz-icon nzTheme="outline" nzType="right-circle" ></i>
+            <i (click)="Colpa()"  nz-icon nzTheme="outline" nzType="right-circle" style="cursor: pointer" ></i>
           </div>
           <div *ngIf="ColpasBool" nz-col nzSpan="3">
             <div
               style="padding-top: 39px; padding-left: 9px; background: #fff; min-height:571px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
               <hr style="height:5px;background-color: #0700CF;margin-top: -40px;margin-left: -10px;">
               <div (click)="Colpa()" class="textLastAdjustement" style="margin-top: 20px;">
-                <i (click)="Colpa()" *ngIf="ColpasBool" nz-icon nzTheme="outline" nzType="left-circle"  style="position: relative;
+                <i (click)="Colpa()" *ngIf="ColpasBool" nz-icon nzTheme="outline" nzType="left-circle"  style="position: relative; cursor: pointer;
     top: -4px;"></i> Tags
               </div>
               <div class="Tags-content">
@@ -298,18 +298,18 @@
                         <i class="icon-menu_24px" nz-dropdown style="font-size: 18px;float: right;"></i>
                         <ul nz-menu>
                           <li nz-menu-item>
+                            <a (click)="addAdjustmenet(adj)">Apply to Selected</a>
+                          </li>
+                          <li nz-menu-item>
                             <a (click)="applyToAll(adj)"
                             >Apply to All</a>
                           </li>
                           <li nz-menu-item>
-                            <a (click)="addAdjustmenet(adj)">Apply to selected</a>
-                          </li>
-                          <li nz-menu-item>
-                            <a (click)="applyToSelectedPlt(adj,adj.value)">Replace selected</a>
+                            <a (click)="applyToSelectedPlt(adj,adj.value)">Replace Selected</a>
                           </li>
                           <li nz-menu-item>
                             <a (click)="applyToAllAdjustement(adj,adj.value)"
-                            >Replace to All</a>
+                            >Replace All</a>
                           </li>
                         </ul>
                       </nz-dropdown>

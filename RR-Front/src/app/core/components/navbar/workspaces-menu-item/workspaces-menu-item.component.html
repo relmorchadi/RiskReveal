@@ -6,7 +6,7 @@
 <ng-template #workspacePopoverContent>
 
   <div class="tabs-popover-content">
-    <nz-tabset>
+    <nz-tabset class="tabs-standard">
       <nz-tab [nzTitle]="RecentHeaderContent">
         <div class="popup-tab-content">
           <div class="tab-search-input">
@@ -130,7 +130,7 @@
           </div>
           <ul>
             <ng-container *ngFor="let workspace of pinged | showLast: [pingedSize] | inputSearch: [pingedSearch]; let i = index">
-              <li class="poover-menu-item" (click)="toggle(workspace,'pinged',workspace?.selectedP,i)"
+              <li class="poover-menu-item" (click)="toggle(workspace, 'pinged', workspace?.selectedP)"
                   [ngClass]="{'poover-menu-item-active': workspace.selectedP}">
                 <div class="items-popover-wrapper">
                   <i class="icon-window-section"></i>
@@ -169,19 +169,19 @@
 
   <ng-template #RecentHeaderContent>
     <span style="width: 5px">Recent &nbsp; <span
-      class="badge badge-light tab-badge">{{state.workspacePagination.numberOfElement}}</span></span>
+      class="tags-info">{{state.workspacePagination.numberOfElement}}</span></span>
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>
-    <span style="width: 90px">Favorites &nbsp; <span class="badge badge-light tab-badge">{{(favorites | keys)?.length}}</span></span>
+    <span style="width: 90px">Favorites &nbsp; <span class="tags-info">{{(favorites | keys)?.length}}</span></span>
   </ng-template>
 
   <ng-template #AssignedHeaderContent>
-    <span style="width: 80px">Assigned &nbsp; <span class="badge badge-light tab-badge">0</span></span>
+    <span style="width: 80px">Assigned &nbsp; <span class="tags-info">0</span></span>
   </ng-template>
 
   <ng-template #PinnedHeaderContent>
-    <span style="width: 72px">Pinned &nbsp; <span class="badge badge-light tab-badge">{{(pinged | keys)?.length}}</span></span>
+    <span style="width: 72px">Pinned &nbsp; <span class="tags-info">{{(pinged | keys)?.length}}</span></span>
   </ng-template>
 
 </ng-template>
