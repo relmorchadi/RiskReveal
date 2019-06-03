@@ -1,13 +1,22 @@
 import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
 import {
-  AddBadgeSearchStateAction, ClearSearchValuesAction, LoadRecentSearchAction,
-  PatchSearchStateAction, SearchContractsCountAction
+  ClearSearchValuesAction, CloseBadgeByIndexAction,
+  DeleteAllBadgesAction,
+  DeleteLastBadgeAction,
+  DisableExpertMode,
+  EnableExpertMode,
+  LoadRecentSearchAction,
+  PatchSearchStateAction,
+  SearchContractsCountAction,
+  SelectBadgeAction
 } from '../actions';
-import {SearchService} from '../../service/search.service';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
 import * as _ from 'lodash';
-import {catchError, debounceTime, distinctUntilChanged, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {catchError,switchMap} from 'rxjs/operators';
+import {SearchService} from "../../service";
+import {Inject} from "@angular/core";
+import produce from "immer";
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -15,7 +24,6 @@ const initiaState: SearchNavBar = {
   showLastSearch: false,
   visible: false,
   visibleSearch: false,
-  deleteBlock: true,
   showClearIcon: false,
   actualGlobalKeyword: '',
   keywordBackup: '',
@@ -66,12 +74,13 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ctx = null;
 
-  constructor(private _searchService: SearchService) {
+  constructor(@Inject(SearchService) private _searchService: SearchService) {
 
   }
 
   ngxsOnInit(ctx?: StateContext<SearchNavBarState>): void | any {
     this.ctx = ctx;
+    ctx.dispatch(new LoadRecentSearchAction);
   }
 
   /**
@@ -107,20 +116,17 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(SearchContractsCountAction, {cancelUncompleted: true})
   searchContracts(ctx: StateContext<SearchNavBar>, {keyword}: SearchContractsCountAction) {
-    ctx.dispatch(new PatchSearchStateAction({key: 'data', value: []}));
     ctx.patchState({
+      data: [],
       loading: true
     });
     return forkJoin(
       ...ctx.getState().tables.map(tableName => this.searchLoader(keyword, tableName))
     ).pipe(
       switchMap(payload => {
-        ctx.patchState({
-          loading: false
-        });
-        return ctx.dispatch(new PatchSearchStateAction({
-          key: 'data',
-          value: _.map(payload, 'content')
+        return of(ctx.patchState({
+          loading: false,
+          data:  _.map(payload, 'content')
         }));
       }),
       catchError(err => {
@@ -131,9 +137,11 @@ export class SearchNavBarState implements NgxsOnInit {
     );
   }
 
-  @Action(AddBadgeSearchStateAction)
-  addBadge(ctx: StateContext<SearchNavBar>, {badge}: AddBadgeSearchStateAction) {
-    ctx.patchState({badges: [...ctx.getState().badges, badge]});
+  @Action(SelectBadgeAction)
+  addBadge(ctx: StateContext<SearchNavBar>, {badge, keyword}: SelectBadgeAction) {
+    ctx.patchState({badges: [...ctx.getState().badges, badge], showLastSearch: true, showResult: true, keywordBackup: keyword});
+    if(keyword && keyword.length && ctx.getState().visibleSearch)
+      ctx.dispatch(new SearchContractsCountAction(keyword));
   }
 
 
@@ -154,14 +162,39 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState({recentSearch: (JSON.parse(localStorage.getItem('items')) || []).slice(0, 5)});
   }
 
+  @Action(EnableExpertMode)
+  enableExpertMode(ctx: StateContext<SearchNavBar>){
+    ctx.patchState({visibleSearch: false});
+  }
+
+  @Action(DisableExpertMode)
+  disableExpertMode(ctx: StateContext<SearchNavBar>){
+    ctx.patchState({visibleSearch: true});
+  }
+
+  @Action(DeleteLastBadgeAction)
+  deleteLastBadge(ctx: StateContext<SearchNavBar>){
+    ctx.patchState(produce(ctx.getState(), draftState => {
+      draftState.badges= draftState.badges.slice(0,draftState.badges.length-1 );
+    }));
+  }
+
+  @Action(DeleteAllBadgesAction)
+  deleteAllBadges(ctx: StateContext<SearchNavBar>){
+    ctx.patchState(produce(ctx.getState(), draftState => {
+      draftState.badges= [];
+    }));
+  }
+
+  @Action(CloseBadgeByIndexAction)
+  closeBadgeByIndex(ctx: StateContext<SearchNavBar>, {index, expertMode}:CloseBadgeByIndexAction){
+    ctx.patchState(produce(ctx.getState(), draftState => {
+      draftState.badges= _.toArray(_.omit(ctx.getState().badges, index));
+    }));
+  }
+
   private searchLoader(keyword, table) {
     return this._searchService.searchByTable(keyword || '', '5', table || '');
   }
-
-  // @Action(SearchContractsCountSuccessAction)
-  // searchContractsSuccess(ctx: StateContext<SearchNavBarState>,{result}: SearchContractsCountSuccessAction){
-  //   ctx.patchState({data: result.content});
-  // }
-
 
 }

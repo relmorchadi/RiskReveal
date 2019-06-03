@@ -5,8 +5,13 @@
                   [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
                   [nzSuffix]="suffixIconSearch"
                   [nzAddOnBefore]="prefixIconTag">
-    <input [ngClass]="{'search-page-active-border': isSearchRoute()}"
-           (keydown)="filterContracts($event)"
+    <input searchInput [ngClass]="{'search-page-active-border': isSearchRoute()}"
+           (onEnter)="onEnter($event)"
+           (onSpace)="onSpace($event)"
+           (onBackspace)="onBackspace($event)"
+           (onArrowDown)="onArrowDown($event)"
+           (onArrowUp)="onArrowUp($event)"
+           (onDelete)="onDelete($event)"
            (input)="onInput($event)" #searchInput
            formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="state.searchValue"
            class="search-input" type="text" nz-input placeholder="Search">
@@ -80,7 +85,7 @@
           </div>
         </ng-template>
         <ng-template #loadingTemp>
-            <ng-container *ngIf="loading;else emptyState">
+            <ng-container *ngIf="state?.loading;else emptyState">
               <nz-skeleton [nzActive]="true"></nz-skeleton>
               <nz-skeleton [nzActive]="true"></nz-skeleton>
             </ng-container>
@@ -100,7 +105,7 @@
     <div class="search-contextual-table"
     nz-menu style="height: 400px; overflow: auto; border-radius: 10px; width: 350px">
         <div class="tag-header">
-          <span>EXPERT MODE</span><nz-switch (click)="enableExpertMode()" formControlName="switchValue"></nz-switch>
+          <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" formControlName="expertModeToggle"></nz-switch>
         </div>
         <div class="tag-body">
           <div class="tag-body-header">

@@ -6,7 +6,6 @@ export class SearchNavBar {
   showLastSearch: boolean;
   visible: boolean;
   visibleSearch: boolean;
-  deleteBlock: boolean;
   showClearIcon: boolean;
   actualGlobalKeyword: string;
   keywordBackup: string;

@@ -2,8 +2,9 @@ import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {fromEvent} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
 import {HelperService} from '../../../shared/helper.service';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {PatchSearchStateAction} from '../../store/actions';
+import {SearchNavBarState} from "../../store/states";
 
 @Component({
   selector: 'app-navbar',
@@ -15,7 +16,11 @@ export class NavbarComponent implements OnInit {
   formatter = (_) => '';
   defaultImport;
 
-  constructor(private store: Store) { }
+  @Select(SearchNavBarState)
+  searchState$;
+
+  constructor(private store: Store) {
+  }
 
   collapseLeftNavbar() {
     // @TODO

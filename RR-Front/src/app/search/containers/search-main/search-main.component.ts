@@ -153,14 +153,17 @@ export class SearchMainComponent implements OnInit {
       () => {
         // console.log('Emitted')
         this.initSearchForm();
-        this.globalSearchItem = '';
+        this.globalSearchItem = null;
         this.searchedItems = [...this._searchService.searchedItems];
         this._loadContracts();
       }
     );
 
-    this._searchService.globalSearch$.subscribe(
+    this._searchService.globalSearch$
+      .pipe(debounceTime(200))
+      .subscribe(
       () => {
+        console.log('Global search');
         this.globalSearchItem = this._searchService.globalSearchItem;
         this.searchedItems = [];
         this.globalSearchItem !== '' ? this._loadContracts() : null;
