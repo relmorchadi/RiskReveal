@@ -1410,8 +1410,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   Colpa() {
     this.ColpasBool = !this.ColpasBool;
-    console.log(this.extended, "extended1");
-    console.log(this.ColpasBool, "ColpasBool1");
+    // console.log(this.extended, "extended1");
+    // console.log(this.ColpasBool, "ColpasBool1");
     if (this.ColpasBool == true) {
       if (this.extended) {
         this.pltSpan = 14;
@@ -1434,8 +1434,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   exetende() {
     this.extended = !this.extended;
-    console.log(this.extended, "extended2");
-    console.log(this.ColpasBool, "ColpasBool2");
+    // console.log(this.extended, "extended2");
+    // console.log(this.ColpasBool, "ColpasBool2");
     if (this.extended) {
       if (!this.ColpasBool) {
         this.pltSpan = 15;
@@ -1453,7 +1453,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
         this.templateSpan = 14;
       } else {
         this.pltSpan = 9;
-        this.templateSpan = 15;
+        this.templateSpan = 14;
       }
       _.forIn(this.pltColumns, function (value: any, key) {
         if (value.fields == "check" || value.header == "User Tags" || value.fields == "pltId" || value.fields == "pltName" || value.fields == "action") {
