@@ -164,23 +164,6 @@ export class SearchMenuItemComponent implements OnInit {
 
   filterContracts(keyboardEvent) {
     this._clearFilters();
-    // console.log(keyboardEvent);
-    if (keyboardEvent.key === 'ArrowUp') {
-      event.preventDefault();
-      if (this.scrollTo > 0) {
-        this.scrollTo = this.scrollTo - 1;
-      }
-      // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
-      event.stopPropagation();
-    }
-    if (keyboardEvent.key === 'ArrowDown') {
-      event.preventDefault();
-      if (this.scrollTo < this.listLength) {
-        this.scrollTo = this.scrollTo + 1;
-      }
-      // this.state.searchValue = this.state.data[this.pos.i][this.pos.j] && this.state.data[this.pos.i][this.pos.j].label;
-      event.stopPropagation();
-    }
     if (keyboardEvent.key === ' ' && this.scrollTo >= 0) {
       if (this.pos) {
         this.selectSearchBadge(this.stringUpdate(this.state.tables[this.pos.i]), this.state.data[this.pos.i][this.pos.j].label );
