@@ -82,7 +82,7 @@
                       ></ng-template>
                     </div>
                   </nz-tab>
-                  <nz-tab nzTitle="Assign Existing">
+                  <nz-tab *ngIf="fromPlts" nzTitle="Assign Existing">
                     <div class="content">
                       <nz-select
                         style="width: 200px;"
@@ -90,15 +90,16 @@
                         nzAllowClear
                         [nzDisabled]="(userTags | keys)?.length == 0"
                         nzPlaceHolder="Select a tag"
-                        [(ngModel)]="addModalSelect"
+                        [ngModel]="addModalSelect"
+                        (ngModelChange)="selectUserTag($event)"
                       >
-                        <nz-option nzCustomContent *ngFor="let key of userTags | keys" [nzLabel]="userTags[key]?.tagName" [nzValue]="userTags[key]">
+                        <nz-option nzCustomContent *ngFor="let key of userTags | keys" [nzLabel]="userTags[key]?.tagName" [nzValue]="key">
                           <div class="opt-cnt">
-                            <label nz-checkbox [ngModel]="true"><span class="pop-up-option-text">
+                            <label nz-checkbox  [nzChecked]="selectedUserTags[key]" (nzCheckedChange)="selectUserTag(key)" ><span class="pop-up-option-text">
                             {{userTags[key]?.tagName}}
                             </span></label>
                           </div>
-                          <i class="icon-close_24px"></i>
+                          <i class="icon-trash-alt"></i>
                         </nz-option>
                       </nz-select>
                     </div>
@@ -108,12 +109,13 @@
 
               <ng-template #addTagModalFooter>
                 <div class="footer">
-                  <button (click)="assignPltsToTag()" nz-button>
-                    {{addTagModalIndex == 0 ? 'Create & ' : ''}} Assign
+                  <button (click)="addTagModal=false;addModalInput='';addModalSelect=''" nz-button class="button-no-outline">cancel</button>
+                  <button class="button-standard" (click)="assignPltsToTag()" nz-button>
+                    {{addTagModalIndex == 0 ? fromPlts ? 'Create & Assign' : 'Create' : 'Assign'}}
                   </button>
                 </div>
               </ng-template>
-              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i (click)="addTagModal = true" style="cursor:pointer;" class="icon-plus-circle"></i></div>
+              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i (click)="addTagModal = true;fromPlts=false" style="cursor:pointer;" class="icon-plus-circle"></i></div>
               <div *ngFor="let key of userTags | keys" nz-row class="ml-3 mt-1">
                 <p-contextMenu appendTo="body" [target]="tagMenu" [model]="tagContextMenu" ></p-contextMenu>
                     <span

@@ -2,8 +2,8 @@ import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from 
 import * as _ from 'lodash';
 import {pltMainModel} from "../../model";
 import * as fromPlt from '../actions'
-import {of} from "rxjs";
-import {catchError, map, mergeMap, tap} from 'rxjs/operators';
+import {forkJoin, from, of} from 'rxjs';
+import {catchError, map, mapTo, mergeMap, tap} from 'rxjs/operators';
 import {PltApi} from '../../services/plt.api';
 
 const initiaState: pltMainModel = {
@@ -241,8 +241,22 @@ export class PltMainState implements NgxsOnInit {
   @Action(fromPlt.assignPltsToTag)
   assignPltsToTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTag){
 
-    return this.pltApi.assignPltsToTag(payload).pipe(
-      tap( r => console.log(r)),
+    return payload.type == 'many' ? forkJoin(..._.map(payload.tags,e => this.pltApi.assignPltsToTag({
+        plts: payload.plts,
+        wsId: payload.wsId,
+        uwYear: payload.uwYear,
+        tag: e
+      }))).pipe(
+      mergeMap( tags => from(tags)),
+      map( (userTag) => {
+        console.log(userTag)
+        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
+          userTag,
+          plts: payload.plts
+        }))
+      })
+      )
+      : this.pltApi.assignPltsToTag(payload).pipe(
       mergeMap( (userTag) => {
         return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
           userTag,
