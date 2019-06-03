@@ -332,6 +332,31 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         let d2= [];
         this.loading= false;
         this.systemTagsCount = {};
+
+        if(_.keys(this.systemTagsCount).length == 0 ) {
+          _.forEach(data, (v,k) => {
+            //Init Tags Counters
+
+            //Grouped Sys Tags
+            _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
+              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+              const tag = _.toString(v[section]);
+              if(tag){
+                this.systemTagsCount[sectionName][tag] = 0;
+              }
+            })
+
+            //NONE grouped Sys Tags
+            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+              this.systemTagsCount[sectionName][section] = 0;
+              this.systemTagsCount[sectionName]['non-'+section] = 0;
+            })
+
+          })
+        }
+
+
         _.forEach(data, (v,k) => {
           d1.push({...v,pltId: k});
           d2.push(k);
@@ -339,22 +364,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           if(v.visible) {
             //Grouped Sys Tags
             _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              const tag = v[section];
-              if(this.systemTagsCount[sectionName][tag]){
-                this.systemTagsCount[sectionName][tag] = this.systemTagsCount[sectionName][tag] + 1;
-              }else{
-                this.systemTagsCount[sectionName][tag] = 1
+              const tag = _.toString(v[section]);
+              if(tag){
+                if( this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag] === 0){
+                  this.systemTagsCount[sectionName][tag] = this.systemTagsCount[sectionName][tag] + 1;
+                }
               }
             })
 
             //NONE grouped Sys Tags
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
               const tag = v[section];
-              if(this.systemTagsCount[sectionName][tag]){
+              if(this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0){
                 this.systemTagsCount[sectionName][section] = (this.systemTagsCount[sectionName][section] || 0) + 1;
-              }else{
+              }
+              if(this.systemTagsCount[sectionName]['non-'+section] || this.systemTagsCount[sectionName]['non-'+section] == 0){
                 this.systemTagsCount[sectionName]['non-'+section] = (this.systemTagsCount[sectionName]['non-'+section] || 0) + 1;
               }
             })

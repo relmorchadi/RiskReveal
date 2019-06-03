@@ -132,14 +132,15 @@
 
               <div nz-row class="tags-title-section">System Tags</div>
               <nz-collapse
-                [nzAccordion]="true"
+                [nzAccordion]="false"
               >
-                <nz-collapse-panel
-                  *ngFor="let section of (systemTagsCount | keys)"
-                  [nzHeader]="section"
-                >
-                  <ul class="title-list">
-                    <li *ngFor="let tag of ( systemTagsCount[section] | keys)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                <ng-container *ngFor="let section of (systemTagsCount | keys)">
+                  <ng-container *ngIf="(systemTagsCount[section] | keys).length > 0">
+                    <nz-collapse-panel
+                      [nzHeader]="section"
+                    >
+                      <ul class="title-list">
+                        <li *ngFor="let tag of ( systemTagsCount[section] | keys)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
                     <span
                       [ngClass]="{'active-tag': tag.selected }"
                       class="chips"
@@ -149,9 +150,11 @@
                       <span class="chips-content">{{tag}}</span>
                       <span [ngStyle]="{'background-color': 'black' }" class="chips-counter">{{systemTagsCount[section][tag]}}</span>
                 </span>
-                    </li>
-                  </ul>
-                </nz-collapse-panel>
+                        </li>
+                      </ul>
+                    </nz-collapse-panel>
+                  </ng-container>
+                </ng-container>
               </nz-collapse>
 
             </div>
