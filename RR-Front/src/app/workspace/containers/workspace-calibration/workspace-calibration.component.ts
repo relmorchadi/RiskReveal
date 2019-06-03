@@ -11,7 +11,7 @@ import {DndDropEvent, DropEffect} from "ngx-drag-drop";
   styleUrls: ['./workspace-calibration.component.scss']
 })
 export class WorkspaceCalibrationComponent implements OnInit {
-
+  inputValue;
   size;
   disabled;
 
