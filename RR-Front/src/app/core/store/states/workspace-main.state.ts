@@ -266,7 +266,7 @@ export class WorkspaceMainState implements NgxsOnInit {
       workspacePagination: paginationList,
       openedWs: {...currentOpenedWs.data[state.openedTabs.tabsIndex],projects: projects.map((prj,i) => ({...prj, selected: projects.length > 0 && i == 0}))},
       openedTabs: {data: currentOpenedWs.data.map( ws => {
-        const wsFromLocal = JSON.parse(localStorage.getItem('workSpaceMenuItem'))[ws.workSpaceId+'-'+ws.uwYear]
+        const wsFromLocal = recentlyOpenedWs.find(item => item.workspaceId == ws.workSpaceId && item.uwYear == ws.uwYear ); // JSON.parse(localStorage.getItem('workSpaceMenuItem'))[ws.workSpaceId+'-'+ws.uwYear]
           return ({
             ...ws,
             favorite: _.get(wsFromLocal,'favorite',false),
