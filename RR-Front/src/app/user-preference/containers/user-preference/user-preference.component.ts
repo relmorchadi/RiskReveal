@@ -30,6 +30,9 @@ export class UserPreferenceComponent implements OnInit {
   financialPerspectiveEPM: any;
   targetCurrency: any;
 
+  dateFormat: any;
+  timeFormat: any;
+
   constructor(public location: Location, public store$: Store) { }
 
   ngOnInit() {

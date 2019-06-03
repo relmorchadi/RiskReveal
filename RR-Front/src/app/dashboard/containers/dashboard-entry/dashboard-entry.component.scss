@@ -79,12 +79,6 @@ nz-header {
   }
 }
 
-.collapsed-setting-icon {
-  margin-top: 50px;
-  display: flex;
-  justify-content: center
-}
-
 .slider-header-item {
   padding-top: 25px;
   padding-bottom: 25px;
@@ -227,7 +221,7 @@ ul.widgets-list {
 
 
 ::ng-deep .dashboard-content {
-  padding: 20px 30px !important;
+  padding: 20px 15px !important;
 }
 
 ::ng-deep {
@@ -256,7 +250,17 @@ ul.widgets-list {
   }
 
   .closed-slider {
-    min-width: 85px;
-    background-color: #008694;
+    position: absolute;
+    display: flex;
+    height: 50px;
+    width: 40px;
+    right: 0;
+
+    .collapsed-setting-icon {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
   }
+
 }
