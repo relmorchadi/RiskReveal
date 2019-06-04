@@ -368,13 +368,9 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   getTableData() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      /* return _.toArray( this.tableLeftAnalysis[_.toArray(this.state.listEdmRdm.selectedListEDMAndRDM).
-      filter(dt => dt.selected === true)[0].id].data );
-       */
+      return _.toArray( this.tableLeftAnalysis[_.toArray(this.state.listEdmRdm.selectedListEDMAndRDM).filter(dt => dt.selected === true)[0].id].data );
     } else {
-      /* return _.toArray(this.tableLeftProtfolio[_.toArray(this.state.listEdmRdm.selectedListEDMAndRDM).
-      filter(dt => dt.selected === true)[0].id].data);
-       */
+      return _.toArray(this.tableLeftProtfolio[_.toArray(this.state.listEdmRdm.selectedListEDMAndRDM).filter(dt => dt.selected === true)[0].id].data);
     }
   }
 
