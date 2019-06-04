@@ -3,10 +3,9 @@ export class RiskLinkModel {
     data: any,
     dataSelected: any,
     selectedListEDMAndRDM: any,
-    selectedEDMOrRDM: string,
     totalNumberElement: number,
     searchValue: string,
-    dataLength: number
+    numberOfElement: number
   };
   display: {
     displayDropdownRDMEDM: boolean,
@@ -34,5 +33,7 @@ export class RiskLinkModel {
     selectedAnalysis: any;
     selectedPortfolio: any;
   };
-  currentStep: number;
+  analysis: any;
+  portfolios: any;
+  selectedEDMOrRDM: string;
 }
