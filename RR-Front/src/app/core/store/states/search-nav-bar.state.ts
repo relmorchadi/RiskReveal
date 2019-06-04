@@ -7,13 +7,13 @@ import {
   EnableExpertMode,
   LoadRecentSearchAction,
   PatchSearchStateAction,
-  SearchContractsCountAction,
+  SearchContractsCountAction, SearchInputFocusAction,
   SelectBadgeAction
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
 import * as _ from 'lodash';
-import {catchError,switchMap} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 import {SearchService} from "../../service";
 import {Inject} from "@angular/core";
 import produce from "immer";
@@ -126,7 +126,7 @@ export class SearchNavBarState implements NgxsOnInit {
       switchMap(payload => {
         return of(ctx.patchState({
           loading: false,
-          data:  _.map(payload, 'content')
+          data: _.map(payload, 'content')
         }));
       }),
       catchError(err => {
@@ -139,8 +139,13 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(SelectBadgeAction)
   addBadge(ctx: StateContext<SearchNavBar>, {badge, keyword}: SelectBadgeAction) {
-    ctx.patchState({badges: [...ctx.getState().badges, badge], showLastSearch: true, showResult: true, keywordBackup: keyword});
-    if(keyword && keyword.length && ctx.getState().visibleSearch)
+    ctx.patchState({
+      badges: [...ctx.getState().badges, badge],
+      showLastSearch: true,
+      showResult: true,
+      keywordBackup: keyword
+    });
+    if (keyword && keyword.length && ctx.getState().visibleSearch)
       ctx.dispatch(new SearchContractsCountAction(keyword));
   }
 
@@ -163,35 +168,70 @@ export class SearchNavBarState implements NgxsOnInit {
   }
 
   @Action(EnableExpertMode)
-  enableExpertMode(ctx: StateContext<SearchNavBar>){
+  enableExpertMode(ctx: StateContext<SearchNavBar>) {
     ctx.patchState({visibleSearch: false});
   }
 
   @Action(DisableExpertMode)
-  disableExpertMode(ctx: StateContext<SearchNavBar>){
+  disableExpertMode(ctx: StateContext<SearchNavBar>) {
     ctx.patchState({visibleSearch: true});
   }
 
   @Action(DeleteLastBadgeAction)
-  deleteLastBadge(ctx: StateContext<SearchNavBar>){
+  deleteLastBadge(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.badges= draftState.badges.slice(0,draftState.badges.length-1 );
+      draftState.badges = draftState.badges.slice(0, draftState.badges.length - 1);
     }));
   }
 
   @Action(DeleteAllBadgesAction)
-  deleteAllBadges(ctx: StateContext<SearchNavBar>){
+  deleteAllBadges(ctx: StateContext<SearchNavBar>) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.badges= [];
+      draftState.badges = [];
     }));
   }
 
   @Action(CloseBadgeByIndexAction)
-  closeBadgeByIndex(ctx: StateContext<SearchNavBar>, {index, expertMode}:CloseBadgeByIndexAction){
+  closeBadgeByIndex(ctx: StateContext<SearchNavBar>, {index, expertMode}: CloseBadgeByIndexAction) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.badges= _.toArray(_.omit(ctx.getState().badges, index));
+      draftState.badges = _.toArray(_.omit(ctx.getState().badges, index));
     }));
   }
+
+  @Action(SearchInputFocusAction)
+  searchInputFocus(ctx: StateContext<SearchNavBar>, {expertMode, inputValue}) {
+    ctx.patchState(produce(ctx.getState(), draftState => {
+      draftState.showLastSearch= expertMode ? true : ( (inputValue === '' || inputValue.length < 2) ? true : false );
+      draftState.showResult= expertMode ? false : (!(inputValue === '' || inputValue.length < 2) ? true : draftState.showResult);
+      draftState.visibleSearch=true;
+      draftState.visible=false;
+    }));
+  }
+
+  /*
+
+  if (this.isExpertMode) {
+    this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
+      key: 'showResult',
+      value: false
+    }]));
+  } else {
+    if (event.target.value === '' || event.target.value.length < 2) {
+      this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: true}));
+    } else {
+      this.store.dispatch(new PatchSearchStateAction([{key: 'showResult', value: true}, {
+        key: 'showLastSearch',
+        value: false
+      }]));
+    }
+  }
+  this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: true}, {
+    key: 'visible',
+    value: false
+  }]));
+
+   */
+
 
   private searchLoader(keyword, table) {
     return this._searchService.searchByTable(keyword || '', '5', table || '');

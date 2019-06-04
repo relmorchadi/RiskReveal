@@ -88,3 +88,7 @@ export class CloseBadgeByIndexAction{
   constructor(public index: number, public expertMode:boolean){}
 }
 
+export class SearchInputFocusAction {
+  static readonly type = '[Search Nav Bar] Search Input focus';
+  constructor(public expertMode:boolean, public inputValue: string){}
+}

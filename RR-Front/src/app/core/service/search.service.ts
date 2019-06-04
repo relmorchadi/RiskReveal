@@ -114,7 +114,6 @@ export class SearchService {
         }) ;
         return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword), formGroup,shortcutMapper,badges );
       }).trim();
-      console.log('My badges', badges);
       this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: badges}));
       if (this.keyword)
         setTimeout(() => this.addSearchedItems({key: 'Global Search', value: this.keyword}));

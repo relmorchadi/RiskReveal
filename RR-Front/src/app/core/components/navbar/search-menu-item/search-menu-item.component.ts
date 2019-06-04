@@ -20,7 +20,7 @@ import {
   DisableExpertMode,
   EnableExpertMode,
   PatchSearchStateAction,
-  SearchContractsCountAction,
+  SearchContractsCountAction, SearchInputFocusAction,
   SelectBadgeAction
 } from '../../../store/index';
 import {Store, Actions, ofActionDispatched} from '@ngxs/store';
@@ -97,30 +97,47 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   private _subscribeToDistatchedEvents() {
-    let subscription = this.actions$
+    this.actions$
       .pipe(ofActionDispatched(EnableExpertMode, DisableExpertMode))
       .subscribe(instance => {
         if (instance instanceof EnableExpertMode)
           this._notifcationService.createNotification('Information',
-            'the expert mode is now enabled',
+            'The expert mode is now enabled',
             'info', 'bottomRight', 2000);
         if (instance instanceof DisableExpertMode)
           this._notifcationService.createNotification('Information',
-            'the expert mode is now disabled',
+            'The expert mode is now disabled',
             'info', 'bottomRight', 2000);
       });
-    this.subscriptions.add(subscription);
   }
 
+
   private _subscribeGlobalKeywordChanges() {
-    let subscription = this.contractFilterFormGroup.get('globalKeyword')
+    this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((value) => {
         this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value}));
+        // To externalise
+        value === '' ? this.state.showClearIcon = false : this.state.showClearIcon = true;
+        if (!this.isExpertMode) {
+          if (value === '' || value.length < 2) {
+            this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
+              key: 'showResult',
+              value: false
+            }]));
+          } else {
+            this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: false}));
+            this._searchService.examinateExpression(this.isExpertMode, this.globalKeyword, this.contractFilterFormGroup, this.state.sortcutFormKeysMapper);
+            this.store.dispatch(new PatchSearchStateAction({key: 'showResult', value: true}));
+          }
+          this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: true}));
+        } else {
+          this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
+        }
+        this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
         this._contractChoicesSearch(value);
       });
-    this.subscriptions.add(subscription);
   }
 
   stringUpdate(value) {
@@ -240,45 +257,27 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   focusInput(event) {
     this._searchService.setvisibleDropdown(false);
-    if (this.isExpertMode) {
-      this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
-        key: 'showResult',
-        value: false
-      }]));
-    } else {
-      if (event.target.value === '' || event.target.value.length < 2) {
-        this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: true}));
-      } else {
-        this.store.dispatch(new PatchSearchStateAction([{key: 'showResult', value: true}, {
-          key: 'showLastSearch',
-          value: false
-        }]));
-      }
-    }
-    this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: true}, {
-      key: 'visible',
-      value: false
-    }]));
+    this.store.dispatch(new SearchInputFocusAction(this.isExpertMode, event.target.value));
   }
 
   onInput(event) {
-    event.target.value === '' ? this.state.showClearIcon = false : this.state.showClearIcon = true;
-    if (!this.isExpertMode) {
-      if (event.target.value === '' || event.target.value.length < 2) {
-        this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
-          key: 'showResult',
-          value: false
-        }]));
-      } else {
-        this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: false}));
-        this._searchService.examinateExpression(this.isExpertMode, this.globalKeyword, this.contractFilterFormGroup, this.state.sortcutFormKeysMapper);
-        this.store.dispatch(new PatchSearchStateAction({key: 'showResult', value: true}));
-      }
-      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: true}));
-    } else {
-      this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
-    }
-    this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
+    // event.target.value === '' ? this.state.showClearIcon = false : this.state.showClearIcon = true;
+    // if (!this.isExpertMode) {
+    //   if (event.target.value === '' || event.target.value.length < 2) {
+    //     this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
+    //       key: 'showResult',
+    //       value: false
+    //     }]));
+    //   } else {
+    //     this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: false}));
+    //     this._searchService.examinateExpression(this.isExpertMode, this.globalKeyword, this.contractFilterFormGroup, this.state.sortcutFormKeysMapper);
+    //     this.store.dispatch(new PatchSearchStateAction({key: 'showResult', value: true}));
+    //   }
+    //   this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: true}));
+    // } else {
+    //   this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
+    // }
+    // this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
   }
 
   openClose(): void {
