@@ -304,6 +304,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.addTagModalIndex = 0;
     this.fromPlts = false;
     this.selectedUserTags= {};
+    this.initColor = '#fe45cd'
+    this.colorPickerIsVisible = false;
+    this.addTagModalPlaceholder = 'Select a Tag'
   }
 
   @Select(PltMainState.getUserTags) userTags$;
@@ -498,6 +501,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   addModalSelect: any;
   tagFormenu: any;
   fromPlts: any;
+  colorPickerIsVisible: any;
+  initColor: any;
+  addTagModalPlaceholder: any;
 
   setFilter(filter: string, tag,section) {
       if(filter === 'userTag'){
@@ -745,17 +751,13 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         type: 'many'
       }))
     }else{
-      let color = Math.floor(Math.random()*16777215).toString(16)
-      while (_.includes(color,'fff')){
-        color = Math.floor(Math.random()*16777215).toString(16)
-      }
       this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
         plts: this.fromPlts ? this.selectedListOfPlts : [],
         wsId: this.workspaceId,
         uwYear: this.uwy,
         tag: {
           tagName: this.addModalInput,
-          tagColor: '#' + color
+          tagColor: this.initColor
         }
       }))
     }
@@ -763,13 +765,30 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   selectUserTag(k) {
-    console.log(k);
+    event.stopPropagation();
+    event.preventDefault();
     if(_.find(this.selectedUserTags, t => t.tagId == k)){
       this.selectedUserTags = _.omit(this.selectedUserTags,k);
     }else{
       this.selectedUserTags[k] = this.userTags[k];
     }
-    this.addModalSelect = this.userTags[k];
+    const l = _.toArray(this.selectedUserTags).length;
+
+    if(l == 0) {
+      //this.addTagModalPlaceholder= {'Select a Tag': {tagName: 'Select a Tag'}}
+      this.addTagModalPlaceholder= 'Seleetc'
+    }
+    if(l == 1 ) {
+      //this.addTagModalPlaceholder = _.toArray(this.selectedUserTags)[0]
+      this.addTagModalPlaceholder= 'hey'
+    }
+    if(l > 1) {
+      //this.addTagModalPlaceholder = {'multiple': {tagName: 'multiple'}}
+      this.addTagModalPlaceholder= 'multiple'
+    }
+    //this.addModalSelect = this.userTags[k];
+    console.log(this.addTagModalPlaceholder)
+
   }
 
   selectSystemTag(section, tag) {
@@ -785,6 +804,29 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         }
       })
     })
+  }
+
+  toggleModal(){
+    this.addTagModal = !this.addTagModal;
+    if(!this.addTagModal){
+      this.addModalInput=null;
+      this.addModalSelect=null;
+      this.addTagModalIndex=0;
+    }
+  }
+
+  toggleColorPicker(from?: string){
+    if(from == 'color') {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    this.colorPickerIsVisible=!this.colorPickerIsVisible;
+    if(!this.colorPickerIsVisible) this.initColor= '#fe45cd';
+  }
+
+
+  log(e: any) {
+    console.log(e,this.addModalSelect);
   }
 }
 
