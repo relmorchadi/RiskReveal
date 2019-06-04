@@ -303,9 +303,21 @@
   .chips-counter {
     margin-left: 5px;
     font-size: .9em;
-    opacity: 0.8;
     border-radius: 11px;
     padding: 2px 8px;
+    color: white;
+    position: relative;
+    .chips-layer {
+      background-color: white;
+      position: absolute;
+      padding: 2px 8px;
+      top: 0;
+      left: 0;
+      border-radius: 25px;
+      height: 100%;
+      width: 100%;
+      opacity: .3;
+    }
   }
 }
 
@@ -883,6 +895,10 @@
 }
 
 
+::ng-deep .tab-content-cnt{
+  overflow: visible;
+}
+
 ::ng-deep .addTagModal {
   display: flex;
   align-items: center;
@@ -911,6 +927,21 @@
       display: flex;
       justify-content: center;
       padding: 25px;
+      .color {
+        margin: 0 5px;
+        display: block;
+        width: 70px;
+        height: 43px;
+        cursor: pointer;
+        position: relative;
+      }
+      color-chrome{
+        display: block;
+        position: absolute;
+        right: -108px;
+        bottom: -214px;
+        z-index: 1;
+      }
     }
 
     .ant-input-affix-wrapper {
@@ -930,6 +961,7 @@
 
 :host {
   ::ng-deep {
+
     nz-collapse{
       max-height: 48%;
       overflow: auto;

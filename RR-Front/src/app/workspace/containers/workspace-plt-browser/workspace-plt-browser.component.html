@@ -45,11 +45,11 @@
               <nz-modal nzWrapClassName="addTagModal"
                         [nzVisible]="addTagModal"
                         [nzTitle]="addTagModalTitle"
-                        (nzOnCancel)="addTagModal = false"
+                        (nzOnCancel)="toggleColorPicker();toggleModal()"
+                        (nzAfterClose)="toggleColorPicker()"
                         [nzClosable]="false"
                         [nzFooter]="addTagModalFooter"
-                        [nzContent]="addTagModalContent"
-                        (nzOnOk)="handleOk()">
+                        [nzContent]="addTagModalContent">
               </nz-modal>
 
               <ng-template #addTagModalTitle>
@@ -62,12 +62,15 @@
               </ng-template>
 
               <ng-template #addTagModalContent>
-                <nz-tabset [(nzSelectedIndex)]="addTagModalIndex">
+                <nz-tabset class="tab-content-cnt" [(nzSelectedIndex)]="addTagModalIndex">
                   <nz-tab nzTitle="Create New Tag">
                     <div class="content">
                       <nz-input-group [nzSuffix]="suffixTemplate">
                         <input  class="input-default" [(ngModel)]="addModalInput" type="text" nz-input placeholder="Tag Name"/>
                       </nz-input-group>
+                      <div class="color" [ngStyle]="{'background-color': initColor}" (click)="toggleColorPicker('color')">
+                      </div>
+                      <color-chrome (clickOutside)="toggleColorPicker()" (onChangeComplete)="initColor=$event.color.hex" [color]="initColor" *ngIf="colorPickerIsVisible" ></color-chrome>
                       <ng-template #suffixTemplate
                       ><i
                         nz-icon
@@ -85,22 +88,33 @@
                     <div class="content">
                       <nz-select
                         style="width: 200px;"
-                        nzShowSearch
-                        nzAllowClear
                         [nzDisabled]="(userTags | keys)?.length == 0"
-                        nzPlaceHolder="Select a tag"
-                        [ngModel]="addModalSelect"
+                        [nzPlaceHolder]="addTagModalPlaceholder"
+                        nzAutoClearSearchValue
+                        [(ngModel)]="addTagModalPlaceholder"
                         (ngModelChange)="selectUserTag($event)"
                       >
                         <nz-option nzCustomContent *ngFor="let key of userTags | keys" [nzLabel]="userTags[key]?.tagName" [nzValue]="key">
                           <div class="opt-cnt">
-                            <label nz-checkbox  [nzChecked]="selectedUserTags[key]" (nzCheckedChange)="selectUserTag(key)" ><span class="pop-up-option-text">
+                            <label nz-checkbox [nzChecked]="selectedUserTags[key]" (nzCheckedChange)="selectUserTag(key)" ><span class="pop-up-option-text">
                             {{userTags[key]?.tagName}}
                             </span></label>
                           </div>
-                          <i class="icon-trash-alt"></i>
                         </nz-option>
                       </nz-select>
+                      <!--p-multiSelect appendTo="body" dataKey="tagId" optionLabel="tagName" [showToggleAll]="false" (onChange)="log(e)" [options]="userTags | toArray" [(ngModel)]="addModalSelect" [panelStyle]="{minWidth:'300px'}">
+
+                        <ng-template let-value pTemplate="selectedItems">
+                          <span *ngIf="!value || value.length === 0" class="ui-multiselected-empty-token ui-corner-all">Select a Tag</span>
+                          <span *ngIf="value && value.length === 1" class="ui-multiselected-empty-token ui-corner-all">{{value[0]?.tagName}}</span>
+                          <span *ngIf="value && value.length > 1" class="ui-multiselected-empty-token ui-corner-all">Multiple</span>
+                        </ng-template>
+                        <ng-template let-tag let-i="index" pTemplate="item">
+                          {{i}}
+                          <div style="font-size:14px;float:right;margin-top:4px">{{tag.tagName}}</div>
+                        </ng-template>
+
+                      </p-multiSelect-->
                     </div>
                   </nz-tab>
                 </nz-tabset>
@@ -125,7 +139,10 @@
                       [ngStyle]="{'background-color': userTags[key]?.tagColor}"
                       (click)="setFilter('userTag', userTags[key])">
                       <span class="chips-content">{{userTags[key]?.tagName}}</span>
-                      <span [ngStyle]="{'background-color': 'black'}" class="chips-counter">{{userTags[key]?.count}}</span>
+                      <span class="chips-counter">
+                        {{userTags[key]?.count}}
+                        <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
+                      </span>
                     </span>
               </div>
 
