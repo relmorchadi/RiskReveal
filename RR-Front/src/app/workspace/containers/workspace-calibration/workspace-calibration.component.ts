@@ -704,25 +704,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   ngOnInit() {
-    /** scroll principe ****/
-    // const scrollOne = this.scrollOne.nativeElement as HTMLElement;
-    // const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-    // let scroll2Event$ = fromEvent(scrollTwo, 'scroll');
-    // let scroll1Event$ = fromEvent(scrollOne, 'scroll');
-    // let supscription1 = scroll2Event$.pipe(
-    //   filter(() => this.divIn === true)
-    // ).subscribe(
-    //   value => {
-    //     scrollOne.scrollTop = scrollTwo.scrollTop;
-    //   }
-    // )
-    // let supscription2 = scroll1Event$.pipe(
-    //   filter(() => this.divIn === false)
-    // ).subscribe(
-    //   value => {
-    //     scrollTwo.scrollTop = scrollOne.scrollTop;
-    //   });
-
     this.getAllBasises();
 
     /** drawer principe **/
@@ -1078,33 +1059,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
       }
     }
   }
-
-  updateScroll() {
-    /*  const scrollOne = this.scrollOne.nativeElement as HTMLElement;
-      const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-      //scrollOne.scrollTop= scrollTwo.scrollTop; const scroll1Event$ =  fromEvent(scrollOne, 'scroll');
-      */
-  }
-
-
-  updateScroll2() {
-    /*const scrollOne = this.scrollOne.nativeElement as HTMLElement;
-    const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-    //scrollOne.scrollTop= scrollTwo.scrollTop;
-    const scroll1Event$ = fromEvent(scrollOne, 'scroll');
-    const scroll2Event$ = fromEvent(scrollTwo, 'scroll');
-    scroll2Event$.pipe(
-      switchMap(event => {
-        return scroll1Event$;
-      })
-    ).subscribe(
-      value => {
-        scrollTwo.scrollTop = scrollOne.scrollTop
-      }
-    )*/
-
-  }
-
   deleteColumn(name: string, name2: string) {
 
     let o = _.findIndex(this.pure.category, function (o: any) {
@@ -1268,20 +1222,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
     })
     return false;
   }
-
-  /*
-    checkedAll() {
-      _.forIn(this.pure.dataTable, function (value, key) {
-        _.forIn(value.thread, function (plt, key) {
-            if (!plt.checked) {
-             return false;
-            }
-          }
-        )
-      })
-      return true;
-    }*/
-
   haveTagSystem(thread: any) {
     let currenSystemTag = this.currentSystemTag;
     let currentUserTag = this.currentUserTag;
@@ -1413,34 +1353,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
     })
   }
 
-  Colpa() {
-    this.ColpasBool = !this.ColpasBool;
-    // console.log(this.extended, "extended1");
-    // console.log(this.ColpasBool, "ColpasBool1");
-    if (this.ColpasBool == true) {
-      if (this.extended) {
-        this.pltSpan = 14;
-        this.templateSpan = 7;
-      } else {
-        this.pltSpan = 7;
-        this.templateSpan = 14;
-      }
-    } else {
-      if (this.extended) {
-        this.pltSpan = 14;
-        this.templateSpan = 9;
-      } else {
-        this.pltSpan = 9;
-        this.templateSpan = 14;
-      }
-    }
-
-  }
-
-  exetende() {
+  extend() {
     this.extended = !this.extended;
-    // console.log(this.extended, "extended2");
-    // console.log(this.ColpasBool, "ColpasBool2");
     if (this.extended) {
       if (!this.ColpasBool) {
         this.pltSpan = 15;

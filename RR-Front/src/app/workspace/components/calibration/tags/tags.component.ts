@@ -20,7 +20,14 @@ export class TagsComponent implements OnInit {
   constructor() {
 
     this.systemTags = [
-      {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
+      {
+        tagId: '1',
+        tagName: 'TC',
+        tagColor: '#7bbe31',
+        innerTagContent: '1',
+        innerTagColor: '#a2d16f',
+        selected: false
+      },
       {
         tagId: '2',
         tagName: 'NATC-USM',
@@ -130,4 +137,10 @@ export class TagsComponent implements OnInit {
     this.notify.emit({tag: tag, type: type});
   }
 
+  resetFilterByTags() {
+    this.currentUserTag = null;
+    this.currentSystemTag = null;
+    this.notify.emit({tag: null, type: 'system'});
+    this.notify.emit({tag: null, type: 'user'});
+  }
 }
