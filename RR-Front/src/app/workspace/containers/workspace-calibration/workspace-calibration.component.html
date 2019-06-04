@@ -13,49 +13,8 @@
           <div class="textCalibrationMatrix" nz-col nzSpan="6">Calibration Editor</div>
           <div class="textCalibrationMatrix" nz-col nzSpan="2">&nbsp;</div>
         </div>
-
         <div nz-row>
-          <div nz-col nzSpan="1" style="text-align: center; font-size: 26px;" *ngIf="!ColpasBool">
-            <i class="expand-tags-icon" (click)="Colpa()"  nz-icon nzTheme="outline" nzType="right-circle" style="cursor: pointer" ></i>
-          </div>
-          <div *ngIf="ColpasBool" nz-col nzSpan="3">
-            <div
-              style="padding-top: 39px; padding-left: 9px; background: #fff; min-height:571px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
-              <hr style="height:5px;background-color: #0700CF;margin-top: -40px;margin-left: -10px;">
-              <div (click)="Colpa()" class="textLastAdjustement" style="margin-top: 20px;">
-                <i (click)="Colpa()" *ngIf="ColpasBool" nz-icon nzTheme="outline" nzType="left-circle"  style="position: relative; cursor: pointer;
-    top: -4px;"></i> Tags
-              </div>
-              <div class="Tags-content">
-                <div class="button-reset-filter-by-tag" nz-row>
-                  <button (click)="resetFilterByTags()" nz-button nzShape="circle" nzType="default"
-                          style=" float: right; border: 0px solid;">
-                    <i nz-icon nzTheme="outline" nzType="undo"></i></button>
-                </div>
-                <div class="tags-title-section" nz-row style="margin-top: -20px;">System Tags</div>
-                <div *ngFor="let tag of systemTags" class="ml-3 mt-1" nz-row>
-                    <span (click)="currentSystemTag = tag" [ngClass]="{'active-tag': tag === currentSystemTag}"
-                          [ngStyle]="{'background-color': tag.tagColor}" class="chips">
-                      {{tag.tagName}}
-                      <span [ngStyle]="{'background-color': tag.innerTagColor}"
-                            class="inner-chip">{{tag.innerTagContent}}</span>
-                    </span>
-                </div>
-
-                <div class="tags-title-section" nz-row>User tags<i class="icon-plus-circle"
-                                                                   style="margin-top: 14px; margin-left: 5px;"></i>
-                </div>
-                <div *ngFor="let tag of userTags" class="ml-3 mt-1" nz-row>
-                    <span (click)="currentUserTag = tag" [ngClass]="{'active-tag': tag === currentUserTag}"
-                          [ngStyle]="{'background-color': tag.tagColor}" class="chips">
-                      {{tag.tagName}}
-                      <span [ngStyle]="{'background-color': tag.innerTagColor}"
-                            class="inner-chip">{{tag.innerTagContent}}</span>
-                    </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <app-tags (notify)="onNotify($event)"></app-tags>
           <div [nzSpan]="pltSpan" nz-col>
             <div
               style="padding-top: 39px; padding-left: 24px; background: #fff; min-height:571px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
@@ -74,64 +33,15 @@
                     <i class="icon-menu_24px" nz-dropdown style="font-size: 25px;"></i>
                     <ul nz-menu>
                       <li nz-menu-item>
-                        <a (click)="exetende()" >
+                        <a (click)="exetende()">
                           <b *ngIf="extended">Collapse PLT Selection</b>
                           <b *ngIf="!extended">Extend PLT Selection</b>
                         </a>
                       </li>
-                     <!-- <li nz-menu-item>
-                        <a (click)="addAdjustmenet(adj)">Apply to selected</a>
-                      </li>
-                      <li nz-menu-item>
-                        <a (click)="applyToSelectedPlt(adj,adj.value)">Replace selected</a>
-                      </li>
-                      <li nz-menu-item>
-                        <a (click)="applyToAllAdjustement(adj,adj.value)"
-                        >Replace to All</a>
-                      </li>-->
                     </ul>
                   </nz-dropdown>
                 </div>
               </div>
-              <!--<div nz-row>
-                <div nz-col nzSpan="2" style="position:relative; top:8px; font-size: 13px;color: #0700CF">
-                  <a>
-                    <label (nzCheckedChange)="selectAllBool?selectAllThread(true):selectAllThread(false)"
-                           [nzIndeterminate]="indeterminate()"
-                           nz-checkbox>
-                    </label>
-                  </a>
-                </div>
-                <div nz-col nzSpan="2" style="font-size: 18px;color: #0700CF">
-                  <i (click)="afficheTree()" nz-icon nzTheme="outline" nzType="menu-unfold"></i>
-                </div>
-                <div nz-col nzSpan="2" style="font-size: 18px;color: #0700CF">
-                  <i (click)="CloseTree()" nz-icon nzTheme="outline" nzType="database"></i>
-                </div>
-                <div nz-col nzSpan="2" style="padding-top: 2px">
-                  <i class="icon-arrows-right-down" style="font-size: 25px;color: #0700CF"></i>
-                </div>
-              </div>-->
-              <!-- <div class="table-Header" nz-row>
-                 <div nz-col nzSpan="2">
-                   <label (nzCheckedChange)="selectAllBool?selectAllThread(true):selectAllThread(false)"
-                          [nzIndeterminate]="indeterminate()"
-                          nz-checkbox>
-                   </label>
-                 </div>
-                 <div nz-col nzSpan="3">
-                   <label> User Tags
-                   </label>
-                 </div>
-                 <div nz-col nzSpan="4">
-                   <label> Plt ID
-                   </label>
-                 </div>
-                 <div nz-col nzSpan="4">
-                   <label> Plt Name
-                   </label>
-                 </div>
-               </div>-->
               <div nz-row>
                 <div nz-col nzSpan="24">
                   <hr style="margin: 0px">
@@ -139,7 +49,7 @@
               </div>
               <!-- Table de PLT Selection -->
               <div class="tablePlt" nz-row>
-                <div #scrollTwo (mouseover)="cursorOntable1()" nz-col nzSpan="24"
+                <div scroller topic="rr-table" (mouseover)="cursorOntable1()" nz-col nzSpan="24"
                      style="overflow-y: auto;overflow-x: auto;max-width:900px;max-height: 414px">
                   <!--- List With Tree --->
                   <nz-table #fixedTable1 *ngIf="tree" [nzData]="pure.dataTable"
@@ -155,10 +65,8 @@
                         <b> {{ data.name }}</b>
                       </td>
                       <td>
-
                       </td>
                       <td>
-
                         <i class="icon-menu_24px" nz-dropdown style="font-size: 20px"></i>
                       </td>
                     </tr>
@@ -197,10 +105,10 @@
                             [nzShowPagination]="false">
                     <thead (nzSortChange)="sort($event)" nzSingleSort>
                     <tr style="height: 66px ">
-                      <ng-container *ngFor="let col of pltColumns" >
+                      <ng-container *ngFor="let col of pltColumns">
                         <th [nzShowSort]="col.sorted"
                             [nzSortKey]="col.fields" [nzWidth]="col.width"
-                            style="position: sticky;top: 0;z-index: 1000;" *ngIf="col.extended" >
+                            style="position: sticky;top: 0;z-index: 1000;" *ngIf="col.extended">
                           {{col.header}}
                           <div *ngIf="col.filtred" class="filter-input">
                             <i class="icon-search"></i>
@@ -239,18 +147,22 @@
                           <td (click)="changeBackgroud($event,dataTable1)">{{ dataTable1.id }}</td>
                           <td (click)="changeBackgroud($event,dataTable1)">{{ dataTable1.threadName }}</td>
                           <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.peril }}</td>
-                          <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.regionPerilCode }}</td>
-                          <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.regionPerilName }}</td>
+                          <td (click)="changeBackgroud($event,dataTable1)"
+                              *ngIf="extended">{{ dataTable1.regionPerilCode }}</td>
+                          <td (click)="changeBackgroud($event,dataTable1)"
+                              *ngIf="extended">{{ dataTable1.regionPerilName }}</td>
                           <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.grain }}</td>
-                          <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.vendorSystem }}</td>
+                          <td (click)="changeBackgroud($event,dataTable1)"
+                              *ngIf="extended">{{ dataTable1.vendorSystem }}</td>
                           <td (click)="changeBackgroud($event,dataTable1)" *ngIf="extended">{{ dataTable1.rap }}</td>
                           <td><i [class]="dataTable1.icon" style="font-size: 20px"></i></td>
-                          <td><i class="icon-plus-circle" nz-dropdown style="font-size: 20px;color: #000; cursor: pointer" (click)="clickButtonPlus(false,dataTable1)"></i>
+                          <td><i class="icon-plus-circle" nz-dropdown
+                                 style="font-size: 20px;color: #000; cursor: pointer"
+                                 (click)="clickButtonPlus(false,dataTable1)"></i>
                           </td>
                         </tr>
                       </ng-container>
                     </ng-container>
-
                     </tbody>
                   </nz-table>
                 </div>
@@ -275,7 +187,7 @@
               </div>
             </div>
           </div>
-          <div nz-col [nzSpan]="templateSpan" >
+          <div nz-col [nzSpan]="templateSpan">
             <div class="test"
                  style=" background: #fff; min-height:570px; min-width: 350px; box-shadow: 0px 1px 20px 0px #dcdada; margin-left: -4px">
               <div nz-row>
@@ -289,8 +201,8 @@
                   Template <i class="icon-plus-circle" nz-dropdown
                               style="font-size: 20px;color: #000; cursor: pointer" (click)="clickButtonPlus(true)"></i>
                 </div>
-                <div class="card1" nz-col nzSpan="13" style="margin-top: 18px; margin-left: -8px;display: flex;overflow: auto; max-width: 100%;margin-top: 18px;
-    margin-left: -8px;" >
+                <div class="card1" nz-col nzSpan="13"
+                     style="margin-top: 18px; margin-left: -8px;display: flex;overflow: auto; max-width: 100%;margin-top: 18px; margin-left: -8px;">
                   <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                     <div class="dashbordAdj">
                       <span style="height: 30px;margin: 0px 2px 0px 2px;">{{adj.name}}</span>
@@ -322,10 +234,6 @@
                 <div class="card1" nz-col nzSpan="5" style="flex:auto;margin-left: -21px;">
                   <i class="icon-menu_24px"
                      style="font-size: 25px;float: right;margin-top:29px; margin-right: 10px;"></i>
-               <!--   <i nz-icon nzTheme="outline" nzType="right"
-                     style="font-size: 20px;float: right;margin-top:32px;margin-left: 6px;margin-right: 14px;"></i>
-                  <i nz-icon nzTheme="outline" nzType="left"
-                     style="font-size: 20px;float: right;margin-top:32px;margin-left: 6px;"></i>-->
                 </div>
               </div>
               <div nz-row>
@@ -333,21 +241,20 @@
                   <!-- Table de Template 1   -->
                   <div nz-row>
                     <div nz-col nzSpan="24">
-                      <div #scrollOne (mouseover)="cursorOntable2()" nz-row
+                      <div scroller topic="rr-table" (mouseover)="cursorOntable2()" nz-row
                            style="margin-top: 5px;overflow-y: auto;max-height: 415px;min-height:415px;width: 100%;">
-
                         <nz-table #rightTable #te [nzData]="pure.dataTable"
                                   [nzPaginationPosition]="false" class="fixedHeadder">
                           <thead class="header-text">
                           <tr style="height: 66px !important;">
-                            <th  style="border-right: 1px solid rgb(232, 232, 232);width: 15%"><b style="margin-left:10px !important;">Overall LMF</b></th>
+                            <th style="border-right: 1px solid rgb(232, 232, 232);width: 15%"><b
+                              style="margin-left:10px !important;">Overall LMF</b></th>
                             <ng-container *ngFor="let category of pure.category;trackBy: trackByFn">
                               <th *ngIf="category.showBol" [colSpan]="category.basis.length"
                                   [ngStyle]="{background:InuringBack(category.name) }"
                                   [style.width]="category.width"
-                                  style="border-right: 1px solid rgb(232, 232, 232);"><b style="margin-left:10px !important;">{{category.name}}</b>
-                                <!-- <i (click)="feedCatgegoryNameForHide(category.name)" [ngClass]="eyeVisible()"
-                                    style="float: right;margin-top: 5px;"></i>-->
+                                  style="border-right: 1px solid rgb(232, 232, 232);"><b
+                                style="margin-left:10px !important;">{{category.name}}</b>
                               </th>
                             </ng-container>
                           </tr>
@@ -402,7 +309,7 @@
                                           </ul>
                                         </nz-dropdown>
                                         <input [disabled]="adj.linear" [value]="adj.value" class="inputOfdachboard"
-                                       (change)="changeValue(adj,$event)"  >
+                                               (change)="changeValue(adj,$event)">
                                       </div>
                                     </ng-container>
                                   </div>
@@ -437,8 +344,7 @@
                                              [dndDisableIf]="dataTable1.locked"
                                              [dndDraggable]="adj"
                                              class="divInTd"
-                                             dndEffectAllowed="move"
-                                        >
+                                             dndEffectAllowed="move">
                                               <span
                                                 class="spanStyle">{{adj.name}}</span>
                                           <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
@@ -458,8 +364,7 @@
                                             </ul>
                                           </nz-dropdown>
                                           <input [disabled]="adj.linear" [value]="adj.value"
-                                                 class="inputOfdachboard" (change)="changeValue(adj,$event)"
-                                          >
+                                                 class="inputOfdachboard" (change)="changeValue(adj,$event)">
                                         </div>
                                       </ng-container>
                                     </ng-container>
@@ -469,8 +374,7 @@
                                   <div style="display: flex;height: max-content">
                                     <div
                                       class="divInTd">
-                                          <span
-                                            class="spanStyle"></span>
+                                      <span class="spanStyle"></span>
                                       <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                         <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
                                            style="font-size: 18px;float: right"></i>
@@ -510,7 +414,7 @@
                                              [dndDisableIf]="dataTable1.locked"
                                              [dndDraggable]="adj"
                                              class="divInTd"
-                                             dndEffectAllowed="move"   >
+                                             dndEffectAllowed="move">
                                               <span
                                                 class="spanStyle">{{adj.name}}</span>
                                           <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
@@ -558,129 +462,13 @@
                       </button>
                       <button class="ant-btn ant-btn-default" style="width: 100px;height: 30px; ">APPLY</button>
                     </div>
-                    <!-- <div nz-col nzOffset="4" nzSpan="6">
-                       <nz-select
-                         (ngModelChange)="hideCatgegory(listOfSelectedValue)"
-                         [(ngModel)]="listOfSelectedValue"
-                         [nzMaxTagCount]="2"
-                         nzMode="multiple"
-                         nzPlaceHolder="Please select Category"
-                         style="width: 260px;"
-                       >
-                         <nz-option *ngFor="let option of pure.category" [nzLabel]="option.name"
-                                    [nzValue]="option.name"></nz-option>
-                       </nz-select>
-                       <ng-template #tagPlaceHolder let-selectedList> and {{ selectedList.length }} more selected
-                       </ng-template>
-                     </div>-->
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-        <div nz-row>
-          <div nz-col nzSpan="24" style="margin-top: 25px;">
-            <div style="padding:24px; background: #fff; min-height:130px; box-shadow: 0px 1px 20px 0px #dcdada; ">
-              <div nz-col nzSpan="10" style="height: 10px">
-                <hr style="height: 4px;background-color: #00c4aa;margin: -24px;width: 288px;">
-              </div>
-              <div nz-row style="margin-top: -35px;">
-                <div class="textLastAdjustement" nz-col nzSpan="24" style="margin-top: 2px;">
-                  Last Adjustment Matrix
-                </div>
-              </div>
-              <div nz-row>
-                <div nz-col nzSpan="24">
-                  <div class="AdjustementTextGray" style="padding:24px; background: #f0f2f5; min-height:60px;">
-                    <div nz-col nzSpan="4">
-                      <b>Apply Adjustment Matrix</b>
-                    </div>
-                    <div nz-col nzSpan="7">
-                      <i class="icon-event_note_24px"></i>Started:<b>Mon Feb 04 16:19:39 UTC 2019</b>
-                    </div>
-                    <div nz-col nzSpan="7">
-                      <i class="icon-event_note_24px"></i>Ended:<b>Mon Feb 04 16:20:00 UTC 2019</b>
-                    </div>
-                    <div nz-col nzSpan="6"
-                         style="color: #00C4AA;white-space: nowrap;overflow: hidden;text-overflow: ellipsis">
-                      Adjustment Matrix Completed succesfly
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!--<nz-tab nzTitle="Adjustment Canvas">
-          <div
-            style="padding:50px; background: #fff; min-height:700px;margin-top: 25px; margin-right: 15px; box-shadow: 0px 1px 20px 0px #dcdada;">
-            <hr style="height: 4px;background-color: #0700CF;margin: -24px;margin: -50px; width: 20%;">
-            <div nz-col nzSpan="17" style="margin-left:-40px;">
-              <div nz-row>
-                <div nz-col nzSpan="6">&nbsp;</div>
-              </div>
-              <div nz-row>
-                <div class="textLastAdjustement" nz-col nzSpan="6">Canvas</div>
-              </div>
-              <div nz-row>
-                <div nz-col nzSpan="12" style="font-weight: 300">NATC-USM_RL_lmf.T1</div>
-              </div>
-              <div nz-row>
-                <div class="AdjustmentCanvas" nz-col nzSpan="18">
-                  <nz-tabset>
-                    <nz-tab nzTitle="PLT Overview">
-                    </nz-tab>
-                    <nz-tab nzTitle="Adjustment">
-
-                    </nz-tab>
-                  </nz-tabset>
-                </div>
-              </div>
-            </div>
-            <div nz-col nzSpan="7" style="margin-left:-40px;">
-              <div nz-row>
-                <div nz-col nzSpan="24">
-                  <div
-                    style="padding: 5px;
-                  width: 370px;
-                  background: #f0f2f59e;
-                  min-height: 600px;
-                  margin-top: 25px;
-                  margin-right: 15px;
-                  box-shadow: 0px 0px 2px 0px #dcdada; ">
-                    <div nz-row>
-                      <div nz-col nzSpan="6">&nbsp;</div>
-                    </div>
-                    <div nz-row>
-                      <div nz-col nzSpan="6" style="font-weight: 900; margin: 10px;">Adjustment
-                      </div>
-                    </div>
-                    <div nz-row>
-                      <div nz-col nzSpan="6" style="height: 420px ">&nbsp;</div>
-                    </div>
-                    <div nz-row>
-                      <div nz-col nzSpan="6">&nbsp;</div>
-                    </div>
-                    <div nz-row>
-                      <div nz-col nzSpan="6">&nbsp;</div>
-                    </div>
-                    <div nz-row>
-                      <div nz-col nzSpan="2">&nbsp;</div>
-                      <div nz-col nzSpan="6">
-                        <button class="ant-btn ant-btn-default"
-                                style="background-color: #070acf !important;color: #ffffff;border-color:#070acf;margin-right: 20px;border-radius: 17px">
-                          Actions
-                        </button>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nz-tab>-->
+        <app-last-adjustment-matrix></app-last-adjustment-matrix>
       </div>
       <div nz-col nzSpan="1">
         <div class="right-column">
@@ -692,13 +480,6 @@
       </div>
     </div>
   </nz-layout>
-  <nz-layout class="calibration-Tab" style="width: 1000px;height: 100%">
-    <nz-content style="margin:0 16px;">
-      <nz-breadcrumb style="margin:16px 0;">
-
-      </nz-breadcrumb>
-    </nz-content>
-  </nz-layout>
   <nz-drawer
     (nzOnClose)="close()"
     [nzClosable]="false"
@@ -706,20 +487,12 @@
     [nzVisible]="visible"
     [nzWidth]=650
     [nzZIndex]=1100
-    nzPlacement="right"
-  >
-
+    nzPlacement="right">
     <div>
-      <div class="navigation-icons-drawer" style="display: flex;
-flex-direction: column;
-justify-content: space-between;
-align-items: flex-end;">
-        <i (click)="close()" class="icon-arrow_forward_ios_24px mt-2" style="padding: 5px;
-border-radius: 25px;
-border: 2px solid #F5F5F5;
-color: #9C99EC;
-font-size: 24px;
-cursor: pointer;"></i>
+      <div class="navigation-icons-drawer"
+           style="display: flex; flex-direction: column; justify-content: space-between; align-items: flex-end;">
+        <i (click)="close()" class="icon-arrow_forward_ios_24px mt-2"
+           style="padding: 5px;border-radius: 25px;border: 2px solid #F5F5F5;color: #9C99EC;font-size: 24px;cursor: pointer;"></i>
       </div>
       <nz-tabset class="tabset-drawer">
         <nz-tab nzTitle="Basket">
@@ -767,7 +540,6 @@ cursor: pointer;"></i>
             </nz-tabset>
           </div>
         </nz-tab>
-
       </nz-tabset>
     </div>
   </nz-drawer>
@@ -786,7 +558,8 @@ cursor: pointer;"></i>
       </div>
       <div nz-col nzSpan="16">
         <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
-        <nz-select   [(ngModel)]="categorySelectedFromAdjustement" (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
+        <nz-select [(ngModel)]="categorySelectedFromAdjustement"
+                   (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
                    [nzPlaceHolder]="'Select Adjustment'"
                    [nzSize]="size" style="width: 260px;">
           <ng-container *ngFor="let option of allAdjsArray">
@@ -807,7 +580,7 @@ cursor: pointer;"></i>
       </div>
       <div nz-col nzSpan="16" style="line-height: 2.2rem;">
         <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
-        <b style="margin-left: 10px;" >{{categorySelected}}</b>
+        <b style="margin-left: 10px;">{{categorySelected}}</b>
       </div>
     </div>
     <div nz-row>
@@ -855,16 +628,16 @@ cursor: pointer;"></i>
           <hr>
         </div>
       </div>
-      <div nz-row >
+      <div nz-row>
         <div nz-col nzSpan="24" style="margin: 5px;">
           <b>Adjustment Parameter</b>
         </div>
       </div>
-      <div nz-row >
-        <div nz-col nzSpan="2" >
+      <div nz-row>
+        <div nz-col nzSpan="2">
           &nbsp;
         </div>
-        <div nz-col nzSpan="11" >
+        <div nz-col nzSpan="11">
           Loss Modification Factor (LMF)
         </div>
         <div nz-col nzSpan="9">
