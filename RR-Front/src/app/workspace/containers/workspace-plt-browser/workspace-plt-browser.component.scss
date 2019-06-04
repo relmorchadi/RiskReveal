@@ -19,6 +19,8 @@
   flex-direction: row;
   background-color: #F4F6FC;
   width: 100%;
+  height: 100vh;
+  overflow: auto;
 
   .tabset-left {
     min-height: 85vh;
@@ -1017,4 +1019,12 @@
     }
 
   }
+}
+
+
+.my-tabs {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-bottom: 300px;
 }
