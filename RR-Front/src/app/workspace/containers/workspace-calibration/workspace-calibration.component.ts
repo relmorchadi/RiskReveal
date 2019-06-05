@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import * as _ from 'lodash'
 import {Subscription} from "rxjs";
 import {DndDropEvent, DropEffect} from "ngx-drag-drop";
+import {ADJUSTMENTS_ARRAY} from "./data";
 
 
 @Component({
@@ -408,7 +409,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   constructor() {
     this.AdjustementType = [
-      {id: 0, name: "none", abv: false},
+      //{id: 0, name: "none", abv: false},
       {id: 1, name: "Linear", abv: false},
       {id: 2, name: "Event Driven", abv: "Event Driven"},
       {id: 3, name: "Return Period Banding Severity (EEF)", abv: "RP (EEF)"},
@@ -609,7 +610,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
           ]
         },
       ]
-    }
+    };
     this.systemTags = [
       {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
       {
@@ -687,20 +688,21 @@ export class WorkspaceCalibrationComponent implements OnInit {
         selected: false
       }
     ];
-    this.allAdjsArray = [
-      {id: 1, name: 'Missing Exp ', value: 2.1, linear: false, category: "Client", hover: false, idAdjustementType: 5},
-      {id: 2, name: 'Port. Evo ', value: 2.1, linear: false, category: "Base", hover: false, idAdjustementType: 6},
-      {id: 3, name: 'ALAE ', value: 1.75, linear: false, category: "Client", hover: false, idAdjustementType: 7},
-      {
-        id: 4,
-        name: 'Model Calib ',
-        value: "RPB (EEF)",
-        linear: true,
-        category: "Base",
-        hover: false,
-        idAdjustementType: 8
-      }
-    ]
+    this.allAdjsArray = ADJUSTMENTS_ARRAY;
+    //   [
+    //   {id: 1, name: 'Missing Exp ', value: 2.1, linear: false, category: "Client", hover: false, idAdjustementType: 5},
+    //   {id: 2, name: 'Port. Evo ', value: 2.1, linear: false, category: "Base", hover: false, idAdjustementType: 6},
+    //   {id: 3, name: 'ALAE ', value: 1.75, linear: false, category: "Client", hover: false, idAdjustementType: 7},
+    //   {
+    //     id: 4,
+    //     name: 'Model Calib ',
+    //     value: "RPB (EEF)",
+    //     linear: true,
+    //     category: "Base",
+    //     hover: false,
+    //     idAdjustementType: 8
+    //   }
+    // ]
   }
 
   ngOnInit() {
@@ -1282,7 +1284,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (thread, key) {
         _.forIn(thread.adj, function (adj, key) {
-          console.log("yes1")
+          console.log("yes1", adj)
           if (adj.idAdjustementType == adjustement.idAdjustementType) {
             console.log(valueOfAdj);
             adj.value = valueOfAdj;
