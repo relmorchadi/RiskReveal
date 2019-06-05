@@ -55,7 +55,17 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   contextMenuItems = [
     { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
     { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) },
-    { label: 'Add/Assign Tag', icon: 'pi pi-tags', command: (event) => this.addTagModal= true}
+    { label: 'Edit Tags', icon: 'pi pi-tags', command: (event) => {
+        this.addTagModal= true;
+        this.fromPlts= true;
+        let d= [];
+
+        _.forEach( this.listOfPltsData, (v,k) => {
+          if(v.selected) d.push(v.userTags);
+        })
+
+        this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+      }}
   ];
 
   tagContextMenu = [
@@ -292,11 +302,17 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.systemTagsCount= {};
     this.userTagsCount= {};
     this.addTagModalIndex = 0;
+    this.fromPlts = false;
+    this.selectedUserTags= {};
+    this.initColor = '#fe45cd'
+    this.colorPickerIsVisible = false;
+    this.addTagModalPlaceholder = 'Select a Tag'
   }
 
   @Select(PltMainState.getUserTags) userTags$;
   @Select(PltMainState.data) data$;
   loading: boolean;
+  selectedUserTags: any;
 
   systemTagsMapping = {
     grouped: {
@@ -319,6 +335,30 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         let d2= [];
         this.loading= false;
         this.systemTagsCount = {};
+
+        if(_.keys(this.systemTagsCount).length == 0 ) {
+          _.forEach(data, (v,k) => {
+            //Init Tags Counters
+
+            //Grouped Sys Tags
+            _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
+              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+              const tag = _.toString(v[section]);
+              if(tag){
+                this.systemTagsCount[sectionName][tag] = {selected: false,count:0}
+              }
+            })
+
+            //NONE grouped Sys Tags
+            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+              this.systemTagsCount[sectionName][section] = {selected: false,count:0};
+              this.systemTagsCount[sectionName]['non-'+section] = {selected: false,count:0};
+            })
+
+          })
+        }
+
         _.forEach(data, (v,k) => {
           d1.push({...v,pltId: k});
           d2.push(k);
@@ -326,29 +366,27 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           if(v.visible) {
             //Grouped Sys Tags
             _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              const tag = v[section];
-              if(this.systemTagsCount[sectionName][tag]){
-                this.systemTagsCount[sectionName][tag] = this.systemTagsCount[sectionName][tag] + 1;
-              }else{
-                this.systemTagsCount[sectionName][tag] = 1
+              const tag = _.toString(v[section]);
+              if(tag){
+                if( this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0){
+                  this.systemTagsCount[sectionName][tag] = {...this.systemTagsCount[sectionName][tag],count: this.systemTagsCount[sectionName][tag].count + 1};
+                }
               }
             })
 
             //NONE grouped Sys Tags
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
               const tag = v[section];
-              if(this.systemTagsCount[sectionName][tag]){
-                this.systemTagsCount[sectionName][section] = (this.systemTagsCount[sectionName][section] || 0) + 1;
-              }else{
-                this.systemTagsCount[sectionName]['non-'+section] = (this.systemTagsCount[sectionName]['non-'+section] || 0) + 1;
+              if(this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0){
+                this.systemTagsCount[sectionName][section] = {...this.systemTagsCount[sectionName][section],count: this.systemTagsCount[sectionName][section].count + 1};
+              }
+              if(this.systemTagsCount[sectionName]['non-'+section] || this.systemTagsCount[sectionName]['non-'+section].count == 0){
+                this.systemTagsCount[sectionName]['non-'+section] = {...this.systemTagsCount[sectionName]['non-'+section],count: this.systemTagsCount[sectionName]['non-'+section].count + 1};
               }
             })
           }
 
         });
-        console.log(this.systemTagsCount)
         this.listOfPlts = d2;
         this.listOfPltsData = this.listOfPltsCache = d1;
         this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
@@ -368,7 +406,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         this.detectChanges();
       }),
       this.route$.params.subscribe(({wsId, year}) => {
-          console.log(wsId);
           this.workspaceId = wsId;
           this.uwy = year;
           this.loading= true;
@@ -383,7 +420,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         }),
       this.getAttr('loading').subscribe( l => this.loading = l),
       this.userTags$.subscribe( userTags => {
-        console.log(userTags)
         this.userTags = userTags || {};
         this.detectChanges();
       })
@@ -455,7 +491,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         this.filterData = _.omit(this.filterData, [key]);
       }
     }
-    console.log(this.filterData);
   }
 
   selectedPlt: any;
@@ -465,6 +500,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   inputValue: null;
   addModalSelect: any;
   tagFormenu: any;
+  fromPlts: any;
+  colorPickerIsVisible: any;
+  initColor: any;
+  addTagModalPlaceholder: any;
 
   setFilter(filter: string, tag,section) {
       if(filter === 'userTag'){
@@ -473,11 +512,12 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
             _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
             _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
 
-        if(filter == 'userTag'){
-          this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
-        }
+        this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
+
+        this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
+          filters: this.filters
+        }))
       }else{
-        console.log(tag,section)
         const {
           systemTag
         } = this.filters;
@@ -499,12 +539,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           }):
           _.assign({}, this.filters,{ systemTag: _.filter( systemTag, sectionFilter => sectionFilter[tag] != section)})
       }
-
-      console.log(this.filters)
-
-    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
-      filters: this.filters
-    }))
   }
 
   selectPltById(pltId) {
@@ -587,7 +621,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   close(e: NzMenuItemDirective): void {
-    console.log(e);
     this.dropdown.close();
   }
 
@@ -644,7 +677,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    console.log(i);
     if ($event.ctrlKey) {
       this.selectSinglePLT(pltId, isSelected);
       this.lastSelectedId = i;
@@ -652,14 +684,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
 
     if($event.shiftKey) {
-      console.log('SHIFT');
       console.log(i, this.lastSelectedId);
       if(!this.lastSelectedId) this.lastSelectedId = 0;
       if(this.lastSelectedId || this.lastSelectedId == 0) {
-        console.log(i, this.lastSelectedId)
         const max = _.max([i, this.lastSelectedId]);
         const min = _.min([i, this.lastSelectedId]);
-        console.log(max, min)
         this.toggleSelectPlts(
           _.zipObject(
             _.map(this.listOfPlts, plt => plt),
@@ -674,7 +703,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   private loadData(params: any) {
-    console.log(params);
     this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}));
   }
 
@@ -719,19 +747,86 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         plts: this.selectedListOfPlts,
         wsId: this.workspaceId,
         uwYear: this.uwy,
-        tag: this.addModalSelect
+        tags: this.selectedUserTags,
+        type: 'many'
       }))
     }else{
       this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
-        plts: this.selectedListOfPlts,
+        plts: this.fromPlts ? this.selectedListOfPlts : [],
         wsId: this.workspaceId,
         uwYear: this.uwy,
         tag: {
-          tagName: this.addModalInput
+          tagName: this.addModalInput,
+          tagColor: this.initColor
         }
       }))
     }
     this.addTagModal = false;
+  }
+
+  selectUserTag(k) {
+    event.stopPropagation();
+    event.preventDefault();
+    if(_.find(this.selectedUserTags, t => t.tagId == k)){
+      this.selectedUserTags = _.omit(this.selectedUserTags,k);
+    }else{
+      this.selectedUserTags[k] = this.userTags[k];
+    }
+    const l = _.toArray(this.selectedUserTags).length;
+
+    if(l == 0) {
+      //this.addTagModalPlaceholder= {'Select a Tag': {tagName: 'Select a Tag'}}
+      this.addTagModalPlaceholder= 'Seleetc'
+    }
+    if(l == 1 ) {
+      //this.addTagModalPlaceholder = _.toArray(this.selectedUserTags)[0]
+      this.addTagModalPlaceholder= 'hey'
+    }
+    if(l > 1) {
+      //this.addTagModalPlaceholder = {'multiple': {tagName: 'multiple'}}
+      this.addTagModalPlaceholder= 'multiple'
+    }
+    //this.addModalSelect = this.userTags[k];
+    console.log(this.addTagModalPlaceholder)
+
+  }
+
+  selectSystemTag(section, tag) {
+
+    _.forEach(this.systemTagsCount, (s,sKey) => {
+      _.forEach(s, (t,tKey) => {
+        if(tag == tKey && section == sKey){
+          this.systemTagsCount[sKey][tKey] = {...t,selected: !t.selected}
+          console.log(this.systemTagsCount[sKey][tKey]);
+        }else{
+          this.systemTagsCount[sKey][tKey] = {...t,selected: false}
+          console.log(this.systemTagsCount[sKey][tKey]);
+        }
+      })
+    })
+  }
+
+  toggleModal(){
+    this.addTagModal = !this.addTagModal;
+    if(!this.addTagModal){
+      this.addModalInput=null;
+      this.addModalSelect=null;
+      this.addTagModalIndex=0;
+    }
+  }
+
+  toggleColorPicker(from?: string){
+    if(from == 'color') {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+    this.colorPickerIsVisible=!this.colorPickerIsVisible;
+    if(!this.colorPickerIsVisible) this.initColor= '#fe45cd';
+  }
+
+
+  log(e: any) {
+    console.log(e,this.addModalSelect);
   }
 }
 

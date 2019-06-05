@@ -6,15 +6,17 @@ import {COMPONENTS} from './components';
 import {TableModule} from 'primeng/table';
 import {RouterModule} from '@angular/router';
 import {HighlightDirective} from './highlight.directive';
-import {ContextMenuModule} from 'primeng/primeng';
+import {ContextMenuModule, MultiSelectModule} from 'primeng/primeng';
 import { TableSortAndFilterPipe } from '../core/pipes/table-sort-and-filter.pipe';
 import {KeysPipe} from './pipes/keys.pipe';
 import { ShowLastPipe } from './pipes/show-last.pipe';
 import { InputSearchPipe } from './pipes/input-search.pipe';
+import {ColorChromeModule} from 'ngx-color/chrome';
+import { ToArrayPipe } from './pipes/to-array.pipe';
 
 
 @NgModule({
-  declarations: [...COMPONENTS, HighlightDirective, KeysPipe, ShowLastPipe, InputSearchPipe],
+  declarations: [...COMPONENTS, HighlightDirective, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -35,7 +37,10 @@ import { InputSearchPipe } from './pipes/input-search.pipe';
     ...COMPONENTS,
     KeysPipe,
     ShowLastPipe,
-    InputSearchPipe
+    InputSearchPipe,
+    ColorChromeModule,
+    MultiSelectModule,
+    ToArrayPipe
   ]
 })
 export class SharedModule { }

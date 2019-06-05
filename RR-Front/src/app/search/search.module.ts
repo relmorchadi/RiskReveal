@@ -5,13 +5,14 @@ import {SharedModule} from '../shared/shared.module';
 import {RouterModule, Routes} from '@angular/router';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { ContractFilterPipe } from './pipes/contract-filter.pipe';
+import { SearchMainDetailComponentComponent } from './components/search-main-detail-component/search-main-detail-component.component';
 
 const routes: Routes = [
   {path: '', component: SearchMainComponent}
 ];
 
 @NgModule({
-  declarations: [...CONTAINERS, ContractFilterPipe],
+  declarations: [...CONTAINERS, ContractFilterPipe, SearchMainDetailComponentComponent],
   imports: [
     SharedModule,
     ScrollingModule,

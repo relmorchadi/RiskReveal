@@ -342,14 +342,6 @@ export class SearchMainComponent implements OnInit {
     this._loadContracts();
   }
 
-  sliceContent(content: any, valid: boolean) {
-    if (valid && content) {
-      return content.slice(0, 3);
-    } else {
-      return content;
-    }
-  }
-
   closeSearchBadge(status, index, key?) {
     if (status) {
       if (key === 'Global Search') {

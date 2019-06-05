@@ -36,8 +36,8 @@
                 <gridster-item *ngIf="item.selected" [item]="item?.position ">
                   <renewal-contract-scope [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="delete(dashboard.id, $event)"
-                                          (changeName)="changeName(dashboard.id,$event)"
-                                          (duplicate)="duplicate(dashboard.id,$event)"
+                                          (changeName)="changeName(dashboard.id, $event)"
+                                          (duplicate)="duplicate(dashboard.id, $event)"
                                           class="no-drag"></renewal-contract-scope>
                 </gridster-item>
               </ng-container>
