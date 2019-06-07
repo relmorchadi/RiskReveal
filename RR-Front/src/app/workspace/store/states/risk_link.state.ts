@@ -32,8 +32,6 @@ const initiaState: RiskLinkModel = {
     numberOfElement: 0
   },
   display: {
-    displayDropdownRDMEDM: false,
-    displayListRDMEDM: false,
     displayTable: false,
     displayImport: false,
   },
@@ -58,10 +56,6 @@ const initiaState: RiskLinkModel = {
     },
     targetCurrency: {data: ['MLC', 'User Defined', 'Underling Currency'], selected: 'MLC'},
     calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
-  },
-  selectedAnalysisAndPortoflio: {
-    selectedAnalysis: {data: null, lastSelectedIndex: null},
-    selectedPortfolio: {data: null, lastSelectedIndex: null},
   },
   analysis: null,
   portfolios: null,
@@ -160,7 +154,7 @@ export class RiskLinkState implements NgxsOnInit {
       } else {
         array = array.filter(data => data.id == item || data.selected === true);
       }
-      console.log(array);
+
       ctx.patchState({
         listEdmRdm: {
           ...state.listEdmRdm,
@@ -171,6 +165,18 @@ export class RiskLinkState implements NgxsOnInit {
           dataSelected: array
         }
       });
+    } else if (action === 'selectLink') {
+      const {id, name} = RDM;
+      const searchTerm = _.truncate(name, {length: name.length - 2, omission: ''});
+      this.riskApi.searchRiskLinkPortfolio(id, searchTerm).pipe(
+        mergeMap(
+          (data: any) => {
+            of(
+
+            )
+          }
+        )
+      );
     } else {
       if (action === 'selectAll') {
         array.forEach(dt => {
@@ -209,7 +215,7 @@ export class RiskLinkState implements NgxsOnInit {
     const state = ctx.getState();
     const {action, value, item} = payload;
     console.log(action, value, item);
-    const portfolios = _.toArray(state.selectedAnalysisAndPortoflio.selectedPortfolio.data);
+    const portfolios = _.toArray(_.get(state.portfolios, `${item.edmId}.data`));
     let newData = {};
     if (action === 'selectOne') {
       if (value) {
@@ -218,27 +224,23 @@ export class RiskLinkState implements NgxsOnInit {
         // array = array.filter(data => data.id == item || data.selected === true);
       }
       ctx.patchState({
-        selectedAnalysisAndPortoflio: {
-          ...state.selectedAnalysisAndPortoflio,
-          selectedPortfolio: {
-            ...state.selectedAnalysisAndPortoflio.selectedPortfolio,
+        portfolios: {
+          ...state.portfolios,
+          [item.edmId]: {
+            ...state.portfolios[item.edmId],
             data: {
-              ...state.selectedAnalysisAndPortoflio.selectedPortfolio.data,
+              ...state.portfolios[item.edmId].data,
               [item.dataSourceId]: {
-                ...state.selectedAnalysisAndPortoflio.selectedPortfolio.data[item.dataSourceId],
+                ...state.portfolios[item.edmId].data[item.dataSourceId],
                 selected: value
               }
-            },
+            }
           },
         }
       });
     } else {
       let selected: boolean;
-      if (action === 'selectAll') {
-        selected = true;
-      } else if (action === 'unselectAll') {
-        selected = false;
-      }
+      action === 'selectAll' ? selected = true : selected = false;
       portfolios.forEach((dt: any) => {
           newData = _.merge(newData, {
             [dt.dataSourceId]: {
@@ -249,12 +251,12 @@ export class RiskLinkState implements NgxsOnInit {
         }
       );
       ctx.patchState({
-        selectedAnalysisAndPortoflio: {
-          ...state.selectedAnalysisAndPortoflio,
-          selectedPortfolio: {
-            ...state.selectedAnalysisAndPortoflio.selectedPortfolio,
+        portfolios: {
+          ...state.portfolios,
+          [item.edmId]: {
+            ...state.portfolios[item.edmId],
             data: newData
-          },
+          }
         },
       });
 
@@ -265,9 +267,9 @@ export class RiskLinkState implements NgxsOnInit {
   toggleRiskLinkAnalysis(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkAnalysisAction) {
     const state = ctx.getState();
     const {action, value, item} = payload;
-    const analysis = _.toArray(state.selectedAnalysisAndPortoflio.selectedAnalysis.data);
+    const analysis = _.toArray(state.analysis.data);
     let newData = {};
-    const dataSelected = state.selectedAnalysisAndPortoflio.selectedAnalysis;
+    const dataSelected = state.analysis;
     if (action === 'selectOne') {
       if (value) {
         // array = array.filter(data => data.id !== item && data.selected === true);
@@ -275,26 +277,23 @@ export class RiskLinkState implements NgxsOnInit {
         // array = array.filter(data => data.id == item || data.selected === true);
       }
       ctx.patchState({
-        selectedAnalysisAndPortoflio: {
-          ...state.selectedAnalysisAndPortoflio,
-          selectedAnalysis: {
-            ...state.selectedAnalysisAndPortoflio.selectedAnalysis,
+        analysis: {
+          ...state.analysis,
+          [item.rdmId]: {
+            ...state.analysis[item.rdmId],
             data: {
-              ...state.selectedAnalysisAndPortoflio.selectedAnalysis.data,
+              ...state.analysis[item.rdmId].data,
               [item.analysisId]: {
-                ...state.selectedAnalysisAndPortoflio.selectedAnalysis.data[item.analysisId],
+                ...state.portfolios[item.edmId].data[item.analysisId],
                 selected: value
               }
-            },
+            }
           },
-        }});
+        }
+      });
     } else {
       let selected: boolean;
-      if (action === 'selectAll') {
-        selected = true;
-      } else if (action === 'unselectAll') {
-        selected = false;
-      }
+      action === 'selectAll' ? selected = true : selected = false;
       analysis.forEach((st: any) => {
           newData = _.merge(newData, {
             [st.analysisId]: {
@@ -304,14 +303,13 @@ export class RiskLinkState implements NgxsOnInit {
           });
         }
       );
-      console.log(analysis);
       ctx.patchState({
-        selectedAnalysisAndPortoflio: {
-          ...state.selectedAnalysisAndPortoflio,
-          selectedAnalysis: {
-            ...state.selectedAnalysisAndPortoflio.selectedAnalysis,
+        analysis: {
+          ...state.analysis,
+          [item.rdmId]: {
+            ...state.analysis[item.rdmId],
             data: newData
-          },
+          }
         },
       });
 
@@ -332,20 +330,6 @@ export class RiskLinkState implements NgxsOnInit {
         (data: any) =>
           of(ctx.patchState(
             {
-              selectedAnalysisAndPortoflio: {
-                ...state.selectedAnalysisAndPortoflio,
-                selectedAnalysis: {
-                  data: Object.assign({},
-                    ...data.content.map(Analysis => ({
-                        [Analysis.analysisId]: {
-                          ...Analysis,
-                          selected: false
-                        }
-                      }
-                    ))),
-                  lastSelectedIndex: null
-                }
-              },
               analysis: _.merge(
                 {}, state.analysis, {
                   [payload.id]: {
@@ -378,20 +362,6 @@ export class RiskLinkState implements NgxsOnInit {
         data =>
           of(ctx.patchState(
             {
-              selectedAnalysisAndPortoflio: {
-                ...state.selectedAnalysisAndPortoflio,
-                selectedPortfolio: {
-                  data: Object.assign({},
-                    ...data.content.map(portfolio => ({
-                        [portfolio.dataSourceId]: {
-                          ...portfolio,
-                          selected: false
-                        }
-                      }
-                    ))),
-                  lastSelectedIndex: null
-                }
-              },
               portfolios: _.merge(
                 {}, state.portfolios, {
                   [payload.id]: {

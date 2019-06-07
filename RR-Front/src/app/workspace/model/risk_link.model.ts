@@ -8,8 +8,6 @@ export class RiskLinkModel {
     numberOfElement: number
   };
   display: {
-    displayDropdownRDMEDM: boolean,
-    displayListRDMEDM: boolean,
     displayTable: boolean,
     displayImport: boolean,
   };
@@ -28,10 +26,6 @@ export class RiskLinkModel {
     financialPerspectiveEPM: any,
     targetCurrency: any,
     calibration: any,
-  };
-  selectedAnalysisAndPortoflio: {
-    selectedAnalysis: any;
-    selectedPortfolio: any;
   };
   analysis: any;
   portfolios: any;
