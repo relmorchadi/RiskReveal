@@ -42,11 +42,11 @@
     right: 2px;">
                   <i nz-icon nzType="undo" nzTheme="outline"></i></button>
               </div>
-              <nz-modal nzWrapClassName="addTagModal"
+              <nz-modal
+                nzWrapClassName="addTagModal"
                         [nzVisible]="addTagModal"
                         [nzTitle]="addTagModalTitle"
-                        (nzOnCancel)="toggleColorPicker();toggleModal()"
-                        (nzAfterClose)="toggleColorPicker()"
+                        (nzOnCancel)="initColorPicker();toggleModal()"
                         [nzClosable]="false"
                         [nzFooter]="addTagModalFooter"
                         [nzContent]="addTagModalContent">
@@ -70,7 +70,7 @@
                       </nz-input-group>
                       <div class="color" [ngStyle]="{'background-color': initColor}" (click)="toggleColorPicker('color')">
                       </div>
-                      <color-chrome (clickOutside)="toggleColorPicker()" (onChangeComplete)="initColor=$event.color.hex" [color]="initColor" *ngIf="colorPickerIsVisible" ></color-chrome>
+                      <color-chrome (clickOutside)="colorPickerIsVisible=false" (onChangeComplete)="initColor=$event.color.hex" [color]="initColor" *ngIf="colorPickerIsVisible" ></color-chrome>
                       <ng-template #suffixTemplate
                       ><i
                         nz-icon
@@ -86,7 +86,7 @@
                   </nz-tab>
                   <nz-tab *ngIf="fromPlts" nzTitle="Assign Existing">
                     <div class="content">
-                      <nz-select
+                      <!--nz-select
                         style="width: 200px;"
                         [nzDisabled]="(userTags | keys)?.length == 0"
                         [nzPlaceHolder]="addTagModalPlaceholder"
@@ -101,20 +101,30 @@
                             </span></label>
                           </div>
                         </nz-option>
-                      </nz-select>
-                      <!--p-multiSelect appendTo="body" dataKey="tagId" optionLabel="tagName" [showToggleAll]="false" (onChange)="log(e)" [options]="userTags | toArray" [(ngModel)]="addModalSelect" [panelStyle]="{minWidth:'300px'}">
+                      </nz-select-->
+                      <p-multiSelect
+                        [displaySelectedLabel]="false"
+                        [showHeader]="false"
+                        appendTo="body"
+                        dataKey="tagId"
+                        optionLabel="tagName"
+                        [showToggleAll]="false"
+                        (onChange)="log(e)"
+                        [options]="userTags | toArray"
+                        [(ngModel)]="addModalSelect"
+                        [panelStyle]="{minWidth:'450px'}">
 
                         <ng-template let-value pTemplate="selectedItems">
                           <span *ngIf="!value || value.length === 0" class="ui-multiselected-empty-token ui-corner-all">Select a Tag</span>
                           <span *ngIf="value && value.length === 1" class="ui-multiselected-empty-token ui-corner-all">{{value[0]?.tagName}}</span>
                           <span *ngIf="value && value.length > 1" class="ui-multiselected-empty-token ui-corner-all">Multiple</span>
                         </ng-template>
+
                         <ng-template let-tag let-i="index" pTemplate="item">
-                          {{i}}
-                          <div style="font-size:14px;float:right;margin-top:4px">{{tag.tagName}}</div>
+                          <div style="font-size:14px;float:right;margin-top:4px">{{tag.label}}</div>
                         </ng-template>
 
-                      </p-multiSelect-->
+                      </p-multiSelect>
                     </div>
                   </nz-tab>
                 </nz-tabset>
@@ -197,7 +207,7 @@
               <i class="icon-menu_24px" style="position: absolute;
     right: 7px;
     top: 59px;
-    font-size: 18px;
+    font-size: 17px;
     width: 14px;"></i>
               <!--nz-table-- #pltTable
                         [nzData]="listOfPlts"
@@ -353,8 +363,10 @@
                     <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
                       <ng-container *ngIf="i === 0">
                         <div class="td-wrapper-tags">
-                        <span *ngFor="let tag of rowData.userTag" [ngStyle]="{'background-color': getColor(tag.tagId, 'user')}"></span>
-                          <!--<span style ="background-color: #0b97c4">&nbsp;</span>-->
+                          <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
+                            <span class="tag-el" *ngIf="i < 2" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
+                            <span class="tag-ellipsis" *ngIf="i == 2" style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
+                          </ng-container>
                         </div>
                       </ng-container>
                       <ng-container *ngIf="i === 1">
