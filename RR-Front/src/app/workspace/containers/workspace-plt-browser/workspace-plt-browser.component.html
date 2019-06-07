@@ -45,8 +45,7 @@
               <nz-modal nzWrapClassName="addTagModal"
                         [nzVisible]="addTagModal"
                         [nzTitle]="addTagModalTitle"
-                        (nzOnCancel)="toggleColorPicker();toggleModal()"
-                        (nzAfterClose)="toggleColorPicker()"
+                        (nzOnCancel)="initColorPicker();toggleModal()"
                         [nzClosable]="false"
                         [nzFooter]="addTagModalFooter"
                         [nzContent]="addTagModalContent">
@@ -70,7 +69,7 @@
                       </nz-input-group>
                       <div class="color" [ngStyle]="{'background-color': initColor}" (click)="toggleColorPicker('color')">
                       </div>
-                      <color-chrome (clickOutside)="toggleColorPicker()" (onChangeComplete)="initColor=$event.color.hex" [color]="initColor" *ngIf="colorPickerIsVisible" ></color-chrome>
+                      <color-chrome (clickOutside)="colorPickerIsVisible=false" (onChangeComplete)="initColor=$event.color.hex" [color]="initColor" *ngIf="colorPickerIsVisible" ></color-chrome>
                       <ng-template #suffixTemplate
                       ><i
                         nz-icon

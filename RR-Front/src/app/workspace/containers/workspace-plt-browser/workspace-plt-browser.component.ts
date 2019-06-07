@@ -824,6 +824,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if(!this.colorPickerIsVisible) this.initColor= '#fe45cd';
   }
 
+  initColorPicker(){
+    this.colorPickerIsVisible = false;
+    this.initColor = '#fe45cd'
+  }
+
 
   log(e: any) {
     console.log(e,this.addModalSelect);
