@@ -33,8 +33,6 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   closePrevent = false;
 
-  listEDM: any = [];
-  listRDM: any = [];
   serviceSubscription: any;
 
   listEdmRdm: any = [
@@ -72,9 +70,9 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
   ];
 
-  tableLeftAnalysis: any = [];
+  tableLeftAnalysis: any;
 
-  tableLeftProtfolio: any = [];
+  tableLeftProtfolio: any;
 
   scrollableColsAnalysis = [
     {field: 'description', header: 'Description', width: '150px', type: 'text'},
@@ -218,12 +216,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.serviceSubscription = [
       this.state$.subscribe(value => this.state = _.merge({}, value)),
-      this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedAnalysis.data).subscribe(dt => {
-        this.tableLeftAnalysis = _.toArray(dt);
+      this.store.select(st => st.RiskLinkModel.analysis).subscribe(dt => {
+        this.tableLeftAnalysis = dt;
         this.detectChanges();
       }),
-      this.store.select(st => st.RiskLinkModel.selectedAnalysisAndPortoflio.selectedPortfolio.data).subscribe(dt => {
-        this.tableLeftProtfolio = _.toArray(dt);
+      this.store.select(st => st.RiskLinkModel.portfolios).subscribe(dt => {
+        this.tableLeftProtfolio = dt;
         this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
@@ -233,7 +231,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if(this.serviceSubscription)
+    if (this.serviceSubscription)
       this.serviceSubscription.forEach(sub => sub.unsubscribe());
   }
 
@@ -242,7 +240,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     if (filter === null) {
       return array;
     } else {
-      return array.filter(dt => dt.type === filter );
+      return array.filter(dt => dt.type === filter);
     }
   }
 
@@ -312,48 +310,48 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   displayImported() {
-    if (this.state.currentStep === 1) {
+    if (true) {
       this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
     }
   }
 
-/*  selectRow(row: any, index: number) {
-    if ((window as any).event.ctrlKey) {
-      row.selected = !row.selected;
+  /*  selectRow(row: any, index: number) {
+      if ((window as any).event.ctrlKey) {
+        row.selected = !row.selected;
+      }
+      if ((window as any).event.shiftKey) {
+        event.preventDefault();
+        if (this.lastSelectedIndex) {
+          this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
+          this.lastSelectedIndex = null;
+        } else {
+          this.lastSelectedIndex = index;
+        }
+      }
+      // this.currentSelectedItem = row;
+      const selectedRowsAnalysis = this.tableLeftAnalysis.filter(ws => ws.selected === true);
+      const selectedRowsPortfolio = this.tableLeftProtfolio.filter(ws => ws.selected === true);
+
     }
-    if ((window as any).event.shiftKey) {
-      event.preventDefault();
-      if (this.lastSelectedIndex) {
-        this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
-        this.lastSelectedIndex = null;
+
+    selectSection(from, to) {
+      let tableUpdated: any;
+      if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+        tableUpdated = this.tableLeftAnalysis;
       } else {
-        this.lastSelectedIndex = index;
+        tableUpdated = this.tableLeftProtfolio;
       }
-    }
-    // this.currentSelectedItem = row;
-    const selectedRowsAnalysis = this.tableLeftAnalysis.filter(ws => ws.selected === true);
-    const selectedRowsPortfolio = this.tableLeftProtfolio.filter(ws => ws.selected === true);
-
-  }
-
-  selectSection(from, to) {
-    let tableUpdated: any;
-    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
-      tableUpdated = this.tableLeftAnalysis;
-    } else {
-      tableUpdated = this.tableLeftProtfolio;
-    }
-    if (from === to) {
-      tableUpdated[from].selected = !tableUpdated[from].selected;
-    } else {
-      for (let i = from; i <= to; i++) {
-        tableUpdated[i].selected = !tableUpdated[i].selected;
+      if (from === to) {
+        tableUpdated[from].selected = !tableUpdated[from].selected;
+      } else {
+        for (let i = from; i <= to; i++) {
+          tableUpdated[i].selected = !tableUpdated[i].selected;
+        }
       }
-    }
-  }*/
+    }*/
 
   getScrollableCols() {
-    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'rdm') {
       return this.scrollableColsAnalysis;
     } else {
       return this.scrollableColsPortfolio;
@@ -361,7 +359,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   getFrozenCols() {
-    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
+    if (this.state.selectedEDMOrRDM === 'rdm') {
       return this.frozenColsAnalysis;
     } else {
       return this.frozenColsPortfolio;
@@ -369,10 +367,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   getTableData() {
-    if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
-      return this.tableLeftAnalysis;
+    if (this.state.selectedEDMOrRDM === 'rdm') {
+      return _.toArray( this.tableLeftAnalysis[_.toArray(this.state.listEdmRdm.selectedListEDMAndRDM).filter(dt => dt.selected === true)[0].id].data );
     } else {
-      return this.tableLeftProtfolio;
+      return _.toArray(this.tableLeftProtfolio[_.toArray(this.state.listEdmRdm.selectedListEDMAndRDM).filter(dt => dt.selected === true)[0].id].data);
     }
   }
 
@@ -388,20 +386,22 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   loadItemsLazy(event) {
     let sizePage = '';
     if (event.first + event.rows > this.state.listEdmRdm.totalNumberElement) {
-      sizePage  = this.state.listEdmRdm.totalNumberElement.toString();
+      sizePage = this.state.listEdmRdm.totalNumberElement.toString();
     } else {
       sizePage = event.first === 0 ? '20' : (event.first + event.rows).toString();
     }
-    if (this.state.listEdmRdm.dataLength < event.first + event.rows) {
+    if (this.state.listEdmRdm.numberOfElement < event.first + event.rows) {
       console.log('you called for :' + sizePage);
-      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: this.state.listEdmRdm.searchValue, size: sizePage}));
+      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({
+        keyword: this.state.listEdmRdm.searchValue,
+        size: sizePage
+      }));
     }
 
   }
 
   selectRows(row: any, index: number) {
     if ((window as any).event.ctrlKey) {
-      // row.selected = !row.selected;
       this.lastSelectedIndex = index;
     } else if ((window as any).event.shiftKey) {
       event.preventDefault();
@@ -435,7 +435,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   checkRow(event, rowData) {
-    if (this.state.listEdmRdm.selectedEDMOrRDM === 'edm') {
+    if (this.state.selectedEDMOrRDM === 'edm') {
       this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
     } else {
       this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));

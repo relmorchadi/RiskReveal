@@ -27,10 +27,9 @@ const initiaState: RiskLinkModel = {
     data: null,
     dataSelected: [],
     selectedListEDMAndRDM: null,
-    selectedEDMOrRDM: null,
     totalNumberElement: 0,
     searchValue: '',
-    dataLength: 0
+    numberOfElement: 0
   },
   display: {
     displayDropdownRDMEDM: false,
@@ -64,7 +63,9 @@ const initiaState: RiskLinkModel = {
     selectedAnalysis: {data: null, lastSelectedIndex: null},
     selectedPortfolio: {data: null, lastSelectedIndex: null},
   },
-  currentStep: 0,
+  analysis: null,
+  portfolios: null,
+  selectedEDMOrRDM: null,
 };
 
 @State<RiskLinkModel>({
@@ -344,7 +345,26 @@ export class RiskLinkState implements NgxsOnInit {
                     ))),
                   lastSelectedIndex: null
                 }
-              }
+              },
+              analysis: _.merge(
+                {}, state.analysis, {
+                  [payload.id]: {
+                    data: Object.assign({},
+                      ...data.content.map(Analysis => ({
+                          [Analysis.analysisId]: {
+                            ...Analysis,
+                            selected: false
+                          }
+                        }
+                      ))),
+                    selectedData: [],
+                    lastSelectedIndex: null,
+                    totalNumberElement: data.totalElements,
+                    numberOfElement: data.size,
+                    filter: {}
+                  }
+                }
+              )
             }))
       )
     );
@@ -371,7 +391,26 @@ export class RiskLinkState implements NgxsOnInit {
                     ))),
                   lastSelectedIndex: null
                 }
-              }
+              },
+              portfolios: _.merge(
+                {}, state.portfolios, {
+                  [payload.id]: {
+                    data: Object.assign({},
+                      ...data.content.map(portfolio => ({
+                          [portfolio.dataSourceId]: {
+                            ...portfolio,
+                            selected: false
+                          }
+                        }
+                      ))),
+                    selectedData: [],
+                    lastSelectedIndex: null,
+                    totalNumberElement: data.totalElements,
+                    numberOfElement: data.size,
+                    filter: {}
+                  }
+                }
+              )
             }))
       )
     );
@@ -399,8 +438,8 @@ export class RiskLinkState implements NgxsOnInit {
           ...state.listEdmRdm,
           data: state.listEdmRdm.selectedListEDMAndRDM,
           selectedListEDMAndRDM: newDataSelected,
-          selectedEDMOrRDM: null,
         },
+        selectedEDMOrRDM: null,
       });
     } else {
       array.forEach(dt => {
@@ -424,8 +463,8 @@ export class RiskLinkState implements NgxsOnInit {
             ...newDataSelected,
             [id]: {...newDataSelected[id], selected: true}
           },
-          selectedEDMOrRDM: type
         },
+        selectedEDMOrRDM: type
       });
     }
   }
@@ -434,17 +473,10 @@ export class RiskLinkState implements NgxsOnInit {
   selectRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
     const listDataToArray = _.toArray(state.listEdmRdm.data);
-    let rdmValidator = false, emdValidator = false;
     let listSelected = {};
     listDataToArray.forEach(
       dt => {
         if (dt.selected) {
-          if (dt.type === 'rdm') {
-            rdmValidator = true;
-          }
-          if (dt.type === 'edm') {
-            emdValidator = true;
-          }
           listSelected = _.merge(listSelected, {
             [dt.id]: {
               ...dt,
@@ -460,7 +492,6 @@ export class RiskLinkState implements NgxsOnInit {
         ...state.listEdmRdm,
         selectedListEDMAndRDM: listSelected
       },
-      currentStep: (rdmValidator && emdValidator) ? 1 : 0
     });
   }
 
@@ -492,7 +523,7 @@ export class RiskLinkState implements NgxsOnInit {
                   })),
                 totalNumberElement: data.totalElements,
                 searchValue: keyword,
-                dataLength: data.size
+                numberOfElement: data.size
               }
             }))
       )
@@ -521,7 +552,7 @@ export class RiskLinkState implements NgxsOnInit {
                   ))),
                 searchValue: '',
                 totalNumberElement: data.totalElements,
-                dataLength: data.size
+                numberOfElement: data.size
               }
             }))
       )

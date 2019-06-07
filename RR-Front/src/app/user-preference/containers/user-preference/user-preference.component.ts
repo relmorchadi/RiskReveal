@@ -15,6 +15,9 @@ import * as _ from "lodash";
 export class UserPreferenceComponent implements OnInit {
   defaultImport;
 
+  extraDetailDate = false;
+  extraDetailTime = false;
+
   search = ['Country',
     'Cedent Name',
     'Cedant Code',
@@ -61,6 +64,11 @@ export class UserPreferenceComponent implements OnInit {
   }
 
   changePerspective() {
+  }
+
+  returnToConf() {
+    this.extraDetailDate = false;
+    this.extraDetailTime = false;
   }
 
 }

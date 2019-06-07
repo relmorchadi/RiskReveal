@@ -7,7 +7,7 @@
       </div>
     </div>
 
-    <div class="my-tabs" style="display: flex; flex-direction: row; width: 100%;">
+    <div class="my-tabs">
       <div class="noMargin">
         <nz-tabset class="tabset-left">
           <nz-tab [nzTitle]="path">
@@ -45,11 +45,11 @@
               <nz-modal nzWrapClassName="addTagModal"
                         [nzVisible]="addTagModal"
                         [nzTitle]="addTagModalTitle"
-                        (nzOnCancel)="addTagModal = false"
+                        (nzOnCancel)="toggleColorPicker();toggleModal()"
+                        (nzAfterClose)="toggleColorPicker()"
                         [nzClosable]="false"
                         [nzFooter]="addTagModalFooter"
-                        [nzContent]="addTagModalContent"
-                        (nzOnOk)="handleOk()">
+                        [nzContent]="addTagModalContent">
               </nz-modal>
 
               <ng-template #addTagModalTitle>
@@ -62,13 +62,15 @@
               </ng-template>
 
               <ng-template #addTagModalContent>
-                <nz-tabset [(nzSelectedIndex)]="addTagModalIndex">
+                <nz-tabset class="tab-content-cnt" [(nzSelectedIndex)]="addTagModalIndex">
                   <nz-tab nzTitle="Create New Tag">
                     <div class="content">
-                      <nz-form-label>Tag Name</nz-form-label>
                       <nz-input-group [nzSuffix]="suffixTemplate">
-                        <input  [(ngModel)]="addModalInput" type="text" nz-input />
+                        <input  class="input-default" [(ngModel)]="addModalInput" type="text" nz-input placeholder="Tag Name"/>
                       </nz-input-group>
+                      <div class="color" [ngStyle]="{'background-color': initColor}" (click)="toggleColorPicker('color')">
+                      </div>
+                      <color-chrome (clickOutside)="toggleColorPicker()" (onChangeComplete)="initColor=$event.color.hex" [color]="initColor" *ngIf="colorPickerIsVisible" ></color-chrome>
                       <ng-template #suffixTemplate
                       ><i
                         nz-icon
@@ -82,25 +84,37 @@
                       ></ng-template>
                     </div>
                   </nz-tab>
-                  <nz-tab nzTitle="Assign Existing">
+                  <nz-tab *ngIf="fromPlts" nzTitle="Assign Existing">
                     <div class="content">
                       <nz-select
                         style="width: 200px;"
-                        nzShowSearch
-                        nzAllowClear
                         [nzDisabled]="(userTags | keys)?.length == 0"
-                        nzPlaceHolder="Select a tag"
-                        [(ngModel)]="addModalSelect"
+                        [nzPlaceHolder]="addTagModalPlaceholder"
+                        nzAutoClearSearchValue
+                        [(ngModel)]="addTagModalPlaceholder"
+                        (ngModelChange)="selectUserTag($event)"
                       >
-                        <nz-option nzCustomContent *ngFor="let key of userTags | keys" [nzLabel]="userTags[key]?.tagName" [nzValue]="userTags[key]">
+                        <nz-option nzCustomContent *ngFor="let key of userTags | keys" [nzLabel]="userTags[key]?.tagName" [nzValue]="key">
                           <div class="opt-cnt">
-                            <label nz-checkbox [ngModel]="true"><span class="pop-up-option-text">
+                            <label nz-checkbox [nzChecked]="selectedUserTags[key]" (nzCheckedChange)="selectUserTag(key)" ><span class="pop-up-option-text">
                             {{userTags[key]?.tagName}}
                             </span></label>
                           </div>
-                          <i class="icon-close_24px"></i>
                         </nz-option>
                       </nz-select>
+                      <!--p-multiSelect appendTo="body" dataKey="tagId" optionLabel="tagName" [showToggleAll]="false" (onChange)="log(e)" [options]="userTags | toArray" [(ngModel)]="addModalSelect" [panelStyle]="{minWidth:'300px'}">
+
+                        <ng-template let-value pTemplate="selectedItems">
+                          <span *ngIf="!value || value.length === 0" class="ui-multiselected-empty-token ui-corner-all">Select a Tag</span>
+                          <span *ngIf="value && value.length === 1" class="ui-multiselected-empty-token ui-corner-all">{{value[0]?.tagName}}</span>
+                          <span *ngIf="value && value.length > 1" class="ui-multiselected-empty-token ui-corner-all">Multiple</span>
+                        </ng-template>
+                        <ng-template let-tag let-i="index" pTemplate="item">
+                          {{i}}
+                          <div style="font-size:14px;float:right;margin-top:4px">{{tag.tagName}}</div>
+                        </ng-template>
+
+                      </p-multiSelect-->
                     </div>
                   </nz-tab>
                 </nz-tabset>
@@ -108,12 +122,13 @@
 
               <ng-template #addTagModalFooter>
                 <div class="footer">
-                  <button (click)="assignPltsToTag()" nz-button>
-                    {{addTagModalIndex == 0 ? 'Create & ' : ''}} Assign
+                  <button (click)="addTagModal=false;addModalInput='';addModalSelect=''" nz-button class="button-no-outline">cancel</button>
+                  <button class="button-standard" (click)="assignPltsToTag()" nz-button>
+                    {{addTagModalIndex == 0 ? fromPlts ? 'Create & Assign' : 'Create' : 'Assign'}}
                   </button>
                 </div>
               </ng-template>
-              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i (click)="addTagModal = true" style="cursor:pointer;" class="icon-plus-circle"></i></div>
+              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i (click)="addTagModal = true;fromPlts=false" style="cursor:pointer;" class="icon-plus-circle"></i></div>
               <div *ngFor="let key of userTags | keys" nz-row class="ml-3 mt-1">
                 <p-contextMenu appendTo="body" [target]="tagMenu" [model]="tagContextMenu" ></p-contextMenu>
                     <span
@@ -121,35 +136,50 @@
                       (contextmenu)="tagFormenu = userTags[key]"
                       [ngClass]="{'active-tag': userTags[key]?.selected}"
                       class="chips"
-                      [ngStyle]="{'background-color': 'blue'}"
+                      [ngStyle]="{'background-color': userTags[key]?.tagColor}"
                       (click)="setFilter('userTag', userTags[key])">
                       <span class="chips-content">{{userTags[key]?.tagName}}</span>
-                      <span [ngStyle]="{'background-color': 'black'}" class="chips-counter">{{userTags[key]?.count}}</span>
+                      <span class="chips-counter">
+                        {{userTags[key]?.count}}
+                        <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
+                      </span>
                     </span>
               </div>
 
               <div nz-row class="tags-title-section">System Tags</div>
               <nz-collapse
-                [nzAccordion]="true"
+                [nzAccordion]="false"
               >
-                <nz-collapse-panel
-                  *ngFor="let section of (systemTagsCount | keys)"
-                  [nzHeader]="section"
-                >
-                  <ul class="title-list">
-                    <li *ngFor="let tag of ( systemTagsCount[section] | keys)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
-                    <span
-                      [ngClass]="{'active-tag': tag.selected }"
-                      class="chips"
-                      [ngStyle]="{'background-color': 'orange'}"
-                      (click)="setFilter('systemTag', tag, section)"
+                <ng-container *ngFor="let section of (systemTagsCount | keys)">
+                  <ng-container *ngIf="(systemTagsCount[section] | keys).length > 0">
+                    <nz-collapse-panel
+                      [nzHeader]="section"
                     >
-                      <span class="chips-content">{{tag}}</span>
-                      <span [ngStyle]="{'background-color': 'black' }" class="chips-counter">{{systemTagsCount[section][tag]}}</span>
+                      <ul class="title-list" style="position: relative;left:-24px">
+                        <li *ngFor="let tag of ( systemTagsCount[section] | keys)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                    <span
+                      [ngClass]="{'active-tag': systemTagsCount[section][tag].selected }"
+                      class="chips"
+                      [ngStyle]="{
+                      'background-color': systemTagsCount[section][tag].count ? 'orange' : 'grey',
+                      'cursor': systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      }"
+                      (click)="setFilter('systemTag', tag, section);selectSystemTag(section,tag)"
+                    >
+                      <span
+                        [ngStyle]="{
+                      'cursor': systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      }"
+                        class="chips-content">{{tag}}</span>
+                      <span [ngStyle]="{
+                      'background-color': 'black',
+                      'cursor': systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'}" class="chips-counter">{{systemTagsCount[section][tag].count}}</span>
                 </span>
-                    </li>
-                  </ul>
-                </nz-collapse-panel>
+                        </li>
+                      </ul>
+                    </nz-collapse-panel>
+                  </ng-container>
+                </ng-container>
               </nz-collapse>
 
             </div>

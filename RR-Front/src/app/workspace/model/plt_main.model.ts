@@ -4,5 +4,4 @@ export class pltMainModel {
   loading: boolean;
   filters: any;
   userTags: any;
-  systemTags: any;
 }

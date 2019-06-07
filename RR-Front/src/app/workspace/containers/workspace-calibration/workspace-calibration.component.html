@@ -205,7 +205,8 @@
                      style="margin-top: 18px; margin-left: -8px;display: flex;overflow: auto; max-width: 100%;margin-top: 18px; margin-left: -8px;">
                   <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                     <div class="dashbordAdj">
-                      <span style="height: 30px;margin: 0px 2px 0px 2px;">{{adj.name}}</span>
+                      <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
+                        style="height: 20px;margin: 0px 2px 0px 2px; text-overflow: ellipsis; white-space: nowrap;overflow: hidden;" >{{adj.name}}</div>
                       <nz-dropdown [nzPlacement]="'bottomLeft'">
                         <i class="icon-menu_24px" nz-dropdown style="font-size: 18px;float: right;"></i>
                         <ul nz-menu>
@@ -291,7 +292,9 @@
                                            [dndDraggable]="adj"
                                            class="adjustDiv"
                                            dndEffectAllowed="move">
-                                        <span class="spanStyle">{{adj.name}}</span>
+                                        <div
+                                          [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
+                                           class="spanStyle">{{adj.name}}</div>
                                         <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                           <i [hidden]="!adj.hover" class="icon-menu_24px"
                                              nz-dropdown style="font-size: 18px;float: right"></i>
@@ -345,8 +348,8 @@
                                              [dndDraggable]="adj"
                                              class="adjustDiv"
                                              dndEffectAllowed="move">
-                                              <span
-                                                class="spanStyle">{{adj.name}}</span>
+                                              <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
+                                                class="spanStyle">{{adj.name}}</div>
                                           <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                             <i [hidden]="!adj.hover" class="icon-menu_24px"
                                                nz-dropdown style="font-size: 18px;float: right"></i>
@@ -406,7 +409,7 @@
                                        style="display: flex;height: max-content;margin-left: 10px">
                                     <div class="dndPlaceholder" dndPlaceholderRef id="dndPlaceholder"></div>
                                     <ng-container *ngFor="let adj of dataTable1.adj ;let adjindex=index">
-                                      <ng-container *ngIf="adj.category=='poin'">
+                                      <ng-container *ngIf="adj.category=='Inuring'">
                                         <div (dndCanceled)="onDragged($event,adj, dataTable1.adj, 'none','cancled')"
                                              (dndMoved)="onDragged($event,adj,dataTable1.adj, 'move','td2')"
                                              (mouseout)="hideIcon(adj)"
@@ -415,8 +418,8 @@
                                              [dndDraggable]="adj"
                                              class="adjustDiv"
                                              dndEffectAllowed="move">
-                                              <span
-                                                class="spanStyle">{{adj.name}}</span>
+                                              <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
+                                                class="spanStyle">{{adj.name}}</div>
                                           <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                             <i [hidden]="!adj.hover" class="icon-menu_24px"
                                                nz-dropdown style="font-size: 18px;float: right"></i>
@@ -571,7 +574,11 @@
     </div>
     <div nz-row>
       <div nz-col nzSpan="24">
-        &nbsp;
+        <nz-collapse *ngIf="categorySelectedFromAdjustement?.description" [nzBordered]="false">
+          <nz-collapse-panel [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis" [nzActive]="true">
+            <p>{{categorySelectedFromAdjustement?.description}}</p>
+          </nz-collapse-panel>
+        </nz-collapse>
       </div>
     </div>
     <div nz-row>
@@ -613,12 +620,12 @@
         </nz-select>
       </div>
     </div>
-    <div nz-row style="margin-top: 20px;">
+    <div nz-row style="margin-top: 20px;" *ngIf="categorySelectedFromAdjustement">
       <div class="modal-left-item" nz-col nzSpan="8" style="margin: 5px;">
         Capped
       </div>
       <div nzSpan="16" style="line-height: 2.2rem;">
-        <nz-switch [(ngModel)]="disabled" nzSize="small" style="margin-left: 15px;"></nz-switch>
+        <nz-switch [nzDisabled]="true" [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" nzSize="small" style="margin-left: 15px;"></nz-switch>
       </div>
     </div>
 

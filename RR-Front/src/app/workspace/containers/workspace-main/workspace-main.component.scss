@@ -146,10 +146,12 @@
 }
 
 .workspace-main-content {
+  height: 100vh;
+  overflow: auto;
   position: relative;
   flex: 1;
   background: rgb(244, 246, 252);
-
+  
 }
 
 .pine-btn {
