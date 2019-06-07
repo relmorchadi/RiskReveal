@@ -65,6 +65,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         })
 
         this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+
+        this.addModalSelect = _.toArray(this.selectedUserTags);
       }}
   ];
 
@@ -77,7 +79,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'peril', header: 'Peril', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'regionPerilCode', header: 'Region Peril Code', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {fields: 'regionPerilCode', header: 'Region Peril Code', width: '80px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
     {fields: 'vendorSystem', header: 'Vendor System', width: '90px', sorted: true, filtred: true, icon: null, type: 'field'},
@@ -299,9 +301,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.activeCheckboxSort = false;
     this.loading = true;
     this.addTagModal = false;
+    this.addTagModalIndex= 0;
     this.systemTagsCount= {};
     this.userTagsCount= {};
-    this.addTagModalIndex = 0;
     this.fromPlts = false;
     this.selectedUserTags= {};
     this.initColor = '#fe45cd'
@@ -807,7 +809,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   toggleModal(){
-    this.addTagModal = !this.addTagModal;
+    this.addTagModal = false;
     if(!this.addTagModal){
       this.addModalInput=null;
       this.addModalSelect=null;

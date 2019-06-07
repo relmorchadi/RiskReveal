@@ -13,10 +13,11 @@ import { ShowLastPipe } from './pipes/show-last.pipe';
 import { InputSearchPipe } from './pipes/input-search.pipe';
 import {ColorChromeModule} from 'ngx-color/chrome';
 import { ToArrayPipe } from './pipes/to-array.pipe';
+import { LogPipe } from './pipes/log.pipe';
 
 
 @NgModule({
-  declarations: [...COMPONENTS, HighlightDirective, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe],
+  declarations: [...COMPONENTS, HighlightDirective, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe, LogPipe],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -40,7 +41,8 @@ import { ToArrayPipe } from './pipes/to-array.pipe';
     InputSearchPipe,
     ColorChromeModule,
     MultiSelectModule,
-    ToArrayPipe
+    ToArrayPipe,
+    LogPipe
   ]
 })
 export class SharedModule { }
