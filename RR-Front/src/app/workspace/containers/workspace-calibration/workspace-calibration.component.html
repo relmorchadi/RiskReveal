@@ -226,7 +226,7 @@
                         </ul>
                       </nz-dropdown>
                       <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                             class="inputOfdachboard"
+                             class="templateInput"
                              style="height: 17px;">
                     </div>
                   </ng-container>
@@ -289,7 +289,7 @@
                                            *ngIf="adj.category=='Base'"
                                            [dndDisableIf]="dataTable1.locked"
                                            [dndDraggable]="adj"
-                                           class="divInTd"
+                                           class="adjustDiv"
                                            dndEffectAllowed="move">
                                         <span class="spanStyle">{{adj.name}}</span>
                                         <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
@@ -308,7 +308,7 @@
                                             </li>
                                           </ul>
                                         </nz-dropdown>
-                                        <input [disabled]="adj.linear" [value]="adj.value" class="inputOfdachboard"
+                                        <input [disabled]="adj.linear" [value]="adj.value" class="templateInput"
                                                (change)="changeValue(adj,$event)">
                                       </div>
                                     </ng-container>
@@ -317,10 +317,10 @@
                                 <td style="background: rgb(250, 250, 250)">
                                   <div style="display: flex;height: max-content">
                                     <div
-                                      class="divInTd" style=" background: #f3f3f3;">
+                                      class="adjustDiv" style=" background: #f3f3f3;">
                                           <span
                                             class="spanStyle">Model Calib</span>
-                                      <input class="inputOfdachboard" disabled
+                                      <input class="templateInput" disabled
                                              style=" background: #f3f3f3;" value="2.1">
                                     </div>
                                   </div>
@@ -343,7 +343,7 @@
                                              (mouseover)="adj.hover='true'"
                                              [dndDisableIf]="dataTable1.locked"
                                              [dndDraggable]="adj"
-                                             class="divInTd"
+                                             class="adjustDiv"
                                              dndEffectAllowed="move">
                                               <span
                                                 class="spanStyle">{{adj.name}}</span>
@@ -364,7 +364,7 @@
                                             </ul>
                                           </nz-dropdown>
                                           <input [disabled]="adj.linear" [value]="adj.value"
-                                                 class="inputOfdachboard" (change)="changeValue(adj,$event)">
+                                                 class="templateInput" (change)="changeValue(adj,$event)">
                                         </div>
                                       </ng-container>
                                     </ng-container>
@@ -373,7 +373,7 @@
                                 <td style="background: antiquewhite">
                                   <div style="display: flex;height: max-content">
                                     <div
-                                      class="divInTd">
+                                      class="adjustDiv">
                                       <span class="spanStyle"></span>
                                       <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                         <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
@@ -391,7 +391,7 @@
                                           </li>
                                         </ul>
                                       </nz-dropdown>
-                                      <input class="inputOfdachboard" disabled
+                                      <input class="templateInput" disabled
                                              value="P00002">
                                     </div>
                                   </div>
@@ -413,7 +413,7 @@
                                              (mouseover)="adj.hover='true'"
                                              [dndDisableIf]="dataTable1.locked"
                                              [dndDraggable]="adj"
-                                             class="divInTd"
+                                             class="adjustDiv"
                                              dndEffectAllowed="move">
                                               <span
                                                 class="spanStyle">{{adj.name}}</span>
@@ -434,7 +434,7 @@
                                             </ul>
                                           </nz-dropdown>
                                           <input [disabled]="adj.linear" [value]="adj.value"
-                                                 class="inputOfdachboard" (change)="changeValue(adj,$event)"
+                                                 class="templateInput" (change)="changeValue(adj,$event)"
                                           >
                                         </div>
                                       </ng-container>
