@@ -1,8 +1,8 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import * as _ from 'lodash'
-import {fromEvent, Subscription} from "rxjs";
-import {filter, switchMap} from "rxjs/operators";
+import {Subscription} from "rxjs";
 import {DndDropEvent, DropEffect} from "ngx-drag-drop";
+import {ADJUSTMENTS_ARRAY} from "./data";
 
 
 @Component({
@@ -18,7 +18,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
   visibleIcon: Boolean;
 
   cols: any[];
-  adjsArray: any[]=[];
+  adjsArray: any[] = [];
   visible: Boolean = false;
   tree: Boolean = false;
   pure: any = {};
@@ -40,7 +40,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
       name: 'Joe Black',
       age: 32,
       address: 'Sidney No. 1 Lake Park'
-    }, {
+    },
+    {
       key: '2',
       name: 'Jim Green',
       age: 42,
@@ -51,7 +52,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
       name: 'Joe Black',
       age: 32,
       address: 'Sidney No. 1 Lake Park'
-    }, {
+    },
+    {
       key: '2',
       name: 'Jim Green',
       age: 42,
@@ -74,8 +76,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
   colunmName = null;
   stockedColumnName: string;
   listOfSelectedValue = [];
-  @ViewChild('scrollOne') scrollOne: ElementRef;
-  @ViewChild('scrollTwo') scrollTwo: ElementRef;
+  // @ViewChild('scrollOne') scrollOne: ElementRef;
+  // @ViewChild('scrollTwo') scrollTwo: ElementRef;
   divIn: boolean = false;
   supscription1: Subscription;
   supscription2: Subscription;
@@ -407,7 +409,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   constructor() {
     this.AdjustementType = [
-      {id: 0, name: "none", abv: false},
+      //{id: 0, name: "none", abv: false},
       {id: 1, name: "Linear", abv: false},
       {id: 2, name: "Event Driven", abv: "Event Driven"},
       {id: 3, name: "Return Period Banding Severity (EEF)", abv: "RP (EEF)"},
@@ -463,7 +465,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
               grain: "liberty-NAHU",
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
-            }, {
+            },
+            {
               id: "122242",
               threadName: "APEQ-ID_GU_CFS PORT 2",
               icon: 'icon-history-alt iconYellow',
@@ -479,7 +482,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
               grain: "liberty-NAHU",
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
-            }, {
+            },
+            {
               id: "122252",
               threadName: "APEQ-ID_GU_CFS PORT 3",
               icon: 'icon-history-alt iconYellow',
@@ -550,7 +554,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
               grain: "liberty-NAHU",
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
-            }, {
+            },
+            {
               id: "122292", threadName: "APEQ-ID_GULM 2", icon: 'icon-lock-alt iconRed',
               checked: false,
               locked: true,
@@ -585,7 +590,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
               grain: "liberty-NAHU",
               vendorSystem: "RMS RiskLink",
               rap: "North Atlantic"
-            }, {
+            },
+            {
               id: "12295892", threadName: "Apk lap okol Pm 2", icon: 'icon-history-alt iconYellow',
               checked: false,
               locked: false,
@@ -604,7 +610,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
           ]
         },
       ]
-    }
+    };
     this.systemTags = [
       {tagId: '1', tagName: 'TC', tagColor: '#7bbe31', innerTagContent: '1', innerTagColor: '#a2d16f', selected: false},
       {
@@ -682,42 +688,24 @@ export class WorkspaceCalibrationComponent implements OnInit {
         selected: false
       }
     ];
-    this.allAdjsArray = [
-      {id: 1, name: 'Missing Exp ', value: 2.1, linear: false, category: "Client", hover: false, idAdjustementType: 5},
-      {id: 2, name: 'Port. Evo ', value: 2.1, linear: false, category: "Base", hover: false, idAdjustementType: 6},
-      {id: 3, name: 'ALAE ', value: 1.75, linear: false, category: "Client", hover: false, idAdjustementType: 7},
-      {
-        id: 4,
-        name: 'Model Calib ',
-        value: "RPB (EEF)",
-        linear: true,
-        category: "Base",
-        hover: false,
-        idAdjustementType: 8
-      }
-    ]
+    this.allAdjsArray = ADJUSTMENTS_ARRAY;
+    //   [
+    //   {id: 1, name: 'Missing Exp ', value: 2.1, linear: false, category: "Client", hover: false, idAdjustementType: 5},
+    //   {id: 2, name: 'Port. Evo ', value: 2.1, linear: false, category: "Base", hover: false, idAdjustementType: 6},
+    //   {id: 3, name: 'ALAE ', value: 1.75, linear: false, category: "Client", hover: false, idAdjustementType: 7},
+    //   {
+    //     id: 4,
+    //     name: 'Model Calib ',
+    //     value: "RPB (EEF)",
+    //     linear: true,
+    //     category: "Base",
+    //     hover: false,
+    //     idAdjustementType: 8
+    //   }
+    // ]
   }
 
   ngOnInit() {
-    /** scroll principe ****/
-    const scrollOne = this.scrollOne.nativeElement as HTMLElement;
-    const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-    let scroll2Event$ = fromEvent(scrollTwo, 'scroll');
-    let scroll1Event$ = fromEvent(scrollOne, 'scroll');
-    let supscription1 = scroll2Event$.pipe(
-      filter(() => this.divIn === true)
-    ).subscribe(
-      value => {
-        scrollOne.scrollTop = scrollTwo.scrollTop;
-      }
-    )
-    let supscription2 = scroll1Event$.pipe(
-      filter(() => this.divIn === false)
-    ).subscribe(
-      value => {
-        scrollTwo.scrollTop = scrollOne.scrollTop;
-      });
-
     this.getAllBasises();
 
     /** drawer principe **/
@@ -1073,33 +1061,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
       }
     }
   }
-
-  updateScroll() {
-    /*  const scrollOne = this.scrollOne.nativeElement as HTMLElement;
-      const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-      //scrollOne.scrollTop= scrollTwo.scrollTop; const scroll1Event$ =  fromEvent(scrollOne, 'scroll');
-      */
-  }
-
-
-  updateScroll2() {
-    const scrollOne = this.scrollOne.nativeElement as HTMLElement;
-    const scrollTwo = this.scrollTwo.nativeElement as HTMLElement;
-    //scrollOne.scrollTop= scrollTwo.scrollTop;
-    const scroll1Event$ = fromEvent(scrollOne, 'scroll');
-    const scroll2Event$ = fromEvent(scrollTwo, 'scroll');
-    scroll2Event$.pipe(
-      switchMap(event => {
-        return scroll1Event$;
-      })
-    ).subscribe(
-      value => {
-        scrollTwo.scrollTop = scrollOne.scrollTop
-      }
-    )
-
-  }
-
   deleteColumn(name: string, name2: string) {
 
     let o = _.findIndex(this.pure.category, function (o: any) {
@@ -1263,20 +1224,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
     })
     return false;
   }
-
-  /*
-    checkedAll() {
-      _.forIn(this.pure.dataTable, function (value, key) {
-        _.forIn(value.thread, function (plt, key) {
-            if (!plt.checked) {
-             return false;
-            }
-          }
-        )
-      })
-      return true;
-    }*/
-
   haveTagSystem(thread: any) {
     let currenSystemTag = this.currentSystemTag;
     let currentUserTag = this.currentUserTag;
@@ -1337,7 +1284,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (thread, key) {
         _.forIn(thread.adj, function (adj, key) {
-          console.log("yes1")
+          console.log("yes1", adj)
           if (adj.idAdjustementType == adjustement.idAdjustementType) {
             console.log(valueOfAdj);
             adj.value = valueOfAdj;
@@ -1408,34 +1355,8 @@ export class WorkspaceCalibrationComponent implements OnInit {
     })
   }
 
-  Colpa() {
-    this.ColpasBool = !this.ColpasBool;
-    // console.log(this.extended, "extended1");
-    // console.log(this.ColpasBool, "ColpasBool1");
-    if (this.ColpasBool == true) {
-      if (this.extended) {
-        this.pltSpan = 14;
-        this.templateSpan = 7;
-      } else {
-        this.pltSpan = 7;
-        this.templateSpan = 14;
-      }
-    } else {
-      if (this.extended) {
-        this.pltSpan = 14;
-        this.templateSpan = 9;
-      } else {
-        this.pltSpan = 9;
-        this.templateSpan = 14;
-      }
-    }
-
-  }
-
-  exetende() {
+  extend() {
     this.extended = !this.extended;
-    // console.log(this.extended, "extended2");
-    // console.log(this.ColpasBool, "ColpasBool2");
     if (this.extended) {
       if (!this.ColpasBool) {
         this.pltSpan = 15;
@@ -1529,9 +1450,20 @@ export class WorkspaceCalibrationComponent implements OnInit {
       this.adjsArray.push(newAdj);
     }
 
-    this.categorySelectedFromAdjustement=null;
-    this.singleValue=null;
-    this.columnPosition=null;
-    this.linear=false;
+    this.categorySelectedFromAdjustement = null;
+    this.singleValue = null;
+    this.columnPosition = null;
+    this.linear = false;
+  }
+
+  onNotify(tag: any) {
+    switch (tag.type) {
+      case 'system':
+        this.currentSystemTag = tag.tag;
+        break;
+      case 'user':
+        this.currentUserTag = tag.tag;
+        break;
+    }
   }
 }

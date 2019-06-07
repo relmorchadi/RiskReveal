@@ -261,19 +261,19 @@ export class WorkspaceMainState implements NgxsOnInit {
     const recentlyOpenedWs = (JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
     const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || {data: []});
     const paginationList = this.makePagination(recentlyOpenedWs);
-    const projects =_.get(currentOpenedWs.data[state.openedTabs.tabsIndex],'projects',[])
+    const projects =_.get(currentOpenedWs.data[state.openedTabs.tabsIndex], 'projects', [])
     ctx.patchState({
       workspacePagination: paginationList,
-      openedWs: {...currentOpenedWs.data[state.openedTabs.tabsIndex],projects: projects.map((prj,i) => ({...prj, selected: projects.length > 0 && i == 0}))},
+      openedWs: {...currentOpenedWs.data[state.openedTabs.tabsIndex], projects: projects.map((prj, i) => ({...prj, selected: projects.length > 0 && i == 0}))},
       openedTabs: {data: currentOpenedWs.data.map( ws => {
         const wsFromLocal = recentlyOpenedWs.find(item => item.workspaceId == ws.workSpaceId && item.uwYear == ws.uwYear ); // JSON.parse(localStorage.getItem('workSpaceMenuItem'))[ws.workSpaceId+'-'+ws.uwYear]
           return ({
             ...ws,
-            favorite: _.get(wsFromLocal,'favorite',false),
-            lastFModified: _.get(wsFromLocal,'lastFModified',null),
-            lastPModified: _.get(wsFromLocal,'lastPModified',null),
-            pinged: _.get(wsFromLocal,'pinged',false)
-          })
+            favorite: _.get(wsFromLocal, 'favorite', false),
+            lastFModified: _.get(wsFromLocal, 'lastFModified', null),
+            lastPModified: _.get(wsFromLocal, 'lastPModified', null),
+            pinged: _.get(wsFromLocal, 'pinged', false)
+          });
         }), tabsIndex: state.openedTabs.tabsIndex},
       recentWs: recentlyOpenedWs
     });
