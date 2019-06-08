@@ -14,7 +14,7 @@
           <div class="textCalibrationMatrix" nz-col nzSpan="2">&nbsp;</div>
         </div>
         <div nz-row>
-          <app-tags (notify)="onNotify($event)"></app-tags>
+          <app-tags (notify)="onNotify($event)" [extended]="extended" (collapse)="collapseTags($event)"></app-tags>
           <div [nzSpan]="pltSpan" nz-col>
             <div
               style="padding-top: 39px; padding-left: 24px; background: #fff; min-height:571px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">

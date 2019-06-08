@@ -1,9 +1,9 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import * as _ from 'lodash'
 import {DndDropEvent, DropEffect} from "ngx-drag-drop";
 import {
   ADJUSTMENT_TYPE,
-  ALL_ADJUSTMENTS,
+  ADJUSTMENTS_ARRAY,
   DATA,
   LIST_OF_DISPLAY_PLTS,
   LIST_OF_PLTS,
@@ -12,6 +12,11 @@ import {
   SYSTEM_TAGS,
   USER_TAGS
 } from "./data";
+import {Select, Store} from "@ngxs/store";
+import {extendPltSection, saveAdjustment, setFilterCalibration} from "../../store/actions";
+import {take} from "rxjs/operators";
+import {CalibrationState} from "../../store/states";
+import {Observable, Subscription} from "rxjs";
 
 
 @Component({
@@ -19,12 +24,14 @@ import {
   templateUrl: './workspace-calibration.component.html',
   styleUrls: ['./workspace-calibration.component.scss']
 })
-export class WorkspaceCalibrationComponent implements OnInit {
+export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   inputValue;
   size;
   disabled;
 
+  visibleIcon: Boolean;
 
+  cols: any[];
   adjsArray: any[] = [];
   visible: Boolean = false;
   tree: Boolean = false;
@@ -37,9 +44,16 @@ export class WorkspaceCalibrationComponent implements OnInit {
   categorySelectedFromAdjustement: any;
   columnPosition: number;
   selectAllBool = true;
-
+  colunmName = null;
+  stockedColumnName: string;
+  listOfSelectedValue = [];
+  // @ViewChild('scrollOne') scrollOne: ElementRef;
+  // @ViewChild('scrollTwo') scrollTwo: ElementRef;
   divIn: boolean = false;
+  supscription1: Subscription;
+  supscription2: Subscription;
   dndBool: boolean = false;
+  onHoverIcon: any;
   checked: boolean = false;
   lastChecked;
   lastCheckedBool: boolean = false;
@@ -53,8 +67,10 @@ export class WorkspaceCalibrationComponent implements OnInit {
   sortName: string | null = null;
   sortValue: string | null = null;
   searchAddress: string;
+  tagSpan: number = 3;
   pltSpan: number = 7;
   templateSpan: number = 14;
+  pltSelectionSpan;
   allAdjsArray = [];
   extended: boolean = false;
   idPlt: string = null;
@@ -66,19 +82,49 @@ export class WorkspaceCalibrationComponent implements OnInit {
   pltColumns = PLT_COLUMNS;
   ColpasBool: boolean = true;
   linear: boolean = false;
+  selectedPlt: any = [];
+  @Select(CalibrationState) state$: Observable<any>;
+
+
   private currentDraggableEvent: DragEvent;
 
-  constructor() {
+  constructor(private store$: Store) {
     this.AdjustementType = ADJUSTMENT_TYPE;
     this.pure = PURE;
     this.systemTags = SYSTEM_TAGS;
     this.userTags = USER_TAGS;
-    this.allAdjsArray = ALL_ADJUSTMENTS;
+    // this.allAdjsArray = ALL_ADJUSTMENTS;
+    this.allAdjsArray = ADJUSTMENTS_ARRAY;
   }
 
   ngOnInit() {
     this.getAllBasises();
+    this.state$.pipe(take(1)).subscribe((data: any) => {
+      this.extended = data.extendPltSection;
+      if (data.adjustments.length !== 0) {
+        for (const adjustement of data.adjustments) {
+          this.singleValue = adjustement.adjustementType;
+          this.categorySelectedFromAdjustement = adjustement.adjustement;
 
+          let idPlt = this.idPlt;
+          var today = new Date();
+          var milliseconds = today.getMilliseconds();
+          let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+          let newObject = Object.assign({}, this.categorySelectedFromAdjustement);
+          newObject.id = numberAdjs;
+          if (this.singleValue.id == 1) {
+            newObject.linear = false;
+            // newObject.value = this.columnPosition;
+          } else {
+            newObject.linear = true;
+            newObject.value = this.singleValue.abv;
+          }
+          let newAdj = {...newObject};
+          this.adjsArray.push(newAdj);
+        }
+      }
+    });
+    this.adjustExention();
     /** drawer principe **/
 
     let c = 209;
@@ -102,6 +148,10 @@ export class WorkspaceCalibrationComponent implements OnInit {
     this.visible = false;
   }
 
+  afficheTree() {
+    this.tree = true;
+  }
+
   hide(name) {
     _.hasIn(this.hideThread, name) ? _.set(this.hideThread, name, !_.get(this.hideThread, name)) : this.hideThread = {
       ...this.hideThread,
@@ -113,6 +163,40 @@ export class WorkspaceCalibrationComponent implements OnInit {
     return _.isNil(_.get(this.hideThread, name)) ? true : this.hideThread[name];
   }
 
+  CloseTree() {
+    this.tree = false;
+  }
+
+  returnBasis() {
+    let number = 0;
+    _.forIn(this.pure.category, function (value, key) {
+      number += _.values(_.get(value, "basis")).length;
+    });
+    return number;
+  }
+
+  addColumn() {
+    console.log("test test");
+  }
+
+  showModal(): void {
+    this.isVisible = true;
+  }
+
+  addColumnToTableAndClose(a, b): void {
+
+    let index = _.findIndex(this.pure.category, {name: b});
+    //this.pure.category[index].basis.push({name: a})
+    this.pure.category[index].basis.splice(this.columnPosition - 1, 0, {name: a});
+    this.isVisible = false;
+  }
+
+  addColumnToTable(a, b) {
+    let index = _.findIndex(this.pure.category, {name: b});
+    //this.pure.category[index].basis.push({name: a})
+    this.pure.category[index].basis.splice(this.columnPosition - 1, 0, {name: a});
+    this.isVisible = true;
+  }
 
   handleCancel(): void {
     console.log('Button cancel clicked!');
@@ -142,6 +226,16 @@ export class WorkspaceCalibrationComponent implements OnInit {
     console.log(this.basises)
   }
 
+  visibledIcon() {
+    this.visibleIcon = true;
+  }
+
+  styleBorder(tdNumber, sizeOfBasis) {
+    let x = sizeOfBasis - 1;
+    if (tdNumber == x) {
+      return '1px solid rgb(232, 232, 232)';
+    } else return;
+  }
 
   trackByFn(index, item) {
     return index; // or item.id
@@ -215,7 +309,6 @@ export class WorkspaceCalibrationComponent implements OnInit {
           } else {
             value.thread[x].checked = true;
           }
-
         }
       })
       this.lastCheckedBool = false;
@@ -317,6 +410,79 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   }
 
+  feedColunmName(category, nameOfColumn) {
+
+    if (category == "Default") {
+      return;
+    } else {
+      if (this.colunmName == nameOfColumn) {
+        console.log("already feeded!");
+        this.colunmName = null;
+      } else {
+        this.stockedColumnName = null;
+        this.colunmName = nameOfColumn;
+      }
+      console.log("******************")
+      console.log("1st col: ", this.colunmName)
+      console.log("2nd col: ", this.stockedColumnName)
+      console.log("******************")
+    }
+  }
+
+  iClearAdjustment(colunmName, locked) {
+
+    if (this.colunmName === colunmName && locked !== "icon-lock-alt iconRed") {
+      return "hidden";
+    } else if (this.stockedColumnName === colunmName && locked !== "icon-lock-alt iconRed") {
+      return "hidden";
+    } else {
+      return " "
+    }
+  }
+
+  hideCatgegory(names: string) {
+    console.log(names);
+    this.hideAllCategories();
+    for (let i = 0; i < names.length; i++) {
+      let a = _.findIndex(this.pure.category, function (o: any) {
+        return o.name == names[i]
+      });
+      console.log(a);
+      this.pure.category[a].showBol = true;
+      // _.set(this.pure.category[a], 'showBol', true);
+    }
+
+  }
+
+  hideAllCategories() {
+    _.forIn(this.pure.category, function (value, key) {
+        _.set(value, 'showBol', false);
+      }
+    )
+  }
+
+  feedCatgegoryNameForHide(name) {
+    let a = _.findIndex(this.pure.category, function (o: any) {
+      return o.name == name
+    });
+    this.pure.category[a].showBol = false;
+    for (let i = 0; i < this.listOfSelectedValue.length; i++) {
+      if (this.listOfSelectedValue[i] == name) {
+        this.listOfSelectedValue.splice(i, 1);
+      }
+    }
+  }
+
+  deleteColumn(name: string, name2: string) {
+
+    let o = _.findIndex(this.pure.category, function (o: any) {
+      return o.name == name
+    });
+    let a = _.findIndex(this.pure.category[o].basis, function (o: any) {
+      return o.name == name2
+    });
+    this.pure.category[o].basis.splice(a, 1);
+  }
 
   cursorOntable1() {
     this.divIn = true;
@@ -327,6 +493,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   addAdjustmenet(adj) {
+    console.log('here is add adjus');
     var today = new Date();
     var milliseconds = today.getMilliseconds();
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
@@ -345,6 +512,18 @@ export class WorkspaceCalibrationComponent implements OnInit {
     })
 
   }
+
+  generateId() {
+    let lenght = 0;
+    _.forIn(this.pure.dataTable, function (value, key) {
+      _.forIn(value.thread, function (thraed, key) {
+          lenght = lenght + thraed.adj.length;
+        }
+      )
+    })
+    return lenght;
+  }
+
 
   sleep(millis: number) {
 
@@ -443,7 +622,21 @@ export class WorkspaceCalibrationComponent implements OnInit {
     // this.pure.dataTable[dataTableIndex].thread[threadIndex].adj.splice(adjindex, 1);
   }
 
+  onMouseHover(threadIndex) {
+    console.log("test", threadIndex);
+  }
 
+  indeterminate() {
+    _.forIn(this.pure.dataTable, function (value, key) {
+      _.forIn(value.thread, function (plt, key) {
+          if (plt.checked) {
+            return true;
+          }
+        }
+      )
+    })
+    return false;
+  }
   haveTagSystem(thread: any) {
     let currenSystemTag = this.currentSystemTag;
     let currentUserTag = this.currentUserTag;
@@ -483,6 +676,17 @@ export class WorkspaceCalibrationComponent implements OnInit {
 
   }
 
+  haveTagUser(thread) {
+
+    let currenUsreTag = this.currentUserTag;
+    let number = _.findIndex(thread.userTags, function (o: any) {
+      return o.tagId == currenUsreTag;
+    });
+    if (number < 0) {
+      return false;
+    }
+  }
+
   getColorTag(tag) {
     return _.find(this.userTags, function (o) {
       return o.tagId == tag.tagId;
@@ -493,7 +697,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (thread, key) {
         _.forIn(thread.adj, function (adj, key) {
-          console.log("yes1")
+          console.log("yes1", adj)
           if (adj.idAdjustementType == adjustement.idAdjustementType) {
             console.log(valueOfAdj);
             adj.value = valueOfAdj;
@@ -564,8 +768,7 @@ export class WorkspaceCalibrationComponent implements OnInit {
     })
   }
 
-  extend() {
-    this.extended = !this.extended;
+  adjustExention() {
     if (this.extended) {
       if (!this.ColpasBool) {
         this.pltSpan = 15;
@@ -596,6 +799,12 @@ export class WorkspaceCalibrationComponent implements OnInit {
     }
   }
 
+  extend() {
+    this.extended = !this.extended;
+    this.adjustExention();
+    this.store$.dispatch(new extendPltSection(this.extended));
+  }
+
   changeValue(adj: any, event) {
     adj.value = event.target.value;
   }
@@ -611,6 +820,9 @@ export class WorkspaceCalibrationComponent implements OnInit {
   }
 
   addAdjustmentFromPlusIcon(boolAdj, adjustementType?, adjustement?) {
+    console.log('here is plus icon', adjustement);
+    console.log('here is plus icon', adjustementType);
+    console.log('here is plus icon', boolAdj);
     if (this.addAdjustement) {
       if (boolAdj) {
         this.isVisible = false;
@@ -657,8 +869,11 @@ export class WorkspaceCalibrationComponent implements OnInit {
       }
       let newAdj = {...adjustement};
       this.adjsArray.push(newAdj);
+      this.store$.dispatch(new saveAdjustment({
+        adjustementType: this.singleValue,
+        adjustement: this.categorySelectedFromAdjustement
+      }));
     }
-
     this.categorySelectedFromAdjustement = null;
     this.singleValue = null;
     this.columnPosition = null;
@@ -674,5 +889,26 @@ export class WorkspaceCalibrationComponent implements OnInit {
         this.currentUserTag = tag.tag;
         break;
     }
+    this.store$.dispatch(new setFilterCalibration({systemTags: this.currentSystemTag, userTags: this.currentUserTag}));
+  }
+
+  collapseTags(event) {
+    this.pltSpan = event.pltSpan;
+    this.templateSpan = event.templateSpan;
+  }
+
+  updateSelectedPlt() {
+    for (const row of this.pure.dataTable) {
+      for (const row2 of row.thread) {
+        if (row2.checked) {
+          this.selectedPlt.push(row2);
+        }
+      }
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.updateSelectedPlt();
+    // this.store$.dispatch(new saveSelectedPlts(this.selectedPlt));
   }
 }
