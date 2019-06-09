@@ -357,12 +357,24 @@ export class PltMainState implements NgxsOnInit {
   @Action(fromPlt.deletePlt)
   deletePlt(ctx: StateContext<pltMainModel>, { payload }: fromPlt.deletePlt){
 
-    return this.pltApi.deletePlt(payload.pltId).pipe(
+    const {
+      pltId
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState();
+
+    ctx.patchState({
+      data: _.merge({}, data, {[pltId]: { ...data[pltId], deleted: true}})
+    })
+
+    /*return this.pltApi.deletePlt(payload.pltId).pipe(
       mergeMap(plt => ctx.dispatch(new fromPlt.deletePltSucess({
         pltId: payload.pltId
       }))),
       catchError(e => ctx.dispatch(new fromPlt.deletePltFail()))
-    )
+    )*/
 
   }
 

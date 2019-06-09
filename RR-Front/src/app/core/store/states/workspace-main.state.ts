@@ -160,21 +160,20 @@ export class WorkspaceMainState implements NgxsOnInit {
   @Action(SelectWorkspaceAction)
   selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SelectWorkspaceAction) {
     const state = ctx.getState();
-    let newState = state.openedTabs.data.map(ws => {
-      if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) {
-        return payload;
-      } else {
-        return ws;
-      }
-    });
+
+    let index= _.findIndex(state.openedTabs.data, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear)
     const projectFormat = payload.projects.map(prj => prj = {...prj, selected: false});
     if (projectFormat.length > 0) {
       projectFormat[0] = {...projectFormat[0], selected: true};
     }
     const opened = {...payload, projects: projectFormat};
-    ctx.patchState(
-      {openedWs: opened, openedTabs: {data: newState, tabsIndex: state.openedTabs.tabsIndex}}
-    );
+    ctx.patchState({
+      openedWs: opened,
+      openedTabs: {
+        data: _.merge([],state.openedTabs.data, {[index]: { ...payload}}),
+        tabsIndex: state.openedTabs.tabsIndex
+      }
+    });
   }
 
   @Action(SelectProjectAction)

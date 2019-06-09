@@ -33,7 +33,7 @@ export class LeftMenuComponent implements OnInit {
 
   routerNavigate(routerLink) {
     let patchRouting;
-    if (routerLink ) {
+    if (routerLink) {
       this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${routerLink}`]);
       patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
     } else {
