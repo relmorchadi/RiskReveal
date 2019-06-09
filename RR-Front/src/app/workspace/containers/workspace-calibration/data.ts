@@ -4,9 +4,9 @@ export const ADJUSTMENT_TYPE = [
   {id: 2, name: "Event Driven", abv: "Event Driven"},
   {id: 3, name: "Return Period Banding Severity (EEF)", abv: "RP (EEF)"},
   {id: 4, name: "Return Period Banding Severity (OEP)", abv: "RP (OEP)"},
-  {id: 4, name: "Frequency (EEF)", abv: "Freq (EEF)"},
-  {id: 4, name: "CAT XL", abv: "CAT XL"},
-  {id: 4, name: "Quota Share", abv: "QS"}
+  {id: 5, name: "Frequency (EEF)", abv: "Freq (EEF)"},
+  {id: 6, name: "CAT XL", abv: "CAT XL"},
+  {id: 7, name: "Quota Share", abv: "QS"}
 ];
 export const PURE = {
   category: [
@@ -54,7 +54,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'in progress'
         },
         {
           id: "122242",
@@ -71,7 +72,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'in progress'
         },
         {
           id: "122252",
@@ -88,7 +90,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'in progress'
         },
         {
           id: "122263",
@@ -105,7 +108,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'in progress'
         },
         {
           id: "122274",
@@ -122,7 +126,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'checked'
         }
 
       ]
@@ -143,7 +148,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'locked'
         },
         {
           id: "122292", threadName: "APEQ-ID_GULM 2", icon: 'icon-lock-alt iconRed',
@@ -158,7 +164,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'locked'
         },
 
       ]
@@ -179,7 +186,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'in progress'
         },
         {
           id: "12295892", threadName: "Apk lap okol Pm 2", icon: 'icon-history-alt iconYellow',
@@ -194,7 +202,8 @@ export const PURE = {
           selected: false,
           grain: "liberty-NAHU",
           vendorSystem: "RMS RiskLink",
-          rap: "North Atlantic"
+          rap: "North Atlantic",
+          status: 'in progress'
         }
 
       ]

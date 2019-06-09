@@ -11,7 +11,8 @@ const initiaState: CalibrationModel = {
   selectedPLT: [],
   extendPltSection: false,
   collapseTags: true,
-  adjustments: []
+  adjustments: [],
+  adjustmentApplication: []
 };
 
 @State<CalibrationModel>({
@@ -56,6 +57,7 @@ export class CalibrationState implements NgxsOnInit {
   @Action(fromPlt.saveAdjustment)
   saveAdjustement(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.saveAdjustment) {
     const state = ctx.getState();
+
     ctx.patchState({
       adjustments: [
         ...state.adjustments,
@@ -67,9 +69,20 @@ export class CalibrationState implements NgxsOnInit {
 
   @Action(fromPlt.saveSelectedPlts)
   saveSelectedPlts(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.saveSelectedPlts) {
-    // const state = ctx.getState();
+    const state = ctx.getState();
+
     ctx.patchState({
-      selectedPLT: payload
+      selectedPLT: _.merge({}, payload)
+    });
+
+  }
+
+  @Action(fromPlt.saveAdjustmentApplication)
+  saveAdjustmentApplication(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.saveAdjustmentApplication) {
+    const state = ctx.getState();
+
+    ctx.patchState({
+      adjustmentApplication: _.merge({}, payload)
     });
 
   }

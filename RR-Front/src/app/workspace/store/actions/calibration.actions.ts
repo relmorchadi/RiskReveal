@@ -34,3 +34,10 @@ export class saveSelectedPlts {
   }
 }
 
+export class saveAdjustmentApplication {
+  static readonly type = '[Calibration] save adjustment application';
+
+  constructor(public payload?: any) {
+  }
+}
+

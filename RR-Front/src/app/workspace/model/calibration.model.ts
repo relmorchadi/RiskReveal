@@ -4,4 +4,5 @@ export class CalibrationModel {
   collapseTags: boolean;
   selectedPLT: any;
   adjustments: any;
+  adjustmentApplication: any;
 }

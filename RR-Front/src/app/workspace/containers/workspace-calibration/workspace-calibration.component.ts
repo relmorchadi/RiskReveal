@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import * as _ from 'lodash'
 import {DndDropEvent, DropEffect} from "ngx-drag-drop";
 import {
@@ -13,7 +13,13 @@ import {
   USER_TAGS
 } from "./data";
 import {Select, Store} from "@ngxs/store";
-import {extendPltSection, saveAdjustment, setFilterCalibration} from "../../store/actions";
+import {
+  extendPltSection,
+  saveAdjustment,
+  saveAdjustmentApplication,
+  saveSelectedPlts,
+  setFilterCalibration
+} from "../../store/actions";
 import {take} from "rxjs/operators";
 import {CalibrationState} from "../../store/states";
 import {Observable, Subscription} from "rxjs";
@@ -33,6 +39,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
   cols: any[];
   adjsArray: any[] = [];
+  singleValueArray: any[] = [];
+  inputValueArray = [];
+  columnPositionArray = [];
   visible: Boolean = false;
   tree: Boolean = false;
   pure: any = {};
@@ -83,12 +92,19 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   ColpasBool: boolean = true;
   linear: boolean = false;
   selectedPlt: any = [];
+  appliedAdjutement: any = [];
+  modalTitle: string;
+  modifyModal: boolean;
+  tempId: any;
+  inProgressCheckbox: boolean = true;
+  checkedCheckbox: boolean = true;
+  lockedCheckbox: boolean = true;
   @Select(CalibrationState) state$: Observable<any>;
 
 
   private currentDraggableEvent: DragEvent;
 
-  constructor(private store$: Store) {
+  constructor(private store$: Store, private ref: ChangeDetectorRef) {
     this.AdjustementType = ADJUSTMENT_TYPE;
     this.pure = PURE;
     this.systemTags = SYSTEM_TAGS;
@@ -121,7 +137,21 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
           }
           let newAdj = {...newObject};
           this.adjsArray.push(newAdj);
+          this.singleValueArray.push({
+            adj: newAdj.id,
+            singleValue: this.singleValue
+          });
+          this.inputValueArray.push({
+            adj: newAdj.id,
+            inputValue: this.inputValue
+          });
         }
+      }
+      if (data.filters.userTags !== undefined && data.filters.userTags.length !== 0) {
+        this.currentUserTag = data.filters.userTags;
+      }
+      if (data.filters.systemTags !== undefined && data.filters.systemTags.length !== 0) {
+        this.currentSystemTag = data.filters.systemTags;
       }
     });
     this.adjustExention();
@@ -259,18 +289,23 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     let o = 0;
     let x;
     let i;
+    let self = this;
     if (event.ctrlKey) {
       this.lastCheckedBool = true;
       _.forIn(this.pure.dataTable, function (value, key) {
         if (_.findIndex(value.thread, a) != -1) {
           o = i;
           x = _.findIndex(value.thread, a);
-          if (value.thread[x].checked == false)
+          if (value.thread[x].checked == false) {
             value.thread[x].checked = true;
-          else
+            // self.selectedPlt.push(value.thread[x]);
+          } else {
             value.thread[x].checked = false;
+            // self.selectedPlt = self.selectedPlt.filter(obj => obj !== value.thread[x]);
+          }
         }
       })
+      console.log(this.selectedPlt);
     } else if (event.shiftKey) {
       this.lastCheckedBool = true;
       let between = false;
@@ -286,10 +321,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         _.forIn(value.thread, function (plt, key) {
           if (between) {
             plt.checked = true
+            // self.selectedPlt.push(plt);
           }
 
           if (plt == lastChecked || plt == a) {
             plt.checked = true;
+            // self.selectedPlt.push(plt);
             between = !between;
           }
         })
@@ -314,10 +351,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       this.lastCheckedBool = false;
     }
     this.cheackBoxPrincipe();
+    this.updateSelectedPlt();
   }
 
   changeBackgroundCheckBox(event, a) {
-
+    console.log('checked');
     let checked = a.checked;
     let o = 0;
     let x;
@@ -346,6 +384,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       })
     }
     this.cheackBoxPrincipe();
+    this.updateSelectedPlt();
   }
 
   cheackBoxPrincipe() {
@@ -384,6 +423,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         plt.checked = false;
       })
     })
+    this.updateSelectedPlt();
   }
 
   InuringBack(a) {
@@ -407,7 +447,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         }
       })
     })
-
+    this.updateSelectedPlt();
   }
 
   feedColunmName(category, nameOfColumn) {
@@ -494,6 +534,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
   addAdjustmenet(adj) {
     console.log('here is add adjus');
+    let self = this;
     var today = new Date();
     var milliseconds = today.getMilliseconds();
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
@@ -505,6 +546,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
             let newAdj = {...adj};
             newAdj.id = numberAdjs;
             myThread.adj.push(newAdj);
+            self.saveAdjustementApplicaiton(thraed.id, newAdj);
             return;
           }
         }
@@ -611,13 +653,14 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
 
   deleAdjustment(dataTableIndex, threadIndex, adjindex, adj) {
-    console.log("hhh")
+    let self = this;
     if (this.pure.dataTable[dataTableIndex].thread[threadIndex].locked) return;
     _.forIn(this.pure.dataTable[dataTableIndex].thread, function (value, key) {
       _.remove(value.adj, function (n) {
         console.log("here");
         return n == adj;
       });
+      self.deleteAdjustementApplicaiton(value.id, adj);
     })
     // this.pure.dataTable[dataTableIndex].thread[threadIndex].adj.splice(adjindex, 1);
   }
@@ -637,6 +680,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     })
     return false;
   }
+
   haveTagSystem(thread: any) {
     let currenSystemTag = this.currentSystemTag;
     let currentUserTag = this.currentUserTag;
@@ -677,7 +721,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   haveTagUser(thread) {
-
     let currenUsreTag = this.currentUserTag;
     let number = _.findIndex(thread.userTags, function (o: any) {
       return o.tagId == currenUsreTag;
@@ -694,6 +737,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   applyToAllAdjustement(adjustement, valueOfAdj) {
+    let self = this;
+    console.log('this function');
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (thread, key) {
         _.forIn(thread.adj, function (adj, key) {
@@ -701,6 +746,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
           if (adj.idAdjustementType == adjustement.idAdjustementType) {
             console.log(valueOfAdj);
             adj.value = valueOfAdj;
+            self.saveAdjustementApplicaiton(thread.id, valueOfAdj);
           }
         })
       })
@@ -712,12 +758,14 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   applyToSelectedPlt(adjustement, valueOfAdj) {
+    let self = this;
     _.forIn(this.pure.dataTable, function (value, key) {
       _.forIn(value.thread, function (thread, key) {
         _.forIn(thread.adj, function (adj, key) {
           console.log("yes1")
           if (adj.idAdjustementType == adjustement.idAdjustementType && thread.checked == true) {
             adj.value = valueOfAdj;
+            self.saveAdjustementApplicaiton(thread.pltId, valueOfAdj);
           }
         })
       })
@@ -754,6 +802,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   applyToAll(adj) {
+    let self = this;
     var today = new Date();
     var milliseconds = today.getMilliseconds();
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
@@ -763,6 +812,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
           let newAdj = {...adj};
           newAdj.id = numberAdjs;
           myThread.adj.push(newAdj);
+        self.saveAdjustementApplicaiton(thraed.id, newAdj);
         }
       )
     })
@@ -810,6 +860,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   clickButtonPlus(bool, data?: any) {
+    this.modalTitle = "Add New Adjustment";
+    this.modifyModal = false;
+    this.categorySelectedFromAdjustement = null;
+    this.inputValue = '';
+    this.singleValue = null;
     if (!bool) {
       this.idPlt = data.id;
       this.addAdjustement = true;
@@ -820,9 +875,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   addAdjustmentFromPlusIcon(boolAdj, adjustementType?, adjustement?) {
-    console.log('here is plus icon', adjustement);
-    console.log('here is plus icon', adjustementType);
-    console.log('here is plus icon', boolAdj);
+    let self = this;
     if (this.addAdjustement) {
       if (boolAdj) {
         this.isVisible = false;
@@ -847,6 +900,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
           if (plt.id == idPlt) {
             console.log("true");
             plt.adj.push(newAdj);
+            self.saveAdjustementApplicaiton(plt.id, newAdj);
             return;
           }
         })
@@ -869,6 +923,18 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       }
       let newAdj = {...adjustement};
       this.adjsArray.push(newAdj);
+      this.singleValueArray.push({
+        adj: newAdj.id,
+        singleValue: this.singleValue
+      });
+      this.inputValueArray.push({
+        adj: newAdj.id,
+        inputValue: this.inputValue
+      });
+      this.columnPositionArray.push({
+        adj: newAdj.id,
+        columnPosition: this.columnPosition
+      });
       this.store$.dispatch(new saveAdjustment({
         adjustementType: this.singleValue,
         adjustement: this.categorySelectedFromAdjustement
@@ -898,6 +964,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   updateSelectedPlt() {
+    this.selectedPlt = [];
     for (const row of this.pure.dataTable) {
       for (const row2 of row.thread) {
         if (row2.checked) {
@@ -905,10 +972,79 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         }
       }
     }
+    this.store$.dispatch(new saveSelectedPlts(this.selectedPlt));
+    console.log(this.selectedPlt);
+  }
+
+  saveAdjustementApplicaiton(pltId, adj) {
+    this.appliedAdjutement.push({
+      pltId: pltId,
+      adj: adj
+    });
+    this.store$.dispatch(new saveAdjustmentApplication(this.appliedAdjutement));
+  }
+
+  deleteAdjustementApplicaiton(pltId, adj) {
+    const target = {
+      pltId: pltId,
+      adj: adj
+    };
+    let index = this.appliedAdjutement.findIndex(obj => obj.pltId === target.pltId && obj.adj === target.adj); //find index in your array
+    if (index !== -1) {
+      this.appliedAdjutement.splice(index, 1);//remove element from array
+      this.store$.dispatch(new saveAdjustmentApplication(this.appliedAdjutement));
+    }
+  }
+
+  ModifyAdjustement(adj) {
+    this.modalTitle = "Modify Adjustment";
+    this.modifyModal = true;
+    this.tempId = adj.id;
+    let type: {
+      adj,
+      singleValue
+    };
+    let narrative: {
+      adj,
+      inputValue
+    };
+    this.categorySelectedFromAdjustement = _.find(this.allAdjsArray, {name: adj.name});
+    type = _.find(this.singleValueArray, {adj: adj.id});
+    narrative = _.find(this.inputValueArray, {adj: adj.id});
+
+    this.singleValue = type.singleValue;
+    this.inputValue = narrative.inputValue;
+
+    if (this.singleValue.name === "Linear") {
+      this.linear = true;
+      let linearValue: {
+        adj,
+        columnPosition
+      };
+      linearValue = _.find(this.columnPositionArray, {adj: adj.id});
+      this.columnPosition = linearValue.columnPosition;
+    } else {
+      this.linear = false;
+    }
+    this.isVisible = true
+  }
+
+  saveModification(singleValue, adj) {
+    console.log(this.adjsArray);
+    console.log(this.tempId);
+    let tempAdj = _.assign({}, adj);
+    tempAdj.id = this.tempId;
+    if (this.singleValue.name === "Linear") {
+      tempAdj.value = this.columnPosition;
+    }
+    const index = _.findIndex(this.adjsArray, {id: this.tempId});
+    this.adjsArray[index] = tempAdj;
+    this.isVisible = false;
   }
 
   ngOnDestroy(): void {
-    this.updateSelectedPlt();
-    // this.store$.dispatch(new saveSelectedPlts(this.selectedPlt));
+    /*this.updateSelectedPlt();
+    this.store$.dispatch(new saveSelectedPlts(this.selectedPlt));*/
   }
+
 }
