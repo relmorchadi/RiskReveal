@@ -52,6 +52,7 @@
     line-height: 41px;
     display: flex;
     padding-top: 25px;
+
     button {
       position: absolute;
       right: 0;
@@ -60,12 +61,14 @@
       font-size: 20px;
       width: 45px;
       height: 45px;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
     }
+
     ::ng-deep {
       .ant-select {
         margin-right: 70px;
       }
+
       .ant-select-selection {
         background-color: #f5f5f5;
       }
@@ -81,7 +84,7 @@
 }
 
 .settings-holder {
-  width:60%;
+  width: 60%;
   margin: auto;
 }
 
@@ -100,7 +103,7 @@
 
 .settings-wrapper {
   background-color: #FFFFFF;
-  box-shadow:  1px 3px rgba(0,0,0,0.15), -1px -1px 3px rgba(0,0,0,0.15);
+  box-shadow: 1px 3px rgba(0, 0, 0, 0.15), -1px -1px 3px rgba(0, 0, 0, 0.15);
   border-radius: 3px;
 
   .user-config-item {
@@ -108,12 +111,12 @@
     justify-content: space-between;
     align-items: center;
     padding: 12px 22px;
-    border-bottom: 1px solid rgba(0,0,0,0.15);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
   }
 }
 
 .footer-tab-settings {
-  width:60%;
+  width: 60%;
   display: flex;
   justify-content: flex-end;
   margin: 10px auto;

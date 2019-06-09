@@ -168,7 +168,7 @@ export class RiskLinkState implements NgxsOnInit {
     } else if (action === 'selectLink') {
       const {id, name} = RDM;
       const searchTerm = _.truncate(name, {length: name.length - 2, omission: ''});
-      this.riskApi.searchRiskLinkPortfolio(id, searchTerm).pipe(
+/*      this.riskApi.searchRiskLinkPortfolio('', searchTerm).pipe(
         mergeMap(
           (data: any) => {
             of(
@@ -176,7 +176,7 @@ export class RiskLinkState implements NgxsOnInit {
             )
           }
         )
-      );
+      );*/
     } else {
       if (action === 'selectAll') {
         array.forEach(dt => {

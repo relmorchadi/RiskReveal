@@ -23,6 +23,7 @@ import {TableSortAndFilterPipe} from './pipes/table-sort-and-filter.pipe';
 import { KeyDownScrollDirective } from './key-down-scroll.directive';
 import { ScrollToParentDirective } from './pipes/scroll-to-parent.directive';
 
+
 registerLocaleData(en);
 
 @NgModule({

@@ -10,17 +10,19 @@
     <p-contextMenu #cm [model]="items"></p-contextMenu>
     <div class="app-title-manager">
       <span>JOB Manager 1-50 of 348 results</span>
-      <nz-select class="float-right mt-2" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
-        <nz-option nzLabel="All Users" nzValue="1"></nz-option>
+      <nz-select (ngModelChange)="filterByUser($event)" class="dropdown-default float-right mt-2" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
+        <nz-option nzLabel="All Users" nzValue="all"></nz-option>
+        <nz-option nzLabel="Amina Cheref" nzValue="Amina Cheref"></nz-option>
+        <nz-option nzLabel="Rim Benabbes" nzValue="Rim Benabbes"></nz-option>
       </nz-select>
-      <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+<!--      <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
               nz-button nzType="primary" nzSize="default" nzShape="circle">
         <i style="color: #9592E6;" nz-icon theme="outline">
           <i class="icon-map-pin-alt"></i>
         </i>
-      </button>
+      </button>-->
     </div>
-    <p-table [value]="listOfData" #dt
+    <p-table [value]="savedTask" #dt
              [columns]="tableColumn" [resizableColumns]="true"
              [scrollable]="true" [scrollHeight]="'500'" [rows]="50"
              [(contextMenuSelection)]="contextSelectedItem"
@@ -39,11 +41,11 @@
           <th *ngFor="let col of columns" pResizableColumn>
         <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex">
           {{col?.header}}
-          <ng-container *ngIf="col.type === 'checkbox'">
+<!--          <ng-container *ngIf="col.type === 'checkbox'">
             <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
                    [nzIndeterminate]="indeterminate"></label>
             <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
-          </ng-container>
+          </ng-container>-->
         </span>
             <div class="search-bar-table" *ngIf="col?.filtered">
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -87,6 +89,47 @@
               <div style="display: flex" *ngIf="!rowData[col?.field]">
                 <span class="status-false"></span>
                 <span>Low</span>
+              </div>
+            </td>
+            <td *ngIf="col?.type === 'icon'">
+              <div style="display: flex">
+                <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                  <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
+                  <ul nz-menu>
+                    <!--<li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span
+                      class="dropdown-title">Cancel</span></li>-->
+                    <li style="display:flex" nz-menu-item
+                        *ngIf="!rowData.isPaused"
+                        nz-popconfirm
+                        nzTitle="Are you sure you want to pause this Job?"
+                        (nzOnConfirm)="pauseJob(rowData.id)"
+                        (nzOnCancel)="cancel()"
+                        nzPlacement="bottom"><i
+                      class="icon-pause_circle_outline_24px dropdown-icons"></i><span
+                      class="dropdown-title">Pause</span></li>
+
+                    <li style="display:flex" nz-menu-item
+                        *ngIf="rowData.isPaused"
+                        nz-popconfirm
+                        nzTitle="Are you sure you want to pause this Job?"
+                        (nzOnConfirm)="resumeJob(rowData.id)"
+                        (nzOnCancel)="cancel()"
+                        nzPlacement="bottom"><i
+                      class="icon-play_circle_outline_24px dropdown-icons"></i><span
+                      class="dropdown-title">Resume</span></li>
+
+                    <li style="display:flex" nz-menu-item
+                        nz-popconfirm
+                        nzOkText="ABORT"
+                        nzTitle="Are you sure you want to Abort this Job?"
+                        (nzOnConfirm)="deleteJob(rowData.id)"
+                        (nzOnCancel)="cancel()"
+                        nzPlacement="bottom"><i
+                      class="icon-trash-alt dropdown-icons"></i><span
+                      class="dropdown-title">Delete</span></li>
+
+                  </ul>
+                </nz-dropdown>
               </div>
             </td>
           </ng-container>
