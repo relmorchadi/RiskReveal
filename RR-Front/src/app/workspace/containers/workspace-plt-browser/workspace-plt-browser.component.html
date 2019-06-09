@@ -139,7 +139,7 @@
               <ng-template #addTagModalFooter>
                 <div class="footer">
                   <button (click)="handlePopUpCancel()" nz-button class="button-no-outline">cancel</button>
-                  <button class="button-standard" (click)="handlePopUpButton()" nz-button>
+                  <button class="button-standard" (click)="handlePopUpConfirm()" nz-button>
                     {{renamingTag ? 'Rename' : addTagModalIndex == 0 ? fromPlts ? 'Create & Assign' : 'Create' : 'Assign'}}
                   </button>
                 </div>
