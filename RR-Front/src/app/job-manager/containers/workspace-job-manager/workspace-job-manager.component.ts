@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 export class WorkspaceJobManagerComponent implements OnInit {
   loading = false;
   contextSelectedItem: any;
-  Users = '1';
+  Users = 'all';
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -42,6 +42,8 @@ export class WorkspaceJobManagerComponent implements OnInit {
       }
     },
   ];
+
+  savedTask: any;
 
   tableColumn = [
 /*    {
@@ -153,6 +155,16 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filtered: true,
       type: 'text',
       filterParam: 'submittedTimeDate'
+    },
+    {
+      field: 'menuIcon',
+      header: '',
+      width: '20px',
+      display: false,
+      sorted: false,
+      filtered: false,
+      type: 'icon',
+      filterParam: 'submittedTimeDate'
     }
   ];
 
@@ -205,7 +217,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       sorted: false,
       filtered: false,
       type: 'text',
-      filterParam: 'innerCedantName'
+      filterParam: 'completedDate'
     },
   ];
 
@@ -228,12 +240,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   listOfData = [
     {
+      id: 1,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: true,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -241,12 +255,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 2,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: false,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -254,12 +270,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 3,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: false,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -267,12 +285,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 4,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
-      jobOwner: 'Amina Cheref',
+      jobOwner: 'Rim Benabbes',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: true,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -280,12 +300,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 5,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
-      jobOwner: 'Amina Cheref',
+      jobOwner: 'Rim Benabbes',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       jobType: 'Import',
+      isPaused: false,
       priority: false,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -293,12 +315,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 6,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
-      jobOwner: 'Amina Cheref',
+      jobOwner: 'Rim Benabbes',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: true,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -306,12 +330,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 7,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: false,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -319,12 +345,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 8,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: true,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -332,12 +360,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 9,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
-      jobOwner: 'Amina Cheref',
+      jobOwner: 'Rim Benabbes',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: true,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -345,12 +375,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 10,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
-      jobOwner: 'Amina Cheref',
+      jobOwner: 'Rim Benabbes',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: false,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -358,12 +390,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
       submittedTimeDate: '2019-01-03 T 09:57:10'
     },
     {
+      id: 11,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: true,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -372,11 +406,13 @@ export class WorkspaceJobManagerComponent implements OnInit {
     },
     {
 /*      selected: false,*/
+      id: 12,
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
       priority: false,
       startTimeDate: '2019-01-03 T 09:57:10',
       elapsedTimeDate: '2019-01-03 T 09:57:10',
@@ -389,6 +425,45 @@ export class WorkspaceJobManagerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.savedTask = [...this.listOfData];
+  }
+
+  resumeJob(id) {
+    this.listOfData.map(dt => {
+      if (dt.id === id) {
+        dt.isPaused = false;
+      }
+    });
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused)
+  }
+
+  deleteJob(id) {
+    console.log(id);
+    this.listOfData = this.listOfData.filter(dt => dt.id !== id);
+  }
+
+  pauseJob(id): void {
+    this.listOfData.map(dt => {
+      if (dt.id === id) {
+        dt.isPaused = true;
+      }
+    });
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused)
+  }
+
+  filterByUser(event) {
+    console.log(event);
+    event === 'all' ? this.savedTask = this.listOfData :
+      this.savedTask = this.listOfData.filter(dt => dt.jobOwner === event);
+  }
+
+  filterByType(event) {
+/*    event === 'all' ? this.savedTasksLocal.active = this.tasks.active :
+      this.savedTasksLocal.active = this.tasks.active.filter(dt => dt.specific.type === event);*/
+  }
+
+  cancel(): void {
+
   }
 
   navigateBack() {

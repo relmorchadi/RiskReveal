@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {SearchService} from "../../../service/search.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'notifications-menu-item',
@@ -32,10 +33,15 @@ export class NotificationsMenuItemComponent implements OnInit {
     }
   };
 
-  constructor(private _searchService: SearchService) { }
+  constructor(private _searchService: SearchService, private router: Router) { }
 
   ngOnInit() {
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
+  }
+
+  navigateToNotification() {
+    this.router.navigateByUrl(`/notificationManager`);
+    this.visible = false;
   }
 
   toggleNotificaion(notification) {

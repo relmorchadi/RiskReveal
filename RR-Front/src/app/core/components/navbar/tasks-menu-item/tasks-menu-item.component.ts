@@ -12,31 +12,36 @@ import {WorkspaceMain} from '../../../model/workspace-main';
 import {Location} from '@angular/common';
 import {HelperService} from '../../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
+import {ConfirmationService} from 'primeng/api';
 
 @Component({
   selector: 'tasks-menu-item',
   templateUrl: './tasks-menu-item.component.html',
-  styleUrls: ['./tasks-menu-item.component.scss']
+  styleUrls: ['./tasks-menu-item.component.scss'],
+  providers: [ConfirmationService]
 })
 export class TasksMenuItemComponent implements OnInit {
 
   formatter = (_) => '';
   visible: boolean;
-  lastOnes = 1;
-  savedtasks: any;
+  typePointer = 'all';
+  datePointer = 'all';
+  savedTasksLocal: any;
 
   wsId: any;
 
-  readonly tasks = {
+  tasks = {
     active: [
       {
+        id: 1,
         progress: 75,
         name: 'SCOR SE',
         year: '2018',
         description: 'SBS-SCOR ASIA PACIF...',
         duration: '5 min remaining',
-        specific: {type: 'Import', link: 'RiskLink', id: '00F0006'},
+        specific: {type: 'Import', link: 'RiskLink', date: 'today',  id: '00F0006'},
         append: false,
+        isPaused: false,
         data: {
           workSpaceId: '00F0006',
           uwYear: 2018,
@@ -71,17 +76,18 @@ export class TasksMenuItemComponent implements OnInit {
             createdAt: 1542882354617,
             duration: '5 min remaining',
             createdBy: 'Ghada CHOUK'
-          }],
-        isPaused: false
+          }]
       },
       {
+        id: 2,
         progress: 50,
         name: 'NFU MUTUAL',
         year: '2017',
         description: 'NFU Mtr & Liab XL',
         duration: '1 min remaining',
-        specific: {type: 'Calibration', link: 'Calibration', id: '01P4134'},
+        specific: {type: 'Calibration', link: 'Calibration', date: 'today', id: '01P4134'},
         append: false,
+        isPaused: false,
         data: {
           workSpaceId: '01P4134',
           uwYear: 2017,
@@ -98,17 +104,18 @@ export class TasksMenuItemComponent implements OnInit {
             createdAt: 1542882354617,
             duration: '5 min remaining',
             createdBy: 'Ghada CHOUK'
-          }],
-        isPaused: false
+          }]
       },
       {
+        id: 3,
         progress: 25,
         name: 'NFU MUTUAL',
         year: '2017',
         description: 'NFU PROPERTY CAT UK',
         duration: '1 min remaining',
-        specific: {type: 'Inuring', link: 'Inuring', id: '01P4466'},
+        specific: {type: 'Inuring', link: 'Inuring', date: 'yesterday', id: '01P4466'},
         append: false,
+        isPaused: false,
         data: {
           workSpaceId: '01P4466',
           uwYear: 2017,
@@ -134,17 +141,18 @@ export class TasksMenuItemComponent implements OnInit {
             createdAt: 1542882354617,
             duration: 'Processed',
             createdBy: 'Ghada CHOUK'
-          }],
-        isPaused: false
+          }]
       },
       {
+        id: 4,
         progress: 0,
         name: 'CALIFORNIA EQ AUTHORITY',
         year: '2016',
         description: 'CEA Program: Private Plac',
-        duration: '4/12 Pending',
-        specific: {type: 'Import', link: 'RiskLink', id: 'TP05413 '},
+        duration: '3 min remaining',
+        specific: {type: 'Import', link: 'RiskLink', date: 'lastWeek', id: 'TP05413 '},
         append: false,
+        isPaused: true,
         data: {
           workSpaceId: 'TP05413',
           uwYear: 2016,
@@ -180,16 +188,17 @@ export class TasksMenuItemComponent implements OnInit {
             duration: 'Processed',
             createdBy: 'Ghada CHOUK'
           }],
-        isPaused: true
       },
       {
+        id: 5,
         progress: 0,
         name: 'SCOR SE',
         year: '2019',
         description: 'CFS-SCOR ITALIA-SCOR',
-        duration: '4/12 Pending',
-        specific: {type: 'Calibration', link: 'Calibration', id: '00C0024'},
+        duration: '12 min remaining',
+        specific: {type: 'Calibration', link: 'Calibration', date: 'lastWeek', id: '00C0024'},
         append: false,
+        isPaused: true,
         data: {
           workSpaceId: '00C0024',
           uwYear: 2019,
@@ -216,7 +225,6 @@ export class TasksMenuItemComponent implements OnInit {
             duration: '7 min remaining',
             createdBy: 'Ghada CHOUK'
           }],
-        isPaused: true
       },
     ]
   };
@@ -225,13 +233,16 @@ export class TasksMenuItemComponent implements OnInit {
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
   private year: any;
-  constructor(private _searchService: SearchService, private route: ActivatedRoute, private store: Store, private helperService: HelperService, private router: Router,private cdRef: ChangeDetectorRef) {
+  constructor(private _searchService: SearchService,
+              private route: ActivatedRoute, private store: Store,
+              private helperService: HelperService, private router: Router,
+              private cdRef: ChangeDetectorRef, private confirmationService: ConfirmationService) {
   }
 
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
-    this.savedtasks = this.tasks;
+    this.savedTasksLocal = { active: [...this.tasks.active]};
     this.store.select(WorkspaceMainState.getCurrentWS).subscribe( (ws) => {
       this.wsId = _.get(ws, 'workSpaceId', null);
       this.year = _.get(ws, 'uwYear', null);
@@ -252,7 +263,43 @@ export class TasksMenuItemComponent implements OnInit {
   }
 
   searchJobs(event) {
-    this.savedtasks.active = this.tasks.active.filter(text => _.includes(text.name, event.target.value));
+    this.savedTasksLocal.active = this.tasks.active.filter(text => _.includes(text.name, event.target.value));
+  }
+
+  resumeJob(id) {
+    this.tasks.active.map(dt => {
+      if (dt.id === id) {
+        dt.isPaused = false;
+      }
+    });
+    this.tasks.active = _.sortBy(this.tasks.active, (dt) => dt.isPaused)
+  }
+
+  deleteJob(id) {
+    this.tasks.active = this.tasks.active.filter(dt => dt.id !== id);
+  }
+
+  pauseJob(id): void {
+    this.tasks.active.map(dt => {
+      if (dt.id === id) {
+        dt.isPaused = true;
+      }
+    });
+    this.tasks.active = _.sortBy(this.tasks.active, (dt) => dt.isPaused)
+  }
+
+  filterByDate(event) {
+    event === 'all' ? this.savedTasksLocal.active = this.tasks.active :
+      this.savedTasksLocal.active = this.tasks.active.filter(dt => dt.specific.date === event);
+  }
+
+  filterByType(event) {
+    event === 'all' ? this.savedTasksLocal.active = this.tasks.active :
+      this.savedTasksLocal.active = this.tasks.active.filter(dt => dt.specific.type === event);
+  }
+
+  cancel(): void {
+
   }
 
   openWorkspace(wsId, year, routerLink) {
@@ -298,5 +345,6 @@ export class TasksMenuItemComponent implements OnInit {
 
   navigateToJOBManager() {
     this.router.navigateByUrl(`/jobManager`);
+    this.visible = false;
   }
 }
