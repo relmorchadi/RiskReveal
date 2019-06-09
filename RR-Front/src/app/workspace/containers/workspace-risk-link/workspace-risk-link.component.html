@@ -115,28 +115,28 @@
           </div>
           <div *ngIf="state.collapse.collapseHead" class="body-wrapper-body">
             <div class="body-wrapper-search" clickOutside (clickOutside)="closeDropdown()"
-                 [ngClass]="{'body-wrapper-search-active': state.display.displayDropdownRDMEDM ,'body-wrapper-search-display': state.display.displayListRDMEDM}">
+                 [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': displayListRDMEDM}">
               <div class="search-bar"
-                   [ngClass]="{'search-bar-active': state.display.displayDropdownRDMEDM, 'search-bar-display': state.display.displayListRDMEDM}">
-                <i class="search-bar-icon-search" (click)="openCloseDropdown()" nz-icon nzType="search"
+                   [ngClass]="{'search-bar-active': displayDropdownRDMEDM, 'search-bar-display': displayListRDMEDM}">
+                <i class="search-bar-icon-search" (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" nz-icon nzType="search"
                    nzTheme="outline"></i>
                 <div class="search-bar-text"
-                     [ngStyle]="{'display': state.display.displayDropdownRDMEDM ? 'none' : 'flex'}"
-                     (click)="openCloseDropdown()" *ngIf="!state.display.displayListRDMEDM">Select EDM & RDM
+                     [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
+                     (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" *ngIf="!displayListRDMEDM">Select EDM & RDM
                 </div>
                 <input placeholder="Select EDM & RDM"
-                       [ngStyle]="{'display': state.display.displayDropdownRDMEDM ? 'flex' : 'none'}"
+                       [ngStyle]="{'display': displayDropdownRDMEDM ? 'flex' : 'none'}"
                        (input)="onInputSearch($event)">
                 <div class="search-bar-text displayed-info"
-                     [ngStyle]="{'display': state.display.displayDropdownRDMEDM ? 'none' : 'flex'}"
-                     (click)="openCloseDropdown()" *ngIf="state.display.displayListRDMEDM">
+                     [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
+                     (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" *ngIf="displayListRDMEDM">
                   <span class="search-bar-text-title">EDM & RDM</span>
                   <span class="search-bar-text-subtitle">Add EDM & RDM</span>
                 </div>
-                <i class="search-bar-icon-down" (click)="openCloseDropdown()" nz-icon nzType="down"
+                <i class="search-bar-icon-down" (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" nz-icon nzType="down"
                    nzTheme="outline"></i>
               </div>
-              <div class="search-bar-result" *ngIf="state.display.displayDropdownRDMEDM">
+              <div class="search-bar-result" *ngIf="displayDropdownRDMEDM">
                 <div class="search-bar-result-icon">
                   <i style="font-size: 1.6em; margin-right:15px; cursor:pointer" nz-tooltip nzTitle="Refresh"
                      (click)="refreshAll()" nzPlacement="bottom" class="icon-refresh"></i>
@@ -206,7 +206,7 @@
             </div>
           </div>
         </div>
-        <div class="body-main-wrapper" style="" *ngIf="state.display.displayListRDMEDM">
+        <div class="body-main-wrapper" style="" *ngIf="displayListRDMEDM">
           <div class="left" *ngIf="state.collapse.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
@@ -214,7 +214,7 @@
                   <span>Selected EDMs & RDMs</span>
                 </div>
               </div>
-              <div class="list-items" *ngIf="state.display.displayListRDMEDM">
+              <div class="list-items" *ngIf="displayListRDMEDM">
                 <span class="list-items-title">EDM</span>
                 <ul>
                   <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
@@ -236,7 +236,7 @@
                   </ng-container>
                 </ul>
               </div>
-              <div class="list-items" *ngIf="state.display.displayListRDMEDM">
+              <div class="list-items" *ngIf="displayListRDMEDM">
                 <span class="list-items-title">RDM</span>
                 <ul>
                   <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
