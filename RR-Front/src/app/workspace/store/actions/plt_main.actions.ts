@@ -92,3 +92,33 @@ export class deleteUserTagFail {
   static readonly type = '[PLT Main] delete User Tag Fail'
   constructor(public payload?: any) {}
 }
+
+export class deletePlt {
+  static readonly type = '[PLT Main] delete Plt'
+  constructor(public payload?: any) {}
+}
+
+export class deletePltSucess {
+  static readonly type = '[PLT Main] delete Plt Sucess'
+  constructor(public payload?: any) {}
+}
+
+export class deletePltFail {
+  static readonly type = '[PLT Main] delete Plt Fail'
+  constructor(public payload?: any) {}
+}
+
+export class renameTag {
+  static readonly type = '[PLT Main] Rename Tag'
+  constructor(public payload?: any) {}
+}
+
+export class renameTagSuccess {
+  static readonly type = '[PLT Main] Rename Tag Success'
+  constructor(public payload?: any) {}
+}
+
+export class renameTagFail {
+  static readonly type = '[PLT Main] Rename Tag Fail'
+  constructor(public payload?: any) {}
+}
