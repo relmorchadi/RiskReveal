@@ -1,13 +1,13 @@
 import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
 import {
-  ClearSearchValuesAction, CloseBadgeByIndexAction,
+  ClearSearchValuesAction, CloseAllTagsAction, CloseBadgeByIndexAction, CloseGlobalSearchAction, CloseTagByIndexAction,
   DeleteAllBadgesAction,
   DeleteLastBadgeAction,
   DisableExpertMode,
-  EnableExpertMode,
+  EnableExpertMode, ExpertModeSearchAction,
   LoadRecentSearchAction,
-  PatchSearchStateAction,
-  SearchContractsCountAction, SearchInputFocusAction,
+  PatchSearchStateAction, SearchAction,
+  SearchContractsCountAction, SearchInputFocusAction, SearchInputValueChange,
   SelectBadgeAction
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
@@ -17,6 +17,9 @@ import {catchError, switchMap} from 'rxjs/operators';
 import {SearchService} from "../../service";
 import {Inject} from "@angular/core";
 import produce from "immer";
+import {BadgesService} from "../../service/badges.service";
+import {Navigate} from "@ngxs/router-plugin";
+import {NavigationExtras} from "@angular/router";
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -56,15 +59,15 @@ const initiaState: SearchNavBar = {
     {tag: 'UW Unit', value: 'C:'}
   ],
   sortcutFormKeysMapper: {
-    c: 'cedantName',
-    cid: 'cedantCode',
-    uwy: 'year',
-    wn: 'workspaceName',
-    wid: 'workspaceId',
-    ctr: 'countryName'
-  }
+    c: 'Cedant Name',
+    cid: 'Cedant Code',
+    uwy: 'Year',
+    wn: 'Workspace Name',
+    wid: 'Workspace Id',
+    ctr: 'Country Name'
+  },
+  searchContent: {value: null}
 };
-
 
 @State<SearchNavBar>({
   name: 'searchBar',
@@ -74,7 +77,8 @@ export class SearchNavBarState implements NgxsOnInit {
 
   ctx = null;
 
-  constructor(@Inject(SearchService) private _searchService: SearchService) {
+  constructor(@Inject(SearchService) private _searchService: SearchService,
+              @Inject(BadgesService) private _badgesService: BadgesService) {
 
   }
 
@@ -101,11 +105,15 @@ export class SearchNavBarState implements NgxsOnInit {
     return state.data;
   }
 
+  @Selector()
+  static getSearchContent(state: SearchNavBar) {
+    return state.searchContent;
+  }
+
 
   /**
    * Commands
    */
-
   @Action(PatchSearchStateAction)
   patchSearchState(ctx: StateContext<SearchNavBarState>, {payload}: PatchSearchStateAction) {
     if (_.isArray(payload))
@@ -201,40 +209,79 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(SearchInputFocusAction)
   searchInputFocus(ctx: StateContext<SearchNavBar>, {expertMode, inputValue}) {
     ctx.patchState(produce(ctx.getState(), draftState => {
-      draftState.showLastSearch= expertMode ? true : ( (inputValue === '' || inputValue.length < 2) ? true : false );
-      draftState.showResult= expertMode ? false : (!(inputValue === '' || inputValue.length < 2) ? true : draftState.showResult);
-      draftState.visibleSearch=true;
-      draftState.visible=false;
+      draftState.showLastSearch = expertMode ? true : ((inputValue === '' || inputValue.length < 2) ? true : false);
+      draftState.showResult = expertMode ? false : (!(inputValue === '' || inputValue.length < 2) ? true : draftState.showResult);
+      draftState.visibleSearch = true;
+      draftState.visible = false;
     }));
   }
 
-  /*
-
-  if (this.isExpertMode) {
-    this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
-      key: 'showResult',
-      value: false
-    }]));
-  } else {
-    if (event.target.value === '' || event.target.value.length < 2) {
-      this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: true}));
-    } else {
-      this.store.dispatch(new PatchSearchStateAction([{key: 'showResult', value: true}, {
-        key: 'showLastSearch',
-        value: false
-      }]));
-    }
+  @Action(SearchInputValueChange)
+  searchInputValueChange(ctx: StateContext<SearchNavBar>, {expertMode, value}) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.searchValue = value;
+      draft.showResult = !(value === '');
+      if (!expertMode) {
+        if (value === '' || value.length < 2) {
+          draft = _.merge(draft, {showLastSearch: true, showResult: false})
+        } else {
+          draft.showLastSearch = false;
+          draft.showResult = true;
+        }
+        draft.visibleSearch = true;
+      } else {
+        draft.visibleSearch = false;
+      }
+      draft.visible = false;
+    }));
   }
-  this.store.dispatch(new PatchSearchStateAction([{key: 'visibleSearch', value: true}, {
-    key: 'visible',
-    value: false
-  }]));
 
-   */
+  @Action(ExpertModeSearchAction)
+  doExpertModeSearch(ctx: StateContext<SearchNavBar>, {expression}) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)}
+      if(_.isArray(draft.searchContent.value)){
+        draft.badges= draft.searchContent.value;
+        draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual);
+        localStorage.setItem('items', JSON.stringify(draft.recentSearch));
+        draft.visibleSearch=false;
+      }
+    }));
+    ctx.dispatch(new Navigate(['/search']));
+  }
 
+  @Action(SearchAction)
+  doSearch(ctx: StateContext<SearchNavBar>, {bages, keyword}) {
+    if (_.isEmpty(bages) && _.isEmpty(keyword))
+      throw new Error('Search without keyword or value')
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.searchContent = {value: _.isEmpty(bages) ? keyword : bages};
+      draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual);
+      localStorage.setItem('items', JSON.stringify(draft.recentSearch));
+      draft.visibleSearch=false;
+    }));
+    ctx.dispatch(new Navigate(['/search']));
+  }
+
+  @Action(CloseTagByIndexAction)
+  closeTagByIndexAction(ctx: StateContext<SearchNavBar>, {index}) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.searchContent.value = _.toArray(_.omit(draft.searchContent.value, index));
+      draft.badges = draft.searchContent.value;
+    }))
+  }
+
+  @Action([CloseGlobalSearchAction, CloseAllTagsAction])
+  closeGlobalSearchAction(ctx: StateContext<SearchNavBar>) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.searchContent.value = null;
+      draft.badges = [];
+    }))
+  }
 
   private searchLoader(keyword, table) {
     return this._searchService.searchByTable(keyword || '', '5', table || '');
   }
+
 
 }

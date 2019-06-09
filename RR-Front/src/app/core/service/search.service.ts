@@ -1,12 +1,11 @@
-import {Observable, Subject} from 'rxjs';
+import { Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
-import {of} from 'rxjs';
 import * as _ from 'lodash'
 import {Select, Selector, Store} from '@ngxs/store';
-import {PatchSearchStateAction, SetLoadingState} from '../store/actions';
+import { SetLoadingState} from '../store/actions';
 import {NotificationService} from "../../shared/notification.service";
 
 @Injectable({
@@ -30,7 +29,7 @@ export class SearchService {
 
   private readonly api = environment.API_URI + 'search/';
 
-  constructor(private _http: HttpClient, private store: Store, private _notifcationService:NotificationService) {
+  constructor(private _http: HttpClient) {
   }
 
   searchContracts(filter: WorkspaceFilter, offset = '0', size = '20') {
@@ -68,10 +67,6 @@ export class SearchService {
     this.globalSearch$.next();
   }
 
-  get searchedItems(): any[] {
-    return this._searchedItems;
-  }
-
   getvisibleDropdown() {
     return this.visibleDropdown;
   }
@@ -81,75 +76,5 @@ export class SearchService {
     this.infodropdown.next();
   }
 
-  setLoading(value) {
-    this.store.dispatch(new SetLoadingState(value));
-  }
-
-  addSearchedItems(itm) {
-    this._searchedItems.push(itm);
-    this.items.next();
-  }
-
-  resetSearchedItems() {
-    this._searchedItems = [];
-    this.items.next();
-  }
-
-  examinateExpression(isExpertMode:boolean, expression: string, formGroup, shortcutMapper) {
-    let badges = [];
-    if (isExpertMode) {
-      const regExp = /(\w*:){1}(((\w|\")*\s)*)/g;
-      const globalKeyword = `${expression} `.replace(regExp, (match, shortcut, keyword) => {
-        this.keyword = expression.trim().split(" ")[0];
-        if (this.keyword.indexOf(':') > -1) this.keyword = null;
-        let field = shortcutMapper[_.trim(shortcut, ':')];
-        this.expertModeFilter.push({
-          field : shortcutMapper[_.trim(shortcut, ':')],
-          value: _.trim(_.trim(_.trim(keyword),'"')),
-          operator: this.getOperator(_.trim(keyword), field)});
-        badges.push({
-          key : shortcutMapper[_.trim(shortcut, ':')],
-          value: _.trim(_.trim(_.trim(keyword),'"')),
-          operator: this.getOperator(_.trim(keyword), field)
-        }) ;
-        return this.toBadges(_.trim(shortcut, ':'), _.trim(keyword), formGroup,shortcutMapper,badges );
-      }).trim();
-      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: badges}));
-      if (this.keyword)
-        setTimeout(() => this.addSearchedItems({key: 'Global Search', value: this.keyword}));
-      this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: globalKeyword}));
-    } else {
-      this.store.dispatch(new PatchSearchStateAction({key: 'actualGlobalKeyword', value: expression}));
-    }
-  }
-
-  toBadges(shortcut, keyword, formGroup, shortcutMapper,badges) {
-    const correspondingKey: string = shortcutMapper[shortcut];
-    if (correspondingKey) {
-      formGroup.get(correspondingKey).patchValue(keyword);
-      const instance = {key: this.stringUpdate(correspondingKey), value: keyword};
-      console.log('Those are badges', badges);
-      badges= [...badges,instance];
-      this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: badges}));
-    } else {
-      this._notifcationService.createNotification('Information',
-        'some shortcuts were false please check the shortcuts or change them!',
-        'error', 'bottomRight', 4000);
-    }
-    formGroup.get('globalKeyword').patchValue('');
-    return '';
-  }
-
-  getOperator(str: string, field: string) {
-    if (str.endsWith('\"') && str.indexOf('\"') === 0) {
-      return 'EQUAL';
-    } else { return 'LIKE'; }
-  }
-
-  stringUpdate(value) {
-    let newString = _.lowerCase(value);
-    newString = newString.split(' ').map(_.upperFirst).join(' ');
-    return newString;
-  }
 
 }

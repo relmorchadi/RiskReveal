@@ -18,10 +18,10 @@ import {
   DeleteAllBadgesAction,
   DeleteLastBadgeAction,
   DisableExpertMode,
-  EnableExpertMode,
+  EnableExpertMode, ExpertModeSearchAction,
   PatchSearchStateAction,
-  SearchContractsCountAction, SearchInputFocusAction,
-  SelectBadgeAction
+  SearchContractsCountAction, SearchInputFocusAction, SearchInputValueChange,
+  SelectBadgeAction, SearchAction
 } from '../../../store/index';
 import {Store, Actions, ofActionDispatched} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
@@ -88,7 +88,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this._subscribeToDistatchedEvents();
   }
 
-  private calculateContractChoicesLength(){
+  private calculateContractChoicesLength() {
     if (this.state.data && this.state.data.length > 0) {
       this.listLength = _.reduce(this.state.data, (sum, n) => {
         return sum + (n.length > 5 ? 5 : n.length);
@@ -117,25 +117,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((value) => {
-        this.store.dispatch(new PatchSearchStateAction({key: 'searchValue', value: value}));
-        // To externalise
-        value === '' ? this.state.showClearIcon = false : this.state.showClearIcon = true;
-        if (!this.isExpertMode) {
-          if (value === '' || value.length < 2) {
-            this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
-              key: 'showResult',
-              value: false
-            }]));
-          } else {
-            this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: false}));
-            this._searchService.examinateExpression(this.isExpertMode, this.globalKeyword, this.contractFilterFormGroup, this.state.sortcutFormKeysMapper);
-            this.store.dispatch(new PatchSearchStateAction({key: 'showResult', value: true}));
-          }
-          this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: true}));
-        } else {
-          this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
-        }
-        this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
+        this.store.dispatch(new SearchInputValueChange(this.isExpertMode, value))
         this._contractChoicesSearch(value);
       });
   }
@@ -150,57 +132,43 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     return window.location.href.match('search');
   }
 
-  onEnter(evt:KeyboardEvent){
+  onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
-    this._searchService.expertModeFilter = [];
-    this._searchService.resetSearchedItems();
-    const searchExpression = this.contractFilterFormGroup.get('globalKeyword').value;
     if (this.isExpertMode) {
-      this._searchService.examinateExpression(this.isExpertMode, searchExpression, this.contractFilterFormGroup, this.state.sortcutFormKeysMapper);
+      this.store.dispatch(new ExpertModeSearchAction(this.globalKeyword))
     } else {
-      this._searchService.globalSearchItem = searchExpression;
+      this.store.dispatch(new SearchAction(this.state.badges, this.globalKeyword))
     }
-    this.redirectToSearchPage();
+    this.contractFilterFormGroup.get('globalKeyword').patchValue('');
+    // this.redirectToSearchPage();
   }
 
-  onSpace(evt:KeyboardEvent){
+  onSpace(evt: KeyboardEvent) {
     if (this.pos && this.scrollTo >= 0) {
       this.selectSearchBadge(this.stringUpdate(this.state.tables[this.pos.i]), this.state.data[this.pos.i][this.pos.j].label);
       this.scrollTo = -1;
     }
   }
 
-  onArrowUp(evt:KeyboardEvent){
+  onArrowUp(evt: KeyboardEvent) {
     evt.preventDefault();
     if (this.scrollTo > 0)
       this.scrollTo = this.scrollTo - 1;
   }
 
-  onArrowDown(evt:KeyboardEvent){
+  onArrowDown(evt: KeyboardEvent) {
     evt.preventDefault();
     if (this.scrollTo < this.listLength)
       this.scrollTo = this.scrollTo + 1;
   }
 
-  onBackspace(evt:KeyboardEvent){
-    if(this.globalKeyword=='')
+  onBackspace(evt: KeyboardEvent) {
+    if (this.globalKeyword == '')
       this.store.dispatch(new DeleteLastBadgeAction());
   }
 
-  onDelete(evt:KeyboardEvent){
+  onDelete(evt: KeyboardEvent) {
     this.store.dispatch(new DeleteAllBadgesAction());
-  }
-
-  redirectToSearchPage() {
-    if (this.state.badges.length > 0) {
-      this.store.dispatch(new PatchSearchStateAction({
-        key: 'recentSearch',
-        value: _.uniqWith([[...this.state.badges], ...this.state.recentSearch].slice(0, 5), _.isEqual)
-      }));
-      this._searchService.affectItems([...this.state.badges]);
-      localStorage.setItem('items', JSON.stringify(this.state.recentSearch));
-    }
-    this.router.navigate(['/search']);
   }
 
   redirectWithSearch(items) {
@@ -211,7 +179,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   selectSearchBadge(key, value) {
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
-    this.store.dispatch(new SelectBadgeAction( {key,value}, this.globalKeyword));
+    this.store.dispatch(new SelectBadgeAction({key, value}, this.globalKeyword));
     this.searchInput.nativeElement.focus();
   }
 
@@ -239,7 +207,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   private _clearFilters() {
     this.contractFilterFormGroup.patchValue({
-      // globalKeyword: '',
       cedantCode: '',
       cedantName: '',
       countryName: '',
@@ -258,26 +225,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   focusInput(event) {
     this._searchService.setvisibleDropdown(false);
     this.store.dispatch(new SearchInputFocusAction(this.isExpertMode, event.target.value));
-  }
-
-  onInput(event) {
-    // event.target.value === '' ? this.state.showClearIcon = false : this.state.showClearIcon = true;
-    // if (!this.isExpertMode) {
-    //   if (event.target.value === '' || event.target.value.length < 2) {
-    //     this.store.dispatch(new PatchSearchStateAction([{key: 'showLastSearch', value: true}, {
-    //       key: 'showResult',
-    //       value: false
-    //     }]));
-    //   } else {
-    //     this.store.dispatch(new PatchSearchStateAction({key: 'showLastSearch', value: false}));
-    //     this._searchService.examinateExpression(this.isExpertMode, this.globalKeyword, this.contractFilterFormGroup, this.state.sortcutFormKeysMapper);
-    //     this.store.dispatch(new PatchSearchStateAction({key: 'showResult', value: true}));
-    //   }
-    //   this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: true}));
-    // } else {
-    //   this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
-    // }
-    // this.store.dispatch(new PatchSearchStateAction({key: 'visible', value: false}));
   }
 
   openClose(): void {

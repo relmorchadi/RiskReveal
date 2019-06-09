@@ -16,7 +16,7 @@
         <div class="title-wrapper" nz-row style="margin-top: 50px;">
           <div class="title-section">
             <h3>
-              Showing {{currentPage + '-' }}{{paginationOption?.total > currentPage + 100 ? (currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
+              Showing {{paginationOption?.currentPage + '-' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
               results</h3>
             <!--            /*( paginationOption?.total / 50 | number:'1.0-0' )*/-->
           </div>
@@ -30,103 +30,26 @@
           </div>
         </div>
 
-
-        <!--  <nz-table
-          nzVirtualScroll
-          [nzVirtualItemSize]="5"
-          [nzData]="contracts"
-          [nzFrontPagination]="false"
-          [nzShowPagination]="false"
-          [nzScroll]="{ x: '1200px', y: '240px' }"
-          (scroll)="contractsDatatableScroll($event)">
-          <thead [formGroup]="contractFilterFormGroup">
-          <tr>
-          <th>ID</th>
-          <th>Country</th>
-          <th colspan="2">Cedant</th>
-          <th>Uw Year</th>
-          <th colspan="2">Workspace Context</th>
-          <th></th>
-          </tr>
-          <tr>
-          <th></th>
-          <th>
-          <div class="filter-input">
-          <i class="icon-search"></i>
-          <input type="text" formControlName="country">
-          </div>
-          </th>
-          <th>
-          <div class="filter-input">
-          <i class="icon-search"></i>
-          <input type="text" formControlName="cedant">
-          </div>
-          </th>
-          <th>
-          <div class="filter-input">
-          <i class="icon-search"></i>
-          <input type="text">
-          </div>
-          </th>
-          <th>
-          <div class="filter-input">
-          <i class="icon-search"></i>
-          <input type="text" formControlName="year">
-          </div>
-          </th>
-          <th>
-          <div class="filter-input">
-          <i class="icon-search"></i>
-          <input type="text" formControlName="workspaceId">
-          </div>
-          </th>
-          <th>
-          <div class="filter-input">
-          <i class="icon-search"></i>
-          <input type="text" formControlName="workspaceName">
-          </div>
-          </th>
-          <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <ng-template nz-virtual-scroll let-contract>
-          <tr>
-          <td>{{contract?.id}}</td>
-          <td>{{contract?.countryName}}</td>
-          <td>{{contract?.cedantCode}}</td>
-          <td>{{contract?.cedantName}}</td>
-          <td>{{contract?.uwYear}}</td>
-          <td>{{contract?.workSpaceId}}</td>
-          <td>{{contract?.workspaceName}}</td>
-          <td class="actions-td">
-          <i class="icon-fullscreen_24px"></i>
-          <i class="icon-open_in_new_24px"></i>
-          </td>
-          </tr>
-          </ng-template>
-          </tbody>
-          </nz-table>-->
-
         <div class="chips-wrapper">
           <div *ngIf="globalSearchItem" style="padding: 15px 4px;">
             <app-chip-tag key='Global Search' (onclick)="closeGlobalSearch()"
                           [value]="globalSearchItem" [closeStatus]="true"></app-chip-tag>
           </div>
-          <div *ngFor="let items of searchedItems; let i = index" style="padding: 15px 4px;">
-            <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i, items.key)" [value]="items.value"
-                          [closeStatus]="true"></app-chip-tag>
-          </div>
-          <span (click)="clearChips()" *ngIf="searchedItems.length > 0">Clear All</span>
+          <ng-container *ngIf="_searchContent && _searchContent?.length" >
+            <div *ngFor="let items of _searchContent; let i = index" style="padding: 15px 4px;">
+              <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i, items.key)" [value]="items.value"
+                            [closeStatus]="true"></app-chip-tag>
+            </div>
+          </ng-container>
+          <span (click)="clearChips()" *ngIf="_searchContent?.length > 0">Clear All</span>
         </div>
         <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                    [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                    [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
-                   (filterData)="changeForm($event.searchValue, $event.searchAddress)"
+                   (filterData)="filterData($event.searchValue, $event.searchAddress)"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
                    [tableHeight]="'640px'"
-                   [loading]="loading"
-        >
+                   [loading]="loading">
         </app-table>
 
 

@@ -12,13 +12,13 @@
            (onArrowDown)="onArrowDown($event)"
            (onArrowUp)="onArrowUp($event)"
            (onDelete)="onDelete($event)"
-           (input)="onInput($event)" #searchInput
+           #searchInput
            formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="state.searchValue"
            class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
   <ng-template #suffixIconSearch>
     <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close" nzTheme="outline"></i>
-    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="redirectToSearchPage()" style="cursor: pointer" class="icon-search_24px"></i>
+    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer" class="icon-search_24px"></i>
   </ng-template>
   <ng-template #prefixIconTag>
     <div class="prefix-wrapper">

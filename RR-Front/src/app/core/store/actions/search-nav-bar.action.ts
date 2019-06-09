@@ -68,27 +68,73 @@ export class DisableExpertMode {
 export class SelectBadgeAction {
   static readonly type = '[Search Nav Bar] Select badge';
 
-  constructor(public badge: { key: string, value: string }, public keyword: string ) {
+  constructor(public badge: { key: string, value: string }, public keyword: string) {
   }
 }
 
 
 export class DeleteLastBadgeAction {
   static readonly type = '[Search Nav Bar] Delete last badge';
-  constructor() {}
+
+  constructor() {
+  }
 }
 
 export class DeleteAllBadgesAction {
   static readonly type = '[Search Nav Bar] Delete All Badges';
-  constructor() {}
+
+  constructor() {
+  }
 }
 
-export class CloseBadgeByIndexAction{
+export class CloseBadgeByIndexAction {
   static readonly type = '[Search Nav Bar] Delete Badge by index';
-  constructor(public index: number, public expertMode:boolean){}
+
+  constructor(public index: number, public expertMode: boolean) {
+  }
 }
 
 export class SearchInputFocusAction {
   static readonly type = '[Search Nav Bar] Search Input focus';
-  constructor(public expertMode:boolean, public inputValue: string){}
+
+  constructor(public expertMode: boolean, public inputValue: string) {
+  }
 }
+
+export class SearchInputValueChange {
+  static readonly type = '[Search Nav Bar] Search input value change';
+
+  constructor(public expertMode: boolean, public value: string) {
+  }
+}
+
+export class ExpertModeSearchAction {
+  static readonly type = '[Search Nav Bar] do expert mode search action';
+
+  constructor(public expression: string) {
+  }
+
+}
+
+export class SearchAction {
+  static readonly type = '[Search Nav Bar] do search';
+  constructor(public bages: any[], public keyword:string) {}
+}
+
+export class CloseTagByIndexAction {
+  static readonly type = '[Search Nav Bar] Close tag by index';
+  constructor(public index:number) {}
+}
+
+export class CloseAllTagsAction{
+  static readonly type= '[Search Nav Bar] Close all search tag';
+  constructor() {}
+}
+
+export class CloseGlobalSearchAction {
+  static readonly type = '[Search Nav Bar] Close global search tag';
+  constructor() {}
+}
+
+
+
