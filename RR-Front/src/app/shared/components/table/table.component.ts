@@ -188,6 +188,7 @@ export class TableComponent implements OnInit {
     console.log(this.selectedRows);
     row.selected = true;
     tableColumn.handler(this.selectedRows);
+
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {

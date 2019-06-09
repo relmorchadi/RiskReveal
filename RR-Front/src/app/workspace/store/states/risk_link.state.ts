@@ -170,11 +170,10 @@ export class RiskLinkState implements NgxsOnInit {
       const searchTerm = _.truncate(name, {length: name.length - 2, omission: ''});
       this.riskApi.searchRiskLinkPortfolio(id, searchTerm).pipe(
         mergeMap(
-          (data: any) => {
+          (data: any) => 
             of(
-
+              null
             )
-          }
         )
       );
     } else {

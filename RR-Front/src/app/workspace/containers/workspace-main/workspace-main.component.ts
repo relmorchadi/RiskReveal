@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
@@ -17,6 +17,7 @@ import {
   PatchWorkspaceMainStateAction, setTabsIndex
 } from '../../../core/store/actions/workspace-main.action';
 import * as moment from 'moment'
+import * as fromWS from '../../store/'
 
 
 @Component({
@@ -25,7 +26,8 @@ import * as moment from 'moment'
   styleUrls: ['./workspace-main.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspaceMainComponent implements OnInit {
+export class WorkspaceMainComponent implements OnInit,OnDestroy {
+  componentSubscriptions: Subscription[];
   tabIndex = 0;
   liked = false;
 
@@ -35,51 +37,70 @@ export class WorkspaceMainComponent implements OnInit {
   private keyEvents: Observable<any>;
   private keyDowns: any;
   private keyUps: any;
+  private selectedTabIndex: number;
+  private loading: boolean;
+  private data: { [p: string]: any };
 
-  constructor(private _helper: HelperService, private cdRef: ChangeDetectorRef, private route: ActivatedRoute, private _searchService: SearchService, private store: Store, private _router: Router) {
-
+  constructor(
+    private _helper: HelperService,
+    private cdRef: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private _searchService: SearchService,
+    private store: Store,
+    private _router: Router,
+  ) {
+    this.componentSubscriptions = [];
+    this.selectedTabIndex=0;
+    this.loading= false;
   }
 
   ngOnInit() {
-    this.store.dispatch(new LoadWorkspacesAction());
-    this.state$.subscribe(value => this.state = _.merge({}, value));
+    /*this.store.dispatch(new LoadWorkspacesAction());*/
     this.route.children[0].params.subscribe(
       ({wsId, year}: any) => {
         this.getSearchedWorkspaces(wsId, year);
         this.detectChanges();
       });
-    this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
-      dt =>
-        this.detectChanges()
-    );
+    //New
+    this.componentSubscriptions.push(
+      this.store.select(fromWS.WorkspaceState.getCurrentTab).subscribe( curTab => {
+        this.selectedTabIndex= curTab.index;
+        console.log(this.selectedTabIndex);
+        this.detectChanges();
+      }),
+      this.store.select(fromWS.WorkspaceState.getLoading).subscribe( loading => {
+        this.loading = loading;
+        this.detectChanges();
+      }),
+      this.store.select(fromWS.WorkspaceState.getWorkspaces).subscribe( content => {
+        this.data = content;
+        console.log(content);
+        this.detectChanges();
+      })
+    )
   }
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(e: KeyboardEvent) {
-    if(e.key == 'ArrowRight' && e.ctrlKey && this.state.openedTabs.data) {
-      if( this.state.openedTabs.data.length - 1 > this.state.openedTabs.tabsIndex){
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex+1])
-        this.store.dispatch(new setTabsIndex({
-          index: this.state.openedTabs.tabsIndex+1
-        }))
-      }else{
-        this.selectWorkspace(this.state.openedTabs.data[0])
-        this.store.dispatch(new setTabsIndex({
-          index: 0
-        }))
+
+    if(e.ctrlKey && _.size(this.data)) {
+      if(e.key == 'ArrowRight') {
+        if( _.size(this.data) > this.selectedTabIndex){
+          const wsIdentifier = _.keys(this.data)[this.selectedTabIndex + 1];
+          this.selectWorkspace(wsIdentifier, this.selectedTabIndex + 1)
+        }else{
+          this.selectWorkspace(_.keys(this.data)[0],0)
+        }
       }
-    }
-    if(e.key == 'ArrowLeft' && e.ctrlKey && this.state.openedTabs.data) {
-      if(0 < this.state.openedTabs.tabsIndex){
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex - 1])
-        this.store.dispatch(new setTabsIndex({
-          index: this.state.openedTabs.tabsIndex - 1
-        }))
-      }else{
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length - 1])
-        this.store.dispatch(new setTabsIndex({
-          index: this.state.openedTabs.data.length - 1
-        }))
+      if(e.key == 'ArrowLeft'){
+        if(this.selectedTabIndex > 0){
+          const wsIdentifier = _.keys(this.data)[this.selectedTabIndex - 1];
+          this.selectWorkspace(wsIdentifier, this.selectedTabIndex - 1);
+        }else{
+          const i = _.size(this.data) - 1;
+          const wsIdentifier = _.keys(this.data)[i];
+          this.selectWorkspace(wsIdentifier,i)
+        }
       }
     }
   }
@@ -111,27 +132,16 @@ export class WorkspaceMainComponent implements OnInit {
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-  close(title, year) {
-    const state = this.state.openedWs;
-    if (state.workSpaceId === title && state.uwYear == year) {
-      this.store.dispatch(new CloseWorkspaceMainAction({workSpaceId: title, uwYear: year, same: true}));
-      this.navigateToTab();
-    } else {
-      this.store.dispatch(new CloseWorkspaceMainAction({workSpaceId: title, uwYear: year, same: false}));
-    }
+  close(wsId, uwYear) {
+    this.store.dispatch(new fromWS.closeWS({
+      wsIdentifier: wsId+'-'+uwYear
+    }))
+    //AFTER
     this._helper.updateWorkspaceItems();
   }
 
-  navigateToTab() {
-    if (this.state.openedWs.routing) {
-      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${this.state.openedWs.routing}`]);
-    } else {
-      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
-    }
-  }
-
-  addWs(title, year) {
-    const alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === title && ws.uwYear == year);
+  addWs(wsId, uwYear) {
+    /*const alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === title && ws.uwYear == year);
     const index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === title && ws.uwYear == year);
     if (alreadyOpened.length > 0) {
       this.store.dispatch(new PatchWorkspaceMainStateAction([{key: 'openedWs', value: alreadyOpened[0]},
@@ -155,8 +165,11 @@ export class WorkspaceMainComponent implements OnInit {
           this.detectChanges();
         }
       );
-    }
-    this.navigateToTab();
+    }*/
+    this.store.dispatch(new fromWS.openWS({
+      wsId,
+      uwYear
+    }))
   }
 
   generateYear(year, years, title = '') {
@@ -192,9 +205,11 @@ export class WorkspaceMainComponent implements OnInit {
     }));
   }
 
-  selectWorkspace(workspace) {
-    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: workspace}));
-    this.navigateToTab();
+  selectWorkspace(wsIdentifier, index) {
+    this.store.dispatch(new fromWS.setCurrentTab({
+      wsIdentifier,
+      index
+    }))
   }
 
   detectChanges() {
@@ -220,5 +235,9 @@ export class WorkspaceMainComponent implements OnInit {
       workspaceMenuItem = {...workspaceMenuItem, [tab.workSpaceId + '-'+ tab.uwYear]: _.omit(workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear], ['favorite','lastFModified'])};
     }
     localStorage.setItem('workSpaceMenuItem',JSON.stringify(workspaceMenuItem));
+  }
+
+  ngOnDestroy(): void {
+    _.forEach(this.componentSubscriptions, sub => sub.unsubscribe())
   }
 }

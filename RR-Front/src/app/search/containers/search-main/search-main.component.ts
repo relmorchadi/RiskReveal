@@ -14,6 +14,7 @@ import {
 } from '../../../core/store/actions/workspace-main.action';
 import {WorkspaceMainState} from '../../../core/store/states';
 import * as fromWS from '../../../core/store';
+import * as fromWS2 from '../../../workspace/store/actions';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {PatchSearchStateAction} from '../../../core/store';
@@ -215,8 +216,8 @@ export class SearchMainComponent implements OnInit {
     this._loadContracts(String(event.first));
   }
 
-  openWorkspace(wsId, year) {
-    this.searchData(wsId, year).subscribe(
+  openWorkspace(wsId, uwYear) {
+    /*this.searchData(wsId, year).subscribe(
       (dt: any) => {
         const workspace = {
           workSpaceId: wsId,
@@ -238,7 +239,11 @@ export class SearchMainComponent implements OnInit {
           this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
         }
       }
-    );
+    );*/
+    this.store.dispatch(new fromWS2.loadWS({
+      wsId,
+      uwYear
+    }))
   }
 
   navigateToTab(value) {
