@@ -27,6 +27,13 @@
                   </li>
                 </ul>
               </div>
+              <div *ngIf="(deletedPlts | toArray).length > 0" class="plt-trash">
+                <div class="cnt" (click)="showDeleted= !showDeleted">
+                  <i class="icon-trash-alt"></i>
+                  <span> Deleted Plts </span>
+                </div>
+                <span class="deleted-counter">{{(deletedPlts | toArray).length}}</span>
+              </div>
             </div>
           </nz-tab>
 
@@ -63,12 +70,12 @@
 
               <ng-template #addTagModalContent>
                 <nz-tabset class="tab-content-cnt" [(nzSelectedIndex)]="addTagModalIndex">
-                  <nz-tab nzTitle="Create New Tag">
+                  <nz-tab [nzTitle]="renamingTag ? 'Rename Tag' : 'Create New Tag'">
                     <div class="content">
                       <nz-input-group [nzSuffix]="suffixTemplate">
-                        <input  class="input-default" [(ngModel)]="addModalInput" type="text" nz-input placeholder="Tag Name"/>
+                        <input class="input-default" [(ngModel)]="addModalInput" type="text" nz-input placeholder="Tag Name"/>
                       </nz-input-group>
-                      <div class="color" [ngStyle]="{'background-color': initColor}" (click)="toggleColorPicker('color')">
+                      <div *ngIf="!renamingTag" class="color" [ngStyle]="{'background-color': initColor}" (click)="toggleColorPicker('color')">
                       </div>
                       <color-chrome (clickOutside)="colorPickerIsVisible=false" (onChangeComplete)="initColor=$event.color.hex" [color]="initColor" *ngIf="colorPickerIsVisible" ></color-chrome>
                       <ng-template #suffixTemplate
@@ -109,7 +116,6 @@
                         dataKey="tagId"
                         optionLabel="tagName"
                         [showToggleAll]="false"
-                        (onChange)="log(e)"
                         [options]="userTags | toArray"
                         [(ngModel)]="addModalSelect"
                         [panelStyle]="{minWidth:'450px'}">
@@ -132,9 +138,9 @@
 
               <ng-template #addTagModalFooter>
                 <div class="footer">
-                  <button (click)="addTagModal=false;addModalInput='';addModalSelect=''" nz-button class="button-no-outline">cancel</button>
-                  <button class="button-standard" (click)="assignPltsToTag()" nz-button>
-                    {{addTagModalIndex == 0 ? fromPlts ? 'Create & Assign' : 'Create' : 'Assign'}}
+                  <button (click)="handlePopUpCancel()" nz-button class="button-no-outline">cancel</button>
+                  <button class="button-standard" (click)="handlePopUpButton()" nz-button>
+                    {{renamingTag ? 'Rename' : addTagModalIndex == 0 ? fromPlts ? 'Create & Assign' : 'Create' : 'Assign'}}
                   </button>
                 </div>
               </ng-template>
@@ -303,14 +309,15 @@
             </tbody>
           </nz-table-->
               <p-contextMenu #cm appendTo="body" [model]="contextMenuItems"></p-contextMenu>
-              <p-table [columns]="pltColumns" [value]="listOfPltsData | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]"
+              <p-table
+                        [columns]="pltColumns"
+                       [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]"
                        [resizableColumns]="true"
                        [(contextMenuSelection)]="selectedPlt"
                        [contextMenu]="cm"
                        [scrollHeight]="'500px'"
                        [scrollable]="true"
                        [totalRecords]="listOfPltsData.length"
-                       sortMode="multiple"
                        (onSort)="onSort($event)"
                        [responsive]="true"
               >
@@ -327,7 +334,7 @@
                       <i (click)="checkBoxsort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
                     </th>
                     <th [ngStyle]="{'width': '60px'}">
-                      <span style="display:flex;justify-content: space-between;">
+                      <span style="display:flex;justify-content: space-between;font-weight: bold">
                         User Tags
                       </span>
                     </th>
@@ -336,7 +343,11 @@
                       <th  *ngIf="i > 0" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
-                        <p-sortIcon *ngIf="col?.sorted" [field]="col.fields"></p-sortIcon>
+                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                        </ng-container>
                       </span>
                         <i *ngIf="col.icon" [ngClass]="col.icon"></i>
                       </th>
@@ -356,11 +367,11 @@
                   </tr>
                 </ng-template>
                 <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
-                  <tr [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
+                  <tr (contextmenu)="selectedItemForMenu=rowData.pltId" [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
                     <td [ngStyle]="{'width': '43px'}">
                       <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
                     </td>
-                    <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
+                      <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
                       <ng-container *ngIf="i === 0">
                         <div class="td-wrapper-tags">
                           <ng-container *ngFor="let tag of rowData.userTags;let i= index;">

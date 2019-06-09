@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
+import * as _ from 'lodash';
 
 @Injectable({
   providedIn: 'root'
@@ -24,5 +25,13 @@ export class PltApi {
 
   deleteUserTag(params): Observable<any>{
     return this.http.delete(`${this.URL}/user-tag/${params}`)
+  }
+
+  renameTag(params: any): Observable<any> {
+    return this.http.put(`${this.URL}/user-tag`,params)
+  }
+
+  deletePlt(params: any): Observable<any> {
+    return this.http.delete(`${this.URL}/plt`,params)
   }
 }

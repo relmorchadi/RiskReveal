@@ -84,6 +84,19 @@
           padding: 2px 3px 2px 2px;
         }
       }
+
+      .plt-trash {
+        position: absolute;
+        bottom: 0;
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        padding: 16px;
+        font-size: 16px;
+        .deleted-counter {
+          cursor: auto;
+        }
+      }
     }
 
 
@@ -199,7 +212,7 @@
   .tags-title-section {
     color: #646464;
     font-size: 14.54px;
-    font-weight: 300;
+    font-weight: bold;
     letter-spacing: 0.25px;
     line-height: 41px;
     padding-left: 18px;
@@ -294,7 +307,7 @@
 }
 
 .chips {
-  padding: 2px 7px;
+  padding: 4px 8px;
   color: #fff;
   font-family: Rubik;
   border-radius: 10px;
@@ -311,10 +324,9 @@
   }
 
   .chips-counter {
-    margin-left: 5px;
-    font-size: .9em;
+    margin-left: 16px;
     border-radius: 11px;
-    padding: 2px 8px;
+    padding: 0px 14px;
     color: white;
     position: relative;
     .chips-layer {

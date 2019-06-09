@@ -33,28 +33,14 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   projects: any[];
 
   params: any;
-  sortMap = {
-    pltId: null,
-    systemTags: null,
-    userTags: null,
-    pathId: null,
-    pltName: null,
-    peril: null,
-    regionPerilCode: null,
-    regionPerilName: null,
-    selected: null,
-    grain: null,
-    vendorSystem: null,
-    rap: null,
-    isScorCurrent: null,
-    isScorDefault: null,
-    isScorGenerated: null,
-  };
   lastSelectedId;
 
   contextMenuItems = [
     { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
-    { label: 'Delete', icon: 'pi pi-times', command: (event) => console.log(event) },
+    { label: 'Delete', icon: 'pi pi-trash', command: (event) => {
+      this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltId : this.selectedItemForMenu}))
+      }
+      },
     { label: 'Edit Tags', icon: 'pi pi-tags', command: (event) => {
         this.addTagModal= true;
         this.fromPlts= true;
@@ -64,29 +50,37 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
           if(v.selected) d.push(v.userTags);
         })
 
-        this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+        //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
-        this.addModalSelect = _.toArray(this.selectedUserTags);
-      }}
+        this.addModalSelect = _.intersectionBy(...d, 'tagId');
+
+      }
+    }
   ];
 
   tagContextMenu = [
-    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))}
-  ]
+    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))}, { label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
+        this.renamingTag= true;
+        this.fromPlts = false;
+        this.addModalInput = this.tagFormenu.tagName;
+        this.modalInputCache= this.tagFormenu.tagName;
+        this.addTagModal= true;
+      }}
+  ];
 
   pltColumns = [
-    {fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
-    {fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'peril', header: 'Peril', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'regionPerilCode', header: 'Region Peril Code', width: '80px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'vendorSystem', header: 'Vendor System', width: '90px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
-    {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
-    {fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {sortDir: 1,fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
+    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'peril', header: 'Peril', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '80px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '90px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
+    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     ];
 
   epMetricsCurrencySelected: any = 'EUR';
@@ -276,6 +270,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   selectAll: boolean;
   drawerIndex: any;
   private pageSize: number = 20;
+  private lastClick: string;
+  private renamingTag: boolean;
+  private modalInputCache: any;
 
 
   constructor(
@@ -298,6 +295,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       userTag: []
     }
     this.filterData = {};
+    this.sortData= {};
     this.activeCheckboxSort = false;
     this.loading = true;
     this.addTagModal = false;
@@ -308,11 +306,14 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.selectedUserTags= {};
     this.initColor = '#fe45cd'
     this.colorPickerIsVisible = false;
-    this.addTagModalPlaceholder = 'Select a Tag'
+    this.addTagModalPlaceholder = 'Select a Tag';
+    this.showDeleted= false;
   }
 
   @Select(PltMainState.getUserTags) userTags$;
-  @Select(PltMainState.data) data$;
+  @Select(PltMainState.getPlts) data$;
+  @Select(PltMainState.getDeletedPlts) deletedPlts$;
+  deletedPlts: any;
   loading: boolean;
   selectedUserTags: any;
 
@@ -332,6 +333,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   ngOnInit() {
     this.Subscriptions.push(
+      this.deletedPlts$.subscribe( d => {
+        this.deletedPlts= d;
+        this.detectChanges();
+
+      }),
       this.data$.subscribe( data => {
         let d1= [];
         let d2= [];
@@ -506,6 +512,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   colorPickerIsVisible: any;
   initColor: any;
   addTagModalPlaceholder: any;
+  showDeleted: boolean;
+  selectedItemForMenu: string;
 
   setFilter(filter: string, tag,section) {
       if(filter === 'userTag'){
@@ -616,6 +624,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   resetPath(){
     this.filterData = _.omit(this.filterData, 'project')
     this.projects = _.map(this.projects, p => ({...p, selected: false}))
+    this.showDeleted= false;
   }
 
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
@@ -666,15 +675,17 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
     const isSelected = _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
+      this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
     } else {
       this.lastSelectedId = i;
       this.toggleSelectPlts(
         _.zipObject(
           _.map(this.listOfPlts, plt => plt),
-          _.map(this.listOfPlts, plt =>  plt == pltId && !isSelected ? ({type: 'select'}) : ({type: 'unselect'}) )
+          _.map(this.listOfPlts, plt =>  plt == pltId && (this.lastClick == 'withKey' || !isSelected) ? ({type: 'select'}) : ({type: 'unselect'}))
         )
       );
+      this.lastClick= null;
     }
   }
 
@@ -743,26 +754,38 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
   }
 
-  assignPltsToTag() {
-    if(this.addTagModalIndex > 0 ){
-      this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
-        plts: this.selectedListOfPlts,
-        wsId: this.workspaceId,
-        uwYear: this.uwy,
-        tags: this.selectedUserTags,
-        type: 'many'
-      }))
-    }else{
-      this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
-        plts: this.fromPlts ? this.selectedListOfPlts : [],
-        wsId: this.workspaceId,
-        uwYear: this.uwy,
-        tag: {
-          tagName: this.addModalInput,
-          tagColor: this.initColor
-        }
-      }))
+  handlePopUpConfirm() {
+    if(this.renamingTag) {
+      if(this.addModalInput != this.modalInputCache){
+        this.store$.dispatch(new fromWorkspaceStore.renameTag({
+          tagId: this.tagFormenu.tagId,
+          tagName: this.addModalInput
+        }))
+      }
+    }else {
+      if(this.addTagModalIndex === 1 ){
+        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+          plts: this.selectedListOfPlts,
+          wsId: this.workspaceId,
+          uwYear: this.uwy,
+          tags: this.addModalSelect,
+          type: 'many'
+        }))
+      }
+
+      if(this.addTagModalIndex === 0) {
+        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+          plts: this.fromPlts ? this.selectedListOfPlts : [],
+          wsId: this.workspaceId,
+          uwYear: this.uwy,
+          tag: {
+            tagName: this.addModalInput,
+            tagColor: this.initColor
+          }
+        }))
+      }
     }
+    
     this.addTagModal = false;
   }
 
@@ -831,9 +854,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.initColor = '#fe45cd'
   }
 
+  sortChange(field: any, sortCol: any) {
+    console.log(field,sortCol)
+    if(!sortCol){
+      this.sortData[field] = 'asc';
+    }else if(sortCol === 'asc'){
+      this.sortData[field] = 'desc';
+    } else if(sortCol === 'desc') {
+      this.sortData[field]= null
+    }
+  }
 
-  log(e: any) {
-    console.log(e,this.addModalSelect);
+  handlePopUpCancel() {
+    this.addTagModal=false;
+    this.addModalInput='';
+    this.addModalSelect='';
   }
 }
 
