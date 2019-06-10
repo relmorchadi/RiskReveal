@@ -319,6 +319,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   systemTagsMapping = {
     grouped: {
+      peril: 'Peril',
       regionPerilCode: 'Region Peril',
       currency: 'Currency',
       sourceModellingVendor: 'Modelling Vendor',

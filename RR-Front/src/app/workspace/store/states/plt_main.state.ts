@@ -185,6 +185,7 @@ export class PltMainState implements NgxsOnInit {
 
   reverseSystemTagsMapping = {
     grouped: {
+      'Peril': 'peril',
       'Region Peril': 'regionPerilCode',
       'Currency': 'currency',
       'Modelling Vendor': 'sourceModellingVendor',
@@ -389,9 +390,8 @@ export class PltMainState implements NgxsOnInit {
       data
     } = ctx.getState();
 
-     ctx.patchState({
-       data: _.merge({}, data, {[pltId]: { ...data[pltId], deleted: true}})
-     })
+     return of(JSON.parse(localStorage.getItem('deletedPlts')) || {})
+       .pipe()
    }
 
   @Action(fromPlt.renameTag)

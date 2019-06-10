@@ -4,9 +4,7 @@ import {FilterBySystemTagPipe} from "./filter-by-system-tag.pipe";
 import {FilterByPathPipe} from "./filter-by-path.pipe";
 import {TableSortAndFilterPipe} from '../../core/pipes/table-sort-and-filter.pipe';
 import {TextLengthPipe} from '../../core/pipes/text-length.pipe';
-import {BoldPipe} from './bold.pipe';
 import {ForNumberPipe} from "./for-number.pipe";
-import {KeysPipe} from '../../shared/pipes/keys.pipe';
 
 export const PIPES= [
   FilterByBadgePipe,
@@ -15,7 +13,6 @@ export const PIPES= [
   FilterByPathPipe,
   TableSortAndFilterPipe,
   TextLengthPipe,
-  BoldPipe,
   ForNumberPipe,
 ];
 
