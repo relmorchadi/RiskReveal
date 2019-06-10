@@ -41,7 +41,7 @@ export class WorkspaceProjectComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.state$.subscribe(value => this.state = _.merge({}, value));
+    this.state$.subscribe(value => {this.state = _.merge({}, value); this});
 
     combineLatest(
       this.data$,

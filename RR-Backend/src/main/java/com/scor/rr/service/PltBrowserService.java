@@ -75,4 +75,8 @@ public class PltBrowserService {
     public void deleteUserTag(Integer id) {
         userTagRepository.delete(userTagRepository.findById(id).orElseThrow(()->new RuntimeException("ID not Found")));
     }
+
+    public UserTag updateUserTag(UserTag userTag) {
+        return userTagRepository.save(userTag);
+    }
 }

@@ -60,7 +60,7 @@
           </div>
           <ul>
           <ng-container *ngFor="let workspace of favorites | showLast: [favoriteSize] | inputSearch: [favoriteSearch]; let i = index">
-            <li class="poover-menu-item" (click)="toggle(workspace,'favorite',workspace?.selectedF,i)"
+            <li class="poover-menu-item" (click)="toggle(workspace, 'favorite', workspace?.selectedF)"
                 [ngClass]="{'poover-menu-item-active': workspace.selectedF}">
               <div class="items-popover-wrapper">
                 <i class="icon-window-section"></i>

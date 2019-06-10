@@ -11,7 +11,8 @@ export class NotificationsMenuItemComponent implements OnInit {
   lastOnes = 5;
   visible: boolean;
   notifCount = 5;
-  notification = {
+  cleared = false;
+  notification: any = {
     all: {
       today: [
         {avatar: 'H.P', icon: null, iconColor: '#7ED321', content: 'Project P-6458 has been assigned to you by Huw Parry', backgroundColor: '#06B8FF', textColor: '#FFFFFF'},
@@ -44,12 +45,19 @@ export class NotificationsMenuItemComponent implements OnInit {
     this.visible = false;
   }
 
-  toggleNotificaion(notification) {
+  toggleNotification(notification) {
 
   }
 
   updateNotif() {
     this.notifCount = 0;
+    this.cleared ? this.navigateToNotification() : null;
+  }
+
+  clearNotif() {
+    this.notification = {};
+    this.cleared = true;
+    this.visible = false;
   }
 
 }

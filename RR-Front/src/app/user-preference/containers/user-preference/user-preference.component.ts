@@ -15,6 +15,8 @@ import * as _ from "lodash";
 export class UserPreferenceComponent implements OnInit {
   defaultImport;
 
+  searchTarget = 'treaty';
+
   extraDetailDate = false;
   extraDetailTime = false;
 
@@ -69,6 +71,10 @@ export class UserPreferenceComponent implements OnInit {
   returnToConf() {
     this.extraDetailDate = false;
     this.extraDetailTime = false;
+  }
+
+  changeSearch() {
+
   }
 
 }
