@@ -392,6 +392,18 @@ export class PltComparerMainComponent implements OnInit {
     console.log(e);
     this.dropdown.close();
   }
+
+  selectFirst(event) {
+    if (event)
+      this.cardContainer[0].selected = true;
+    else
+      this.cardContainer.forEach(dt =>  dt.selected = false);
+  }
+  selectItem(selected){
+    this.cardContainer.forEach(dt => dt.selected = false);
+
+  }
+
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.cardContainer, event.previousIndex, event.currentIndex);
   }

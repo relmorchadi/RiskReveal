@@ -20,7 +20,6 @@
   background-color: #F4F6FC;
   width: 100%;
   height: 100vh;
-  overflow: auto;
 
   .tabset-left {
     background: #fff;
@@ -84,7 +83,6 @@
       }
 
       .plt-trash {
-        position: absolute;
         bottom: 0;
         display: flex;
         justify-content: space-between;

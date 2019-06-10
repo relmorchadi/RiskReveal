@@ -321,7 +321,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   systemTagsMapping = {
     grouped: {
       peril: 'Peril',
-      regionPerilCode: 'Region Peril',
+      regionPerilCode: 'Region',
       currency: 'Currency',
       sourceModellingVendor: 'Modelling Vendor',
       sourceModellingSystem: 'Model System',
@@ -865,7 +865,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }else if(sortCol === 'asc'){
       this.sortData[field] = 'desc';
     } else if(sortCol === 'desc') {
-      this.sortData[field]= null
+      this.sortData = _.omit(this.sortData, `${field}`)
     }
   }
 
