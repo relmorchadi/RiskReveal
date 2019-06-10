@@ -5,7 +5,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
+  PatchWorkspaceMainStateAction, SetWsRoutingAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -157,8 +157,8 @@ export class WorkspaceMainState implements NgxsOnInit {
     });
   }
 
-  @Action(SelectWorkspaceAction)
-  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SelectWorkspaceAction) {
+  @Action(SetWsRoutingAction)
+  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SetWsRoutingAction) {
     const state = ctx.getState();
 
     let index= _.findIndex(state.openedTabs.data, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear)

@@ -5,8 +5,7 @@ import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as _ from 'lodash';
 import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
-import { SelectWorkspaceAction, PatchWorkspaceMainStateAction } from '../../../core/store/actions/workspace-main.action';
-import {SearchService} from "../../../core/service/search.service";
+import { SetWsRoutingAction, PatchWorkspaceMainStateAction } from '../../../core/store/actions/workspace-main.action';
 import {HelperService} from "../../../shared/helper.service";
 
 
@@ -40,7 +39,7 @@ export class LeftMenuComponent implements OnInit {
       this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
       patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
     }
-    this.store.dispatch(new SelectWorkspaceAction(patchRouting));
+    this.store.dispatch(new SetWsRoutingAction(patchRouting));
     this._helper.updateWorkspaceItems();
   }
 
