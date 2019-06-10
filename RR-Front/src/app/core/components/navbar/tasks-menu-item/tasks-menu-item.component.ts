@@ -42,6 +42,7 @@ export class TasksMenuItemComponent implements OnInit {
         specific: {type: 'Import', link: 'RiskLink', date: 'today',  id: '00F0006'},
         append: false,
         isPaused: false,
+        pending: false,
         data: {
           workSpaceId: '00F0006',
           uwYear: 2018,
@@ -49,7 +50,7 @@ export class TasksMenuItemComponent implements OnInit {
           cedantCode: ' 22231',
           cedantName: 'SCOR SE',
         },
-        status: {completed: 0, total:3},
+        status: {completed: 0, total: 3},
         content: [{
             progress: 90,
             projectId: 'P-000004970',
@@ -88,6 +89,7 @@ export class TasksMenuItemComponent implements OnInit {
         specific: {type: 'Calibration', link: 'Calibration', date: 'today', id: '01P4134'},
         append: false,
         isPaused: false,
+        pending: false,
         data: {
           workSpaceId: '01P4134',
           uwYear: 2017,
@@ -95,7 +97,7 @@ export class TasksMenuItemComponent implements OnInit {
           cedantCode: '11963',
           cedantName: 'NFU MUTUAL'
         },
-        status: {completed: 0, total:1},
+        status: {completed: 0, total: 1},
         content: [{
             progress: 50,
             projectId: 'P-000004971',
@@ -116,6 +118,7 @@ export class TasksMenuItemComponent implements OnInit {
         specific: {type: 'Inuring', link: 'Inuring', date: 'yesterday', id: '01P4466'},
         append: false,
         isPaused: false,
+        pending: false,
         data: {
           workSpaceId: '01P4466',
           uwYear: 2017,
@@ -153,6 +156,7 @@ export class TasksMenuItemComponent implements OnInit {
         specific: {type: 'Import', link: 'RiskLink', date: 'lastWeek', id: 'TP05413 '},
         append: false,
         isPaused: true,
+        pending: true,
         data: {
           workSpaceId: 'TP05413',
           uwYear: 2016,
@@ -199,6 +203,7 @@ export class TasksMenuItemComponent implements OnInit {
         specific: {type: 'Calibration', link: 'Calibration', date: 'lastWeek', id: '00C0024'},
         append: false,
         isPaused: true,
+        pending: true,
         data: {
           workSpaceId: '00C0024',
           uwYear: 2019,
@@ -272,11 +277,13 @@ export class TasksMenuItemComponent implements OnInit {
         dt.isPaused = false;
       }
     });
-    this.tasks.active = _.sortBy(this.tasks.active, (dt) => dt.isPaused)
+    this.tasks.active = _.sortBy(this.tasks.active, (dt) => dt.isPaused);
+    this.savedTasksLocal = { active: [...this.tasks.active]};
   }
 
   deleteJob(id) {
     this.tasks.active = this.tasks.active.filter(dt => dt.id !== id);
+    this.savedTasksLocal = { active: [...this.tasks.active]};
   }
 
   pauseJob(id): void {
@@ -285,7 +292,8 @@ export class TasksMenuItemComponent implements OnInit {
         dt.isPaused = true;
       }
     });
-    this.tasks.active = _.sortBy(this.tasks.active, (dt) => dt.isPaused)
+    this.tasks.active = _.sortBy(this.tasks.active, (dt) => dt.isPaused);
+    this.savedTasksLocal = { active: [...this.tasks.active]};
   }
 
   filterByDate(event) {
