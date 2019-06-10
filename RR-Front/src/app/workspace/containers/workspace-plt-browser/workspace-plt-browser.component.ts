@@ -865,7 +865,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }else if(sortCol === 'asc'){
       this.sortData[field] = 'desc';
     } else if(sortCol === 'desc') {
-      this.sortData[field]= null
+      this.sortData = _.omit(this.sortData, `${field}`)
     }
   }
 
