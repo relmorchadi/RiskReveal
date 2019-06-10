@@ -1,6 +1,10 @@
 <app-left-menu></app-left-menu>
 <div class="plt-browser-wrapper">
-  <div class="mr-3 ml-3" style="flex: 1;">
+  <div class="mr-1 ml-1" style="
+  display: flex;
+  flex-direction: column;
+    justify-content: center;
+    margin-bottom: 3em;">
     <div class="title-wrapper" nz-row>
       <div class="title-section">
         <h4>PLT Manager</h4>
@@ -15,18 +19,16 @@
               <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
             </ng-template>
             <div class="path-content">
-              <div class="title">
-                    <span (click)="resetPath()">
+              <span (click)="resetPath()">
                       <i class="icon-window-section"></i>
-                      {{workspaceId}} - {{uwy}}
-                    </span>
-                <ul class="title-list">
-                  <li *ngFor="let project of projects" (click)="filter('project',project.projectId)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;" [ngClass]="{'active-path': project.selected}">
-                    <i class="icon-assignment_24px"></i>
-                    <span class="tooltipMsg" [nz-tooltip]="project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
-                  </li>
-                </ul>
-              </div>
+                {{workspaceId}} - {{uwy}}
+              </span>
+              <ul class="title-list">
+                <li *ngFor="let project of projects" (click)="filter('project',project.projectId)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;" [ngClass]="{'active-path': project.selected}">
+                  <i class="icon-assignment_24px"></i>
+                  <span class="tooltipMsg" [nz-tooltip]="project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+                </li>
+              </ul>
               <div *ngIf="(deletedPlts | toArray).length > 0" class="plt-trash">
                 <div class="cnt" (click)="showDeleted= !showDeleted">
                   <i class="icon-trash-alt"></i>
@@ -416,7 +418,7 @@
     </div>
   </div>
 
-  <div nz-col style="width: 60px;">
+  <div nz-col style="display: flex;">
     <div class="right-column">
       <div class="navigation-icons">
         <i class="icon-map-pin-alt"></i>

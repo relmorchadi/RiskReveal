@@ -1,12 +1,12 @@
 @import "~src/assets/scss/variables";
 :host {
   ::ng-deep {
-    .ant-menu-root.ant-menu-vertical{
+    /*.ant-menu-root.ant-menu-vertical{
       padding-bottom: 40vh;
     }
     .ant-menu-root.ant-menu-inline{
       padding-bottom: 40vh;
-    }
+    }*/
     .ant-menu-inline .ant-menu-item::after {
       border-right: 3px solid $color-secondary !important;
     }
