@@ -6,15 +6,15 @@
                [tableColumn]="cols" [listOfData]="mockData"
                [virtualScroll]="false" [totalRecords]="mockData.length"></app-table>
     <div class="select-sections">
-      <nz-select nzPlaceHolder="Cedant" class="float-right mt-2 mr-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="activeProject">
-        <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
+      <nz-select nzPlaceHolder="Country" class="float-right mt-2 mr-2 dropdown-default" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="activeProject">
+        <nz-option nzLabel="Country" nzValue="1"></nz-option>
       </nz-select>
 
-      <nz-select nzPlaceHolder="UW Units" class="float-right mt-2 mr-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="uwyUnits">
+      <nz-select nzPlaceHolder="UW Units" class="float-right mt-2 mr-2 dropdown-default" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="uwyUnits">
         <nz-option nzLabel="UW Units" nzValue="1"></nz-option>
       </nz-select>
 
-      <nz-select nzPlaceHolder="Renewal Period" class="float-right mt-2 mr-2" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="renewalPeriod">
+      <nz-select nzPlaceHolder="Renewal Period" class="float-right mt-2 mr-2 dropdown-default" style="width: 140px;" nzShowSearch nzAllowClear  [(ngModel)]="renewalPeriod">
         <nz-option nzLabel="Renewal Period" nzValue="1"></nz-option>
       </nz-select>
   </div>
