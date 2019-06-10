@@ -268,7 +268,7 @@ export class TasksMenuItemComponent implements OnInit {
   }
 
   searchJobs(event) {
-    this.savedTasksLocal.active = this.tasks.active.filter(text => _.includes(text.name, event.target.value));
+    this.savedTasksLocal.active = this.tasks.active.filter(text => _.includes( _.toLower(text.name), _.toLower(event.target.value)));
   }
 
   resumeJob(id) {

@@ -10,6 +10,25 @@
   width: 35px;
 }
 
+.notif-wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  height: 320px;
+}
+
+.empty-wrapper {
+  height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.list-group-fuse {
+  height: auto;
+  margin-right: 10px;
+}
+
 i.notifications_24px {
   color: rgba(0, 0, 0, 0.7) !important;
 }
