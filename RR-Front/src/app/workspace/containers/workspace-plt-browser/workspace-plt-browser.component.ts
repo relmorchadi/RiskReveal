@@ -758,7 +758,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if(this.renamingTag) {
       if(this.addModalInput != this.modalInputCache){
         this.store$.dispatch(new fromWorkspaceStore.renameTag({
-          tagId: this.tagFormenu.tagId,
+          ...this.tagFormenu,
           tagName: this.addModalInput
         }))
       }

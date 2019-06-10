@@ -136,7 +136,7 @@ export class WorkspaceMainState implements NgxsOnInit {
         }
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
-      const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem'));
+      const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
       openedTabs.map(dt => ({
         ...dt,
         projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),

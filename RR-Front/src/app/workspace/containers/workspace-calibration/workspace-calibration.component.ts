@@ -922,6 +922,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         adjustement.value = adjustementType.abv;
       }
       let newAdj = {...adjustement};
+      console.log('this is new adjs', newAdj);
       this.adjsArray.push(newAdj);
       this.singleValueArray.push({
         adj: newAdj.id,
