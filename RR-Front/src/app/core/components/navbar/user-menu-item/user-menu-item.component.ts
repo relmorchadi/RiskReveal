@@ -13,6 +13,7 @@ export class UserMenuItemComponent implements OnInit {
   defaultImport;
   isVisible = false;
   isOkLoading = false;
+  searchTarget = 'treaty';
 
   constructor( private _searchService: SearchService, private route: ActivatedRoute, private router: Router) {}
 
@@ -33,6 +34,10 @@ export class UserMenuItemComponent implements OnInit {
   navigateToUserPreference() {
     this.router.navigateByUrl(`/userPreference`);
     this.visible = false;
+  }
+
+  changeSearch() {
+
   }
 
 }

@@ -331,6 +331,7 @@ export class TasksMenuItemComponent implements OnInit {
           this.helperService.updateWorkspaceItems();
           this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
         }
+        this.visible = false;
       }
     );
   }
