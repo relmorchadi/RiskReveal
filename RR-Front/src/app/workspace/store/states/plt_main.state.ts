@@ -53,6 +53,7 @@ export class PltMainState implements NgxsOnInit {
   static getProjects() {
     return (state: any) => state.workspaceMain.openedWs.projects
   }
+
   @Selector()
     static getUserTags(state: pltMainModel){
     return _.get(state,'userTags',{})
