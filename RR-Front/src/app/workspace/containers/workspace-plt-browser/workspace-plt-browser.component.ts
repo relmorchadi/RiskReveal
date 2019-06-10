@@ -319,6 +319,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   systemTagsMapping = {
     grouped: {
+      peril: 'Peril',
       regionPerilCode: 'Region Peril',
       currency: 'Currency',
       sourceModellingVendor: 'Modelling Vendor',
@@ -758,7 +759,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if(this.renamingTag) {
       if(this.addModalInput != this.modalInputCache){
         this.store$.dispatch(new fromWorkspaceStore.renameTag({
-          tagId: this.tagFormenu.tagId,
+          ...this.tagFormenu,
           tagName: this.addModalInput
         }))
       }

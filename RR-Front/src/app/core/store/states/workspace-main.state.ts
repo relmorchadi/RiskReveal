@@ -5,7 +5,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
+  PatchWorkspaceMainStateAction, SetWsRoutingAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -136,7 +136,7 @@ export class WorkspaceMainState implements NgxsOnInit {
         }
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
-      const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem'));
+      const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
       openedTabs.map(dt => ({
         ...dt,
         projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
@@ -157,8 +157,8 @@ export class WorkspaceMainState implements NgxsOnInit {
     });
   }
 
-  @Action(SelectWorkspaceAction)
-  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SelectWorkspaceAction) {
+  @Action(SetWsRoutingAction)
+  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SetWsRoutingAction) {
     const state = ctx.getState();
 
     let index= _.findIndex(state.openedTabs.data, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear)

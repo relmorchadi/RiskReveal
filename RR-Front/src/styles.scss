@@ -7,9 +7,9 @@
 @import "assets/scss/theme/tabs";
 @import "assets/scss/theme/tags";
 
-/*body {
-  overflow: hidden;
-}*/
+body {
+  overflow: auto;
+}
 
 .ant-avatar {
   display: inline-flex;

@@ -3,7 +3,7 @@ import {SearchService} from '../../../service/search.service';
 import * as _ from 'lodash';
 import {
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction
+  PatchWorkspaceMainStateAction, SetWsRoutingAction
 } from '../../../store/actions/workspace-main.action';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../store/states';
@@ -318,7 +318,7 @@ export class TasksMenuItemComponent implements OnInit {
           this.store.dispatch(new PatchWorkspaceMainStateAction([
             {key: 'openedWs', value: _.merge({}, alreadyOpened[0], {routing: routerLink})},
             {key: 'openedTabs', value: {data: this.state.openedTabs.data, tabsIndex: index}}]));
-          this.store.dispatch(new SelectWorkspaceAction(_.merge({}, alreadyOpened[0], {routing: routerLink})));
+          this.store.dispatch(new SetWsRoutingAction(_.merge({}, alreadyOpened[0], {routing: routerLink})));
           this.helperService.updateRecentWorkspaces();
           this.helperService.updateWorkspaceItems();
           this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.tabsIndex]);
@@ -326,7 +326,7 @@ export class TasksMenuItemComponent implements OnInit {
           this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
           alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === wsId && ws.uwYear == year);
           index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === wsId && ws.uwYear == year);
-          this.store.dispatch(new SelectWorkspaceAction(_.merge({}, alreadyOpened[0], {routing: routerLink})));
+          this.store.dispatch(new SetWsRoutingAction(_.merge({}, alreadyOpened[0], {routing: routerLink})));
           this.helperService.updateRecentWorkspaces();
           this.helperService.updateWorkspaceItems();
           this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
