@@ -69,7 +69,7 @@
                       <li style="display:flex" nz-menu-item
                           *ngIf="activeTask.isPaused"
                           nz-popconfirm
-                          nzTitle="Are you sure you want to pause this Job?"
+                          nzTitle="Are you sure you want to Resume this Job?"
                           (nzOnConfirm)="resumeJob(activeTask.id)"
                           (nzOnCancel)="cancel()"
                           nzPlacement="bottom"><i

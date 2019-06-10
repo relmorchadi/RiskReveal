@@ -14,7 +14,7 @@
 
     <div class="Deltas">Deltas &nbsp;
       <div class="button-toggle">
-        <nz-switch class="switch-input"  [(ngModel)]="switchValue"></nz-switch>
+        <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch>
       </div>
       <div style="width: 200px;">
         <nz-select *ngIf="switchValue"
@@ -174,7 +174,7 @@
               </div>
               <div class="card-header-icons">
                 <i *ngIf="!item.selected" [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden'}"
-                   class="icon-check-circle" (click)="item.selected = !item.selected"></i>
+                   class="icon-check-circle" (click)="selectItem($event); item.selected = !item.selected"></i>
                 <i *ngIf="item.selected" class="icon-check_24px" (click)="item.selected = !item.selected"></i>
                 <span
                   [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden', 'color': item.selected? '#03DAC4' : '' }">BL</span>
