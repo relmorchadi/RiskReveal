@@ -335,7 +335,7 @@ export class PltMainState implements NgxsOnInit {
     let newData = {};
 
     _.forEach(pltHeaders, (v,k) => {
-      newData[v.id] = _.merge({},data[v.id],{userTags: [...data[v.id].userTags, rest] })
+      newData[v.id] = _.merge({},data[v.id],{userTags: _.uniqBy([...data[v.id].userTags, rest], e => e.tagId) })
     })
 
     ctx.patchState({
