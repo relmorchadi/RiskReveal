@@ -39,16 +39,9 @@
 
           <nz-tab [nzTitle]="tags">
             <ng-template #tags>
-              <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;"> Tags</span>
+              <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Tags</span>
             </ng-template>
             <div class="Tags-content">
-              <div nz-row class="button-reset-filter-by-tag">
-                <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle"
-                        style=" float: right; border: 0px solid;position: relative;
-    top: 14px;
-    right: 2px;">
-                  <i nz-icon nzType="undo" nzTheme="outline"></i></button>
-              </div>
               <nz-modal
                 nzWrapClassName="addTagModal"
                         [nzVisible]="addTagModal"
@@ -144,35 +137,51 @@
                   </button>
                 </div>
               </ng-template>
-              <div nz-row class="tags-title-section" style="margin-top: -20px;">User tags<i (click)="addTagModal = true;fromPlts=false" style="cursor:pointer;" class="icon-plus-circle"></i></div>
-              <div *ngFor="let key of userTags | keys" nz-row class="ml-3 mt-1">
-                <p-contextMenu appendTo="body" [target]="tagMenu" [model]="tagContextMenu" ></p-contextMenu>
-                    <span
-                      #tagMenu
-                      (contextmenu)="tagFormenu = userTags[key]"
-                      [ngClass]="{'active-tag': userTags[key]?.selected}"
-                      class="chips"
-                      [ngStyle]="{'background-color': userTags[key]?.tagColor}"
-                      (click)="setFilter('userTag', userTags[key])">
+
+                <div class="user-tag-section">
+                  <div class="header">
+                    <div>
+                      <span>User tags</span>
+                      <i (click)="addTagModal = true;fromPlts=false" style="cursor:pointer;" class="icon-plus-circle"></i>
+                    </div>
+                    <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle" >
+                      <i nz-icon nzType="undo" nzTheme="outline">
+                      </i>
+                    </button>
+                  </div>
+                  <div *ngFor="let key of userTags | keys" nz-row class="ml-3 mt-1">
+                  <p-contextMenu appendTo="body" [target]="tagMenu" [model]="tagContextMenu" ></p-contextMenu>
+                  <span
+                    #tagMenu
+                    (contextmenu)="tagFormenu = userTags[key]"
+                    [ngClass]="{'active-tag': userTags[key]?.selected}"
+                    class="chips"
+                    [ngStyle]="{'background-color': userTags[key]?.tagColor}"
+                    (click)="setFilter('userTag', userTags[key])">
                       <span class="chips-content">{{userTags[key]?.tagName}}</span>
                       <span class="chips-counter">
                         {{userTags[key]?.count}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                     </span>
-              </div>
-
-              <div nz-row class="tags-title-section">System Tags</div>
-              <nz-collapse
-                [nzAccordion]="false"
-              >
-                <ng-container *ngFor="let section of (systemTagsCount | keys)">
-                  <ng-container *ngIf="(systemTagsCount[section] | keys).length > 0">
-                    <nz-collapse-panel
-                      [nzHeader]="section"
+                </div>
+                 </div>
+                  <div class="sys-tag-section">
+                    <div class="header">
+                      <div>
+                        <span>System Tags</span>
+                      </div>
+                    </div>
+                    <nz-collapse
+                      [nzAccordion]="false"
                     >
-                      <ul class="title-list" style="position: relative;left:-24px">
-                        <li *ngFor="let tag of ( systemTagsCount[section] | keys)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                      <ng-container *ngFor="let section of (systemTagsCount | keys)">
+                        <ng-container *ngIf="(systemTagsCount[section] | keys).length > 0">
+                          <nz-collapse-panel
+                            [nzHeader]="section"
+                          >
+                            <ul class="title-list" style="position: relative;left:-24px">
+                              <li *ngFor="let tag of ( systemTagsCount[section] | keys)" style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
                     <span
                       [ngClass]="{'active-tag': systemTagsCount[section][tag].selected }"
                       class="chips"
@@ -191,12 +200,13 @@
                       'background-color': 'black',
                       'cursor': systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'}" class="chips-counter">{{systemTagsCount[section][tag].count}}</span>
                 </span>
-                        </li>
-                      </ul>
-                    </nz-collapse-panel>
-                  </ng-container>
-                </ng-container>
-              </nz-collapse>
+                              </li>
+                            </ul>
+                          </nz-collapse-panel>
+                        </ng-container>
+                      </ng-container>
+                    </nz-collapse>
+                  </div>
 
             </div>
           </nz-tab>
@@ -315,7 +325,6 @@
                        [resizableColumns]="true"
                        [(contextMenuSelection)]="selectedPlt"
                        [contextMenu]="cm"
-                       [scrollHeight]="'500px'"
                        [scrollable]="true"
                        [totalRecords]="listOfPltsData.length"
                        (onSort)="onSort($event)"

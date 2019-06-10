@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnI
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
-import {combineLatest, forkJoin, from, fromEvent, Observable, of, Subscription} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 

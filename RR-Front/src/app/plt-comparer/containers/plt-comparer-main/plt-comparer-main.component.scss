@@ -2,7 +2,14 @@
 :host {
   display: flex;
   height: 100%;
+
 }
+
+//::ng-deep {
+//  .ant-modal-mask {
+//    -webkit-filter: blur(5px) grayscale(90%);
+//  }
+//}
 
 .layout-comparer {
   overflow: auto;
@@ -121,6 +128,12 @@ div.blank-space {
     font-size: 24.38px;
     line-height: 29px;
   }
+  ::ng-deep{
+    ::ant-modal-wrap {
+      filter: blur(8px);
+      -webkit-filter: blur(8px);
+    }
+  }
 }
 
 .Deltas {
@@ -136,6 +149,7 @@ div.blank-space {
   display: flex;
   justify-content: space-between;
   margin-right: 120px;
+  margin-top:10px;
 }
 
 .body {
@@ -213,7 +227,6 @@ div.blank-space {
 
   .card-footer-detail {
     display: flex;
-    justify-content: space-between;
     margin: 0px 5px 0px 5px;
     font-weight: bold;
     font-size: 15px;
@@ -221,7 +234,7 @@ div.blank-space {
   }
 
   .card-table-row {
-    width: 116px;
+    width: 80px;
     margin-left: 5px;
 
 
@@ -238,6 +251,11 @@ div.blank-space {
     border-bottom: none;
     margin-bottom: 3px;
     margin-right: 3px;
+    box-sizing: border-box;
+    cursor: move;
+    background-color: #FFFFFF;
+    flex-grow: 1;
+    flex-basis: 0;
   }
 
   .cards-wrapper {
@@ -269,7 +287,7 @@ div.blank-space {
           th {
             font-weight: lighter;
             padding: 3px;
-            width: 20px;
+            width: 22px;
 
           }
         }
@@ -299,6 +317,36 @@ div.blank-space {
   box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15), -3px 0px 5px rgba(0, 0, 0, 0.15);
   margin: 10px 20px 40px 10px;
 }
+.example-list {
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.example-box:last-child {
+  border: none;
+}
+
+.example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
 
 .footer-title {
   border-top: 3px solid #0700CF;
@@ -310,3 +358,4 @@ div.blank-space {
   font-weight: bold;
 
 }
+

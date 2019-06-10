@@ -59,7 +59,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ];
 
   tagContextMenu = [
-    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))}, { label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
+    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))},
+    { label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
         this.renamingTag= true;
         this.fromPlts = false;
         this.addModalInput = this.tagFormenu.tagName;
@@ -319,6 +320,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   systemTagsMapping = {
     grouped: {
+      peril: 'Peril',
       regionPerilCode: 'Region Peril',
       currency: 'Currency',
       sourceModellingVendor: 'Modelling Vendor',
@@ -335,8 +337,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.Subscriptions.push(
       this.deletedPlts$.subscribe( d => {
         this.deletedPlts= d;
+        console.log('deleted',d);
         this.detectChanges();
-
       }),
       this.data$.subscribe( data => {
         let d1= [];
@@ -758,7 +760,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if(this.renamingTag) {
       if(this.addModalInput != this.modalInputCache){
         this.store$.dispatch(new fromWorkspaceStore.renameTag({
-          tagId: this.tagFormenu.tagId,
+          ...this.tagFormenu,
           tagName: this.addModalInput
         }))
       }
@@ -786,7 +788,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       }
     }
     
-    this.addTagModal = false;
+    this.toggleModal();
+
   }
 
   selectUserTag(k) {
@@ -837,6 +840,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       this.addModalInput=null;
       this.addModalSelect=null;
       this.addTagModalIndex=0;
+      this.renamingTag= false;
     }
   }
 
@@ -869,6 +873,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.addTagModal=false;
     this.addModalInput='';
     this.addModalSelect='';
+    this.renamingTag= false;
   }
 }
 
