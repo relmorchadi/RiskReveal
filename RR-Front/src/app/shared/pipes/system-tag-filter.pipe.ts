@@ -9,7 +9,7 @@ export class SystemTagFilterPipe implements PipeTransform {
   reverseSystemTagsMapping = {
     grouped: {
       'Peril': 'peril',
-      'Region Peril': 'regionPerilCode',
+      'Region': 'regionPerilCode',
       'Currency': 'currency',
       'Modelling Vendor': 'sourceModellingVendor',
       'Model System': 'sourceModellingSystem',

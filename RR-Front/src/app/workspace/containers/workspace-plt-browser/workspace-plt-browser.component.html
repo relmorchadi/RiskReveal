@@ -353,8 +353,8 @@
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
                           <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
                         </ng-container>
                       </span>
