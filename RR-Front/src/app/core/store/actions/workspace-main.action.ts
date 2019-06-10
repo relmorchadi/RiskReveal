@@ -19,8 +19,8 @@ export class CloseWorkspaceMainAction {
   constructor(public payload: any) {}
 }
 
-export class SelectWorkspaceAction {
-  static readonly type = '[Workspace Main] Select Current Workspace';
+export class SetWsRoutingAction {
+  static readonly type = '[Workspace Main] Set workspace routing';
   constructor(public payload: any) {}
 }
 
