@@ -25,11 +25,24 @@
           <div class="settings-holder">
             <span class="head-title">Date & Time</span>
             <div class="settings-wrapper">
+              <div class="user-config-item">
+                <span>Search Target :</span>
+                <nz-select class="dropdown-default"
+                           style="width: 270px;"
+                           [ngModel]="searchTarget"
+                           (ngModelChange)="changeSearch()"
+                           nzShowSearch>
+                  <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
+                  <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
+                </nz-select>
+              </div>
+
               <div (click)="extraDetailDate = !extraDetailDate" class="user-config-item" style="cursor: pointer"><span>Date Format</span>
                 <div>
                   <i class="icon-arrow_forward_ios_24px"></i>
                 </div>
               </div>
+
               <div *ngIf="extraDetailDate" class="user-config-item"><span>Short Date</span>
                 <div>
                   <nz-select

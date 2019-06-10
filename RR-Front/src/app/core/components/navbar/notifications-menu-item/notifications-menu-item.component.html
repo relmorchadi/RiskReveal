@@ -15,10 +15,10 @@
           </p>
           <ul style="height: 151px">
             <li *ngFor="let notification of notification.all.today" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -33,10 +33,10 @@
 
           <ul style="height: 172px">
             <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -44,8 +44,6 @@
               </div>
             </li>
           </ul>
-
-
 
           <div class="mt-2">
             <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
@@ -57,7 +55,7 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="button-no-outline">CLEAR ALL</button>
+              <button (click)="clearNotif()" class="button-no-outline">CLEAR ALL</button>
               <button (click)="navigateToNotification()" class="button-no-outline">SEE ALL</button>
             </div>
           </div>
@@ -74,10 +72,10 @@
           </p>
           <ul style="height: 151px">
             <li *ngFor="let notification of notification.warning.today" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+<!--                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>-->
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -92,10 +90,10 @@
 
           <ul style="height: 172px">
             <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -103,8 +101,6 @@
               </div>
             </li>
           </ul>
-
-
 
           <div class="mt-2 footer-wrapper">
             <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
@@ -116,8 +112,8 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="button-no-outline" nz-button nzType="default">CLEAR ALL</button>
-              <button class="button-no-outline" (click)="navigateToNotification()" nz-button nzType="default">SEE ALL</button>
+              <button class="button-no-outline" (click)="clearNotif()">CLEAR ALL</button>
+              <button class="button-no-outline" (click)="navigateToNotification()">SEE ALL</button>
             </div>
           </div>
         </div>
@@ -133,10 +129,10 @@
           </p>
           <ul style="height: 151px">
             <li *ngFor="let notification of notification.all.today" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -151,10 +147,10 @@
 
           <ul style="height: 172px">
             <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -162,8 +158,6 @@
               </div>
             </li>
           </ul>
-
-
 
           <div class="mt-2">
             <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
@@ -175,8 +169,8 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="button-no-outline" nz-button nzType="default">CLEAR ALL</button>
-              <button class="button-no-outline" (click)="navigateToNotification()" nz-button nzType="default">SEE ALL</button>
+              <button class="button-no-outline">CLEAR ALL</button>
+              <button class="button-no-outline" (click)="navigateToNotification()">SEE ALL</button>
             </div>
           </div>
         </div>
@@ -192,10 +186,10 @@
           </p>
           <ul style="height: 151px">
             <li *ngFor="let notification of notification.all.today" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -210,10 +204,10 @@
 
           <ul style="height: 172px">
             <li *ngFor="let notification of notification.all.yesterday" class=" row poover-menu-item notification-item"
-                (click)="toggleNotificaion(notification)"
+                (click)="toggleNotification(notification)"
                 [ngStyle]="{'backgroundColor': notification?.backgroundColor, 'color': notification?.textColor}">
               <div class="col-md-2" [ngClass]="{'center-icon': notification?.icon}">
-                <nz-avatar *ngIf="notification.avatar" nzText="H.P" nzSize="large"></nz-avatar>
+                <span *ngIf="notification.avatar" class="text-avatar">H.P</span>
                 <i class="notification-icon" [ngStyle]="{'color': notification?.iconColor}" *ngIf="notification?.icon" [ngClass]="notification?.icon"></i>
               </div>
               <div class="col-md-10">
@@ -221,8 +215,6 @@
               </div>
             </li>
           </ul>
-
-
 
           <div class="mt-2">
             <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left dropdown-default"
@@ -234,15 +226,14 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="button-no-outline" nz-button nzType="default">CLEAR ALL</button>
-              <button class="button-no-outline" (click)="navigateToNotification()" nz-button nzType="default">SEE ALL</button>
+              <button class="button-no-outline" (click)="clearNotif()">CLEAR ALL</button>
+              <button class="button-no-outline" (click)="navigateToNotification()">SEE ALL</button>
             </div>
           </div>
         </div>
       </nz-tab>
     </nz-tabset>
   </div>
-  `
 
   <ng-template #AllHeaderContent>
     <span style="width: 5px">All Notifications &nbsp; <span class="badge badge-light tab-badge">9</span></span>

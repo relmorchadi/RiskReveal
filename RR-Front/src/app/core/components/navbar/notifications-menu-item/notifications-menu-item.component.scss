@@ -2,6 +2,14 @@
   font-size: 2em;
 }
 
+.text-avatar {
+  display: flex;
+  padding: 8px 4px 8px 6px;
+  border-radius: 83px;
+  background: rgb(204, 204, 204);
+  width: 35px;
+}
+
 i.notifications_24px {
   color: rgba(0, 0, 0, 0.7) !important;
 }
