@@ -44,7 +44,7 @@
           <div class="mt-2">
             <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
-              <ng-container *ngFor="let date of getDateIntervals(); " >
+              <ng-container *ngFor="let date of getDateIntervals()" >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
               </ng-container>
             </nz-select>

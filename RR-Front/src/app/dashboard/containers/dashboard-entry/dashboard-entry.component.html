@@ -75,6 +75,9 @@
     </div>
     <div class="slider-content">
       <div style="flex:1">
+        <div class="collapse-command" (click)="rightSliderCollapsed= !rightSliderCollapsed">
+          <i class="icon-arrow_forward_ios_24px"></i>
+        </div>
         <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;"
                    nzShowSearch class="dropdown-default"
                    nzPlaceHolder="Select Dashboard" [(ngModel)]="idSelected">
@@ -123,9 +126,7 @@
       <!--        <div style="margin-bottom: 15px">
                 <button class="button-apply-function">Apply</button>
               </div>-->
-      <div class="collapse-command" (click)="rightSliderCollapsed= !rightSliderCollapsed">
-        <i class="icon-arrow_forward_ios_24px"></i> Collapse
-      </div>
+
     </div>
   </div>
 </div>

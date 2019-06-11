@@ -125,7 +125,7 @@ export class NotificationsMenuItemComponent implements OnInit {
           compareDate = compareDate.setDate(compareDate.getDate() - 30);
         }
         return dt.date > compareDate;
-      })
+      });
     }
 
   }

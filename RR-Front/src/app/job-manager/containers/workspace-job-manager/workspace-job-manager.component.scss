@@ -151,22 +151,24 @@
           stroke-width: 8px;
         }
 
-        .status-true {
+        .status-high , .status-medium, .status-low {
           width: 30px;
           height: 30px;
           border-radius: 20px;
           margin-right: 10px;
           display: flex;
+        }
+
+        .status-high {
           background-color: #D0021B;
         }
 
-        .status-false {
-          width: 30px;
-          height: 30px;
-          border-radius: 20px;
-          margin-right: 10px;
-          display: flex;
-          background-color: #A7FFFA;
+        .status-medium {
+          background-color: orange;
+        }
+
+        .status-low {
+          background-color: #03DAC4;
         }
 
         .context-wrapper {
