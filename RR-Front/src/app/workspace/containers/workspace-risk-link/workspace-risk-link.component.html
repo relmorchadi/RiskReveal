@@ -63,7 +63,7 @@
                 *ngFor="let item of state.financialValidator.financialPerspectiveELT.data">{{item}}</li>
           </ul>
         </nz-dropdown>
-        <nz-dropdown [nzTrigger]="'click'">
+<!--        <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective EPMetrics</span>
@@ -79,7 +79,7 @@
             <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveEPM', item)"
                 *ngFor="let item of state.financialValidator.financialPerspectiveEPM.data">{{item}}</li>
           </ul>
-        </nz-dropdown>
+        </nz-dropdown>-->
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
@@ -267,8 +267,163 @@
                   <span *ngIf="state.selectedEDMOrRDM === 'edm'">Select Portfolio For Import</span>
                 </div>
                 <div class="body-wrapper-header-right">
-                  <i class="icon-filter"></i>
-                  <button class="button-outlined"> ADVANCED</button>
+                  <i class="icon-filter" (click)="filterModalVisibility = true"></i>
+                  <nz-modal [(nzVisible)]="filterModalVisibility" [nzTitle]="titleModal"
+                            (nzOnCancel)="handleCancel()"
+                            [nzFooter]="footerModal">
+                    <div class="input-group-modal">
+                      <input placeholder="Portfolio ID" class="input-default input-wrapper" >
+                      <div class="radio-wrapper">
+                        <span>AGG/DET</span>
+                        <nz-radio-group [(ngModel)]="radioValue">
+                          <label nz-radio nzValue="all">All</label>
+                          <label nz-radio nzValue="agg">AGG</label>
+                          <label nz-radio nzValue="det">DET</label>
+                        </nz-radio-group>
+                      </div>
+                      <input placeholder="Number" class="input-default input-wrapper" >
+                      <input placeholder="Name" class="input-default input-wrapper" >
+                      <input placeholder="Description" class="input-default input-wrapper" >
+                    </div>
+                    <ng-template #titleModal>
+                      <h6>Portfolio Filter Criteria</h6>
+                    </ng-template>
+                    <ng-template #footerModal>
+                      <div class="modal-footer-wrapper">
+                        <button class="button-no-outline-disabled">CLEAR</button>
+                        <button class="button-standard">APPLY</button>
+                      </div>
+                    </ng-template>
+                  </nz-modal>
+                  <button (click)="linkingModalVisibility = true" class="button-outlined">LINKING</button>
+                  <nz-modal [(nzVisible)]="linkingModalVisibility" [nzTitle]="titleModalLinking"
+                            (nzOnCancel)="handleCancel()"
+                            [nzFooter]="null">
+                    <div class="modal-linking-wrapper">
+                      <div class="modal-linking-head">
+                        <div class="modal-l-h-title">
+                          <span class="modal-l-h-span">Associate</span>
+                        </div>
+                        <div class="modal-l-h-body">
+                          <ul>
+                            <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
+                              <li *ngIf="itemsE.type === 'edm'" class="popover-menu-item"
+                                  [ngClass]="{'popover-menu-item-active': itemsE.selected}">
+                                <label nz-checkbox [(ngModel)]="itemsE.selected">
+                                  <span (click)="toggleItemsListRDM(itemsE)" class="logo" style="background: #0700CF;">E</span>
+                                  <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
+                                        class="text">{{itemsE?.name}}</span>
+                                </label>
+                              </li>
+                            </ng-container>
+                          </ul>
+
+                          <ul>
+                            <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
+                              <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item"
+                                  [ngClass]="{'popover-menu-item-active': itemsR.selected}">
+                                <label nz-checkbox [(ngModel)]="itemsR.selected">
+                                  <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #03DAC4">R</span>
+                                  <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
+                                        class="text">{{itemsR?.name}}</span>
+                                </label>
+                              </li>
+                            </ng-container>
+                          </ul>
+                        </div>
+                        <div class="modal-l-h-button">
+                          <button class="button-outlined">ASSOCIATE</button>
+                        </div>
+                      </div>
+                      <div class="modal-linking-body">
+                        <nz-tabset class="tabs-standard-top-secondary">
+                          <nz-tab nzTitle="Association 1">
+                            <div class="modal-tab-content-wrapper">
+                              <div class="modal-l-b-header">
+                                <div class="popover-menu-item item-popover">
+                                  <span  class="logo" style="background: #03DAC4">R</span>
+                                  <span>4</span>
+                                  <span class="text">AA2012_SyntheticCurve_R</span>
+                                </div>
+                                <div class="popover-menu-item item-popover">
+                                  <span  class="logo" style="background: #0700CF;">E</span>
+                                  <span>4</span>
+                                  <span class="text">AA2012_SyntheticCurve_E</span>
+                                </div>
+                              </div>
+                              <div class="modal-l-b-body">
+                                <div class="modal-l-b-left">
+                                  <div class="modal-l-b-card">
+                                    <div>
+                                      <span>EDM Portfolio</span>
+                                      <div class="tab-search-input">
+                                        <i class="icon-search_24px"></i>
+                                        <input class="input-search"/>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                      <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
+                                        <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item"
+                                            [ngClass]="{'popover-menu-item-active': itemsR.selected}">
+                                          <label nz-checkbox [(ngModel)]="itemsR.selected">
+                                            <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #C38FFF">P</span>
+                                            <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
+                                                  class="text">{{itemsR?.name}}</span>
+                                          </label>
+                                        </li>
+                                      </ng-container>
+                                    </ul>
+                                  </div>
+                                  <div class="modal-l-b-card">
+                                    <div>
+                                      <span>RDM Analysis</span>
+                                      <div class="tab-search-input">
+                                        <i class="icon-search_24px"></i>
+                                        <input class="input-search"/>
+                                      </div>
+                                    </div>
+                                    <ul>
+                                      <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
+                                        <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item"
+                                            [ngClass]="{'popover-menu-item-active': itemsR.selected}">
+                                          <label nz-checkbox [(ngModel)]="itemsR.selected">
+                                            <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #009575">A</span>
+                                            <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
+                                                  class="text">{{itemsR?.name}}</span>
+                                          </label>
+                                        </li>
+                                      </ng-container>
+                                    </ul>
+                                  </div>
+                                </div>
+                                <div class="modal-l-b-right">
+                                  <div class="modal-l-b-card"></div>
+                                </div>
+                              </div>
+                            </div>
+                          </nz-tab>
+                          <nz-tab nzTitle="Association 2">
+                            <div class="modal-tab-content-wrapper">
+                              <div class="modal-l-b-header">
+
+                              </div>
+                              <div class="modal-l-b-body">
+                                <div class="modal-l-b-left">
+
+                                </div>
+                                <div class="modal-l-b-right">
+
+                                </div>
+                              </div>
+                            </div>
+                          </nz-tab>
+                        </nz-tabset>
+                      </div>
+                    </div>
+                    <ng-template #titleModalLinking>
+                      <h6>Associate & Link EDM & RDM</h6>
+                    </ng-template>
+                  </nz-modal>
                 </div>
               </div>
               <div class="show-table">
@@ -445,7 +600,7 @@
                   <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
                 <th style="width:10%">
-                  Analysis Currency
+                  Source Currency
                   <ng-container *ngTemplateOutlet="search"></ng-container>
                 </th>
                 <th style="width:9%">

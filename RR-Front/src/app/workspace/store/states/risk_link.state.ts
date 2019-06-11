@@ -50,11 +50,7 @@ const initiaState: RiskLinkModel = {
       data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
       selected: 'Net Loss Pre Cat (RL)'
     },
-    financialPerspectiveEPM: {
-      data: ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'],
-      selected: 'Facultative Reinsurance Loss'
-    },
-    targetCurrency: {data: ['MLC', 'User Defined', 'Underling Currency'], selected: 'MLC'},
+    targetCurrency: {data: ['MLC', 'User Defined', 'Underlying Currency'], selected: 'MLC'},
     calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
   },
   analysis: null,

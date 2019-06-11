@@ -1,10 +1,8 @@
-<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover
-     [nzContent]="userPopoverContent" nzPlacement="bottomRight" nzTrigger="click">
+<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" (click)="navigateToUserPreference()">
   <nz-avatar nzText="N.D" nzSize="large"></nz-avatar>
   Nathalie Dulac &nbsp;&nbsp;
-  <i nz-icon type="down" theme="outline" style="float: right; margin-top: 12px;"></i>
 </div>
-<ng-template #userPopoverContent>
+<!--<ng-template #userPopoverContent>
   <div class="tabs-popover-content">
 
     <div>
@@ -24,13 +22,13 @@
       </div>
     </div>
 
-<!--    <div class="">
+&lt;!&ndash;    <div class="">
       <span class="user-config-title">Import Settings</span>
       <div class="user-config-item">
         <span>Default Import :</span>
         <button class="button-outlined" (click)="isVisible=true">&nbsp;&nbsp;&nbsp;&nbsp;Configure&nbsp;&nbsp;&nbsp;&nbsp;</button>
       </div>
-    </div>-->
+    </div>&ndash;&gt;
 
     <div class="">
       <span class="user-config-title">Widget Settings</span>
@@ -55,7 +53,7 @@
 
   <ng-template #userPrefHeaderContent>
     <span style="width: 5px">User Preferences &nbsp;
-      <!--<span class="badge badge-light tab-badge">12</span>-->
+      &lt;!&ndash;<span class="badge badge-light tab-badge">12</span>&ndash;&gt;
     </span>
   </ng-template>
 </ng-template>
@@ -87,7 +85,7 @@
       </nz-select>
     </div>
   </div>
-</nz-modal>
+</nz-modal>-->
 
 
 <ng-template #preferencesConfig>

@@ -23,7 +23,6 @@ export class RiskLinkModel {
   financialValidator: {
     rmsInstance: any,
     financialPerspectiveELT: any,
-    financialPerspectiveEPM: any,
     targetCurrency: any,
     calibration: any,
   };

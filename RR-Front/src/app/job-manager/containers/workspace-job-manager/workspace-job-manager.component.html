@@ -49,7 +49,7 @@
         </span>
             <div class="search-bar-table" *ngIf="col?.filtered">
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-              <input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')">
             </div>
           </th>
         </tr>
@@ -88,12 +88,16 @@
               </div>
             </td>
             <td *ngIf="col?.type === 'status'">
-              <div style="display: flex" *ngIf="rowData[col?.field]">
-                <span class="status-true"></span>
+              <div style="display: flex" *ngIf="rowData[col?.field] === 'high'">
+                <span class="status-high"></span>
                 <span>High</span>
               </div>
-              <div style="display: flex" *ngIf="!rowData[col?.field]">
-                <span class="status-false"></span>
+              <div style="display: flex" *ngIf="rowData[col?.field] === 'medium'">
+                <span class="status-medium"></span>
+                <span>Medium</span>
+              </div>
+              <div style="display: flex" *ngIf="rowData[col?.field] === 'low'">
+                <span class="status-low"></span>
                 <span>Low</span>
               </div>
             </td>
@@ -202,12 +206,16 @@
                   </div>
                 </td>
                 <td *ngIf="col?.type === 'status'">
-                  <div style="display: flex" *ngIf="rowData[col?.field]">
-                    <span class="status-true"></span>
+                  <div style="display: flex" *ngIf="rowData[col?.field] === 'high'">
+                    <span class="status-high"></span>
                     <span>High</span>
                   </div>
-                  <div style="display: flex" *ngIf="!rowData[col?.field]">
-                    <span class="status-false"></span>
+                  <div style="display: flex" *ngIf="rowData[col?.field] === 'medium'">
+                    <span class="status-medium"></span>
+                    <span>Medium</span>
+                  </div>
+                  <div style="display: flex" *ngIf="rowData[col?.field] === 'low'">
+                    <span class="status-low"></span>
                     <span>Low</span>
                   </div>
                 </td>

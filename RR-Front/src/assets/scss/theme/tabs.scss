@@ -40,3 +40,24 @@
     background-color: #0700CF;
   }
 }
+
+.tabs-standard-top-secondary {
+  .ant-tabs-nav .ant-tabs-tab-active {
+    color: #000000;
+    font-weight: bold;
+    background: transparent !important;
+    .tags-info {
+      background-color: #D5D6F6;
+      color: #03DAC4;
+    }
+  }
+  .ant-tabs-nav .ant-tabs-tab {
+    margin: 0;
+  }
+
+  .ant-tabs-ink-bar {
+    top: 0;
+    background-color: #03DAC4;
+    height: 3px
+  }
+}
