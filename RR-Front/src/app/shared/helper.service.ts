@@ -33,4 +33,8 @@ export class HelperService {
   updateRecentWorkspaces() {
     localStorage.setItem('usedWorkspaces', JSON.stringify(this.state.recentWs));
   }
+
+  public static upperFirstWordsInSetence(sentence){
+    return sentence ? _.lowerCase(sentence).split(' ').map(_.upperFirst).join(' ') : sentence;
+  }
 }

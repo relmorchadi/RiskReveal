@@ -241,7 +241,7 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       if(! _.isEmpty(expression) ){
         draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)};
-        draft.badges= draft.searchContent.value;
+        draft.badges= _.isArray(draft.searchContent.value) ?  draft.searchContent.value : [];
       }
       if(_.isArray(draft.searchContent.value)){
         // draft.badges= draft.badges;
@@ -255,8 +255,10 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(SearchAction)
   doSearch(ctx: StateContext<SearchNavBar>, {bages, keyword}) {
-    if (_.isEmpty(bages) && _.isEmpty(keyword))
+    if (_.isEmpty(bages) && _.isEmpty(keyword)){
+      ctx.dispatch(new Navigate(['/search']));
       throw new Error('Search without keyword or value')
+    }
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchContent = {value: _.isEmpty(bages) ? keyword : bages};
       draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );

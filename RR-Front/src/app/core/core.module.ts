@@ -12,23 +12,17 @@ import en from '@angular/common/locales/en';
 import {en_US, NgZorroAntdModule, NZ_I18N} from 'ng-zorro-antd';
 import {COMPONENTS} from './components'
 import {CONTAINERS} from './containers';
+import {PIPES} from "./pipes";
+import {DIRECTIVES} from "./directives";
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
-import { BoldKeywordPipe } from './pipes/bold-keyword.pipe';
-import {CORE_STATES} from './store/states';
-import { BoldSpanPipe } from './pipes/bold-span.pipe';
-import {WORKSPACE_STATES} from '../workspace/store/states';
-import {TableSortAndFilterPipe} from './pipes/table-sort-and-filter.pipe';
-import { KeyDownScrollDirective } from './key-down-scroll.directive';
-import { ScrollToParentDirective } from './pipes/scroll-to-parent.directive';
-import { SearchInputDirective } from './directive/search-input.directive';
+import {StoreModule} from "./store";
 
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe, BoldSpanPipe, KeyDownScrollDirective, SearchInputDirective],
-  declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe, BoldSpanPipe, KeyDownScrollDirective, ScrollToParentDirective],
+  declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES,...PIPES],
   imports: [
     NgZorroAntdModule,
     RouterModule,
@@ -37,7 +31,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    NgxsModule.forRoot([...CORE_STATES, ...WORKSPACE_STATES], {developmentMode: !environment.production}),
+    StoreModule,
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
   exports: [

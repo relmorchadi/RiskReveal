@@ -9,13 +9,11 @@
            (onEnter)="onEnter($event)"
            (onSpace)="onSpace($event)"
            (onBackspace)="onBackspace($event)"
-           (onArrowDown)="onArrowDown($event)"
-           (onArrowUp)="onArrowUp($event)"
            (onDelete)="onDelete($event)"
            appScrollToParent
-           [scrollTo]="scrollTo"
-           [listLength]="listLength"
-           (emitScrollTo)="scrollTo = $event"
+           [scrollTo]="scrollParams.scrollTo"
+           [listLength]="scrollParams.listLength"
+           (emitScrollTo)="scrollParams.scrollTo = $event"
            #searchInput
            formControlName="globalKeyword" (click)="focusInput($event)"
            class="search-input" type="text" nz-input placeholder="Search">
@@ -79,9 +77,9 @@
         <ng-template #basicTable>
           <div class="result-wrapper" *ngIf="state?.data?.length > 0; else loadingTemp">
             <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
-                <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span" *ngIf="state?.data[i].length > 0">{{stringUpdate(state?.tables[i])}}</span>
+                <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span" *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
                 <ul class="search-result-list" >
-                  <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index" [scrollTo]="scrollTo" [i]="i" [k]="k" [data]="state?.data" (setPos)="setPos($event)" appKeyDownScroll (click)="selectSearchBadge(stringUpdate(state?.tables[i]), val.label)">
+                  <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index" [scrollTo]="scrollParams.scrollTo" [i]="i" [k]="k" [data]="state?.data" (setPos)="scrollParams.position= $event" appKeyDownScroll (click)="selectSearchBadge(state?.tables[i], val.label)">
                     <span>{{val.countOccur}}</span> <p [innerHtml]="val.label| boldSpan: state.searchValue"></p><!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
                   </li>
                 </ul>
