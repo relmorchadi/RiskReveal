@@ -37,10 +37,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   contextMenuItems = [
     { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
-    { label: 'Delete', icon: 'pi pi-trash', command: (event) => {
-      this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltId : this.selectedItemForMenu}))
-      }
-      },
+    { label: 'Delete', icon: 'pi pi-trash', command: (event) =>
+        this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltId : this.selectedItemForMenu}))
+    },
     { label: 'Edit Tags', icon: 'pi pi-tags', command: (event) => {
         this.addTagModal= true;
         this.fromPlts= true;
@@ -479,28 +478,22 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
   }
 
-  filter(key: string, value) {
+  filter(key, filterData, value) {
     if (key == 'project') {
       if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
-        this.filterData = _.omit(this.filterData, [key]);
+        this.filterData= _.omit(this.filterData, [key])
       } else {
-        this.filterData = _.merge({}, this.filterData, {[key]: value});
+        this.filterData= _.merge({}, this.filterData, {[key]: value})
       }
       this.projects = _.map(this.projects, t => {
-        if(t.projectId == value){
-            return ({...t,selected: !t.selected})
+        if(t.value == value){
+          return ({...t,selected: !t.selected})
         }else if(t.selected) {
           return ({...t,selected: false})
         }else return t;
       })
-
-    }else {
-      if(value) {
-        this.filterData= _.merge({},this.filterData, {[key]: value})
-      } else {
-        this.filterData = _.omit(this.filterData, [key]);
-      }
     }
+    if(filterData) this.filterData = filterData;
   }
 
   selectedPlt: any;
@@ -653,7 +646,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe());
   }
 
-  checkAll($event: boolean) {
+  checkAll() {
     this.toggleSelectPlts(
       _.zipObject(
         _.map(this.listOfPlts, plt => plt),
@@ -666,94 +659,16 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}));
   }
 
-  selectSinglePLT(pltId: number, $event: boolean) {
-    this.toggleSelectPlts({
-      [pltId]: {
-        type: $event ? 'select' : 'unselect'
-      }
-    });
-  }
-
-  handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
-    if ($event.ctrlKey || $event.shiftKey) {
-      this.lastClick = "withKey";
-      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
-    } else {
-      this.lastSelectedId = i;
-      this.toggleSelectPlts(
-        _.zipObject(
-          _.map(this.listOfPlts, plt => plt),
-          _.map(this.listOfPlts, plt =>  plt == pltId && (this.lastClick == 'withKey' || !isSelected) ? ({type: 'select'}) : ({type: 'unselect'}))
-        )
-      );
-      this.lastClick= null;
-    }
-  }
-
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
-      if(!this.lastSelectedId) this.lastSelectedId = 0;
-      if(this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(this.listOfPlts, plt => plt),
-            _.map(this.listOfPlts,(plt,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
-  }
-
-  private loadData(params: any) {
-    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}));
-  }
-
-  selectProject(id: any) {
-
+  selectSinglePLT($event) {
+    this.toggleSelectPlts($event);
   }
 
   toDate(d) {
     return new Date(d);
   }
 
-  handleOk(){
-
-  }
-
-  onSort($event: any) {
-    console.log($event);
-    const {
-      multisortmeta
-    } = $event;
-
-    /*if(_.find(multisortmeta, col => col.field == 'selected' && col.order == 1)){
-      this.table.reset();
-    }
-    this.multiSortMeta = multisortmeta;*/
-  }
-
-  checkBoxsort() {
-    this.activeCheckboxSort = !this.activeCheckboxSort;
-    if (this.activeCheckboxSort) {
-      this.listOfPltsData = _.sortBy( this.listOfPltsData, [(o) => {
-        return !o.selected;
-      }]);
-    } else {
-      this.listOfPltsData = this.listOfPltsCache;
-    }
+  checkBoxSort($event) {
+    this.listOfPltsData= $event;
   }
 
   handlePopUpConfirm() {
@@ -874,6 +789,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.addModalInput='';
     this.addModalSelect='';
     this.renamingTag= false;
+  }
+
+  setSelectedMenuItem($event: any) {
+    this.selectedItemForMenu= $event;
   }
 }
 
