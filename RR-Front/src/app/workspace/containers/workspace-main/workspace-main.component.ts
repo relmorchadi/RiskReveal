@@ -48,10 +48,10 @@ export class WorkspaceMainComponent implements OnInit {
         this.getSearchedWorkspaces(wsId, year);
         this.detectChanges();
       });
-    this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
-      dt =>
-        this.detectChanges()
-    );
+    // this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
+    //   dt =>
+    //     this.detectChanges()
+    // );
   }
 
   @HostListener('window:keyup', ['$event'])
@@ -210,7 +210,7 @@ export class WorkspaceMainComponent implements OnInit {
       value: [liked,moment().format('x')],
       k,
       ws: tab
-    }))
+    }));
 
     let workspaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
 
@@ -220,5 +220,9 @@ export class WorkspaceMainComponent implements OnInit {
       workspaceMenuItem = {...workspaceMenuItem, [tab.workSpaceId + '-'+ tab.uwYear]: _.omit(workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear], ['favorite','lastFModified'])};
     }
     localStorage.setItem('workSpaceMenuItem',JSON.stringify(workspaceMenuItem));
+  }
+
+  trackWorkspaces(index, item){
+    return item.workSpaceId+item.uwYear;
   }
 }

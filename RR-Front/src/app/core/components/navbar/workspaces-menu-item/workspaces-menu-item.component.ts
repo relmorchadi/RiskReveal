@@ -57,7 +57,6 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
     this.favorites$.subscribe( fv => {
       this.favorites= _.orderBy(fv, ['lastFModified'],['desc'])
-      console.log(fv,this.favorites)
       this.detectChanges();
     });
     this.pinged$.subscribe( pn => {
