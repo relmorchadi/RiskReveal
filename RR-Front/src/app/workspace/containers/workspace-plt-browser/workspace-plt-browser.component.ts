@@ -70,13 +70,15 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   pltColumns = [
     {sortDir: 1,fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
-    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '65px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'peril', header: 'Peril', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '80px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'peril', header: 'Peril', width: '55px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '75px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '90px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletebBy', header: 'Deleted By', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletebAt', header: 'Deleted At', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
@@ -299,7 +301,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.activeCheckboxSort = false;
     this.loading = true;
     this.addTagModal = false;
-    this.addTagModalIndex= 0;
+    this.tagModalIndex= 0;
     this.systemTagsCount= {};
     this.userTagsCount= {};
     this.fromPlts = false;
@@ -478,26 +480,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
   }
 
-  filter(key, filterData, value) {
+  filter({key, filterData, projectId}) {
     if (key == 'project') {
-      if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
-        this.filterData= _.omit(this.filterData, [key])
-      } else {
-        this.filterData= _.merge({}, this.filterData, {[key]: value})
-      }
       this.projects = _.map(this.projects, t => {
-        if(t.value == value){
-          return ({...t,selected: !t.selected})
+        if(t.projectId == projectId){
+            return ({...t,selected: !t.selected})
         }else if(t.selected) {
           return ({...t,selected: false})
         }else return t;
       })
     }
-    if(filterData) this.filterData = filterData;
+    this.filterData= filterData;
   }
 
   selectedPlt: any;
-  addTagModalIndex: any;
+  tagModalIndex: any;
   addTagModal: boolean;
   addModalInput: any;
   inputValue: null;
@@ -622,6 +619,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.showDeleted= false;
   }
 
+  setSelectedProjects($event){
+    this.projects= $event;
+  }
+
   contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
     this.dropdown = this.nzDropdownService.create($event, template);
   }
@@ -663,48 +664,16 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.toggleSelectPlts($event);
   }
 
-  toDate(d) {
-    return new Date(d);
+  handleOk(){
+
   }
 
   checkBoxSort($event) {
     this.listOfPltsData= $event;
   }
 
-  handlePopUpConfirm() {
-    if(this.renamingTag) {
-      if(this.addModalInput != this.modalInputCache){
-        this.store$.dispatch(new fromWorkspaceStore.renameTag({
-          ...this.tagFormenu,
-          tagName: this.addModalInput
-        }))
-      }
-    }else {
-      if(this.addTagModalIndex === 1 ){
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
-          plts: this.selectedListOfPlts,
-          wsId: this.workspaceId,
-          uwYear: this.uwy,
-          tags: this.addModalSelect,
-          type: 'many'
-        }))
-      }
-
-      if(this.addTagModalIndex === 0) {
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
-          plts: this.fromPlts ? this.selectedListOfPlts : [],
-          wsId: this.workspaceId,
-          uwYear: this.uwy,
-          tag: {
-            tagName: this.addModalInput,
-            tagColor: this.initColor
-          }
-        }))
-      }
-    }
-    
-    this.toggleModal();
-
+  renameTag($event){
+    this.store$.dispatch(new fromWorkspaceStore.renameTag($event))
   }
 
   selectUserTag(k) {
@@ -734,17 +703,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   }
 
-  selectSystemTag(section, tag) {
+  selectSystemTag({section, tag}) {
 
     _.forEach(this.systemTagsCount, (s,sKey) => {
       _.forEach(s, (t,tKey) => {
-        if(tag == tKey && section == sKey){
-          this.systemTagsCount[sKey][tKey] = {...t,selected: !t.selected}
-          console.log(this.systemTagsCount[sKey][tKey]);
-        }else{
-          this.systemTagsCount[sKey][tKey] = {...t,selected: false}
-          console.log(this.systemTagsCount[sKey][tKey]);
-        }
+        this.systemTagsCount[sKey][tKey] = tag == tKey && section == sKey ? {...t,selected: !t.selected} : {...t,selected: false};
       })
     })
   }
@@ -754,7 +717,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if(!this.addTagModal){
       this.addModalInput=null;
       this.addModalSelect=null;
-      this.addTagModalIndex=0;
+      this.tagModalIndex=0;
       this.renamingTag= false;
     }
   }
@@ -793,6 +756,31 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   setSelectedMenuItem($event: any) {
     this.selectedItemForMenu= $event;
+  }
+  
+  setFilters($event){
+    this.filters= $event;
+  }
+
+  setFromPlts($event){
+    this.fromPlts= $event;
+  }
+  
+  setSysTags($event){
+    this.systemTags= $event;
+  }
+  
+  setUserTags($event){
+    this.userTags= $event;
+  }
+
+  setModalIndex($event){
+    this.tagModalIndex= $event;
+  }
+
+  assignPltsToTag($event: any) {
+    this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
+
   }
 }
 
