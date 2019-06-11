@@ -110,7 +110,28 @@ export class NotificationsMenuItemComponent implements OnInit {
   }
 
   changeDate(event) {
-     // this.filteredNotification = this.notification.all
+    if (event === 'all') {
+      this.filteredNotification = [...this.notification.all]
+    } else {
+      this.filteredNotification = this.notification.all.filter(dt => {
+        let compareDate: any = new Date();
+        if (event === 'today') {
+          compareDate = compareDate.setDate(compareDate.getDate());
+        } else if (event === 'yesterday') {
+          compareDate = compareDate.setDate(compareDate.getDate() - 1);
+        } else if (event === 'lastWeek') {
+          compareDate = compareDate.setDate(compareDate.getDate() - 6);
+        } else if (event === 'lastMonth') {
+          compareDate = compareDate.setDate(compareDate.getDate() - 30);
+        }
+        return dt.date > compareDate;
+      })
+    }
+
+  }
+
+  formatString(text) {
+    return _.camelCase(text);
   }
 
   searchNotification(event) {
@@ -140,7 +161,7 @@ export class NotificationsMenuItemComponent implements OnInit {
 
   getDates() {
     const dateArray = [];
-    const listElement = [...this.filteredNotification.map(dt => dt.date)];
+    const listElement = [...this.notification.all.map(dt => dt.date)];
 
     const currentDate = new Date(_.min(listElement));
     const lastDate = new Date(_.max(listElement) + 1000000);
@@ -193,10 +214,14 @@ export class NotificationsMenuItemComponent implements OnInit {
     }
     if ( oldestDate > 0) {
       dateIntervals.push('Yesterday');
-      oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 6;
+      oldestDate = oldestDate - 1000 * 60 * 60 * 24;
     }
     if ( oldestDate > 0) {
       dateIntervals.push('Last Week');
+      oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 6;
+    }
+    if (oldestDate > 0) {
+      dateIntervals.push('Last Month');
       oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 25;
     }
     return dateIntervals;
