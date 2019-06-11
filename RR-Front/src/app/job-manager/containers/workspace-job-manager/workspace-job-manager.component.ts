@@ -434,12 +434,13 @@ export class WorkspaceJobManagerComponent implements OnInit {
         dt.isPaused = false;
       }
     });
-    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused)
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused);
+    this.savedTask = [...this.listOfData];
   }
 
   deleteJob(id) {
-    console.log(id);
     this.listOfData = this.listOfData.filter(dt => dt.id !== id);
+    this.savedTask = [...this.listOfData];
   }
 
   pauseJob(id): void {
@@ -448,7 +449,8 @@ export class WorkspaceJobManagerComponent implements OnInit {
         dt.isPaused = true;
       }
     });
-    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused)
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused);
+    this.savedTask = [...this.listOfData];
   }
 
   filterByUser(event) {
