@@ -14,8 +14,7 @@ export class SystemTagFilterPipe implements PipeTransform {
       'Modelling Vendor': 'sourceModellingVendor',
       'Model System': 'sourceModellingSystem',
       'Target RAP':'targetRapCode',
-      'User Occurence Basis': 'userOccurrenceBasis',
-      'Loss Asset Type': 'pltType',
+      'User Occurence Basis': 'userOccurrenceBasis'
     },
     nonGrouped: {
     }
