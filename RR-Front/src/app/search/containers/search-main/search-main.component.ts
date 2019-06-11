@@ -14,8 +14,7 @@ import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states'
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {Debounce} from "../../../shared";
-import {CloseTagByIndexAction} from "../../../core/store";
-import {CloseAllTagsAction} from "../../../core/store";
+import {CloseTagByIndexAction, CloseAllTagsAction} from "../../../core/store";
 
 
 @Component({
@@ -139,18 +138,26 @@ export class SearchMainComponent implements OnInit {
   ngOnInit() {
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this.searchContent$.subscribe(({value}) => {
-      console.log('Search content change', value);
-      this._searchContent = value;
-      _.isString(value) || value == null ? this.globalSearchItem = value : null;
+      this._checkSearchContent(value);
       this._loadData();
       this.detectChanges();
     })
   }
 
+  private _checkSearchContent(value:string|any[]){
+    if(_.isString(value) || value == null){
+      this.globalSearchItem = (value as string);
+      this._searchContent = [];
+    } else {
+      this.globalSearchItem = null;
+      this._searchContent=value;
+    }
+  }
+
   private _loadData(offset = '0', size = '100') {
     this.loading = true;
     let params = {
-      keyword: _.isString(this._searchContent) ? this._searchContent : '',
+      keyword: this.globalSearchItem,
       filter: this.filter,
       offset,
       size

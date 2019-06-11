@@ -46,8 +46,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   @Input('state')
   set setState(value) {
     this.state = _.clone(value);
-    this.detectChanges();
     this.calculateContractChoicesLength();
+    this.detectChanges();
   }
 
   subscriptions: Subscription = new Subscription();
@@ -60,20 +60,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
               private _notifcationService: NotificationService, private store: Store,
               private actions$: Actions, private cdRef: ChangeDetectorRef) {
     this.contractFilterFormGroup = this._fb.group({
-      expertModeToggle: false,
-      globalKeyword: '',
-      cedantCode: '',
-      cedantName: '',
-      countryName: '',
-      innerCedantCode: '',
-      innerCedantName: '',
-      innerCountryName: '',
-      innerWorkspaceId: '',
-      innerWorkspaceName: '',
-      innerYear: '',
-      workspaceId: '',
-      workspaceName: '',
-      year: ''
+      expertModeToggle: [false],
+      globalKeyword: ['']
     });
     this.scrollTo = -1;
     this.listLength = 0;
@@ -113,7 +101,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
 
   private _subscribeGlobalKeywordChanges() {
-    this.contractFilterFormGroup.get('globalKeyword')
+    this._unsubscribeToFormChanges();
+    this.subscriptions= this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
       .pipe(debounceTime(500))
       .subscribe((value) => {
@@ -135,12 +124,11 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   onEnter(evt: KeyboardEvent) {
     evt.preventDefault();
     if (this.isExpertMode) {
-      this.store.dispatch(new ExpertModeSearchAction(this.globalKeyword))
+      this.store.dispatch(new ExpertModeSearchAction(this.globalKeyword));
     } else {
-      this.store.dispatch(new SearchAction(this.state.badges, this.globalKeyword))
+      this.store.dispatch(new SearchAction(this.state.badges, this.globalKeyword));
     }
-    this.contractFilterFormGroup.get('globalKeyword').patchValue('');
-    // this.redirectToSearchPage();
+    this.clearSearchValue();
   }
 
   onSpace(evt: KeyboardEvent) {
@@ -171,11 +159,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteAllBadgesAction());
   }
 
-  redirectWithSearch(items) {
-    this._searchService.affectItems(items);
-    this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: items}));
-    this.router.navigate(['/search']);
-  }
 
   selectSearchBadge(key, value) {
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
@@ -200,26 +183,19 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.store.dispatch(this.isExpertMode ? new EnableExpertMode() : new DisableExpertMode());
   }
 
-  clearValue(): void {
-    this.store.dispatch(new ClearSearchValuesAction());
-    this._clearFilters();
+  appendSearchBadges(items) {
+    this.store.dispatch(new PatchSearchStateAction({key: 'badges', value: items}));
+    this.router.navigate(['/search']);
   }
 
-  private _clearFilters() {
-    this.contractFilterFormGroup.patchValue({
-      cedantCode: '',
-      cedantName: '',
-      countryName: '',
-      innerCedantCode: '',
-      innerCedantName: '',
-      innerCountryName: '',
-      innerWorkspaceId: '',
-      innerWorkspaceName: '',
-      innerYear: '',
-      workspaceId: '',
-      workspaceName: '',
-      year: ''
-    });
+
+  selectSearchAndRedirect(items){
+    this.appendSearchBadges(items);
+    this.onEnter(event as any);
+  }
+
+  clearValue(): void {
+    this.store.dispatch(new ClearSearchValuesAction());
   }
 
   focusInput(event) {
@@ -251,9 +227,18 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       this.cdRef.detectChanges();
   }
 
+  private clearSearchValue(){
+    this._unsubscribeToFormChanges();
+    this.contractFilterFormGroup.get('globalKeyword').patchValue('');
+    this._subscribeGlobalKeywordChanges();
+  }
+
+  private _unsubscribeToFormChanges(){
+    this.subscriptions ? this.subscriptions.unsubscribe(): null;
+  }
+
   ngOnDestroy(): void {
-    if (this.subscriptions)
-      this.subscriptions.unsubscribe();
+    this._unsubscribeToFormChanges();
   }
 
 }

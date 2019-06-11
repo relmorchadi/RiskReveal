@@ -239,13 +239,16 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(ExpertModeSearchAction)
   doExpertModeSearch(ctx: StateContext<SearchNavBar>, {expression}) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)}
-      if(_.isArray(draft.searchContent.value)){
+      if(! _.isEmpty(expression) ){
+        draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)};
         draft.badges= draft.searchContent.value;
-        draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual);
-        localStorage.setItem('items', JSON.stringify(draft.recentSearch));
-        draft.visibleSearch=false;
       }
+      if(_.isArray(draft.searchContent.value)){
+        // draft.badges= draft.badges;
+        draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
+      }
+      draft.visibleSearch=false;
+      localStorage.setItem('items', JSON.stringify(draft.recentSearch));
     }));
     ctx.dispatch(new Navigate(['/search']));
   }
@@ -256,11 +259,15 @@ export class SearchNavBarState implements NgxsOnInit {
       throw new Error('Search without keyword or value')
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchContent = {value: _.isEmpty(bages) ? keyword : bages};
-      draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual);
+      draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
       localStorage.setItem('items', JSON.stringify(draft.recentSearch));
       draft.visibleSearch=false;
     }));
     ctx.dispatch(new Navigate(['/search']));
+  }
+
+  private pushBadgesToLocalStorage(badges){
+
   }
 
   @Action(CloseTagByIndexAction)
