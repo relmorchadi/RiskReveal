@@ -5,19 +5,24 @@
                   [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
                   [nzSuffix]="suffixIconSearch"
                   [nzAddOnBefore]="prefixIconTag">
-    <input [ngClass]="{'search-page-active-border': isSearchRoute()}"
-           (keydown)="filterContracts($event)"
-           (input)="onInput($event)" #searchInput
+    <input searchInput [ngClass]="{'search-page-active-border': isSearchRoute()}"
+           (onEnter)="onEnter($event)"
+           (onSpace)="onSpace($event)"
+           (onBackspace)="onBackspace($event)"
+           (onArrowDown)="onArrowDown($event)"
+           (onArrowUp)="onArrowUp($event)"
+           (onDelete)="onDelete($event)"
            appScrollToParent
            [scrollTo]="scrollTo"
            [listLength]="listLength"
            (emitScrollTo)="scrollTo = $event"
-           formControlName="globalKeyword" (click)="focusInput($event)" [(ngModel)]="state.searchValue"
+           #searchInput
+           formControlName="globalKeyword" (click)="focusInput($event)"
            class="search-input" type="text" nz-input placeholder="Search">
   </nz-input-group>
   <ng-template #suffixIconSearch>
     <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close" nzTheme="outline"></i>
-    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="redirectToSearchPage()" style="cursor: pointer" class="icon-search_24px"></i>
+    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer" class="icon-search_24px"></i>
   </ng-template>
   <ng-template #prefixIconTag>
     <div class="prefix-wrapper">
@@ -43,7 +48,7 @@
 <!--                <span class="search-history-viewAll">See All</span>-->
               </div>
               <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
-                <li *ngFor="let items of state?.recentSearch" (click)="redirectWithSearch(items)">
+                <li *ngFor="let items of state?.recentSearch" (click)="appendSearchBadges(items)" (dblclick)="selectSearchAndRedirect(items)">
                   <div class="chip-container" *ngFor="let instance of items">
                     <app-chip-tag  [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
                   </div>
@@ -62,7 +67,7 @@
                 <span class="search-history-viewAll">See All</span>
               </div>
               <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
-                  <li *ngFor="let items of state?.savedSearch;let i= index" (click)="redirectWithSearch(items)">
+                  <li *ngFor="let items of state?.savedSearch;let i= index" (click)="appendSearchBadges(items)">
                     <div class="chip-container" *ngFor="let instance of items">
                       <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
                     </div>
@@ -77,14 +82,14 @@
                 <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span" *ngIf="state?.data[i].length > 0">{{stringUpdate(state?.tables[i])}}</span>
                 <ul class="search-result-list" >
                   <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index" [scrollTo]="scrollTo" [i]="i" [k]="k" [data]="state?.data" (setPos)="setPos($event)" appKeyDownScroll (click)="selectSearchBadge(stringUpdate(state?.tables[i]), val.label)">
-                    <span>{{val.countOccur}}</span> <p [innerHtml]="val.label| boldSpan: state.actualGlobalKeyword"></p><!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
+                    <span>{{val.countOccur}}</span> <p [innerHtml]="val.label| boldSpan: state.searchValue"></p><!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
                   </li>
                 </ul>
             </div>
           </div>
         </ng-template>
         <ng-template #loadingTemp>
-            <ng-container *ngIf="loading;else emptyState">
+            <ng-container *ngIf="state?.loading;else emptyState">
               <nz-skeleton [nzActive]="true"></nz-skeleton>
               <nz-skeleton [nzActive]="true"></nz-skeleton>
             </ng-container>
@@ -104,7 +109,7 @@
     <div class="search-contextual-table"
     nz-menu style="height: 400px; overflow: auto; border-radius: 10px; width: 350px">
         <div class="tag-header">
-          <span>EXPERT MODE</span><nz-switch (click)="enableExpertMode()" formControlName="switchValue"></nz-switch>
+          <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" formControlName="expertModeToggle"></nz-switch>
         </div>
         <div class="tag-body">
           <div class="tag-body-header">

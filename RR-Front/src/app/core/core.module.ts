@@ -22,11 +22,12 @@ import {WORKSPACE_STATES} from '../workspace/store/states';
 import {TableSortAndFilterPipe} from './pipes/table-sort-and-filter.pipe';
 import { KeyDownScrollDirective } from './key-down-scroll.directive';
 import { ScrollToParentDirective } from './pipes/scroll-to-parent.directive';
-
+import { SearchInputDirective } from './directive/search-input.directive';
 
 registerLocaleData(en);
 
 @NgModule({
+  declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe, BoldSpanPipe, KeyDownScrollDirective, SearchInputDirective],
   declarations: [...COMPONENTS, ...CONTAINERS, BoldKeywordPipe, BoldSpanPipe, KeyDownScrollDirective, ScrollToParentDirective],
   imports: [
     NgZorroAntdModule,
