@@ -1,6 +1,8 @@
 <nav class="p-0 p navbar navbar-expand-lg navbar-light bg-white border-bottom align-items-stretch">
-  <img style="cursor: pointer" (click)="collapseLeftNavbar()" src="./assets/images/rr-logo.svg"
-       class="pl-2 pr-2 rr-logo img-fluid border-right" alt="Risk Reveal Logo">
+  <a routerLink="/dashboard">
+    <img style="cursor: pointer" (click)="collapseLeftNavbar()"  src="./assets/images/rr-logo.svg"
+         class="pl-2 pr-2 rr-logo img-fluid border-right" alt="Risk Reveal Logo">
+  </a>
   <button (click)="expandMenu = !expandMenu" class="navbar-toggler" type="button">
     <span class="navbar-toggler-icon"></span>
   </button>

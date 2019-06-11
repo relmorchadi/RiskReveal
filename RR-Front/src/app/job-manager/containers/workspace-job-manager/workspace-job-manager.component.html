@@ -49,7 +49,7 @@
         </span>
             <div class="search-bar-table" *ngIf="col?.filtered">
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-              <input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">
+              <input pInputText type="text" (input)="dt.filterGlobal($event.target.value, 'contains')">
             </div>
           </th>
         </tr>
@@ -71,8 +71,14 @@
             </td>
             <td *ngIf="col?.type === 'progress'">
               <div style="display:flex; align-items: center">
-                <nz-progress [nzWidth]="35" [nzPercent]="rowData[col?.field]" nzType="circle"></nz-progress>
-                <span style="padding-left: 5px">In Progress</span>
+                <ng-container *ngIf="!rowData.isPaused">
+                  <nz-progress [nzWidth]="35" [nzPercent]="rowData[col?.field]" nzType="circle"></nz-progress>
+                  <span style="padding-left: 5px">In Progress</span>
+                </ng-container>
+                <ng-container *ngIf="rowData.isPaused">
+                  <i class="icon-pause_circle_outline_24px pause-icon-status"></i>
+                  <span style="padding-left: 5px">Paused</span>
+                </ng-container>
               </div>
             </td>
             <td *ngIf="col?.type === 'object'">
@@ -82,12 +88,16 @@
               </div>
             </td>
             <td *ngIf="col?.type === 'status'">
-              <div style="display: flex" *ngIf="rowData[col?.field]">
-                <span class="status-true"></span>
+              <div style="display: flex" *ngIf="rowData[col?.field] === 'high'">
+                <span class="status-high"></span>
                 <span>High</span>
               </div>
-              <div style="display: flex" *ngIf="!rowData[col?.field]">
-                <span class="status-false"></span>
+              <div style="display: flex" *ngIf="rowData[col?.field] === 'medium'">
+                <span class="status-medium"></span>
+                <span>Medium</span>
+              </div>
+              <div style="display: flex" *ngIf="rowData[col?.field] === 'low'">
+                <span class="status-low"></span>
                 <span>Low</span>
               </div>
             </td>
@@ -95,7 +105,7 @@
               <div style="display: flex">
                 <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                   <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
-                  <ul nz-menu>
+                  <ul nz-menu class="dropdown-menu-selector">
                     <!--<li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span
                       class="dropdown-title">Cancel</span></li>-->
                     <li style="display:flex" nz-menu-item
@@ -111,7 +121,7 @@
                     <li style="display:flex" nz-menu-item
                         *ngIf="rowData.isPaused"
                         nz-popconfirm
-                        nzTitle="Are you sure you want to pause this Job?"
+                        nzTitle="Are you sure you want to resume this Job?"
                         (nzOnConfirm)="resumeJob(rowData.id)"
                         (nzOnCancel)="cancel()"
                         nzPlacement="bottom"><i
@@ -196,12 +206,16 @@
                   </div>
                 </td>
                 <td *ngIf="col?.type === 'status'">
-                  <div style="display: flex" *ngIf="rowData[col?.field]">
-                    <span class="status-true"></span>
+                  <div style="display: flex" *ngIf="rowData[col?.field] === 'high'">
+                    <span class="status-high"></span>
                     <span>High</span>
                   </div>
-                  <div style="display: flex" *ngIf="!rowData[col?.field]">
-                    <span class="status-false"></span>
+                  <div style="display: flex" *ngIf="rowData[col?.field] === 'medium'">
+                    <span class="status-medium"></span>
+                    <span>Medium</span>
+                  </div>
+                  <div style="display: flex" *ngIf="rowData[col?.field] === 'low'">
+                    <span class="status-low"></span>
                     <span>Low</span>
                   </div>
                 </td>

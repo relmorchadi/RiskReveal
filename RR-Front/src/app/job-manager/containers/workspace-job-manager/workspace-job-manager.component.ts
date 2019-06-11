@@ -117,8 +117,18 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'innerCedantCode'
     },
     {
-      field: 'startTimeDate',
-      header: 'Start Time Date',
+      field: 'submittedTime',
+      header: 'Submitted Time',
+      width: '110px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      type: 'text',
+      filterParam: 'submittedTime'
+    },
+    {
+      field: 'startTime',
+      header: 'Start Time',
       width: '110px',
       display: true,
       sorted: false,
@@ -127,34 +137,24 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'innerYear'
     },
     {
-      field: 'elapsedTimeDate',
-      header: 'Elapsed Time Data',
+      field: 'elapsedTime',
+      header: 'Elapsed Time',
       width: '110px',
       display: true,
       sorted: false,
       filtered: true,
       type: 'text',
-      filterParam: 'elapsedTimeDate'
+      filterParam: 'elapsedTime'
     },
     {
-      field: 'completionTimeDate',
-      header: 'Completion Time Data',
+      field: 'completionTime',
+      header: 'Completion Time',
       width: '110px',
       display: true,
       sorted: false,
       filtered: true,
       type: 'text',
-      filterParam: 'completionTimeDate'
-    },
-    {
-      field: 'submittedTimeDate',
-      header: 'Submitted Time Data',
-      width: '110px',
-      display: true,
-      sorted: false,
-      filtered: true,
-      type: 'text',
-      filterParam: 'submittedTimeDate'
+      filterParam: 'completionTime'
     },
     {
       field: 'menuIcon',
@@ -164,7 +164,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       sorted: false,
       filtered: false,
       type: 'icon',
-      filterParam: 'submittedTimeDate'
+      filterParam: ''
     }
   ];
 
@@ -248,11 +248,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 2,
@@ -263,11 +263,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 3,
@@ -278,11 +278,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 4,
@@ -293,11 +293,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'low',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 5,
@@ -308,11 +308,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       jobType: 'Import',
       isPaused: false,
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'low',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 6,
@@ -323,11 +323,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 7,
@@ -338,11 +338,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 8,
@@ -353,11 +353,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 9,
@@ -368,11 +368,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 10,
@@ -383,11 +383,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
       id: 11,
@@ -398,11 +398,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'low',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
 /*      selected: false,*/
@@ -413,11 +413,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       isPaused: false,
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     }
   ];
 
@@ -434,12 +434,13 @@ export class WorkspaceJobManagerComponent implements OnInit {
         dt.isPaused = false;
       }
     });
-    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused)
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused);
+    this.savedTask = [...this.listOfData];
   }
 
   deleteJob(id) {
-    console.log(id);
     this.listOfData = this.listOfData.filter(dt => dt.id !== id);
+    this.savedTask = [...this.listOfData];
   }
 
   pauseJob(id): void {
@@ -448,7 +449,8 @@ export class WorkspaceJobManagerComponent implements OnInit {
         dt.isPaused = true;
       }
     });
-    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused)
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused);
+    this.savedTask = [...this.listOfData];
   }
 
   filterByUser(event) {

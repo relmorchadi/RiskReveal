@@ -23,7 +23,7 @@
         <div>
           <span class="main-tab-title">General User</span>
           <div class="settings-holder">
-            <span class="head-title">Date & Time</span>
+            <span class="head-title">search</span>
             <div class="settings-wrapper">
               <div class="user-config-item">
                 <span>Search Target :</span>
@@ -36,7 +36,10 @@
                   <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
                 </nz-select>
               </div>
+            </div>
 
+            <span class="head-title">Date & Time</span>
+            <div class="settings-wrapper">
               <div (click)="extraDetailDate = !extraDetailDate" class="user-config-item" style="cursor: pointer"><span>Date Format</span>
                 <div>
                   <i class="icon-arrow_forward_ios_24px"></i>
@@ -117,27 +120,40 @@
                 </div>
               </div>
               <div class="user-config-item"><span>Time zones</span>
-                <div>
 
-                </div>
               </div>
 
             </div>
 
             <span class="head-title">Numerical</span>
             <div class="settings-wrapper">
-              <div class="user-config-item"><span>Number Format</span>
+              <div class="user-config-item"><span>Number Of Decimals</span>
                 <div>
-
+                  <nz-input-number
+                    [ngModel]="numberParser"
+                    [nzMin]="0"
+                    [nzMax]="4"
+                    [nzStep]="1"
+                    style="width: 140px;"
+                  ></nz-input-number>
                 </div>
               </div>
               <div class="user-config-item"><span>Decimal Separator Character</span>
                 <div>
-
+                  <nz-radio-group [ngModel]="decimalSeparator">
+                    <label nz-radio nzValue=",">,</label>
+                    <label nz-radio nzValue=".">.</label>
+                    <label nz-radio nzValue="'">'</label>
+                  </nz-radio-group>
                 </div>
               </div>
-              <div class="user-config-item"><span>Decimal Thousand Separator Character</span>
+              <div class="user-config-item"><span>Thousand Separator Character</span>
                 <div>
+                  <nz-radio-group [ngModel]="thousandSeparator">
+                    <label nz-radio nzValue=",">,</label>
+                    <label nz-radio nzValue=".">.</label>
+                    <label nz-radio nzValue="'">'</label>
+                  </nz-radio-group>
                 </div>
               </div>
               <div class="user-config-item"><span>Number of recent history items (My recent)</span></div>
@@ -158,7 +174,7 @@
           <span class="main-tab-title">Import</span>
           <div class="settings-holder">
 
-            <span class="head-title">Default</span>
+            <span class="head-title">General</span>
             <div class="settings-wrapper">
               <div class="user-config-item">
                 <span>Default Import Page</span>
@@ -247,9 +263,8 @@
 
             <span class="head-title">Default Scope Of Contract</span>
             <div class="settings-wrapper">
-              <div class="user-config-item"><span>Default Country</span></div>
-              <div class="user-config-item"><span>Default UW Unit</span></div>
-              <div class="user-config-item"><span>Default Subsidiary Ledger</span></div>
+              <div class="user-config-item"><span>Country</span></div>
+              <div class="user-config-item"><span>UW Unit</span></div>
             </div>
           </div>
           <div class="footer-tab-settings">
@@ -257,7 +272,7 @@
           </div>
         </div>
         <ng-template #widgetConfig>
-          <span>Dashboard Widget</span>
+          <span>Contract Of Interest</span>
         </ng-template>
       </nz-tab>
       <nz-tab [nzTitle]="epMetricConfig">

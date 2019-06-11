@@ -28,6 +28,9 @@ import {
 export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   lastSelectedIndex = null;
+  filterModalVisibility = false;
+  linkingModalVisibility = false;
+  radioValue = 'all';
 
   inputSwitch = true;
 
@@ -94,7 +97,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
     {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
     {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
-    {field: 'analysisCurrency', header: 'Analysis Currency', width: '110px', type: 'text'},
+    {field: 'sourceCurrency', header: 'Source Currency', width: '110px', type: 'text'},
     {field: 'regionName', header: 'Region Name', width: '110px', type: 'text'},
     {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
     {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
@@ -173,7 +176,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       name: 'Europe All Lines, EP Wind Only',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
-      analysisCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       ELT: 'GR',
       occurrenceBasis: 'PerEvent',
@@ -186,7 +189,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       name: 'Europe All Lines, EP Wind Only',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
-      analysisCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       ELT: 'GR',
       occurrenceBasis: 'PerEvent',
@@ -199,7 +202,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       name: 'Europe All Lines, EP Wind Only',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
-      analysisCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       ELT: 'GR',
       occurrenceBasis: 'PerEvent',
@@ -432,6 +435,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   changeFinancialValidator(value, item) {
     this.store.dispatch(new PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
+  }
+
+  handleCancel() {
+    this.filterModalVisibility = false;
+    this.linkingModalVisibility = false;
   }
 
   detectChanges() {

@@ -38,6 +38,11 @@ export class UserPreferenceComponent implements OnInit {
   dateFormat: any;
   timeFormat: any;
 
+  decimalSeparator = '.';
+  thousandSeparator = ',';
+
+  numberParser = 2;
+
   constructor(public location: Location, public store$: Store) { }
 
   ngOnInit() {
