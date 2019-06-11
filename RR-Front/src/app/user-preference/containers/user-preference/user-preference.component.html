@@ -120,27 +120,40 @@
                 </div>
               </div>
               <div class="user-config-item"><span>Time zones</span>
-                <div>
 
-                </div>
               </div>
 
             </div>
 
             <span class="head-title">Numerical</span>
             <div class="settings-wrapper">
-              <div class="user-config-item"><span>Number Format</span>
+              <div class="user-config-item"><span>Number Of Decimals</span>
                 <div>
-
+                  <nz-input-number
+                    [ngModel]="numberParser"
+                    [nzMin]="0"
+                    [nzMax]="4"
+                    [nzStep]="1"
+                    style="width: 140px;"
+                  ></nz-input-number>
                 </div>
               </div>
               <div class="user-config-item"><span>Decimal Separator Character</span>
                 <div>
-
+                  <nz-radio-group [ngModel]="decimalSeparator">
+                    <label nz-radio nzValue=",">,</label>
+                    <label nz-radio nzValue=".">.</label>
+                    <label nz-radio nzValue="'">'</label>
+                  </nz-radio-group>
                 </div>
               </div>
-              <div class="user-config-item"><span>Decimal Thousand Separator Character</span>
+              <div class="user-config-item"><span>Thousand Separator Character</span>
                 <div>
+                  <nz-radio-group [ngModel]="thousandSeparator">
+                    <label nz-radio nzValue=",">,</label>
+                    <label nz-radio nzValue=".">.</label>
+                    <label nz-radio nzValue="'">'</label>
+                  </nz-radio-group>
                 </div>
               </div>
               <div class="user-config-item"><span>Number of recent history items (My recent)</span></div>
