@@ -22,6 +22,8 @@
   }
 }
 
+
+
 .focused-item{
   background-color: #F4F6FC;
 }
@@ -270,6 +272,7 @@ ul.badges-list {
 
 .prefix-wrapper{
   display: flex;
+  line-height: 0rem;
   .chips-wrapper{
     display:flex;
   }
@@ -280,7 +283,7 @@ ul.badges-list {
   background: transparent;
   border: none;
   padding: 1px 5px;
-  margin-right: 4px;
+  //margin-right: 4px;
   &:focus{
     outline:0;
     background: rgba(0,0,0,0.05);
@@ -325,4 +328,16 @@ ul.badges-list {
   }
 }
 
+
+.setting-popover{
+  //margin-top: 20px;
+  height: 115px;
+  width: 215px;
+  padding: 15px;
+  .popover-title{
+    letter-spacing: 0.1rem;
+    font-size: 0.9rem;
+    font-weight: bolder;
+  }
+}
 

@@ -37,7 +37,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   scrollParams;
   state: SearchNavBar = null;
   private unSubscribe$:Subject<void>;
-
+  searchMode:string= 'Treaty';
 
   @Input('state')
   set setState(value) {

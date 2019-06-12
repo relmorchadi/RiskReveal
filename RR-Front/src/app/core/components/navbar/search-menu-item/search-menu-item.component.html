@@ -16,8 +16,9 @@
            (emitScrollTo)="scrollParams.scrollTo = $event"
            #searchInput
            formControlName="globalKeyword" (click)="focusInput($event)"
-           class="search-input" type="text" nz-input placeholder="Search">
+           class="search-input" type="text" nz-input [placeholder]="'Search for ' + searchMode || 'Treaty' ">
   </nz-input-group>
+
   <ng-template #suffixIconSearch>
     <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close" nzTheme="outline"></i>
     <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer" class="icon-search_24px"></i>
@@ -27,11 +28,42 @@
       <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
         <i class="icon-code_24px"></i>
       </button>
+      <button class="code-button" style="font-size: 16px; margin-right: 0px" nz-popover  [nzContent]="searchDropDown" nzPlacement="bottomLeft" nzTrigger="click">
+        <i nz-icon nzType="setting" nzTheme="outline" ></i>
+      </button>
       <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
               nz-popover [nzContent]="searchDropdown"  nzPlacement="bottomLeft" nzTrigger="click">
       </button>
       <div class="chips-wrapper">
         <app-chip-tag *ngFor="let items of state?.badges; let i = index" (onclick)="closeSearchBadge($event, i)" [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
+      </div>
+    </div>
+  </ng-template>
+
+
+  <ng-template #searchDropDown>
+    <div class="setting-popover">
+      <div class="popover-title">
+        SEARCH SETTINGS
+      </div>
+      <div nz-row style="line-height: 3rem;">
+        <div style="font-size: 0.8rem " nz-col nzSpan="12">
+          Search Mode
+        </div>
+        <div nz-col nzSpan="12">
+          <nz-select
+            class="dropdown-default"
+            style="width: 100px;"
+            nzShowSearch
+            nzAllowClear
+            nzPlaceHolder="Select Search Mode"
+            [(ngModel)]="searchMode"
+            [ngModelOptions]="{standalone: true}"
+          >
+            <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
+            <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
+          </nz-select>
+        </div>
       </div>
     </div>
   </ng-template>
