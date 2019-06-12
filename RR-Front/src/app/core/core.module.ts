@@ -10,19 +10,19 @@ import {CustomRouterStateSerializer} from './service/router/RouterStateSerialize
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import {en_US, NgZorroAntdModule, NZ_I18N} from 'ng-zorro-antd';
-import {COMPONENTS} from './components'
+import {COMPONENTS} from './components';
 import {CONTAINERS} from './containers';
-import {PIPES} from "./pipes";
-import {DIRECTIVES} from "./directives";
+import {PIPES} from './pipes';
+import {DIRECTIVES} from './directives';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SharedModule} from '../shared/shared.module';
-import {StoreModule} from "./store";
+import {StoreModule} from './store';
 
 registerLocaleData(en);
 
 @NgModule({
-  declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES,...PIPES],
+  declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES, ...PIPES],
   imports: [
     NgZorroAntdModule,
     RouterModule,
@@ -46,8 +46,7 @@ export class CoreModule implements NgxsHmrLifeCycle<Snapshot> {
       ngModule: CoreModule,
       providers: [{provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
         {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, { provide: NZ_I18N, useValue: en_US }],
-
-    }
+    };
   }
 
   public hmrNgxsStoreOnInit(ctx: StateContext<Snapshot>, snapshot: Partial<Snapshot>) {

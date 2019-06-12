@@ -81,7 +81,6 @@ export class PltMainState implements NgxsOnInit {
     sourceModellingVendor: 'Modelling Vendor',
     sourceModellingSystem: 'Model System',
     generatedFromDefaultAdjustement: 'Default',
-    pltType: 'Loss Asset Type',
     originalTarget: 'Loss Asset Type',
     targetRapCode: 'Target RAP',
     xActAvailable: 'Published to Pricing',
@@ -89,6 +88,12 @@ export class PltMainState implements NgxsOnInit {
     pltGrouping: 'Grouped',
     userOccurenceBasis: 'userOccurenceBasis'
   };
+
+  regions = ['DE','EU','JP'];
+
+  getRegion(){
+    return this.regions[_.random(0,3)]
+  }
 
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
@@ -114,6 +119,7 @@ export class PltMainState implements NgxsOnInit {
                   selected: false,
                   visible: true,
                   tagFilterActive: false,
+                  regionDesc: this.getRegion(),
                   opened: false,
                   deleted: ls[plt.pltId] ? ls[plt.pltId].deleted : undefined,
                   deletedBy: ls[plt.pltId] ? ls[plt.pltId].deletedBy : undefined,
@@ -182,8 +188,8 @@ export class PltMainState implements NgxsOnInit {
     });
   }
 
-  @Action(fromPlt.setFilterPlts)
-  setFilterPlts(ctx: StateContext<pltMainModel>, { payload }: fromPlt.setFilterPlts) {
+  @Action(fromPlt.setUserTagsFilters)
+  setFilterPlts(ctx: StateContext<pltMainModel>, { payload }: fromPlt.setUserTagsFilters) {
     const state = ctx.getState();
     const{
       filters
@@ -193,55 +199,18 @@ export class PltMainState implements NgxsOnInit {
       filters: _.assign({}, state.filters, filters)
     });
 
-    return ctx.dispatch(new fromPlt.FilterPlts());
+    return ctx.dispatch(new fromPlt.FilterPltsByUserTags());
 
   }
 
-
-  reverseSystemTagsMapping = {
-    grouped: {
-      'Peril': 'peril',
-      'Region Peril': 'regionPerilCode',
-      'Currency': 'currency',
-      'Modelling Vendor': 'sourceModellingVendor',
-      'Model System': 'sourceModellingSystem',
-      'Target RAP':'targetRapCode',
-      'User Occurence Basis': 'userOccurrenceBasis',
-      'Loss Asset Type': 'pltType',
-    },
-    nonGrouped: {
-    }
-  };
-
-  @Action(fromPlt.FilterPlts)
-  FilterPlts(ctx: StateContext<pltMainModel>, action: fromPlt.FilterPlts) {
+  @Action(fromPlt.FilterPltsByUserTags)
+  FilterPlts(ctx: StateContext<pltMainModel>, action: fromPlt.FilterPltsByUserTags) {
     const state = ctx.getState();
     const {
       filters
     } = state;
 
     let newData = {};
-
-    /*if(filters.systemTag.length > 0 ){
-      _.forEach( state.data , (plt: any, k) => {
-        if(plt.visible) {
-          if (_.some(filters.systemTag, (systemTag) => {
-            const key = _.keys(systemTag)[0];
-            return plt[this.reverseSystemTagsMapping.grouped[systemTag[key]]] === key
-          })) {
-            newData[k] = {...plt, tagFilterActive: true};
-          } else {
-            newData[k] = {...plt, tagFilterActive: false};
-          }
-        }else{
-          newData[k] = {...plt, tagFilterActive: false};
-        }
-      });
-    }else{
-      _.forEach(state.data, (plt, k) => {
-        newData[k] = {...plt,visible: plt.visible, tagFilterActive: false};
-      });
-    }*/
 
     if (filters.userTag.length > 0) {
         _.forEach(state.data, (plt: any, k) => {
@@ -261,6 +230,44 @@ export class PltMainState implements NgxsOnInit {
       ...state,
       data: newData
     });
+  }
+
+  @Action(fromPlt.setTableSortAndFilter)
+  setTableSortAndFilter(ctx: StateContext<pltMainModel>, { payload }: fromPlt.setTableSortAndFilter){
+
+    const {
+      sortData,
+      filterData
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState();
+
+    const sortDataKeys =_.keys(sortData);
+    const filterDataKeys = _.keys(filterData)
+    let res={...data};
+
+
+    if(filterDataKeys.length > 0 ) {
+
+      res = _.filter(data, row =>
+        _.every(
+          filterDataKeys,
+          filteredCol => _.some(
+            _.split(filterData[filteredCol],/[,;]/g), strs =>
+              _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)))
+          )
+        ))
+    }
+
+    if(sortDataKeys.length > 0){
+      res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
+    }
+
+    ctx.patchState({
+      data: res
+    })
   }
 
   @Action(fromPlt.assignPltsToTag)
@@ -458,6 +465,26 @@ export class PltMainState implements NgxsOnInit {
         }
       })
     })
+
+  }
+
+  @Action(fromPlt.restorePlt)
+  restorePlt(ctx: StateContext<pltMainModel>, { payload }: fromPlt.restorePlt){
+    const {
+      pltId
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState();
+
+    ctx.patchState({
+      data: _.merge({}, data, { [pltId]: { ...data[pltId], deleted: false}})
+    })
+
+    let ls= JSON.parse(localStorage.getItem('deletedPlts')) || {};
+
+    localStorage.setItem('deletedPlts', JSON.stringify(_.omit(ls, `${pltId}`)));
 
   }
 

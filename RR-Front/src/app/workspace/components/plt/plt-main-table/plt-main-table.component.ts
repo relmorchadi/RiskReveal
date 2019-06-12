@@ -36,6 +36,7 @@ export class PltMainTableComponent implements OnInit {
   @Output() onItemSelectForMenu= new EventEmitter();
   @Output() onSelectSinglePlt= new EventEmitter();
   @Output() onPltClick= new EventEmitter();
+  @Output() setTagModalVisibility= new EventEmitter();
 
   private activeCheckboxSort: boolean;
   private lastSelectedId: number;

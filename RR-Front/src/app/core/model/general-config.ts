@@ -1,7 +1,6 @@
 
 export class GeneralConfig {
   general: {
-    searchTarget: any;
     dateFormat: {
       shortDate: string;
       longDate: string;
@@ -10,17 +9,26 @@ export class GeneralConfig {
     };
     timeZone: any;
     numberFormat: {
-      numberFormat: string;
+      numberOfDecimals: number;
       decimalSeparator: string;
       decimalThousandSeparator: string;
+      negativeFormat: string;
       numberHistory: string;
     };
   };
   riskLink: {
     importPage: any;
-    financialPerspective: any;
+    financialPerspectiveELT: any;
+    financialPerspectiveEPM: any;
     targetCurrency: any;
     rmsInstance: any;
   };
-
+  contractOfInterest: {
+    country: any;
+    uwUnit: any;
+  };
+  epCurves: {
+    returnPeriod: any;
+    display: any;
+  };
 }

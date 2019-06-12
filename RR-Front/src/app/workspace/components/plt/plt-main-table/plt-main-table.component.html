@@ -1,7 +1,7 @@
 <p-contextMenu #cm appendTo="body" [model]="tableInputs.contextMenuItems"></p-contextMenu>
 <p-table
   [columns]="tableInputs.pltColumns"
-  [value]="(tableInputs.showDeleted ? tableInputs.deletedPlts : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData,tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
+  [value]="(tableInputs.showDeleted ? tableInputs.deletedPlts : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
   [resizableColumns]="true"
   [(contextMenuSelection)]="tableInputs.selectedPlt"
   [contextMenu]="cm"
@@ -28,7 +28,7 @@
       </th>
 
       <ng-container *ngFor="let col of columns; let i = index">
-        <th  *ngIf="i > 0" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
+        <th  *ngIf="i > 0 && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
@@ -55,7 +55,11 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
-    <tr (contextmenu)="selectedItemForMenu(rowData.pltId)" [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="tableInputs.filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
+    <tr
+      (contextmenu)="selectedItemForMenu(rowData.pltId)"
+      [pContextMenuRow]="rowData"
+      [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
+      *ngIf="tableInputs.filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
       <td [ngStyle]="{'width': '43px'}">
         <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
       </td>
@@ -69,7 +73,7 @@
           </div>
         </ng-container>
         <ng-container *ngIf="i === 1">
-          <div class="text-elipsice" style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+          <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
         </ng-container>
         <ng-container *ngIf="i > 1">
           <ng-container *ngIf="col?.type == 'field' && col?.type != 'checkbox'">

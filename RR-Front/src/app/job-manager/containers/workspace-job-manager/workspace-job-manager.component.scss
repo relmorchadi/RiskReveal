@@ -168,7 +168,7 @@
         }
 
         .status-low {
-          background-color: #03DAC4;
+          background-color: #F8E71C;
         }
 
         .context-wrapper {
@@ -238,4 +238,10 @@
   background-size: 400% 100%;
   -webkit-animation: ant-skeleton-loading 1.4s ease infinite;
   animation: ant-skeleton-loading 1.4s ease infinite;
+}
+
+.label-wrapper {
+  font-size: 12px;
+  margin: 9px 12px 0 0;
+  font-weight: bold;
 }

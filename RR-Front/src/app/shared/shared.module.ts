@@ -11,6 +11,7 @@ import { ShowLastPipe } from './pipes/show-last.pipe';
 import { InputSearchPipe } from './pipes/input-search.pipe';
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
+import { ReFormatPIDPipe } from './pipes/re-format-pid.pipe';
 
 
 @NgModule({
