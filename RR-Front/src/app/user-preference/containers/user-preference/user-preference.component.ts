@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
 import {RiskLinkModel} from '../../../workspace/model/risk_link.model';
 import * as _ from 'lodash';
 import {GeneralConfigState, SearchNavBarState} from '../../../core/store/states';
-import {PatchSearchStateAction} from '../../../core/store/actions';
+import {PatchNumberFormatAction, PatchSearchStateAction} from '../../../core/store/actions';
 import {GeneralConfig} from '../../../core/model';
 
 @Component({
@@ -18,9 +18,7 @@ import {GeneralConfig} from '../../../core/model';
 export class UserPreferenceComponent implements OnInit {
 
   searchTarget: any;
-
-  extraDetailDate = false;
-  extraDetailTime = false;
+  testNumber: 1231024;
 
   search = ['Country',
     'Cedent Name',
@@ -30,7 +28,9 @@ export class UserPreferenceComponent implements OnInit {
     'Workspace Context'
   ];
 
-
+  check1 = false;
+  check2 = false;
+  numberCollapse = false;
   defaultImport;
 
   @Select(GeneralConfigState)
@@ -61,12 +61,15 @@ export class UserPreferenceComponent implements OnInit {
     localStorage.setItem('importConfig', this.defaultImport);
   }
 
+  numberFormat() {
+    return `1.${this.state.general.numberFormat.numberOfDecimals}-${this.state.general.numberFormat.numberOfDecimals}`;
+  }
+
   changePerspective() {
   }
 
-  returnToConf() {
-    this.extraDetailDate = false;
-    this.extraDetailTime = false;
+  changeNumberFormat(event, target) {
+    this.store$.dispatch(new PatchNumberFormatAction({target: target, value: event}));
   }
 
   changeSearch(event) {

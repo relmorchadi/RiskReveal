@@ -118,16 +118,16 @@ export class ExpertModeSearchAction {
 
 export class SearchAction {
   static readonly type = '[Search Nav Bar] do search';
-  constructor(public bages: any[], public keyword:string) {}
+  constructor(public bages: any[], public keyword: string) {}
 }
 
 export class CloseTagByIndexAction {
   static readonly type = '[Search Nav Bar] Close tag by index';
-  constructor(public index:number) {}
+  constructor(public index: number) {}
 }
 
-export class CloseAllTagsAction{
-  static readonly type= '[Search Nav Bar] Close all search tag';
+export class CloseAllTagsAction {
+  static readonly type = '[Search Nav Bar] Close all search tag';
   constructor() {}
 }
 

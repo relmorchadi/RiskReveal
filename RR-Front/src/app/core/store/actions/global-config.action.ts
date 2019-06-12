@@ -1,4 +1,4 @@
-export class PatchSearchTargetAction {
-  static readonly type = '[Global Configuration] Patch Search Target';
-  constructor(public value: string) {}
+export class PatchNumberFormatAction {
+  static readonly type = '[Global Configuration] Patch Number Format';
+  constructor(public payload: any) {}
 }

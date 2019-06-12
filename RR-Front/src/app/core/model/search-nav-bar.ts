@@ -20,7 +20,7 @@ export class SearchNavBar {
   savedSearch: any[];
   tagShortcuts: any[];
   sortcutFormKeysMapper: any;
-  searchContent:any;
+  searchContent: any;
 }
 
 
