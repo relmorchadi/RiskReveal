@@ -13,7 +13,7 @@
             [ngClass]="{'active-path': project.selected}">
           <i class="icon-assignment_24px"></i>
           <span class="tooltipMsg"
-                [nz-tooltip]="project.projectId + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{project.projectId + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+                [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
         </li>
       </ul>
       <div class="plt-trash" [ngStyle]="{'visibility': menuInputs.deletedPltsLength > 0 ? 'visible' : 'hidden'}">
@@ -127,21 +127,23 @@
             </i>
           </button>
         </div>
-        <div *ngFor="let key of menuInputs.userTags | keys" nz-row class="ml-3 mt-1">
-          <p-contextMenu appendTo="body" [target]="tagMenu" [model]="menuInputs.tagContextMenu"></p-contextMenu>
-          <span
-            #tagMenu
-            (contextmenu)="setTagForMenu(menuInputs.userTags[key])"
-            [ngClass]="{'active-tag': menuInputs.userTags[key]?.selected}"
-            class="chips"
-            [ngStyle]="{'background-color': menuInputs.userTags[key]?.tagColor}"
-            (click)="setFilter('userTag', menuInputs.userTags[key],null)">
+        <div class="rest">
+          <div *ngFor="let key of menuInputs.userTags | keys" nz-row class="ml-3 mt-1">
+            <p-contextMenu appendTo="body" [target]="tagMenu" [model]="menuInputs.tagContextMenu"></p-contextMenu>
+            <span
+              #tagMenu
+              (contextmenu)="setTagForMenu(menuInputs.userTags[key])"
+              [ngClass]="{'active-tag': menuInputs.userTags[key]?.selected}"
+              class="chips"
+              [ngStyle]="{'background-color': menuInputs.userTags[key]?.tagColor}"
+              (click)="setFilter('userTag', menuInputs.userTags[key],null)">
                       <span class="chips-content">{{menuInputs.userTags[key]?.tagName}}</span>
                       <span class="chips-counter">
                         {{menuInputs.userTags[key]?.count}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                     </span>
+          </div>
         </div>
       </div>
       <div class="sys-tag-section">
@@ -154,13 +156,14 @@
           [nzAccordion]="false"
         >
           <ng-container *ngFor="let section of (menuInputs.systemTagsCount | keys)">
-            <ng-container *ngIf="(menuInputs.systemTagsCount[section] | keys).length > 0">
+            <ng-container >
               <nz-collapse-panel
                 [nzHeader]="section"
               >
-                <ul class="title-list" style="position: relative;left:-24px">
-                  <li *ngFor="let tag of ( menuInputs.systemTagsCount[section] | keys)"
-                      style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;">
+                  <div *ngFor="let tag of ( menuInputs.systemTagsCount[section] | keys)"
+                      style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
+                       class="ml-3"
+                  >
                     <span
                       [ngClass]="{'active-tag': menuInputs.systemTagsCount[section][tag].selected }"
                       class="chips"
@@ -173,15 +176,12 @@
                       <span
                         [ngStyle]="{
                       'cursor': menuInputs.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
-                      }"
-                        class="chips-content">{{tag}}</span>
+                      }" class="chips-content">{{tag}}</span>
                       <span [ngStyle]="{
                       'background-color': 'black',
-                      'cursor': menuInputs.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'}"
-                            class="chips-counter">{{menuInputs.systemTagsCount[section][tag].count}}</span>
-                </span>
-                  </li>
-                </ul>
+                      'cursor': menuInputs.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'}" class="chips-counter">{{menuInputs.systemTagsCount[section][tag].count}}</span>
+                    </span>
+                  </div>
               </nz-collapse-panel>
             </ng-container>
           </ng-container>

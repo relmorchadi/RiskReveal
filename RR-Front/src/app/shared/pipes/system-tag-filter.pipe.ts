@@ -9,12 +9,15 @@ export class SystemTagFilterPipe implements PipeTransform {
   reverseSystemTagsMapping = {
     grouped: {
       'Peril': 'peril',
-      'Region': 'regionPerilCode',
+      'Region': 'regionDesc',
       'Currency': 'currency',
       'Modelling Vendor': 'sourceModellingVendor',
       'Model System': 'sourceModellingSystem',
       'Target RAP':'targetRapCode',
-      'User Occurence Basis': 'userOccurrenceBasis'
+      'User Occurence Basis': 'userOccurrenceBasis',
+      'Published To Pricing': 'xActAvailable',
+      'Priced': 'xActUsed',
+      'Accumulated': 'accumulated'
     },
     nonGrouped: {
     }

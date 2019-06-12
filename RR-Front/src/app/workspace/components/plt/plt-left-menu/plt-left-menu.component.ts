@@ -219,4 +219,11 @@ export class PltLeftMenuComponent implements OnInit {
   tagModalIndexChange($event: number) {
     this.setTagModalIndex.emit($event);
   }
+
+  getProjectID(projectId: string | string) {
+    const str= _.split(projectId,'-');
+
+    console.log(_.join([str[0],_.trimStart(str[1],'0')],'-'));
+    return _.join([str[0],_.trimStart(str[1],'0')],'-')
+  }
 }
