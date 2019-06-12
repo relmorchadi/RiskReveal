@@ -1,7 +1,7 @@
 <div class="card-container">
   <nz-tabset class="tabs-main-component" [nzSelectedIndex]="state.openedTabs.tabsIndex" *ngIf="!state.loading"
              [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of state.openedTabs.data;let k= index;">
+    <ng-container *ngFor="let tab of state.openedTabs.data;let k= index; trackBy: trackWorkspaces">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"

@@ -29,7 +29,7 @@
     </div>
   </div>
   <div class="card-holder-wrap">
-    <div *ngFor="let project of state.openedWs.projects" (contextmenu)="contextMenu($event, template)" class="card-holder">
+    <div *ngFor="let project of projects$ | async" (contextmenu)="contextMenu($event, template)" class="card-holder">
         <div class="project-card mx-1" (click)="selectProject(project)" [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
           <div class="project-header">
 <!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">

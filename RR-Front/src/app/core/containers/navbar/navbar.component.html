@@ -21,7 +21,7 @@
         <workspaces-menu-item style="display: flex"></workspaces-menu-item>
       </li>
       <li style="flex: 1" class="d-flex align-items-center nav-item px-3">
-        <search-menu-item></search-menu-item>
+        <search-menu-item [state]="searchState$ | async"></search-menu-item>
       </li>
     </ul>
     <div class="d-flex align-items-center my-2 my-lg-0">

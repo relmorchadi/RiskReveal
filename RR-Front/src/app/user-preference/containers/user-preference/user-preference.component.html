@@ -30,7 +30,7 @@
                 <nz-select class="dropdown-default"
                            style="width: 270px;"
                            [ngModel]="searchTarget"
-                           (ngModelChange)="changeSearch()"
+                           (ngModelChange)="changeSearch($event)"
                            nzShowSearch>
                   <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
                   <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
@@ -40,17 +40,17 @@
 
             <span class="head-title">Date & Time</span>
             <div class="settings-wrapper">
-              <div (click)="extraDetailDate = !extraDetailDate" class="user-config-item" style="cursor: pointer"><span>Date Format</span>
+
+<!--              <div (click)="extraDetailDate = !extraDetailDate" class="user-config-item" style="cursor: pointer"><span>Date Format</span>
                 <div>
                   <i class="icon-arrow_forward_ios_24px"></i>
                 </div>
-              </div>
-
-              <div *ngIf="extraDetailDate" class="user-config-item"><span>Short Date</span>
+              </div>-->
+              <div  class="user-config-item"><span>Short Date</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
-                    [ngModel]="dateFormat"
+                    [ngModel]="state.general.dateFormat.shortDate"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
                     class="dropdown-default"
@@ -64,11 +64,11 @@
                   </nz-select>
                 </div>
               </div>
-              <div *ngIf="extraDetailDate" class="user-config-item"><span>Date Long</span>
+              <div  class="user-config-item"><span>Long Date</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
-                    [ngModel]="timeFormat"
+                    [ngModel]="state.general.dateFormat.longDate"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
                     class="dropdown-default"
@@ -81,16 +81,11 @@
                   </nz-select>
                 </div>
               </div>
-              <div (click)="extraDetailTime = !extraDetailTime" class="user-config-item" style="cursor: pointer"><span>Time</span>
-                <div>
-                  <i  class="icon-arrow_forward_ios_24px"></i>
-                </div>
-              </div>
-              <div *ngIf="extraDetailTime" class="user-config-item"><span>Short Time</span>
+              <div class="user-config-item"><span>Short Time</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
-                    [ngModel]="timeFormat"
+                    [ngModel]="state.general.dateFormat.shortTime"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
                     class="dropdown-default"
@@ -104,11 +99,11 @@
                   </nz-select>
                 </div>
               </div>
-              <div *ngIf="extraDetailTime" class="user-config-item"><span>Long Time</span>
+              <div class="user-config-item"><span>Long Time</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
-                    [ngModel]="timeFormat"
+                    [ngModel]="state.general.dateFormat.longTime"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
                     class="dropdown-default"
@@ -120,7 +115,7 @@
                 </div>
               </div>
               <div class="user-config-item"><span>Time zones</span>
-
+                <ng2-timezone-picker [(timezone)]="state.general.timeZone" style="width: 270px" showOffset="true" guess="true"></ng2-timezone-picker>
               </div>
 
             </div>
@@ -130,7 +125,7 @@
               <div class="user-config-item"><span>Number Of Decimals</span>
                 <div>
                   <nz-input-number
-                    [ngModel]="numberParser"
+                    [ngModel]="state.general.numberFormat.numberOfDecimals"
                     [nzMin]="0"
                     [nzMax]="4"
                     [nzStep]="1"
@@ -140,7 +135,7 @@
               </div>
               <div class="user-config-item"><span>Decimal Separator Character</span>
                 <div>
-                  <nz-radio-group [ngModel]="decimalSeparator">
+                  <nz-radio-group [ngModel]="state.general.numberFormat.decimalSeparator">
                     <label nz-radio nzValue=",">,</label>
                     <label nz-radio nzValue=".">.</label>
                     <label nz-radio nzValue="'">'</label>
@@ -149,7 +144,7 @@
               </div>
               <div class="user-config-item"><span>Thousand Separator Character</span>
                 <div>
-                  <nz-radio-group [ngModel]="thousandSeparator">
+                  <nz-radio-group [ngModel]="state.general.numberFormat.decimalThousandSeparator">
                     <label nz-radio nzValue=",">,</label>
                     <label nz-radio nzValue=".">.</label>
                     <label nz-radio nzValue="'">'</label>
@@ -180,7 +175,7 @@
                 <span>Default Import Page</span>
                 <div>
                   <nz-select
-                    style="width: 200px;"
+                    style="width: 270px;"
                     [(ngModel)]="defaultImport"
                     (ngModelChange)="defaultImportChange()"
                     nzShowSearch
@@ -197,14 +192,34 @@
                 <span>Default Financial Perspectives</span>
                 <div>
                   <nz-select
-                    style="width: 200px;"
-                    [ngModel]="financialPerspectiveEPM?.selected"
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.financialPerspectiveELT?.selected"
+                    (ngModelChange)="changePerspective()"
+                    nzMode="multiple"
+                    [nzMaxTagCount]="1"
+                    [nzMaxTagPlaceholder]="tagPlaceHolder"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select an FP"
+                  >
+                    <nz-option *ngFor="let item of state.riskLink.financialPerspectiveELT?.data" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
+                  </nz-select>
+                  <ng-template #tagPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                </div>
+              </div>
+              <div class="user-config-item">
+                <span>Default Financial Perspectives EP Metric</span>
+                <div>
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.financialPerspectiveEPM?.selected"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
                     class="dropdown-default"
-                    nzPlaceHolder="Select an import"
+                    nzPlaceHolder="Select an FP"
                   >
-                    <nz-option *ngFor="let item of financialPerspectiveEPM?.data" [nzLabel]="item"
+                    <nz-option *ngFor="let item of state.riskLink.financialPerspectiveEPM?.data" [nzLabel]="item"
                                [nzValue]="item"></nz-option>
                   </nz-select>
                 </div>
@@ -213,14 +228,14 @@
                 <span>Default Target Currency</span>
                 <div>
                   <nz-select
-                    style="width: 200px;"
-                    [ngModel]="targetCurrency?.selected"
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.targetCurrency?.selected"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
                     class="dropdown-default"
                     nzPlaceHolder="Select an import"
                   >
-                    <nz-option *ngFor="let item of targetCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                    <nz-option *ngFor="let item of state.riskLink.targetCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
                   </nz-select>
                 </div>
               </div>
@@ -228,14 +243,14 @@
                 <span>Default RMS Instance</span>
                 <div>
                   <nz-select
-                    style="width: 200px;"
-                    [ngModel]="rmsInstance?.selected"
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.rmsInstance?.selected"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
                     class="dropdown-default"
                     nzPlaceHolder="Select an import"
                   >
-                    <nz-option *ngFor="let item of rmsInstance?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                    <nz-option *ngFor="let item of state.riskLink.rmsInstance?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
                   </nz-select>
                 </div>
               </div>

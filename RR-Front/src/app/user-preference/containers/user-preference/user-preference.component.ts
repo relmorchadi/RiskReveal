@@ -1,11 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import {Location} from '@angular/common';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {Select, Store} from "@ngxs/store";
-import {RiskLinkState} from "../../../workspace/store/states";
-import {Observable} from "rxjs";
-import {RiskLinkModel} from "../../../workspace/model/risk_link.model";
-import * as _ from "lodash";
+import {Select, Store} from '@ngxs/store';
+import {RiskLinkState} from '../../../workspace/store/states';
+import {Observable} from 'rxjs';
+import {RiskLinkModel} from '../../../workspace/model/risk_link.model';
+import * as _ from 'lodash';
+import {GeneralConfigState, SearchNavBarState} from '../../../core/store/states';
+import {PatchSearchStateAction} from '../../../core/store/actions';
+import {GeneralConfig} from '../../../core/model';
 
 @Component({
   selector: 'app-user-preference',
@@ -13,9 +16,8 @@ import * as _ from "lodash";
   styleUrls: ['./user-preference.component.scss']
 })
 export class UserPreferenceComponent implements OnInit {
-  defaultImport;
 
-  searchTarget = 'treaty';
+  searchTarget: any;
 
   extraDetailDate = false;
   extraDetailTime = false;
@@ -28,34 +30,23 @@ export class UserPreferenceComponent implements OnInit {
     'Workspace Context'
   ];
 
-  @Select(RiskLinkState.getFinancialValidator)
-  financialValidator$: Observable<any>;
-  rmsInstance: any;
-  financialPerspectiveELT: any;
-  financialPerspectiveEPM: any;
-  targetCurrency: any;
 
-  dateFormat: any;
-  timeFormat: any;
+  defaultImport;
 
-  decimalSeparator = '.';
-  thousandSeparator = ',';
-
-  numberParser = 2;
+  @Select(GeneralConfigState)
+  state$: Observable<GeneralConfig>;
+  state: GeneralConfig = null;
 
   constructor(public location: Location, public store$: Store) { }
 
   ngOnInit() {
     this.defaultImport = localStorage.getItem('importConfig');
 
-    this.store$.select(RiskLinkState.getFinancialValidatorAttr('financialValidator', null)).subscribe(
-      value => {
-        this.rmsInstance = value.rmsInstance;
-        this.financialPerspectiveELT = value.financialPerspectiveELT;
-        this.financialPerspectiveEPM = value.financialPerspectiveEPM ;
-        this.targetCurrency = value.targetCurrency;
-      }
+    this.store$.select(SearchNavBarState.getSearchTarget).subscribe(
+      value => this.searchTarget = value
     );
+
+    this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
   navigateBack() {
@@ -78,8 +69,8 @@ export class UserPreferenceComponent implements OnInit {
     this.extraDetailTime = false;
   }
 
-  changeSearch() {
-
+  changeSearch(event) {
+    this.store$.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: event}));
   }
 
 }

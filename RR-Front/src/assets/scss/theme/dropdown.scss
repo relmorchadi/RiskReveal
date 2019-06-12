@@ -13,4 +13,22 @@
   }
 }
 
+.select2-container--default .select2-selection--single {
+  background-color: #fff;
+  border: none;
+  border-bottom: 2px solid #0700CF;
+  border-radius: 0;
+}
 
+.ant-select-selection--multiple {
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  border: none;
+  border-bottom: 2px solid #0700cf;
+  border-radius: 0;
+}
+
+.ant-select ul, .ant-select ol {
+  display: flex;
+}

@@ -68,6 +68,11 @@ export class WorkspaceMainState implements NgxsOnInit {
     return state.openedWs;
   }
 
+  @Selector()
+  static getProjects(state: WorkspaceMain){
+    return state.openedWs.projects;
+  }
+
 
   /**
    * Commands
