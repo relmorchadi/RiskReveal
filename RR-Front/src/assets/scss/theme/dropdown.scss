@@ -23,10 +23,10 @@
 .ant-select-selection--multiple {
   height: 32px;
   display: flex;
-  justify-content: center;
   border: none;
   border-bottom: 2px solid #0700cf;
   border-radius: 0;
+  background: transparent;
 }
 
 .ant-select ul, .ant-select ol {

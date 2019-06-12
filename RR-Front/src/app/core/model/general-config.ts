@@ -12,6 +12,7 @@ export class GeneralConfig {
       numberOfDecimals: number;
       decimalSeparator: string;
       decimalThousandSeparator: string;
+      negativeFormat: string;
       numberHistory: string;
     };
   };

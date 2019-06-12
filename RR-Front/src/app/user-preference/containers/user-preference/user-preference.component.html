@@ -40,12 +40,6 @@
 
             <span class="head-title">Date & Time</span>
             <div class="settings-wrapper">
-
-<!--              <div (click)="extraDetailDate = !extraDetailDate" class="user-config-item" style="cursor: pointer"><span>Date Format</span>
-                <div>
-                  <i class="icon-arrow_forward_ios_24px"></i>
-                </div>
-              </div>-->
               <div  class="user-config-item"><span>Short Date</span>
                 <div>
                   <nz-select
@@ -122,33 +116,59 @@
 
             <span class="head-title">Numerical</span>
             <div class="settings-wrapper">
-              <div class="user-config-item"><span>Number Of Decimals</span>
+              <div (click)="numberCollapse = !numberCollapse" class="user-config-item" style="cursor: pointer"><span>Number Format</span>
                 <div>
-                  <nz-input-number
-                    [ngModel]="state.general.numberFormat.numberOfDecimals"
-                    [nzMin]="0"
-                    [nzMax]="4"
-                    [nzStep]="1"
-                    style="width: 140px;"
-                  ></nz-input-number>
+                  <i class="icon-arrow_forward_ios_24px"></i>
                 </div>
               </div>
-              <div class="user-config-item"><span>Decimal Separator Character</span>
-                <div>
-                  <nz-radio-group [ngModel]="state.general.numberFormat.decimalSeparator">
-                    <label nz-radio nzValue=",">,</label>
-                    <label nz-radio nzValue=".">.</label>
-                    <label nz-radio nzValue="'">'</label>
-                  </nz-radio-group>
+              <div style="border-bottom: 1px solid rgba(0, 0, 0, 0.15);" *ngIf="numberCollapse">
+                <div class="user-config-item number-config-item"><span>Number Of Decimals</span>
+                  <div>
+                    <nz-input-number
+                      [ngModel]="state.general.numberFormat.numberOfDecimals"
+                      [nzMin]="0"
+                      [nzMax]="12"
+                      [nzStep]="1"
+                      (ngModelChange)="changeNumberFormat($event , 'numberOfDecimals')"
+                      style="width: 270px;"
+                    ></nz-input-number>
+                  </div>
                 </div>
-              </div>
-              <div class="user-config-item"><span>Thousand Separator Character</span>
-                <div>
-                  <nz-radio-group [ngModel]="state.general.numberFormat.decimalThousandSeparator">
-                    <label nz-radio nzValue=",">,</label>
-                    <label nz-radio nzValue=".">.</label>
-                    <label nz-radio nzValue="'">'</label>
-                  </nz-radio-group>
+                <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check1">Decimal Separator Character</label>
+                  <div *ngIf="check1">
+                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
+                      <label nz-radio nzValue=",">,</label>
+                      <label nz-radio nzValue=".">.</label>
+                      <label nz-radio nzValue="'">'</label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+                <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check2">Thousand Separator Character</label>
+                  <div *ngIf="check2">
+                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
+                      <label nz-radio nzValue=",">,</label>
+                      <label nz-radio nzValue=".">.</label>
+                      <label nz-radio nzValue="'">'</label>
+                    </nz-radio-group>
+                  </div>
+                </div>
+                <div class="user-config-item number-config-item column-config"><span>Negative Numbers</span>
+                  <div class="list-config-wrapper">
+                    <ul>
+                      <li (click)="changeNumberFormat('simple' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simple'}">
+                        -{{123.104687921545317523123 | number: numberFormat()}}</li>
+                      <li (click)="changeNumberFormat('redHue' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'redHue'}">
+                        <span style="color: red">{{123.104687921545317523123  | number: numberFormat()}}</span></li>
+                      <li (click)="changeNumberFormat('simpleRHue' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simpleRHue'}">
+                        <span style="color: red">-{{123.104687921545317523123  | number: numberFormat()}}</span></li>
+                      <li (click)="changeNumberFormat('roundBrackets' , 'negativeFormat')"
+                          [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'roundBrackets'}">
+                        ({{123.104687921545317523123  | number: numberFormat()}})</li>
+                    </ul>
+                  </div>
                 </div>
               </div>
               <div class="user-config-item"><span>Number of recent history items (My recent)</span></div>
