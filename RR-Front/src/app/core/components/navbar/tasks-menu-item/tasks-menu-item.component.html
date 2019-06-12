@@ -18,19 +18,22 @@
             <input (input)="searchJobs($event)" class="input-search"/>
           </div>
           <ul>
-            <li *ngFor="let activeTask of savedtasks.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
+            <li *ngFor="let activeTask of savedTasksLocal.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
                 class="popover-menu-item">
               <div class="data-first">
                 <div class="list-item-left">
-                  <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-clock"></i>
-                  <ng-template #taskProgress>
-                    <nz-progress style="display: flex; align-items: center" class="circular-progress-bar"
-                                 [nzPercent]="activeTask.progress"
-                                 [nzFormat]="formatter"
-                                 [nzStrokeWidth]="8"
-                                 nzType="circle" [nzWidth]="24">
-                    </nz-progress>
-                  </ng-template>
+                  <i *ngIf="activeTask.pending" class="icon-clock"></i>
+                  <ng-container *ngIf="!activeTask.pending">
+                    <i *ngIf="activeTask.isPaused; else taskProgress" class="icon-pause_circle_outline_24px"></i>
+                    <ng-template #taskProgress>
+                      <nz-progress style="display: flex; align-items: center" class="circular-progress-bar"
+                                   [nzPercent]="activeTask.progress"
+                                   [nzFormat]="formatter"
+                                   [nzStrokeWidth]="8"
+                                   nzType="circle" [nzWidth]="24">
+                      </nz-progress>
+                    </ng-template>
+                  </ng-container>
                   <ng-template #tooltipInfo>
                     <span>
                       <span *ngIf="activeTask.specific.type === 'Import'">Import: {{activeTask.status.completed}} of {{activeTask.status.total}} Portfolios,
@@ -49,17 +52,47 @@
                 </div>
                 <div class="list-item-right">
                   <span (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="list-item-info">{{activeTask?.specific.type}} - {{activeTask?.data.workSpaceId}}</span>
-                  <span (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">{{activeTask?.duration}}</span>
+                  <ng-container *ngIf="!activeTask.pending">
+                    <span *ngIf="!activeTask.isPaused" (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">{{activeTask?.duration}}</span>
+                    <span *ngIf="activeTask.isPaused" (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">Paused</span>
+                  </ng-container>
+                  <span *ngIf="activeTask.pending" (dblclick)="openWorkspace(activeTask.data.workSpaceId, activeTask.data.uwYear, activeTask.specific.link)" class="task-duration mr-2">4/12 pending</span>
                   <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                     <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                     <ul nz-menu>
                       <!--<li style="display:flex" nz-menu-item><i class="icon-close_24px dropdown-icons"></i><span
                         class="dropdown-title">Cancel</span></li>-->
-                      <li style="display:flex" nz-menu-item><i
+                      <li style="display:flex" nz-menu-item
+                          *ngIf="!activeTask.isPaused"
+                          nz-popconfirm
+                          nzTitle="Are you sure you want to pause this Job?"
+                          (nzOnConfirm)="pauseJob(activeTask.id)"
+                          (nzOnCancel)="cancel()"
+                          nzPlacement="bottom"><i
                         class="icon-pause_circle_outline_24px dropdown-icons"></i><span
                         class="dropdown-title">Pause</span></li>
-                      <li style="display:flex" nz-menu-item><i class="icon-trash-alt dropdown-icons"></i><span
+
+                      <li style="display:flex" nz-menu-item
+                          *ngIf="activeTask.isPaused"
+                          nz-popconfirm
+                          nzTitle="Are you sure you want to Resume this Job?"
+                          (nzOnConfirm)="resumeJob(activeTask.id)"
+                          (nzOnCancel)="cancel()"
+                          nzPlacement="bottom"><i
+                        class="icon-play_circle_outline_24px dropdown-icons"></i><span
+                        class="dropdown-title">Resume</span></li>
+
+                      <li style="display:flex" nz-menu-item
+                          nz-popconfirm
+                          nzOkText="ABORT"
+                          nzTitle="Are you sure you want to Abort this Job?
+                                   You will Find it Later in the Job List"
+                          (nzOnConfirm)="deleteJob(activeTask.id)"
+                          (nzOnCancel)="cancel()"
+                          nzPlacement="bottom"><i
+                        class="icon-trash-alt dropdown-icons"></i><span
                         class="dropdown-title">Delete</span></li>
+
                     </ul>
                   </nz-dropdown>
                   <i *ngIf="!activeTask.append" (click)="toggleActiveTask(activeTask)"
@@ -96,20 +129,20 @@
           </ul>
           <div class="mt-2 task-footer">
             <div>
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
-                         style="width: 140px; margin-right: 10px;" nzAllowClear nzPlaceHolder="Choose">
-                <nz-option [nzValue]="1" nzLabel="Today"></nz-option>
-                <nz-option [nzValue]="2" nzLabel="Yesterday"></nz-option>
-                <nz-option [nzValue]="3" nzLabel="Last Week"></nz-option>
-                <nz-option [nzValue]="4" nzLabel="Last Month"></nz-option>
+              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="dropdown-default"
+                         style="width: 140px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear nzPlaceHolder="Choose">
+                <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
+                <nz-option [nzValue]="'today'" nzLabel="Today"></nz-option>
+                <nz-option [nzValue]="'yesterday'" nzLabel="Yesterday"></nz-option>
+                <nz-option [nzValue]="'lastWeek'" nzLabel="Last Week"></nz-option>
               </nz-select>
 
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
-                         style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
-                <nz-option [nzValue]="1" nzLabel="All"></nz-option>
-                <nz-option [nzValue]="2" nzLabel="Import"></nz-option>
-                <nz-option [nzValue]="3" nzLabel="Inuring"></nz-option>
-                <nz-option [nzValue]="4" nzLabel="Calibration"></nz-option>
+              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="dropdown-default"
+                         style="width: 140px;" (ngModelChange)="filterByType($event)" nzAllowClear nzPlaceHolder="Choose">
+                <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
+                <nz-option [nzValue]="'Import'" nzLabel="Import"></nz-option>
+                <nz-option [nzValue]="'Inuring'" nzLabel="Inuring"></nz-option>
+                <nz-option [nzValue]="'Calibration'" nzLabel="Calibration"></nz-option>
 
               </nz-select>
             </div>
@@ -194,7 +227,7 @@
             <input (input)="searchJobs($event)" class="input-search"/>
           </div>
           <ul>
-            <li *ngFor="let activeTask of savedtasks.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
+            <li *ngFor="let activeTask of savedTasksLocal.active" [ngStyle]="{'height': activeTask.append ? '' : '40px'}"
                 class="popover-menu-item">
               <div class="data-first">
                 <div class="list-item-left">
@@ -270,7 +303,7 @@
           </ul>
           <div class="mt-2 task-footer">
             <div>
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
+              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="dropdown-default"
                          style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="Today"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Yesterday"></nz-option>
@@ -278,7 +311,7 @@
                 <nz-option [nzValue]="4" nzLabel="Last Month"></nz-option>
               </nz-select>
 
-              <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="dropdown-default"
+              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="dropdown-default"
                          style="width: 140px;" nzAllowClear nzPlaceHolder="Choose">
                 <nz-option [nzValue]="1" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="2" nzLabel="Import"></nz-option>

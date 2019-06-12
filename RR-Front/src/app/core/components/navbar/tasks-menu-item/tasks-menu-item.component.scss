@@ -10,6 +10,15 @@
   }
 }
 
+::ng-deep {
+  .ant-popover-message > .anticon {
+    position: absolute;
+    top: 25px;
+    font-size: 18px;
+    left: 10px;
+  }
+}
+
 .circular-progress-bar {
   position: relative;
   font-family: 'Scor_fonticon' !important;
@@ -45,6 +54,13 @@ i.icon-pause_circle_outline_24px {
 
   .data-first {
     display: flex;
+
+    .icon-pause_circle_outline_24px {
+      font-size: 27px;
+      color: rgba(0, 0, 0, 0.3);
+      display: flex;
+      align-items: center;
+    }
 
     .icon-clock {
       font-size: 27px;
@@ -114,6 +130,7 @@ i.icon-pause_circle_outline_24px {
         align-items: center;
         font-size: 23px;
       }
+
 
     }
   }
@@ -193,6 +210,8 @@ i.icon-pause_circle_outline_24px {
   align-items: center;
   justify-content: flex-end;
   flex: 0.9;
+  white-space: nowrap;
+  padding-left: 4px;
 }
 
 .dropdown-icons {

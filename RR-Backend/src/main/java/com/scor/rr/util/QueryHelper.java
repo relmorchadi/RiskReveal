@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 public class QueryHelper {
 
 
-    String[] globalSearchColumns={"CedantName","CountryName","ProgramName","TreatyName"};
+    String[] globalSearchColumns={"WorkSpaceId","WorkspaceName","CedantName","CountryName","ProgramName","TreatyName"};
     String[] groupByColumns={"CountryName","WorkSpaceId","WorkspaceName","CedantCode","CedantName","UwYear"};
     public String generateSqlQuery(NewWorkspaceFilter filter, int offset, int size){
 

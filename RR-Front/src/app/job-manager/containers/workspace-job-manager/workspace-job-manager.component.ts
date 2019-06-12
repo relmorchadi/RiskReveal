@@ -11,7 +11,7 @@ import * as _ from 'lodash';
 export class WorkspaceJobManagerComponent implements OnInit {
   loading = false;
   contextSelectedItem: any;
-  Users = '1';
+  Users = 'all';
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -42,6 +42,8 @@ export class WorkspaceJobManagerComponent implements OnInit {
       }
     },
   ];
+
+  savedTask: any;
 
   tableColumn = [
 /*    {
@@ -115,8 +117,18 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'innerCedantCode'
     },
     {
-      field: 'startTimeDate',
-      header: 'Start Time Date',
+      field: 'submittedTime',
+      header: 'Submitted Time',
+      width: '110px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      type: 'text',
+      filterParam: 'submittedTime'
+    },
+    {
+      field: 'startTime',
+      header: 'Start Time',
       width: '110px',
       display: true,
       sorted: false,
@@ -125,34 +137,34 @@ export class WorkspaceJobManagerComponent implements OnInit {
       filterParam: 'innerYear'
     },
     {
-      field: 'elapsedTimeDate',
-      header: 'Elapsed Time Data',
+      field: 'elapsedTime',
+      header: 'Elapsed Time',
       width: '110px',
       display: true,
       sorted: false,
       filtered: true,
       type: 'text',
-      filterParam: 'elapsedTimeDate'
+      filterParam: 'elapsedTime'
     },
     {
-      field: 'completionTimeDate',
-      header: 'Completion Time Data',
+      field: 'completionTime',
+      header: 'Completion Time',
       width: '110px',
       display: true,
       sorted: false,
       filtered: true,
       type: 'text',
-      filterParam: 'completionTimeDate'
+      filterParam: 'completionTime'
     },
     {
-      field: 'submittedTimeDate',
-      header: 'Submitted Time Data',
-      width: '110px',
-      display: true,
+      field: 'menuIcon',
+      header: '',
+      width: '20px',
+      display: false,
       sorted: false,
-      filtered: true,
-      type: 'text',
-      filterParam: 'submittedTimeDate'
+      filtered: false,
+      type: 'icon',
+      filterParam: ''
     }
   ];
 
@@ -205,7 +217,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       sorted: false,
       filtered: false,
       type: 'text',
-      filterParam: 'innerCedantName'
+      filterParam: 'completedDate'
     },
   ];
 
@@ -228,160 +240,184 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   listOfData = [
     {
+      id: 1,
 /*      selected: false,*/
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      isPaused: false,
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 2,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Amina Cheref',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 3,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Amina Cheref',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 4,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Rim Benabbes',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'low',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 5,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Rim Benabbes',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      jobType: 'Import',
+      isPaused: false,
+      priority: 'low',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 6,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Rim Benabbes',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 7,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Amina Cheref',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 8,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Amina Cheref',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 9,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Rim Benabbes',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 10,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Rim Benabbes',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'medium',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
+    },
+    {
+      id: 11,
+/*      selected: false,*/
+      state: 75,
+      jobId: '001',
+      jobOwner: 'Amina Cheref',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      isPaused: false,
+      priority: 'low',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     },
     {
 /*      selected: false,*/
+      id: 12,
       state: 75,
       jobId: '001',
       jobOwner: 'Amina Cheref',
       jobType: 'Import',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      jobType: 'Import',
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: true,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
-    },
-    {
-/*      selected: false,*/
-      state: 75,
-      jobId: '001',
-      jobOwner: 'Amina Cheref',
-      jobType: 'Import',
-      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
-      priority: false,
-      startTimeDate: '2019-01-03 T 09:57:10',
-      elapsedTimeDate: '2019-01-03 T 09:57:10',
-      completionTimeDate: '2019-01-03 T 09:57:10',
-      submittedTimeDate: '2019-01-03 T 09:57:10'
+      isPaused: false,
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10'
     }
   ];
 
@@ -389,6 +425,47 @@ export class WorkspaceJobManagerComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.savedTask = [...this.listOfData];
+  }
+
+  resumeJob(id) {
+    this.listOfData.map(dt => {
+      if (dt.id === id) {
+        dt.isPaused = false;
+      }
+    });
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused);
+    this.savedTask = [...this.listOfData];
+  }
+
+  deleteJob(id) {
+    this.listOfData = this.listOfData.filter(dt => dt.id !== id);
+    this.savedTask = [...this.listOfData];
+  }
+
+  pauseJob(id): void {
+    this.listOfData.map(dt => {
+      if (dt.id === id) {
+        dt.isPaused = true;
+      }
+    });
+    this.listOfData = _.sortBy(this.listOfData, (dt) => dt.isPaused);
+    this.savedTask = [...this.listOfData];
+  }
+
+  filterByUser(event) {
+    console.log(event);
+    event === 'all' ? this.savedTask = this.listOfData :
+      this.savedTask = this.listOfData.filter(dt => dt.jobOwner === event);
+  }
+
+  filterByType(event) {
+/*    event === 'all' ? this.savedTasksLocal.active = this.tasks.active :
+      this.savedTasksLocal.active = this.tasks.active.filter(dt => dt.specific.type === event);*/
+  }
+
+  cancel(): void {
+
   }
 
   navigateBack() {

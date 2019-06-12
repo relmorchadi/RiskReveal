@@ -4,20 +4,17 @@ import {NgZorroAntdModule} from 'ng-zorro-antd';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {COMPONENTS} from './components';
 import {TableModule} from 'primeng/table';
-import {RouterModule} from '@angular/router';
 import {HighlightDirective} from './highlight.directive';
 import {ContextMenuModule, MultiSelectModule} from 'primeng/primeng';
-import { TableSortAndFilterPipe } from '../core/pipes/table-sort-and-filter.pipe';
 import {KeysPipe} from './pipes/keys.pipe';
 import { ShowLastPipe } from './pipes/show-last.pipe';
 import { InputSearchPipe } from './pipes/input-search.pipe';
 import {ColorChromeModule} from 'ngx-color/chrome';
-import { ToArrayPipe } from './pipes/to-array.pipe';
-import { LogPipe } from './pipes/log.pipe';
+import {PIPES} from './pipes';
 
 
 @NgModule({
-  declarations: [...COMPONENTS, HighlightDirective, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe, LogPipe],
+  declarations: [...COMPONENTS, ...PIPES],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -41,8 +38,7 @@ import { LogPipe } from './pipes/log.pipe';
     InputSearchPipe,
     ColorChromeModule,
     MultiSelectModule,
-    ToArrayPipe,
-    LogPipe
+    ...PIPES
   ]
 })
 export class SharedModule { }

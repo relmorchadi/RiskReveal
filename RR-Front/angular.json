@@ -32,6 +32,7 @@
               }
             ],
             "styles": [
+              "node_modules/select2/dist/css/select2.min.css",
               "node_modules/primeng/resources/themes/nova-light/theme.css",
               "node_modules/primeng/resources/primeng.min.css",
               "node_modules/primeicons/primeicons.css",
@@ -84,7 +85,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "RiskReveal:build"
+            "browserTarget": "RiskReveal:build",
+            "port": 4200
           },
           "configurations": {
             "production": {

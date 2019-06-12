@@ -5,7 +5,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
+  PatchWorkspaceMainStateAction, SetWsRoutingAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -66,6 +66,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   @Selector()
   static getCurrentWS(state: WorkspaceMain){
     return state.openedWs;
+  }
+
+  @Selector()
+  static getProjects(state: WorkspaceMain){
+    return state.openedWs.projects;
   }
 
 
@@ -136,7 +141,7 @@ export class WorkspaceMainState implements NgxsOnInit {
         }
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
-      const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem'));
+      const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
       openedTabs.map(dt => ({
         ...dt,
         projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
@@ -157,24 +162,23 @@ export class WorkspaceMainState implements NgxsOnInit {
     });
   }
 
-  @Action(SelectWorkspaceAction)
-  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SelectWorkspaceAction) {
+  @Action(SetWsRoutingAction)
+  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SetWsRoutingAction) {
     const state = ctx.getState();
-    let newState = state.openedTabs.data.map(ws => {
-      if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) {
-        return payload;
-      } else {
-        return ws;
-      }
-    });
+
+    let index= _.findIndex(state.openedTabs.data, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear)
     const projectFormat = payload.projects.map(prj => prj = {...prj, selected: false});
     if (projectFormat.length > 0) {
       projectFormat[0] = {...projectFormat[0], selected: true};
     }
     const opened = {...payload, projects: projectFormat};
-    ctx.patchState(
-      {openedWs: opened, openedTabs: {data: newState, tabsIndex: state.openedTabs.tabsIndex}}
-    );
+    ctx.patchState({
+      openedWs: opened,
+      openedTabs: {
+        data: _.merge([],state.openedTabs.data, {[index]: { ...payload}}),
+        tabsIndex: state.openedTabs.tabsIndex
+      }
+    });
   }
 
   @Action(SelectProjectAction)

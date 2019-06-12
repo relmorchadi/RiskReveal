@@ -50,11 +50,7 @@ const initiaState: RiskLinkModel = {
       data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
       selected: 'Net Loss Pre Cat (RL)'
     },
-    financialPerspectiveEPM: {
-      data: ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'],
-      selected: 'Facultative Reinsurance Loss'
-    },
-    targetCurrency: {data: ['MLC', 'User Defined', 'Underling Currency'], selected: 'MLC'},
+    targetCurrency: {data: ['MLC', 'User Defined', 'Underlying Currency'], selected: 'MLC'},
     calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
   },
   analysis: null,
@@ -168,14 +164,14 @@ export class RiskLinkState implements NgxsOnInit {
     } else if (action === 'selectLink') {
       const {id, name} = RDM;
       const searchTerm = _.truncate(name, {length: name.length - 2, omission: ''});
-      this.riskApi.searchRiskLinkPortfolio(id, searchTerm).pipe(
+/*      this.riskApi.searchRiskLinkPortfolio('', searchTerm).pipe(
         mergeMap(
-          (data: any) => 
+          (data: any) =>
             of(
               null
             )
         )
-      );
+      );*/
     } else {
       if (action === 'selectAll') {
         array.forEach(dt => {

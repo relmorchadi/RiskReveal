@@ -7,14 +7,11 @@
           <div nz-col nzSpan="24">&nbsp;</div>
         </div>
         <div nz-row>
-          <div nz-col nzSpan="24">&nbsp;</div>
-        </div>
-        <div nz-row>
           <div class="textCalibrationMatrix" nz-col nzSpan="6">Calibration Editor</div>
           <div class="textCalibrationMatrix" nz-col nzSpan="2">&nbsp;</div>
         </div>
         <div nz-row>
-          <app-tags (notify)="onNotify($event)"></app-tags>
+          <app-tags (notify)="onNotify($event)" [extended]="extended" (collapse)="collapseTags($event)"></app-tags>
           <div [nzSpan]="pltSpan" nz-col>
             <div
               style="padding-top: 39px; padding-left: 24px; background: #fff; min-height:571px;width: 98%;  box-shadow: 0px 1px 20px 0px #dcdada; ">
@@ -101,7 +98,8 @@
                     </tbody>
                   </nz-table>
                   <!--- List Without Tree --->
-                  <nz-table #fixedTable *ngIf="!tree" [nzData]="pure.dataTable"
+                  <nz-table #fixedTable *ngIf="!tree"
+                            [nzData]="pure.dataTable | statusFilter : inProgressCheckbox:checkedCheckbox:lockedCheckbox"
                             [nzShowPagination]="false">
                     <thead (nzSortChange)="sort($event)" nzSingleSort>
                     <tr style="height: 66px ">
@@ -114,7 +112,42 @@
                             <i class="icon-search"></i>
                             <input type="text">
                           </div>
-                          <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+                          <i *ngIf="col.icon === 'icon-note'" [ngClass]="col.icon"></i>
+                          <nz-dropdown *ngIf="col.icon === 'icon-focus-add'" [nzPlacement]="'bottomLeft'">
+                            <i [ngClass]="col.icon" nz-dropdown style="font-size: 15px;"></i>
+                            <ul nz-menu>
+                              <li nz-menu-item>
+                                <div class="checkboxInput">
+                                  <label [(ngModel)]="inProgressCheckbox"
+                                         nzChecked
+                                         nz-checkbox
+                                         style="margin-right: 12px;">
+                                    <i class="icon-history-alt iconYellow"></i> In progress
+                                  </label>
+                                </div>
+                              </li>
+                              <li nz-menu-item>
+                                <div class="checkboxInput">
+                                  <label [(ngModel)]="checkedCheckbox"
+                                         nzChecked
+                                         nz-checkbox
+                                         style="margin-right: 12px;">
+                                    <i class="icon-check-circle iconGreen"></i> Checked
+                                  </label>
+                                </div>
+                              </li>
+                              <li nz-menu-item>
+                                <div class="checkboxInput">
+                                  <label [(ngModel)]="lockedCheckbox"
+                                         nzChecked
+                                         nz-checkbox
+                                         style="margin-right: 12px;">
+                                    <i class="icon-lock-alt iconRed"></i> Locked
+                                  </label>
+                                </div>
+                              </li>
+                            </ul>
+                          </nz-dropdown>
                           <label (nzCheckedChange)="selectAllBool?selectAllThread(true):selectAllThread(false)"
                                  *ngIf="col.fields=='check'"
                                  [nzChecked]="checkedAll"
@@ -206,7 +239,7 @@
                   <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                     <div class="dashbordAdj">
                       <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
-                        style="height: 20px;margin: 0px 2px 0px 2px; text-overflow: ellipsis; white-space: nowrap;overflow: hidden;" >{{adj.name}}</div>
+                           style="height: 20px;margin: 0px 2px 0px 2px; text-overflow: ellipsis; white-space: nowrap;overflow: hidden;">{{adj.name}}</div>
                       <nz-dropdown [nzPlacement]="'bottomLeft'">
                         <i class="icon-menu_24px" nz-dropdown style="font-size: 18px;float: right;"></i>
                         <ul nz-menu>
@@ -224,10 +257,14 @@
                             <a (click)="applyToAllAdjustement(adj,adj.value)"
                             >Replace All</a>
                           </li>
+                          <li nz-menu-item>
+                            <a (click)="ModifyAdjustement(adj)"
+                            >Modify</a>
+                          </li>
                         </ul>
                       </nz-dropdown>
                       <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                             class="inputOfdachboard"
+                             class="templateInput"
                              style="height: 17px;">
                     </div>
                   </ng-container>
@@ -290,11 +327,11 @@
                                            *ngIf="adj.category=='Base'"
                                            [dndDisableIf]="dataTable1.locked"
                                            [dndDraggable]="adj"
-                                           class="divInTd"
+                                           class="adjustDiv"
                                            dndEffectAllowed="move">
                                         <div
                                           [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
-                                           class="spanStyle">{{adj.name}}</div>
+                                          class="spanStyle">{{adj.name}}</div>
                                         <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                           <i [hidden]="!adj.hover" class="icon-menu_24px"
                                              nz-dropdown style="font-size: 18px;float: right"></i>
@@ -311,7 +348,7 @@
                                             </li>
                                           </ul>
                                         </nz-dropdown>
-                                        <input [disabled]="adj.linear" [value]="adj.value" class="inputOfdachboard"
+                                        <input [disabled]="adj.linear" [value]="adj.value" class="templateInput"
                                                (change)="changeValue(adj,$event)">
                                       </div>
                                     </ng-container>
@@ -320,10 +357,10 @@
                                 <td style="background: rgb(250, 250, 250)">
                                   <div style="display: flex;height: max-content">
                                     <div
-                                      class="divInTd" style=" background: #f3f3f3;">
+                                      class="adjustDiv" style=" background: #f3f3f3;">
                                           <span
                                             class="spanStyle">Model Calib</span>
-                                      <input class="inputOfdachboard" disabled
+                                      <input class="templateInput" disabled
                                              style=" background: #f3f3f3;" value="2.1">
                                     </div>
                                   </div>
@@ -346,10 +383,10 @@
                                              (mouseover)="adj.hover='true'"
                                              [dndDisableIf]="dataTable1.locked"
                                              [dndDraggable]="adj"
-                                             class="divInTd"
+                                             class="adjustDiv"
                                              dndEffectAllowed="move">
-                                              <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
-                                                class="spanStyle">{{adj.name}}</div>
+                                          <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
+                                               class="spanStyle">{{adj.name}}</div>
                                           <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                             <i [hidden]="!adj.hover" class="icon-menu_24px"
                                                nz-dropdown style="font-size: 18px;float: right"></i>
@@ -367,7 +404,7 @@
                                             </ul>
                                           </nz-dropdown>
                                           <input [disabled]="adj.linear" [value]="adj.value"
-                                                 class="inputOfdachboard" (change)="changeValue(adj,$event)">
+                                                 class="templateInput" (change)="changeValue(adj,$event)">
                                         </div>
                                       </ng-container>
                                     </ng-container>
@@ -376,7 +413,7 @@
                                 <td style="background: antiquewhite">
                                   <div style="display: flex;height: max-content">
                                     <div
-                                      class="divInTd">
+                                      class="adjustDiv">
                                       <span class="spanStyle"></span>
                                       <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                         <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
@@ -394,7 +431,7 @@
                                           </li>
                                         </ul>
                                       </nz-dropdown>
-                                      <input class="inputOfdachboard" disabled
+                                      <input class="templateInput" disabled
                                              value="P00002">
                                     </div>
                                   </div>
@@ -416,10 +453,10 @@
                                              (mouseover)="adj.hover='true'"
                                              [dndDisableIf]="dataTable1.locked"
                                              [dndDraggable]="adj"
-                                             class="divInTd"
+                                             class="adjustDiv"
                                              dndEffectAllowed="move">
-                                              <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
-                                                class="spanStyle">{{adj.name}}</div>
+                                          <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
+                                               class="spanStyle">{{adj.name}}</div>
                                           <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                             <i [hidden]="!adj.hover" class="icon-menu_24px"
                                                nz-dropdown style="font-size: 18px;float: right"></i>
@@ -437,7 +474,7 @@
                                             </ul>
                                           </nz-dropdown>
                                           <input [disabled]="adj.linear" [value]="adj.value"
-                                                 class="inputOfdachboard" (change)="changeValue(adj,$event)"
+                                                 class="templateInput" (change)="changeValue(adj,$event)"
                                           >
                                         </div>
                                       </ng-container>
@@ -549,7 +586,7 @@
   <!-- Model add Column-->
   <nz-modal [(nzVisible)]="isVisible" [nzFooter]="modalFooter" class="modelAdjustment"
             (nzOnCancel)="handleCancel()"
-            nzTitle="Add New Adjustment">
+            [nzTitle]="modalTitle">
     <div nz-row>
       <div nz-col nzSpan="24">
         &nbsp;
@@ -625,7 +662,8 @@
         Capped
       </div>
       <div nzSpan="16" style="line-height: 2.2rem;">
-        <nz-switch [nzDisabled]="true" [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" nzSize="small" style="margin-left: 15px;"></nz-switch>
+        <nz-switch [nzDisabled]="true" [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" nzSize="small"
+                   style="margin-left: 15px;"></nz-switch>
       </div>
     </div>
 
@@ -669,14 +707,19 @@
               class="ant-btn"
               style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
       </button>
-      <button (click)="addAdjustmentFromPlusIcon(false,singleValue,categorySelectedFromAdjustement)"
+      <button *ngIf="!modifyModal"
+              (click)="addAdjustmentFromPlusIcon(false,singleValue,categorySelectedFromAdjustement)"
               class="ant-btn ant-btn-default"
               style="background-color: #ffffff !important; color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 70px;height: 30px; ">
         ADD
       </button>
-      <button (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)"
+      <button *ngIf="!modifyModal" (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)"
               class="ant-btn ant-btn-default"
               style="width: 130px; height: 30px; ">ADD & CLOSE
+      </button>
+      <button *ngIf="modifyModal" (click)="saveModification(singleValue,categorySelectedFromAdjustement)"
+              class="ant-btn ant-btn-default"
+              style="width: 130px; height: 30px; ">SAVE
       </button>
     </ng-template>
   </nz-modal>

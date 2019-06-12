@@ -1,0 +1,89 @@
+<p-contextMenu #cm appendTo="body" [model]="tableInputs.contextMenuItems"></p-contextMenu>
+<p-table
+  [columns]="tableInputs.pltColumns"
+  [value]="(tableInputs.showDeleted ? tableInputs.deletedPlts : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData,tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
+  [resizableColumns]="true"
+  [(contextMenuSelection)]="tableInputs.selectedPlt"
+  [contextMenu]="cm"
+  [scrollable]="true"
+  [totalRecords]="tableInputs.listOfPltsData.length"
+  [responsive]="true"
+>
+  <ng-template pTemplate="colgroup" let-columns>
+    <colgroup>
+      <col style="min-width: 43px">
+      <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
+    </colgroup>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
+      <th [ngStyle]="{'width': '43px'}" class="checkBoxHead">
+        <label nz-checkbox [nzChecked]="tableInputs.selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="tableInputs.someItemsAreSelected"></label>
+        <i (click)="checkBoxSort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
+      </th>
+      <th [ngStyle]="{'width': '60px'}">
+                      <span style="display:flex;justify-content: space-between;font-weight: bold">
+                        User Tags
+                      </span>
+      </th>
+
+      <ng-container *ngFor="let col of columns; let i = index">
+        <th  *ngIf="i > 0" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
+                      <span style="display:flex;justify-content: space-between;">
+                        {{col?.header}}
+                        <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                        </ng-container>
+                      </span>
+          <i *ngIf="col.icon" [ngClass]="col.icon"></i>
+        </th>
+      </ng-container>
+    </tr>
+    <tr>
+      <th></th>
+      <th></th>
+      <ng-container *ngFor="let col of columns;">
+        <th *ngIf="col?.filtred">
+          <div class="filter-input">
+            <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+            <input  *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)">
+          </div>
+        </th>
+      </ng-container>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
+    <tr (contextmenu)="selectedItemForMenu(rowData.pltId)" [pContextMenuRow]="rowData" [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }" *ngIf="tableInputs.filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
+      <td [ngStyle]="{'width': '43px'}">
+        <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+      </td>
+      <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
+        <ng-container *ngIf="i === 0">
+          <div class="td-wrapper-tags">
+            <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
+              <span class="tag-el" *ngIf="i < 2" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
+              <span class="tag-ellipsis" *ngIf="i == 2" style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
+            </ng-container>
+          </div>
+        </ng-container>
+        <ng-container *ngIf="i === 1">
+          <div class="text-elipsice" style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+        </ng-container>
+        <ng-container *ngIf="i > 1">
+          <ng-container *ngIf="col?.type == 'field' && col?.type != 'checkbox'">
+            <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+          </ng-container>
+          <ng-container *ngIf="col?.type == 'icon'">
+            <div class="td-wrapper-check">
+              <div>
+                <i [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
+              </div>
+            </div>
+          </ng-container>
+        </ng-container>
+      </td>
+    </tr>
+  </ng-template>
+</p-table>

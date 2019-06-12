@@ -1,7 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
-import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../core/service/search.service';
-import {debounceTime} from 'rxjs/operators';
 import {HelperService} from '../../../shared/helper.service';
 import {Router} from '@angular/router';
 import {Location} from '@angular/common';
@@ -12,12 +10,11 @@ import {
   AppendNewWorkspaceMainAction,
   PatchWorkspaceMainStateAction
 } from '../../../core/store/actions/workspace-main.action';
-import {WorkspaceMainState} from '../../../core/store/states';
-import * as fromWS from '../../../core/store';
-import * as fromWS2 from '../../../workspace/store/actions';
+import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {PatchSearchStateAction} from '../../../core/store';
+import {Debounce} from "../../../shared";
+import {CloseTagByIndexAction, CloseAllTagsAction} from "../../../core/store";
 
 
 @Component({
@@ -29,15 +26,14 @@ import {PatchSearchStateAction} from '../../../core/store';
 export class SearchMainComponent implements OnInit {
   @ViewChild('dt') table;
 
-  contractFilterFormGroup: FormGroup;
+  @Select(SearchNavBarState.getSearchContent)
+  searchContent$;
+
   expandWorkspaceDetails = false;
   contracts = [];
-  paginationOption = {page: 0, size: 40, total: '-'};
+  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
   selectedWorkspace: any;
-  loadingMore = false;
   sliceValidator = true;
-  searchedItems = [];
-  currentPage = 0;
   globalSearchItem = '';
   currentWorkspace = null;
   loading = true;
@@ -59,7 +55,7 @@ export class SearchMainComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerCountryName'
+      filterParam: 'countryName'
     },
     {
       field: 'cedantName',
@@ -68,7 +64,7 @@ export class SearchMainComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerCedantName'
+      filterParam: 'cedantName'
     },
     {
       field: 'cedantCode',
@@ -77,7 +73,7 @@ export class SearchMainComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerCedantCode'
+      filterParam: 'cedantCode'
     },
     {
       field: 'uwYear',
@@ -86,7 +82,7 @@ export class SearchMainComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerYear'
+      filterParam: 'year'
     },
     {
       field: 'workspaceName',
@@ -95,7 +91,7 @@ export class SearchMainComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerWorkspaceName'
+      filterParam: 'workspaceName'
     },
     {
       field: 'workSpaceId',
@@ -104,7 +100,7 @@ export class SearchMainComponent implements OnInit {
       display: true,
       sorted: false,
       filtered: true,
-      filterParam: 'innerWorkspaceId'
+      filterParam: 'workspaceId'
     },
     {
       field: 'openInHere',
@@ -132,92 +128,62 @@ export class SearchMainComponent implements OnInit {
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
-  subscription
+  private _filter = {};
+  private _searchContent;
 
-  constructor(private _fb: FormBuilder, private _searchService: SearchService, private _helperService: HelperService,
+  constructor(private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
-    this.initSearchForm();
   }
 
   ngOnInit() {
-    this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: true}));
     this.state$.subscribe(value => this.state = _.merge({}, value));
-    this.searchedItems = this._searchService.searchedItems;
-    this.globalSearchItem = this._searchService.globalSearchItem;
-    this.store.select(fromWS.SearchNavBarState.getLoadingState).subscribe(l => {
-      // console.log('loading', l);
+    this.searchContent$.subscribe(({value}) => {
+      this._checkSearchContent(value);
+      this._loadData();
       this.detectChanges();
-    });
-    this._searchService.items
-      .pipe(debounceTime(200))
-      .subscribe(
-      () => {
-        // console.log('Emitted')
-        this.initSearchForm();
-        this.globalSearchItem = '';
-        this.searchedItems = [...this._searchService.searchedItems];
-        this._loadContracts();
-      }
-    );
-
-    this._searchService.globalSearch$.subscribe(
-      () => {
-        this.globalSearchItem = this._searchService.globalSearchItem;
-        this.searchedItems = [];
-        this.globalSearchItem !== '' ? this._loadContracts() : null;
-      }
-    );
+    })
   }
 
-  initSearchForm() {
-    this.contractFilterFormGroup = this._fb.group({
-      globalKeyword: [],
-      cedantCode: null,
-      cedantName: null,
-      countryName: null,
-      innerCedantCode: null,
-      innerCedantName: null,
-      innerCountryName: null,
-      innerWorkspaceId: null,
-      innerWorkspaceName: null,
-      innerYear: null,
-      workspaceId: null,
-      workspaceName: null,
-      year: null
-    });
-    this.contractFilterFormGroup
-      .valueChanges
-      .pipe(debounceTime(500))
-      .subscribe((param) => {
-        // this.globalSearchItem !== '' ? this.globalSearchItem = '' : null;
+  private _checkSearchContent(value:string|any[]){
+    if(_.isString(value) || value == null){
+      this.globalSearchItem = (value as string);
+      this._searchContent = [];
+    } else {
+      this.globalSearchItem = null;
+      this._searchContent=value;
+    }
+  }
+
+  private _loadData(offset = '0', size = '100') {
+    this.loading = true;
+    let params = {
+      keyword: this.globalSearchItem,
+      filter: this.filter,
+      offset,
+      size
+    };
+    this._searchService.expertModeSearch(params)
+      .subscribe((data: any) => {
+        this.contracts = data.content.map(item => ({...item, selected: false}));
+        this.loading = false;
+        this.paginationOption = {
+          ...this.paginationOption,
+          page: data.number,
+          size: data.numberOfElements,
+          total: data.totalElements
+        };
         this.detectChanges();
-        this._loadContracts();
       });
   }
 
-  detectChanges() {
-    if (!this.cdRef['destroyed'])
-      this.cdRef.detectChanges();
-  }
-
-
-  private searchData(id, year) {
-    return this._searchService.searchWorkspace(id || '', year || '2019');
-  }
-
-  loadMoreItems() {
-    let {page, size} = this.paginationOption;
-    this._loadContracts(String(page), String(size));
-    this.loadingMore = true;
-  }
 
   loadMore(event: LazyLoadEvent) {
-    this.currentPage = event.first;
-    this._loadContracts(String(event.first));
+    this.paginationOption.currentPage = event.first;
+    this._loadData(String(event.first));
   }
 
-  openWorkspace(wsId, uwYear) {
-    /*this.searchData(wsId, year).subscribe(
+  openWorkspace(wsId, year) {
+    this.searchData(wsId, year).subscribe(
       (dt: any) => {
         const workspace = {
           workSpaceId: wsId,
@@ -239,11 +205,7 @@ export class SearchMainComponent implements OnInit {
           this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
         }
       }
-    );*/
-    this.store.dispatch(new fromWS2.loadWS({
-      wsId,
-      uwYear
-    }))
+    );
   }
 
   navigateToTab(value) {
@@ -276,62 +238,10 @@ export class SearchMainComponent implements OnInit {
     );
   }
 
-  changeForm($event, target) {
-    $event === '' ? this.contractFilterFormGroup.get(target).patchValue(null) : this.contractFilterFormGroup.get(target).patchValue($event);
-  }
-
-  private _loadContracts(offset = '0', size = '100') {
-    // console.log('Load contracts');
-    this.store.dispatch(new PatchSearchStateAction({key: 'visibleSearch', value: false}));
-     if (!this._searchService.expertModeEnabled) {
-      this.loading = true;
-      const keys = [];
-      const values = [];
-      this.searchedItems.forEach(
-        (e) => {
-          keys.push(_.camelCase(e.key));
-          values.push(e.value);
-        }
-      );
-      keys.forEach(
-        (e, index) => {
-          this.contractFilterFormGroup.value[e] = values[index];
-          // console.log(this.contractFilterFormGroup.value);
-        }
-      );
-      this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: true}));
-      this._searchService.setLoading(true);
-      this.globalSearchItem = this._searchService.globalSearchItem;
-      const globalSearchParams = _.merge({keyword: this._searchService.globalSearchItem}, this.contractFilterFormGroup.value);
-      if ( this.subscription ) {
-         this.subscription.unsubscribe();
-       }
-      this.subscription = this._searchService.searchGlobal(globalSearchParams, offset, size)
-        .subscribe((data: any) => {
-          this.contracts = data.content.map(item => ({...item, selected: false}));
-          this.loadingMore = false;
-          this.loading = false;
-          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-          this._searchService.setLoading(false);
-          this.detectChanges();
-        });
-    } else {
-      if ( this.subscription ) {
-        this.subscription.unsubscribe();
-      }
-      this._searchService.setLoading(true);
-      const filter = [...this._searchService.expertModeFilter, ...this.getInnerFilter()]
-      this.subscription = this._searchService.expertModeSearch(_.merge(
-        {keyword: this._searchService.keyword, filter, offset, size}))
-        .subscribe((data: any) => {
-          this.contracts = data.content.map(item => ({...item, selected: false}));
-          this.loadingMore = false;
-          this.loading = false;
-          this.paginationOption = {page: data.number, size: data.numberOfElements, total: data.totalElements};
-          this.store.dispatch(new PatchSearchStateAction({key: 'loading', value: false}));
-          this.detectChanges();
-        });
-    }
+  @Debounce(500)
+  filterData($event, target) {
+    this._filter = {...this._filter, [target]: $event || null};
+    this._loadData();
   }
 
   navigateBack() {
@@ -339,44 +249,34 @@ export class SearchMainComponent implements OnInit {
   }
 
   clearChips() {
-    this.closeGlobalSearch();
-    this.searchedItems = [];
-    this._searchService.expertModeFilter = [];
-    this._searchService.keyword = null;
-    this.initSearchForm();
-    this._loadContracts();
+    this.store.dispatch(new CloseAllTagsAction());
   }
 
   closeSearchBadge(status, index, key?) {
-    if (status) {
-      if (key === 'Global Search') {
-        this._searchService.keyword = null;
-      } else if (this._searchService.expertModeEnabled) {
-        this._searchService.expertModeFilter.splice(index, 1);
-      }
-      this.initSearchForm();
-      this.searchedItems.splice(index, 1);
-      this._loadContracts();
-    }
+    this.store.dispatch(new CloseTagByIndexAction(index));
   }
 
-  closeSlider() {
-    // console.log('this is outside');
-    this.expandWorkspaceDetails = false;
-  }
-
-  getInnerFilter() {
-    const filter = [];
-    _.reduce(this.contractFilterFormGroup.value, (result, value, key) => {
-      if (!_.isNil(value)) {
-        const field = _(this.columns).filter(['filterParam', key]).map((o) => o.field).value()[0];
-        filter.push({ field, value, operator: 'LIKE'}); }});
-    return filter;
-  }
   closeGlobalSearch() {
-    this.globalSearchItem = '';
-    this._searchService.globalSearchItem = '';
-    this._loadContracts();
+    this.store.dispatch(new CloseAllTagsAction());
+  }
+
+  get filter() {
+    let tags = _.isString(this._searchContent) ? [] : (this._searchContent || []);
+    let tableFilter = _.map(this._filter, (value, key) => ({key, value}));
+    return _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
+      ...item,
+      field: _.camelCase(item.key),
+      operator: item.operator || 'LIKE'
+    }));
+  }
+
+  private searchData(id, year) {
+    return this._searchService.searchWorkspace(id || '', year || '2019');
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
   }
 
 }
