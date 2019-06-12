@@ -10,6 +10,7 @@ export class SearchNavBar {
   actualGlobalKeyword: string;
   keywordBackup: string;
   searchValue: string;
+  searchTarget: any;
   badges: any[];
   data: any[];
   loading: boolean;

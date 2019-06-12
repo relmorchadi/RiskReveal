@@ -31,6 +31,7 @@ const initiaState: SearchNavBar = {
   actualGlobalKeyword: '',
   keywordBackup: '',
   searchValue: '',
+  searchTarget: 'treaty',
   badges: [],
   data: [],
   loading: false,
@@ -108,6 +109,11 @@ export class SearchNavBarState implements NgxsOnInit {
   @Selector()
   static getSearchContent(state: SearchNavBar) {
     return state.searchContent;
+  }
+  
+  @Selector()
+  static getSearchTarget(state: SearchNavBar) {
+    return state.searchTarget;
   }
 
 

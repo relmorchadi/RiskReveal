@@ -10,7 +10,7 @@ import {CustomRouterStateSerializer} from './service/router/RouterStateSerialize
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
 import {en_US, NgZorroAntdModule, NZ_I18N} from 'ng-zorro-antd';
-import {COMPONENTS} from './components'
+import {COMPONENTS} from './components';
 import {CONTAINERS} from './containers';
 import {PIPES} from "./pipes";
 import {DIRECTIVES} from "./directives";
