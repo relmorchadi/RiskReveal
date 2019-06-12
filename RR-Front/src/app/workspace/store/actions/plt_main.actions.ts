@@ -48,13 +48,18 @@ export class ClosePLTinDrawer{
   constructor(public payload?: any) {}
 }
 
-export class FilterPlts{
-  static readonly  type = '[PLT Main] Filter Plts'
+export class FilterPltsByUserTags{
+  static readonly  type = '[PLT Main] Filter Plts By UserTags'
   constructor(public payload?: any) {}
 }
 
-export class setFilterPlts{
+export class setUserTagsFilters{
   static readonly  type = '[PLT Main] set Filter Plts'
+  constructor(public payload?: any) {}
+}
+
+export class setTableSortAndFilter{
+static readonly  type = '[PLT Main] set Table Filter & Sort'
   constructor(public payload?: any) {}
 }
 

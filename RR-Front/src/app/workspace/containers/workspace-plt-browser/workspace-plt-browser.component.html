@@ -6,7 +6,6 @@
         <h4>PLT Manager</h4>
       </div>
     </div>
-
     <div class="my-tabs">
       <app-plt-left-menu
           [menuInputs]="{
@@ -76,6 +75,7 @@
             (onItemSelectForMenu)="setSelectedMenuItem($event)"
             (onPltClick)="toggleSelectPlts($event)"
             (onSelectSinglePlt)="selectSinglePLT($event)"
+            (onSortChange)="sortChange($event)"
           ></app-plt-main-table>
         </div>
       </div>

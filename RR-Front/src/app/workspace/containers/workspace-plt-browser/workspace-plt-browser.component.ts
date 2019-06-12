@@ -3,7 +3,7 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
-import {pltMainModel, PltMainState} from '../../store';
+import {PltMainState} from '../../store';
 import {map, mergeMap, tap} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
 import {Table} from 'primeng/table';
@@ -72,12 +72,12 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {sortDir: 1,fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
     {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '65px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'peril', header: 'Peril', width: '55px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'peril', header: 'Peril', width: '55px', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
     {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '75px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletebBy', header: 'Deleted By', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletebAt', header: 'Deleted At', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletedBy',forDelete: true, header: 'Deleted By', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletedAt',forDelete:true, header: 'Deleted At', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
@@ -329,7 +329,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       sourceModellingSystem: 'Model System',
       targetRapCode: 'Target RAP',
       userOccurrenceBasis: 'User Occurence Basis',
-      pltType: 'Loss Asset Type',
+      xActAvailable: 'Published To Pricing',
+      xActUsed: 'Priced',
+      accumulated: 'Accumulated'
     },
     nonGrouped: {
     }
@@ -442,35 +444,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)));
   }
 
-  /*sort(sort: { key: string, value: string }): void {
-    let sortField = sort.key;
-    let sortOrder = sort.value;
-    if (sortField && sortOrder) {
-      this.sortMap[sort.key] = sort.key;
-      (sortOrder === 'ascend') ? sortOrder = 'asc' : sortOrder = 'desc';
-      this.params = {
-        ...this.params,
-        pageNumber: 0,
-        pageSize: this.pageSize,
-        sort: sortField + "," + sortOrder,
-      };
-      //this.loadData(this.params);
-    } else {
-      this.params = {...this.params, sort: 'pltId,desc', sortCompany: '', pageSize: this.pageSize};
-      //this.loadData(this.params);
-    }
-    this.loadData(this.params)
-  }
-
-  filter = _.debounce( (key: string, value) => {
-    if(value){
-      this.params= _.merge({},this.params, {[key]: value })
-    }else{
-      this.params= _.omit(this.params, [key])
-    }
-    this.loadData(this.params)
-  },500);*/
-
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.sortData = _.merge({}, this.sortData, {
@@ -481,16 +454,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
   }
 
-  filter({key, filterData, projectId}) {
-    if (key == 'project') {
-      this.projects = _.map(this.projects, t => {
-        if(t.projectId == projectId){
-            return ({...t,selected: !t.selected})
-        }else if(t.selected) {
-          return ({...t,selected: false})
-        }else return t;
-      })
-    }
+  filter(filterData) {
     this.filterData= filterData;
   }
 
@@ -498,7 +462,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   tagModalIndex: any;
   addTagModal: boolean;
   addModalInput: any;
-  inputValue: null;
   addModalSelect: any;
   tagFormenu: any;
   fromPlts: any;
@@ -517,7 +480,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
         this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
 
-        this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
+        this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
           filters: this.filters
         }))
       }else{
@@ -568,18 +531,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.getTagsForSummary();
   }
 
-  getColor(id, type) {
-    let item;
-    if (type === 'system') {
-      item = this.systemTags.filter(tag => tag.tagId == id);
-    } else {
-      item = this.userTags.filter(tag => tag.tagId == id);
-    }
-    if (item.length > 0)
-      return item[0].tagColor;
-    return null;
-  }
-
   getTagsForSummary() {
     this.pltdetailsSystemTags = this.systemTags;
     this.pltdetailsUserTags = this.userTags;
@@ -611,7 +562,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
     this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
     this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
-    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({filters: this.filters}));
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({filters: this.filters}));
   }
 
   resetPath(){
@@ -737,15 +688,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.initColor = '#fe45cd'
   }
 
-  sortChange(field: any, sortCol: any) {
-    console.log(field,sortCol)
-    if(!sortCol){
-      this.sortData[field] = 'asc';
-    }else if(sortCol === 'asc'){
-      this.sortData[field] = 'desc';
-    } else if(sortCol === 'desc') {
-      this.sortData = _.omit(this.sortData, `${field}`)
-    }
+  sortChange(sortData) {
+    this.sortData= sortData;
   }
 
   handlePopUpCancel() {
