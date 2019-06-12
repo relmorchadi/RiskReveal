@@ -305,6 +305,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.systemTagsCount= {};
     this.userTagsCount= {};
     this.fromPlts = false;
+    this.renamingTag= false;
     this.selectedUserTags= {};
     this.initColor = '#fe45cd'
     this.colorPickerIsVisible = false;
@@ -779,8 +780,20 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   assignPltsToTag($event: any) {
+    console.log($event)
     this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
+  }
 
+  setTagModal($event: any) {
+    this.addTagModal= $event;
+  }
+
+  setTagForMenu($event: any) {
+    this.tagFormenu=$event;
+  }
+
+  setRenameTag($event: any) {
+    this.renamingTag = $event;
   }
 }
 

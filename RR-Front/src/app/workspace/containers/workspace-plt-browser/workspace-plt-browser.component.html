@@ -8,7 +8,7 @@
     </div>
 
     <div class="my-tabs">
-        <app-plt-left-menu
+      <app-plt-left-menu
           [menuInputs]="{
             tagContextMenu: this.tagContextMenu,
             wsId: this.workspaceId,
@@ -17,13 +17,15 @@
             showDeleted: this.showDeleted,
             filterData: this.filterData,
             filters: this.filters,
-            addTagModalIndex: this.addTagModalIndex,
+            addTagModalIndex: this.tagModalIndex,
             fromPlts: this.fromPlts,
             deletedPltsLength: (this.deletedPlts | keys).length,
             userTags: this.userTags,
             systemTags: this.systemTags,
             selectedListOfPlts: this.selectedListOfPlts,
-            systemTagsCount: this.systemTagsCount
+            systemTagsCount: this.systemTagsCount,
+            _tagModal: this.addTagModal,
+            _renamingTag: this.renamingTag
           }"
           (onAssignPltsToTag)="assignPltsToTag($event)"
           (onProjectFilter)="filter($event)"
@@ -37,12 +39,20 @@
           (onSetSelectedUserTags)="setUserTags($event)"
           (onToggleDeletedPlts)="showDeleted= !showDeleted"
           (setTagModalIndex)="setModalIndex($event)"
+          (setTagModalVisibility)="setTagModal($event)"
+          (onSetTagForMenu)="setTagForMenu($event)"
+          (onSetRenameTag)="setRenameTag($event)"
         >
 
         </app-plt-left-menu>
-      <div class="tabset-right" style="flex: 1">
+      <div class="tabset-right">
+        <div class="title-as-tab">
+          <span>
+            PLTs
+          </span>
+        </div>
         <div class="PLTs-content">
-          <i class="icon-menu_24px"></i>
+          <i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;cursor: pointer;font-size: 15px;"></i>
           <app-plt-main-table
             [tableInputs]="{
                   contextMenuItems: this.contextMenuItems,

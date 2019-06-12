@@ -32,7 +32,7 @@
     <div class="Tags-content">
       <nz-modal
         nzWrapClassName="addTagModal"
-        [nzVisible]="_tagModal"
+        [nzVisible]="menuInputs._tagModal"
         [nzTitle]="addTagModalTitle"
         (nzOnCancel)="initColorPicker();toggleModal()"
         [nzClosable]="false"
@@ -45,19 +45,19 @@
                   <span>
                     Tag Manager
                   </span>
-          <i style="cursor: pointer" (click)="_tagModal =false" class="icon-close_24px"></i>
+          <i style="cursor: pointer" (click)="tagModal(false)" class="icon-close_24px"></i>
         </div>
       </ng-template>
 
       <ng-template #addTagModalContent>
-        <nz-tabset class="tab-content-cnt" [(nzSelectedIndex)]="menuInputs.addTagModalIndex">
-          <nz-tab [nzTitle]="_renamingTag ? 'Rename Tag' : 'Create New Tag'">
+        <nz-tabset class="tab-content-cnt" [nzSelectedIndex]="menuInputs.addTagModalIndex" (nzSelectedIndexChange)="tagModalIndexChange($event)">
+          <nz-tab [nzTitle]="menuInputs._renamingTag ? 'Rename Tag' : 'Create New Tag'">
             <div class="content">
               <nz-input-group [nzSuffix]="suffixTemplate">
                 <input class="input-default" [(ngModel)]="_modalInput" type="text" nz-input
                        placeholder="Tag Name"/>
               </nz-input-group>
-              <div *ngIf="!_renamingTag" class="color" [ngStyle]="{'background-color': initColor}"
+              <div class="color" [ngStyle]="{'background-color': initColor}"
                    (click)="toggleColorPicker('color')">
               </div>
               <color-chrome (clickOutside)="colorPickerIsVisible=false"
@@ -76,7 +76,7 @@
               ></ng-template>
             </div>
           </nz-tab>
-          <nz-tab *ngIf="menuInputs.fromPlts" nzTitle="Assign Existing">
+          <nz-tab *ngIf="menuInputs.fromPlts"  nzTitle="Assign Existing">
             <div class="content">
               <p-multiSelect
                 [displaySelectedLabel]="false"
@@ -111,7 +111,7 @@
         <div class="footer">
           <button (click)="handlePopUpCancel()" nz-button class="button-no-outline">cancel</button>
           <button class="button-standard" (click)="handlePopUpConfirm()" nz-button>
-            {{_renamingTag ? 'Rename' : menuInputs.addTagModalIndex == 0 ? menuInputs.fromPlts ? 'Create & Assign' : 'Create' : 'Assign'}}
+            {{menuInputs._renamingTag ?  'Rename' : menuInputs.addTagModalIndex == 0 ? ( menuInputs.fromPlts ? 'Create & Assign' : 'Create' )  : 'Assign'}}
           </button>
         </div>
       </ng-template>
@@ -120,7 +120,7 @@
         <div class="header">
           <div>
             <span>User Tags</span>
-            <i (click)="_tagModal = true;setFromPlts(false)" style="cursor:pointer;" class="icon-plus-circle"></i>
+            <i (click)="tagModal(true);setFromPlts(false);renamingTag(false)" style="cursor:pointer;" class="icon-plus-circle"></i>
           </div>
           <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle">
             <i nz-icon nzType="undo" nzTheme="outline">
@@ -131,7 +131,7 @@
           <p-contextMenu appendTo="body" [target]="tagMenu" [model]="menuInputs.tagContextMenu"></p-contextMenu>
           <span
             #tagMenu
-            (contextmenu)="tagForMenu = menuInputs.userTags[key]"
+            (contextmenu)="setTagForMenu(menuInputs.userTags[key])"
             [ngClass]="{'active-tag': menuInputs.userTags[key]?.selected}"
             class="chips"
             [ngStyle]="{'background-color': menuInputs.userTags[key]?.tagColor}"
