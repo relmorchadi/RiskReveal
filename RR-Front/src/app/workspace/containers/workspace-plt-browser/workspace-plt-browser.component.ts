@@ -36,11 +36,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   lastSelectedId;
 
   contextMenuItems = [
-    { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
-    { label: 'Delete', icon: 'pi pi-trash', command: (event) =>
+    { label: 'View Detail', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
+    { label: 'Delete', command: (event) =>
         this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltId : this.selectedItemForMenu}))
     },
-    { label: 'Edit Tags', icon: 'pi pi-tags', command: (event) => {
+    { label: 'Edit Tags', command: (event) => {
         this.addTagModal= true;
         this.fromPlts= true;
         let d= [];
@@ -54,8 +54,20 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         this.addModalSelect = _.intersectionBy(...d, 'tagId');
 
       }
+    },
+    {
+      label: 'Restore',
+      command: () => {
+        this.store$.dispatch(new fromWorkspaceStore.restorePlt({pltId : this.selectedItemForMenu}))
+      }
     }
   ];
+
+  contextMenuItemsCache= this.contextMenuItems;
+
+  generateContextMenu(toRestore) {
+    this.contextMenuItems= !toRestore ? this.contextMenuItemsCache.slice(0,3) : this.contextMenuItemsCache;
+  }
 
   tagContextMenu = [
     { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))},
@@ -741,6 +753,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   setRenameTag($event: any) {
     this.renamingTag = $event;
+  }
+
+  toggleDeletePlts() {
+    this.showDeleted= !this.showDeleted;
+    this.generateContextMenu(this.showDeleted);
   }
 }
 

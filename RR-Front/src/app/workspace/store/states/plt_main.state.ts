@@ -89,6 +89,12 @@ export class PltMainState implements NgxsOnInit {
     userOccurenceBasis: 'userOccurenceBasis'
   };
 
+  regions = ['DE','EU','JP'];
+
+  getRegion(){
+    return this.regions[_.random(0,3)]
+  }
+
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
     const {
@@ -113,6 +119,7 @@ export class PltMainState implements NgxsOnInit {
                   selected: false,
                   visible: true,
                   tagFilterActive: false,
+                  regionDesc: this.getRegion(),
                   opened: false,
                   deleted: ls[plt.pltId] ? ls[plt.pltId].deleted : undefined,
                   deletedBy: ls[plt.pltId] ? ls[plt.pltId].deletedBy : undefined,
@@ -458,6 +465,26 @@ export class PltMainState implements NgxsOnInit {
         }
       })
     })
+
+  }
+
+  @Action(fromPlt.restorePlt)
+  restorePlt(ctx: StateContext<pltMainModel>, { payload }: fromPlt.restorePlt){
+    const {
+      pltId
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState();
+
+    ctx.patchState({
+      data: _.merge({}, data, { [pltId]: { ...data[pltId], deleted: false}})
+    })
+
+    let ls= JSON.parse(localStorage.getItem('deletedPlts')) || {};
+
+    localStorage.setItem('deletedPlts', JSON.stringify(_.omit(ls, `${pltId}`)));
 
   }
 

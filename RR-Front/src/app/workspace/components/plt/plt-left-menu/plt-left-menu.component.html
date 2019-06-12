@@ -16,7 +16,7 @@
                 [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
         </li>
       </ul>
-      <div class="plt-trash" [ngStyle]="{'visibility': menuInputs.deletedPltsLength > 0 ? 'visible' : 'hidden'}">
+      <div class="plt-trash">
         <div class="cnt" (click)="toggleDeletedPlts()">
           <i class="icon-trash-alt"></i>
           <span> Deleted Plts </span>
@@ -168,7 +168,7 @@
                       [ngClass]="{'active-tag': menuInputs.systemTagsCount[section][tag].selected }"
                       class="chips"
                       [ngStyle]="{
-                      'background-color': menuInputs.systemTagsCount[section][tag].count ? 'orange' : 'grey',
+                      'background-color': menuInputs.systemTagsCount[section][tag].count ? (section === 'Peril' ? perilColors[tag] ? perilColors[tag] : 'orange' : 'orange') : 'grey',
                       'cursor': menuInputs.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
                       }"
                       (click)="setFilter('systemTag', tag, section);selectSystemTag(section,tag)"

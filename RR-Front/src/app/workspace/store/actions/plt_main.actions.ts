@@ -127,3 +127,8 @@ export class renameTagFail {
   static readonly type = '[PLT Main] Rename Tag Fail'
   constructor(public payload?: any) {}
 }
+
+export class restorePlt {
+  static readonly type = '[PLT Main] Restore Plt'
+  constructor(public payload?: any) {}
+}

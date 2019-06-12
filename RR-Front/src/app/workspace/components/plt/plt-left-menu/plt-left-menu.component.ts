@@ -51,6 +51,13 @@ export class PltLeftMenuComponent implements OnInit {
   initColor: string;
   tagForMenu: any;
 
+  perilColors = {
+    'EQ': 'red',
+    'FL': '#0b99cc',
+    'WS': '#62ec07',
+    'CS': '#62ec07'
+  }
+
   constructor() {
     this.initColor= "blue"
   }
