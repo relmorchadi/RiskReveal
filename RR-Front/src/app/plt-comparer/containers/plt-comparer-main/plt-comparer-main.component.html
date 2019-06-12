@@ -72,14 +72,12 @@
         </nz-dropdown>
       </div>
       <nz-select
-        style="width: 200px;"
-        nzShowSearch
-        nzAllowClear
-        class="dropdown-default"
+        [nzMaxTagCount]="1"
+        nzMode="multiple"
         nzPlaceHolder="EP Metrics"
-        [(ngModel)]="defaultImport" style="width: 140px;"
+        [(ngModel)]="listOfSelectedValues" style="width: 211px;"
       >
-        <nz-option nzLabel="OEP" nzValue="OEP"></nz-option>
+        <nz-option nzLabel="OEP" nzValue="OEP"  nzDisabled></nz-option>
         <nz-option nzLabel="AEP" nzValue="AEP"></nz-option>
         <nz-option nzLabel="TVaR-OEP" nzValue="TVaR-OEP"></nz-option>
         <nz-option nzLabel="TVaR-AEP" nzValue="TVaR-AEP"></nz-option>
@@ -96,8 +94,8 @@
   </div>
   <div class="body">
     <div class="lefter">
-      <div class="cards-wrapper">
-        <div class="card-header-title" style="height: 71px;">
+      <div class="cards-wrapper1">
+        <div class="card-header-title" style="height: 88px;">
         </div>
         <div class="card-table">
           <table>
@@ -151,8 +149,8 @@
         </div>
         <div class="card-footer-detail">
           <div class="card-table-row" style="width: 134px;">
-            <div>Pure Premium
-              Standard Deviation
+            <div>Pure Premium &nbsp;
+              Standard Deviation&nbsp;
               CoV
             </div>
           </div>
@@ -161,11 +159,12 @@
     </div>
     <div class="righter">
       <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
-        <div [class.selected-item]="item.selected == true" *ngFor="let item of cardContainer" class="card-outer" cdkDrag>
-          <div class="cards-wrapper" [ngStyle]="{'border-top': item.selected ? 'none' : '5px solid ' + item.color ,
+        <div [class.selected-item]="item.selected == true" *ngFor="let item of cardContainer; let i = index" class="card-outer" cdkDrag>
+
+          <div class="cards-wrapper" *ngIf="!item.deleted" [ngStyle]="{'border-top': item.selected ? 'none' : '5px solid ' + item.color ,
     'border-bottom': item.selected ? 'none' : '5px solid transparent',
-    'height':item.selected ? ' 500px' : '',
-     'width': (switchValue && !item.selected) ? '569px' : '255px'}" (contextmenu)="contextMenu($event, template)">
+    'height':item.selected ? ' 500px' : ''}" (contextmenu)="contextMenu($event, template)">
+            <i class="icon-cancel_24px" (click)="deleteItem(i)" style="font-size: 15px; color: darkred;cursor: pointer;"></i>
             <div class="card-header-title">
               <div class="card-header-detail">
                 <span style="font-weight: bold; font-size:15px;">{{item.title}}</span><br>
@@ -190,15 +189,18 @@
                     <div style="margin-bottom:6px;"><i class="icon-triangle" style="font-size: 20px;"></i> OEP</div>
                   </th>
                   <th *ngIf="switchValue && !item.selected"
-                      style="background-color: #F4F6FC; color: #0700CF;width: 66px;"> OEP%
+                      style="background-color: #F4F6FC; color: #0700CF;"> OEP%
                   </th>
-                  <th>AEP</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
                     <div style="margin-bottom:6px;"><i class="icon-triangle" style="font-size: 20px;"></i> AEP</div>
                   </th>
                   <th *ngIf="switchValue && !item.selected"
-                      style="background-color: #F4F6FC; color: #0700CF;width: 66px;"> AEP %
+                      style="background-color: #F4F6FC; color: #0700CF;"> AEP %
                   </th>
+                  <th *ngFor="let th of listOfSelectedValues">
+                    {{th}}
+                  </th>
+
                 </tr>
                 </thead>
                 <tbody>
@@ -206,21 +208,22 @@
                   <th>{{row[0]}}</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
-                  <th>{{row[2]}}</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[3]}}</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
+                  <th *ngFor="let th of listOfSelectedValues" >{{row[2]}}</th>
                 </tr>
                 <tr>
-                  <th><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
-                  <th><input class="input-default" style="width: 100%" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%" type="text"
+                  <th><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
                                                                    name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%" type="text"
+                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
                                                                    name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%" type="text"
+                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
                                                                    name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%" type="text"
+                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
                                                                    name="new-field"></th>
+                  <th *ngFor="let th of listOfSelectedValues"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
+                                                                     name="new-field"></th>
                 </tr>
                 </tbody>
               </table>
