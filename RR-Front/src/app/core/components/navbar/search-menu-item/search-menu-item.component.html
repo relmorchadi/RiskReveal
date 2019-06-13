@@ -55,7 +55,7 @@
             class="dropdown-default"
             style="width: 100px;"
             nzShowSearch
-            nzAllowClear
+            [nzAllowClear]="false"
             nzPlaceHolder="Select Search Mode"
             [(ngModel)]="searchMode"
             [ngModelOptions]="{standalone: true}"
