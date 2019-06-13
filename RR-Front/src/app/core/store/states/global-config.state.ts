@@ -2,6 +2,7 @@ import {GeneralConfig} from '../../model';
 import * as _ from 'lodash';
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import {PatchNumberFormatAction} from '../actions';
+import {Data} from '../../model/data';
 
 
 const initiaState: GeneralConfig = {
@@ -31,15 +32,15 @@ const initiaState: GeneralConfig = {
           data: ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'],
           selected: 'Facultative Reinsurance Loss'
       },
-      targetCurrency: {data: ['MLC', 'User Defined', 'Underlying Currency'], selected: 'MLC'},
+      targetCurrency: {data: ['MLC', 'Underlying Currency', 'User Defined'], selected: 'MLC'},
       rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'], selected: 'AZU-P-RL17-SQL14'},
     },
     contractOfInterest: {
-      country: '',
-      uwUnit: '',
+      country: {data: Data.countries, selected: []},
+      uwUnit: {data: Data.uwUnit, selected: []},
     },
     epCurves: {
-      returnPeriod: '',
+      returnPeriod: {data: [], selected: []},
       display: '',
     }
 };
