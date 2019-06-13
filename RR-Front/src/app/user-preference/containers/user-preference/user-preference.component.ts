@@ -72,6 +72,10 @@ export class UserPreferenceComponent implements OnInit {
     this.store$.dispatch(new PatchNumberFormatAction({target: target, value: event}));
   }
 
+  changeContract(event, target) {
+
+  }
+
   changeSearch(event) {
     this.store$.dispatch(new PatchSearchStateAction({key: 'searchTarget', value: event}));
   }

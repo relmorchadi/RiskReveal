@@ -107,10 +107,8 @@
             </div>
             <div class="body-wrapper-header-right">
               <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-              <i nz-icon *ngIf="state.collapse.collapseHead" (click)="changeCollapse('collapseHead')" nzType="up"
-                 nzTheme="outline"></i>
-              <i nz-icon *ngIf="!state.collapse.collapseHead" (click)="changeCollapse('collapseHead')"
-                 style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
+              <i *ngIf="state.collapse.collapseHead" (click)="changeCollapse('collapseHead')" class="icon-keyboard_arrow_up_24px"></i>
+              <i *ngIf="!state.collapse.collapseHead" (click)="changeCollapse('collapseHead')" class="icon-keyboard_arrow_down_24px"></i>
             </div>
           </div>
           <div *ngIf="state.collapse.collapseHead" class="body-wrapper-body">
@@ -481,10 +479,10 @@
             <div class="body-wrapper-header-right-summary">
               <button class="button-outlined" *ngIf="state.collapse.collapseResult"> ADVANCED</button>
               <div class="icon-drop">
-                <i *ngIf="state.collapse.collapseResult" nz-icon nzType="up" (click)="changeCollapse('collapseResult')"
-                   nzTheme="outline"></i>
-                <i nz-icon *ngIf="!state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
-                   style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
+                <i *ngIf="state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
+                   class="icon-keyboard_arrow_up_24px"></i>
+                <i  *ngIf="!state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
+                    class="icon-keyboard_arrow_down_24px"></i>
               </div>
             </div>
           </div>
@@ -570,10 +568,10 @@
             <div class="body-wrapper-header-right-summary">
               <button class="button-outlined" *ngIf="state.collapse.collapseAnalysis"> ADVANCED</button>
               <div class="icon-drop">
-                <i *ngIf="state.collapse.collapseAnalysis" nz-icon nzType="up"
-                   (click)="changeCollapse('collapseAnalysis')" nzTheme="outline"></i>
-                <i nz-icon *ngIf="!state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
-                   style="padding:2px; background-color: #0700CF; color: #fff" nzType="down" nzTheme="outline"></i>
+                <i *ngIf="state.collapse.collapseAnalysis"
+                   (click)="changeCollapse('collapseAnalysis')" class="icon-keyboard_arrow_up_24px"></i>
+                <i *ngIf="!state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
+                   class="icon-keyboard_arrow_down_24px"></i>
               </div>
             </div>
           </div>
