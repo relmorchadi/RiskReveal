@@ -610,9 +610,8 @@ export class WorkspaceJobManagerComponent implements OnInit {
   }
 
   expandRow(row, expand) {
-    expand = true;
-    console.log(row, expand);
     row.append = !row.append;
+    return true;
   }
 
   resumeJob(id) {

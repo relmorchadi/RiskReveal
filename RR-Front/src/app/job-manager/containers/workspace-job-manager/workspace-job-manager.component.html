@@ -28,7 +28,7 @@
              [scrollable]="true" [scrollHeight]="'500'" [rows]="50"
              [(contextMenuSelection)]="contextSelectedItem"
              [contextMenu]="cm" class="table-ngPrime"
-             [loading]="loading" dataKey="menuIcon"
+             [loading]="loading" dataKey="id"
     >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
@@ -156,7 +156,7 @@
 
                   </ul>
                 </nz-dropdown>
-                <div (click)="expandRow(rowData, expanded)" [pRowToggler]="rowData">
+                <div (click)="expanded = expandRow(rowData, expanded)" [pRowToggler]="rowData">
                   <i [ngClass]="rowData.append ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
                 </div>
               </div>
