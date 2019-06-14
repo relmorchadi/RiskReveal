@@ -131,6 +131,63 @@ export class WorkspaceContractComponent implements OnInit {
     }
   ];
 
+  listStandardContent = {
+    primary: [
+    {
+      title: 'Ceded Share:',
+      value: 100
+    },
+    {
+      title: 'Written Share:',
+      value: 100
+    },
+    {
+      title: 'Signed Share:',
+      value: 9
+    },
+    {
+      title: 'Expected Ceded Share:',
+      value: 9
+    }
+    ],
+    secondary: [
+      {
+        title: 'Line of Business:',
+        value: 'Property'
+      },
+      {
+        title: 'Scope of Business:',
+        value: 'Residential/Pers'
+      },
+      {
+        title: 'Type of Policy:',
+        value: 'PD&Bi All Risk'
+      },
+      {
+        title: 'General Nature:',
+        value: 'Excess of Loss'
+      }
+    ]
+  };
+
+  listSecondaryContent = {
+    liability: {
+      capacity: 80000000,
+      attachmentPoint: 80000000,
+      annualDeductible: 0,
+      isUnlimited: false,
+      limitPerEvent: 0,
+      annualLimit: 240000000
+    },
+    premium: {
+      subjectPremium: '',
+      subjectPremiumBasis: '',
+      scorEGPI: '',
+      unlimitedReinst: false
+    }
+
+  };
+
   coveragesElement = [
     {
       country: 'France',

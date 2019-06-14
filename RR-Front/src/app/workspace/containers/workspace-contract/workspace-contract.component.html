@@ -28,7 +28,10 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <th *ngFor="let col of columns">
-                <div class="table-header-wrapper" *ngIf="col.display"><span *ngIf="col.indicator" class="indicator-frame" [ngStyle]="{'background-color': col.color}"></span> {{col.header}}</div>
+                <div class="table-header-wrapper" *ngIf="col.display"><span *ngIf="col.indicator"
+                                                                            class="indicator-frame"
+                                                                            [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                </div>
                 <div class="search-bar-table" *ngIf="col.filtered">
                   <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                   <input pInputText type="text"
@@ -60,7 +63,7 @@
   <div class="contract-body-wrapper">
     <div class="contract-left">
       <div class="body-wrap-body margin-reset">
-        <div class="body-wrapper">
+        <div class="body-wrapper" style="height: 250px;">
           <div class="body-wrapper-header">
             <div class="body-wrapper-header-left">
               <hr>
@@ -74,7 +77,7 @@
           </div>
           <div class="show-table">
             <p-table #dt [columns]="colsReinstatement" [value]="reinstatementData"
-                     [scrollable]="true" scrollHeight="340px" >
+                     [scrollable]="true" scrollHeight="340px">
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                   <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -83,7 +86,10 @@
               <ng-template pTemplate="header" let-columns>
                 <tr>
                   <th *ngFor="let col of columns">
-                    <div class="table-header-wrapper" *ngIf="col.display"><span *ngIf="col.indicator" class="indicator-frame" [ngStyle]="{'background-color': col.color}"></span> {{col.header}}</div>
+                    <div class="table-header-wrapper" *ngIf="col.display"><span *ngIf="col.indicator"
+                                                                                class="indicator-frame"
+                                                                                [ngStyle]="{'background-color': col.color}"></span> {{col.header}}
+                    </div>
                     <div class="search-bar-table" *ngIf="col.filtered">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                       <input pInputText type="text"
@@ -98,14 +104,16 @@
                       [ngClass]="{'selected-item': rowData?.selected}"
                       [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
                     <div style=" display: flex;" *ngIf="col.type === 'select'">
-                      <label nz-checkbox (ngModelChange)="checkRow($event, rowData)" [ngModel]="rowData.selected"></label>
+                      <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
+                             [ngModel]="rowData.selected"></label>
                     </div>
                     <div class="text-data" (click)="selectRows(rowData, i)"
                          *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                     <div class="text-data" (click)="selectRows(rowData, i)"
                          *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                     <div *ngIf="col.type === 'status'">
-                      <nz-progress [nzPercent]="rowData[col.field]" [ngClass]="{'hidden-text': rowData[col.field] < 100 }"
+                      <nz-progress [nzPercent]="rowData[col.field]"
+                                   [ngClass]="{'hidden-text': rowData[col.field] < 100 }"
                                    [nzWidth]="20" nzType="circle"></nz-progress>
                       {{rowData[col.field] | number: '1.2-2'}}%
                     </div>
@@ -117,12 +125,54 @@
               </ng-template>
             </p-table>
           </div>
+
+          <div class="body-wrap-border">
+            <div class="body-wrap-border-header"><span>Treaty Section Summary</span></div>
+            <div class="body-wrap-border-body">
+              <div class="body-wrap-border-left">
+                <ul>
+                  <li></li>
+                  <li></li>
+                </ul>
+              </div>
+              <div class="body-wrap-border-standard">
+                <ul>
+                  <li *ngFor="let item of listStandardContent.primary">
+                    <span class="span-left">{{item.title}}</span>
+                    <span class="span-right">{{item.value}}</span>
+                  </li>
+                </ul>
+              </div>
+              <div class="body-wrap-border-standard">
+                <ul>
+                  <li *ngFor="let item of listStandardContent.secondary">
+                    <span class="span-left">{{item.title}}</span>
+                    <span class="span-right">{{item.value}}</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="body-wrap-secondary">
+            <div></div>
+            <div>
+              <div>
+                <div></div>
+                <div></div>
+              </div>
+              <div>
+                <div></div>
+                <div></div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
     <div class="contract-right">
       <div class="body-wrap-body margin-reset">
-        <div class="body-wrapper">
+        <div class="body-wrapper" style="height: 250px;">
           <div class="body-wrapper-header">
             <div class="body-wrapper-header-left">
               <hr>
@@ -135,10 +185,12 @@
             </div>
           </div>
           <div>
-            <ul>
+            <ul class="ul-wrapper">
               <li class="list-item-wrapper" *ngFor="let items of coveragesElement">
                 <div class="list-item-left"><span></span><span>{{items.country}}</span></div>
-                <div class="list-item-right"><span class="flag-container" *ngFor="let flag of items.flags" [ngStyle]="{'background-color': flag.color}">{{flag.content}}</span></div>
+                <div class="list-item-right"><span class="flag-container" *ngFor="let flag of items.flags"
+                                                   [ngStyle]="{'background-color': flag.color}">{{flag.content}}</span>
+                </div>
               </li>
             </ul>
           </div>
@@ -146,8 +198,6 @@
       </div>
     </div>
   </div>
-
-
 
 
 </div>
