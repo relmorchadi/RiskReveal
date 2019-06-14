@@ -24,8 +24,8 @@ export class PltComparerMainComponent implements OnInit {
   colorSwitcher = ['#A96EFE', '#06B8FF', '#F5A623', '#03DAC4', '#E3B8FF', '#0700CF', '#ADFEFA', '#1C607C'];
   isVisible = false;
 
-  private dropdown: NzDropdownContextComponent;
-  private Subscriptions: any[] = [];
+  dropdown: NzDropdownContextComponent;
+  Subscriptions: any[] = [];
   searchAddress: string;
   listOfPlts: any[];
   listOfPltsData: any[];
@@ -44,8 +44,8 @@ export class PltComparerMainComponent implements OnInit {
   params: any;
   lastSelectedId;
 
-  private renamingTag: boolean;
-  private modalInputCache: any;
+  renamingTag: boolean;
+  modalInputCache: any;
 
   selectedPlt: any;
   tagModalIndex: any;

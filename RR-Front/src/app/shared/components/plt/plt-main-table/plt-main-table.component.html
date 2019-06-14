@@ -1,12 +1,11 @@
 <p-contextMenu #cm appendTo="body" [model]="tableInputs.contextMenuItems"></p-contextMenu>
 <p-table
   [columns]="tableInputs.pltColumns"
-  [value]="(tableInputs.showDeleted ? tableInputs.deletedPlts : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
+  [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
   [resizableColumns]="true"
   [(contextMenuSelection)]="tableInputs.selectedPlt"
   [contextMenu]="cm"
   [scrollable]="true"
-  [totalRecords]="tableInputs.listOfPltsData.length"
   [responsive]="true"
 >
   <ng-template pTemplate="colgroup" let-columns>
@@ -28,12 +27,12 @@
       </th>
 
       <ng-container *ngFor="let col of columns; let i = index">
-        <th  *ngIf="i > 0 && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width}" pResizableColumn [pSortableColumn]="col.fields">
+        <th  *ngIf="i > 0 && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width}" pResizableColumn>
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
                           <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
                         </ng-container>
                       </span>
@@ -76,8 +75,8 @@
           <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
         </ng-container>
         <ng-container *ngIf="i > 1">
-          <ng-container *ngIf="col?.type == 'field' && col?.type != 'checkbox'">
-            <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+          <ng-container *ngIf="col?.type == 'field' || col?.type == 'date'">
+            <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ col?.type === 'date' ? (rowData[col.fields] | date) : rowData[col.fields] }}</div>
           </ng-container>
           <ng-container *ngIf="col?.type == 'icon'">
             <div class="td-wrapper-check">

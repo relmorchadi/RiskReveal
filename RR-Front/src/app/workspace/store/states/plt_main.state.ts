@@ -150,14 +150,14 @@ export class PltMainState implements NgxsOnInit {
   SelectPlts(ctx: StateContext<pltMainModel>, { payload }: fromPlt.ToggleSelectPlts) {
     const state = ctx.getState();
     const {
-      plts,
+      plts
     } = payload;
 
     let inComingData = {};
 
     _.forEach(plts, (v, k) => {
       inComingData[k] = {
-        selected: v.type === 'select'
+        selected: v.type
       };
     });
 
@@ -270,35 +270,6 @@ export class PltMainState implements NgxsOnInit {
     })
   }
 
-  @Action(fromPlt.assignPltsToTag)
-  assignPltsToTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTag){
-
-    return payload.type == 'many' ? forkJoin(..._.map(payload.tags,e => this.pltApi.assignPltsToTag({
-        plts: payload.plts,
-        wsId: payload.wsId,
-        uwYear: payload.uwYear,
-        tag: e
-      }))).pipe(
-      mergeMap( tags => from(tags)),
-      map( (userTag) => {
-        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
-          userTag,
-          plts: payload.plts
-        }))
-      })
-      )
-      : this.pltApi.assignPltsToTag(payload).pipe(
-      mergeMap( (userTag) => {
-        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
-          userTag,
-          plts: payload.plts
-        }))
-      }),
-      catchError( () => of(new fromPlt.assignPltsToTagFail()))
-    )
-
-  }
-
   @Action(fromPlt.constructUserTags)
   constructUserTags(ctx: StateContext<pltMainModel>, { payload }: fromPlt.constructUserTags){
     const {
@@ -326,13 +297,39 @@ export class PltMainState implements NgxsOnInit {
 
   }
 
+  @Action(fromPlt.assignPltsToTag)
+  assignPltsToTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTag){
+
+    return payload.type == 'many' ? forkJoin(..._.map(payload.tags,e => this.pltApi.assignPltsToTag({
+        plts: payload.plts,
+        wsId: payload.wsId,
+        uwYear: payload.uwYear,
+        tag: e
+      }))).pipe(
+      tap( t=> console.log(t)),
+      map( (tags) => {
+        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
+          tags: tags,
+          plts: payload.plts,
+          type: 'many'
+        }))
+      })
+      )
+      : this.pltApi.assignPltsToTag(payload).pipe(
+      mergeMap( (userTag) => {
+        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
+          userTag,
+          plts: payload.plts
+        }))
+      }),
+      catchError( () => of(new fromPlt.assignPltsToTagFail()))
+    )
+  }
+
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTagSuccess){
     const {
-      userTag: {
-        pltHeaders,
-        ...rest
-      }
+      type,
     } = payload;
 
     const {
@@ -342,14 +339,42 @@ export class PltMainState implements NgxsOnInit {
 
     let newData = {};
 
-    _.forEach(pltHeaders, (v,k) => {
-      newData[v.id] = _.merge({},data[v.id],{userTags: _.uniqBy([...data[v.id].userTags, rest], e => e.tagId) })
-    })
+    if(type !== 'many') {
 
-    ctx.patchState({
-      data: _.merge({},data, newData),
-      userTags: {...userTags, [rest.tagId]: {...rest, selected: false,count: pltHeaders.length}}
-    })
+      const {
+        userTag: {
+          pltHeaders,
+          ...rest
+        }
+      }= payload;
+
+      _.forEach(pltHeaders, (v,k) => {
+        newData[v.id] = _.merge({},data[v.id],{userTags: _.uniqBy([...data[v.id].userTags, rest], e => e.tagId) })
+      })
+
+      ctx.patchState({
+        data: _.merge({},data, newData),
+        userTags: {...userTags, [rest.tagId]: {...rest, selected: false,count: pltHeaders.length}}
+      })
+
+    }else {
+
+      const {
+        tags,
+        plts,
+      } = payload;
+
+      _.forEach(plts, plt => {
+        newData[plt] = _.assign({}, data[plt], {...data[plt], userTags: tags})
+      })
+
+      ctx.patchState({
+        data: _.merge({},data, newData),
+        userTags: {...userTags, ..._.keyBy(_.map(tags, tag => ({...tag,selected: false, count: plts.length})), 'tagId')}
+      })
+
+    }
+
   }
   @Action(fromPlt.deleteUserTag)
   deleteUserTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.deleteUserTag){
@@ -381,20 +406,26 @@ export class PltMainState implements NgxsOnInit {
   deletePlt(ctx: StateContext<pltMainModel>, { payload }: fromPlt.deletePlt){
 
     const {
-      pltId
+      pltIds
     } = payload;
 
     const {
       data
     } = ctx.getState();
 
-    ctx.patchState({
-      data: _.merge({}, data, {[pltId]: { ...data[pltId], deleted: true}})
-    })
-
+    let newData = {};
     let ls= JSON.parse(localStorage.getItem('deletedPlts')) || {};
 
-    localStorage.setItem('deletedPlts', JSON.stringify(_.merge({}, ls, {[pltId]: { deleted: true, deletedBy: 'DEV', deletedAt: moment.now()}})))
+    _.forEach(pltIds, k => {
+      newData[k] = { ...data[k], deleted: true, selected: false}
+      ls = _.merge({}, ls, {[k]: { deleted: true, deletedBy: 'DEV', deletedAt: moment.now()}})
+    });
+
+    ctx.patchState({
+      data: _.merge({}, data, newData)
+    })
+
+    localStorage.setItem('deletedPlts', JSON.stringify(ls))
     console.log(ls);
     /*return this.pltApi.deletePlt(payload.pltId).pipe(
       mergeMap(plt => ctx.dispatch(new fromPlt.deletePltSucess({
@@ -471,20 +502,26 @@ export class PltMainState implements NgxsOnInit {
   @Action(fromPlt.restorePlt)
   restorePlt(ctx: StateContext<pltMainModel>, { payload }: fromPlt.restorePlt){
     const {
-      pltId
+      pltIds
     } = payload;
 
     const {
       data
     } = ctx.getState();
 
-    ctx.patchState({
-      data: _.merge({}, data, { [pltId]: { ...data[pltId], deleted: false}})
-    })
-
+    let newData = {};
     let ls= JSON.parse(localStorage.getItem('deletedPlts')) || {};
 
-    localStorage.setItem('deletedPlts', JSON.stringify(_.omit(ls, `${pltId}`)));
+    _.forEach(pltIds, k => {
+      newData[k] = { ...data[k], deleted: false, selected: false}
+      ls = _.omit(ls, `${k}`)
+    });
+
+    ctx.patchState({
+      data: _.merge({}, data, newData)
+    });
+
+    localStorage.setItem('deletedPlts', JSON.stringify(ls));
 
   }
 
