@@ -252,14 +252,14 @@ export class WorkspaceJobManagerComponent implements OnInit {
     {
       taskNumber: '1',
       taskName: 'Import Portfolio XYZ from "EDM Name"',
-      status: '2019-01-03 T 09:57:10',
+      status: 'In progress',
       startDate: '2019-01-03 T 09:57:10',
       completedDate: '2019-01-03 T 09:57:10',
     },
     {
       taskNumber: '2',
       taskName: 'Import Analysis ABC (ID 30) from "RDM Name"',
-      status: '2019-01-03 T 09:57:10',
+      status: 'Pending',
       startDate: '2019-01-03 T 09:57:10',
       completedDate: '2019-01-03 T 09:57:10',
     }
@@ -420,7 +420,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       append: false,
       isPaused: true,
-      pending: true,
+      pending: false,
       priority: 'low',
       startTime: '2019-01-03 T 09:57:10',
       elapsedTime: '2019-01-03 T 09:57:10',
@@ -474,7 +474,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       append: false,
       isPaused: true,
-      pending: true,
+      pending: false,
       priority: 'low',
       startTime: '2019-01-03 T 09:57:10',
       elapsedTime: '2019-01-03 T 09:57:10',
@@ -514,7 +514,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
       workSpaceId: 'TP05413',
       uwYear: 2019,
       workspaceName: 'CFS-SCOR ITALIA-SCOR ITALIA',
-      jobOwner: 'Amine Cheref',
+      jobOwner: 'Amina Cheref',
       jobType: 'Calibration',
       context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
       append: false,
@@ -611,8 +611,23 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   resumeJob(id) {
     this.listOfData.map(dt => {
-      if (dt.id === id) {
-        dt.isPaused = false;
+      if (this.selectedRows.length === 0) {
+        if (dt.id === id) {
+          dt.isPaused = false;
+        }
+      } else {
+        const filtered = this.selectedRows.filter(st => st.id === id);
+        if (filtered.length > 0) {
+          this.selectedRows.map(st => {
+            if (st.id === dt.id) {
+              dt.isPaused = false;
+            }
+          });
+        } else {
+          if (dt.id === id) {
+            dt.isPaused = false;
+          }
+        }
       }
     });
     this.listOfData = [..._.sortBy(_.filter(this.listOfData, (dt) => !dt.pending) , (dt) => dt.isPaused),
@@ -627,8 +642,23 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   pauseJob(id): void {
     this.listOfData.map(dt => {
-      if (dt.id === id) {
-        dt.isPaused = true;
+      if (this.selectedRows.length === 0) {
+        if (dt.id === id) {
+          dt.isPaused = true;
+        }
+      } else {
+        const filtered = this.selectedRows.filter(st => st.id === id);
+        if (filtered.length > 0) {
+          this.selectedRows.map(st => {
+            if (st.id === dt.id) {
+              dt.isPaused = true;
+            }
+          });
+        } else {
+          if (dt.id === id) {
+            dt.isPaused = true;
+          }
+        }
       }
     });
     this.listOfData = [..._.sortBy(_.filter(this.listOfData, (dt) => !dt.pending) , (dt) => dt.isPaused),
@@ -644,6 +674,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   uncheckRow(row) {
     row.selected = !row.selected;
+    this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
   }
 
   openWorkspace(wsId, year, routerLink) {
