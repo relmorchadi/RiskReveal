@@ -57,8 +57,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
         this.addModalSelect= this.addModalSelectCache= _.intersectionBy(...d, 'tagId');
-        this.addModalSelecUniqTags= _.uniqBy(_.flatten(d), 'tagId');
-        console.log(this.addModalSelectCache,this.addModalSelecUniqTags,d)
+        this.oldSelectedTags= _.uniqBy(_.flatten(d), 'tagId');
+        console.log(this.addModalSelectCache,this.oldSelectedTags,d)
 
       }
     },
@@ -512,7 +512,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   addModalInput: any;
   addModalSelect: any;
   addModalSelectCache: any;
-  addModalSelecUniqTags: any;
+  oldSelectedTags: any;
   tagFormenu: any;
   fromPlts: any;
   colorPickerIsVisible: any;
@@ -700,21 +700,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     if(!this.colorPickerIsVisible) this.initColor= '#fe45cd';
   }
 
-  initColorPicker(){
-    this.colorPickerIsVisible = false;
-    this.initColor = '#fe45cd'
-  }
-
   sortChange(sortData) {
     this.sortData= sortData;
   }
 
-  handlePopUpCancel() {
-    this.addTagModal=false;
-    this.addModalInput='';
-    this.addModalSelect='';
-    this.renamingTag= false;
-  }
 
   setSelectedMenuItem($event: any) {
     this.selectedItemForMenu= $event;
@@ -748,7 +737,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
   assignPltsToTag($event: any) {
     console.log(this.addModalSelectCache, $event);
-    this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
+    const {
+      plts,
+      tags: newSelectedTags
+    } = $event;
+
+    console.log(newSelectedTags,plts);
+    let newTags = [];
+
+    _.forEach(this.oldSelectedTags, oldTag => {
+      const isSelected= _.find(newSelectedTags, newTag => oldTag.tagId == newTag.tagId);
+
+      newTags.push({...oldTag, pltHeaders: !isSelected ? _.filter(old.pltHeaders,pltHeader => pltHeader.id) : false})
+
+    } )
+    //this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
   }
 
   setTagModal($event: any) {
