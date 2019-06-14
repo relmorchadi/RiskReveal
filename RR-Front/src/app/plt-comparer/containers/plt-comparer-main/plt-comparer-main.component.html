@@ -4,11 +4,95 @@
       <h4>PLT Comparer &nbsp;</h4>
       <i class="icon-plus" (click)="showModal()"></i>
       <nz-modal
+        style="width: 95%;"
         [(nzVisible)]="isVisible"
         nzFooter=" "
         nzTitle="Browse For Comparer"
         (nzOnCancel)="handleCancel()">
-        <p></p>
+        <nz-select
+          nzShowSearch
+          nzAllowClear
+          class="dropdown-default"
+          style="width: 200px; margin-bottom: 5px;"
+          nzPlaceHolder="Select Workspace"
+          (ngModelChange)="getWorkspaceData($event)"
+          [(ngModel)]="defaultImport">
+          <nz-option nzCustomContent *ngFor="let item of listOfWs.data" [nzLabel]="item.workSpaceId" [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
+        </nz-select>
+        <div class="my-tabs">
+        <app-plt-left-menu
+          [menuInputs]="{
+            tagContextMenu: this.tagContextMenu,
+            wsId: this.workspaceId,
+            uwYear: this.uwy,
+            projects: this.projects,
+            showDeleted: this.showDeleted,
+            filterData: this.filterData,
+            filters: this.filters,
+            addTagModalIndex: this.tagModalIndex,
+            fromPlts: this.fromPlts,
+            deletedPltsLength: (this.deletedPlts | keys).length,
+            userTags: this.userTags,
+            systemTags: this.systemTags,
+            selectedListOfPlts: this.selectedListOfPlts,
+            systemTagsCount: this.systemTagsCount,
+            _tagModal: this.addTagModal,
+            _renamingTag: this.renamingTag
+          }"
+          (onAssignPltsToTag)="assignPltsToTag($event)"
+          (onProjectFilter)="filter($event)"
+          (onRenameTag)="renameTag($event)"
+          (onResetPath)="resetPath()"
+          (onSelectProjects)="setSelectedProjects($event)"
+          (onSelectSysTagCount)="selectSystemTag($event)"
+          (onSetFilters)="setFilters($event)"
+          (onSetFromPlts)="setFromPlts($event)"
+          (onSetSelectedSystemTags)="setSysTags($event)"
+          (onSetSelectedUserTags)="setUserTags($event)"
+          (onToggleDeletedPlts)="showDeleted= !showDeleted"
+          (setTagModalIndex)="setModalIndex($event)"
+          (setTagModalVisibility)="setTagModal($event)"
+          (onSetTagForMenu)="setTagForMenu($event)"
+          (onSetRenameTag)="setRenameTag($event)"
+        >
+
+        </app-plt-left-menu>
+          <div class="tabset-right">
+            <div class="title-as-tab">
+          <span>
+            PLTs
+          </span>
+            </div>
+            <div class="PLTs-content">
+              <i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;cursor: pointer;font-size: 15px;"></i>
+        <app-plt-main-table
+          [tableInputs]="{
+                  contextMenuItems: this.contextMenuItems,
+                  pltColumns: this.pltColumns,
+                  listOfPltsData: this.listOfPltsData,
+                  listOfPltsCache: this.listOfPltsCache,
+                  listOfPlts: this.listOfPlts,
+                  selectedPlt: this.selectedPlt,
+                  selectedListOfPlts: this.selectedListOfPlts,
+                  deletedPlts: this.deletedPlts,
+                  selectAll: this.selectAll,
+                  someItemsAreSelected: this.someItemsAreSelected,
+                  showDeleted: this.showDeleted,
+                  filterData: this.filterData,
+                  filters: this.filters,
+                  sortData: this.sortData
+                }"
+          (onCheckAll)="checkAll()"
+          (onCheckBoxSort)="checkBoxSort($event)"
+          (onFilter)="filter($event)"
+          (onItemSelectForMenu)="setSelectedMenuItem($event)"
+          (onPltClick)="toggleSelectPlts($event)"
+          (onSelectSinglePlt)="selectSinglePLT($event)"
+          (onSortChange)="sortChange($event)"
+        ></app-plt-main-table>
+            </div>
+        </div>
+        </div>
       </nz-modal>
     </div>
 

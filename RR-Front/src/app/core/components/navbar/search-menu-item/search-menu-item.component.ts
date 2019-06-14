@@ -15,11 +15,7 @@ import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
 import {Store, Actions, ofActionDispatched} from '@ngxs/store';
-import {
-  ClearSearchValuesAction, LoadRecentSearchAction,
-  PatchSearchStateAction, SearchContractsCountAction
-} from '../../../store/index';
-import {SearchNavBar} from '../../../model';
+import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
 import {RouterNavigation} from "@ngxs/router-plugin";
@@ -41,11 +37,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   scrollParams;
   state: SearchNavBar = null;
   private unSubscribe$:Subject<void>;
-
-  loading: any;
-  scrollTo: number;
-  listLength: number;
-  pos: any;
+  searchMode:string= 'Treaty';
 
   @Input('state')
   set setState(value) {

@@ -23,7 +23,7 @@
         <div>
           <span class="main-tab-title">General User</span>
           <div class="settings-holder">
-            <span class="head-title">search</span>
+            <span class="head-title">Search</span>
             <div class="settings-wrapper">
               <div class="user-config-item">
                 <span>Search Target :</span>
@@ -192,7 +192,7 @@
             <span class="head-title">General</span>
             <div class="settings-wrapper">
               <div class="user-config-item">
-                <span>Default Import Page</span>
+                <span>Default Import Type</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
@@ -298,8 +298,44 @@
 
             <span class="head-title">Default Scope Of Contract</span>
             <div class="settings-wrapper">
-              <div class="user-config-item"><span>Country</span></div>
-              <div class="user-config-item"><span>UW Unit</span></div>
+              <div class="user-config-item"><span>Country</span>
+                <div>
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.contractOfInterest.country?.selected"
+                    (ngModelChange)="changeContract($event, 'country')"
+                    nzMode="multiple"
+                    [nzMaxTagCount]="1"
+                    [nzMaxTagPlaceholder]="tagCountryPlaceHolder"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select Countries"
+                  >
+                    <nz-option *ngFor="let item of state.contractOfInterest.country?.data" [nzLabel]="item.shortName"
+                               [nzValue]="item.countryCode"></nz-option>
+                  </nz-select>
+                  <ng-template #tagCountryPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                </div>
+              </div>
+              <div class="user-config-item"><span>UW Unit</span>
+                <div>
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.contractOfInterest.uwUnit?.selected"
+                    (ngModelChange)="changeContract($event, 'uwUnit')"
+                    nzMode="multiple"
+                    [nzMaxTagCount]="1"
+                    [nzMaxTagPlaceholder]="tagUnitPlaceHolder"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select UW Units"
+                  >
+                    <nz-option *ngFor="let item of state.contractOfInterest.uwUnit?.data" [nzLabel]="item.name"
+                               [nzValue]="item.id"></nz-option>
+                  </nz-select>
+                  <ng-template #tagUnitPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                </div>
+              </div>
             </div>
           </div>
           <div class="footer-tab-settings">
@@ -307,7 +343,7 @@
           </div>
         </div>
         <ng-template #widgetConfig>
-          <span>Contract Of Interest</span>
+          <span>Contracts Of Interest</span>
         </ng-template>
       </nz-tab>
       <nz-tab [nzTitle]="epMetricConfig">
@@ -317,7 +353,25 @@
 
             <span class="head-title">Default</span>
             <div class="settings-wrapper">
-              <div class="user-config-item"><span>Custom Return Period</span></div>
+              <div class="user-config-item"><span>Custom Return Period</span>
+                <div>
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.epCurves.returnPeriod?.selected"
+                    (ngModelChange)="changeContract($event, 'uwUnit')"
+                    nzMode="multiple"
+                    [nzMaxTagCount]="1"
+                    [nzMaxTagPlaceholder]="tagRPPlaceHolder"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select Return Period"
+                  >
+                    <nz-option *ngFor="let item of state.epCurves.returnPeriod?.data" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
+                  </nz-select>
+                  <ng-template #tagRPPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                </div>
+              </div>
               <div class="user-config-item"><span>Default display of EP Curves</span></div>
             </div>
           </div>

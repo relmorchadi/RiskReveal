@@ -129,7 +129,7 @@ export class SearchMainComponent implements OnInit {
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
   private _filter = {};
-  private _searchContent;
+  searchContent;
 
   constructor(private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
@@ -147,10 +147,10 @@ export class SearchMainComponent implements OnInit {
   private _checkSearchContent(value:string|any[]){
     if(_.isString(value) || value == null){
       this.globalSearchItem = (value as string);
-      this._searchContent = [];
+      this.searchContent = [];
     } else {
       this.globalSearchItem = null;
-      this._searchContent=value;
+      this.searchContent=value;
     }
   }
 
@@ -261,7 +261,7 @@ export class SearchMainComponent implements OnInit {
   }
 
   get filter() {
-    let tags = _.isString(this._searchContent) ? [] : (this._searchContent || []);
+    let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
     let tableFilter = _.map(this._filter, (value, key) => ({key, value}));
     return _.concat(tags, tableFilter).filter(({value}) => value).map((item: any) => ({
       ...item,

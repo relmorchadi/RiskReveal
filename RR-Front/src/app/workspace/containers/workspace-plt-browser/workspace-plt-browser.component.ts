@@ -293,7 +293,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   drawerIndex: any;
   private pageSize: number = 20;
   private lastClick: string;
-  private renamingTag: boolean;
+  renamingTag: boolean;
   private modalInputCache: any;
 
 

@@ -22,7 +22,9 @@ import { ReFormatPIDPipe } from './pipes/re-format-pid.pipe';
     ReactiveFormsModule,
     ContextMenuModule,
     TableModule,
-    FormsModule
+    FormsModule,
+    ColorChromeModule,
+    MultiSelectModule
   ],
   providers: [],
   exports: [
@@ -34,11 +36,6 @@ import { ReFormatPIDPipe } from './pipes/re-format-pid.pipe';
     ReactiveFormsModule,
     FormsModule,
     ...COMPONENTS,
-    KeysPipe,
-    ShowLastPipe,
-    InputSearchPipe,
-    ColorChromeModule,
-    MultiSelectModule,
     ...PIPES
   ]
 })

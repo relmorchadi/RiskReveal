@@ -10,6 +10,16 @@
 //    -webkit-filter: blur(5px) grayscale(90%);
 //  }
 //}
+.my-tabs {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 85vh;
+
+  nz-tabset {
+    height: 100%;
+  }
+}
 
 .layout-comparer {
   background-color: #F4F6FC;
@@ -143,6 +153,12 @@ div.blank-space {
   justify-content: space-between;
   margin-right: 120px;
   margin-top:10px;
+}
+
+::ng-deep{
+  .ant-modal {
+    width: 90% !important;
+  }
 }
 
 .body {

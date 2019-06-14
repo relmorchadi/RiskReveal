@@ -6,10 +6,12 @@ import {ToArrayPipe} from './to-array.pipe';
 import {LogPipe} from './log.pipe';
 import {BoldPipe} from './bold.pipe';
 import {SystemTagFilterPipe} from './system-tag-filter.pipe';
+import {TableSortAndFilterPipe} from "./table-sort-and-filter.pipe";
+import {TextLengthPipe} from "./text-length.pipe";
 import {ReFormatPIDPipe} from './re-format-pid.pipe';
 
 
-export const PIPES = [ReFormatPIDPipe,HighlightDirective, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe, LogPipe, BoldPipe, SystemTagFilterPipe]
+export const PIPES = [ReFormatPIDPipe,HighlightDirective,TableSortAndFilterPipe,TextLengthPipe, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe, LogPipe, BoldPipe, SystemTagFilterPipe]
 
 export * from './input-search.pipe';
 export * from './keys.pipe';

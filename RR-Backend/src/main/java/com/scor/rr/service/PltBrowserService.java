@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+
 
 @Component
 public class PltBrowserService {
@@ -67,7 +69,7 @@ public class PltBrowserService {
             pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
         userTag.setTagName(request.tag.getTagName());
         if (Objects.isNull(userTag.getPltHeaders())) userTag.setPltHeaders(new HashSet<>());
-        userTag.getPltHeaders().addAll(new HashSet<>(pltHeaders));
+        userTag.setPltHeaders(new HashSet<>(pltHeaders));
         userTag.setWorkspace(workspace);
         userTagRepository.save(userTag);
         return userTag;
