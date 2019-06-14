@@ -13,11 +13,14 @@ export class PltMainTableComponent implements OnInit {
     contextMenuItems: any[];
     pltColumns: any[];
     listOfPltsData: [];
+    listOfDeletedPltsData: [];
     listOfPltsCache: [];
+    listOfDeletedPltsCache: [];
     listOfPlts: [];
+    listOfDeletedPlts: [];
     selectedPlt: any;
     selectedListOfPlts: any;
-    deletedPlts: any;
+    selectedListOfDeletedPlts: any;
     selectAll: boolean;
     someItemsAreSelected: boolean;
     showDeleted: boolean;
@@ -48,12 +51,15 @@ export class PltMainTableComponent implements OnInit {
   }
 
   checkAll($event){
-    this.onCheckAll.emit(true);
+    this.onCheckAll.emit(this.tableInputs.showDeleted);
   }
 
   checkBoxSort() {
     this.activeCheckboxSort = !this.activeCheckboxSort;
-    this.onCheckBoxSort.emit( this.activeCheckboxSort ? _.sortBy( this.tableInputs.listOfPltsData, [(o: any) => !o.selected]) : this.tableInputs.listOfPltsCache)
+    this.onCheckBoxSort.emit( this.activeCheckboxSort ?
+      _.sortBy( !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData
+        :
+        this.tableInputs.listOfDeletedPltsData, [(o: any) => !o.selected]) : !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsCache : this.tableInputs.listOfDeletedPltsCache)
   }
 
   sortChange(field: any, sortCol: any) {
@@ -68,13 +74,9 @@ export class PltMainTableComponent implements OnInit {
 
   filter(key: string, value) {
     if(value) {
-      this.onFilter.emit({
-        filterData: _.merge({},this.tableInputs.filterData, {[key]: value})
-      })
+      this.onFilter.emit(_.merge({},this.tableInputs.filterData, {[key]: value}))
     } else {
-      this.onFilter.emit({
-        filterData: _.omit(this.tableInputs.filterData, [key])
-      })
+      this.onFilter.emit(_.omit(this.tableInputs.filterData, [key]))
     }
   }
 
@@ -85,13 +87,13 @@ export class PltMainTableComponent implements OnInit {
   selectSinglePLT(pltId: number, $event: boolean) {
     this.onSelectSinglePlt.emit({
       [pltId]: {
-        type: $event ? 'select' : 'unselect'
+        type:  $event
       }
     })
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(this.tableInputs.selectedListOfPlts, el => el == pltId) >= 0;
+    const isSelected = _.findIndex( !this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
@@ -99,8 +101,8 @@ export class PltMainTableComponent implements OnInit {
       this.lastSelectedId = i;
       this.onPltClick.emit(
         _.zipObject(
-          _.map(this.tableInputs.listOfPlts, plt => plt),
-          _.map(this.tableInputs.listOfPlts, plt =>  plt == pltId && (this.lastClick == 'withKey' || !isSelected) ? ({type: 'select'}) : ({type: 'unselect'}))
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt =>   ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected) }))
         )
       )
       this.lastClick= null;
@@ -122,8 +124,8 @@ export class PltMainTableComponent implements OnInit {
         const min = _.min([i, this.lastSelectedId]);
         this.onPltClick.emit(
           _.zipObject(
-            _.map(this.tableInputs.listOfPlts, plt => plt),
-            _.map(this.tableInputs.listOfPlts,(plt,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )),
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts,(plt,i) =>  ({type:  i <= max  && i >= min})),
           )
         )
       } else {

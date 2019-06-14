@@ -9,22 +9,24 @@
     <div class="my-tabs">
       <app-plt-left-menu
           [menuInputs]="{
-            tagContextMenu: this.tagContextMenu,
-            wsId: this.workspaceId,
-            uwYear: this.uwy,
-            projects: this.projects,
-            showDeleted: this.showDeleted,
-            filterData: this.filterData,
-            filters: this.filters,
-            addTagModalIndex: this.tagModalIndex,
-            fromPlts: this.fromPlts,
-            deletedPltsLength: (this.deletedPlts | keys).length,
-            userTags: this.userTags,
-            systemTags: this.systemTags,
-            selectedListOfPlts: this.selectedListOfPlts,
-            systemTagsCount: this.systemTagsCount,
-            _tagModal: this.addTagModal,
-            _renamingTag: this.renamingTag
+            tagContextMenu: tagContextMenu,
+            wsId: workspaceId,
+            uwYear: uwy,
+            projects: projects,
+            showDeleted: showDeleted,
+            filterData: filterData,
+            filters: filters,
+            addTagModalIndex: tagModalIndex,
+            fromPlts: fromPlts,
+            deletedPltsLength: (listOfDeletedPlts | keys).length,
+            userTags: userTags,
+            systemTags: systemTags,
+            selectedListOfPlts: selectedListOfPlts,
+            systemTagsCount: systemTagsCount,
+            _tagModal: addTagModal,
+            _renamingTag: renamingTag,
+            _modalSelect: addModalSelect,
+            wsHeaderSelected: wsHeaderSelected
           }"
           (onAssignPltsToTag)="assignPltsToTag($event)"
           (onProjectFilter)="filter($event)"
@@ -34,13 +36,16 @@
           (onSelectSysTagCount)="selectSystemTag($event)"
           (onSetFilters)="setFilters($event)"
           (onSetFromPlts)="setFromPlts($event)"
-          (onSetSelectedSystemTags)="setSysTags($event)"
           (onSetSelectedUserTags)="setUserTags($event)"
           (onToggleDeletedPlts)="toggleDeletePlts()"
           (setTagModalIndex)="setModalIndex($event)"
           (setTagModalVisibility)="setTagModal($event)"
           (onSetTagForMenu)="setTagForMenu($event)"
           (onSetRenameTag)="setRenameTag($event)"
+          (emitFilters)="emitFilters($event)"
+          (unCkeckAllPlts)="unCheckAll()"
+          (onWsHeaderSelection)="setWsHeaderSelect($event)"
+          (onModalSelect)="setModalSelectedItems($event)"
         >
 
         </app-plt-left-menu>
@@ -57,11 +62,14 @@
                   contextMenuItems: this.contextMenuItems,
                   pltColumns: this.pltColumns,
                   listOfPltsData: this.listOfPltsData,
+                  listOfDeletedPltsData: this.listOfDeletedPltsData,
                   listOfPltsCache: this.listOfPltsCache,
+                  listOfDeletedPltsCache: this.listOfDeletedPltsCache,
                   listOfPlts: this.listOfPlts,
+                  listOfDeletedPlts: this.listOfDeletedPlts,
                   selectedPlt: this.selectedPlt,
                   selectedListOfPlts: this.selectedListOfPlts,
-                  deletedPlts: this.deletedPlts,
+                  selectedListOfDeletedPlts: this.selectedListOfDeletedPlts,
                   selectAll: this.selectAll,
                   someItemsAreSelected: this.someItemsAreSelected,
                   showDeleted: this.showDeleted,
@@ -69,7 +77,7 @@
                   filters: this.filters,
                   sortData: this.sortData
                 }"
-            (onCheckAll)="checkAll()"
+            (onCheckAll)="checkAll($event)"
             (onCheckBoxSort)="checkBoxSort($event)"
             (onFilter)="filter($event)"
             (onItemSelectForMenu)="setSelectedMenuItem($event)"

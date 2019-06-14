@@ -11,6 +11,7 @@ export class PltLeftMenuComponent implements OnInit {
   @Input() menuInputs: {
     tagContextMenu: any;
     _tagModal: boolean;
+    _modalSelect: [];
     _renamingTag: boolean;
     wsId: string;
     uwYear: string;
@@ -22,9 +23,9 @@ export class PltLeftMenuComponent implements OnInit {
     fromPlts: boolean;
     deletedPltsLength: number;
     userTags: any[];
-    systemTags: any[];
     selectedListOfPlts: any[];
     systemTagsCount: any;
+    wsHeaderSelected: boolean;
   }
   
   @Output() onResetPath= new EventEmitter();
@@ -34,17 +35,19 @@ export class PltLeftMenuComponent implements OnInit {
   @Output() setTagModalIndex= new EventEmitter();
   @Output() onSetFromPlts= new EventEmitter();
   @Output() onSetFilters= new EventEmitter();
+  @Output() emitFilters= new EventEmitter();
   @Output() onSetSelectedUserTags= new EventEmitter();
-  @Output() onSetSelectedSystemTags= new EventEmitter();
   @Output() onSelectSysTagCount= new EventEmitter();
   @Output() onRenameTag= new EventEmitter();
   @Output() onAssignPltsToTag= new EventEmitter();
   @Output() setTagModalVisibility= new EventEmitter();
   @Output() onSetTagForMenu= new EventEmitter();
   @Output() onSetRenameTag= new EventEmitter();
+  @Output() unCkeckAllPlts= new EventEmitter();
+  @Output() onWsHeaderSelection= new EventEmitter();
+  @Output() onModalSelect= new EventEmitter();
 
   _modalInput: string;
-  _modalSelect: any;
   _renamingTag: boolean;
   _modalInputCache: string;
   colorPickerIsVisible: boolean;
@@ -71,13 +74,18 @@ export class PltLeftMenuComponent implements OnInit {
 
   resetPath(){
     this.onResetPath.emit(false);
+    this.onWsHeaderSelection.emit(true)
+    this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, ['project']))
   }
   
   filter(key, filterData, value){
     if (key == 'project') {
+      this.unCkeckAllPlts.emit();
       if (this.menuInputs.filterData['project'] && this.menuInputs.filterData['project'] != '' && value == this.menuInputs.filterData['project']) {
+        this.onWsHeaderSelection.emit(true);
         this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, [key]))
       } else {
+        this.onWsHeaderSelection.emit(false);
         this.onProjectFilter.emit(_.merge({}, this.menuInputs.filterData, {[key]: value}))
       }
       this.onSelectProjects.emit(_.map(this.menuInputs.projects, t => {
@@ -113,7 +121,8 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   modalSelect(value: any) {
-    this._modalSelect = value;
+    console.log(value);
+    this.onModalSelect.emit(value);
   }
 
   renamingTag(value: boolean) {
@@ -143,7 +152,6 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   handlePopUpConfirm() {
-    console.log(this.menuInputs)
     if(this.menuInputs._renamingTag) {
       if(this._modalInput != this._modalInputCache){
         this.onRenameTag.emit({
@@ -152,12 +160,13 @@ export class PltLeftMenuComponent implements OnInit {
         })
       }
     }else {
+
       if(this.menuInputs.addTagModalIndex === 1 ){
         this.onAssignPltsToTag.emit({
           plts: this.menuInputs.selectedListOfPlts,
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
-          tags: this._modalSelect,
+          tags: this.menuInputs._modalSelect,
           type: 'many'
         })
       }
@@ -173,6 +182,7 @@ export class PltLeftMenuComponent implements OnInit {
           }
         });
       }
+
     }
     this.toggleModal();
   }
@@ -182,32 +192,35 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   resetFilterByTags() {
-    this.onSetFilters.emit({
-      systemTag: [],
-      userTag: []
-    });
+    this.onSetFilters.emit( {
+        systemTag: [],
+        userTag: []
+      });
     this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => ({...t, selected: false})));
-    this.onSetSelectedSystemTags.emit(_.map(this.menuInputs.systemTags, t => ({...t, selected: false})))
   }
 
   setFilter(filter: string, tag,section) {
     if(filter === 'userTag'){
       this.onSetFilters.emit(_.findIndex(this.menuInputs.filters[filter], e => e == tag.tagId) < 0 ?
-        _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
-        _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)}));
+          _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
+          _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)})
+        );
 
       this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t))
+
+      this.emitFilters.emit(this.menuInputs.filters);
     }else{
       const {
         systemTag
       } = this.menuInputs.filters;
 
       this.onSetFilters.emit(_.findIndex(systemTag, sectionFilter => sectionFilter[tag] === section ) < 0 ?
-        _.merge({},this.menuInputs.filters,{
-          systemTag: _.merge([], systemTag, {
-            [systemTag.length]: { [tag] : section }
-          })
-        }) : _.assign({}, this.menuInputs.filters,{ systemTag: _.filter( systemTag, sectionFilter => sectionFilter[tag] != section)}))
+          _.merge({},this.menuInputs.filters,{
+            systemTag: _.merge([], systemTag, {
+              [systemTag.length]: { [tag] : section }
+            })
+          }) : _.assign({}, this.menuInputs.filters,{ systemTag: _.filter( systemTag, sectionFilter => sectionFilter[tag] != section)})
+      )
     }
   }
 
@@ -229,7 +242,6 @@ export class PltLeftMenuComponent implements OnInit {
 
   getProjectID(projectId: string | string) {
     const str= _.split(projectId,'-');
-
     console.log(_.join([str[0],_.trimStart(str[1],'0')],'-'));
     return _.join([str[0],_.trimStart(str[1],'0')],'-')
   }

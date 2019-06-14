@@ -2,6 +2,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  nz-tabset {
+    overflow: visible;
+  }
     .ant-modal {
       top: 0;
     }
@@ -103,10 +107,17 @@
         padding: 2px 3px 2px 2px;
       }
     }
+
+    .wsHeader {
+      font-size: 1.2em;
+    }
     span {
-      letter-spacing: 0.2px;
-      font-size: 0.9em;
-      padding: 2px 7px;
+      i {
+        background-color: #0700e4;
+        padding: 4px;
+        color: white;
+        vertical-align: middle;
+      }
     }
 
     .active-path {
@@ -156,14 +167,13 @@
   }
 
   .chips {
-    padding: 4px 8px;
+    padding: 1px 10px;
     color: #fff;
     font-family: Rubik;
     border-radius: 10px;
     font-size: .9em;
     display: flex;
     max-width: max-content;
-    margin: 1px;
 
     .chips-content {
       cursor: pointer;
@@ -179,14 +189,14 @@
       color: white;
       position: relative;
       .chips-layer {
-        background-color: white;
         position: absolute;
         top: 0;
         left: 0;
-        border-radius: 25px;
-        height: 100%;
-        width: 100%;
+        border-radius: 34px;
+        height: 70%;
+        width: 80%;
         opacity: .3;
+        transform: translate(11%, 18%);
       }
     }
   }

@@ -14445,11 +14445,11 @@ export class RenewalContractScopeComponent implements OnInit {
     {field: 'UNDERWRITINGUNITNAMELL', header: 'Uw Unit', width: '50px', display: true, sorted: false, type: 'text'},
     {field: 'lastModifiedBy', header: 'Last Modified By', width: '80px', display: true, sorted: false, type: 'text'},
     {field: 'lastModifiedDate', header: 'Last Modified Date', width: '80px', display: true, sorted: false, type: 'date'},
-    {field: 'rrStatus', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
+    /*{field: 'rrStatus', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
     {field: 'plt', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
     {field: 'publishedToPricing', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
     {field: 'usedInPricing', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
-    {field: 'publishedToAccumulation', header: '', width: '20px', display: true, sorted: false, type: 'text'}
+    {field: 'publishedToAccumulation', header: '', width: '20px', display: true, sorted: false, type: 'text'}*/
   ];
   mockData = [];
   private defaultCountry: string;
