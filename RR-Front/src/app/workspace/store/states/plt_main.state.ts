@@ -1,9 +1,9 @@
-import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import {pltMainModel} from "../../model";
 import * as fromPlt from '../actions'
 import {forkJoin, from, of} from 'rxjs';
-import {catchError, map, mapTo, mergeMap, tap} from 'rxjs/operators';
+import {catchError, map, mergeMap} from 'rxjs/operators';
 import {PltApi} from '../../services/plt.api';
 
 const initiaState: pltMainModel = {
@@ -87,7 +87,11 @@ export class PltMainState implements NgxsOnInit {
     pltGrouping: 'Grouped',
     userOccurenceBasis: 'userOccurenceBasis'
   };
+  status = ['in progress', 'checked', 'locked'];
 
+  getRandomInt(min = 0, max = 2) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
     const {
@@ -103,7 +107,17 @@ export class PltMainState implements NgxsOnInit {
         mergeMap( (data) => {
           ctx.patchState({
             data: Object.assign({},
-              ...data.plts.map(plt => ({[plt.pltId]: { ...plt, selected: false, visible: true,tagFilterActive: false,opened: false,deleted: false }}))
+              ...data.plts.map(plt => ({
+                [plt.pltId]: {
+                  ...plt,
+                  selected: false,
+                  visible: true,
+                  tagFilterActive: false,
+                  opened: false,
+                  deleted: false,
+                  status: this.status[this.getRandomInt()]
+                }
+              }))
             ),
             filters: {
               systemTag: [],

@@ -1,10 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
-import {pltMainModel, PltMainState} from '../../store';
-import {map, mergeMap, tap} from 'rxjs/operators';
+import {PltMainState} from '../../store';
+import {map} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
 import {Table} from 'primeng/table';
 
@@ -82,6 +82,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     ];
+
 
   epMetricsCurrencySelected: any = 'EUR';
   CalibrationImpactCurrencySelected: any = 'EUR';
