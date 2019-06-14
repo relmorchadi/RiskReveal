@@ -137,10 +137,14 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         user-select: none;
 
-        div {
+        .td-wrapper {
           width: 100%;
           height: 40px;
           align-items: center;
+        }
+
+        .td-wrapper-append {
+          height: auto !important;
         }
 
         .ant-progress-text {
@@ -202,6 +206,90 @@
       tr.selected_contract_item {
         background-color: #E9E9E9 !important;
       }
+    }
+  }
+}
+
+.data-append-list {
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  .data-append-item {
+    display: flex;
+    height: 35px;
+    width: 100%;
+    padding: 5px 15px;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    .list-item-left {
+      display: flex;
+      align-items: center;
+
+      .item-list-title-wrapper {
+        display: flex;
+        flex-direction: column;
+        margin-left: 5px;
+        width: 70%;
+        flex: 1;
+        .item-list-title {
+          height: 15px;
+          color: rgba(0, 0, 0, 0.87);
+          font-family: Rubik;
+          font-size: 13px;
+          letter-spacing: 0.08px;
+          line-height: 24px;
+        }
+
+        .item-list-subtitle {
+          height: 24px;
+          color: rgba(0, 0, 0, 0.6);
+          font-family: Rubik;
+          font-size: 11px;
+          letter-spacing: 0.08px;
+          line-height: 24px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+      }
+
+      ::ng-deep {
+        .ant-progress-text {
+          display: block;
+          color: #03DAC4;
+        }
+
+        .ant-progress-text {
+          display: none;
+        }
+
+        .ant-progress-circle-path {
+          stroke: #03DAC4;
+          stroke-width: 8px;
+        }
+      }
+    }
+  }
+  .list-item-info {
+    display: flex;
+    align-items: center;
+
+    .task-duration {
+      color: rgba(0, 0, 0, 0.38);
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 0.9;
+      white-space: nowrap;
+      padding-left: 4px;
+    }
+
+    i {
+      margin-left: 8px;
+      font-size: 18px;
     }
   }
 }
