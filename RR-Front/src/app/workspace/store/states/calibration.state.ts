@@ -274,6 +274,7 @@ export class CalibrationState implements NgxsOnInit {
     });
   }
 
+
   @Action(fromPlt.applyAdjustment)
   applyAdjustment(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.applyAdjustment) {
     const state = ctx.getState();
@@ -303,6 +304,21 @@ export class CalibrationState implements NgxsOnInit {
       adjustmentApplication: [
         ...state.adjustmentApplication,
         ...adjustmentApplication,
+      ]
+    });
+  }
+
+  @Action(fromPlt.dropAdjustment)
+  dropAdjustment(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.dropAdjustment) {
+    const state = ctx.getState();
+
+    let pltId = payload.pltId;
+    let newAdj = {...payload.adjustement};
+
+    ctx.patchState({
+      adjustmentApplication: [
+        ...state.adjustmentApplication,
+        {pltId: pltId, adj: newAdj}
       ]
     });
   }

@@ -1,13 +1,13 @@
 <app-left-menu></app-left-menu>
 <div class="plt-browser-wrapper">
-  <div class="mr-3 ml-3" style="flex: 1;">
+  <div class="mr-3 ml-3">
     <div class="title-wrapper" nz-row>
       <div class="title-section">
-        <h4>Calibration</h4>
+        <h4>Calibration Editor</h4>
       </div>
     </div>
 
-    <div class="my-tabs">
+    <div class="my-tabs" style="margin-bottom: 10px;">
       <div class="noMargin">
         <nz-tabset class="tabset-left">
           <nz-tab [nzTitle]="path" *ngIf="mode==='pltManager'">
@@ -205,7 +205,7 @@
         <div style="background-color: #ffffff">
 
 
-          <div class="PLTs-content" style="width:100%">
+          <div class="PLTs-content" style="overflow:scroll; width: 1150px;">
             <p-contextMenu #cm appendTo="body" [model]="contextMenuItems"></p-contextMenu>
             <p-table
               class="temp"
@@ -222,7 +222,7 @@
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
                   <col style="min-width: 43px">
-                  <col *ngFor="let col of dataColumns" [ngStyle]="{'width': col?.icon ? '25px' : 'auto'}">
+                  <col *ngFor="let col of dataColumns" [ngStyle]="{'width': col?.width+'px'}">
                 </colgroup>
               </ng-template>
               <ng-template pTemplate="header" let-columns>
@@ -239,7 +239,6 @@
                         style="background-color: #ffffff !important;height: 70px!important;">
                     </th>
                   </ng-container>
-                  <th style="background-color: #ffffff !important;"></th>
                   <th
                     style="border-right: none !important;background-color: #ffffff !important;height: 70px!important;">
                     <nz-dropdown [nzPlacement]="'bottomRight'">
@@ -254,7 +253,9 @@
                       </ul>
                     </nz-dropdown>
                   </th>
-                  <th style="background-color: #ffffff !important; height: 70px!important;  position: relative;"
+                  <th style="background-color: #ffffff !important;"></th>
+                  <th class="separator-left"
+                      style="background-color: #ffffff !important; height: 70px!important;  position: relative;"
                       colspan="6">
                     <span
                       style="width: 60px !important; padding: 0px 10px 0px 12px; font-size: 15px; font-weight: bold;position: absolute;">Template</span>
@@ -308,7 +309,7 @@
                   </th>
 
                   <ng-container *ngFor="let col of dataColumns; let i = index">
-                    <th *ngIf="i > 0 && col.extended" [ngStyle]="{'width': col?.icon ? '25px' : ''}"
+                    <th *ngIf="i > 0 && col.extended" [ngStyle]="{'width': col?.width}"
                         [ngClass]="{ 'inuring-header':col.fields=='inuring','separator-left':col?.fields == 'overallLMF','draggable': col?.dragable}">
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
@@ -390,11 +391,15 @@
                     <label nz-checkbox [nzChecked]="rowData.selected"
                            (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
                   </td>
-                  <td dndDropzone (dndDrop)="onDrop($event,adjutmentApplication,rowData.pltId)"
+                  <td dndDropzone
+                      dndHorizontal
+                      dndEffectAllowed="copyMove"
+                      (dndDrop)="onDrop($event,rowData.pltId)"
                       [ngClass]="{'draggable':col?.dragable,'fixed':!col?.dragable}"
                       *ngFor="let col of dataColumns; let i = index"
                       (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
                       [ngStyle]="{'width': i ==0 ?'60px':'','background-color':getDragableColor(col.fields)}">
+                    <div class="dndPlaceholder" dndPlaceholderRef></div>
                     <ng-container *ngIf="i === 0">
                       <div class="td-wrapper-tags">
                         <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
@@ -426,7 +431,12 @@
                         </div>
                       </ng-container>
                       <ng-container *ngIf="col?.dragable">
-                        <div style="display: flex;" class="text-elipsice border-dragable"
+                        <div dndDropzone
+                             dndHorizontal
+                             dndEffectAllowed="copyMove"
+                             (dndDrop)="onDrop($event,rowData.pltId)"
+                             style="display: flex;"
+                             class="text-elipsice border-dragable"
                              [ngClass]="{'separator-left':col?.fields == 'overallLMF'}"
                              [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">
 
@@ -439,21 +449,22 @@
                                      style=" background: #f3f3f3;" value="2.1">
                             </div>
                           </div>
+                          <div class="dndPlaceholder" dndPlaceholderRef></div>
                           <ng-container *ngFor="let adjs of adjutmentApplication">
-                            <div dndDropzone (dndDrop)="onDropDiv($event,adjutmentApplication)"
-                                 *ngIf="col.fields=='base' && adjs.pltId == rowData.pltId && adjs.adj.category == 'Base'"
-                                 style="display: flex;height: max-content;width:50px !important;">
+                            <div
+                              *ngIf="col.fields=='base' && adjs.pltId == rowData.pltId && adjs.adj.category == 'Base'"
+                              style="display: flex;height: max-content;">
                               <div [dndDraggable]="adjs"
-                                   (dndCanceled)="onDragged($event,adjs.adj, adjutmentApplication, 'none','cancled')"
-                                   (dndEnd)="onDragEnd($event)"
-                                   (dndMoved)="onDragged($event,adjs.adj, adjutmentApplication, 'move','td1')"
+                                   (dragover)="adjustColWidth(adjs.adj,80)"
+                                   (dragend)="adjustColWidth(adjs.adj,0)"
                                    (dndStart)="onDragStart($event)"
+                                   (dndEnd)="onDragEnd($event)"
+                                   (dndMoved)="onDragged(adjs, 'move')"
                                    dndEffectAllowed="move"
                                    class="adjustDiv">
                                 <span class="spanStyle">{{adjs?.adj?.name}}</span>
                                 <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                   <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
-                                     dndHandle
                                      style="font-size: 18px;float: right"></i>
                                   <ul nz-menu>
                                     <li nz-menu-item>
@@ -471,14 +482,15 @@
                                 <input class="templateInput" [value]="adjs?.adj?.value">
                               </div>
                             </div>
-                            <div dndDropzone (dndDrop)="onDropDiv($event,adjs.adj)"
-                                 *ngIf="col.fields=='client' && adjs.pltId == rowData.pltId && adjs.adj.category == 'Client'"
-                                 style="display: flex;height: max-content">
+                            <div
+                              *ngIf="col.fields=='client' && adjs.pltId == rowData.pltId && adjs.adj.category == 'Client'"
+                              style="display: flex;height: max-content">
                               <div [dndDraggable]="adjs"
-                                   (dndCanceled)="onDragged($event,adjs.adj, adjutmentApplication, 'none','cancled')"
-                                   (dndEnd)="onDragEnd($event)"
-                                   (dndMoved)="onDragged($event,adjs.adj, adjutmentApplication, 'move','td1')"
                                    (dndStart)="onDragStart($event)"
+                                   (dragover)="adjustColWidth(adjs.adj,80)"
+                                   (dragend)="adjustColWidth(adjs.adj,0)"
+                                   (dndEnd)="onDragEnd($event)"
+                                   (dndMoved)="onDragged(adjs, 'move')"
                                    dndEffectAllowed="move"
                                    class="adjustDiv">
                                 <span class="spanStyle">{{adjs?.adj?.name}}</span>
@@ -532,11 +544,22 @@
               </ng-template>
             </p-table>
           </div>
+          <div style="margin: 20px 12px 13px 26px;" class="templateFooter pull-right">
+            <button class="ant-btn ant-btn-default"
+                    style="background-color: #ffffff !important;color: #070acf;border-color:#070acf;margin-right: 20px; width: 100px;height: 30px; ">
+              Export
+            </button>
+            <button class="ant-btn ant-btn-default"
+                    style="background-color: #ffffff !important;color: #0b2ccf;border-color:#070acf;margin-right: 20px;width: 100px;height: 30px; ">
+              Save As
+            </button>
+            <button class="ant-btn ant-btn-default" style="width: 100px;height: 30px; ">APPLY</button>
+          </div>
         </div>
       </div>
 
-
     </div>
+    <app-last-adjustment-matrix></app-last-adjustment-matrix>
   </div>
 
   <div nz-col style="width: 60px;">
@@ -551,7 +574,6 @@
 
 
 <!--<nz-drawer [nzClosable]="false" [nzVisible]="visible" nzPlacement="right" (nzOnClose)="closeDrawer()" [nzWidth]=650>-->
-
 
 <div *ngIf="visible" class="drawer">
   <div class="drawer-content">

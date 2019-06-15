@@ -61,6 +61,13 @@ export class applyAdjustment {
   }
 }
 
+export class dropAdjustment {
+  static readonly type = '[Calibration]drop Adjustment';
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class initCalibrationData {
   static readonly type = '[Calibration] initData';
 

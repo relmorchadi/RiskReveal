@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -16,6 +17,7 @@ import {Select, Store} from "@ngxs/store";
 import {
   applyAdjustment,
   deleteAdjsApplication,
+  dropAdjustment,
   extendPltSection,
   replaceAdjustement,
   saveAdjModification,
@@ -23,7 +25,7 @@ import {
   saveAdjustmentApplication,
   saveAdjustmentInPlt
 } from "../../store/actions";
-import {map} from "rxjs/operators";
+import {first, map} from "rxjs/operators";
 import {CalibrationState, PltMainState} from "../../store/states";
 import {Observable} from "rxjs";
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
@@ -35,7 +37,8 @@ import {ActivatedRoute} from "@angular/router";
 @Component({
   selector: 'app-workspace-calibration',
   templateUrl: './workspace-calibration.component.html',
-  styleUrls: ['./workspace-calibration.component.scss']
+  styleUrls: ['./workspace-calibration.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChanges {
   searchAddress: string;
@@ -60,7 +63,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   addAdjustement: any;
   modifyModal: any;
   idPlt: any;
-  templateWidth = '100px';
+  templateWidth = '120';
+  tableWidth = '1200';
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   iconNotePosition: any;
@@ -89,7 +93,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: '',
       header: 'User Tags',
-      width: '60px',
+      width: '60',
       sorted: false,
       filtred: false,
       icon: null,
@@ -101,7 +105,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'pltId',
       header: 'PLT ID',
-      width: '100px',
+      width: '100',
       sorted: true,
       filtred: true,
       icon: null,
@@ -113,7 +117,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'pltName',
       header: 'PLT Name',
-      width: '140px',
+      width: '200',
       sorted: true,
       filtred: true,
       icon: null,
@@ -125,7 +129,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'peril',
       header: 'Peril',
-      width: '60px',
+      width: '60',
       sorted: true,
       filtred: true,
       icon: null,
@@ -137,7 +141,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'regionPerilCode',
       header: 'Region Peril Code',
-      width: '80px',
+      width: '80',
       sorted: true,
       filtred: true,
       icon: null,
@@ -149,7 +153,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'regionPerilName',
       header: 'Region Peril Name',
-      width: '130px',
+      width: '130',
       sorted: true,
       filtred: true,
       icon: null,
@@ -161,7 +165,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'grain',
       header: 'Grain',
-      width: '160px',
+      width: '160',
       sorted: true,
       filtred: true,
       icon: null,
@@ -173,7 +177,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'vendorSystem',
       header: 'Vendor System',
-      width: '90px',
+      width: '90',
       sorted: true,
       filtred: true,
       icon: null,
@@ -185,7 +189,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'rap',
       header: 'RAP',
-      width: '70px',
+      width: '70',
       sorted: true,
       filtred: true,
       icon: null,
@@ -197,7 +201,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'action',
       header: '',
-      width: '25px',
+      width: '25',
       sorted: false,
       filtred: false,
       icon: 'icon-focus-add',
@@ -209,7 +213,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'action',
       header: '',
-      width: '25px',
+      width: '25',
       sorted: false,
       filtred: false,
       icon: 'icon-note',
@@ -1165,6 +1169,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }));
       console.log('here 2')
     }
+    this.adjustColWidth(adjustement);
   }
 
   selectCategory(p) {
@@ -1189,13 +1194,35 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.store$.dispatch(new saveAdjustmentApplication(this.appliedAdjutement));
   }
 
+  filterArr(data, key) {
+    return data.reduce((result, current) => {
+      if (!result[current[key]]) {
+        result[current[key]] = 1;
+      } else {
+        result[current[key]] += 1;
+      }
+      return result;
+    }, {})
+  }
+
+  adjustColWidth(adj, dndDragover = 0) {
+    this.adjutmentApplication$.pipe(first()).subscribe(data => {
+      const colWidth = 110 * Math.max(..._.values(this.filterArr(_.filter(data, item =>
+        item.adj.category === adj.category
+      ), "pltId"))) + dndDragover;
+      let index = _.findIndex(this.pltColumns, {fields: adj.category.toLowerCase()});
+      this.pltColumns[index].width = colWidth.toString();
+    });
+  }
   applyToAll(adj) {
+    console.log('applytoall');
     this.store$.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
       pltId: this.listOfPlts,
     }));
+    this.adjustColWidth(adj);
   }
 
   replaceToAllAdjustement(adj) {
@@ -1206,6 +1233,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       pltId: this.listOfPlts,
       all: true
     }));
+    this.adjustColWidth(adj);
   }
 
   replaceToSelectedPlt(adj) {
@@ -1216,6 +1244,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       pltId: this.selectedListOfPlts,
       all: false
     }));
+    this.adjustColWidth(adj);
   }
 
   deleteAdjs(adj, pltId) {
@@ -1223,15 +1252,19 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       adjustement: adj,
       pltId: pltId
     }));
+    this.adjustColWidth(adj);
   }
 
   applyToSelected(adj) {
+    console.log('applytoselected');
+
     this.store$.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
       pltId: this.selectedListOfPlts,
     }));
+    this.adjustColWidth(adj);
   }
 
   ModifyAdjustement(adj) {
@@ -1246,6 +1279,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       this.columnPosition = adj.value;
     }
     this.isVisible = true
+    this.adjustColWidth(adj);
   }
 
   saveAdjModification(adj) {
@@ -1268,102 +1302,25 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }));
   }
 
-  onDropDiv(event: DndDropEvent, list: any[]) {
-    console.log("ondragDiv")
 
-    let index = event.index;
-
-    if (typeof index === "undefined") {
-
-      index = list.length;
-    }
-    let id = event.event.toElement.id;
-    //event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
-    console.log("heeeee. ", event.data.category)
-
-    if (event.data.category == "Base" || event.data.category == "Client" || event.data.category == "poin") {
-      console.log("dropTrue", this.dndBool)
-      this.dndBool = true;
-      list.splice(index, 0, event.data);
-    } else {
-      this.dndBool = false;
-      console.log("dropFalse", this.dndBool)
-    }
+  onDrop(event: DndDropEvent, pltId) {
+    console.log("ondrop");
+    this.store$.dispatch(new dropAdjustment({
+      pltId: pltId,
+      adjustement: event.data.adj
+    }))
 
   }
 
-  onDrop(event: DndDropEvent, list: any[]) {
-    console.log("ondrag")
-    console.log(event);
-    let index = event.index;
+  onDragged(item: any, effect: DropEffect) {
 
-    if (typeof index === "undefined") {
-
-      index = list.length;
-    }
-    let id = event.event.toElement.id;
-    console.log("heeeee.1 ", event.data.adj.category)
-    //event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
-    console.log("heeeee.2 ", event.data.adj.category)
-
-    if (event.data.adj.category == "Base" || event.data.adj.category == "Client") {
-      console.log("dropTrue", this.dndBool)
-      this.dndBool = true;
-      if (event.data.adj.linear) {
-        this.store$.dispatch(new applyAdjustment({
-          adjustementType: event.data.adj.value,
-          adjustement: event.data.adj,
-          columnPosition: this.columnPosition,
-          pltId: this.selectedListOfPlts,
-        }));
-      } else {
-        this.store$.dispatch(new applyAdjustment({
-          adjustementType: "linear",
-          adjustement: event.data.adj,
-          columnPosition: event.data.adj.value,
-          pltId: this.selectedListOfPlts,
-        }));
-      }
-    } else {
-      this.dndBool = false;
-      console.log("dropFalse", this.dndBool)
-    }
-
-  }
-
-  onDragged(event: DragEvent, item: any, list: any[], effect: DropEffect, a?) {
-    console.log(list);
-    if (effect == "none") return;
-    if (this.dndBool) {
+    if (effect === "move") {
       this.deleteAdjs(item.adj, item.pltId);
-    }
-    if (item.content === "Block") {
-      // simulate long running task
-      this.sleep(1000);
-    } else {
-      // run long task in next loop
-      setTimeout(() => this.sleep(1000), 0);
     }
   }
 
   onDragEnd(event: DragEvent) {
 
-    this.currentDraggableEvent = event;
-  }
-
-  sleep(millis: number) {
-
-    var date = new Date();
-    var curDate = null;
-    do {
-      curDate = new Date();
-    }
-    while (curDate.getTime() - date.getTime() < millis);
-  }
-
-  hideIcon(adj) {
-    console.log("out")
-    adj.hover = false;
   }
 
   onDragStart(event: DragEvent) {
@@ -1393,9 +1350,5 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
       return;
     }
-  }
-
-  private loadData(params: any) {
-    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}));
   }
 }
