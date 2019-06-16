@@ -1,9 +1,9 @@
-<p-contextMenu #cm appendTo="body" [model]="tableInputs.contextMenuItems"></p-contextMenu>
+<p-contextMenu #cm appendTo="body" [model]="contextMenuItemsCache"></p-contextMenu>
 <p-table
   [columns]="tableInputs.pltColumns"
   [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
   [resizableColumns]="true"
-  [(contextMenuSelection)]="tableInputs.selectedPlt"
+  [(contextMenuSelection)]="contextMenuSelect"
   [contextMenu]="cm"
   [scrollable]="true"
   [responsive]="true"
@@ -70,7 +70,7 @@
   </ng-template>
   <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
     <tr
-      (contextmenu)="selectedItemForMenu(rowData.pltId)"
+      (contextmenu)="selectedItemForMenu(rowData)"
       [pContextMenuRow]="rowData"
       [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
       *ngIf="tableInputs.filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
@@ -79,7 +79,7 @@
           <label nz-checkbox [nzChecked]="rowData.selected"
                  (nzCheckedChange)="selectSinglePLT(rowData.pltId, $event)"></label>
         </div>
-        <div *ngIf="col.type === 'tags'" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
+        <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col.type === 'tags'" >
           <div class="td-wrapper-tags">
             <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
               <span class="tag-el" *ngIf="i < 2" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
@@ -88,13 +88,13 @@
             </ng-container>
           </div>
         </div>
-        <div *ngIf="col.type === 'fieldBold'">
+        <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col.type === 'fieldBold'">
           <ng-container>
             <div class="text-elipsice" style="font-weight: bold"
                  [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
           </ng-container>
         </div>
-        <div *ngIf="col?.type == 'field' || col?.type == 'date'">
+        <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' || col?.type == 'date'">
           <ng-container>
               <div class="text-elipsice"
                    [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ col?.type === 'date' ? (rowData[col.fields] | date) : rowData[col.fields] }}</div>
