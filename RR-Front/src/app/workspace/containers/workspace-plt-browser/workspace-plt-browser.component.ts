@@ -89,20 +89,21 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   ];
 
   pltColumns = [
-    {sortDir: 1,fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
-    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '65px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'peril', header: 'Peril', width: '55px', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
-    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '75px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletedBy',forDelete: true, header: 'Deleted By', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletedAt',forDelete:true, header: 'Deleted At', width: '70px', sorted: true, filtred: true, icon: null, type: 'date'},
-    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
-    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
-    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {sortDir: 1,fields: '', header: '', width: '3%', sorted: false, filtred: false, icon: null, type: 'checkbox'},
+    {sortDir: 1,fields: '', header: 'User Tags', width: '5%', sorted: false, filtred: false, icon: null, type: 'tags'},
+    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '5%', sorted: true, filtred: true, icon: null, type: 'fieldBold'},
+    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '15%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'peril', header: 'Peril', width: '6%', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
+    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '10%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '10%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'grain', header: 'Grain', width: '10%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletedBy',forDelete: true, header: 'Deleted By', width: '10%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletedAt',forDelete:true, header: 'Deleted At', width: '10%', sorted: true, filtred: true, icon: null, type: 'date'},
+    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '5%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'rap', header: 'RAP', width: '5%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: '', header: '', width: '3%', sorted: false, filtred: false, icon: 'icon-custom', type: 'icon'},
+    {sortDir: 1,fields: '', header: '', width: '3%', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
+    {sortDir: 1,fields: '', header: '', width: '3%', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     ];
 
   epMetricsCurrencySelected: any = 'EUR';
@@ -117,7 +118,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   filters: {
     systemTag: [],
     userTag: []
-  }
+  };
   sumnaryPltDetailsPltId: any;
 
   epMetricInputValue: string | null;
@@ -748,7 +749,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     _.forEach(this.oldSelectedTags, oldTag => {
       const isSelected= _.find(newSelectedTags, newTag => oldTag.tagId == newTag.tagId);
 
-      newTags.push({...oldTag, pltHeaders: !isSelected ? _.filter(old.pltHeaders,pltHeader => pltHeader.id) : false})
+      newTags.push({...oldTag, pltHeaders: !isSelected ? _.filter(oldTag.pltHeaders,pltHeader => pltHeader.id) : false})
 
     } )
     //this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))

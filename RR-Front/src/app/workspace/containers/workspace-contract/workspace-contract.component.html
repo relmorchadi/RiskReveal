@@ -57,6 +57,66 @@
           </ng-template>
         </p-table>
       </div>
+
+      <div class="body-wrap-border">
+        <div class="body-1"><span style="font-weight: bold;">Treaty Section Summary</span></div>
+        <div class="body-wrap-border-body">
+          <div class="body-wrap-border-left">
+
+            <div class="body-w-b-l-list-item border-bottom-custom">
+              <div class="body-w-b-l-item">
+                <span class="indicator-container" [ngStyle]="{'background-color': '#FFAA06'}"></span>
+                <span class="body-1">Treaty 02T019976 1 XS DAB EVTS NATURELS</span>
+              </div>
+              <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value"> Renewed</span></div>
+            </div>
+
+            <div class="body-w-b-l-list-item">
+              <div class="body-w-b-l-item">
+                <span class="indicator-container"></span>
+                <span class="body-1">Section: 1.1 XS DAB EVTS NATURELS</span>
+              </div>
+              <div class="body-w-b-l-item subtext"><span class="item-key">Status: </span><span class="item-value">Renewed</span></div>
+            </div>
+
+          </div>
+          <div class="body-wrap-border-standard">
+            <ul>
+              <li *ngFor="let item of listStandardContent.primary">
+                <span class="span-left">{{item.title}}</span>
+                <span class="span-right">
+                  <nz-progress [nzPercent]="item.value"
+                               [ngClass]="{'hidden-text': item.value < 100 }"
+                               [nzWidth]="20" nzType="circle"></nz-progress>
+                  {{item.value | number: '1.2-2'}}%
+                </span>
+              </li>
+            </ul>
+          </div>
+          <div class="body-wrap-border-standard">
+            <ul>
+              <li *ngFor="let item of listStandardContent.secondary">
+                <span class="span-left">{{item.title}}</span>
+                <span class="span-right">{{item.value}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="body-wrap-secondary">
+        <div></div>
+        <div>
+          <div>
+            <div></div>
+            <div></div>
+          </div>
+          <div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -126,47 +186,6 @@
             </p-table>
           </div>
 
-          <div class="body-wrap-border">
-            <div class="body-wrap-border-header"><span>Treaty Section Summary</span></div>
-            <div class="body-wrap-border-body">
-              <div class="body-wrap-border-left">
-                <ul>
-                  <li></li>
-                  <li></li>
-                </ul>
-              </div>
-              <div class="body-wrap-border-standard">
-                <ul>
-                  <li *ngFor="let item of listStandardContent.primary">
-                    <span class="span-left">{{item.title}}</span>
-                    <span class="span-right">{{item.value}}</span>
-                  </li>
-                </ul>
-              </div>
-              <div class="body-wrap-border-standard">
-                <ul>
-                  <li *ngFor="let item of listStandardContent.secondary">
-                    <span class="span-left">{{item.title}}</span>
-                    <span class="span-right">{{item.value}}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-
-          <div class="body-wrap-secondary">
-            <div></div>
-            <div>
-              <div>
-                <div></div>
-                <div></div>
-              </div>
-              <div>
-                <div></div>
-                <div></div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>

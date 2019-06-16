@@ -104,7 +104,7 @@ export class PltMainTableComponent implements OnInit {
           _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
           _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt =>   ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected) }))
         )
-      )
+      );
       this.lastClick= null;
     }
   }
