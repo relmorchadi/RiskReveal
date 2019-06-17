@@ -1,5 +1,6 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
+import * as fromWorkspaceStore from "../../../../workspace/store";
 
 @Component({
   selector: 'app-plt-main-table',
@@ -10,7 +11,6 @@ import * as _ from 'lodash';
 export class PltMainTableComponent implements OnInit {
 
   @Input() tableInputs: {
-    contextMenuItems: any[];
     pltColumns: any[];
     listOfPltsData: [];
     listOfDeletedPltsData: [];
@@ -18,7 +18,6 @@ export class PltMainTableComponent implements OnInit {
     listOfDeletedPltsCache: [];
     listOfPlts: [];
     listOfDeletedPlts: [];
-    selectedPlt: any;
     selectedListOfPlts: any;
     selectedListOfDeletedPlts: any;
     selectAll: boolean;
@@ -30,7 +29,33 @@ export class PltMainTableComponent implements OnInit {
       userTag: []
     };
     sortData: any;
-  }
+  };
+
+  contextMenuSelect: any;
+
+  contextMenuItems = [
+    { label: 'View Detail', command: (event) => {
+        console.log(this.contextMenuSelect);
+        this.openPltInDrawer.emit(this.contextMenuSelect.pltId);
+      }},
+    { label: 'Delete', command: (event) =>
+        this.deletePlt.emit()
+    },
+     { label: 'Edit Tags', command: (event) =>
+         this.editTags.emit()
+    },
+    {
+      label: 'Restore',
+      command: () => this.restore.emit()
+    }
+  ];
+
+  contextMenuItemsCache = this.contextMenuItems;
+
+  @Output() editTags = new EventEmitter();
+  @Output() deletePlt = new EventEmitter();
+  @Output() restore = new EventEmitter();
+  @Output() openPltInDrawer = new EventEmitter();
 
   @Output() onCheckAll= new EventEmitter();
   @Output() onCheckBoxSort= new EventEmitter();
@@ -81,6 +106,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   selectedItemForMenu(pltId: any) {
+    console.log()
     this.onItemSelectForMenu.emit(pltId);
   }
 
@@ -90,6 +116,10 @@ export class PltMainTableComponent implements OnInit {
         type:  $event
       }
     })
+  }
+
+  generateContextMenu(toRestore) {
+    this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => e.label != (!toRestore ? 'Restore' : 'Delete'))
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
@@ -104,7 +134,7 @@ export class PltMainTableComponent implements OnInit {
           _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
           _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt =>   ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected) }))
         )
-      )
+      );
       this.lastClick= null;
     }
   }

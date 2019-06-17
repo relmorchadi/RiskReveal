@@ -24,8 +24,11 @@ export class TableSortAndFilterPipe implements PipeTransform {
             )
         ))
     }
+<<<<<<< HEAD
 
     console.log(filterDataKeys, filterData)
+=======
+>>>>>>> fa02d59e6bdc1694449f665e76cb43571a2c4dc4
     if(sortDataKeys.length > 0){
         res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
     }

@@ -147,7 +147,7 @@ export class WorkspaceMainState implements NgxsOnInit {
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
       const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
-      openedTabs.map(dt => ({
+      openedTabs = openedTabs.map(dt => ({
         ...dt,
         projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
         pinged: _.get( workSpaceMenuItem[dt.workSpaceId+'-'+dt.uwYear],'pinged',false),
@@ -274,7 +274,7 @@ export class WorkspaceMainState implements NgxsOnInit {
     ctx.patchState({
       workspacePagination: paginationList,
       openedWs: {...currentOpenedWs.data[state.openedTabs.tabsIndex], projects: projects.map((prj, i) => ({...prj, selected: projects.length > 0 && i == 0}))},
-      openedTabs: {data: currentOpenedWs.data.map( ws => {
+      openedTabs: {data: state.openedTabs.data.map( ws => {
         const wsFromLocal = recentlyOpenedWs.find(item => item.workspaceId == ws.workSpaceId && item.uwYear == ws.uwYear ); // JSON.parse(localStorage.getItem('workSpaceMenuItem'))[ws.workSpaceId+'-'+ws.uwYear]
           return ({
             ...ws,

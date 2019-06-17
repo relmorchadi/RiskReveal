@@ -234,7 +234,7 @@ ul.badges-list {
 .tag-body{
   display:flex;
   flex-direction:column;
-  width: 75%;
+  width: 95%;
   margin: auto;
   background-color: #FCF9D6;
   padding-bottom: 5px;
@@ -250,22 +250,32 @@ ul.badges-list {
     margin-top: 3px;
     color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 16.26px;	letter-spacing: 0.5px;	line-height: 20px;
   }
-  table{
+
+  .tags-wrapper {
     margin: 15px auto;
-    td,th {
+    width: 80%;
+    display: flex;
+    justify-content: space-between;
+
+    .holds-up{
+      display: flex;
+    }
+
+    .tags-wrapper-left, .tags-wrapper-right {
       font-size: 16.26px !important;
       letter-spacing: 0.08px !important;
       line-height: 30px !important;
       background-color: transparent !important;
+      flex: 0 0 90%;
     }
-    th{
-      color: rgba(0,0,0,0.87) !important;
-      text-align: start !important;
+
+    .tags-wrapper-left {
+      color: rgba(0, 0, 0, 0.87) !important;
     }
-    td{
-      color: rgba(0,0,0,0.6) !important;
+
+    .tags-wrapper-right {
+      color: rgba(0, 0, 0, 0.6) !important;
       padding-right: 10px;
-      text-align: end;
     }
   }
 }

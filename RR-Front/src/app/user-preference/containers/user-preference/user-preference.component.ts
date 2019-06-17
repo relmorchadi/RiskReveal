@@ -65,6 +65,27 @@ export class UserPreferenceComponent implements OnInit {
     return `1.${this.state.general.numberFormat.numberOfDecimals}-${this.state.general.numberFormat.numberOfDecimals}`;
   }
 
+  number_format(num, decimals, decPoint, thousandsSep) {
+    const newNum = !isFinite(+num) ? 0 : +num,
+      prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+      sep = (typeof thousandsSep === 'undefined') ? ',' : thousandsSep,
+      dec = (typeof decPoint === 'undefined') ? '.' : decPoint,
+      toFixedFix = (n, v) => {
+        // Fix for IE parseFloat(0.55).toFixed(0) = 0;
+        const k = Math.pow(10, v);
+        return Math.round(n * k) / k;
+      },
+      s = (prec ? toFixedFix(newNum, prec) : Math.round(newNum)).toString().split('.');
+    if (s[0].length > 3) {
+      s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+    }
+    if ((s[1] || '').length < prec) {
+      s[1] = s[1] || '';
+      s[1] += new Array(prec - s[1].length + 1).join('0');
+    }
+    return s.join(dec);
+  }
+
   changePerspective() {
   }
 

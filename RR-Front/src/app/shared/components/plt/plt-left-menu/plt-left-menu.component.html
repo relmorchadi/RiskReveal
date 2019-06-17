@@ -3,6 +3,7 @@
     <ng-template #path>
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
+<<<<<<< HEAD
     <div class="upPartLeftMenu">
         <span class="wsHeader" [ngStyle]="{'background-color': menuInputs.wsHeaderSelected ?  '#FDFBDF' : 'white'}" (click)="resetPath()">
                       <i class="icon-window-section"></i>
@@ -12,12 +13,33 @@
         <!--
         <ng-container *ngFor="let project of menuInputs.projects;let i = index;">
           <li *ngIf="i < 10" (click)="filter('project',null,project.projectId)"
+=======
+      <div class="upPartLeftMenu">
+        <span class="wsHeader" [ngStyle]="{'border': menuInputs.wsHeaderSelected ?  '1px solid #0700e4' : 'none'}" (click)="resetPath()">
+                      <i class="icon-window-section"></i>
+          {{menuInputs.wsId}} - {{menuInputs.uwYear}}
+      </span>
+        <ul class="title-list">
+          <!--
+          <ng-container *ngFor="let project of menuInputs.projects;let i = index;">
+            <li *ngIf="i < 10" (click)="filter('project',null,project.projectId)"
+                style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
+                [ngClass]="{'active-path': project.selected}">
+              <i class="icon-assignment_24px"></i>
+              <span class="tooltipMsg"
+                    [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+            </li>
+          </ng-container>
+          -->
+          <li *ngFor="let project of menuInputs.projects" (click)="filter('project',null,project.projectId)"
+>>>>>>> fa02d59e6bdc1694449f665e76cb43571a2c4dc4
               style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
               [ngClass]="{'active-path': project.selected}">
             <i class="icon-assignment_24px"></i>
             <span class="tooltipMsg"
                   [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
           </li>
+<<<<<<< HEAD
         </ng-container>
         -->
         <li *ngFor="let project of menuInputs.projects" (click)="filter('project',null,project.projectId)"
@@ -34,6 +56,17 @@
       <div class="cnt" (click)="toggleDeletedPlts()">
         <i class="icon-trash-alt"></i>
         <span> Deleted Plts </span>
+=======
+
+        </ul>
+      </div>
+      <div class="plt-trash" [ngStyle]="{'visibility': menuInputs.deletedPltsLength > 0 ? 'visible' : 'hidden'}">
+        <div class="cnt" (click)="toggleDeletedPlts()">
+          <i class="icon-trash-alt"></i>
+          <span> Deleted Plts </span>
+        </div>
+        <span class="deleted-counter">{{menuInputs.deletedPltsLength}}</span>
+>>>>>>> fa02d59e6bdc1694449f665e76cb43571a2c4dc4
       </div>
       <span class="deleted-counter">{{menuInputs.deletedPltsLength}}</span>
     </div>

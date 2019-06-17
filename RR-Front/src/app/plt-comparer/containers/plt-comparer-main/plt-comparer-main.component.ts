@@ -31,6 +31,9 @@ export class PltComparerMainComponent implements OnInit {
   listOfPltsData: any[];
   listOfPltsCache: any[];
   selectedListOfPlts: any[];
+  selectedListOfDeletedPlts: any[];
+  listOfDeletedPlts: any[];
+  listOfDeletedPltsData = [];
   filterData: any;
   sortData;
   activeCheckboxSort: boolean;
@@ -49,6 +52,8 @@ export class PltComparerMainComponent implements OnInit {
 
   selectedPlt: any;
   tagModalIndex: any;
+  addModalSelectCache: any;
+  oldSelectedTags: any;
   addTagModal: boolean;
   addModalInput: any;
   inputValue: null;
@@ -128,20 +133,26 @@ export class PltComparerMainComponent implements OnInit {
     systemTag: [],
     userTag: []
   }
+
+  selectedCurrency = 'EUR';
   sumnaryPltDetailsPltId: any;
 
   epMetricInputValue: string | null;
 
   pltdetailsSystemTags: any = [];
   pltdetailsUserTags: any = [];
+  listOfDeletedPltsCache: any[];
 
   systemTags: any;
+  wsHeaderSelected: boolean;
 
   systemTagsCount: any;
 
   userTags: any;
 
   userTagsCount: any;
+
+  selectedUnit = 'Million';
 
   currencies = [
     {id: '1', name: 'Euro', label: 'EUR'},
@@ -350,6 +361,7 @@ export class PltComparerMainComponent implements OnInit {
     nonGrouped: {
     }
   };
+
 
   cardContainer = [
 
@@ -670,13 +682,14 @@ export class PltComparerMainComponent implements OnInit {
     private nzDropdownService: NzDropdownService,
     private store$: Store,
     private zone: NgZone,
-    private cdRef: ChangeDetectorRef,
-    private route$: ActivatedRoute) {
+    private cdRef: ChangeDetectorRef) {
     this.someItemsAreSelected = false;
     this.selectAll = false;
     this.listOfPlts = [];
     this.listOfPltsData = [];
+    this.listOfDeletedPltsData = [];
     this.selectedListOfPlts = [];
+    this.selectedListOfDeletedPlts = [];
     this.lastSelectedId = null;
     this.drawerIndex = 0;
     this.params = {};
@@ -684,22 +697,24 @@ export class PltComparerMainComponent implements OnInit {
     this.filters = {
       systemTag: [],
       userTag: []
-    }
+    };
     this.filterData = {};
-    this.sortData= {};
+    this.sortData = {};
     this.activeCheckboxSort = false;
     this.loading = true;
     this.addTagModal = false;
-    this.tagModalIndex= 0;
-    this.systemTagsCount= {};
-    this.userTagsCount= {};
+    this.tagModalIndex = 0;
+    this.systemTagsCount = {};
+    this.userTagsCount = {};
     this.fromPlts = false;
-    this.renamingTag= false;
-    this.selectedUserTags= {};
+    this.renamingTag = false;
+    this.selectedUserTags = {};
     this.initColor = '#fe45cd'
     this.colorPickerIsVisible = false;
     this.addTagModalPlaceholder = 'Select a Tag';
-    this.showDeleted= false;
+    this.showDeleted = false;
+    this.wsHeaderSelected = true;
+    // this.generateContextMenu(this.showDeleted);
   }
 
   ngOnInit() {
@@ -990,6 +1005,71 @@ export class PltComparerMainComponent implements OnInit {
 
   setRenameTag($event: any) {
     this.renamingTag = $event;
+  }
+  changeCurrency(currency){
+    this.selectedCurrency = currency;
+  }
+  changeUnit(unit){
+    this.selectedUnit = unit;
+
+  }
+  toggleDeletePlts() {
+    this.showDeleted = !this.showDeleted;
+    this.selectAll =
+      !this.showDeleted
+        ?
+        (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
+        :
+        (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
+
+    this.someItemsAreSelected =
+      !this.showDeleted ?
+        this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
+        :
+        this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
+    // this.generateContextMenu(this.showDeleted);
+  }
+  emitFilters(filters: any) {
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
+      filters: filters
+    }))
+  }
+  unCheckAll() {
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
+        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({type: false}))
+      )
+    );
+  }
+  setWsHeaderSelect($event: any) {
+    this.wsHeaderSelected = $event;
+  }
+
+  setModalSelectedItems($event: any) {
+    this.addModalSelect = $event;
+  }
+  deletePlt() {
+    this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
+  }
+  editTags() {
+    this.addTagModal = true;
+    this.fromPlts = true;
+    let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
+
+    /* _.forEach( this.listOfPltsData, (v,k) => {
+       if(v.selected) d.push(v.userTags);
+     })*/
+
+    //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+
+    this.addModalSelect = this.addModalSelectCache = _.intersectionBy(...d, 'tagId');
+    this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
+    console.log(this.addModalSelectCache, this.oldSelectedTags, d);
+  }
+  restore() {
+    this.store$.dispatch(new fromWorkspaceStore.restorePlt({pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
+    this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
   }
 
 }

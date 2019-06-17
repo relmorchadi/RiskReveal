@@ -71,7 +71,7 @@ export class PltMainState implements NgxsOnInit {
 
   @Selector()
     static getPlts(state: pltMainModel) {
-    return _.keyBy(_.filter(_.get(state,'data',{}),e => !e.deleted), 'pltId')
+    return _.keyBy(_.filter(state.data,e => !e.deleted), 'pltId')
   }
 
   systemTagsMapping = {
