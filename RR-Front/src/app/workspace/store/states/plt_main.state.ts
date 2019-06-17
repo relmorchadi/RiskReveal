@@ -71,7 +71,7 @@ export class PltMainState implements NgxsOnInit {
 
   @Selector()
     static getPlts(state: pltMainModel) {
-    return _.keyBy(_.filter(_.get(state,'data',{}),e => !e.deleted), 'pltId')
+    return _.keyBy(_.filter(state.data,e => !e.deleted), 'pltId')
   }
 
   systemTagsMapping = {
@@ -300,7 +300,7 @@ export class PltMainState implements NgxsOnInit {
   @Action(fromPlt.assignPltsToTag)
   assignPltsToTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTag){
 
-    return payload.type == 'many' ? forkJoin(..._.map(payload.tags,e => this.pltApi.assignPltsToTag({
+    return payload.type == 'assignOrRemove' ? forkJoin(..._.map(payload.tags,e => this.pltApi.assignPltsToTag({
         plts: payload.plts,
         wsId: payload.wsId,
         uwYear: payload.uwYear,
@@ -309,9 +309,8 @@ export class PltMainState implements NgxsOnInit {
       tap( t=> console.log(t)),
       map( (tags) => {
         return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
-          tags: tags,
-          plts: payload.plts,
-          type: 'many'
+          ...payload,
+          type: 'assignOrRemove'
         }))
       })
       )
@@ -339,7 +338,7 @@ export class PltMainState implements NgxsOnInit {
 
     let newData = {};
 
-    if(type !== 'many') {
+    if(type !== 'assignOrRemove') {
 
       const {
         userTag: {
@@ -357,20 +356,39 @@ export class PltMainState implements NgxsOnInit {
         userTags: {...userTags, [rest.tagId]: {...rest, selected: false,count: pltHeaders.length}}
       })
 
-    }else {
+    } else {
+
+      console.log(payload.metaData)
 
       const {
         tags,
         plts,
+        metaData: {
+          affectedPlts
+        }
       } = payload;
+      console.log(affectedPlts,tags);
 
-      _.forEach(plts, plt => {
-        newData[plt] = _.assign({}, data[plt], {...data[plt], userTags: tags})
+      _.forEach(affectedPlts.toAdd, plt => {
+        console.log(data[plt.id]);
+        newData[plt.id] = _.assign({}, data[plt.id], {...data[plt.id], userTags: [...data[plt.id].userTags, ...tags]})
       })
 
+      _.forEach(affectedPlts.toDelete, plt => {
+        newData[plt.id] = _.assign({}, data[plt.id], {...data[plt.id], userTags: _.filter(data[plt.id].userTags, tag => !_.find(tags, t =>  t.tagId == tag.tagId))})
+      })
+
+      let newTags = {};
+
+      _.forEach(tags, t => {
+        newTags[t.tagId]= {...t, selected: false}
+      })
+
+      console.log(newData, newTags);
+
       ctx.patchState({
-        data: _.merge({},data, newData),
-        userTags: {...userTags, ..._.keyBy(_.map(tags, tag => ({...tag,selected: false, count: plts.length})), 'tagId')}
+        data: {...data, ...newData},
+        userTags: {...userTags, ...newTags}
       })
 
     }
