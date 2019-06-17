@@ -32,7 +32,7 @@
     >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
-          <col *ngFor="let col of columns" [ngStyle]="{'width': col?.width}">
+          <col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}" [ngClass]="{'bordered-col': i==1}">
         </colgroup>
       </ng-template>
       <ng-template pTemplate="header" let-columns>
@@ -112,6 +112,8 @@
                         *ngIf="!rowData.isPaused"
                         nz-popconfirm
                         nzTitle="Are you sure you want to pause this Job?"
+                        nzOkText="PAUSE"
+                        nzCancelText="CANCEL"
                         (nzOnConfirm)="pauseJob(rowData.id)"
                         (nzOnCancel)="cancel()"
                         nzPlacement="bottom"><i
@@ -122,6 +124,8 @@
                         *ngIf="rowData.isPaused"
                         nz-popconfirm
                         nzTitle="Are you sure you want to resume this Job?"
+                        nzOkText="RESUME"
+                        nzCancelText="CANCEL"
                         (nzOnConfirm)="resumeJob(rowData.id)"
                         (nzOnCancel)="cancel()"
                         nzPlacement="bottom"><i
@@ -131,6 +135,7 @@
                     <li style="display:flex; align-items: center;" nz-menu-item
                         nz-popconfirm
                         nzOkText="ABORT"
+                        nzCancelText="CANCEL"
                         nzTitle="Are you sure you want to Abort this Job?"
                         (nzOnConfirm)="deleteJob(rowData.id)"
                         (nzOnCancel)="cancel()"
