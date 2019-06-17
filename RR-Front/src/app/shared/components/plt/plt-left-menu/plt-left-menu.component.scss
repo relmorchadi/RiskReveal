@@ -126,13 +126,20 @@
       margin-bottom: 1px;
     }
 
+    .upPartLeftMenu {
+      padding-bottom: 55.5px;
+      height: 100%;
+      display: flex;
+      flex-flow: column;
+    }
+
     .plt-trash {
       display: flex;
       justify-content: space-between;
       width: 100%;
       padding: 16px;
       font-size: 16px;
-      position: sticky;
+      position: absolute;
       bottom: 0;
       background-color: white;
       .cnt {

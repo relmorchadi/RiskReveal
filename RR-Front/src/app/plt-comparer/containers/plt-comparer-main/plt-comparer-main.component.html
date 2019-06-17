@@ -15,7 +15,7 @@
           class="dropdown-default"
           style="width: 200px; margin-bottom: 5px;"
           nzPlaceHolder="Select Workspace"
-          (ngModelChange)="getWorkspaceData($event)"
+          (ngModelChange)="getWorkspaceData($event);"
           [(ngModel)]="defaultImport">
           <nz-option nzCustomContent *ngFor="let item of listOfWs.data" [nzLabel]="item.workSpaceId" [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
         </nz-select>
@@ -159,6 +159,7 @@
         [nzMaxTagCount]="1"
         nzMode="multiple"
         nzPlaceHolder="EP Metrics"
+        (ngModelChange)="toggleColumns($event)"
         [(ngModel)]="listOfSelectedValues" style="width: 211px; height: 35px;"
       >
         <nz-option nzLabel="OEP" nzValue="OEP"  nzDisabled></nz-option>

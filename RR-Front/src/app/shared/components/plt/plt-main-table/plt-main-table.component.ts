@@ -81,6 +81,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   selectedItemForMenu(pltId: any) {
+    console.log()
     this.onItemSelectForMenu.emit(pltId);
   }
 

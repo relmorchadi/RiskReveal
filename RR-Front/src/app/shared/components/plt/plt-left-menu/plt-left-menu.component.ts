@@ -89,7 +89,7 @@ export class PltLeftMenuComponent implements OnInit {
         this.onProjectFilter.emit(_.merge({}, this.menuInputs.filterData, {[key]: value}))
       }
       this.onSelectProjects.emit(_.map(this.menuInputs.projects, t => {
-        if(t.value == value){
+        if(t.projectId == value){
           return ({...t,selected: !t.selected})
         }else if(t.selected) {
           return ({...t,selected: false})
@@ -168,7 +168,7 @@ export class PltLeftMenuComponent implements OnInit {
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
           tags: this.menuInputs._modalSelect,
-          type: 'many'
+          type: 'assignOrRemove'
         })
       }
 
@@ -202,14 +202,14 @@ export class PltLeftMenuComponent implements OnInit {
 
   setFilter(filter: string, tag,section) {
     if(filter === 'userTag'){
-      this.onSetFilters.emit(_.findIndex(this.menuInputs.filters[filter], e => e == tag.tagId) < 0 ?
-          _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
-          _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)})
-        );
+      const filters = _.findIndex(this.menuInputs.filters[filter], e => e == tag.tagId) < 0 ?
+        _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
+        _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)})
+      this.onSetFilters.emit(filters);
 
       this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t))
 
-      this.emitFilters.emit(this.menuInputs.filters);
+      this.emitFilters.emit(filters);
     }else{
       const {
         systemTag
