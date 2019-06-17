@@ -351,8 +351,6 @@ export class PltComparerMainComponent implements OnInit {
     }
   };
 
-
-
   cardContainer = [
 
     {
@@ -813,7 +811,6 @@ export class PltComparerMainComponent implements OnInit {
       workspaceId: this.workspaceId, uwy: this.uwy
     }}));
    }
-
 
   colorThePlt() {
     while (this.cardContainer.length > this.colorSwitcher.length) {

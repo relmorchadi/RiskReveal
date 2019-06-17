@@ -748,7 +748,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     _.forEach(this.oldSelectedTags, oldTag => {
       const isSelected= _.find(newSelectedTags, newTag => oldTag.tagId == newTag.tagId);
 
-      newTags.push({...oldTag, pltHeaders: !isSelected ? _.filter(old.pltHeaders,pltHeader => pltHeader.id) : false})
+      newTags.push({...oldTag, pltHeaders: !isSelected ? _.filter(oldTag.pltHeaders,pltHeader => pltHeader.id) : false})
 
     } )
     //this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
