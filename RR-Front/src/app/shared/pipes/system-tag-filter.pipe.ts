@@ -17,7 +17,8 @@ export class SystemTagFilterPipe implements PipeTransform {
       'User Occurence Basis': 'userOccurrenceBasis',
       'Published To Pricing': 'xActAvailable',
       'Priced': 'xActUsed',
-      'Accumulated': 'accumulated'
+      'Accumulated': 'accumulated',
+      'Financial Perspectives': 'financial'
     },
     nonGrouped: {
     }

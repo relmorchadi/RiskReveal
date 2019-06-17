@@ -38,7 +38,7 @@
       <ng-template pTemplate="header" let-columns>
         <tr *ngIf="!sortable">
           <th *ngFor="let col of columns" pResizableColumn>
-        <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex">
+        <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" [ngClass]="{'status-border': col.header === 'State'}" style="display:flex">
           {{col?.header}}
         </span>
             <div class="search-bar-table" *ngIf="col?.filtered">
@@ -64,7 +64,7 @@
               </div>
             </td>
             <td *ngIf="col?.type === 'progress'" (click)="multiSelectRow(rowData, i)">
-              <div class="td-wrapper" style="display:flex; align-items: center">
+              <div class="td-wrapper status-border" style="display:flex; align-items: center">
                 <ng-container *ngIf="rowData.pending">
                   <i class="icon-clock pause-icon-status"></i>
                   <span style="padding-left: 5px">Pending 4/12</span>

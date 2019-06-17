@@ -29,6 +29,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   workspaceUrl: any;
   workspace: any;
   index: any;
+  isVisible = false;
 
   @Select(WorkspaceMainState.getData) data$;
   @Select(WorkspaceMainState.getProjects) projects$;
@@ -56,7 +57,15 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
         this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
-      })
+      });
+  }
+
+  handleOk(): void {
+    this.isVisible = false;
+  }
+
+  handleCancel(): void {
+    this.isVisible = false;
   }
 
   selectProject(project) {

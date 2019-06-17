@@ -43,26 +43,22 @@ const initiaState: SearchNavBar = {
     // [{key: 'Cedant', value: 'Tokio'}, {key: 'Country', value: 'Japan'}, {key: 'UW/Year', value: '2019'}],
     // [{key: 'Country', value: 'Japan'}, {key: 'Program', value: 'Prog Name'}]
   ],
-  tagShortcuts: {
-    list1: [
-      {tag: 'Cedant Name', value: 'c:'},
-      {tag: 'Cedant Code', value: 'cid:'},
-      {tag: 'Country', value: 'ctr:'},
-      {tag: 'UW Year', value: 'uwy:'},
-      {tag: 'Workspace Name', value: 'wn:'},
-      {tag: 'Workspace Code', value: 'wid:'},
-      {tag: 'Program', value: 'C:'},
-      {tag: 'PLT', value: 'C:'},
-      {tag: 'Section', value: 'C:'}
-    ],
-    list2: [
-      {tag: 'Subsidiary', value: 'C:'},
-      {tag: 'Ledger', value: 'C:'},
-      {tag: 'Bouquet', value: 'C:'},
-      {tag: 'Contract', value: 'C:'},
-      {tag: 'UW Unit', value: 'C:'}
-    ]
-  },
+  tagShortcuts: [
+    {tag: 'Cedant Name', value: 'c:'},
+    {tag: 'Cedant Code', value: 'cid:'},
+    {tag: 'Country', value: 'ctr:'},
+    {tag: 'UW Year', value: 'uwy:'},
+    {tag: 'Workspace Name', value: 'wn:'},
+    {tag: 'Workspace Code', value: 'wid:'},
+    {tag: 'Program', value: 'C:'},
+    {tag: 'PLT', value: 'C:'},
+    {tag: 'Section', value: 'C:'},
+    {tag: 'Subsidiary', value: 'C:'},
+    {tag: 'Ledger', value: 'C:'},
+    {tag: 'Bouquet', value: 'C:'},
+    {tag: 'Contract', value: 'C:'},
+    {tag: 'UW Unit', value: 'C:'}
+  ],
   sortcutFormKeysMapper: {
     c: 'Cedant Name',
     cid: 'Cedant Code',
@@ -187,12 +183,12 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(EnableExpertMode)
   enableExpertMode(ctx: StateContext<SearchNavBar>) {
-    // ctx.patchState({visibleSearch: false});
+    ctx.patchState({visibleSearch: false});
   }
 
   @Action(DisableExpertMode)
   disableExpertMode(ctx: StateContext<SearchNavBar>) {
-    // ctx.patchState({visibleSearch: true});
+    ctx.patchState({visibleSearch: true});
   }
 
   @Action(DeleteLastBadgeAction)
@@ -249,13 +245,13 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(ExpertModeSearchAction)
   doExpertModeSearch(ctx: StateContext<SearchNavBar>, {expression}) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      if (!_.isEmpty(expression)) {
+      if (! _.isEmpty(expression) ) {
         draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)};
-        draft.badges = _.isArray(draft.searchContent.value) ? draft.searchContent.value : [];
+        draft.badges = _.isArray(draft.searchContent.value) ?  draft.searchContent.value : [];
       }
       if (_.isArray(draft.searchContent.value)) {
         // draft.badges= draft.badges;
-        draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => !_.isEmpty(item));
+        draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
       }
       draft.visibleSearch = false;
       localStorage.setItem('items', JSON.stringify(draft.recentSearch));
@@ -271,7 +267,7 @@ export class SearchNavBarState implements NgxsOnInit {
     }
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchContent = {value: _.isEmpty(bages) ? keyword : bages};
-      draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => !_.isEmpty(item));
+      draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
       localStorage.setItem('items', JSON.stringify(draft.recentSearch));
       draft.visibleSearch = false;
     }));

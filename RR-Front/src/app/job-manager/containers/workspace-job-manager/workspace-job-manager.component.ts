@@ -590,6 +590,96 @@ export class WorkspaceJobManagerComponent implements OnInit {
           createdBy: 'Ghada CHOUK'
         }]
     },
+    {
+      id: 8,
+      selected: false,
+      progress: 30,
+      cedantName: 'SCOR SE',
+      cedantCode: '22231',
+      description: 'CFS-SCOR ITALIA-SCOR',
+      duration: '12 min remaining',
+      jobId: '001',
+      linkTo: 'Calibration',
+      date: 'lastWeek',
+      workSpaceId: 'TP05413',
+      uwYear: 2019,
+      workspaceName: 'CFS-SCOR ITALIA-SCOR ITALIA',
+      jobOwner: 'Amine Cheref',
+      jobType: 'Calibration',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      append: false,
+      isPaused: false,
+      pending: true,
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10',
+      status: {completed: 0, total: 2},
+      content: [{
+        progress: 75,
+        projectId: 'P-000004971',
+        contentId: 'For ARC',
+        contentName: 'Clone',
+        createdAt: 1542882354617,
+        duration: '2 min remaining',
+        createdBy: 'Ghada CHOUK'
+      },
+        {
+          progress: 20,
+          projectId: 'P-000004971',
+          contentId: 'For ARC',
+          contentName: 'Clone',
+          createdAt: 1542882354617,
+          duration: '7 min remaining',
+          createdBy: 'Ghada CHOUK'
+        }]
+    },
+    {
+      id: 9,
+      selected: false,
+      progress: 40,
+      cedantName: 'SCOR SE',
+      cedantCode: '22231',
+      description: 'CFS-SCOR ITALIA-SCOR',
+      duration: '12 min remaining',
+      jobId: '001',
+      linkTo: 'RiskLink',
+      date: 'lastWeek',
+      workSpaceId: 'TP05413',
+      uwYear: 2019,
+      workspaceName: 'CFS-SCOR ITALIA-SCOR ITALIA',
+      jobOwner: 'Rim Benabbes',
+      jobType: 'Import',
+      context: {data: 'ALABAMA INS.UA - 2019', year: 2018, program: 'Cat Program, 1st/4th 1year, 2nd/3rd year ½'},
+      append: false,
+      isPaused: false,
+      pending: true,
+      priority: 'high',
+      startTime: '2019-01-03 T 09:57:10',
+      elapsedTime: '2019-01-03 T 09:57:10',
+      completionTime: '2019-01-03 T 09:57:10',
+      submittedTime: '2019-01-03 T 09:57:10',
+      status: {completed: 0, total: 2},
+      content: [{
+        progress: 75,
+        projectId: 'P-000004971',
+        contentId: 'For ARC',
+        contentName: 'Clone',
+        createdAt: 1542882354617,
+        duration: '2 min remaining',
+        createdBy: 'Ghada CHOUK'
+      },
+        {
+          progress: 20,
+          projectId: 'P-000004971',
+          contentId: 'For ARC',
+          contentName: 'Clone',
+          createdAt: 1542882354617,
+          duration: '7 min remaining',
+          createdBy: 'Ghada CHOUK'
+        }]
+    }
   ];
 
   @Select(WorkspaceMainState)

@@ -135,7 +135,7 @@
                   </div>
                 </div>
                 <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check1">Decimal Separator Character</label>
-                  <div *ngIf="check1">
+                  <div class="custom-radio" *ngIf="check1">
                     <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
                       <label nz-radio nzValue=",">,</label>
                       <label nz-radio nzValue=".">.</label>
@@ -144,7 +144,7 @@
                   </div>
                 </div>
                 <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check2">Thousand Separator Character</label>
-                  <div *ngIf="check2">
+                  <div class="custom-radio" *ngIf="check2">
                     <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
                       <label nz-radio nzValue=",">,</label>
                       <label nz-radio nzValue=".">.</label>
