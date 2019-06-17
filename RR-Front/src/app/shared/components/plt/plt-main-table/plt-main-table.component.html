@@ -86,7 +86,7 @@
           <ng-container *ngIf="!col?.forDelete && (col?.type == 'field' || col?.type == 'date')">
               <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ col?.type === 'date' ? (rowData[col.fields] | date) : rowData[col.fields] }}</div>
           </ng-container>
-        </div>
+        </ng-container>
         <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' || col?.type == 'date'">
           <ng-container>
               <div class="text-elipsice"

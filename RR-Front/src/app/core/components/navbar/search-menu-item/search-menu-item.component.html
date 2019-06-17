@@ -23,6 +23,7 @@
     <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close" nzTheme="outline"></i>
     <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer" class="icon-search_24px"></i>
   </ng-template>
+
   <ng-template #prefixIconTag>
     <div class="prefix-wrapper">
       <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
@@ -137,21 +138,29 @@
 
   <ng-template #tagDropdown>
     <div class="search-contextual-table"
-    nz-menu style="height: 400px; overflow: auto; border-radius: 10px; width: 350px">
+    nz-menu style="height: 500px; border-radius: 10px; width: 550px">
         <div class="tag-header">
-          <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" formControlName="expertModeToggle"></nz-switch>
+          <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" class="switch-input" formControlName="expertModeToggle"></nz-switch>
         </div>
         <div class="tag-body">
           <div class="tag-body-header">
               <i class="icon-info_24px"></i>
               <span>Shortcut List:</span>
           </div>
-          <table>
-            <tr *ngFor="let items of state?.tagShortcuts">
-              <td>{{items.tag}}</td>
-              <th>{{items.value}}</th>
-            </tr>
-          </table>
+          <div class="tags-wrapper">
+            <div style="width:45%">
+              <div class="holds-up" *ngFor="let items of state?.tagShortcuts; let i = index">
+                  <div class="tags-wrapper-left" *ngIf="i < 10">{{items.tag}}</div>
+                  <div class="tags-wrapper-right" *ngIf="i < 10">{{items.value}}</div>
+              </div>
+            </div>
+            <div style="width:45%">
+              <div class="holds-up" *ngFor="let items of state?.tagShortcuts; let i = index">
+                  <div class="tags-wrapper-left" *ngIf="i >= 10">{{items.tag}}</div>
+                  <div class="tags-wrapper-right" *ngIf="i >= 10">{{items.value}}</div>
+              </div>
+            </div>
+          </div>
         </div>
     </div>
   </ng-template>

@@ -88,8 +88,7 @@
 
     .ui-table-thead {
       th {
-        padding: 7px !important;
-        padding-top: 15px !important;
+        padding: 15px 10px 7px 7px !important;
         font-size: 12px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
@@ -98,6 +97,11 @@
         height: 45px;
         border: none !important;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+
+        .status-border {
+          padding-bottom: 20px;
+          border-right: 1px solid rgba(0,0,0,0.15);
+        }
 
         .search-bar-table {
           display: flex;
@@ -136,6 +140,10 @@
         border: none !important;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         user-select: none;
+
+        .status-border {
+          border-right: 1px solid rgba(0,0,0,0.15);
+        }
 
         .td-wrapper {
           width: 100%;
