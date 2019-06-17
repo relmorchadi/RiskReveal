@@ -186,7 +186,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
     {
       field: 'menuIcon',
       header: '',
-      width: '20px',
+      width: '30px',
       display: false,
       sorted: false,
       filtered: false,
@@ -607,6 +607,11 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   private searchData(id, year) {
     return this._searchService.searchWorkspace(id || '', year || '2019');
+  }
+
+  expandRow(row, expand) {
+    row.append = !row.append;
+    return true;
   }
 
   resumeJob(id) {

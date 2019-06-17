@@ -376,7 +376,10 @@ export class PltComparerMainComponent implements OnInit {
     nonGrouped: {}
   };
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a16e4c39b441b1962aefea6a6b700932bca72a7c
   cardContainer = [
 
     {
@@ -847,7 +850,6 @@ export class PltComparerMainComponent implements OnInit {
       }
     }));
   }
-
 
   colorThePlt() {
     while (this.cardContainer.length > this.colorSwitcher.length) {

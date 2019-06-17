@@ -271,20 +271,23 @@
                 <tr>
                   <th>OEP</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                    <div style="margin-bottom:6px;"><i class="icon-triangle" style="font-size: 20px;"></i> OEP</div>
-                  </th>
-                  <th *ngIf="switchValue && !item.selected"
-                      style="background-color: #F4F6FC; color: #0700CF;"> OEP%
+                    <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>OEP</div>
                   </th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                    <div style="margin-bottom:6px;"><i class="icon-triangle" style="font-size: 20px;"></i> AEP</div>
+                    OEP %
                   </th>
-                  <th *ngIf="switchValue && !item.selected"
-                      style="background-color: #F4F6FC; color: #0700CF;"> AEP %
-                  </th>
-                  <th *ngFor="let th of listOfSelectedValues">
-                    {{th}}
-                  </th>
+                  <ng-container *ngFor="let th of listOfSelectedValues">
+                    <th>
+                      {{th}}
+                    </th>
+                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
+                      <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>{{th}}</div>
+                    </th>
+                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
+                      {{th}} %
+                    </th>
+                  </ng-container>
+
 
                 </tr>
                 </thead>
@@ -293,9 +296,11 @@
                   <th>{{row[0]}}</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
-                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[3]}}</th>
+                  <ng-container *ngFor="let tab of listOfSelectedValues">
+                  <th>{{row[0]}}</th>
+                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
                   <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
-                  <th *ngFor="let th of listOfSelectedValues" >{{row[2]}}</th>
+                  </ng-container>
                 </tr>
                 <tr>
                   <th><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
@@ -303,13 +308,11 @@
                                                                    name="new-field"></th>
                   <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
                                                                    name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
-                                                                   name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
-                                                                   name="new-field"></th>
-                  <th *ngFor="let th of listOfSelectedValues"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
-                                                                     name="new-field"></th>
-                </tr>
+                  <ng-container *ngFor="let th of listOfSelectedValues">
+                  <th><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  </ng-container></tr>
                 </tbody>
               </table>
             </div>

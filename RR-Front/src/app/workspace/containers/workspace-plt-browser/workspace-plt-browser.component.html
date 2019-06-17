@@ -59,24 +59,27 @@
           <i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;cursor: pointer;font-size: 15px;"></i>
           <app-plt-main-table
             [tableInputs]="{
-                  contextMenuItems: this.contextMenuItems,
-                  pltColumns: this.pltColumns,
-                  listOfPltsData: this.listOfPltsData,
-                  listOfDeletedPltsData: this.listOfDeletedPltsData,
-                  listOfPltsCache: this.listOfPltsCache,
-                  listOfDeletedPltsCache: this.listOfDeletedPltsCache,
-                  listOfPlts: this.listOfPlts,
-                  listOfDeletedPlts: this.listOfDeletedPlts,
-                  selectedPlt: this.selectedPlt,
-                  selectedListOfPlts: this.selectedListOfPlts,
-                  selectedListOfDeletedPlts: this.selectedListOfDeletedPlts,
-                  selectAll: this.selectAll,
-                  someItemsAreSelected: this.someItemsAreSelected,
-                  showDeleted: this.showDeleted,
-                  filterData: this.filterData,
-                  filters: this.filters,
-                  sortData: this.sortData
+                  pltColumns: pltColumns,
+                  listOfPltsData: listOfPltsData,
+                  listOfDeletedPltsData: listOfDeletedPltsData,
+                  listOfPltsCache: listOfPltsCache,
+                  listOfDeletedPltsCache: listOfDeletedPltsCache,
+                  listOfPlts: listOfPlts,
+                  listOfDeletedPlts: listOfDeletedPlts,
+                  selectedListOfPlts: selectedListOfPlts,
+                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
+                  selectAll: selectAll,
+                  someItemsAreSelected: someItemsAreSelected,
+                  showDeleted: showDeleted,
+                  filterData: filterData,
+                  filters: filters,
+                  sortData: sortData
                 }"
+
+            (deletePlt)="deletePlt()"
+            (openPltInDrawer)="openPltInDrawer($event)"
+            (editTags)="editTags()"
+            (restore)="restore()"
             (onCheckAll)="checkAll($event)"
             (onCheckBoxSort)="checkBoxSort($event)"
             (onFilter)="filter($event)"

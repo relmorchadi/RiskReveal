@@ -157,16 +157,28 @@
                     <ul>
                       <li (click)="changeNumberFormat('simple' , 'negativeFormat')"
                           [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simple'}">
-                        -{{123.104687921545317523123 | number: numberFormat()}}</li>
+                        -{{number_format(9123.104687921545317523123,
+                        state.general.numberFormat.numberOfDecimals,
+                        state.general.numberFormat.decimalSeparator,
+                      state.general.numberFormat.decimalThousandSeparator)}}</li>
                       <li (click)="changeNumberFormat('redHue' , 'negativeFormat')"
                           [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'redHue'}">
-                        <span style="color: red">{{123.104687921545317523123  | number: numberFormat()}}</span></li>
+                        <span style="color: red">{{number_format(9123.104687921545317523123,
+                          state.general.numberFormat.numberOfDecimals,
+                          state.general.numberFormat.decimalSeparator,
+                          state.general.numberFormat.decimalThousandSeparator)}}</span></li>
                       <li (click)="changeNumberFormat('simpleRHue' , 'negativeFormat')"
                           [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'simpleRHue'}">
-                        <span style="color: red">-{{123.104687921545317523123  | number: numberFormat()}}</span></li>
+                        <span style="color: red">-{{number_format(9123.104687921545317523123,
+                          state.general.numberFormat.numberOfDecimals,
+                          state.general.numberFormat.decimalSeparator,
+                          state.general.numberFormat.decimalThousandSeparator)}}</span></li>
                       <li (click)="changeNumberFormat('roundBrackets' , 'negativeFormat')"
                           [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'roundBrackets'}">
-                        ({{123.104687921545317523123  | number: numberFormat()}})</li>
+                        ({{number_format(9123.104687921545317523123,
+                        state.general.numberFormat.numberOfDecimals,
+                        state.general.numberFormat.decimalSeparator,
+                        state.general.numberFormat.decimalThousandSeparator)}})</li>
                     </ul>
                   </div>
                 </div>
@@ -189,7 +201,7 @@
           <span class="main-tab-title">Import</span>
           <div class="settings-holder">
 
-            <span class="head-title">General</span>
+            <span class="head-title">RiskLink Import</span>
             <div class="settings-wrapper">
               <div class="user-config-item">
                 <span>Default Import Type</span>
