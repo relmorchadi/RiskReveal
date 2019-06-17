@@ -8,7 +8,7 @@
     </div>
     <div class="my-tabs">
       <app-plt-left-menu
-          [menuInputs]="{
+        [menuInputs]="{
             tagContextMenu: tagContextMenu,
             wsId: workspaceId,
             uwYear: uwy,
@@ -28,28 +28,29 @@
             _modalSelect: addModalSelect,
             wsHeaderSelected: wsHeaderSelected
           }"
-          (onAssignPltsToTag)="assignPltsToTag($event)"
-          (onProjectFilter)="filter($event)"
-          (onRenameTag)="renameTag($event)"
-          (onResetPath)="resetPath()"
-          (onSelectProjects)="setSelectedProjects($event)"
-          (onSelectSysTagCount)="selectSystemTag($event)"
-          (onSetFilters)="setFilters($event)"
-          (onSetFromPlts)="setFromPlts($event)"
-          (onSetSelectedUserTags)="setUserTags($event)"
-          (onToggleDeletedPlts)="toggleDeletePlts()"
-          (setTagModalIndex)="setModalIndex($event)"
-          (setTagModalVisibility)="setTagModal($event)"
-          (onSetTagForMenu)="setTagForMenu($event)"
-          (onSetRenameTag)="setRenameTag($event)"
-          (emitFilters)="emitFilters($event)"
-          (unCkeckAllPlts)="unCheckAll()"
-          (onWsHeaderSelection)="setWsHeaderSelect($event)"
-          (onModalSelect)="setModalSelectedItems($event)"
-        >
+        (onAssignPltsToTag)="assignPltsToTag($event)"
+        (onAssignPltsToSingleTag)="assignPltsToSingleTag($event)"
+        (onProjectFilter)="filter($event)"
+        (onRenameTag)="renameTag($event)"
+        (onResetPath)="resetPath()"
+        (onSelectProjects)="setSelectedProjects($event)"
+        (onSelectSysTagCount)="selectSystemTag($event)"
+        (onSetFilters)="setFilters($event)"
+        (onSetFromPlts)="setFromPlts($event)"
+        (onSetSelectedUserTags)="setUserTags($event)"
+        (onToggleDeletedPlts)="toggleDeletePlts()"
+        (setTagModalIndex)="setModalIndex($event)"
+        (setTagModalVisibility)="setTagModal($event)"
+        (onSetTagForMenu)="setTagForMenu($event)"
+        (onSetRenameTag)="setRenameTag($event)"
+        (emitFilters)="emitFilters($event)"
+        (unCkeckAllPlts)="unCheckAll()"
+        (onWsHeaderSelection)="setWsHeaderSelect($event)"
+        (onModalSelect)="setModalSelectedItems($event)"
+      >
 
-        </app-plt-left-menu>
-      <div class="tabset-right">
+      </app-plt-left-menu>
+      <div class="tabset-right" [ngStyle]="{ 'width': !leftIsHidden ? 'calc(100vw - 190px - 80px - 221px)' : 'calc(100vw - 190px - 80px - 221px + 125px)' }">
         <div class="title-as-tab">
           <span>
             PLTs
@@ -653,4 +654,3 @@
 
   </div>
 </div>
-

@@ -3,11 +3,23 @@
     <ng-template #path>
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
-      <span class="wsHeader" [ngStyle]="{'border': menuInputs.wsHeaderSelected ?  '1px solid #0700e4' : 'none'}" (click)="resetPath()">
+    <div class="upPartLeftMenu">
+        <span class="wsHeader" [ngStyle]="{'background-color': menuInputs.wsHeaderSelected ?  '#FDFBDF' : 'white'}" (click)="resetPath()">
                       <i class="icon-window-section"></i>
-        {{menuInputs.wsId}} - {{menuInputs.uwYear}}
+          {{menuInputs.wsId}} - {{menuInputs.uwYear}}
       </span>
       <ul class="title-list">
+        <!--
+        <ng-container *ngFor="let project of menuInputs.projects;let i = index;">
+          <li *ngIf="i < 10" (click)="filter('project',null,project.projectId)"
+              style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
+              [ngClass]="{'active-path': project.selected}">
+            <i class="icon-assignment_24px"></i>
+            <span class="tooltipMsg"
+                  [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+          </li>
+        </ng-container>
+        -->
         <li *ngFor="let project of menuInputs.projects" (click)="filter('project',null,project.projectId)"
             style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
             [ngClass]="{'active-path': project.selected}">
@@ -15,14 +27,16 @@
           <span class="tooltipMsg"
                 [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
         </li>
+
       </ul>
-      <div class="plt-trash" [ngStyle]="{'visibility': menuInputs.deletedPltsLength > 0 ? 'visible' : 'hidden'}">
-        <div class="cnt" (click)="toggleDeletedPlts()">
-          <i class="icon-trash-alt"></i>
-          <span> Deleted Plts </span>
-        </div>
-        <span class="deleted-counter">{{menuInputs.deletedPltsLength}}</span>
+    </div>
+    <div class="plt-trash" [ngStyle]="{'visibility': menuInputs.deletedPltsLength > 0 ? 'visible' : 'hidden'}">
+      <div class="cnt" (click)="toggleDeletedPlts()">
+        <i class="icon-trash-alt"></i>
+        <span> Deleted Plts </span>
       </div>
+      <span class="deleted-counter">{{menuInputs.deletedPltsLength}}</span>
+    </div>
   </nz-tab>
 
   <nz-tab [nzTitle]="tags">
@@ -121,7 +135,6 @@
         <div class="header">
           <div>
             <span>User Tags</span>
-            <i (click)="tagModal(true);setFromPlts(false);renamingTag(false)" style="cursor:pointer;" class="icon-plus-circle"></i>
           </div>
           <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle">
             <i nz-icon nzType="undo" nzTheme="outline">
@@ -161,10 +174,10 @@
               <nz-collapse-panel
                 [nzHeader]="section"
               >
-                  <div *ngFor="let tag of ( menuInputs.systemTagsCount[section] | keys)"
-                      style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
-                       class="ml-3 my-1"
-                  >
+                <div *ngFor="let tag of ( menuInputs.systemTagsCount[section] | keys)"
+                     style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
+                     class="ml-3 my-1"
+                >
                     <span
                       [ngClass]="{'active-tag': menuInputs.systemTagsCount[section][tag].selected }"
                       class="chips"
@@ -181,7 +194,7 @@
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                     </span>
-                  </div>
+                </div>
               </nz-collapse-panel>
             </ng-container>
           </ng-container>

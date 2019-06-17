@@ -99,6 +99,7 @@
         color: #fff;
         background-color: #fdc228;
         padding: 2px 3px 2px 2px;
+        margin-right: 7px;
       }
 
       .icon-sitemap {
@@ -110,11 +111,12 @@
 
     .wsHeader {
       font-size: 1.2em;
+      margin-bottom: 10px;
     }
     span {
       i {
         background-color: #0700e4;
-        padding: 4px;
+        padding: 3px;
         color: white;
         vertical-align: middle;
       }
@@ -126,13 +128,20 @@
       margin-bottom: 1px;
     }
 
+    .upPartLeftMenu {
+      padding-bottom: 55.5px;
+      height: 100%;
+      display: flex;
+      flex-flow: column;
+    }
+
     .plt-trash {
       display: flex;
       justify-content: space-between;
       width: 100%;
       padding: 16px;
       font-size: 16px;
-      position: sticky;
+      position: absolute;
       bottom: 0;
       background-color: white;
       .cnt {

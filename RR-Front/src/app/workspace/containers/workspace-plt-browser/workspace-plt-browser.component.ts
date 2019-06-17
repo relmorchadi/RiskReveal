@@ -8,6 +8,7 @@ import {map, mergeMap, tap} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
 import {Table} from 'primeng/table';
 import {combineLatest} from 'rxjs';
+import {WorkspaceMainState} from '../../../core/store/states';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -41,18 +42,19 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   lastSelectedId;
 
   contextMenuItems = [
-    { label: 'View Detail', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
+    { label: 'View Detail', command: (event) => this.openPltInDrawer(this.selectedPlt) },
     { label: 'Delete', command: (event) =>
         this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
     },
-    { label: 'Edit Tags', command: (event) => {
+    { label: 'Manage Tags', command: (event) => {
         this.addTagModal= true;
         this.fromPlts= true;
+        this.renamingTag= false;
         let d= _.map( this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
 
-       /* _.forEach( this.listOfPltsData, (v,k) => {
-          if(v.selected) d.push(v.userTags);
-        })*/
+        /* _.forEach( this.listOfPltsData, (v,k) => {
+           if(v.selected) d.push(v.userTags);
+         })*/
 
         //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
@@ -103,7 +105,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
-    ];
+  ];
 
   epMetricsCurrencySelected: any = 'EUR';
   CalibrationImpactCurrencySelected: any = 'EUR';
@@ -355,7 +357,8 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
       userOccurrenceBasis: 'User Occurence Basis',
       xActAvailable: 'Published To Pricing',
       xActUsed: 'Priced',
-      accumulated: 'Accumulated'
+      accumulated: 'Accumulated',
+      financial: 'Financial Perspectives'
     },
     nonGrouped: {
     }
@@ -467,21 +470,25 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         this.detectChanges();
       }),
       this.route$.params.subscribe(({wsId, year}) => {
-          this.workspaceId = wsId;
-          this.uwy = year;
-          this.loading= true;
-          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
-            params: {
-              workspaceId: wsId, uwy: year
-            }}));
-        }),
+        this.workspaceId = wsId;
+        this.uwy = year;
+        this.loading= true;
+        this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+          params: {
+            workspaceId: wsId, uwy: year
+          }}));
+      }),
       this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
-          this.projects = projects;
-          this.detectChanges();
-        }),
+        this.projects = _.map(projects, p => ({...p, selected: false}));
+        this.detectChanges();
+      }),
       this.getAttr('loading').subscribe( l => this.loading = l),
       this.userTags$.subscribe( userTags => {
         this.userTags = userTags || {};
+        this.detectChanges();
+      }),
+      this.store$.select(WorkspaceMainState.getLeftNavbarIsCollapsed).subscribe(l => {
+        this.leftIsHidden=l;
         this.detectChanges();
       })
     );
@@ -521,6 +528,7 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   showDeleted: boolean;
   selectedItemForMenu: string;
   wsHeaderSelected: boolean;
+  leftIsHidden: any;
 
   selectPltById(pltId) {
     return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`));
@@ -706,9 +714,10 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
 
   setSelectedMenuItem($event: any) {
+    this.selectedPlt= $event;
     this.selectedItemForMenu= $event;
   }
-  
+
   setFilters(filters){
     this.filters= filters;
   }
@@ -722,11 +731,11 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   setFromPlts($event){
     this.fromPlts= $event;
   }
-  
+
   setSysTags($event){
     this.setSysTags= $event;
   }
-  
+
   setUserTags($event){
     this.userTags= $event;
   }
@@ -736,7 +745,6 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   }
 
   assignPltsToTag($event: any) {
-    console.log(this.addModalSelectCache, $event);
     const {
       plts,
       tags: newSelectedTags
@@ -744,14 +752,60 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
 
     console.log(newSelectedTags,plts);
     let newTags = [];
+    let tt= {
+      toDelete: [],
+      toAdd: []
+    };
+    let pp= {
+      toDelete: _.differenceBy(this.oldSelectedTags, newSelectedTags, 'tagId'),
+      toAdd: newSelectedTags
+    };
 
-    _.forEach(this.oldSelectedTags, oldTag => {
-      const isSelected= _.find(newSelectedTags, newTag => oldTag.tagId == newTag.tagId);
+    console.log(this.oldSelectedTags,newSelectedTags)
 
-      newTags.push({...oldTag, pltHeaders: !isSelected ? _.filter(oldTag.pltHeaders,pltHeader => pltHeader.id) : false})
+    _.forEach(_.uniqBy([...this.oldSelectedTags,...newSelectedTags], 'tagId'), tag => {
+      let isSelected= _.find(newSelectedTags, newTag => tag.tagId == newTag.tagId);
+      let headers = !isSelected
+        ?
+        _.filter(tag.pltHeaders,pltHeader => !(_.findIndex(plts, pltId => pltId == pltHeader.id) >= 0))
+        :
+        _.uniqBy([...tag.pltHeaders, ..._.map(plts, plt => ({id : plt}))], e => e.id)
 
-    } )
-    //this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
+      /*newTags.push({
+        ...tag,
+        pltHeaders: headers,
+        count: headers.length
+      })*/
+
+      newTags.push({
+        ...tag,
+        pltHeaders: headers,
+        count: headers.length
+      })
+    })
+
+    console.log(newTags);
+    /*
+    _.forEach(_.uniqBy([...this.oldSelectedTags,...newSelectedTags], 'tagId'), tag => {
+      let newHeaders = _.find(newTags, t => t.tagId === tag.tagId).pltHeaders;
+
+      console.log(newHeaders,tag.pltHeaders);
+
+      tt['toAdd'] = [...tt['toAdd'], ..._.differenceBy(newHeaders, tag.pltHeaders, 'id')];
+      tt['toDelete'] = [...tt['toDelete'], ..._.differenceBy(tag.pltHeaders, newHeaders, 'id')];
+    })
+
+    console.log(tt);*/
+
+    this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+      ...$event,
+      type: 'assignOrRemove',
+      tags: newTags
+    }))
+  }
+
+  assignPltsToSingleTag($event) {
+    this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
   }
 
   setTagModal($event: any) {
@@ -800,5 +854,3 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.addModalSelect= $event;
   }
 }
-
-

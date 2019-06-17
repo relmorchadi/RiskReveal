@@ -74,7 +74,7 @@
         <ng-container *ngIf="i === 1">
           <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
         </ng-container>
-        <ng-container *ngIf="i > 1">
+        <ng-container *ngIf="i > 1 && (col?.forDelete ? tableInputs.showDeleted : true)">
           <ng-container *ngIf="col?.type == 'field' || col?.type == 'date'">
             <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ col?.type === 'date' ? (rowData[col.fields] | date) : rowData[col.fields] }}</div>
           </ng-container>

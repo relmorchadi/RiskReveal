@@ -44,6 +44,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Selector()
+  static getLeftNavbarIsCollapsed(state: WorkspaceMain) {
+    return state.leftNavbarIsCollapsed;
+  }
+
+  @Selector()
   static getFavorite(state: WorkspaceMain) {
     return state.openedTabs.data.filter( dt => dt.favorite);
   }

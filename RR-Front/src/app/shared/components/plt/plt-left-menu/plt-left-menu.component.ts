@@ -46,6 +46,7 @@ export class PltLeftMenuComponent implements OnInit {
   @Output() unCkeckAllPlts= new EventEmitter();
   @Output() onWsHeaderSelection= new EventEmitter();
   @Output() onModalSelect= new EventEmitter();
+  @Output() onAssignPltsToSingleTag= new EventEmitter();
 
   _modalInput: string;
   _renamingTag: boolean;
@@ -89,7 +90,7 @@ export class PltLeftMenuComponent implements OnInit {
         this.onProjectFilter.emit(_.merge({}, this.menuInputs.filterData, {[key]: value}))
       }
       this.onSelectProjects.emit(_.map(this.menuInputs.projects, t => {
-        if(t.value == value){
+        if(t.projectId == value){
           return ({...t,selected: !t.selected})
         }else if(t.selected) {
           return ({...t,selected: false})
@@ -162,17 +163,18 @@ export class PltLeftMenuComponent implements OnInit {
     }else {
 
       if(this.menuInputs.addTagModalIndex === 1 ){
+        console.log(this.menuInputs._modalSelect)
         this.onAssignPltsToTag.emit({
           plts: this.menuInputs.selectedListOfPlts,
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
           tags: this.menuInputs._modalSelect,
-          type: 'many'
+          type: 'assignAndRemove'
         })
       }
 
       if(this.menuInputs.addTagModalIndex === 0) {
-        this.onAssignPltsToTag.emit({
+        this.onAssignPltsToSingleTag.emit({
           plts: this.menuInputs.fromPlts ? this.menuInputs.selectedListOfPlts : [],
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
@@ -196,19 +198,24 @@ export class PltLeftMenuComponent implements OnInit {
         systemTag: [],
         userTag: []
       });
+    this.emitFilters.emit({
+      systemTag: [],
+      userTag: []
+    });
     this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => ({...t, selected: false})));
   }
 
   setFilter(filter: string, tag,section) {
     if(filter === 'userTag'){
-      this.onSetFilters.emit(_.findIndex(this.menuInputs.filters[filter], e => e == tag.tagId) < 0 ?
-          _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
-          _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)})
-        );
+      const filters = _.findIndex(this.menuInputs.filters[filter], e => e == tag.tagId) < 0 ?
+        _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
+        _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)});
+
+      this.onSetFilters.emit(filters);
 
       this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t))
 
-      this.emitFilters.emit(this.menuInputs.filters);
+      this.emitFilters.emit(filters);
     }else{
       const {
         systemTag
