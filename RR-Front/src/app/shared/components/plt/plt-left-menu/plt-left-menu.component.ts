@@ -47,6 +47,7 @@ export class PltLeftMenuComponent implements OnInit {
   @Output() onWsHeaderSelection= new EventEmitter();
   @Output() onModalSelect= new EventEmitter();
   @Output() onAssignPltsToSingleTag= new EventEmitter();
+  @Output() emitModalInputValue= new EventEmitter();
 
   _modalInput: string;
   _renamingTag: boolean;
@@ -251,5 +252,9 @@ export class PltLeftMenuComponent implements OnInit {
     const str= _.split(projectId,'-');
     console.log(_.join([str[0],_.trimStart(str[1],'0')],'-'));
     return _.join([str[0],_.trimStart(str[1],'0')],'-')
+  }
+
+  emitModalInput($event: {}) {
+    this.emitModalInputValue.emit($event)
   }
 }

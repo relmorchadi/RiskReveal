@@ -68,7 +68,7 @@
           <nz-tab [nzTitle]="menuInputs._renamingTag ? 'Rename Tag' : 'Create New Tag'">
             <div class="content">
               <nz-input-group [nzSuffix]="suffixTemplate">
-                <input class="input-default" [(ngModel)]="_modalInput" type="text" nz-input
+                <input class="input-default" [ngModel]="menuInputs._modalInput" (ngModelChange)="emitModalInput($event)" type="text" nz-input
                        placeholder="Tag Name"/>
               </nz-input-group>
               <div class="color" [ngStyle]="{'background-color': initColor}"

@@ -57,6 +57,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     },
     { label: 'Manage Tags', command: (event) => {
         this.addTagModal= true;
+        this.addModalInput= '';
         this.fromPlts= true;
         this.renamingTag= false;
         let d= _.map( this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
@@ -88,7 +89,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
         this.renamingTag= true;
         this.fromPlts = false;
         this.addModalInput = this.tagFormenu.tagName;
-        this.modalInputCache = this.tagFormenu.tagName;
         this.addTagModal = true;
       }
     }
@@ -98,15 +98,15 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {sortDir: 1,fields: '', header: 'User Tags', width: '10%', sorted: false, filtred: false, icon: null, type: 'checkbox'},
     {sortDir: 1,fields: '', header: 'User Tags', width: '10%', sorted: false, filtred: false, icon: null, type: 'tags'},
     {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '13%', sorted: true, filtred: true, icon: null, type: 'id'},
-    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'peril', header: 'Peril', width: '12%', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
-    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '40%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'peril', header: 'Peril', width: '15%', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
+    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '20%', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'grain', header: 'Grain', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'grain', header: 'Grain', width: '40%', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'deletedBy',forDelete: true, header: 'Deleted By', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: 'deletedAt',forDelete:true, header: 'Deleted At', width: '25%', sorted: true, filtred: true, icon: null, type: 'date'},
-    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'rap', header: 'RAP', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '15%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'rap', header: 'RAP', width: '13%', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
@@ -869,7 +869,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
   toggleDeletePlts() {
     this.showDeleted= !this.showDeleted;
-    console.log(this.showDeleted);
+    this.generateContextMenu(this.showDeleted);
     this.selectAll =
       !this.showDeleted
         ?
@@ -900,5 +900,9 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
   setModalSelectedItems($event: any) {
     this.addModalSelect = $event;
+  }
+
+  setInputModalValue($event: any) {
+    this.addModalInput= $event;
   }
 }

@@ -26,6 +26,7 @@
             _tagModal: addTagModal,
             _renamingTag: renamingTag,
             _modalSelect: addModalSelect,
+            _modalInput: addModalInput,
             wsHeaderSelected: wsHeaderSelected
           }"
         (onAssignPltsToTag)="assignPltsToTag($event)"
@@ -47,6 +48,7 @@
         (unCkeckAllPlts)="unCheckAll()"
         (onWsHeaderSelection)="setWsHeaderSelect($event)"
         (onModalSelect)="setModalSelectedItems($event)"
+        (emitModalInputValue)="setInputModalValue($event)"
       >
 
       </app-plt-left-menu>
