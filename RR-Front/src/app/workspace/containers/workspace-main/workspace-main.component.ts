@@ -86,7 +86,7 @@ export class WorkspaceMainComponent implements OnInit {
 
   getSearchedWorkspaces(wsId = null, year = null) {
     const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
-    console.log(popConfirm)
+    console.log(popConfirm);
     if (popConfirm) {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(wsId, year).pipe(
@@ -203,26 +203,26 @@ export class WorkspaceMainComponent implements OnInit {
     }
   }
 
-  addToFavorite(tab: any,k,liked) {
+  addToFavorite(tab: any, k, liked) {
     this.liked = liked;
     this.store.dispatch(new PatchWorkspace({
-      key: ['favorite','lastFModified'],
-      value: [liked,moment().format('x')],
+      key: ['favorite', 'lastFModified'],
+      value: [liked, moment().format('x')],
       k,
       ws: tab
     }));
 
     let workspaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
 
-    if(liked){
-      workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear] = {...tab,favorite: true, lastFModified: moment().format('x')};
-    }else{
-      workspaceMenuItem = {...workspaceMenuItem, [tab.workSpaceId + '-'+ tab.uwYear]: _.omit(workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear], ['favorite','lastFModified'])};
+    if (liked) {
+      workspaceMenuItem[tab.workSpaceId + '-' + tab.uwYear] = {...tab, favorite: true, lastFModified: moment().format('x')};
+    } else {
+      workspaceMenuItem = {...workspaceMenuItem, [tab.workSpaceId + '-'+ tab.uwYear]: _.omit(workspaceMenuItem[tab.workSpaceId + '-' + tab.uwYear], ['favorite', 'lastFModified'])};
     }
-    localStorage.setItem('workSpaceMenuItem',JSON.stringify(workspaceMenuItem));
+    localStorage.setItem('workSpaceMenuItem', JSON.stringify(workspaceMenuItem));
   }
 
-  trackWorkspaces(index, item){
-    return item.workSpaceId+item.uwYear;
+  trackWorkspaces(index, item) {
+    return item.workSpaceId + item.uwYear;
   }
 }

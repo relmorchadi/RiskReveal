@@ -48,22 +48,18 @@ const initiaState: SearchNavBar = {
     {tag: 'Cedant Code', value: 'cid:'},
     {tag: 'Country', value: 'ctr:'},
     {tag: 'UW Year', value: 'uwy:'},
-    {tag: 'Workspace Name', value: 'wn:'},
+    {tag: 'Workspace Name', value: 'w:'},
     {tag: 'Workspace Code', value: 'wid:'},
-    {tag: 'Program', value: 'C:'},
-    {tag: 'PLT', value: 'C:'},
-    {tag: 'Section', value: 'C:'},
-    {tag: 'Subsidiary', value: 'C:'},
-    {tag: 'Ledger', value: 'C:'},
-    {tag: 'Bouquet', value: 'C:'},
-    {tag: 'Contract', value: 'C:'},
-    {tag: 'UW Unit', value: 'C:'}
+    {tag: 'Project', value: 'p:'},
+    {tag: 'PLT', value: 'plt:'},
+    {tag: 'Section Name', value: 's:'},
+    {tag: 'UW Unit', value: 'uwu:'}
   ],
   sortcutFormKeysMapper: {
     c: 'Cedant Name',
     cid: 'Cedant Code',
     uwy: 'Year',
-    wn: 'Workspace Name',
+    w: 'Workspace Name',
     wid: 'Workspace Id',
     ctr: 'Country Name'
   },
@@ -188,7 +184,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(DisableExpertMode)
   disableExpertMode(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState({visibleSearch: true});
+    // ctx.patchState({visibleSearch: true});
   }
 
   @Action(DeleteLastBadgeAction)
