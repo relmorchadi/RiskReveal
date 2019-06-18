@@ -64,7 +64,6 @@
         <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
       </td>
       <td *ngFor="let col of columns; let i = index" (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
-        {{col.fields}}
         <ng-container *ngIf="i === 0">
           <div class="td-wrapper-tags">
             <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
@@ -77,22 +76,15 @@
         <ng-container *ngIf="i === 1">
           <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
         </ng-container>
-<<<<<<< HEAD
-        <ng-container *ngIf="i > 1 && (col?.forDelete ? tableInputs.showDeleted : true)">
-          <ng-container *ngIf="col?.type == 'field' || col?.type == 'date'">
-            <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ col?.type === 'date' ? (rowData[col.fields] | date) : rowData[col.fields] }}</div>
-=======
         <ng-container *ngIf="i > 1">
           <ng-container *ngIf="col?.forDelete && (col?.type == 'field' || col?.type == 'date')">
             <ng-container *ngIf="tableInputs.showDeleted">
               <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ col?.type === 'date' ? (rowData[col.fields] | date) : rowData[col.fields] }}</div>
             </ng-container>
->>>>>>> fa02d59e6bdc1694449f665e76cb43571a2c4dc4
           </ng-container>
           <ng-container *ngIf="!col?.forDelete && (col?.type == 'field' || col?.type == 'date')">
               <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ col?.type === 'date' ? (rowData[col.fields] | date) : rowData[col.fields] }}</div>
           </ng-container>
-        </ng-container>
         <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' || col?.type == 'date'">
           <ng-container>
               <div class="text-elipsice"
@@ -107,6 +99,7 @@
             </div>
           </div>
         </div>
+          </ng-container>
       </td>
     </tr>
   </ng-template>
