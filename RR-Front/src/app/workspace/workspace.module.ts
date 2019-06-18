@@ -15,6 +15,7 @@ import {DndModule} from 'ngx-drag-drop';
 import {SystemTagFilterPipe} from './pipes/system-tag-filter.pipe';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
+import {DragDropModule} from "primeng/primeng";
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjus
     ReactiveFormsModule,
     NgMasonryGridModule,
     DndModule,
+    DragDropModule,
     RouterModule.forChild(workspaceRoutes)
   ],
   exports: [

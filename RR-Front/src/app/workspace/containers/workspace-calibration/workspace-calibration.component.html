@@ -205,10 +205,10 @@
         <div style="background-color: #ffffff">
 
 
-          <div class="PLTs-content" style="overflow:scroll; width: 1150px;">
+          <div class="PLTs-content" style="overflow:scroll; width: 100%;">
             <p-contextMenu #cm appendTo="body" [model]="contextMenuItems"></p-contextMenu>
             <p-table
-              class="temp"
+              [style]="{'width':'1100px'}"
               [columns]="pltColumns"
               [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]"
               [resizableColumns]="true"
@@ -293,7 +293,7 @@
                                class="templateInput"
                                style="height: 17px;">
                       </div>
-                      </ng-container>
+                    </ng-container>
                   </th>
                 </tr>
                 <tr>
@@ -362,8 +362,7 @@
                   </ng-container>
                 </tr>
                 <tr>
-                  <th></th>
-                  <th></th>
+                  <th colspan="2"></th>
                   <ng-container *ngFor="let col of columns;">
                     <th *ngIf="col?.filtred && col.extended">
                       <div class="filter-input">
@@ -376,9 +375,7 @@
                   <th></th>
                   <th style="border-right: none !important;"></th>
                   <th style="border-left: 5px solid #F4F6FC !important;"></th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
+                  <th colspan="3"></th>
                   <th style="background-color: #FAEBD7 !important;"></th>
                   <th></th>
                 </tr>
@@ -391,15 +388,16 @@
                     <label nz-checkbox [nzChecked]="rowData.selected"
                            (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
                   </td>
-                  <td dndDropzone
-                      dndHorizontal
-                      dndEffectAllowed="copyMove"
-                      (dndDrop)="onDrop($event,rowData.pltId)"
-                      [ngClass]="{'draggable':col?.dragable,'fixed':!col?.dragable}"
-                      *ngFor="let col of dataColumns; let i = index"
-                      (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
-                      [ngStyle]="{'width': i ==0 ?'60px':'','background-color':getDragableColor(col.fields)}">
-                    <div class="dndPlaceholder" dndPlaceholderRef></div>
+                  <td
+                    pDroppable="adjustment"
+                    (onDrop)="onDrop(rowData.pltId)"
+                    (onDragEnter)="ondragEnter(col,rowData.pltId)"
+                    (onDragLeave)="ondragLeave(col)"
+                    [ngClass]="{'draggable':col?.dragable,'fixed':!col?.dragable}"
+                    *ngFor="let col of dataColumns; let i = index"
+                    (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
+                    [ngStyle]="{'width': i ==0 ?'60px':'','background-color':getDragableColor(col.fields)}">
+
                     <ng-container *ngIf="i === 0">
                       <div class="td-wrapper-tags">
                         <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
@@ -431,15 +429,11 @@
                         </div>
                       </ng-container>
                       <ng-container *ngIf="col?.dragable">
-                        <div dndDropzone
-                             dndHorizontal
-                             dndEffectAllowed="copyMove"
-                             (dndDrop)="onDrop($event,rowData.pltId)"
-                             style="display: flex;"
-                             class="text-elipsice border-dragable"
-                             [ngClass]="{'separator-left':col?.fields == 'overallLMF'}"
-                             [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">
-
+                        <div
+                          style="display: flex;"
+                          class="text-elipsice border-dragable"
+                          [ngClass]="{'separator-left':col?.fields == 'overallLMF'}"
+                          [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">
                           <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
                             <div
                               class="adjustDiv" style=" background: #f3f3f3;">
@@ -449,18 +443,15 @@
                                      style=" background: #f3f3f3;" value="2.1">
                             </div>
                           </div>
-                          <div class="dndPlaceholder" dndPlaceholderRef></div>
+
                           <ng-container *ngFor="let adjs of adjutmentApplication">
                             <div
                               *ngIf="col.fields=='base' && adjs.pltId == rowData.pltId && adjs.adj.category == 'Base'"
                               style="display: flex;height: max-content;">
-                              <div [dndDraggable]="adjs"
-                                   (dragover)="adjustColWidth(adjs.adj,80)"
-                                   (dragend)="adjustColWidth(adjs.adj,0)"
-                                   (dndStart)="onDragStart($event)"
-                                   (dndEnd)="onDragEnd($event)"
-                                   (dndMoved)="onDragged(adjs, 'move')"
-                                   dndEffectAllowed="move"
+                              <div pDraggable="adjustment"
+                                   (onDragEnd)="onDragEnd($event,adjs)"
+                                   (onDragStart)="onDragStart($event,adjs.adj)"
+                                   (onDrag)="onDragged(adjs)"
                                    class="adjustDiv">
                                 <span class="spanStyle">{{adjs?.adj?.name}}</span>
                                 <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
@@ -485,13 +476,10 @@
                             <div
                               *ngIf="col.fields=='client' && adjs.pltId == rowData.pltId && adjs.adj.category == 'Client'"
                               style="display: flex;height: max-content">
-                              <div [dndDraggable]="adjs"
-                                   (dndStart)="onDragStart($event)"
-                                   (dragover)="adjustColWidth(adjs.adj,80)"
-                                   (dragend)="adjustColWidth(adjs.adj,0)"
-                                   (dndEnd)="onDragEnd($event)"
-                                   (dndMoved)="onDragged(adjs, 'move')"
-                                   dndEffectAllowed="move"
+                              <div pDraggable="adjustment"
+                                   (onDragEnd)="onDragEnd($event,adjs)"
+                                   (onDragStart)="onDragStart($event,adjs.adj)"
+                                   (onDrag)="onDragged(adjs)"
                                    class="adjustDiv">
                                 <span class="spanStyle">{{adjs?.adj?.name}}</span>
                                 <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
@@ -536,6 +524,8 @@
                             <input class="templateInput" disabled
                                    value="P00002">
                           </div>
+                          <div *ngIf="dragPlaceHolderId == rowData.pltId && dragPlaceHolderCol == col?.fields"
+                               class="dndPlaceholder"></div>
                         </div>
                       </ng-container>
                     </ng-container>
@@ -1137,7 +1127,7 @@
   </div>
   <div nz-row>
     <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Adjustment Basis</b>
+      <b>Basis</b>
     </div>
     <div nz-col nzSpan="16">
       <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
@@ -1163,7 +1153,7 @@
   </div>
   <div nz-row>
     <div class="modal-left-item" nz-col nzSpan="8">
-      <b>Adjustment Category</b>
+      <b>Category</b>
     </div>
     <div nz-col nzSpan="16" style="line-height: 2.2rem;">
       <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
@@ -1177,7 +1167,7 @@
   </div>
   <div nz-row>
     <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Adjustment Narrative</b>
+      <b>Narrative</b>
     </div>
     <div nz-col nzSpan="16">
       <textarea style="margin-left: 10px; width: 95%" rows="4" nz-input [(ngModel)]="inputValue"></textarea>
@@ -1190,7 +1180,7 @@
   </div>
   <div nz-row>
     <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Adjustment Type</b>
+      <b>Type</b>
     </div>
     <div nz-col nzSpan="16">
       <nz-select [(ngModel)]="singleValue" (ngModelChange)="selectBasis(singleValue)"
@@ -1218,7 +1208,7 @@
     </div>
     <div nz-row>
       <div nz-col nzSpan="24" style="margin: 5px;">
-        <b>Adjustment Parameter</b>
+        <b>Parameter</b>
       </div>
     </div>
     <div nz-row>

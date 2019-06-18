@@ -884,6 +884,7 @@
 
 :host .PLTs-content {
   padding: 0 16px 0 16px !important;
+  border-bottom: 3px solid #F4F6FC;
 
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
@@ -1259,7 +1260,7 @@
   background: white;
   box-shadow: none;
   border: 0;
-  width: 80%;
+  width: 82%;
   height: 50%;
   position: relative;
   bottom: 3px;
@@ -1323,4 +1324,8 @@
 .modal-left-item {
   text-align: left;
   line-height: 2.2rem;
+}
+
+/deep/ .cdk-global-scrollblock {
+  overflow-y: visible !important;
 }

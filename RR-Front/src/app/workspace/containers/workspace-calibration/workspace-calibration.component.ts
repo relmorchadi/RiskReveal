@@ -12,7 +12,6 @@ import {
   ViewChild
 } from '@angular/core';
 import * as _ from 'lodash'
-import {DndDropEvent, DropEffect} from "ngx-drag-drop";
 import {Select, Store} from "@ngxs/store";
 import {
   applyAdjustment,
@@ -57,12 +56,15 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   lockedCheckbox: boolean = true;
   isVisible = false;
   singleValue: any;
+  dragPlaceHolderId: any;
+  dragPlaceHolderCol: any;
   dndBool: boolean = false;
   categorySelectedFromAdjustement: any;
   modalTitle: any;
   addAdjustement: any;
   modifyModal: any;
   idPlt: any;
+  draggedAdjs: any;
   templateWidth = '120';
   tableWidth = '1200';
   @ViewChild('dt')
@@ -105,7 +107,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'pltId',
       header: 'PLT ID',
-      width: '100',
+      width: '80',
       sorted: true,
       filtred: true,
       icon: null,
@@ -117,7 +119,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'pltName',
       header: 'PLT Name',
-      width: '200',
+      width: '150',
       sorted: true,
       filtred: true,
       icon: null,
@@ -1303,29 +1305,44 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
 
-  onDrop(event: DndDropEvent, pltId) {
-    console.log("ondrop");
+  onDrop(pltId) {
     this.store$.dispatch(new dropAdjustment({
       pltId: pltId,
-      adjustement: event.data.adj
+      adjustement: this.draggedAdjs
     }))
+    this.adjustColWidth(this.draggedAdjs);
+    this.dragPlaceHolderCol = null;
+    this.dragPlaceHolderId = null;
+  }
+
+  onDragged(item: any) {
+    this.deleteAdjs(item.adj, item.pltId);
+  }
+
+  onDragEnd(event, adj) {
 
   }
 
-  onDragged(item: any, effect: DropEffect) {
-
-    if (effect === "move") {
-      this.deleteAdjs(item.adj, item.pltId);
-    }
+  onDragStart(event, data: any) {
+    console.log(data);
+    this.draggedAdjs = data;
   }
 
-  onDragEnd(event: DragEvent) {
-
+  ondragEnter(col, pltId) {
+    console.log('ondragEnter');
+    const width = +col.width;
+    col.width = (width + 40).toString();
+    this.dragPlaceHolderId = pltId;
+    this.dragPlaceHolderCol = col.fields
   }
 
-  onDragStart(event: DragEvent) {
+  ondragLeave(col) {
+    console.log('ondragLeave');
+    const width = +col.width;
+    col.width = (width - 40).toString();
+    this.dragPlaceHolderId = null;
+    this.dragPlaceHolderCol = null;
   }
-
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
       this.selectSinglePLT(pltId, isSelected);
