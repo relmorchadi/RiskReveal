@@ -11,36 +11,41 @@
            (onBackspace)="onBackspace($event)"
            (onDelete)="onDelete($event)"
            appScrollToParent
-           [scrollTo]="scrollParams.scrollTo"
-           [listLength]="scrollParams.listLength"
+           [scrollTo]="scrollParams?.scrollTo"
+           [listLength]="scrollParams?.listLength"
            (emitScrollTo)="scrollParams.scrollTo = $event"
            #searchInput
            formControlName="globalKeyword" (click)="focusInput($event)"
            class="search-input" type="text" nz-input [placeholder]="'Search for ' + searchMode || 'Treaty' ">
   </nz-input-group>
 
-  <ng-template #suffixIconSearch>
-    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close" nzTheme="outline"></i>
-    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer" class="icon-search_24px"></i>
-  </ng-template>
-
   <ng-template #prefixIconTag>
     <div class="prefix-wrapper">
-      <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
+      <button class="code-button" [(nzVisible)]="state.visible" (click)="openClose()" nz-popover
+              [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
         <i class="icon-code_24px"></i>
       </button>
-      <button class="code-button" style="font-size: 16px; margin-right: 0px" nz-popover  [nzContent]="searchDropDown" nzPlacement="bottomLeft" nzTrigger="click">
-        <i nz-icon nzType="setting" nzTheme="outline" ></i>
+      <button class="code-button" [(nzVisible)]="searchConfigPopInVisible"
+              (click)="toggleSearchConfigPopIn()" style="font-size: 16px; margin-right: 0px"
+              nz-popover [nzContent]="searchDropDown" nzPlacement="bottomLeft" nzTrigger="click">
+        <i nz-icon nzType="setting" nzTheme="outline"></i>
       </button>
       <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
-              nz-popover [nzContent]="searchDropdown"  nzPlacement="bottomLeft" nzTrigger="click">
+              nz-popover [nzContent]="searchDropdown" nzPlacement="bottomLeft" nzTrigger="click">
       </button>
       <div class="chips-wrapper">
-        <app-chip-tag *ngFor="let items of state?.badges; let i = index" (onclick)="closeSearchBadge($event, i)" [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
+        <app-chip-tag *ngFor="let items of state?.badges; let i = index" (onclick)="closeSearchBadge($event, i)"
+                      [closeStatus]="true" [key]="items.key" [value]="items.value"></app-chip-tag>
       </div>
     </div>
   </ng-template>
 
+  <ng-template #suffixIconSearch>
+    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close"
+       nzTheme="outline"></i>
+    <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer"
+       class="icon-search_24px"></i>
+  </ng-template>
 
   <ng-template #searchDropDown>
     <div class="setting-popover">
@@ -72,66 +77,73 @@
   <ng-template #searchDropdown>
     <div class="search-contextual-table"
          nz-menu style="height: 300px; overflow: auto; width: 750px">
-         <div class="search-history" *ngIf="state?.showLastSearch; else basicTable">
-          <div class="search-history-component" style="position: relative;">
-              <div class="header-wrapper">
-                <span class="search-history-header">RECENT SEARCH</span>
-<!--                <span class="search-history-viewAll">See All</span>-->
+      <div class="search-history" *ngIf="state?.showLastSearch; else basicTable">
+        <div class="search-history-component" style="position: relative;">
+          <div class="header-wrapper">
+            <span class="search-history-header">RECENT SEARCH</span>
+            <!--                <span class="search-history-viewAll">See All</span>-->
+          </div>
+          <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
+            <li *ngFor="let items of state?.recentSearch" (click)="appendSearchBadges(items)"
+                (dblclick)="selectSearchAndRedirect(items)">
+              <div class="chip-container" *ngFor="let instance of items">
+                <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
               </div>
-              <ul *ngIf="state?.recentSearch && state?.recentSearch.length > 0;else emptyRecent">
-                <li *ngFor="let items of state?.recentSearch" (click)="appendSearchBadges(items)" (dblclick)="selectSearchAndRedirect(items)">
-                  <div class="chip-container" *ngFor="let instance of items">
-                    <app-chip-tag  [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
-                  </div>
-                </li>
-              </ul>
+            </li>
+          </ul>
 
-            <ng-template #emptyRecent>
-              <div>
-                <nz-empty></nz-empty>
-              </div>
-            </ng-template>
-          </div>
-          <div class="search-history-component" style="position: relative;">
-              <div class="header-wrapper">
-                <span class="search-history-header">SAVED SEARCH</span>
-                <span class="search-history-viewAll">See All</span>
-              </div>
-              <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
-                  <li *ngFor="let items of state?.savedSearch;let i= index" (click)="appendSearchBadges(items)">
-                    <div class="chip-container" *ngFor="let instance of items">
-                      <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
-                    </div>
-                  </li>
-              </ul>
-          </div>
-        </div>
-
-        <ng-template #basicTable>
-          <div class="result-wrapper" *ngIf="state?.data?.length > 0; else loadingTemp">
-            <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
-                <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span" *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
-                <ul class="search-result-list" >
-                  <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index" [scrollTo]="scrollParams.scrollTo" [i]="i" [k]="k" [data]="state?.data" (setPos)="scrollParams.position= $event" appKeyDownScroll (click)="selectSearchBadge(state?.tables[i], val.label)">
-                    <span>{{val.countOccur}}</span> <p [innerHtml]="val.label| boldSpan: state.searchValue"></p><!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
-                  </li>
-                </ul>
-            </div>
-          </div>
-        </ng-template>
-        <ng-template #loadingTemp>
-            <ng-container *ngIf="state?.loading;else emptyState">
-              <nz-skeleton [nzActive]="true"></nz-skeleton>
-              <nz-skeleton [nzActive]="true"></nz-skeleton>
-            </ng-container>
-          <ng-template #emptyState>
+          <ng-template #emptyRecent>
             <div>
-              <nz-empty></nz-empty>
+<!--              <nz-empty></nz-empty>-->
             </div>
           </ng-template>
+        </div>
+        <div class="search-history-component" style="position: relative;">
+          <div class="header-wrapper">
+            <span class="search-history-header">SAVED SEARCH</span>
+            <span class="search-history-viewAll">See All</span>
+          </div>
+          <ul style="line-height: normal" *ngIf="state?.savedSearch && state?.savedSearch > 0;else emptyRecent">
+            <li *ngFor="let items of state?.savedSearch;let i= index" (click)="appendSearchBadges(items)">
+              <div class="chip-container" *ngFor="let instance of items">
+                <app-chip-tag [closeStatus]="false" [key]="instance.key" [value]="instance.value"></app-chip-tag>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <ng-template #basicTable>
+        <div class="result-wrapper" *ngIf="state?.data?.length > 0; else loadingTemp">
+          <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
+            <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span"
+                  *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
+            <ul class="search-result-list">
+              <li style="display: flex; height: 31px;" *ngFor="let val of state?.data[i];let k=index"
+                  [scrollTo]="scrollParams.scrollTo" [i]="i" [k]="k" [data]="state?.data"
+                  (setPos)="scrollParams.position= $event" appKeyDownScroll
+                  (click)="selectSearchBadge(state?.tables[i], val.label)">
+                <span>{{val.countOccur}}</span>
+                <p [innerHtml]="val.label| boldSpan: state.searchValue"></p>
+                <!--{{val.label | boldKeyword: val.label:state.actualGlobalKeyword}}-->
+              </li>
+            </ul>
+          </div>
+        </div>
+      </ng-template>
+      <ng-template #loadingTemp>
+        <ng-container *ngIf="state?.loading;else emptyState">
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+          <nz-skeleton [nzActive]="true"></nz-skeleton>
+        </ng-container>
+        <ng-template #emptyState>
+          <div>
+            <nz-empty></nz-empty>
+          </div>
         </ng-template>
+      </ng-template>
       <div class="more-results-sction">
-        <button (click)="redirectToSearchPage()" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
+        <button (click)="onEnter($event)" class="more-results-button" nz-button nzType="default">MORE RESULTS</button>
       </div>
     </div>
   </ng-template>

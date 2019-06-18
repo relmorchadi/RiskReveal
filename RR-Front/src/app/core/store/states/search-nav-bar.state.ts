@@ -188,7 +188,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(DisableExpertMode)
   disableExpertMode(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState({visibleSearch: false});
+    ctx.patchState({visibleSearch: true});
   }
 
   @Action(DeleteLastBadgeAction)

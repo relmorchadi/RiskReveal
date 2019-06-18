@@ -36,8 +36,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   subscriptions: Subscription;
   scrollParams;
   state: SearchNavBar = null;
-  private unSubscribe$:Subject<void>;
-  searchMode:string= 'Treaty';
+  private unSubscribe$: Subject<void>;
+  searchMode: string = 'Treaty';
+  searchConfigPopInVisible: boolean = false;
+
 
   @Input('state')
   set setState(value) {
@@ -55,7 +57,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     });
     this.subscriptions = new Subscription();
     this.scrollParams = {scrollTo: -1, listLength: 0, position: {i: 0, j: 0}};
-    this.unSubscribe$= new Subject<void>();
+    this.unSubscribe$ = new Subject<void>();
   }
 
   ngOnInit() {
@@ -93,7 +95,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this._unsubscribeToFormChanges();
     this.subscriptions = this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
-      .pipe(takeUntil(this.unSubscribe$),debounceTime(500))
+      .pipe(takeUntil(this.unSubscribe$), debounceTime(500))
       .subscribe((value) => {
         this.store.dispatch(new SearchActions.SearchInputValueChange(this.isExpertMode, value))
         this._contractChoicesSearch(value);
@@ -111,7 +113,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     } else {
       this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
     }
-    this.clearSearchValue();
+    // this.clearSearchValue();
   }
 
   onSpace(evt: KeyboardEvent) {
@@ -133,7 +135,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   selectSearchBadge(key, value) {
-    key= HelperService.upperFirstWordsInSetence(key);
+    key = HelperService.upperFirstWordsInSetence(key);
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword));
     this.searchInput.nativeElement.focus();
@@ -170,15 +172,29 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   focusInput(event) {
+    if (this.searchConfigPopInVisible)
+      this.searchConfigPopInVisible = false;
     this._searchService.setvisibleDropdown(false);
     this.store.dispatch(new SearchActions.SearchInputFocusAction(this.isExpertMode, event.target.value));
   }
 
   openClose(): void {
-    this.store.dispatch(new SearchActions.PatchSearchStateAction([{key: 'visibleSearch', value: false}, {
-      key: 'visible',
-      value: !this.state.visible
-    }]));
+    if (this.searchConfigPopInVisible)
+      this.searchConfigPopInVisible = false;
+    if (this.state.visibleSearch)
+      this.store.dispatch(new SearchActions.PatchSearchStateAction([{key: 'visibleSearch', value: false}, {
+        key: 'visible',
+        value: !this.state.visible
+      }]));
+  }
+
+  toggleSearchConfigPopIn() {
+    if (this.searchConfigPopInVisible)
+      this.searchConfigPopInVisible = false;
+    if (this.state.visible)
+      this.store.dispatch(new SearchActions.PatchSearchStateAction({key: 'visible', value: !this.state.visible}));
+    if (this.state.visibleSearch)
+      this.store.dispatch(new SearchActions.PatchSearchStateAction({key: 'visibleSearch', value: false}));
   }
 
   get isExpertMode() {
