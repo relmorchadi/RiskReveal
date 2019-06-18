@@ -9,31 +9,32 @@
     <nz-tabset class="tabs-standard">
       <nz-tab [nzTitle]="RecentHeaderContent">
         <div class="popup-tab-content">
-          <div class="tab-search-input">
-            <i class="icon-search_24px"></i>
-            <input class="input-search" (input)="searchNewWorkspace($event)"/>
-          </div>
           <nz-alert
             nzType="info"
             nzCloseable
             nzShowIcon
             nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"
           ></nz-alert>
+          <div class="tab-search-input">
+            <i class="icon-search_24px"></i>
+            <input class="input-search" (input)="searchNewWorkspace($event)"/>
+          </div>
           <ul>
             <ng-container *ngFor="let workspace of state.recentWs; let i = index">
               <li *ngIf="i < state.appliedFilter.shownElement" class="poover-menu-item" (click)="toggleWorkspace(workspace)"
                   [ngClass]="{'poover-menu-item-active': workspace.selected}">
                 <div class="items-popover-wrapper">
-                  <i class="icon-window-section"></i>
+                  <label class="item-checkbox" nz-checkbox [(ngModel)]="workspace.selected"></label>
+
+<!--                  <i class="icon-window-section"></i>-->
                   <div class="item-popover-context">
-                    <span class="item-popover-context-header">{{workspace?.workspaceName}}</span>
+                    <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
                     <span
-                      class="item-popover-context-footer">{{workspace?.cedantName}} {{workspace?.programName}}</span>
+                      class="item-popover-context-footer">{{workspace?.uwYear}} - {{workspace?.workspaceName}} {{workspace?.programName}} </span>
                   </div>
                 </div>
                 <div class="items-popover-info">
-                  {{workspace?.uwYear}} - {{workspace?.workSpaceId}} <i class="float-right mr-1 mt-1"
-                                                                        [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
+                  {{workspace?.workSpaceId}}
                 </div>
               </li>
             </ng-container>
