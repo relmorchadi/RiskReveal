@@ -7,7 +7,7 @@ import * as _ from 'lodash';
   styleUrls: ['./plt-left-menu.component.scss']
 })
 export class PltLeftMenuComponent implements OnInit {
-  
+
   @Input() menuInputs: {
     tagContextMenu: any;
     _tagModal: boolean;
@@ -27,7 +27,7 @@ export class PltLeftMenuComponent implements OnInit {
     systemTagsCount: any;
     wsHeaderSelected: boolean;
   }
-  
+
   @Output() onResetPath= new EventEmitter();
   @Output() onToggleDeletedPlts= new EventEmitter();
   @Output() onProjectFilter= new EventEmitter();
@@ -78,7 +78,7 @@ export class PltLeftMenuComponent implements OnInit {
     this.onWsHeaderSelection.emit(true)
     this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, ['project']))
   }
-  
+
   filter(key, filterData, value){
     if (key == 'project') {
       this.unCkeckAllPlts.emit();
@@ -163,21 +163,13 @@ export class PltLeftMenuComponent implements OnInit {
     }else {
 
       if(this.menuInputs.addTagModalIndex === 1 ){
-<<<<<<< HEAD
         console.log(this.menuInputs._modalSelect)
-=======
-        console.log(this.menuInputs._modalSelect);
->>>>>>> fa02d59e6bdc1694449f665e76cb43571a2c4dc4
         this.onAssignPltsToTag.emit({
           plts: this.menuInputs.selectedListOfPlts,
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
           tags: this.menuInputs._modalSelect,
-<<<<<<< HEAD
           type: 'assignAndRemove'
-=======
-          type: 'assignOrRemove'
->>>>>>> fa02d59e6bdc1694449f665e76cb43571a2c4dc4
         })
       }
 
@@ -217,12 +209,8 @@ export class PltLeftMenuComponent implements OnInit {
     if(filter === 'userTag'){
       const filters = _.findIndex(this.menuInputs.filters[filter], e => e == tag.tagId) < 0 ?
         _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
-<<<<<<< HEAD
         _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)});
 
-=======
-        _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)})
->>>>>>> fa02d59e6bdc1694449f665e76cb43571a2c4dc4
       this.onSetFilters.emit(filters);
 
       this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t))

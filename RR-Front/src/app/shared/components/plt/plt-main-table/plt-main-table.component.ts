@@ -11,6 +11,7 @@ import * as fromWorkspaceStore from "../../../../workspace/store";
 export class PltMainTableComponent implements OnInit {
 
   @Input() tableInputs: {
+    contextMenuItems: any,
     pltColumns: any[];
     listOfPltsData: [];
     listOfDeletedPltsData: [];

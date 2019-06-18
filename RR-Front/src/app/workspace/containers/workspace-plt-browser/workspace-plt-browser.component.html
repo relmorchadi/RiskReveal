@@ -50,16 +50,22 @@
       >
 
       </app-plt-left-menu>
-      <div class="tabset-right" [ngStyle]="{ 'width': !leftIsHidden ? 'calc(100vw - 190px - 80px - 221px)' : 'calc(100vw - 190px - 80px - 221px + 125px)' }">
+      <div class="tabset-right" [ngStyle]="{ 'width': !leftIsHidden ? 'calc(100vw - 190px - 80px - 221px)' : 'calc(100vw - 190px - 80px - 232px + 125px)' }">
         <div class="title-as-tab">
           <span>
             PLTs
           </span>
         </div>
         <div class="PLTs-content">
-          <i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;cursor: pointer;font-size: 15px;"></i>
+          <i class="icon-menu_24px" style="position: absolute;
+    top: -50px;
+    right: 14px;
+    z-index: 10;
+    cursor: pointer;
+    font-size: 2em;"></i>
           <app-plt-main-table
             [tableInputs]="{
+                  contextMenuItems: contextMenuItems,
                   pltColumns: pltColumns,
                   listOfPltsData: listOfPltsData,
                   listOfDeletedPltsData: listOfDeletedPltsData,

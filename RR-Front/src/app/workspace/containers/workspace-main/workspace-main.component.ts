@@ -87,7 +87,7 @@ export class WorkspaceMainComponent implements OnInit {
   getSearchedWorkspaces(wsId = null, year = null) {
     const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
     console.log(popConfirm)
-    if (popConfirm) {
+    /*if (popConfirm) {*/
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(wsId, year).pipe(
         mergeMap((content: any) => {
@@ -104,7 +104,7 @@ export class WorkspaceMainComponent implements OnInit {
         this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
         this.detectChanges();
       });
-    }
+    /*}*/
   }
 
   private searchData(id, year) {
