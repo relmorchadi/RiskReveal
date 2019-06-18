@@ -10,14 +10,15 @@
   </div>
 
   <div nz-row class="search-container">
-    <div style="  width: 94% ">
-      <div class="mr-5 ml-5">
+    <div style="  width: 100% ">
+      <div class="mr-3 ml-3">
 
-        <div class="title-wrapper" nz-row style="margin-top: 50px;">
+        <div class="title-wrapper" nz-row style="margin-top: 10px;">
           <div class="title-section">
-            <h3>
+            <h6 style="margin-bottom: 0; display:flex; align-items: center">
               Showing {{paginationOption?.currentPage + '-' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
-              results</h3>
+              results
+            </h6>
             <!--            /*( paginationOption?.total / 50 | number:'1.0-0' )*/-->
           </div>
 

@@ -1,4 +1,4 @@
-<div [ngStyle]="{'width': expandWorkspaceDetails ? '27%' : '6%' }" class="right-column">
+<div [ngStyle]="{'width': expandWorkspaceDetails ? '27%' : '0%', 'display': expandWorkspaceDetails ? 'block' : 'none' }" class="right-column">
   <div *ngIf="!expandWorkspaceDetails; else workspaceDetails" class="navigation-icons mt-5"
        style="min-height: 100px">
     <i class="icon-map-pin-alt"></i>
