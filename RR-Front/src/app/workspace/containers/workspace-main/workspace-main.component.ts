@@ -56,30 +56,30 @@ export class WorkspaceMainComponent implements OnInit {
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(e: KeyboardEvent) {
-    if(e.key == 'ArrowRight' && e.ctrlKey && this.state.openedTabs.data) {
-      if( this.state.openedTabs.data.length - 1 > this.state.openedTabs.tabsIndex){
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex+1])
+    if (e.key == 'ArrowRight' && e.ctrlKey && this.state.openedTabs.data) {
+      if ( this.state.openedTabs.data.length - 1 > this.state.openedTabs.tabsIndex) {
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex + 1]);
         this.store.dispatch(new setTabsIndex({
-          index: this.state.openedTabs.tabsIndex+1
-        }))
-      }else{
-        this.selectWorkspace(this.state.openedTabs.data[0])
+          index: this.state.openedTabs.tabsIndex + 1
+        }));
+      } else {
+        this.selectWorkspace(this.state.openedTabs.data[0]);
         this.store.dispatch(new setTabsIndex({
           index: 0
-        }))
+        }));
       }
     }
-    if(e.key == 'ArrowLeft' && e.ctrlKey && this.state.openedTabs.data) {
-      if(0 < this.state.openedTabs.tabsIndex){
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex - 1])
+    if (e.key == 'ArrowLeft' && e.ctrlKey && this.state.openedTabs.data) {
+      if (0 < this.state.openedTabs.tabsIndex) {
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex - 1]);
         this.store.dispatch(new setTabsIndex({
           index: this.state.openedTabs.tabsIndex - 1
-        }))
-      }else{
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length - 1])
+        }));
+      } else {
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
         this.store.dispatch(new setTabsIndex({
           index: this.state.openedTabs.data.length - 1
-        }))
+        }));
       }
     }
   }
@@ -87,7 +87,7 @@ export class WorkspaceMainComponent implements OnInit {
   getSearchedWorkspaces(wsId = null, year = null) {
     const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
     console.log(popConfirm)
-    /*if (popConfirm) {*/
+    if (popConfirm) {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(wsId, year).pipe(
         mergeMap((content: any) => {
@@ -104,7 +104,7 @@ export class WorkspaceMainComponent implements OnInit {
         this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: false}));
         this.detectChanges();
       });
-    /*}*/
+    }
   }
 
   private searchData(id, year) {
