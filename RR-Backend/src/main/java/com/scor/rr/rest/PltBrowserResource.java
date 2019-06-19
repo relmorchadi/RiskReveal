@@ -3,12 +3,15 @@ package com.scor.rr.rest;
 import com.scor.rr.domain.PltManagerView;
 import com.scor.rr.domain.UserTag;
 import com.scor.rr.domain.dto.AssignPltsRequest;
+import com.scor.rr.domain.dto.AssignUpdatePltsRequest;
 import com.scor.rr.domain.dto.PltFilter;
 import com.scor.rr.domain.dto.PltTagResponse;
 import com.scor.rr.service.PltBrowserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 
 @RestController
@@ -29,6 +32,10 @@ public class PltBrowserResource {
         return pltBrowserService.assignUserTag(assignPltsRequest);
     }
 
+    @PostMapping("assign-update-user-tag")
+    public List<UserTag> assignUpdateUserTag(@RequestBody AssignUpdatePltsRequest request) {
+        return pltBrowserService.assignUpdateUserTag(request);
+    }
     @DeleteMapping("user-tag/{id}")
     public void deleteUserTag(@PathVariable Integer id) {
         pltBrowserService.deleteUserTag(id);
