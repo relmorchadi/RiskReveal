@@ -3,7 +3,7 @@
     <div class="row" style="width:100%">
     <div class="title-section-comparer col-md-3">
       <h4>PLT Comparer &nbsp;</h4>
-      <i class="icon-plus" (click)="showModal()"></i>
+      <i class="icon-plus-circle icon-generic" (click)="showModal()" style="font-size: 25px; cursor: pointer;margin-bottom: 8px;"></i>
       <nz-modal
         [(nzVisible)]="isVisible"
         nzFooter=" "
@@ -107,12 +107,12 @@
       </nz-modal>
     </div>
 
-    <div class="Deltas col-md-1">Deltas &nbsp;
+    <div class="Deltas col-md-1"  style="position: unset;">Deltas &nbsp;
       <div class="button-toggle">
         <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch>
       </div>
     </div>
-    <div class="dropdown-group col-md-7">
+    <div class="dropdown-group col-md-7" style="position: unset;">
       <div class="row">
         <div class="col-md-3">
           <div style="width: 200px;">
@@ -171,9 +171,9 @@
             </nz-dropdown>
           </div>
         </div>
-        <div class="col-md-3">
+        <div class="col-md-3 multiple-selection">
           <nz-select
-          [nzMaxTagCount]="1"
+          [nzMaxTagCount]="0"
           nzMode="multiple"
           nzPlaceHolder="EP Metrics"
           [(ngModel)]="listOfSelectedValues" style="width: 100%;"
@@ -209,49 +209,64 @@
           <table>
             <thead>
             <tr>
-              <th>Return Period</th>
+              <th style="width: 92px;">Return Period</th>
+              <th>Probability</th>
             </tr>
             </thead>
             <tbody style="text-align: right;">
             <tr>
               <th>10,000</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>5,000</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>1,000</th>
+              <th>50%</th>
+
             </tr>
             <tr>
               <th>500</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>250</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>200</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>100</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>50</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>25</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>10</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>5</th>
+              <th>50%</th>
             </tr>
             <tr>
               <th>2</th>
+              <th>50%</th>
             </tr>
             <tr>
-              <th><span style="font-size: 15px; margin-right: 4px;" [ngStyle]="{'cursor' : switchValue? '' : 'pointer'
-, 'color' : switchValue? '' : 'blue'}"><i class="icon-plus-circle"></i></span> <input class="input-default" style="width: 80%" type="text" name="new-field"></th>
+              <th><i style="font-size: 14px; margin-right: 1px;" [ngStyle]="{'cursor' : switchValue? '' : 'pointer'
+, 'color' : switchValue? '' : 'blue'}" class="icon-plus-circle"></i> <input class="input-default" style="width: 80%" type="text" name="new-field"></th>
+            <th><input class="input-default" style="width: 80%" type="text" name="new-field"></th>
             </tr>
             </tbody>
           </table>
@@ -275,19 +290,21 @@
     'height':item.selected ? ' 500px' : ''}" (contextmenu)="contextMenu($event, template)">
 
             <div class="card-header-title">
-              <div class="card-header-detail">
-                <span style="font-weight: bold; font-size:15px;">{{item.title}}</span><br>
-                <span>{{item.subtitle}}</span><br>
-                <span style="font-size: 10px;">{{item.tableHeader}}</span>
-              </div>
               <div class="card-header-icons">
-                <i class="icon-cancel_24px" (click)="deleteItem(i)" style="font-size: 15px; color: darkred;cursor: pointer; margin-right: 2px;"></i>
+                <i class="icon-map-pin-alt" style="cursor: pointer; color: #0700CF;font-size: 20px;"></i>
                 <i *ngIf="!item.selected" [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden'}"
                    class="icon-check-circle" (click)="selectItem($event); item.selected = !item.selected"></i>
                 <i *ngIf="item.selected" class="icon-check_24px" (click)="item.selected = !item.selected"></i>
                 <span
                   [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden', 'color': item.selected? '#03DAC4' : '' }">BL</span>
-                <i class="icon-map-pin-alt" style="cursor: pointer; color: #0700CF;font-size: 20px;"></i>
+                <span style="flex: 1;">
+                <i class="icon-cancel_24px" (click)="deleteItem(i)" style="font-size: 18px; float: right; color: darkred;cursor: pointer; margin-right: 1px;"></i>
+                </span>
+              </div>
+              <div class="card-header-detail">
+                <span style="font-weight: bold; font-size:15px;">{{item.title}}</span><br>
+                <span>{{item.subtitle}}</span><br>
+                <span style="font-size: 10px;">{{item.tableHeader}}</span>
               </div>
             </div>
             <div class="card-table">
