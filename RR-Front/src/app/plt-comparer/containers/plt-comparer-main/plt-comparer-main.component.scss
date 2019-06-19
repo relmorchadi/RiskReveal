@@ -134,6 +134,22 @@ div.blank-space {
   padding: 0;
   margin: 28px auto 0;
   height: 60px;
+  ::ng-deep{
+    .ant-select-search--inline{
+      position: unset;
+    }
+  }
+  .multiple-selection{
+    ::ng-deep{
+      .ant-select-selection__placeholder {
+        top: 30%;
+        display:block !important;
+      }
+      .ant-select-selection__choice{
+        display: none;
+      }
+    }
+  }
 }
 
 .content {
@@ -151,17 +167,7 @@ div.blank-space {
   height: 50px;
   align-items: center;
 
-  i {
-    color: #FFFFFF;
-    background-color: #0700CF;
-    border: 2px solid #FFFFFF;
-    border-radius: 32px;
-    font-size: 18px;
-    padding: 4px 3px 2px;
-    display: flex;
-    cursor: pointer;
-    margin-bottom: 12px;
-  }
+
 
   h3 {
     color: rgba(0, 0, 0, 0.38);
@@ -223,6 +229,7 @@ div.blank-space {
     font-family: Rubik;
     font-size: 12px;
     font-weight: 500;
+    flex-direction: column;
     letter-spacing: 0.1px;
     margin: 0px 1px 3px 9px;
 
@@ -231,10 +238,9 @@ div.blank-space {
     }
 
     .card-header-icons {
-      width: 10%;
+      width: 100%;
       display: flex;
-      text-align: center;
-      flex-direction: column;
+      align-items: center;
 
       .icon-check_24px {
         color: #FFFFFF;
@@ -265,8 +271,8 @@ div.blank-space {
 
       span {
         color: #E5E9FA;
+        font-size:14px ;
         line-height: 15px;
-        margin-bottom: 10px;
       }
     }
 
@@ -430,6 +436,7 @@ div.blank-space {
     font-family: Rubik;
     font-size: 12px;
     font-weight: 500;
+    flex-direction: column;
     letter-spacing: 0.1px;
     margin: 0px 1px 3px 9px;
 
@@ -438,10 +445,9 @@ div.blank-space {
     }
 
     .card-header-icons {
-      width: 10%;
+      width: 100%;
       display: flex;
-      text-align: center;
-      flex-direction: column;
+      align-items: center;
 
       .icon-check_24px {
         color: #FFFFFF;
@@ -461,17 +467,19 @@ div.blank-space {
       }
 
       ::ng-deep {
-        .icon-map-pin-alt {
+        .anticon {
           font-size: 20px;
           color: #0700CF;
           cursor: pointer;
+
+
         }
       }
 
       span {
         color: #E5E9FA;
+        font-size:14px ;
         line-height: 15px;
-        margin-bottom: 10px;
       }
     }
 
