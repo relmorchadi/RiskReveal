@@ -27,7 +27,7 @@ export class PltApi {
     return this.http.delete(`${this.URL}/user-tag/${params}`)
   }
 
-  renameTag(params: any): Observable<any> {
+  editTag(params: any): Observable<any> {
     return this.http.put(`${this.URL}/user-tag`,params)
   }
 

@@ -11,4 +11,5 @@ import java.util.Optional;
 public interface UserTagRepository extends JpaRepository<UserTag, Integer>{
     List<UserTag> findByWorkspace(Workspace workspace);
     Optional<UserTag> findByTagName(String tagName);
+    List<UserTag> findByTagIdIn(List<Integer> listIds);
 }

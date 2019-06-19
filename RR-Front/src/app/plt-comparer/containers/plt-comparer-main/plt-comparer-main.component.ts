@@ -955,7 +955,7 @@ export class PltComparerMainComponent implements OnInit {
     this.filters= $event;
   }
   renameTag($event){
-    this.store$.dispatch(new fromWorkspaceStore.renameTag($event))
+    this.store$.dispatch(new fromWorkspaceStore.editTag($event))
   }
   resetPath(){
     this.filterData = _.omit(this.filterData, 'project')

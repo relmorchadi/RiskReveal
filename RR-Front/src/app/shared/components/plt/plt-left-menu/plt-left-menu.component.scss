@@ -36,12 +36,13 @@
         cursor: pointer;
         position: relative;
       }
-      color-chrome{
+      color-chrome, color-sketch{
         display: block;
         position: absolute;
-        right: -108px;
-        bottom: -214px;
         z-index: 1;
+        right: -147px;
+        bottom: -314px;
+        max-width: 270px;
       }
     }
 
@@ -129,7 +130,6 @@
     }
 
     .upPartLeftMenu {
-      padding-bottom: 55.5px;
       height: 100%;
       display: flex;
       flex-flow: column;
@@ -139,10 +139,6 @@
       display: flex;
       justify-content: space-between;
       width: 100%;
-      padding: 16px;
-      font-size: 16px;
-      position: absolute;
-      bottom: 0;
       background-color: white;
       .cnt {
         cursor: pointer;

@@ -12,7 +12,7 @@ export class SystemTagFilterPipe implements PipeTransform {
       'Region': 'regionDesc',
       'Currency': 'currency',
       'Modelling Vendor': 'sourceModellingVendor',
-      'Model System': 'sourceModellingSystem',
+      'Modelling System': 'sourceModellingSystem',
       'Target RAP':'targetRapCode',
       'User Occurence Basis': 'userOccurrenceBasis',
       'Published To Pricing': 'xActAvailable',

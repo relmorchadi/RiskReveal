@@ -298,11 +298,9 @@
 
       .tabset-right {
         background: #fff;
-        max-width: calc(100vw - 190px - 80px - 221px);
         height: 85vh;
         display: flex;
         flex-flow: column;
-        align-items: stretch;
 
         .title-as-tab {
           display: flex;
@@ -505,6 +503,11 @@
         font-size: 15px;
       }
 
+
+      a:focus,
+      button:focus {
+        outline: none;
+      }
       button {
         background-color: #0700cf;
         color: #fff;
@@ -849,4 +852,22 @@
 
 .mr-1 {
   margin-right: 0.75rem !important;
+}
+
+.chips {
+  padding: 1px 0 0 10px;
+  max-width: 150px;
+  width: max-content;
+  color: #fff;
+  font-family: Rubik;
+  border-radius: 10px;
+  font-size: .9em;
+  display: flex;
+
+  .chips-content {
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
 }

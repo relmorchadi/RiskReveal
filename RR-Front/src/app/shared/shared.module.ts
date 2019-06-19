@@ -6,12 +6,9 @@ import {COMPONENTS} from './components';
 import {TableModule} from 'primeng/table';
 import {HighlightDirective} from './highlight.directive';
 import {ContextMenuModule, MultiSelectModule} from 'primeng/primeng';
-import {KeysPipe} from './pipes/keys.pipe';
-import { ShowLastPipe } from './pipes/show-last.pipe';
-import { InputSearchPipe } from './pipes/input-search.pipe';
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
-import { ReFormatPIDPipe } from './pipes/re-format-pid.pipe';
+import {ColorSketchModule} from 'ngx-color/sketch';
 
 
 @NgModule({
@@ -24,6 +21,7 @@ import { ReFormatPIDPipe } from './pipes/re-format-pid.pipe';
     TableModule,
     FormsModule,
     ColorChromeModule,
+    ColorSketchModule,
     MultiSelectModule
   ],
   providers: [],

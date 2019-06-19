@@ -27,7 +27,7 @@
               <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
             </ng-container>
           </span>
-          <i *ngIf="col.icon" style="font-size: 2em" [ngClass]="col.icon"></i>
+          <i *ngIf="col.icon" style="font-size: 1.6em" [ngClass]="col.icon"></i>
         </th>
       </ng-container>
     </tr>
@@ -39,7 +39,7 @@
           <th *ngIf="col?.filtred" [ngStyle]="{'width': col?.width, 'min-width': col?.width}">
             <div class="filter-input">
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-              <input  *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)">
+              <input *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterInput">
             </div>
           </th>
         </ng-container>
