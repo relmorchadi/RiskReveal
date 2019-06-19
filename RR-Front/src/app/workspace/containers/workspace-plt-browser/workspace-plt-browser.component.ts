@@ -51,7 +51,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   lastSelectedId;
 
   contextMenuItems = [
-    { label: 'View Detail', command: (event) => this.openPltInDrawer(this.selectedPlt) },
+    { label: 'View Detail', command: (event) => {
+      console.log(this.selectedPlt)
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      } },
     { label: 'Delete', command: (event) =>
         this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
     },
