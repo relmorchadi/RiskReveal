@@ -87,6 +87,7 @@ nz-alert {
   justify-content: space-between;
   padding: 0 7px;
   border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  user-select: none;
 
   .items-popover-wrapper {
     display: flex;

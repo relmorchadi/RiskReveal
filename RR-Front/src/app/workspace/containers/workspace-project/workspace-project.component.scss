@@ -1,10 +1,8 @@
 :host {
   width: 100%;
-  overflow: hidden;
+  height: max-content;
   display: flex;
-  @media  screen and (min-width: 1900px) {
-    height: 100vh;
-  }
+  min-height: 100vh;
 
   ::ng-deep submenu-inline > .ant-menu-submenu-title .ant-menu-submenu-arrow {
     padding-right: 15px !important;
@@ -27,7 +25,8 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  overflow: auto;
+  min-height: 100vh;
+  height: max-content;
   flex: 1;
   background: #f4f6fc;
 }
@@ -199,7 +198,7 @@
     flex-wrap: wrap;
     width: 95%;
     flex: 1;
-    padding: 0 20px 300px;
+    padding: 0 20px 50px;
     margin: 0 auto;
     justify-content: flex-start;
     @media screen and (max-width: 1550px) and (min-width: 1200px) {

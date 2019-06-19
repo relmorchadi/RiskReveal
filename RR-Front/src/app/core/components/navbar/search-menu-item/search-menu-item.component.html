@@ -123,7 +123,7 @@
 
   <ng-template #tagDropdown>
     <div class="search-contextual-table"
-    nz-menu style="height: 465px; border-radius: 10px" [ngStyle]="{'width': state.tagShortcuts.length > 10 ? '550px' : '350px'}">
+    nz-menu style="height: 550px; border-radius: 10px" [ngStyle]="{'width': state.tagShortcuts.length > 10 ? '550px' : '350px'}">
         <div class="tag-header">
           <span>SEARCH MODE</span>
           <div>
@@ -143,6 +143,13 @@
         </div>
         <div class="tag-header">
           <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" class="switch-input" formControlName="expertModeToggle"></nz-switch>
+        </div>
+        <div class="tag-body" style="margin-bottom: 8px;">
+          <div class="tag-body-header">
+            <div style="line-height: 17px;">Using "" while in Expert Mode will display the results with the exact search term.<br/>
+                  Eg: c:"axa"
+            </div>
+          </div>
         </div>
         <div class="tag-body">
           <div class="tag-body-header">
