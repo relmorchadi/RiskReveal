@@ -144,23 +144,61 @@
   display: flex;
   width: 100%;
 
+  ::ng-deep.plt-browser-wrapper {
+    display: flex;
+    flex-direction: row;
+    background-color: #F4F6FC;
+    width: 100%;
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex-wrap: nowrap;
+    }
+
+    .left {
+      flex: 1;
+    }
+  }
 
   ::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
     margin-top: -362px;
     margin-left: -473px;
   }
+
+  ::ng-deep .PLTs-content {
+    padding: 0px 0px 0 6px !important;
+    position: relative;
+    flex: 1 1 auto;
+  }
+
+  ::ng-deep .my-tabs {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+  }
 }
 
+.ui-widget {
+  font-family: "Open Sans", "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.ui-table-scrollable-wrapper {
+  position: relative;
+}
+
+.ui-table-scrollable-body {
+  overflow: auto;
+  position: relative;
+}
 
 .plt-browser-wrapper {
-  display: flex;
-  flex-direction: row;
-  background-color: #F4F6FC;
-  width: 100%;
+
 
   .tabset-left {
-    min-height: 85vh;
-    max-height: 85vh;
     background: #fff;
     margin-right: 5px;
 
@@ -258,6 +296,10 @@
 
   .tabset-right {
     background: #fff;
+    max-width: calc(100vw - 190px - 80px - 133px);
+    display: flex;
+    flex-flow: column;
+    align-items: stretch;
 
     ::ng-deep .ant-tabs-ink-bar {
       position: absolute;
@@ -882,8 +924,13 @@
   box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
 }
 
+.ui-table {
+  position: relative;
+}
+
+
 :host .PLTs-content {
-  padding: 0 16px 0 16px !important;
+
   border-bottom: 3px solid #F4F6FC;
 
   ::ng-deep {
@@ -934,7 +981,6 @@
       border-radius: 25px;
       font-size: 16px;
     }
-
     .ui-table-thead {
 
       .checkBoxHead div {
@@ -1013,7 +1059,7 @@
         padding: 0px !important;
         cursor: pointer;
         font-size: 14px;
-        border: none !important;
+        border: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         user-select: none;
 
@@ -1203,12 +1249,7 @@
 }
 
 
-.my-tabs {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  margin-bottom: 300px;
-}
+
 
 .border-dragable {
   border-left: 1px solid #F3F3F3 !important;
@@ -1237,7 +1278,7 @@
 }
 
 .separator-right {
-  border-right: 6px solid #b4b4b4 !important;
+  border-right: 8px solid #F4F6FC !important;
 }
 
 .separator-left {
@@ -1249,7 +1290,7 @@
   border: solid 1px #cccccc;
   font-size: 10px;
   background: white;
-  width: 100px !important;
+  width: 102px !important;
   height: 80% !important;
   display: inline-block;
   color: black;
@@ -1262,7 +1303,6 @@
   border: 0;
   width: 82%;
   height: 50%;
-  position: relative;
   bottom: 3px;
   margin-left: 2px;
 }
@@ -1328,4 +1368,13 @@
 
 /deep/ .cdk-global-scrollblock {
   overflow-y: visible !important;
+}
+
+.adjustmentContainer  {
+  margin-left: 33px;
+  border: 1px dotted #7f7f7f;
+  height: 50px;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  white-space: nowrap;
 }

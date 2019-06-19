@@ -1,12 +1,11 @@
 <app-left-menu></app-left-menu>
 <div class="plt-browser-wrapper">
-  <div class="mr-3 ml-3">
+  <div class="left mr-1 ml-1">
     <div class="title-wrapper" nz-row>
       <div class="title-section">
         <h4>Calibration Editor</h4>
       </div>
     </div>
-
     <div class="my-tabs" style="margin-bottom: 10px;">
       <div class="noMargin">
         <nz-tabset class="tabset-left">
@@ -205,10 +204,9 @@
         <div style="background-color: #ffffff">
 
 
-          <div class="PLTs-content" style="overflow:scroll; width: 100%;">
+          <div class="PLTs-content">
             <p-contextMenu #cm appendTo="body" [model]="contextMenuItems"></p-contextMenu>
             <p-table
-              [style]="{'width':'1100px'}"
               [columns]="pltColumns"
               [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]"
               [resizableColumns]="true"
@@ -227,10 +225,10 @@
               </ng-template>
               <ng-template pTemplate="header" let-columns>
                 <tr style="background-color: #ffffff !important;">
-                  <th [ngStyle]="{'width': '43px'}" class="checkBoxHead"
+                  <th [ngStyle]="{'width': '43px','overflow':'visible'}" class="checkBoxHead"
                       style="background-color: #ffffff !important;height: 70px!important;">
                     <span
-                      style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold; position: absolute;margin-top: 12px;margin-left: 14px;">PLT Selection</span>
+                      style="width: 90px; padding: 0px 50px 0px 12px; font-size: 15px; font-weight: bold;margin-left: 20px;">PLT Selection</span>
                   </th>
                   <th [ngStyle]="{'width': '60px'}"
                       style="background-color: #ffffff !important;height: 70px!important;"></th>
@@ -241,59 +239,71 @@
                   </ng-container>
                   <th
                     style="border-right: none !important;background-color: #ffffff !important;height: 70px!important;">
-                    <nz-dropdown [nzPlacement]="'bottomRight'">
-                      <i class="icon-menu_24px" nz-dropdown style="font-size: 25px;"></i>
-                      <ul nz-menu>
-                        <li nz-menu-item>
-                          <a (click)="extend()">
-                            <b *ngIf="extended">Collapse PLT Selection</b>
-                            <b *ngIf="!extended">Extend PLT Selection</b>
-                          </a>
-                        </li>
-                      </ul>
-                    </nz-dropdown>
+                    <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
+                       style="font-size: 25px; cursor: pointer;"></i>
+                    <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
+                       style="font-size: 25px; cursor: pointer;"></i>
                   </th>
                   <th style="background-color: #ffffff !important;"></th>
                   <th class="separator-left"
                       style="background-color: #ffffff !important; height: 70px!important;  position: relative;"
-                      colspan="6">
-                    <span
-                      style="width: 60px !important; padding: 0px 10px 0px 12px; font-size: 15px; font-weight: bold;position: absolute;">Template</span>
+                      colspan="5">
                     <i class="icon-plus-circle" nz-dropdown
-                       style="font-size: 20px;color: #000; cursor: pointer;position: absolute;left: 80px;"
+                       style="font-size: 20px;color: #000; cursor: pointer;position: absolute;left: 7px;"
                        (click)="clickButtonPlus(true)"></i>
-                    <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                      <div class="dashbordAdj" [ngStyle]="{'margin-left' : adjIndex ==0 ? '100px':'5px'}">
-                        <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
-                             style="height: 20px;margin: 0px 2px 0px 2px; text-overflow: ellipsis; white-space: nowrap;overflow: hidden;">{{adj.name}}</div>
-                        <nz-dropdown [nzPlacement]="'bottomLeft'">
-                          <i class="icon-menu_24px" nz-dropdown style="font-size: 18px;float: right;"></i>
-                          <ul nz-menu>
-                            <li nz-menu-item>
-                              <a (click)="applyToSelected(adj)">Apply to Selected</a>
-                            </li>
-                            <li nz-menu-item>
-                              <a (click)="applyToAll(adj)"
-                              >Apply to All</a>
-                            </li>
-                            <li nz-menu-item>
-                              <a (click)="replaceToSelectedPlt(adj)">Replace Selected</a>
-                            </li>
-                            <li nz-menu-item>
-                              <a (click)="replaceToAllAdjustement(adj)"
-                              >Replace All</a>
-                            </li>
-                            <li nz-menu-item>
-                              <a (click)="ModifyAdjustement(adj)"
-                              >Modify</a>
-                            </li>
-                          </ul>
-                        </nz-dropdown>
-                        <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                               class="templateInput"
-                               style="height: 17px;">
-                      </div>
-                    </ng-container>
+                    <div
+                      style="margin-left: 33px; border: 3px dotted #9F9F9F; height: 57px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                      <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
+                        <div class="dashbordAdj" [ngStyle]="{'margin-left' :'5px'}">
+                          <div [nzTitle]="adj.name" nzPlacement="bottom" nz-tooltip
+                               style="height: 20px;margin: 0px 2px 0px 2px; text-overflow: ellipsis; white-space: nowrap;overflow: hidden;">{{adj.name}}</div>
+                          <nz-dropdown [nzPlacement]="'bottomLeft'">
+                            <i class="icon-menu_24px" nz-dropdown style="font-size: 18px;float: right;"></i>
+                            <ul nz-menu>
+                              <li nz-menu-item>
+                                <a (click)="applyToSelected(adj)">Apply to Selected</a>
+                              </li>
+                              <li nz-menu-item>
+                                <a (click)="applyToAll(adj)"
+                                >Apply to All</a>
+                              </li>
+                              <li nz-menu-item>
+                                <a (click)="replaceToSelectedPlt(adj)">Replace Selected</a>
+                              </li>
+                              <li nz-menu-item>
+                                <a (click)="replaceToAllAdjustement(adj)"
+                                >Replace All</a>
+                              </li>
+                              <li nz-menu-item>
+                                <a (click)="ModifyAdjustement(adj)"
+                                >Modify</a>
+                              </li>
+                            </ul>
+                          </nz-dropdown>
+                          <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
+                                 class="templateInput"
+                                 style="height: 17px;">
+                        </div>
+                      </ng-container>
+                    </div>
+
+                  </th>
+                  <th style="background-color: #ffffff !important;">
+                    <nz-dropdown [nzPlacement]="'bottomRight'">
+                      <i class="icon-menu_24px" nz-dropdown
+                         style="font-size: 25px; float: right; margin-right: 7px"></i>
+                      <ul nz-menu>
+                        <li nz-menu-item>
+                          <a>Save template</a>
+                        </li>
+                        <li nz-menu-item>
+                          <a>Load template</a>
+                        </li>
+                        <li nz-menu-item>
+                          <a>Apply template</a>
+                        </li>
+                      </ul>
+                    </nz-dropdown>
                   </th>
                 </tr>
                 <tr>
@@ -374,7 +384,7 @@
                   </ng-container>
                   <th></th>
                   <th style="border-right: none !important;"></th>
-                  <th style="border-left: 5px solid #F4F6FC !important;"></th>
+                  <th style="border-left: 8px solid #F4F6FC !important;"></th>
                   <th colspan="3"></th>
                   <th style="background-color: #FAEBD7 !important;"></th>
                   <th></th>
@@ -393,10 +403,10 @@
                     (onDrop)="onDrop(rowData.pltId)"
                     (onDragEnter)="ondragEnter(col,rowData.pltId)"
                     (onDragLeave)="ondragLeave(col)"
-                    [ngClass]="{'draggable':col?.dragable,'fixed':!col?.dragable}"
+                    [ngClass]="{'draggable':col?.dragable,'fixed':!col?.dragable,'separator-right':col?.icon == 'icon-note'}"
                     *ngFor="let col of dataColumns; let i = index"
                     (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
-                    [ngStyle]="{'width': i ==0 ?'60px':'','background-color':getDragableColor(col.fields)}">
+                    [ngStyle]="{'width': i ==0 ?'60px':'','background-color':getDragableColor(col.fields),'border-right': col?.icon == 'icon-note' ? '8px solid #F4F6FC' : 'none'}">
 
                     <ng-container *ngIf="i === 0">
                       <div class="td-wrapper-tags">
@@ -417,7 +427,7 @@
                              [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
                       </ng-container>
                       <ng-container *ngIf="col?.type == 'icon'">
-                        <div class="td-wrapper-check" [ngClass]="{'separator-right':col?.icon == 'overallLMF'}">
+                        <div class="td-wrapper-check">
                           <div *ngIf="col.icon=='icon-focus-add'">
                             <i
                               [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress', 'icon-check-circle iconGreen': rowData?.status=='locked' ,'icon-lock-alt iconRed': rowData?.status=='checked' }"></i>
@@ -432,7 +442,6 @@
                         <div
                           style="display: flex;"
                           class="text-elipsice border-dragable"
-                          [ngClass]="{'separator-left':col?.fields == 'overallLMF'}"
                           [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">
                           <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
                             <div
@@ -549,16 +558,7 @@
       </div>
 
     </div>
-    <app-last-adjustment-matrix></app-last-adjustment-matrix>
-  </div>
-
-  <div nz-col style="width: 60px;">
-    <div class="right-column">
-      <div class="navigation-icons">
-        <i class="icon-map-pin-alt"></i>
-        <i class="icon-arrow_back_ios_24px" (click)="openDrawer(null)"></i>
-      </div>
-    </div>
+    <app-last-adjustment-matrix style="height: 25vh"></app-last-adjustment-matrix>
   </div>
 </div>
 
