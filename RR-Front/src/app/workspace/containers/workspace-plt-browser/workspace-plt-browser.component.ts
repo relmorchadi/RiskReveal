@@ -575,6 +575,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   selectedItemForMenu: string;
   wsHeaderSelected: boolean;
   leftIsHidden: any;
+  filterInput: string= "";
 
   selectPltById(pltId) {
     return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`));
@@ -871,5 +872,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       userTag: [],
       systemTag: []
     }
+    this.filterInput= "";
   }
 }
