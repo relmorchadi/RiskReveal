@@ -13,8 +13,8 @@ import {
 import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {Debounce} from "../../../shared";
-import {CloseTagByIndexAction, CloseAllTagsAction} from "../../../core/store";
+import {Debounce} from '../../../shared';
+import {CloseTagByIndexAction, CloseAllTagsAction} from '../../../core/store';
 
 
 @Component({
@@ -150,7 +150,7 @@ export class SearchMainComponent implements OnInit {
       this.searchContent = [];
     } else {
       this.globalSearchItem = null;
-      this.searchContent=value;
+      this.searchContent = value;
     }
   }
 

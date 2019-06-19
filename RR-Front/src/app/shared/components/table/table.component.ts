@@ -82,6 +82,15 @@ export class TableComponent implements OnInit {
   ngOnInit() {
   }
 
+  getItems() {
+    const selected = this.listOfData.filter(dt => dt.selected);
+    if (selected.length > 1) {
+      return this.items.filter(item => item.label !== 'View Detail');
+    } else {
+      return this.items;
+    }
+  }
+
   sort(): void {
     if (this.dataCashed) {
       this.listOfData = this.dataCashed;
