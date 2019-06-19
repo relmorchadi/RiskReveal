@@ -36,14 +36,14 @@
             systemTags: systemTags,
             selectedListOfPlts: selectedListOfPlts,
             systemTagsCount: systemTagsCount,
-            _tagModal: addTagModal,
+            _tagModalVisible: addTagModal,
             _renamingTag: renamingTag,
             _modalSelect: addModalSelect,
             wsHeaderSelected: wsHeaderSelected
           }"
             (onAssignPltsToTag)="assignPltsToTag($event)"
             (onProjectFilter)="filter($event)"
-            (onRenameTag)="renameTag($event)"
+            (onEditTag)="renameTag($event)"
             (onResetPath)="resetPath()"
             (onSelectProjects)="setSelectedProjects($event)"
             (onSelectSysTagCount)="selectSystemTag($event)"

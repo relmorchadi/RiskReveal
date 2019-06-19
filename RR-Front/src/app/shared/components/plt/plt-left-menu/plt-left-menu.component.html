@@ -4,7 +4,7 @@
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
     <div class="upPartLeftMenu">
-        <span class="wsHeader" [ngStyle]="{'background-color': menuInputs.wsHeaderSelected ?  '#FDFBDF' : 'white'}" (click)="resetPath()">
+        <span class="wsHeader" [ngStyle]="{'background-color': menuInputs.wsHeaderSelected && !menuInputs.showDeleted ?  '#FDFBDF' : 'white'}" (click)="resetPath()">
                       <i class="icon-window-section"></i>
           {{menuInputs.wsId}} - {{menuInputs.uwYear}}
       </span>
@@ -27,15 +27,17 @@
           <span class="tooltipMsg"
                 [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
         </li>
+        <li>
+          <div class="plt-trash" [ngStyle]="{'display': menuInputs.deletedPltsLength > 0 ? 'flex' : 'none', 'background-color': menuInputs.showDeleted ? 'rgb(253, 251, 223)' : 'white'}" style="font-size: 0.7em;">
+            <div class="cnt" (click)="toggleDeletedPlts()">
+              <i class="icon-trash-alt"></i>
+              <span> Deleted PLTs </span>
+            </div>
+            <span class="deleted-counter">{{menuInputs.deletedPltsLength}}</span>
+          </div>
+        </li>
 
       </ul>
-    </div>
-    <div class="plt-trash" [ngStyle]="{'visibility': menuInputs.deletedPltsLength > 0 ? 'visible' : 'hidden'}">
-      <div class="cnt" (click)="toggleDeletedPlts()">
-        <i class="icon-trash-alt"></i>
-        <span> Deleted PLTs </span>
-      </div>
-      <span class="deleted-counter">{{menuInputs.deletedPltsLength}}</span>
     </div>
   </nz-tab>
 
@@ -46,7 +48,7 @@
     <div class="Tags-content">
       <nz-modal
         nzWrapClassName="addTagModal"
-        [nzVisible]="menuInputs._tagModal"
+        [nzVisible]="menuInputs._tagModalVisible"
         [nzTitle]="addTagModalTitle"
         (nzOnCancel)="initColorPicker();toggleModal()"
         [nzClosable]="false"
@@ -65,18 +67,29 @@
 
       <ng-template #addTagModalContent>
         <nz-tabset class="tab-content-cnt" [nzSelectedIndex]="menuInputs.addTagModalIndex" (nzSelectedIndexChange)="tagModalIndexChange($event)">
-          <nz-tab [nzTitle]="menuInputs._renamingTag ? 'Rename Tag' : 'Create New Tag'">
+          <nz-tab [nzTitle]="menuInputs._editingTag ? 'Edit Tag' : 'Create New Tag'">
             <div class="content">
               <nz-input-group [nzSuffix]="suffixTemplate">
-                <input class="input-default" [ngModel]="menuInputs._modalInput" (ngModelChange)="emitModalInput($event)" type="text" nz-input
+                <input class="input-default" [ngModel]="menuInputs.tagForMenu.tagName" (ngModelChange)="emitTagValues('tagName',$event)" type="text" nz-input
                        placeholder="Tag Name"/>
               </nz-input-group>
-              <div class="color" [ngStyle]="{'background-color': initColor}"
+              <div class="color" [ngStyle]="{'background-color': menuInputs.tagForMenu.tagColor}"
                    (click)="toggleColorPicker('color')">
               </div>
+              <!--
               <color-chrome (clickOutside)="colorPickerIsVisible=false"
-                            (onChangeComplete)="initColor=$event.color.hex" [color]="initColor"
+                            (onChangeComplete)="emitTagValues('tagColor',$event.color.hex)" [color]="menuInputs.tagForMenu.tagColor"
                             *ngIf="colorPickerIsVisible"></color-chrome>
+              -->
+              <color-sketch
+                  (clickOutside)="colorPickerIsVisible=false"
+                  [color]="menuInputs.tagForMenu.tagColor"
+                  (onChange)="emitTagValues('tagColor',$event.color.hex)"
+                  [presetColors]="presetColors"
+                  *ngIf="colorPickerIsVisible"
+              >
+
+              </color-sketch>
               <ng-template #suffixTemplate
               ><i
                 nz-icon
@@ -126,7 +139,7 @@
         <div class="footer">
           <button (click)="handlePopUpCancel()" nz-button class="button-no-outline">cancel</button>
           <button class="button-standard" (click)="handlePopUpConfirm()" nz-button>
-            {{menuInputs._renamingTag ?  'Rename' : menuInputs.addTagModalIndex == 0 ? ( menuInputs.fromPlts ? 'Create & Assign' : 'Create' )  : 'Assign'}}
+            {{menuInputs._editingTag ?  'Edit Tag' : menuInputs.addTagModalIndex == 0 ? ( menuInputs.fromPlts ? 'Create & Assign' : 'Create' )  : 'Assign'}}
           </button>
         </div>
       </ng-template>
@@ -190,7 +203,7 @@
                       'cursor': menuInputs.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
                       }" class="chips-content">{{tag}}</span>
                       <span class="chips-counter">
-                        {{menuInputs.systemTagsCount[section][tag].count}}
+                        {{menuInputs.systemTagsCount[section][tag].count}}/{{menuInputs.systemTagsCount[section][tag].max}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                     </span>

@@ -10,9 +10,10 @@ export class PltLeftMenuComponent implements OnInit {
 
   @Input() menuInputs: {
     tagContextMenu: any;
-    _tagModal: boolean;
+    _tagModalVisible: boolean;
     _modalSelect: [];
-    _renamingTag: boolean;
+    tagForMenu: any,
+    _editingTag: boolean;
     wsId: string;
     uwYear: string;
     projects: any[];
@@ -38,7 +39,7 @@ export class PltLeftMenuComponent implements OnInit {
   @Output() emitFilters= new EventEmitter();
   @Output() onSetSelectedUserTags= new EventEmitter();
   @Output() onSelectSysTagCount= new EventEmitter();
-  @Output() onRenameTag= new EventEmitter();
+  @Output() onEditTag= new EventEmitter();
   @Output() onAssignPltsToTag= new EventEmitter();
   @Output() setTagModalVisibility= new EventEmitter();
   @Output() onSetTagForMenu= new EventEmitter();
@@ -54,7 +55,6 @@ export class PltLeftMenuComponent implements OnInit {
   _modalInputCache: string;
   colorPickerIsVisible: boolean;
   initColor: string;
-  tagForMenu: any;
 
   perilColors = {
     'EQ': 'red',
@@ -62,6 +62,7 @@ export class PltLeftMenuComponent implements OnInit {
     'WS': '#62ec07',
     'CS': '#62ec07'
   }
+  presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
   constructor() {
     this.initColor= "blue"
@@ -78,6 +79,7 @@ export class PltLeftMenuComponent implements OnInit {
     this.onResetPath.emit(false);
     this.onWsHeaderSelection.emit(true)
     this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, ['project']))
+    this.onToggleDeletedPlts.emit(false);
   }
 
   filter(key, filterData, value){
@@ -101,12 +103,12 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   toggleDeletedPlts() {
-    this.onToggleDeletedPlts.emit();
+    this.onToggleDeletedPlts.emit(!this.menuInputs.showDeleted);
   }
 
   toggleModal(){
     this.tagModal( false);
-    if(!this.menuInputs._tagModal){
+    if(!this.menuInputs._tagModalVisible){
       this.modalInput(null);
       this.modalSelect(null);
       this.renamingTag(false);
@@ -146,7 +148,7 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   handlePopUpCancel() {
-    console.log(this.menuInputs._renamingTag,this.menuInputs.fromPlts,this.menuInputs.addTagModalIndex)
+    console.log(this.menuInputs._editingTag,this.menuInputs.fromPlts,this.menuInputs.addTagModalIndex)
     this.tagModal(false);
     this.modalInput('');
     this.modalSelect('');
@@ -154,13 +156,8 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   handlePopUpConfirm() {
-    if(this.menuInputs._renamingTag) {
-      if(this._modalInput != this._modalInputCache){
-        this.onRenameTag.emit({
-          ...this.tagForMenu,
-          tagName: this._modalInput
-        })
-      }
+    if(this.menuInputs._editingTag) {
+        this.onEditTag.emit()
     }else {
 
       if(this.menuInputs.addTagModalIndex === 1 ){
@@ -240,8 +237,8 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   setTagForMenu(any: any) {
-    this.tagForMenu =any;
-    this.onSetTagForMenu.emit(any);
+    console.log(any);
+    this.onSetTagForMenu.emit(_.pick(any, ['tagName','tagColor','tagId']));
   }
 
   tagModalIndexChange($event: number) {
@@ -254,7 +251,10 @@ export class PltLeftMenuComponent implements OnInit {
     return _.join([str[0],_.trimStart(str[1],'0')],'-')
   }
 
-  emitModalInput($event: {}) {
-    this.emitModalInputValue.emit($event)
+  emitTagValues(key, value) {
+    this.onSetTagForMenu.emit({
+      ...this.menuInputs.tagForMenu,
+      [key]: value
+    })
   }
 }

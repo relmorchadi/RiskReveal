@@ -477,17 +477,17 @@ export class PltMainState implements NgxsOnInit {
        .pipe()*/
    }
 
-  @Action(fromPlt.renameTag)
-  renameTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.renameTag){
+  @Action(fromPlt.editTag)
+  renameTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.editTag){
 
-    return this.pltApi.renameTag({...payload}).pipe(
-      mergeMap( tag => ctx.dispatch(new fromPlt.renameTagSuccess(tag))),
-      catchError(err => ctx.dispatch(new fromPlt.renameTagFail()))
+    return this.pltApi.editTag({...payload}).pipe(
+      mergeMap( tag => ctx.dispatch(new fromPlt.editTagSuccess(tag))),
+      catchError(err => ctx.dispatch(new fromPlt.editTagFail()))
     )
   }
 
-  @Action(fromPlt.renameTagSuccess)
-  renameTagSucces(ctx: StateContext<pltMainModel>, { payload }: fromPlt.renameTagSuccess){
+  @Action(fromPlt.editTagSuccess)
+  renameTagSucces(ctx: StateContext<pltMainModel>, { payload }: fromPlt.editTagSuccess){
     const {
       data,
       userTags
@@ -495,7 +495,8 @@ export class PltMainState implements NgxsOnInit {
 
     const {
       tagId,
-      tagName
+      tagName,
+      tagColor
     } = payload;
 
     let newData = {};
@@ -510,14 +511,15 @@ export class PltMainState implements NgxsOnInit {
 
       let index= _.findIndex(data[id].userTags, (tag: any) => tag.tagId === tagId);
 
-      newData[id] = {...data[id], userTags: _.merge([],data[id].userTags, { [index]: {...data[id].userTags[index], tagName}})}
+      newData[id] = {...data[id], userTags: _.merge([],data[id].userTags, { [index]: {...data[id].userTags[index], tagName,tagColor}})}
     })
 
     ctx.patchState({
       data: _.merge({},data, newData),
       userTags: _.merge({}, userTags, {
         [tagId] : {
-          tagName
+          tagName,
+          tagColor
         }
       })
     })

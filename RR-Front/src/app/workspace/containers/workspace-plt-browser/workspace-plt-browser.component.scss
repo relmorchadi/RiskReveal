@@ -298,11 +298,9 @@
 
       .tabset-right {
         background: #fff;
-        max-width: calc(100vw - 190px - 80px - 221px);
         height: 85vh;
         display: flex;
         flex-flow: column;
-        align-items: stretch;
 
         .title-as-tab {
           display: flex;
@@ -505,6 +503,11 @@
         font-size: 15px;
       }
 
+
+      a:focus,
+      button:focus {
+        outline: none;
+      }
       button {
         background-color: #0700cf;
         color: #fff;

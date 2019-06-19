@@ -23,23 +23,23 @@
             systemTags: systemTags,
             selectedListOfPlts: selectedListOfPlts,
             systemTagsCount: systemTagsCount,
-            _tagModal: addTagModal,
-            _renamingTag: renamingTag,
-            _modalSelect: addModalSelect,
-            _modalInput: addModalInput,
+            _tagModalVisible: tagModalVisible,
+            _editingTag: editingTag,
+            _modalSelect: modalSelect,
+            tagForMenu: tagForMenu,
             wsHeaderSelected: wsHeaderSelected
           }"
         (onAssignPltsToTag)="assignPltsToTag($event)"
         (onAssignPltsToSingleTag)="assignPltsToSingleTag($event)"
         (onProjectFilter)="filter($event)"
-        (onRenameTag)="renameTag($event)"
+        (onEditTag)="editTag($event)"
         (onResetPath)="resetPath()"
         (onSelectProjects)="setSelectedProjects($event)"
         (onSelectSysTagCount)="selectSystemTag($event)"
         (onSetFilters)="setFilters($event)"
         (onSetFromPlts)="setFromPlts($event)"
         (onSetSelectedUserTags)="setUserTags($event)"
-        (onToggleDeletedPlts)="toggleDeletePlts()"
+        (onToggleDeletedPlts)="toggleDeletePlts($event)"
         (setTagModalIndex)="setModalIndex($event)"
         (setTagModalVisibility)="setTagModal($event)"
         (onSetTagForMenu)="setTagForMenu($event)"
@@ -48,23 +48,35 @@
         (unCkeckAllPlts)="unCheckAll()"
         (onWsHeaderSelection)="setWsHeaderSelect($event)"
         (onModalSelect)="setModalSelectedItems($event)"
-        (emitModalInputValue)="setInputModalValue($event)"
       >
 
       </app-plt-left-menu>
-      <div class="tabset-right" [ngStyle]="{ 'width': !leftIsHidden ? 'calc(100vw - 190px - 80px - 221px)' : 'calc(100vw - 190px - 80px - 232px + 125px)' }">
+      <div class="tabset-right">
         <div class="title-as-tab">
           <span>
             PLTs
           </span>
         </div>
         <div class="PLTs-content">
-          <i class="icon-menu_24px" style="position: absolute;
-    top: -50px;
-    right: 14px;
-    z-index: 10;
-    cursor: pointer;
-    font-size: 2em;"></i>
+          <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'" >
+            <a  style="position: absolute;top: -50px;right: 14px;cursor: pointer;font-size: 2em;height: 27px;" nz-dropdown>
+                <i class="icon-menu_24px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+              <li nz-menu-item (click)="resetSort()">Reset Sort</li>
+              <li nz-menu-item (click)="resetFilters()">Reset Filters</li>
+              <li nz-menu-item (click)="resetSort();resetFilters()">Reset Sort/Filters</li>
+
+              <li nz-menu-divider></li>
+
+              <li nz-menu-item>Re-Order/Activate Columns</li>
+
+              <li nz-menu-divider></li>
+
+              <li nz-menu-item (click)="checkAll(false)" >Unselect All</li>
+
+            </ul>
+          </nz-dropdown>
           <app-plt-main-table
             [tableInputs]="{
                   contextMenuItems: contextMenuItems,
@@ -101,23 +113,13 @@
       </div>
     </div>
   </div>
-  <div class="right">
-    <div nz-col style="display: flex;height: 100%;">
-      <div class="right-column">
-        <div class="navigation-icons">
-          <i class="icon-map-pin-alt"></i>
-          <i class="icon-arrow_back_ios_24px" (click)="openDrawer(null)"></i>
-        </div>
-      </div>
-    </div>
-  </div>
 </div>
 
-<div *ngIf="visible" class="drawer">
+<div *ngIf="drawerVisible" class="drawer">
   <div class="drawer-content">
 
     <div class="navigation-icons-drawer">
-      <i class="icon-arrow_forward_ios_24px" (click)="closeDrawer()"></i>
+      <i class="icon-multiply" (click)="closeDrawer()"></i>
     </div>
 
     <div class="noMargin">
@@ -210,8 +212,6 @@
               <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
                 PLT Details
               </span>
-              <i class="icon-remove_red_eye_24px"
-                 style="font-size: 16px; margin: 3px 5px 3px 15px; color: #06b8ff;"></i>
             </div>
 
             <ng-template #noPermission>
@@ -229,10 +229,42 @@
                 <h3>{{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltName}}</h3>
               </div>
               <div nz-col nzSpan="4">
-                <button>
-                  <i class="icon-menu_24px"></i>
-                  <span>ACTIONS</span>
-                </button>
+                <nz-dropdown [nzTrigger]="'click'">
+                  <a nz-dropdown>
+                    <button>
+                      <i class="icon-menu_24px"></i>
+                      <span>ACTIONS</span>
+                    </button>
+                  </a>
+                  <ul nz-menu style="font-size: 12px">
+                    <li nz-menu-item>Calibrate</li>
+                    <li nz-menu-item>Publish To Pricing</li>
+                    <li nz-menu-item>Publish To Accumulation</li>
+                    <li nz-menu-item>Add To Injuring Node</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Alternate RAP</li>
+                    <li nz-menu-item>Link To Exposure</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Add To Comparer</li>
+                    <li nz-menu-item>Export</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Copy</li>
+                    <li nz-menu-item>Paste</li>
+                    <li nz-menu-item>Remove</li>
+
+                    <li nz-menu-divider></li>
+
+                    <li nz-menu-item>Unselect All</li>
+                    <li nz-menu-item>Save Basket</li>
+
+                  </ul>
+                </nz-dropdown>
               </div>
             </div>
           </div>
