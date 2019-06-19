@@ -853,3 +853,21 @@
 .mr-1 {
   margin-right: 0.75rem !important;
 }
+
+.chips {
+  padding: 1px 0 0 10px;
+  max-width: 150px;
+  width: max-content;
+  color: #fff;
+  font-family: Rubik;
+  border-radius: 10px;
+  font-size: .9em;
+  display: flex;
+
+  .chips-content {
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+}

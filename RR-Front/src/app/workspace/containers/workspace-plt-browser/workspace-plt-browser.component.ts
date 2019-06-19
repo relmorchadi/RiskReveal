@@ -627,8 +627,8 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   getTagsForSummary(pltId) {
-    this.pltdetailsSystemTags = this.systemTags;
-    this.pltdetailsUserTags = this.userTags;
+    //this.pltdetailsSystemTags = this.systemTags;
+    this.pltdetailsUserTags = _.find(this.listOfPltsData, e => e.pltId == pltId).userTags;
   }
 
   selectCardThead(card) {

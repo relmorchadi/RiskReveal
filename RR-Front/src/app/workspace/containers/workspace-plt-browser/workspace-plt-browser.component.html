@@ -227,7 +227,7 @@
           <div nz-row>
             <div class="title-section-drawer">
               <div nz-col nzSpan="18">
-                <h3>{{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltName}}</h3>
+                <h3>{{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltId}} - {{(selectPltById(sumnaryPltDetailsPltId) | async)?.pltName}}</h3>
               </div>
               <div nz-col nzSpan="4">
                 <nz-dropdown [nzTrigger]="'click'">
@@ -275,19 +275,19 @@
                 <div class="summary-content">
                   <div class="summary-tags">
 
-                    <div style="display: flex">
+                    <!--div style="display: flex">
                       <div *ngFor="let tag of pltdetailsSystemTags" style="margin: 4px 5px 5px 4px;">
-                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}">
-                      {{tag.tagName}}
-                    </span>
+                        <span class="chips" [ngStyle]="{'background-color': tag.tagColor}">
+                          <span class="chips-content">{{tag.tagName}}</span>
+                        </span>
                       </div>
-                    </div>
+                    </div-->
 
                     <div style="display: flex">
                       <div *ngFor="let tag of pltdetailsUserTags" style="margin: 4px 5px 5px 4px;">
-                    <span class="chips" [ngStyle]="{'background-color': tag.tagColor}">
-                      {{tag.tagName}}
-                    </span>
+                        <span class="chips" style="padding: 1px 10px !important;" [ngStyle]="{'background-color': tag.tagColor}">
+                          <span class="chips-content">{{tag.tagName}}</span>
+                        </span>
                       </div>
                     </div>
                   </div>
