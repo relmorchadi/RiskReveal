@@ -188,15 +188,6 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
       }]));
   }
 
-  toggleSearchConfigPopIn() {
-    if (this.searchConfigPopInVisible)
-      this.searchConfigPopInVisible = false;
-    if (this.state.visible)
-      this.store.dispatch(new SearchActions.PatchSearchStateAction({key: 'visible', value: !this.state.visible}));
-    if (this.state.visibleSearch)
-      this.store.dispatch(new SearchActions.PatchSearchStateAction({key: 'visibleSearch', value: false}));
-  }
-
   get isExpertMode() {
     return this.contractFilterFormGroup.get('expertModeToggle').value;
   }

@@ -10,12 +10,14 @@
     color: black;
     //background-color: #7ED321;
   }
-  .ant-input-group-wrapper{
+
+  .ant-input-group-wrapper {
     border: 1px solid #06B8FF;
     border-radius: 18px;
   }
-  .ant-input{
-    &:focus{
+
+  .ant-input {
+    &:focus {
       border: none;
       box-shadow: none;
     }
@@ -23,8 +25,7 @@
 }
 
 
-
-.focused-item{
+.focused-item {
   background-color: #F4F6FC;
 }
 
@@ -53,6 +54,7 @@ td, th {
   bottom: 0px;
   right: 0px;
   left: 0px;
+
   button {
     background-color: #f0f2f5;
     margin-left: 10px;
@@ -69,8 +71,8 @@ td, th {
     text-align: center;
   }
 
-  ::ng-deep .ant-menu-vertical{
-    border-right:none;
+  ::ng-deep .ant-menu-vertical {
+    border-right: none;
   }
 }
 
@@ -79,11 +81,13 @@ ul.badges-list {
   padding-left: 2px;
   height: 270px;
   overflow-y: auto;
+
   li.badge-item {
     margin: 15px 10px;
     cursor: pointer;
     height: 24px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
     i {
       margin-right: 5px;
       padding: 5px;
@@ -92,10 +96,11 @@ ul.badges-list {
     }
   }
 
-  li.search-item{
+  li.search-item {
     margin: 15px 10px;
     cursor: pointer;
     height: 20px;
+
     i {
       margin-right: 5px;
       padding: 5px;
@@ -109,12 +114,13 @@ ul.badges-list {
   background-color: #008694 !important;
   color: #fff !important;
 }
+
 /*
 .search-page-active-border {
 }*/
 
 .global-search-input-grp {
-  ::ng-deep span.ant-input-group-addon.ng-star-inserted{
+  ::ng-deep span.ant-input-group-addon.ng-star-inserted {
     background-color: #FFF;
     border: none;
     border-radius: 20px 0px 0px 20px;
@@ -122,19 +128,22 @@ ul.badges-list {
     padding: 0 6px;
   }
 
-  ::ng-deep{
-    .ant-input-affix-wrapper .ant-input:not(:last-child){
+  ::ng-deep {
+    .ant-input-affix-wrapper .ant-input:not(:last-child) {
       padding-left: 6px;
     }
-    .ant-input-affix-wrapper .ant-input-suffix{
-      display:flex;
+
+    .ant-input-affix-wrapper .ant-input-suffix {
+      display: flex;
     }
-    .item-close{
+
+    .item-close {
       height: 17px;
       margin-right: 5px;
       margin-top: 9px;
     }
-    .icon-search_24px{
+
+    .icon-search_24px {
       color: rgba(0, 0, 0, 0.8);
       background-color: rgba(0, 0, 0, 0.05);
       padding-right: 15px;
@@ -146,7 +155,8 @@ ul.badges-list {
       font-size: 18px;
     }
   }
-  ::ng-deep nz-tag{
+
+  ::ng-deep nz-tag {
     margin: 0px 5px !important;
     border-radius: 10px;
   }
@@ -157,47 +167,54 @@ ul.badges-list {
   //}
 }
 
-.global-search-input-grp-active{
+.global-search-input-grp-active {
   border: 1px solid #008694;
 
 }
 
-.search-history{
+.search-history {
   display: block;
   height: 265px;
   overflow: auto;
-  ::ng-deep{
-    .ant-menu{
+
+  ::ng-deep {
+    .ant-menu {
       line-height: unset;
     }
   }
-  .search-history-component{
-    ul{
-      ::ng-deep{
-        .ant-menu{
+
+  .search-history-component {
+    ul {
+      ::ng-deep {
+        .ant-menu {
           line-height: normal;
         }
       }
-      li{
-        border-top:1px solid rgba(0,0,0,0.15);
-        display:flex;
+
+      li {
+        border-top: 1px solid rgba(0, 0, 0, 0.15);
+        display: flex;
         padding: 6px 10px;
-        cursor:pointer;
-        &:hover{
+        cursor: pointer;
+
+        &:hover {
           background-color: #F4F6FC;
         }
-        .chip-container{
-          margin-right:5px;
+
+        .chip-container {
+          margin-right: 5px;
         }
       }
     }
-    .header-wrapper{
-      display:flex;
-      width:40%;
+
+    .header-wrapper {
+      display: flex;
+      width: 40%;
       // justify-content: space-between;
       padding: 10px 15px;
     }
-    .search-history-header{
+
+    .search-history-header {
       margin-right: 15px;
       color: rgba(0, 0, 0, 0.3);
       font-family: Rubik;
@@ -206,7 +223,8 @@ ul.badges-list {
       letter-spacing: 2px;
       line-height: 15px;
     }
-    .search-history-viewAll{
+
+    .search-history-viewAll {
       cursor: pointer;
       color: #666666;
       font-family: Rubik;
@@ -218,37 +236,54 @@ ul.badges-list {
   }
 }
 
-.result-wrapper{
-  height:265px;
-  overflow:auto;
+.result-wrapper {
+  height: 265px;
+  overflow: auto;
   padding-bottom: 5px;
 }
 
-.tag-header{
-  padding: 15px 0;
-  span{
-    padding: 20px;
-    color: rgba(0,0,0,0.6);	font-family: Rubik;	font-size: 12.19px;	font-weight: 500;	letter-spacing: 2px;	line-height: 16px;
+.tag-header {
+  padding: 0px 15px 5px 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  span {
+    padding: 10px;
+    color: rgba(0, 0, 0, 0.6);
+    font-family: Rubik;
+    font-size: 12.19px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    line-height: 16px;
   }
 }
-.tag-body{
-  display:flex;
-  flex-direction:column;
+
+.tag-body {
+  display: flex;
+  flex-direction: column;
   width: 95%;
   margin: auto;
   background-color: #FEFCE8;
   padding-bottom: 5px;
-  .tag-body-header{
+
+  .tag-body-header {
     display: flex;
     padding: 15px 15px 0;
   }
-  i{
+
+  i {
     font-size: 20px;
     margin-right: 5px;
   }
-  span{
+
+  span {
     margin-top: 3px;
-    color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 16.26px;	letter-spacing: 0.5px;	line-height: 20px;
+    color: rgba(0, 0, 0, 0.87);
+    font-family: Rubik;
+    font-size: 16.26px;
+    letter-spacing: 0.5px;
+    line-height: 20px;
   }
 
   .tags-wrapper {
@@ -257,7 +292,7 @@ ul.badges-list {
     display: flex;
     justify-content: space-between;
 
-    .holds-up{
+    .holds-up {
       display: flex;
     }
 
@@ -280,47 +315,65 @@ ul.badges-list {
   }
 }
 
-.prefix-wrapper{
+.prefix-wrapper {
   display: flex;
   line-height: 0rem;
-  .chips-wrapper{
-    display:flex;
+
+  .chips-wrapper {
+    display: flex;
   }
 }
 
-.code-button{
+.code-button {
   font-size: 19px;
   background: transparent;
   border: none;
   padding: 1px 5px;
   //margin-right: 4px;
-  &:focus{
-    outline:0;
-    background: rgba(0,0,0,0.05);
+  &:focus {
+    outline: 0;
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 12px;
   }
 }
 
-.search-result-wrapper{
+.search-result-wrapper {
   display: flex;
   flex-direction: column;
+
   .search-result-span {
-    color: rgba(0,0,0,0.3);	font-family: Rubik;	font-size: 14.19px;	font-weight: 500;	letter-spacing: 2px;	line-height: 20px;
-    border-bottom: 1px solid rgba(0,0,0,0.15); width:100%; padding:10px 20px;
+    color: rgba(0, 0, 0, 0.3);
+    font-family: Rubik;
+    font-size: 14.19px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    line-height: 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    width: 100%;
+    padding: 10px 20px;
     cursor: pointer;
   }
 
-  .search-result-list{
+  .search-result-list {
     .highlight-scroll-item {
       background-color: #F4F6FC !important;
     }
-    li{
-      padding: 0px 20px; padding-top: 8px; cursor: pointer;
-      color: rgba(0,0,0,0.87);	font-family: Rubik;	font-size: 14.22px;	letter-spacing: 0.25px;	line-height: 24px;
-      &:hover{
+
+    li {
+      padding: 0px 20px;
+      padding-top: 8px;
+      cursor: pointer;
+      color: rgba(0, 0, 0, 0.87);
+      font-family: Rubik;
+      font-size: 14.22px;
+      letter-spacing: 0.25px;
+      line-height: 24px;
+
+      &:hover {
         background-color: #F4F6FC;
       }
-      span{
+
+      span {
         display: inline-flex;
         line-height: 15px;
         justify-content: center;
@@ -339,12 +392,13 @@ ul.badges-list {
 }
 
 
-.setting-popover{
+.setting-popover {
   //margin-top: 20px;
   height: 115px;
   width: 215px;
   padding: 15px;
-  .popover-title{
+
+  .popover-title {
     letter-spacing: 0.1rem;
     font-size: 0.9rem;
     font-weight: bolder;

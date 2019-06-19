@@ -25,11 +25,11 @@
               [nzContent]="tagDropdown" nzPlacement="bottomLeft" nzTrigger="click">
         <i class="icon-code_24px"></i>
       </button>
-      <button class="code-button" [(nzVisible)]="searchConfigPopInVisible"
+<!--      <button class="code-button" [(nzVisible)]="searchConfigPopInVisible"
               (click)="toggleSearchConfigPopIn()" style="font-size: 16px; margin-right: 0px"
               nz-popover [nzContent]="searchDropDown" nzPlacement="bottomLeft" nzTrigger="click">
         <i nz-icon nzType="setting" nzTheme="outline"></i>
-      </button>
+      </button>-->
       <button style="border: none;cursor: default;padding: 0;" [(nzVisible)]="state.visibleSearch"
               nz-popover [nzContent]="searchDropdown" nzPlacement="bottomLeft" nzTrigger="click">
       </button>
@@ -45,33 +45,6 @@
        nzTheme="outline"></i>
     <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer"
        class="icon-search_24px"></i>
-  </ng-template>
-
-  <ng-template #searchDropDown>
-    <div class="setting-popover">
-      <div class="popover-title">
-        SEARCH SETTINGS
-      </div>
-      <div nz-row style="line-height: 3rem;">
-        <div style="font-size: 0.8rem " nz-col nzSpan="12">
-          Search Mode
-        </div>
-        <div nz-col nzSpan="12">
-          <nz-select
-            class="dropdown-default"
-            style="width: 100px;"
-            nzShowSearch
-            [nzAllowClear]="false"
-            nzPlaceHolder="Select Search Mode"
-            [(ngModel)]="searchMode"
-            [ngModelOptions]="{standalone: true}"
-          >
-            <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
-            <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
-          </nz-select>
-        </div>
-      </div>
-    </div>
   </ng-template>
 
   <ng-template #searchDropdown>
@@ -150,7 +123,24 @@
 
   <ng-template #tagDropdown>
     <div class="search-contextual-table"
-    nz-menu style="height: 500px; border-radius: 10px; width: 550px">
+    nz-menu style="height: 465px; border-radius: 10px" [ngStyle]="{'width': state.tagShortcuts.length > 10 ? '550px' : '350px'}">
+        <div class="tag-header">
+          <span>SEARCH MODE</span>
+          <div>
+            <nz-select
+              class="dropdown-default"
+              style="width: 100px;"
+              nzShowSearch
+              [nzAllowClear]="false"
+              nzPlaceHolder="Select Search Mode"
+              [(ngModel)]="searchMode"
+              [ngModelOptions]="{standalone: true}"
+            >
+              <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
+              <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
+            </nz-select>
+          </div>
+        </div>
         <div class="tag-header">
           <span>EXPERT MODE</span><nz-switch (ngModelChange)="expertModeChange()" class="switch-input" formControlName="expertModeToggle"></nz-switch>
         </div>
@@ -160,13 +150,13 @@
               <span>Shortcut List:</span>
           </div>
           <div class="tags-wrapper">
-            <div style="width:45%">
+            <div [ngStyle]="{'width': state.tagShortcuts.length > 10 ? '45%' : '75%'}" style="margin:auto">
               <div class="holds-up" *ngFor="let items of state?.tagShortcuts; let i = index">
                   <div class="tags-wrapper-left" *ngIf="i < 10">{{items.tag}}</div>
                   <div class="tags-wrapper-right" *ngIf="i < 10">{{items.value}}</div>
               </div>
             </div>
-            <div style="width:45%">
+            <div *ngIf="state?.tagShortcuts.length > 10" style="width:45%; margin:auto">
               <div class="holds-up" *ngFor="let items of state?.tagShortcuts; let i = index">
                   <div class="tags-wrapper-left" *ngIf="i >= 10">{{items.tag}}</div>
                   <div class="tags-wrapper-right" *ngIf="i >= 10">{{items.value}}</div>

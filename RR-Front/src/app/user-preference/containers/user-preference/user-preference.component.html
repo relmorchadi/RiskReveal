@@ -21,9 +21,9 @@
     <nz-tabset nzTabPosition="left">
       <nz-tab [nzTitle]="generalConfig">
         <div>
-          <span class="main-tab-title">General User</span>
+          <span class="main-tab-title">General</span>
           <div class="settings-holder">
-            <span class="head-title">Search</span>
+<!--            <span class="head-title">Search</span>
             <div class="settings-wrapper">
               <div class="user-config-item">
                 <span>Search Target :</span>
@@ -36,7 +36,7 @@
                   <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
                 </nz-select>
               </div>
-            </div>
+            </div>-->
 
             <span class="head-title">Date & Time</span>
             <div class="settings-wrapper">
@@ -122,7 +122,7 @@
                 </div>
               </div>
               <div style="border-bottom: 1px solid rgba(0, 0, 0, 0.15);" *ngIf="numberCollapse">
-                <div class="user-config-item number-config-item"><span>Number Of Decimals</span>
+                <div class="user-config-item number-config-item"><span>Number Of Decimal Places</span>
                   <div>
                     <nz-input-number
                       [ngModel]="state.general.numberFormat.numberOfDecimals"
@@ -136,20 +136,46 @@
                 </div>
                 <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check1">Decimal Separator Character</label>
                   <div class="custom-radio" *ngIf="check1">
-                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
+                    <nz-select
+                      style="width: 270px;"
+                      [ngModel]="state.general.numberFormat.decimalSeparator"
+                      (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')"
+                      nzShowSearch
+                      class="dropdown-default"
+                      nzPlaceHolder="Select A Time Format"
+                    >
+                      <nz-option nzLabel=","  nzValue=","></nz-option>
+                      <nz-option nzLabel="." nzValue="."></nz-option>
+                      <nz-option nzLabel="'" nzValue="'"></nz-option>
+                      <nz-option nzLabel="space" nzValue=" "></nz-option>
+                    </nz-select>
+<!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
                       <label nz-radio nzValue=",">,</label>
                       <label nz-radio nzValue=".">.</label>
                       <label nz-radio nzValue="'">'</label>
-                    </nz-radio-group>
+                    </nz-radio-group>-->
                   </div>
                 </div>
                 <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check2">Thousand Separator Character</label>
                   <div class="custom-radio" *ngIf="check2">
-                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
+                    <nz-select
+                      style="width: 270px;"
+                      [ngModel]="state.general.numberFormat.decimalThousandSeparator"
+                      (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')"
+                      nzShowSearch
+                      class="dropdown-default"
+                      nzPlaceHolder="Select A Time Format"
+                    >
+                      <nz-option nzLabel=","  nzValue=","></nz-option>
+                      <nz-option nzLabel="." nzValue="."></nz-option>
+                      <nz-option nzLabel="'" nzValue="'"></nz-option>
+                      <nz-option nzLabel="space" nzValue=" "></nz-option>
+                    </nz-select>
+<!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
                       <label nz-radio nzValue=",">,</label>
                       <label nz-radio nzValue=".">.</label>
                       <label nz-radio nzValue="'">'</label>
-                    </nz-radio-group>
+                    </nz-radio-group>-->
                   </div>
                 </div>
                 <div class="user-config-item number-config-item column-config"><span>Negative Numbers</span>
@@ -202,26 +228,33 @@
           <div class="settings-holder">
 
             <span class="head-title">RiskLink Import</span>
+
             <div class="settings-wrapper">
               <div class="user-config-item">
-                <span>Default Import Type</span>
-                <div>
-                  <nz-select
-                    style="width: 270px;"
-                    [(ngModel)]="defaultImport"
-                    (ngModelChange)="defaultImportChange()"
-                    nzShowSearch
-                    class="dropdown-default"
-                    nzPlaceHolder="Select an import"
-                  >
-                    <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
-                    <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
-                    <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
-                  </nz-select>
-                </div>
-              </div>
+                            <span>Default Import Type</span>
+                            <div>
+                              <nz-select
+                                style="width: 270px;"
+                                [(ngModel)]="defaultImport"
+                                (ngModelChange)="defaultImportChange()"
+                                nzShowSearch
+                                class="dropdown-default"
+                                nzPlaceHolder="Select an import"
+                              >
+                                <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
+                                <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
+                                <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
+                              </nz-select>
+                            </div>
+                          </div>
+            </div>
+
+
+            <span class="head-title">Default</span>
+            <div class="settings-wrapper">
+
               <div class="user-config-item">
-                <span>Default Financial Perspectives</span>
+                <span>Financial Perspective Event Level</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
@@ -241,7 +274,7 @@
                 </div>
               </div>
               <div class="user-config-item">
-                <span>Default Financial Perspectives EP Metric</span>
+                <span>Financial Perspectives Statistics</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
@@ -257,7 +290,7 @@
                 </div>
               </div>
               <div class="user-config-item">
-                <span>Default Target Currency</span>
+                <span>Target Currency</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
@@ -272,7 +305,7 @@
                 </div>
               </div>
               <div class="user-config-item">
-                <span>Default RMS Instance</span>
+                <span>Server Instance</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
@@ -286,8 +319,8 @@
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item"><span>Data Sources EDMs</span></div>
-              <div class="user-config-item"><span>Data Sources RDMs</span></div>
+              <div class="user-config-item"><span>Exposures Data Sources</span></div>
+              <div class="user-config-item"><span>Loss Data Sources</span></div>
             </div>
           </div>
           <div class="footer-tab-settings">
