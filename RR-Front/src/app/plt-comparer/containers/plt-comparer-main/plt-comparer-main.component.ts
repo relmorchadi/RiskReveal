@@ -58,7 +58,10 @@ export class PltComparerMainComponent implements OnInit {
   addModalInput: any;
   inputValue: null;
   addModalSelect: any;
-  tagFormenu: any;
+  tagFormenu: any= {
+    tagColor: 'white',
+    tagName: ''
+  };
   fromPlts: any;
   colorPickerIsVisible: any;
   initColor: any;

@@ -95,6 +95,21 @@
             nzOkText="DELETE" nzCancelText="CANCEL"
           ></i>
         </div>
+        <div class="search-Mode">
+          <span class="title">SEARCH MODE</span>
+          <nz-select
+            class="dropdown-default"
+            style="width: 150px;"
+            nzShowSearch
+            [nzAllowClear]="false"
+            nzPlaceHolder="Select Search Mode"
+            [(ngModel)]="searchMode"
+            [ngModelOptions]="{standalone: true}"
+          >
+            <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
+            <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
+          </nz-select>
+        </div>
         <div class="highlight">
           Display selected widgets on dashboard
           <br><br>
