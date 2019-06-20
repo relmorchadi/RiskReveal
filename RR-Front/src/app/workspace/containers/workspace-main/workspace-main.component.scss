@@ -26,6 +26,8 @@
 .tab-title-container {
   position: relative;
   text-align: left;
+  height: 80%;
+  border-right:1px solid rgba(255,255,255,0.5);
 
   &:hover {
     .icon-clear_24px {
@@ -44,7 +46,7 @@
   flex-direction: column;
   font-family: Rubik;
   height: 50px;
-  margin-bottom: 0;
+  margin-top: -8px;
   cursor: pointer;
 
   .tab-title-main {
@@ -239,6 +241,11 @@
       padding: 0;
       color: white;
       height: 70px;
+    }
+
+    .ant-tabs-tab:hover {
+      /* background-color: rgb(20, 97, 122, 0.3) !important; */
+      background-color: rgba(255, 255, 255,0.15) !important;
     }
 
     .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab {

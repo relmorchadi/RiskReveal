@@ -21,6 +21,7 @@ export class GeneralConfig {
     financialPerspectiveELT: any;
     financialPerspectiveEPM: any;
     targetCurrency: any;
+    targetAnalysisCurrency: any;
     rmsInstance: any;
   };
   contractOfInterest: {

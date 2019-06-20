@@ -12,7 +12,7 @@
   <div class="tabs-popover-content" style="width: 565px">
     <nz-tabset>
       <nz-tab [nzTitle]="ActiveHeaderContent">
-        <div class="popup-tab-content">
+        <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input (input)="searchJobs($event)" class="input-search"/>
@@ -36,10 +36,13 @@
                   </ng-container>
                   <ng-template #tooltipInfo>
                     <span>
-                      <span *ngIf="activeTask.jobType === 'Import'">Import: {{activeTask.status.completed}} of {{activeTask.status.total}} Portfolios,
-                      {{activeTask.status.completed}} of {{activeTask.status.total}} Analysis</span>
-                      <span *ngIf="activeTask.jobType === 'Calibration'">Calibration: {{activeTask.status.completed}} of {{activeTask.status.total}} PLTs</span>
-                      <span *ngIf="activeTask.jobType === 'Inuring'">Inuring: {{activeTask.status.completed}} of {{activeTask.status.total}} Contract</span>
+                      <span *ngIf="activeTask.jobType === 'Import'">Import: {{activeTask.status.completed}}
+                        of {{activeTask.status.total}} Portfolios,
+                        {{activeTask.status.completed}} of {{activeTask.status.total}} Analysis</span>
+                      <span *ngIf="activeTask.jobType === 'Calibration'">Calibration: {{activeTask.status.completed}}
+                        of {{activeTask.status.total}} PLTs</span>
+                      <span *ngIf="activeTask.jobType === 'Inuring'">Inuring: {{activeTask.status.completed}}
+                        of {{activeTask.status.total}} Contract</span>
                     </span>
                   </ng-template>
                   <!--<i class="icon-window-section"></i> -->
@@ -51,12 +54,19 @@
                   </div>
                 </div>
                 <div class="list-item-right">
-                  <span (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="list-item-info">{{activeTask?.jobType}} - {{activeTask?.workSpaceId}}</span>
+                  <span (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                        class="list-item-info">{{activeTask?.jobType}} - {{activeTask?.workSpaceId}}</span>
                   <ng-container *ngIf="!activeTask.pending">
-                    <span *ngIf="!activeTask.isPaused" (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="task-duration mr-2">{{activeTask?.duration}}</span>
-                    <span *ngIf="activeTask.isPaused" (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="task-duration mr-2">Paused</span>
+                    <span *ngIf="!activeTask.isPaused"
+                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                          class="task-duration mr-2">{{activeTask?.duration}}</span>
+                    <span *ngIf="activeTask.isPaused"
+                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                          class="task-duration mr-2">Paused</span>
                   </ng-container>
-                  <span *ngIf="activeTask.pending" (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="task-duration mr-2">4/12 pending</span>
+                  <span *ngIf="activeTask.pending"
+                        (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                        class="task-duration mr-2">4/12 pending</span>
                   <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                     <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                     <ul nz-menu>
@@ -129,18 +139,20 @@
           </ul>
           <div class="mt-2 task-footer">
             <div style="display: flex;">
-              <label>Date :</label>
-              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="dropdown-default"
-                         style="width: 120px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear nzPlaceHolder="Choose">
+              <!--              <label>Date :</label>-->
+              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="dropdown-default date-label"
+                         style="width: 120px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear
+                         nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="'today'" nzLabel="Today"></nz-option>
                 <nz-option [nzValue]="'yesterday'" nzLabel="Yesterday"></nz-option>
                 <nz-option [nzValue]="'lastWeek'" nzLabel="Last Week"></nz-option>
               </nz-select>
 
-              <label>Type :</label>
-              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="dropdown-default"
-                         style="width: 120px;" (ngModelChange)="filterByType($event)" nzAllowClear nzPlaceHolder="Choose">
+              <!--              <label>Type :</label>-->
+              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="dropdown-default type-label"
+                         style="width: 120px;" (ngModelChange)="filterByType($event)" nzAllowClear
+                         nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="'Import'" nzLabel="Import"></nz-option>
                 <nz-option [nzValue]="'Inuring'" nzLabel="Inuring"></nz-option>
@@ -149,7 +161,7 @@
               </nz-select>
             </div>
             <div class="task-button">
-              <button class="button-no-outline" (click)="navigateToJOBManager()">SEE ALL</button>
+              <button class="a-button-text" (click)="navigateToJOBManager()">SEE ALL</button>
             </div>
           </div>
         </div>
@@ -247,10 +259,13 @@
                   </ng-container>
                   <ng-template #tooltipInfo>
                     <span>
-                      <span *ngIf="activeTask.jobType === 'Import'">Import: {{activeTask.status.completed}} of {{activeTask.status.total}} Portfolios,
+                      <span *ngIf="activeTask.jobType === 'Import'">Import: {{activeTask.status.completed}}
+                        of {{activeTask.status.total}} Portfolios,
                         {{activeTask.status.completed}} of {{activeTask.status.total}} Analysis</span>
-                      <span *ngIf="activeTask.jobType === 'Calibration'">Calibration: {{activeTask.status.completed}} of {{activeTask.status.total}} PLTs</span>
-                      <span *ngIf="activeTask.jobType === 'Inuring'">Inuring: {{activeTask.status.completed}} of {{activeTask.status.total}} Contract</span>
+                      <span *ngIf="activeTask.jobType === 'Calibration'">Calibration: {{activeTask.status.completed}}
+                        of {{activeTask.status.total}} PLTs</span>
+                      <span *ngIf="activeTask.jobType === 'Inuring'">Inuring: {{activeTask.status.completed}}
+                        of {{activeTask.status.total}} Contract</span>
                     </span>
                   </ng-template>
                   <!--<i class="icon-window-section"></i> -->
@@ -262,12 +277,19 @@
                   </div>
                 </div>
                 <div class="list-item-right">
-                  <span (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="list-item-info">{{activeTask?.jobType}} - {{activeTask?.workSpaceId}}</span>
+                  <span (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                        class="list-item-info">{{activeTask?.jobType}} - {{activeTask?.workSpaceId}}</span>
                   <ng-container *ngIf="!activeTask.pending">
-                    <span *ngIf="!activeTask.isPaused" (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="task-duration mr-2">{{activeTask?.duration}}</span>
-                    <span *ngIf="activeTask.isPaused" (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="task-duration mr-2">Paused</span>
+                    <span *ngIf="!activeTask.isPaused"
+                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                          class="task-duration mr-2">{{activeTask?.duration}}</span>
+                    <span *ngIf="activeTask.isPaused"
+                          (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                          class="task-duration mr-2">Paused</span>
                   </ng-container>
-                  <span *ngIf="activeTask.pending" (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)" class="task-duration mr-2">4/12 pending</span>
+                  <span *ngIf="activeTask.pending"
+                        (dblclick)="openWorkspace(activeTask.workSpaceId, activeTask.uwYear, activeTask.linkTo)"
+                        class="task-duration mr-2">4/12 pending</span>
                   <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
                     <i nz-dropdown style="margin-top: 7px" class="icon-menu_24px"></i>
                     <ul nz-menu>
@@ -341,7 +363,8 @@
           <div class="mt-2 task-footer">
             <div>
               <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="dropdown-default"
-                         style="width: 140px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear nzPlaceHolder="Choose">
+                         style="width: 140px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear
+                         nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="'today'" nzLabel="Today"></nz-option>
                 <nz-option [nzValue]="'yesterday'" nzLabel="Yesterday"></nz-option>
@@ -349,7 +372,8 @@
               </nz-select>
 
               <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="dropdown-default"
-                         style="width: 140px;" (ngModelChange)="filterByType($event)" nzAllowClear nzPlaceHolder="Choose">
+                         style="width: 140px;" (ngModelChange)="filterByType($event)" nzAllowClear
+                         nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
                 <nz-option [nzValue]="'Import'" nzLabel="Import"></nz-option>
                 <nz-option [nzValue]="'Inuring'" nzLabel="Inuring"></nz-option>
@@ -358,7 +382,7 @@
               </nz-select>
             </div>
             <div class="task-button">
-              <button class="button-no-outline" (click)="navigateToJOBManager()">SEE ALL</button>
+              <button class="a-button-text" (click)="navigateToJOBManager()">SEE ALL</button>
             </div>
           </div>
         </div>
