@@ -1,27 +1,42 @@
-import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, TemplateRef, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
 import {PltMainState} from '../../store';
-import {map} from 'rxjs/operators';
+import {map, mergeMap, tap} from 'rxjs/operators';
 import {ActivatedRoute} from '@angular/router';
 import {Table} from 'primeng/table';
+import {combineLatest} from 'rxjs';
+import {WorkspaceMainState} from '../../../core/store/states';
 
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
   styleUrls: ['./workspace-plt-browser.component.scss']
 })
-export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
+export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
   private dropdown: NzDropdownContextComponent;
   private Subscriptions: any[] = [];
   searchAddress: string;
   listOfPlts: any[];
+  listOfDeletedPlts: any[];
   listOfPltsData: any[];
+  listOfDeletedPltsData: any[];
+  listOfDeletedPltsCache: any[];
   listOfPltsCache: any[];
   selectedListOfPlts: any[];
+  selectedListOfDeletedPlts: any[];
   filterData: any;
   sortData;
   activeCheckboxSort: boolean;
@@ -36,67 +51,86 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   lastSelectedId;
 
   contextMenuItems = [
-    { label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId) },
-    { label: 'Delete', icon: 'pi pi-trash', command: (event) => {
-      this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltId : this.selectedItemForMenu}))
-      }
-      },
-    { label: 'Edit Tags', icon: 'pi pi-tags', command: (event) => {
-        this.addTagModal= true;
+    { label: 'View Detail', command: (event) => {
+      console.log(this.selectedPlt)
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      } },
+    { label: 'Delete', command: (event) =>
+        this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
+    },
+    { label: 'Manage Tags', command: (event) => {
+        this.tagModalVisible= true;
+        this.tagForMenu = {
+          ...this.tagForMenu,
+          tagName: ''
+        };
         this.fromPlts= true;
-        let d= [];
+        this.editingTag= false;
+        let d= _.map( this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
 
-        _.forEach( this.listOfPltsData, (v,k) => {
-          if(v.selected) d.push(v.userTags);
-        })
+        /* _.forEach( this.listOfPltsData, (v,k) => {
+           if(v.selected) d.push(v.userTags);
+         })*/
 
         //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
-        this.addModalSelect = _.intersectionBy(...d, 'tagId');
+        this.modalSelect= this.addModalSelectCache= _.intersectionBy(...d, 'tagId');
+        this.oldSelectedTags= _.uniqBy(_.flatten(d), 'tagId');
+        console.log(this.addModalSelectCache,this.oldSelectedTags,d)
 
+      }
+    },
+    {
+      label: 'Restore',
+      command: () => {
+        this.store$.dispatch(new fromWorkspaceStore.restorePlt({pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
+        this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
       }
     }
   ];
 
   tagContextMenu = [
-    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))}, { label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
-        this.renamingTag= true;
+    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagForMenu.tagId))},
+    { label: 'Edit Tag', icon: 'pi pi-pencil', command: (event) => {
+        this.editingTag= true;
         this.fromPlts = false;
-        this.addModalInput = this.tagFormenu.tagName;
-        this.modalInputCache= this.tagFormenu.tagName;
-        this.addTagModal= true;
-      }}
+        this.tagModalVisible = true;
+      }
+    }
   ];
 
   pltColumns = [
-    {sortDir: 1,fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
-    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '100px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'peril', header: 'Peril', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '80px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '90px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {sortDir: 1,fields: '', header: 'User Tags', width: '10%', sorted: false, filtred: false, icon: null, type: 'checkbox'},
+    {sortDir: 1,fields: '', header: 'User Tags', width: '10%', sorted: false, filtred: false, icon: null, type: 'tags'},
+    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '13%', sorted: true, filtred: true, icon: null, type: 'id'},
+    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '40%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'peril', header: 'Peril', width: '15%', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
+    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '20%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'grain', header: 'Grain', width: '40%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletedBy',forDelete: true, header: 'Deleted By', width: '25%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'deletedAt',forDelete:true, header: 'Deleted On', width: '25%', sorted: true, filtred: true, icon: null, type: 'date'},
+    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '15%', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1,fields: 'rap', header: 'RAP', width: '13%', sorted: true, filtred: true, icon: null, type: 'field'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
+    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-dollar-alt', type: 'icon'},
     {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
-    ];
 
+  ];
+
+  pltColumnsCache= this.pltColumns;
 
   epMetricsCurrencySelected: any = 'EUR';
   CalibrationImpactCurrencySelected: any = 'EUR';
   epMetricsFinancialUnitSelected: any = 'Million';
   CalibrationImpactFinancialUnitSelected: any = 'Million';
 
-  currentPath:any = null;
-
-  visible = false;
+  drawerVisible = false;
   size = 'large';
   filters: {
     systemTag: [],
     userTag: []
-  }
+  };
   sumnaryPltDetailsPltId: any;
 
   epMetricInputValue: string | null;
@@ -266,13 +300,13 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
     {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
     {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
-  ]
+  ];
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
   private pageSize: number = 20;
   private lastClick: string;
-  private renamingTag: boolean;
+  editingTag: boolean;
   private modalInputCache: any;
 
 
@@ -286,7 +320,9 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.selectAll = false;
     this.listOfPlts = [];
     this.listOfPltsData = [];
+    this.listOfDeletedPltsData = [];
     this.selectedListOfPlts = [];
+    this.selectedListOfDeletedPlts = [];
     this.lastSelectedId = null;
     this.drawerIndex = 0;
     this.params = {};
@@ -294,21 +330,29 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.filters = {
       systemTag: [],
       userTag: []
-    }
+    };
     this.filterData = {};
-    this.sortData= {};
+    this.sortData = {};
     this.activeCheckboxSort = false;
     this.loading = true;
-    this.addTagModal = false;
-    this.addTagModalIndex= 0;
-    this.systemTagsCount= {};
-    this.userTagsCount= {};
+    this.tagModalVisible = false;
+    this.tagModalIndex = 0;
+    this.systemTagsCount = {};
+    this.userTagsCount = {};
     this.fromPlts = false;
-    this.selectedUserTags= {};
-    this.initColor = '#fe45cd'
+    this.editingTag = false;
+    this.selectedUserTags = {};
     this.colorPickerIsVisible = false;
     this.addTagModalPlaceholder = 'Select a Tag';
     this.showDeleted= false;
+    this.wsHeaderSelected= true;
+    this.tagForMenu= {
+      tagId: null,
+      tagName: '',
+      tagColor: '#0700e4'
+    }
+    this.generateContextMenu(this.showDeleted);
+    this.generateColumns(this.showDeleted);
   }
 
   @Select(PltMainState.getUserTags) userTags$;
@@ -318,95 +362,154 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
   loading: boolean;
   selectedUserTags: any;
 
+  generateColumns= (showDelete) =>  this.pltColumns = showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache;
+
   systemTagsMapping = {
     grouped: {
-      regionPerilCode: 'Region Peril',
+      peril: 'Peril',
+      regionDesc: 'Region',
       currency: 'Currency',
       sourceModellingVendor: 'Modelling Vendor',
-      sourceModellingSystem: 'Model System',
+      sourceModellingSystem: 'Modelling System',
       targetRapCode: 'Target RAP',
       userOccurrenceBasis: 'User Occurence Basis',
-      pltType: 'Loss Asset Type',
+      xActAvailable: 'Published To Pricing',
+      xActUsed: 'Priced',
+      accumulated: 'Accumulated',
+      financial: 'Financial Perspectives'
     },
-    nonGrouped: {
-    }
+    nonGrouped: {}
   };
+
+  contextMenuItemsCache= this.contextMenuItems;
+
+  generateContextMenu(toRestore) {
+    const t = ['Delete','Manage Tags'];
+    this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ( 'Restore' != e.label ) : !_.find(t, el => el == e.label))
+  }
 
   ngOnInit() {
     this.Subscriptions.push(
-      this.deletedPlts$.subscribe( d => {
-        this.deletedPlts= d;
-        this.detectChanges();
-
-      }),
-      this.data$.subscribe( data => {
-        let d1= [];
-        let d2= [];
-        this.loading= false;
+      combineLatest(
+        this.data$,
+        this.deletedPlts$
+      ).subscribe(([data, deletedData]) => {
+        let d1 = [];
+        let dd1 = [];
+        let d2 = [];
+        let dd2 = [];
+        this.loading = false;
         this.systemTagsCount = {};
 
-        if(_.keys(this.systemTagsCount).length == 0 ) {
-          _.forEach(data, (v,k) => {
-            //Init Tags Counters
+        if (data) {
+          if (_.keys(this.systemTagsCount).length == 0) {
+            _.forEach(data, (v, k) => {
+              //Init Tags Counters
 
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              const tag = _.toString(v[section]);
-              if(tag){
-                this.systemTagsCount[sectionName][tag] = {selected: false,count:0}
-              }
-            })
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              this.systemTagsCount[sectionName][section] = {selected: false,count:0};
-              this.systemTagsCount[sectionName]['non-'+section] = {selected: false,count:0};
-            })
-
-          })
-        }
-
-        _.forEach(data, (v,k) => {
-          d1.push({...v,pltId: k});
-          d2.push(k);
-
-          if(v.visible) {
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName,section) => {
-              const tag = _.toString(v[section]);
-              if(tag){
-                if( this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0){
-                  this.systemTagsCount[sectionName][tag] = {...this.systemTagsCount[sectionName][tag],count: this.systemTagsCount[sectionName][tag].count + 1};
+              //Grouped Sys Tags
+              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
+                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+                const tag = _.toString(v[section]);
+                if (tag) {
+                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
                 }
-              }
-            })
+              });
 
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              const tag = v[section];
-              if(this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0){
-                this.systemTagsCount[sectionName][section] = {...this.systemTagsCount[sectionName][section],count: this.systemTagsCount[sectionName][section].count + 1};
-              }
-              if(this.systemTagsCount[sectionName]['non-'+section] || this.systemTagsCount[sectionName]['non-'+section].count == 0){
-                this.systemTagsCount[sectionName]['non-'+section] = {...this.systemTagsCount[sectionName]['non-'+section],count: this.systemTagsCount[sectionName]['non-'+section].count + 1};
-              }
+              //NONE grouped Sys Tags
+              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+                this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
+                this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
+              })
+
             })
           }
 
-        });
-        this.listOfPlts = d2;
-        this.listOfPltsData = this.listOfPltsCache = d1;
-        this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+          _.forEach(data, (v, k) => {
+            d1.push({...v, pltId: k});
+            d2.push(k);
+
+            /*if (v.visible) {*/
+              //Grouped Sys Tags
+              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
+                const tag = _.toString(v[section]);
+                if (tag) {
+                  if (this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0) {
+                    const {
+                      count,
+                      max
+                    } =this.systemTagsCount[sectionName][tag];
+
+                    this.systemTagsCount[sectionName][tag] = {
+                      ...this.systemTagsCount[sectionName][tag],
+                      count: v.visible ? count + 1 : count,
+                      max: max + 1
+                    };
+                  }
+                }
+              })
+
+              //NONE grouped Sys Tags
+              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+                const tag = v[section];
+                if (this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0) {
+                  const {
+                    max,
+                    count
+                  } = this.systemTagsCount[sectionName][section];
+                  this.systemTagsCount[sectionName][section] = {
+                    ...this.systemTagsCount[sectionName][section],
+                    count: v.visible ? count + 1 : count,
+                    max: max + 1
+                  };
+                }
+                if (this.systemTagsCount[sectionName]['non-' + section] || this.systemTagsCount[sectionName]['non-' + section].count == 0) {
+                  const {
+                    count,
+                    max
+                  } = this.systemTagsCount[sectionName]['non-' + section];
+                  this.systemTagsCount[sectionName]['non-' + section] = {
+                    ...this.systemTagsCount[sectionName]['non-' + section],
+                    count: v.visible ? count + 1 : count,
+                    max: max + 1
+                  };
+                }
+              })
+            /*}*/
+
+          });
+
+          this.listOfPlts = d2;
+          this.listOfPltsData = this.listOfPltsCache = d1;
+          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+        }
+
+        if (deletedData) {
+          _.forEach(deletedData, (v, k) => {
+            dd1.push({...v, pltId: k});
+            dd2.push(k);
+          });
+
+          this.listOfDeletedPlts = dd2;
+          this.listOfDeletedPltsData = this.listOfDeletedPltsCache = dd1;
+          this.selectedListOfDeletedPlts = _.filter(dd2, k => deletedData[k].selected);
+        }
+
+        this.selectAll =
+          !this.showDeleted
+            ?
+            (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
+            :
+            (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
+
+        this.someItemsAreSelected =
+          !this.showDeleted ?
+            this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
+            :
+            this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.data$.subscribe( data => {
-        this.selectAll = (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0 ;
-        this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
-        this.detectChanges();
-      }),
-      this.data$.subscribe( data => {
+      this.data$.subscribe(data => {
         _.forEach(data, (v, k) => {
           if (v.opened) {
             this.sumnaryPltDetailsPltId = k;
@@ -415,58 +518,33 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
         this.detectChanges();
       }),
       this.route$.params.subscribe(({wsId, year}) => {
-          this.workspaceId = wsId;
-          this.uwy = year;
-          this.loading= true;
-          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
-            params: {
-              workspaceId: wsId, uwy: year
-            }}));
-        }),
+        this.workspaceId = wsId;
+        this.uwy = year;
+        this.loading= true;
+        this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+          params: {
+            workspaceId: wsId, uwy: year
+          }}));
+      }),
       this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
-          this.projects = projects;
-          this.detectChanges();
-        }),
+        this.projects = _.map(projects, p => ({...p, selected: false}));
+        this.detectChanges();
+      }),
       this.getAttr('loading').subscribe( l => this.loading = l),
       this.userTags$.subscribe( userTags => {
         this.userTags = userTags || {};
+        this.detectChanges();
+      }),
+      this.store$.select(WorkspaceMainState.getLeftNavbarIsCollapsed).subscribe(l => {
+        this.leftIsHidden=l;
         this.detectChanges();
       })
     );
   }
 
   getAttr(path) {
-    return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)));
+    return this.store$.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
   }
-
-  /*sort(sort: { key: string, value: string }): void {
-    let sortField = sort.key;
-    let sortOrder = sort.value;
-    if (sortField && sortOrder) {
-      this.sortMap[sort.key] = sort.key;
-      (sortOrder === 'ascend') ? sortOrder = 'asc' : sortOrder = 'desc';
-      this.params = {
-        ...this.params,
-        pageNumber: 0,
-        pageSize: this.pageSize,
-        sort: sortField + "," + sortOrder,
-      };
-      //this.loadData(this.params);
-    } else {
-      this.params = {...this.params, sort: 'pltId,desc', sortCompany: '', pageSize: this.pageSize};
-      //this.loadData(this.params);
-    }
-    this.loadData(this.params)
-  }
-
-  filter = _.debounce( (key: string, value) => {
-    if(value){
-      this.params= _.merge({},this.params, {[key]: value })
-    }else{
-      this.params= _.omit(this.params, [key])
-    }
-    this.loadData(this.params)
-  },500);*/
 
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
@@ -478,119 +556,79 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     }
   }
 
-  filter(key: string, value) {
-    if (key == 'project') {
-      if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
-        this.filterData = _.omit(this.filterData, [key]);
-      } else {
-        this.filterData = _.merge({}, this.filterData, {[key]: value});
-      }
-      this.projects = _.map(this.projects, t => {
-        if(t.projectId == value){
-            return ({...t,selected: !t.selected})
-        }else if(t.selected) {
-          return ({...t,selected: false})
-        }else return t;
-      })
-
-    }else {
-      if(value) {
-        this.filterData= _.merge({},this.filterData, {[key]: value})
-      } else {
-        this.filterData = _.omit(this.filterData, [key]);
-      }
-    }
+  filter(filterData) {
+    this.filterData= filterData;
   }
 
   selectedPlt: any;
-  addTagModalIndex: any;
-  addTagModal: boolean;
-  addModalInput: any;
-  inputValue: null;
-  addModalSelect: any;
-  tagFormenu: any;
+  tagModalIndex: any;
+  tagModalVisible: boolean;
+  modalSelect: any;
+  addModalSelectCache: any;
+  oldSelectedTags: any;
+  tagForMenu: any;
   fromPlts: any;
   colorPickerIsVisible: any;
   initColor: any;
   addTagModalPlaceholder: any;
   showDeleted: boolean;
   selectedItemForMenu: string;
-
-  setFilter(filter: string, tag,section) {
-      if(filter === 'userTag'){
-        this.filters =
-          _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
-            _.merge({}, this.filters, { [filter]: _.merge([], this.filters[filter], {[this.filters[filter].length] : tag.tagId} ) }) :
-            _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
-
-        this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
-
-        this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
-          filters: this.filters
-        }))
-      }else{
-        const {
-          systemTag
-        } = this.filters;
-        /*this.filters =
-          _.findIndex(systemTag, e => e == tag.tagId) < 0 ?
-            _.merge({},
-              this.filters, {
-              systemTag: _.merge([], systemTag, {
-                [systemTag.length] : {section, }
-              } )
-            }) :
-            _.assign({}, this.filters, {systemTag: _.filter(systemTag, e => e.section != section)})*/
-
-        this.filters = _.findIndex(systemTag, sectionFilter => sectionFilter[tag] === section ) < 0 ?
-          _.merge({},this.filters,{
-            systemTag: _.merge([], systemTag, {
-              [systemTag.length]: { [tag] : section }
-            })
-          }):
-          _.assign({}, this.filters,{ systemTag: _.filter( systemTag, sectionFilter => sectionFilter[tag] != section)})
-      }
-  }
+  wsHeaderSelected: boolean;
+  leftIsHidden: any;
+  filterInput: string= "";
 
   selectPltById(pltId) {
     return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`));
   }
 
   openDrawer(index): void {
-    this.visible = true;
+    this.drawerVisible = true;
     this.drawerIndex = index;
   }
 
   closeDrawer(): void {
-    this.visible = false;
+    this.drawerVisible = false;
   }
 
   closePltInDrawer(pltId) {
     this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}));
   }
 
+  deletePlt() {
+    this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
+  }
+
+  editTags() {
+    this.tagModalVisible = true;
+    this.fromPlts = true;
+    let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
+
+    /* _.forEach( this.listOfPltsData, (v,k) => {
+       if(v.selected) d.push(v.userTags);
+     })*/
+
+    //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+
+    this.modalSelect = this.addModalSelectCache = _.intersectionBy(...d, 'tagId');
+    this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
+    console.log(this.addModalSelectCache, this.oldSelectedTags, d);
+  }
+
+  restore() {
+    this.store$.dispatch(new fromWorkspaceStore.restorePlt({pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
+    this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
+  }
+
   openPltInDrawer(plt) {
     this.closePltInDrawer(this.sumnaryPltDetailsPltId);
     this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}));
     this.openDrawer(1);
-    this.getTagsForSummary();
+    this.getTagsForSummary(plt);
   }
 
-  getColor(id, type) {
-    let item;
-    if (type === 'system') {
-      item = this.systemTags.filter(tag => tag.tagId == id);
-    } else {
-      item = this.userTags.filter(tag => tag.tagId == id);
-    }
-    if (item.length > 0)
-      return item[0].tagColor;
-    return null;
-  }
-
-  getTagsForSummary() {
-    this.pltdetailsSystemTags = this.systemTags;
-    this.pltdetailsUserTags = this.userTags;
+  getTagsForSummary(pltId) {
+    //this.pltdetailsSystemTags = this.systemTags;
+    this.pltdetailsUserTags = _.find(this.listOfPltsData, e => e.pltId == pltId).userTags;
   }
 
   selectCardThead(card) {
@@ -612,35 +650,18 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     else return 'none';
   }
 
-  resetFilterByTags() {
-    this.filters = {
-      systemTag: [],
-      userTag: []
-    }
-    this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
-    this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
-    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({filters: this.filters}));
-  }
-
-  resetPath(){
+  resetPath() {
     this.filterData = _.omit(this.filterData, 'project')
     this.projects = _.map(this.projects, p => ({...p, selected: false}))
-    this.showDeleted= false;
+    this.showDeleted = false;
   }
 
-  contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
-    this.dropdown = this.nzDropdownService.create($event, template);
+  setSelectedProjects($event) {
+    this.projects = $event;
   }
 
   close(e: NzMenuItemDirective): void {
     this.dropdown.close();
-  }
-
-  runInNewConext(task) {
-    this.zone.runOutsideAngular(() => {
-      task();
-      this.detectChanges();
-    });
   }
 
   detectChanges() {
@@ -652,225 +673,205 @@ export class WorkspacePltBrowserComponent implements OnInit,OnDestroy {
     this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe());
   }
 
-  checkAll($event: boolean) {
+  checkAll($event) {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map(this.listOfPlts, plt => plt),
-        _.range(this.listOfPlts.length).map(el => ({type : !this.selectAll && !this.someItemsAreSelected ? 'select' : 'unselect'}))
+        _.map(!$event ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
+        _.range(!$event ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({type: !this.selectAll && !this.someItemsAreSelected}))
       )
     );
   }
 
+
   toggleSelectPlts(plts: any) {
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}));
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts, forDeleted: this.showDeleted}));
   }
 
-  selectSinglePLT(pltId: number, $event: boolean) {
-    this.toggleSelectPlts({
-      [pltId]: {
-        type: $event ? 'select' : 'unselect'
-      }
-    });
+  selectSinglePLT($event) {
+    this.toggleSelectPlts($event);
   }
 
-  handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
-    if ($event.ctrlKey || $event.shiftKey) {
-      this.lastClick = "withKey";
-      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
-    } else {
-      this.lastSelectedId = i;
-      this.toggleSelectPlts(
-        _.zipObject(
-          _.map(this.listOfPlts, plt => plt),
-          _.map(this.listOfPlts, plt =>  plt == pltId && (this.lastClick == 'withKey' || !isSelected) ? ({type: 'select'}) : ({type: 'unselect'}))
-        )
-      );
-      this.lastClick= null;
-    }
+  checkBoxSort($event) {
+    this.listOfPltsData = $event;
   }
 
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
-      if(!this.lastSelectedId) this.lastSelectedId = 0;
-      if(this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(this.listOfPlts, plt => plt),
-            _.map(this.listOfPlts,(plt,i) => ( i <= max  && i >= min ? ({type: 'select'}) : ({type: 'unselect'}) )),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
+  editTag() {
+    this.store$.dispatch(new fromWorkspaceStore.editTag(this.tagForMenu))
   }
 
-  private loadData(params: any) {
-    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({params}));
-  }
 
-  selectProject(id: any) {
-
-  }
-
-  toDate(d) {
-    return new Date(d);
-  }
-
-  handleOk(){
-
-  }
-
-  onSort($event: any) {
-    console.log($event);
-    const {
-      multisortmeta
-    } = $event;
-
-    /*if(_.find(multisortmeta, col => col.field == 'selected' && col.order == 1)){
-      this.table.reset();
-    }
-    this.multiSortMeta = multisortmeta;*/
-  }
-
-  checkBoxsort() {
-    this.activeCheckboxSort = !this.activeCheckboxSort;
-    if (this.activeCheckboxSort) {
-      this.listOfPltsData = _.sortBy( this.listOfPltsData, [(o) => {
-        return !o.selected;
-      }]);
-    } else {
-      this.listOfPltsData = this.listOfPltsCache;
-    }
-  }
-
-  handlePopUpConfirm() {
-    if(this.renamingTag) {
-      if(this.addModalInput != this.modalInputCache){
-        this.store$.dispatch(new fromWorkspaceStore.renameTag({
-          ...this.tagFormenu,
-          tagName: this.addModalInput
-        }))
-      }
-    }else {
-      if(this.addTagModalIndex === 1 ){
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
-          plts: this.selectedListOfPlts,
-          wsId: this.workspaceId,
-          uwYear: this.uwy,
-          tags: this.addModalSelect,
-          type: 'many'
-        }))
-      }
-
-      if(this.addTagModalIndex === 0) {
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
-          plts: this.fromPlts ? this.selectedListOfPlts : [],
-          wsId: this.workspaceId,
-          uwYear: this.uwy,
-          tag: {
-            tagName: this.addModalInput,
-            tagColor: this.initColor
-          }
-        }))
-      }
-    }
-    
-    this.addTagModal = false;
-  }
-
-  selectUserTag(k) {
-    event.stopPropagation();
-    event.preventDefault();
-    if(_.find(this.selectedUserTags, t => t.tagId == k)){
-      this.selectedUserTags = _.omit(this.selectedUserTags,k);
-    }else{
-      this.selectedUserTags[k] = this.userTags[k];
-    }
-    const l = _.toArray(this.selectedUserTags).length;
-
-    if(l == 0) {
-      //this.addTagModalPlaceholder= {'Select a Tag': {tagName: 'Select a Tag'}}
-      this.addTagModalPlaceholder= 'Seleetc'
-    }
-    if(l == 1 ) {
-      //this.addTagModalPlaceholder = _.toArray(this.selectedUserTags)[0]
-      this.addTagModalPlaceholder= 'hey'
-    }
-    if(l > 1) {
-      //this.addTagModalPlaceholder = {'multiple': {tagName: 'multiple'}}
-      this.addTagModalPlaceholder= 'multiple'
-    }
-    //this.addModalSelect = this.userTags[k];
-    console.log(this.addTagModalPlaceholder)
-
-  }
-
-  selectSystemTag(section, tag) {
-
+  selectSystemTag({section, tag}) {
     _.forEach(this.systemTagsCount, (s,sKey) => {
       _.forEach(s, (t,tKey) => {
         if(tag == tKey && section == sKey){
           this.systemTagsCount[sKey][tKey] = {...t,selected: !t.selected}
-          console.log(this.systemTagsCount[sKey][tKey]);
         }else{
           this.systemTagsCount[sKey][tKey] = {...t,selected: false}
-          console.log(this.systemTagsCount[sKey][tKey]);
         }
       })
     })
+
   }
 
-  toggleModal(){
-    this.addTagModal = false;
-    if(!this.addTagModal){
-      this.addModalInput=null;
-      this.addModalSelect=null;
-      this.addTagModalIndex=0;
+  sortChange(sortData) {
+    this.sortData = sortData;
+  }
+
+
+  setSelectedMenuItem($event: any) {
+    this.selectedPlt= $event;
+    this.selectedItemForMenu= $event;
+  }
+
+  setFilters(filters){
+    console.log(filters);
+    this.filters= filters;
+  }
+
+  emitFilters(filters: any) {
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
+      filters: filters
+    }))
+  }
+
+  setFromPlts($event) {
+    this.fromPlts = $event;
+  }
+
+  setUserTags($event){
+    this.userTags= $event;
+  }
+
+  setModalIndex($event) {
+    this.tagModalIndex = $event;
+  }
+
+  assignPltsToTag($event: any) {
+    const {
+      plts,
+      tags: newSelectedTags
+    } = $event;
+
+    console.log(newSelectedTags, plts);
+    let newTags = [];
+    let tt= {
+      toDelete: [],
+      toAdd: []
+    };
+    let pp= {
+      toDelete: _.differenceBy(this.oldSelectedTags, newSelectedTags, 'tagId'),
+      toAdd: newSelectedTags
+    };
+
+    console.log(this.oldSelectedTags,newSelectedTags)
+
+    _.forEach(_.uniqBy([...this.oldSelectedTags,...newSelectedTags], 'tagId'), tag => {
+      let isSelected= _.find(newSelectedTags, newTag => tag.tagId == newTag.tagId);
+      let headers = !isSelected
+        ?
+        _.filter(tag.pltHeaders,pltHeader => !(_.findIndex(plts, pltId => pltId == pltHeader.id) >= 0))
+        :
+        _.uniqBy([...tag.pltHeaders, ..._.map(plts, plt => ({id : plt}))], e => e.id)
+
+      /*newTags.push({
+        ...tag,
+        pltHeaders: headers,
+        count: headers.length
+      })*/
+
+      newTags.push({
+        ...tag,
+        pltHeaders: headers,
+        count: headers.length
+      })
+    })
+
+    console.log(newTags);
+    /*
+    _.forEach(_.uniqBy([...this.oldSelectedTags,...newSelectedTags], 'tagId'), tag => {
+      let newHeaders = _.find(newTags, t => t.tagId === tag.tagId).pltHeaders;
+
+      console.log(newHeaders,tag.pltHeaders);
+
+      tt['toAdd'] = [...tt['toAdd'], ..._.differenceBy(newHeaders, tag.pltHeaders, 'id')];
+      tt['toDelete'] = [...tt['toDelete'], ..._.differenceBy(tag.pltHeaders, newHeaders, 'id')];
+    })
+
+    console.log(tt);*/
+
+    this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+      ...$event,
+      type: 'assignOrRemove',
+      tags: newTags
+    }))
+  }
+
+  assignPltsToSingleTag($event) {
+    this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
+  }
+
+  setTagModal($event: any) {
+    this.tagModalVisible = $event;
+  }
+
+  setTagForMenu($event: any) {
+    this.tagForMenu = $event;
+  }
+
+  setRenameTag($event: any) {
+    this.editingTag = $event;
+  }
+
+  toggleDeletePlts($event) {
+    this.showDeleted= $event;
+    this.generateContextMenu(this.showDeleted);
+    this.selectAll =
+      !this.showDeleted
+        ?
+        (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
+        :
+        (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
+
+    this.someItemsAreSelected =
+      !this.showDeleted ?
+        this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
+        :
+        this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
+    // this.generateContextMenu(this.showDeleted);
+  }
+
+  unCheckAll() {
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
+        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({type: false}))
+      )
+    );
+  }
+
+  setWsHeaderSelect($event: any) {
+    this.wsHeaderSelected = $event;
+  }
+
+  setModalSelectedItems($event: any) {
+    this.modalSelect = $event;
+  }
+
+  resetSort() {
+    this.sortData= {};
+  }
+
+  resetFilters() {
+    this.filterData= {};
+    this.emitFilters({
+      userTag: [],
+      systemTag: []
+    })
+    this.userTags = _.map(this.userTags, t =>  ({...t,selected: false}))
+    this.filters= {
+      userTag: [],
+      systemTag: []
     }
-  }
-
-  toggleColorPicker(from?: string){
-    if(from == 'color') {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    this.colorPickerIsVisible=!this.colorPickerIsVisible;
-    if(!this.colorPickerIsVisible) this.initColor= '#fe45cd';
-  }
-
-  initColorPicker(){
-    this.colorPickerIsVisible = false;
-    this.initColor = '#fe45cd'
-  }
-
-  sortChange(field: any, sortCol: any) {
-    console.log(field,sortCol)
-    if(!sortCol){
-      this.sortData[field] = 'asc';
-    }else if(sortCol === 'asc'){
-      this.sortData[field] = 'desc';
-    } else if(sortCol === 'desc') {
-      this.sortData[field]= null
-    }
-  }
-
-  handlePopUpCancel() {
-    this.addTagModal=false;
-    this.addModalInput='';
-    this.addModalSelect='';
+    this.filterInput= "";
   }
 }
-
-

@@ -12,7 +12,6 @@ import {SERVICE} from './services';
 import {VirtualScrollerModule} from 'primeng/virtualscroller';
 import {workspaceRoutes} from './workspace.route';
 import {DndModule} from 'ngx-drag-drop';
-import {SystemTagFilterPipe} from './pipes/system-tag-filter.pipe';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
 import {DragDropModule} from "primeng/primeng";
@@ -20,7 +19,7 @@ import {DragDropModule} from "primeng/primeng";
 @NgModule({
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, SystemTagFilterPipe, TagsComponent, LastAdjustmentMatrixComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent,
   ],
   imports: [
     GridsterModule,

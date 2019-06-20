@@ -1,7 +1,7 @@
 <div class="card-container">
   <nz-tabset class="tabs-main-component" [nzSelectedIndex]="state.openedTabs.tabsIndex" *ngIf="!state.loading"
              [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of state.openedTabs.data;let k= index;">
+    <ng-container *ngFor="let tab of state.openedTabs.data;let k = index; trackBy: trackWorkspaces">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
@@ -17,7 +17,8 @@
         ></ng-container>
       </ng-template>
       <nz-tab (nzSelect)="selectWorkspace(tab)" [nzTitle]="titleTemplate">
-        <div nz-row>
+        <ng-template nz-tab>
+          <div nz-row>
           <div nz-col nzSpan="24">
             <div class="row tab-detail p-2 header-tab-wrapper">
               <div class="detail-wrapper">
@@ -164,12 +165,11 @@
 
             </div>
           </div>
-          <div nz-col [nzSpan]="24">
-            <div style="display: flex">
+            <div style="display: flex;width: 100%">
               <router-outlet></router-outlet>
             </div>
-          </div>
         </div>
+        </ng-template>
       </nz-tab>
     </ng-container>
   </nz-tabset>

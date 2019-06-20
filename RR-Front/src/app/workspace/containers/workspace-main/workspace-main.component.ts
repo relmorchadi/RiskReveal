@@ -2,7 +2,7 @@ import {ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, OnI
 import {HelperService} from '../../../shared/helper.service';
 import {SearchService} from '../../../core/service/search.service';
 import * as _ from 'lodash';
-import {combineLatest, forkJoin, from, fromEvent, Observable, of, Subscription} from 'rxjs';
+import {forkJoin, Observable} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 
@@ -13,8 +13,10 @@ import {
   AppendNewWorkspaceMainAction,
   CloseWorkspaceMainAction,
   LoadWorkspacesAction,
-  OpenNewWorkspacesAction, PatchWorkspace,
-  PatchWorkspaceMainStateAction, setTabsIndex
+  OpenNewWorkspacesAction,
+  PatchWorkspace,
+  PatchWorkspaceMainStateAction,
+  setTabsIndex
 } from '../../../core/store/actions/workspace-main.action';
 import * as moment from 'moment'
 
@@ -48,45 +50,45 @@ export class WorkspaceMainComponent implements OnInit {
         this.getSearchedWorkspaces(wsId, year);
         this.detectChanges();
       });
-    this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
-      dt =>
-        this.detectChanges()
-    );
+    // this.store.select(dt => dt.workspaceMain.openedTabs).subscribe(
+    //   dt =>
+    //     this.detectChanges()
+    // );
   }
 
   @HostListener('window:keyup', ['$event'])
   keyEvent(e: KeyboardEvent) {
-    if(e.key == 'ArrowRight' && e.ctrlKey && this.state.openedTabs.data) {
-      if( this.state.openedTabs.data.length - 1 > this.state.openedTabs.tabsIndex){
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex+1])
+    if (e.key == 'ArrowRight' && e.ctrlKey && this.state.openedTabs.data) {
+      if ( this.state.openedTabs.data.length - 1 > this.state.openedTabs.tabsIndex) {
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex + 1]);
         this.store.dispatch(new setTabsIndex({
-          index: this.state.openedTabs.tabsIndex+1
-        }))
-      }else{
-        this.selectWorkspace(this.state.openedTabs.data[0])
+          index: this.state.openedTabs.tabsIndex + 1
+        }));
+      } else {
+        this.selectWorkspace(this.state.openedTabs.data[0]);
         this.store.dispatch(new setTabsIndex({
           index: 0
-        }))
+        }));
       }
     }
-    if(e.key == 'ArrowLeft' && e.ctrlKey && this.state.openedTabs.data) {
-      if(0 < this.state.openedTabs.tabsIndex){
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex - 1])
+    if (e.key == 'ArrowLeft' && e.ctrlKey && this.state.openedTabs.data) {
+      if (0 < this.state.openedTabs.tabsIndex) {
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.tabsIndex - 1]);
         this.store.dispatch(new setTabsIndex({
           index: this.state.openedTabs.tabsIndex - 1
-        }))
-      }else{
-        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length - 1])
+        }));
+      } else {
+        this.selectWorkspace(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
         this.store.dispatch(new setTabsIndex({
           index: this.state.openedTabs.data.length - 1
-        }))
+        }));
       }
     }
   }
 
   getSearchedWorkspaces(wsId = null, year = null) {
     const popConfirm = this._router.url === `/workspace/${wsId}/${year}/PopOut`;
-    console.log(popConfirm)
+    console.log(popConfirm);
     if (popConfirm) {
       this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'loading', value: true}));
       this.searchData(wsId, year).pipe(
@@ -203,22 +205,26 @@ export class WorkspaceMainComponent implements OnInit {
     }
   }
 
-  addToFavorite(tab: any,k,liked) {
+  addToFavorite(tab: any, k, liked) {
     this.liked = liked;
     this.store.dispatch(new PatchWorkspace({
-      key: ['favorite','lastFModified'],
-      value: [liked,moment().format('x')],
+      key: ['favorite', 'lastFModified'],
+      value: [liked, moment().format('x')],
       k,
       ws: tab
-    }))
+    }));
 
     let workspaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
 
-    if(liked){
-      workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear] = {...tab,favorite: true, lastFModified: moment().format('x')};
-    }else{
-      workspaceMenuItem = {...workspaceMenuItem, [tab.workSpaceId + '-'+ tab.uwYear]: _.omit(workspaceMenuItem[tab.workSpaceId + '-'+ tab.uwYear], ['favorite','lastFModified'])};
+    if (liked) {
+      workspaceMenuItem[tab.workSpaceId + '-' + tab.uwYear] = {...tab, favorite: true, lastFModified: moment().format('x')};
+    } else {
+      workspaceMenuItem = {...workspaceMenuItem, [tab.workSpaceId + '-'+ tab.uwYear]: _.omit(workspaceMenuItem[tab.workSpaceId + '-' + tab.uwYear], ['favorite', 'lastFModified'])};
     }
-    localStorage.setItem('workSpaceMenuItem',JSON.stringify(workspaceMenuItem));
+    localStorage.setItem('workSpaceMenuItem', JSON.stringify(workspaceMenuItem));
+  }
+
+  trackWorkspaces(index, item) {
+    return item.workSpaceId + item.uwYear;
   }
 }

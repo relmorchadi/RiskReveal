@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -7,8 +7,10 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  SearchRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkPortfolioAction
+  SearchRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkAnalysisAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction,
+  ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
@@ -28,6 +30,9 @@ import {
 export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   lastSelectedIndex = null;
+  filterModalVisibility = false;
+  linkingModalVisibility = false;
+  radioValue = 'all';
 
   inputSwitch = true;
 
@@ -37,40 +42,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   serviceSubscription: any;
 
-  listEdmRdm: any = [
-    {id: 1, name: 'AA2012_syntheticCurve_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 2, name: 'AA2012_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/5'},
-    {id: 3, name: 'AA2016_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 4, name: 'AA2017_SEA_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 5, name: 'ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'},
-    {id: 6, name: 'ALMF_test_R', type: 'RDM', selected: false, scanned: false, Reference: '0/12'},
-    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
-    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/4'},
-    {id: 9, name: 'Aon_IF_Flood_Example_E', type: 'EDM', selected: false, scanned: false, Reference: '0/2'},
-    {
-      id: 10,
-      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM',
-      type: 'EDM',
-      selected: false,
-      scanned: false,
-      Reference: '0/15'
-    },
-    {
-      id: 11,
-      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM',
-      type: 'RDM',
-      selected: false,
-      scanned: false,
-      Reference: '0/13'
-    },
-    {id: 12, name: 'CC_ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 13, name: 'CG1801_DEU_Allianz_DEFL_R', type: 'RDM', selected: false, scanned: false, Reference: '0/41'},
-    {id: 14, name: 'CG1801_DEU_Allianz_DEFL_E', type: 'EDM', selected: false, scanned: false, Reference: '0/41'},
-    {id: 15, name: 'Anxin_2018_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/15'},
-    {id: 16, name: 'Anxin_2018_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/17'},
-    {id: 17, name: 'CF1803_PORT_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
-    {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
-  ];
+  listEdmRdm: any = [];
 
   tableLeftAnalysis: any;
 
@@ -94,7 +66,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
     {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
     {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
-    {field: 'analysisCurrency', header: 'Analysis Currency', width: '110px', type: 'text'},
+    {field: 'sourceCurrency', header: 'Source Currency', width: '110px', type: 'text'},
     {field: 'regionName', header: 'Region Name', width: '110px', type: 'text'},
     {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
     {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
@@ -173,7 +145,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       name: 'Europe All Lines, EP Wind Only',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
-      analysisCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       ELT: 'GR',
       occurrenceBasis: 'PerEvent',
@@ -186,7 +158,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       name: 'Europe All Lines, EP Wind Only',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
-      analysisCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       ELT: 'GR',
       occurrenceBasis: 'PerEvent',
@@ -199,7 +171,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       name: 'Europe All Lines, EP Wind Only',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
-      analysisCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       ELT: 'GR',
       occurrenceBasis: 'PerEvent',
@@ -432,6 +404,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   changeFinancialValidator(value, item) {
     this.store.dispatch(new PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
+  }
+
+  handleCancel() {
+    this.filterModalVisibility = false;
+    this.linkingModalVisibility = false;
   }
 
   detectChanges() {

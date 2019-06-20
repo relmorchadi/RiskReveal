@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import * as _ from 'lodash';
 
 @Pipe({
@@ -8,13 +8,17 @@ export class SystemTagFilterPipe implements PipeTransform {
 
   reverseSystemTagsMapping = {
     grouped: {
-      'Region Peril': 'regionPerilCode',
+      'Peril': 'peril',
+      'Region': 'regionDesc',
       'Currency': 'currency',
       'Modelling Vendor': 'sourceModellingVendor',
-      'Model System': 'sourceModellingSystem',
+      'Modelling System': 'sourceModellingSystem',
       'Target RAP':'targetRapCode',
       'User Occurence Basis': 'userOccurrenceBasis',
-      'Loss Asset Type': 'pltType',
+      'Published To Pricing': 'xActAvailable',
+      'Priced': 'xActUsed',
+      'Accumulated': 'accumulated',
+      'Financial Perspectives': 'financial'
     },
     nonGrouped: {
     }

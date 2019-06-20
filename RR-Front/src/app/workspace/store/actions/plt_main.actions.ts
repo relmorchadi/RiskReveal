@@ -48,13 +48,18 @@ export class ClosePLTinDrawer{
   constructor(public payload?: any) {}
 }
 
-export class FilterPlts{
-  static readonly  type = '[PLT Main] Filter Plts'
+export class FilterPltsByUserTags{
+  static readonly  type = '[PLT Main] Filter Plts By UserTags'
   constructor(public payload?: any) {}
 }
 
-export class setFilterPlts{
+export class setUserTagsFilters{
   static readonly  type = '[PLT Main] set Filter Plts'
+  constructor(public payload?: any) {}
+}
+
+export class setTableSortAndFilter{
+static readonly  type = '[PLT Main] set Table Filter & Sort'
   constructor(public payload?: any) {}
 }
 
@@ -108,17 +113,22 @@ export class deletePltFail {
   constructor(public payload?: any) {}
 }
 
-export class renameTag {
-  static readonly type = '[PLT Main] Rename Tag'
+export class editTag {
+  static readonly type = '[PLT Main] Edit Tag'
   constructor(public payload?: any) {}
 }
 
-export class renameTagSuccess {
+export class editTagSuccess {
   static readonly type = '[PLT Main] Rename Tag Success'
   constructor(public payload?: any) {}
 }
 
-export class renameTagFail {
+export class editTagFail {
   static readonly type = '[PLT Main] Rename Tag Fail'
+  constructor(public payload?: any) {}
+}
+
+export class restorePlt {
+  static readonly type = '[PLT Main] Restore Plt'
   constructor(public payload?: any) {}
 }

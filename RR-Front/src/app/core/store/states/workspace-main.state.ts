@@ -1,11 +1,16 @@
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import {Observable} from 'rxjs';
 
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
-  CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SelectWorkspaceAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
+  CloseWorkspaceMainAction,
+  LoadWorkspacesAction,
+  OpenNewWorkspacesAction,
+  PatchWorkspace,
+  PatchWorkspaceMainStateAction,
+  SelectProjectAction,
+  setTabsIndex,
+  SetWsRoutingAction,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 
@@ -44,6 +49,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Selector()
+  static getLeftNavbarIsCollapsed(state: WorkspaceMain) {
+    return state.leftNavbarIsCollapsed;
+  }
+
+  @Selector()
   static getFavorite(state: WorkspaceMain) {
     return state.openedTabs.data.filter( dt => dt.favorite);
   }
@@ -66,6 +76,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   @Selector()
   static getCurrentWS(state: WorkspaceMain){
     return state.openedWs;
+  }
+
+  @Selector()
+  static getProjects(state: WorkspaceMain){
+    return state.openedWs.projects;
   }
 
 
@@ -137,7 +152,7 @@ export class WorkspaceMainState implements NgxsOnInit {
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
       const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
-      openedTabs.map(dt => ({
+      openedTabs = openedTabs.map(dt => ({
         ...dt,
         projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
         pinged: _.get( workSpaceMenuItem[dt.workSpaceId+'-'+dt.uwYear],'pinged',false),
@@ -157,8 +172,8 @@ export class WorkspaceMainState implements NgxsOnInit {
     });
   }
 
-  @Action(SelectWorkspaceAction)
-  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SelectWorkspaceAction) {
+  @Action(SetWsRoutingAction)
+  selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SetWsRoutingAction) {
     const state = ctx.getState();
 
     let index= _.findIndex(state.openedTabs.data, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear)

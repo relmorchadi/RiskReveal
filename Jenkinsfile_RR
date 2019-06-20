@@ -1,0 +1,293 @@
+node ('dcvprdadm04') {
+
+//add JDK
+    String jdktool = tool name: "jdk1.8.0_60", type: 'hudson.model.JDK'
+//add maven
+    def mvnHome = tool name: 'Maven 3.3.9'
+    Test_Profile = "coverage"
+//add SonarQube
+    def scannerHome = tool name: 'sonar-scanner'
+    Sonar_GateId = "low-restriction-not-blocking"
+//set global variables
+    def isLinux = env.windir == null
+    def workspace = pwd()
+    //path definition install function
+    ScorPRDToolkitPath = "/scor/ScorPRDToolkit/groovy"
+    ScorPRDDownloadPath = "/scor/delivery/Nexus_download"
+    Manage_modules = load("${ScorPRDToolkitPath}/Manage_modules.groovy")
+    Get_and_Deploy = load("${ScorPRDToolkitPath}/Get_and_Deploy.groovy")
+    ScorPRDToolkitAnsible = "/scor/ScorPRDToolkit/Ansible"
+    Sonar_CI = load("${ScorPRDToolkitPath}/Sonar_CI.groovy")
+
+    //to true if the job is a multi pipeline
+    BuildFromScm = true
+    if (env.BuildFromScm) {
+        BuildFromScm = env.BuildFromScm
+    }
+
+    //Check if we are building a tag or a branch
+    final def tagName = env.TAG_NAME
+    final def branchName = env.BRANCH_NAME
+
+    def releaseBuild = false
+    if (branchName.equals(tagName)) {
+    releaseBuild = true
+    }
+
+    Cur_Environment = sh(returnStdout: true, script: 'echo "$JOB_NAME" | awk -F "/" "{print \\$(NF-1)}"').trim()
+
+    //Nexus used
+    Nexus_host = "dcvprdci"
+    Nexus_port = "8082"
+
+    //map definition for manage_modules
+    def fullmapmodule = [:]
+    def warmapmodule = [:]
+
+    //Set JAVA_HOME, and special PATH variables
+    List javaEnv = [
+        "PATH+MVN=${jdktool}/bin:${mvnHome}/bin",
+        "M2_HOME=${mvnHome}",
+        "JAVA_HOME=${jdktool}"
+    ]
+
+    withEnv(javaEnv) {
+
+        stage ('Get Jenkinsfile') {
+            checkout scm
+        }
+        // The properties rootpomxml, rootpompath and application_name is specific to the project, indicate the right path to reach the root pom
+        rootpomxml = "${workspace}/pom.xml"
+        frontpomxml = "${workspace}/RR-Front/pom.xml"
+        rootpompath = "${workspace}"
+        rootpom = readMavenPom file: "${rootpomxml}"
+        frontpom = readMavenPom file: "${frontpomxml}"
+        application_name = "${rootpom.name}"
+        influxDB_prefix = "${application_name}_${Cur_Environment}"
+        currentBuild.displayName = "${rootpom.artifactId}-${Cur_Environment}-${env.BRANCH_NAME}-${rootpom.properties.rr_version}"
+
+        if ("${rootpom.properties.rr_version.contains("SNAPSHOT")}" == "false") {
+            if ("${releaseBuild}" != "true") {
+            stage ('Release Version Control'){
+            echo "Launch a release version without tag is not allowed, please generate a tag"
+            currentBuild.result = "FAILURE"
+            SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "Release Version Control", "${rootpom.name}")
+            throw (error)
+        } } }
+
+        if ("${rootpom.properties.rr_version.contains("SNAPSHOT")}" == "true") {
+            if ("${releaseBuild}" == "true") {
+            stage ('Release Version Control'){
+            echo "Launch a snapshot version within a tag is not allowed, please modify the version of your tag"
+            currentBuild.result = "FAILURE"
+            SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "Release Version Control", "${rootpom.name}")
+            throw (error)
+        } } }
+
+        def userInput = "none"
+    if ("${releaseBuild}" == "false") {
+        def didTimeout = false
+    stage ('Perform Sonar analysis ?') {
+        try {
+            timeout(time: 30, unit: 'SECONDS') { // change to a convenient timeout for you
+                userInput = input(
+                id: 'Proceed1', message: 'Do you want to perform a Sonar analysis ?', parameters: [
+                [$class: 'BooleanParameterDefinition', defaultValue: true, description: '', name: 'Perform Sonar Analysis ?']
+                ])
+            }
+        } catch(err) { // timeout reached or input false
+            def user = err.getCauses()[0].getUser()
+            if('SYSTEM' == user.toString()) { // SYSTEM means timeout.
+                didTimeout = true
+            } else if (userInput != true) {
+                userInput = false
+            } else if (userInput == true) {
+                userInput = true
+            }
+        }
+    }
+    }
+
+        if ("${userInput}" == "true" || "${releaseBuild}" == "true") {
+            if ("${Cur_Environment.contains("DEV")}" == "true") {
+                    stage ('unitTest Build') {
+                        try {
+                        Get_and_Deploy.Test_bin_local ("${rootpomxml}", "${Test_Profile}")
+                        } catch (error) {
+                            currentBuild.result = "FAILURE"
+                            step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+                            SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "unitTest Build", "${rootpom.name}")
+                            throw (error)
+                        }
+                    }
+
+                   stage('SonarQube analysis') {
+                        try {
+                        withSonarQubeEnv('SonarQube-PRD') {
+                        sh "export SONAR_USER_HOME=/scor/delivery/sonar_cache && mvn sonar:sonar -P${Test_Profile} " +
+                           "-Dsonar.projectVersion=${rootpom.properties.rr_version} " +
+                           "-Dsonar.projectKey=${rootpom.groupId}:${rootpom.artifactId} " +
+                           "-Dsonar.branch=${env.BRANCH_NAME} " +
+                           "-Dsonar.sourceEncoding=UTF-8 " +
+                           "-Dsonar.projectBaseDir=${workspace} "
+                           //add here your ecxlusions path if any
+                           //"-Dsonar.exclusions=[path_to eclude-1]," +
+                           //"[path_to eclude-2]"
+                         def Sonarprops = readProperties file: 'target/sonar/report-task.txt'
+                         env.SONAR_CE_TASK_URL = Sonarprops['ceTaskUrl']
+                            }
+                        } catch (error) {
+                            currentBuild.result = "FAILURE"
+                            step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+                            SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "SonarQube analysis", "${rootpom.name}")
+                            throw (error)
+                            }
+                    }
+
+                    stage("Quality Gate"){
+                            withSonarQubeEnv('SonarQube-PRD') {
+                            Sonar_CI.SetSonarQualityGate("${env.SONAR_HOST_URL}", "${env.SONAR_AUTH_TOKEN}", "${rootpom.groupId}:${rootpom.artifactId}:${env.BRANCH_NAME}", "${Sonar_GateId}")
+                            def ceTask
+                            timeout(time: 5, unit: 'MINUTES') {
+                            waitUntil {
+                                sh "curl -u ${SONAR_AUTH_TOKEN} ${SONAR_CE_TASK_URL} -o ceTask.json"
+                                ceTask = readJSON file:'ceTask.json'
+                                echo ceTask.toString()
+                                return "SUCCESS".equals(ceTask["task"]["status"])
+                            }
+                            }
+                            def qualityGateUrl = env.SONAR_HOST_URL + "/api/qualitygates/project_status?analysisId=" + ceTask["task"]["analysisId"]
+                            sh "curl -u ${SONAR_AUTH_TOKEN} ${qualityGateUrl} -o qualityGate.json"
+                            def qualitygate = readJSON file:'qualityGate.json'
+                            echo qualitygate.toString()
+                            if ("ERROR".equals(qualitygate["projectStatus"]["status"])) {
+                                currentBuild.result = "FAILURE"
+                                step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+                                SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "Quality Gate", "${rootpom.name}")
+                                error  "Quality Gate failure"
+                            }
+                            echo  "Quality Gate success"
+                            }
+                    }
+            }
+        }
+
+        if ("${Cur_Environment.contains("DEV")}" == "true") {
+                    stage ('Check Nexus') {
+                        try {
+                        if ("${rootpom.properties.rr_version.contains("SNAPSHOT")}" == "false") {
+                        Get_and_Deploy.Check_bin_nexus ("${rootpom.groupId}", "${rootpom.artifactId}", "${rootpom.properties.rr_version}", "${Nexus_host}", "${Nexus_port}")
+                            //condition if the artifact is not already present on nexus (Get_and_Deploy.Check_bin_nexus return BUILD FAILURE)
+                            if (Is_artifact.equals(false)) {
+                                stage ('build and storage') {
+                                    try {
+                                        Get_and_Deploy.Deploy_bin_rel ("${rootpomxml}", "${Nexus_host}", "${Nexus_port}")
+                                    } catch (error) {
+                                        currentBuild.result = "FAILURE"
+                                        step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+                                        SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "build and storage", "${rootpom.name}")
+                                        throw (error)
+                                    }
+                                }
+                            } else {
+                                stage ('build and storage') {
+                                    try {
+                                    //empty stage to keep the historic on the GUI
+                                    sh "echo The version ${rootpom.properties.rr_version} is already built on nexus, skipping the build stage"
+                                    } catch (error) {
+                                        SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "build and storage", "${rootpom.name}")
+                                        throw (error)
+                                    }
+                                }
+                            }
+                            } else {
+                                stage ('build and storage') {
+                                try {
+                                    Get_and_Deploy.Deploy_bin_snap ("${rootpomxml}", "${Nexus_host}", "${Nexus_port}")
+                                } catch (error) {
+                                    currentBuild.result = "FAILURE"
+                                    step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+                                    SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "build and storage", "${rootpom.name}")
+                                    throw (error)
+                                }
+                            }
+                        }
+                        } catch (error) {
+                        throw (error)
+                        }
+                    }
+
+        }
+
+        Manage_modules.Get_modules(fullmapmodule, "${rootpompath}")
+        Manage_modules.Filter_modules(fullmapmodule, warmapmodule)
+
+        def stepsForParallel = warmapmodule.collectEntries { module, pompath ->
+        ["${module}" : transformIntoStep(module, "${pompath}")]
+        }
+
+        stage ('backend deployment') {
+        parallel stepsForParallel
+        }
+
+        stage ('frontend deployment') {
+        try {
+            dir ("${ScorPRDToolkitAnsible}/playbook"){
+            sh "ansible-playbook -i ../frontend/hosts/${frontpom.artifactId}/${Cur_Environment}/hosts playbook_nginx.yml -e app_version=${rootpom.properties.rr_version} -e env=${Cur_Environment} -e app_name=${frontpom.artifactId} -e app_groupid=${frontpom.groupId} -e app_artifactid=${frontpom.artifactId} -e group_hosts=${frontpom.artifactId}_${Cur_Environment} -e app_extension=tar -e app_classifier=front"
+            }
+            } catch (error) {
+            currentBuild.result = "FAILURE"
+            step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+            SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "front deployment", "${rootpom.name}")
+        throw (error)
+        }
+        }
+
+        stage ('clean workspace') {
+        cleanWs()
+        }
+
+        //End of pipeline reached if no errors
+        currentBuild.result = "SUCCESS"
+        step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+        SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "final step", "${rootpom.name}")
+
+    }
+}
+
+
+def transformIntoStep(module, pompath) {
+    return {
+        node ('dcvprdadm04') {
+            def pomfile = readMavenPom file: "${pompath}"
+                stage (module) {
+                    try {
+                        Get_and_Deploy.Retrieve_war_from_Nexus("${Cur_Environment}", "${pomfile.groupId}", "${pomfile.artifactId}", "${rootpom.properties.rr_version}", "${pomfile.artifactId}", "${Nexus_host}", "${Nexus_port}")
+                        Get_and_Deploy.Deploy_war("${pomfile.artifactId}", "${Cur_Environment}", "${rootpom.properties.rr_version}")
+                        } catch (error) {
+                        step([$class: 'InfluxDbPublisher', customData: null, customDataMap: null, customPrefix: "${influxDB_prefix}", target: 'influxdb'])
+                        SendMail("${currentBuild.result}", "${Cur_Environment}", "${rootpom.properties.rr_version}", "${module} Deployment", "${rootpom.name}")
+                        throw (error)
+                        }
+                }
+        }
+    }
+}
+
+def SendMail(Buildresult, Env, Version, Step, App_name) {
+    wrap([$class: 'BuildUser']) {
+         emailext (
+         mimeType: 'text/html',
+         subject: "Pipeline ${env.JOB_NAME} ${Buildresult}",
+         body: """
+         Application : <b>${App_name}</b> <br/>
+         Environment : <b>${Env}</b> <br/>
+         GIT branch : <b>${env.BRANCH_NAME}</b> <br/>
+         Version : <b>${Version}</b> <br/>
+         Pipeline Step : <b>${Step}</b> <br/>
+         Statut : <b>${Buildresult}</b> <br/>
+         Console output : <a href="${env.BUILD_URL}">Jenkins Job link</a>""",
+         to: "${BUILD_USER_EMAIL}, ITPrd_Deliv@scor.com",
+         from: 'CI-Factory <CI-factory@scor.com>')
+    }
+}

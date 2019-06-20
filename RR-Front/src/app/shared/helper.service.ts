@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import { Observable, Subject} from 'rxjs';
+import {Observable, of, Subject} from 'rxjs';
 import * as _ from 'lodash';
-import {of} from 'rxjs';
 import {map} from 'rxjs/operators';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from "../core/store/states/workspace-main.state";
@@ -32,5 +31,9 @@ export class HelperService {
 
   updateRecentWorkspaces() {
     localStorage.setItem('usedWorkspaces', JSON.stringify(this.state.recentWs));
+  }
+
+  public static upperFirstWordsInSetence(sentence){
+    return sentence ? _.lowerCase(sentence).split(' ').map(_.upperFirst).join(' ') : sentence;
   }
 }

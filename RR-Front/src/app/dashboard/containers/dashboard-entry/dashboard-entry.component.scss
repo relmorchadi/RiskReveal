@@ -96,7 +96,7 @@ nz-header {
   flex-direction: column;
   background: #FFFFFF;
   height: 100%;
-  padding: 30px 24px;
+  padding: 15px 24px;
   padding-bottom: 500px;
 }
 
@@ -202,17 +202,13 @@ ul.widgets-list {
 }
 
 .collapse-command {
-  width: 100%;
+  width: 40%;
   cursor: pointer;
   background-color: #FFF;
   line-height: 30px;
   vertical-align: middle;
   i {
-    margin-right: 30px;
-  }
-  &:hover{
-    border-right: 3px solid #008694;
-    background-color: rgba(0, 0, 0, 0.1);
+    font-size: 17px;
   }
 }
 
@@ -269,4 +265,11 @@ ul.widgets-list {
     }
   }
 
+}
+
+.search-Mode {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
 }

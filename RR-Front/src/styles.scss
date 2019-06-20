@@ -6,6 +6,7 @@
 @import "assets/scss/theme/dropdown";
 @import "assets/scss/theme/tabs";
 @import "assets/scss/theme/tags";
+@import "assets/scss/theme/radio.scss";
 
 body {
   overflow: auto;
@@ -59,3 +60,9 @@ body {
 .gr__localhost {
   overflow-y: hidden;
 }
+
+
+.ant-popover-buttons button.ant-btn-ghost{
+  color: #362FD8 !important;
+}
+

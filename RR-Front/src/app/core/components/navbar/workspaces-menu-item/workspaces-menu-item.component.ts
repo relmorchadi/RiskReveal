@@ -30,6 +30,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   lastOnes = 0;
   visible: any;
   labels: any = [];
+  lastSelectedIndex = null;
 
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
@@ -37,11 +38,11 @@ export class WorkspacesMenuItemComponent implements OnInit {
   favorites: any;
   pinged: any;
 
-  constructor(private _helperService: HelperService, private router:Router, private _searchService: SearchService,
-              private _fb: FormBuilder, private store: Store, private notificationService: NotificationService,private cdRef: ChangeDetectorRef) {
+  constructor(private _helperService: HelperService, private router: Router, private _searchService: SearchService,
+              private _fb: FormBuilder, private store: Store, private notificationService: NotificationService, private cdRef: ChangeDetectorRef) {
     this.setForm();
-    this.favoriteSize= 10;
-    this.pingedSize= 10;
+    this.favoriteSize = 10;
+    this.pingedSize = 10;
   }
 
   @Select(WorkspaceMainState.getFavorite) favorites$;
@@ -54,16 +55,15 @@ export class WorkspacesMenuItemComponent implements OnInit {
   ngOnInit() {
     this.store.dispatch(new LoadWorkspacesAction());
     this.state$.subscribe(value => this.state = _.merge({}, value));
-    this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
-    this.favorites$.subscribe( fv => {
-      this.favorites= _.orderBy(fv, ['lastFModified'],['desc'])
-      console.log(fv,this.favorites)
+    this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
+    this.favorites$.subscribe(fv => {
+      this.favorites = _.orderBy(fv, ['lastFModified'], ['desc']);
       this.detectChanges();
     });
-    this.pinged$.subscribe( pn => {
-      this.pinged = _.orderBy(pn, ['lastPModified'],['desc'])
+    this.pinged$.subscribe(pn => {
+      this.pinged = _.orderBy(pn, ['lastPModified'], ['desc']);
       this.detectChanges();
-    })
+    });
   }
 
   detectChanges() {
@@ -92,8 +92,35 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this.contractFilterFormGroup.patchValue({cedant: search.target.value});
   }
 
-  toggleWorkspace(workspace) {
-    workspace.selected = !workspace.selected;
+  toggleWorkspace(workspace, index) {
+    if ((window as any).event.ctrlKey) {
+      workspace.selected = !workspace.selected;
+      this.lastSelectedIndex = index;
+    } else if ((window as any).event.shiftKey) {
+      event.preventDefault();
+      if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
+        this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
+        // this.lastSelectedIndex = null;
+      } else {
+        this.lastSelectedIndex = index;
+        workspace.selected = true;
+      }
+    } else {
+      this.state.recentWs.forEach(res => res.selected = false);
+      this.lastSelectedIndex = index;
+      workspace.selected = !workspace.selected;
+    }
+  }
+
+  private selectSection(from, to) {
+    this.state.recentWs.forEach(dt => dt.selected = false);
+    if (from === to) {
+      this.state.recentWs[from].selected = true;
+    } else {
+      for (let i = from; i <= to; i++) {
+        this.state.recentWs[i].selected = true;
+      }
+    }
   }
 
   popOutWorkspaces() {
@@ -104,7 +131,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   async openWorkspaces() {
-    const selectedItems = [ ...this.state.recentWs.filter(ws => ws.selected)];
+    const selectedItems = [...this.state.recentWs.filter(ws => ws.selected)];
     let workspaces = [];
     selectedItems.forEach(
       (SI) => {
@@ -131,6 +158,26 @@ export class WorkspacesMenuItemComponent implements OnInit {
     );
   }
 
+  async openSingleWorkspaces(ws) {
+    this.searchData(ws.workSpaceId, ws.uwYear).subscribe(
+      (dt: any) => {
+        const workspace = {
+          workSpaceId: ws.workSpaceId,
+          uwYear: ws.uwYear,
+          selected: false,
+          ...dt
+        };
+
+        this.store.dispatch(new OpenNewWorkspacesAction([workspace]));
+        this._helperService.updateWorkspaceItems();
+        this._helperService.updateRecentWorkspaces();
+        this.visible = false;
+        this.workspaces.forEach(wcs => wcs.selected = false);
+        this.router.navigate([`/workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
+      }
+    );
+  }
+
   navigateToTab(value) {
     if (value.routing == 0) {
       this.router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}`]);
@@ -152,7 +199,10 @@ export class WorkspacesMenuItemComponent implements OnInit {
 
   searchWorkspace(value) {
     const paginationOption = this.state.workspacePagination.paginationList.filter(page => page.id === value);
-    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'appliedFilter', value: {shownElement: paginationOption[0].shownElement}}));
+    this.store.dispatch(new PatchWorkspaceMainStateAction({
+      key: 'appliedFilter',
+      value: {shownElement: paginationOption[0].shownElement}
+    }));
   }
 
   toggle(workspace: any, type: string, selected) {

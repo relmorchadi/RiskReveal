@@ -10,6 +10,8 @@
   }
 }
 
+
+
 .app-wrapper {
   background-color: #f5f5f5;
   border: 10px solid #06B8FF;
@@ -86,10 +88,13 @@
       overflow: auto;
     }
 
+    .bordered-col{
+      border-right: 5px solid #F5F5F5;
+    }
+
     .ui-table-thead {
       th {
-        padding: 7px !important;
-        padding-top: 15px !important;
+        padding: 15px 10px 7px 7px !important;
         font-size: 12px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
@@ -98,6 +103,11 @@
         height: 45px;
         border: none !important;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+
+        .status-border {
+          padding-bottom: 20px;
+          border-right: 1px solid rgba(0,0,0,0.15);
+        }
 
         .search-bar-table {
           display: flex;
@@ -137,10 +147,18 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         user-select: none;
 
-        div {
+        .status-border {
+          border-right: 1px solid rgba(0,0,0,0.15);
+        }
+
+        .td-wrapper {
           width: 100%;
           height: 40px;
           align-items: center;
+        }
+
+        .td-wrapper-append {
+          height: auto !important;
         }
 
         .ant-progress-text {
@@ -151,22 +169,24 @@
           stroke-width: 8px;
         }
 
-        .status-true {
+        .status-high , .status-medium, .status-low {
           width: 30px;
           height: 30px;
           border-radius: 20px;
           margin-right: 10px;
           display: flex;
+        }
+
+        .status-high {
           background-color: #D0021B;
         }
 
-        .status-false {
-          width: 30px;
-          height: 30px;
-          border-radius: 20px;
-          margin-right: 10px;
-          display: flex;
-          background-color: #A7FFFA;
+        .status-medium {
+          background-color: orange;
+        }
+
+        .status-low {
+          background-color: #F8E71C;
         }
 
         .context-wrapper {
@@ -204,6 +224,90 @@
   }
 }
 
+.data-append-list {
+  height: auto;
+  width: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  .data-append-item {
+    display: flex;
+    height: 35px;
+    width: 100%;
+    padding: 5px 15px;
+    justify-content: space-between;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    .list-item-left {
+      display: flex;
+      align-items: center;
+
+      .item-list-title-wrapper {
+        display: flex;
+        flex-direction: column;
+        margin-left: 5px;
+        width: 70%;
+        flex: 1;
+        .item-list-title {
+          height: 15px;
+          color: rgba(0, 0, 0, 0.87);
+          font-family: Rubik;
+          font-size: 13px;
+          letter-spacing: 0.08px;
+          line-height: 24px;
+        }
+
+        .item-list-subtitle {
+          height: 24px;
+          color: rgba(0, 0, 0, 0.6);
+          font-family: Rubik;
+          font-size: 11px;
+          letter-spacing: 0.08px;
+          line-height: 24px;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+      }
+
+      ::ng-deep {
+        .ant-progress-text {
+          display: block;
+          color: #03DAC4;
+        }
+
+        .ant-progress-text {
+          display: none;
+        }
+
+        .ant-progress-circle-path {
+          stroke: #03DAC4;
+          stroke-width: 8px;
+        }
+      }
+    }
+  }
+  .list-item-info {
+    display: flex;
+    align-items: center;
+
+    .task-duration {
+      color: rgba(0, 0, 0, 0.38);
+      font-size: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      flex: 0.9;
+      white-space: nowrap;
+      padding-left: 4px;
+    }
+
+    i {
+      margin-left: 8px;
+      font-size: 18px;
+    }
+  }
+}
+
 .detail-Job-wrapper {
   background-color: #fff;
   padding: 20px;
@@ -218,10 +322,28 @@
   }
 }
 
+.pause-icon-status {
+  font-size: 36px;
+  color: rgba(0, 0, 0, 0.38);
+}
+
+.dropdown-menu-selector {
+  .dropdown-icons {
+    font-size: 17px;
+    margin-right: 8px;
+  }
+}
+
 .loading-text {
   height: 20px;
   background: linear-gradient(90deg, #f2f2f2 25%, #e6e6e6 37%, #f2f2f2 63%);
   background-size: 400% 100%;
   -webkit-animation: ant-skeleton-loading 1.4s ease infinite;
   animation: ant-skeleton-loading 1.4s ease infinite;
+}
+
+.label-wrapper {
+  font-size: 12px;
+  margin: 9px 12px 0 0;
+  font-weight: bold;
 }

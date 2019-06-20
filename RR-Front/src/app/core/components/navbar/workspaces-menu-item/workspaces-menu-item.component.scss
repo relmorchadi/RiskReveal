@@ -86,11 +86,18 @@ nz-alert {
   display: flex;
   justify-content: space-between;
   padding: 0 7px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  user-select: none;
 
   .items-popover-wrapper {
     display: flex;
     width: 65%;
     flex: 1;
+
+    .item-checkbox{
+      line-height: 35px;
+      margin-right: 12px;
+    }
 
     .icon-window-section {
       font-size: 22px;
@@ -101,7 +108,7 @@ nz-alert {
     .item-popover-context {
       display: flex;
       flex-direction: column;
-      width: 87%;
+      width: 100%;
 
       .item-popover-context-header {
         white-space: nowrap;
@@ -121,7 +128,7 @@ nz-alert {
         font-family: Rubik;
         font-size: 11px;
         letter-spacing: 0.08px;
-        line-height: 10px;
+        line-height: 12px;
       }
     }
   }
@@ -140,7 +147,8 @@ nz-alert {
       width: 17px;
       height: 17px;
       background: #40e2c8;
-      border-radius: 20px;
+      border-radius: 0px;
+      font-weight: bold;
     }
 
     i.icon-radio_button_unchecked_24px {
