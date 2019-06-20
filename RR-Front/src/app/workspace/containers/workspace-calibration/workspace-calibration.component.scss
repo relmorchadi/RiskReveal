@@ -296,7 +296,6 @@
 
   .tabset-right {
     background: #fff;
-    max-width: calc(100vw - 190px - 80px - 133px);
     display: flex;
     flex-flow: column;
     align-items: stretch;
@@ -845,6 +844,10 @@
 
 ::ng-deep {
   .noMargin {
+    background: #fff;
+    display: flex;
+    margin-left: 8px;
+    margin-right: 8px;
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
     }

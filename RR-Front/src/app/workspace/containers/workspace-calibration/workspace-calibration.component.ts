@@ -45,6 +45,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   listOfPltsData: any[];
   listOfPltsCache: any[];
   selectedListOfPlts: any[];
+  listOfDeletedPlts: any[] = [];
   filterData: any;
   sortData;
   lastModifiedAdj;
@@ -54,6 +55,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   inProgressCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
   lockedCheckbox: boolean = true;
+  collapsedTags: boolean = true;
   isVisible = false;
   singleValue: any;
   dragPlaceHolderId: any;
@@ -87,6 +89,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   columnPosition: number;
   params: any;
   lastSelectedId;
+  tagModalIndex: any = 0;
   mode = "calibration";
   @Select(CalibrationState) state$: Observable<any>;
   private currentDraggableEvent: DragEvent;
@@ -767,7 +770,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
       this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t, selected: !t.selected} : t)
 
-      this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({
+      this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
         filters: this.filters
       }))
     } else {
@@ -875,7 +878,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
     this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
     this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
-    this.store$.dispatch(new fromWorkspaceStore.setFilterPlts({filters: this.filters}));
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({filters: this.filters}));
   }
 
   resetPath() {
@@ -908,29 +911,29 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe());
   }
 
-  checkAll($event: boolean) {
+  checkAll($event) {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map(this.listOfPlts, plt => plt),
-        _.range(this.listOfPlts.length).map(el => ({type: !this.selectAll && !this.someItemsAreSelected ? 'select' : 'unselect'}))
+        _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
+        _.range(!this.showDeleted ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({type: !this.selectAll && !this.someItemsAreSelected}))
       )
     );
   }
 
   toggleSelectPlts(plts: any) {
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts}));
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts, forDeleted: this.showDeleted}));
   }
 
   selectSinglePLT(pltId: number, $event: boolean) {
     this.toggleSelectPlts({
       [pltId]: {
-        type: $event ? 'select' : 'unselect'
+        type: $event
       }
     });
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(this.selectedListOfPlts, el => el == pltId) >= 0;
+    const isSelected = _.findIndex(!this.showDeleted ? this.selectedListOfPlts : this.listOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
@@ -938,14 +941,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       this.lastSelectedId = i;
       this.toggleSelectPlts(
         _.zipObject(
-          _.map(this.listOfPlts, plt => plt),
-          _.map(this.listOfPlts, plt => plt == pltId && (this.lastClick == 'withKey' || !isSelected) ? ({type: 'select'}) : ({type: 'unselect'}))
+          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
+          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
     }
   }
-
   selectProject(id: any) {
 
   }
@@ -984,7 +986,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   handlePopUpConfirm() {
     if (this.renamingTag) {
       if (this.addModalInput != this.modalInputCache) {
-        this.store$.dispatch(new fromWorkspaceStore.renameTag({
+        this.store$.dispatch(new fromWorkspaceStore.editTag({
           ...this.tagFormenu,
           tagName: this.addModalInput
         }))
@@ -1367,5 +1369,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
       return;
     }
+  }
+
+  collapseTags() {
+    this.collapsedTags = !this.collapsedTags;
   }
 }
