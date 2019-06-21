@@ -1,0 +1,14 @@
+.popover-menu {
+  ul {
+    list-style: none;
+    padding-left: 5px;
+    overflow-y: auto;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+      user-select: none;
+    }
+  }
+}

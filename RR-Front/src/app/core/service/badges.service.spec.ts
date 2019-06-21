@@ -1,4 +1,4 @@
-import { BadgesService } from './badges.service';
+import {BadgesService} from './badges.service';
 
 describe('BadgesServiceService', () => {
 

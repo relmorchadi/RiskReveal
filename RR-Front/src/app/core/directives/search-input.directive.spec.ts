@@ -1,4 +1,4 @@
-import { SearchInputDirective } from './search-input.directive';
+import {SearchInputDirective} from './search-input.directive';
 
 describe('SearchInputDirective', () => {
   it('should create an instance', () => {

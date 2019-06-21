@@ -108,7 +108,7 @@
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item"><span>Time zones</span>
+              <div class="user-config-item"><span>Time Zone</span>
                 <ng2-timezone-picker [(timezone)]="state.general.timeZone" style="width: 270px" showOffset="true" guess="true"></ng2-timezone-picker>
               </div>
 
@@ -144,10 +144,10 @@
                       class="dropdown-default"
                       nzPlaceHolder="Select A Time Format"
                     >
-                      <nz-option nzLabel=","  nzValue=","></nz-option>
-                      <nz-option nzLabel="." nzValue="."></nz-option>
-                      <nz-option nzLabel="'" nzValue="'"></nz-option>
-                      <nz-option nzLabel="space" nzValue=" "></nz-option>
+                      <nz-option nzLabel="Comma (,)"  nzValue=","></nz-option>
+                      <nz-option nzLabel="Period (.)" nzValue="."></nz-option>
+                      <nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>
+                      <nz-option nzLabel="Space ( )" nzValue=" "></nz-option>
                     </nz-select>
 <!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
                       <label nz-radio nzValue=",">,</label>
@@ -166,10 +166,10 @@
                       class="dropdown-default"
                       nzPlaceHolder="Select A Time Format"
                     >
-                      <nz-option nzLabel=","  nzValue=","></nz-option>
-                      <nz-option nzLabel="." nzValue="."></nz-option>
-                      <nz-option nzLabel="'" nzValue="'"></nz-option>
-                      <nz-option nzLabel="space" nzValue=" "></nz-option>
+                      <nz-option nzLabel="Comma (,)"  nzValue=","></nz-option>
+                      <nz-option nzLabel="Period (.)" nzValue="."></nz-option>
+                      <nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>
+                      <nz-option nzLabel="Space ( )" nzValue=" "></nz-option>
                     </nz-select>
 <!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
                       <label nz-radio nzValue=",">,</label>
@@ -209,11 +209,16 @@
                   </div>
                 </div>
               </div>
+
+            </div>
+
+            <span class="head-title">Recent</span>
+            <div class="settings-wrapper">
               <div class="user-config-item"><span>Number of recent history items (My recent)</span></div>
             </div>
           </div>
           <div class="footer-tab-settings">
-            <button class="button-standard">Save</button>
+            <button class="a-buttons-contained">Save</button>
           </div>
         </div>
 
@@ -227,7 +232,7 @@
           <span class="main-tab-title">Import</span>
           <div class="settings-holder">
 
-            <span class="head-title">RiskLink Import</span>
+            <span class="head-title">General</span>
 
             <div class="settings-wrapper">
               <div class="user-config-item">
@@ -250,7 +255,7 @@
             </div>
 
 
-            <span class="head-title">Default</span>
+            <span class="head-title">Default Configuration: RiskLink</span>
             <div class="settings-wrapper">
 
               <div class="user-config-item">
@@ -274,7 +279,7 @@
                 </div>
               </div>
               <div class="user-config-item">
-                <span>Financial Perspectives Statistics</span>
+                <span>Financial Perspective Statistics</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
@@ -290,7 +295,7 @@
                 </div>
               </div>
               <div class="user-config-item">
-                <span>Target Currency</span>
+                <span>Target Exposure Currency</span>
                 <div>
                   <nz-select
                     style="width: 270px;"
@@ -304,6 +309,23 @@
                   </nz-select>
                 </div>
               </div>
+
+              <div class="user-config-item">
+                <span>Target Analysis Currency</span>
+                <div>
+                  <nz-select
+                    style="width: 270px;"
+                    [ngModel]="state.riskLink.targetAnalysisCurrency?.selected"
+                    (ngModelChange)="changePerspective()"
+                    nzShowSearch
+                    class="dropdown-default"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option *ngFor="let item of state.riskLink.targetAnalysisCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+
               <div class="user-config-item">
                 <span>Server Instance</span>
                 <div>
@@ -319,12 +341,12 @@
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item"><span>Exposures Data Sources</span></div>
-              <div class="user-config-item"><span>Loss Data Sources</span></div>
+              <div class="user-config-item"><span>Exposures Data Sources (EDM)</span></div>
+              <div class="user-config-item"><span>Loss Data Sources (RDM)</span></div>
             </div>
           </div>
           <div class="footer-tab-settings">
-            <button class="button-standard">Save</button>
+            <button class="a-buttons-contained">Save</button>
           </div>
         </div>
 
@@ -384,7 +406,7 @@
             </div>
           </div>
           <div class="footer-tab-settings">
-            <button class="button-standard">Save</button>
+            <button class="a-buttons-contained">Save</button>
           </div>
         </div>
         <ng-template #widgetConfig>
@@ -421,7 +443,7 @@
             </div>
           </div>
           <div class="footer-tab-settings">
-            <button class="button-standard">Save</button>
+            <button class="a-buttons-contained">Save</button>
           </div>
         </div>
         <ng-template #epMetricConfig>

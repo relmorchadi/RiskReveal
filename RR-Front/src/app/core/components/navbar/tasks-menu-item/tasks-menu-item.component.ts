@@ -3,13 +3,13 @@ import {SearchService} from '../../../service/search.service';
 import * as _ from 'lodash';
 import {
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SetWsRoutingAction
+  PatchWorkspaceMainStateAction,
+  SetWsRoutingAction
 } from '../../../store/actions/workspace-main.action';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../store/states';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../model/workspace-main';
-import {Location} from '@angular/common';
 import {HelperService} from '../../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';

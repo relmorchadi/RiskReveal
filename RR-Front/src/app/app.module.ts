@@ -8,7 +8,6 @@ import {HttpClientModule} from '@angular/common/http';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 import {HelperService} from './shared/helper.service';
-import {DragulaModule} from "ng2-dragula";
 import {DndModule} from 'ngx-drag-drop';
 
 @NgModule({

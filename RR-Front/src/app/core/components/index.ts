@@ -1,4 +1,3 @@
-
 import {NotificationsMenuItemComponent} from "./navbar/notifications-menu-item/notifications-menu-item.component";
 import {SearchMenuItemComponent} from "./navbar/search-menu-item/search-menu-item.component";
 import {TasksMenuItemComponent} from "./navbar/tasks-menu-item/tasks-menu-item.component";

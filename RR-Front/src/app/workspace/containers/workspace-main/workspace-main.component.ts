@@ -13,8 +13,10 @@ import {
   AppendNewWorkspaceMainAction,
   CloseWorkspaceMainAction,
   LoadWorkspacesAction,
-  OpenNewWorkspacesAction, PatchWorkspace,
-  PatchWorkspaceMainStateAction, setTabsIndex
+  OpenNewWorkspacesAction,
+  PatchWorkspace,
+  PatchWorkspaceMainStateAction,
+  setTabsIndex
 } from '../../../core/store/actions/workspace-main.action';
 import * as moment from 'moment'
 

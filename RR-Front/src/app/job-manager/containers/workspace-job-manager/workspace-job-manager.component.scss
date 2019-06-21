@@ -54,6 +54,14 @@
       display: flex;
       padding-top: 25px;
 
+      .user-label {
+        ::ng-deep {
+          .ant-select-selection__rendered::after {
+            content: 'User';
+          }
+        }
+      }
+
       button {
         right: 0;
         top: 110px;
@@ -88,9 +96,6 @@
       overflow: auto;
     }
 
-    .bordered-col{
-      border-right: 5px solid #F5F5F5;
-    }
 
     .ui-table-thead {
       th {

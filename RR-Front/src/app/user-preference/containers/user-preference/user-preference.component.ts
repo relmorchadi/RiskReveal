@@ -1,10 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Location} from '@angular/common';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Select, Store} from '@ngxs/store';
-import {RiskLinkState} from '../../../workspace/store/states';
 import {Observable} from 'rxjs';
-import {RiskLinkModel} from '../../../workspace/model/risk_link.model';
 import * as _ from 'lodash';
 import {GeneralConfigState, SearchNavBarState} from '../../../core/store/states';
 import {PatchNumberFormatAction, PatchSearchStateAction} from '../../../core/store/actions';

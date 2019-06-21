@@ -3,7 +3,7 @@ import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 
-import {combineLatest, Observable, Subject} from 'rxjs';
+import {combineLatest, Subject} from 'rxjs';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {WorkspaceMainState} from '../../../core/store/states/workspace-main.state';

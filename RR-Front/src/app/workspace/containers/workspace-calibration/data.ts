@@ -43,7 +43,7 @@ export const PURE = {
           id: "122232",
           threadName: "APEQ-ID_GU_CFS PORT 1",
           icon: 'icon-history-alt iconYellow',
-          checked: false,
+          checked: true,
           locked: false,
           adj: [],
           systemTags: [{tagId: 6}, {tagId: 7}],

@@ -3,10 +3,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  OnInit,
-  ViewChild,
   Input,
-  OnDestroy
+  OnDestroy,
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../service';
@@ -14,7 +14,7 @@ import {debounceTime, takeUntil} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
-import {Store, Actions, ofActionDispatched} from '@ngxs/store';
+import {Actions, ofActionDispatched, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";

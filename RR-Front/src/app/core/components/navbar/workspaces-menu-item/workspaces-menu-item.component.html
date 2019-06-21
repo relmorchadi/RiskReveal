@@ -8,7 +8,7 @@
   <div class="tabs-popover-content">
     <nz-tabset class="tabs-standard">
       <nz-tab [nzTitle]="RecentHeaderContent">
-        <div class="popup-tab-content">
+        <div class="popup-tab-content popover-menu">
           <nz-alert
             nzType="info"
             nzCloseable
@@ -21,7 +21,7 @@
           </div>
           <ul>
             <ng-container *ngFor="let workspace of state.recentWs; let i = index">
-              <li *ngIf="i < state.appliedFilter.shownElement" class="poover-menu-item" (click)="toggleWorkspace(workspace, i)"
+              <li *ngIf="i < state.appliedFilter.shownElement" (click)="toggleWorkspace(workspace, i)"
                   (dblclick)="openSingleWorkspaces(workspace)"
                   [ngClass]="{'poover-menu-item-active': workspace.selected}">
                 <div class="items-popover-wrapper">
@@ -48,8 +48,8 @@
                          [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>
             </nz-select>
             <div class="float-right">
-              <button (click)="popOutWorkspaces()" class="button-no-outline">POP OUT</button>
-              <button (click)="openWorkspaces()" class="button-no-outline">OPEN</button>
+              <button (click)="popOutWorkspaces()" class="a-button-text">POP OUT</button>
+              <button (click)="openWorkspaces()" class="a-button-text">OPEN</button>
             </div>
           </div>
         </div>

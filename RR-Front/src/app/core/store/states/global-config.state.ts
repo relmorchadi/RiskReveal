@@ -32,7 +32,12 @@ const initiaState: GeneralConfig = {
           data: ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'],
           selected: 'Facultative Reinsurance Loss'
       },
-      targetCurrency: {data: ['MLC', 'Underlying Currency', 'User Defined'], selected: 'MLC'},
+      targetCurrency: {
+        data: ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'],
+        selected: 'Main Liability Currency (MLC)'},
+      targetAnalysisCurrency: {
+        data: ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'],
+        selected: 'Main Liability Currency (MLC)'},
       rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'], selected: 'AZU-P-RL17-SQL14'},
     },
     contractOfInterest: {

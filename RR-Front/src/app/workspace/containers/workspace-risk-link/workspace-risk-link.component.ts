@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -7,8 +7,10 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  SearchRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkPortfolioAction
+  SearchRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkAnalysisAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction,
+  ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,

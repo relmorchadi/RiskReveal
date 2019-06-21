@@ -33,6 +33,31 @@
   color: #0700CF;
 }
 
+.ant-select-selection__rendered::after {
+  display: inline-block;
+  width: 0;
+  visibility: visible;
+  position: absolute;
+  pointer-events: none;
+  content: '';
+  font-size: 10px;
+  left: 0;
+  margin-top: -10px;
+  margin-left: -8px;
+  opacity: 0.5;
+}
+
+.ant-select-selection-selected-value {
+  padding-top: 4px;
+  font-size: 13px;
+  margin-left: -8px;
+}
+
+.ant-select-search--inline .ant-select-search__field {
+  height: auto;
+  margin-top: 8px;
+}
+
 .ant-select ul, .ant-select ol {
   display: flex;
 }

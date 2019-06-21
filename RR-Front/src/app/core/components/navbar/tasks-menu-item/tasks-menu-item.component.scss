@@ -66,6 +66,7 @@ i.icon-pause_circle_outline_24px {
         margin-left: 5px;
         width: 70%;
         flex: 1;
+
         .item-list-title {
           height: 15px;
           color: rgba(0, 0, 0, 0.87);
@@ -129,7 +130,7 @@ i.icon-pause_circle_outline_24px {
     .list-item-left {
       display: flex;
 
-      .list-item-title-wrapper{
+      .list-item-title-wrapper {
         display: flex;
         flex-direction: column;
 
@@ -153,14 +154,17 @@ i.icon-pause_circle_outline_24px {
       }
 
     }
+
     .data-append-list {
       height: auto;
       width: 100%;
       overflow: hidden;
+
       .data-append-item {
         display: flex;
         height: 35px;
         justify-content: space-between;
+
         ::ng-deep {
           .ant-progress-text {
             display: block;
@@ -173,6 +177,7 @@ i.icon-pause_circle_outline_24px {
           }
         }
       }
+
       .list-item-info {
         i {
           margin-left: 8px;
@@ -185,14 +190,41 @@ i.icon-pause_circle_outline_24px {
 
 }
 
+.popover-menu {
+  ul {
+    height: 200px;
+
+    li {
+      padding: 0 7px;
+      margin-right: 7px;
+    }
+  }
+}
+
 .task-footer {
   display: flex;
   justify-content: space-between;
 
-  label {
-    font-size: 12px;
-    margin: 9px 12px 0 0;
-    font-weight: bold;
+  /*  label {
+      font-size: 12px;
+      margin: 9px 12px 0 0;
+      font-weight: bold;
+    }*/
+
+  .date-label {
+    ::ng-deep {
+      .ant-select-selection__rendered::after {
+        content: 'Date';
+      }
+    }
+  }
+
+  .type-label {
+    ::ng-deep {
+      .ant-select-selection__rendered::after {
+        content: 'Type';
+      }
+    }
   }
 }
 
