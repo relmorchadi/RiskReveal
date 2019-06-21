@@ -993,7 +993,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
     } else {
       if (this.addTagModalIndex === 1) {
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+        this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
           plts: this.selectedListOfPlts,
           wsId: this.workspaceId,
           uwYear: this.uwy,
@@ -1003,7 +1003,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
 
       if (this.addTagModalIndex === 0) {
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+        this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
           plts: this.fromPlts ? this.selectedListOfPlts : [],
           wsId: this.workspaceId,
           uwYear: this.uwy,

@@ -1,0 +1,8 @@
+$h-sizes: ();
+@for $i from 1 through 6 {
+  $h-sizes: append($h-sizes, (7 - $i) * 5px + 12px);
+}
+
+$h-colors: ();
+$h-weights: (300, 300, 300, 300, 300, bold);
+$h-ls: (-1.5px,-0.5px, initial, 0.25px, initial, 0.25px)

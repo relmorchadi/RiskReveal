@@ -5,7 +5,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {COMPONENTS} from './components';
 import {TableModule} from 'primeng/table';
 import {HighlightDirective} from './highlight.directive';
-import {ContextMenuModule, MultiSelectModule} from 'primeng/primeng';
+import {ContextMenuModule, DialogModule, MultiSelectModule} from 'primeng/primeng';
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
@@ -18,6 +18,7 @@ import {ColorSketchModule} from 'ngx-color/sketch';
     NgZorroAntdModule,
     ReactiveFormsModule,
     ContextMenuModule,
+    DialogModule,
     TableModule,
     FormsModule,
     ColorChromeModule,

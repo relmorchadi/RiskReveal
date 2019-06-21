@@ -1,46 +1,12 @@
-h1 {
-  color: rgba(0, 0, 0, 0.87);
-  font-family: Rubik;
-  font-size: 97.54px;
-  font-weight: 300;
-  letter-spacing: -1.5px;
-}
+@import "mixins";
+@import "variables";
 
-h2 {
-  color: rgba(0, 0, 0, 0.87);
-  font-family: Rubik;
-  font-size: 60.96px;
-  font-weight: 300;
-  letter-spacing: -0.5px;
-}
 
-h3 {
-  color: rgba(0, 0, 0, 0.87);
-  font-family: Rubik;
-  font-size: 48.77px;
-  font-weight: 300;
-}
-
-h4 {
-  color: rgba(0, 0, 0, 0.87);
-  font-family: Rubik;
-  font-size: 34.54px;
-  font-weight: 300;
-  letter-spacing: 0.25px;
-}
-
-h5 {
-  color: rgba(0, 0, 0, 0.87);
-  font-family: Rubik;
-  font-size: 24.38px;
-}
-
-h6 {
-  color: rgba(0, 0, 0, 0.87);
-  font-family: Rubik;
-  font-size: 20.32px;
-  font-weight: bold;
-  letter-spacing: 0.25px;
+@each $size in $h-sizes {
+  $i: index($h-sizes, $size);
+  h#{$i} {
+    @include font-source-sans($size, rgba(0, 0, 0, 0.87), nth($h-weights, $i), nth($h-ls, $i));
+  }
 }
 
 .body-1 {
