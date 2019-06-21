@@ -1,12 +1,11 @@
 import {ChangeDetectorRef, Component, NgZone, OnInit, TemplateRef, ViewChild} from '@angular/core';
-import { NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective } from 'ng-zorro-antd';
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWorkspaceStore from "../../../workspace/store";
+import {PltMainState} from "../../../workspace/store";
 import {Select, Store} from "@ngxs/store";
 import * as _ from "lodash";
-import {PltMainState} from "../../../workspace/store";
 import {Table} from "primeng/table";
-import {ActivatedRoute} from "@angular/router";
 import {map} from "rxjs/operators";
 import {Observable} from "rxjs";
 import {WorkspaceMainState} from "../../../core/store/states";

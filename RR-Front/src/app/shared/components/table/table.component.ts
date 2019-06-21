@@ -1,13 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
-  HostListener,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
 

@@ -14,7 +14,7 @@ import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states'
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {Debounce} from '../../../shared';
-import {CloseTagByIndexAction, CloseAllTagsAction} from '../../../core/store';
+import {CloseAllTagsAction, CloseTagByIndexAction} from '../../../core/store';
 
 
 @Component({

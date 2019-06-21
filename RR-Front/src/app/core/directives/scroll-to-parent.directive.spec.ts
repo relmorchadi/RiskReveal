@@ -1,4 +1,4 @@
-import { ScrollToParentDirective } from './scroll-to-parent.directive';
+import {ScrollToParentDirective} from './scroll-to-parent.directive';
 
 describe('ScrollToParentDirective', () => {
   it('should create an instance', () => {

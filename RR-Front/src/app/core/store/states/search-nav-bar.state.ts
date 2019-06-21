@@ -1,13 +1,21 @@
-import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
+import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import {
-  ClearSearchValuesAction, CloseAllTagsAction, CloseBadgeByIndexAction, CloseGlobalSearchAction, CloseTagByIndexAction,
+  ClearSearchValuesAction,
+  CloseAllTagsAction,
+  CloseBadgeByIndexAction,
+  CloseGlobalSearchAction,
+  CloseTagByIndexAction,
   DeleteAllBadgesAction,
   DeleteLastBadgeAction,
   DisableExpertMode,
-  EnableExpertMode, ExpertModeSearchAction,
+  EnableExpertMode,
+  ExpertModeSearchAction,
   LoadRecentSearchAction,
-  PatchSearchStateAction, SearchAction,
-  SearchContractsCountAction, SearchInputFocusAction, SearchInputValueChange,
+  PatchSearchStateAction,
+  SearchAction,
+  SearchContractsCountAction,
+  SearchInputFocusAction,
+  SearchInputValueChange,
   SelectBadgeAction
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
@@ -19,7 +27,6 @@ import {Inject} from '@angular/core';
 import produce from 'immer';
 import {BadgesService} from '../../service/badges.service';
 import {Navigate} from '@ngxs/router-plugin';
-import {NavigationExtras} from '@angular/router';
 
 const initiaState: SearchNavBar = {
   contracts: null,

@@ -1,5 +1,3 @@
-import {WorkspaceFilter} from '../../model';
-
 export class SearchContractsCountAction {
   static readonly type = '[Search Nav Bar] Search contacts with count';
 

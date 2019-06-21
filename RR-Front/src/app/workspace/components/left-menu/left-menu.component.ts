@@ -1,11 +1,11 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as _ from 'lodash';
 import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
-import { SetWsRoutingAction, PatchWorkspaceMainStateAction } from '../../../core/store/actions/workspace-main.action';
+import {PatchWorkspaceMainStateAction, SetWsRoutingAction} from '../../../core/store/actions/workspace-main.action';
 import {HelperService} from "../../../shared/helper.service";
 
 

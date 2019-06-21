@@ -83,7 +83,6 @@
               -->
               <color-sketch
                   (clickOutside)="colorPickerIsVisible=false"
-                  [color]="menuInputs.tagForMenu.tagColor"
                   (onChange)="emitTagValues('tagColor',$event.color.hex)"
                   [presetColors]="presetColors"
                   *ngIf="colorPickerIsVisible"

@@ -1,9 +1,7 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {fromEvent} from 'rxjs';
 import {debounceTime} from 'rxjs/operators';
-import {HelperService} from '../../../shared/helper.service';
 import {Select, Store} from '@ngxs/store';
-import {PatchSearchStateAction} from '../../store/actions';
 import {SearchNavBarState} from "../../store/states";
 
 @Component({

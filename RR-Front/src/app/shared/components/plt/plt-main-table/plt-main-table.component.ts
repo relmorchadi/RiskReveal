@@ -1,6 +1,5 @@
 import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
-import * as fromWorkspaceStore from "../../../../workspace/store";
 
 @Component({
   selector: 'app-plt-main-table',

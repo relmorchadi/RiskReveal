@@ -8,17 +8,19 @@ import {
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
   PatchRiskLinkFinancialPerspectiveAction,
-  SearchRiskLinkEDMAndRDMAction, SelectRiskLinkAnalysisAndPortfolioAction,
-  SelectRiskLinkEDMAndRDMAction, ToggleRiskLinkPortfolioAction,
-  ToggleRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction
+  SearchRiskLinkEDMAndRDMAction,
+  SelectRiskLinkAnalysisAndPortfolioAction,
+  SelectRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkAnalysisAction,
+  ToggleRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkPortfolioAction
 } from '../actions';
 import {
-  ToggleRiskLinkEDMAndRDMSelectedAction,
   LoadRiskLinkAnalysisDataAction,
-  LoadRiskLinkPortfolioDataAction
+  LoadRiskLinkPortfolioDataAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction
 } from '../actions/risk_link.actions';
-import {mergeMap, switchMap} from 'rxjs/operators';
-import {Observable} from 'rxjs';
+import {mergeMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from '../../services/risk.api';
 
