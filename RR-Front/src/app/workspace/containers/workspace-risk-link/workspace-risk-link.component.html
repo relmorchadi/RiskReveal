@@ -137,7 +137,7 @@
                     <i style="font-size: 1.6em; cursor:pointer" nz-tooltip nzTitle="Unselect All"
                        (click)="unselectAll()" nzPlacement="bottom" class="icon-minus-square"></i>
                   </div>
-                  <nz-tabset class="tabs-standard">
+                  <nz-tabset class="a-tab-minitab">
                     <nz-tab nzTitle="EDM & RDM">
                       <div class="search-bar-result-list">
                         <p-virtualScroller [value]="dataList(state.listEdmRdm.data)" scrollHeight="305px" [itemSize]="30"  [rows]="state.listEdmRdm.numberOfElement"
@@ -270,7 +270,7 @@
                             (nzOnCancel)="handleCancel()"
                             [nzFooter]="footerModal">
                     <div class="input-group-modal">
-                      <input placeholder="Portfolio ID" class="input-default input-wrapper" >
+                      <input placeholder="Portfolio ID" class="a-textfield-mini input-wrapper" >
                       <div class="radio-wrapper default-radio">
                         <span>AGG/DET</span>
                         <nz-radio-group [(ngModel)]="radioValue">
@@ -279,9 +279,9 @@
                           <label nz-radio nzValue="det">DET</label>
                         </nz-radio-group>
                       </div>
-                      <input placeholder="Number" class="input-default input-wrapper" >
-                      <input placeholder="Name" class="input-default input-wrapper" >
-                      <input placeholder="Description" class="input-default input-wrapper" >
+                      <input placeholder="Number" class="a-textfield-mini input-wrapper" >
+                      <input placeholder="Name" class="a-textfield-mini input-wrapper" >
+                      <input placeholder="Description" class="a-textfield-mini input-wrapper" >
                     </div>
                     <ng-template #titleModal>
                       <h6>Portfolio Filter Criteria</h6>

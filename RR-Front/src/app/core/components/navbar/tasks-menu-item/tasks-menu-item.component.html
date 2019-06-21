@@ -10,7 +10,7 @@
 </nz-badge>
 <ng-template #tasksPopoverContent>
   <div class="tabs-popover-content" style="width: 565px">
-    <nz-tabset>
+    <nz-tabset class="a-tab-minitab">
       <nz-tab [nzTitle]="ActiveHeaderContent">
         <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
@@ -140,7 +140,7 @@
           <div class="mt-2 task-footer">
             <div style="display: flex;">
               <!--              <label>Date :</label>-->
-              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="dropdown-default date-label"
+              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="a-dropdown-label date-label"
                          style="width: 120px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear
                          nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
@@ -150,7 +150,7 @@
               </nz-select>
 
               <!--              <label>Type :</label>-->
-              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="dropdown-default type-label"
+              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="a-dropdown-label type-label"
                          style="width: 120px;" (ngModelChange)="filterByType($event)" nzAllowClear
                          nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
@@ -362,7 +362,7 @@
           </ul>
           <div class="mt-2 task-footer">
             <div>
-              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="dropdown-default"
+              <nz-select [(ngModel)]="datePointer" [nzAllowClear]="false" class="a-dropdown-small"
                          style="width: 140px; margin-right: 10px;" (ngModelChange)="filterByDate($event)" nzAllowClear
                          nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>
@@ -371,7 +371,7 @@
                 <nz-option [nzValue]="'lastWeek'" nzLabel="Last Week"></nz-option>
               </nz-select>
 
-              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="dropdown-default"
+              <nz-select [(ngModel)]="typePointer" [nzAllowClear]="false" class="a-dropdown-small"
                          style="width: 140px;" (ngModelChange)="filterByType($event)" nzAllowClear
                          nzPlaceHolder="Choose">
                 <nz-option [nzValue]="'all'" nzLabel="All"></nz-option>

@@ -343,6 +343,22 @@ export class CalibrationState implements NgxsOnInit {
     });
   }
 
+  @Action(fromPlt.deleteAdjustment)
+  deleteAdjustment(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.deleteAdjustment) {
+    const state = ctx.getState();
+    let adjustement = payload.adjustment;
+
+    let index = _.findIndex(state.adjustments, adjustement);
+    let adjustments = _.merge([], state.adjustments);
+
+    adjustments.splice(index, 1);
+    ctx.patchState({
+      adjustments: [
+        ...adjustments,
+      ]
+    });
+  }
+
   @Action(fromPlt.saveSelectedPlts)
   saveSelectedPlts(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.saveSelectedPlts) {
     const state = ctx.getState();

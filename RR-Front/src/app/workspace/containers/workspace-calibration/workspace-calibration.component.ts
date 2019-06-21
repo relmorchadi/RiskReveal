@@ -16,6 +16,7 @@ import {Select, Store} from "@ngxs/store";
 import {
   applyAdjustment,
   deleteAdjsApplication,
+  deleteAdjustment,
   dropAdjustment,
   extendPltSection,
   replaceAdjustement,
@@ -526,7 +527,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
           if (v.selected) d.push(v.userTags);
         })
 
-        //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+        // this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
         this.addModalSelect = _.intersectionBy(...d, 'tagId');
 
@@ -1284,6 +1285,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
     this.isVisible = true
     this.adjustColWidth(adj);
+  }
+
+  DeleteAdjustement(adj) {
+    this.store$.dispatch(new deleteAdjustment({
+      adjustment: adj
+    }))
   }
 
   saveAdjModification(adj) {

@@ -12,13 +12,15 @@
      <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
    </ul>
    -->
-  <button *ngIf="!workspace.pinged" (click)="pinWorkspace()" class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+  <button *ngIf="!workspace.pinged" (click)="pinWorkspace()"
+          class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
           nz-button nzType="primary" nzSize="default" nzShape="circle">
     <i style="color: #9592E6" nz-icon theme="outline">
       <i class="icon-map-pin-alt"></i>
     </i>
   </button>
-  <button *ngIf="workspace.pinged" (click)="pinWorkspace()" style="background-color: rgb(91, 139, 159);" class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+  <button *ngIf="workspace.pinged" (click)="pinWorkspace()" style="background-color: rgb(91, 139, 159);"
+          class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
           nz-button nzType="primary" nzSize="default" nzShape="circle">
     <span style="color: #FFFFFF">
       <i class="icon-map-pin-alt"></i>
@@ -30,116 +32,239 @@
     <div class="title-project-wrapper">
       <div style="display: flex;">
         <h4>Projects</h4>
-        <i class="icon-plus-circle icon-generic" (click)="isVisible = true" style="font-size: 25px; cursor: pointer;"></i>
-        <nz-modal [(nzVisible)]="isVisible" nzTitle="Create New Project" (nzOnCancel)="handleCancel()" (nzOnOk)="handleOk()">
-          <div>
-            <input class="input-default" style="width: 100%;padding: 10px" placeholder="Name Project" />
+        <i class="icon-plus-circle icon-generic" (click)="isVisible = true"
+           style="font-size: 25px; cursor: pointer;"></i>
+
+        <nz-modal [(nzVisible)]="isVisible" [nzTitle]="modalHeader" (nzOnCancel)="handleCancel()"
+                  (nzOnOk)="handleOk()" [nzFooter]="modalFooter" [ngClass]="{'standard-width' : !existingProject && !searchWorkspace && !mgaProject , 'search-width': searchWorkspace}">
+          <div *ngIf="!newProject && !existingProject && !searchWorkspace && !mgaProject">
+            <div class="a-card-list-wrap">
+              <div class="a-card-item">
+                <div class="a-card-item-left">New Project</div>
+                <div class="a-card-item-right" (click)="newProject = true"><span class="a-card-item-inner">
+                <span style="margin-left: 10px">CREATE</span><i class="icon-arrow_forward_ios_24px"></i>
+              </span></div>
+              </div>
+              <div class="a-card-item">
+                <div class="a-card-item-left">Existing Project</div>
+                <div class="a-card-item-right" (click)="searchWorkspace = true"><span class="a-card-item-inner">
+                <span style="margin-left: 10px">CREATE</span><i class="icon-arrow_forward_ios_24px"></i>
+              </span></div>
+              </div>
+              <div class="a-card-item">
+                <div class="a-card-item-left">MGA</div>
+                <div class="a-card-item-right"><span class="a-card-item-inner">
+                <span style="margin-left: 10px">CREATE</span><i class="icon-arrow_forward_ios_24px"></i>
+              </span></div>
+              </div>
+            </div>
           </div>
+
+          <ng-container *ngIf="newProject">
+            <div class="a-info-card">
+              <div style="background: #F5B74E" class="project-header-icon d-flex justify-content-center align-items-center">
+                <i class="icon-assignment_24px"></i>
+              </div>
+              <div class="a-info-card-data">
+                <div class="a-info-data-left">
+                  <span class="a-info-title">{{workspace.cedantName}}</span>
+                  <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+                </div>
+                <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+              </div>
+            </div>
+            <div class="a-form-control">
+              <div class="a-form-input-wrapper">
+                <label class="label-input">Project Name</label>
+                <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label" placeholder="Insert Name" />
+              </div>
+
+              <div class="a-form-input-wrapper">
+                <label class="textarea-label">Description</label>
+                <textarea style="margin-bottom:15px" rows="4" nz-input placeholder="Insert Description" [(ngModel)]="description"></textarea>
+              </div>
+
+              <div class="a-form-input-wrapper">
+                <label class="label-input">Created By</label>
+                <input class="a-textfield-standard a-textfield-label" placeholder="Insert Name" />
+              </div>
+
+              <div class="a-form-date-control a-datepicker-standard">
+                <nz-date-picker class="reception-label" [(ngModel)]="receptionDate" (ngModelChange)="onChangeDate($event)"></nz-date-picker>
+                <nz-date-picker class="due-label" [(ngModel)]="dueDate" (ngModelChange)="onChangeDate($event)"></nz-date-picker>
+              </div>
+
+            </div>
+          </ng-container>
+
+          <div *ngIf="searchWorkspace">
+            <div class="a-form-control">
+              <div class="a-form-input-wrapper">
+                <label class="label-input">Search For Project</label>
+                <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label" placeholder="Insert Workspace Name" />
+              </div>
+              <div class="search-area-wrapper">
+                <div class="search-result popover-menu">
+                  <ul>
+                    <li>
+                      <div class="a-info-data-left">
+                        <span class="a-info-title">{{workspace.cedantName}}</span>
+                        <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+                      </div>
+                      <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="project-inputs">
+                  <div class="a-info-card">
+                    <div style="background: #F5B74E" class="project-header-icon d-flex justify-content-center align-items-center">
+                      <i class="icon-assignment_24px"></i>
+                    </div>
+                    <div class="a-info-card-data">
+                      <div class="a-info-data-left">
+                        <span class="a-info-title">{{workspace.cedantName}}</span>
+                        <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+                      </div>
+                      <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #modalFooter>
+            <div class="a-control-buttons" *ngIf="newProject">
+              <button class="a-button-text-cancel">CANCEL</button>
+              <button class="a-button-text">CREATE</button>
+            </div>
+          </ng-template>
+
+          <ng-template #modalHeader>
+            <div class="header-modal" *ngIf="!existingProject && !searchWorkspace && !mgaProject">
+              <i *ngIf="newProject" (click)="resetToMain()" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+              <span style="margin-left: 10px">Create New Project</span>
+            </div>
+
+            <div class="header-modal" *ngIf="existingProject">
+              <i (click)="resetToMain()" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+              <span style="margin-left: 10px">Create Existing Project</span>
+            </div>
+            <div class="header-modal" *ngIf="searchWorkspace">
+              <i (click)="resetToMain()" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+              <span style="margin-left: 10px">Search For Project</span>
+            </div>
+          </ng-template>
         </nz-modal>
+
       </div>
-      <nz-select class="float-right mt-2 dropdown-default" style="width: 150px; margin-right: 70px;" nzShowSearch [(ngModel)]="selectedPrStatus">
+      <nz-select class="float-right mt-2 a-dropdown-small" style="width: 150px; margin-right: 70px;" nzShowSearch
+                 [(ngModel)]="selectedPrStatus">
         <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
       </nz-select>
     </div>
   </div>
   <div class="card-holder-wrap">
     <div *ngFor="let project of projects$ | async" (contextmenu)="contextMenu($event, template)" class="card-holder">
-        <div class="project-card mx-1" (click)="selectProject(project)" [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
-          <div class="project-header">
-<!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
-              <i class="fa fa-code-fork" aria-hidden="true"></i>
-            </div>-->
-            <div style="background: #F5B74E" class="project-header-icon d-flex justify-content-center align-items-center">
-              <i class="icon-assignment_24px"></i>
-            </div>
-            <div class="project-header-title d-flex flex-column justify-content-center pl-3">
-              <span>{{project?.name}}</span>
-              <span>{{project?.projectId}}</span>
-            </div>
-            <div class="icon-card-wrapper" [ngStyle]="{'display': project?.selected ? 'flex' : 'none'}">
-              <i class="icon-ellipsis-h"></i>
-              <i *ngIf="project?.selected" class="icon-check_24px"></i>
-              <span *ngIf="!project?.selected"></span>
-            </div>
+      <div class="project-card mx-1" (click)="selectProject(project)"
+           [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
+        <div class="project-header">
+          <!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
+                        <i class="fa fa-code-fork" aria-hidden="true"></i>
+                      </div>-->
+          <div style="background: #F5B74E" class="project-header-icon d-flex justify-content-center align-items-center">
+            <i class="icon-assignment_24px"></i>
           </div>
-          <div class="project-progress d-flex justify-content-center align-items-center">
-            <div class="project-flag">
-              <div style="margin-right: 3px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Imported</span>
-            </div>
-            <div class="project-flag">
-              <div style="margin-right: 3px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Published to Pricing</span>
-            </div>
-            <div class="project-flag">
-              <div style="margin-right: 3px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Priced</span>
-            </div>
-            <div class="project-flag">
-              <div style="margin-right: 2px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Accumulated</span>
-            </div>
+          <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+            <span>{{project?.name}}</span>
+            <span>{{project?.projectId}}</span>
           </div>
-          <div class="project-kpi border-top d-flex">
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
-              <span class="project-kpi-span">Region Perils</span>
-              <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
-              <span class="project-kpi-span">Exp</span>
-              <span class="project-kpi-span"><b>-</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
-              <span class="project-kpi-span">PLT</span>
-              <span class="project-kpi-span"><b>{{project?.pltThreadSum || 0}}</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
-              <span class="project-kpi-span">Published</span>
-              <span class="project-kpi-span"><b>{{project?.xactSum || 0}}</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
-              <span class="project-kpi-span">Pricing</span>
-              <span class="project-kpi-span"><b>-</b></span>
-            </div>
-            <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
-              <span class="project-kpi-span">Accum</span>
-              <span class="project-kpi-span"><b>-</b></span>
-            </div>
-          </div>
-          <div class="project-kpi-details pb-3">
-            <p class="project-kpi-details-title">
-             {{project?.description}}
-            </p>
-            <div class="border-top d-flex project-kpi-details-content">
-              <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
-              <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-              <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
-            </div>
-            <div class="border-top d-flex project-kpi-details-content">
-              <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Last Modified</span>
-              <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-              <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px;	line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
-            </div>
+          <div class="icon-card-wrapper" [ngStyle]="{'display': project?.selected ? 'flex' : 'none'}">
+            <i class="icon-ellipsis-h"></i>
+            <i *ngIf="project?.selected" class="icon-check_24px"></i>
+            <span *ngIf="!project?.selected"></span>
           </div>
         </div>
+        <div class="project-progress d-flex justify-content-center align-items-center">
+          <div class="project-flag">
+            <div style="margin-right: 3px">
+              <hr>
+              <span class="steper-icon"></span>
+            </div>
+            <span>Imported</span>
+          </div>
+          <div class="project-flag">
+            <div style="margin-right: 3px">
+              <hr>
+              <span class="steper-icon"></span>
+            </div>
+            <span>Published to Pricing</span>
+          </div>
+          <div class="project-flag">
+            <div style="margin-right: 3px">
+              <hr>
+              <span class="steper-icon"></span>
+            </div>
+            <span>Priced</span>
+          </div>
+          <div class="project-flag">
+            <div style="margin-right: 2px">
+              <hr>
+              <span class="steper-icon"></span>
+            </div>
+            <span>Accumulated</span>
+          </div>
+        </div>
+        <div class="project-kpi border-top d-flex">
+          <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+            <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+            <span class="project-kpi-span">Region Perils</span>
+            <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
+          </div>
+          <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+            <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
+            <span class="project-kpi-span">Exp</span>
+            <span class="project-kpi-span"><b>-</b></span>
+          </div>
+          <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+            <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+            <span class="project-kpi-span">PLT</span>
+            <span class="project-kpi-span"><b>{{project?.pltThreadSum || 0}}</b></span>
+          </div>
+          <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+            <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+            <span class="project-kpi-span">Published</span>
+            <span class="project-kpi-span"><b>{{project?.xactSum || 0}}</b></span>
+          </div>
+          <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+            <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
+            <span class="project-kpi-span">Pricing</span>
+            <span class="project-kpi-span"><b>-</b></span>
+          </div>
+          <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
+            <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+            <span class="project-kpi-span">Accum</span>
+            <span class="project-kpi-span"><b>-</b></span>
+          </div>
+        </div>
+        <div class="project-kpi-details pb-3">
+          <p class="project-kpi-details-title">
+            {{project?.description}}
+          </p>
+          <div class="border-top d-flex project-kpi-details-content">
+            <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
+            <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
+            <span class="text-center dt-11"
+                  style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
+          </div>
+          <div class="border-top d-flex project-kpi-details-content">
+            <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Last Modified</span>
+            <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
+            <span class="text-center dt-11"
+                  style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px;	line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

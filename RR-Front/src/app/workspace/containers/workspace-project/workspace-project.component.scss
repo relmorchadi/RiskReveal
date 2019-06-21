@@ -437,3 +437,122 @@
   white-space: nowrap;
   overflow: hidden;
 }
+
+/*
+===================================================================================
+PROJECT MODAL STYLE
+===================================================================================
+*/
+
+::ng-deep {
+  .ant-modal-body {
+    background-color: #F4F4F4;
+  }
+
+  .ant-modal-header {
+    padding: 0;
+    height: 56px;
+  }
+
+  .ant-modal-title {
+    height: 100%;
+  }
+
+  .ant-modal-footer {
+    padding: 0;
+  }
+}
+
+.search-width {
+  ::ng-deep {
+    .ant-modal {
+      width: 650px !important;
+    }
+  }
+}
+
+.standard-width {
+  ::ng-deep {
+    .ant-modal {
+      width: 520px !important;
+    }
+  }
+}
+
+.header-modal {
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  ::ng-deep {
+    .anticon {
+      height: 100%;
+      align-items: center;
+      display: flex;
+      justify-content: center;
+      width: 40px;
+      cursor: pointer;
+    }
+  }
+
+}
+
+.a-card-list-wrap {
+
+  .a-card-item-right {
+    height: 100%;
+    flex: 0 0 33%;
+
+    &:hover {
+      cursor: pointer;
+      padding-right: 18px;
+      color: #1890FF;
+    }
+
+    .a-card-item-inner {
+      display:flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      height: 80%;
+      border-left: 1px solid rgba(0,0,0,0.15);
+    }
+  }
+}
+
+.a-info-card {
+  margin-bottom: 10px;
+}
+
+.reception-label {
+  ::ng-deep {
+    .ant-calendar-picker:after {
+      content: 'Reception On';
+    }
+  }
+}
+
+.due-label {
+  ::ng-deep {
+    .ant-calendar-picker:after {
+      content: 'Due On';
+    }
+  }
+}
+
+.search-area-wrapper {
+  display: flex;
+  justify-content: space-between;
+
+  .search-result {
+    background-color: #FFFFFF;
+    display: flex;
+    padding: 10px 5px;
+    width: 49%;
+  }
+
+  .project-inputs {
+    display: flex;
+    width: 50%;
+  }
+}

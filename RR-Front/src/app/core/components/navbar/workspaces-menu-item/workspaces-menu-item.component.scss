@@ -97,7 +97,7 @@ nz-alert {
         width: 65%;
         flex: 1;
 
-        .item-checkbox{
+        .item-checkbox {
           line-height: 35px;
           margin-right: 12px;
         }
@@ -162,4 +162,18 @@ nz-alert {
     }
   }
 
+}
+
+.footer-workspace-menu {
+  display: flex;
+  justify-content: space-between;
+  flex: 1;
+  align-items: flex-end;
+  padding-left: 25px;
+}
+
+.popup-tab-content-term {
+  height: 350px;
+  display: flex;
+  flex-direction: column;
 }

@@ -5,7 +5,7 @@
 </nz-badge>
 <ng-template #notificationsPopoverContent>
   <div class="tabs-popover-content" style="width: 465px; height:500px;">
-    <nz-tabset>
+    <nz-tabset class="a-tab-minitab">
       <nz-tab [nzTitle]="AllHeaderContent">
         <div class="popup-tab-content">
           <div class="tab-search-input">
@@ -42,7 +42,7 @@
           </div>
 
           <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals()" >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -93,7 +93,7 @@
           </div>
 
           <div class="mt-2 footer-wrapper">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -144,7 +144,7 @@
           </div>
 
           <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -195,7 +195,7 @@
           </div>
 
           <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
