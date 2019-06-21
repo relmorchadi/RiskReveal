@@ -167,13 +167,11 @@
     margin-left: -473px;
   }
 
-.a-chips-input-filled-textonly {
-  padding: 4px 10px;
-  color: #fff;
-  font-family: rubik;
-  border-radius: 10px;
-  font-size: 12px;
-  cursor: pointer;
+  ::ng-deep .PLTs-content {
+    padding: 0px 0px 0 6px !important;
+    position: relative;
+    flex: 1 1 auto;
+  }
 
   ::ng-deep .my-tabs {
     display: flex;
@@ -1136,7 +1134,8 @@
     }
 
     .ant-modal-body {
-      padding: 0;
+      max-height: calc(100vh - 335px) !important;
+      overflow-y: auto !important;
     }
 
     .header {
@@ -1185,7 +1184,6 @@
 
 :host {
   ::ng-deep {
-
     nz-collapse {
       max-height: 48%;
       overflow: auto;
@@ -1383,4 +1381,4 @@
   overflow-y: hidden;
   white-space: nowrap;
 }
-}
+

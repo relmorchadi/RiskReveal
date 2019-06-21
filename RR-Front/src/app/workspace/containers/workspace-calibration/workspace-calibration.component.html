@@ -262,6 +262,10 @@
                                 <a (click)="ModifyAdjustement(adj)"
                                 >Modify</a>
                               </li>
+                              <li nz-menu-item>
+                                <a (click)="DeleteAdjustement(adj)"
+                                >Delete</a>
+                              </li>
                             </ul>
                           </nz-dropdown>
                           <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
@@ -549,11 +553,6 @@
 <nz-modal [(nzVisible)]="isVisible" [nzFooter]="modalFooter" class="modelAdjustment"
           (nzOnCancel)="handleCancel()"
           [nzTitle]="modalTitle">
-  <div nz-row>
-    <div nz-col nzSpan="24">
-      &nbsp;
-    </div>
-  </div>
   <div nz-row>
     <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
       <b>Basis</b>
