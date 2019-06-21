@@ -69,7 +69,7 @@
         </button>
         <ng-template #dash>
           <p class="popover-title">Add New Dashboard</p>
-          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name" class="input-default" type="text">
+          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name" class="a-textfield-mini" type="text">
         </ng-template>
       </div>
     </div>
@@ -79,7 +79,7 @@
           <i class="icon-arrow_forward_ios_24px"></i>
         </div>
         <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;"
-                   nzShowSearch class="dropdown-default"
+                   nzShowSearch class="a-dropdown-small"
                    nzPlaceHolder="Select Dashboard" [(ngModel)]="idSelected">
           <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d?.name" [nzValue]="d?.id">
             {{d?.name}}
@@ -98,7 +98,7 @@
         <div class="search-Mode">
           <span class="title">SEARCH MODE</span>
           <nz-select
-            class="dropdown-default"
+            class="a-dropdown-small"
             style="width: 150px;"
             nzShowSearch
             [nzAllowClear]="false"

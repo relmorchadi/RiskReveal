@@ -527,7 +527,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
           if (v.selected) d.push(v.userTags);
         })
 
-        //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+        // this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
         this.addModalSelect = _.intersectionBy(...d, 'tagId');
 

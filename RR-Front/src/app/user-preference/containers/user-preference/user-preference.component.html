@@ -39,15 +39,15 @@
             </div>-->
 
             <span class="head-title">Date & Time</span>
-            <div class="settings-wrapper">
-              <div  class="user-config-item"><span>Short Date</span>
-                <div>
+            <div class="a-card-list-wrap">
+              <div  class="a-card-item"><span>Short Date</span>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.general.dateFormat.shortDate"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select a Short Date Format"
                   >
                     <nz-option nzLabel="DD/MM/YYYY" nzValue="DD/MM/YYYY"></nz-option>
@@ -58,14 +58,14 @@
                   </nz-select>
                 </div>
               </div>
-              <div  class="user-config-item"><span>Long Date</span>
-                <div>
+              <div  class="a-card-item"><span>Long Date</span>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.general.dateFormat.longDate"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select A Long Date Format"
                   >
                     <nz-option nzLabel="DDDD MMMM YYYY" nzValue="DDDD MMMM YYYY"></nz-option>
@@ -75,14 +75,14 @@
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item"><span>Short Time</span>
-                <div>
+              <div class="a-card-item"><span>Short Time</span>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.general.dateFormat.shortTime"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select A Time Format"
                   >
                     <nz-option nzLabel="HH:MM" nzValue="HH:MM"></nz-option>
@@ -93,14 +93,14 @@
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item"><span>Long Time</span>
-                <div>
+              <div class="a-card-item"><span>Long Time</span>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.general.dateFormat.longTime"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select A Time Format"
                   >
                     <nz-option nzLabel="HH:MM:SS" nzValue="HH:MM:SS"></nz-option>
@@ -108,21 +108,23 @@
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item"><span>Time Zone</span>
-                <ng2-timezone-picker [(timezone)]="state.general.timeZone" style="width: 270px" showOffset="true" guess="true"></ng2-timezone-picker>
+              <div class="a-card-item"><span>Time Zone</span>
+                <div class="a-card-item-right">
+                  <ng2-timezone-picker  [(timezone)]="state.general.timeZone" style="width: 270px" showOffset="true" guess="true"></ng2-timezone-picker>
+                </div>
               </div>
 
             </div>
 
             <span class="head-title">Numerical</span>
-            <div class="settings-wrapper">
-              <div (click)="numberCollapse = !numberCollapse" class="user-config-item" style="cursor: pointer"><span>Number Format</span>
-                <div>
+            <div class="a-card-list-wrap">
+              <div (click)="numberCollapse = !numberCollapse" class="a-card-item" style="cursor: pointer"><span>Number Format</span>
+                <div class="a-card-item-right">
                   <i class="icon-arrow_forward_ios_24px"></i>
                 </div>
               </div>
               <div style="border-bottom: 1px solid rgba(0, 0, 0, 0.15);" *ngIf="numberCollapse">
-                <div class="user-config-item number-config-item"><span>Number Of Decimal Places</span>
+                <div class="a-card-item number-config-item"><span>Number Of Decimal Places</span>
                   <div>
                     <nz-input-number
                       [ngModel]="state.general.numberFormat.numberOfDecimals"
@@ -134,14 +136,14 @@
                     ></nz-input-number>
                   </div>
                 </div>
-                <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check1">Decimal Separator Character</label>
+                <div class="a-card-item number-config-item"><label nz-checkbox [(ngModel)]="check1">Decimal Separator Character</label>
                   <div class="custom-radio" *ngIf="check1">
                     <nz-select
                       style="width: 270px;"
                       [ngModel]="state.general.numberFormat.decimalSeparator"
                       (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')"
                       nzShowSearch
-                      class="dropdown-default"
+                      class="a-dropdown-small"
                       nzPlaceHolder="Select A Time Format"
                     >
                       <nz-option nzLabel="Comma (,)"  nzValue=","></nz-option>
@@ -156,14 +158,14 @@
                     </nz-radio-group>-->
                   </div>
                 </div>
-                <div class="user-config-item number-config-item"><label nz-checkbox [(ngModel)]="check2">Thousand Separator Character</label>
+                <div class="a-card-item number-config-item"><label nz-checkbox [(ngModel)]="check2">Thousand Separator Character</label>
                   <div class="custom-radio" *ngIf="check2">
                     <nz-select
                       style="width: 270px;"
                       [ngModel]="state.general.numberFormat.decimalThousandSeparator"
                       (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')"
                       nzShowSearch
-                      class="dropdown-default"
+                      class="a-dropdown-small"
                       nzPlaceHolder="Select A Time Format"
                     >
                       <nz-option nzLabel="Comma (,)"  nzValue=","></nz-option>
@@ -178,7 +180,7 @@
                     </nz-radio-group>-->
                   </div>
                 </div>
-                <div class="user-config-item number-config-item column-config"><span>Negative Numbers</span>
+                <div class="a-card-item number-config-item column-config"><span>Negative Numbers</span>
                   <div class="list-config-wrapper">
                     <ul>
                       <li (click)="changeNumberFormat('simple' , 'negativeFormat')"
@@ -213,8 +215,8 @@
             </div>
 
             <span class="head-title">Recent</span>
-            <div class="settings-wrapper">
-              <div class="user-config-item"><span>Number of recent history items (My recent)</span></div>
+            <div class="a-card-list-wrap">
+              <div class="a-card-item"><span>Number of recent history items (My recent)</span></div>
             </div>
           </div>
           <div class="footer-tab-settings">
@@ -234,16 +236,16 @@
 
             <span class="head-title">General</span>
 
-            <div class="settings-wrapper">
-              <div class="user-config-item">
+            <div class="a-card-list-wrap">
+              <div class="a-card-item">
                             <span>Default Import Type</span>
-                            <div>
+                            <div class="a-card-item-right">
                               <nz-select
                                 style="width: 270px;"
                                 [(ngModel)]="defaultImport"
                                 (ngModelChange)="defaultImportChange()"
                                 nzShowSearch
-                                class="dropdown-default"
+                                class="a-dropdown-small"
                                 nzPlaceHolder="Select an import"
                               >
                                 <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
@@ -256,11 +258,11 @@
 
 
             <span class="head-title">Default Configuration: RiskLink</span>
-            <div class="settings-wrapper">
+            <div class="a-card-list-wrap">
 
-              <div class="user-config-item">
+              <div class="a-card-item">
                 <span>Financial Perspective Event Level</span>
-                <div>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.riskLink.financialPerspectiveELT?.selected"
@@ -269,7 +271,7 @@
                     [nzMaxTagCount]="1"
                     [nzMaxTagPlaceholder]="tagPlaceHolder"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select an FP"
                   >
                     <nz-option *ngFor="let item of state.riskLink.financialPerspectiveELT?.data" [nzLabel]="item"
@@ -278,15 +280,15 @@
                   <ng-template #tagPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
                 </div>
               </div>
-              <div class="user-config-item">
+              <div class="a-card-item">
                 <span>Financial Perspective Statistics</span>
-                <div>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.riskLink.financialPerspectiveEPM?.selected"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select an FP"
                   >
                     <nz-option *ngFor="let item of state.riskLink.financialPerspectiveEPM?.data" [nzLabel]="item"
@@ -294,15 +296,15 @@
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item">
+              <div class="a-card-item">
                 <span>Target Exposure Currency</span>
-                <div>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.riskLink.targetCurrency?.selected"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                   >
                     <nz-option *ngFor="let item of state.riskLink.targetCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
@@ -310,15 +312,15 @@
                 </div>
               </div>
 
-              <div class="user-config-item">
+              <div class="a-card-item">
                 <span>Target Analysis Currency</span>
-                <div>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.riskLink.targetAnalysisCurrency?.selected"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                   >
                     <nz-option *ngFor="let item of state.riskLink.targetAnalysisCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
@@ -326,23 +328,23 @@
                 </div>
               </div>
 
-              <div class="user-config-item">
+              <div class="a-card-item">
                 <span>Server Instance</span>
-                <div>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.riskLink.rmsInstance?.selected"
                     (ngModelChange)="changePerspective()"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                   >
                     <nz-option *ngFor="let item of state.riskLink.rmsInstance?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
                   </nz-select>
                 </div>
               </div>
-              <div class="user-config-item"><span>Exposures Data Sources (EDM)</span></div>
-              <div class="user-config-item"><span>Loss Data Sources (RDM)</span></div>
+              <div class="a-card-item"><span>Exposures Data Sources (EDM)</span></div>
+              <div class="a-card-item"><span>Loss Data Sources (RDM)</span></div>
             </div>
           </div>
           <div class="footer-tab-settings">
@@ -364,9 +366,9 @@
                         </div>-->
 
             <span class="head-title">Default Scope Of Contract</span>
-            <div class="settings-wrapper">
-              <div class="user-config-item"><span>Country</span>
-                <div>
+            <div class="a-card-list-wrap">
+              <div class="a-card-item"><span>Country</span>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.contractOfInterest.country?.selected"
@@ -375,7 +377,7 @@
                     [nzMaxTagCount]="1"
                     [nzMaxTagPlaceholder]="tagCountryPlaceHolder"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select Countries"
                   >
                     <nz-option *ngFor="let item of state.contractOfInterest.country?.data" [nzLabel]="item.shortName"
@@ -384,8 +386,8 @@
                   <ng-template #tagCountryPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
                 </div>
               </div>
-              <div class="user-config-item"><span>UW Unit</span>
-                <div>
+              <div class="a-card-item"><span>UW Unit</span>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.contractOfInterest.uwUnit?.selected"
@@ -394,7 +396,7 @@
                     [nzMaxTagCount]="1"
                     [nzMaxTagPlaceholder]="tagUnitPlaceHolder"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select UW Units"
                   >
                     <nz-option *ngFor="let item of state.contractOfInterest.uwUnit?.data" [nzLabel]="item.name"
@@ -419,9 +421,9 @@
           <div class="settings-holder">
 
             <span class="head-title">Default</span>
-            <div class="settings-wrapper">
-              <div class="user-config-item"><span>Custom Return Period</span>
-                <div>
+            <div class="a-card-list-wrap">
+              <div class="a-card-item"><span>Custom Return Period</span>
+                <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.epCurves.returnPeriod?.selected"
@@ -430,7 +432,7 @@
                     [nzMaxTagCount]="1"
                     [nzMaxTagPlaceholder]="tagRPPlaceHolder"
                     nzShowSearch
-                    class="dropdown-default"
+                    class="a-dropdown-small"
                     nzPlaceHolder="Select Return Period"
                   >
                     <nz-option *ngFor="let item of state.epCurves.returnPeriod?.data" [nzLabel]="item"
@@ -439,7 +441,7 @@
                   <ng-template #tagRPPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
                 </div>
               </div>
-              <div class="user-config-item"><span>Default display of EP Curves</span></div>
+              <div class="a-card-item"><span>Default display of EP Curves</span></div>
             </div>
           </div>
           <div class="footer-tab-settings">
