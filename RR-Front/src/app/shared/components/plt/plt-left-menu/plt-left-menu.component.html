@@ -136,8 +136,8 @@
 
       <ng-template #addTagModalFooter>
         <div class="footer">
-          <button (click)="handlePopUpCancel()" nz-button class="button-no-outline">cancel</button>
-          <button class="button-standard" (click)="handlePopUpConfirm()" nz-button>
+          <button (click)="handlePopUpCancel()" nz-button class="a-button-text">cancel</button>
+          <button class="a-buttons-contained" (click)="handlePopUpConfirm()" nz-button>
             {{menuInputs._editingTag ?  'Save' : menuInputs.addTagModalIndex == 0 ? ( menuInputs.fromPlts ? 'Create & Assign' : 'Create' )  : 'Assign'}}
           </button>
         </div>
