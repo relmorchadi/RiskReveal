@@ -63,8 +63,8 @@ static readonly  type = '[PLT Main] set Table Filter & Sort'
   constructor(public payload?: any) {}
 }
 
-export class assignPltsToTag {
-  static readonly type = '[PLT Main] Assign plts to Tag'
+export class createOrAssignTags {
+  static readonly type = '[PLT Main] Create Or Assign Tags'
   constructor(public payload?: any) {}
 }
 
@@ -75,6 +75,16 @@ export class assignPltsToTagSuccess {
 
 export class assignPltsToTagFail {
   static readonly type = '[PLT Main] Assign plts to Tag Fail'
+  constructor(public payload?: any) {}
+}
+
+export class CreateTagSuccess {
+  static readonly type = '[PLT Main] Create Tag Success'
+  constructor(public payload?: any) {}
+}
+
+export class CreateTagFail {
+  static readonly type = '[PLT Main] Create Tag Fail'
   constructor(public payload?: any) {}
 }
 

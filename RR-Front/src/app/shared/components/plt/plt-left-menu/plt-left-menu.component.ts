@@ -41,20 +41,17 @@ export class PltLeftMenuComponent implements OnInit {
   @Output() onSelectSysTagCount= new EventEmitter();
   @Output() onEditTag= new EventEmitter();
   @Output() onAssignPltsToTag= new EventEmitter();
+  @Output() onCreateTag= new EventEmitter();
   @Output() setTagModalVisibility= new EventEmitter();
   @Output() onSetTagForMenu= new EventEmitter();
   @Output() onSetRenameTag= new EventEmitter();
   @Output() unCkeckAllPlts= new EventEmitter();
   @Output() onWsHeaderSelection= new EventEmitter();
   @Output() onModalSelect= new EventEmitter();
-  @Output() onAssignPltsToSingleTag= new EventEmitter();
   @Output() emitModalInputValue= new EventEmitter();
 
   _modalInput: string;
-  _renamingTag: boolean;
-  _modalInputCache: string;
   colorPickerIsVisible: boolean;
-  initColor: string;
 
   perilColors = {
     'EQ': 'red',
@@ -65,7 +62,7 @@ export class PltLeftMenuComponent implements OnInit {
   presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
   constructor() {
-    this.initColor= "blue"
+
   }
 
   ngOnInit() {
@@ -135,7 +132,7 @@ export class PltLeftMenuComponent implements OnInit {
 
   initColorPicker(){
     this.colorPickerIsVisible = false;
-    this.initColor = '#fe45cd'
+    this.emitTagValues('tagColor','#fe45cd')
   }
 
   toggleColorPicker(from?: string){
@@ -144,7 +141,7 @@ export class PltLeftMenuComponent implements OnInit {
       event.preventDefault();
     }
     this.colorPickerIsVisible=!this.colorPickerIsVisible;
-    if(!this.colorPickerIsVisible) this.initColor= '#fe45cd';
+    if(!this.colorPickerIsVisible) this.emitTagValues('tagColor','#fe45cd');
   }
 
   handlePopUpCancel() {
@@ -161,29 +158,25 @@ export class PltLeftMenuComponent implements OnInit {
     }else {
 
       if(this.menuInputs.addTagModalIndex === 1 ){
-        console.log(this.menuInputs._modalSelect)
         this.onAssignPltsToTag.emit({
           plts: this.menuInputs.selectedListOfPlts,
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
-          tags: this.menuInputs._modalSelect,
-          type: 'assignAndRemove'
+          selectedTags: this.menuInputs._modalSelect
         })
       }
 
       if(this.menuInputs.addTagModalIndex === 0) {
-        this.onAssignPltsToSingleTag.emit({
+        this.onCreateTag.emit({
           plts: this.menuInputs.fromPlts ? this.menuInputs.selectedListOfPlts : [],
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
-          tag: {
-            tagName: this._modalInput,
-            tagColor: this.initColor
-          }
+          tag: _.omit(this.menuInputs.tagForMenu, 'tagId')
         });
       }
 
     }
+
     this.toggleModal();
   }
 

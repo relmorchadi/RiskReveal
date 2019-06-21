@@ -30,7 +30,7 @@
             wsHeaderSelected: wsHeaderSelected
           }"
         (onAssignPltsToTag)="assignPltsToTag($event)"
-        (onAssignPltsToSingleTag)="assignPltsToSingleTag($event)"
+        (onCreateTag)="createTag($event)"
         (onProjectFilter)="filter($event)"
         (onEditTag)="editTag()"
         (onResetPath)="resetPath()"
@@ -285,7 +285,7 @@
 
                     <div style="display: flex">
                       <div *ngFor="let tag of pltdetailsUserTags" style="margin: 4px 5px 5px 4px;">
-                        <span class="chips" style="padding: 1px 10px !important;" [ngStyle]="{'background-color': tag.tagColor}">
+                        <span class="a-chips-input-filled-textonly" style="padding: 1px 10px !important;" [ngStyle]="{'background-color': tag.tagColor}">
                           <span class="chips-content">{{tag.tagName}}</span>
                         </span>
                       </div>

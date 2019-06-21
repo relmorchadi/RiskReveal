@@ -995,7 +995,7 @@ export class PltComparerMainComponent implements OnInit {
 
   assignPltsToTag($event: any) {
     console.log($event)
-    this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag($event))
+    this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags($event))
   }
 
   setTagModal($event: any) {

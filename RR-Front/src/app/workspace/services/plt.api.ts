@@ -23,12 +23,17 @@ export class PltApi {
     return this.http.post(`${this.URL}/assign-user-tag`, params)
   }
 
-  deleteUserTag(params): Observable<any>{
-    return this.http.delete(`${this.URL}/user-tag/${params}`)
+  public creatUserTag(params?): Observable<any> {
+    console.log(params);
+    return this.http.post(`${this.URL}/create-user-tag`, params)
   }
 
-  editTag(params: any): Observable<any> {
-    return this.http.put(`${this.URL}/user-tag`,params)
+  public editTag(params: any): Observable<any> {
+    return this.http.put(`${this.URL}/update-user-tag`,params)
+  }
+
+  deleteUserTag(params): Observable<any>{
+    return this.http.delete(`${this.URL}/user-tag/${params}`)
   }
 
   deletePlt(params: any): Observable<any> {

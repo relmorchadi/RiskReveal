@@ -297,110 +297,112 @@ export class PltMainState implements NgxsOnInit {
 
   }
 
-  @Action(fromPlt.assignPltsToTag)
-  assignPltsToTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTag){
+  @Action(fromPlt.createOrAssignTags)
+  assignPltsToTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.createOrAssignTags){
 
-    console.log(payload)
-
-    return payload.type == "assignOrRemove" ? forkJoin(..._.map(payload.tags,e => this.pltApi.assignPltsToTag({
-        plts: payload.plts,
-        wsId: payload.wsId,
-        uwYear: payload.uwYear,
-        tag: e
-      }))).pipe(
-      tap( t=> console.log(t)),
-      map( (tags) => {
-        console.log(tags);
-        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
-          tags: payload.tags,
-          plts: payload.plts,
-          metaData: payload.metaData,
-          type: 'many'
-        }))
-      })
-      )
-      : this.pltApi.assignPltsToTag(payload).pipe(
-      mergeMap( (userTag) => {
-        return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
-          userTag,
-          plts: payload.plts
-        }))
-      }),
-      catchError( () => of(new fromPlt.assignPltsToTagFail()))
-    )
+    switch (payload.type) {
+      case 'assignOrRemove':
+        return this.pltApi.assignPltsToTag(payload).pipe(
+          tap( t=> console.log(t)),
+          mergeMap( (tags) => {
+            console.log(tags);
+            return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
+              ...payload,
+              tags
+            }))
+          })
+        );
+      case 'createTag':
+        return this.pltApi.creatUserTag(payload).pipe(
+          mergeMap( (userTag) => {
+            return ctx.dispatch(new fromPlt.CreateTagSuccess({
+              userTag
+            }))
+          }),
+          catchError( () => of(new fromPlt.assignPltsToTagFail()))
+        )
+    }
   }
 
-  @Action(fromPlt.assignPltsToTagSuccess)
-  assignPltsToTagSucess(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTagSuccess){
-    const {
-      type,
-    } = payload;
-
+  @Action(fromPlt.CreateTagSuccess)
+  createUserTagSuccess(ctx: StateContext<pltMainModel>, { payload }: fromPlt.CreateTagSuccess) {
+    console.log('state create tag');
     const {
       data,
       userTags
     } = ctx.getState()
 
-    let newData = {};
+    const {
+      userTag
+    } = payload;
 
-    if(type !== "many") {
+    let newData= {};
 
-      const {
-        userTag: {
-          pltHeaders,
-          ...rest
-        }
-      }= payload;
+    _.forEach(userTag.pltHeaders, header => {
+      newData[header.id] = {...data[header.id], userTags: [...data[header.id].userTags, userTag] }
+    })
 
-      _.forEach(pltHeaders, (v,k) => {
-        newData[v.id] = _.merge({},data[v.id],{userTags: _.uniqBy([...data[v.id].userTags, rest], e => e.tagId) })
-      })
 
-      ctx.patchState({
-        data: _.merge({},data, newData),
-        userTags: {...userTags, [rest.tagId]: {...rest, selected: false,count: pltHeaders.length}}
-      })
-
-    }else {
-      /*
-      const {
-        tags,
-        metaData: {
-          affectedPlts,
-          affectedTags
-        }
-      } = payload;
-      console.log(affectedPlts,affectedTags);
-
-      _.forEach(affectedPlts.toAdd, plt => {
-        newData[plt.id] = _.assign({}, data[plt.id], {...data[plt.id], userTags: _.uniqBy([...data[plt.id].userTags, ...affectedTags.toAdd],'tagId')})
-      })
-
-      _.forEach(affectedPlts.toDelete, plt => {
-        console.log(data[plt.id].userTags, tags);
-        newData[plt.id] = _.assign({}, data[plt.id], {...data[plt.id], userTags: _.filter(data[plt.id].userTags, tag => {
-          const t= !_.find(affectedTags.toDelete, t =>  t.tagId == tag.tagId);
-          console.log(tag, t)
-          return t;
-          })})
-      })
-
-      let newTags = {};
-
-      _.forEach(tags, t => {
-        newTags[t.tagId]= {...t, selected: false}
-      })
-
-      console.log(newData, newTags);
-
-      ctx.patchState({
-        data: {...data, ...newData},
-        userTags: {...userTags, ...newTags}
-      })
-      */
-    }
+    ctx.patchState({
+      data: _.merge({}, data, newData),
+      userTags: _.merge({}, userTags, { [userTag.tagId]: {...userTag, count: userTag.pltHeaders.length, selected: false} })
+    })
 
   }
+
+  @Action(fromPlt.assignPltsToTagSuccess)
+  assignPltsToTagSucess(ctx: StateContext<pltMainModel>, { payload }: fromPlt.assignPltsToTagSuccess){
+
+    const {
+      data,
+      userTags
+    } = ctx.getState();
+
+    const {
+      tags
+    } = payload;
+
+    console.log(tags,userTags)
+
+    let newData = {};
+
+    let newTags = {};
+
+    _.forEach(tags, tag => {
+      const {
+        pltHeaders
+      }= tag;
+
+      let toDel= _.differenceBy(userTags[tag.tagId].pltHeaders, pltHeaders);
+      let toAdd= _.differenceBy(pltHeaders, userTags[tag.tagId].pltHeaders);
+
+      console.log({
+        tagId: tag.tagId,
+        toDel,
+        toAdd
+      });
+
+
+      _.forEach(toDel, ({id}) => {
+        newData[id] = {...data[id], userTags: _.filter(data[id].userTags, tagItem => tagItem.tagId != tag.tagId) || []}
+      });
+
+      _.forEach(toAdd, ({id}) => {
+        newData[id] = {...data[id], userTags: _.concat(data[id].userTags, tag)}
+      });
+
+      newTags[tag.tagId]= {...tag, selected: userTags[tag.tagId].selected, count: tag.pltHeaders.length};
+    })
+
+    ctx.patchState({
+      data: {...data, ...newData},
+      userTags: {...userTags, ...newTags}
+    })
+
+  }
+
+
+
   @Action(fromPlt.deleteUserTag)
   deleteUserTag(ctx: StateContext<pltMainModel>, { payload }: fromPlt.deleteUserTag){
     return this.pltApi.deleteUserTag(payload).pipe(

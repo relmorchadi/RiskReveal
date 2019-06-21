@@ -1,8 +1,16 @@
 @import "./variables";
 @import "./scrollbar";
+@import "/theme/font";
+@import "/theme/button";
+@import "/theme/input";
+@import "/theme/dropdown";
+@import "/theme/tabs";
+@import "/theme/tags";
+@import "/theme/radio.scss";
+@import "/theme/chips.scss";
 
 * {
-  font-family: Rubik;
+  font-family: Rubik, sans-serif;
 }
 
 
