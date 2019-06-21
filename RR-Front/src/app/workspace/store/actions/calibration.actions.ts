@@ -47,6 +47,13 @@ export class deleteAdjsApplication {
   }
 }
 
+export class deleteAdjustment {
+  static readonly type = '[Calibration] delete Adjustment';
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class saveAdjustmentInPlt {
   static readonly type = '[Calibration] save adjustment in PLT';
 

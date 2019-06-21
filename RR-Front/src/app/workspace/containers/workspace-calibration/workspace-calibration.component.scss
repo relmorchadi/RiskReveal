@@ -1134,7 +1134,8 @@
     }
 
     .ant-modal-body {
-      padding: 0;
+      max-height: calc(100vh - 335px) !important;
+      overflow-y: auto !important;
     }
 
     .header {
@@ -1183,7 +1184,6 @@
 
 :host {
   ::ng-deep {
-
     nz-collapse {
       max-height: 48%;
       overflow: auto;
@@ -1381,3 +1381,4 @@
   overflow-y: hidden;
   white-space: nowrap;
 }
+

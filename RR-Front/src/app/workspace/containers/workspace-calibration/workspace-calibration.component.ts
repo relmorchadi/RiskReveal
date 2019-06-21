@@ -16,6 +16,7 @@ import {Select, Store} from "@ngxs/store";
 import {
   applyAdjustment,
   deleteAdjsApplication,
+  deleteAdjustment,
   dropAdjustment,
   extendPltSection,
   replaceAdjustement,
@@ -1284,6 +1285,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
     this.isVisible = true
     this.adjustColWidth(adj);
+  }
+
+  DeleteAdjustement(adj) {
+    this.store$.dispatch(new deleteAdjustment({
+      adjustment: adj
+    }))
   }
 
   saveAdjModification(adj) {
