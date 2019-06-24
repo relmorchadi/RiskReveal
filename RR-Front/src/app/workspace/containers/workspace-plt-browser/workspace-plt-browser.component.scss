@@ -305,12 +305,30 @@
         .title-as-tab {
           display: flex;
           flex: 0 1 auto;
-
+          justify-content: space-between;
           span {
             padding: 16px 43px;
             font-size: 1.3em;
             font-weight: bold;
             border-top: 3px solid #0700e4;
+          }
+          .right {
+            display: flex;
+            flex-direction: row;
+
+            div {
+              width: max-content;
+              margin-right: 16px;
+            }
+
+            nz-dropdown {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+              font-size: 2em;
+              height: 27px;
+            }
+
           }
         }
 

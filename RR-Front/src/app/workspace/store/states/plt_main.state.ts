@@ -369,8 +369,6 @@ export class PltMainState implements NgxsOnInit {
       tags
     } = payload;
 
-    console.log(tags,userTags)
-
     let newData = {};
 
     let newTags = {};
@@ -383,23 +381,29 @@ export class PltMainState implements NgxsOnInit {
       let toDel= _.differenceBy(userTags[tag.tagId].pltHeaders, pltHeaders);
       let toAdd= _.differenceBy(pltHeaders, userTags[tag.tagId].pltHeaders);
 
+
       console.log({
-        tagId: tag.tagId,
+        pltHeaders,
         toDel,
-        toAdd
+        toAdd,
       });
 
+      //Process
 
       _.forEach(toDel, ({id}) => {
-        newData[id] = {...data[id], userTags: _.filter(data[id].userTags, tagItem => tagItem.tagId != tag.tagId) || []}
+        newData[id] = {...data[id], ...newData[id]};
+        newData[id] = {...newData[id], userTags: _.filter(newData[id].userTags, tagItem => tagItem.tagId != tag.tagId) || []}
       });
 
       _.forEach(toAdd, ({id}) => {
-        newData[id] = {...data[id], userTags: _.concat(data[id].userTags, tag)}
+        newData[id] = {...data[id], ...newData[id]};
+        newData[id] = {...newData[id], userTags: _.concat(newData[id].userTags, tag)}
       });
 
       newTags[tag.tagId]= {...tag, selected: userTags[tag.tagId].selected, count: tag.pltHeaders.length};
     })
+
+    console.log(newTags, newData);
 
     ctx.patchState({
       data: {...data, ...newData},

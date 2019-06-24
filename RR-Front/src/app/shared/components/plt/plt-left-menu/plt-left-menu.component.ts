@@ -212,14 +212,36 @@ export class PltLeftMenuComponent implements OnInit {
         systemTag
       } = this.menuInputs.filters;
 
-      this.onSetFilters.emit(_.findIndex(systemTag, sectionFilter => sectionFilter[tag] === section ) < 0 ?
-          _.merge({},this.menuInputs.filters,{
-            systemTag: _.merge([], systemTag, {
-              [systemTag.length]: { [tag] : section }
+      this.onSetFilters.emit(
+        !systemTag[section] ?
+          _.merge({}, this.menuInputs.filters, {
+            systemTag: _.merge({},systemTag, { [section]: [tag]})
+          })
+          :
+          _.findIndex(systemTag[section], sysTagValue =>  sysTagValue == tag) < 0 ?
+            _.merge({}, this.menuInputs.filters, {
+              systemTag: _.merge({},systemTag, { [section]: this.toggleArrayItem(tag, systemTag[section], (a,b) => a == b) })
             })
-          }) : _.assign({}, this.menuInputs.filters,{ systemTag: _.filter( systemTag, sectionFilter => sectionFilter[tag] != section)})
+            :
+            (
+              systemTag[section].length == 1 ?
+                _.assign({}, this.menuInputs.filters, {
+                  systemTag: _.omit(systemTag, `${section}`)
+                })
+                :
+                _.assign({}, this.menuInputs.filters, {
+                  systemTag: _.assign({},systemTag, { [section]: this.toggleArrayItem(tag, systemTag[section], (a,b) => a == b) })
+                })
+            )
       )
+
     }
+  }
+
+  toggleArrayItem(item,arr, compare){
+    const i = _.findIndex(arr, e => compare(e,item));
+    console.log(i,i >= 0 ? [...arr.slice(0, i), ...arr.slice(i+1)] :  [...arr, item]);
+    return i >= 0 ? [...arr.slice(0, i), ...arr.slice(i+1)] :  [...arr, item];
   }
 
   selectSystemTag(section,tag) {
