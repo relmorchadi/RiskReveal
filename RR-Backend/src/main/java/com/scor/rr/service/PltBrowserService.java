@@ -95,13 +95,13 @@ public class PltBrowserService {
         List<PltHeader> pltHeaders = pltHeaderRepository.findPltHeadersByIdIn(request.plts);
         request.selectedTags.forEach(userTagId -> {
             UserTag userTag = userTagRepository.findById(userTagId).orElseThrow(()-> new RuntimeException("userTag ID not found"));
-            userTag.setPltHeaders(new HashSet<>(pltHeaders));
+            userTag.getPltHeaders().addAll(new HashSet<>(pltHeaders));
             userTag.setWorkspace(workspace);
             userTagRepository.save(userTag);
         });
         request.unselectedTags.forEach(userTagId -> {
             UserTag userTag = userTagRepository.findById(userTagId).orElseThrow(()-> new RuntimeException("userTag ID not found"));
-            userTag.setPltHeaders(new HashSet<>(userTag.getPltHeaders().stream().filter(p->request.plts.contains(p.getId())).collect(Collectors.toList())));
+            userTag.setPltHeaders(new HashSet<>(userTag.getPltHeaders().stream().filter(p->!request.plts.contains(p.getId())).collect(Collectors.toList())));
             userTag.setWorkspace(workspace);
             userTagRepository.save(userTag);
         });

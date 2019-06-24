@@ -15,6 +15,7 @@ import {DndModule} from 'ngx-drag-drop';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
 import {DialogModule, DragDropModule, CalendarModule} from 'primeng/primeng';
+import {ToastModule} from "primeng/toast";
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import {DialogModule, DragDropModule, CalendarModule} from 'primeng/primeng';
     NgMasonryGridModule,
     DndModule,
     DragDropModule,
-    RouterModule.forChild(workspaceRoutes)
+    RouterModule.forChild(workspaceRoutes),
+    ToastModule
   ],
   exports: [
     RouterModule

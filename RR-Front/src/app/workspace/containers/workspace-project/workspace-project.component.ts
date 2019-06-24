@@ -4,19 +4,27 @@ import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 
 import {combineLatest, Subject} from 'rxjs';
-import {Select, Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {WorkspaceMainState} from '../../../core/store/states/workspace-main.state';
 
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import {PatchWorkspace, SelectProjectAction} from '../../../core/store/actions/workspace-main.action';
+import {
+  AddNewProject, AddNewProjectFail,
+  AddNewProjectSuccess,
+  PatchWorkspace,
+  SelectProjectAction
+} from '../../../core/store/actions/workspace-main.action';
 import * as moment from 'moment';
 import {takeUntil} from 'rxjs/operators';
+import {FormControl, FormGroup, Validators} from '@angular/forms';
+import {MessageService} from 'primeng/api';
 
 @Component({
   selector: 'app-workspace-project',
   templateUrl: './workspace-project.component.html',
-  styleUrls: ['./workspace-project.component.scss']
+  styleUrls: ['./workspace-project.component.scss'],
+  providers: [MessageService]
 })
 export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
@@ -42,14 +50,14 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   dueDate: any;
 
   description: any;
-
+  newProjectForm: FormGroup;
   @Select(WorkspaceMainState.getData) data$;
   @Select(WorkspaceMainState.getProjects) projects$;
 
 
   constructor(private _helper: HelperService, private route: ActivatedRoute,
               private nzDropdownService: NzDropdownService, private store: Store,
-              private router: Router
+              private router: Router, private actions$: Actions, private messageService: MessageService,
   ) {
     console.log('init project');
     this.unSubscribe$ = new Subject<void>();
@@ -70,6 +78,21 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
         this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
+    this.newProjectForm = new FormGroup({
+      projectName: new FormControl(null, Validators.required),
+      description: new FormControl(null),
+      createdBy: new FormControl(null, Validators.required),
+      receptionDate: new FormControl(null, Validators.required),
+      dueDate: new FormControl(null, Validators.required),
+    });
+    this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).subscribe(() => {
+      this.isVisible = false;
+      this.messageService.add({severity: 'info', summary: 'Project added successfully'});
+      this.newProjectForm.reset();
+      }
+    );
+    this.actions$.pipe(ofActionSuccessful(AddNewProjectFail)).subscribe(() =>
+      this.messageService.add({severity: 'error', summary: ' Error please try again'}));
   }
 
   handleOk(): void {
@@ -134,6 +157,25 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   onChangeDate(event) {
 
   }
+  createUpdateProject() {
+    if (this.newProject) {
+      console.log(this.newProjectForm.value);
+      this.store.dispatch(new AddNewProject({
+        workspaceId: this.workspace.workSpaceId,
+        uwYear: this.workspace.uwYear,
+        project: {...this.newProjectForm.value, receptionDate: this.formatDateTime(this.newProjectForm.value.receptionDate),
+          dueDate: this.formatDateTime(this.newProjectForm.value.dueDate)},
+      }));
+    }
+  }
 
+  cancelCreateProject() {
+    this.newProjectForm.reset();
+    this.isVisible = false;
+  }
+
+  formatDateTime(dateTime: any) {
+    moment(dateTime).format('x');
+  }
 
 }

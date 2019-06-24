@@ -26,12 +26,12 @@ public class PltBrowserResource {
         return pltBrowserService.searchPltTable(filter);
     }
 
-    @PostMapping("assign-user-tag")
+    @PostMapping("create-user-tag")
     public UserTag createUserTag(@RequestBody AssignPltsRequest assignPltsRequest) {
         return pltBrowserService.assignUserTag(assignPltsRequest);
     }
 
-    @PostMapping("assign-update-user-tag")
+    @PostMapping("assign-user-tag")
     public List<UserTag> assignUpdateUserTag(@RequestBody AssignUpdatePltsRequest request) {
         return pltBrowserService.assignUpdateUserTag(request);
     }
@@ -40,7 +40,7 @@ public class PltBrowserResource {
         pltBrowserService.deleteUserTag(id);
     }
 
-    @PutMapping("user-tag")
+    @PutMapping("update-user-tag")
     public ResponseEntity<UserTag> updateTag(@RequestBody UserTag userTag) {
         try {
             return ResponseEntity.ok(pltBrowserService.updateUserTag(userTag));
