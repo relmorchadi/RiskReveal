@@ -48,20 +48,48 @@ const frozenColsPortfolio = [
 
 
 const scrollableColsSummary = [
-  {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text'},
-  {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date'},
-  {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text'},
-  {field: 'type', header: 'Type', width: '180px', type: 'text'},
-  {field: 'agCedent', header: 'Cedant', width: '120px', type: 'text'},
-  {field: 'agCurrency', header: 'Currency', width: '120px', type: 'text'},
-  {field: 'agSource', header: 'Source', width: '120px', type: 'text'},
-  {field: 'peril', header: 'Peril', width: '120px', type: 'text'},
+  {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorted: false, filtered: true, highlight: false},
+  {field: 'sourceCurrency', header: 'Source Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: true},
+  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorted: false, filtered: true, highlight: false},
+  {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorted: false, filtered: true, highlight: false},
+  {field: 'EDM', header: 'EDM', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
 ];
 
 const frozenColsSummary = [
-  {field: 'scan', header: '', width: '20px', type: 'scan'},
-  {field: 'status', header: 'Status', width: '40px', type: 'text'},
-  {field: 'id', header: 'ID', width: '190px', type: 'text'}
+  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false},
+  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false},
+  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
+  {field: 'number', header: 'Number', width: '190px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'name', header: 'Name', width: '190px', type: 'text', sorted: false, filtered: true, highlight: false},
 ];
 
+const scrollableColsResults = [
+  {field: 'regionPeril', header: 'Region Peril', width: '70px', type: 'text', sorted: false, filtered: true, highlight: true},
+  {field: 'sourceCurrency', header: 'Source Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true},
+  {field: 'ELT', header: 'ELT FIN PERSP', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '90px', type: 'text', sorted: false, filtered: true, highlight: true},
+  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true},
+  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
+];
 
+const frozenColsResults = [
+  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false},
+  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false},
+  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
+  {field: 'name', header: 'Name', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false},
+];
+
+export const DataTables = {
+  scrollableColsAnalysis,
+  scrollableColsPortfolio,
+  scrollableColsSummary,
+  scrollableColsResults,
+  frozenColsAnalysis,
+  frozenColsPortfolio,
+  frozenColsSummary,
+  frozenColsResults
+};

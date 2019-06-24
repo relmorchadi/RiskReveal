@@ -487,72 +487,57 @@
             </div>
           </div>
           <div class="summary-info" *ngIf="state.collapse.collapseResult">
-            <table>
-              <thead>
-              <tr>
-                <th style="width:2%"></th>
-                <th style="width:3%">Status</th>
-                <th style="width:4%">
-                  ID
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <th style="width:17%">
-                  Number
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <th style="width:14%">
-                  Name
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <!--<th style="width:11%">
-                  Exposed Location
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>-->
-                <th style="width:11%">
-                  Exposure Currency
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <th style="width:10%">
-                  Target Currency
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <th style="width:8%">
-                  Unit Multiplier
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <th style="width:7%">
-                  Proportion
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <th style="width:5%">
-                  EDM
-                  <ng-container *ngTemplateOutlet="search"></ng-container>
-                </th>
-                <th style="width:2%"><i class="icon-menu_24px"></i></th>
-              </tr>
-              </thead>
-              <tbody>
-              <tr *ngFor="let items of summaryInfo">
-                <th><i class="icon-loop_24px"></i></th>
-                <th style="text-align: center">
-                  <nz-progress [nzPercent]="items?.status" [ngClass]="{'hidden-text': items.status < 100 }"
-                               [nzWidth]="20" nzType="circle"></nz-progress>
-                </th>
-                <th>{{items?.id}}</th>
-                <th>{{items?.number}}</th>
-                <th>{{items?.name}}</th>
-                <!--<th>
-                  <div class="state" [ngClass]="{'state-false': !items?.exposedLocation}"></div>
-                </th>-->
-                <th>{{items?.exposedCurrency}}</th>
-                <th>{{items?.targetCurrency}}</th>
-                <th>{{items?.unitMultiplier | number:'1.1-1'}}</th>
-                <th>{{items?.proportion}}</th>
-                <th>{{items?.EDM}}</th>
-                <th><i class="icon-trash-alt"></i></th>
-              </tr>
-              </tbody>
-            </table>
+            <p-table  [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary" [value]="summaryInfo"
+                      #st [scrollable]="true" frozenWidth="485px">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
+                    <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
+                      {{col.header}}
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input pInputText type="text"
+                               (input)="st.filter($event.target.value, col.field, col.filterMatchMode)">
+                      </div>
+                    </div>
+                    <div *ngIf="col.type === 'icon'">
+                      <i class="icon-menu_24px"></i>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                    <div *ngIf="col.type === 'progress'">
+                      <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
+                                   [nzWidth]="20" nzType="circle"></nz-progress>
+                    </div>
+                    <div *ngIf="col.type === 'indicator'">
+                      <span class="indicator-flag" *ngIf="rowData.exposedLocation" style="background-color: #0700CF"></span>
+                    </div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%</div>
+                    <div class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                         [ngClass]="{'highlight-temp': col.highlight}"
+                         *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"><i class="icon-trash-alt"></i></div>
+                  </th>
+                </tr>
+              </ng-template>
+            </p-table>
           </div>
         </div>
       </div>
@@ -576,7 +561,55 @@
             </div>
           </div>
           <div class="summary-info" *ngIf="state.collapse.collapseAnalysis">
-            <table>
+            <p-table  [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult" [value]="resultsInfo"
+                      #rt [scrollable]="true" frozenWidth="445px">
+              <ng-template pTemplate="colgroup" let-columns>
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template pTemplate="header" let-columns>
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
+                    <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
+                      {{col.header}}
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input pInputText type="text"
+                               (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
+                      </div>
+                    </div>
+                    <div *ngIf="col.type === 'icon'">
+                      <i class="icon-menu_24px"></i>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                    <div class="text-data" *ngIf="col.type === 'progress'">
+                      <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
+                                   [nzWidth]="20" nzType="circle"></nz-progress>
+                    </div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                         *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                         *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%</div>
+                    <div class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                         [ngClass]="{'highlight-temp': col.highlight}"
+                         *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                         *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                    <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                         style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"><i class="icon-trash-alt"></i></div>
+                  </th>
+                </tr>
+              </ng-template>
+            </p-table>
+<!--            <table>
               <thead>
               <tr>
                 <th style="width:1%"></th>
@@ -639,7 +672,7 @@
                 <th><i class="icon-trash-alt"></i></th>
               </tr>
               </tbody>
-            </table>
+            </table>-->
           </div>
         </div>
       </div>
