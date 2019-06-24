@@ -36,6 +36,8 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   mgaProject = false;
   searchWorkspace = false;
 
+  selectedWs: any;
+
   receptionDate: any;
   dueDate: any;
 

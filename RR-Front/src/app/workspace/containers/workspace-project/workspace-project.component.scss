@@ -415,7 +415,6 @@
 
 .icon-generic {
   font-size: 22px;
-  margin-top: 15px !important;
   margin-left: 20px;
 }
 
@@ -445,21 +444,63 @@ PROJECT MODAL STYLE
 */
 
 ::ng-deep {
-  .ant-modal-body {
-    background-color: #F4F4F4;
+
+  .ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix.ui-corner-top {
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
   }
 
-  .ant-modal-header {
-    padding: 0;
-    height: 56px;
+  .ui-dialog-content.ui-widget-content {
+    padding: 15px !important;
+    background-color: #F4F4F4 !important;
   }
 
-  .ant-modal-title {
-    height: 100%;
+  .ui-dialog-title {
+    display: flex;
+    flex: 1;
   }
 
-  .ant-modal-footer {
-    padding: 0;
+  .ui-dialog-footer.ui-widget-content {
+    padding: 0 !important;
+  }
+
+  label.ant-radio-wrapper {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(0,0,0,0.15);
+    padding-bottom: 7px;
+  }
+
+  span.ant-radio + * {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+
+    .a-info-data-left {
+      display: flex;
+      flex-direction: column;
+
+      .a-info-title {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100%;
+        color: rgba(0, 0, 0, 0.87);
+        font-weight: bold;
+        font-size: 13px;
+        letter-spacing: 0.08px;
+        line-height: 21px;
+      }
+
+      .a-info-subtitle {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 11px;
+        letter-spacing: 0.08px;
+        line-height: 12px;
+      }
+    }
   }
 }
 
@@ -554,5 +595,12 @@ PROJECT MODAL STYLE
   .project-inputs {
     display: flex;
     width: 50%;
+
+    .a-info-card {
+      height: 50px;
+      width: 100%;
+      margin: 0 2px 1px;
+    }
+
   }
 }
