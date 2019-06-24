@@ -1,5 +1,5 @@
 import {CalibrationModel} from "../../model";
-import {Action, NgxsOnInit, Selector, State, StateContext, Store} from "@ngxs/store";
+import {Action, createSelector, NgxsOnInit, Selector, State, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../actions";
 import {deselectAll, PatchCalibrationStateAction, selectRow} from "../actions";
 import * as _ from "lodash";
@@ -17,6 +17,8 @@ import {
 import {tap} from "rxjs/operators";
 import {PltApi} from "../../services/plt.api";
 import produce from "immer";
+import {WorkspaceMain} from "../../../core/model";
+import {WorkspaceMainState} from "../../../core/store/states";
 
 const initiaState: CalibrationModel = {
   data: {},
@@ -97,6 +99,12 @@ export class CalibrationState implements NgxsOnInit {
   @Selector()
   static getAdjustmentApplication(state: CalibrationModel) {
     return _.get(state, "adjustmentApplication")
+  }
+
+  static getLeftNavbarIsCollapsed() {
+    return createSelector([WorkspaceMainState], (state: WorkspaceMain) => {
+      return _.get(state, "leftNavbarIsCollapsed");
+    });
   }
 
 

@@ -168,7 +168,7 @@
   }
 
   ::ng-deep .PLTs-content {
-    padding: 0px 0px 0 6px !important;
+    padding: 0px 0px 4px 4px !important;
     position: relative;
     flex: 1 1 auto;
   }
@@ -295,7 +295,6 @@
   }
 
   .tabset-right {
-    background: #fff;
     display: flex;
     flex-flow: column;
     align-items: stretch;
@@ -935,10 +934,15 @@
 :host .PLTs-content {
 
   border-bottom: 3px solid #F4F6FC;
+  background: #fff;
 
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
       background-color: #efefef;
+    }
+
+    .ui-table-frozen-view {
+      min-height: 610px;
     }
 
     thead {
@@ -993,7 +997,6 @@
       }
 
       th {
-        padding: 15px 2px 5px 2px !important;
         font-size: 12px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
@@ -1006,7 +1009,7 @@
 
         .filter-input {
           width: 100%;
-          background-color: #F5F5F5;
+          background-color: #f9f9f9;
 
           i {
             width: 10%;
@@ -1016,11 +1019,10 @@
 
           input {
             padding: 0px 1px 0px 1px;
-            width: 69%;
-            background-color: #F5F5F5;
+            width: 63%;
+            background-color: #f9f9f9;
             border: none;
             height: 25px;
-            background: #f5f5f5;
 
             &:focus {
               outline: 0;
@@ -1191,7 +1193,6 @@
 
     .Tags-content {
       max-height: 80vh;
-      height: 80vh;
     }
 
     .tag-section {
@@ -1288,6 +1289,19 @@
   border-left: 8px solid #F4F6FC !important;
 }
 
+.data-separator-left {
+  border-left: 8px solid #F4F6FC !important;
+  background-color: #F3F3F3 !important;
+}
+
+.data-default {
+  background-color: #F3F3F3 !important;
+}
+
+.data-inuring {
+  background-color: #FAEBD7 !important;
+}
+
 .adjustDiv {
   margin: 4px !important;
   border: solid 1px #cccccc;
@@ -1382,3 +1396,6 @@
   white-space: nowrap;
 }
 
+body .ui-table .ui-table-thead > tr > th {
+  padding: 0 !important;
+}

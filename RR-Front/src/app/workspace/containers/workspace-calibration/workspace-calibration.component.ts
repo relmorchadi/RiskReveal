@@ -47,6 +47,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   listOfPltsCache: any[];
   selectedListOfPlts: any[];
   listOfDeletedPlts: any[] = [];
+  frozenColumns: any[] = [];
+  frozenWidth: any = '403px';
   filterData: any;
   sortData;
   lastModifiedAdj;
@@ -56,7 +58,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   inProgressCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
   lockedCheckbox: boolean = true;
-  collapsedTags: boolean = true;
+  collapsedTags: boolean = false;
   isVisible = false;
   singleValue: any;
   dragPlaceHolderId: any;
@@ -79,6 +81,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   adjsArray: any[] = [];
   appliedAdjutement = [];
   @Select(CalibrationState.getAdjustmentApplication) adjutmentApplication$;
+  @Select(CalibrationState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
+  leftNavbarIsCollapsed: boolean;
   adjutmentApplication = [];
   singleValueArray: any[] = [];
   inputValueArray = [];
@@ -97,15 +101,29 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   pltColumns = [
     {
       sortDir: 1,
-      fields: '',
-      header: 'User Tags',
-      width: '60',
+      fields: 'checkbox',
+      header: '',
+      width: '43',
       sorted: false,
       filtred: false,
       icon: null,
       type: 'checkbox',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: true,
+    },
+    {
+      sortDir: 1,
+      fields: 'userTags',
+      header: 'User Tags',
+      width: '80',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'checkbox',
+      style: 'border: none !important',
+      extended: true,
+      frozen: true,
     },
     {
       sortDir: 1,
@@ -117,7 +135,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: true,
     },
     {
       sortDir: 1,
@@ -129,19 +148,21 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: true
     },
     {
       sortDir: 1,
       fields: 'peril',
       header: 'Peril',
-      width: '60',
+      width: '80',
       sorted: true,
       filtred: true,
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -153,7 +174,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -165,7 +187,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -177,7 +200,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -189,7 +213,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -201,7 +226,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -213,7 +239,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: 'icon-focus-add',
       type: 'icon',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: true
     },
     {
       sortDir: 1,
@@ -225,20 +252,22 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: 'icon-note',
       type: 'icon',
       style: 'border: none !important',
-      extended: true
+      extended: true,
+      frozen: true
     },
     {
       sortDir: 1,
       fields: 'overallLMF',
       header: 'Overall LMF',
-      width: this.templateWidth,
+      width: '60',
       dragable: true,
       sorted: false,
       filtred: false,
       icon: null,
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -251,7 +280,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -264,7 +294,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -277,7 +308,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -290,7 +322,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
     {
       sortDir: 1,
@@ -303,7 +336,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       icon: null,
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true
+      extended: true,
+      frozen: false
     },
   ];
   epMetricsCurrencySelected: any = 'EUR';
@@ -593,10 +627,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   ngOnInit() {
-    // console.log(this.iconNote.style.position);
-    this.adjutmentApplication$.subscribe(data => this.adjutmentApplication = data);
-    this.initDataColumns();
     this.extend();
+    this.leftNavbarIsCollapsed$.subscribe(data => {
+      console.log(data);
+      this.leftNavbarIsCollapsed = data;
+    });
+
+    this.adjutmentApplication$.subscribe(data => this.adjutmentApplication = data);
     this.state$.subscribe((state: any) => {
       this.allAdjsArray = _.merge([], state.allAdjsArray);
       this.AdjustementType = _.merge([], state.adjustementType);
@@ -717,11 +754,25 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
   initDataColumns() {
     this.dataColumns = [];
-    _.forEach(this.pltColumns, (value, key) => {
-      if (value.extended) {
-        this.dataColumns.push(value);
-      }
-    });
+    this.frozenColumns = [];
+    if (this.extended) {
+      _.forEach(this.pltColumns, (value, key) => {
+        if (value.extended) {
+          this.dataColumns.push(value);
+        }
+      });
+    } else {
+      _.forEach(this.pltColumns, (value, key) => {
+        if (value.extended && !value.frozen) {
+          this.dataColumns.push(value);
+        }
+        if (value.extended && value.frozen) {
+          this.frozenColumns.push(value);
+        }
+      });
+    }
+    console.log('data =>', this.dataColumns)
+    console.log('frozen =>', this.frozenColumns)
   }
 
   getAttr(path) {
@@ -949,6 +1000,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       this.lastClick = null;
     }
   }
+
   selectProject(id: any) {
 
   }
@@ -1103,6 +1155,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
   extend() {
     this.extended = !this.extended;
+    if (this.extended) {
+      this.frozenWidth = '0px'
+    } else {
+      this.frozenWidth = '403px'
+    }
     this.adjustExention();
     this.initDataColumns();
     this.store$.dispatch(new extendPltSection(this.extended));
@@ -1115,7 +1172,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       })
     } else {
       _.forIn(this.pltColumns, function (value: any, key) {
-        if (value.header == "User Tags" || value.fields == "pltId" || value.fields == "pltName" || value.fields == "action" || value.dragable) {
+        if (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable) {
           value.extended = true;
         } else {
           value.extended = false;
@@ -1219,6 +1276,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       this.pltColumns[index].width = colWidth.toString();
     });
   }
+
   applyToAll(adj) {
     console.log('applytoall');
     this.store$.dispatch(new applyAdjustment({
@@ -1352,6 +1410,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.dragPlaceHolderId = null;
     this.dragPlaceHolderCol = null;
   }
+
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
       this.selectSinglePLT(pltId, isSelected);
@@ -1380,5 +1439,22 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
   collapseTags() {
     this.collapsedTags = !this.collapsedTags;
+  }
+
+  adjustTabsetRight() {
+    console.log(this.collapsedTags, this.leftNavbarIsCollapsed)
+    if (this.collapsedTags && this.leftNavbarIsCollapsed) {
+      return 'calc(100vw - 50px + 80px - 174px)'
+    } else if (this.collapsedTags && !this.leftNavbarIsCollapsed) {
+      return 'calc(100vw - 190px + 80px - 174px)'
+    } else if (!this.collapsedTags && this.leftNavbarIsCollapsed) {
+      return 'calc(100vw - 50px - 80px - 174px)'
+    } else if (!this.collapsedTags && !this.leftNavbarIsCollapsed) {
+      return 'calc(100vw - 190px - 80px - 174px)'
+    }
+  }
+
+  log(columns) {
+    console.log(columns);
   }
 }
