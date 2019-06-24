@@ -8,17 +8,24 @@
 >
   <ng-template pTemplate="header" let-columns>
     <tr>
+      <th *ngFor="let col of columns" [ngStyle]="{'width': col?.width + 'px'}" >
+        {{col.header}}
+      </th>
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="header" let-columns>
+    <tr>
       <ng-container *ngFor="let col of columns; let i = index">
-        <th *ngIf="col?.type == 'checkbox'" [ngStyle]="{'width': col?.width, 'min-width': col?.width}" class="checkBoxHead">
+        <th *ngIf="col?.type == 'checkbox'"  class="checkBoxHead" [ngStyle]="{'width': col?.width + 'px'}">
           <label nz-checkbox [nzChecked]="tableInputs.selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="tableInputs.someItemsAreSelected"></label>
           <i (click)="checkBoxSort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
         </th>
-        <th *ngIf="col?.type == 'tags'" [ngStyle]="{'width': col?.width, 'min-width': col?.width}">
+        <th *ngIf="col?.type == 'tags'" [ngStyle]="{'width': col?.width + 'px'}">
                       <span style="display:flex;justify-content: space-between;font-weight: bold">
                         User Tags
                       </span>
         </th>
-        <th  *ngIf="i > 1 && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width, 'min-width': col?.width}" pResizableColumn>
+        <th  *ngIf="i > 1 && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + 'px'}" pResizableColumn>
           <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
             <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
@@ -36,7 +43,7 @@
       <th></th>
       <ng-container *ngFor="let col of columns;let i=index;">
         <ng-container *ngIf="i > 0 && (col?.forDelete ? tableInputs.showDeleted : true)">
-          <th *ngIf="col?.filtred" [ngStyle]="{'width': col?.width, 'min-width': col?.width}">
+          <th *ngIf="col?.filtred" >
             <div class="filter-input">
               <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
               <input *ngIf="col.header.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterInput">
@@ -51,12 +58,12 @@
       (contextmenu)="selectedItemForMenu(rowData)"
       [pContextMenuRow]="rowData"
       [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
-      *ngIf="tableInputs.filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
+      *ngIf="(tableInputs.filters.systemTag | keys ).length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
       <ng-container *ngFor="let col of columns; let i = index">
-        <td  *ngIf="col?.type == 'checkbox'" [ngStyle]="{'width': col?.width}">
+        <td  *ngIf="col?.type == 'checkbox'" [ngStyle]="{'width': col?.width + 'px'}">
           <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
         </td>
-        <td *ngIf="col?.type == 'tags'" [ngStyle]="{'width': col?.width}">
+        <td *ngIf="col?.type == 'tags'" [ngStyle]="{'width': col?.width + 'px'}">
           <div class="td-wrapper-tags">
             <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
               <span class="tag-el" *ngIf="i < 2" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
@@ -65,20 +72,20 @@
             </ng-container>
           </div>
         </td>
-        <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width}">
+        <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'id'" [ngStyle]="{'width': col?.width + 'px'}">
           <div class="text-elipsice" style="font-weight: bold" [ngStyle]="{'text-align' : col?.textAlign ? col?.textAlign : 'left'}">{{rowData.pltId | textLength}}</div>
         </td>
-        <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width}">
+        <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'field' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + 'px'}">
           <ng-container>
             <div class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ rowData[col.fields] }}</div>
           </ng-container>
         </td>
-        <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'date' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width}">
+        <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" *ngIf="col?.type == 'date' && (col?.forDelete ? tableInputs.showDeleted : true)" [ngStyle]="{'width': col?.width + 'px'}">
           <ng-container>
             <div (click)="handlePLTClick(rowData.pltId,rowIndex,$event)" class="text-elipsice" [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ (rowData[col.fields] | date) }}</div>
           </ng-container>
         </td>
-        <td *ngIf="col?.type == 'icon'" [ngStyle]="{'width': col?.width}">
+        <td *ngIf="col?.type == 'icon'" [ngStyle]="{'width': col?.width + 'px'}">
           <i [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
         </td>
       </ng-container>

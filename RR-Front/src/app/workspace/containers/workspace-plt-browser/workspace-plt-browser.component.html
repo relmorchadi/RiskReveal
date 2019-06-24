@@ -51,32 +51,37 @@
       >
 
       </app-plt-left-menu>
-      <div class="tabset-right">
+      <div class="tabset-right" [ngStyle]="{ 'max-width': leftIsHidden ? 'calc(100vw - 190px - 80px - 174px + 130px)' : 'calc(100vw - 190px - 80px - 174px)'}">
         <div class="title-as-tab">
           <span>
             PLTs
           </span>
+          <div class="right">
+            <div>
+              {{selectedListOfPlts.length ? selectedListOfPlts.length + ' Rows are selected' : ''}}
+            </div>
+            <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'" >
+              <a style="max-height: 28px;display: flex;" nz-dropdown>
+                <i class="icon-menu_24px"></i>
+              </a>
+              <ul nz-menu style="font-size: 12px">
+                <li nz-menu-item (click)="resetSort()">Reset Sort</li>
+                <li nz-menu-item (click)="resetFilters()">Reset Filters</li>
+                <li nz-menu-item (click)="resetSort();resetFilters()">Reset Sort/Filters</li>
+
+                <li nz-menu-divider></li>
+
+                <li nz-menu-item>Re-Order/Activate Columns</li>
+
+                <li nz-menu-divider></li>
+
+                <li nz-menu-item (click)="checkAll(false)" >Unselect All</li>
+
+              </ul>
+            </nz-dropdown>
+          </div>
         </div>
         <div class="PLTs-content">
-          <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'" >
-            <a  style="position: absolute;top: -50px;right: 14px;cursor: pointer;font-size: 2em;height: 27px;" nz-dropdown>
-                <i class="icon-menu_24px"></i>
-            </a>
-            <ul nz-menu style="font-size: 12px">
-              <li nz-menu-item (click)="resetSort()">Reset Sort</li>
-              <li nz-menu-item (click)="resetFilters()">Reset Filters</li>
-              <li nz-menu-item (click)="resetSort();resetFilters()">Reset Sort/Filters</li>
-
-              <li nz-menu-divider></li>
-
-              <li nz-menu-item>Re-Order/Activate Columns</li>
-
-              <li nz-menu-divider></li>
-
-              <li nz-menu-item (click)="checkAll(false)" >Unselect All</li>
-
-            </ul>
-          </nz-dropdown>
           <app-plt-main-table
             [tableInputs]="{
                   contextMenuItems: contextMenuItems,
