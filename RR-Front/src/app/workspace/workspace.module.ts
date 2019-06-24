@@ -14,7 +14,7 @@ import {workspaceRoutes} from './workspace.route';
 import {DndModule} from 'ngx-drag-drop';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
-import {DialogModule, DragDropModule} from 'primeng/primeng';
+import {DialogModule, DragDropModule, CalendarModule} from 'primeng/primeng';
 
 @NgModule({
   declarations: [
@@ -26,6 +26,7 @@ import {DialogModule, DragDropModule} from 'primeng/primeng';
     SharedModule,
     FormsModule,
     DialogModule,
+    CalendarModule,
     VirtualScrollerModule,
     ReactiveFormsModule,
     NgMasonryGridModule,

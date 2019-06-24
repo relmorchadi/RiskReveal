@@ -76,15 +76,15 @@
     opacity: 0.7;
   }
 
-  input.ant-calendar-picker-input.ant-input {
+  input.ant-calendar-picker-input.ant-input, input.ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
     border: none;
     border-radius: 0;
     border-bottom: 1px solid #0700cf;
     color: #0700cf;
     background-color: #F4F6FC;
-    padding-top: 4px;
+    padding-top: 10px;
     font-size: 13px;
-    margin-left: -4px;
+    margin-left: 1px;
 
     &::-webkit-input-placeholder {
       color: #0700CF;

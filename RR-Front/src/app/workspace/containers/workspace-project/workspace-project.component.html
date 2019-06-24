@@ -37,6 +37,7 @@
 
         <p-dialog [(visible)]="isVisible"
                   [modal]="true"
+                  [contentStyle]="{'overflow':'visible'}"
                   [styleClass]="searchWorkspace ? 'm-dialog-modal-m-f' : 'm-dialog-modal-sm-f'"
                   [responsive]="true">
 
@@ -112,10 +113,18 @@
               </div>
 
               <div class="a-form-date-control a-datepicker-standard">
-                <nz-date-picker class="reception-label" [(ngModel)]="receptionDate"
+                <div class="a-form-input-wrapper">
+                  <label class="label-input">Reception Date</label>
+                  <p-calendar [(ngModel)]="receptionDate" placeholder="Select Date" [showIcon]="true"></p-calendar>
+                </div>
+                <div class="a-form-input-wrapper">
+                  <label class="label-input">Due Date</label>
+                  <p-calendar [(ngModel)]="dueDate" placeholder="Select Date" [showIcon]="true"></p-calendar>
+                </div>
+<!--                <nz-date-picker class="reception-label" [(ngModel)]="receptionDate"
                                 (ngModelChange)="onChangeDate($event)"></nz-date-picker>
                 <nz-date-picker class="due-label" [(ngModel)]="dueDate"
-                                (ngModelChange)="onChangeDate($event)"></nz-date-picker>
+                                (ngModelChange)="onChangeDate($event)"></nz-date-picker>-->
               </div>
 
             </div>
