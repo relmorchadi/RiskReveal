@@ -25,7 +25,9 @@
 $modal-sizes: (
   "auto": ( "height": auto, "width": auto ),
   "sm": ( "height": 35vh, "width": 40vw ),
+  "sm-f": ("height": auto, "width": 30vw, "minWidth": 450px),
   "m": ( "height": 50vh, "width": 60vw ),
+  "m-f": ( "height": auto, "width": 55vw, "minWidth": 750px ),
   "lg": ( "height": 75vh, "width": 90vw )
 );
 
@@ -41,15 +43,15 @@ body {
 
     .m-dialog-modal#{ $expr } {
       width: map_get($size, "width");
+      min-width: map_get($size, "minWidth");
 
       .ui-dialog-titlebar {
         border: none;
         background-color: white;
-        padding: 2.5em;
 
         p-header {
 
-          i {
+          span.pi.pi-times, .icon-close_24px {
             position: absolute;
             right: 0;
             top: 0;
@@ -68,7 +70,6 @@ body {
       .ui-dialog-footer {
         border: none;
         @include border-divider("top");
-        padding: 25px;
       }
     }
   }
