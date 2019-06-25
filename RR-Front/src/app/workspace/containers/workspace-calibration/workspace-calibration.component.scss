@@ -139,7 +139,6 @@
 }
 
 
-
 :host {
   display: flex;
   width: 100%;
@@ -847,6 +846,7 @@
     display: flex;
     margin-left: 8px;
     margin-right: 8px;
+
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
     }
@@ -988,6 +988,7 @@
       border-radius: 25px;
       font-size: 16px;
     }
+
     .ui-table-thead {
 
       .checkBoxHead div {
@@ -1235,6 +1236,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   ::ng-deep {
     .ant-checkbox-inner {
       background-color: white;
@@ -1251,8 +1253,6 @@
 
   }
 }
-
-
 
 
 .border-dragable {
@@ -1311,6 +1311,13 @@
   height: 80% !important;
   display: inline-block;
   color: black;
+}
+
+/*.adjustDiv:hover {
+  border: solid 1px #028004;
+}*/
+.adjustDiv:focus {
+  border: solid 1px #028004;
 }
 
 .templateInput {
@@ -1398,4 +1405,18 @@
 
 body .ui-table .ui-table-thead > tr > th {
   padding: 0 !important;
+}
+
+.addRemove {
+  font-size: 15px;
+  font-weight: bold;
+  color: #0700e4;
+  padding-top: 4px;
+  border: 1px solid #0700e4;
+  cursor: pointer;
+  border-radius: 25px;
+}
+
+.addRemove:hover {
+  background-color: #ececec;
 }
