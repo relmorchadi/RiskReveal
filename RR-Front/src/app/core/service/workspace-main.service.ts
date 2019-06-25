@@ -16,8 +16,13 @@ export class WorkspaceMainService {
   }
 
   addNewProject(project: any, workspaceId, uwYear): Observable<any> {
-     return this.http.post(`${this.api}`, {workspaceId, uwYear, project});
+      return this.http.post(`${this.api}`, {workspaceId, uwYear, project});
      // return of({ workspaceId, uwYear, projectId: project.projectName, name: project.projectName, ...project});
+  }
+
+  deleteProject(project: any, workspaceId, uwYear): Observable<any> {
+     return this.http.post(`${this.api}delete`, {workspaceId, uwYear, project});
+    // return of({ workspaceId, uwYear, ...project});
   }
 
 }

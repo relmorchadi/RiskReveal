@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -11,7 +11,7 @@ import {WorkspaceMainState} from '../../../core/store/states/workspace-main.stat
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {
   AddNewProject, AddNewProjectFail,
-  AddNewProjectSuccess,
+  AddNewProjectSuccess, DeleteProject, DeleteProjectFail, DeleteProjectSuccess,
   PatchWorkspace,
   SelectProjectAction
 } from '../../../core/store/actions/workspace-main.action';
@@ -48,7 +48,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
   receptionDate: any;
   dueDate: any;
-
+  contextMenuProject: any = null;
   description: any;
   newProjectForm: FormGroup;
   @Select(WorkspaceMainState.getData) data$;
@@ -58,6 +58,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   constructor(private _helper: HelperService, private route: ActivatedRoute,
               private nzDropdownService: NzDropdownService, private store: Store,
               private router: Router, private actions$: Actions, private messageService: MessageService,
+              private changeDetector: ChangeDetectorRef
   ) {
     console.log('init project');
     this.unSubscribe$ = new Subject<void>();
@@ -91,8 +92,14 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
       this.newProjectForm.reset();
       }
     );
-    this.actions$.pipe(ofActionSuccessful(AddNewProjectFail)).subscribe(() =>
-      this.messageService.add({severity: 'error', summary: ' Error please try again'}));
+    this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
+        this.messageService.add({severity: 'error', summary: ' Error please try again'});
+        this.changeDetector.detectChanges();
+      })
+
+    this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() =>
+        this.messageService.add({severity: 'info', summary: 'Project deleted successfully'})
+    );
   }
 
   handleOk(): void {
@@ -114,13 +121,18 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   selectProject(project) {
     this.store.dispatch(new SelectProjectAction(project));
   }
-
-  contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
+  delete(project) {
+    this.store.dispatch(new DeleteProject({
+      workspaceId: this.workspace.workSpaceId, uwYear: this.workspace.uwYear, project,
+    }));
+    this.dropdown.close();
+  }
+  contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {
+    this.contextMenuProject = project;
     this.dropdown = this.nzDropdownService.create($event, template);
   }
 
   close(e: NzMenuItemDirective): void {
-    console.log(e);
     this.dropdown.close();
   }
 

@@ -4,7 +4,7 @@ import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
   AddNewProject, AddNewProjectFail, AddNewProjectSuccess,
   AppendNewWorkspaceMainAction,
-  CloseWorkspaceMainAction,
+  CloseWorkspaceMainAction, DeleteProject, DeleteProjectFail, DeleteProjectSuccess,
   LoadWorkspacesAction,
   OpenNewWorkspacesAction,
   PatchWorkspace,
@@ -315,6 +315,26 @@ export class WorkspaceMainState implements NgxsOnInit {
      }
      ctx.dispatch(new AddNewProjectSuccess(result));
    });
+  }
+
+  @Action(DeleteProject)
+  deleteProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
+    return this.workspaceMainService.deleteProject(payload.project, payload.workspaceId, payload.uwYear)
+      .pipe(catchError(err => {
+        ctx.dispatch(new DeleteProjectFail({}));
+        return EMPTY; }))
+      .subscribe((result) => {
+        const state = ctx.getState();
+        if (result) {
+          const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
+          ctx.setState(
+            produce((draft) => {
+              draft.openedTabs.data[i].projects = _.filter(draft.openedTabs.data[i].projects, e => e.projectId !== result.projectId);
+              draft.openedWs.projects = _.filter(draft.openedWs.projects, e => e.projectId !== result.projectId);
+            }));
+        }
+        ctx.dispatch(new DeleteProjectSuccess(result));
+      });
   }
 
   private makePagination(recentlyOpenedWs) {

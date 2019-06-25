@@ -63,3 +63,18 @@ export class AddNewProjectFail {
   static readonly type = '[Workspace Main] Add new project fail';
   constructor(public payload?: any) {}
 }
+
+export class DeleteProject {
+  static readonly type = '[Workspace Main] delete project';
+  constructor(public payload?: any) {}
+}
+
+export class DeleteProjectSuccess {
+  static readonly type = '[Workspace Main] delete project success';
+  constructor(public payload?: any) {}
+}
+
+export class DeleteProjectFail {
+  static readonly type = '[Workspace Main] delete project fail';
+  constructor(public payload?: any) {}
+}

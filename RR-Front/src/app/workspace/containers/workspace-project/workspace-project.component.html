@@ -194,7 +194,7 @@
     </div>
   </div>
   <div class="card-holder-wrap">
-    <div *ngFor="let project of projects$ | async" (contextmenu)="contextMenu($event, template)" class="card-holder">
+    <div *ngFor="let project of projects$ | async" (contextmenu)="contextMenu($event, template, project)" class="card-holder">
       <div class="project-card mx-1" (click)="selectProject(project)"
            [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
         <div class="project-header">
@@ -299,13 +299,13 @@
 </div>
 
 <ng-template #template>
-  <ul nz-menu nzInDropDown (nzClick)="close($event)">
+  <ul nz-menu nzInDropDown>
     <li nz-menu-item class="contextMenu"><i class="icon-arrow-from-top"></i>Import</li>
     <li nz-menu-item class="contextMenu"><i class="icon-copy-landscape"></i>Clone</li>
     <li nz-menu-item class="contextMenu border-bottom"><i class="icon-sitemap"></i>Calibrate</li>
     <li nz-menu-item class="contextMenu border-bottom"><i class="icon-export"></i>Publish To Pricing</li>
     <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-trash-alt"></i>Delete</li>
+    <li nz-menu-item class="contextMenu border-bottom" (click)="delete(contextMenuProject)"><i class="icon-trash-alt"></i>Delete</li>
     <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
   </ul>
 </ng-template>
