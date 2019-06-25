@@ -1,4 +1,4 @@
-.dropdown-default {
+.a-dropdown-small,.a-dropdown-label {
   .ant-select-selection.ant-select-selection--single {
     background-color: transparent;
     border: none;
@@ -33,6 +33,78 @@
   color: #0700CF;
 }
 
-.ant-select ul, .ant-select ol {
-  display: flex;
+.a-dropdown-label {
+  .ant-select-selection__rendered::after {
+    display: inline-block;
+    width: 0;
+    visibility: visible;
+    position: absolute;
+    pointer-events: none;
+    content: '';
+    font-size: 10px;
+    left: 0;
+    margin-top: -10px;
+    margin-left: -8px;
+    opacity: 0.5;
+  }
+
+  .ant-select-selection-selected-value {
+    padding-top: 4px;
+    font-size: 13px;
+    margin-left: -8px;
+  }
+
+  .ant-select-search--inline .ant-select-search__field {
+    height: auto;
+    margin-top: 8px;
+  }
+
+  .ant-select ul, .ant-select ol {
+    display: flex;
+  }
+}
+
+.a-datepicker-standard {
+  .ant-calendar-picker:after {
+    position: absolute;
+    pointer-events: none;
+    content: '';
+    font-size: 10px;
+    left: 0;
+    margin-top: -6px;
+    margin-left: 7px;
+    opacity: 0.7;
+  }
+
+  input.ant-calendar-picker-input.ant-input, input.ui-inputtext.ui-widget.ui-state-default.ui-corner-all {
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid #0700cf;
+    color: #0700cf;
+    background-color: #F4F6FC;
+    padding-top: 10px;
+    font-size: 13px;
+    margin-left: 1px;
+
+    &::-webkit-input-placeholder {
+      color: #0700CF;
+    }
+
+    &::-moz-placeholder {
+      color: #0700CF;
+    }
+
+    &:-ms-input-placeholder {
+      color: #0700CF;
+    }
+
+    &:-moz-placeholder {
+      color: #0700CF;
+    }
+  }
+
+  .ant-calendar-picker-icon {
+    color: #0700cf;
+  }
+
 }

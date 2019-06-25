@@ -12,7 +12,7 @@
         <nz-select
           nzShowSearch
           nzAllowClear
-          class="dropdown-default"
+          class="a-dropdown-small"
           style="width: 200px; margin-bottom: 5px;"
           nzPlaceHolder="Select Workspace"
           (ngModelChange)="getWorkspaceData($event)"
@@ -121,7 +121,7 @@
 
                        nzShowSearch
                        nzAllowClear
-                       class="dropdown-default"
+                       class="a-dropdown-small"
                        nzPlaceHolder="Baseline"
                        [(ngModel)]="defaultImport" style="width: 140px;"
             >
@@ -195,7 +195,7 @@
 
 
     <div class="export col-md-1">
-      <button class="button-outlined">
+      <button class="a-buttons-outlined">
         EXPORT
       </button>
     </div>
@@ -266,8 +266,8 @@
             </tr>
             <tr>
               <th><i style="font-size: 14px; margin-right: 1px;" [ngStyle]="{'cursor' : switchValue? '' : 'pointer'
-, 'color' : switchValue? '' : 'blue'}" class="icon-plus-circle"></i> <input class="input-default" style="width: 80%" type="text" name="new-field"></th>
-            <th><input class="input-default" style="width: 80%" type="text" name="new-field"></th>
+, 'color' : switchValue? '' : 'blue'}" class="icon-plus-circle"></i> <input class="a-textfield-mini" style="width: 80%" type="text" name="new-field"></th>
+            <th><input class="a-textfield-mini" style="width: 80%" type="text" name="new-field"></th>
             </tr>
             </tbody>
           </table>
@@ -346,15 +346,15 @@
                   </ng-container>
                 </tr>
                 <tr>
-                  <th><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
+                  <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text"
                                                                    name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text"
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text"
                                                                    name="new-field"></th>
                   <ng-container *ngFor="let th of listOfSelectedValues">
-                  <th><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="input-default" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
                   </ng-container></tr>
                 </tbody>
               </table>

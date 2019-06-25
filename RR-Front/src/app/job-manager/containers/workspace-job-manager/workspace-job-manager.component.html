@@ -10,8 +10,8 @@
     <p-contextMenu #cm [model]="changeContext()"></p-contextMenu>
     <div class="app-title-manager">
       <span style="flex: 1">JOB Manager 1-50 of 348 results</span>
-      <label class="label-wrapper">User :</label>
-      <nz-select (ngModelChange)="filterByUser($event)" class="dropdown-default float-right mt-2" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
+<!--      <label class="label-wrapper">User :</label>-->
+      <nz-select (ngModelChange)="filterByUser($event)" class="a-dropdown-small user-label float-right mt-2" style="width: 140px;" nzShowSearch [(ngModel)]="Users">
         <nz-option nzLabel="All Users" nzValue="all"></nz-option>
         <nz-option nzLabel="Amina Cheref" nzValue="Amina Cheref"></nz-option>
         <nz-option nzLabel="Rim Benabbes" nzValue="Rim Benabbes"></nz-option>
@@ -32,7 +32,7 @@
     >
       <ng-template pTemplate="colgroup" let-columns>
         <colgroup>
-          <col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}" [ngClass]="{'bordered-col': i==1}">
+          <col *ngFor="let col of columns; let i=index" [ngStyle]="{'width': col?.width}">
         </colgroup>
       </ng-template>
       <ng-template pTemplate="header" let-columns>

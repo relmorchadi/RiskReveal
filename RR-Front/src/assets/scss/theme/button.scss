@@ -1,4 +1,4 @@
-.button-standard {
+.a-buttons-contained {
   background-color: #0700CF;
   color: #FFFFFF;
   font-family: Rubik;
@@ -30,7 +30,7 @@
   }
 }
 
-.button-disabled {
+.a-buttons-contained-disabled {
   background-color: rgba(0, 0, 0, 0.87);
   color: rgba(0, 0, 0, 0.38);
   font-family: Rubik;
@@ -47,7 +47,7 @@
   text-transform: uppercase;
 }
 
-.button-outlined {
+.a-buttons-outlined {
   border: 1px solid #0700CF;
   border-radius: 18px;
   background-color: rgba(98, 2, 238, 0);
@@ -78,7 +78,7 @@
   }
 }
 
-.button-no-outline {
+.a-button-text, .a-button-text-warning, .a-button-text-cancel {
   border: none;
   background-color: #FFFFFF;
   color: #0700CF;
@@ -92,9 +92,11 @@
   background-position: center;
   transition: background 1s;
   text-transform: uppercase;
+  border-radius: 20px;
 
   &:hover {
-    background: #FFFFFF radial-gradient(circle, transparent 1%, #FFFFFF 1%) center/15000%;
+    background: #EBEBF8 radial-gradient(circle, transparent 1%, #EBEBF8 1%) center/15000%;
+    border-radius: 20px;
   }
 
   &:active {
@@ -107,6 +109,14 @@
     outline: 0 !important;
   }
 
+}
+
+.a-button-text-cancel {
+  color: #A8A8A8;
+}
+
+.a-button-text-warning {
+  color: #D0021B;
 }
 
 .button-outlined-disabled {

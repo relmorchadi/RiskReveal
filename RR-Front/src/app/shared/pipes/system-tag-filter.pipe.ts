@@ -28,13 +28,29 @@ export class SystemTagFilterPipe implements PipeTransform {
 
     const systemTag= args[0];
 
-    return systemTag.length > 0 ? _.map(data, plt => plt.visible ?
-      (_.some(systemTag, (systemTag) => {
-        const key = _.keys(systemTag)[0];
-        return plt[this.reverseSystemTagsMapping.grouped[systemTag[key]]] === key
-      }) ? ({...plt, tagFilterActive: true}): ({...plt, tagFilterActive: false}))
-      : ({...plt, tagFilterActive: false})
-    ) : _.map(data, plt => ({...plt, tagFilterActive: false}));
+    const filterKeys= _.keys(systemTag);
+
+    let dt= [];
+
+    if(filterKeys.length > 0 ) {
+      dt = _.map(data, plt => plt.visible ?
+        (
+          _.every(systemTag, (tags, section) => {
+            const column= this.reverseSystemTagsMapping.grouped[section];
+            return _.some(tags, tag => plt[column] == tag);
+          })
+            ?
+            ({...plt, tagFilterActive: true})
+            :
+            ({...plt, tagFilterActive: false})
+        )
+          :
+        ({...plt, tagFilterActive: false})
+      )
+    } else {
+      dt = _.map(data, plt => ({...plt, tagFilterActive: false}));
+    }
+    return dt;
   }
 
 }

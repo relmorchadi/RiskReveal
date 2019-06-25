@@ -108,6 +108,10 @@
       .ui-table-tbody {
         tr {
           background-color: #fff !important;
+
+          &:hover {
+            background-color: #E9E9E9;
+          }
         }
 
         td {
@@ -167,7 +171,7 @@
         }
 
         tr.selected_contract_item {
-          background-color: #E9E9E9 !important;
+
         }
       }
 

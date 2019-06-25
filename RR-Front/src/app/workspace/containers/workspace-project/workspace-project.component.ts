@@ -10,8 +10,8 @@ import {WorkspaceMainState} from '../../../core/store/states/workspace-main.stat
 
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {PatchWorkspace, SelectProjectAction} from '../../../core/store/actions/workspace-main.action';
-import * as moment from 'moment'
-import {takeUntil} from "rxjs/operators";
+import * as moment from 'moment';
+import {takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace-project',
@@ -20,7 +20,7 @@ import {takeUntil} from "rxjs/operators";
 })
 export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
-  unSubscribe$:Subject<void>;
+  unSubscribe$: Subject<void>;
   leftNavbarIsCollapsed = false;
   collapseWorkspaceDetail = true;
   selectedPrStatus = '1';
@@ -30,6 +30,18 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   workspace: any;
   index: any;
   isVisible = false;
+
+  newProject = false;
+  existingProject = false;
+  mgaProject = false;
+  searchWorkspace = false;
+
+  selectedWs: any;
+
+  receptionDate: any;
+  dueDate: any;
+
+  description: any;
 
   @Select(WorkspaceMainState.getData) data$;
   @Select(WorkspaceMainState.getProjects) projects$;
@@ -66,6 +78,14 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
   handleCancel(): void {
     this.isVisible = false;
+    this.resetToMain();
+  }
+
+  resetToMain() {
+    this.newProject = false;
+    this.existingProject = false;
+    this.mgaProject = false;
+    this.searchWorkspace = false;
   }
 
   selectProject(project) {
@@ -109,6 +129,10 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unSubscribe$.next();
     this.unSubscribe$.complete();
+  }
+
+  onChangeDate(event) {
+
   }
 
 

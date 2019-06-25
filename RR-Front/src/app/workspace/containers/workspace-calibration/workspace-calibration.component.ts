@@ -561,7 +561,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
           if (v.selected) d.push(v.userTags);
         })
 
-        //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+        // this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
         this.addModalSelect = _.intersectionBy(...d, 'tagId');
 
@@ -1046,7 +1046,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
     } else {
       if (this.addTagModalIndex === 1) {
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+        this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
           plts: this.selectedListOfPlts,
           wsId: this.workspaceId,
           uwYear: this.uwy,
@@ -1056,7 +1056,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
 
       if (this.addTagModalIndex === 0) {
-        this.store$.dispatch(new fromWorkspaceStore.assignPltsToTag({
+        this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
           plts: this.fromPlts ? this.selectedListOfPlts : [],
           wsId: this.workspaceId,
           uwYear: this.uwy,

@@ -1,0 +1,126 @@
+.a-card-list-wrap {
+  background-color: #FFFFFF;
+  box-shadow: 1px 3px rgba(0, 0, 0, 0.15), -1px -1px 3px rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+
+  .a-card-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 22px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    height: 56px;
+
+    .a-card-item-right {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 22px;
+    }
+
+    .a-card-item-left {
+
+    }
+
+    ::ng-deep {
+      .ant-select ul, .ant-select ol {
+        width: 250px;
+      }
+    }
+  }
+}
+
+.a-info-card {
+  display: flex;
+  background-color: #FFFFFF;
+  box-shadow: 2px 1px 6px rgba(0, 0, 0, 0.15), -2px -1px 7px rgba(0, 0, 0, 0.15);
+
+  .project-header-icon {
+    width: 80px;
+
+    i {
+      color: white;
+      font-size: 2em;
+    }
+  }
+
+  .a-info-card-data {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 40px;
+
+    .a-info-data-left {
+      padding-left: 10px;
+      display: flex;
+      flex-direction: column;
+      font-family: Rubik;
+
+      .a-info-title {
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100%;
+        color: rgba(0, 0, 0, 0.87);
+        font-weight: bold;
+        font-size: 13px;
+        letter-spacing: 0.08px;
+        line-height: 21px;
+      }
+
+      .a-info-subtitle {
+        color: rgba(0, 0, 0, 0.5);
+        font-size: 11px;
+        letter-spacing: 0.08px;
+        line-height: 12px;
+      }
+    }
+
+    .a-info-data-right {
+      padding-right: 10px;
+    }
+  }
+}
+
+.a-form-control {
+  display: flex;
+  flex-direction: column;
+
+  .a-form-input-wrapper {
+    display: flex;
+    flex-direction: column;
+
+    .label-input {
+      position: absolute;
+      pointer-events: none;
+      font-size: 11px;
+      margin-top: -2px;
+      margin-left: 6px;
+      opacity: 0.7;
+      z-index: 1001;
+    }
+
+    .textarea-label {
+      font-size: 11px;
+      margin-left: 7px;
+      opacity: 0.7;
+      margin-bottom: 2px;
+    }
+
+    textarea.ant-input {
+      border: none;
+      border-radius: 0;
+    }
+  }
+
+  .a-form-date-control {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+}
+
+.a-control-buttons {
+  padding: 10px 15px;
+}

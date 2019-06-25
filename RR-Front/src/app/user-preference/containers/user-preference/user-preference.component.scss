@@ -101,25 +101,7 @@
   margin: 20px 0 15px 10px;
 }
 
-.settings-wrapper {
-  background-color: #FFFFFF;
-  box-shadow: 1px 3px rgba(0, 0, 0, 0.15), -1px -1px 3px rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
-
-  .user-config-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 22px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    height: 56px;
-
-    ::ng-deep {
-      .ant-select ul, .ant-select ol {
-        width: 250px;
-      }
-    }
-  }
+.a-card-list-wrap {
 
   .column-config {
     height: 165px;

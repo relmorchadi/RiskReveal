@@ -27,7 +27,7 @@
   }
 }
 
-.input-default {
+.a-textfield-mini, .a-textfield-standard {
   border: none;
   border-bottom: 1px solid #0700CF;
   background-color: #F4F6FC;
@@ -36,6 +36,7 @@
 
   &:hover {
     cursor: text;
+    background-color: #EDEFFA;
     border-bottom: 1px solid #666666;
   }
 
@@ -57,9 +58,24 @@
 
   &:focus {
     outline: 0;
-    border-bottom: 2px solid #666666;
+    border-bottom: 1px solid #666666;
   }
 
+}
+
+.a-textfield-standard {
+  padding: 10px;
+
+  &:hover {
+    cursor: text;
+    border-bottom: 1px solid #666666;
+  }
+}
+
+.a-textfield-label {
+  padding-top: 10px;
+  font-size: 13px;
+  margin-left: -4px;
 }
 
 .switch-input {
