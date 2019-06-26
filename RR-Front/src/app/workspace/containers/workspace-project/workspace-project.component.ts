@@ -80,7 +80,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
     this.newProjectForm = new FormGroup({
-      projectName: new FormControl(null, Validators.required),
+      name: new FormControl(null, Validators.required),
       description: new FormControl(null),
       createdBy: new FormControl(null, Validators.required),
       receptionDate: new FormControl(null, Validators.required),
@@ -175,8 +175,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
       this.store.dispatch(new AddNewProject({
         workspaceId: this.workspace.workSpaceId,
         uwYear: this.workspace.uwYear,
-        project: {...this.newProjectForm.value, receptionDate: this.formatDateTime(this.newProjectForm.value.receptionDate),
-          dueDate: this.formatDateTime(this.newProjectForm.value.dueDate)},
+        project: {...this.newProjectForm.value },
       }));
     }
   }
