@@ -28,5 +28,8 @@ export class RiskLinkModel {
   };
   analysis: any;
   portfolios: any;
+  results: any;
+  summaries: any;
   selectedEDMOrRDM: string;
+  activeAddBasket: boolean;
 }

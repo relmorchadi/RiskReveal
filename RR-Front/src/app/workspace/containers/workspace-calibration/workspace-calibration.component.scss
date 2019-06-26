@@ -140,8 +140,11 @@
 
 
 :host {
-  display: flex;
   width: 100%;
+  height: max-content;
+  display: flex;
+  min-height: 100vh;
+  background-color: #F4F6FC;
 
   ::ng-deep.plt-browser-wrapper {
     display: flex;
@@ -844,7 +847,7 @@
   .noMargin {
     background: #fff;
     display: flex;
-    margin-left: 8px;
+    margin-left: 0;
     margin-right: 8px;
 
     .ant-tabs-nav .ant-tabs-tab {
@@ -1293,6 +1296,10 @@
   background-color: #F3F3F3 !important;
 }
 
+.overallLMF {
+  background-color: #F3F3F3 !important;
+}
+
 .data-separator-right {
   border-left: 8px solid #F4F6FC !important;
   background-color: #F3F3F3 !important;
@@ -1311,7 +1318,7 @@
   border: solid 1px #cccccc;
   font-size: 10px;
   background: white;
-  width: 102px !important;
+  width: 109px !important;
   display: inline-block !important;
   color: black;
   font-weight: normal !important;
@@ -1423,3 +1430,4 @@ body .ui-table .ui-table-thead > tr > th {
 .addRemove:hover {
   color: #1890ff;
 }
+

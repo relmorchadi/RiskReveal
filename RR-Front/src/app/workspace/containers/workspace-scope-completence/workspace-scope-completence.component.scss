@@ -6,15 +6,8 @@
   background-color: #F4F6FC;
 }
 
-.app-wrapper {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin: 20px auto;
-
+.a-app-wrapper {
   .a-app-body {
-    width: 95%;
-    margin: 20px auto;
     background-color: #FFFFFF;
 
     .header-divider {
