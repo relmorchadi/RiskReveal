@@ -45,7 +45,7 @@ export class LeftMenuComponent implements OnInit {
 
   riskLinkImportNavigation() {
     let userPref = localStorage.getItem('importConfig');
-    if (userPref && ['RiskLink', 'FileBasedImport', 'CloneData'].includes(userPref)) {
+    if (userPref && ['RiskLink', 'FileBasedImport'].includes(userPref)) {
       this.routerNavigate(userPref);
     }
   }

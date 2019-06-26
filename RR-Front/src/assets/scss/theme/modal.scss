@@ -62,7 +62,7 @@ body {
       }
 
       .ui-dialog-content {
-        height: map_get($size, "height");
+        height: calc(#{map_get($size, "height")} - 100px);
         border: none;
         @include border-divider("top");
       }

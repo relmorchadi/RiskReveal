@@ -11,15 +11,13 @@
 
 .body-1 {
   color: rgba(0, 0, 0, 0.6);
-  font-family: Rubik;
   font-size: 16.26px;
   letter-spacing: 0.5px;
 }
 
 .body-2 {
-  color: rgba(0, 0, 0, 0.6);
-  font-family: Rubik;
-  font-size: 14.22px;
+  color: rgba(0, 0, 0, 1);
+  font-size: 16px;
   letter-spacing: 0.25px;
 }
 
@@ -35,6 +33,14 @@
   font-family: Rubik;
   font-size: 14.22px;
   font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+.subtitle-3 {
+  color: rgba(0, 0, 0,1);
+  font-family: Rubik;
+  font-size: 16px;
+  font-weight: bold;
   letter-spacing: 0.1px;
 }
 
@@ -73,5 +79,12 @@
   color: rgba(0, 0, 0, 0.87);
   font-family: Rubik;
   font-size: 11px;
+  letter-spacing: 0.08px;
+}
+
+.regular {
+  color: rgba(0, 0, 0, 0.87);
+  font-family: Rubik;
+  font-size: 20px;
   letter-spacing: 0.08px;
 }

@@ -1,9 +1,199 @@
 <app-left-menu></app-left-menu>
 <div class="app-wrapper">
-  <div class="app-header">
-    <span class="app-title">Scope of Completeness</span>
+  <div class="a-app-header">
+    <h4>Scope of Completeness</h4>
+    <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+            nz-button nzType="primary" nzSize="default" nzShape="circle">
+      <i style="color: #16617a;" nz-icon theme="outline">
+        <i class="icon-map-pin-alt"></i>
+      </i>
+    </button>
   </div>
-  <div class="app-body">
+  <div class="a-app-body">
+    <div class="header-divider">
+      <div class="divider-left">
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Sort By</span>
+              <span class="dropdown-item-selected">
+                Minimum Grain / RAP
+              </span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li nz-menu-item>Minimum Grain / RAP</li>
+          </ul>
+        </nz-dropdown>
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Filter By</span>
+              <span class="dropdown-item-selected">
+                All
+              </span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li nz-menu-item>All</li>
+          </ul>
+        </nz-dropdown>
+      </div>
+      <div class="divider-right">
+        <nz-dropdown [nzTrigger]="'click'">
+          <div class="dropdown-wrap" nz-dropdown>
+            <div class="dropdown-wrap-title">
+              <span class="dropdown-title">Accumulation Status</span>
+              <span class="dropdown-item-selected">
+                Published
+              </span>
+            </div>
+            <div class="dropdown-icon">
+              <i nz-icon type="down"></i>
+            </div>
+          </div>
+          <ul nz-menu>
+            <li nz-menu-item>Published</li>
+          </ul>
+        </nz-dropdown>
+        <i class="icon-menu_24px"></i>
+      </div>
+
+    </div>
+    <div class="table-wrap">
+      <p-table [value]="dataSource" scrollHeight="340px" dataKey="id">
+        <ng-template pTemplate="header" let-columns>
+          <tr>
+            <th style="width: 390px">
+              <div style="display: flex;">
+                <div style="width: 100px"></div>
+                <div style="width: 50px">ID</div>
+                <div style="width: 150px">Name</div>
+                <div style="width: 30px">P</div>
+                <div style="width: 60px">Peril</div>
+              </div>
+            </th>
+
+            <th *ngFor="let item of workspace.treatySections" style="width:120px; max-width: 120px" class="divided-col">
+              <div>{{item}}</div>
+              <div class="icon-holder">
+                <i class="icon-share-folder"></i>
+                <i class="icon-box"></i>
+                <div>
+                  <i class="icon-focus-add"></i>
+                  <i class="icon-check_24px"></i>
+                </div>
+              </div>
+            </th>
+            <th style="width: 130px" class="divided-col">Completion</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-expanded="expanded">
+          <tr [ngClass]="{'expanded-row': expanded}">
+            <th>
+              <div class="info-rp" (click)="expanded = !expanded" [pRowToggler]="rowData">
+                <i *ngIf="!rowData.expanded" class="icon-keyboard_arrow_down_24px"></i>
+                <i *ngIf="rowData.expanded" class="icon-keyboard_arrow_up_24px"></i>
+                <i class="icon-map-marker-alt"></i><span class="code-rp">{{rowData?.regionPerilCode}}</span><span style="font-weight: 400">{{rowData?.type}}</span>
+              </div>
+            </th>
+            <th *ngFor="let item of workspace.treatySections" class="divided-col">
+              <div class="icon-holder">
+                <ng-container>
+                  <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                  <i class="icon-box" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                  <ng-container>
+                    <i class="icon-focus-add" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                  </ng-container>
+                  <ng-container *ngIf="!check">
+                    <i class="icon-block_24px"></i>
+                  </ng-container>
+                </ng-container>
+              </div>
+            </th>
+            <th class="divided-col">
+
+            </th>
+          </tr>
+
+        </ng-template>
+        <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
+          <ng-container *ngFor="let grain of rowData.grain">
+            <tr [ngClass]="{'expanded-inner-row': grain.expanded}">
+              <th class="inner-line">
+                <div class="grain-info-wrapper" (click)="grain.expanded = !grain.expanded">
+                  <i *ngIf="!grain.expanded" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="grain.expanded" class="icon-keyboard_arrow_up_24px"></i>
+                  <i class="icon-map_24px"></i>
+                  <div class="grain-info">
+                    <span class="name-grain">{{grain?.grainName}}</span>
+                    <span class="desc-grain" style="font-weight: 400">{{grain?.grainDescriprion}}</span>
+                  </div>
+                </div>
+              </th>
+              <th class="divided-col" *ngFor="let item of workspace.treatySections">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                    <i class="icon-box" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                    <ng-container>
+                      <i class="icon-focus-add" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                    </ng-container>
+                    <ng-container *ngIf="!check">
+                      <i class="icon-block_24px"></i>
+                    </ng-container>
+                  </ng-container>
+                </div>
+              </th>
+              <th class="divided-col"> </th>
+            </tr>
+            <ng-container *ngFor="let plt of grain.plts">
+              <tr *ngIf="grain.expanded">
+
+                <th class="inner-line">
+                  <div class="grain-info-wrapper">
+                    <div class="td-wrapper-tags">
+                      <ng-container *ngFor="let tag of plt.userTags; let i= index;">
+                        <span class="tag-el" *ngIf="i < 2" [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
+                        <span class="tag-ellipsis" *ngIf="i == 2" style="background-color: #E0E0E0"><i
+                          class="icon-ellipsis-h"></i></span>
+                      </ng-container>
+                    </div>
+                    <span class="plt-info">{{plt.pltId | textLength}}</span>
+                    <span class="plt-info">{{plt.pltName}}</span>
+                    <label nz-checkbox></label>
+                    <div class="plt-info peril-indicator" [ngStyle]="{'background-color': perilZone(plt.peril).color}">{{perilZone(plt.peril).peril}}</div>
+                    <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
+                  </div>
+                </th>
+                <th class="divided-col" *ngFor="let item of workspace.treatySections">
+                  <div class="icon-holder">
+                    <ng-container>
+                      <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                      <i class="icon-box" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                      <ng-container>
+                        <i class="icon-focus-add" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
+                      </ng-container>
+                      <ng-container *ngIf="!check">
+                        <i class="icon-block_24px"></i>
+                      </ng-container>
+                    </ng-container>
+                  </div>
+                </th>
+                <th class="divided-col"> </th>
+              </tr>
+            </ng-container>
+          </ng-container>
+
+        </ng-template>
+      </p-table>
+    </div>
 
   </div>
 </div>
