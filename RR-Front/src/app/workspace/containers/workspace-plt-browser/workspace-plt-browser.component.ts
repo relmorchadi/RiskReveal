@@ -94,21 +94,21 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   ];
 
   pltColumns = [
-    {sortDir: 1,fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'checkbox'},
-    {sortDir: 1,fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags'},
-    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id'},
-    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '60', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'peril', header: 'Peril', width: '80', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
-    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '130', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '160', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletedBy',forDelete: true, header: 'Deleted By', width: '50', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletedAt',forDelete:true, header: 'Deleted On', width: '50', sorted: true, filtred: true, icon: null, type: 'date'},
-    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '90', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
-    {sortDir: 1,fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-dollar-alt', type: 'icon'},
-    {sortDir: 1,fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {sortDir: 1, fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'checkbox'},
+    {sortDir: 1, fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags'},
+    {sortDir: 1, fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id'},
+    {sortDir: 1, fields: 'pltName', header: 'PLT Name', width: '60', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'peril', header: 'Peril', width: '80', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center'},
+    {sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', width: '130', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', width: '160', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'deletedBy', forDelete: true, header: 'Deleted By', width: '50', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'deletedAt', forDelete:true, header: 'Deleted On', width: '50', sorted: true, filtred: true, icon: null, type: 'date'},
+    {sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', width: '90', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
+    {sortDir: 1, fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-dollar-alt', type: 'icon'},
+    {sortDir: 1, fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
   ];
 
   pltColumnsCache= this.pltColumns;
@@ -377,7 +377,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   contextMenuItemsCache= this.contextMenuItems;
 
   generateContextMenu(toRestore) {
-    const t = ['Delete','Manage Tags'];
+    const t = ['Delete', 'Manage Tags'];
     this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ( 'Restore' != e.label ) : !_.find(t, el => el == e.label))
   }
 
@@ -404,7 +404,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                 this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
                 const tag = _.toString(v[section]);
                 if (tag) {
-                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
+                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0};
                 }
               });
 
@@ -513,7 +513,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       this.route$.params.subscribe(({wsId, year}) => {
         this.workspaceId = wsId;
         this.uwy = year;
-        this.loading= true;
+        this.loading = true;
         this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
           params: {
             workspaceId: wsId, uwy: year
@@ -529,7 +529,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
         this.detectChanges();
       }),
       this.store$.select(WorkspaceMainState.getLeftNavbarIsCollapsed).subscribe(l => {
-        this.leftIsHidden=l;
+        this.leftIsHidden = l;
         this.detectChanges();
       })
     );
