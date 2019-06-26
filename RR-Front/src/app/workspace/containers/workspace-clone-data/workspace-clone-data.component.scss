@@ -101,4 +101,14 @@
     background-color: #fff;
   }
 
+  ::ng-deep {
+    .ant-radio-group {
+      display: flex;
+    }
+    .ant-radio-wrapper {
+      display: flex;
+      align-items: center;
+    }
+  }
+
 }
