@@ -642,7 +642,8 @@
                 </p-table>
               </div>
               <div class="import-button" (click)="displayImported()">
-                <button class="a-buttons-contained">ADD TO BASKET</button>
+                <button *ngIf="state.activeAddBasket" class="a-buttons-contained">ADD TO BASKET</button>
+                <button *ngIf="!state.activeAddBasket" class="a-buttons-contained-disabled" disabled>ADD TO BASKET</button>
               </div>
             </div>
           </div>

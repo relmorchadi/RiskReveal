@@ -48,8 +48,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   selectedListOfPlts: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
-  frozenWidth: any = '403px';
+  frozenWidth: any = '463px';
+  genericWidth: any = ['409px', '33px', '566px'];
   filterData: any;
+  shownDropDown: any;
   sortData;
   lastModifiedAdj;
   dataColumns = [];
@@ -267,7 +269,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
       extended: true,
-      frozen: false
+      frozen: true
     },
     {
       sortDir: 1,
@@ -632,7 +634,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   ngOnInit() {
     this.extend();
     this.leftNavbarIsCollapsed$.subscribe(data => {
-      console.log(data);
       this.leftNavbarIsCollapsed = data;
     });
 
@@ -1198,8 +1199,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.extended = !this.extended;
     if (this.extended) {
       this.frozenWidth = '0px'
+      this.genericWidth = ['1019px', '33px', '1176px'];
     } else {
-      this.frozenWidth = '403px'
+      this.frozenWidth = '463px'
+      this.genericWidth = ['409px', '33px', '566px'];
     }
     this.adjustExention();
     this.initDataColumns();
@@ -1483,7 +1486,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   adjustTabsetRight() {
-    console.log(this.collapsedTags, this.leftNavbarIsCollapsed)
     if (this.collapsedTags && this.leftNavbarIsCollapsed) {
       return 'calc(100vw - 50px + 80px - 174px)'
     } else if (this.collapsedTags && !this.leftNavbarIsCollapsed) {

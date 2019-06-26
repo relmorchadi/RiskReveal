@@ -23,6 +23,11 @@ export class SelectRiskLinkEDMAndRDMAction {
   constructor() {}
 }
 
+export class PatchAddToBasketStateAction {
+  static readonly type = '[Risk Link] Patch Add To Basket Button State';
+  constructor() {}
+}
+
 export class ToggleRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Toggle Risk Link EDM And RDM';
   constructor(public payload: any) {}
