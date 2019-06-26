@@ -90,6 +90,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
       this.isVisible = false;
       this.messageService.add({severity: 'info', summary: 'Project added successfully'});
       this.newProjectForm.reset();
+      this._helper.updateWorkspaceItems();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
@@ -97,8 +98,10 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
         this.changeDetector.detectChanges();
       })
 
-    this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() =>
-        this.messageService.add({severity: 'info', summary: 'Project deleted successfully'})
+    this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
+          this.messageService.add({severity: 'info', summary: 'Project deleted successfully'});
+          this._helper.updateWorkspaceItems();
+        }
     );
   }
 
