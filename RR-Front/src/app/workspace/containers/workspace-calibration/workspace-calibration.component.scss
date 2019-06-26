@@ -140,8 +140,11 @@
 
 
 :host {
-  display: flex;
   width: 100%;
+  height: max-content;
+  display: flex;
+  min-height: 100vh;
+  background-color: #F4F6FC;
 
   ::ng-deep.plt-browser-wrapper {
     display: flex;
@@ -844,7 +847,7 @@
   .noMargin {
     background: #fff;
     display: flex;
-    margin-left: 8px;
+    margin-left: 0;
     margin-right: 8px;
 
     .ant-tabs-nav .ant-tabs-tab {
