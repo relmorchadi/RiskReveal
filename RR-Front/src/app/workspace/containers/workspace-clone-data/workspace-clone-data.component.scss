@@ -41,15 +41,13 @@
     margin-top: 25px;
   }
 
-   .plts-detail-boxes {
-    margin: 25px;
-  }
-
   .plts-detail-boxes {
     width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 25px;
+    background-color: #e5e9fa;
   }
 
   .box {
