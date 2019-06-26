@@ -51,6 +51,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   frozenWidth: any = '463px';
   genericWidth: any = ['409px', '33px', '566px'];
   filterData: any;
+  shownDropDown: any;
   sortData;
   lastModifiedAdj;
   dataColumns = [];
@@ -630,7 +631,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   ngOnInit() {
     this.extend();
     this.leftNavbarIsCollapsed$.subscribe(data => {
-      console.log(data);
       this.leftNavbarIsCollapsed = data;
     });
 
@@ -1445,7 +1445,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   adjustTabsetRight() {
-    console.log(this.collapsedTags, this.leftNavbarIsCollapsed)
     if (this.collapsedTags && this.leftNavbarIsCollapsed) {
       return 'calc(100vw - 50px + 80px - 174px)'
     } else if (this.collapsedTags && !this.leftNavbarIsCollapsed) {
