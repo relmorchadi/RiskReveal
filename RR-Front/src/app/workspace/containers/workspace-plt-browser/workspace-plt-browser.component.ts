@@ -56,7 +56,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
         this.openPltInDrawer(this.selectedPlt.pltId)
       } },
     { label: 'Delete', command: (event) => {
-        this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}));
+        this.store$.dispatch(new fromWorkspaceStore.deletePlt({wsIdentifier: this.workspaceId+'-'+this.uwy,pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}));
       }
     },
     {
@@ -83,7 +83,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Restore',
       command: () => {
-        this.store$.dispatch(new fromWorkspaceStore.restorePlt({pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
+        this.store$.dispatch(new fromWorkspaceStore.restorePlt({wsIdentifier: this.workspaceId+'-'+this.uwy,pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
         this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
         this.generateContextMenu(this.showDeleted);
       }
@@ -91,7 +91,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   ];
 
   tagContextMenu = [
-    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagForMenu.tagId))},
+    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag({wsIdentifier: this.workspaceId+'-'+this.uwy, userTagId: this.tagForMenu.tagId }))},
     { label: 'Edit Tag', icon: 'pi pi-pencil', command: (event) => {
         this.editingTag= true;
         this.fromPlts = false;
@@ -698,7 +698,11 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   editTag() {
-    this.store$.dispatch(new fromWorkspaceStore.editTag(this.tagForMenu))
+    this.store$.dispatch(new fromWorkspaceStore.editTag({
+      tag: this.tagForMenu,
+      workspaceId: this.workspaceId,
+      uwy: this.uwy
+    }))
   }
 
 

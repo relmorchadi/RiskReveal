@@ -28,6 +28,7 @@ export class PltApi {
   }
 
   public editTag(params: any): Observable<any> {
+    console.log(params)
     return this.http.put(`${this.URL}/update-user-tag`,params)
   }
 
