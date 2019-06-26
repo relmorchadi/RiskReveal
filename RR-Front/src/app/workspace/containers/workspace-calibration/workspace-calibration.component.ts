@@ -48,7 +48,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   selectedListOfPlts: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
-  frozenWidth: any = '403px';
+  frozenWidth: any = '463px';
+  genericWidth: any = ['409px', '33px', '566px'];
   filterData: any;
   sortData;
   lastModifiedAdj;
@@ -267,7 +268,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
       extended: true,
-      frozen: false
+      frozen: true
     },
     {
       sortDir: 1,
@@ -1157,8 +1158,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.extended = !this.extended;
     if (this.extended) {
       this.frozenWidth = '0px'
+      this.genericWidth = ['1019px', '33px', '1176px'];
     } else {
-      this.frozenWidth = '403px'
+      this.frozenWidth = '463px'
+      this.genericWidth = ['409px', '33px', '566px'];
     }
     this.adjustExention();
     this.initDataColumns();
