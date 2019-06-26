@@ -385,7 +385,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   contextMenuItemsCache= this.contextMenuItems;
 
   generateContextMenu(toRestore) {
-    const t = ['Delete', 'Manage Tags', 'Clone To'];
+    const t = ['Delete','Manage Tags', 'Clone To'];
     this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ( 'Restore' != e.label ) : !_.find(t, el => el == e.label))
   }
 

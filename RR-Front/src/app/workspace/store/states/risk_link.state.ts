@@ -3,7 +3,7 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  LoadRiskLinkDataAction,
+  LoadRiskLinkDataAction, PatchAddToBasketStateAction,
   PatchRiskLinkAction,
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
@@ -59,7 +59,10 @@ const initiaState: RiskLinkModel = {
   },
   analysis: null,
   portfolios: null,
+  results: null,
+  summaries: null,
   selectedEDMOrRDM: null,
+  activeAddBasket: false
 };
 
 @State<RiskLinkModel>({
@@ -140,6 +143,22 @@ export class RiskLinkState implements NgxsOnInit {
     ctx.patchState({financialValidator: newValue});
   }
 
+  @Action(PatchAddToBasketStateAction)
+  patchAddToBasketState(ctx: StateContext<RiskLinkModel>) {
+    const state = ctx.getState();
+    const selectedPortfolio = _.filter(_.toArray(state.listEdmRdm.selectedListEDMAndRDM), dt => dt.selected)[0];
+    if (state.selectedEDMOrRDM === 'edm') {
+      ctx.patchState({
+        activeAddBasket: _.filter(_.toArray(state.portfolios[selectedPortfolio.id].data), dt => dt.selected).length > 0
+      });
+    } else {
+      ctx.patchState({
+        activeAddBasket: _.filter(_.toArray(state.analysis[selectedPortfolio.id].data), dt => dt.selected).length > 0
+      });
+    }
+
+  }
+
   @Action(ToggleRiskLinkEDMAndRDMAction)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
@@ -213,29 +232,25 @@ export class RiskLinkState implements NgxsOnInit {
   toggleRiskLinkPortfolio(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkPortfolioAction) {
     const state = ctx.getState();
     const {action, value, item} = payload;
-    console.log(action, value, item);
-    const portfolios = _.toArray(_.get(state.portfolios, `${item.edmId}.data`));
+    const selectedPortfolio = _.filter(_.toArray(state.listEdmRdm.selectedListEDMAndRDM), dt => dt.selected)[0];
+    const portfolios = _.toArray(state.portfolios[selectedPortfolio.id].data);
     let newData = {};
     if (action === 'selectOne') {
-      if (value) {
-        // array = array.filter(data => data.id !== item && data.selected === true);
-      } else {
-        // array = array.filter(data => data.id == item || data.selected === true);
-      }
       ctx.patchState({
         portfolios: {
           ...state.portfolios,
-          [item.edmId]: {
-            ...state.portfolios[item.edmId],
+          [selectedPortfolio.id]: {
+            ...state.portfolios[selectedPortfolio.id],
             data: {
-              ...state.portfolios[item.edmId].data,
+              ...state.portfolios[selectedPortfolio.id].data,
               [item.dataSourceId]: {
-                ...state.portfolios[item.edmId].data[item.dataSourceId],
+                ...state.portfolios[selectedPortfolio.id].data[item.dataSourceId],
                 selected: value
               }
             }
           },
-        }
+        }/*,
+        activeAddBasket: _.filter(_.toArray(state.portfolios[selectedPortfolio.id].data), dt => dt.selected).length > 0*/
       });
     } else {
       let selected: boolean;
@@ -252,8 +267,8 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.patchState({
         portfolios: {
           ...state.portfolios,
-          [item.edmId]: {
-            ...state.portfolios[item.edmId],
+          [selectedPortfolio.id]: {
+            ...state.portfolios[selectedPortfolio.id],
             data: newData
           }
         },
@@ -266,24 +281,19 @@ export class RiskLinkState implements NgxsOnInit {
   toggleRiskLinkAnalysis(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkAnalysisAction) {
     const state = ctx.getState();
     const {action, value, item} = payload;
-    const analysis = _.toArray(state.analysis.data);
+    const selectedAnalysis = _.filter(_.toArray(state.listEdmRdm.selectedListEDMAndRDM), dt => dt.selected)[0];
+    const analysis = _.toArray(state.analysis[selectedAnalysis.id].data);
     let newData = {};
-    const dataSelected = state.analysis;
     if (action === 'selectOne') {
-      if (value) {
-        // array = array.filter(data => data.id !== item && data.selected === true);
-      } else {
-        // array = array.filter(data => data.id == item || data.selected === true);
-      }
       ctx.patchState({
         analysis: {
           ...state.analysis,
-          [item.rdmId]: {
-            ...state.analysis[item.rdmId],
+          [selectedAnalysis.id]: {
+            ...state.analysis[selectedAnalysis.id],
             data: {
-              ...state.analysis[item.rdmId].data,
+              ...state.analysis[selectedAnalysis.id].data,
               [item.analysisId]: {
-                ...state.portfolios[item.edmId].data[item.analysisId],
+                ...state.analysis[selectedAnalysis.id].data[item.analysisId],
                 selected: value
               }
             }
@@ -305,8 +315,8 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.patchState({
         analysis: {
           ...state.analysis,
-          [item.rdmId]: {
-            ...state.analysis[item.rdmId],
+          [selectedAnalysis.id]: {
+            ...state.analysis[selectedAnalysis.id],
             data: newData
           }
         },
@@ -438,6 +448,7 @@ export class RiskLinkState implements NgxsOnInit {
     }
   }
 
+  /** ACTION ADDED EDM AND RDM */
   @Action(SelectRiskLinkEDMAndRDMAction)
   selectRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
@@ -464,6 +475,7 @@ export class RiskLinkState implements NgxsOnInit {
     });
   }
 
+  /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
   @Action(SearchRiskLinkEDMAndRDMAction)
   searchRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: SearchRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
@@ -499,6 +511,7 @@ export class RiskLinkState implements NgxsOnInit {
     );
   }
 
+  /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(LoadRiskLinkDataAction)
   loadRiskLinkData(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
