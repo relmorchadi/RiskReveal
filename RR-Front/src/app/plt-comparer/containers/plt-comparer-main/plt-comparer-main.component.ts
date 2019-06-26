@@ -679,7 +679,7 @@ export class PltComparerMainComponent implements OnInit {
       ]
     }
   ];
-  private form: FormGroup;
+  form: FormGroup;
 
 
   constructor(
