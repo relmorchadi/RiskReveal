@@ -25,9 +25,9 @@ import {
   saveAdjustmentApplication,
   saveAdjustmentInPlt
 } from "../../store/actions";
-import {first, map} from "rxjs/operators";
+import {first, map, switchMap} from 'rxjs/operators';
 import {CalibrationState, PltMainState} from "../../store/states";
-import {Observable} from "rxjs";
+import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import {Table} from "primeng/table";
 import * as fromWorkspaceStore from "../../store";
@@ -516,8 +516,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   selectAll: boolean;
   drawerIndex: any;
   @Select(PltMainState.getUserTags) userTags$;
-  @Select(PltMainState.getPlts) data$;
-  @Select(PltMainState.getDeletedPlts) deletedPlts$;
+  data$;
+  deletedPlts$;
   deletedPlts: any;
   loading: boolean;
   selectedUserTags: any;
@@ -592,6 +592,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
     }
   ];
+  listOfDeletedPltsData: any;
+  listOfDeletedPltsCache: any;
+  selectedListOfDeletedPlts: any;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -641,53 +644,73 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       this.adjsArray = _.merge([], state.adjustments);
     });
     this.Subscriptions.push(
-      this.deletedPlts$.subscribe(d => {
-        this.deletedPlts = d;
-        this.detectChanges();
-
-      }),
-      this.data$.subscribe(data => {
+      this.route$.params.pipe(
+        switchMap(({wsId, year}) => {
+          this.workspaceId = wsId;
+          this.uwy = year;
+          this.loading= true;
+          this.data$= this.store$.select(PltMainState.getPlts(this.workspaceId+'-'+this.uwy));
+          this.deletedPlts$= this.store$.select(PltMainState.getDeletedPlts(this.workspaceId+'-'+this.uwy));
+          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+            params: {
+              workspaceId: wsId, uwy: year
+            }}));
+          return combineLatest(
+            this.data$,
+            this.deletedPlts$
+          )
+        })
+      ).subscribe( ([data, deletedData]: any) => {
         let d1 = [];
+        let dd1 = [];
         let d2 = [];
+        let dd2 = [];
         this.loading = false;
         this.systemTagsCount = {};
 
-        if (_.keys(this.systemTagsCount).length == 0) {
+        if (data) {
+          if (_.keys(this.systemTagsCount).length == 0) {
+            _.forEach(data, (v, k) => {
+              //Init Tags Counters
+
+              //Grouped Sys Tags
+              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
+                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+                const tag = _.toString(v[section]);
+                if (tag) {
+                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
+                }
+              });
+
+              //NONE grouped Sys Tags
+              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+                this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
+                this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
+              })
+
+            })
+          }
+
           _.forEach(data, (v, k) => {
-            //Init Tags Counters
+            d1.push({...v, pltId: k});
+            d2.push(k);
 
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              const tag = _.toString(v[section]);
-              if (tag) {
-                this.systemTagsCount[sectionName][tag] = {selected: false, count: 0}
-              }
-            })
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
-              this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0};
-            })
-
-          })
-        }
-
-        _.forEach(data, (v, k) => {
-          d1.push({...v, pltId: k});
-          d2.push(k);
-
-          if (v.visible) {
+            /*if (v.visible) {*/
             //Grouped Sys Tags
             _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
               const tag = _.toString(v[section]);
               if (tag) {
                 if (this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0) {
+                  const {
+                    count,
+                    max
+                  } =this.systemTagsCount[sectionName][tag];
+
                   this.systemTagsCount[sectionName][tag] = {
                     ...this.systemTagsCount[sectionName][tag],
-                    count: this.systemTagsCount[sectionName][tag].count + 1
+                    count: v.visible ? count + 1 : count,
+                    max: max + 1
                   };
                 }
               }
@@ -697,48 +720,66 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
               const tag = v[section];
               if (this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0) {
+                const {
+                  max,
+                  count
+                } = this.systemTagsCount[sectionName][section];
                 this.systemTagsCount[sectionName][section] = {
                   ...this.systemTagsCount[sectionName][section],
-                  count: this.systemTagsCount[sectionName][section].count + 1
+                  count: v.visible ? count + 1 : count,
+                  max: max + 1
                 };
               }
               if (this.systemTagsCount[sectionName]['non-' + section] || this.systemTagsCount[sectionName]['non-' + section].count == 0) {
+                const {
+                  count,
+                  max
+                } = this.systemTagsCount[sectionName]['non-' + section];
                 this.systemTagsCount[sectionName]['non-' + section] = {
                   ...this.systemTagsCount[sectionName]['non-' + section],
-                  count: this.systemTagsCount[sectionName]['non-' + section].count + 1
+                  count: v.visible ? count + 1 : count,
+                  max: max + 1
                 };
               }
             })
-          }
+            /*}*/
 
-        });
-        this.listOfPlts = d2;
-        this.listOfPltsData = this.listOfPltsCache = d1;
-        this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+          });
+
+          this.listOfPlts = d2;
+          this.listOfPltsData = this.listOfPltsCache = d1;
+          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+          _.forEach(data, (v, k) => {
+            if (v.opened) {
+              this.sumnaryPltDetailsPltId = k;
+            }
+          });
+        }
+
+        if (deletedData) {
+          _.forEach(deletedData, (v, k) => {
+            dd1.push({...v, pltId: k});
+            dd2.push(k);
+          });
+
+          this.listOfDeletedPlts = dd2;
+          this.listOfDeletedPltsData = this.listOfDeletedPltsCache = dd1;
+          this.selectedListOfDeletedPlts = _.filter(dd2, k => deletedData[k].selected);
+        }
+
+        this.selectAll =
+          !this.showDeleted
+            ?
+            (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
+            :
+            (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
+
+        this.someItemsAreSelected =
+          !this.showDeleted ?
+            this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
+            :
+            this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
-      }),
-      this.data$.subscribe(data => {
-        this.selectAll = (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0;
-        this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
-        this.detectChanges();
-      }),
-      this.data$.subscribe(data => {
-        _.forEach(data, (v, k) => {
-          if (v.opened) {
-            this.sumnaryPltDetailsPltId = k;
-          }
-        });
-        this.detectChanges();
-      }),
-      this.route$.params.subscribe(({wsId, year}) => {
-        this.workspaceId = wsId;
-        this.uwy = year;
-        this.loading = true;
-        this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
-          params: {
-            workspaceId: wsId, uwy: year
-          }
-        }));
       }),
       this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
