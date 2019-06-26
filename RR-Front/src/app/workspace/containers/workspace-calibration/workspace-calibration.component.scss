@@ -139,7 +139,6 @@
 }
 
 
-
 :host {
   display: flex;
   width: 100%;
@@ -847,6 +846,7 @@
     display: flex;
     margin-left: 8px;
     margin-right: 8px;
+
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
     }
@@ -988,12 +988,12 @@
       border-radius: 25px;
       font-size: 16px;
     }
+
     .ui-table-thead {
 
       .checkBoxHead div {
         display: flex;
         align-items: center;
-        justify-content: space-around;
       }
 
       th {
@@ -1235,6 +1235,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   ::ng-deep {
     .ant-checkbox-inner {
       background-color: white;
@@ -1251,8 +1252,6 @@
 
   }
 }
-
-
 
 
 .border-dragable {
@@ -1294,6 +1293,11 @@
   background-color: #F3F3F3 !important;
 }
 
+.data-separator-right {
+  border-left: 8px solid #F4F6FC !important;
+  background-color: #F3F3F3 !important;
+}
+
 .data-default {
   background-color: #F3F3F3 !important;
 }
@@ -1308,9 +1312,16 @@
   font-size: 10px;
   background: white;
   width: 102px !important;
-  height: 80% !important;
-  display: inline-block;
+  display: inline-block !important;
   color: black;
+  font-weight: normal !important;
+}
+
+/*.adjustDiv:hover {
+  border: solid 1px #028004;
+}*/
+.adjustDiv:focus {
+  border: solid 1px #028004;
 }
 
 .templateInput {
@@ -1319,7 +1330,7 @@
   box-shadow: none;
   border: 0;
   width: 82%;
-  height: 50%;
+  height: 49%;
   bottom: 3px;
   margin-left: 2px;
 }
@@ -1398,4 +1409,17 @@
 
 body .ui-table .ui-table-thead > tr > th {
   padding: 0 !important;
+}
+
+.addRemove {
+  font-size: 12px;
+  font-weight: bold;
+  color: #0700e4;
+  padding-top: 17px;
+  padding-left: 4px;
+  cursor: pointer;
+}
+
+.addRemove:hover {
+  color: #1890ff;
 }
