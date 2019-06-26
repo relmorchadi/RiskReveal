@@ -139,7 +139,6 @@
 }
 
 
-
 :host {
   display: flex;
   width: 100%;
@@ -168,7 +167,7 @@
   }
 
   ::ng-deep .PLTs-content {
-    padding: 0px 0px 0 6px !important;
+    padding: 0px 0px 4px 4px !important;
     position: relative;
     flex: 1 1 auto;
   }
@@ -295,7 +294,6 @@
   }
 
   .tabset-right {
-    background: #fff;
     display: flex;
     flex-flow: column;
     align-items: stretch;
@@ -848,6 +846,7 @@
     display: flex;
     margin-left: 8px;
     margin-right: 8px;
+
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
     }
@@ -935,10 +934,15 @@
 :host .PLTs-content {
 
   border-bottom: 3px solid #F4F6FC;
+  background: #fff;
 
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
       background-color: #efefef;
+    }
+
+    .ui-table-frozen-view {
+      min-height: 610px;
     }
 
     thead {
@@ -984,16 +988,15 @@
       border-radius: 25px;
       font-size: 16px;
     }
+
     .ui-table-thead {
 
       .checkBoxHead div {
         display: flex;
         align-items: center;
-        justify-content: space-around;
       }
 
       th {
-        padding: 15px 2px 5px 2px !important;
         font-size: 12px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
@@ -1006,7 +1009,7 @@
 
         .filter-input {
           width: 100%;
-          background-color: #F5F5F5;
+          background-color: #f9f9f9;
 
           i {
             width: 10%;
@@ -1016,11 +1019,10 @@
 
           input {
             padding: 0px 1px 0px 1px;
-            width: 69%;
-            background-color: #F5F5F5;
+            width: 63%;
+            background-color: #f9f9f9;
             border: none;
             height: 25px;
-            background: #f5f5f5;
 
             &:focus {
               outline: 0;
@@ -1191,7 +1193,6 @@
 
     .Tags-content {
       max-height: 80vh;
-      height: 80vh;
     }
 
     .tag-section {
@@ -1234,6 +1235,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+
   ::ng-deep {
     .ant-checkbox-inner {
       background-color: white;
@@ -1250,8 +1252,6 @@
 
   }
 }
-
-
 
 
 .border-dragable {
@@ -1288,15 +1288,40 @@
   border-left: 8px solid #F4F6FC !important;
 }
 
+.data-separator-left {
+  border-left: 8px solid #F4F6FC !important;
+  background-color: #F3F3F3 !important;
+}
+
+.data-separator-right {
+  border-left: 8px solid #F4F6FC !important;
+  background-color: #F3F3F3 !important;
+}
+
+.data-default {
+  background-color: #F3F3F3 !important;
+}
+
+.data-inuring {
+  background-color: #FAEBD7 !important;
+}
+
 .adjustDiv {
   margin: 4px !important;
   border: solid 1px #cccccc;
   font-size: 10px;
   background: white;
   width: 102px !important;
-  height: 80% !important;
-  display: inline-block;
+  display: inline-block !important;
   color: black;
+  font-weight: normal !important;
+}
+
+/*.adjustDiv:hover {
+  border: solid 1px #028004;
+}*/
+.adjustDiv:focus {
+  border: solid 1px #028004;
 }
 
 .templateInput {
@@ -1305,7 +1330,7 @@
   box-shadow: none;
   border: 0;
   width: 82%;
-  height: 50%;
+  height: 49%;
   bottom: 3px;
   margin-left: 2px;
 }
@@ -1382,3 +1407,19 @@
   white-space: nowrap;
 }
 
+body .ui-table .ui-table-thead > tr > th {
+  padding: 0 !important;
+}
+
+.addRemove {
+  font-size: 12px;
+  font-weight: bold;
+  color: #0700e4;
+  padding-top: 17px;
+  padding-left: 4px;
+  cursor: pointer;
+}
+
+.addRemove:hover {
+  color: #1890ff;
+}
