@@ -21,6 +21,7 @@ import {
   ToggleRiskLinkEDMAndRDMAction
 } from '../../store/actions';
 import { DataTables } from './data';
+import {DateRangePickerComponent} from "ng-zorro-antd/date-picker/date-range-picker.component";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -60,6 +61,9 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   scrollableColsResult: any;
   frozenColsResult: any;
+
+  selectedEDM: any;
+  scrollableColslinking: any;
 
   summaryInfo: any = [
     {
@@ -178,6 +182,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.frozenColsSummary = DataTables.frozenColsSummary;
     this.scrollableColsResult = DataTables.scrollableColsResults;
     this.frozenColsResult = DataTables.frozenColsResults;
+    this.scrollableColslinking = DataTables.scrollableColsLinking;
   }
 
   ngOnDestroy() {

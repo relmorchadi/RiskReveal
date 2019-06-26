@@ -83,11 +83,22 @@ const frozenColsResults = [
   {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false},
 ];
 
+const scrollableColsLinking = [
+  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false},
+  {field: 'icon', header: '', width: '25px', type: 'iconIndicator', sorted: false, filtered: false, highlight: false},
+  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
+  {field: 'name', header: 'Name', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'engineVersion', header: 'Eng Version', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'iconManager', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
+];
+
 export const DataTables = {
   scrollableColsAnalysis,
   scrollableColsPortfolio,
   scrollableColsSummary,
   scrollableColsResults,
+  scrollableColsLinking,
   frozenColsAnalysis,
   frozenColsPortfolio,
   frozenColsSummary,
