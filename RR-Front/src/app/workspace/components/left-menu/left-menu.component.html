@@ -40,7 +40,6 @@
     <ul>
       <li (click)="routerNavigate('RiskLink')" nz-menu-item>RiskLink Import</li>
       <li (click)="routerNavigate('FileBasedImport')" nz-menu-item>File-Based Import</li>
-      <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>
     </ul>
   </li>
   <hr class="col-xs-12">
@@ -79,6 +78,12 @@
           <span title>
             <i nz-icon><i class="icon-focus-add"></i></i>
             <span>Accumulation</span>
+          </span>
+  </li>
+  <li (click)="routerNavigate('CloneData')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="state.leftNavbarIsCollapsed ? 'Clone Data' : ''">
+          <span title>
+            <i nz-icon><i class="icon-focus-add"></i></i>
+            <span>Clone Data</span>
           </span>
   </li>
 </ul>
