@@ -79,17 +79,11 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
         this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
-    this.newProjectForm = new FormGroup({
-      name: new FormControl(null, Validators.required),
-      description: new FormControl(null),
-      createdBy: new FormControl(null, Validators.required),
-      receptionDate: new FormControl(null, Validators.required),
-      dueDate: new FormControl(null, Validators.required),
-    });
+    this.initNewProjectForm();
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).subscribe(() => {
       this.isVisible = false;
       this.messageService.add({severity: 'info', summary: 'Project added successfully'});
-      this.newProjectForm.reset();
+      this.initNewProjectForm();
       this._helper.updateWorkspaceItems();
       }
     );
@@ -184,12 +178,22 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   }
 
   cancelCreateProject() {
-    this.newProjectForm.reset();
-    this.isVisible = false;
+    this.initNewProjectForm();
+    this.newProject = false;
   }
 
   formatDateTime(dateTime: any) {
     moment(dateTime).format('x');
+  }
+
+  initNewProjectForm() {
+    this.newProjectForm = new FormGroup({
+      name: new FormControl(null, Validators.required),
+      description: new FormControl(null),
+      createdBy: new FormControl('Nathalie Dulac', Validators.required),
+      receptionDate: new FormControl(new Date(), Validators.required),
+      dueDate: new FormControl(new Date(), Validators.required),
+    });
   }
 
 }
