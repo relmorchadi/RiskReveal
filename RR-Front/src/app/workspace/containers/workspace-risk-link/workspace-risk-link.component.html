@@ -212,11 +212,11 @@
                   <span>Selected EDMs & RDMs</span>
                 </div>
               </div>
-              <div class="list-items" *ngIf="displayListRDMEDM">
+              <div class="list-items" *ngIf="displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.edm).length > 0">
                 <span class="list-items-title">EDM</span>
                 <ul>
-                  <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
-                    <li *ngIf="itemsE.type === 'edm'" class="poover-menu-item"
+                  <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM.edm)">
+                    <li class="poover-menu-item"
                         [ngClass]="{'poover-menu-item-active': itemsE.selected}">
                       <span (click)="toggleItemsListRDM(itemsE)" class="logo" style="background: #0700CF;">E</span>
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
@@ -234,11 +234,11 @@
                   </ng-container>
                 </ul>
               </div>
-              <div class="list-items" *ngIf="displayListRDMEDM">
+              <div class="list-items" *ngIf="displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.rdm).length > 0">
                 <span class="list-items-title">RDM</span>
                 <ul>
-                  <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
-                    <li *ngIf="itemsR.type === 'rdm'" class="poover-menu-item"
+                  <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM.rdm)">
+                    <li class="poover-menu-item"
                         [ngClass]="{'poover-menu-item-active': itemsR.selected}">
                       <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #03DAC4">R</span>
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
@@ -301,36 +301,23 @@
                       <div class="modal-linking-head">
                         <div class="modal-l-h-body-fill">
                           <span class="subtitle-2">Data Sources</span>
-                          <nz-radio-group class="default-radio radio-control" [(ngModel)]="selectedEDM">
-                            <label class="popover-menu-item" *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM)" nz-radio [nzValue]="itemsE">
+                          <nz-radio-group class="default-radio radio-control" [ngModel]="selectedEDM">
+                            <label class="popover-menu-item" [ngClass]="{'popover-menu-item-active': itemsE.selected}"
+                                   (click)="toggleForLinkingEDM(itemsE)"
+                                   *ngFor="let itemsE of dataList(state.linking.edm)" nz-radio [nzValue]="itemsE">
                               <span class="logo" style="background: #0700CF;">E</span>
                               <span [title]="itemsE.name" class="text">{{itemsE?.name}}</span>
                             </label>
                           </nz-radio-group>
                         </div>
                         <div class="modal-l-h-body-right">
-                          <!--
-                                                    <ul>
-                                                      <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
-                                                        <li *ngIf="itemsE.type === 'edm'" class="popover-menu-item"
-                                                            [ngClass]="{'popover-menu-item-active': itemsE.selected}">
-                                                          <label nz-checkbox [(ngModel)]="itemsE.selected">
-                                                            <span (click)="toggleItemsListRDM(itemsE)" class="logo" style="background: #0700CF;">E</span>
-                                                            <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
-                                                                  class="text">{{itemsE?.name}}</span>
-                                                          </label>
-                                                        </li>
-                                                      </ng-container>
-                                                    </ul>
-                          -->
                           <ul>
-                            <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM)">
-                              <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item"
+                            <ng-container *ngFor="let itemsR of dataList(state.linking.rdm)">
+                              <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item" (click)="toggleForLinkingRDM(itemsR)"
                                   [ngClass]="{'popover-menu-item-active': itemsR.selected}">
-                                <label nz-checkbox [(ngModel)]="itemsR.selected">
-                                  <span (click)="toggleItemsListRDM(itemsR)" class="logo" style="background: #03DAC4">R</span>
-                                  <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
-                                        class="text">{{itemsR?.name}}</span>
+                                <label nz-checkbox [ngModel]="itemsR.selected">
+                                  <span class="logo" style="background: #03DAC4">R</span>
+                                  <span [title]="itemsR?.name" class="text">{{itemsR?.name}}</span>
                                 </label>
                               </li>
                             </ng-container>
@@ -488,7 +475,7 @@
                         <div class="modal-linking-head">
                           <div class="modal-l-h-body-fill summary-info">
                             <span class="subtitle-2">EDM Portofolio</span>
-                            <p-table #lt [columns]="scrollableColslinking" [value]="" [scrollable]="true" scrollHeight="340px" >
+                            <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingData()" [scrollable]="true" scrollHeight="340px" >
                               <ng-template pTemplate="colgroup" let-columns>
                                 <colgroup>
                                   <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">

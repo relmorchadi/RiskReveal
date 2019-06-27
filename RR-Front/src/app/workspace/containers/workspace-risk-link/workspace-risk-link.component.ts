@@ -8,7 +8,7 @@ import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
   PatchAddToBasketStateAction,
-  SearchRiskLinkEDMAndRDMAction,
+  SearchRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction, TogglePortfolioForLinkingAction,
   ToggleRiskLinkAnalysisAction,
   ToggleRiskLinkEDMAndRDMSelectedAction,
   ToggleRiskLinkPortfolioAction
@@ -22,7 +22,6 @@ import {
   ToggleRiskLinkEDMAndRDMAction
 } from '../../store/actions';
 import { DataTables } from './data';
-import {DateRangePickerComponent} from "ng-zorro-antd/date-picker/date-range-picker.component";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -48,8 +47,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   listEdmRdm: any = [];
 
   tableLeftAnalysis: any;
+  tableAnalysisLinking: any;
 
-  tableLeftProtfolio: any;
+  tableLeftPortfolio: any;
+  tablePortfolioLinking: any;
 
   scrollableColsAnalysis: any;
   frozenColsAnalysis: any;
@@ -167,7 +168,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.portfolios).subscribe(dt => {
-        this.tableLeftProtfolio = dt;
+        this.tableLeftPortfolio = dt;
         this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
@@ -249,6 +250,15 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
   }
 
+  toggleForLinkingEDM(items) {
+    this.store.dispatch(new TogglePortfolioForLinkingAction(items));
+    this.selectedEDM = items;
+  }
+
+  toggleForLinkingRDM(items) {
+    this.store.dispatch(new ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
+  }
+
   getScrollableCols() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
       return this.scrollableColsAnalysis;
@@ -265,14 +275,22 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
+  getLinkingData() {
+    const {id} = _.filter(this.state.linking.edm, (dt) => dt.selected === true)[0];
+    const dataTable = _.get(this.state.linking, `analysis.${id}.data`, null);
+    return _.toArray(dataTable);
+  }
+
   getTableData() {
-    const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM, (dt) => dt.selected === true)[0];
+    let dataTable;
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      this.tableLeftAnalysis = _.get(this.tableLeftAnalysis, `${id}.data`, this.tableLeftAnalysis);
-      return _.toArray(this.tableLeftAnalysis);
+      const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM.rdm, (dt) => dt.selected === true)[0];
+      dataTable = _.get(this.tableLeftAnalysis, `${id}.data`, this.tableLeftAnalysis);
+      return _.toArray(dataTable);
     } else {
-      this.tableLeftProtfolio = _.get(this.tableLeftProtfolio, `${id}.data`, this.tableLeftProtfolio);
-      return _.toArray(this.tableLeftProtfolio);
+      const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM.edm, (dt) => dt.selected === true)[0];
+      dataTable = _.get(this.tableLeftPortfolio, `${id}.data`, this.tableLeftPortfolio);
+      return _.toArray(dataTable);
     }
   }
 
