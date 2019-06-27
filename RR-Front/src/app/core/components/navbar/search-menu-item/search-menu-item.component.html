@@ -41,7 +41,7 @@
   </ng-template>
 
   <ng-template #suffixIconSearch>
-    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close"
+    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
        nzTheme="outline"></i>
     <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer"
        class="icon-search_24px"></i>
