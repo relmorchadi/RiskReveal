@@ -972,7 +972,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
     this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
     this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({filters: this.filters}));
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      filters: this.filters
+    }))
   }
 
   resetPath() {
@@ -1015,7 +1018,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   toggleSelectPlts(plts: any) {
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts, forDeleted: this.showDeleted}));
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      plts,
+      forDeleted: this.showDeleted
+    }));
   }
 
   selectSinglePLT(pltId: number, $event: boolean) {
