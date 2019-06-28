@@ -11,11 +11,12 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SERVICE} from './services';
 import {VirtualScrollerModule} from 'primeng/virtualscroller';
 import {workspaceRoutes} from './workspace.route';
-import {DndModule} from 'ngx-drag-drop';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
-import {DialogModule, DragDropModule, CalendarModule} from 'primeng/primeng';
+import {CalendarModule, DialogModule, DragDropModule} from 'primeng/primeng';
 import {ToastModule} from "primeng/toast";
+import {DndModule} from 'ng2-dnd';
+import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
 
 @NgModule({
   declarations: [
@@ -31,8 +32,9 @@ import {ToastModule} from "primeng/toast";
     VirtualScrollerModule,
     ReactiveFormsModule,
     NgMasonryGridModule,
-    DndModule,
+    DndModule.forRoot(),
     DragDropModule,
+    NgxDndNodule,
     RouterModule.forChild(workspaceRoutes),
     ToastModule
   ],
