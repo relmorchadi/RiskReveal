@@ -558,28 +558,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   listOfDeletedPltsData: any;
   listOfDeletedPltsCache: any;
   selectedListOfDeletedPlts: any;
-  contextMenuItemsCache = this.contextMenuItems;
-  tagModalVisible: boolean;
-  editingTag: boolean;
-  tagContextMenu = [
-    {
-      label: 'Delete Tag',
-      icon: 'pi pi-trash',
-      command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag({
-        wsIdentifier: this.workspaceId + '-' + this.uwy,
-        userTagId: this.tagForMenu.tagId
-      }))
-    },
-    {
-      label: 'Edit Tag', icon: 'pi pi-pencil', command: (event) => {
-        this.editingTag = true;
-        this.fromPlts = false;
-        this.tagModalVisible = true;
-      }
-    }
-  ];
-  wsHeaderSelected: boolean;
-  modalSelect: any;
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
@@ -629,6 +607,29 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       }
     }
   ];
+  contextMenuItemsCache = this.contextMenuItems;
+  tagModalVisible: boolean;
+  editingTag: boolean;
+  tagContextMenu = [
+    {
+      label: 'Delete Tag',
+      icon: 'pi pi-trash',
+      command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag({
+        wsIdentifier: this.workspaceId + '-' + this.uwy,
+        userTagId: this.tagForMenu.tagId
+      }))
+    },
+    {
+      label: 'Edit Tag', icon: 'pi pi-pencil', command: (event) => {
+        this.editingTag = true;
+        this.fromPlts = false;
+        this.tagModalVisible = true;
+      }
+    }
+  ];
+  wsHeaderSelected: boolean;
+  modalSelect: any;
+
 
   constructor(
     private nzDropdownService: NzDropdownService,
