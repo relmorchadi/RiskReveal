@@ -50,6 +50,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   frozenColumns: any[] = [];
   frozenWidth: any = '463px';
   genericWidth: any = ['409px', '33px', '157px'];
+  selectedAdjustment: any;
   filterData: any;
   shownDropDown: any;
   sortData;
@@ -1693,5 +1694,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
   dropThreadAdjustment() {
     this.store$.dispatch(new dropThreadAdjustment({adjustmentArray: this.adjsArray}))
+  }
+
+  selectedAdjust(adjId) {
+    if (this.selectedAdjustment == adjId) {
+      this.selectedAdjustment = null
+    } else {
+      this.selectedAdjustment = adjId;
+    }
   }
 }
