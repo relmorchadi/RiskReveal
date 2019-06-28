@@ -1,5 +1,4 @@
 export const ADJUSTMENT_TYPE = [
-  {id: 0, name: "none", abv: false},
   {id: 1, name: "Linear", abv: false},
   {id: 2, name: "Event Driven", abv: "Event Driven"},
   {id: 3, name: "Return Period Banding Severity (EEF)", abv: "RP (EEF)"},

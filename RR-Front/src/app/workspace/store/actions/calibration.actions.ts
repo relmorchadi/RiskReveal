@@ -75,6 +75,13 @@ export class dropAdjustment {
   }
 }
 
+export class dropThreadAdjustment {
+  static readonly type = '[Calibration]Drop Thread Adjustment';
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class initCalibrationData {
   static readonly type = '[Calibration] initData';
 

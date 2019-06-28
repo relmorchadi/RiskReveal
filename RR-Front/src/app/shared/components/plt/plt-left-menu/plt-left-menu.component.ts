@@ -27,6 +27,7 @@ export class PltLeftMenuComponent implements OnInit {
     selectedListOfPlts: any[];
     systemTagsCount: any;
     wsHeaderSelected: boolean;
+    pathTab: boolean;
   }
 
   @Output() onResetPath= new EventEmitter();
