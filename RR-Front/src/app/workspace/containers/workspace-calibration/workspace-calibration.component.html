@@ -6,8 +6,8 @@
     </div>
 
     <div class="my-tabs" style="margin-bottom: 10px;">
-      <div class="noMargin row" [ngStyle]="{'height': !collapsedTags ? '' : '44px'}">
-        <div *ngIf="!collapsedTags" class="col-10" style="padding:unset">
+      <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;width: 175px;">
+        <div class="col-10" style="padding:unset; position: absolute;min-width: 175px">
           <app-plt-left-menu
             [menuInputs]="{
             tagContextMenu: tagContextMenu,
@@ -52,12 +52,16 @@
             (onModalSelect)="setModalSelectedItems($event)"
           ></app-plt-left-menu>
         </div>
-        <div class="collapseTags col-2" style="padding:10px 0px 0px 0px"
-             [ngStyle]="{'width':!collapsedTags ? '16.6666%' : 'none'}">
-          <i *ngIf="collapsedTags" (click)="collapseTags()" class="icon-chevron_right_24px"
-             style="font-size: 25px; cursor: pointer"></i>
+        <div class="collapseTags col-2" style="padding:10px 0px 0px 145px; position: absolute;width: 16.6666%">
           <i *ngIf="!collapsedTags" (click)="collapseTags()" class="icon-chevron_left_24px"
              style="font-size: 25px; cursor: pointer"></i>
+        </div>
+      </div>
+      <div *ngIf="collapsedTags" class="noMargin row" style="position: relative;width: 37px;height:44px">
+        <div class="collapseTags col-2" style="padding:10px 0px 0px 5px; position: absolute;">
+          <i (click)="collapseTags()" class="icon-chevron_right_24px"
+             style="font-size: 25px; cursor: pointer"></i>
+
         </div>
       </div>
       <div class="tabset-right" style="flex: 1;background: #fff;">
@@ -159,11 +163,11 @@
                         style="background-color: #ffffff !important;height: 70px!important;">
                     </th>
                     <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
-                        style="background-color: #ffffff !important;height: 70px!important;padding: 0;">
+                        style="background-color: #ffffff !important;height: 70px!important;padding: 10px 0 0 0;position:relative">
                       <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
-                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);"></i>
+                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
                       <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
-                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);"></i>
+                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
                     </th>
                     <th *ngIf="col.fields == 'overallLMF' && !extended"
                         [ngStyle]="{'width': '43px','overflow':'visible'}"

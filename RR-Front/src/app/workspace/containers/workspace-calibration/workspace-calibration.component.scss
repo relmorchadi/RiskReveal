@@ -203,6 +203,7 @@
   .tabset-left {
     background: #fff;
     margin-right: 5px;
+    max-height: 580px;
 
     .path-content {
       cursor: pointer;
@@ -850,6 +851,7 @@
     margin-left: 0;
     margin-right: 8px;
 
+
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
     }
@@ -933,6 +935,11 @@
   position: relative;
 }
 
+:host ::ng-deep {
+  .tabset-left {
+    max-height: 580px !important;
+  }
+}
 
 :host .PLTs-content {
   background: #fff;
