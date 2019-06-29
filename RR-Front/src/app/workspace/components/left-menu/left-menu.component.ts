@@ -1,12 +1,6 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Router} from '@angular/router';
-import {Select, Store} from '@ngxs/store';
-import {Observable} from 'rxjs';
-import {WorkspaceMain} from '../../../core/model/workspace-main';
-import * as _ from 'lodash';
-import {WorkspaceMainState} from "../../../core/store/states/workspace-main.state";
-import {PatchWorkspaceMainStateAction, SetWsRoutingAction} from '../../../core/store/actions/workspace-main.action';
-import {HelperService} from "../../../shared/helper.service";
+import {BaseContainer} from "../../../shared/base";
 
 
 @Component({
@@ -14,40 +8,61 @@ import {HelperService} from "../../../shared/helper.service";
   templateUrl: './left-menu.component.html',
   styleUrls: ['./left-menu.component.scss']
 })
-export class LeftMenuComponent implements OnInit {
+export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestroy {
 
-  @Select(WorkspaceMainState)
-  state$: Observable<WorkspaceMain>;
-  state: WorkspaceMain = null;
-  constructor(private _router: Router, private _helper: HelperService, private store: Store) { }
-  ngOnInit() {
-    this.state$.subscribe(value => this.state = _.merge({}, value));
+  @Input('isCollapsed')
+  isCollapsed;
+
+  @Output('toggleCollapse')
+  toggleCollapseEmitter:EventEmitter<void>;
+
+  @Output('navigate')
+  navigationEmitter:EventEmitter<{route:string}>;
+
+
+  constructor(private _router: Router) {
+    super(_router, null, null);
+    this.toggleCollapseEmitter= new EventEmitter();
+    this.navigationEmitter= new EventEmitter();
   }
 
-  collapse($event){
+  ngOnInit() {
+    // this.state$.subscribe(value => this.state = _.merge({}, value));
+  }
+
+  collapse($event) {
     $event.stopPropagation();
     $event.preventDefault();
-    this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'leftNavbarIsCollapsed', value: !this.state.leftNavbarIsCollapsed}));
+    console.log('Collapse/Expand');
+    this.toggleCollapseEmitter.emit();
   }
 
-  routerNavigate(routerLink) {
-    let patchRouting;
-    if (routerLink) {
-      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${routerLink}`]);
-      patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
-    } else {
-      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
-      patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
-    }
-    this.store.dispatch(new SetWsRoutingAction(patchRouting));
-    this._helper.updateWorkspaceItems();
+  routerNavigate(route) {
+    this.navigationEmitter.emit({ route });
+
+    // let patchRouting;
+    // if (routerLink) {
+    //   this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${routerLink}`]);
+    //   patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
+    // } else {
+    //   this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
+    //   patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
+    // }
+    // this._store.dispatch(new SetWsRoutingAction(patchRouting));
+    // this._helper.updateWorkspaceItems();
   }
 
   riskLinkImportNavigation() {
     let userPref = localStorage.getItem('importConfig');
-    if (userPref && ['RiskLink', 'FileBasedImport'].includes(userPref)) {
+    if (userPref && ['RiskLink', 'FileBasedImport', 'CloneData'].includes(userPref)) {
       this.routerNavigate(userPref);
     }
   }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+
 
 }

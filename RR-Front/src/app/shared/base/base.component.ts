@@ -6,9 +6,9 @@ import {takeUntil} from "rxjs/operators";
 
 export abstract class BaseComponent implements OnDestroy {
 
-  private unSubscriton$ = new Subject<void>();
+  private unSubscriton$: Subject<void>;
 
-  constructor(private _router: Router, private _cdr: ChangeDetectorRef) {
+  constructor(protected _baseRouter: Router, protected _baseCdr: ChangeDetectorRef) {
     this.unSubscriton$ = new Subject<void>();
   }
 
@@ -18,13 +18,13 @@ export abstract class BaseComponent implements OnDestroy {
   }
 
   protected navigate(commands: any[]) {
-    this._router.navigate(commands);
+    this._baseRouter.navigate(commands);
   }
 
 
   protected detectChanges() {
-    if (!this._cdr['destroyed'])
-      this._cdr.detectChanges();
+    if (!this._baseCdr['destroyed'])
+      this._baseCdr.detectChanges();
   }
 
   protected destroy() {

@@ -1,20 +1,18 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SearchService} from '../../../core/service/search.service';
-import {HelperService} from '../../../shared/helper.service';
+import {HelperService} from '../../../shared';
 import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
-import {
-  AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction
-} from '../../../core/store/actions/workspace-main.action';
 import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {Debounce} from '../../../shared';
-import {CloseAllTagsAction, CloseTagByIndexAction} from '../../../core/store';
+import {Debounce} from "../../../shared";
+import {CloseTagByIndexAction, CloseAllTagsAction} from "../../../core/store";
+import {BaseContainer} from "../../../shared/base";
+import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 
 
 @Component({
@@ -23,7 +21,7 @@ import {CloseAllTagsAction, CloseTagByIndexAction} from '../../../core/store';
   styleUrls: ['./search-main.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class SearchMainComponent implements OnInit {
+export class SearchMainComponent extends BaseContainer implements OnInit, OnDestroy {
   @ViewChild('dt') table;
 
   @Select(SearchNavBarState.getSearchContent)
@@ -133,19 +131,25 @@ export class SearchMainComponent implements OnInit {
 
   constructor(private _searchService: SearchService, private _helperService: HelperService,
               private _router: Router, private _location: Location, private store: Store, private cdRef: ChangeDetectorRef) {
+    super(_router, cdRef, store);
+
   }
 
   ngOnInit() {
-    this.state$.subscribe(value => this.state = _.merge({}, value));
-    this.searchContent$.subscribe(({value}) => {
-      this._checkSearchContent(value);
-      this._loadData();
-      this.detectChanges();
-    })
+    this.state$
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(value => this.state = _.merge({}, value));
+    this.searchContent$
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(({value}) => {
+        this._checkSearchContent(value);
+        this._loadData();
+        this.detectChanges();
+      });
   }
 
-  private _checkSearchContent(value:string|any[]){
-    if(_.isString(value) || value == null){
+  private _checkSearchContent(value: string | any[]) {
+    if (_.isString(value) || value == null) {
       this.globalSearchItem = (value as string);
       this.searchContent = [];
     } else {
@@ -163,6 +167,7 @@ export class SearchMainComponent implements OnInit {
       size
     };
     this._searchService.expertModeSearch(params)
+      .pipe(this.unsubscribeOnDestroy)
       .subscribe((data: any) => {
         this.contracts = data.content.map(item => ({...item, selected: false}));
         this.loading = false;
@@ -183,34 +188,12 @@ export class SearchMainComponent implements OnInit {
   }
 
   openWorkspace(wsId, year) {
-    this.searchData(wsId, year).subscribe(
-      (dt: any) => {
-        const workspace = {
-          workSpaceId: wsId,
-          uwYear: year,
-          selected: false,
-          ...dt
-        };
-        workspace.projects = workspace.projects.map(prj => prj = {...prj, selected: false});
-        const alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === wsId && ws.uwYear == year);
-        const index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === wsId && ws.uwYear == year);
-        if (alreadyOpened.length > 0) {
-          this.store.dispatch(new PatchWorkspaceMainStateAction([{key: 'openedWs', value: alreadyOpened[0]},
-            {key: 'openedTabs', value: {data: this.state.openedTabs.data, tabsIndex: index}}]));
-          this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.tabsIndex]);
-        } else {
-          this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
-          this._helperService.updateRecentWorkspaces();
-          this._helperService.updateWorkspaceItems();
-          this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
-        }
-      }
-    );
+    this.dispatch(new workspaceActions.openWS({wsId, uwYear: year, route: 'projects'}));
   }
 
   navigateToTab(value) {
     if (value.routing == 0) {
-      this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}`]);
+      this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}/projects`]);
     } else {
       this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}/${value.routing}`]);
     }
@@ -220,22 +203,26 @@ export class SearchMainComponent implements OnInit {
     this.currentWorkspace = contract;
     this.sliceValidator = true;
     this.expandWorkspaceDetails = true;
-    this.searchData(contract.workSpaceId, contract.uwYear).subscribe(
-      dt => {
-        this.selectedWorkspace = dt;
-        this.cdRef.detectChanges();
-        console.log(this.selectedWorkspace);
-      }
-    );
+    this.searchData(contract.workSpaceId, contract.uwYear)
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(
+        dt => {
+          this.selectedWorkspace = dt;
+          this.cdRef.detectChanges();
+          console.log(this.selectedWorkspace);
+        }
+      );
 
   }
 
   popUpWorkspace(wsId, year) {
-    this.searchData(wsId, year).subscribe(
-      () => {
-        window.open(`/workspace/${wsId}/${year}/PopOut`);
-      }
-    );
+    this.searchData(wsId, year)
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe(
+        () => {
+          window.open(`/workspace/${wsId}/${year}/PopOut`);
+        }
+      );
   }
 
   @Debounce(500)
@@ -274,9 +261,10 @@ export class SearchMainComponent implements OnInit {
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-  detectChanges() {
-    if (!this.cdRef['destroyed'])
-      this.cdRef.detectChanges();
+
+  ngOnDestroy(): void {
+    this.destroy();
   }
+
 
 }

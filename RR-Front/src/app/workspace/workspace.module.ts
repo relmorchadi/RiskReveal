@@ -19,6 +19,7 @@ import {DndModule} from 'ng2-dnd';
 import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
 
 @NgModule({
+  entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
     ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent,
@@ -42,7 +43,7 @@ import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
     RouterModule
   ],
   providers: [
-    ...SERVICE
+    ...SERVICE,
   ]
 })
 export class WorkspaceModule {

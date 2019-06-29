@@ -1,35 +1,27 @@
-import {ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
-import {HelperService} from '../../../shared/helper.service';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {HelperService} from '../../../shared';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-
-import {combineLatest, Subject} from 'rxjs';
-import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
+import {Subject} from 'rxjs';
+import {Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {WorkspaceMainState} from '../../../core/store/states/workspace-main.state';
-
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import {
-  AddNewProject, AddNewProjectFail,
-  AddNewProjectSuccess, DeleteProject, DeleteProjectFail, DeleteProjectSuccess,
-  PatchWorkspace,
-  SelectProjectAction
-} from '../../../core/store/actions/workspace-main.action';
-import * as moment from 'moment';
-import {takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
-import {MessageService} from 'primeng/api';
+import {PatchWorkspace, SelectProjectAction} from '../../../core/store/actions/workspace-main.action';
+import * as moment from 'moment'
+import {takeUntil} from "rxjs/operators";
+import {StateSubscriber} from "../../model/state-subscriber";
+import * as fromHeader from "../../../core/store/actions/header.action";
+import * as fromWs from "../../store/actions";
+import {FormControl, FormGroup, Validators} from "@angular/forms";
 
 @Component({
-  selector: 'app-workspace-project',
+  selector: 'workspace-project',
   templateUrl: './workspace-project.component.html',
-  styleUrls: ['./workspace-project.component.scss'],
-  providers: [MessageService]
+  styleUrls: ['./workspace-project.component.scss']
 })
-export class WorkspaceProjectComponent implements OnInit, OnDestroy {
-
-  unSubscribe$: Subject<void>;
-  leftNavbarIsCollapsed = false;
+export class WorkspaceProjectComponent implements OnInit, OnDestroy, StateSubscriber {
+  actionsEmitter: EventEmitter<any>;
+  // unSubscribe$: Subject<void>;
   collapseWorkspaceDetail = true;
   selectedPrStatus = '1';
   private dropdown: NzDropdownContextComponent;
@@ -38,6 +30,12 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   workspace: any;
   index: any;
   isVisible = false;
+  wsIdentifier;
+  //@Select(WorkspaceState.getData)
+  // data$= of();
+  //@Select(Workspacetate.getProjects)
+  // projects$= of();
+
 
   newProject = false;
   existingProject = false;
@@ -51,34 +49,12 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   contextMenuProject: any = null;
   description: any;
   newProjectForm: FormGroup;
-  @Select(WorkspaceMainState.getData) data$;
-  @Select(WorkspaceMainState.getProjects) projects$;
 
 
   constructor(private _helper: HelperService, private route: ActivatedRoute,
-              private nzDropdownService: NzDropdownService, private store: Store,
-              private router: Router, private actions$: Actions, private messageService: MessageService,
-              private changeDetector: ChangeDetectorRef
-  ) {
+              private nzDropdownService: NzDropdownService) {
     console.log('init project');
-    this.unSubscribe$ = new Subject<void>();
-  }
-
-  ngOnInit() {
-    combineLatest(
-      this.data$,
-      this.route.params
-    ).pipe(takeUntil(this.unSubscribe$))
-      .subscribe(([data, {wsId, year}]: any) => {
-
-        this.workspaceUrl = {
-          wsId,
-          uwYear: year
-        };
-
-        this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
-        this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
-      });
+    this.actionsEmitter = new EventEmitter();
     this.newProjectForm = new FormGroup({
       name: new FormControl(null, Validators.required),
       description: new FormControl(null),
@@ -86,20 +62,31 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
       receptionDate: new FormControl(null, Validators.required),
       dueDate: new FormControl(null, Validators.required),
     });
-    this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).subscribe(() => {
-      this.isVisible = false;
-      this.messageService.add({severity: 'info', summary: 'Project added successfully'});
-      this.newProjectForm.reset();
-      }
-    );
-    this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
-        this.messageService.add({severity: 'error', summary: ' Error please try again'});
-        this.changeDetector.detectChanges();
-      })
+  }
 
-    this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() =>
-        this.messageService.add({severity: 'info', summary: 'Project deleted successfully'})
-    );
+  patchState({wsIdentifier, data}: any): void {
+    this.workspace = data;
+    this.wsIdentifier = wsIdentifier;
+  }
+
+
+  ngOnInit() {
+    // combineLatest(
+    // this.data$,
+    // this.route.params
+    // )
+
+    // .pipe(takeUntil(this.unSubscribe$))
+    // .subscribe(([data, {wsId, year}]: any) => {
+
+    // this.workspaceUrl = {
+    //   wsId,
+    //   uwYear: year
+    // };
+
+    //   this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
+    //   this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
+    // });
   }
 
   handleOk(): void {
@@ -108,27 +95,13 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
   handleCancel(): void {
     this.isVisible = false;
-    this.resetToMain();
-  }
-
-  resetToMain() {
-    this.newProject = false;
-    this.existingProject = false;
-    this.mgaProject = false;
-    this.searchWorkspace = false;
   }
 
   selectProject(project) {
-    this.store.dispatch(new SelectProjectAction(project));
+    this.actionsEmitter.emit(new SelectProjectAction(project));
   }
-  delete(project) {
-    this.store.dispatch(new DeleteProject({
-      workspaceId: this.workspace.workSpaceId, uwYear: this.workspace.uwYear, project,
-    }));
-    this.dropdown.close();
-  }
-  contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {
-    this.contextMenuProject = project;
+
+  contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
     this.dropdown = this.nzDropdownService.create($event, template);
   }
 
@@ -137,56 +110,37 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   }
 
   pinWorkspace() {
-    this.store.dispatch(new PatchWorkspace({
-      key: ['pinged', 'lastPModified'],
-      value: [!this.workspace.pinged, moment().format('x')],
-      ws: this.workspace,
-      k: this.index
-    }));
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
+    this.actionsEmitter.emit([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
 
-    let workspaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspace;
+    this.actionsEmitter.emit([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ])
+  }
 
-    if (this.workspace.pinged) {
-      workspaceMenuItem[this.workspace.workSpaceId + '-' + this.workspace.uwYear] = {
-        ...this.workspace,
-        pinged: true,
-        lastPModified: moment().format('x')
-      };
-    } else {
-      workspaceMenuItem = {
-        ...workspaceMenuItem,
-        [this.workspace.workSpaceId + '-' + this.workspace.uwYear]: _.omit(workspaceMenuItem[this.workspace.workSpaceId + '-' + this.workspace.uwYear], ['pinged', 'lastPModified'])
-      };
-    }
-    localStorage.setItem('workSpaceMenuItem', JSON.stringify(workspaceMenuItem));
+
+  delete(project) {
+    // this.store.dispatch(new DeleteProject({
+    //   workspaceId: this.workspace.workSpaceId, uwYear: this.workspace.uwYear, project,
+    // }));
+    this.dropdown.close();
   }
 
   ngOnDestroy(): void {
-    this.unSubscribe$.next();
-    this.unSubscribe$.complete();
+    // this.unSubscribe$.next();
+    // this.unSubscribe$.complete();
   }
 
-  onChangeDate(event) {
-
-  }
-  createUpdateProject() {
-    if (this.newProject) {
-      console.log(this.newProjectForm.value);
-      this.store.dispatch(new AddNewProject({
-        workspaceId: this.workspace.workSpaceId,
-        uwYear: this.workspace.uwYear,
-        project: {...this.newProjectForm.value },
-      }));
-    }
-  }
-
-  cancelCreateProject() {
-    this.newProjectForm.reset();
-    this.isVisible = false;
-  }
-
-  formatDateTime(dateTime: any) {
-    moment(dateTime).format('x');
-  }
 
 }

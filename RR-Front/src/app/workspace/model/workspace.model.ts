@@ -7,6 +7,9 @@ export class WorkspaceModel {
     index: number,
     wsIdentifier: string
   };
+  favorite: any[];
+  pinned: any[];
   routing: string;
   loading: boolean;
+  // paginationParams:any[];
 }
