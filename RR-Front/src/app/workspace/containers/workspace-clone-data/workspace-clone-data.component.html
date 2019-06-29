@@ -1,14 +1,14 @@
 <app-left-menu></app-left-menu>
 <div class="app-wrapper">
   <div class="app-header">
-    <h4>Clone Data &nbsp;&nbsp;</h4>
-    <span class="subtitle-2">
-      {{ subTitle[activeSubTitle] }}
-    </span>
+    <h4>Clone Workspace assets </h4>
+<!--    <span class="subtitle-2">-->
+<!--      {{ subTitle[activeSubTitle] }}-->
+<!--    </span>-->
   </div>
   <div class="app-body">
     <ng-container [ngSwitch]="activeSubTitle">
-      <div class="box-container" *ngSwitchCase="0">
+      <div class="box-container" *ngSwitchCase="0" style="padding: 0 0;">
         <div class="box-item" style="background-color: #e5e9fa;">
           <span class="subtitle-3">
         Summary of assets being cloned:
@@ -19,7 +19,7 @@
                 <i class="icon-assignment_24px"></i>
               </div>
               <div class="right">
-                <div class="regular">Pre-Inured PLTs</div>
+                <div class="regular1">Pre-Inured PLTs</div>
                 <span class="regular">12</span>
               </div>
             </div>
@@ -28,16 +28,16 @@
                 <i class="fa fa-code-fork" style="margin: 4px;"></i>
               </div>
               <div class="right">
-                <div class="regular">Post-Inured PLTs</div>
+                <div class="regular1">Post-Inured PLTs</div>
                 <span class="regular">4</span>
               </div>
             </div>
             <div class="box">
-              <div class="left" style="background-color: var(--primary-9);">
-                <i></i>
+              <div class="left" style="background-color: #33d0bb;">
+                <i class="fa fa-code-fork" style="margin: 4px;"></i>
               </div>
               <div class="right">
-                <div class="regular">Inuring Packages</div>
+                <div class="regular1">Inuring Packages</div>
                 <span class="regular">1</span>
               </div>
             </div>
@@ -46,32 +46,80 @@
                 <i class="icon-assignment_24px"></i>
               </div>
               <div class="right">
-                <div class="regular">Sources Projects</div>
+                <div class="regular1">Sources Projects</div>
                 <span class="regular">3</span>
               </div>
             </div>
           </div>
         </div>
         <div class="box-item">
-          <span class="subtitle-3">
+
+          <span class="subtitle-4">
             Cloning from:
           </span>
-          <div class="input-group">
-            <input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />
-            <i (click)="setSubTitle(1)" class="icon-search-alt" style="cursor:pointer;"></i>
+          <div style="background-color: cornflowerblue;">
+          <div class="input-group"  style="background-color: #f4f6fc;">
+            <div style="background-color: white; padding: 20px; margin-right: 5px; width: 50%;">
+              <!--<input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />-->
+              <div>XL, INC, VOL, IND,ACC,AUTO CASCO  |     2017</div>
+              <div>20769 | A.M.MA(BEL)</div>
+            </div>
+            <div style="background-color: white; padding: 20px; margin-right: 5px; width: 24%;">
+              <!--<input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />-->
+              <div style="padding: 10px;">
+                <span title>
+                  <i nz-icon><i class="icon-down-arrow"></i></i>
+                  <span style="text-decoration: underline; color: #0700cf; padding: 10px;">Edit PLT List</span>
+                </span>
+              </div>
+            </div>
+            <div style="background-color: white; padding: 20px; width: 24%;">
+            <!--<input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />  icon-down-arrow -->
+              <div style="padding: 10px;">
+                <span title>
+                  <i nz-icon><i (click)="setSubTitle(1)" class="icon-search-alt"></i></i>
+                  <span style="text-decoration: underline; color: #0700cf; padding-left: 10px;">Change Workspace</span>
+                </span>
+              </div>
+            </div>
+          </div>
           </div>
         </div>
-        <div class="box-item">
-        <span class="subtitle-3">
+        <div class="box-item" style="margin-top: 0; margin-bottom: 0;padding-top: 0;padding-bottom: 0;">
+          <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
+            <i style="padding-right: 20px;" class="icon-compare_arrows_24px"></i>
+          </div>
+        </div>
+        <div class="box-item" style="margin-top: 0;">
+        <span class="subtitle-4">
           Cloning to:
         </span>
-          <div class="input-group">
-            <input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />
-            <i (click)="setSubTitle(2)" class="icon-search-alt" style="cursor:pointer;"></i>
+          <div style="background-color: cornflowerblue;">
+            <div class="input-group"  style="background-color: #f4f6fc;">
+              <div style="background-color: white; padding: 20px; margin-right: 5px; width: 50%;">
+                <!--<input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />-->
+                <div>XL, INC, VOL, IND,ACC,AUTO CASCO  |     2017</div>
+                <div>20769 | A.M.MA(BEL)</div>
+              </div>
+              <div style="background-color: white; padding: 20px; margin-right: 5px; width: 24%;">
+                <!--<input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />-->
+                <div style="padding: 10px;">
+                <span title>
+                  <i nz-icon><i class="icon-down-arrow"></i></i>
+                  <span style="text-decoration: underline; color: #0700cf; padding: 10px;">Edit PLT List</span>
+                </span>
+                </div>
+              </div>
+              <div style="background-color: white; padding: 20px; width: 24%;">
+                <!--<input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />  icon-down-arrow -->
+                <div style="padding: 10px;">
+                <span title>
+                  <i nz-icon><i (click)="setSubTitle(2)" class="icon-search-alt"></i></i>
+                  <span style="text-decoration: underline; color: #0700cf; padding-left: 10px;">Change Workspace</span>
+                </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="box-item">
@@ -91,10 +139,12 @@
         target
       </div>
     </ng-container>
-    <div class="box-buttons">
+    <div class="box-item">
+      <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
       <button [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
-      <button class="a-buttons-contained">clone & open</button>
-      <button class="a-buttons-contained">clone</button>
+      <button class="a-buttons-contained" style="margin-left: 10px;">clone & open</button>
+      <button class="a-buttons-contained" style="margin-left: 10px;">clone</button>
+      </div>
     </div>
   </div>
 </div>

@@ -44,16 +44,17 @@
   .plts-detail-boxes {
     width: 100%;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 25px;
+    justify-content: space-between;
+    //justify-content: center;
+    //align-items: center;
+    //padding: 25px;
   }
 
   .box {
-    margin: 0 25px;
+    margin: 10px 0px 10px 0px;
     background-color: #fff;
     display: flex;
-
+    width: 23%;
     .left {
       font-size: 25px;
       i {
@@ -62,9 +63,10 @@
     }
 
     .right {
+      position: relative;
       display: flex;
       flex-flow: column;
-      padding: 0 34px 0 16px;
+      padding: 0 0 0 16px;
     }
   }
 
@@ -72,6 +74,8 @@
     width: 100%;
     margin-top: 25px;
     padding: 16px 25px;
+    padding-left: 14%;
+    padding-right: 14%;
 
     .input-group {
       margin: 10px 0;
