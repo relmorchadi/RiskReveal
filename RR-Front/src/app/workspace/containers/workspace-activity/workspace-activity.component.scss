@@ -1,103 +1,84 @@
 :host {
-  display: flex;
   width: 100%;
-  @media screen and (min-width: 1900px) {
-    height: 100vh;
-  }
+  height: max-content;
+  display: flex;
+  min-height: 100vh;
+  background-color: #F4F6FC;
 }
 
-.app-wrapper {
-  background-color: #F4F6FC;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100vh;
-  overflow: auto;
-  margin: 0 auto;
-  padding-bottom: 200px;
+.app-body {
 
-  .app-header {
+  .active-body {
     display: flex;
-    width: 90%;
-    margin: 20px auto;
-  }
+    flex-direction: column;
+    padding: 10px 15px;
+    margin: 15px 0;
+    background-color: #FFFFFF;
 
-  .app-body {
-    width: 90%;
-    margin: 0 auto;
+    .body-1 {
+      color: rgba(0, 0, 0, 0.87);
+      margin: 4px 0;
+    }
 
-    .active-body {
+    .item-wrapper {
       display: flex;
       flex-direction: column;
-      padding: 10px 15px;
-      margin: 15px 0;
-      background-color: #FFFFFF;
+      margin: 5px 0;
 
-      .body-1 {
-        color: rgba(0, 0, 0, 0.87);
-        margin: 4px 0;
-      }
-
-      .item-wrapper {
+      .border-wrap {
         display: flex;
-        flex-direction: column;
-        margin: 5px 0;
+        width: 100%;
 
-        .border-wrap {
+        .border-wrap-inner {
           display: flex;
+          justify-content: space-between;
+          border: 1px solid rgba(0, 0, 0, 0.15);
+          border-left: none;
+          padding: 15px;
           width: 100%;
+          cursor: pointer;
+        }
 
-          .border-wrap-inner {
-            display: flex;
-            justify-content: space-between;
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            border-left: none;
-            padding: 15px;
-            width: 100%;
-            cursor: pointer;
-          }
+        .item-left {
+          display: flex;
+          align-items: center;
 
-          .item-left {
-            display: flex;
-            align-items: center;
-
-            i {
-              padding: 7px;
-              color: #FFFFFF;
-              border-radius: 20px;
-              margin-right: 5px;
-              font-size: 17px;
-            }
-          }
-
-          .item-right {
-            display: flex;
-            align-items: center;
-
-            i {
-              font-size: 17px;
-              color: #0700CF;
-            }
+          i {
+            padding: 7px;
+            color: #FFFFFF;
+            border-radius: 20px;
+            margin-right: 5px;
+            font-size: 17px;
           }
         }
 
-        .item-project-info {
-          border: 1px solid rgba(0, 0, 0, 0.15);
+        .item-right {
+          display: flex;
+          align-items: center;
 
-          table {
-            width: 100%;
+          i {
+            font-size: 17px;
+            color: #0700CF;
+          }
+        }
+      }
 
-            thead {
-              th {
-                padding-left: 55px;
-              }
+      .item-project-info {
+        border: 1px solid rgba(0, 0, 0, 0.15);
+
+        table {
+          width: 100%;
+
+          thead {
+            th {
+              padding-left: 55px;
             }
+          }
 
-            tbody {
-              td {
-                padding-left: 55px;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-              }
+          tbody {
+            td {
+              padding-left: 55px;
+              border-bottom: 1px solid rgba(0, 0, 0, 0.15);
             }
           }
         }

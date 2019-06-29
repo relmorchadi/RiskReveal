@@ -1,25 +1,32 @@
-import {Action, NgxsOnInit, Selector, State, StateContext, Store} from '@ngxs/store';
+import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import {
-  ClearSearchValuesAction, CloseAllTagsAction, CloseBadgeByIndexAction, CloseGlobalSearchAction, CloseTagByIndexAction,
+  ClearSearchValuesAction,
+  CloseAllTagsAction,
+  CloseBadgeByIndexAction,
+  CloseGlobalSearchAction,
+  CloseTagByIndexAction,
   DeleteAllBadgesAction,
   DeleteLastBadgeAction,
   DisableExpertMode,
-  EnableExpertMode, ExpertModeSearchAction,
+  EnableExpertMode,
+  ExpertModeSearchAction,
   LoadRecentSearchAction,
-  PatchSearchStateAction, SearchAction,
-  SearchContractsCountAction, SearchInputFocusAction, SearchInputValueChange,
+  PatchSearchStateAction,
+  SearchAction,
+  SearchContractsCountAction,
+  SearchInputFocusAction,
+  SearchInputValueChange,
   SelectBadgeAction
 } from '../actions';
 import {forkJoin, of} from 'rxjs';
 import {SearchNavBar} from '../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {catchError, switchMap} from 'rxjs/operators';
-import {SearchService} from "../../service";
-import {Inject} from "@angular/core";
-import produce from "immer";
-import {BadgesService} from "../../service/badges.service";
-import {Navigate} from "@ngxs/router-plugin";
-import {NavigationExtras} from "@angular/router";
+import {SearchService} from '../../service';
+import {Inject} from '@angular/core';
+import produce from 'immer';
+import {BadgesService} from '../../service/badges.service';
+import {Navigate} from '@ngxs/router-plugin';
 
 const initiaState: SearchNavBar = {
   contracts: null,
@@ -48,22 +55,18 @@ const initiaState: SearchNavBar = {
     {tag: 'Cedant Code', value: 'cid:'},
     {tag: 'Country', value: 'ctr:'},
     {tag: 'UW Year', value: 'uwy:'},
-    {tag: 'Workspace Name', value: 'wn:'},
+    {tag: 'Workspace Name', value: 'w:'},
     {tag: 'Workspace Code', value: 'wid:'},
-    {tag: 'Program', value: 'C:'},
-    {tag: 'PLT', value: 'C:'},
-    {tag: 'Section', value: 'C:'},
-    {tag: 'Subsidiary', value: 'C:'},
-    {tag: 'Ledger', value: 'C:'},
-    {tag: 'Bouquet', value: 'C:'},
-    {tag: 'Contract', value: 'C:'},
-    {tag: 'UW Unit', value: 'C:'}
+    {tag: 'Project', value: 'p:'},
+    {tag: 'PLT', value: 'plt:'},
+    {tag: 'Section Name', value: 's:'},
+    {tag: 'UW Unit', value: 'uwu:'}
   ],
   sortcutFormKeysMapper: {
     c: 'Cedant Name',
     cid: 'Cedant Code',
     uwy: 'Year',
-    wn: 'Workspace Name',
+    w: 'Workspace Name',
     wid: 'Workspace Id',
     ctr: 'Country Name'
   },
@@ -110,7 +113,7 @@ export class SearchNavBarState implements NgxsOnInit {
   static getSearchContent(state: SearchNavBar) {
     return state.searchContent;
   }
-  
+
   @Selector()
   static getSearchTarget(state: SearchNavBar) {
     return state.searchTarget;
@@ -188,7 +191,7 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(DisableExpertMode)
   disableExpertMode(ctx: StateContext<SearchNavBar>) {
-    ctx.patchState({visibleSearch: true});
+    // ctx.patchState({visibleSearch: true});
   }
 
   @Action(DeleteLastBadgeAction)
@@ -245,15 +248,15 @@ export class SearchNavBarState implements NgxsOnInit {
   @Action(ExpertModeSearchAction)
   doExpertModeSearch(ctx: StateContext<SearchNavBar>, {expression}) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      if(! _.isEmpty(expression) ){
+      if (! _.isEmpty(expression) ) {
         draft.searchContent = {value: this._badgesService.generateBadges(expression, draft.sortcutFormKeysMapper)};
-        draft.badges= _.isArray(draft.searchContent.value) ?  draft.searchContent.value : [];
+        draft.badges = _.isArray(draft.searchContent.value) ?  draft.searchContent.value : [];
       }
-      if(_.isArray(draft.searchContent.value)){
+      if (_.isArray(draft.searchContent.value)) {
         // draft.badges= draft.badges;
-        draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
+        draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
       }
-      draft.visibleSearch=false;
+      draft.visibleSearch = false;
       localStorage.setItem('items', JSON.stringify(draft.recentSearch));
     }));
     ctx.dispatch(new Navigate(['/search']));
@@ -261,20 +264,20 @@ export class SearchNavBarState implements NgxsOnInit {
 
   @Action(SearchAction)
   doSearch(ctx: StateContext<SearchNavBar>, {bages, keyword}) {
-    if (_.isEmpty(bages) && _.isEmpty(keyword)){
+    if (_.isEmpty(bages) && _.isEmpty(keyword)) {
       ctx.dispatch(new Navigate(['/search']));
-      throw new Error('Search without keyword or value')
+      throw new Error('Search without keyword or value');
     }
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchContent = {value: _.isEmpty(bages) ? keyword : bages};
-      draft.recentSearch=_.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
+      draft.recentSearch = _.uniqWith([[...draft.badges], ...draft.recentSearch].slice(0, 5), _.isEqual).filter(item => ! _.isEmpty(item) );
       localStorage.setItem('items', JSON.stringify(draft.recentSearch));
-      draft.visibleSearch=false;
+      draft.visibleSearch = false;
     }));
     ctx.dispatch(new Navigate(['/search']));
   }
 
-  private pushBadgesToLocalStorage(badges){
+  private pushBadgesToLocalStorage(badges) {
 
   }
 
@@ -291,7 +294,7 @@ export class SearchNavBarState implements NgxsOnInit {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.searchContent.value = null;
       draft.badges = [];
-    }))
+    }));
   }
 
   private searchLoader(keyword, table) {

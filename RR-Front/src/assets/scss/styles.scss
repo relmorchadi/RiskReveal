@@ -1,8 +1,25 @@
 @import "./variables";
 @import "./scrollbar";
+@import "/theme/font";
+@import "/theme/button";
+@import "/theme/input";
+@import "/theme/dropdown";
+@import "/theme/tabs";
+@import "/theme/tags";
+@import "/theme/radio";
+@import "/theme/chips";
+@import "/theme/list";
+@import "/theme/modal";
+@import "/theme/layout";
+
+.clickable-item {
+  cursor: pointer;
+}
+
+/*
 
 * {
-  font-family: Rubik;
+  font-family: Rubik, sans-serif;
 }
 
 
@@ -14,42 +31,7 @@
   padding: 5px;
   width: 400px;
 
-  .popup-tab-content {
-    margin: 5px 20px;
-  }
-
-  .ant-tabs-tab {
-    height: 14.61px;
-    color: rgba(0, 0, 0, 0.6);
-    font-family: Rubik;
-    font-size: 11px;
-    letter-spacing: 0.08px;
-    line-height: 24px;
-    text-align: center;
-    margin: 0px !important;
-  }
-
-  .ant-tabs-tab-active {
-    height: 14.61px;
-    color: #0700CF !important;
-    font-family: Rubik;
-    font-size: 11px;
-    letter-spacing: 0.08px;
-    line-height: 24px;
-    text-align: center;
-    .tab-badge {
-      color: #0700CF;
-      opacity: 0.9;
-    }
-  }
-
-  .ant-tabs-ink-bar {
-    background-color: #0700CF !important;
-  }
-
   .poover-menu-item {
-    margin: 5px 0px;
-    padding: 3px 5px;
     cursor: pointer;
   }
 
@@ -60,18 +42,10 @@
     }
   }
 
-  ul {
-    list-style: none;
-    padding-left: 5px;
-    height: 200px;
-    overflow-y: auto;
-  }
-
   .popover-menu-control-button {
     color: #0700CF;
     font-family: Rubik;
     font-size: 14.22px;
-    font-weight: 500;
     letter-spacing: 1.25px;
     line-height: 16px;
     border: none;
@@ -107,3 +81,70 @@ gridster .gridster-column {
   color: #D4172E;
   border: 0px;
 }
+*/
+/*
+
+* {
+  font-family: Rubik, sans-serif;
+}
+
+
+#cdk-overlay-0 > div > div > div.ant-popover-inner > div > div {
+  padding: 0px;
+}
+
+.tabs-popover-content {
+  padding: 5px;
+  width: 400px;
+
+  .poover-menu-item {
+    cursor: pointer;
+  }
+
+  .poover-menu-item-active {
+    background-color: $color-light-yellow;
+    .icon-check_24px {
+      color: $color-secondary;
+    }
+  }
+
+  .popover-menu-control-button {
+    color: #0700CF;
+    font-family: Rubik;
+    font-size: 14.22px;
+    letter-spacing: 1.25px;
+    line-height: 16px;
+    border: none;
+    font-weight: bold;
+  }
+
+  //.popover-menu-control-select{
+    ::ng-deep .ant-select-selection{
+      border: none !important;
+    }
+  //}
+}
+
+gridster .gridster-row {
+  border: none !important;
+}
+gridster .gridster-column {
+  border: none !important;
+}
+
+.ant-popover-inner-content{
+  padding: 8px 8px !important;
+}
+.ant-popover-buttons button:nth-child(1){
+  background: transparent;
+  box-shadow: none;
+  color: rgba(0,0,0,0.6);
+  border: 0px;
+}
+.ant-popover-buttons button:nth-child(2){
+  background: transparent;
+  box-shadow: none;
+  color: #D4172E;
+  border: 0px;
+}
+*/

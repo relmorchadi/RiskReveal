@@ -44,3 +44,37 @@ export class PatchWorkspace {
   static readonly type = '[Workspace Main] Patch Workspace';
   constructor(public payload?: any) {}
 }
+export class AddNewProject {
+  static readonly type = '[Workspace Main] Add new project';
+  constructor(public payload?: any) {}
+}
+
+export class UpdateProject {
+  static readonly type = '[Workspace Main] Update project';
+  constructor(public payload?: any) {}
+}
+
+export class AddNewProjectSuccess {
+  static readonly type = '[Workspace Main] Add new project success';
+  constructor(public payload?: any) {}
+}
+
+export class AddNewProjectFail {
+  static readonly type = '[Workspace Main] Add new project fail';
+  constructor(public payload?: any) {}
+}
+
+export class DeleteProject {
+  static readonly type = '[Workspace Main] delete project';
+  constructor(public payload?: any) {}
+}
+
+export class DeleteProjectSuccess {
+  static readonly type = '[Workspace Main] delete project success';
+  constructor(public payload?: any) {}
+}
+
+export class DeleteProjectFail {
+  static readonly type = '[Workspace Main] delete project fail';
+  constructor(public payload?: any) {}
+}

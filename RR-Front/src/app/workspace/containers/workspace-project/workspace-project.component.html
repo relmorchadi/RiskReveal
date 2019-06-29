@@ -1,40 +1,192 @@
 <app-left-menu></app-left-menu>
 <div class="workspace-main-content">
-  <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
-           nz-button nzType="primary" nzSize="large" nzShape="circle">
-     <i style="color: white;" nz-icon type="plus" theme="outline"></i>
-   </button>
-   -->
-  <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
-     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
-     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
-     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
-     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
-   </ul>
-   -->
-  <button (click)="pinWorkspace()" class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-          nz-button nzType="primary" nzSize="default" nzShape="circle">
-    <i style="color: #9592E6" nz-icon theme="outline">
-      <i class="icon-map-pin-alt"></i>
-    </i>
-  </button>
-  <div class="row pl-2 ml-4 mt-4">
-    <div class="title-project-wrapper">
-      <div style="display: flex;">
-        <h4>Projects</h4> <i class="icon-plus-circle icon-generic" style="font-size: 25px;"></i>
+  <div class="a-app-wrapper">
+    <div class="a-app-header">
+      <div class="title-project-wrapper">
+        <h4>Projects</h4>
+        <i class="icon-plus-circle icon-generic" (click)="isVisible = true"
+           style="font-size: 25px; cursor: pointer;"></i>
+        <p-dialog [(visible)]="isVisible"
+                  [modal]="true"
+                  [contentStyle]="{'overflow':'visible'}"
+                  [styleClass]="searchWorkspace ? 'm-dialog-modal-m-f' : 'm-dialog-modal-sm-f'"
+                  [responsive]="true">
+
+          <p-header>
+            <div class="header-modal" *ngIf="!existingProject && !searchWorkspace && !mgaProject">
+              <i *ngIf="newProject" (click)="resetToMain()" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+              <span style="margin-left: 10px">Create New Project</span>
+            </div>
+
+            <div class="header-modal" *ngIf="existingProject">
+              <i (click)="resetToMain()" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+              <span style="margin-left: 10px">Create Existing Project</span>
+            </div>
+            <div class="header-modal" *ngIf="searchWorkspace">
+              <i (click)="resetToMain()" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+              <span style="margin-left: 10px">Search For Project</span>
+            </div>
+          </p-header>
+
+          <div *ngIf="!newProject && !existingProject && !searchWorkspace && !mgaProject">
+            <div class="a-card-list-wrap">
+              <div class="a-card-item">
+                <div class="a-card-item-left">New Project</div>
+                <div class="a-card-item-right" (click)="newProject = true"><span class="a-card-item-inner">
+                <span style="margin-left: 10px">CREATE</span><i class="icon-arrow_forward_ios_24px"></i>
+              </span></div>
+              </div>
+              <div class="a-card-item">
+                <div class="a-card-item-left">Existing Project</div>
+                <div class="a-card-item-right" (click)="searchWorkspace = true"><span class="a-card-item-inner">
+                <span style="margin-left: 10px">CREATE</span><i class="icon-arrow_forward_ios_24px"></i>
+              </span></div>
+              </div>
+              <div class="a-card-item">
+                <div class="a-card-item-left">MGA</div>
+                <div class="a-card-item-right"><span class="a-card-item-inner">
+                <span style="margin-left: 10px">CREATE</span><i class="icon-arrow_forward_ios_24px"></i>
+              </span></div>
+              </div>
+            </div>
+          </div>
+
+          <ng-container *ngIf="newProject">
+            <div class="a-info-card">
+              <div style="background: #F5B74E"
+                   class="project-header-icon d-flex justify-content-center align-items-center">
+                <i class="icon-assignment_24px"></i>
+              </div>
+              <div class="a-info-card-data">
+                <div class="a-info-data-left">
+                  <span class="a-info-title">{{workspace.cedantName}}</span>
+                  <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+                </div>
+                <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+              </div>
+            </div>
+            <div class="a-form-control" [formGroup]="newProjectForm">
+              <div class="a-form-input-wrapper">
+                <label class="label-input">Project Name</label>
+                <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label"
+                       placeholder="Insert Name" formControlName="name"/>
+              </div>
+
+              <div class="a-form-input-wrapper">
+                <label class="textarea-label">Description</label>
+                <textarea style="margin-bottom:15px" rows="4" nz-input placeholder="Insert Description"
+                          formControlName="description"></textarea>
+              </div>
+
+              <div class="a-form-input-wrapper">
+                <label class="label-input">Created By</label>
+                <input class="a-textfield-standard a-textfield-label" placeholder="Insert Name" formControlName="createdBy"/>
+              </div>
+
+              <div class="a-form-date-control a-datepicker-standard">
+                <div class="a-form-input-wrapper">
+                  <label class="label-input">Reception Date</label>
+                  <p-calendar formControlName="receptionDate" placeholder="Select Date" [showIcon]="true"></p-calendar>
+                </div>
+                <div class="a-form-input-wrapper">
+                  <label class="label-input">Due Date</label>
+                  <p-calendar formControlName="dueDate" placeholder="Select Date" [showIcon]="true"></p-calendar>
+                </div>
+                <!--                <nz-date-picker class="reception-label" [(ngModel)]="receptionDate"
+                                                (ngModelChange)="onChangeDate($event)"></nz-date-picker>
+                                <nz-date-picker class="due-label" [(ngModel)]="dueDate"
+                                                (ngModelChange)="onChangeDate($event)"></nz-date-picker>-->
+              </div>
+
+            </div>
+          </ng-container>
+
+          <div *ngIf="searchWorkspace">
+            <div class="a-form-control">
+              <div class="a-form-input-wrapper">
+                <label class="label-input">Search For Project</label>
+                <input style="margin-bottom:15px" class="a-textfield-standard a-textfield-label"
+                       placeholder="Insert Workspace Name"/>
+              </div>
+              <div class="search-area-wrapper">
+                <div class="search-result popover-menu">
+                  <nz-radio-group class="default-radio" [(ngModel)]="selectedWs" style="width: 100%">
+                    <label nz-radio nzValue="A">
+                      <div class="a-info-data-left">
+                        <span class="a-info-title">{{workspace.cedantName}}</span>
+                        <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+                      </div>
+                      <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+                    </label>
+                    <label nz-radio nzValue="B">
+                      <div class="a-info-data-left">
+                        <span class="a-info-title">{{workspace.cedantName}}</span>
+                        <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+                      </div>
+                      <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+                    </label>
+                  </nz-radio-group>
+                </div>
+                <div class="project-inputs">
+                  <div class="a-info-card">
+                    <div style="background: #F5B74E"
+                         class="project-header-icon d-flex justify-content-center align-items-center">
+                      <i class="icon-assignment_24px"></i>
+                    </div>
+                    <div class="a-info-card-data">
+                      <div class="a-info-data-left">
+                        <span class="a-info-title">{{workspace.cedantName}}</span>
+                        <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+                      </div>
+                      <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <p-footer>
+            <div class="a-control-buttons" *ngIf="newProject">
+              <button class="a-button-text-cancel" (click)="cancelCreateProject()">CANCEL</button>
+              <button class="a-button-text" [ngClass]="{'a-button-text-cancel' : !newProjectForm.valid}"
+                      [disabled]="!newProjectForm.valid" (click)="createUpdateProject()">CREATE</button>
+            </div>
+          </p-footer>
+
+
+        </p-dialog>
       </div>
-      <nz-select class="float-right mt-2 dropdown-default" style="width: 150px; margin-right: 70px;" nzShowSearch [(ngModel)]="selectedPrStatus">
-        <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
-      </nz-select>
+      <div style="display: flex">
+        <nz-select class="float-right mt-2 a-dropdown-small" style="width: 150px; margin-right: 70px;" nzShowSearch
+                   [(ngModel)]="selectedPrStatus">
+          <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
+        </nz-select>
+        <button *ngIf="!workspace.pinged" (click)="pinWorkspace()"
+                class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+                nz-button nzType="primary" nzSize="default" nzShape="circle">
+          <i style="color: #9592E6" nz-icon theme="outline">
+            <i class="icon-map-pin-alt"></i>
+          </i>
+        </button>
+        <button *ngIf="workspace.pinged" (click)="pinWorkspace()" style="background-color: rgb(91, 139, 159);"
+                class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
+                nz-button nzType="primary" nzSize="default" nzShape="circle">
+            <span style="color: #FFFFFF">
+              <i class="icon-map-pin-alt"></i>
+              <i style="position: absolute;margin-left: -17px" class="icon-line-alt"></i>
+            </span>
+        </button>
+      </div>
     </div>
-  </div>
-  <div class="card-holder-wrap">
-    <div *ngFor="let project of projects$ | async" (contextmenu)="contextMenu($event, template)" class="card-holder">
-        <div class="project-card mx-1" (click)="selectProject(project)" [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
+    <div class="card-holder-wrap">
+      <div *ngFor="let project of projects$ | async" (contextmenu)="contextMenu($event, template, project)" class="card-holder">
+        <div class="project-card mx-1" (click)="selectProject(project)"
+             [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
           <div class="project-header">
-<!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
-              <i class="fa fa-code-fork" aria-hidden="true"></i>
-            </div>-->
+            <!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
+                          <i class="fa fa-code-fork" aria-hidden="true"></i>
+                        </div>-->
             <div style="background: #F5B74E" class="project-header-icon d-flex justify-content-center align-items-center">
               <i class="icon-assignment_24px"></i>
             </div>
@@ -112,32 +264,49 @@
           </div>
           <div class="project-kpi-details pb-3">
             <p class="project-kpi-details-title">
-             {{project?.description}}
+              {{project?.description}}
             </p>
             <div class="border-top d-flex project-kpi-details-content">
               <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
               <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-              <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
+              <span class="text-center dt-11"
+                    style="flex:1;color: rgba(0,0,0,0.87);	letter-spacing: 0.08px;	line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
             </div>
             <div class="border-top d-flex project-kpi-details-content">
               <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Last Modified</span>
               <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-              <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px;	line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
+              <span class="text-center dt-11"
+                    style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px;	line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
             </div>
           </div>
         </div>
+      </div>
     </div>
   </div>
+  <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
+           nz-button nzType="primary" nzSize="large" nzShape="circle">
+     <i style="color: white;" nz-icon type="plus" theme="outline"></i>
+   </button>
+   -->
+  <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>PLT's </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
+     <li style="font-size: 14.22px;	font-weight: 500;" nz-menu-item>Activity </li>
+   </ul>
+   -->
+
+
 </div>
 
 <ng-template #template>
-  <ul nz-menu nzInDropDown (nzClick)="close($event)">
+  <ul nz-menu nzInDropDown>
     <li nz-menu-item class="contextMenu"><i class="icon-arrow-from-top"></i>Import</li>
     <li nz-menu-item class="contextMenu"><i class="icon-copy-landscape"></i>Clone</li>
     <li nz-menu-item class="contextMenu border-bottom"><i class="icon-sitemap"></i>Calibrate</li>
     <li nz-menu-item class="contextMenu border-bottom"><i class="icon-export"></i>Publish To Pricing</li>
     <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-trash-alt"></i>Delete</li>
+    <li nz-menu-item class="contextMenu border-bottom" (click)="delete(contextMenuProject)"><i class="icon-trash-alt"></i>Delete</li>
     <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
   </ul>
 </ng-template>
@@ -247,3 +416,4 @@
     </ng-masonry-grid>
   </div>-->
 
+<p-toast></p-toast>

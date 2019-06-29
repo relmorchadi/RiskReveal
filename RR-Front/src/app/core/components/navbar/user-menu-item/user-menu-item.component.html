@@ -1,14 +1,17 @@
-<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" (click)="navigateToUserPreference()">
+<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover
+     [nzContent]="userPopoverContent" nzPlacement="bottomRight" nzTrigger="click">
   <nz-avatar nzText="N.D" nzSize="large"></nz-avatar>
   Nathalie Dulac &nbsp;&nbsp;
+  <i nz-icon type="down" theme="outline" style="float: right; margin-top: 12px;"></i>
 </div>
-<!--<ng-template #userPopoverContent>
+
+<ng-template #userPopoverContent>
   <div class="tabs-popover-content">
 
     <div>
-      <span class="user-config-title">General Search Settings</span>
+<!--      <span class="user-config-title">General Settings</span>-->
       <div>
-        <div class="user-config-item">
+<!--        <div class="user-config-item">
           <span>Search Target :</span>
           <nz-select class="dropdown-default"
                      style="width: 150px;"
@@ -18,48 +21,25 @@
             <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
             <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
           </nz-select>
-        </div>
-      </div>
-    </div>
-
-&lt;!&ndash;    <div class="">
-      <span class="user-config-title">Import Settings</span>
-      <div class="user-config-item">
-        <span>Default Import :</span>
-        <button class="button-outlined" (click)="isVisible=true">&nbsp;&nbsp;&nbsp;&nbsp;Configure&nbsp;&nbsp;&nbsp;&nbsp;</button>
-      </div>
-    </div>&ndash;&gt;
-
-    <div class="">
-      <span class="user-config-title">Widget Settings</span>
-      <div style="margin-bottom: 25px;" class="user-config-item">
-        <span>Default Widget :</span>
-      </div>
-    </div>
-
-    <div class="">
-      <span class="user-config-title">EP Metrics Settings</span>
-      <div style="margin-bottom: 25px;" class="user-config-item">
-        <span>Default EP Metrics :</span>
-
+        </div>-->
       </div>
     </div>
 
     <div class="user-config-footer">
-      <button (click)="navigateToUserPreference()" class="button-no-outline">MORE CONFIGURATION</button>
+      <button (click)="navigateToUserPreference()" class="a-button-text">GENERAL SETTINGS</button>
     </div>
 
   </div>
 
-  <ng-template #userPrefHeaderContent>
+<!--  <ng-template #userPrefHeaderContent>
     <span style="width: 5px">User Preferences &nbsp;
       &lt;!&ndash;<span class="badge badge-light tab-badge">12</span>&ndash;&gt;
     </span>
-  </ng-template>
+  </ng-template>-->
 </ng-template>
 
 
-<nz-modal
+<!--nz-modal
   [(nzVisible)]="isVisible"
   [nzTitle]="preferencesConfig"
   (nzOnCancel)="handleCancel()"
@@ -88,9 +68,9 @@
 </nz-modal>-->
 
 
-<ng-template #preferencesConfig>
+<!--<ng-template #preferencesConfig>
   <span>
     <i class="icon-settings_24px"></i> User Preferences
   </span>
-</ng-template>
+</ng-template>-->
 

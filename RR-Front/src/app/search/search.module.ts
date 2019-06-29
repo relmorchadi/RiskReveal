@@ -3,10 +3,10 @@ import {SearchMainComponent} from './containers/search-main/search-main.componen
 import {CONTAINERS} from './containers';
 import {SharedModule} from '../shared/shared.module';
 import {RouterModule, Routes} from '@angular/router';
-import { ScrollingModule } from '@angular/cdk/scrolling';
-import { ContractFilterPipe } from './pipes/contract-filter.pipe';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {ContractFilterPipe} from './pipes/contract-filter.pipe';
 import {NgxsModule} from "@ngxs/store";
-import { SearchMainDetailComponentComponent } from './components/search-main-detail-component/search-main-detail-component.component';
+import {SearchMainDetailComponentComponent} from './components/search-main-detail-component/search-main-detail-component.component';
 
 const routes: Routes = [
   {path: '', component: SearchMainComponent}

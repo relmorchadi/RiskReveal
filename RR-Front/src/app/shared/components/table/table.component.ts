@@ -1,13 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ViewChild,
-  HostListener,
-  ChangeDetectionStrategy
-} from '@angular/core';
+import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
 
@@ -80,6 +71,15 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  getItems() {
+    const selected = this.listOfData.filter(dt => dt.selected);
+    if (selected.length > 1) {
+      return this.items.filter(item => item.label !== 'View Detail');
+    } else {
+      return this.items;
+    }
   }
 
   sort(): void {

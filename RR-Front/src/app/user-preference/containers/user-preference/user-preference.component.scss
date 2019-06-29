@@ -101,21 +101,39 @@
   margin: 20px 0 15px 10px;
 }
 
-.settings-wrapper {
-  background-color: #FFFFFF;
-  box-shadow: 1px 3px rgba(0, 0, 0, 0.15), -1px -1px 3px rgba(0, 0, 0, 0.15);
-  border-radius: 3px;
+.a-card-list-wrap {
 
-  .user-config-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 22px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+  .column-config {
+    height: 165px;
+    flex-direction: column;
+    align-items: baseline;
+  }
 
-    ::ng-deep {
-      .ant-select ul, .ant-select ol {
-        width: 250px;
+  .number-config-item {
+    border-bottom: none !important;
+
+    .list-config-wrapper {
+      width: 100%;
+      padding: 10px 0;
+      border: 1px solid rgba(0,0,0,0.15);
+    }
+
+    ul {
+      list-style: none;
+      margin-bottom: 0;
+      padding: 0;
+      
+      li {
+        cursor: pointer;
+        padding: 3px 15px;
+
+        &:hover {
+          background-color: rgba(0,0,0,0.15);
+        }
+      }
+
+      .selected-config {
+        background-color: #FCF9D6;
       }
     }
   }
@@ -125,7 +143,7 @@
   width: 60%;
   display: flex;
   justify-content: flex-end;
-  margin: 10px auto;
+  margin: 20px auto;
 }
 
 .example-list {

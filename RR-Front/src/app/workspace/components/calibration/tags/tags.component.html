@@ -21,7 +21,7 @@
       <div class="tags-title-section" nz-row style="margin-top: -20px;">User tags</div>
       <div *ngFor="let tag of userTags" class="ml-3 mt-1" nz-row>
                     <span (click)="changeFilter(tag,'user')" [ngClass]="{'active-tag': tag === currentUserTag}"
-                          [ngStyle]="{'background-color': tag.tagColor}" class="chips">
+                          [ngStyle]="{'background-color': tag.tagColor}" class="a-chips-input-filled-textonly">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>
@@ -33,7 +33,7 @@
       </div>
       <div *ngFor="let tag of systemTags" class="ml-3 mt-1" nz-row>
                     <span (click)="changeFilter(tag,'system')" [ngClass]="{'active-tag': tag === currentSystemTag}"
-                          [ngStyle]="{'background-color': tag.tagColor}" class="chips">
+                          [ngStyle]="{'background-color': tag.tagColor}" class="a-chips-input-filled-textonly">
                       {{tag.tagName}}
                       <span [ngStyle]="{'background-color': tag.innerTagColor}"
                             class="inner-chip">{{tag.innerTagContent}}</span>

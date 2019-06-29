@@ -4,8 +4,8 @@
   <i class="icon-notifications_24px icon-size"></i>
 </nz-badge>
 <ng-template #notificationsPopoverContent>
-  <div class="tabs-popover-content" style="width: 465px; height:500px;">
-    <nz-tabset>
+  <div class="tabs-popover-content" style="width: 465px; height:455px;">
+    <nz-tabset class="a-tab-minitab">
       <nz-tab [nzTitle]="AllHeaderContent">
         <div class="popup-tab-content">
           <div class="tab-search-input">
@@ -41,8 +41,8 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+          <div class="mt-2 task-footer">
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals()" >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -50,8 +50,8 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button (click)="clearNotif('all')" class="button-no-outline">CLEAR ALL</button>
-              <button (click)="navigateToNotification()" class="button-no-outline">SEE ALL</button>
+              <button (click)="clearNotif('all')" class="a-button-text">CLEAR ALL</button>
+              <button (click)="navigateToNotification()" class="a-button-text">SEE ALL</button>
             </div>
           </div>
         </div>
@@ -92,8 +92,8 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2 footer-wrapper">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+          <div class="mt-2 task-footer">
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -101,8 +101,8 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="button-no-outline" (click)="clearNotif('Error')">CLEAR ALL</button>
-              <button class="button-no-outline" (click)="navigateToNotification()">SEE ALL</button>
+              <button class="a-button-text" (click)="clearNotif('Error')">CLEAR ALL</button>
+              <button class="a-button-text" (click)="navigateToNotification()">SEE ALL</button>
             </div>
           </div>
         </div>
@@ -143,8 +143,8 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+          <div class="mt-2 task-footer">
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -152,8 +152,8 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="button-no-outline" (click)="clearNotif('warning')">CLEAR ALL</button>
-              <button class="button-no-outline" (click)="navigateToNotification()">SEE ALL</button>
+              <button class="a-button-text" (click)="clearNotif('warning')">CLEAR ALL</button>
+              <button class="a-button-text" (click)="navigateToNotification()">SEE ALL</button>
             </div>
           </div>
         </div>
@@ -194,8 +194,8 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left dropdown-default"
+          <div class="mt-2 task-footer">
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -203,8 +203,8 @@
             </nz-select>
 
             <div class="notification-footer">
-              <button class="button-no-outline" (click)="clearNotif('informational')">CLEAR ALL</button>
-              <button class="button-no-outline" (click)="navigateToNotification()">SEE ALL</button>
+              <button class="a-button-text" (click)="clearNotif('informational')">CLEAR ALL</button>
+              <button class="a-button-text" (click)="navigateToNotification()">SEE ALL</button>
             </div>
           </div>
         </div>

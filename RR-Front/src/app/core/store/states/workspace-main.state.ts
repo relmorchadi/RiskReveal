@@ -1,13 +1,22 @@
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import {Observable} from 'rxjs';
-
+import produce from 'immer';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
-  CloseWorkspaceMainAction, LoadWorkspacesAction, OpenNewWorkspacesAction,
+  AddNewProject, AddNewProjectFail, AddNewProjectSuccess,
   AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction, SetWsRoutingAction, SelectProjectAction, setTabsIndex, PatchWorkspace,
+  CloseWorkspaceMainAction, DeleteProject, DeleteProjectFail, DeleteProjectSuccess,
+  LoadWorkspacesAction,
+  OpenNewWorkspacesAction,
+  PatchWorkspace,
+  PatchWorkspaceMainStateAction,
+  SelectProjectAction,
+  setTabsIndex,
+  SetWsRoutingAction,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
+import {WorkspaceMainService} from '../../service/workspace-main.service';
+import {catchError, tap} from "rxjs/operators";
+import {EMPTY, Observable} from "rxjs";
 
 const initiaState: WorkspaceMain = {
   leftNavbarIsCollapsed: false,
@@ -28,7 +37,7 @@ const initiaState: WorkspaceMain = {
 export class WorkspaceMainState implements NgxsOnInit {
   ctx = null;
 
-  constructor() {
+  constructor(private workspaceMainService: WorkspaceMainService) {
   }
 
   ngxsOnInit(ctx?: StateContext<WorkspaceMainState>): void | any {
@@ -41,6 +50,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   @Selector()
   static getWorkspaceMainState(state: WorkspaceMain) {
     return state;
+  }
+
+  @Selector()
+  static getLeftNavbarIsCollapsed(state: WorkspaceMain) {
+    return state.leftNavbarIsCollapsed;
   }
 
   @Selector()
@@ -142,7 +156,7 @@ export class WorkspaceMainState implements NgxsOnInit {
       });
       openedTabs = [...openedTabs, _.merge({}, data, {routing: ''})];
       const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
-      openedTabs.map(dt => ({
+      openedTabs = openedTabs.map(dt => ({
         ...dt,
         projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
         pinged: _.get( workSpaceMenuItem[dt.workSpaceId+'-'+dt.uwYear],'pinged',false),
@@ -281,6 +295,46 @@ export class WorkspaceMainState implements NgxsOnInit {
         }), tabsIndex: state.openedTabs.tabsIndex},
       recentWs: recentlyOpenedWs
     });
+  }
+
+  @Action(AddNewProject)
+  addNewProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
+   return this.workspaceMainService.addNewProject(payload.project, payload.workspaceId, payload.uwYear)
+     .pipe(catchError(err => {
+       ctx.dispatch(new AddNewProjectFail({}));
+       return EMPTY; }))
+     .subscribe((result) => {
+     const state = ctx.getState();
+     if (result) {
+       const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
+       ctx.setState(
+         produce((draft) => {
+           draft.openedTabs.data[i].projects.push(result);
+           draft.openedWs.projects.push(result);
+         }));
+     }
+     ctx.dispatch(new AddNewProjectSuccess(result));
+   });
+  }
+
+  @Action(DeleteProject)
+  deleteProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
+    return this.workspaceMainService.deleteProject(payload.project, payload.workspaceId, payload.uwYear)
+      .pipe(catchError(err => {
+        ctx.dispatch(new DeleteProjectFail({}));
+        return EMPTY; }))
+      .subscribe((result) => {
+        const state = ctx.getState();
+        if (result) {
+          const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
+          ctx.setState(
+            produce((draft) => {
+              draft.openedTabs.data[i].projects = _.filter(draft.openedTabs.data[i].projects, e => e.projectId !== result.projectId);
+              draft.openedWs.projects = _.filter(draft.openedWs.projects, e => e.projectId !== result.projectId);
+            }));
+        }
+        ctx.dispatch(new DeleteProjectSuccess(result));
+      });
   }
 
   private makePagination(recentlyOpenedWs) {

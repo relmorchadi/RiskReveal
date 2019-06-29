@@ -20,6 +20,8 @@ public interface ContractSearchResultRepository extends JpaRepository<ContractSe
     @Query("select c from ContractSearchResult c where c.workSpaceId= :wkspId and concat(c.uwYear,'')= :uwy order by c.workSpaceId asc, c.uwYear asc")
     List<ContractSearchResult> findByTreatyidAndUwYear(@Param("wkspId") String workspaceId,String uwy);
 
+    @Query("select c from ContractSearchResult c where c.workSpaceId= :wkspId and concat(c.uwYear,'')= :uwy order by c.workSpaceId asc, c.uwYear asc")
+    ContractSearchResult findByWorkspaceIdAndUwYear(@Param("wkspId") String workspaceId,String uwy);
 
     @Query(value = "select c.workSpaceId as workSpaceId, c.workspaceName as workspaceName, c.uwYear as uwYear, c.cedantCode as cedantCode, c.cedantName as cedantName, c.countryName as countryName from ContractSearchResult c " +
             " where c.workSpaceId like :kw or c.workspaceName like :kw or c.uwYear like :kw or c.cedantCode like :kw or c.cedantName like :kw or c.countryName like :kw" +

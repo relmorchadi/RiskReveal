@@ -18,9 +18,9 @@ export class SearchNavBar {
   showRecentSearch: any[];
   tables: any[];
   savedSearch: any[];
-  tagShortcuts: any[];
+  tagShortcuts: any;
   sortcutFormKeysMapper: any;
-  searchContent:any;
+  searchContent: any;
 }
 
 

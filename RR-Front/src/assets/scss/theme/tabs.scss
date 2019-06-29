@@ -4,7 +4,12 @@
   }
 }
 
-.tabs-standard {
+.a-tab-minitab {
+  .ant-tabs-tab {
+    padding: 11px 10px;
+    font-size: 12px;
+  }
+
   .ant-tabs-nav .ant-tabs-tab-active {
     color: #0700CF;
     background: transparent !important;

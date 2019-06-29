@@ -1,5 +1,6 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import {Pipe, PipeTransform} from '@angular/core';
 import * as _ from 'lodash'
+
 @Pipe({
   name: 'tableSortAndFilter'
 })
@@ -24,7 +25,6 @@ export class TableSortAndFilterPipe implements PipeTransform {
             )
         ))
     }
-
     if(sortDataKeys.length > 0){
         res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
     }

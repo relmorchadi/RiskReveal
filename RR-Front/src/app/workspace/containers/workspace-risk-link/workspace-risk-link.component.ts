@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnDestroy} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -7,8 +7,11 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  SearchRiskLinkEDMAndRDMAction, ToggleRiskLinkAnalysisAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkPortfolioAction
+  PatchAddToBasketStateAction,
+  SearchRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction, TogglePortfolioForLinkingAction,
+  ToggleRiskLinkAnalysisAction,
+  ToggleRiskLinkEDMAndRDMSelectedAction,
+  ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
@@ -18,6 +21,7 @@ import {
   SelectRiskLinkEDMAndRDMAction,
   ToggleRiskLinkEDMAndRDMAction
 } from '../../store/actions';
+import { DataTables } from './data';
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -40,91 +44,28 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   serviceSubscription: any;
 
-  listEdmRdm: any = [
-    {id: 1, name: 'AA2012_syntheticCurve_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 2, name: 'AA2012_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/5'},
-    {id: 3, name: 'AA2016_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 4, name: 'AA2017_SEA_syntheticCurve_R', type: 'RDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 5, name: 'ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'},
-    {id: 6, name: 'ALMF_test_R', type: 'RDM', selected: false, scanned: false, Reference: '0/12'},
-    {id: 7, name: 'Anxin_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
-    {id: 8, name: 'Anxin_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/4'},
-    {id: 9, name: 'Aon_IF_Flood_Example_E', type: 'EDM', selected: false, scanned: false, Reference: '0/2'},
-    {
-      id: 10,
-      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_EDM',
-      type: 'EDM',
-      selected: false,
-      scanned: false,
-      Reference: '0/15'
-    },
-    {
-      id: 11,
-      name: 'Brkr_PICC_CATXL_2018RNL_ToMkt_RDM',
-      type: 'RDM',
-      selected: false,
-      scanned: false,
-      Reference: '0/13'
-    },
-    {id: 12, name: 'CC_ALMF_test_E', type: 'EDM', selected: false, scanned: false, Reference: '0/13'},
-    {id: 13, name: 'CG1801_DEU_Allianz_DEFL_R', type: 'RDM', selected: false, scanned: false, Reference: '0/41'},
-    {id: 14, name: 'CG1801_DEU_Allianz_DEFL_E', type: 'EDM', selected: false, scanned: false, Reference: '0/41'},
-    {id: 15, name: 'Anxin_2018_NMQSS_ZJ_Training_R', type: 'RDM', selected: false, scanned: false, Reference: '0/15'},
-    {id: 16, name: 'Anxin_2018_NMQSS_ZJ_Training_E', type: 'EDM', selected: false, scanned: false, Reference: '0/17'},
-    {id: 17, name: 'CF1803_PORT_R', type: 'RDM', selected: false, scanned: false, Reference: '0/3'},
-    {id: 18, name: 'CF1803_PORT_E', type: 'EDM', selected: false, scanned: false, Reference: '0/25'}
-  ];
+  listEdmRdm: any = [];
 
   tableLeftAnalysis: any;
+  tableAnalysisLinking: any;
 
-  tableLeftProtfolio: any;
+  tableLeftPortfolio: any;
+  tablePortfolioLinking: any;
 
-  scrollableColsAnalysis = [
-    {field: 'description', header: 'Description', width: '150px', type: 'text'},
-    {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
-    {field: 'groupType', header: 'Group Type', width: '110px', type: 'text'},
-    {field: 'cedant', header: 'Cedant', width: '110px', type: 'text'},
-    {field: 'lobName', header: 'LOB', width: '110px', type: 'text'},
-    {field: 'engineType', header: 'Engine Type', width: '110px', type: 'text'},
-    {field: 'runDate', header: 'Run Date', width: '110px', type: 'text'},
-    {field: 'typeName', header: 'Type', width: '110px', type: 'text'},
-    {field: 'peril', header: 'Peril', width: '110px', type: 'text'},
-    {field: 'subPeril', header: 'Sub Peril', width: '110px', type: 'text'},
-    {field: 'lossAmplification', header: 'Loss Amplification', width: '110px', type: 'text'},
-    {field: 'region', header: 'Region', width: '110px', type: 'text'},
-    {field: 'modeName', header: 'Mode', width: '110px', type: 'text'},
-    {field: 'user1', header: 'User 1', width: '110px', type: 'text'},
-    {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
-    {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
-    {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
-    {field: 'sourceCurrency', header: 'Source Currency', width: '110px', type: 'text'},
-    {field: 'regionName', header: 'Region Name', width: '110px', type: 'text'},
-    {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
-    {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
-  ];
+  scrollableColsAnalysis: any;
+  frozenColsAnalysis: any;
 
-  frozenColsAnalysis = [
-    {field: 'selected', header: 'selected', width: '20px', type: 'select'},
-    {field: 'analysisId', header: 'id', width: '30px', type: 'text'},
-    {field: 'analysisName', header: 'name', width: '190px', type: 'text'}
-  ];
+  scrollableColsPortfolio: any;
+  frozenColsPortfolio: any;
 
-  scrollableColsPortfolio = [
-    {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text'},
-    {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date'},
-    {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text'},
-    {field: 'type', header: 'Type', width: '180px', type: 'text'},
-    {field: 'agCedent', header: 'Cedant', width: '120px', type: 'text'},
-    {field: 'agCurrency', header: 'Currency', width: '120px', type: 'text'},
-    {field: 'agSource', header: 'Source', width: '120px', type: 'text'},
-    {field: 'peril', header: 'Peril', width: '120px', type: 'text'},
-  ];
+  scrollableColsSummary: any;
+  frozenColsSummary: any;
 
-  frozenColsPortfolio = [
-    {field: 'selected', header: 'selected', width: '20px', type: 'select'},
-    {field: 'dataSourceId', header: 'id', width: '30px', type: 'text'},
-    {field: 'number', header: 'Number', width: '190px', type: 'text'}
-  ];
+  scrollableColsResult: any;
+  frozenColsResult: any;
+
+  selectedEDM: any;
+  scrollableColslinking: any;
 
   summaryInfo: any = [
     {
@@ -134,10 +75,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       number: 'EUGU_CHIPZCP_CDSC_PR',
       name: 'AUWS_PR_20170930',
       exposedLocation: true,
-      exposedCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       unitMultiplier: 1.0,
-      proportion: '100%',
+      proportion: '100',
       EDM: 'AA2012_SyntheticCurve_E'
     },
     {
@@ -147,10 +88,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       number: 'EUGU_CHIPZCP_CDSC_PR',
       name: 'AUWS_PR_20170930',
       exposedLocation: true,
-      exposedCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       unitMultiplier: 1.0,
-      proportion: '100%',
+      proportion: '100',
       EDM: 'AA2012_SyntheticCurve_E'
     },
     {
@@ -160,10 +101,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       number: 'EUGU_CHIPZCP_CDSC_PR',
       name: 'AUWS_PR_20170930',
       exposedLocation: true,
-      exposedCurrency: 'USD',
+      sourceCurrency: 'USD',
       targetCurrency: 'USD',
       unitMultiplier: 1.0,
-      proportion: '100%',
+      proportion: '100',
       EDM: 'AA2012_SyntheticCurve_E'
     },
   ];
@@ -173,7 +114,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       scanned: false,
       status: 100,
       id: '286',
-      name: 'Europe All Lines, EP Wind Only',
+      name: 'FA0020553_01',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
       sourceCurrency: 'USD',
@@ -186,7 +127,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       scanned: false,
       status: 50,
       id: '285',
-      name: 'Europe All Lines, EP Wind Only',
+      name: 'FA0020553_01',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
       sourceCurrency: 'USD',
@@ -199,7 +140,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       scanned: false,
       status: 20,
       id: '284',
-      name: 'Europe All Lines, EP Wind Only',
+      name: 'FA0020553_01',
       description: 'Europe All Lines, EP Wind Only',
       regionPeril: 'DEFL',
       sourceCurrency: 'USD',
@@ -218,6 +159,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.serviceSubscription = [
       this.state$.subscribe(value => this.state = _.merge({}, value)),
@@ -226,13 +168,23 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.portfolios).subscribe(dt => {
-        this.tableLeftProtfolio = dt;
+        this.tableLeftPortfolio = dt;
         this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
         this.detectChanges();
       })
     ];
+
+    this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
+    this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
+    this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
+    this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
+    this.scrollableColsSummary = DataTables.scrollableColsSummary;
+    this.frozenColsSummary = DataTables.frozenColsSummary;
+    this.scrollableColsResult = DataTables.scrollableColsResults;
+    this.frozenColsResult = DataTables.frozenColsResults;
+    this.scrollableColslinking = DataTables.scrollableColsLinking;
   }
 
   ngOnDestroy() {
@@ -298,40 +250,14 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
   }
 
-  /*  selectRow(row: any, index: number) {
-      if ((window as any).event.ctrlKey) {
-        row.selected = !row.selected;
-      }
-      if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndex) {
-          this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
-          this.lastSelectedIndex = null;
-        } else {
-          this.lastSelectedIndex = index;
-        }
-      }
-      // this.currentSelectedItem = row;
-      const selectedRowsAnalysis = this.tableLeftAnalysis.filter(ws => ws.selected === true);
-      const selectedRowsPortfolio = this.tableLeftProtfolio.filter(ws => ws.selected === true);
+  toggleForLinkingEDM(items) {
+    this.store.dispatch(new TogglePortfolioForLinkingAction(items));
+    this.selectedEDM = items;
+  }
 
-    }
-
-    selectSection(from, to) {
-      let tableUpdated: any;
-      if (this.state.listEdmRdm.selectedEDMOrRDM === 'rdm') {
-        tableUpdated = this.tableLeftAnalysis;
-      } else {
-        tableUpdated = this.tableLeftProtfolio;
-      }
-      if (from === to) {
-        tableUpdated[from].selected = !tableUpdated[from].selected;
-      } else {
-        for (let i = from; i <= to; i++) {
-          tableUpdated[i].selected = !tableUpdated[i].selected;
-        }
-      }
-    }*/
+  toggleForLinkingRDM(items) {
+    this.store.dispatch(new ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
+  }
 
   getScrollableCols() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
@@ -349,14 +275,22 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
+  getLinkingData() {
+    const {id} = _.filter(this.state.linking.edm, (dt) => dt.selected === true)[0];
+    const dataTable = _.get(this.state.linking, `analysis.${id}.data`, null);
+    return _.toArray(dataTable);
+  }
+
   getTableData() {
-    const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM, (dt) => dt.selected === true)[0];
+    let dataTable;
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      this.tableLeftAnalysis = _.get(this.tableLeftAnalysis, `${id}.data`, this.tableLeftAnalysis);
-      return _.toArray(this.tableLeftAnalysis);
+      const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM.rdm, (dt) => dt.selected === true)[0];
+      dataTable = _.get(this.tableLeftAnalysis, `${id}.data`, this.tableLeftAnalysis);
+      return _.toArray(dataTable);
     } else {
-      this.tableLeftProtfolio = _.get(this.tableLeftProtfolio, `${id}.data`, this.tableLeftProtfolio);
-      return _.toArray(this.tableLeftProtfolio);
+      const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM.edm, (dt) => dt.selected === true)[0];
+      dataTable = _.get(this.tableLeftPortfolio, `${id}.data`, this.tableLeftPortfolio);
+      return _.toArray(dataTable);
     }
   }
 
@@ -388,34 +322,56 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   selectRows(row: any, index: number) {
     if ((window as any).event.ctrlKey) {
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
+      } else {
+        this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+      }
       this.lastSelectedIndex = index;
     } else if ((window as any).event.shiftKey) {
       event.preventDefault();
       if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
         this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
-        // this.lastSelectedIndex = null;
       } else {
         this.lastSelectedIndex = index;
-        // row.selected = true;
+        if (this.state.selectedEDMOrRDM === 'rdm') {
+          this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
+        } else {
+          this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+        }
       }
     } else {
-      this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+        this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
+      } else {
+        this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
+        this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+      }
       this.lastSelectedIndex = index;
-      row.selected = true;
     }
-    // this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
-    // this.isIndeterminate();
+    this.store.dispatch(new PatchAddToBasketStateAction());
   }
 
   private selectSection(from, to) {
-    // this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
+    if (this.state.selectedEDMOrRDM === 'rdm') {
+      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+    } else {
+      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
+    }
     if (from === to) {
-      // this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
-      // this.listOfData[from].selected = true;
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: this.getTableData()[from]}));
+      } else {
+        this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: this.getTableData()[from]}));
+      }
     } else {
       for (let i = from; i <= to; i++) {
-        // this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
-        // this.listOfData[i].selected = true;
+        if (this.state.selectedEDMOrRDM === 'rdm') {
+          this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: this.getTableData()[i]}));
+        } else {
+          this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: this.getTableData()[i]}));
+        }
       }
     }
   }

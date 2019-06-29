@@ -15,6 +15,7 @@ export class DashboardEntryComponent implements OnInit {
   protected item: any = {x: 0, y: 0, cols: 3, rows: 5};
   newDashboardTitle: any;
   selectedDashboard: any;
+  searchMode = 'Treaty';
   dashboards: any = [
     {
       id: 0,

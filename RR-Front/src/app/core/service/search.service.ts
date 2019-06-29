@@ -1,12 +1,9 @@
-import { Subject} from 'rxjs';
+import {Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
 import * as _ from 'lodash'
-import {Select, Selector, Store} from '@ngxs/store';
-import { SetLoadingState} from '../store/actions';
-import {NotificationService} from "../../shared/notification.service";
 
 @Injectable({
   providedIn: 'root'

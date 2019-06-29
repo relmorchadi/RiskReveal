@@ -12,6 +12,7 @@ export class GeneralConfig {
       numberOfDecimals: number;
       decimalSeparator: string;
       decimalThousandSeparator: string;
+      negativeFormat: string;
       numberHistory: string;
     };
   };
@@ -20,6 +21,7 @@ export class GeneralConfig {
     financialPerspectiveELT: any;
     financialPerspectiveEPM: any;
     targetCurrency: any;
+    targetAnalysisCurrency: any;
     rmsInstance: any;
   };
   contractOfInterest: {

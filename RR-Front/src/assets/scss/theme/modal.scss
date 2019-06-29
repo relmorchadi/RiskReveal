@@ -1,0 +1,76 @@
+@import "sizes";
+@import "mixins";
+// diffrent size modifier for m-dialog as class
+//tips: m-dialog-modal-sm || m-dialog-modal for auto width && hight
+
+/*
+<p-dialog
+        styleClass="m-dialog-modal-lg"
+        appendTo="body"
+        [responsive]="true"
+      >
+        <p-header>
+          <hn>
+            #Title
+          </hn>
+          <i style="cursor: pointer" (click)="tagModal(false)" class="icon-close_24px"></i>
+        </p-header>
+        #content
+        <p-footer>
+          #footer content
+        </p-footer>
+</p-dialog>
+*/
+
+$modal-sizes: (
+  "auto": ( "height": auto, "width": auto ),
+  "sm": ( "height": 35vh, "width": 40vw ),
+  "sm-f": ("height": auto, "width": 30vw, "minWidth": 450px),
+  "m": ( "height": 50vh, "width": 60vw ),
+  "m-f": ( "height": auto, "width": 55vw, "minWidth": 750px ),
+  "lg": ( "height": 75vh, "width": 90vw )
+);
+
+body {
+  @each $abbreviation, $size in $modal-sizes {
+    $expr: "";
+
+    @if $abbreviation == auto {
+      $expr: "";
+    } @else {
+      $expr: "-" + $abbreviation;
+    }
+
+    .m-dialog-modal#{ $expr } {
+      width: map_get($size, "width");
+      min-width: map_get($size, "minWidth");
+
+      .ui-dialog-titlebar {
+        border: none;
+        background-color: white;
+
+        p-header {
+
+          span.pi.pi-times, .icon-close_24px {
+            position: absolute;
+            right: 0;
+            top: 0;
+            margin: 12px;
+            font-size: 1.6em;
+          }
+        }
+      }
+
+      .ui-dialog-content {
+        height: calc(#{map_get($size, "height")} - 100px);
+        border: none;
+        @include border-divider("top");
+      }
+
+      .ui-dialog-footer {
+        border: none;
+        @include border-divider("top");
+      }
+    }
+  }
+}

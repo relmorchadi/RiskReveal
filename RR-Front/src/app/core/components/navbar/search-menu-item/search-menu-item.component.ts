@@ -3,10 +3,10 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  OnInit,
-  ViewChild,
   Input,
-  OnDestroy
+  OnDestroy,
+  OnInit,
+  ViewChild
 } from '@angular/core';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import {SearchService} from '../../../service';
@@ -14,12 +14,8 @@ import {debounceTime, takeUntil} from 'rxjs/operators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {Router} from '@angular/router';
 import * as SearchActions from '../../../store/actions/search-nav-bar.action';
-import {Store, Actions, ofActionDispatched} from '@ngxs/store';
-import {
-  ClearSearchValuesAction, LoadRecentSearchAction,
-  PatchSearchStateAction, SearchContractsCountAction
-} from '../../../store/index';
-import {SearchNavBar} from '../../../model';
+import {Actions, ofActionDispatched, Store} from '@ngxs/store';
+import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
 import {RouterNavigation} from "@ngxs/router-plugin";
@@ -40,12 +36,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   subscriptions: Subscription;
   scrollParams;
   state: SearchNavBar = null;
-  private unSubscribe$:Subject<void>;
+  private unSubscribe$: Subject<void>;
+  searchMode: string = 'Treaty';
+  searchConfigPopInVisible: boolean = false;
 
-  loading: any;
-  scrollTo: number;
-  listLength: number;
-  pos: any;
 
   @Input('state')
   set setState(value) {
@@ -63,7 +57,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     });
     this.subscriptions = new Subscription();
     this.scrollParams = {scrollTo: -1, listLength: 0, position: {i: 0, j: 0}};
-    this.unSubscribe$= new Subject<void>();
+    this.unSubscribe$ = new Subject<void>();
   }
 
   ngOnInit() {
@@ -83,7 +77,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(
         takeUntil(this.unSubscribe$),
-        ofActionDispatched(SearchActions.EnableExpertMode, SearchActions.DisableExpertMode, RouterNavigation))
+        ofActionDispatched(SearchActions.EnableExpertMode, SearchActions.DisableExpertMode))
       .subscribe(instance => {
         if (instance instanceof SearchActions.EnableExpertMode)
           this._notifcationService.createNotification('Information',
@@ -101,7 +95,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this._unsubscribeToFormChanges();
     this.subscriptions = this.contractFilterFormGroup.get('globalKeyword')
       .valueChanges
-      .pipe(takeUntil(this.unSubscribe$),debounceTime(500))
+      .pipe(takeUntil(this.unSubscribe$), debounceTime(500))
       .subscribe((value) => {
         this.store.dispatch(new SearchActions.SearchInputValueChange(this.isExpertMode, value))
         this._contractChoicesSearch(value);
@@ -119,7 +113,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     } else {
       this.store.dispatch(new SearchActions.SearchAction(this.state.badges, this.globalKeyword));
     }
-    this.clearSearchValue();
+    // this.clearSearchValue();
   }
 
   onSpace(evt: KeyboardEvent) {
@@ -141,7 +135,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   }
 
   selectSearchBadge(key, value) {
-    key= HelperService.upperFirstWordsInSetence(key);
+    key = HelperService.upperFirstWordsInSetence(key);
     this.contractFilterFormGroup.patchValue({globalKeyword: ''});
     this.store.dispatch(new SearchActions.SelectBadgeAction({key, value}, this.globalKeyword));
     this.searchInput.nativeElement.focus();
@@ -166,6 +160,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   appendSearchBadges(items) {
     this.store.dispatch(new SearchActions.PatchSearchStateAction({key: 'badges', value: items}));
+    this.searchInput.nativeElement.focus();
   }
 
   selectSearchAndRedirect(items) {
@@ -173,20 +168,25 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.onEnter(event as any);
   }
 
-  clearValue(): void {
-    this.store.dispatch(new SearchActions.ClearSearchValuesAction());
-  }
+  // clearValue(): void {
+  //   this.store.dispatch(new SearchActions.ClearSearchValuesAction());
+  // }
 
   focusInput(event) {
+    if (this.searchConfigPopInVisible)
+      this.searchConfigPopInVisible = false;
     this._searchService.setvisibleDropdown(false);
     this.store.dispatch(new SearchActions.SearchInputFocusAction(this.isExpertMode, event.target.value));
   }
 
   openClose(): void {
-    this.store.dispatch(new SearchActions.PatchSearchStateAction([{key: 'visibleSearch', value: false}, {
-      key: 'visible',
-      value: !this.state.visible
-    }]));
+    if (this.searchConfigPopInVisible)
+      this.searchConfigPopInVisible = false;
+    if (this.state.visibleSearch)
+      this.store.dispatch(new SearchActions.PatchSearchStateAction([{key: 'visibleSearch', value: false}, {
+        key: 'visible',
+        value: !this.state.visible
+      }]));
   }
 
   get isExpertMode() {
@@ -206,6 +206,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this._unsubscribeToFormChanges();
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
     this._subscribeGlobalKeywordChanges();
+    this.store.dispatch(new SearchActions.ClearSearchValuesAction());
+    this.searchInput.nativeElement.focus();
   }
 
   private _unsubscribeToFormChanges() {

@@ -1,8 +1,11 @@
 package com.scor.rr.domain;
 
+import com.scor.rr.util.StringPrefixedSequenceIdGenerator;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.enhanced.SequenceStyleGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,8 +25,18 @@ public class Workspace implements Serializable{
     @Column(name = "workspaceUwYear")
     public Integer workspaceUwYear;
   }
-  @EmbeddedId
+  @Embedded
   WorkspaceId workspaceId;
+  @Id
+  @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "workspace_seq")
+  @GenericGenerator(
+          name = "workspace_seq",
+          strategy = "com.scor.rr.util.StringPrefixedSequenceIdGenerator",
+          parameters = {
+                  @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.INITIAL_PARAM,value = "18891"),
+                  @org.hibernate.annotations.Parameter(name = StringPrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "1"),
+                  @org.hibernate.annotations.Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "W-"),
+                  @org.hibernate.annotations.Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%09d") })
   private String id;
   // private String audit;
   private String cedantName;

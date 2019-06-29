@@ -6,193 +6,11 @@
   }
   height: 100vh;
 
-  ::ng-deep .ui-contextmenu.ui-widget.ui-widget-content.ui-corner-all.ui-shadow {
-    margin-top: -362px;
-    margin-left: -473px;
-  }
-
   .PLTs-content {
     padding: 0 21px 0 16px !important;
     position: relative;
     flex: 1 1 auto;
-    overflow: auto;
 
-    ::ng-deep {
-      .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
-        background-color: #fff !important;
-      }
-
-      thead {
-        th {
-          background-color: #fff !important;
-          border: none;
-
-          .header-tab {
-            display: flex;
-
-            i {
-              font-size: 22px;
-            }
-          }
-        }
-
-        .ant-checkbox-indeterminate .ant-checkbox-inner {
-          background-color: #0700cf;
-          border-color: #0700cf;
-        }
-
-        .ant-checkbox-indeterminate .ant-checkbox-inner::after {
-          height: 4px;
-          background-color: #ffffff;
-        }
-
-        .ant-checkbox-checked .ant-checkbox-inner {
-          background-color: #0700cf;
-          border-color: #0700cf;
-        }
-      }
-
-      tbody {
-        .ant-checkbox-checked .ant-checkbox-inner {
-          background-color: #0700cf;
-          border-color: #0700cf;
-        }
-      }
-
-      .icon-check {
-        background-color: #0700e4;
-        color: #fff;
-        border-radius: 25px;
-        font-size: 16px;
-      }
-
-      .ui-table-thead {
-
-        .checkBoxHead div {
-          display: flex;
-          align-items: center;
-          justify-content: space-around;
-        }
-
-        th {
-          padding: 15px 2px 5px 2px !important;
-          font-size: 12px;
-          vertical-align: top;
-          color: rgba(0, 0, 0, 0.38) !important;
-          background-color: #fff !important;
-          outline-color: #fff;
-          font-family: Rubik;
-          height: 45px;
-          border: none !important;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-
-          .filter-input {
-            width: 100%;
-            background-color: #F5F5F5;
-
-            i {
-              width: 10%;
-              margin-left: 5px;
-              background-color: #F5F5F5;
-            }
-
-            input {
-              padding: 0px 1px 0px 1px;
-              width: 69%;
-              background-color: #F5F5F5;
-              border: none;
-              height: 25px;
-              background: #f5f5f5;
-
-              &:focus {
-                outline: 0;
-              }
-            }
-          }
-
-          .ui-sortable-column-icon {
-            color: #848484 !important;
-          }
-
-          .icon-sort-amount-down {
-            font-size: 28px;
-            margin-left: 2px;
-            cursor: pointer;
-          }
-        }
-      }
-
-      .ui-table-tbody {
-        tr {
-          background-color: #fff !important;
-        }
-
-        tr.active_plt_item {
-          background-color: #fcf9d6 !important;
-        }
-
-        tr.opened_plt_item {
-          background-color: #E9E9E9 !important;
-        }
-
-        tr:hover {
-          background-color: #F7F8FD !important;
-        }
-
-
-        td {
-          padding-left: 0px !important;
-          padding-right: 0 !important;
-          cursor: pointer;
-          font-size: 14px;
-          border: none !important;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
-          user-select: none;
-
-          .text-elipsice {
-            width: 100%;
-            height: 30px;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            overflow: hidden;
-          }
-
-          .td-wrapper-tags {
-            padding: 4px 0px 0px 5px !important;
-            position: relative;
-            top: -4px;
-            .tag-el {
-              border-radius: 29px;
-              font-size: 14px;
-              margin-left: -7px;
-              padding: 0px 7px 0px 7px;
-              border: 2px solid white;
-            }
-            .tag-ellipsis {
-              background-color: #0CB79B;
-              border-radius: 25px;
-              color: white;
-              font-size: 14px;
-              text-align: center;
-              border: 2px solid white;
-              margin-left: -7px;
-            }
-          }
-        }
-
-        .ui-contextmenu-selected {
-          color: inherit !important;
-        }
-
-        tr.active_contract_item {
-          background-color: #FCF9D6 !important;
-        }
-
-        tr.selected_contract_item {
-          background-color: #E9E9E9 !important;
-        }
-      }
-    }
   }
   ::ng-deep {
     .ep-metric-tabset {
@@ -293,21 +111,37 @@
 
       .tabset-right {
         background: #fff;
-        max-width: calc(100vw - 190px - 80px - 221px);
         height: 85vh;
         display: flex;
         flex-flow: column;
-        align-items: stretch;
 
         .title-as-tab {
           display: flex;
           flex: 0 1 auto;
-
+          justify-content: space-between;
           span {
             padding: 16px 43px;
             font-size: 1.3em;
             font-weight: bold;
             border-top: 3px solid #0700e4;
+          }
+          .right {
+            display: flex;
+            flex-direction: row;
+
+            div {
+              width: max-content;
+              margin-right: 16px;
+            }
+
+            nz-dropdown {
+              display: flex;
+              align-items: center;
+              cursor: pointer;
+              font-size: 2em;
+              height: 27px;
+            }
+
           }
         }
 
@@ -322,74 +156,6 @@
         background-color: #FFFFFF;
         min-height: 350px;
         max-height: 750px;
-
-        .icon-check {
-          background-color: #0700e4;
-          color: #fff;
-          border-radius: 25px;
-          font-size: 18px;
-          padding: 2px;
-        }
-
-        .active_plt_item {
-          background-color: #fcf9d6;
-        }
-
-        ::ng-deep {
-          .anticon {
-            font-size: 15px;
-          }
-
-          .anticon-eye {
-            color: #FFF;
-          }
-        }
-
-        th {
-          padding: 3px;
-          padding-right: 0 !important;
-          vertical-align: top;
-          line-height: 17px !important;
-          color: rgba(0, 0, 0, 0.38);
-          font-size: 11px;
-          letter-spacing: 0.08px;
-
-          ::ng-deep {
-            .ant-table-column-sorter {
-              top: 9%;
-            }
-
-          }
-
-
-        }
-
-        td {
-          height: 40px;
-          padding: 5px;
-          font-size: 11px;
-          user-select: none;
-        }
-
-        .td-wrapper-tags {
-          padding: 4px 0px 0px 5px;
-          .tag-el {
-            border-radius: 29px;
-            font-size: 14px;
-            margin-left: -7px;
-            padding: 0px 7px 0px 7px;
-            border: 2px solid white;
-          }
-          .tag-ellipsis {
-            background-color: #0CB79B;
-            border-radius: 25px;
-            color: white;
-            font-size: 14px;
-            text-align: center;
-            border: 2px solid white;
-            margin-left: -7px;
-          }
-        }
       }
 
       .tags-title-section {
@@ -415,6 +181,7 @@
         letter-spacing: 0.25px;
         line-height: 41px;
         display: flex;
+        align-items: center;
         flex: 1;
 
         h3 {
@@ -486,42 +253,6 @@
       }
     }
 
-    .chips {
-      padding: 4px 8px;
-      color: #fff;
-      font-family: Rubik;
-      border-radius: 10px;
-      font-size: .9em;
-      display: flex;
-      max-width: max-content;
-      margin: 1px;
-
-      .chips-content {
-        cursor: pointer;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-      }
-
-      .chips-counter {
-        margin-left: 16px;
-        border-radius: 11px;
-        padding: 0px 14px;
-        color: white;
-        position: relative;
-        .chips-layer {
-          background-color: white;
-          position: absolute;
-          top: 0;
-          left: 0;
-          border-radius: 25px;
-          height: 100%;
-          width: 100%;
-          opacity: .3;
-        }
-      }
-    }
-
     .title-section-drawer {
       div {
         margin-bottom: 15px;
@@ -536,6 +267,11 @@
         font-size: 15px;
       }
 
+
+      a:focus,
+      button:focus {
+        outline: none;
+      }
       button {
         background-color: #0700cf;
         color: #fff;
@@ -854,45 +590,6 @@
     }
   }
 
-  ::ng-deep {
-
-    nz-collapse{
-      max-height: 48%;
-      overflow: auto;
-    }
-    .Tags-content {
-      max-height: 80vh;
-      height: 80vh;
-    }
-    .tag-section {
-      ul {
-        list-style-type: none;
-        max-width: 190px;
-        padding: 0;
-      }
-    }
-    .ant-collapse {
-      border: none;
-    }
-    .ant-collapse-content > .ant-collapse-content-box {
-      max-width: 190px;
-      padding: 0;
-    }
-    .ant-collapse-content {
-      border:none;
-    }
-    .ant-collapse > .ant-collapse-item {
-      border-bottom: none;
-    }
-    .ant-collapse > .ant-collapse-item > .ant-collapse-header {
-      background-color: white;
-    }
-    .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
-      font-size: 10px;
-      top: 44%;
-    }
-  }
-
   ::ng-deep .ant-select-dropdown-menu-item{
     display: flex;
     justify-content: space-between;
@@ -911,63 +608,30 @@
 
     }
   }
+}
 
-  ::ng-deep{
-    .user-tag-section, .sys-tag-section {
-      overflow: auto;
-      margin-top: 1px;
-    }
+.ml-1 {
+  margin-left: 0.75rem !important;
+}
 
-    .sys-tag-section {
-      max-height: 80%;
-    }
-    .user-tag-section {
-      max-height: 20%;
-    }
-    .header{
-      display: flex;
-      justify-content: space-between;
-      padding: 5px 16px;
-      font-weight: bold;
-      font-size: 16px;
+.mr-1 {
+  margin-right: 0.75rem !important;
+}
 
-      div {
-        display: flex;
-        justify-content: center;
-        align-items: center;
+.a-chips-input-filled-textonly {
+  padding: 1px 0 0 10px;
+  max-width: 150px;
+  width: max-content;
+  color: #fff;
+  font-family: Rubik;
+  border-radius: 10px;
+  font-size: .9em;
+  display: flex;
 
-        *{
-          margin: 3px;
-        }
-      }
-
-      button {
-        border: none;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 16px;
-        font-weight: bold;
-      }
-    }
-  }
-
-  ::ng-deep {
-    /*.ant-tabs-tabpane {
-      margin-left: 0% !important;
-      max-height: 80vh !important;
-      min-height: 80vh !important;
-      height: 80vh !important;
-    }*/
-  }
-
-  ::ng-deep .tab-content-cnt{
-    overflow: visible;
-  }
-
-  ::ng-deep .addTagModal {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .chips-content {
+    cursor: pointer;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
   }
 }

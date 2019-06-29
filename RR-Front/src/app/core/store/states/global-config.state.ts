@@ -1,7 +1,8 @@
 import {GeneralConfig} from '../../model';
 import * as _ from 'lodash';
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import {PatchSearchTargetAction} from '../actions';
+import {PatchNumberFormatAction} from '../actions';
+import {Data} from '../../model/data';
 
 
 const initiaState: GeneralConfig = {
@@ -17,6 +18,7 @@ const initiaState: GeneralConfig = {
         numberOfDecimals: 2,
         decimalSeparator: '.',
         decimalThousandSeparator: ',',
+        negativeFormat: 'simple',
         numberHistory: '',
       }
     },
@@ -30,15 +32,20 @@ const initiaState: GeneralConfig = {
           data: ['Facultative Reinsurance Loss', 'Ground UP Loss (GU)', 'Variante Reinsurance Loss'],
           selected: 'Facultative Reinsurance Loss'
       },
-      targetCurrency: {data: ['MLC', 'User Defined', 'Underlying Currency'], selected: 'MLC'},
+      targetCurrency: {
+        data: ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'],
+        selected: 'Main Liability Currency (MLC)'},
+      targetAnalysisCurrency: {
+        data: ['Main Liability Currency (MLC)', 'Underlying Loss Currency', 'User Defined Currency'],
+        selected: 'Main Liability Currency (MLC)'},
       rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'], selected: 'AZU-P-RL17-SQL14'},
     },
     contractOfInterest: {
-      country: '',
-      uwUnit: '',
+      country: {data: Data.countries, selected: []},
+      uwUnit: {data: Data.uwUnit, selected: []},
     },
     epCurves: {
-      returnPeriod: '',
+      returnPeriod: {data: [], selected: []},
       display: '',
     }
 };
@@ -76,11 +83,20 @@ export class GeneralConfigState implements NgxsOnInit {
    * Commands
    */
 
-/*  @Action(PatchSearchTargetAction)
-  patchSearchTarget(ctx: StateContext<GeneralConfig>, {value}: PatchSearchTargetAction) {
+  @Action(PatchNumberFormatAction)
+  patchSearchTarget(ctx: StateContext<GeneralConfig>, {payload}: PatchNumberFormatAction) {
+    const state = ctx.getState();
+    const {target, value} = payload;
+    let newFormat = {...state.general.numberFormat};
+    if (target === 'numberOfDecimals') { newFormat = {...newFormat, numberOfDecimals: value}; }
+    if (target === 'decimalSeparator') { newFormat = {...newFormat, decimalSeparator: value}; }
+    if (target === 'decimalThousandSeparator') { newFormat = {...newFormat, decimalThousandSeparator: value}; }
+    if (target === 'negativeFormat') { newFormat = {...newFormat, negativeFormat: value}; }
+    if (target === 'numberHistory') { newFormat = {...newFormat, numberHistory: value}; }
+
     ctx.patchState(
       {general:  {
-            ...ctx.getState().general, searchTarget: value
+            ...state.general, numberFormat: newFormat
         }});
-  }*/
+  }
 }

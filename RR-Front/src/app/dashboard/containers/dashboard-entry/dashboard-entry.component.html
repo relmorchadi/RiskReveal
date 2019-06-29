@@ -64,12 +64,12 @@
         Dashboard <br>
         Preferences
         <button nz-popconfirm (nzOnConfirm)="addDashboard()" [nzTitle]="dash" class="add-workspace-btn" nz-button
-                nzType="primary" nzShape="circle">
+                nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" [nzOkType]="'ghost'" >
           <i nz-icon type="plus"></i>
         </button>
         <ng-template #dash>
           <p class="popover-title">Add New Dashboard</p>
-          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name" class="input-default" type="text">
+          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name" class="a-textfield-mini" type="text">
         </ng-template>
       </div>
     </div>
@@ -79,19 +79,36 @@
           <i class="icon-arrow_forward_ios_24px"></i>
         </div>
         <nz-select (ngModelChange)="dashboardChange($event)" style="width: 200px;"
-                   nzShowSearch class="dropdown-default"
+                   nzShowSearch class="a-dropdown-small"
                    nzPlaceHolder="Select Dashboard" [(ngModel)]="idSelected">
           <nz-option *ngFor="let d of dashboardsMockData" nzCustomContent [nzLabel]="d?.name" [nzValue]="d?.id">
             {{d?.name}}
             <i *ngIf="d.visible" (click)="closeTab(d)" class="icon-remove_red_eye_24px selected-item-icon"></i>
-            <i *ngIf="!d.visible" (click)="activeView(d)" class="icon-visibility_off_24px selected-item-icon"></i>
+            <i *ngIf="!d.visible" (click)="activeView(d)" class="icon-visibility_off_24px selected-item-icon" style="color: gray"></i>
           </nz-option>
         </nz-select>
         <div class="edit-dashboard-section">
           <input style="width: 80%" class="hover-input" placeholder=""
                  (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard.name">
           <i nz-popconfirm nzPlacement="top" nzTitle="Do you want to delete this dashboard?"
-             (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"></i>
+             (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
+            nzOkText="DELETE" nzCancelText="CANCEL"
+          ></i>
+        </div>
+        <div class="search-Mode">
+          <span class="title">SEARCH MODE</span>
+          <nz-select
+            class="a-dropdown-small"
+            style="width: 150px;"
+            nzShowSearch
+            [nzAllowClear]="false"
+            nzPlaceHolder="Select Search Mode"
+            [(ngModel)]="searchMode"
+            [ngModelOptions]="{standalone: true}"
+          >
+            <nz-option nzLabel="FAC" nzValue="Fac"></nz-option>
+            <nz-option nzLabel="Treaty" nzValue="Treaty"></nz-option>
+          </nz-select>
         </div>
         <div class="highlight">
           Display selected widgets on dashboard
