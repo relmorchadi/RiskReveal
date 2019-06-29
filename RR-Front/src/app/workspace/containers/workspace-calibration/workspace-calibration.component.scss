@@ -140,8 +140,11 @@
 
 
 :host {
-  display: flex;
   width: 100%;
+  height: max-content;
+  display: flex;
+  min-height: 100vh;
+  background-color: #F4F6FC;
 
   ::ng-deep.plt-browser-wrapper {
     display: flex;
@@ -200,6 +203,7 @@
   .tabset-left {
     background: #fff;
     margin-right: 5px;
+    max-height: 580px;
 
     .path-content {
       cursor: pointer;
@@ -844,8 +848,9 @@
   .noMargin {
     background: #fff;
     display: flex;
-    margin-left: 8px;
+    margin-left: 0;
     margin-right: 8px;
+
 
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
@@ -930,10 +935,13 @@
   position: relative;
 }
 
+:host ::ng-deep {
+  .tabset-left {
+    max-height: 580px !important;
+  }
+}
 
 :host .PLTs-content {
-
-  border-bottom: 3px solid #F4F6FC;
   background: #fff;
 
   ::ng-deep {
@@ -1293,6 +1301,10 @@
   background-color: #F3F3F3 !important;
 }
 
+.overallLMF {
+  background-color: #F3F3F3 !important;
+}
+
 .data-separator-right {
   border-left: 8px solid #F4F6FC !important;
   background-color: #F3F3F3 !important;
@@ -1309,12 +1321,14 @@
 .adjustDiv {
   margin: 4px !important;
   border: solid 1px #cccccc;
-  font-size: 10px;
+  font-size: 9px;
   background: white;
-  width: 102px !important;
   display: inline-block !important;
   color: black;
   font-weight: normal !important;
+  max-height: 33px;
+  max-width: 109px !important;
+  min-width: 109px !important;
 }
 
 /*.adjustDiv:hover {
@@ -1330,7 +1344,7 @@
   box-shadow: none;
   border: 0;
   width: 82%;
-  height: 49%;
+  height: 35%;
   bottom: 3px;
   margin-left: 2px;
 }
@@ -1422,4 +1436,14 @@ body .ui-table .ui-table-thead > tr > th {
 
 .addRemove:hover {
   color: #1890ff;
+}
+
+.dnd-sortable-drag {
+  transform: scale(.8);
+  opacity: .6;
+  border: 1px dashed #6fd089;
+}
+
+.selectedAdjustment {
+  border: solid 1px #6fd089 !important;
 }

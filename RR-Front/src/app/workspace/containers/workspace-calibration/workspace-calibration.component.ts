@@ -17,7 +17,7 @@ import {
   applyAdjustment,
   deleteAdjsApplication,
   deleteAdjustment,
-  dropAdjustment,
+  dropThreadAdjustment,
   extendPltSection,
   replaceAdjustement,
   saveAdjModification,
@@ -25,13 +25,13 @@ import {
   saveAdjustmentApplication,
   saveAdjustmentInPlt
 } from "../../store/actions";
-import {first, map} from "rxjs/operators";
+import {map, switchMap} from 'rxjs/operators';
 import {CalibrationState, PltMainState} from "../../store/states";
-import {Observable} from "rxjs";
+import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import {Table} from "primeng/table";
 import * as fromWorkspaceStore from "../../store";
-import {ActivatedRoute} from "@angular/router";
+import {ActivatedRoute, Router} from "@angular/router";
 
 
 @Component({
@@ -48,8 +48,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   selectedListOfPlts: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
-  frozenWidth: any = '403px';
+  frozenWidth: any = '463px';
+  genericWidth: any = ['409px', '33px', '157px'];
+  selectedAdjustment: any;
   filterData: any;
+  shownDropDown: any;
   sortData;
   lastModifiedAdj;
   dataColumns = [];
@@ -70,7 +73,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   modifyModal: any;
   idPlt: any;
   draggedAdjs: any;
-  templateWidth = '120';
+  templateWidth = '130';
   tableWidth = '1200';
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
@@ -267,7 +270,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       type: 'field',
       style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
       extended: true,
-      frozen: false
+      frozen: true
     },
     {
       sortDir: 1,
@@ -287,7 +290,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       sortDir: 1,
       fields: 'default',
       header: 'Default',
-      width: this.templateWidth,
+      width: '60',
       dragable: true,
       sorted: false,
       filtred: false,
@@ -514,8 +517,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   selectAll: boolean;
   drawerIndex: any;
   @Select(PltMainState.getUserTags) userTags$;
-  @Select(PltMainState.getPlts) data$;
-  @Select(PltMainState.getDeletedPlts) deletedPlts$;
+  data$;
+  deletedPlts$;
   deletedPlts: any;
   loading: boolean;
   selectedUserTags: any;
@@ -544,30 +547,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   addTagModalPlaceholder: any;
   showDeleted: boolean;
   selectedItemForMenu: string;
-  contextMenuItems = [
-    {label: 'View Detail', icon: 'pi pi-search', command: (event) => this.openPltInDrawer(this.selectedPlt.pltId)},
-    {
-      label: 'Delete', icon: 'pi pi-trash', command: (event) => {
-        this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltId: this.selectedItemForMenu}))
-      }
-    },
-    {
-      label: 'Edit Tags', icon: 'pi pi-tags', command: (event) => {
-        this.addTagModal = true;
-        this.fromPlts = true;
-        let d = [];
-
-        _.forEach(this.listOfPltsData, (v, k) => {
-          if (v.selected) d.push(v.userTags);
-        })
-
-        // this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
-
-        this.addModalSelect = _.intersectionBy(...d, 'tagId');
-
-      }
-    }
-  ];
+  oldSelectedTags: any;
   private dropdown: NzDropdownContextComponent;
   private Subscriptions: any[] = [];
   private table: Table;
@@ -575,27 +555,89 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   private lastClick: string;
   private renamingTag: boolean;
   private modalInputCache: any;
+  tagForMenu: any;
+  listOfDeletedPltsData: any;
+  listOfDeletedPltsCache: any;
+  selectedListOfDeletedPlts: any;
+  contextMenuItems = [
+    {
+      label: 'View Detail', command: (event) => {
+        console.log(this.selectedPlt)
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Delete', command: (event) => {
+        this.store$.dispatch(new fromWorkspaceStore.deletePlt({
+          wsIdentifier: this.workspaceId + '-' + this.uwy,
+          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
+        }));
+      }
+    },
+    {
+      label: 'Clone To',
+      command: (event) => {
+        console.log('cloning')
+        this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
+      }
+    },
+    {
+      label: 'Manage Tags', command: (event) => {
+        this.tagModalVisible = true;
+        this.tagForMenu = {
+          ...this.tagForMenu,
+          tagName: ''
+        };
+        this.fromPlts = true;
+        this.editingTag = false;
+        let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
+        this.modalSelect = _.intersectionBy(...d, 'tagId');
+        this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
+        console.log(this.oldSelectedTags, this.modalSelect)
+      }
+    },
+    {
+      label: 'Restore',
+      command: () => {
+        this.store$.dispatch(new fromWorkspaceStore.restorePlt({
+          wsIdentifier: this.workspaceId + '-' + this.uwy,
+          pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
+        }))
+        this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
+        this.generateContextMenu(this.showDeleted);
+      }
+    }
+  ];
+  contextMenuItemsCache = this.contextMenuItems;
+  tagModalVisible: boolean;
+  editingTag: boolean;
   tagContextMenu = [
     {
       label: 'Delete Tag',
       icon: 'pi pi-trash',
-      command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))
-    }, {
-      label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
-        this.renamingTag = true;
+      command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag({
+        wsIdentifier: this.workspaceId + '-' + this.uwy,
+        userTagId: this.tagForMenu.tagId
+      }))
+    },
+    {
+      label: 'Edit Tag', icon: 'pi pi-pencil', command: (event) => {
+        this.editingTag = true;
         this.fromPlts = false;
-        this.addModalInput = this.tagFormenu.tagName;
-        this.modalInputCache = this.tagFormenu.tagName;
-        this.addTagModal = true;
+        this.tagModalVisible = true;
       }
     }
   ];
+  wsHeaderSelected: boolean;
+  modalSelect: any;
+
 
   constructor(
     private nzDropdownService: NzDropdownService,
     private store$: Store,
     private zone: NgZone,
     private cdRef: ChangeDetectorRef,
+    private router$: Router,
     private route$: ActivatedRoute) {
     this.someItemsAreSelected = false;
     this.selectAll = false;
@@ -624,69 +666,93 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.colorPickerIsVisible = false;
     this.addTagModalPlaceholder = 'Select a Tag';
     this.showDeleted = false;
+    this.tagForMenu = {
+      tagId: null,
+      tagName: '',
+      tagColor: '#0700e4'
+    }
   }
 
   ngOnInit() {
     this.extend();
     this.leftNavbarIsCollapsed$.subscribe(data => {
-      console.log(data);
       this.leftNavbarIsCollapsed = data;
     });
 
-    this.adjutmentApplication$.subscribe(data => this.adjutmentApplication = data);
+    this.adjutmentApplication$.subscribe(data => this.adjutmentApplication = _.merge({}, data));
     this.state$.subscribe((state: any) => {
       this.allAdjsArray = _.merge([], state.allAdjsArray);
       this.AdjustementType = _.merge([], state.adjustementType);
       this.adjsArray = _.merge([], state.adjustments);
     });
     this.Subscriptions.push(
-      this.deletedPlts$.subscribe(d => {
-        this.deletedPlts = d;
-        this.detectChanges();
-
-      }),
-      this.data$.subscribe(data => {
+      this.route$.params.pipe(
+        switchMap(({wsId, year}) => {
+          this.workspaceId = wsId;
+          this.uwy = year;
+          this.loading= true;
+          this.data$= this.store$.select(PltMainState.getPlts(this.workspaceId+'-'+this.uwy));
+          this.deletedPlts$= this.store$.select(PltMainState.getDeletedPlts(this.workspaceId+'-'+this.uwy));
+          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+            params: {
+              workspaceId: wsId, uwy: year
+            }}));
+          return combineLatest(
+            this.data$,
+            this.deletedPlts$
+          )
+        })
+      ).subscribe( ([data, deletedData]: any) => {
         let d1 = [];
+        let dd1 = [];
         let d2 = [];
+        let dd2 = [];
         this.loading = false;
         this.systemTagsCount = {};
 
-        if (_.keys(this.systemTagsCount).length == 0) {
+        if (data) {
+          if (_.keys(this.systemTagsCount).length == 0) {
+            _.forEach(data, (v, k) => {
+              //Init Tags Counters
+
+              //Grouped Sys Tags
+              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
+                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+                const tag = _.toString(v[section]);
+                if (tag) {
+                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
+                }
+              });
+
+              //NONE grouped Sys Tags
+              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
+                this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
+                this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
+              })
+
+            })
+          }
+
           _.forEach(data, (v, k) => {
-            //Init Tags Counters
+            d1.push({...v, pltId: k});
+            d2.push(k);
 
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              const tag = _.toString(v[section]);
-              if (tag) {
-                this.systemTagsCount[sectionName][tag] = {selected: false, count: 0}
-              }
-            })
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-              this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
-              this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0};
-            })
-
-          })
-        }
-
-        _.forEach(data, (v, k) => {
-          d1.push({...v, pltId: k});
-          d2.push(k);
-
-          if (v.visible) {
+            /*if (v.visible) {*/
             //Grouped Sys Tags
             _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
               const tag = _.toString(v[section]);
               if (tag) {
                 if (this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0) {
+                  const {
+                    count,
+                    max
+                  } =this.systemTagsCount[sectionName][tag];
+
                   this.systemTagsCount[sectionName][tag] = {
                     ...this.systemTagsCount[sectionName][tag],
-                    count: this.systemTagsCount[sectionName][tag].count + 1
+                    count: v.visible ? count + 1 : count,
+                    max: max + 1
                   };
                 }
               }
@@ -696,48 +762,66 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
               const tag = v[section];
               if (this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0) {
+                const {
+                  max,
+                  count
+                } = this.systemTagsCount[sectionName][section];
                 this.systemTagsCount[sectionName][section] = {
                   ...this.systemTagsCount[sectionName][section],
-                  count: this.systemTagsCount[sectionName][section].count + 1
+                  count: v.visible ? count + 1 : count,
+                  max: max + 1
                 };
               }
               if (this.systemTagsCount[sectionName]['non-' + section] || this.systemTagsCount[sectionName]['non-' + section].count == 0) {
+                const {
+                  count,
+                  max
+                } = this.systemTagsCount[sectionName]['non-' + section];
                 this.systemTagsCount[sectionName]['non-' + section] = {
                   ...this.systemTagsCount[sectionName]['non-' + section],
-                  count: this.systemTagsCount[sectionName]['non-' + section].count + 1
+                  count: v.visible ? count + 1 : count,
+                  max: max + 1
                 };
               }
             })
-          }
+            /*}*/
 
-        });
-        this.listOfPlts = d2;
-        this.listOfPltsData = this.listOfPltsCache = d1;
-        this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+          });
+
+          this.listOfPlts = d2;
+          this.listOfPltsData = this.listOfPltsCache = d1;
+          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+          _.forEach(data, (v, k) => {
+            if (v.opened) {
+              this.sumnaryPltDetailsPltId = k;
+            }
+          });
+        }
+
+        if (deletedData) {
+          _.forEach(deletedData, (v, k) => {
+            dd1.push({...v, pltId: k});
+            dd2.push(k);
+          });
+
+          this.listOfDeletedPlts = dd2;
+          this.listOfDeletedPltsData = this.listOfDeletedPltsCache = dd1;
+          this.selectedListOfDeletedPlts = _.filter(dd2, k => deletedData[k].selected);
+        }
+
+        this.selectAll =
+          !this.showDeleted
+            ?
+            (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
+            :
+            (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
+
+        this.someItemsAreSelected =
+          !this.showDeleted ?
+            this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
+            :
+            this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
-      }),
-      this.data$.subscribe(data => {
-        this.selectAll = (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0;
-        this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0;
-        this.detectChanges();
-      }),
-      this.data$.subscribe(data => {
-        _.forEach(data, (v, k) => {
-          if (v.opened) {
-            this.sumnaryPltDetailsPltId = k;
-          }
-        });
-        this.detectChanges();
-      }),
-      this.route$.params.subscribe(({wsId, year}) => {
-        this.workspaceId = wsId;
-        this.uwy = year;
-        this.loading = true;
-        this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
-          params: {
-            workspaceId: wsId, uwy: year
-          }
-        }));
       }),
       this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
@@ -930,7 +1014,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
     this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
     this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({filters: this.filters}));
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      filters: this.filters
+    }))
   }
 
   resetPath() {
@@ -973,7 +1060,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   toggleSelectPlts(plts: any) {
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({plts, forDeleted: this.showDeleted}));
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      plts,
+      forDeleted: this.showDeleted
+    }));
   }
 
   selectSinglePLT(pltId: number, $event: boolean) {
@@ -1157,8 +1248,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.extended = !this.extended;
     if (this.extended) {
       this.frozenWidth = '0px'
+      this.genericWidth = ['1019px', '33px', '157px'];
     } else {
-      this.frozenWidth = '403px'
+      this.frozenWidth = '463px'
+      this.genericWidth = ['409px', '33px', '157px '];
     }
     this.adjustExention();
     this.initDataColumns();
@@ -1267,14 +1360,38 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }, {})
   }
 
-  adjustColWidth(adj, dndDragover = 0) {
-    this.adjutmentApplication$.pipe(first()).subscribe(data => {
-      const colWidth = 110 * Math.max(..._.values(this.filterArr(_.filter(data, item =>
-        item.adj.category === adj.category
-      ), "pltId"))) + dndDragover;
-      let index = _.findIndex(this.pltColumns, {fields: adj.category.toLowerCase()});
-      this.pltColumns[index].width = colWidth.toString();
+  adjustColWidth(dndDragover = 10) {
+    let countBase = 0;
+    let countClient = 0;
+    const baseLengthArray = [];
+    const clientLengthArray = [];
+    _.forEach(this.adjutmentApplication, (plt, pKey) => {
+      countBase = 0;
+      countClient = 0;
+      _.forEach(plt, (adj, aKey) => {
+        if (adj.category === 'Base') {
+          countBase++
+        }
+        if (adj.category === 'Client') {
+          countClient++
+        }
+        baseLengthArray.push(countBase);
+        clientLengthArray.push(countClient);
+      });
     });
+    let baseWidth = 120 * Math.max(...baseLengthArray);
+    let clientWidth = 120 * Math.max(...clientLengthArray);
+    clientWidth == 0 ? clientWidth = 120 : null;
+    baseWidth == 0 ? baseWidth = 120 : null;
+    let indexBase = _.findIndex(this.dataColumns, col => col.fields == 'base');
+    let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
+    this.dataColumns[indexBase].width = baseWidth.toString();
+    this.dataColumns[indexClient].width = clientWidth.toString();
+    console.log('after adjustment ==> ', baseWidth);
+  }
+
+  ondragOver(col, pltId) {
+
   }
 
   applyToAll(adj) {
@@ -1310,9 +1427,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.adjustColWidth(adj);
   }
 
-  deleteAdjs(adj, pltId) {
+  deleteAdjs(adj, index, pltId) {
     this.store$.dispatch(new deleteAdjsApplication({
-      adjustement: adj,
+      index: index,
       pltId: pltId
     }));
     this.adjustColWidth(adj);
@@ -1372,18 +1489,21 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
 
-  onDrop(pltId) {
-    this.store$.dispatch(new dropAdjustment({
-      pltId: pltId,
-      adjustement: this.draggedAdjs
-    }))
+  onDrop(col, pltId) {
+    console.log('col == >', col);
+    /* this.store$.dispatch(new dropAdjustment({
+       pltId: pltId,
+       adjustement: this.draggedAdjs
+     }))*/
     this.adjustColWidth(this.draggedAdjs);
-    this.dragPlaceHolderCol = null;
-    this.dragPlaceHolderId = null;
+    /*this.dragPlaceHolderCol = null;
+    this.dragPlaceHolderId = null;*/
+    console.log(col);
   }
 
-  onDragged(item: any) {
-    this.deleteAdjs(item.adj, item.pltId);
+  onDragged(index, adj, pltId) {
+    // this.deleteAdjs(adj,index,pltId);
+    console.log(this.adjutmentApplication);
   }
 
   onDragEnd(event, adj) {
@@ -1397,18 +1517,22 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
   ondragEnter(col, pltId) {
     console.log('ondragEnter');
-    const width = +col.width;
-    col.width = (width + 40).toString();
-    this.dragPlaceHolderId = pltId;
-    this.dragPlaceHolderCol = col.fields
+    if (col.fields == 'base' || col.fields == 'client') {
+      const width = +col.width;
+      col.width = (width + 40).toString();
+      // this.dragPlaceHolderId = pltId;
+      // this.dragPlaceHolderCol = col.fields
+    }
   }
 
   ondragLeave(col) {
-    console.log('ondragLeave');
-    const width = +col.width;
-    col.width = (width - 40).toString();
-    this.dragPlaceHolderId = null;
-    this.dragPlaceHolderCol = null;
+    if (col.fields == 'base' || col.fields == 'client') {
+      console.log('ondragLeave');
+      const width = +col.width;
+      col.width = (width - 40).toString();
+      // this.dragPlaceHolderId = null;
+      // this.dragPlaceHolderCol = null;
+    }
   }
 
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
@@ -1441,8 +1565,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.collapsedTags = !this.collapsedTags;
   }
 
+  /*
   adjustTabsetRight() {
-    console.log(this.collapsedTags, this.leftNavbarIsCollapsed)
     if (this.collapsedTags && this.leftNavbarIsCollapsed) {
       return 'calc(100vw - 50px + 80px - 174px)'
     } else if (this.collapsedTags && !this.leftNavbarIsCollapsed) {
@@ -1453,8 +1577,130 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       return 'calc(100vw - 190px - 80px - 174px)'
     }
   }
+  */
 
   log(columns) {
     console.log(columns);
+  }
+
+  // Tags Component
+  assignPltsToTag($event: any) {
+    const {
+      selectedTags
+    } = $event;
+    this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      ...$event,
+      selectedTags: _.map(selectedTags, (el: any) => el.tagId),
+      unselectedTags: _.map(_.differenceBy(this.oldSelectedTags, selectedTags, 'tagId'), (e: any) => e.tagId),
+      type: 'assignOrRemove'
+    }))
+  }
+
+  createTag($event: any) {
+    this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
+      ...$event,
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      type: 'createTag'
+    }))
+  }
+
+  editTag() {
+    this.store$.dispatch(new fromWorkspaceStore.editTag({
+      tag: this.tagForMenu,
+      workspaceId: this.workspaceId,
+      uwy: this.uwy
+    }))
+  }
+
+  setSelectedProjects($event) {
+    this.projects = $event;
+  }
+
+  setFilters(filters) {
+    this.filters = filters;
+  }
+
+  setFromPlts($event) {
+    this.fromPlts = $event;
+  }
+
+  setUserTags($event) {
+    this.userTags = $event;
+  }
+
+  setModalIndex($event) {
+    this.tagModalIndex = $event;
+  }
+
+  toggleDeletePlts($event) {
+    this.showDeleted = $event;
+    this.generateContextMenu(this.showDeleted);
+    this.selectAll =
+      !this.showDeleted
+        ?
+        (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
+        :
+        (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
+
+    this.someItemsAreSelected =
+      !this.showDeleted ?
+        this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
+        :
+        this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
+    // this.generateContextMenu(this.showDeleted);
+  }
+
+  setTagModal($event: any) {
+    this.tagModalVisible = $event;
+  }
+
+  setTagForMenu($event: any) {
+    this.tagForMenu = $event;
+  }
+
+  setRenameTag($event: any) {
+    this.editingTag = $event;
+  }
+
+  generateContextMenu(toRestore) {
+    const t = ['Delete', 'Manage Tags', 'Clone To'];
+    this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ('Restore' != e.label) : !_.find(t, el => el == e.label))
+  }
+
+  emitFilters(filters: any) {
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      filters: filters
+    }))
+  }
+
+  unCheckAll() {
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
+        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({type: false}))
+      )
+    );
+  }
+
+  setWsHeaderSelect($event: any) {
+    this.wsHeaderSelected = $event;
+  }
+
+  setModalSelectedItems($event: any) {
+    this.modalSelect = $event;
+  }
+
+  dropThreadAdjustment() {
+    this.store$.dispatch(new dropThreadAdjustment({adjustmentArray: this.adjsArray}))
+  }
+
+  selectedAdjust(adjId) {
+    if (this.selectedAdjustment == adjId) {
+      this.selectedAdjustment = null
+    } else {
+      this.selectedAdjustment = adjId;
+    }
   }
 }

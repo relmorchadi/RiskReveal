@@ -5,6 +5,7 @@
   [(contextMenuSelection)]="contextMenuSelect"
   [contextMenu]="cm"
   [scrollable]="true"
+  [resizableColumns]="true"
 >
   <ng-template pTemplate="header" let-columns>
     <tr>
@@ -55,7 +56,7 @@
   </ng-template>
   <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
     <tr
-      (contextmenu)="selectedItemForMenu(rowData)"
+      (contextmenu)="selectedItemForMenu(rowData.pltId)"
       [pContextMenuRow]="rowData"
       [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
       *ngIf="(tableInputs.filters.systemTag | keys ).length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">

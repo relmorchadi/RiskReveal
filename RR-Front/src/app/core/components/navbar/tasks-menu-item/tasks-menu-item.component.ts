@@ -483,7 +483,16 @@ export class TasksMenuItemComponent implements OnInit {
   }
 
   searchJobs(event) {
-    this.savedTasksLocal = this.tasks.filter(text => _.includes(_.toLower(text.cedantName), _.toLower(event.target.value)));
+    this.savedTasksLocal = this.tasks.filter(item =>
+      _.includes(_.toLower(item.cedantName), _.toLower(event.target.value)) ||
+      _.includes(_.toLower(item.uwYear + ''), _.toLower(event.target.value)) ||
+      _.includes(_.toLower(item.cedantCode), _.toLower(event.target.value)) ||
+      _.includes(_.toLower(item.cedantName), _.toLower(event.target.value)) ||
+      _.includes(_.toLower(item.workSpaceId), _.toLower(event.target.value)) ||
+      _.includes(_.toLower(item.jobOwner), _.toLower(event.target.value)) ||
+      _.includes(_.toLower(item.description), _.toLower(event.target.value)) ||
+      _.includes(_.toLower(item.workspaceName), _.toLower(event.target.value))
+    );
   }
 
   resumeJob(id) {
@@ -492,7 +501,7 @@ export class TasksMenuItemComponent implements OnInit {
         dt.isPaused = false;
       }
     });
-    this.tasks = [..._.sortBy(_.filter(this.tasks, (dt) => !dt.pending) , (dt) => dt.isPaused),
+    this.tasks = [..._.sortBy(_.filter(this.tasks, (dt) => !dt.pending), (dt) => dt.isPaused),
       ..._.filter(this.tasks, (dt) => dt.pending)];
     this.savedTasksLocal = [...this.tasks];
   }
@@ -508,7 +517,7 @@ export class TasksMenuItemComponent implements OnInit {
         dt.isPaused = true;
       }
     });
-    this.tasks = [..._.sortBy(_.filter(this.tasks, (dt) => !dt.pending) , (dt) => dt.isPaused),
+    this.tasks = [..._.sortBy(_.filter(this.tasks, (dt) => !dt.pending), (dt) => dt.isPaused),
       ..._.filter(this.tasks, (dt) => dt.pending)];
     this.savedTasksLocal = [...this.tasks];
   }

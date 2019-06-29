@@ -41,8 +41,8 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
+          <div class="mt-2 task-footer">
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals()" >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -93,7 +93,7 @@
           </div>
 
           <div class="mt-2 footer-wrapper">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -144,7 +144,7 @@
           </div>
 
           <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>
@@ -195,7 +195,7 @@
           </div>
 
           <div class="mt-2">
-            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="float-left a-dropdown-small"
+            <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
                 <nz-option [nzValue]="formatString(date)" [nzLabel]="date"></nz-option>

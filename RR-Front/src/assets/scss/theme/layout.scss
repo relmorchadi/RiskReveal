@@ -95,7 +95,7 @@
       position: absolute;
       pointer-events: none;
       font-size: 11px;
-      margin-top: -2px;
+      margin-top: -5px;
       margin-left: 6px;
       opacity: 0.7;
       z-index: 1001;
@@ -125,11 +125,18 @@
   padding: 10px 15px;
 }
 
+.a-app-wrapper {
+  display: flex;
+  width: -webkit-fill-available;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  margin: 20px 15px;
+}
+
 .a-app-header {
   display: flex;
   justify-content: space-between;
-  width: 95%;
-  margin: 20px auto;
+  margin-bottom: 10px;
 
   .pine-btn {
     box-sizing: border-box;
@@ -137,5 +144,6 @@
     width: 57px;
     background: transparent;
     border: 1px solid #E5E9FA;
+    margin: 0 !important;
   }
 }

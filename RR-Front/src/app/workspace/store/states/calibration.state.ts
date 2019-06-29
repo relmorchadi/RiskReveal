@@ -34,7 +34,7 @@ const initiaState: CalibrationModel = {
   lastCheckedBool: false,
   firstChecked: '',
   adjustments: [],
-  adjustmentApplication: [],
+  adjustmentApplication: {},
   adjustementType: _.assign([], [...ADJUSTMENT_TYPE]),
   pure: _.assign({}, {...PURE}),
   systemTags: _.assign([], [...SYSTEM_TAGS]),
@@ -179,6 +179,17 @@ export class CalibrationState implements NgxsOnInit {
 
   }
 
+  @Action(fromPlt.dropThreadAdjustment)
+  dropThreadAdjustment(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.dropThreadAdjustment) {
+    let adjustmentArray = payload.adjustmentArray;
+    ctx.patchState({
+      adjustments: [
+        ...adjustmentArray
+      ]
+    });
+
+  }
+
   @Action(fromPlt.saveAdjModification)
   saveAdjModification(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.saveAdjModification) {
     const state = ctx.getState();
@@ -292,6 +303,7 @@ export class CalibrationState implements NgxsOnInit {
     let pltId = payload.pltId;
     let today = new Date();
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    adjustement.ref = adjustement.id;
     adjustement.id = numberAdjs;
     if (adjustementType.id == 1) {
       adjustement.linear = false;
@@ -300,19 +312,23 @@ export class CalibrationState implements NgxsOnInit {
       adjustement.linear = true;
       adjustement.value = adjustementType.abv;
     }
-    let adjustmentApplication = [];
+    let adjustmentApplication = _.merge({}, state.adjustmentApplication);
+    console.log(adjustmentApplication);
     let newAdj = {...adjustement};
-    _.forEach(pltId, (value) => {
-      adjustmentApplication.push({
-        pltId: value,
-        adj: newAdj
+    if (Object.keys(adjustmentApplication).length > 0) {
+      console.log('push')
+      _.forEach(pltId, (value) => {
+        adjustmentApplication[value].push(newAdj)
       })
-    })
+    } else {
+      console.log('assign')
+      _.forEach(pltId, (value) => {
+        adjustmentApplication[value] = [newAdj]
+      })
+    }
+    console.log(adjustmentApplication);
     ctx.patchState({
-      adjustmentApplication: [
-        ...state.adjustmentApplication,
-        ...adjustmentApplication,
-      ]
+      adjustmentApplication: {...adjustmentApplication}
     });
   }
 
@@ -334,16 +350,10 @@ export class CalibrationState implements NgxsOnInit {
   @Action(fromPlt.deleteAdjsApplication)
   deleteAdjsApplication(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.deleteAdjsApplication) {
     const state = ctx.getState();
-    let adjustement = payload.adjustement;
+    let index = payload.index;
     let pltId = payload.pltId;
-    let target = {
-      pltId: pltId,
-      adj: adjustement
-    }
-    let index = _.findIndex(state.adjustmentApplication, target);
     let adjustmentApplication = _.merge([], state.adjustmentApplication);
-
-    adjustmentApplication.splice(index, 1);
+    adjustmentApplication[pltId].splice(index, 1);
     ctx.patchState({
       adjustmentApplication: [
         ...adjustmentApplication,

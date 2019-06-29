@@ -1,5 +1,5 @@
 <nz-tabset class="tabset-left">
-  <nz-tab [nzTitle]="path" class="path-content">
+  <nz-tab *ngIf="menuInputs.pathTab" [nzTitle]="path" class="path-content">
     <ng-template #path>
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
@@ -64,7 +64,7 @@
             <nz-tab [nzTitle]="menuInputs._editingTag ? ' Tag' : 'Create New Tag'">
               <div class="content">
                 <nz-input-group [nzSuffix]="suffixTemplate">
-                  <input class="input-default" [ngModel]="menuInputs?.tagForMenu?.tagName" (ngModelChange)="emitTagValues('tagName',$event)" type="text" nz-input
+                  <input class="a-textfield-standard" [ngModel]="menuInputs?.tagForMenu?.tagName" (ngModelChange)="emitTagValues('tagName',$event)" type="text" nz-input
                          placeholder="Tag Name"/>
                 </nz-input-group>
                 <div class="color" [ngStyle]="{'background-color': menuInputs.tagForMenu.tagColor}"

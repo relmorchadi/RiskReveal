@@ -77,7 +77,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(
         takeUntil(this.unSubscribe$),
-        ofActionDispatched(SearchActions.EnableExpertMode, SearchActions.DisableExpertMode, RouterNavigation))
+        ofActionDispatched(SearchActions.EnableExpertMode, SearchActions.DisableExpertMode))
       .subscribe(instance => {
         if (instance instanceof SearchActions.EnableExpertMode)
           this._notifcationService.createNotification('Information',
@@ -160,6 +160,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   appendSearchBadges(items) {
     this.store.dispatch(new SearchActions.PatchSearchStateAction({key: 'badges', value: items}));
+    this.searchInput.nativeElement.focus();
   }
 
   selectSearchAndRedirect(items) {
@@ -167,9 +168,9 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.onEnter(event as any);
   }
 
-  clearValue(): void {
-    this.store.dispatch(new SearchActions.ClearSearchValuesAction());
-  }
+  // clearValue(): void {
+  //   this.store.dispatch(new SearchActions.ClearSearchValuesAction());
+  // }
 
   focusInput(event) {
     if (this.searchConfigPopInVisible)
@@ -205,6 +206,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this._unsubscribeToFormChanges();
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
     this._subscribeGlobalKeywordChanges();
+    this.store.dispatch(new SearchActions.ClearSearchValuesAction());
+    this.searchInput.nativeElement.focus();
   }
 
   private _unsubscribeToFormChanges() {
