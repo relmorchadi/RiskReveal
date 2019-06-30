@@ -16,7 +16,7 @@ const scrollableColsAnalysis = [
   {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
   {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
   {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
-  {field: 'sourceCurrency', header: 'Source Currency', width: '110px', type: 'text'},
+  {field: 'analysisCurrency', header: 'Source Currency', width: '110px', type: 'text'},
   {field: 'regionName', header: 'Region Name', width: '110px', type: 'text'},
   {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
   {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
@@ -45,31 +45,29 @@ const frozenColsPortfolio = [
   {field: 'number', header: 'Number', width: '190px', type: 'text'}
 ];
 
-
-
 const scrollableColsSummary = [
   {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorted: false, filtered: true, highlight: false},
-  {field: 'sourceCurrency', header: 'Source Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'analysisCurrency', header: 'Source Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false},
   {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: true},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorted: false, filtered: true, highlight: false},
   {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorted: false, filtered: true, highlight: false},
-  {field: 'EDM', header: 'EDM', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'edmName', header: 'EDM', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false},
   {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
 ];
 
 const frozenColsSummary = [
   {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false},
   {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false},
-  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
+  {field: 'dataSourceId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
   {field: 'number', header: 'Number', width: '190px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'name', header: 'Name', width: '190px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'dataSourceName', header: 'Name', width: '190px', type: 'text', sorted: false, filtered: true, highlight: false},
 ];
 
 const scrollableColsResults = [
-  {field: 'regionPeril', header: 'Region Peril', width: '70px', type: 'text', sorted: false, filtered: true, highlight: true},
-  {field: 'sourceCurrency', header: 'Source Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'peril', header: 'Region Peril', width: '70px', type: 'text', sorted: false, filtered: true, highlight: true},
+  {field: 'analysisCurrency', header: 'Source Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false},
   {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true},
-  {field: 'ELT', header: 'ELT FIN PERSP', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'elt', header: 'ELT FIN PERSP', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false},
   {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '90px', type: 'text', sorted: false, filtered: true, highlight: true},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true},
   {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
@@ -78,8 +76,8 @@ const scrollableColsResults = [
 const frozenColsResults = [
   {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false},
   {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false},
-  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
-  {field: 'name', header: 'Name', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
+  {field: 'analysisName', header: 'Name', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false},
   {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false},
 ];
 
