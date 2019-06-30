@@ -1442,5 +1442,8 @@ body .ui-table .ui-table-thead > tr > th {
   transform: scale(.8);
   opacity: .6;
   border: 1px dashed #6fd089;
+}
 
+.selectedAdjustment {
+  border: solid 1px #6fd089 !important;
 }

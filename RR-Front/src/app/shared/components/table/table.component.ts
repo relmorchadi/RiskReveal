@@ -12,6 +12,8 @@ export class TableComponent implements OnInit {
   @Output('selectOne') selectOne: any = new EventEmitter<any>();
   @Output('loadMore') loadMore: any = new EventEmitter<any>();
   @Output('dbClickItem') doubleClick: any = new EventEmitter<any>();
+  @Output('onRowSelect') onRowSelect: any = new EventEmitter<any>();
+  @Output('onRowUnselect') onRowUnselect: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -23,6 +25,8 @@ export class TableComponent implements OnInit {
   dataCashed: any;
   allChecked = false;
   indeterminate = false;
+
+  selectedRow: any
 
   items = [
     {
@@ -62,6 +66,8 @@ export class TableComponent implements OnInit {
   tableHeight: string;
   @Input()
   tableWidth: string;
+  @Input()
+  selectionMode: string = null;
 
   event: any;
   selectedRows: any = [];
@@ -192,5 +198,12 @@ export class TableComponent implements OnInit {
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
     this.contextMenu.hide();
+  }
+
+  rowSelect($event) {
+    this.onRowSelect.emit($event);
+  }
+  rowUnselect($event) {
+    this.onRowUnselect.emit($event);
   }
 }

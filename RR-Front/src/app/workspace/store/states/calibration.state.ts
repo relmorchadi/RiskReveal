@@ -303,6 +303,7 @@ export class CalibrationState implements NgxsOnInit {
     let pltId = payload.pltId;
     let today = new Date();
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    adjustement.ref = adjustement.id;
     adjustement.id = numberAdjs;
     if (adjustementType.id == 1) {
       adjustement.linear = false;
