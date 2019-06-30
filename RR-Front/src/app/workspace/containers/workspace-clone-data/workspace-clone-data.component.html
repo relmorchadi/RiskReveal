@@ -9,7 +9,7 @@
   <div class="app-body">
     <ng-container [ngSwitch]="activeSubTitle">
       <div class="box-container" *ngSwitchCase="0" style="padding: 0 0;">
-        <div class="box-item" style="background-color: #e5e9fa;">
+        <div class="box-item" style="background-color: #e5e9fa;width: 100%;">
           <span class="subtitle-3">
         Summary of assets being cloned:
       </span>
@@ -34,7 +34,7 @@
             </div>
             <div class="box">
               <div class="left" style="background-color: #33d0bb;">
-                <i class="fa fa-code-fork" style="margin: 4px;"></i>
+                <i class="icon-layer-group" style="margin: 4px;"></i>
               </div>
               <div class="right">
                 <div class="regular1">Inuring Packages</div>
@@ -52,83 +52,94 @@
             </div>
           </div>
         </div>
-        <div class="box-item">
+        <div class="box-item" style="width: 800px;">
 
           <span class="subtitle-4">
             Cloning from:
           </span>
-          <div style="background-color: cornflowerblue;">
-          <div class="input-group"  style="background-color: #f4f6fc;">
-            <div style="background-color: white; padding: 20px; margin-right: 5px; width: 50%;">
-              <!--<input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />-->
-              <div>XL, INC, VOL, IND,ACC,AUTO CASCO  |     2017</div>
-              <div>20769 | A.M.MA(BEL)</div>
-            </div>
-            <div style="background-color: white; padding: 20px; margin-right: 5px; width: 24%;">
-              <!--<input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />-->
-              <div style="padding: 10px;">
-                <span title>
-                  <i nz-icon><i class="icon-down-arrow"></i></i>
-                  <span style="text-decoration: underline; color: #0700cf; padding: 10px;">Edit PLT List</span>
-                </span>
+          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': cloningFromItem ?  '#fff' : '#e5e9fa','justify-content': cloningFromItem ? 'unset' : 'center' }">
+            <ng-container *ngIf="cloningFromItem">
+              <div class="left-box">
+                XL, INC, VOL, IND,ACC,AUTO CASCO | 2017 20769 | A.M.MA(BEL)
               </div>
-            </div>
-            <div style="background-color: white; padding: 20px; width: 24%;">
-            <!--<input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />  icon-down-arrow -->
-              <div style="padding: 10px;">
-                <span title>
-                  <i nz-icon><i (click)="setSubTitle(1)" class="icon-search-alt"></i></i>
-                  <span style="text-decoration: underline; color: #0700cf; padding-left: 10px;">Change Workspace</span>
-                </span>
+              <div class="right-box">
+                <button class="a-buttons-contained override">
+                  <i class="icon-search_24px"></i>
+                </button>
               </div>
-            </div>
-          </div>
+            </ng-container>
+            <ng-container *ngIf="!cloningFromItem">
+              <button class="a-buttons-contained override" style="margin: 9px">
+                <i class="icon-search_24px"></i>
+                Select workspace
+              </button>
+            </ng-container>
           </div>
         </div>
-        <div class="box-item" style="margin-top: 0; margin-bottom: 0;padding-top: 0;padding-bottom: 0;">
+        <div class="box-item" style="width: 800px;padding: 0 25px;">
           <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
-            <i style="padding-right: 20px;" class="icon-compare_arrows_24px"></i>
+            <i style="font-size:25px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px" class="icon-compare_arrows_24px"></i>
           </div>
         </div>
-        <div class="box-item" style="margin-top: 0;">
-        <span class="subtitle-4">
-          Cloning to:
-        </span>
-          <div style="background-color: cornflowerblue;">
-            <div class="input-group"  style="background-color: #f4f6fc;">
-              <div style="background-color: white; padding: 20px; margin-right: 5px; width: 50%;">
-                <!--<input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />-->
-                <div>XL, INC, VOL, IND,ACC,AUTO CASCO  |     2017</div>
-                <div>20769 | A.M.MA(BEL)</div>
-              </div>
-              <div style="background-color: white; padding: 20px; margin-right: 5px; width: 24%;">
-                <!--<input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />-->
-                <div style="padding: 10px;">
-                <span title>
-                  <i nz-icon><i class="icon-down-arrow"></i></i>
-                  <span style="text-decoration: underline; color: #0700cf; padding: 10px;">Edit PLT List</span>
-                </span>
-                </div>
-              </div>
-              <div style="background-color: white; padding: 20px; width: 24%;">
-                <!--<input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />  icon-down-arrow -->
-                <div style="padding: 10px;">
-                <span title>
-                  <i nz-icon><i (click)="setSubTitle(2)" class="icon-search-alt"></i></i>
-                  <span style="text-decoration: underline; color: #0700cf; padding-left: 10px;">Change Workspace</span>
-                </span>
-                </div>
-              </div>
+        <div class="box-item" style="width: 800px;">
+
+          <span class="subtitle-4">
+            Cloning to:
+          </span>
+          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': cloningToItem ?  '#fff' : '#e5e9fa'}">
+            <div class="left-box">
+              XL, INC, VOL, IND,ACC,AUTO CASCO | 2017 20769 | A.M.MA(BEL)
+            </div>
+            <div class="right-box">
+              <button class="a-buttons-contained override">
+                <i class="icon-search_24px"></i>
+              </button>
             </div>
           </div>
         </div>
-        <div class="box-item">
+        <div class="box-item" style="width: 800px;">
           <div class="default-radio">
-            <nz-radio-group>
-              <label nz-radio nzValue="all" class="body-2">Keep Source Project Name(s)</label>
-              <label nz-radio nzValue="agg" class="body-2">Clone into New Project</label>
-              <label nz-radio nzValue="det" class="body-2">Clone into Existing Project</label>
+            <nz-radio-group [(ngModel)]="projectForClone">
+              <label nz-radio [nzValue]="-1" class="body-2">Keep Source Project Name(s)</label>
+              <label nz-radio [nzValue]="0" class="body-2" [ngClass]="{'label-border': projectForClone == 0}">
+                Clone into New Project
+              </label>
+              <label nz-radio [nzValue]="1" class="body-2" [ngClass]="{'label-border': projectForClone == 1}">Clone into Existing Project</label>
             </nz-radio-group>
+          </div>
+          <div style="display: flex;justify-content: center">
+            <div *ngIf="projectForClone == 0" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    padding: 13px;
+    bottom: 3px;
+    z-index: 0;
+    border: 3px solid var(--primary-1);
+">
+              <input class="a-textfield-standard" type="text" placeholder="Project name" style="margin: 0 16px;">
+              <input class="a-textfield-standard" type="text" placeholder="Project description" style="margin: 0 16px;">
+            </div>
+            <div *ngIf="projectForClone == 1" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    padding: 13px;
+    bottom: 3px;
+    z-index: 0;
+    border: 3px solid var(--primary-1);
+">
+              <nz-select
+                style="width: 270px;"
+                nzShowSearch
+                class="a-dropdown-small"
+                nzPlaceHolder="Choose target workspace"
+              >
+                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
+                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
+                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
+                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
+                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
+              </nz-select>
+            </div>
           </div>
         </div>
       </div>
@@ -139,7 +150,7 @@
         target
       </div>
     </ng-container>
-    <div class="box-item">
+    <div class="box-item" style="width: 100%;">
       <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
       <button [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
       <button class="a-buttons-contained" style="margin-left: 10px;">clone & open</button>
