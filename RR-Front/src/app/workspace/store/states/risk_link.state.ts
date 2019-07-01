@@ -11,8 +11,7 @@ import {
   PatchRiskLinkDisplayAction,
   PatchRiskLinkFinancialPerspectiveAction,
   SearchRiskLinkEDMAndRDMAction,
-  SelectRiskLinkAnalysisAndPortfolioAction,
-  SelectRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction, TogglePortfolioForLinkingAction,
+  SelectRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction,
   ToggleRiskLinkAnalysisAction,
   ToggleRiskLinkEDMAndRDMAction,
   ToggleRiskLinkPortfolioAction
@@ -26,7 +25,6 @@ import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from '../../services/risk.api';
 import {forkJoin} from "rxjs";
-import {DeleteAllBadgesAction} from "../../../core/store/actions";
 
 const initiaState: RiskLinkModel = {
   listEdmRdm: {
@@ -369,7 +367,7 @@ export class RiskLinkState implements NgxsOnInit {
           },
         },
         numberOfElement: results.numberOfElement + 1
-      }
+      };
     });
 
     dataPortfolio.forEach(dt => {
@@ -388,7 +386,7 @@ export class RiskLinkState implements NgxsOnInit {
           },
         },
         numberOfElement: results.numberOfElement + 1
-      }
+      };
     });
 
     ctx.patchState(
@@ -396,7 +394,7 @@ export class RiskLinkState implements NgxsOnInit {
         summaries: summary,
         results: results
       }
-    )
+    );
   }
 
   @Action(DeleteFromBasketAction)
@@ -410,35 +408,40 @@ export class RiskLinkState implements NgxsOnInit {
         newData = {...newData, [dt.dataSourceId]: {...dt}};
       });
       ctx.patchState(
-        {summaries: {
-          ...state.summaries,
-          data: newData,
-          numberOfElement: summary.length
-        }}
-      )
+        {
+          summaries: {
+            ...state.summaries,
+            data: newData,
+            numberOfElement: summary.length
+          }
+        }
+      );
     } else if (scope === 'results') {
       const results = _.filter(_.toArray(state.results.data), dt => dt.analysisId !== id);
       results.forEach(dt => {
         newData = {...newData, [dt.analysisId]: {...dt}};
       });
       ctx.patchState(
-        {results: {
+        {
+          results: {
             ...state.results,
             data: newData,
             numberOfElement: results.length
-          }}
-      )
+          }
+        }
+      );
     }
   }
 
   @Action(LoadRiskLinkAnalysisDataAction)
-  loadRiskLinkAnalysisDataAction(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkAnalysisDataAction) {
+  loadRiskLinkAnalysisData(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkAnalysisDataAction) {
     const state = ctx.getState();
     return forkJoin(
       payload.map(dt => this.riskApi.searchRiskLinkAnalysis(dt.id, dt.name))
     ).pipe(
       switchMap(out => {
-        let dataTable;
+        let dataTable = {};
+        let totalElement = {};
         out.forEach((dt: any, i) => {
             dataTable = {
               ...dataTable,
@@ -458,12 +461,26 @@ export class RiskLinkState implements NgxsOnInit {
                 filter: {}
               }
             };
+            totalElement = {
+              ...totalElement,
+              [payload[i].id]: {
+                totalNumberElement: dt.totalElements
+              }
+            };
           }
         );
         return of(ctx.patchState(
           {
-            analysis: dataTable
-          }));
+            analysis: dataTable,
+            listEdmRdm: {
+              ...state.listEdmRdm,
+              selectedListEDMAndRDM: {
+                ...state.listEdmRdm.selectedListEDMAndRDM,
+                rdm: _.merge({}, state.listEdmRdm.selectedListEDMAndRDM.rdm, totalElement)
+                }
+              }
+            }
+          ));
       }),
       catchError(err => {
         // @TODO Handle error case
@@ -480,7 +497,8 @@ export class RiskLinkState implements NgxsOnInit {
       payload.map(dt => this.riskApi.searchRiskLinkPortfolio(dt.id, dt.name))
     ).pipe(
       switchMap(out => {
-        let dataTable;
+        let dataTable = {};
+        let totalElement = {};
         out.forEach((dt: any, i) => {
             dataTable = {
               ...dataTable,
@@ -500,16 +518,66 @@ export class RiskLinkState implements NgxsOnInit {
                 filter: {}
               }
             };
+            totalElement = {
+              ...totalElement,
+              [payload[i].id]: {
+                totalNumberElement: dt.totalElements
+              }
+            };
           }
         );
         return of(ctx.patchState(
           {
-            portfolios: dataTable
+            portfolios: dataTable,
+            listEdmRdm: {
+              ...state.listEdmRdm,
+              selectedListEDMAndRDM: {
+                ...state.listEdmRdm.selectedListEDMAndRDM,
+                edm:  _.merge({}, state.listEdmRdm.selectedListEDMAndRDM.edm, totalElement)
+              }
+            }
           }));
       }),
       catchError(err => {
         // @TODO Handle error case
         console.error('Failed to search contracts Count');
+        return of();
+      })
+    );
+  }
+
+  @Action(LoadPortfolioForLinkingAction)
+  loadPortfolioForLinking(ctx: StateContext<RiskLinkModel>, {payload}: LoadPortfolioForLinkingAction) {
+    const state = ctx.getState();
+    const {id, name} = payload;
+    return this.riskApi.searchRiskLinkPortfolio(id, name).pipe(
+      mergeMap(dt => {
+        const dataTable = {
+          data: Object.assign({},
+            ...dt.content.map(portfolio => ({
+                [portfolio.dataSourceId]: {
+                  ...portfolio,
+                  selected: false
+                }
+              }
+            ))),
+          selectedData: [],
+          lastSelectedIndex: null,
+          totalNumberElement: dt.totalElements,
+          numberOfElement: dt.size,
+          filter: {}
+        };
+        return of(ctx.patchState(
+          {
+            linking: {
+              ...state.linking,
+              portfolio: dataTable
+            }
+          }));
+      }),
+      catchError(err => {
+        // @TODO Handle error case
+        console.error('Failed to search Analysis Count');
         return of();
       })
     );
@@ -535,7 +603,6 @@ export class RiskLinkState implements NgxsOnInit {
                       }
                     }
                   ))),
-                selectedData: [],
                 lastSelectedIndex: null,
                 totalNumberElement: dt.totalElements,
                 numberOfElement: dt.size,
@@ -549,50 +616,6 @@ export class RiskLinkState implements NgxsOnInit {
             linking: {
               ...state.linking,
               analysis: dataTable
-            }
-          }));
-      }),
-      catchError(err => {
-        // @TODO Handle error case
-        console.error('Failed to search Analysis Count');
-        return of();
-      })
-    );
-  }
-
-  @Action(LoadPortfolioForLinkingAction)
-  loadPortfolioForLinking(ctx: StateContext<RiskLinkModel>, {payload}: LoadPortfolioForLinkingAction) {
-    const state = ctx.getState();
-    return forkJoin(
-      payload.map(dt => this.riskApi.searchRiskLinkPortfolio(dt.id, dt.name))
-    ).pipe(
-      switchMap(out => {
-        let dataTable;
-        out.forEach((dt: any, i) => {
-            dataTable = {
-              ...dataTable,
-              [payload[i].id]: {
-                data: Object.assign({},
-                  ...dt.content.map(portfolio => ({
-                      [portfolio.dataSourceId]: {
-                        ...portfolio,
-                        selected: false
-                      }
-                    }
-                  ))),
-                lastSelectedIndex: null,
-                totalNumberElement: dt.totalElements,
-                numberOfElement: dt.size,
-                filter: {}
-              }
-            };
-          }
-        );
-        return of(ctx.patchState(
-          {
-            linking: {
-              ...state.linking,
-              portfolio: dataTable
             }
           }));
       }),
@@ -646,14 +669,6 @@ export class RiskLinkState implements NgxsOnInit {
             rdm: {...newDataSelectedRDM}
           },
         },
-        linking: {
-          ...state.linking,
-          edm: {
-            ...newDataSelectedEDM,
-            [id]: {...newDataSelectedEDM[id], selected: !selected}
-          },
-          rdm: {...newDataSelectedRDM}
-        },
         selectedEDMOrRDM: type
       });
     } else {
@@ -668,14 +683,6 @@ export class RiskLinkState implements NgxsOnInit {
             }
           },
         },
-        linking: {
-          ...state.linking,
-          edm: {...newDataSelectedEDM},
-          rdm: {
-            ...newDataSelectedRDM,
-            [id]: {...newDataSelectedRDM[id], selected: !selected}
-          }
-        },
         selectedEDMOrRDM: type
       });
     }
@@ -685,40 +692,14 @@ export class RiskLinkState implements NgxsOnInit {
   ToggleAnalysisForLinking(ctx: StateContext<RiskLinkModel>, {payload}: ToggleAnalysisForLinkingAction) {
     const state = ctx.getState();
     const {id} = payload.item;
-    const {selected} = payload;
     let array = state.linking.rdm;
-    array = {...array, [id]: {...array[id], selected: selected}};
+    array = {...array, [id]: {...array[id], selected: !array[id].selected}};
     ctx.dispatch(new LoadAnalysisForLinkingAction(_.filter(_.toArray(array), dt => dt.selected)));
     ctx.patchState(
       {
         linking: {
           ...state.linking,
           rdm: array
-        }
-      }
-    );
-  }
-
-  @Action(TogglePortfolioForLinkingAction)
-  TogglePortfolioForLinking(ctx: StateContext<RiskLinkModel>, {payload}: TogglePortfolioForLinkingAction) {
-    const state = ctx.getState();
-    const {id, name} = payload;
-    const array = _.toArray(state.linking.edm);
-    let newData = {};
-    array.forEach(dt => {
-      newData = _.merge({}, newData, {
-        [dt.id]: {
-          ...dt,
-          selected: false
-        }
-      });
-    });
-    ctx.dispatch(new LoadAnalysisForLinkingAction([{id, name}]));
-    ctx.patchState(
-      {
-        linking: {
-          ...state.linking,
-          edm: {...newData, [id]: {...newData[id], selected: true}}
         }
       }
     );
@@ -735,12 +716,12 @@ export class RiskLinkState implements NgxsOnInit {
     listDataToArray.map(
       dt => {
         if (dt.selected && dt.type === 'edm') {
+          console.log(state.portfolios, state.analysis);
           listSelected.edm = _.merge(listSelected.edm, {
             [dt.id]: {
               ...dt,
               scanned: true,
               selected: false,
-              /*              totalNumberElement: state.analysis[dt.id].numberOfElement*/
             }
           });
         } else if (dt.selected && dt.type === 'rdm') {
@@ -749,7 +730,6 @@ export class RiskLinkState implements NgxsOnInit {
               ...dt,
               scanned: true,
               selected: false,
-              /*              totalNumberElement: state.portfolios[dt.id].numberOfElement*/
             }
           });
         }
@@ -759,6 +739,11 @@ export class RiskLinkState implements NgxsOnInit {
       listEdmRdm: {
         ...state.listEdmRdm,
         selectedListEDMAndRDM: listSelected
+      },
+      linking: {
+        ...state.linking,
+        edm: listSelected.edm,
+        rdm: listSelected.rdm
       }
     });
   }

@@ -7,7 +7,7 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  AddToBasketAction, DeleteFromBasketAction,
+  AddToBasketAction, DeleteFromBasketAction, LoadAnalysisForLinkingAction, LoadPortfolioForLinkingAction,
   PatchAddToBasketStateAction,
   SearchRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction, TogglePortfolioForLinkingAction,
   ToggleRiskLinkAnalysisAction,
@@ -76,7 +76,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    console.log('init Risk');
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.serviceSubscription = [
       this.state$.subscribe(value => this.state = _.merge({}, value)),
@@ -173,12 +173,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   toggleForLinkingEDM(items) {
-    this.store.dispatch(new TogglePortfolioForLinkingAction(items));
-    this.selectedEDM = items;
+    this.store.dispatch(new LoadPortfolioForLinkingAction(items));
   }
 
   toggleForLinkingRDM(items) {
-    this.store.dispatch(new ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
+    items.selected = !items.selected;
   }
 
   getScrollableCols() {
@@ -197,10 +196,18 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
-  getLinkingData() {
-    const {id} = _.filter(this.state.linking.edm, (dt) => dt.selected === true)[0];
+  getLinkingPortfolio() {
+    if (this.state.linking.portfolio === null) {
+      return null;
+    } else {
+      return _.toArray(this.state.linking.portfolio.data);
+    }
+  }
+
+  getLinkingAnalysis() {
+/*    const {id} = _.filter(this.state.linking.edm, (dt) => dt.selected === true)[0];
     const dataTable = _.get(this.state.linking, `analysis[${id}].data`, null);
-    return _.toArray(dataTable);
+    return _.toArray(dataTable);*/
   }
 
   getTableData() {
@@ -214,6 +221,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       dataTable = _.get(this.tableLeftPortfolio, `${id}.data`, this.tableLeftPortfolio);
       return _.toArray(dataTable);
     }
+  }
+
+  getTitle() {
+    return this.state.selectedEDMOrRDM === 'rdm' ? 'Analysis' : 'Portfolio';
   }
 
   onInputSearch(event) {

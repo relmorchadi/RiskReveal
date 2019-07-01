@@ -270,7 +270,7 @@
                             (nzOnCancel)="handleCancel()"
                             [nzFooter]="footerModal">
                     <div class="input-group-modal">
-                      <input placeholder="Portfolio ID" class="a-textfield-mini input-wrapper" >
+                      <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper" ></div>
                       <div class="radio-wrapper default-radio">
                         <span>AGG/DET</span>
                         <nz-radio-group [(ngModel)]="radioValue">
@@ -279,12 +279,12 @@
                           <label nz-radio nzValue="det">DET</label>
                         </nz-radio-group>
                       </div>
-                      <input placeholder="Number" class="a-textfield-mini input-wrapper" >
-                      <input placeholder="Name" class="a-textfield-mini input-wrapper" >
-                      <input placeholder="Description" class="a-textfield-mini input-wrapper" >
+                      <div class="row-input"><span class="label-input">Number</span><input placeholder="Number" class="a-textfield-mini input-wrapper" ></div>
+                      <div class="row-input"><span class="label-input">Name</span><input placeholder="Name" class="a-textfield-mini input-wrapper" ></div>
+                      <div class="row-input"><span class="label-input">Description</span><input placeholder="Description" class="a-textfield-mini input-wrapper" ></div>
                     </div>
                     <ng-template #titleModal>
-                      <h6>Portfolio Filter Criteria</h6>
+                      <h6>{{getTitle()}} Filter Criteria</h6>
                     </ng-template>
                     <ng-template #footerModal>
                       <div class="modal-footer-wrapper">
@@ -293,7 +293,7 @@
                       </div>
                     </ng-template>
                   </nz-modal>
-                  <button (click)="linkingModalVisibility = true" class="a-buttons-outlined">LINKING</button>
+                  <button (click)="linkingModalVisibility = true" class="a-buttons-outlined">ADVANCED</button>
                   <nz-modal [(nzVisible)]="linkingModalVisibility" [nzTitle]="titleModalLinking"
                             (nzOnCancel)="handleCancel()"
                             [nzFooter]="null">
@@ -301,9 +301,8 @@
                       <div class="modal-linking-head">
                         <div class="modal-l-h-body-fill">
                           <span class="subtitle-2">Data Sources</span>
-                          <nz-radio-group class="default-radio radio-control" [ngModel]="selectedEDM">
-                            <label class="popover-menu-item" [ngClass]="{'popover-menu-item-active': itemsE.selected}"
-                                   (click)="toggleForLinkingEDM(itemsE)"
+                          <nz-radio-group class="default-radio radio-control" (ngModelChange)="toggleForLinkingEDM($event)" [(ngModel)]="selectedEDM">
+                            <label class="popover-menu-item" [ngClass]="{'popover-menu-item-active': itemsE === selectedEDM}"
                                    *ngFor="let itemsE of dataList(state.linking.edm)" nz-radio [nzValue]="itemsE">
                               <span class="logo" style="background: #0700CF;">E</span>
                               <span [title]="itemsE.name" class="text">{{itemsE?.name}}</span>
@@ -315,7 +314,7 @@
                             <ng-container *ngFor="let itemsR of dataList(state.linking.rdm)">
                               <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item" (click)="toggleForLinkingRDM(itemsR)"
                                   [ngClass]="{'popover-menu-item-active': itemsR.selected}">
-                                <label nz-checkbox [ngModel]="itemsR.selected">
+                                <label nz-checkbox [nzChecked]="itemsR.selected">
                                   <span class="logo" style="background: #03DAC4">R</span>
                                   <span [title]="itemsR?.name" class="text">{{itemsR?.name}}</span>
                                 </label>
@@ -474,8 +473,8 @@
                       <div class="modal-linking-wrapper">
                         <div class="modal-linking-head">
                           <div class="modal-l-h-body-fill summary-info">
-                            <span class="subtitle-2">EDM Portofolio</span>
-<!--                            <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingData()" [scrollable]="true" scrollHeight="340px" >
+                            <span class="subtitle-2">EDM Portfolio</span>
+                            <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingPortfolio()" [scrollable]="true" scrollHeight="340px" >
                               <ng-template pTemplate="colgroup" let-columns>
                                 <colgroup>
                                   <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -524,7 +523,7 @@
                                   </th>
                                 </tr>
                               </ng-template>
-                            </p-table>-->
+                            </p-table>
                           </div>
                         </div>
                       </div>
@@ -532,7 +531,7 @@
                         <div class="modal-linking-head">
                           <div class="modal-l-h-body-fill summary-info">
                             <span class="subtitle-2">RDM Analysis</span>
-                            <p-table #lt [columns]="scrollableColslinking" [value]="" [scrollable]="true" scrollHeight="340px" >
+                            <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingAnalysis()" [scrollable]="true" scrollHeight="340px" >
                               <ng-template pTemplate="colgroup" let-columns>
                                 <colgroup>
                                   <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -547,7 +546,7 @@
                                       <div class="search-bar-table">
                                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                                         <input pInputText type="text"
-                                               (input)="st.filter($event.target.value, col.field, col.filterMatchMode)">
+                                               (input)="lt.filter($event.target.value, col.field, col.filterMatchMode)">
                                       </div>
                                     </div>
                                     <div *ngIf="col.type === 'icon'">
@@ -593,7 +592,7 @@
                 </div>
               </div>
               <div class="show-table">
-                <p-table #dt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
+                <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
                          [scrollable]="true" scrollHeight="340px" frozenWidth="240px">
                   <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
@@ -608,7 +607,7 @@
                              *ngIf="col.header !== 'selected' && col.header !== 'id'">
                           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                           <input pInputText type="text"
-                                 (input)="dt.filter($event.target.value, col.field, col.filterMatchMode)">
+                                 (input)="kt.filter($event.target.value, col.field, col.filterMatchMode)">
                         </div>
                       </th>
                     </tr>
@@ -646,7 +645,6 @@
               <div>Exposure Summaries</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="a-buttons-outlined" *ngIf="state.collapse.collapseResult"> ADVANCED</button>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
                    class="icon-keyboard_arrow_up_24px"></i>
@@ -720,7 +718,7 @@
               <div>Analysis Results</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="a-buttons-outlined" *ngIf="state.collapse.collapseAnalysis"> ADVANCED</button>
+              <button class="a-buttons-outlined" *ngIf="state.collapse.collapseAnalysis"> LINKING</button>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseAnalysis"
                    (click)="changeCollapse('collapseAnalysis')" class="icon-keyboard_arrow_up_24px"></i>
