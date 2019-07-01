@@ -61,7 +61,6 @@
         <div class="collapseTags col-2" style="padding:10px 0px 0px 5px; position: absolute;">
           <i (click)="collapseTags()" class="icon-chevron_right_24px"
              style="font-size: 25px; cursor: pointer"></i>
-
         </div>
       </div>
       <div class="tabset-right" style="flex: 1;background: #fff;">
@@ -437,6 +436,26 @@
                               </label>
                             </div>
                           </li>
+                          <li nz-menu-item>
+                            <div class="checkboxInput">
+                              <label [(ngModel)]="lockedCheckbox"
+                                     nzChecked
+                                     nz-checkbox
+                                     style="margin-right: 12px;">
+                                <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
+                              </label>
+                            </div>
+                          </li>
+                          <li nz-menu-item>
+                            <div class="checkboxInput">
+                              <label [(ngModel)]="lockedCheckbox"
+                                     nzChecked
+                                     nz-checkbox
+                                     style="margin-right: 12px;">
+                                <i class="icon-error_24px iconRed2"></i> Failed
+                              </label>
+                            </div>
+                          </li>
                         </ul>
                       </nz-dropdown>
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -539,7 +558,12 @@
                       <div class="td-wrapper-check">
                         <div *ngIf="col.icon=='icon-focus-add'">
                           <i
-                            [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress', 'icon-check-circle iconGreen': rowData?.status=='locked' ,'icon-lock-alt iconRed': rowData?.status=='checked' }"></i>
+                            [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
+                                         'icon-check-circle iconGreen': rowData?.status=='locked' ,
+                                         'icon-lock-alt iconRed': rowData?.status=='checked',
+                                         'icon-error_24px iconRed2': rowData?.status=='failed',
+                                         'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }">
+                          </i>
                         </div>
                         <div *ngIf="col.icon=='icon-note'">
                           <nz-dropdown [nzPlacement]="'bottomLeft'">
@@ -822,5 +846,3 @@
     </button>
   </ng-template>
 </nz-modal>
-
-

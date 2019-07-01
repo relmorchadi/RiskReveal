@@ -2,8 +2,8 @@ import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from 
 import * as _ from 'lodash';
 import {pltMainModel} from "../../model";
 import * as fromPlt from '../actions'
-import {forkJoin, of} from 'rxjs';
-import {catchError, map, mergeMap, tap} from 'rxjs/operators';
+import {of} from 'rxjs';
+import {catchError, mergeMap} from 'rxjs/operators';
 import {PltApi} from '../../services/plt.api';
 import * as moment from 'moment';
 
@@ -44,7 +44,7 @@ export class PltMainState implements NgxsOnInit {
     return (state: pltMainModel) => state.data[wsIdentifier];
   }
 
-  status = ['in progress', 'checked', 'locked'];
+  status = ['in progress', 'checked', 'locked', 'requires regeneration', 'failed'];
 
   @Selector()
   static getProjects() {
@@ -91,7 +91,7 @@ export class PltMainState implements NgxsOnInit {
     return createSelector([PltMainState], (state: pltMainModel) => _.keyBy(_.filter(_.get(state.data, `${wsIdentifier}`), e => !e.deleted), 'pltId'))
   }
 
-  getRandomInt(min = 0, max = 2) {
+  getRandomInt(min = 0, max = 4) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
