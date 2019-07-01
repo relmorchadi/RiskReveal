@@ -10,49 +10,51 @@
     <ng-container [ngSwitch]="activeSubTitle">
       <div class="box-container" *ngSwitchCase="0" style="padding: 0 0;">
         <div class="box-item" style="background-color: #e5e9fa;width: 100%;">
-          <span class="subtitle-3">
-        Summary of assets being cloned:
-      </span>
-          <div class="plts-detail-boxes">
-            <div class="box">
-              <div class="left" style="background-color: var(--primary-9);">
-                <i class="icon-assignment_24px"></i>
+          <div style="width: 780px;margin: auto;">
+            <span class="subtitle-3">
+              Summary of assets being cloned:
+            </span>
+            <div class="plts-detail-boxes">
+              <div class="box">
+                <div class="left" style="background-color: var(--primary-9);">
+                  <i class="icon-assignment_24px"></i>
+                </div>
+                <div class="right">
+                  <div class="regular1">Pre-Inured PLTs</div>
+                  <span class="regular">12</span>
+                </div>
               </div>
-              <div class="right">
-                <div class="regular1">Pre-Inured PLTs</div>
-                <span class="regular">12</span>
+              <div class="box">
+                <div class="left" style="background-color: var(--scor-peril-2);">
+                  <i class="fa fa-code-fork" style="margin: 4px;"></i>
+                </div>
+                <div class="right">
+                  <div class="regular1">Post-Inured PLTs</div>
+                  <span class="regular">4</span>
+                </div>
               </div>
-            </div>
-            <div class="box">
-              <div class="left" style="background-color: var(--scor-peril-2);">
-                <i class="fa fa-code-fork" style="margin: 4px;"></i>
+              <div class="box">
+                <div class="left" style="background-color: #33d0bb;">
+                  <i class="icon-layer-group" style="margin: 4px;"></i>
+                </div>
+                <div class="right">
+                  <div class="regular1">Inuring Packages</div>
+                  <span class="regular">1</span>
+                </div>
               </div>
-              <div class="right">
-                <div class="regular1">Post-Inured PLTs</div>
-                <span class="regular">4</span>
-              </div>
-            </div>
-            <div class="box">
-              <div class="left" style="background-color: #33d0bb;">
-                <i class="icon-layer-group" style="margin: 4px;"></i>
-              </div>
-              <div class="right">
-                <div class="regular1">Inuring Packages</div>
-                <span class="regular">1</span>
-              </div>
-            </div>
-            <div class="box">
-              <div class="left" style="background-color: var(--primary-10);">
-                <i class="icon-assignment_24px"></i>
-              </div>
-              <div class="right">
-                <div class="regular1">Sources Projects</div>
-                <span class="regular">3</span>
+              <div class="box">
+                <div class="left" style="background-color: var(--primary-10);">
+                  <i class="icon-assignment_24px"></i>
+                </div>
+                <div class="right">
+                  <div class="regular1">Sources Projects</div>
+                  <span class="regular">3</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-        <div class="box-item" style="width: 800px;">
+        <div class="box-item" style="width: 780px;">
 
           <span class="subtitle-4">
             Cloning from:
@@ -76,12 +78,12 @@
             </ng-container>
           </div>
         </div>
-        <div class="box-item" style="width: 800px;padding: 0 25px;">
+        <div class="box-item" style="width: 780px;padding: 0 25px;">
           <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
             <i style="font-size:25px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px" class="icon-compare_arrows_24px"></i>
           </div>
         </div>
-        <div class="box-item" style="width: 800px;">
+        <div class="box-item" style="width: 780px;">
 
           <span class="subtitle-4">
             Cloning to:
@@ -97,14 +99,18 @@
             </div>
           </div>
         </div>
-        <div class="box-item" style="width: 800px;">
+        <div class="box-item" style="width: 780px;">
           <div class="default-radio">
             <nz-radio-group [(ngModel)]="projectForClone">
               <label nz-radio [nzValue]="-1" class="body-2">Keep Source Project Name(s)</label>
               <label nz-radio [nzValue]="0" class="body-2" [ngClass]="{'label-border': projectForClone == 0}">
                 Clone into New Project
+                <div class="toHide"></div>
               </label>
-              <label nz-radio [nzValue]="1" class="body-2" [ngClass]="{'label-border': projectForClone == 1}">Clone into Existing Project</label>
+              <label nz-radio [nzValue]="1" class="body-2" [ngClass]="{'label-border': projectForClone == 1}">
+                Clone into Existing Project
+                <div class="toHide"></div>
+              </label>
             </nz-radio-group>
           </div>
           <div style="display: flex;justify-content: center">
@@ -142,6 +148,16 @@
             </div>
           </div>
         </div>
+        <div class="box-item" style="width: 880px;margin: 0;padding: 0;">
+          <nz-divider></nz-divider>
+        </div>
+        <div class="box-item" style="width: 780px;">
+          <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
+            <button [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
+            <button class="a-buttons-contained" style="margin-left: 10px;">clone</button>
+            <button class="a-buttons-contained" style="margin-left: 10px;">clone & open</button>
+          </div>
+        </div>
       </div>
       <div class="box-container" *ngSwitchCase="1">
 
@@ -150,12 +166,5 @@
         target
       </div>
     </ng-container>
-    <div class="box-item" style="width: 100%;">
-      <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
-      <button [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
-      <button class="a-buttons-contained" style="margin-left: 10px;">clone & open</button>
-      <button class="a-buttons-contained" style="margin-left: 10px;">clone</button>
-      </div>
-    </div>
   </div>
 </div>
