@@ -1,0 +1,105 @@
+<p-dialog
+  (cancel)="handleCancel()"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [visible]="isVisible"
+  appendTo="body"
+  styleClass="m-dialog-modal-m"
+>
+  <p-header>
+    <h3>
+      {{modalTitle}}
+    </h3>
+    <i (click)="handleCancel()" class="icon-close_24px" style="cursor: pointer"></i>
+  </p-header>
+  <div nz-row>
+    <div nz-col nzSpan="8" style="margin-top: 10px">
+      <b>Basis</b>
+    </div>
+    <div nz-col nzSpan="16">
+      <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
+      <nz-select (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
+                 [(ngModel)]="categorySelectedFromAdjustement"
+                 [nzPlaceHolder]="'Select Adjustment'"
+                 [nzSize]="size" style="width: 260px;">
+        <ng-container *ngFor="let option of allAdjsArray">
+          <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
+                     [nzValue]="option"></nz-option>
+        </ng-container>
+      </nz-select>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      <nz-collapse *ngIf="categorySelectedFromAdjustement?.description" [nzBordered]="false">
+        <nz-collapse-panel [nzActive]="true" [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis">
+          <p>{{categorySelectedFromAdjustement?.description}}</p>
+        </nz-collapse-panel>
+      </nz-collapse>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8">
+      <b>Category</b>
+    </div>
+    <div nz-col nzSpan="16" style="line-height: 2.2rem;">
+      <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
+      <b style="margin-left: 10px;">{{categorySelected}}</b>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      &nbsp;
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8" style="margin-top: 10px">
+      <b>Narrative</b>
+    </div>
+    <div nz-col nzSpan="16">
+      <textarea [(ngModel)]="inputValue" nz-input rows="4" style="margin-left: 10px; width: 95%"></textarea>
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="24">
+      &nbsp;
+    </div>
+  </div>
+  <div nz-row>
+    <div nz-col nzSpan="8" style="margin-top: 10px">
+      <b>Type</b>
+    </div>
+    <div nz-col nzSpan="16">
+      <nz-select (ngModelChange)="selectBasis(singleValue)" [(ngModel)]="singleValue"
+                 [nzPlaceHolder]="'choose Type'"
+                 [nzSize]="size" style="width: 260px;">
+        <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+      </nz-select>
+    </div>
+  </div>
+  <div *ngIf="categorySelectedFromAdjustement" nz-row style="margin-top: 20px;">
+    <div nz-col nzSpan="8" style="margin: 5px;">
+      Capped
+    </div>
+    <div nz-col nzSpan="16" style="line-height: 2.2rem;">
+      <nz-switch [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" [nzDisabled]="true" nzSize="small"
+                 style="margin-left: 15px;"></nz-switch>
+    </div>
+  </div>
+  <p-footer>
+    <button (click)="handleCancel()"
+            class="ant-btn"
+            style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
+    </button>
+
+    <button (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)" *ngIf="!modifyModal"
+            class="ant-btn ant-btn-default"
+            style="width: 130px; height: 30px; ">SAVE
+    </button>
+    <button (click)="saveAdjModification(categorySelectedFromAdjustement)" *ngIf="modifyModal"
+            class="ant-btn ant-btn-default"
+            style="width: 130px; height: 30px; ">SAVE
+    </button>
+  </p-footer>
+</p-dialog>
