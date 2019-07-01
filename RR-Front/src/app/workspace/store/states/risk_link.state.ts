@@ -3,6 +3,7 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
+  AddToBasketAction, DeleteFromBasketAction,
   LoadAnalysisForLinkingAction, LoadPortfolioForLinkingAction,
   LoadRiskLinkDataAction, PatchAddToBasketStateAction,
   PatchRiskLinkAction,
@@ -25,6 +26,7 @@ import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from '../../services/risk.api';
 import {forkJoin} from "rxjs";
+import {DeleteAllBadgesAction} from "../../../core/store/actions";
 
 const initiaState: RiskLinkModel = {
   listEdmRdm: {
@@ -158,18 +160,18 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(PatchAddToBasketStateAction)
   patchAddToBasketState(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
-    const selectedPortfolio = _.filter(_.toArray(state.listEdmRdm.selectedListEDMAndRDM.edm), dt => dt.selected)[0];
-    const selectedAnalysis = _.filter(_.toArray(state.listEdmRdm.selectedListEDMAndRDM.rdm), dt => dt.selected)[0];
-    if (state.selectedEDMOrRDM === 'edm') {
-      ctx.patchState({
-        activeAddBasket: _.filter(_.toArray(state.portfolios[selectedPortfolio.id].data), dt => dt.selected).length > 0
-      });
-    } else {
-      ctx.patchState({
-        activeAddBasket: _.filter(_.toArray(state.analysis[selectedAnalysis.id].data), dt => dt.selected).length > 0
-      });
-    }
-
+    let analysis = _.toArray(state.analysis);
+    let portfolio = _.toArray(state.portfolios);
+    analysis = analysis.map(dt => _.toArray(dt.data));
+    portfolio = portfolio.map(dt => _.toArray(dt.data));
+    const data = analysis.concat(portfolio);
+    let count = 0;
+    data.forEach(dt => {
+      count = count + _.filter(dt, ws => ws.selected).length
+    });
+    ctx.patchState({
+      activeAddBasket: count > 0
+    });
   }
 
   @Action(ToggleRiskLinkEDMAndRDMAction)
@@ -312,6 +314,7 @@ export class RiskLinkState implements NgxsOnInit {
           },
         }
       });
+      ctx.dispatch(new PatchAddToBasketStateAction());
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -333,14 +336,99 @@ export class RiskLinkState implements NgxsOnInit {
           }
         },
       });
-
+      ctx.dispatch(new PatchAddToBasketStateAction());
     }
   }
 
-  @Action(SelectRiskLinkAnalysisAndPortfolioAction)
-  selectRiskLinkAnalysisAndPortfolio(ctx: StateContext<RiskLinkModel>, {payload}: SelectRiskLinkAnalysisAndPortfolioAction) {
+  @Action(AddToBasketAction)
+  addToBasket(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
+    let analysis = _.toArray(state.analysis).map(dt => _.toArray(dt.data));
+    let portfolio = _.toArray(state.portfolios).map(dt => _.toArray(dt.data));
+    const selectAnalysis = analysis.map(dt => _.filter(dt, ws => ws.selected));
+    const selectPortfolio = portfolio.map(dt => _.filter(dt, ws => ws.selected));
+    let dataAnalysis = [];
+    let dataPortfolio = [];
+    selectAnalysis.forEach(dt => dataAnalysis = [...dataAnalysis, ...dt]);
+    selectPortfolio.forEach(dt => dataPortfolio = [...dataPortfolio, ...dt]);
+    let results = {data: {}, filter: {}, numberOfElement: 0};
+    let summary = {data: {}, filter: {}, numberOfElement: 0};
+    dataAnalysis.forEach(dt => {
+      results = {
+        ...results, data: {
+          ...results.data,
+          [dt.rdmId + dt.analysisId]: {
+            ...dt,
+            scanned: true,
+            status: 100,
+            unitMultiplier: 1,
+            targetCurrency: 'USD',
+            elt: 'GR',
+            occurrenceBasis: 'PerEvent',
+            selected: false
+          },
+        },
+        numberOfElement: results.numberOfElement + 1
+      }
+    });
 
+    dataPortfolio.forEach(dt => {
+      summary = {
+        ...summary, data: {
+          ...summary.data,
+          [dt.edmId + dt.dataSourceId]: {
+            ...dt,
+            scanned: true,
+            status: 100,
+            unitMultiplier: 1,
+            proportion: 100,
+            targetCurrency: 'USD',
+            sourceCurrency: 'USD',
+            exposedLocation: true
+          },
+        },
+        numberOfElement: results.numberOfElement + 1
+      }
+    });
+
+    ctx.patchState(
+      {
+        summaries: summary,
+        results: results
+      }
+    )
+  }
+
+  @Action(DeleteFromBasketAction)
+  deleteFromBasket(ctx: StateContext<RiskLinkModel>, {payload}: DeleteFromBasketAction) {
+    const state = ctx.getState();
+    const {id, scope} = payload;
+    let newData = {};
+    if (scope === 'summary') {
+      const summary = _.filter(_.toArray(state.summaries.data), dt => dt.dataSourceId !== id);
+      summary.forEach(dt => {
+        newData = {...newData, [dt.dataSourceId]: {...dt}};
+      });
+      ctx.patchState(
+        {summaries: {
+          ...state.summaries,
+          data: newData,
+          numberOfElement: summary.length
+        }}
+      )
+    } else if (scope === 'results') {
+      const results = _.filter(_.toArray(state.results.data), dt => dt.analysisId !== id);
+      results.forEach(dt => {
+        newData = {...newData, [dt.analysisId]: {...dt}};
+      });
+      ctx.patchState(
+        {results: {
+            ...state.results,
+            data: newData,
+            numberOfElement: results.length
+          }}
+      )
+    }
   }
 
   @Action(LoadRiskLinkAnalysisDataAction)
@@ -618,7 +706,7 @@ export class RiskLinkState implements NgxsOnInit {
     const array = _.toArray(state.linking.edm);
     let newData = {};
     array.forEach(dt => {
-      newData = _.merge({} , newData, {
+      newData = _.merge({}, newData, {
         [dt.id]: {
           ...dt,
           selected: false
@@ -644,7 +732,6 @@ export class RiskLinkState implements NgxsOnInit {
     const listSelected = {edm: {}, rdm: {}};
     ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, dt => dt.type === 'rdm' && dt.selected)));
     ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, dt => dt.type === 'edm' && dt.selected)));
-    console.log(state.analysis);
     listDataToArray.map(
       dt => {
         if (dt.selected && dt.type === 'edm') {
