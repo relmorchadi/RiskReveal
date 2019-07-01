@@ -16,12 +16,6 @@
       padding: 0;
     }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: nowrap;
-    }
-
     .content {
       display: flex;
       justify-content: center;
@@ -46,10 +40,6 @@
 
     .ant-input-affix-wrapper {
       width: auto;
-    }
-
-    .footer {
-      padding: 7px;
     }
 
     .ant-modal-footer {

@@ -527,6 +527,7 @@ export class PltMainState implements NgxsOnInit {
 
   @Action(fromPlt.editTag)
   renameTag(ctx: StateContext<pltMainModel>, {payload}: fromPlt.editTag) {
+    console.log(payload);
     return this.pltApi.editTag(payload.tag).pipe(
       mergeMap(tag => ctx.dispatch(new fromPlt.editTagSuccess({
         wsIdentifier: payload.workspaceId + '-' + payload.uwy,
@@ -574,8 +575,6 @@ export class PltMainState implements NgxsOnInit {
         })
       }
     })
-
-    console.log(newData);
 
     ctx.patchState({
       data: _.merge({}, data, {[wsIdentifier]: {...data[wsIdentifier], ...newData}}),
