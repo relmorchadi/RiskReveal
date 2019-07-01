@@ -1,0 +1,123 @@
+<p-dialog [(visible)]="isVisible"
+          [modal]="true"
+          [closable]="false"
+          [contentStyle]="{'width':'100%'}"
+          [style]="{width: '96%'}"
+          (onHide)="cancelCreateExistingProject()"
+>
+
+  <p-header>
+      <i *ngIf="!stepSelectWorkspace && stepSelectProject" (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+      <span style="margin-left: 10px">Search For Project</span>
+      <span (click)="cancelCreateExistingProject()" style="float: right; cursor: pointer;">&#10006;</span>
+  </p-header>
+  <ng-container *ngIf="stepSelectWorkspace && !stepSelectProject">
+    <div style="height:600px;">
+
+      <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
+                 [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
+                 [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
+                 (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                 (dbClickItem)="getWorkspaceProjects(selectedWorkspace)"
+                 [tableHeight]="'480px'"
+                 (onRowSelect)="onRowSelect($event)"
+                 (onRowUnselect)="onRowUnselect($event)"
+                 [selectionMode]="'single'"
+                 [loading]="loading">
+      </app-table>
+
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="!stepSelectWorkspace && stepSelectProject">
+    <div style="height:600px; overflow:auto;">
+      <div style="display: inline-block; padding: 20px;" *ngFor="let project of selectedWorkspaceProjects; let i = index" class="card-holder">
+        <div class="project-card mx-1" (click)="selectThisProject(project)"
+             [ngStyle]="{'border': project?.projectId == selectedProject?.projectId ? '2px solid #06B8FF' : '2px solid transparent'}">
+          <div class="project-header">
+            <!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
+                          <i class="fa fa-code-fork" aria-hidden="true"></i>
+                        </div>-->
+            <div style="background: #F5B74E" class="project-header-icon d-flex justify-content-center align-items-center">
+              <i class="icon-assignment_24px"></i>
+            </div>
+            <div class="project-header-title d-flex flex-column justify-content-center pl-3">
+              <span>{{project?.name}}</span>
+              <span>{{project?.projectId}}</span>
+            </div>
+            <div class="icon-card-wrapper" [ngStyle]="{'display': project?.projectId == selectedProject?.projectId ? 'flex' : 'none'}">
+              <i class="icon-ellipsis-h"></i>
+              <i *ngIf="project?.projectId == selectedProject?.projectId" class="icon-check_24px"></i>
+              <span *ngIf="project?.projectId != selectedProject?.projectId"></span>
+            </div>
+          </div>
+          <div class="project-kpi border-top d-flex">
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+              <span class="project-kpi-span">Region Perils</span>
+              <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
+            </div>
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
+              <span class="project-kpi-span">Exp</span>
+              <span class="project-kpi-span"><b>-</b></span>
+            </div>
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
+              <span class="project-kpi-span">PLT</span>
+              <span class="project-kpi-span"><b>{{project?.pltThreadSum || 0}}</b></span>
+            </div>
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
+              <span class="project-kpi-span">Published</span>
+              <span class="project-kpi-span"><b>{{project?.xactSum || 0}}</b></span>
+            </div>
+            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
+              <span class="project-kpi-span">Pricing</span>
+              <span class="project-kpi-span"><b>-</b></span>
+            </div>
+            <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
+              <span class="project-kpi-span">Accum</span>
+              <span class="project-kpi-span"><b>-</b></span>
+            </div>
+          </div>
+          <div class="project-kpi-details pb-3">
+            <p class="project-kpi-details-title">
+              {{project?.description}}
+            </p>
+            <div class="border-top d-flex project-kpi-details-content">
+              <span class="pl-4 dt-11" style="flex:1; letter-spacing: 0.08px; line-height: 32px;">Created</span>
+              <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
+              <span class="text-center dt-11"
+                    style="flex:1;color: rgba(0,0,0,0.87);  letter-spacing: 0.08px; line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
+            </div>
+            <div class="border-top d-flex project-kpi-details-content">
+              <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;  line-height: 32px;">Last Modified</span>
+              <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
+              <span class="text-center dt-11"
+                    style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
+            </div>
+          </div>
+        </div>
+      </div></div>
+  </ng-container>
+
+  <p-footer>
+    <div class="a-control-buttons">
+      <button class="a-button-text-cancel" (click)="cancelCreateExistingProject()" >CANCEL</button>
+      <ng-container *ngIf="stepSelectWorkspace && !stepSelectProject">
+        <button [ngClass]="{'a-buttons-contained-disabled' : !!!selectedWorkspace, 'a-buttons-contained': !!!!selectedWorkspace}"
+                [disabled]="!!!selectedWorkspace" (click)="getWorkspaceProjects(selectedWorkspace)">NEXT</button>
+      </ng-container>
+      <ng-container *ngIf="!stepSelectWorkspace && stepSelectProject">
+        <button [ngClass]="{'a-buttons-contained-disabled' : !!!selectedProject, 'a-buttons-contained': !!!!selectedProject}"
+                [disabled]="!!!selectedProject" (click)="selectProjectNext()">SELECT</button>
+      </ng-container>
+    </div>
+  </p-footer>
+
+
+</p-dialog>
+<p-toast></p-toast>

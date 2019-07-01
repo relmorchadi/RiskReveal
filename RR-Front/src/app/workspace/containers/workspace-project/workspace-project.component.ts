@@ -10,18 +10,14 @@ import {WorkspaceMainState} from '../../../core/store/states/workspace-main.stat
 
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {
-  AddNewProject, AddNewProjectFail,
+  AddNewProjectFail,
   AddNewProjectSuccess, DeleteProject, DeleteProjectFail, DeleteProjectSuccess,
   PatchWorkspace,
   SelectProjectAction
 } from '../../../core/store/actions/workspace-main.action';
 import * as moment from 'moment';
 import {takeUntil} from 'rxjs/operators';
-import {FormControl, FormGroup, Validators} from '@angular/forms';
 import {LazyLoadEvent, MessageService} from 'primeng/api';
-import {SearchService} from '../../../core/service';
-import {Debounce} from '../../../shared/decorators';
-import {SearchNavBarState} from '../../../core/store/states';
 
 @Component({
   selector: 'app-workspace-project',
@@ -40,20 +36,11 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   workspaceUrl: any;
   workspace: any;
   index: any;
-  isVisible = false;
-
   newProject = false;
-  existingProject = false;
-  mgaProject = false;
   searchWorkspace = false;
-  selectedWorkspace: any = null;
-  selectedWorkspaceProjects: any = null;
-  selectExistingProject = false;
   selectedProject: any = null;
   stepSelectWorkspace = true;
   stepSelectProject = false;
-  selectedWs: any;
-  globalSearchItem = '';
   private _filter = {};
   columns = [
     {
@@ -111,14 +98,11 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
       filterParam: 'workspaceId'
     }
   ];
-  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
-  contracts = [];
   loading
   receptionDate: any;
   dueDate: any;
   contextMenuProject: any = null;
   description: any;
-  newProjectForm: FormGroup;
   @Select(WorkspaceMainState.getData) data$;
   @Select(WorkspaceMainState.getProjects) projects$;
 
@@ -126,7 +110,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   constructor(private _helper: HelperService, private route: ActivatedRoute,
               private nzDropdownService: NzDropdownService, private store: Store,
               private router: Router, private actions$: Actions, private messageService: MessageService,
-              private changeDetector: ChangeDetectorRef, private _searchService: SearchService
+              private changeDetector: ChangeDetectorRef
   ) {
     console.log('init project');
     this.unSubscribe$ = new Subject<void>();
@@ -147,11 +131,9 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
         this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
-    this.initNewProjectForm();
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).subscribe(() => {
       this.newProject = false;
       this.messageService.add({severity: 'info', summary: 'Project added successfully'});
-      this.initNewProjectForm();
       this._helper.updateWorkspaceItems();
       }
     );
@@ -165,20 +147,6 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
           this._helper.updateWorkspaceItems();
         }
     );
-  }
-
-  handleOk(): void {
-    this.isVisible = false;
-  }
-
-  handleCancel(): void {
-    this.isVisible = false;
-    this.resetToMain();
-  }
-
-  resetToMain() {
-    this.stepSelectWorkspace = true;
-    this.stepSelectProject = false;
   }
 
   selectProject(project) {
@@ -229,84 +197,6 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
     this.unSubscribe$.complete();
   }
 
-  onChangeDate(event) {
-
-  }
-  createUpdateProject() {
-    if (this.newProject) {
-      console.log(this.newProjectForm.value);
-      this.store.dispatch(new AddNewProject({
-        workspaceId: this.workspace.workSpaceId,
-        uwYear: this.workspace.uwYear,
-        project: {...this.newProjectForm.value , projectId: null},
-      }));
-    }
-  }
-
-  cancelCreateProject() {
-    this.initNewProjectForm();
-    this.newProject = false;
-  }
-
-  formatDateTime(dateTime: any) {
-    moment(dateTime).format('x');
-  }
-
-  initNewProjectForm() {
-    this.newProjectForm = new FormGroup({
-      projectId: new FormControl(null),
-      name: new FormControl(null, Validators.required),
-      description: new FormControl(null),
-      createdBy: new FormControl('Nathalie Dulac', Validators.required),
-      receptionDate: new FormControl(new Date(), Validators.required),
-      dueDate: new FormControl(new Date(), Validators.required),
-      assignedTo: new FormControl(null),
-      linkFlag: new FormControl(null),
-      postInuredFlag: new FormControl(null),
-      publishFlag: new FormControl(null),
-      pltSum: new FormControl(0),
-      pltThreadSum: new FormControl(0),
-      regionPerilSum: new FormControl(0),
-      xactSum: new FormControl(0),
-      locking: new FormControl(null),
-    });
-  }
-
-  openWorkspaceInSlider(event?) { console.log(event); }
-  @Debounce(500)
-  filterData($event, target) {
-    this._filter = {...this._filter, [target]: $event || null};
-    this._loadData();
-  }
-  openWorkspace(workSpaceId, uwYear) {}
-
-  private _loadData(offset = '0', size = '100') {
-    this.loading = true;
-    const params = {
-      keyword: this.globalSearchItem,
-       filter: this.filter,
-      offset,
-      size
-    };
-    this._searchService.expertModeSearch(params)
-      .subscribe((data: any) => {
-        this.contracts = data.content.map(item => ({...item, selected: false}));
-        this.loading = false;
-        this.paginationOption = {
-          ...this.paginationOption,
-          page: data.number,
-          size: data.numberOfElements,
-          total: data.totalElements
-        };
-        this.changeDetector.detectChanges();
-      });
-  }
-
-  loadMore(event: LazyLoadEvent) {
-    this.paginationOption.currentPage = event.first;
-    this._loadData(String(event.first));
-  }
-
   get filter() {
     // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
     const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
@@ -318,44 +208,19 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
     }));
   }
 
-  cancelCreateExistingProject() {
-    this.searchWorkspace = false;
-    this.selectedWorkspace = null;
-    this.stepSelectWorkspace = true;
-    this.stepSelectProject = false;
-
-  }
-  onRowSelect(event) {
-   this.selectedWorkspace = event.data;
-  }
-  onRowUnselect(event) {
-    // this.selectedWorkspace = null;
-  }
-  getWorkspaceProjects(workspace) {
-    this._searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
-        this.selectedWorkspaceProjects = data.projects;
-        if (data.projects.length) {
-          this.stepSelectWorkspace = false;
-          this.stepSelectProject = true;
-        } else {
-          this.messageService.add({severity: 'info', summary: 'This workspace contains no project'});
-        }
-        this.changeDetector.detectChanges();
-      }
-    );
-  }
-  selectProjectNext() {
+  selectProjectNext(project) {
     this.searchWorkspace = false;
     this.newProject = true;
-    this.newProjectForm.patchValue(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
+    this.selectedProject = project;
   }
 
-  selectThisProject(project) {
-    if (this.selectedProject === project) {
-      this.selectedProject = null;
-      return;
-    }
-    this.selectedProject = project;
+  cancelCreateExistingProjectPopup() {
+    this.searchWorkspace = false;
+    this.selectedProject = null;
+  }
+
+  onCancelCreateProject() {
+    this.newProject = false;
   }
 
 }
