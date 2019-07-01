@@ -475,7 +475,7 @@
                         <div class="modal-linking-head">
                           <div class="modal-l-h-body-fill summary-info">
                             <span class="subtitle-2">EDM Portofolio</span>
-                            <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingData()" [scrollable]="true" scrollHeight="340px" >
+<!--                            <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingData()" [scrollable]="true" scrollHeight="340px" >
                               <ng-template pTemplate="colgroup" let-columns>
                                 <colgroup>
                                   <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -524,7 +524,7 @@
                                   </th>
                                 </tr>
                               </ng-template>
-                            </p-table>
+                            </p-table>-->
                           </div>
                         </div>
                       </div>
@@ -628,8 +628,8 @@
                   </ng-template>
                 </p-table>
               </div>
-              <div class="import-button" (click)="displayImported()">
-                <button *ngIf="state.activeAddBasket" class="a-buttons-contained">ADD TO BASKET</button>
+              <div class="import-button" >
+                <button *ngIf="state.activeAddBasket" (click)="displayImported()" class="a-buttons-contained">ADD TO BASKET</button>
                 <button *ngIf="!state.activeAddBasket" class="a-buttons-contained-disabled" disabled>ADD TO BASKET</button>
               </div>
             </div>
@@ -638,7 +638,7 @@
       </div>
 
 
-      <div class="body-wrap-body" *ngIf="state.display.displayImport">
+      <div class="body-wrap-body" *ngIf="state.display.displayImport && dataList(state.summaries.data).length > 0 ">
         <div class="body-wrapper">
           <div class="body-wrapper-header">
             <div class="body-wrapper-header-left">
@@ -656,7 +656,7 @@
             </div>
           </div>
           <div class="summary-info" *ngIf="state.collapse.collapseResult">
-            <p-table  [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary" [value]="summaryInfo"
+            <p-table  [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary" [value]="dataList(state.summaries.data)"
                       #st [scrollable]="true" frozenWidth="485px">
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
@@ -702,7 +702,7 @@
                     <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
                          *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                     <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                         style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"><i class="icon-trash-alt"></i></div>
+                         style="display: flex;justify-content: center;" (click)="deleteFromBasket(rowData.dataSourceId, 'summaries')"  *ngIf="col.type === 'icon'"><i class="icon-trash-alt"></i></div>
                   </th>
                 </tr>
               </ng-template>
@@ -712,7 +712,7 @@
       </div>
 
 
-      <div class="body-wrap-body" *ngIf="state.display.displayImport">
+      <div class="body-wrap-body" *ngIf="state.display.displayImport && dataList(state.results.data).length > 0">
         <div class="body-wrapper">
           <div class="body-wrapper-header">
             <div class="body-wrapper-header-left">
@@ -730,7 +730,7 @@
             </div>
           </div>
           <div class="summary-info" *ngIf="state.collapse.collapseAnalysis">
-            <p-table  [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult" [value]="resultsInfo"
+            <p-table  [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult" [value]="dataList(state.results.data)"
                       #rt [scrollable]="true" frozenWidth="445px">
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
@@ -773,7 +773,7 @@
                     <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                          *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                     <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
-                         style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"><i class="icon-trash-alt"></i></div>
+                         style="display: flex;justify-content: center;" (click)="deleteFromBasket(rowData.analysisId, 'results')" *ngIf="col.type === 'icon'"><i class="icon-trash-alt"></i></div>
                   </th>
                 </tr>
               </ng-template>
@@ -858,7 +858,7 @@
             <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish for Pricing</label>
           </div>
           <div class="body-wrap-footer-right">
-            <button nz-button>IMPORT</button>
+            <button class="a-buttons-contained">IMPORT</button>
           </div>
         </div>
       </div>

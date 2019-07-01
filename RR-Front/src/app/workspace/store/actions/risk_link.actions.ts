@@ -53,6 +53,16 @@ export class TogglePortfolioForLinkingAction {
   constructor(public payload: any) {}
 }
 
+export class AddToBasketAction {
+  static readonly type = '[Risk Link] Add Analysis and Portfolio To Basket';
+  constructor() {}
+}
+
+export class DeleteFromBasketAction {
+  static readonly type = '[Risk Link] Delete From Basket';
+  constructor(public payload: any) {}
+}
+
 export class SelectRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Select Risk Link EDM And RDM';
   constructor() {}
