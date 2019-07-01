@@ -1,29 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
 import {filter, map, switchMap} from 'rxjs/operators';
 import * as _ from 'lodash';
 import * as fromWorkspaceStore from '../../store';
-import {Store} from '@ngxs/store';
 import {PltMainState} from '../../store';
+import {Select, Store} from '@ngxs/store';
 import {combineLatest, Observable} from 'rxjs';
 
 @Component({
   selector: 'app-workspace-clone-data',
   templateUrl: './workspace-clone-data.component.html',
-  styleUrls: ['./workspace-clone-data.component.scss']
+  styleUrls: ['./workspace-clone-data.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceCloneDataComponent implements OnInit {
+
+  @Select(PltMainState.getUserTags) userTags$;
+  userTags: any;
 
   constructor(
     private router$: Router,
     private route$: ActivatedRoute,
-    private store$: Store
+    private store$: Store,
+    private cdRef: ChangeDetectorRef
   ) {
     this.activeSubTitle= 0;
     this.cloningFromItem= false;
     this.cloningToItem= true;
     this.projectForClone= -1;
-    this.searchWorkSpaceModal= false;
+    this.searchWorkSpaceModal= true;
     this.cols= [
       {
         field: 'id',
@@ -124,7 +129,8 @@ export class WorkspaceCloneDataComponent implements OnInit {
       cedant: 87989,
       country: "Belgium"
     },];
-    this.browesing= false;
+    this.browesing= true;
+    this.showDeleted= false;
     this.tagForMenu = {
       tagId: null,
       tagName: '',
@@ -196,113 +202,61 @@ export class WorkspaceCloneDataComponent implements OnInit {
   filterInput: string = "";
   pltColumns = [
     {
-      sortDir: 1,
-      fields: '',
-      header: 'User Tags',
       width: '60',
-      sorted: false,
       filtred: false,
       icon: null,
       type: 'checkbox'
     },
-    {sortDir: 1, fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags'},
-    {sortDir: 1, fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id'},
+    {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id'},
     {
-      sortDir: 1,
       fields: 'pltName',
       header: 'PLT Name',
-      width: '60',
-      sorted: true,
+      width: '160',
+      sorted: false,
       filtred: true,
       icon: null,
       type: 'field'
     },
     {
-      sortDir: 1,
       fields: 'peril',
       header: 'Peril',
-      width: '80',
-      sorted: true,
-      filtred: true,
+      width: '40',
+      sorted: false,
+      filtred: false,
       icon: null,
       type: 'field',
       textAlign: 'center'
     },
     {
-      sortDir: 1,
       fields: 'regionPerilCode',
       header: 'Region Peril Code',
-      width: '130',
-      sorted: true,
-      filtred: true,
+      width: '70',
+      sorted: false,
+      filtred: false,
       icon: null,
       type: 'field'
     },
     {
-      sortDir: 1,
       fields: 'regionPerilName',
       header: 'Region Peril Name',
       width: '160',
-      sorted: true,
-      filtred: true,
+      sorted: false,
+      filtred: false,
       icon: null,
       type: 'field'
     },
-    {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: true, icon: null, type: 'field'},
-    {
-      sortDir: 1,
-      fields: 'deletedBy',
-      forDelete: true,
-      header: 'Deleted By',
-      width: '50',
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field'
-    },
-    {
-      sortDir: 1,
-      fields: 'deletedAt',
-      forDelete: true,
-      header: 'Deleted On',
-      width: '50',
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'date'
-    },
+    {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field'},
     {
       sortDir: 1,
       fields: 'vendorSystem',
       header: 'Vendor System',
       width: '90',
-      sorted: true,
-      filtred: true,
+      sorted: false,
+      filtred: false,
       icon: null,
       type: 'field'
     },
-    {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1, fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      width: '25',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-dollar-alt',
-      type: 'icon'
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      width: '25',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-focus-add',
-      type: 'icon'
-    },
+    {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field'}
   ];
 
   contextMenuItems = [
@@ -474,10 +428,17 @@ export class WorkspaceCloneDataComponent implements OnInit {
           this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
           :
           this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
+      this.detectChanges();
     })
 
     this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
       this.projects = _.map(projects, p => ({...p, selected: false}));
+      this.detectChanges();
+    })
+
+    this.userTags$.subscribe(userTags => {
+      this.userTags = userTags || {};
+      this.detectChanges();
     })
 
   }
@@ -535,5 +496,10 @@ export class WorkspaceCloneDataComponent implements OnInit {
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       filters: filters
     }))
+  }
+
+  detectChanges() {
+    if (!this.cdRef['destroyed'])
+      this.cdRef.detectChanges();
   }
 }

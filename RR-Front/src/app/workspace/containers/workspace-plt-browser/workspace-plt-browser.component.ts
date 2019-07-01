@@ -121,7 +121,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       sortDir: 1,
       fields: '',
-      header: 'User Tags',
+      header: 'tata',
       width: '60',
       sorted: false,
       filtred: false,
