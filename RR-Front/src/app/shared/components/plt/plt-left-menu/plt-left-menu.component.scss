@@ -172,17 +172,13 @@
   .Tags-content {
     display: flex;
     flex-flow: column;
+    overflow: auto;
   }
 
   .user-tag-section, .sys-tag-section {
     margin-top: 1px;
     display: flex;
     flex-flow: column;
-  }
-
-  .user-tag-section {
-    min-height: 160px;
-    max-height: 20.5%;
   }
 
   .header{
@@ -214,13 +210,11 @@
 
   .rest {
     flex: 1 1 auto;
-    overflow: auto;
     padding: 5px 0;
   }
 
   nz-collapse{
     max-height: 100%;
-    overflow: auto;
   }
   .tag-section {
     ul {

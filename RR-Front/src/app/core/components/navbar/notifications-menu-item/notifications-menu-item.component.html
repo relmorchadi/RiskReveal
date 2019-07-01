@@ -4,7 +4,7 @@
   <i class="icon-notifications_24px icon-size"></i>
 </nz-badge>
 <ng-template #notificationsPopoverContent>
-  <div class="tabs-popover-content" style="width: 465px; height:500px;">
+  <div class="tabs-popover-content" style="width: 465px; height:455px;">
     <nz-tabset class="a-tab-minitab">
       <nz-tab [nzTitle]="AllHeaderContent">
         <div class="popup-tab-content">
@@ -92,7 +92,7 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2 footer-wrapper">
+          <div class="mt-2 task-footer">
             <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
@@ -143,7 +143,7 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2">
+          <div class="mt-2 task-footer">
             <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >
@@ -194,7 +194,7 @@
             <nz-empty></nz-empty>
           </div>
 
-          <div class="mt-2">
+          <div class="mt-2 task-footer">
             <nz-select [ngModel]="'all'" (ngModelChange)="changeDate($event)" [nzAllowClear]="false" class="a-dropdown-label date-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <ng-container *ngFor="let date of getDateIntervals(); " >

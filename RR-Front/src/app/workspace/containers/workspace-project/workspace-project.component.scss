@@ -603,3 +603,19 @@ PROJECT MODAL STYLE
     }
   }
 }
+
+::ng-deep .ui-table-scrollable-wrapper.ng-star-inserted > div {
+  min-height: 0 !important;
+}
+
+::ng-deep  tr.ui-state-highlight {
+  color: #565656 !important;
+}
+
+::ng-deep tr.active_contract_item {
+  color: #565656 !important;
+}
+.ui-listbox-list {
+  width: 600px;
+}
+

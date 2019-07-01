@@ -28,6 +28,7 @@ export class PltLeftMenuComponent implements OnInit {
     systemTagsCount: any;
     wsHeaderSelected: boolean;
     pathTab: boolean;
+    selectedItemForMenu: any;
   }
 
   @Output() onResetPath= new EventEmitter();
@@ -159,8 +160,9 @@ export class PltLeftMenuComponent implements OnInit {
     }else {
 
       if(this.menuInputs.addTagModalIndex === 1 ){
+        console.log(this.menuInputs.selectedItemForMenu,this.menuInputs.selectedListOfPlts)
         this.onAssignPltsToTag.emit({
-          plts: this.menuInputs.selectedListOfPlts,
+          plts: this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu] ,
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
           selectedTags: this.menuInputs._modalSelect
@@ -169,7 +171,7 @@ export class PltLeftMenuComponent implements OnInit {
 
       if(this.menuInputs.addTagModalIndex === 0) {
         this.onCreateTag.emit({
-          plts: this.menuInputs.fromPlts ? this.menuInputs.selectedListOfPlts : [],
+          plts: this.menuInputs.fromPlts ? (this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu]) : [],
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
           tag: _.omit(this.menuInputs.tagForMenu, 'tagId')

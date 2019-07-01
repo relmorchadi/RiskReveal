@@ -324,12 +324,10 @@ export class PltMainState implements NgxsOnInit {
       case 'assignOrRemove':
         return this.pltApi.assignPltsToTag(_.omit(payload, 'wsIdentifier')).pipe(
           mergeMap((tags) => {
-            return ctx.dispatch([new fromPlt.assignPltsToTagSuccess({
-              ...payload,
-              tags
-            }),
-              new fromPlt.loadAllPlts({params: {workspaceId: payload.wsId, uwy: payload.uwYear}})
-            ]);
+            return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
+              workspaceId: payload.wsIdentifier.split('-')[0],
+              uwYear: payload.wsIdentifier.split('-')[1]
+            }));
           })
         );
       case 'createTag':
@@ -384,17 +382,9 @@ export class PltMainState implements NgxsOnInit {
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<pltMainModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
 
-    const {
-      data,
-      userTags
-    } = ctx.getState();
+    ctx.dispatch(new fromPlt.loadAllPlts({params: {workspaceId: payload.workspaceId, uwy: payload.uwYear}}))
 
-    const {
-      tags,
-      wsIdentifier
-    } = payload;
-
-    let newData = {};
+    /*let newData = {};
 
     let newTags = {};
 
@@ -433,7 +423,6 @@ export class PltMainState implements NgxsOnInit {
       });
 
       console.log(newData);
-
       newTags[tag.tagId] = {...tag, selected: userTags[tag.tagId].selected, count: tag.pltHeaders.length};
     })
 
@@ -442,7 +431,7 @@ export class PltMainState implements NgxsOnInit {
     ctx.patchState({
       data: {...data, ...{[wsIdentifier]: {...data[wsIdentifier], ...newData}}},
       userTags: {...userTags, ...newTags}
-    })
+    })*/
 
   }
 

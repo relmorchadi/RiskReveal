@@ -90,6 +90,10 @@
            [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
            [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
            [contextMenu]="cm" class="table-ngPrime"
+           [selectionMode]="selectionMode"
+           (onRowSelect)="rowSelect($event)"
+           (onRowUnselect)="rowUnselect($event)"
+           [(selection)]="selectedRow"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
@@ -115,7 +119,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-      <tr [pContextMenuRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+      <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
         <ng-container *ngFor="let col of columns">
           <td *ngIf="col?.type ==='checkbox'">
             <div style="display:flex">
