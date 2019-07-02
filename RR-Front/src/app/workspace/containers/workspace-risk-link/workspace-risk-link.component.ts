@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -7,9 +15,9 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  AddToBasketAction, DeleteFromBasketAction, LoadAnalysisForLinkingAction, LoadPortfolioForLinkingAction,
+  AddToBasketAction, DeleteFromBasketAction, LoadPortfolioForLinkingAction,
   PatchAddToBasketStateAction,
-  SearchRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction, TogglePortfolioForLinkingAction,
+  SearchRiskLinkEDMAndRDMAction,
   ToggleRiskLinkAnalysisAction,
   ToggleRiskLinkEDMAndRDMSelectedAction,
   ToggleRiskLinkPortfolioAction
@@ -37,11 +45,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   linkingModalVisibility = false;
   radioValue = 'all';
 
-  inputSwitch = true;
+  @ViewChild('searchInput')
+  searchInput: ElementRef;
 
   displayDropdownRDMEDM = false;
   displayListRDMEDM = false;
-  closePrevent = false;
 
   serviceSubscription: any;
 
@@ -49,7 +57,6 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   tableLeftAnalysis: any;
   tableAnalysisLinking: any;
-
   tableLeftPortfolio: any;
   tablePortfolioLinking: any;
 
@@ -76,7 +83,6 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('init Risk');
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.serviceSubscription = [
       this.state$.subscribe(value => this.state = _.merge({}, value)),
@@ -107,6 +113,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.serviceSubscription)
       this.serviceSubscription.forEach(sub => sub.unsubscribe());
+  }
+
+  focusInput() {
+    this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    this.searchInput.nativeElement.focus();
   }
 
   dataList(data, filter = null) {

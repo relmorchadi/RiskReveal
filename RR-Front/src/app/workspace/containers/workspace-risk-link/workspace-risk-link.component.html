@@ -110,18 +110,18 @@
                    [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': displayListRDMEDM}">
                 <div class="search-bar"
                      [ngClass]="{'search-bar-active': displayDropdownRDMEDM, 'search-bar-display': displayListRDMEDM}">
-                  <i class="search-bar-icon-search" (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" nz-icon nzType="search"
+                  <i class="search-bar-icon-search" (click)="focusInput()" nz-icon nzType="search"
                      nzTheme="outline"></i>
                   <div class="search-bar-text"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" *ngIf="!displayListRDMEDM">Select EDM & RDM
+                       (click)="focusInput()">Select EDM & RDM
                   </div>
                   <input placeholder="Select EDM & RDM"
                          [ngStyle]="{'display': displayDropdownRDMEDM ? 'flex' : 'none'}"
-                         (input)="onInputSearch($event)">
+                         (input)="onInputSearch($event)" #searchInput>
                   <div class="search-bar-text displayed-info"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       (click)="displayDropdownRDMEDM = !displayDropdownRDMEDM" *ngIf="displayListRDMEDM">
+                       (click)="focusInput()" *ngIf="displayListRDMEDM">
                     <span class="search-bar-text-title">EDM & RDM</span>
                     <span class="search-bar-text-subtitle">Add EDM & RDM</span>
                   </div>
