@@ -14,6 +14,8 @@ export class NotificationsMenuItemComponent implements OnInit {
   visible: boolean;
   notifCount = 5;
   cleared = false;
+  date = 'all';
+  searchValue = '';
   notification: any = {
     all: [
       {
@@ -21,7 +23,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         icon: null,
         iconColor: '#7ED321',
         content: 'Project P-6458 has been assigned to you by Huw Parry',
-        date: 1560155333216,
+        date: 1562076960605,
         type: 'informational',
         backgroundColor: '#06B8FF',
         textColor: '#FFFFFF'
@@ -31,7 +33,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         icon: 'icon-check_24px',
         iconColor: '#7ED321',
         content: 'Accumulation Package AP-3857 has been successfully published to ARC',
-        date: 1560069150008,
+        date: 1562076960605,
         type: 'informational',
         backgroundColor: '#FCF9D6',
         textColor: 'rgba(0,0,0,0.6)'
@@ -41,7 +43,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         icon: 'icon-check_circle_24px',
         iconColor: '#7ED321',
         content: 'Calculation on Inuring Package IP-2645 is now complete',
-        date: 1560069150008,
+        date: 1561990366477,
         type: 'informational',
         backgroundColor: '#F4F6FC',
         textColor: 'rgba(0,0,0,0.6)'
@@ -52,7 +54,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         iconColor: '#FFFFFF',
 /*        content: 'Project P-8687 : <br/>7PLTs have been successfully published to pricing',*/
         content: 'Project P-8687 : 7PLTs have been successfully published to pricing',
-        date: 1560155333216,
+        date: 1561472085346,
         type: 'informational',
         backgroundColor: '#0700CF',
         textColor: '#FFFFFF'
@@ -62,7 +64,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         icon: 'icon-warning_amber_24px',
         iconColor: '#FFFFFF',
         content: 'Project P-003458 Has been paused for 1 week please resume or cancel Job.',
-        date: 1559467950008,
+        date: 1561990366477,
         type: 'Error',
         backgroundColor: '#D0021B',
         textColor: '#FFFFFF'
@@ -72,7 +74,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         icon: 'icon-graph-bar',
         iconColor: '#DCAA2B',
         content: 'You have many jobs in need of completion.',
-        date: 1559467950008,
+        date: 1561472085346,
         type: 'warning',
         backgroundColor: '#D1F4DA',
         textColor: '#477938'
@@ -82,7 +84,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         icon: 'icon-check_circle_24px',
         iconColor: '#7ED321',
         content: 'You need to resume Action From yesterday',
-        date: 1560069150008,
+        date: 1562076960605,
         type: 'warning',
         backgroundColor: '#F4F6FC',
         textColor: 'rgba(0,0,0,0.6)'
@@ -111,16 +113,16 @@ export class NotificationsMenuItemComponent implements OnInit {
 
   changeDate(event) {
     if (event === 'all') {
-      this.filteredNotification = [...this.notification.all]
+      this.filteredNotification = [...this.notification.all];
     } else {
       this.filteredNotification = this.notification.all.filter(dt => {
         let compareDate: any = new Date();
         if (event === 'today') {
-          compareDate = compareDate.setDate(compareDate.getDate());
-        } else if (event === 'yesterday') {
           compareDate = compareDate.setDate(compareDate.getDate() - 1);
+        } else if (event === 'yesterday') {
+          compareDate = compareDate.setDate(compareDate.getDate() - 2);
         } else if (event === 'lastWeek') {
-          compareDate = compareDate.setDate(compareDate.getDate() - 6);
+          compareDate = compareDate.setDate(compareDate.getDate() - 8);
         } else if (event === 'lastMonth') {
           compareDate = compareDate.setDate(compareDate.getDate() - 30);
         }
@@ -135,6 +137,7 @@ export class NotificationsMenuItemComponent implements OnInit {
   }
 
   searchNotification(event) {
+    console.log(this.filteredNotification)
     this.filteredNotification = this.notification.all.filter(text => _.includes( _.toLower(text.content), _.toLower(event.target.value)));
   }
 

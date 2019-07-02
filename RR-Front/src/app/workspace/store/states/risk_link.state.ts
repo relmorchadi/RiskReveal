@@ -30,7 +30,7 @@ const initiaState: RiskLinkModel = {
   listEdmRdm: {
     data: null,
     dataSelected: [],
-    selectedListEDMAndRDM: null,
+    selectedListEDMAndRDM: {edm: null, rdm: null},
     totalNumberElement: 0,
     searchValue: '',
     numberOfElement: 0
@@ -441,7 +441,6 @@ export class RiskLinkState implements NgxsOnInit {
     ).pipe(
       switchMap(out => {
         let dataTable = {};
-        let totalElement = {};
         out.forEach((dt: any, i) => {
             dataTable = {
               ...dataTable,
@@ -461,24 +460,12 @@ export class RiskLinkState implements NgxsOnInit {
                 filter: {}
               }
             };
-            totalElement = {
-              ...totalElement,
-              [payload[i].id]: {
-                totalNumberElement: dt.totalElements
-              }
-            };
           }
         );
+        console.log(state.listEdmRdm.selectedListEDMAndRDM.edm);
         return of(ctx.patchState(
           {
             analysis: dataTable,
-            listEdmRdm: {
-              ...state.listEdmRdm,
-              selectedListEDMAndRDM: {
-                ...state.listEdmRdm.selectedListEDMAndRDM,
-                rdm: _.merge({}, state.listEdmRdm.selectedListEDMAndRDM.rdm, totalElement)
-                }
-              }
             }
           ));
       }),
@@ -498,7 +485,6 @@ export class RiskLinkState implements NgxsOnInit {
     ).pipe(
       switchMap(out => {
         let dataTable = {};
-        let totalElement = {};
         out.forEach((dt: any, i) => {
             dataTable = {
               ...dataTable,
@@ -518,24 +504,11 @@ export class RiskLinkState implements NgxsOnInit {
                 filter: {}
               }
             };
-            totalElement = {
-              ...totalElement,
-              [payload[i].id]: {
-                totalNumberElement: dt.totalElements
-              }
-            };
           }
         );
         return of(ctx.patchState(
           {
             portfolios: dataTable,
-            listEdmRdm: {
-              ...state.listEdmRdm,
-              selectedListEDMAndRDM: {
-                ...state.listEdmRdm.selectedListEDMAndRDM,
-                edm:  _.merge({}, state.listEdmRdm.selectedListEDMAndRDM.edm, totalElement)
-              }
-            }
           }));
       }),
       catchError(err => {
@@ -711,8 +684,6 @@ export class RiskLinkState implements NgxsOnInit {
     const state = ctx.getState();
     const listDataToArray = _.toArray(state.listEdmRdm.data);
     const listSelected = {edm: {}, rdm: {}};
-    ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, dt => dt.type === 'rdm' && dt.selected)));
-    ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, dt => dt.type === 'edm' && dt.selected)));
     listDataToArray.map(
       dt => {
         if (dt.selected && dt.type === 'edm') {
@@ -734,11 +705,13 @@ export class RiskLinkState implements NgxsOnInit {
           });
         }
       });
-    ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
     ctx.patchState({
       listEdmRdm: {
         ...state.listEdmRdm,
-        selectedListEDMAndRDM: listSelected
+        selectedListEDMAndRDM: {
+          edm: _.merge({}, listSelected.edm, state.listEdmRdm.selectedListEDMAndRDM.edm),
+          rdm: _.merge({}, listSelected.rdm, state.listEdmRdm.selectedListEDMAndRDM.rdm)
+        }
       },
       linking: {
         ...state.linking,
@@ -746,6 +719,9 @@ export class RiskLinkState implements NgxsOnInit {
         rdm: listSelected.rdm
       }
     });
+    ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+    ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, dt => dt.type === 'rdm' && dt.selected)));
+    ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, dt => dt.type === 'edm' && dt.selected)));
   }
 
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
@@ -800,7 +776,6 @@ export class RiskLinkState implements NgxsOnInit {
                         ...item,
                         selected: false,
                         scanned: false,
-                        Reference: '0/13'
                       }
                     }
                   ))),

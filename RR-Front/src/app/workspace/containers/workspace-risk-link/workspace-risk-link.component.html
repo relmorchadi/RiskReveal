@@ -222,7 +222,8 @@
                       <span (click)="toggleItemsListRDM(itemsE)" [title]="itemsE.name"
                             class="text">{{itemsE?.name}}</span>
                       <ng-container *ngIf="itemsE?.scanned">
-                        <span class="reference">{{itemsE?.Reference}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') > 0">{{getNumberOfSelected(itemsE, 'portfolio')}}/{{getNumberElement(itemsE, 'portfolio')}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsE, 'portfolio') === 0">Nan</span>
                         <!--<i class="logo-right" [ngClass]="{'icon-check_24px': itemsE.selected}"></i>-->
                         <i (click)="scanItem(itemsE)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
@@ -244,7 +245,8 @@
                       <span (click)="toggleItemsListRDM(itemsR)" [title]="itemsR?.name"
                             class="text">{{itemsR?.name}}</span>
                       <ng-container *ngIf="itemsR?.scanned">
-                        <span class="reference">{{itemsR?.Reference}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') > 0">{{getNumberOfSelected(itemsR, 'analysis')}}/{{getNumberElement(itemsR, 'analysis')}}</span>
+                        <span class="reference" *ngIf="getNumberElement(itemsR, 'analysis') === 0">Nan</span>
                         <i (click)="scanItem(itemsR)" class="logo-right icon-loop_24px"></i>
                       </ng-container>
                       <ng-container *ngIf="!itemsR?.scanned">

@@ -2,9 +2,9 @@ import {ChangeDetectorRef, Component, NgZone, OnInit, TemplateRef, ViewChild} fr
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWorkspaceStore from "../../../workspace/store";
-import {PltMainState} from "../../../workspace/store";
-import {Select, Store} from "@ngxs/store";
-import * as _ from "lodash";
+import {PltMainState} from '../../../workspace/store';
+import {Select, Store} from '@ngxs/store';
+import * as _ from 'lodash';
 import {Table} from "primeng/table";
 import {map, switchMap} from 'rxjs/operators';
 import {combineLatest, Observable, Subscription} from 'rxjs';
@@ -58,7 +58,7 @@ export class PltComparerMainComponent implements OnInit {
   addModalInput: any;
   inputValue: null;
   addModalSelect: any;
-  tagFormenu: any= {
+  tagFormenu: any = {
     tagColor: 'white',
     tagName: ''
   };
@@ -74,30 +74,30 @@ export class PltComparerMainComponent implements OnInit {
 
 
   pltColumns = [
-    {sortDir: 1,fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
-    {sortDir: 1,fields: 'pltId', header: 'PLT ID', width: '65px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'peril', header: 'Peril', width: '55px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'regionPerilCode', header: 'Region Peril Code', width: '75px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletebBy', header: 'Deleted By', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'deletebAt', header: 'Deleted At', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'vendorSystem', header: 'Vendor System', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
-    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
-    {sortDir: 1,fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {sortDir: 1, fields: '', header: 'User Tags', width: '60px', sorted: false, filtred: false, icon: null, type: 'checkbox'},
+    {sortDir: 1, fields: 'pltId', header: 'PLT ID', width: '65px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'pltName', header: 'PLT Name', width: '140px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'peril', header: 'Peril', width: '55px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', width: '75px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', width: '130px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'grain', header: 'Grain', width: '160px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'deletebBy', header: 'Deleted By', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'deletebAt', header: 'Deleted At', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'vendorSystem', header: 'Vendor System', width: '60px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'rap', header: 'RAP', width: '70px', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
+    {sortDir: 1, fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
+    {sortDir: 1, fields: '', header: '', width: '25px', sorted: false, filtred: false, icon: 'icon-focus-add', type: 'icon'},
   ];
 
   tagContextMenu = [
     { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))},
     { label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
-        this.renamingTag= true;
+        this.renamingTag = true;
         this.fromPlts = false;
         this.addModalInput = this.tagFormenu.tagName;
-        this.modalInputCache= this.tagFormenu.tagName;
-        this.addTagModal= true;
+        this.modalInputCache = this.tagFormenu.tagName;
+        this.addTagModal = true;
       }}
   ];
 
@@ -107,15 +107,15 @@ export class PltComparerMainComponent implements OnInit {
         this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltId : this.selectedItemForMenu}))
     },
     { label: 'Edit Tags', icon: 'pi pi-tags', command: (event) => {
-        this.addTagModal= true;
-        this.fromPlts= true;
-        let d= [];
+        this.addTagModal = true;
+        this.fromPlts = true;
+        let d = [];
 
         _.forEach( this.listOfPltsData, (v,k) => {
           if(v.selected) d.push(v.userTags);
-        })
+        });
 
-        //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
+        // this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
 
         this.addModalSelect = _.intersectionBy(...d, 'tagId');
 

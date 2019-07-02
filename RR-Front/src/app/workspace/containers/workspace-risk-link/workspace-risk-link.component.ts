@@ -227,6 +227,38 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     return this.state.selectedEDMOrRDM === 'rdm' ? 'Analysis' : 'Portfolio';
   }
 
+  getNumberElement(item, source) {
+    if (source === 'portfolio') {
+      if (this.state.portfolios ===  null ) {
+        return 0;
+      } else {
+        return this.state.portfolios[item.id].totalNumberElement;
+      }
+    } else if (source === 'analysis') {
+      if (this.state.analysis ===  null) {
+        return 0;
+      } else {
+        return this.state.analysis[item.id].numberOfElement;
+      }
+    }
+  }
+
+  getNumberOfSelected(item, source) {
+    if (source === 'portfolio') {
+      if (this.state.portfolios ===  null ) {
+        return 0;
+      } else {
+        return _.filter(_.toArray(this.state.portfolios[item.id].data), dt => dt.selected).length;
+      }
+    } else if (source === 'analysis') {
+      if (this.state.analysis ===  null) {
+        return 0;
+      } else {
+        return _.filter(_.toArray(this.state.analysis[item.id].data), dt => dt.selected).length;
+      }
+    }
+  }
+
   onInputSearch(event) {
     if (event.target.value.length > 2) {
       this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
