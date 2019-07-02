@@ -1,11 +1,15 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
-import {filter, map, switchMap} from 'rxjs/operators';
+import {debounceTime, filter, map, switchMap} from 'rxjs/operators';
 import * as _ from 'lodash';
 import * as fromWorkspaceStore from '../../store';
 import {PltMainState} from '../../store';
 import {Select, Store} from '@ngxs/store';
-import {combineLatest, Observable} from 'rxjs';
+import {combineLatest, Observable, Subscription} from 'rxjs';
+import {FormControl, FormGroup} from '@angular/forms';
+import {SearchService} from '../../../core/service';
+import {Debounce} from '../../../shared/decorators';
+import {LazyLoadEvent} from 'primeng/api';
 
 @Component({
   selector: 'app-workspace-clone-data',
@@ -17,13 +21,154 @@ export class WorkspaceCloneDataComponent implements OnInit {
 
   @Select(PltMainState.getUserTags) userTags$;
   userTags: any;
+  keywordFormGroup: FormGroup;
+  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
+  contracts = [];
+  subscriptions: Subscription;
+  columns = [
+    {
+      field: 'countryName',
+      header: 'Country',
+      width: '90px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'countryName'
+    },
+    {
+      field: 'cedantName',
+      header: 'Cedent Name',
+      width: '90px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'cedantName'
+    },
+    {
+      field: 'cedantCode',
+      header: 'Cedant Code',
+      width: '90px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'cedantCode'
+    },
+    {
+      field: 'uwYear',
+      header: 'Uw Year',
+      width: '90px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'year'
+    },
+    {
+      field: 'workspaceName',
+      header: 'Workspace Name',
+      width: '160px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'workspaceName'
+    },
+    {
+      field: 'workSpaceId',
+      header: 'Workspace Context',
+      width: '90px',
+      display: true,
+      sorted: false,
+      filtered: true,
+      filterParam: 'workspaceId'
+    }
+  ];
+  loading;
+  selectedWorkspace: any = null;
+  private _filter = {};
+
+  onRowSelect(event) {
+    this.selectedWorkspace = event.data;
+  }
+
+  onRowUnselect(event) {
+    // this.selectedWorkspace = null;
+  }
+
+  openWorkspaceInSlider(event?) { console.log(event); }
+
+  @Debounce(500)
+  filterDataa($event, target) {
+    this._filter = {...this._filter, [target]: $event || null};
+    this._loadData();
+  }
+
+  @Output('onSelectWorkspace')
+  onSelectWorkspace: EventEmitter<any> = new EventEmitter();
+
+  loadMore(event: LazyLoadEvent) {
+    this.paginationOption.currentPage = event.first;
+    this._loadData(String(event.first));
+  }
+
+
+
+  show() {
+    this.subscriptions = this.keywordFormGroup.get('keyword')
+      .valueChanges
+      .pipe(debounceTime(400))
+      .subscribe((value) => {
+        this._loadData();
+      });
+  }
+
+  onEnter() { this._loadData(); }
+  search() { this._loadData(); }
+  clearSearchValue() {
+    this.keywordFormGroup.get('keyword').setValue(null);
+    this._loadData();
+  }
+
+  get filter() {
+    // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
+    const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
+    // return _.concat(tags ,  tableFilter).filter(({value}) => value).map((item: any) => ({
+    return tableFilter.filter(({value}) => value).map((item: any) => ({
+      ...item,
+      field: _.camelCase(item.key),
+      operator: item.operator || 'LIKE'
+    }));
+  }
+
+  private _loadData(offset = '0', size = '100') {
+    const keyword = this.keywordFormGroup.get('keyword').value === '' ? null : this.keywordFormGroup.get('keyword').value;
+    const params = {
+      keyword,
+      filter: this.filter,
+      offset,
+      size
+    };
+    this.searchService.expertModeSearch(params)
+      .subscribe((data: any) => {
+        this.contracts = data.content.map(item => ({...item, selected: false}));
+        this.paginationOption = {
+          ...this.paginationOption,
+          page: data.number,
+          size: data.numberOfElements,
+          total: data.totalElements
+        };
+        this.detectChanges();
+      });
+  }
 
   constructor(
     private router$: Router,
     private route$: ActivatedRoute,
     private store$: Store,
-    private cdRef: ChangeDetectorRef
+    private cdRef: ChangeDetectorRef,
+    private searchService: SearchService
   ) {
+    this.keywordFormGroup = new FormGroup({
+      keyword: new FormControl(null)
+    });
     this.activeSubTitle= 0;
     this.cloningFromItem= false;
     this.cloningToItem= true;
@@ -129,7 +274,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
       cedant: 87989,
       country: "Belgium"
     },];
-    this.browesing= true;
+    this.browesing= false;
     this.showDeleted= false;
     this.tagForMenu = {
       tagId: null,
@@ -487,19 +632,12 @@ export class WorkspaceCloneDataComponent implements OnInit {
     }));
   }
 
-  setFilters(filters) {
-    this.filters = filters;
-  }
-
-  emitFilters(filters: any) {
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      filters: filters
-    }))
-  }
-
   detectChanges() {
     if (!this.cdRef['destroyed'])
       this.cdRef.detectChanges();
+  }
+
+  getPlts() {
+    console.log('hey')
   }
 }
