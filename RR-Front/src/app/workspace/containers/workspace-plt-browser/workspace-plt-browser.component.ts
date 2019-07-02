@@ -436,7 +436,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     }
     this.generateContextMenu(this.showDeleted);
     this.generateColumns(this.showDeleted);
-    this.managePopUp= true;
+    this.managePopUp= false;
   }
 
   @Select(PltMainState.getUserTags) userTags$;
