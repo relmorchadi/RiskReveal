@@ -160,7 +160,6 @@ export class PltLeftMenuComponent implements OnInit {
     }else {
 
       if(this.menuInputs.addTagModalIndex === 1 ){
-        console.log(this.menuInputs.selectedItemForMenu,this.menuInputs.selectedListOfPlts)
         this.onAssignPltsToTag.emit({
           plts: this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu] ,
           wsId: this.menuInputs.wsId,

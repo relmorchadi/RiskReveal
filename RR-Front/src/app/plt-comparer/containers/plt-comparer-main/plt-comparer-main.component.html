@@ -349,14 +349,12 @@
                 </tr>
                 <tr>
                   <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text"
-                                                                   name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text"
-                                                                   name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" readonly></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" readonly></th>
                   <ng-container *ngFor="let th of listOfSelectedValues">
                   <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" readonly></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" readonly></th>
                   </ng-container></tr>
                 </tbody>
               </table>
@@ -384,6 +382,10 @@
   </div>
   <div class="footer-comparer">
     <div class="footer-title">EP Curves</div>
+    <div class="card-header-detail">
+      <span class="body-1">{{getPlt()?.title}}</span>
+      <span class="body-2">{{getPlt()?.subtitle}}</span>
+    </div>
     <div>
       <img style="width: 100%" src="../../../../assets/images/Capture.PNG"/>
     </div>

@@ -6,7 +6,9 @@
 :host {
   .table-ngPrime {
     ::ng-deep {
-
+      .ui-table-virtual-table {
+        position: unset;
+      }
 
       .ant-checkbox-checked .ant-checkbox-inner {
         background-color: #0700cf;

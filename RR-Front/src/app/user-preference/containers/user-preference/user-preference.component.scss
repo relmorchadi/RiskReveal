@@ -107,10 +107,12 @@
     height: 165px;
     flex-direction: column;
     align-items: baseline;
+    margin-bottom: 5px;
   }
 
   .number-config-item {
     border-bottom: none !important;
+    padding-right: 22px;
 
     .list-config-wrapper {
       width: 100%;
