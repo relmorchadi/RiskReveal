@@ -18,6 +18,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Table} from 'primeng/table';
 import {combineLatest} from 'rxjs';
 import {WorkspaceMainState} from '../../../core/store/states';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -49,6 +50,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
   params: any;
   lastSelectedId;
+  managePopUp: boolean;
 
   contextMenuItems = [
     {
@@ -121,57 +123,25 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       sortDir: 1,
       fields: '',
-      header: 'tata',
+      header: '',
       width: '60',
       sorted: false,
       filtred: false,
       icon: null,
-      type: 'checkbox'
+      type: 'checkbox',
+      active: true
     },
-    {sortDir: 1, fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags'},
-    {sortDir: 1, fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id'},
-    {
-      sortDir: 1,
-      fields: 'pltName',
-      header: 'PLT Name',
-      width: '60',
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field'
+    {sortDir: 1, fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
+    {sortDir: 1, fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id',active: true},
+    {sortDir: 1, fields: 'pltName', header: 'PLT Name', width: '60', sorted: true, filtred: true, icon: null, type: 'field', active: true
     },
-    {
-      sortDir: 1,
-      fields: 'peril',
-      header: 'Peril',
-      width: '80',
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      textAlign: 'center'
+    {sortDir: 1, fields: 'peril', header: 'Peril', width: '80', sorted: true, filtred: true, icon: null, type: 'field', textAlign: 'center',active: true
     },
-    {
-      sortDir: 1,
-      fields: 'regionPerilCode',
-      header: 'Region Peril Code',
-      width: '130',
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field'
+    {sortDir: 1, fields: 'regionPerilCode', header: 'Region Peril Code', width: '130', sorted: true, filtred: true, icon: null, type: 'field', active: true
     },
-    {
-      sortDir: 1,
-      fields: 'regionPerilName',
-      header: 'Region Peril Name',
-      width: '160',
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field'
+    {sortDir: 1, fields: 'regionPerilName', header: 'Region Peril Name', width: '160', sorted: true, filtred: true, icon: null, type: 'field',active: true
     },
-    {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: true, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: true, icon: null, type: 'field',active: true},
     {
       sortDir: 1,
       fields: 'deletedBy',
@@ -181,7 +151,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       sorted: true,
       filtred: true,
       icon: null,
-      type: 'field'
+      type: 'field',active: true
     },
     {
       sortDir: 1,
@@ -192,7 +162,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       sorted: true,
       filtred: true,
       icon: null,
-      type: 'date'
+      type: 'date',active: true
     },
     {
       sortDir: 1,
@@ -202,10 +172,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       sorted: true,
       filtred: true,
       icon: null,
-      type: 'field'
+      type: 'field',active: true
     },
-    {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: true, icon: null, type: 'field'},
-    {sortDir: 1, fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-note', type: 'icon'},
+    {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: true, icon: null, type: 'field',active: true},
+    {sortDir: 1, fields: '', header: '', width: '25', sorted: false, filtred: false, icon: 'icon-note', type: 'icon',active: true},
     {
       sortDir: 1,
       fields: '',
@@ -214,7 +184,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       sorted: false,
       filtred: false,
       icon: 'icon-dollar-alt',
-      type: 'icon'
+      type: 'icon',active: true
     },
     {
       sortDir: 1,
@@ -224,9 +194,11 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       sorted: false,
       filtred: false,
       icon: 'icon-focus-add',
-      type: 'icon'
+      type: 'icon',active: true
     },
   ];
+
+  pltColumnsForConfig= [...this.pltColumns];
 
   pltColumnsCache = this.pltColumns;
 
@@ -464,6 +436,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     }
     this.generateContextMenu(this.showDeleted);
     this.generateColumns(this.showDeleted);
+    this.managePopUp= true;
   }
 
   @Select(PltMainState.getUserTags) userTags$;
@@ -957,5 +930,28 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
     }))
+  }
+
+  toggleColumnsManager() {
+    this.managePopUp= !this.managePopUp;
+    if(this.managePopUp) this.pltColumnsForConfig= [...this.pltColumns];
+  }
+
+  saveColumns() {
+    this.toggleColumnsManager();
+    this.pltColumns= [...this.pltColumnsForConfig];
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    console.log(event.previousIndex, event.currentIndex);
+    moveItemInArray(this.pltColumnsForConfig, event.previousIndex + 1, event.currentIndex + 1);
+  }
+
+  toggleCol(i: number) {
+    this.pltColumnsForConfig= _.merge(
+      [],
+      this.pltColumnsForConfig,
+      { [i]: {...this.pltColumnsForConfig[i], active: !this.pltColumnsForConfig[i].active} }
+      )
   }
 }
