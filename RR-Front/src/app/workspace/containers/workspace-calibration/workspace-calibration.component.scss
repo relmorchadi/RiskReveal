@@ -1274,22 +1274,27 @@
 
 .iconYellow {
   color: #fde729;
+  font-size: 17px;
 }
 
 .iconYellow2 {
   color: #d8880f;
+  font-size: 17px;
 }
 
 .iconGreen {
   color: #00B396;
+  font-size: 17px;
 }
 
 .iconRed {
   color: #b8200c;
+  font-size: 17px;
 }
 
 .iconRed2 {
   color: #ff2126;
+  font-size: 17px;
 }
 
 .inuring-header {
@@ -1454,4 +1459,13 @@ body .ui-table .ui-table-thead > tr > th {
 
 .selectedAdjustment {
   border: solid 1px #6fd089 !important;
+}
+
+.newTag {
+  width: fit-content;
+  height: fit-content !important;
+  color: #fff;
+  padding: 0px 6px 0px 6px;
+  background-color: #27c0ff;
+  border-radius: 14px;
 }
