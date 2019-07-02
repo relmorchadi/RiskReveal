@@ -421,6 +421,12 @@ div.blank-space {
   height: 700px;
   box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15), -3px 0px 5px rgba(0, 0, 0, 0.15);
   margin: 10px 20px 40px 10px;
+
+  .card-header-detail {
+    display: flex;
+    flex-direction: column;
+    margin-left: 36px;
+  }
 }
 
 .example-list {
@@ -579,9 +585,8 @@ div.blank-space {
   display: flex;
   width: 150px;
   justify-content: center;
-  padding: 15px;
+  padding: 15px 15px 5px;
   font-size: 17px;
   font-weight: bold;
-
 }
 
