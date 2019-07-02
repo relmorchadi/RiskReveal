@@ -13,6 +13,8 @@ export class HelperService {
   recentWorkspaces$: Observable<any>;
   collapseLeftMenu$ = new Subject<void>();
 
+  public static headerBarPopinChange$:Subject<{from:string}>= new Subject();
+
 
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
