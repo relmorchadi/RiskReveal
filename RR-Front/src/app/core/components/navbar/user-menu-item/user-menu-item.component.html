@@ -1,4 +1,4 @@
-<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover
+<div (click)="togglePopup()" class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover
      [nzContent]="userPopoverContent" nzPlacement="bottomRight" nzTrigger="click">
   <nz-avatar nzText="N.D" nzSize="large"></nz-avatar>
   Nathalie Dulac &nbsp;&nbsp;

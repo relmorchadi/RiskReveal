@@ -16,10 +16,14 @@
         <div class="title-wrapper" nz-row style="margin-top: 10px;">
           <div class="title-section">
             <h6 style="margin-bottom: 0; display:flex; align-items: center">
-              Showing {{paginationOption?.currentPage + '-' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
-              results
+              <ng-container *ngIf="!paginationOption?.total; else paginationHighlight">
+                0 Results
+              </ng-container>
+              <ng-template #paginationHighlight>
+                Showing {{paginationOption?.currentPage+1 + ' to ' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
+                Results
+              </ng-template>
             </h6>
-            <!--            /*( paginationOption?.total / 50 | number:'1.0-0' )*/-->
           </div>
 
           <div class="search-actions-container">
@@ -36,7 +40,7 @@
             <app-chip-tag key='Global Search' (onclick)="closeGlobalSearch()"
                           [value]="globalSearchItem" [closeStatus]="true"></app-chip-tag>
           </div>
-          <ng-container *ngIf="searchContent && searchContent?.length" >
+          <ng-container *ngIf="searchContent && searchContent?.length">
             <div *ngFor="let items of searchContent; let i = index" style="padding: 15px 4px;">
               <app-chip-tag [key]='items.key' (onclick)="closeSearchBadge($event, i, items.key)" [value]="items.value"
                             [closeStatus]="true"></app-chip-tag>

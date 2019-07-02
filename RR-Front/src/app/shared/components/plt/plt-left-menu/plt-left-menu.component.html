@@ -22,6 +22,7 @@
         -->
         <li *ngFor="let project of menuInputs.projects" (click)="filter('project',null,project.projectId)"
             style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
+            class="clickable-item"
             [ngClass]="{'active-path': project.selected}">
           <i class="icon-assignment_24px"></i>
           <span class="tooltipMsg"
