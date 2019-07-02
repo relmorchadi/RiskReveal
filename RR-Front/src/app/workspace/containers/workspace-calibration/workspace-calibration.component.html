@@ -567,7 +567,7 @@
                                          'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }">
                           </i>
                         </div>
-                        <div *ngIf="col.icon=='icon-note'">
+                        <div *ngIf="col.icon=='icon-note' && !selectedListOfPlts.includes(rowData.pltId)">
                           <nz-dropdown [nzPlacement]="'bottomLeft'">
                             <i class="icon-menu_24px" nz-dropdown
                                style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
