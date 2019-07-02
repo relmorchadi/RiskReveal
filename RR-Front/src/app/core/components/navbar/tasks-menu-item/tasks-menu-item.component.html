@@ -1,4 +1,4 @@
-<nz-badge style="cursor: pointer" [nzCount]="5" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent"
+<nz-badge (click)="togglePopup()" style="cursor: pointer" [nzCount]="5" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent"
           nzPlacement="bottomRight" nzTrigger="click">
   <!-- <a href="#"
       class="icon-help_outline_24px icon-size"></a>-->
