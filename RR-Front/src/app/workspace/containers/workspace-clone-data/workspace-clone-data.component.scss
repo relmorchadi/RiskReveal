@@ -6,6 +6,8 @@
     height: 100vh;
   }
 
+
+
   .app-wrapper{
     background-color: #F4F6FC;
     display: flex;
@@ -35,7 +37,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     width: 100%;
     padding: 0 25px;
     margin-top: 25px;
@@ -71,20 +73,22 @@
   }
 
   .box-item {
-    width: 100%;
     margin-top: 25px;
     padding: 16px 25px;
-    padding-left: 14%;
-    padding-right: 14%;
 
-    .input-group {
-      margin: 10px 0;
-      align-items: flex-end;
+    .left-box, .right-box {
+      width: 50%;
+      padding: 7px;
+      display: flex;
+      align-items: center;
+    }
 
-      i {
-        color: var(--primary-1);
-        font-size: 16px;
-      }
+    .left-box {
+      justify-content: flex-start;
+    }
+
+    .right-box {
+      justify-content: flex-end;
     }
   }
 
@@ -105,6 +109,18 @@
     background-color: #fff;
   }
 
+  .default-radio {
+    label {
+      padding: 7px;
+    }
+
+    .label-border {
+      border: 3px solid var(--primary-1);
+      z-index: 1;
+      border-bottom: 3px solid #F4F6FC;
+    }
+  }
+
   ::ng-deep {
     .ant-radio-group {
       display: flex;
@@ -115,4 +131,29 @@
     }
   }
 
+  ::ng-deep {
+    .ant-divider-horizontal {
+      height: 1.5px;
+    }
+  }
+
+}
+
+
+.override {
+  padding: 7px;
+  display: flex;
+  align-items: center;
+  i {
+    font-size: 25px;
+  }
+}
+
+.toHide {
+  width: 100%;
+  height: 10px;
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  background-color: #F4F6FC;
 }

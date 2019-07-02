@@ -7,6 +7,7 @@ import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
+  AddToBasketAction, DeleteFromBasketAction,
   PatchAddToBasketStateAction,
   SearchRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction, TogglePortfolioForLinkingAction,
   ToggleRiskLinkAnalysisAction,
@@ -66,90 +67,6 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   selectedEDM: any;
   scrollableColslinking: any;
-
-  summaryInfo: any = [
-    {
-      scanned: true,
-      status: 100,
-      id: '286',
-      number: 'EUGU_CHIPZCP_CDSC_PR',
-      name: 'AUWS_PR_20170930',
-      exposedLocation: true,
-      sourceCurrency: 'USD',
-      targetCurrency: 'USD',
-      unitMultiplier: 1.0,
-      proportion: '100',
-      EDM: 'AA2012_SyntheticCurve_E'
-    },
-    {
-      scanned: true,
-      status: 60,
-      id: '325',
-      number: 'EUGU_CHIPZCP_CDSC_PR',
-      name: 'AUWS_PR_20170930',
-      exposedLocation: true,
-      sourceCurrency: 'USD',
-      targetCurrency: 'USD',
-      unitMultiplier: 1.0,
-      proportion: '100',
-      EDM: 'AA2012_SyntheticCurve_E'
-    },
-    {
-      scanned: true,
-      status: 0,
-      id: '284',
-      number: 'EUGU_CHIPZCP_CDSC_PR',
-      name: 'AUWS_PR_20170930',
-      exposedLocation: true,
-      sourceCurrency: 'USD',
-      targetCurrency: 'USD',
-      unitMultiplier: 1.0,
-      proportion: '100',
-      EDM: 'AA2012_SyntheticCurve_E'
-    },
-  ];
-
-  resultsInfo: any = [
-    {
-      scanned: false,
-      status: 100,
-      id: '286',
-      name: 'FA0020553_01',
-      description: 'Europe All Lines, EP Wind Only',
-      regionPeril: 'DEFL',
-      sourceCurrency: 'USD',
-      targetCurrency: 'USD',
-      ELT: 'GR',
-      occurrenceBasis: 'PerEvent',
-      unitMultiplier: 1.0
-    },
-    {
-      scanned: false,
-      status: 50,
-      id: '285',
-      name: 'FA0020553_01',
-      description: 'Europe All Lines, EP Wind Only',
-      regionPeril: 'DEFL',
-      sourceCurrency: 'USD',
-      targetCurrency: 'USD',
-      ELT: 'GR',
-      occurrenceBasis: 'PerEvent',
-      unitMultiplier: 1.0
-    },
-    {
-      scanned: false,
-      status: 20,
-      id: '284',
-      name: 'FA0020553_01',
-      description: 'Europe All Lines, EP Wind Only',
-      regionPeril: 'DEFL',
-      sourceCurrency: 'USD',
-      targetCurrency: 'USD',
-      ELT: 'GR',
-      occurrenceBasis: 'PerEvent',
-      unitMultiplier: 1.0
-    },
-  ];
 
   @Select(RiskLinkState)
   state$: Observable<RiskLinkModel>;
@@ -248,6 +165,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   displayImported() {
     this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
+    this.store.dispatch(new AddToBasketAction());
+  }
+
+  deleteFromBasket(id, target) {
+    this.store.dispatch(new DeleteFromBasketAction({id: id, scope: target}));
   }
 
   toggleForLinkingEDM(items) {
@@ -277,7 +199,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   getLinkingData() {
     const {id} = _.filter(this.state.linking.edm, (dt) => dt.selected === true)[0];
-    const dataTable = _.get(this.state.linking, `analysis.${id}.data`, null);
+    const dataTable = _.get(this.state.linking, `analysis[${id}].data`, null);
     return _.toArray(dataTable);
   }
 

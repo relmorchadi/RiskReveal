@@ -13,6 +13,9 @@ export class WorkspaceCloneDataComponent implements OnInit {
     private router$: Router
   ) {
     this.activeSubTitle= 0;
+    this.cloningFromItem= false;
+    this.cloningToItem= true;
+    this.projectForClone= -1;
   }
 
   subTitle= {
@@ -22,6 +25,9 @@ export class WorkspaceCloneDataComponent implements OnInit {
   };
 
   activeSubTitle: number;
+  cloningFromItem: boolean;
+  cloningToItem: boolean;
+  projectForClone: number;
 
   ngOnInit() {
     this.router$.events.pipe(
@@ -32,5 +38,9 @@ export class WorkspaceCloneDataComponent implements OnInit {
 
   setSubTitle(number: number) {
     this.activeSubTitle= number;
+  }
+
+  onRadioChange($event) {
+    this.projectForClone= $event;
   }
 }
