@@ -636,24 +636,6 @@ PROJECT MODAL STYLE
     .ant-input-affix-wrapper .ant-input-suffix {
       display: flex;
     }
-
-    .item-close {
-      height: 17px;
-      margin-right: 5px;
-      margin-top: 9px;
-    }
-
-    .icon-search_24px {
-      color: rgba(0, 0, 0, 0.8);
-      background-color: rgba(0, 0, 0, 0.05);
-      padding-right: 15px;
-      padding-top: 3px;
-      padding-bottom: 4px;
-      padding-left: 9px;
-      border-radius: 0px 15px 15px 0px;
-      margin-right: -14px;
-      font-size: 18px;
-    }
   }
 
   ::ng-deep nz-tag {
@@ -699,7 +681,7 @@ PROJECT MODAL STYLE
     margin-top: 9px;
   }
 
-  .icon-search_24px {
+  .icon-hold {
     color: rgba(0, 0, 0, 0.8);
     background-color: rgba(0, 0, 0, 0.05);
     padding-right: 15px;
