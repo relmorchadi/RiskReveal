@@ -3,6 +3,7 @@ import {SearchService} from "../../../service/search.service";
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import * as moment from 'moment';
+import {HelperService} from "../../../../shared/helper.service";
 
 @Component({
   selector: 'notifications-menu-item',
@@ -10,6 +11,9 @@ import * as moment from 'moment';
   styleUrls: ['./notifications-menu-item.component.scss']
 })
 export class NotificationsMenuItemComponent implements OnInit {
+
+  readonly componentName: string = 'notifications-pop-in';
+
   lastOnes = 5;
   visible: boolean;
   notifCount = 5;
@@ -52,7 +56,7 @@ export class NotificationsMenuItemComponent implements OnInit {
         avatar: null,
         icon: 'icon-poll_24px',
         iconColor: '#FFFFFF',
-/*        content: 'Project P-8687 : <br/>7PLTs have been successfully published to pricing',*/
+        /*        content: 'Project P-8687 : <br/>7PLTs have been successfully published to pricing',*/
         content: 'Project P-8687 : 7PLTs have been successfully published to pricing',
         date: 1561472085346,
         type: 'informational',
@@ -100,6 +104,10 @@ export class NotificationsMenuItemComponent implements OnInit {
     this.filteredNotification = [...this.notification.all];
     this.getDateIntervals();
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
+    HelperService.headerBarPopinChange$.subscribe(({from}) => {
+      if (from != this.componentName)
+        this.visible = false;
+    });
   }
 
   navigateToNotification() {
@@ -137,13 +145,13 @@ export class NotificationsMenuItemComponent implements OnInit {
   }
 
   searchNotification(event) {
-    console.log(this.filteredNotification)
-    this.filteredNotification = this.notification.all.filter(text => _.includes( _.toLower(text.content), _.toLower(event.target.value)));
+    this.filteredNotification = this.notification.all.filter(text => _.includes(_.toLower(text.content), _.toLower(event.target.value)));
   }
 
   updateNotif() {
     this.notifCount = 0;
     this.cleared ? this.navigateToNotification() : null;
+    this.togglePopup();
   }
 
   clearNotif(target) {
@@ -152,14 +160,16 @@ export class NotificationsMenuItemComponent implements OnInit {
       this.cleared = true;
       this.visible = false;
     } else {
-      this.notification = {all : [...this.notification.all.filter(dt => dt.type !== target)]};
+      this.notification = {all: [...this.notification.all.filter(dt => dt.type !== target)]};
     }
   }
 
   countNotif(type) {
     if (type === 'all') {
-      return this.notification.all.length ;
-    } else { return this.notification.all.filter(dt => dt.type === type).length; }
+      return this.notification.all.length;
+    } else {
+      return this.notification.all.filter(dt => dt.type === type).length;
+    }
   }
 
   getDates() {
@@ -169,7 +179,7 @@ export class NotificationsMenuItemComponent implements OnInit {
     const currentDate = new Date(_.min(listElement));
     const lastDate = new Date(_.max(listElement) + 1000000);
     while (currentDate <= lastDate) {
-      dateArray.unshift(new Date (currentDate));
+      dateArray.unshift(new Date(currentDate));
       currentDate.setDate(currentDate.getDate() + 1);
     }
 
@@ -203,7 +213,9 @@ export class NotificationsMenuItemComponent implements OnInit {
       return 'Today';
     } else if (dateNow === yesterday) {
       return 'Yesterday';
-    } else { return moment(date).format('DD MMMM YYYY'); }
+    } else {
+      return moment(date).format('DD MMMM YYYY');
+    }
   }
 
   getDateIntervals() {
@@ -215,11 +227,11 @@ export class NotificationsMenuItemComponent implements OnInit {
       dateIntervals.push('Today');
       oldestDate = oldestDate - 1000 * 60 * 60 * 24;
     }
-    if ( oldestDate > 0) {
+    if (oldestDate > 0) {
       dateIntervals.push('Yesterday');
       oldestDate = oldestDate - 1000 * 60 * 60 * 24;
     }
-    if ( oldestDate > 0) {
+    if (oldestDate > 0) {
       dateIntervals.push('Last Week');
       oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 6;
     }
@@ -228,6 +240,10 @@ export class NotificationsMenuItemComponent implements OnInit {
       oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 25;
     }
     return dateIntervals;
+  }
+
+  togglePopup() {
+    HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 
 }

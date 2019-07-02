@@ -21,6 +21,9 @@ import {ConfirmationService} from 'primeng/api';
   providers: [ConfirmationService]
 })
 export class TasksMenuItemComponent implements OnInit {
+
+  readonly componentName:string= 'job-queue-pop-in';
+
   visible: boolean;
   typePointer = 'all';
   datePointer = 'all';
@@ -465,6 +468,10 @@ export class TasksMenuItemComponent implements OnInit {
       this.wsId = _.get(ws, 'workSpaceId', null);
       this.year = _.get(ws, 'uwYear', null);
     });
+    HelperService.headerBarPopinChange$.subscribe( ({from}) => {
+      if(from != this.componentName)
+        this.visible= false;
+    })
   }
 
   formatter = (_) => '';
@@ -581,5 +588,9 @@ export class TasksMenuItemComponent implements OnInit {
   navigateToJOBManager() {
     this.router.navigateByUrl(`/jobManager`);
     this.visible = false;
+  }
+
+  togglePopup(){
+    HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 }
