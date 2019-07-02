@@ -177,7 +177,7 @@
                         [ngStyle]="{'left': genericWidth[0]}">
 
                         <span
-                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: rgba(0, 0, 0, 0.65);top: 16px;position: absolute;"
+                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: rgba(0, 0, 0, 0.65);top: 16px;position: absolute;overflow: hidden;white-space: nowrap;"
                           [ngStyle]="{'left': genericWidth[1]}">Generic Thread</span>
                         <nz-dropdown [nzPlacement]="'bottomLeft'"
                                      style="position: absolute; top: 20px;z-index: 100;"
@@ -412,7 +412,7 @@
                                      nzChecked
                                      nz-checkbox
                                      style="margin-right: 12px;">
-                                <i class="icon-history-alt iconYellow"></i> In progress
+                                <i class="icon-history-alt iconYellow"></i> In Progress
                               </label>
                             </div>
                           </li>
@@ -422,7 +422,7 @@
                                      nzChecked
                                      nz-checkbox
                                      style="margin-right: 12px;">
-                                <i class="icon-check-circle iconGreen"></i> Checked
+                                <i class="icon-check-circle iconGreen"></i> Valid
                               </label>
                             </div>
                           </li>
@@ -548,7 +548,9 @@
                       </div>
                     </ng-container>
                     <ng-container *ngIf="col.fields === 'pltId'">
-                      <div class="text-elipsice" style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+                      <div *ngIf="rowData.status !== 'requires regeneration' || !rowData.newPlt" class="text-elipsice"
+                           style="font-weight: bold">{{rowData.pltId | textLength}}</div>
+                      <div *ngIf="rowData.status == 'requires regeneration' && rowData.newPlt" class="newTag">NEW</div>
                     </ng-container>
                     <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
                       <div class="text-elipsice"

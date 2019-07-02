@@ -1455,3 +1455,12 @@ body .ui-table .ui-table-thead > tr > th {
 .selectedAdjustment {
   border: solid 1px #6fd089 !important;
 }
+
+.newTag {
+  width: fit-content;
+  height: fit-content !important;
+  color: #fff;
+  padding: 0px 6px 0px 6px;
+  background-color: #27c0ff;
+  border-radius: 14px;
+}
