@@ -28,7 +28,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
     this.cloningFromItem= false;
     this.cloningToItem= true;
     this.projectForClone= -1;
-    this.searchWorkSpaceModal= true;
+    this.searchWorkSpaceModal= false;
     this.cols= [
       {
         field: 'id',
@@ -37,7 +37,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
         sorted: false,
         filtred: false,
         icon: null,
-        type: 'id'
+        type: 'id',active: true
       },
       {
         field: 'country',
@@ -46,7 +46,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
         sorted: false,
         filtred: true,
         icon: null,
-        type: 'text'
+        type: 'text',active: true
       },
       {
         field: 'cedant',
@@ -55,7 +55,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
         sorted: false,
         filtred: true,
         icon: null,
-        type: 'text'
+        type: 'text',active: true
       },
       {
         field: 'cedantName',
@@ -64,7 +64,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
         sorted: false,
         filtred: true,
         icon: null,
-        type: 'text'
+        type: 'text',active: true
       },
       {
         field: 'year',
@@ -73,7 +73,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
         sorted: false,
         filtred: true,
         icon: null,
-        type: 'text'
+        type: 'text',active: true
       },
       {
         field: 'wsContext',
@@ -82,7 +82,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
         sorted: false,
         filtred: false,
         icon: null,
-        type: 'text'
+        type: 'text',active: true
       },
     ];
     this.data= [
@@ -205,9 +205,9 @@ export class WorkspaceCloneDataComponent implements OnInit {
       width: '60',
       filtred: false,
       icon: null,
-      type: 'checkbox'
+      type: 'checkbox',active: true
     },
-    {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id'},
+    {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id',active: true},
     {
       fields: 'pltName',
       header: 'PLT Name',
@@ -215,7 +215,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
       sorted: false,
       filtred: true,
       icon: null,
-      type: 'field'
+      type: 'field',active: true
     },
     {
       fields: 'peril',
@@ -225,7 +225,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
       filtred: false,
       icon: null,
       type: 'field',
-      textAlign: 'center'
+      textAlign: 'center',active: true
     },
     {
       fields: 'regionPerilCode',
@@ -234,7 +234,7 @@ export class WorkspaceCloneDataComponent implements OnInit {
       sorted: false,
       filtred: false,
       icon: null,
-      type: 'field'
+      type: 'field',active: true
     },
     {
       fields: 'regionPerilName',
@@ -243,9 +243,9 @@ export class WorkspaceCloneDataComponent implements OnInit {
       sorted: false,
       filtred: false,
       icon: null,
-      type: 'field'
+      type: 'field',active: true
     },
-    {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field'},
+    {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field',active: true},
     {
       sortDir: 1,
       fields: 'vendorSystem',
@@ -254,9 +254,9 @@ export class WorkspaceCloneDataComponent implements OnInit {
       sorted: false,
       filtred: false,
       icon: null,
-      type: 'field'
+      type: 'field',active: true
     },
-    {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field'}
+    {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field',active: true}
   ];
 
   contextMenuItems = [
