@@ -80,7 +80,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
         this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
-        this.changeDetector.detectChanges();
+        this.detectChanges();
       })
 
     this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
@@ -152,6 +152,12 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
   onCancelCreateProject() {
     this.newProject = false;
+  }
+
+  detectChanges() {
+    if (!this.changeDetector['destroyed']) {
+      this.changeDetector.detectChanges();
+    }
   }
 
 }
