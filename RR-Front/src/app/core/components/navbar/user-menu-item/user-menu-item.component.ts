@@ -9,6 +9,9 @@ import {HelperService} from "../../../../shared/helper.service";
   styleUrls: ['./user-menu-item.component.scss']
 })
 export class UserMenuItemComponent implements OnInit {
+
+  readonly componentName:string= 'user-pop-in';
+
   visible: boolean;
   defaultImport;
   isVisible = false;
@@ -20,6 +23,10 @@ export class UserMenuItemComponent implements OnInit {
   ngOnInit() {
     this.defaultImport = localStorage.getItem('importConfig');
     this._searchService.infodropdown.subscribe( dt => this.visible = this._searchService.getvisibleDropdown());
+    HelperService.headerBarPopinChange$.subscribe(({from}) => {
+      if (from != this.componentName)
+        this.visible = false;
+    });
   }
 
   handleOk(): void {
@@ -38,6 +45,10 @@ export class UserMenuItemComponent implements OnInit {
 
   changeSearch() {
 
+  }
+
+  togglePopup() {
+    HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 
 }
