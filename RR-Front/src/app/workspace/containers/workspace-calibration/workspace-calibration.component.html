@@ -438,7 +438,7 @@
                           </li>
                           <li nz-menu-item>
                             <div class="checkboxInput">
-                              <label [(ngModel)]="lockedCheckbox"
+                              <label [(ngModel)]="requiresRegenerationCheckbox"
                                      nzChecked
                                      nz-checkbox
                                      style="margin-right: 12px;">
@@ -448,7 +448,7 @@
                           </li>
                           <li nz-menu-item>
                             <div class="checkboxInput">
-                              <label [(ngModel)]="lockedCheckbox"
+                              <label [(ngModel)]="failedCheckbox"
                                      nzChecked
                                      nz-checkbox
                                      style="margin-right: 12px;">
@@ -522,7 +522,7 @@
               <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
                 <tr (contextmenu)="selectedItemForMenu=rowData.pltId" [pContextMenuRow]="rowData"
                     [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
-                    *ngIf="filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
+                    *ngIf="(filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive) &&  statusFilterActive(rowData.status)">
                   <td *ngFor="let col of columns; let i = index"
                       dnd-droppable
                       dnd-sortable-container
@@ -559,8 +559,8 @@
                         <div *ngIf="col.icon=='icon-focus-add'">
                           <i
                             [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
-                                         'icon-check-circle iconGreen': rowData?.status=='locked' ,
-                                         'icon-lock-alt iconRed': rowData?.status=='checked',
+                                         'icon-check-circle iconGreen': rowData?.status=='checked' ,
+                                         'icon-lock-alt iconRed': rowData?.status=='locked',
                                          'icon-error_24px iconRed2': rowData?.status=='failed',
                                          'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }">
                           </i>
@@ -651,8 +651,6 @@
                                   <li nz-menu-item>Edit</li>
                                   <li nz-menu-item>Branch new Thread</li>
                                   <li nz-menu-item>Copy</li>
-                                  <li nz-menu-item>Paste</li>
-                                  <li nz-menu-item>Save As</li>
                                   <li nz-submenu>
                                     <span title>Paste</span>
                                     <ul nz-menu>
@@ -660,6 +658,7 @@
                                       <li nz-menu-item>To the Right</li>
                                     </ul>
                                   </li>
+                                  <li nz-menu-item>Delete</li>
                                   <li nz-menu-item>View EP Metrics</li>
                                   <li nz-menu-item>Pin to Chart</li>
                                   <li nz-menu-item>Add to Comparer</li>
@@ -683,8 +682,6 @@
                               <li nz-menu-item>Edit</li>
                               <li nz-menu-item>Branch new Thread</li>
                               <li nz-menu-item>Copy</li>
-                              <li nz-menu-item>Paste</li>
-                              <li nz-menu-item>Save As</li>
                               <li nz-submenu>
                                 <span title>Paste</span>
                                 <ul nz-menu>
@@ -692,6 +689,7 @@
                                   <li nz-menu-item>To the Right</li>
                                 </ul>
                               </li>
+                              <li nz-menu-item>Delete</li>
                               <li nz-menu-item>View EP Metrics</li>
                               <li nz-menu-item>Pin to Chart</li>
                               <li nz-menu-item>Add to Comparer</li>
