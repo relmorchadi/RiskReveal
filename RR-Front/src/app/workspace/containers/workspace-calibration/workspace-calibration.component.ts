@@ -61,6 +61,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   inProgressCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
   lockedCheckbox: boolean = true;
+  failedCheckbox: boolean = true;
+  requiresRegenerationCheckbox: boolean = true;
   collapsedTags: boolean = false;
   isVisible = false;
   singleValue: any;
@@ -1701,6 +1703,21 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       this.selectedAdjustment = null
     } else {
       this.selectedAdjustment = adjId;
+    }
+  }
+
+  statusFilterActive(status) {
+    switch (status) {
+      case 'in progress':
+        return this.inProgressCheckbox;
+      case 'checked':
+        return this.checkedCheckbox;
+      case 'locked':
+        return this.lockedCheckbox;
+      case 'failed':
+        return this.failedCheckbox;
+      case 'requires regeneration':
+        return this.requiresRegenerationCheckbox
     }
   }
 }

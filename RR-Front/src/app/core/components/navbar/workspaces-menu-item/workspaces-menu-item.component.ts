@@ -23,6 +23,9 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspacesMenuItemComponent implements OnInit {
+
+  readonly componentName: string = 'workspace-pop-in';
+
   contractFilterFormGroup: FormGroup;
   workspaces: any = [];
   selectedWorkspace = null;
@@ -63,6 +66,12 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this.pinged$.subscribe(pn => {
       this.pinged = _.orderBy(pn, ['lastPModified'], ['desc']);
       this.detectChanges();
+    });
+    HelperService.headerBarPopinChange$.subscribe(({from}) => {
+      if (from != this.componentName) {
+        this.visible = false;
+        this.detectChanges();
+      }
     });
   }
 
@@ -223,4 +232,10 @@ export class WorkspacesMenuItemComponent implements OnInit {
         break;
     }
   }
+
+  togglePopup() {
+    HelperService.headerBarPopinChange$.next({from: this.componentName});
+  }
+
+
 }

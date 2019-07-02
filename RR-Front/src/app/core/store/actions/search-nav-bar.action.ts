@@ -134,5 +134,10 @@ export class CloseGlobalSearchAction {
   constructor() {}
 }
 
+export class CloseSearchPopIns{
+  static readonly type = '[Search Nav Bar] Close search Popins';
+  constructor(){}
+}
+
 
 

@@ -12,9 +12,11 @@ body {
   justify-content: center;
 }
 
-//.ant-avatar-string{
-//  position: webkit sticky !important;
-//}
+
+div.cdk-overlay-container{
+  margin-top: 60px;
+}
+
 .ant-menu-item-group-title {
   padding: 0 !important;
 }

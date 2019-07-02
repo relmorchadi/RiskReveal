@@ -1,5 +1,3 @@
-
-
 export class SearchNavBar {
   contracts: any;
   showResult: boolean;
@@ -21,6 +19,7 @@ export class SearchNavBar {
   tagShortcuts: any;
   sortcutFormKeysMapper: any;
   searchContent: any;
+  emptyResult: boolean;
 }
 
 
