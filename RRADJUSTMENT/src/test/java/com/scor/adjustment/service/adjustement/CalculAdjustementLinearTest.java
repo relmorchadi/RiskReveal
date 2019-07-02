@@ -1,7 +1,7 @@
-package com.scor.rr.service.adjustement;
+package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
-import org.junit.After;
+import com.scor.rr.service.adjustement.CalculAdjustement;
 import org.junit.Before;
 import org.junit.Test;
 
