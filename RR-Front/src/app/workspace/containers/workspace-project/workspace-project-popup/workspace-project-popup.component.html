@@ -4,12 +4,52 @@
           [contentStyle]="{'width':'100%'}"
           [style]="{width: '96%'}"
           (onHide)="cancelCreateExistingProject()"
+          (onShow)="show()"
 >
 
   <p-header>
-      <i *ngIf="!stepSelectWorkspace && stepSelectProject" (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left" nzTheme="outline"></i>
-      <span style="margin-left: 10px">Search For Project</span>
-      <span (click)="cancelCreateExistingProject()" style="float: right; cursor: pointer;">&#10006;</span>
+    <div class="row">
+      <div class="col-3 mt-2">
+        <span>
+        <i *ngIf="!stepSelectWorkspace && stepSelectProject" (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left" nzTheme="outline"></i>
+        <span style="margin-left: 10px">Search For Project</span>
+        </span>
+      </div>
+      <div class="col-7" [formGroup]="keywordFormGroup">
+
+        <nz-input-group style="z-index: 1001"
+                        class="global-search-input-grp"
+                        [ngClass]="{'global-search-input-grp-active': 1===1}"
+                        [nzSuffix]="suffixIconSearch"
+                        [nzAddOnBefore]="prefixIconTag">
+          <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
+                 (onEnter)="onEnter()"
+                 #searchInput
+                 formControlName="keyword"  (click)="search()"
+                 class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
+        </nz-input-group>
+
+        <ng-template #prefixIconTag>
+          <div class="prefix-wrapper">
+            <button class="code-button" nz-popover
+                     nzPlacement="bottomLeft" nzTrigger="click">
+            </button>
+          </div>
+        </ng-template>
+
+        <ng-template #suffixIconSearch>
+          <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
+             nzTheme="outline"></i>
+          <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
+             class="icon-search_24px"></i>
+        </ng-template>
+
+
+      </div>
+      <div class="col-2">
+        <span (click)="cancelCreateExistingProject()" style="float: right; cursor: pointer;">&#10006;</span>
+      </div>
+    </div>
   </p-header>
   <ng-container *ngIf="stepSelectWorkspace && !stepSelectProject">
     <div style="height:600px;">

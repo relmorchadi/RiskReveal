@@ -1,13 +1,15 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subject} from 'rxjs';
+import {Subject, Subscription} from 'rxjs';
 import {Actions, Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../../core/store/states';
 import {LazyLoadEvent, MessageService} from 'primeng/api';
 import {SearchService} from '../../../../core/service';
 import {Debounce} from '../../../../shared/decorators';
 import {NotificationService} from '../../../../shared/notification.service';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
+import {debounceTime, takeUntil} from 'rxjs/operators';
 
 @Component({
   selector: 'app-workspace-project-popup',
@@ -42,6 +44,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   selectedWs: any;
   globalSearchItem = '';
   private _filter = {};
+  keywordFormGroup: FormGroup;
   columns = [
     {
       field: 'countryName',
@@ -101,6 +104,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
   contracts = [];
   loading;
+  subscriptions: Subscription;
   @Select(WorkspaceMainState.getData) data$;
   @Select(WorkspaceMainState.getProjects) projects$;
 
@@ -108,8 +112,13 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
               private store: Store,
               private router: Router, private actions$: Actions, private notificationService: NotificationService,
-              private changeDetector: ChangeDetectorRef, private searchService: SearchService
-  ) {this.unSubscribe$ = new Subject<void>(); }
+              private changeDetector: ChangeDetectorRef, private searchService: SearchService, private fb: FormBuilder
+  ) {
+    this.unSubscribe$ = new Subject<void>();
+    this.keywordFormGroup = new FormGroup({
+      keyword: new FormControl(null)
+    });
+  }
 
   ngOnInit() {}
 
@@ -132,9 +141,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
   private _loadData(offset = '0', size = '100') {
     this.loading = true;
+    const keyword = this.keywordFormGroup.get('keyword').value === '' ? null : this.keywordFormGroup.get('keyword').value
     const params = {
-      keyword: this.globalSearchItem,
-       filter: this.filter,
+      keyword,
+      filter: this.filter,
       offset,
       size
     };
@@ -169,6 +179,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   cancelCreateExistingProject() {
+    this.subscriptions && this.subscriptions.unsubscribe();
     this.onCancel.emit(false);
     this.searchWorkspace = false;
     this.selectedWorkspace = null;
@@ -210,6 +221,23 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       return;
     }
     this.selectedProject = project;
+  }
+
+  show() {
+    this.subscriptions = this.keywordFormGroup.get('keyword')
+      .valueChanges
+      .pipe(debounceTime(400))
+      .subscribe((value) => {
+        this.loading = true;
+        this._loadData();
+      });
+  }
+
+  onEnter() { this._loadData(); }
+  search() { this._loadData(); }
+  clearSearchValue() {
+    this.keywordFormGroup.get('keyword').setValue(null);
+    this._loadData();
   }
 
 }
