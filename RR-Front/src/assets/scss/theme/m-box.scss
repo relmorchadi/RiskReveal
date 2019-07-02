@@ -79,15 +79,10 @@
   z-index: 9999999999999 !important;
   border: 2px solid var(--scor-peril-2) !important;
 
-  .left {
-
-    .burger {
-
-      .line {
-        background-color: var(--primary-2);
-      }
-    }
+  .line {
+    background-color: var(--primary-2) !important;
   }
+
 }
 
 .cdk-drag-placeholder {
