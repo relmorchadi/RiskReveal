@@ -18,6 +18,7 @@ import {
 import * as moment from 'moment';
 import {takeUntil} from 'rxjs/operators';
 import {LazyLoadEvent, MessageService} from 'primeng/api';
+import {NotificationService} from '../../../shared/notification.service';
 
 @Component({
   selector: 'app-workspace-project',
@@ -39,68 +40,6 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   newProject = false;
   searchWorkspace = false;
   selectedProject: any = null;
-  stepSelectWorkspace = true;
-  stepSelectProject = false;
-  private _filter = {};
-  columns = [
-    {
-      field: 'countryName',
-      header: 'Country',
-      width: '90px',
-      display: true,
-      sorted: false,
-      filtered: true,
-      filterParam: 'countryName'
-    },
-    {
-      field: 'cedantName',
-      header: 'Cedent Name',
-      width: '90px',
-      display: true,
-      sorted: false,
-      filtered: true,
-      filterParam: 'cedantName'
-    },
-    {
-      field: 'cedantCode',
-      header: 'Cedant Code',
-      width: '90px',
-      display: true,
-      sorted: false,
-      filtered: true,
-      filterParam: 'cedantCode'
-    },
-    {
-      field: 'uwYear',
-      header: 'Uw Year',
-      width: '90px',
-      display: true,
-      sorted: false,
-      filtered: true,
-      filterParam: 'year'
-    },
-    {
-      field: 'workspaceName',
-      header: 'Workspace Name',
-      width: '160px',
-      display: true,
-      sorted: false,
-      filtered: true,
-      filterParam: 'workspaceName'
-    },
-    {
-      field: 'workSpaceId',
-      header: 'Workspace Context',
-      width: '90px',
-      display: true,
-      sorted: false,
-      filtered: true,
-      filterParam: 'workspaceId'
-    }
-  ];
-  loading
-  receptionDate: any;
-  dueDate: any;
   contextMenuProject: any = null;
   description: any;
   @Select(WorkspaceMainState.getData) data$;
@@ -109,7 +48,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
 
   constructor(private _helper: HelperService, private route: ActivatedRoute,
               private nzDropdownService: NzDropdownService, private store: Store,
-              private router: Router, private actions$: Actions, private messageService: MessageService,
+              private router: Router, private actions$: Actions, private notificationService: NotificationService,
               private changeDetector: ChangeDetectorRef
   ) {
     console.log('init project');
@@ -133,17 +72,20 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
       });
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).subscribe(() => {
       this.newProject = false;
-      this.messageService.add({severity: 'info', summary: 'Project added successfully'});
+      this.notificationService.createNotification('Project added successfully', '',
+        'success', 'topRight', 4000);
       this._helper.updateWorkspaceItems();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
-        this.messageService.add({severity: 'error', summary: ' Error please try again'});
+        this.notificationService.createNotification(' Error please try again', '',
+        'error', 'topRight', 4000);
         this.changeDetector.detectChanges();
       })
 
     this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
-          this.messageService.add({severity: 'info', summary: 'Project deleted successfully'});
+          this.notificationService.createNotification('Project deleted successfully', '',
+        'success', 'topRight', 4000);
           this._helper.updateWorkspaceItems();
         }
     );
@@ -195,17 +137,6 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unSubscribe$.next();
     this.unSubscribe$.complete();
-  }
-
-  get filter() {
-    // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
-    const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
-    // return _.concat(tags ,  tableFilter).filter(({value}) => value).map((item: any) => ({
-    return tableFilter.filter(({value}) => value).map((item: any) => ({
-      ...item,
-      field: _.camelCase(item.key),
-      operator: item.operator || 'LIKE'
-    }));
   }
 
   selectProjectNext(project) {

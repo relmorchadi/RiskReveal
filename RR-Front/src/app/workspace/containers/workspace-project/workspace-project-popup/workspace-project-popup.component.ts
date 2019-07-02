@@ -7,12 +7,12 @@ import {WorkspaceMainState} from '../../../../core/store/states';
 import {LazyLoadEvent, MessageService} from 'primeng/api';
 import {SearchService} from '../../../../core/service';
 import {Debounce} from '../../../../shared/decorators';
+import {NotificationService} from '../../../../shared/notification.service';
 
 @Component({
   selector: 'app-workspace-project-popup',
   templateUrl: './workspace-project-popup.component.html',
   styleUrls: ['./workspace-project-popup.component.scss'],
-  providers: [MessageService]
 })
 export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
@@ -107,7 +107,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
               private store: Store,
-              private router: Router, private actions$: Actions, private messageService: MessageService,
+              private router: Router, private actions$: Actions, private notificationService: NotificationService,
               private changeDetector: ChangeDetectorRef, private searchService: SearchService
   ) {this.unSubscribe$ = new Subject<void>(); }
 
@@ -190,7 +190,9 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           this.stepSelectWorkspace = false;
           this.stepSelectProject = true;
         } else {
-          this.messageService.add({severity: 'info', summary: 'This workspace contains no project'});
+          this.notificationService.createNotification('Information',
+            'This workspace contains no project',
+            'error', 'topRight', 4000);
         }
         this.changeDetector.detectChanges();
       }

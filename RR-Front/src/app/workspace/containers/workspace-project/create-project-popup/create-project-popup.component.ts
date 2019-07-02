@@ -35,10 +35,14 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   createUpdateProject() {
+    let project = {...this.newProjectForm.value , projectId: null}
+    if (this.newProjectForm.controls.projectId.value) {
+      project = {...project, linkFlag: true};
+    }
     this.store.dispatch(new AddNewProject({
         workspaceId: this.workspace.workSpaceId,
         uwYear: this.workspace.uwYear,
-        project: {...this.newProjectForm.value , projectId: null},
+        project
       }));
   }
 

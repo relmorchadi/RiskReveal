@@ -5,7 +5,7 @@
       <div class="title-project-wrapper">
         <h4>Projects</h4>
         <nz-dropdown [nzTrigger]="'hover'">
-          <i nz-dropdown  style="padding-top: 6px; cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
+          <i nz-dropdown  style="padding-left: 6px; padding-top: 6px; cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
           <ul nz-menu nzSelectable>
             <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> New Project</li>
             <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> Existing Project</li>
@@ -42,8 +42,9 @@
             <!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
                           <i class="fa fa-code-fork" aria-hidden="true"></i>
                         </div>-->
-            <div style="background: #F5B74E" class="project-header-icon d-flex justify-content-center align-items-center">
-              <i class="icon-assignment_24px"></i>
+            <div [ngStyle]="{'background-color':project.linkFlag ? '#36c6fe': '#F5B74E' }"
+                 class="project-header-icon d-flex justify-content-center align-items-center">
+              <i [className]="project.linkFlag ? 'icon-link_24px' : 'icon-assignment_24px'"></i>
             </div>
             <div class="project-header-title d-flex flex-column justify-content-center pl-3">
               <span>{{project?.name}}</span>
