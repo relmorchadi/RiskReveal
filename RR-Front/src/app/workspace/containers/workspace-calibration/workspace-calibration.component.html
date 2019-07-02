@@ -559,8 +559,9 @@
                     <ng-container *ngIf="col?.type == 'icon'">
                       <div class="td-wrapper-check">
                         <div *ngIf="col.icon=='icon-focus-add'">
-                          <i
-                            [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
+                          <i class="tooltipMsg"
+                             [nz-tooltip]="rowData.status[0].toUpperCase() + rowData.status.slice(1)"
+                             [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
                                          'icon-check-circle iconGreen': rowData?.status=='checked' ,
                                          'icon-lock-alt iconRed': rowData?.status=='locked',
                                          'icon-error_24px iconRed2': rowData?.status=='failed',
