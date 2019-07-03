@@ -25,7 +25,9 @@ public class UserTag {
     @ManyToMany(
     cascade = {CascadeType.PERSIST, CascadeType.REFRESH,CascadeType.MERGE,CascadeType.DETACH})
     @JoinTable(
-            name = "user_tag_plt",
+            catalog = "RR",
+            schema = "poc",
+            name = "[user_tag_plt]",
             joinColumns = @JoinColumn(name = "tagId"),
             inverseJoinColumns = @JoinColumn(name = "_id"))
     Set<PltHeader> pltHeaders;
