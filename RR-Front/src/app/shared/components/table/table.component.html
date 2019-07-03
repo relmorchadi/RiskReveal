@@ -89,7 +89,7 @@
            [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
            [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
            [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
-           [contextMenu]="cm" class="table-ngPrime"
+           [contextMenu]="getContextMenu()" class="table-ngPrime"
            [selectionMode]="selectionMode"
            (onRowSelect)="rowSelect($event)"
            (onRowUnselect)="rowUnselect($event)"
