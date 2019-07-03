@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "WORKSPACE_YEARS", schema = "dbo")
+@Table(name = "WORKSPACE_YEARS", schema = "poc")
 public class WorkspaceYears {
 
     @Id

@@ -19,7 +19,7 @@ import java.util.Set;
 @JsonIgnoreProperties({"currencyCode","geoCode","perilCode","fileName",
         "pltType","project","publishToArc","regionPeril","rrAnalysisId",
         "targetRap","udName","userSelectedGrain","xActPublicationDate","xactPublicationDate","userTags"})
-@Table(name = "[RR-PltHeader]", schema = "dbo")
+@Table(name = "[RR-PltHeader]", schema = "poc")
 public class PltHeader {
 
   @Id

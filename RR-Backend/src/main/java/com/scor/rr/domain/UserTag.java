@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "RRUserTag", schema = "dbo")
+@Table(name = "RRUserTag", schema = "poc")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -7,6 +7,7 @@ import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
+@Table(schema = "poc")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ContractSearchResult {
     @Column(name = "WorkSpaceId")
