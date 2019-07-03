@@ -165,7 +165,7 @@
 <p-toast key="createProject">
 
   <ng-template let-message pTemplate="message">
-    <div class="ant-notification-notice ant-notification-notice-closable ng-trigger ng-trigger-notificationMotion ant-notification-notice ant-no"
+    <div (click)="clear()" class="ant-notification-notice ant-notification-notice-closable ng-trigger ng-trigger-notificationMotion ant-notification-notice ant-no"
          style="opacity: 1; transform: translateX(0px);">
       <div class="ant-notification-notice-content ng-tns-c12-49 ng-star-inserted" style="">
         <div class="ant-notification-notice-content ant-notification-notice-with-icon">
