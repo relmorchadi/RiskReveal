@@ -229,21 +229,16 @@
   </p-header>
 
   <ng-container *ngIf="!browesing">
-    <div style="height:600px;">
-
       <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                  [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                  (filterData)="filterDataa($event.searchValue, $event.searchAddress)"
                  (dbClickItem)="getPlts()"
-                 [tableHeight]="'480px'"
                  (onRowSelect)="onRowSelect($event)"
                  (onRowUnselect)="onRowUnselect($event)"
                  [selectionMode]="'single'"
                  [loading]="loading">
       </app-table>
-
-    </div>
   </ng-container>
 
   <ng-container *ngIf="browesing">
@@ -309,7 +304,7 @@
     <div class="footer">
       <button (click)="cancelModal()" class="a-button-text">cancel</button>
       <button (click)="handleModalClick()" class="a-buttons-contained">
-        ADD
+        {{ browesing ? 'ADD' : 'SELECT'}}
       </button>
     </div>
   </p-footer>

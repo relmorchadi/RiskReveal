@@ -170,6 +170,7 @@
       .ui-table-tbody {
         tr.active_contract_item {
           background-color: #FCF9D6 !important;
+          color: black;
         }
 
         tr.selected_contract_item {
@@ -180,6 +181,7 @@
       .ant-table-tbody {
         tr.active_contract_item {
           background-color: #FCF9D6 !important;
+          color: black !important;
         }
 
         tr.selected_contract_item {
