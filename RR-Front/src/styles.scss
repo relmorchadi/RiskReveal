@@ -69,3 +69,11 @@ div.cdk-overlay-container{
 div.ui-dialog-titlebar.ui-widget-header.ui-helper-clearfix {
   background-color: #FFFFFF !important;
 }
+body > div.ui-widget-overlay.ui-dialog-mask {
+  z-index: 1001 !important;
+}
+
+
+body > div.ui-widget-overlay.ui-dialog-mask{
+  z-index: 1000 !important;
+}
