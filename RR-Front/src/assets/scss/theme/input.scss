@@ -43,18 +43,22 @@
 
   &::-webkit-input-placeholder {
     color: #0700CF;
+    opacity: 0.5;
   }
 
   &::-moz-placeholder {
     color: #0700CF;
+    opacity: 0.5;
   }
 
   &:-ms-input-placeholder {
     color: #0700CF;
+    opacity: 0.5;
   }
 
   &:-moz-placeholder {
     color: #0700CF;
+    opacity: 0.5;
   }
 
   &:focus {

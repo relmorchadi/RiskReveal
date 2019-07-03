@@ -363,6 +363,8 @@ export class RiskLinkState implements NgxsOnInit {
             targetCurrency: 'USD',
             elt: 'GR',
             occurrenceBasis: 'PerEvent',
+            targetRap: 'RDT',
+            peqt: '20',
             selected: false
           },
         },
@@ -466,8 +468,8 @@ export class RiskLinkState implements NgxsOnInit {
         return of(ctx.patchState(
           {
             analysis: dataTable,
-            }
-          ));
+          }
+        ));
       }),
       catchError(err => {
         // @TODO Handle error case
@@ -559,15 +561,11 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(LoadAnalysisForLinkingAction)
   loadAnalysisForLinking(ctx: StateContext<RiskLinkModel>, {payload}: LoadAnalysisForLinkingAction) {
     const state = ctx.getState();
-    return forkJoin(
-      payload.map(dt => this.riskApi.searchRiskLinkAnalysis(dt.id, dt.name))
-    ).pipe(
-      switchMap(out => {
-        let dataTable;
-        out.forEach((dt: any, i) => {
-            dataTable = {
-              ...dataTable,
-              [payload[i].id]: {
+
+    this.riskApi.searchRiskLinkAnalysis(payload.id, payload.name).pipe(
+      switchMap(dt => {
+        const dataTable = {
+          [payload.id]: {
                 data: Object.assign({},
                   ...dt.content.map(analysis => ({
                       [analysis.analysisId]: {
@@ -582,8 +580,7 @@ export class RiskLinkState implements NgxsOnInit {
                 filter: {}
               }
             };
-          }
-        );
+
         return of(ctx.patchState(
           {
             linking: {
@@ -663,16 +660,14 @@ export class RiskLinkState implements NgxsOnInit {
 
   @Action(ToggleAnalysisForLinkingAction)
   ToggleAnalysisForLinking(ctx: StateContext<RiskLinkModel>, {payload}: ToggleAnalysisForLinkingAction) {
-    const state = ctx.getState();
-    const {id} = payload.item;
-    let array = state.linking.rdm;
-    array = {...array, [id]: {...array[id], selected: !array[id].selected}};
-    ctx.dispatch(new LoadAnalysisForLinkingAction(_.filter(_.toArray(array), dt => dt.selected)));
+    const {linking} = ctx.getState();
+    const {item: {id}} = payload;
+    // ctx.dispatch(new LoadAnalysisForLinkingAction(_.filter(_.toArray(linking.rdm), dt => dt.selected)));
     ctx.patchState(
       {
         linking: {
-          ...state.linking,
-          rdm: array
+          ...linking,
+          rdm: {...linking.rdm, [id]: {...linking.rdm[id], selected: !linking.rdm[id].selected}}
         }
       }
     );
@@ -783,7 +778,7 @@ export class RiskLinkState implements NgxsOnInit {
                 totalNumberElement: ds.totalElements,
                 numberOfElement: ds.size
               },
-              display: { displayImport: false, displayTable: false},
+              display: {displayImport: false, displayTable: false},
               results: null,
               summaries: null,
               analysis: null,

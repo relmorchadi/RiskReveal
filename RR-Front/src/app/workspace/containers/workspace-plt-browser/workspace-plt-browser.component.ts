@@ -929,17 +929,17 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       ...$event,
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
-    }))
+    }));
   }
 
   toggleColumnsManager() {
-    this.managePopUp= !this.managePopUp;
-    if(this.managePopUp) this.pltColumnsForConfig= [...this.pltColumns];
+    this.managePopUp = !this.managePopUp;
+    if (this.managePopUp) this.pltColumnsForConfig = [...this.pltColumns];
   }
 
   saveColumns() {
     this.toggleColumnsManager();
-    this.pltColumns= [...this.pltColumnsForConfig];
+    this.pltColumns = [...this.pltColumnsForConfig];
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -948,10 +948,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   toggleCol(i: number) {
-    this.pltColumnsForConfig= _.merge(
+    this.pltColumnsForConfig = _.merge(
       [],
       this.pltColumnsForConfig,
       { [i]: {...this.pltColumnsForConfig[i], active: !this.pltColumnsForConfig[i].active} }
-      )
+      );
   }
 }

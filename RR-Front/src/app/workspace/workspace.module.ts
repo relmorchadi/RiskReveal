@@ -10,6 +10,7 @@ import {GridsterModule} from 'angular-gridster2';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {SERVICE} from './services';
 import {VirtualScrollerModule} from 'primeng/virtualscroller';
+import {RadioButtonModule} from 'primeng/radiobutton';
 import {workspaceRoutes} from './workspace.route';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
@@ -25,6 +26,7 @@ import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-
     ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent,
   ],
   imports: [
+    RadioButtonModule,
     GridsterModule,
     SharedModule,
     FormsModule,
