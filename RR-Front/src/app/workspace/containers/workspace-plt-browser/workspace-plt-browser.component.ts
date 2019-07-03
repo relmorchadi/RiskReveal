@@ -151,7 +151,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       sorted: true,
       filtred: true,
       icon: null,
-      type: 'field',active: true
+      type: 'field',active: false
     },
     {
       sortDir: 1,
@@ -162,7 +162,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       sorted: true,
       filtred: true,
       icon: null,
-      type: 'date',active: true
+      type: 'date',active: false
     },
     {
       sortDir: 1,
