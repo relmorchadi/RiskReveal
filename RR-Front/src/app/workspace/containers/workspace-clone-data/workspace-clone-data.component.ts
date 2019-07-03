@@ -638,6 +638,6 @@ export class WorkspaceCloneDataComponent implements OnInit {
   }
 
   getPlts() {
-    console.log('hey')
+    this.browesing=true;
   }
 }

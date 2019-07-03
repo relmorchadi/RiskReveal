@@ -74,9 +74,9 @@ body {
           }
 
           span.pi.pi-times, .icon-close_24px {
-            position: absolute;
-            right: 0;
-            top: 0;
+            position: relative;
+            left: 34px;
+            bottom: 14px;
             margin: 12px;
             font-size: 1.6em;
           }
