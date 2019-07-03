@@ -243,4 +243,8 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this._loadData();
   }
 
+  clear() {
+    this.messageService.clear();
+  }
+
 }
