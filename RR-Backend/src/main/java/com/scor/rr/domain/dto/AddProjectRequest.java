@@ -15,5 +15,6 @@ public class AddProjectRequest {
 
     public Project project;
     public String workspaceId;
+    public String id;
     public Integer uwYear;
 }

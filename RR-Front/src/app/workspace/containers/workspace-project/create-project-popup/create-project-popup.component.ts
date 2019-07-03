@@ -40,6 +40,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
       project = {...project, linkFlag: true};
     }
     this.store.dispatch(new AddNewProject({
+        id: _.get(this.workspace, 'id', null),
         workspaceId: this.workspace.workSpaceId,
         uwYear: this.workspace.uwYear,
         project
