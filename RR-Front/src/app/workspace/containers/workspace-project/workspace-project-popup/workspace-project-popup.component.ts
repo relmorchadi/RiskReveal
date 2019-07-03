@@ -112,7 +112,8 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   constructor(private route: ActivatedRoute,
               private store: Store,
               private router: Router, private actions$: Actions, private notificationService: NotificationService,
-              private changeDetector: ChangeDetectorRef, private searchService: SearchService, private fb: FormBuilder
+              private changeDetector: ChangeDetectorRef, private searchService: SearchService, private fb: FormBuilder,
+              private messageService: MessageService
   ) {
     this.unSubscribe$ = new Subject<void>();
     this.keywordFormGroup = new FormGroup({
@@ -201,9 +202,11 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           this.stepSelectWorkspace = false;
           this.stepSelectProject = true;
         } else {
-          this.notificationService.createNotification('Information',
-            'This workspace contains no project',
-            'error', 'topRight', 4000);
+          // this.notificationService.createNotification('Information',
+          //   'This workspace contains no project',
+          //   'error', 'topRight', 4000);
+          this.messageService.add({key: 'createProject', severity: 'success', summary: 'This workspace contains no project', detail: '',
+            closable : false, life: 4000});
         }
         this.changeDetector.detectChanges();
       }

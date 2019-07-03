@@ -77,3 +77,18 @@ body > div.ui-widget-overlay.ui-dialog-mask {
 body > div.ui-widget-overlay.ui-dialog-mask{
   z-index: 1000 !important;
 }
+
+div.ui-toast-message.ui-shadow.ui-toast-message-success.ng-trigger.ng-trigger-messageState {
+  box-shadow: 0 0 0 0 rgba(0,0,0,0);
+}
+
+body .ui-toast .ui-toast-message.ui-toast-message-success {
+  background-color: transparent;
+  border: 0 none;
+  color: transparent;
+}
+
+.ui-toast {
+  width: 440px;
+  height: 200px;
+}
