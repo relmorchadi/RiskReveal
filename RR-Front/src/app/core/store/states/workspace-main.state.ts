@@ -299,7 +299,7 @@ export class WorkspaceMainState implements NgxsOnInit {
 
   @Action(AddNewProject)
   addNewProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
-   return this.workspaceMainService.addNewProject(payload.project, payload.workspaceId, payload.uwYear)
+   return this.workspaceMainService.addNewProject(payload.project, payload.workspaceId, payload.uwYear, payload.id)
      .pipe(catchError(err => {
        ctx.dispatch(new AddNewProjectFail({}));
        return EMPTY; }))
