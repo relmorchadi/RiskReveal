@@ -13,7 +13,8 @@ import {WorkspaceContractComponent} from './workspace-contract/workspace-contrac
 import {WorkspaceInuringComponent} from './workspace-inuring/workspace-inuring.component';
 import {WorkspaceResultsComponent} from './workspace-results/workspace-results.component';
 import {WorkspaceScopeCompletenceComponent} from './workspace-scope-completence/workspace-scope-completence.component';
-
+import {WorkspaceProjectPopupComponent} from './workspace-project/workspace-project-popup/workspace-project-popup.component';
+import {CreateProjectPopupComponent} from './workspace-project/create-project-popup/create-project-popup.component';
 
 export const CONTAINERS = [
   WorkspaceMainComponent,
@@ -30,7 +31,9 @@ export const CONTAINERS = [
   WorkspaceContractComponent,
   WorkspaceInuringComponent,
   WorkspaceResultsComponent,
-  WorkspaceScopeCompletenceComponent
+  WorkspaceScopeCompletenceComponent,
+  WorkspaceProjectPopupComponent,
+  CreateProjectPopupComponent,
 ];
 
 export * from './workspace-risk-link/workspace-risk-link.component';
@@ -47,3 +50,5 @@ export * from './workspace-contract/workspace-contract.component';
 export * from './workspace-inuring/workspace-inuring.component';
 export * from './workspace-results/workspace-results.component';
 export * from './workspace-scope-completence/workspace-scope-completence.component';
+export * from './workspace-project/workspace-project-popup/workspace-project-popup.component';
+export * from './workspace-project/create-project-popup/create-project-popup.component';
