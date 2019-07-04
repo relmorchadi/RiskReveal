@@ -238,7 +238,7 @@
     }
   }
 
-  ::ng-deep .project-card {
+  .project-card {
     width: 98%;
     border: 3px solid transparent;
     border-radius: 2px;
@@ -451,6 +451,7 @@ PROJECT MODAL STYLE
 
     .ui-dialog-content.ui-widget-content {
       padding: 15px !important;
+      background-color: #F4F4F4 !important;
     }
 
     .ui-dialog-title {
@@ -618,3 +619,96 @@ PROJECT MODAL STYLE
   width: 600px;
 }
 
+.global-search-input-grp {
+  ::ng-deep span.ant-input-group-addon.ng-star-inserted {
+    background-color: #FFF;
+    border: none;
+    border-radius: 20px 0px 0px 20px;
+    padding-right: 0px !important;
+    padding: 0 6px;
+  }
+
+  ::ng-deep {
+    .ant-input-affix-wrapper .ant-input:not(:last-child) {
+      padding-left: 6px;
+    }
+
+    .ant-input-affix-wrapper .ant-input-suffix {
+      display: flex;
+    }
+  }
+
+  ::ng-deep nz-tag {
+    margin: 0px 5px !important;
+    border-radius: 10px;
+  }
+
+  //::ng-deep i.icon-pricetag-alt{
+  //  font-size: 22px;
+  //  margin-left: -5px;
+  //}
+}
+.global-search-input-grp-active {
+  border: 1px solid #008694;
+
+}
+.search-input {
+  border-radius: 24px;
+  background-color: #FFF;
+  border: none;
+}
+.prefix-wrapper {
+  display: flex;
+  line-height: 0rem;
+
+  .chips-wrapper {
+    display: flex;
+  }
+}
+
+::ng-deep {
+  .ant-input-affix-wrapper .ant-input:not(:last-child) {
+    padding-left: 6px;
+  }
+
+  .ant-input-affix-wrapper .ant-input-suffix {
+    display: flex;
+  }
+
+  .item-close {
+    height: 17px;
+    margin-right: 5px;
+    margin-top: 9px;
+  }
+
+  .icon-hold {
+    color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0.05);
+    padding-right: 15px;
+    padding-top: 3px;
+    padding-bottom: 4px;
+    padding-left: 9px;
+    border-radius: 0px 15px 15px 0px;
+    margin-right: -14px;
+    font-size: 18px;
+  }
+}
+.code-button {
+  font-size: 19px;
+  background: transparent;
+  border: none;
+  padding: 1px 5px;
+  //margin-right: 4px;
+  &:focus {
+    outline: 0;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+  }
+}
+
+.ui-dialog-titlebar {
+  background-color: white !important;
+}
+.ui-dialog-title {
+  background-color: white !important;
+}

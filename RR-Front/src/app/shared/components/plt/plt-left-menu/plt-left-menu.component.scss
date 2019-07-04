@@ -16,12 +16,6 @@
       padding: 0;
     }
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: nowrap;
-    }
-
     .content {
       display: flex;
       justify-content: center;
@@ -48,10 +42,6 @@
       width: auto;
     }
 
-    .footer {
-      padding: 7px;
-    }
-
     .ant-modal-footer {
       border-top: none;
     }
@@ -76,13 +66,12 @@
       letter-spacing: 0.2px;
       line-height: 27px;
       font-size: 9px;
-      font-family: rubik;
       list-style: none;
       padding-left: 20px;
       padding-right: 7px;
       font-weight: bold;
       overflow: auto;
-      max-width: 190px;
+      max-width: 212px;
 
       li * {
         font-size: 1.5em;

@@ -81,7 +81,7 @@
   <i nz-tooltip nzTitle="Unselect All" nzPlacement="bottom" (click)="unselectAll()" class="icon-minus-square icons-font"></i>
 </div>-->
 
-<p-contextMenu #cm [model]="getItems()"></p-contextMenu>
+<p-contextMenu appendTo="body" #cm [model]="getItems()"></p-contextMenu>
 
 <nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700">
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
@@ -89,7 +89,7 @@
            [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
            [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
            [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
-           [contextMenu]="cm" class="table-ngPrime"
+           [contextMenu]="getContextMenu()" class="table-ngPrime"
            [selectionMode]="selectionMode"
            (onRowSelect)="rowSelect($event)"
            (onRowUnselect)="rowUnselect($event)"
@@ -148,7 +148,7 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="emptymessage" let-columns>
-      <tr >
+      <tr>
         <td [attr.colspan]="columns.length">
           No records found
         </td>

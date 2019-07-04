@@ -51,7 +51,7 @@
       >
 
       </app-plt-left-menu>
-      <div class="tabset-right" [ngStyle]="{ 'max-width': leftIsHidden ? 'calc(100vw - 190px - 80px - 174px + 130px)' : 'calc(100vw - 190px - 80px - 174px)'}">
+      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - 212px - 80px - 174px + 130px)' : 'calc(100vw - 212px - 80px - 177px)'}">
         <div class="title-as-tab">
           <span>
             PLTs
@@ -71,7 +71,7 @@
 
                 <li nz-menu-divider></li>
 
-                <li nz-menu-item>Re-Order/Activate Columns</li>
+                <li nz-menu-item (click)="toggleColumnsManager()" >Manage Columns</li>
 
                 <li nz-menu-divider></li>
 
@@ -703,3 +703,61 @@
 
   </div>
 </div>
+
+<p-dialog
+  [visible]="managePopUp"
+  [closable]="false"
+  styleClass="m-dialog-modal-lg-h"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Columns Manager
+      </h4>
+      <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div cdkDropList class="m-box-d" (cdkDropListDropped)="drop($event)">
+    <ng-container *ngFor="let col of pltColumnsForConfig;let i=index">
+      <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+        <div class="m-box-overlay">
+          <div class="left">
+            <div class="burger">
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
+              <div class="line"></div>
+            </div>
+            <span class="subtitle-2">
+          {{col.header}}
+        </span>
+          </div>
+          <div class="right">
+            <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+            <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="toggleColumnsManager()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>

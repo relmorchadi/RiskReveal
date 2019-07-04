@@ -25,10 +25,14 @@
 $modal-sizes: (
   "auto": ( "height": auto, "width": auto ),
   "sm": ( "height": 35vh, "width": 40vw ),
+  "sm-h": ( "height": 35vh, "width": auto ),
   "sm-f": ("height": auto, "width": 30vw, "minWidth": 450px),
   "m": ( "height": 50vh, "width": 60vw ),
+  "m-h": ( "height": 70vh, "width": auto ),
   "m-f": ( "height": auto, "width": 55vw, "minWidth": 750px ),
-  "lg": ( "height": 75vh, "width": 90vw )
+  "spec-def": ( "height": 80vh, "width": 1200px ),
+  "lg": ( "height": 90vh, "width": 90vw ),
+  "lg-h": ( "height": 90vh, "width": auto ),
 );
 
 body {
@@ -44,6 +48,7 @@ body {
     .m-dialog-modal#{ $expr } {
       width: map_get($size, "width");
       min-width: map_get($size, "minWidth");
+      z-index: 1002 !important;
 
       .ui-dialog-titlebar {
         border: none;
@@ -51,10 +56,27 @@ body {
 
         p-header {
 
+          .header {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: nowrap;
+            margin-right: 34px;
+
+            .previous-container {
+              display: flex;
+              align-items: center;
+              margin: 25px;
+
+              button,h4 {
+                margin: 0 12px;
+              }
+            }
+          }
+
           span.pi.pi-times, .icon-close_24px {
-            position: absolute;
-            right: 0;
-            top: 0;
+            position: relative;
+            left: 34px;
+            bottom: 14px;
             margin: 12px;
             font-size: 1.6em;
           }
@@ -65,11 +87,30 @@ body {
         height: calc(#{map_get($size, "height")} - 100px);
         border: none;
         @include border-divider("top");
+
+        .content {
+          display: flex;
+        }
       }
 
       .ui-dialog-footer {
         border: none;
         @include border-divider("top");
+
+        .footer {
+          padding: 7px;
+        }
+      }
+    }
+
+    .borderless {
+      .ui-dialog-content {
+        height: calc(#{map_get($size, "height")} - 150px);
+        border: none;
+
+        .content {
+          display: flex;
+        }
       }
     }
   }

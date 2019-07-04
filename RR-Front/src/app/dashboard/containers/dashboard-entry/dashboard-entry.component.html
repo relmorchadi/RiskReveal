@@ -64,12 +64,12 @@
         Dashboard <br>
         Preferences
         <button nz-popconfirm (nzOnConfirm)="addDashboard()" [nzTitle]="dash" class="add-workspace-btn" nz-button
-                nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" [nzOkType]="'ghost'" >
+                nzType="primary" nzShape="circle" nzOkText="SAVE" nzCancelText="CANCEL" >
           <i nz-icon type="plus"></i>
         </button>
         <ng-template #dash>
           <p class="popover-title">Add New Dashboard</p>
-          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name" class="a-textfield-mini" type="text">
+          <input (keydown)="onEnterAdd($event)" [(ngModel)]="newDashboardTitle" placeholder="Choose a name" class="a-textfield-standard" type="text">
         </ng-template>
       </div>
     </div>
@@ -90,10 +90,14 @@
         <div class="edit-dashboard-section">
           <input style="width: 80%" class="hover-input" placeholder=""
                  (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard.name">
-          <i nz-popconfirm nzPlacement="top" nzTitle="Do you want to delete this dashboard?"
+          <i nz-popconfirm nzPlacement="top" [nzTitle]="delete"
              (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
-            nzOkText="DELETE" nzCancelText="CANCEL"
+            nzOkText="DELETE" nzCancelText="CANCEL" [nzOkType]="'danger'"
           ></i>
+          <ng-template #delete>
+            <span class="body-1">Delete {{selectedDashboard.name}}</span>
+            <p class="body-2">Are you sure you want to delete {{selectedDashboard.name}}?</p>
+          </ng-template>
         </div>
         <div class="search-Mode">
           <span class="title">SEARCH MODE</span>

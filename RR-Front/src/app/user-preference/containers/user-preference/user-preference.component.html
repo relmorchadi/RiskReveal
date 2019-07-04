@@ -136,8 +136,8 @@
                     ></nz-input-number>
                   </div>
                 </div>
-                <div class="a-card-item number-config-item"><label nz-checkbox [(ngModel)]="check1">Decimal Separator Character</label>
-                  <div class="custom-radio" *ngIf="check1">
+                <div class="a-card-item number-config-item"><span>Decimal Separator Character</span>
+                  <div class="custom-radio">
                     <nz-select
                       style="width: 270px;"
                       [ngModel]="state.general.numberFormat.decimalSeparator"
@@ -158,8 +158,8 @@
                     </nz-radio-group>-->
                   </div>
                 </div>
-                <div class="a-card-item number-config-item"><label nz-checkbox [(ngModel)]="check2">Thousand Separator Character</label>
-                  <div class="custom-radio" *ngIf="check2">
+                <div class="a-card-item number-config-item"><span>Thousand Separator Character</span>
+                  <div class="custom-radio">
                     <nz-select
                       style="width: 270px;"
                       [ngModel]="state.general.numberFormat.decimalThousandSeparator"
