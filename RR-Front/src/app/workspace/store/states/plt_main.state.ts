@@ -44,7 +44,7 @@ export class PltMainState implements NgxsOnInit {
     return (state: pltMainModel) => state.data[wsIdentifier];
   }
 
-  status = ['in progress', 'checked', 'locked', 'requires regeneration', 'failed'];
+  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
   @Selector()
   static getProjects() {
