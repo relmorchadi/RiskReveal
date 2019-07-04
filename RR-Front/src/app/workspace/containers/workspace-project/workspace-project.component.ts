@@ -75,6 +75,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
       this.notificationService.createNotification('Project added successfully', '',
         'success', 'topRight', 4000);
       this._helper.updateWorkspaceItems();
+      this.detectChanges();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
@@ -87,6 +88,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
           this.notificationService.createNotification('Project deleted successfully', '',
         'success', 'topRight', 4000);
           this._helper.updateWorkspaceItems();
+          this.detectChanges();
         }
     );
   }

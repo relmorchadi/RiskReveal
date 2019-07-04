@@ -12,6 +12,7 @@ import static java.util.Optional.ofNullable;
 
 public class WorkspaceDetailsDTO {
 
+    private String id;
     private String workspaceName;
     private String cedantCode;
     private String cedantName;
@@ -30,6 +31,7 @@ public class WorkspaceDetailsDTO {
 
     public WorkspaceDetailsDTO(List<ContractSearchResult> items, List<String> years, List<ProjectView> projects) {
         ContractSearchResult first = items.get(0);
+        this.id = first.getId();
         this.workspaceName = first.getWorkspaceName();
         this.cedantCode = first.getCedantCode();
         this.cedantName = first.getCedantName();
@@ -139,5 +141,13 @@ public class WorkspaceDetailsDTO {
 
     public void setProjects(List<ProjectView> projects) {
         this.projects = projects;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

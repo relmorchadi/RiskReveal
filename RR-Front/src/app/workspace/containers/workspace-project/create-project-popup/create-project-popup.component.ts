@@ -4,6 +4,7 @@ import {Subject} from 'rxjs';
 import {Store} from '@ngxs/store';
 import {AddNewProject} from '../../../../core/store/actions';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-create-project-popup',
@@ -23,7 +24,9 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   newProject: any;
   newProjectForm: FormGroup;
 
-  constructor(private store: Store) {this.unSubscribe$ = new Subject<void>(); }
+  constructor(private store: Store) {
+    this.unSubscribe$ = new Subject<void>();
+  }
 
   ngOnInit() {
     this.initNewProjectForm();
@@ -35,15 +38,16 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   createUpdateProject() {
-    let project = {...this.newProjectForm.value , projectId: null}
+    let project = {...this.newProjectForm.value, projectId: null}
     if (this.newProjectForm.controls.projectId.value) {
       project = {...project, linkFlag: true};
     }
     this.store.dispatch(new AddNewProject({
-        workspaceId: this.workspace.workSpaceId,
-        uwYear: this.workspace.uwYear,
-        project
-      }));
+      id: _.get(this.workspace, 'id', null),
+      workspaceId: this.workspace.workSpaceId,
+      uwYear: this.workspace.uwYear,
+      project
+    }));
   }
 
   cancelCreateProject() {

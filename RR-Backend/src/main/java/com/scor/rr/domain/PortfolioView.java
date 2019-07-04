@@ -3,15 +3,13 @@ package com.scor.rr.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity
+@Table(schema = "poc")
 @Data
 @AllArgsConstructor
 public class PortfolioView {

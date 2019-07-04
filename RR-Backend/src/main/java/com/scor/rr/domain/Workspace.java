@@ -11,7 +11,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "[RR-Workspace]", schema = "dbo")
+@Table(name = "[RR-Workspace]", schema = "poc")
 @Data
 public class Workspace implements Serializable{
 
