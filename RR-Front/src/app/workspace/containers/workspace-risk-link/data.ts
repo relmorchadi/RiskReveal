@@ -93,6 +93,38 @@ const scrollableColsLinking = [
   {field: 'iconManager', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false, visible: true},
 ];
 
+const colsFinancialAnalysis = [
+  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'name&desc', header: 'Name & Description', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'regionPeril', header: 'Region Peril', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'ty', header: 'TY', width: '70px', type: 'icon', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'financialPerspective', header: 'Financial Perspective', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false, visible: true},
+];
+
+const colsFinancialStandard = [
+  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'code', header: 'Code', width: '40px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'financialPerspective', header: 'Financial Perspective', width: '300px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'ccy', header: 'CCY', width: '60px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'aal', header: 'AAL', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'stdDev', header: 'STD DEV', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'firstTarget', header: 'OEP 100', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'secondTarget', header: 'OEP 200', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'thirdTarget', header: 'OEP 250', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+];
+
+const financialStandarContent = [
+  {selected: false, code: 'CL', financialPerspective: 'Client Loss', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+  {selected: false, code: 'FA', financialPerspective: 'Facultative Reinsurance Loss', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+  {selected: false, code: 'GR', financialPerspective: 'Gross Loss', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+  {selected: false, code: 'GU', financialPerspective: 'Ground Up Loss', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+  {selected: false, code: 'QS', financialPerspective: 'Quota Share Treaty Loss', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+  {selected: false, code: 'RC', financialPerspective: 'Net Loss Post Corporate Cat', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+  {selected: false, code: 'RG', financialPerspective: 'Reinsurance Gross Loss', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+  {selected: false, code: 'RL', financialPerspective: 'Net Loss Pre Cat', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
+];
+
 export const DataTables = {
   scrollableColsAnalysis,
   scrollableColsPortfolio,
@@ -102,5 +134,8 @@ export const DataTables = {
   frozenColsAnalysis,
   frozenColsPortfolio,
   frozenColsSummary,
-  frozenColsResults
+  frozenColsResults,
+  colsFinancialAnalysis,
+  colsFinancialStandard,
+  financialStandarContent
 };

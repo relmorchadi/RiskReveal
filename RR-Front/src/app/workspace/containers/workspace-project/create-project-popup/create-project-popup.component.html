@@ -9,7 +9,7 @@
 >
 
   <p-header>
-      <span style="margin-left: 10px">Create <span *ngIf="newProjectForm.controls['projectId'].value">Existing</span>
+      <span style="margin-left: 10px">Create <span *ngIf="newProjectForm.controls['projectId'].value">Linked</span>
         <span *ngIf="!newProjectForm.controls['projectId'].value">New</span> Project</span>
       <span (click)="cancelCreateProject()" style="float: right; cursor: pointer;">&#10006;</span>
   </p-header>

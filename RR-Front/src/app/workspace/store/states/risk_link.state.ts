@@ -24,7 +24,7 @@ import {
 import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from '../../services/risk.api';
-import {forkJoin} from "rxjs";
+import {forkJoin} from 'rxjs';
 
 const initiaState: RiskLinkModel = {
   listEdmRdm: {
@@ -175,7 +175,7 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(ToggleRiskLinkEDMAndRDMAction)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
-    const {action, RDM} = payload;
+    const {action, RDM, source} = payload;
     let array = _.toArray(state.listEdmRdm.data);
     let newData = {};
     if (action === 'selectOne') {
@@ -192,22 +192,11 @@ export class RiskLinkState implements NgxsOnInit {
           ...state.listEdmRdm,
           data: {
             ...state.listEdmRdm.data,
-            [item]: {...state.listEdmRdm.data[item], selected: !selected}
+            [item]: {...state.listEdmRdm.data[item], selected: !selected, source: !selected ? source : ''}
           },
           dataSelected: array
         }
       });
-    } else if (action === 'selectLink') {
-      const {id, name} = RDM;
-      const searchTerm = _.truncate(name, {length: name.length - 2, omission: ''});
-      /*      this.riskApi.searchRiskLinkPortfolio('', searchTerm).pipe(
-              mergeMap(
-                (data: any) =>
-                  of(
-                    null
-                  )
-              )
-            );*/
     } else {
       if (action === 'selectAll') {
         array.forEach(dt => {
@@ -215,6 +204,7 @@ export class RiskLinkState implements NgxsOnInit {
             [dt.id]: {
               ...dt,
               selected: true,
+              source: source
             }
           });
           dt = {...dt, selected: true};
@@ -225,12 +215,12 @@ export class RiskLinkState implements NgxsOnInit {
             [dt.id]: {
               ...dt,
               selected: false,
+              source: ''
             }
           });
         });
         array = [];
       }
-      console.log(array);
       ctx.patchState({
         listEdmRdm: {
           ...state.listEdmRdm,
@@ -566,20 +556,20 @@ export class RiskLinkState implements NgxsOnInit {
       switchMap(dt => {
         const dataTable = {
           [payload.id]: {
-                data: Object.assign({},
-                  ...dt.content.map(analysis => ({
-                      [analysis.analysisId]: {
-                        ...analysis,
-                        selected: false
-                      }
-                    }
-                  ))),
-                lastSelectedIndex: null,
-                totalNumberElement: dt.totalElements,
-                numberOfElement: dt.size,
-                filter: {}
-              }
-            };
+            data: Object.assign({},
+              ...dt.content.map(analysis => ({
+                  [analysis.analysisId]: {
+                    ...analysis,
+                    selected: false
+                  }
+                }
+              ))),
+            lastSelectedIndex: null,
+            totalNumberElement: dt.totalElements,
+            numberOfElement: dt.size,
+            filter: {}
+          }
+        };
 
         return of(ctx.patchState(
           {
@@ -662,7 +652,6 @@ export class RiskLinkState implements NgxsOnInit {
   ToggleAnalysisForLinking(ctx: StateContext<RiskLinkModel>, {payload}: ToggleAnalysisForLinkingAction) {
     const {linking} = ctx.getState();
     const {item: {id}} = payload;
-    // ctx.dispatch(new LoadAnalysisForLinkingAction(_.filter(_.toArray(linking.rdm), dt => dt.selected)));
     ctx.patchState(
       {
         linking: {
@@ -679,44 +668,92 @@ export class RiskLinkState implements NgxsOnInit {
     const state = ctx.getState();
     const listDataToArray = _.toArray(state.listEdmRdm.data);
     const listSelected = {edm: {}, rdm: {}};
-    listDataToArray.map(
-      dt => {
-        if (dt.selected && dt.type === 'edm') {
-          console.log(state.portfolios, state.analysis);
-          listSelected.edm = _.merge(listSelected.edm, {
-            [dt.id]: {
-              ...dt,
-              scanned: true,
-              selected: false,
-            }
-          });
-        } else if (dt.selected && dt.type === 'rdm') {
-          listSelected.rdm = _.merge(listSelected.rdm, {
-            [dt.id]: {
-              ...dt,
-              scanned: true,
-              selected: false,
-            }
-          });
-        }
-      });
-    ctx.patchState({
-      listEdmRdm: {
-        ...state.listEdmRdm,
-        selectedListEDMAndRDM: {
-          edm: _.merge({}, listSelected.edm, state.listEdmRdm.selectedListEDMAndRDM.edm),
-          rdm: _.merge({}, listSelected.rdm, state.listEdmRdm.selectedListEDMAndRDM.rdm)
-        }
-      },
-      linking: {
-        ...state.linking,
-        edm: listSelected.edm,
-        rdm: listSelected.rdm
+    _.forEach( listDataToArray, dt => {
+      if (dt.selected && dt.type === 'edm') {
+        console.log(state.portfolios, state.analysis);
+        listSelected.edm = _.merge(listSelected.edm, {
+          [dt.id]: {
+            ...dt,
+            scanned: true,
+            selected: false,
+          }
+        });
+      } else if (dt.selected && dt.type === 'rdm') {
+        listSelected.rdm = _.merge(listSelected.rdm, {
+          [dt.id]: {
+            ...dt,
+            scanned: true,
+            selected: false,
+          }
+        });
       }
     });
-    ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-    ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, dt => dt.type === 'rdm' && dt.selected)));
-    ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, dt => dt.type === 'edm' && dt.selected)));
+
+    forkJoin(
+      ...listDataToArray.filter( e => e.source === 'link').map( dt => {
+        const searchTerm = dt.name.substr(0, dt.name.lastIndexOf('_'));
+        if (dt.name.length - searchTerm.length < 5) {
+          return of([this.riskApi.searchRiskLinkData(searchTerm, '20'), searchTerm]);
+        }
+        return of(null);
+      })
+    ).subscribe( data => {
+      console.log(data);
+      data.map(
+        dt => {
+          if ( dt !== null) {
+            dt[0].subscribe(
+              ks => {
+                ks.content.forEach( ws => {
+                  const trim = ws.name.substr(0, ws.name.lastIndexOf('_'));
+                  if (trim === dt[1]) {
+                    if (ws.type !== dt.type) {
+                      if (ws.type === 'edm') {
+                        _.merge(listSelected.edm, {
+                          [ws.id]: {
+                            ...ws,
+                            scanned: true,
+                            selected: false
+                          }
+                        });
+                      } else {
+                        _.merge(listSelected.rdm, {
+                          [ws.id]: {
+                            ...ws,
+                            scanned: true,
+                            selected: false
+                          }
+                        });
+                      }
+                    }
+                  }
+                });
+                ctx.patchState({
+                  listEdmRdm: {
+                    ...state.listEdmRdm,
+                    selectedListEDMAndRDM: {
+                      edm: listSelected.edm,
+                      rdm: listSelected.rdm
+                    }
+                  },
+                  linking: {
+                    ...state.linking,
+                    edm: listSelected.edm,
+                    rdm: listSelected.rdm
+                  }
+                });
+                ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+                ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, rt => rt.type === 'rdm' && rt.selected)));
+                ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, et => et.type === 'edm' && et.selected)));
+              }
+            );
+
+          }
+        }
+      );
+
+    });
+
   }
 
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
@@ -770,7 +807,7 @@ export class RiskLinkState implements NgxsOnInit {
                       [item.id]: {
                         ...item,
                         selected: false,
-                        scanned: false,
+                        source: '',
                       }
                     }
                   ))),
@@ -788,3 +825,16 @@ export class RiskLinkState implements NgxsOnInit {
     );
   }
 }
+
+/*else if (action === 'selectLink') {
+  const {id, name} = RDM;
+  const searchTerm = name.substr(0, name.lastIndexOf('_'));
+  if (name.length - searchTerm.length < 4) {
+    this.riskApi.searchRiskLinkPortfolio('', searchTerm).pipe(
+      mergeMap(
+        (data: any) => {
+          return of();
+        }
+      )
+    );
+  }*/

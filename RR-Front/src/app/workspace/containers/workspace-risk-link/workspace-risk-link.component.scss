@@ -1124,6 +1124,12 @@ SELECT EDM AND RDM DROPDOWN STYLE
   border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
+/*
+=======================================================================================
+TABLE STYLE
+=======================================================================================
+*/
+
 .summary-info {
   padding: 20px 0;
   margin: auto;
@@ -1209,7 +1215,7 @@ SELECT EDM AND RDM DROPDOWN STYLE
       }
 
       tr {
-        background-color: #fff;
+        background-color: #FFFFFF;
         user-select: none;
       }
 
@@ -1272,7 +1278,6 @@ SELECT EDM AND RDM DROPDOWN STYLE
           color: #B20626;
           font-size: 20px;
         }
-
       }
 
       .selected-item {
@@ -1301,5 +1306,15 @@ SELECT EDM AND RDM DROPDOWN STYLE
       width: 100%;
     }
   }
+}
 
+/*
+=======================================================================================
+FINANCIAL PERSPECTIVE POPUP STYLE
+=======================================================================================
+*/
+
+.fp-options-wrapper {
+  padding: 20px;
+  border: 1px solid rgba(0,0,0,0.15);
 }

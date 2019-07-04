@@ -45,6 +45,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   filterModalVisibility = false;
   linkingModalVisibility = false;
   radioValue = 'all';
+  radioValueFinancialP = 'CurrentSelection';
   columnsForConfig;
   targetConfig;
 
@@ -75,9 +76,14 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   scrollableColsResult: any;
   frozenColsResult: any;
 
+  colsFinancialStandard: any;
+  financialStandardContent: any;
+  colsFinancialAnalysis: any;
+
   manual = false;
   suggested = false;
   managePopUp = false;
+  financialP = false;
   selectedEDM = null;
   scrollableColslinking: any;
 
@@ -114,6 +120,9 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.scrollableColsResult = DataTables.scrollableColsResults;
     this.frozenColsResult = DataTables.frozenColsResults;
     this.scrollableColslinking = DataTables.scrollableColsLinking;
+    this.colsFinancialStandard = DataTables.colsFinancialStandard;
+    this.colsFinancialAnalysis = DataTables.colsFinancialAnalysis;
+    this.financialStandardContent = DataTables.financialStandarContent;
   }
 
   ngOnDestroy() {
@@ -192,11 +201,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleItems(RDM) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
-  }
-
-  toggleItemsLink(RDM) {
+  toggleItems(RDM, event, source) {
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
+    if (event !== null) {
+      event.stopPropagation();
+    }
   }
 
   toggleItemsListRDM(RDM) {
