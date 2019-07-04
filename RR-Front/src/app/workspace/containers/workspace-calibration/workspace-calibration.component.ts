@@ -93,6 +93,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   inputValueArray = [];
   columnPositionArray = [];
   linear: boolean = false;
+  dropdownVisible = false;
   workspaceId: string;
   uwy: number;
   projects: any[];
@@ -109,6 +110,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'checkbox',
       header: '',
       width: '43',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: null,
@@ -122,6 +124,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'userTags',
       header: 'User Tags',
       width: '80',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: null,
@@ -135,6 +138,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'pltId',
       header: 'PLT ID',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -148,6 +152,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'pltName',
       header: 'PLT Name',
       width: '150',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -161,6 +166,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'peril',
       header: 'Peril',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -174,6 +180,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'regionPerilCode',
       header: 'Region Peril Code',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -187,6 +194,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'regionPerilName',
       header: 'Region Peril Name',
       width: '130',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -200,6 +208,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'grain',
       header: 'Grain',
       width: '160',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -213,6 +222,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'vendorSystem',
       header: 'Vendor System',
       width: '90',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -226,6 +236,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'rap',
       header: 'RAP',
       width: '70',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -239,6 +250,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'action',
       header: '',
       width: '25',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: 'icon-focus-add',
@@ -252,6 +264,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'action',
       header: '',
       width: '25',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: 'icon-note',
@@ -1710,7 +1723,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     switch (status) {
       case 'in progress':
         return this.inProgressCheckbox;
-      case 'checked':
+      case 'valid':
         return this.checkedCheckbox;
       case 'locked':
         return this.lockedCheckbox;
