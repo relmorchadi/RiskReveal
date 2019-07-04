@@ -64,6 +64,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   failedCheckbox: boolean = true;
   requiresRegenerationCheckbox: boolean = true;
   collapsedTags: boolean = false;
+  filterInput: string = "";
+  addRemoveModal: boolean = false;
   isVisible = false;
   singleValue: any;
   dragPlaceHolderId: any;
@@ -357,6 +359,93 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       extended: true,
       frozen: false
     },
+  ];
+  popUpPltColumns = [
+    {
+      width: '60',
+      filtred: false,
+      icon: null,
+      type: 'checkbox', active: true
+    },
+    {
+      fields: 'pltId',
+      header: 'PLT ID',
+      width: '80',
+      sorted: false,
+      filtred: true,
+      icon: null,
+      type: 'id',
+      active: true
+    },
+    {
+      fields: 'pltName',
+      header: 'PLT Name',
+      width: '160',
+      sorted: false,
+      filtred: true,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      fields: 'peril',
+      header: 'Peril',
+      width: '40',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      textAlign: 'center', active: true
+    },
+    {
+      fields: 'regionPerilCode',
+      header: 'Region Peril Code',
+      width: '70',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      fields: 'regionPerilName',
+      header: 'Region Peril Name',
+      width: '160',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'grain',
+      header: 'Grain',
+      width: '90',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'vendorSystem',
+      header: 'Vendor System',
+      width: '90',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'rap',
+      header: 'RAP',
+      width: '52',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      active: true
+    }
   ];
   epMetricsCurrencySelected: any = 'EUR';
   CalibrationImpactCurrencySelected: any = 'EUR';
@@ -1291,6 +1380,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   clickButtonPlus(bool, data?: any) {
+    console.log("here");
     this.modalTitle = "Add New Adjustment";
     this.modifyModal = false;
     this.categorySelectedFromAdjustement = null;
