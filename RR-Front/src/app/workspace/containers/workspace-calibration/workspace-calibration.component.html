@@ -238,7 +238,7 @@
                         <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                           <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
                                (mouseover)="shownDropDown = adj.id"
-                               (mouseleave)="shownDropDown = dropdownVisible ? adj.id : null"
+                               (mouseleave)="onLeaveAdjustment(adj.id)"
                                dnd-sortable
                                [sortableIndex]="adjIndex"
                                [dragEnabled]="true"
@@ -248,7 +248,6 @@
                             <span
                               style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
                             <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                                         (nzVisibleChange)="shownDropDown = $event ? adj.id : null"
                                          [nzPlacement]="'bottomLeft'" class="dropD">
                               <i class="icon-menu_24px" nz-dropdown
                                  style="font-size: 14px;float: right;margin-right: 2px;"></i>
@@ -341,6 +340,7 @@
                         <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                           <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
                                (mouseenter)="shownDropDown = adj.id"
+                               (mouseleave)="onLeaveAdjustment(adj.id)"
                                dnd-sortable
                                [sortableIndex]="adjIndex"
                                [dragEnabled]="true"
@@ -350,7 +350,6 @@
                             <span
                               style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
                             <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                                         (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
                                          [nzPlacement]="'bottomLeft'" class="dropD">
                               <i class="icon-menu_24px" nz-dropdown
                                  style="font-size: 14px;float: right;margin-right: 2px;"></i>
@@ -671,12 +670,15 @@
                                  [dragData]="adjs" (onDragStart)="draggedAdjs = adjs"
                                  (drop)="onDrop(col,rowData.pltId)"
                                  [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
-                                 class="adjustDiv" (mouseover)="shownDropDown = adjs.id+rowData.pltId">
+                                 class="adjustDiv"
+                                 (mouseover)="shownDropDown = adjs.id+rowData.pltId"
+                                 (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
+                            >
                               <span class="spanStyle"
                                     style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
                               <nz-dropdown *ngIf="shownDropDown ===  adjs.id+rowData.pltId"
                                            [(nzVisible)]="dropdownVisible"
-                                           (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+
                                            [nzPlacement]="'bottomLeft'"
                                            class="dropD">
                                 <i [id]="i" class="icon-menu_24px" nz-dropdown
@@ -705,11 +707,11 @@
                         </ng-container>
 
                         <div *ngIf="col.fields=='inuring'" class="adjustDiv"
-                             (mouseenter)="shownDropDown = rowData.pltId">
+                             (mouseenter)="shownDropDown = rowData.pltId"
+                             (mouseleave)="onLeaveAdjustment(rowData.pltId)">
                           <span class="spanStyle"
                                 style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px; overflow: hidden;display:inline-block;"></span>
                           <nz-dropdown *ngIf="shownDropDown === rowData.pltId" [(nzVisible)]="dropdownVisible"
-                                       (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
                                        [nzPlacement]="'bottomLeft'"
                                        class="dropD">
                             <i [id]="i" class="icon-menu_24px" nz-dropdown

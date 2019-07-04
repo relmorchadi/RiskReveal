@@ -1733,4 +1733,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
         return this.requiresRegenerationCheckbox
     }
   }
+
+  onLeaveAdjustment(id) {
+    this.shownDropDown = this.dropdownVisible ? id : null;
+    // this.dropdownVisible = this.shownDropDown == id && this.dropdownVisible;
+
+  }
 }
