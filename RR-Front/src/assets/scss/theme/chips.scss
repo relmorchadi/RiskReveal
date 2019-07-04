@@ -97,5 +97,10 @@
   }
 }
 
+.active-tag {
+  border: 2px solid #666666;
+  border-radius: 25px;
+}
+
 @include chips(true);
 @include chips(false);

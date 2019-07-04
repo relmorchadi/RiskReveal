@@ -1,66 +1,68 @@
 <p-dialog [(visible)]="isVisible"
-          [modal]="true"
           [closable]="false"
-          [contentStyle]="{'width':'100%'}"
-          [style]="{width: '96%'}"
-          (onHide)="cancelCreateExistingProject()"
-          (onShow)="show()"
+          [styleClass]="'m-dialog-modal-lg' + (browesing ? ' borderless' : '')"
+          appendTo="body"
+          [modal]="true"
+          [responsive]="true"
+          [baseZIndex]="1"
+          [autoZIndex]="false"
+          (onHide)="onHide()"
+          (onShow)="onShow()"
 >
 
   <p-header>
-    <div class="row">
-      <div class="col-3 mt-2">
-        <span>
-        <i *ngIf="!stepSelectWorkspace && stepSelectProject" (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left" nzTheme="outline"></i>
-        <span style="margin-left: 10px">Search For Project</span>
-        </span>
-      </div>
-      <div class="col-7 style-wrap" [formGroup]="keywordFormGroup">
-
-        <nz-input-group style="z-index: 1001"
-                        class="global-search-input-grp"
-                        [ngClass]="{'global-search-input-grp-active': 1===1}"
-                        [nzSuffix]="suffixIconSearch"
-                        [nzAddOnBefore]="prefixIconTag">
-          <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
-                 (onEnter)="onEnter()"
-                 #searchInput
-                 formControlName="keyword"  (click)="search()"
-                 class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
-        </nz-input-group>
-
-        <ng-template #prefixIconTag>
-          <div class="prefix-wrapper">
-            <button class="code-button" nz-popover
-                     nzPlacement="bottomLeft" nzTrigger="click">
+    <div class="header">
+      <ng-container *ngIf="browesing">
+          <div class="previous-container">
+            <button class="a-buttons-contained override">
+              <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
             </button>
+            <h4>
+              {{ selectionStep =='plt' ? 'Browese For Cloning' : 'Search For Project' }}
+            </h4>
           </div>
-        </ng-template>
+      </ng-container>
 
-        <ng-template #suffixIconSearch>
-          <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
-             nzTheme="outline"></i>
-          <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
-             class="icon-search_24px icon-hold"></i>
-        </ng-template>
+      <ng-container *ngIf="!browesing">
+        <h4 >
+          Select Workspace
+        </h4>
 
+        <div [formGroup]="keywordFormGroup">
 
-      </div>
-      <div class="col-2">
-        <span (click)="cancelCreateExistingProject()" style="float: right; cursor: pointer;">&#10006;</span>
-      </div>
+          <nz-input-group style="z-index: 1001"
+                          class="global-search-input-grp"
+                          [ngClass]="{'global-search-input-grp-active': 1===1}"
+                          [nzSuffix]="suffixIconSearch">
+            <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
+                   (onEnter)="onEnter()"
+                   #searchInput
+                   formControlName="keyword"  (click)="search()"
+                   class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
+          </nz-input-group>
+
+          <ng-template #suffixIconSearch>
+            <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
+               nzTheme="outline"></i>
+            <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
+               class="icon-search_24px"></i>
+          </ng-template>
+
+        </div>
+      </ng-container>
+      <i (click)="isVisible=false" style="cursor: pointer" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <ng-container *ngIf="stepSelectWorkspace && !stepSelectProject">
+
+  <ng-container *ngIf="!browesing">
     <div style="height:600px;">
 
-      <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
+      <app-table [tableColumn]="selectWsTable" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                  [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                  (filterData)="filterData($event.searchValue, $event.searchAddress)"
-                 (dbClickItem)="getWorkspaceProjects(selectedWorkspace)"
-                 [tableHeight]="'480px'"
-                 (onRowSelect)="onRowSelect($event)"
+                 (dbClickItem)="onRowSelect('db',$event);getBrowesingItems($event)"
+                 (onRowSelect)="onRowSelect('',$event)"
                  (onRowUnselect)="onRowUnselect($event)"
                  [selectionMode]="'single'"
                  [loading]="loading">
@@ -69,8 +71,8 @@
     </div>
   </ng-container>
 
-  <ng-container *ngIf="!stepSelectWorkspace && stepSelectProject">
-    <div style="height:600px; overflow:auto;">
+  <ng-container *ngIf="browesing && selectionStep == 'project'">
+    <div class="content" style="flex-wrap: wrap !important;">
       <div style="display: inline-block; padding: 20px;" *ngFor="let project of selectedWorkspaceProjects; let i = index" class="card-holder">
         <div class="project-card mx-1" (click)="selectThisProject(project)"
              [ngStyle]="{'border': project?.projectId == selectedProject?.projectId ? '2px solid #06B8FF' : '2px solid transparent'}">
@@ -145,16 +147,51 @@
       </div></div>
   </ng-container>
 
+  <ng-container *ngIf="browesing && selectionStep == 'plt'">
+    <div class="content">
+      <div class="left">
+        <app-plt-left-menu
+          [menuInputs]="Inputs | pickKeys : menuInputs"
+          (onSetSelectedUserTags)="setUserTags($event)"
+          (onSetFilters)="setFilters($event)"
+          (emitFilters)="emitFilters($event)"
+          (onProjectFilter)="filterPlts($event)"
+          (onWsHeaderSelection)="setWsHeaderSelect($event)"
+          (onSelectProjects)="setSelectedProjects($event)"
+          (unCkeckAllPlts)="unCheckAll()"
+        >
+
+        </app-plt-left-menu>
+      </div>
+      <div class="right">
+        <div class="title-as-tab">
+          <span>
+            PLTs
+          </span>
+        </div>
+        <div class="PLTs-content">
+          <app-plt-main-table
+            [tableInputs]="Inputs | pickKeys : tableInputs"
+            (onCheckAll)="checkAll($event)"
+            (onFilter)="filterPlts($event)"
+            (onPltClick)="toggleSelectPlts($event)"
+            (onSelectSinglePlt)="selectSinglePLT($event)"
+          ></app-plt-main-table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
   <p-footer>
     <div class="a-control-buttons">
-      <button class="a-button-text-cancel" (click)="cancelCreateExistingProject()" >CANCEL</button>
-      <ng-container *ngIf="stepSelectWorkspace && !stepSelectProject">
-        <button [ngClass]="{'a-buttons-contained-disabled' : !!!selectedWorkspace, 'a-buttons-contained': !!!!selectedWorkspace}"
-                [disabled]="!!!selectedWorkspace" (click)="getWorkspaceProjects(selectedWorkspace)">NEXT</button>
+      <button class="a-button-text-cancel" (click)="onHide()" >CANCEL</button>
+      <ng-container *ngIf="!browesing">
+        <button [ngClass]="{'a-buttons-contained-disabled' : !selectedWorkspace, 'a-buttons-contained': selectedWorkspace}"
+                [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">NEXT</button>
       </ng-container>
-      <ng-container *ngIf="!stepSelectWorkspace && stepSelectProject">
-        <button [ngClass]="{'a-buttons-contained-disabled' : !!!selectedProject, 'a-buttons-contained': !!!!selectedProject}"
-                [disabled]="!!!selectedProject" (click)="selectProjectNext()">SELECT</button>
+      <ng-container *ngIf="browesing">
+        <button [ngClass]="{'a-buttons-contained-disabled' : selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length == 0 : !selectedProject, 'a-buttons-contained': selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length > 0 : selectedProject}"
+                [disabled]="selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length == 0 : !selectedProject" (click)="setBrowesingItems()">SELECT</button>
       </ng-container>
     </div>
   </p-footer>
