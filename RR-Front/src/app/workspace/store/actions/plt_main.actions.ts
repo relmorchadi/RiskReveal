@@ -142,3 +142,8 @@ export class restorePlt {
   static readonly type = '[PLT Main] Restore Plt'
   constructor(public payload?: any) {}
 }
+
+export class setCloneConfig {
+  static readonly type = '[PLT Main] Clone Config';
+  constructor(public payload?: any) {}
+}

@@ -1,4 +1,6 @@
-<p-contextMenu #cm appendTo="body" [model]="tableInputs.contextMenuItems"></p-contextMenu>
+<ng-container *ngIf="tableInputs.contextMenuItems">
+  <p-contextMenu #cm appendTo="body" [model]="tableInputs.contextMenuItems"></p-contextMenu>
+</ng-container>
 <p-table
   [columns]="tableInputs.pltColumns"
   [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
@@ -65,7 +67,9 @@
       <ng-container *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col?.active">
           <td  *ngIf="col?.type == 'checkbox'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + 'px'}">
-            <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+            <div style="padding-left: 21px;">
+              <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+            </div>
           </td>
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + 'px'}">
             <div class="td-wrapper-tags">
