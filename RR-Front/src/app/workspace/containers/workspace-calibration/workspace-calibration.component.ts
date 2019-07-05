@@ -977,7 +977,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
-  filter(key: string, value) {
+  filter(key: string, value?:any) {
     if (key == 'project') {
       if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
         this.filterData = _.omit(this.filterData, [key]);
@@ -1171,7 +1171,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }));
   }
 
-  selectSinglePLT(pltId: number, $event: boolean) {
+  selectSinglePLT(pltId: number, $event?: boolean) {
     this.toggleSelectPlts({
       [pltId]: {
         type: $event
