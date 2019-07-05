@@ -1,15 +1,6 @@
 package com.scor.rr;
 
-import com.scor.rr.configuration.excel.util.ExcelUtil;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
-import com.scor.rr.domain.dto.adjustement.loss.PEATData;
-import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
-import com.scor.rr.service.adjustement.CalculAdjustement;
-import com.scor.rr.service.adjustement.PltFromCsv;
-
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MainApplication {
 

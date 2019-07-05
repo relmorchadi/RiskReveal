@@ -1,9 +1,9 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentNodeEntity;
+import com.scor.rr.domain.AdjustmentCategoryEntity;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.AdjustmentnodeRepository;
+import com.scor.rr.repository.AdjustmentCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,30 +15,29 @@ import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class AdjustmentnodeService {
+public class AdjustmentCategoryService {
+
     @Autowired
-    AdjustmentnodeRepository adjustmentnodeRepository;
+    AdjustmentCategoryRepository adjustmentCategoryRepository;
 
-    public AdjustmentNodeEntity findOne(Long id){
-        return adjustmentnodeRepository.getOne(id);
+    public List<AdjustmentCategoryEntity> findAll(){
+        return adjustmentCategoryRepository.findAll();
     }
 
-    public List<AdjustmentNodeEntity> findAll(){
-        return adjustmentnodeRepository.findAll();
+    public AdjustmentCategoryEntity findOne(Integer id){
+        return adjustmentCategoryRepository.getOne(id);
     }
 
-    public AdjustmentNodeEntity save(AdjustmentNodeEntity adjustmentnodeModel){
-        return adjustmentnodeRepository.save(adjustmentnodeModel);
-    }
-
-    public void delete(Long id) {
-        this.adjustmentnodeRepository.delete(
-                this.adjustmentnodeRepository.
+    public void delete(Integer id) {
+        this.adjustmentCategoryRepository.delete(
+                this.adjustmentCategoryRepository.
                         findById(id)
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
     }
+
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
         return () -> new RRException(codeName, httpStatus.value());
     }
+
 }

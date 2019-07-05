@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RRAnalysis-old", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "RRAnalysisold", schema = "dbo", catalog = "RiskReveal")
 public class RrAnalysisOldEntity {
     private String id;
     private Double analysisId;

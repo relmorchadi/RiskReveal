@@ -12,13 +12,17 @@ public class BinFileEntity {
     private String fqn;
 
     @Id
-    @Column(name = "BinFile_Id", nullable = false, precision = 0)
+    @Column(name = "binFile_Id", nullable = false)
     public int getBinFileId() {
         return binFileId;
     }
 
+    public void setBinFileId(int binFileId) {
+        this.binFileId = binFileId;
+    }
+
     @Basic
-    @Column(name = "fileName", nullable = true, length = 255)
+    @Column(name = "fileName", nullable = false, length = 255)
     public String getFileName() {
         return fileName;
     }
@@ -28,7 +32,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "path", nullable = true, length = 255)
+    @Column(name = "path", nullable = false, length = 255)
     public String getPath() {
         return path;
     }
@@ -38,7 +42,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "fqn", nullable = true, length = 255)
+    @Column(name = "fqn", nullable = false, length = 255)
     public String getFqn() {
         return fqn;
     }
@@ -47,20 +51,19 @@ public class BinFileEntity {
         this.fqn = fqn;
     }
 
-    public void setBinFileId(int binFileId) {
-        this.binFileId = binFileId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         BinFileEntity that = (BinFileEntity) o;
-        return binFileId == that.binFileId;
+        return binFileId == that.binFileId &&
+                Objects.equals(fileName, that.fileName) &&
+                Objects.equals(path, that.path) &&
+                Objects.equals(fqn, that.fqn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(binFileId);
+        return Objects.hash(binFileId, fileName, path, fqn);
     }
 }

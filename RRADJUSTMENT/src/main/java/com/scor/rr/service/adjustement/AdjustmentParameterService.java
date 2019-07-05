@@ -16,7 +16,7 @@ import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class AdjustmentparameterService {
+public class AdjustmentParameterService {
 
     @Autowired
     AdjustmentparameterRepository adjustmentparameterRepository;

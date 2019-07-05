@@ -1,15 +1,20 @@
 package com.scor.rr.service.adjustement;
 
+import com.scor.rr.configuration.file.BinaryPLTFileReader;
+import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -17,8 +22,8 @@ import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class AdjustmentnodeprocessingService {
-    private static final Logger log = LoggerFactory.getLogger(AdjustmentnodeprocessingService.class);
+public class AdjustmentNodeProcessingService {
+    private static final Logger log = LoggerFactory.getLogger(AdjustmentNodeProcessingService.class);
 
     @Autowired
     AdjustmentnodeprocessingRepository adjustmentnodeprocessingRepository;
@@ -28,13 +33,17 @@ public class AdjustmentnodeprocessingService {
     private ProjectViewRepository projectViewRepository;
 
     @Autowired
-    private ScorpltheaderRepository scorpltheaderRepository;
-
-    @Autowired
     private RranalysisRepository rranalysisRepository;
 
     @Autowired
     private TargetrapRepository targetrapRepository;
+
+
+    @Autowired
+    ScorpltheaderRepository scorpltheaderRepository;
+
+    @Autowired
+    AdjustmentnodeRepository adjustmentnodeRepository;
 
    public AdjustmentNodeProcessingEntity findOne(Integer id){
        return adjustmentnodeprocessingRepository.getOne(id);
@@ -44,8 +53,34 @@ public class AdjustmentnodeprocessingService {
         return adjustmentnodeprocessingRepository.findAll();
     }
 
-    public AdjustmentNodeProcessingEntity save(AdjustmentNodeProcessingEntity adjustmentnodeprocessingModel){
+    public AdjustmentNodeProcessingEntity save(AdjustmentNodeProcessingEntity adjustmentnodeprocessingModel,String scorPltHeaderId,long adjustmentNodeId){
+        ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.getOne(scorPltHeaderId);
+        AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.getOne(adjustmentNodeId);
+        adjustmentnodeprocessingModel.setScorPltHeaderByInputPltId(scorPltHeader);
+        adjustmentnodeprocessingModel.setAdjustmentNodeByAdjustmentNodeId(adjustmentNode);
+        List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(scorPltHeader);
+
        return adjustmentnodeprocessingRepository.save(adjustmentnodeprocessingModel);
+    }
+
+    public List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) {
+        File file = new File(scorPltHeaderEntity.getBinFile().getFileName());
+        if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+            CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+            try {
+                return csvpltFileReader.read(file);
+            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                e.printStackTrace();
+            }
+        } else {
+            BinaryPLTFileReader binpltFileReader = new BinaryPLTFileReader();
+            try {
+                return binpltFileReader.read(file);
+            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
     }
 
     public void delete(Integer id) {
@@ -66,12 +101,12 @@ public class AdjustmentnodeprocessingService {
         }
 
         String engineType = null;
-        if (purePLTHeader.getRrAnalysisId() != null) {
-            RrAnalysisEntity rrAnalysis = rranalysisRepository.findByAnalysisId(purePLTHeader.getRrAnalysisId());
+        if (purePLTHeader.getRrAnalysis() != null) {
+            RrAnalysisNewEntity rrAnalysis = purePLTHeader.getRrAnalysis();
             if (rrAnalysis != null) {
-                if ("ALM".equals(rrAnalysis.getModel()))
+                if ("ALM".equals(rrAnalysis.getEntityModule()))
                     engineType = "AGG";
-                else if ("DLM".equals(rrAnalysis.getModel()))
+                else if ("DLM".equals(rrAnalysis.getEntityModule()))
                     engineType = "DET";
             }
         }

@@ -122,6 +122,22 @@
     <mapping class="com.scor.rr.domain.CatRequestsEntity"/>
       <mapping class="com.scor.rr.domain.AdjustmentBasisEntity"/>
       <mapping class="com.scor.rr.domain.AdjustmentLibraryEntity"/>
+      <mapping class="com.scor.rr.AdjustmentNodeEntity"/>
+      <mapping class="com.scor.rr.domain.AdjustmentTypeEntity"/>
+      <mapping class="com.scor.rr.BinFileEntity"/>
+      <mapping class="com.scor.rr.ScorPltHeaderEntity"/>
+      <mapping class="com.scor.rr.ProjectEntity"/>
+      <mapping class="com.scor.rr.RrAnalysisNewEntity"/>
+      <mapping class="com.scor.rr.RegionPerilEntity"/>
+      <mapping class="com.scor.rr.domain.AdjustmentCategoryEntity"/>
+      <mapping class="com.scor.rr.domain.AdjustmentStateEntity"/>
+      <mapping class="com.scor.rr.domain.DefaultAdjustmentEntity"/>
+      <mapping class="com.scor.rr.domain.DefaultAdjustmentNodeEntity"/>
+      <mapping class="com.scor.rr.domain.DefaultAdjustmentThreadEntity"/>
+      <mapping class="com.scor.rr.domain.DefaultAdjustmentVersionEntity"/>
+      <mapping class="com.scor.rr.TargetRapEntity"/>
+      <mapping class="com.scor.rr.DefaultAdjustmentNodeEntity"/>
+      <mapping class="com.scor.rr.DefaultAdjustmentThreadEntity"/>
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 

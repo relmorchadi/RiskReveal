@@ -10,6 +10,15 @@
         <class>com.scor.rr.domain.AdjustmentParameterEntity</class>
         <class>com.scor.rr.domain.AdjustmentProcessingAuditEntity</class>
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
+        <class>com.scor.rr.domain.AdjustmentBasisEntity</class>
+        <class>com.scor.rr.domain.AdjustmentNodeEntity</class>
+        <class>com.scor.rr.domain.AdjustmentNodeProcessingEntity</class>
+        <class>com.scor.rr.domain.AdjustmentParameterEntity</class>
+        <class>com.scor.rr.domain.AdjustmentProcessingAuditEntity</class>
+        <class>com.scor.rr.domain.AdjustmentStructureEntity</class>
+        <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
+        <class>com.scor.rr.domain.BinFileEntity</class>
+        <class>com.scor.rr.domain.ScorPltHeaderEntity</class>
         <properties>
             <property name="hibernate.connection.url"
                       value="jdbc:jtds:sqlserver://DCVDEVSQL10:53713/RiskReveal;instance=SDGEN01"/>

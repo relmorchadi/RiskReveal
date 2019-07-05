@@ -62,6 +62,31 @@ public class RrAnalysisNewEntity {
     private String occurrenceBasisOverrideReason;
     private String occurenceBasisOverridenBy;
     private String metadata;
+    private String sourceModellingSystemInstance;
+    private String sourceModellingVendor;
+    private String sourceModellingSystem;
+    private String sourceModellingSystemVersion;
+    private String sourceLossModellingBasis;
+
+    @Basic
+    @Column(name = "model", nullable = true, length = 255)
+    public String getModel() {
+        return model;
+    }
+
+    public void setModel(String model) {
+        this.model = model;
+    }
+
+    @Basic
+    @Column(name = "modelModule", nullable = true, length = 255)
+    public String getModelModule() {
+        return modelModule;
+    }
+
+    public void setModelModule(String modelModule) {
+        this.modelModule = modelModule;
+    }
 
     @Id
     @Column(name = "rrAnalysisId", nullable = false)
@@ -667,5 +692,55 @@ public class RrAnalysisNewEntity {
     @Override
     public int hashCode() {
         return Objects.hash(rrAnalysisId, projectId, importedDate, creationDate, runDate, importStatus, sourceEntitylingSystemInstance, sourceEntitylingVendor, sourceEntitylingSystem, sourceEntitylingSystemVersion, dataSourceId, dataSourceName, fileName, analysisId, analysisName, grain, financialPerspective, treatyLabel, treatyTag, peril, geoCode, regionPeril, sourceCurrency, targetCurrency, targetCurrencyBasis, exchangeRate, defaultOccurrenceBasis, userOccurrenceBasis, proportion, proxyScalingBasis, proxyScalingNarrative, unitMultiplier, multiplierBasis, multiplierNarrative, profileKey, description, analysisLevel, lossAmplification, model, tags, useres, overrideReasonText, resultName, sourceLossEntitylingBasis, sourceLossTableType, eventSet, modelModule, sourceResultsReference, subPeril, region, profileName, occurrenceBasisOverrideReason, occurenceBasisOverridenBy, metadata);
+    }
+
+    @Basic
+    @Column(name = "sourceModellingSystemInstance", nullable = true, length = 255)
+    public String getSourceModellingSystemInstance() {
+        return sourceModellingSystemInstance;
+    }
+
+    public void setSourceModellingSystemInstance(String sourceModellingSystemInstance) {
+        this.sourceModellingSystemInstance = sourceModellingSystemInstance;
+    }
+
+    @Basic
+    @Column(name = "sourceModellingVendor", nullable = true, length = 255)
+    public String getSourceModellingVendor() {
+        return sourceModellingVendor;
+    }
+
+    public void setSourceModellingVendor(String sourceModellingVendor) {
+        this.sourceModellingVendor = sourceModellingVendor;
+    }
+
+    @Basic
+    @Column(name = "sourceModellingSystem", nullable = true, length = 255)
+    public String getSourceModellingSystem() {
+        return sourceModellingSystem;
+    }
+
+    public void setSourceModellingSystem(String sourceModellingSystem) {
+        this.sourceModellingSystem = sourceModellingSystem;
+    }
+
+    @Basic
+    @Column(name = "sourceModellingSystemVersion", nullable = true, length = 255)
+    public String getSourceModellingSystemVersion() {
+        return sourceModellingSystemVersion;
+    }
+
+    public void setSourceModellingSystemVersion(String sourceModellingSystemVersion) {
+        this.sourceModellingSystemVersion = sourceModellingSystemVersion;
+    }
+
+    @Basic
+    @Column(name = "sourceLossModellingBasis", nullable = true, length = 255)
+    public String getSourceLossModellingBasis() {
+        return sourceLossModellingBasis;
+    }
+
+    public void setSourceLossModellingBasis(String sourceLossModellingBasis) {
+        this.sourceLossModellingBasis = sourceLossModellingBasis;
     }
 }

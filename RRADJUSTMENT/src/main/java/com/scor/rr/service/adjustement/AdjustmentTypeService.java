@@ -1,9 +1,9 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentStructureEntity;
+import com.scor.rr.domain.AdjustmentTypeEntity;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.AdjustmentstructureRepository;
+import com.scor.rr.repository.AdjustmentTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -15,30 +15,27 @@ import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
-public class AdjustmentstructureService {
+public class AdjustmentTypeService {
 
     @Autowired
-    AdjustmentstructureRepository adjustmentstructureRepository;
+    AdjustmentTypeRepository adjustmentTypeRepository;
 
-    public AdjustmentStructureEntity findOne(Integer id){
-        return adjustmentstructureRepository.getOne(id);
+    public List<AdjustmentTypeEntity> findAll(){
+        return adjustmentTypeRepository.findAll();
     }
 
-    public List<AdjustmentStructureEntity> findAll(){
-        return adjustmentstructureRepository.findAll();
-    }
-
-    public AdjustmentStructureEntity save(AdjustmentStructureEntity adjustmentstructureModel){
-        return adjustmentstructureRepository.save(adjustmentstructureModel);
+    public AdjustmentTypeEntity findOne(Integer id){
+        return adjustmentTypeRepository.getOne(id);
     }
 
     public void delete(Integer id) {
-        this.adjustmentstructureRepository.delete(
-                this.adjustmentstructureRepository.
+        this.adjustmentTypeRepository.delete(
+                this.adjustmentTypeRepository.
                         findById(id)
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
     }
+
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
         return () -> new RRException(codeName, httpStatus.value());
     }

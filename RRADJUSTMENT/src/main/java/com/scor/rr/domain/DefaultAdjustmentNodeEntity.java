@@ -4,8 +4,8 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "AdjustmentNode", schema = "dbo", catalog = "RiskReveal")
-public class AdjustmentNodeEntity {
+@Table(name = "DefaultAdjustmentNode", schema = "dbo", catalog = "RiskReveal")
+public class DefaultAdjustmentNodeEntity {
     private int adjustmentNodeId;
     private String layer;
     private Integer sequence;
@@ -13,12 +13,11 @@ public class AdjustmentNodeEntity {
     private String adjustmentParamsSource;
     private String lossNetFlag;
     private Boolean hasNewParamsFile;
-    private AdjustmentThreadEntity adjustmentThread;
-    private AdjustmentBasisEntity adjustmentBasis;
-    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeEntityCloning;
-    private AdjustmentTypeEntity adjustmentType;
-    private AdjustmentCategoryEntity adjustmentCategory;
-    private AdjustmentStateEntity adjustmentState;
+    private AdjustmentBasisEntity adjustmentBasisByFkAdjustmentBasis;
+    private AdjustmentTypeEntity adjustmentTypeByAdjustmentType;
+    private AdjustmentCategoryEntity adjustmentCategoryByIdCategory;
+    private AdjustmentStateEntity adjustmentStateByIdState;
+    private DefaultAdjustmentThreadEntity defaultAdjustmentThreadByIdAdjustmentThread;
 
     @Id
     @Column(name = "adjustmentNodeId", nullable = false)
@@ -94,7 +93,7 @@ public class AdjustmentNodeEntity {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AdjustmentNodeEntity that = (AdjustmentNodeEntity) o;
+        DefaultAdjustmentNodeEntity that = (DefaultAdjustmentNodeEntity) o;
         return adjustmentNodeId == that.adjustmentNodeId &&
                 Objects.equals(layer, that.layer) &&
                 Objects.equals(sequence, that.sequence) &&
@@ -110,62 +109,52 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustmentThreadId", referencedColumnName = "adjustmentThreadId")
-    public AdjustmentThreadEntity getAdjustmentThread() {
-        return adjustmentThread;
-    }
-
-    public void setAdjustmentThread(AdjustmentThreadEntity adjustmentThread) {
-        this.adjustmentThread = adjustmentThread;
-    }
-
-    @ManyToOne
     @JoinColumn(name = "fk_adjustment_basis", referencedColumnName = "code")
-    public AdjustmentBasisEntity getAdjustmentBasis() {
-        return adjustmentBasis;
+    public AdjustmentBasisEntity getAdjustmentBasisByFkAdjustmentBasis() {
+        return adjustmentBasisByFkAdjustmentBasis;
     }
 
-    public void setAdjustmentBasis(AdjustmentBasisEntity adjustmentBasis) {
-        this.adjustmentBasis = adjustmentBasis;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "fk_adjustmentNodeEntityCloning", referencedColumnName = "adjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeEntityCloning() {
-        return adjustmentNodeByFkAdjustmentNodeEntityCloning;
-    }
-
-    public void setAdjustmentNodeByFkAdjustmentNodeEntityCloning(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeEntityCloning) {
-        this.adjustmentNodeByFkAdjustmentNodeEntityCloning = adjustmentNodeByFkAdjustmentNodeEntityCloning;
+    public void setAdjustmentBasisByFkAdjustmentBasis(AdjustmentBasisEntity adjustmentBasisByFkAdjustmentBasis) {
+        this.adjustmentBasisByFkAdjustmentBasis = adjustmentBasisByFkAdjustmentBasis;
     }
 
     @ManyToOne
     @JoinColumn(name = "adjustment_type", referencedColumnName = "id_type")
-    public AdjustmentTypeEntity getAdjustmentType() {
-        return adjustmentType;
+    public AdjustmentTypeEntity getAdjustmentTypeByAdjustmentType() {
+        return adjustmentTypeByAdjustmentType;
     }
 
-    public void setAdjustmentType(AdjustmentTypeEntity adjustmentType) {
-        this.adjustmentType = adjustmentType;
+    public void setAdjustmentTypeByAdjustmentType(AdjustmentTypeEntity adjustmentTypeByAdjustmentType) {
+        this.adjustmentTypeByAdjustmentType = adjustmentTypeByAdjustmentType;
     }
 
     @ManyToOne
     @JoinColumn(name = "id_category", referencedColumnName = "id_category")
-    public AdjustmentCategoryEntity getAdjustmentCategory() {
-        return adjustmentCategory;
+    public AdjustmentCategoryEntity getAdjustmentCategoryByIdCategory() {
+        return adjustmentCategoryByIdCategory;
     }
 
-    public void setAdjustmentCategory(AdjustmentCategoryEntity adjustmentCategory) {
-        this.adjustmentCategory = adjustmentCategory;
+    public void setAdjustmentCategoryByIdCategory(AdjustmentCategoryEntity adjustmentCategoryByIdCategory) {
+        this.adjustmentCategoryByIdCategory = adjustmentCategoryByIdCategory;
     }
 
     @ManyToOne
     @JoinColumn(name = "id_state", referencedColumnName = "id_state")
-    public AdjustmentStateEntity getAdjustmentState() {
-        return adjustmentState;
+    public AdjustmentStateEntity getAdjustmentStateByIdState() {
+        return adjustmentStateByIdState;
     }
 
-    public void setAdjustmentState(AdjustmentStateEntity adjustmentState) {
-        this.adjustmentState = adjustmentState;
+    public void setAdjustmentStateByIdState(AdjustmentStateEntity adjustmentStateByIdState) {
+        this.adjustmentStateByIdState = adjustmentStateByIdState;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_adjustment_thread", referencedColumnName = "id")
+    public DefaultAdjustmentThreadEntity getDefaultAdjustmentThreadByIdAdjustmentThread() {
+        return defaultAdjustmentThreadByIdAdjustmentThread;
+    }
+
+    public void setDefaultAdjustmentThreadByIdAdjustmentThread(DefaultAdjustmentThreadEntity defaultAdjustmentThreadByIdAdjustmentThread) {
+        this.defaultAdjustmentThreadByIdAdjustmentThread = defaultAdjustmentThreadByIdAdjustmentThread;
     }
 }

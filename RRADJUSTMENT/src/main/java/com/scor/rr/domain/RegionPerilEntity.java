@@ -20,6 +20,7 @@ public class RegionPerilEntity {
     private Boolean isMinimumGrainRegionPeril;
     private String parentMinimumGrainRegionPeril;
     private Boolean isActive;
+    private Boolean isModelled;
 
     @Id
     @Column(name = "regionPerilId", nullable = false)
@@ -185,5 +186,15 @@ public class RegionPerilEntity {
     @Override
     public int hashCode() {
         return Objects.hash(regionPerilId, regionPerilCode, regionPerilDesc, perilCode, regionPerilGroupCode, regionPerilGroupDesc, regionHierachy, regionDesc, isEntityled, hierachyParentCode, hierachyLevel, isMinimumGrainRegionPeril, parentMinimumGrainRegionPeril, isActive);
+    }
+
+    @Basic
+    @Column(name = "isModelled", nullable = true)
+    public Boolean getModelled() {
+        return isModelled;
+    }
+
+    public void setModelled(Boolean modelled) {
+        isModelled = modelled;
     }
 }

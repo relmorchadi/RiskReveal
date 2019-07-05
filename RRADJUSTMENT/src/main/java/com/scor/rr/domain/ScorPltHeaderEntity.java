@@ -9,15 +9,11 @@ import java.util.Objects;
 public class ScorPltHeaderEntity {
     private int scorPltHeaderId;
     private String pltType;
-    private Integer rrAnalysisId;
     private Integer targetRapId;
-    private Integer regionPerilId;
-    private Integer projectId;
     private Boolean publishToPricing;
     private String e;
     private Integer pltSimulationPeriods;
     private Boolean generatedFromDefaultAdjustement;
-    private Integer cloningSourceId;
     private String pltLossDataFilePath;
     private String pltLossDataFileName;
     private String ccyCode;
@@ -35,10 +31,17 @@ public class ScorPltHeaderEntity {
     private String truncationExchangeRate;
     private String truncationCurrency;
     private Integer inuringPackageId;
-    private String sourceLossEntityingBasis;
+    private String sourceLossModelingBasis;
     private Timestamp deletedOn;
     private String deletedDue;
     private String deletedBy;
+    private String sourceLossEntityingBasis;
+    private RrAnalysisNewEntity rrAnalysisNewByRrAnalysisId;
+    private RegionPerilEntity regionPerilByRegionPerilId;
+    private ProjectEntity projectByProjectId;
+    private ScorPltHeaderEntity scorPltHeaderByCloningSourceId;
+    private BinFileEntity binFile;
+    private TargetRapEntity targetRapByTargetRapId;
 
     @Id
     @Column(name = "scorPLTHeaderId", nullable = false)
@@ -61,16 +64,6 @@ public class ScorPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "rrAnalysisId", nullable = true)
-    public Integer getRrAnalysisId() {
-        return rrAnalysisId;
-    }
-
-    public void setRrAnalysisId(Integer rrAnalysisId) {
-        this.rrAnalysisId = rrAnalysisId;
-    }
-
-    @Basic
     @Column(name = "targetRapId", nullable = true)
     public Integer getTargetRapId() {
         return targetRapId;
@@ -78,26 +71,6 @@ public class ScorPltHeaderEntity {
 
     public void setTargetRapId(Integer targetRapId) {
         this.targetRapId = targetRapId;
-    }
-
-    @Basic
-    @Column(name = "regionPerilId", nullable = true)
-    public Integer getRegionPerilId() {
-        return regionPerilId;
-    }
-
-    public void setRegionPerilId(Integer regionPerilId) {
-        this.regionPerilId = regionPerilId;
-    }
-
-    @Basic
-    @Column(name = "projectId", nullable = true)
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
     }
 
     @Basic
@@ -138,16 +111,6 @@ public class ScorPltHeaderEntity {
 
     public void setGeneratedFromDefaultAdjustement(Boolean generatedFromDefaultAdjustement) {
         this.generatedFromDefaultAdjustement = generatedFromDefaultAdjustement;
-    }
-
-    @Basic
-    @Column(name = "cloningSourceId", nullable = true)
-    public Integer getCloningSourceId() {
-        return cloningSourceId;
-    }
-
-    public void setCloningSourceId(Integer cloningSourceId) {
-        this.cloningSourceId = cloningSourceId;
     }
 
     @Basic
@@ -321,13 +284,13 @@ public class ScorPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "sourceLossEntityingBasis", nullable = true, length = 255)
-    public String getSourceLossEntityingBasis() {
-        return sourceLossEntityingBasis;
+    @Column(name = "sourceLossModelingBasis", nullable = true, length = 255)
+    public String getSourceLossModelingBasis() {
+        return sourceLossModelingBasis;
     }
 
-    public void setSourceLossEntityingBasis(String sourceLossEntityingBasis) {
-        this.sourceLossEntityingBasis = sourceLossEntityingBasis;
+    public void setSourceLossModelingBasis(String sourceLossModelingBasis) {
+        this.sourceLossModelingBasis = sourceLossModelingBasis;
     }
 
     @Basic
@@ -360,6 +323,16 @@ public class ScorPltHeaderEntity {
         this.deletedBy = deletedBy;
     }
 
+    @Basic
+    @Column(name = "sourceLossEntityingBasis", nullable = true, length = 255)
+    public String getSourceLossEntityingBasis() {
+        return sourceLossEntityingBasis;
+    }
+
+    public void setSourceLossEntityingBasis(String sourceLossEntityingBasis) {
+        this.sourceLossEntityingBasis = sourceLossEntityingBasis;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -367,15 +340,11 @@ public class ScorPltHeaderEntity {
         ScorPltHeaderEntity that = (ScorPltHeaderEntity) o;
         return scorPltHeaderId == that.scorPltHeaderId &&
                 Objects.equals(pltType, that.pltType) &&
-                Objects.equals(rrAnalysisId, that.rrAnalysisId) &&
                 Objects.equals(targetRapId, that.targetRapId) &&
-                Objects.equals(regionPerilId, that.regionPerilId) &&
-                Objects.equals(projectId, that.projectId) &&
                 Objects.equals(publishToPricing, that.publishToPricing) &&
                 Objects.equals(e, that.e) &&
                 Objects.equals(pltSimulationPeriods, that.pltSimulationPeriods) &&
                 Objects.equals(generatedFromDefaultAdjustement, that.generatedFromDefaultAdjustement) &&
-                Objects.equals(cloningSourceId, that.cloningSourceId) &&
                 Objects.equals(pltLossDataFilePath, that.pltLossDataFilePath) &&
                 Objects.equals(pltLossDataFileName, that.pltLossDataFileName) &&
                 Objects.equals(ccyCode, that.ccyCode) &&
@@ -393,14 +362,75 @@ public class ScorPltHeaderEntity {
                 Objects.equals(truncationExchangeRate, that.truncationExchangeRate) &&
                 Objects.equals(truncationCurrency, that.truncationCurrency) &&
                 Objects.equals(inuringPackageId, that.inuringPackageId) &&
-                Objects.equals(sourceLossEntityingBasis, that.sourceLossEntityingBasis) &&
+                Objects.equals(sourceLossModelingBasis, that.sourceLossModelingBasis) &&
                 Objects.equals(deletedOn, that.deletedOn) &&
                 Objects.equals(deletedDue, that.deletedDue) &&
-                Objects.equals(deletedBy, that.deletedBy);
+                Objects.equals(deletedBy, that.deletedBy) &&
+                Objects.equals(sourceLossEntityingBasis, that.sourceLossEntityingBasis);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scorPltHeaderId, pltType, rrAnalysisId, targetRapId, regionPerilId, projectId, publishToPricing, e, pltSimulationPeriods, generatedFromDefaultAdjustement, cloningSourceId, pltLossDataFilePath, pltLossDataFileName, ccyCode, createdDate, perilCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, inuringPackageId, sourceLossEntityingBasis, deletedOn, deletedDue, deletedBy);
+        return Objects.hash(scorPltHeaderId, pltType, targetRapId, publishToPricing, e, pltSimulationPeriods, generatedFromDefaultAdjustement, pltLossDataFilePath, pltLossDataFileName, ccyCode, createdDate, perilCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, inuringPackageId, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "rrAnalysisId", referencedColumnName = "rrAnalysisId")
+    public RrAnalysisNewEntity getRrAnalysis() {
+        return rrAnalysisNewByRrAnalysisId;
+    }
+
+    public void setRrAnalysis(RrAnalysisNewEntity rrAnalysisNewByRrAnalysisId) {
+        this.rrAnalysisNewByRrAnalysisId = rrAnalysisNewByRrAnalysisId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "regionPerilId", referencedColumnName = "regionPerilId")
+    public RegionPerilEntity getRegionPerilByRegionPerilId() {
+        return regionPerilByRegionPerilId;
+    }
+
+    public void setRegionPerilByRegionPerilId(RegionPerilEntity regionPerilByRegionPerilId) {
+        this.regionPerilByRegionPerilId = regionPerilByRegionPerilId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "projectId", referencedColumnName = "projectId")
+    public ProjectEntity getProjectByProjectId() {
+        return projectByProjectId;
+    }
+
+    public void setProjectByProjectId(ProjectEntity projectByProjectId) {
+        this.projectByProjectId = projectByProjectId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "cloningSourceId", referencedColumnName = "scorPLTHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByCloningSourceId() {
+        return scorPltHeaderByCloningSourceId;
+    }
+
+    public void setScorPltHeaderByCloningSourceId(ScorPltHeaderEntity scorPltHeaderByCloningSourceId) {
+        this.scorPltHeaderByCloningSourceId = scorPltHeaderByCloningSourceId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "fk_id_bin_file", referencedColumnName = "binFile_Id")
+    public BinFileEntity getBinFile() {
+        return binFile;
+    }
+
+    public void setBinFile(BinFileEntity binFile) {
+        this.binFile = binFile;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "targetRapId", referencedColumnName = "targetRapId")
+    public TargetRapEntity getTargetRapByTargetRapId() {
+        return targetRapByTargetRapId;
+    }
+
+    public void setTargetRapByTargetRapId(TargetRapEntity targetRapByTargetRapId) {
+        this.targetRapByTargetRapId = targetRapByTargetRapId;
     }
 }

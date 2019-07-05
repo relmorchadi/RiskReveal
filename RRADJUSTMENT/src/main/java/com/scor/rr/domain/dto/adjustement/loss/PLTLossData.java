@@ -1,12 +1,5 @@
 package com.scor.rr.domain.dto.adjustement.loss;
 
-import com.google.common.base.Objects;
-import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.joda.time.DateTimeZone;
-import org.joda.time.LocalDateTime;
-
-import java.io.Serializable;
-import java.util.Date;
 
 public class PLTLossData {
 

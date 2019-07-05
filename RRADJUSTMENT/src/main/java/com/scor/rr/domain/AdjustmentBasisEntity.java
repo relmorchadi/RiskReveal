@@ -63,7 +63,7 @@ public class AdjustmentBasisEntity {
     }
 
     public void setExposureFlag(String exposureFlag) {
-        this.exposureFlag= exposureFlag;
+        this.exposureFlag = exposureFlag;
     }
 
     @Basic

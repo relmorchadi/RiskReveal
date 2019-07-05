@@ -19,6 +19,36 @@ public class TargetRapEntity {
     private Boolean isScorDefault;
     private Boolean isActive;
 
+    @Basic
+    @Column(name = "modellingVendor", nullable = true, length = 255)
+    public String getModellingVendor() {
+        return modellingVendor;
+    }
+
+    public void setModellingVendor(String modellingVendor) {
+        this.modellingVendor = modellingVendor;
+    }
+
+    @Basic
+    @Column(name = "modellingSystem", nullable = true, length = 255)
+    public String getModellingSystem() {
+        return modellingSystem;
+    }
+
+    public void setModellingSystem(String modellingSystem) {
+        this.modellingSystem = modellingSystem;
+    }
+
+    @Basic
+    @Column(name = "modellingSystemVersion", nullable = true, length = 255)
+    public String getModellingSystemVersion() {
+        return modellingSystemVersion;
+    }
+
+    public void setModellingSystemVersion(String modellingSystemVersion) {
+        this.modellingSystemVersion = modellingSystemVersion;
+    }
+
     @Id
     @Column(name = "targetRapId", nullable = false)
     public int getTargetRapId() {
