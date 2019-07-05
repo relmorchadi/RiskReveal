@@ -1,11 +1,9 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
-import {debounceTime, filter, map, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import { Store} from '@ngxs/store';
 import { MessageService} from 'primeng/api';
 import {combineLatest, of} from 'rxjs';
 import {WorkspaceMainState} from '../../../core/store/states';
-import {NavigationTransition} from '@angular/router/src/router';
 import * as _ from 'lodash'
 import {PltMainState} from '../../store/states';
 import * as fromWS from '../../store'
@@ -96,7 +94,35 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
       wsId: ''
     };
     this.cloneConfig= {
-      currentSourceOfItems: 'to'
+      currentSourceOfItems: 'to',
+      summary: {
+        'Pre-Inured PLTs': {
+          'icon': 'icon-assignment_24px',
+          'color': '#c38fff',
+          'value': 0
+        },
+        'Post-Inured PLTs': {
+          'icon': 'fa fa-code-fork',
+          'color': '#c38fff',
+          'value': 0
+        },
+        'Inuring Packages': {
+          'icon': 'icon-layer-group',
+          'color': '#f5a623',
+          'value': 0
+        },
+        'Sources Projects': {
+          'icon': 'icon-assignment_24px',
+          'color': '#33d0bb',
+          'value': 0
+        }
+      }
+    };
+    this.multiSteps= true;
+    this.stepConfig= {
+      wsId: '',
+      uwYear: '',
+      plts: []
     }
   }
 
@@ -120,8 +146,15 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   subs: any[]= [];
 
   cloneConfig: {
-    currentSourceOfItems: string
+    currentSourceOfItems: string,
+    summary: any;
   }
+  multiSteps: boolean;
+  stepConfig: {
+    wsId: string,
+    uwYear: string,
+    plts: any[]
+  };
 
   ngOnInit() {
     this.subs.push(
@@ -201,8 +234,14 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
     }
   }
 
-  setSelectedWs($event: any) {
-
+  setSelectedWs(currentSourceOfItems: string,$event: any) {
+    console.log(currentSourceOfItems, $event);
+    if(currentSourceOfItems == 'from') {
+      this.from = {...this.from, wsId: $event.workSpaceId, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
+    }
+    if(currentSourceOfItems == 'to') {
+      this.to = {...this.to, wsId: $event.workSpaceId, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
+    }
   }
 
   swapCloneItems() {
@@ -212,16 +251,18 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   }
 
   setSelectedPlts(currentSourceOfItems: string, $event: any) {
-    if(this.getCloneConfig('currentSourceOfItems') == 'from') {
+    console.log(currentSourceOfItems, $event)
+    if(currentSourceOfItems == 'from') {
       this.from = {...this.from, plts: $event}
     }
-    if(this.getCloneConfig('currentSourceOfItems') == 'to') {
+    if(currentSourceOfItems == 'to') {
       this.to = {...this.to, plts: $event}
     }
   }
 
   openSearchPopUp(destination: string = 'from') {
-    this.searchWorkSpaceModal=true;
+    this.multiSteps= destination == 'from';
+    this.searchWorkSpaceModal= true;
     this.setCloneConfig('currentSourceOfItems', destination);
   }
 
@@ -236,5 +277,15 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store$.dispatch(new fromWS.setCloneConfig({}));
     _.each(this.subs, e => e && e.unsubscribe());
+  }
+
+  editPlts() {
+    this.stepConfig = {
+      wsId: this.from.wsId,
+      uwYear: this.from.uwYear,
+      plts: this.from.plts
+    };
+    this.multiSteps= true;
+    this.openSearchPopUp();
   }
 }
