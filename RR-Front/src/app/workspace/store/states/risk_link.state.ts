@@ -668,7 +668,7 @@ export class RiskLinkState implements NgxsOnInit {
     const state = ctx.getState();
     const listDataToArray = _.toArray(state.listEdmRdm.data);
     const listSelected = {edm: {}, rdm: {}};
-    _.forEach( listDataToArray, dt => {
+    _.forEach(listDataToArray, dt => {
       if (dt.selected && dt.type === 'edm') {
         console.log(state.portfolios, state.analysis);
         listSelected.edm = _.merge(listSelected.edm, {
@@ -689,70 +689,93 @@ export class RiskLinkState implements NgxsOnInit {
       }
     });
 
-    forkJoin(
-      ...listDataToArray.filter( e => e.source === 'link').map( dt => {
-        const searchTerm = dt.name.substr(0, dt.name.lastIndexOf('_'));
-        if (dt.name.length - searchTerm.length < 5) {
-          return of([this.riskApi.searchRiskLinkData(searchTerm, '20'), searchTerm]);
-        }
-        return of(null);
-      })
-    ).subscribe( data => {
-      console.log(data);
-      data.map(
-        dt => {
-          if ( dt !== null) {
-            dt[0].subscribe(
-              ks => {
-                ks.content.forEach( ws => {
-                  const trim = ws.name.substr(0, ws.name.lastIndexOf('_'));
-                  if (trim === dt[1]) {
-                    if (ws.type !== dt.type) {
-                      if (ws.type === 'edm') {
-                        _.merge(listSelected.edm, {
-                          [ws.id]: {
-                            ...ws,
-                            scanned: true,
-                            selected: false
-                          }
-                        });
-                      } else {
-                        _.merge(listSelected.rdm, {
-                          [ws.id]: {
-                            ...ws,
-                            scanned: true,
-                            selected: false
-                          }
-                        });
+    const filteredArray = listDataToArray.filter(e => e.source === 'link');
+    let count = 0;
+    if (filteredArray.length > 0) {
+      forkJoin(
+        filteredArray.map(dt => {
+          const searchTerm = dt.name.substr(0, dt.name.lastIndexOf('_'));
+          if (dt.name.length - searchTerm.length < 5) {
+            return of([this.riskApi.searchRiskLinkData(searchTerm, '20'), searchTerm]);
+          }
+          return of(null);
+        })
+      ).subscribe(data => {
+        data.forEach(dt => {
+            count = count + 1;
+            if (dt !== null) {
+              dt[0].subscribe(
+                ks => {
+                  ks.content.forEach(ws => {
+                    const trim = ws.name.substr(0, ws.name.lastIndexOf('_'));
+                    if (trim === dt[1]) {
+                      if (ws.type !== dt.type) {
+                        if (ws.type === 'edm') {
+                          listSelected.edm = _.merge({}, listSelected.edm, {
+                            [ws.id]: {
+                              ...ws,
+                              scanned: true,
+                              selected: false
+                            }
+                          });
+                        } else {
+                          listSelected.rdm = _.merge({}, listSelected.rdm, {
+                            [ws.id]: {
+                              ...ws,
+                              scanned: true,
+                              selected: false
+                            }
+                          });
+                        }
                       }
                     }
+                  });
+                  if (count === data.length) {
+                    ctx.patchState({
+                      listEdmRdm: {
+                        ...state.listEdmRdm,
+                        selectedListEDMAndRDM: {
+                          edm: listSelected.edm,
+                          rdm: listSelected.rdm
+                        }
+                      },
+                      linking: {
+                        ...state.linking,
+                        edm: listSelected.edm,
+                        rdm: listSelected.rdm
+                      }
+                    });
+                    ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+                    ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.toArray(listSelected.rdm)));
+                    ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.toArray(listSelected.edm)));
                   }
-                });
-                ctx.patchState({
-                  listEdmRdm: {
-                    ...state.listEdmRdm,
-                    selectedListEDMAndRDM: {
-                      edm: listSelected.edm,
-                      rdm: listSelected.rdm
-                    }
-                  },
-                  linking: {
-                    ...state.linking,
-                    edm: listSelected.edm,
-                    rdm: listSelected.rdm
-                  }
-                });
-                ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-                ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, rt => rt.type === 'rdm' && rt.selected)));
-                ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, et => et.type === 'edm' && et.selected)));
-              }
-            );
-
+                }
+              );
+            }
           }
-        }
-      );
+        );
 
-    });
+      });
+    } else {
+      ctx.patchState({
+        listEdmRdm: {
+          ...state.listEdmRdm,
+          selectedListEDMAndRDM: {
+            edm: listSelected.edm,
+            rdm: listSelected.rdm
+          }
+        },
+        linking: {
+          ...state.linking,
+          edm: listSelected.edm,
+          rdm: listSelected.rdm
+        }
+      });
+      ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+      ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, rt => rt.type === 'rdm' && rt.selected)));
+      ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, et => et.type === 'edm' && et.selected)));
+    }
+
 
   }
 

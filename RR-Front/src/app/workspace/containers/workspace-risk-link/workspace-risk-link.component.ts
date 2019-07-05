@@ -213,11 +213,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   selectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll'}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll', source: 'solo'}));
   }
 
   unselectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll', source: 'solo'}));
   }
 
   refreshAll() {

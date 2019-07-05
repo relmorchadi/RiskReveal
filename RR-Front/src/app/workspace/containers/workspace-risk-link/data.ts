@@ -95,11 +95,12 @@ const scrollableColsLinking = [
 
 const colsFinancialAnalysis = [
   {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'name&desc', header: 'Name & Description', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'regionPeril', header: 'Region Peril', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'ty', header: 'TY', width: '70px', type: 'icon', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'financialPerspective', header: 'Financial Perspective', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'id', header: 'ID', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'name&desc', header: 'Name & Description', width: '300px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'regionPeril', header: 'Region Peril', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'ty', header: 'TY', width: '70px', type: 'icon-indicator', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'financialPerspective', header: 'Financial Perspective', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'manager', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false, visible: true},
 ];
 
 const colsFinancialStandard = [
@@ -112,6 +113,7 @@ const colsFinancialStandard = [
   {field: 'firstTarget', header: 'OEP 100', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'secondTarget', header: 'OEP 200', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'thirdTarget', header: 'OEP 250', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'manager', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false, visible: true},
 ];
 
 const financialStandarContent = [
