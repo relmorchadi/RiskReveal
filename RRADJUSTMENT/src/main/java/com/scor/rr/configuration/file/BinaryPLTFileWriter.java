@@ -7,7 +7,6 @@ import com.scor.rr.exceptions.fileExceptionPlt.PLTFileExtNotSupportedException;
 import com.scor.rr.exceptions.fileExceptionPlt.PLTFileWriteException;
 import com.scor.rr.exceptions.fileExceptionPlt.RRException;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
 
@@ -67,15 +66,13 @@ public class BinaryPLTFileWriter implements PLTFileWriter {
             return false;
         final DirectBuffer dbb = (DirectBuffer)buffer;
         return AccessController.doPrivileged(
-                new PrivilegedAction<Object>() {
-                    public Object run() {
-                        try {
-                            Cleaner cleaner = dbb.cleaner();
-                            if (cleaner != null) cleaner.clean();
-                            return null;
-                        } catch (Exception e) {
-                            return dbb;
-                        }
+                (PrivilegedAction<Object>) () -> {
+                    try {
+                        Cleaner cleaner = dbb.cleaner();
+                        if (cleaner != null) cleaner.clean();
+                        return null;
+                    } catch (Exception e) {
+                        return dbb;
                     }
                 }
         ) == null;
