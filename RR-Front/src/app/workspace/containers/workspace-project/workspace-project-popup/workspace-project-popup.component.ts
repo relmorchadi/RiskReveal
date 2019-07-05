@@ -12,6 +12,8 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {debounceTime, takeUntil} from 'rxjs/operators';
 import * as fromWorkspaceStore from '../../../store';
 import {PltMainState} from '../../../store';
+import {el} from "@angular/platform-browser/testing/src/browser_util";
+import {NzMessageService} from "ng-zorro-antd";
 
 @Component({
   selector: 'app-workspace-project-popup',
@@ -179,7 +181,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private searchService: SearchService,
     private fb: FormBuilder,
-    private messageService: MessageService
   ) {
     this.Inputs= {
       filterInput: '',
@@ -362,14 +363,16 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this.setInputs('wsId', workspace.workSpaceId);
     this.setInputs('uwYear', workspace.uwYear);
     this.onSelectWorkspace.emit(workspace);
+    this.browesing= false;
     if(this.selectionStep == 'project') {
       this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
-          this.selectedWorkspaceProjects = data.projects;
+        console.log('This is projects', data.projects);
+        this.selectedWorkspaceProjects = data.projects;
           if (!data.projects.length) {
             this.browesing = false;
-            this.notificationService.createNotification('Information',
-              'This workspace contains no project',
-              'error', 'topRight', 4000);
+            alert('This workspace contains no project');
+          }else {
+            this.browesing=true;
           }
           this.detectChanges();
         }
@@ -511,22 +514,23 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
             :
             this.getInputs('selectedListOfDeletedPlts').length < this.getInputs('listOfDeletedPlts').length && this.getInputs('selectedListOfDeletedPlts').length > 0
       );
+        this.browesing=true;
         this.detectChanges();
-      })
+      });
 
       this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
         this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+        this.browesing=true;
         this.detectChanges();
-      })
+      });
 
       this.pltUserTagsSubscription = this.store$.select(PltMainState.getUserTags).subscribe(userTags => {
         this.setInputs('userTags', userTags || {});
-        console.log(this.getInputs('userTags'))
+        this.browesing=true;
+        console.log(this.getInputs('userTags'));
         this.detectChanges();
       })
     }
-
-    this.browesing= true;
   }
 
   setBrowesingItems() {
@@ -645,5 +649,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     if (!this.cdRef['destroyed'])
       this.cdRef.detectChanges();
   }
+
+  clear() {
+    // this.messageService.clear();
+  }
+
 
 }
