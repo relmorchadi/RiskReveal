@@ -64,6 +64,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   failedCheckbox: boolean = true;
   requiresRegenerationCheckbox: boolean = true;
   collapsedTags: boolean = false;
+  filterInput: string = "";
+  addRemoveModal: boolean = false;
   isVisible = false;
   singleValue: any;
   dragPlaceHolderId: any;
@@ -93,6 +95,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   inputValueArray = [];
   columnPositionArray = [];
   linear: boolean = false;
+  dropdownVisible = false;
   workspaceId: string;
   uwy: number;
   projects: any[];
@@ -109,6 +112,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'checkbox',
       header: '',
       width: '43',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: null,
@@ -122,6 +126,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'userTags',
       header: 'User Tags',
       width: '80',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: null,
@@ -135,6 +140,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'pltId',
       header: 'PLT ID',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -148,6 +154,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'pltName',
       header: 'PLT Name',
       width: '150',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -161,6 +168,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'peril',
       header: 'Peril',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -174,6 +182,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'regionPerilCode',
       header: 'Region Peril Code',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -187,6 +196,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'regionPerilName',
       header: 'Region Peril Name',
       width: '130',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -200,6 +210,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'grain',
       header: 'Grain',
       width: '160',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -213,6 +224,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'vendorSystem',
       header: 'Vendor System',
       width: '90',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -226,6 +238,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'rap',
       header: 'RAP',
       width: '70',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -239,6 +252,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'action',
       header: '',
       width: '25',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: 'icon-focus-add',
@@ -252,6 +266,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'action',
       header: '',
       width: '25',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: 'icon-note',
@@ -344,6 +359,93 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       extended: true,
       frozen: false
     },
+  ];
+  popUpPltColumns = [
+    {
+      width: '60',
+      filtred: false,
+      icon: null,
+      type: 'checkbox', active: true
+    },
+    {
+      fields: 'pltId',
+      header: 'PLT ID',
+      width: '80',
+      sorted: false,
+      filtred: true,
+      icon: null,
+      type: 'id',
+      active: true
+    },
+    {
+      fields: 'pltName',
+      header: 'PLT Name',
+      width: '160',
+      sorted: false,
+      filtred: true,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      fields: 'peril',
+      header: 'Peril',
+      width: '40',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      textAlign: 'center', active: true
+    },
+    {
+      fields: 'regionPerilCode',
+      header: 'Region Peril Code',
+      width: '70',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      fields: 'regionPerilName',
+      header: 'Region Peril Name',
+      width: '160',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'grain',
+      header: 'Grain',
+      width: '90',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'vendorSystem',
+      header: 'Vendor System',
+      width: '90',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'rap',
+      header: 'RAP',
+      width: '52',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      active: true
+    }
   ];
   epMetricsCurrencySelected: any = 'EUR';
   CalibrationImpactCurrencySelected: any = 'EUR';
@@ -875,7 +977,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
-  filter(key: string, value) {
+  filter(key: string, value?:any) {
     if (key == 'project') {
       if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
         this.filterData = _.omit(this.filterData, [key]);
@@ -1069,7 +1171,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }));
   }
 
-  selectSinglePLT(pltId: number, $event: boolean) {
+  selectSinglePLT(pltId: number, $event?: boolean) {
     this.toggleSelectPlts({
       [pltId]: {
         type: $event
@@ -1278,6 +1380,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   clickButtonPlus(bool, data?: any) {
+    console.log("here");
     this.modalTitle = "Add New Adjustment";
     this.modifyModal = false;
     this.categorySelectedFromAdjustement = null;
@@ -1710,7 +1813,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     switch (status) {
       case 'in progress':
         return this.inProgressCheckbox;
-      case 'checked':
+      case 'valid':
         return this.checkedCheckbox;
       case 'locked':
         return this.lockedCheckbox;
@@ -1719,5 +1822,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       case 'requires regeneration':
         return this.requiresRegenerationCheckbox
     }
+  }
+
+  onLeaveAdjustment(id) {
+    this.shownDropDown = this.dropdownVisible ? id : null;
+    // this.dropdownVisible = this.shownDropDown == id && this.dropdownVisible;
+
   }
 }

@@ -1,77 +1,78 @@
 <p-dialog [(visible)]="isVisible"
-          [modal]="true"
           [closable]="false"
-          [contentStyle]="{'width':'100%'}"
-          [style]="{width: '96%'}"
-          (onHide)="cancelCreateExistingProject()"
-          (onShow)="show()"
+          [styleClass]="'m-dialog-modal-lg' + (browesing ? ' borderless' : '')"
+          appendTo="body"
+          [modal]="true"
+          [responsive]="true"
+          [baseZIndex]="1"
+          [autoZIndex]="false"
+          (onHide)="onHide()"
+          (onShow)="onShow()"
 >
 
   <p-header>
-    <div class="row">
-      <div class="col-3 mt-2">
-        <span>
-        <i *ngIf="!stepSelectWorkspace && stepSelectProject" (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left" nzTheme="outline"></i>
-        <span style="margin-left: 10px">Search For Workspace</span>
-        </span>
-      </div>
-      <div class="col-7 style-wrap" [formGroup]="keywordFormGroup">
-
-        <nz-input-group style="z-index: 1001"
-                        class="global-search-input-grp"
-                        [ngClass]="{'global-search-input-grp-active': 1===1}"
-                        [nzSuffix]="suffixIconSearch"
-                        [nzAddOnBefore]="prefixIconTag">
-          <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
-                 (onEnter)="onEnter()"
-                 #searchInput
-                 formControlName="keyword"  (click)="search()"
-                 class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
-        </nz-input-group>
-
-        <ng-template #prefixIconTag>
-          <div class="prefix-wrapper">
-            <button class="code-button" nz-popover
-                     nzPlacement="bottomLeft" nzTrigger="click">
+    <div class="header">
+      <ng-container *ngIf="browesing">
+          <div class="previous-container">
+            <button class="a-buttons-contained override">
+              <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
             </button>
+            <h4>
+              {{ selectionStep =='plt' ? 'Browese For Cloning' : 'Search For Project' }}
+            </h4>
           </div>
-        </ng-template>
+      </ng-container>
 
-        <ng-template #suffixIconSearch>
-          <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
-             nzTheme="outline"></i>
-          <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
-             class="icon-search_24px icon-hold"></i>
-        </ng-template>
+      <ng-container *ngIf="!browesing">
+        <h4 >
+          Select Workspace
+        </h4>
 
+        <div [formGroup]="keywordFormGroup">
 
-      </div>
-      <div class="col-2">
-        <span (click)="cancelCreateExistingProject()" style="float: right; cursor: pointer;">&#10006;</span>
-      </div>
+          <nz-input-group style="z-index: 1001"
+                          class="global-search-input-grp"
+                          [ngClass]="{'global-search-input-grp-active': 1===1}"
+                          [nzSuffix]="suffixIconSearch">
+            <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
+                   (onEnter)="onEnter()"
+                   #searchInput
+                   formControlName="keyword"  (click)="search()"
+                   class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
+          </nz-input-group>
+
+          <ng-template #suffixIconSearch>
+            <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
+               nzTheme="outline"></i>
+            <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
+               class="icon-search_24px"></i>
+          </ng-template>
+
+        </div>
+      </ng-container>
+      <i (click)="isVisible=false" style="cursor: pointer" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <ng-container *ngIf="stepSelectWorkspace && !stepSelectProject">
+
+  <ng-container *ngIf="!browesing">
     <div style="height:600px;">
 
-      <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
+      <app-table [tableColumn]="selectWsTable" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
                  [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
                  [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
                  (filterData)="filterData($event.searchValue, $event.searchAddress)"
-                 (dbClickItem)="getWorkspaceProjects(selectedWorkspace)"
-                 [tableHeight]="'480px'"
-                 (onRowSelect)="onRowSelect($event)"
+                 (dbClickItem)="onRowSelect('db',$event);getBrowesingItems($event)"
+                 (onRowSelect)="onRowSelect('',$event)"
                  (onRowUnselect)="onRowUnselect($event)"
                  [selectionMode]="'single'"
-                 [activateContextMenu]="false"
                  [loading]="loading">
       </app-table>
 
     </div>
   </ng-container>
 
-  <ng-container *ngIf="!stepSelectWorkspace && stepSelectProject">
-    <div style="height:600px; overflow:auto;">
+  <ng-container *ngIf="browesing && selectionStep == 'project'">
+    <div class="content" style="flex-wrap: wrap !important;">
       <div style="display: inline-block; padding: 20px;" *ngFor="let project of selectedWorkspaceProjects; let i = index" class="card-holder">
         <div class="project-card mx-1" (click)="selectThisProject(project)"
              [ngStyle]="{'border': project?.projectId == selectedProject?.projectId ? '2px solid #06B8FF' : '2px solid transparent'}">
@@ -146,56 +147,91 @@
       </div></div>
   </ng-container>
 
+  <ng-container *ngIf="browesing && selectionStep == 'plt'">
+    <div class="content">
+      <div class="left">
+        <app-plt-left-menu
+          [menuInputs]="Inputs | pickKeys : menuInputs"
+          (onSetSelectedUserTags)="setUserTags($event)"
+          (onSetFilters)="setFilters($event)"
+          (emitFilters)="emitFilters($event)"
+          (onProjectFilter)="filterPlts($event)"
+          (onWsHeaderSelection)="setWsHeaderSelect($event)"
+          (onSelectProjects)="setSelectedProjects($event)"
+          (unCkeckAllPlts)="unCheckAll()"
+        >
+
+        </app-plt-left-menu>
+      </div>
+      <div class="right">
+        <div class="title-as-tab">
+          <span>
+            PLTs
+          </span>
+        </div>
+        <div class="PLTs-content">
+          <app-plt-main-table
+            [tableInputs]="Inputs | pickKeys : tableInputs"
+            (onCheckAll)="checkAll($event)"
+            (onFilter)="filterPlts($event)"
+            (onPltClick)="toggleSelectPlts($event)"
+            (onSelectSinglePlt)="selectSinglePLT($event)"
+          ></app-plt-main-table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
   <p-footer>
     <div class="a-control-buttons">
-      <button class="a-button-text-cancel" (click)="cancelCreateExistingProject()" >CANCEL</button>
-      <ng-container *ngIf="stepSelectWorkspace && !stepSelectProject">
-        <button [ngClass]="{'a-buttons-contained-disabled' : !!!selectedWorkspace, 'a-buttons-contained': !!!!selectedWorkspace}"
-                [disabled]="!!!selectedWorkspace" (click)="getWorkspaceProjects(selectedWorkspace)">NEXT</button>
+      <button class="a-button-text-cancel" (click)="onHide()" >CANCEL</button>
+      <ng-container *ngIf="!browesing">
+        <button [ngClass]="{'a-buttons-contained-disabled' : !selectedWorkspace, 'a-buttons-contained': selectedWorkspace}"
+                [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">NEXT</button>
       </ng-container>
-      <ng-container *ngIf="!stepSelectWorkspace && stepSelectProject">
-        <button [ngClass]="{'a-buttons-contained-disabled' : !!!selectedProject, 'a-buttons-contained': !!!!selectedProject}"
-                [disabled]="!!!selectedProject" (click)="selectProjectNext()">SELECT</button>
+      <ng-container *ngIf="browesing">
+        <button [ngClass]="{'a-buttons-contained-disabled' : selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length == 0 : !selectedProject, 'a-buttons-contained': selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length > 0 : selectedProject}"
+                [disabled]="selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length == 0 : !selectedProject" (click)="setBrowesingItems()">SELECT</button>
       </ng-container>
     </div>
   </p-footer>
 
 
 </p-dialog>
-<p-toast key="createProject">
+<!--<p-toast key="createProject">-->
 
-  <ng-template let-message pTemplate="message">
-    <div (click)="clear()" class="ant-notification-notice ant-notification-notice-closable ng-trigger ng-trigger-notificationMotion ant-notification-notice ant-no"
-         style="opacity: 1; transform: translateX(0px);">
-      <div class="ant-notification-notice-content ng-tns-c12-49 ng-star-inserted" style="">
-        <div class="ant-notification-notice-content ant-notification-notice-with-icon">
-          <div class="ng-tns-c12-49 ant-notification-notice-with-icon">
-            <i class="anticon ant-notification-notice-icon ant-notification-notice-icon-success ng-tns-c12-49 anticon-check-circle ng-star-inserted" nz-icon="" type="check-circle">
-              <svg viewBox="64 64 896 896" fill="currentColor" width="1em" height="1em" class="ng-tns-c12-49"
-                   data-icon="check-circle" aria-hidden="true">
-                <path d="M699 353h-46.9c-10.2 0-19.9 4.9-25.9 13.3L469 584.3l-71.2-98.8c-6-8.3-15.6-13.3-25.9-13.3H325c-6.5 0-10.3 7.4-6.5 12.7l124.6 172.8a31.8 31.8 0 0 0 51.7 0l210.6-292c3.9-5.3.1-12.7-6.4-12.7z">
+<!--  <ng-template let-message pTemplate="message">-->
+<!--    <div (click)="clear()" class="ant-notification-notice ant-notification-notice-closable ng-trigger ng-trigger-notificationMotion ant-notification-notice ant-no"-->
+<!--         style="opacity: 1; transform: translateX(0px); z-index: 9999 !important">-->
+<!--      <div class="ant-notification-notice-content ng-tns-c12-49 ng-star-inserted" style="">-->
+<!--        <div class="ant-notification-notice-content ant-notification-notice-with-icon">-->
+<!--          <div class="ng-tns-c12-49 ant-notification-notice-with-icon">-->
+<!--            <i class="anticon ant-notification-notice-icon ant-notification-notice-icon-success ng-tns-c12-49 anticon-check-circle ng-star-inserted" nz-icon="" type="check-circle">-->
+<!--              <svg viewBox="64 64 896 896" fill="currentColor" width="1em" height="1em" class="ng-tns-c12-49"-->
+<!--                   data-icon="check-circle" aria-hidden="true">-->
+<!--                <path d="M699 353h-46.9c-10.2 0-19.9 4.9-25.9 13.3L469 584.3l-71.2-98.8c-6-8.3-15.6-13.3-25.9-13.3H325c-6.5 0-10.3 7.4-6.5 12.7l124.6 172.8a31.8 31.8 0 0 0 51.7 0l210.6-292c3.9-5.3.1-12.7-6.4-12.7z">-->
 
-                </path>
-                <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>
-              </svg>
-            </i>
-            <div class="ant-notification-notice-message">
-              {{message.summary}}
-            </div>
-            <div class="ant-notification-notice-description">
+<!--                </path>-->
+<!--                <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"></path>-->
+<!--              </svg>-->
+<!--            </i>-->
+<!--            <div class="ant-notification-notice-message">-->
+<!--              {{message.summary}}-->
+<!--            </div>-->
+<!--            <div class="ant-notification-notice-description">-->
 
-            </div>
-          </div>
-        </div>
-      </div>
-      <a class="ant-notification-notice-close" tabindex="0">
-            <span class="ant-notification-notice-close-x">
-    <i class="anticon ant-notification-close-icon anticon-close" nz-icon="" type="close">
-      <svg viewBox="64 64 896 896" fill="currentColor" width="1em" height="1em" class="ng-tns-c12-49" data-icon="close" aria-hidden="true">
-        <path d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 0 0 203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z"></path>
-      </svg></i>
-  </span></a>
-    </div>
-  </ng-template>
+<!--            </div>-->
+<!--          </div>-->
+<!--        </div>-->
+<!--      </div>-->
+<!--      <a class="ant-notification-notice-close" tabindex="0">-->
+<!--            <span class="ant-notification-notice-close-x">-->
+<!--    <i class="anticon ant-notification-close-icon anticon-close" nz-icon="" type="close">-->
+<!--      <svg viewBox="64 64 896 896" fill="currentColor" width="1em" height="1em" class="ng-tns-c12-49" data-icon="close" aria-hidden="true">-->
+<!--        <path d="M563.8 512l262.5-312.9c4.4-5.2.7-13.1-6.1-13.1h-79.8c-4.7 0-9.2 2.1-12.3 5.7L511.6 449.8 295.1 191.7c-3-3.6-7.5-5.7-12.3-5.7H203c-6.8 0-10.5 7.9-6.1 13.1L459.4 512 196.9 824.9A7.95 7.95 0 0 0 203 838h79.8c4.7 0 9.2-2.1 12.3-5.7l216.5-258.1 216.5 258.1c3 3.6 7.5 5.7 12.3 5.7h79.8c6.8 0 10.5-7.9 6.1-13.1L563.8 512z"></path>-->
+<!--      </svg></i>-->
+<!--  </span></a>-->
+<!--    </div>-->
+<!--  </ng-template>-->
 
-</p-toast>
+<!--</p-toast>-->

@@ -1469,3 +1469,29 @@ body .ui-table .ui-table-thead > tr > th {
   background-color: #27c0ff;
   border-radius: 14px;
 }
+
+.content {
+  .title-as-tab {
+    display: flex;
+    flex: 0 1 auto;
+    justify-content: space-between;
+
+    span {
+      padding: 16px 43px;
+      font-size: 1.3em;
+      font-weight: bold;
+      border-top: 3px solid #0700e4;
+    }
+  }
+
+  .right, .left {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    margin-right: 10px;
+  }
+
+  .PLTs-content {
+    padding: 0 21px 0 16px !important;
+    position: relative;
+    flex: 1 1 auto;
+  }
+}

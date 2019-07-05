@@ -17,7 +17,7 @@ import {
 } from '../../../core/store/actions/workspace-main.action';
 import * as moment from 'moment';
 import {takeUntil} from 'rxjs/operators';
-import {LazyLoadEvent, MessageService} from 'primeng/api';
+import { MessageService} from 'primeng/api';
 import {NotificationService} from '../../../shared/notification.service';
 
 @Component({
@@ -71,37 +71,39 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).subscribe(() => {
-      this.newProject = false;
-      this.notificationService.createNotification('Project added successfully', '',
-        'success', 'topRight', 4000);
-      this._helper.updateWorkspaceItems();
-      this.detectChanges();
+        this.newProject = false;
+        this.notificationService.createNotification('Project added successfully', '',
+          'success', 'topRight', 4000);
+        this._helper.updateWorkspaceItems();
+        this.detectChanges();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
-        this.notificationService.createNotification(' Error please try again', '',
+      this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
-        this.detectChanges();
-      })
+      this.detectChanges();
+    })
 
     this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
-          this.notificationService.createNotification('Project deleted successfully', '',
-        'success', 'topRight', 4000);
-          this._helper.updateWorkspaceItems();
-          this.detectChanges();
-        }
+        this.notificationService.createNotification('Project deleted successfully', '',
+          'success', 'topRight', 4000);
+        this._helper.updateWorkspaceItems();
+        this.detectChanges();
+      }
     );
   }
 
   selectProject(project) {
     this.store.dispatch(new SelectProjectAction(project));
   }
+
   delete(project) {
     this.store.dispatch(new DeleteProject({
       workspaceId: this.workspace.workSpaceId, uwYear: this.workspace.uwYear, project,
     }));
     this.dropdown.close();
   }
+
   contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {
     this.contextMenuProject = project;
     this.dropdown = this.nzDropdownService.create($event, template);

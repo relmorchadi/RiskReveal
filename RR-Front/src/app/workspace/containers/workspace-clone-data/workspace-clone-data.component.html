@@ -1,10 +1,7 @@
 <app-left-menu></app-left-menu>
 <div class="app-wrapper">
   <div class="app-header">
-    <h4>Clone Workspace assets </h4>
-<!--    <span class="subtitle-2">-->
-<!--      {{ subTitle[activeSubTitle] }}-->
-<!--    </span>-->
+    <h4>Clone Workspace assets</h4>
   </div>
   <div class="app-body">
     <ng-container [ngSwitch]="activeSubTitle">
@@ -59,19 +56,19 @@
           <span class="subtitle-4">
             Cloning from:
           </span>
-          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': cloningFromItem ?  '#fff' : '#e5e9fa','justify-content': cloningFromItem ? 'unset' : 'center' }">
-            <ng-container *ngIf="cloningFromItem">
+          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': from.detail ?  '#fff' : '#e5e9fa','justify-content': from.detail ? 'unset' : 'center' }">
+            <ng-container *ngIf="from.detail">
               <div class="left-box">
-                XL, INC, VOL, IND,ACC,AUTO CASCO | 2017 20769 | A.M.MA(BEL)
+                {{from.detail}}
               </div>
               <div class="right-box">
                 <button class="a-buttons-contained override">
-                  <i class="icon-search_24px"></i>
+                  <i (click)="openSearchPopUp('from')" class="icon-search_24px"></i>
                 </button>
               </div>
             </ng-container>
-            <ng-container *ngIf="!cloningFromItem">
-              <button (click)="searchWorkSpaceModal=true" class="a-buttons-contained override" style="margin: 9px">
+            <ng-container *ngIf="!from.detail">
+              <button (click)="openSearchPopUp('from')" class="a-buttons-contained override" style="margin: 9px">
                 <i class="icon-search_24px"></i>
                 Select workspace
               </button>
@@ -80,23 +77,30 @@
         </div>
         <div class="box-item" style="width: 780px;padding: 0 25px;margin: 0;">
           <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
-            <i style="cursor:pointer;font-size:27px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px" class="icon-compare_arrows_24px"></i>
+            <i style="cursor:pointer;font-size:27px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px" class="icon-compare_arrows_24px" (click)="swapCloneItems()"></i>
           </div>
         </div>
         <div class="box-item" style="width: 780px;padding-top: 0;margin: 0;">
-
           <span class="subtitle-4">
             Cloning to:
           </span>
-          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': cloningToItem ?  '#fff' : '#e5e9fa'}">
-            <div class="left-box">
-              XL, INC, VOL, IND,ACC,AUTO CASCO | 2017 20769 | A.M.MA(BEL)
-            </div>
-            <div class="right-box">
-              <button class="a-buttons-contained override">
+          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': to?.detail ?  '#fff' : '#e5e9fa','justify-content': to.detail ? 'unset' : 'center'}">
+            <ng-container *ngIf="to.detail">
+              <div class="left-box">
+                {{to.detail}}
+              </div>
+              <div class="right-box">
+                <button class="a-buttons-contained override">
+                  <i (click)="openSearchPopUp('to')" class="icon-search_24px"></i>
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!to.detail">
+              <button (click)="openSearchPopUp('to')" class="a-buttons-contained override" style="margin: 9px">
                 <i class="icon-search_24px"></i>
+                Select workspace
               </button>
-            </div>
+            </ng-container>
           </div>
         </div>
         <div class="box-item" style="width: 780px;">
@@ -169,144 +173,10 @@
   </div>
 </div>
 
-<p-dialog
-  [closable]="false"
-  [styleClass]="'m-dialog-modal-lg' + (browesing ? ' borderless' : '')"
-  appendTo="body"
-  [modal]="true"
-  [responsive]="true"
-  [visible]="searchWorkSpaceModal"
-  [baseZIndex]="1"
-  [autoZIndex]="false"
->
-
-  <p-header>
-    <div class="header">
-      <ng-container *ngIf="browesing">
-        <div class="previous-container">
-          <button class="a-buttons-contained override">
-            <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
-          </button>
-          <h4>
-            Browese For Cloning
-          </h4>
-        </div>
-      </ng-container>
-      <h4 *ngIf="!browesing">
-        Select Workspace
-      </h4>
-      <div *ngIf="!browesing" class="col-7" [formGroup]="keywordFormGroup">
-
-        <nz-input-group style="z-index: 1001"
-                        class="global-search-input-grp"
-                        [ngClass]="{'global-search-input-grp-active': 1===1}"
-                        [nzSuffix]="suffixIconSearch"
-                        [nzAddOnBefore]="prefixIconTag">
-          <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
-                 (onEnter)="onEnter()"
-                 #searchInput
-                 formControlName="keyword"  (click)="search()"
-                 class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
-        </nz-input-group>
-
-        <ng-template #prefixIconTag>
-          <div class="prefix-wrapper">
-            <button class="code-button" nz-popover nzPlacement="bottomLeft" nzTrigger="click">
-            </button>
-          </div>
-        </ng-template>
-
-        <ng-template #suffixIconSearch>
-          <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
-             nzTheme="outline"></i>
-          <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
-             class="icon-search_24px"></i>
-        </ng-template>
-
-      </div>
-      <i (click)="searchWorkSpaceModal=false" style="cursor: pointer" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-
-  <ng-container *ngIf="!browesing">
-      <app-table [tableColumn]="columns" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
-                 [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
-                 [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
-                 (filterData)="filterDataa($event.searchValue, $event.searchAddress)"
-                 (dbClickItem)="getPlts()"
-                 (onRowSelect)="onRowSelect($event)"
-                 (onRowUnselect)="onRowUnselect($event)"
-                 [selectionMode]="'single'"
-                 [loading]="loading">
-      </app-table>
-  </ng-container>
-
-  <ng-container *ngIf="browesing">
-    <div class="content">
-      <div class="left">
-        <app-plt-left-menu
-          [menuInputs]="{
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
-            selectedListOfPlts: selectedListOfPlts,
-            systemTagsCount: systemTagsCount,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:true
-          }"
-        >
-
-        </app-plt-left-menu>
-      </div>
-      <div class="right">
-        <div class="title-as-tab">
-          <span>
-            PLTs
-          </span>
-        </div>
-        <div class="PLTs-content">
-          <app-plt-main-table
-            [tableInputs]="{
-                  contextMenuItems: contextMenuItems,
-                  filterInput: filterInput,
-                  pltColumns: pltColumns,
-                  listOfPltsData: listOfPltsData,
-                  listOfDeletedPltsData: listOfDeletedPltsData,
-                  listOfPltsCache: listOfPltsCache,
-                  listOfDeletedPltsCache: listOfDeletedPltsCache,
-                  listOfPlts: listOfPlts,
-                  listOfDeletedPlts: listOfDeletedPlts,
-                  selectedListOfPlts: selectedListOfPlts,
-                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
-                  selectAll: selectAll,
-                  someItemsAreSelected: someItemsAreSelected,
-                  showDeleted: showDeleted,
-                  filterData: filterData,
-                  filters: filters,
-                  sortData: sortData
-                }"
-            (onCheckAll)="checkAll($event)"
-            (onFilter)="filter($event)"
-            (onPltClick)="toggleSelectPlts($event)"
-            (onSelectSinglePlt)="selectSinglePLT($event)"
-          ></app-plt-main-table>
-        </div>
-      </div>
-    </div>
-  </ng-container>
-
-  <p-footer>
-    <div class="footer">
-      <button (click)="cancelModal()" class="a-button-text">cancel</button>
-      <button (click)="handleModalClick()" class="a-buttons-contained">
-        {{ browesing ? 'ADD' : 'SELECT'}}
-      </button>
-    </div>
-  </p-footer>
-
-</p-dialog>
+<app-workspace-project-popup
+  [isVisible]="searchWorkSpaceModal"
+  [selectionStep]="'plt'"
+  (onVisibleChange)="searchWorkSpaceModal= $event"
+  (onSelectWorkspace)="setSelectedWs($event)"
+  (onSelectItems)="setSelectedPlts(cloneConfig.currentSourceOfItems,$event)"
+></app-workspace-project-popup>

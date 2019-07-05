@@ -10,6 +10,7 @@ import * as moment from 'moment';
 const initiaState: pltMainModel = {
   data: {},
   loading: false,
+  cloneConfig: {},
   filters: {
     systemTag: [],
     userTag: []
@@ -35,6 +36,10 @@ export class PltMainState implements NgxsOnInit {
    * Selectors
    */
   @Selector()
+  static getCloneConfig(state: pltMainModel) {
+    return state.cloneConfig;
+  }
+  @Selector()
   static getWorkspaceMainState(state: pltMainModel) {
     return state;
   }
@@ -44,7 +49,7 @@ export class PltMainState implements NgxsOnInit {
     return (state: pltMainModel) => state.data[wsIdentifier];
   }
 
-  status = ['in progress', 'checked', 'locked', 'requires regeneration', 'failed'];
+  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
   @Selector()
   static getProjects() {
@@ -101,6 +106,13 @@ export class PltMainState implements NgxsOnInit {
     return this.regions[_.random(0, 3)]
   }
 
+  @Action(fromPlt.setCloneConfig)
+  setCloneConfig(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setCloneConfig) {
+    ctx.patchState({
+      cloneConfig: payload
+    })
+  }
+
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
     const {
@@ -134,7 +146,7 @@ export class PltMainState implements NgxsOnInit {
                       deletedBy: ls[plt.pltId] ? ls[plt.pltId].deletedBy : undefined,
                       deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
                       status: this.status[this.getRandomInt()],
-                      newPlt: Math.random() >= 0.5
+                      newPlt: Math.random() >= 0.5,
                     }
                   }))
                 )
@@ -615,6 +627,5 @@ export class PltMainState implements NgxsOnInit {
     localStorage.setItem('deletedPlts', JSON.stringify(ls));
 
   }
-
 }
 
