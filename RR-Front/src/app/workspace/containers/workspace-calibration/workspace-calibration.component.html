@@ -87,7 +87,7 @@
                     <col *ngIf="col.fields ==='default'" [ngStyle]="{'width': '122px'}">
                     <col *ngIf="col.fields ==='inuring'" [ngStyle]="{'width': '122px'}">
                     <col *ngIf="!col.frozen && col.fields !=='default'&& col.fields !=='inuring'"
-                         [ngStyle]="{'min-width': '130px'}">
+                         [ngStyle]="{'width':  col.width+'px'}">
                   </ng-container>
                 </colgroup>
               </ng-template>
@@ -233,7 +233,7 @@
 
                       <div
                         *ngIf="adjsArray.length > 0"
-                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['widget-dropZone']"
+                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
                         style="position: absolute; left: 604px; width: calc(100% - 614px);z-index: 100; top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                         <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                           <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
@@ -335,7 +335,7 @@
                       </nz-dropdown>
                       <div
                         *ngIf="adjsArray.length > 0"
-                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['widget-dropZone1']"
+                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
                         style="position: absolute;left: 221px; width: calc(100% - 233px); margin-top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                         <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                           <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
@@ -602,7 +602,7 @@
                                style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
                                (click)="clickButtonPlus(false,rowData)"></i>
                             <ul nz-menu>
-                              <li nz-menu-item>Add New Adjustment</li>
+                              <li nz-menu-item (click)="clickButtonPlus(false,rowData)">Add New Adjustment</li>
                               <li nz-submenu>
                                 <span title>Create</span>
                                 <ul nz-menu>
