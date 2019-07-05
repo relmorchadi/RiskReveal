@@ -260,13 +260,24 @@
       display: flex;
 
       .project-header-icon {
-        background-color: #F5A623;
         width: 80px;
 
         i {
           color: white;
           font-size: 2em;
         }
+      }
+
+      .standard-flag-icon {
+        background-color: #F5A623;
+      }
+
+      .link-flag-icon {
+        background-color: #36C6FE;
+      }
+
+      .inuring-flag-icon {
+        background-color: #B482FE;
       }
 
       .project-header-title {
@@ -293,6 +304,7 @@
       .icon-card-wrapper {
         align-items: center;
         background-color: #F9FAFE;
+        display: flex;
 
         i {
           cursor: pointer;
@@ -607,13 +619,14 @@ PROJECT MODAL STYLE
   min-height: 0 !important;
 }
 
-::ng-deep  tr.ui-state-highlight {
+::ng-deep tr.ui-state-highlight {
   color: #565656 !important;
 }
 
 ::ng-deep tr.active_contract_item {
   color: #565656 !important;
 }
+
 .ui-listbox-list {
   width: 600px;
 }

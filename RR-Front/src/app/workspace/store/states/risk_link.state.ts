@@ -68,6 +68,13 @@ const initiaState: RiskLinkModel = {
     },
     calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
   },
+  financialPerspective: {
+    rdm: {data: null, selected: null},
+    analysis: null,
+    treaty: null,
+    standard: null,
+    target: null
+  },
   analysis: null,
   portfolios: null,
   results: null,
@@ -743,6 +750,10 @@ export class RiskLinkState implements NgxsOnInit {
                         ...state.linking,
                         edm: listSelected.edm,
                         rdm: listSelected.rdm
+                      },
+                      financialPerspective: {
+                        ...state.financialPerspective,
+                        rdm: {data: listSelected.rdm, selected: null},
                       }
                     });
                     ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
@@ -754,7 +765,6 @@ export class RiskLinkState implements NgxsOnInit {
             }
           }
         );
-
       });
     } else {
       ctx.patchState({
@@ -769,6 +779,10 @@ export class RiskLinkState implements NgxsOnInit {
           ...state.linking,
           edm: listSelected.edm,
           rdm: listSelected.rdm
+        },
+        financialPerspective: {
+          ...state.financialPerspective,
+          rdm: {data: listSelected.rdm, selected: null},
         }
       });
       ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
@@ -848,16 +862,3 @@ export class RiskLinkState implements NgxsOnInit {
     );
   }
 }
-
-/*else if (action === 'selectLink') {
-  const {id, name} = RDM;
-  const searchTerm = name.substr(0, name.lastIndexOf('_'));
-  if (name.length - searchTerm.length < 4) {
-    this.riskApi.searchRiskLinkPortfolio('', searchTerm).pipe(
-      mergeMap(
-        (data: any) => {
-          return of();
-        }
-      )
-    );
-  }*/

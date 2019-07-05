@@ -34,6 +34,13 @@ export class RiskLinkModel {
     targetCurrency: any,
     calibration: any,
   };
+  financialPerspective: {
+    rdm: any,
+    analysis: any,
+    treaty: any,
+    standard: any,
+    target: any,
+  };
   analysis: any;
   portfolios: any;
   results: any;

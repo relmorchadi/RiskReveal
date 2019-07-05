@@ -130,6 +130,9 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       this.serviceSubscription.forEach(sub => sub.unsubscribe());
   }
 
+  changeFinancialPTarget(target) {
+  }
+
   toggleColumnsManager(target) {
     this.managePopUp = !this.managePopUp;
     if (this.managePopUp) {
@@ -320,13 +323,21 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       if (this.state.portfolios ===  null ) {
         return 0;
       } else {
-        return this.state.portfolios[item.id].totalNumberElement;
+        if (typeof this.state.portfolios[item.id] !== 'undefined') {
+          return this.state.portfolios[item.id].totalNumberElement;
+        } else {
+          return null;
+        }
       }
     } else if (source === 'analysis') {
       if (this.state.analysis ===  null) {
         return 0;
       } else {
-        return this.state.analysis[item.id].numberOfElement;
+        if (typeof this.state.analysis[item.id] !== 'undefined') {
+          return this.state.analysis[item.id].numberOfElement;
+        } else {
+          return null;
+        }
       }
     }
   }

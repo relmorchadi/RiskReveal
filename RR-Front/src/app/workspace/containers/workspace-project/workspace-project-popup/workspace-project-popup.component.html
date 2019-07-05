@@ -80,9 +80,12 @@
             <!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
                           <i class="fa fa-code-fork" aria-hidden="true"></i>
                         </div>-->
-            <div [ngStyle]="{'background-color':project.linkFlag ? '#36c6fe': '#F5B74E' }"
+            <div [ngClass]="{'link-flag-icon': project.linkFlag,
+                'inuring-flag-icon': project.postInuredFlag,
+                'standard-flag-icon': !project.linkFlag && !project.postInuredFlag}"
                  class="project-header-icon d-flex justify-content-center align-items-center">
-              <i [className]="project.linkFlag ? 'icon-link_24px' : 'icon-assignment_24px'"></i>
+              <i *ngIf="!project.postInuredFlag" [className]="project.linkFlag ? 'icon-link_24px' : 'icon-assignment_24px'"></i>
+              <i *ngIf="project.postInuredFlag" class="fa fa-code-fork"></i>
             </div>
             <div class="project-header-title d-flex flex-column justify-content-center pl-3">
               <span>{{project?.name}}</span>
@@ -96,7 +99,7 @@
           </div>
           <div class="project-kpi border-top d-flex">
             <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
+              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-location_searching_24px mb-1"></i>
               <span class="project-kpi-span">Region Perils</span>
               <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
             </div>

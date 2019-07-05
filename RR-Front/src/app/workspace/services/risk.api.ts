@@ -25,10 +25,6 @@ export class RiskApi {
   }
 
   searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
-/*    console.log(paramId, paramName , `${this.URL}portfolio?edmId=${paramId}&edmName=${paramName}`);
-    this.http.get(`${this.URL}portfolio?edmId=${paramId}&edmName=${paramName}&size=20`).subscribe(
-      (dt: any) => console.log(dt.content)
-    );*/
     return this.http.get(`${this.URL}portfolio?size=20`, {params: {edmId: paramId, edmName: paramName}});
   }
 }

@@ -1357,9 +1357,14 @@ FINANCIAL PERSPECTIVE POPUP STYLE
   }
 
   .fp-header {
+    .subtitle-2 {
+      margin-right: 30px;
+      display: inline-flex;
+    }
+
     .icon-filter {
       color: rgba(0, 0, 0, 0.5);
-      font-size: 17px;
+      font-size: 21px;
     }
   }
 }
