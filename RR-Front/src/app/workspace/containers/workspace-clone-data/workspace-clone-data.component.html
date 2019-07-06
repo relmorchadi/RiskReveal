@@ -7,46 +7,25 @@
     <ng-container [ngSwitch]="activeSubTitle">
       <div class="box-container" *ngSwitchCase="0" style="padding: 0 0;">
         <div class="box-item" style="background-color: #e5e9fa;width: 100%;">
-          <div style="width: 780px;margin: auto;">
+          <div style="width: 812px;margin: auto;">
             <span class="subtitle-3">
               Summary of assets being cloned:
             </span>
             <div class="plts-detail-boxes">
-              <div class="box">
-                <div class="left" style="background-color: var(--primary-9);">
-                  <i class="icon-assignment_24px"></i>
+              <div *ngFor="let summaryItem of ( cloneConfig.summary | keys ) " class="box">
+                <div class="left" [ngStyle]="{ 'background-color': cloneConfig.summary[summaryItem].color }">
+                  <i [ngClass]="cloneConfig.summary[summaryItem].icon"></i>
                 </div>
                 <div class="right">
-                  <div class="regular1">Pre-Inured PLTs</div>
-                  <span class="regular">12</span>
+                  <div class="regular1">{{summaryItem}}</div>
+                  <span class="regular">{{cloneConfig.summary[summaryItem].value}}</span>
                 </div>
               </div>
-              <div class="box">
-                <div class="left" style="background-color: var(--scor-peril-2);">
-                  <i class="fa fa-code-fork" style="margin: 4px;"></i>
-                </div>
-                <div class="right">
-                  <div class="regular1">Post-Inured PLTs</div>
-                  <span class="regular">4</span>
-                </div>
-              </div>
-              <div class="box">
-                <div class="left" style="background-color: #33d0bb;">
-                  <i class="icon-layer-group" style="margin: 4px;"></i>
-                </div>
-                <div class="right">
-                  <div class="regular1">Inuring Packages</div>
-                  <span class="regular">1</span>
-                </div>
-              </div>
-              <div class="box">
-                <div class="left" style="background-color: var(--primary-10);">
-                  <i class="icon-assignment_24px"></i>
-                </div>
-                <div class="right">
-                  <div class="regular1">Sources Projects</div>
-                  <span class="regular">3</span>
-                </div>
+              <div *ngIf="from.wsId" class="box edit-box">
+                <i class="icon-down-arrow"  (click)="editPlts()"></i>
+                <span class="body-3" (click)="editPlts()">
+                  Edit PLT List
+                </span>
               </div>
             </div>
           </div>
@@ -176,7 +155,9 @@
 <app-workspace-project-popup
   [isVisible]="searchWorkSpaceModal"
   [selectionStep]="'plt'"
+  [multiSteps]="multiSteps"
+  [stepConfig]="stepConfig"
   (onVisibleChange)="searchWorkSpaceModal= $event"
-  (onSelectWorkspace)="setSelectedWs($event)"
+  (onSelectWorkspace)="setSelectedWs(cloneConfig.currentSourceOfItems,$event)"
   (onSelectItems)="setSelectedPlts(cloneConfig.currentSourceOfItems,$event)"
 ></app-workspace-project-popup>

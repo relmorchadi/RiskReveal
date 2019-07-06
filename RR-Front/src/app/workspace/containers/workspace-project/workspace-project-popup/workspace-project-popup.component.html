@@ -18,7 +18,7 @@
               <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
             </button>
             <h4>
-              {{ selectionStep =='plt' ? 'Browese For Cloning' : 'Search For Project' }}
+              {{ selectionStep =='plt' ? 'Select PLTs' : 'Search For Project' }}
             </h4>
           </div>
       </ng-container>
@@ -187,7 +187,7 @@
       <button class="a-button-text-cancel" (click)="onHide()" >CANCEL</button>
       <ng-container *ngIf="!browesing">
         <button [ngClass]="{'a-buttons-contained-disabled' : !selectedWorkspace, 'a-buttons-contained': selectedWorkspace}"
-                [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">NEXT</button>
+                [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">{{ multiSteps ? 'NEXT' : 'SELECT'}}</button>
       </ng-container>
       <ng-container *ngIf="browesing">
         <button [ngClass]="{'a-buttons-contained-disabled' : selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length == 0 : !selectedProject, 'a-buttons-contained': selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length > 0 : selectedProject}"

@@ -52,10 +52,11 @@
   }
 
   .box {
-    margin: 10px 0px 10px 0px;
+    margin: 10px;
     background-color: #fff;
     display: flex;
     width: 23%;
+
     .left {
       font-size: 25px;
       i {
@@ -68,6 +69,28 @@
       display: flex;
       flex-flow: column;
       padding: 0 0 0 16px;
+    }
+  }
+
+  .edit-box {
+    justify-content: center;
+    align-items: center;
+
+    i, span {
+      color: #3b00dd;
+      margin: 0 3px;
+      cursor: pointer;
+    }
+
+    span {
+      text-decoration: underline;
+    }
+
+  }
+
+  .box:nth-child(2) {
+    i {
+      padding: 0 4px;
     }
   }
 
