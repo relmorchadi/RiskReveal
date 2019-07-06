@@ -55,8 +55,8 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
-        console.log(this.selectedPlt)
-        this.openPltInDrawer(this.selectedPlt.pltId)
+        console.log(this.selectedPlt);
+        this.openPltInDrawer(this.selectedPlt.pltId);
       }
     },
     {
@@ -70,7 +70,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Clone To',
       command: (event) => {
-        console.log('cloning')
+        console.log('cloning');
         this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltManager', payload: { wsId: this.workspaceId, uwYear: this.uwy}}));
         this.router$.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
       }
@@ -95,7 +95,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
         this.store$.dispatch(new fromWorkspaceStore.restorePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
           pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
-        }))
+        }));
         this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
         this.generateContextMenu(this.showDeleted);
       }
@@ -434,10 +434,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       tagId: null,
       tagName: '',
       tagColor: '#0700e4'
-    }
+    };
     this.generateContextMenu(this.showDeleted);
     this.generateColumns(this.showDeleted);
-    this.managePopUp= false;
+    this.managePopUp = false;
   }
 
   @Select(PltMainState.getUserTags) userTags$;
@@ -490,7 +490,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
           return combineLatest(
             this.data$,
             this.deletedPlts$
-          )
+          );
         })
       ).subscribe(([data, deletedData]: any) => {
         let d1 = [];
@@ -519,9 +519,9 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                 this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
                 this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
                 this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              })
+              });
 
-            })
+            });
           }
 
           _.forEach(data, (v, k) => {
@@ -546,7 +546,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                   };
                 }
               }
-            })
+            });
 
             //NONE grouped Sys Tags
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
@@ -573,7 +573,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                   max: max + 1
                 };
               }
-            })
+            });
             /*}*/
 
           });

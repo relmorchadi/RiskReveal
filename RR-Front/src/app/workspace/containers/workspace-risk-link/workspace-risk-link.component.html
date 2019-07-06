@@ -312,9 +312,9 @@
                           <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
                                  [ngModel]="rowData.selected"></label>
                         </div>
-                        <div class="text-data" (click)="selectRows(rowData, i)"
+                        <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
                              *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                        <div class="text-data" (click)="selectRows(rowData, i)"
+                        <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
                              *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                       </td>
                     </tr>
@@ -384,22 +384,22 @@
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
                   <ng-container *ngFor="let col of columns">
-                    <th *ngIf="col.visible">
+                    <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
                       <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                       <div *ngIf="col.type === 'progress'">
                         <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
                                      [nzWidth]="20" nzType="circle"></nz-progress>
                       </div>
-                      <div *ngIf="col.type === 'indicator'">
-                      <span class="indicator-flag" *ngIf="rowData.exposedLocation"
+                      <div *ngIf="col.type === 'indicator'" (click)="selectRows(rowData, i, 'S')">
+                        <span class="indicator-flag" *ngIf="rowData.exposedLocation"
                             style="background-color: #0700CF"></span>
                       </div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'S')" [ngClass]="{'highlight-temp': rowData.highlight}"
                            *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'S')" [ngClass]="{'highlight-temp': rowData.highlight}"
                            *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
                       </div>
-                      <div class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'S')" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                            [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                       <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
@@ -481,19 +481,23 @@
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
                   <ng-container *ngFor="let col of columns">
-                    <th *ngIf="col.visible">
+                    <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
                       <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                       <div class="text-data" *ngIf="col.type === 'progress'">
                         <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
                                      [nzWidth]="20" nzType="circle"></nz-progress>
                       </div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                      <div class="text-data" (click)="openFinancialP()" *ngIf="col.type === 'multiple'" >
+                        <span *ngIf="rowData.financialPerspective.length > 1">M*</span>
+                        <span *ngIf="rowData.financialPerspective.length <= 1">{{rowData?.financialPerspective[0]}}</span>
+                      </div>
+                      <div class="text-data" (click)="selectRows(rowData, i, 'R')" [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'R')" [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
                       </div>
-                      <div class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                           [ngClass]="{'highlight-temp': col.highlight}" (click)="financialP = true"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'R')" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                           [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                       <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
@@ -609,7 +613,6 @@
     </div>
   </p-footer>
 </p-dialog>
-
 <!--Pop Up Filter-->
 <nz-modal [(nzVisible)]="filterModalVisibility" [nzTitle]="titleModal"
           (nzOnCancel)="handleCancel()"
@@ -944,13 +947,13 @@
             </div>
             <ul nz-menu>
               <li nz-menu-item (click)="changeFinancialPTarget(item)"
-                  *ngFor="let item of dataList(state.financialPerspective.rdm.data)">{{item.name}}</li>
+                  *ngFor="let item of dataList(workingFSC.rdm?.data)">{{item.name}}</li>
             </ul>
           </nz-dropdown>
         </div>
       </div>
-      <p-table #fat [columns]="colsFinancialAnalysis" [value]=""
-               [scrollable]="true" scrollHeight="300px">
+      <p-table #fat [columns]="colsFinancialAnalysis" [value]="dataList(workingFSC.analysis?.data)"
+               [scrollable]="true" scrollHeight="226px">
         <ng-template pTemplate="colgroup" let-columns>
           <colgroup>
             <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -975,35 +978,21 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-          <tr>
-            <th *ngFor="let col of columns">
-              <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
-              <div *ngIf="col.type === 'progress'">
-                <nz-progress [nzPercent]="rowData.status"
-                             [ngClass]="{'hidden-text': rowData.status < 100 }"
-                             [nzWidth]="20" nzType="circle"></nz-progress>
+          <tr style="height: 45px">
+            <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
+              <div *ngIf="col.type === 'select'"><label nz-checkbox [nzChecked]="rowData.selected"></label></div>
+              <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'iconIndicator'">
+                <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
               </div>
-              <div *ngIf="col.type === 'indicator'">
-                                      <span class="indicator-flag" *ngIf="rowData.exposedLocation"
-                                            style="background-color: #0700CF"></span>
+              <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'tags'" style="display: flex">
+                <span class="tags-secondary" *ngFor="let item of rowData.financialPerspective">{{item}}<i class="icon-close_24px"></i></span>
               </div>
-              <div *ngIf="col.type === 'iconIndicator'">
-                <span style="background-color: #009575" class="indicator-icon">A</span>
-              </div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
-              </div>
-              <div class="text-data"
-                   [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                   [ngClass]="{'highlight-temp': col.highlight}"
+              <div (click)="selectRows(rowData, i, 'fpA')" class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                    *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   style="display: flex;justify-content: center;"
-                   *ngIf="col.type === 'icon'"></div>
+              <div (click)="selectRows(rowData, i, 'fpA')" class="text-data branched-data" *ngIf="col.type === 'branched'">
+                <span>{{rowData?.analysisName}}</span>
+                <span>{{rowData?.description}}</span>
+              </div>
             </th>
           </tr>
         </ng-template>
@@ -1014,7 +1003,7 @@
     <nz-tabset class="tabs-standard-top">
       <nz-tab nzTitle="Standard">
         <div style="padding-top:0" class="summary-info">
-          <p-table #fpt [columns]="colsFinancialStandard" [value]="financialStandardContent"
+          <p-table #fpt [columns]="colsFinancialStandard" [value]="dataList(workingFSC.standard)"
                    [scrollable]="true" scrollHeight="300px">
             <ng-template pTemplate="colgroup" let-columns>
               <colgroup>
@@ -1041,34 +1030,16 @@
             </ng-template>
             <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
               <tr>
-                <th *ngFor="let col of columns">
-                  <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
-                  <div *ngIf="col.type === 'progress'">
-                    <nz-progress [nzPercent]="rowData.status"
-                                 [ngClass]="{'hidden-text': rowData.status < 100 }"
-                                 [nzWidth]="20" nzType="circle"></nz-progress>
-                  </div>
-                  <div *ngIf="col.type === 'indicator'">
+                <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
+                  <div *ngIf="col.type === 'select'"><label nz-checkbox [nzChecked]="rowData.selected"></label></div>
+                  <div (click)="selectRows(rowData, i, 'fpS')" *ngIf="col.type === 'indicator'">
                     <span class="indicator-flag" *ngIf="rowData.exposedLocation"
                           style="background-color: #0700CF"></span>
                   </div>
-                  <div *ngIf="col.type === 'iconIndicator'">
-                    <span style="background-color: #009575" class="indicator-icon">A</span>
-                  </div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
-                  </div>
-                  <div class="text-data"
-                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                       [ngClass]="{'highlight-temp': col.highlight}"
+                  <div (click)="selectRows(rowData, i, 'fpS')" class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                        *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       style="display: flex;justify-content: center;"
-                       *ngIf="col.type === 'icon'"></div>
+                  <div (click)="selectRows(rowData, i, 'fpS')" class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                       style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"></div>
                 </th>
               </tr>
             </ng-template>
@@ -1083,7 +1054,7 @@
   <div class="fp-options-wrapper">
     <span style="" class="subtitle-2 subtitle-override">Apply Selected Financial Perpective to Analysis in:</span>
     <div class="context-wrapper">
-      <nz-radio-group class="default-radio" [(ngModel)]="radioValueFinancialP">
+      <nz-radio-group class="default-radio" (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target">
         <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
         <label nz-radio nzValue="currentRDM"><span class="body-2">Current RDM</span></label>
         <label nz-radio nzValue="all"><span class="body-2">All RDM's</span></label>
@@ -1091,14 +1062,14 @@
       <!--      <p-radioButton value="currentSelection" label="Current Selection" [(ngModel)]="radioValueFinancialP"></p-radioButton>
             <p-radioButton value="currentRDM" label="Current RDM" [(ngModel)]="radioValueFinancialP"></p-radioButton>
             <p-radioButton value="all" label="All RDM's" [(ngModel)]="radioValueFinancialP"></p-radioButton>-->
-      <button style="margin-left: 150px" class="a-buttons-outlined">ADD</button>
-      <button class="a-buttons-outlined">REPLACE</button>
+      <button (click)="addFinancialP()" style="margin-left: 150px" class="a-buttons-outlined">ADD</button>
+      <button (click)="replaceFinancialP()" class="a-buttons-outlined">REPLACE</button>
     </div>
   </div>
   <p-footer>
     <div>
       <button class="a-button-text-cancel">CANCEL</button>
-      <button class="a-buttons-contained">SAVE</button>
+      <button (click)="saveFinancialP()" class="a-buttons-contained">SAVE</button>
     </div>
   </p-footer>
 </p-dialog>

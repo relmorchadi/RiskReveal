@@ -6,7 +6,7 @@ import { MessageService} from 'primeng/api';
 import {combineLatest, of} from 'rxjs';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {NavigationTransition} from '@angular/router/src/router';
-import * as _ from 'lodash'
+import * as _ from 'lodash';
 import {PltMainState} from '../../store/states';
 import * as fromWS from '../../store'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
@@ -15,7 +15,7 @@ interface SourceData {
   plts: any[];
   detail: string;
   wsId: string;
-  uwYear: string
+  uwYear: string;
 }
 
 @Component({
@@ -34,11 +34,11 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private prn: PreviousNavigationService
   ) {
-    this.activeSubTitle= 0;
-    this.cloningToItem= true;
-    this.projectForClone= -1;
-    this.searchWorkSpaceModal= false;
-    this.data= [
+    this.activeSubTitle = 0;
+    this.cloningToItem = true;
+    this.projectForClone = -1;
+    this.searchWorkSpaceModal = false;
+    this.data = [
       {
       id: 77897,
       year: 2019,
@@ -82,25 +82,25 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
       cedant: 87989,
       country: "Belgium"
     },];
-    this.browesing= false;
+    this.browesing = false;
     this.from = {
       detail: '',
       plts: [],
       uwYear: '',
       wsId: ''
     };
-    this.to= {
+    this.to = {
       detail: '',
       plts: [],
       uwYear: '',
       wsId: ''
     };
-    this.cloneConfig= {
+    this.cloneConfig = {
       currentSourceOfItems: 'to'
-    }
+    };
   }
 
-  subTitle= {
+  subTitle = {
     0: 'Clone Workspaces Assets',
     1: 'Source Workspace Selection',
     2: 'Target Workspace Selection'
@@ -117,11 +117,11 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   showDeleted: boolean;
   workspaceId: string;
   uwy: number;
-  subs: any[]= [];
+  subs: any[] = [];
 
   cloneConfig: {
     currentSourceOfItems: string
-  }
+  };
 
   ngOnInit() {
     this.subs.push(
@@ -129,70 +129,70 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
       this.store$.select(PltMainState.getCloneConfig),
       this.route$.params,
       this.store$.select(WorkspaceMainState.getCurrentWS)
-    ).subscribe( ([navigationPayload, {wsId, year}, currentWS] :any) => {
+    ).subscribe( ([navigationPayload, {wsId, year}, currentWS]: any) => {
       console.log({
         prn: this.prn.getPreviousUrl(),
-        navigationPayload,wsId,year,currentWS
+        navigationPayload, wsId, year, currentWS
       });
-      if(this.prn.getPreviousUrl() == 'PltBrowser' && _.keys(navigationPayload).length){
+      if (this.prn.getPreviousUrl() == 'PltBrowser' && _.keys(navigationPayload).length) {
         this.from = {
           ...navigationPayload.payload,
-          detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
-        }
+          detail: currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.workSpaceId
+        };
         this.to = {
           detail: '',
           plts: [],
           wsId: '',
           uwYear: ''
-        }
-      }else {
+        };
+      } else {
         this.to = {
           wsId: wsId,
           uwYear: year,
           plts: [],
-          detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
-        }
+          detail: currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.workSpaceId
+        };
         this.from = {
           detail: '',
           plts: [],
           wsId: '',
           uwYear: ''
-        }
+        };
       }
       this.detectChanges();
     })
-    )
+    );
   }
 
   setSubTitle(number: number) {
-    this.activeSubTitle= number;
+    this.activeSubTitle = number;
   }
 
   onRadioChange($event) {
-    this.projectForClone= $event;
+    this.projectForClone = $event;
   }
 
   handleModalClick() {
-    if(!this.browesing) {
-      this.browesing= true;
-    }else {
-      this.searchWorkSpaceModal= false;
-      this.browesing= false;
+    if (!this.browesing) {
+      this.browesing = true;
+    } else {
+      this.searchWorkSpaceModal = false;
+      this.browesing = false;
     }
   }
 
   goToSearchWorkspace() {
-    this.searchWorkSpaceModal=true;
-    this.browesing= false;
+    this.searchWorkSpaceModal = true;
+    this.browesing = false;
   }
 
   cancelModal() {
-    this.browesing= false;
-    this.searchWorkSpaceModal= false;
+    this.browesing = false;
+    this.searchWorkSpaceModal = false;
   }
 
   getPlts() {
-    this.browesing=true;
+    this.browesing = true;
   }
 
   detectChanges() {
@@ -206,27 +206,27 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   }
 
   swapCloneItems() {
-    const t= {...this.from};
-    this.from= {...this.to};
-    this.to= t;
+    const t = {...this.from};
+    this.from = {...this.to};
+    this.to = t;
   }
 
   setSelectedPlts(currentSourceOfItems: string, $event: any) {
-    if(this.getCloneConfig('currentSourceOfItems') == 'from') {
-      this.from = {...this.from, plts: $event}
+    if (this.getCloneConfig('currentSourceOfItems') == 'from') {
+      this.from = {...this.from, plts: $event};
     }
-    if(this.getCloneConfig('currentSourceOfItems') == 'to') {
-      this.to = {...this.to, plts: $event}
+    if (this.getCloneConfig('currentSourceOfItems') == 'to') {
+      this.to = {...this.to, plts: $event};
     }
   }
 
   openSearchPopUp(destination: string = 'from') {
-    this.searchWorkSpaceModal=true;
+    this.searchWorkSpaceModal = true;
     this.setCloneConfig('currentSourceOfItems', destination);
   }
 
-  setCloneConfig(key,value) {
-    this.cloneConfig= { ...this.cloneConfig, [key]: value };
+  setCloneConfig(key, value) {
+    this.cloneConfig = { ...this.cloneConfig, [key]: value };
   }
 
   getCloneConfig(key) {

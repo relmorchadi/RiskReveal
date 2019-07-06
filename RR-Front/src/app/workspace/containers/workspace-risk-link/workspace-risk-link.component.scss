@@ -1259,6 +1259,12 @@ TABLE STYLE
           font-weight: 400;
         }
 
+        .branched-data {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
+        }
+
         .highlight-temp {
           color: #0700CF;
           border-bottom: 1px solid #0700CF;
