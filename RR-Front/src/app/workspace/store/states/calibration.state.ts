@@ -315,17 +315,15 @@ export class CalibrationState implements NgxsOnInit {
     let adjustmentApplication = _.merge({}, state.adjustmentApplication);
     console.log(adjustmentApplication);
     let newAdj = {...adjustement};
-    if (Object.keys(adjustmentApplication).length > 0) {
+
       console.log('push')
       _.forEach(pltId, (value) => {
-        adjustmentApplication[value].push(newAdj)
+        if (adjustmentApplication[value] !== undefined) {
+          adjustmentApplication[value].push(newAdj);
+        } else {
+          adjustmentApplication[value] = [newAdj]
+        }
       })
-    } else {
-      console.log('assign')
-      _.forEach(pltId, (value) => {
-        adjustmentApplication[value] = [newAdj]
-      })
-    }
     console.log(adjustmentApplication);
     ctx.patchState({
       adjustmentApplication: {...adjustmentApplication}
