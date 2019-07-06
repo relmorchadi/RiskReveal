@@ -46,49 +46,597 @@ const frozenColsPortfolio = [
 ];
 
 const scrollableColsSummary = [
-  {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorted: false, filtered: true, highlight: false},
-  {field: 'analysisCurrency', header: 'Source Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: true},
-  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorted: false, filtered: true, highlight: false},
-  {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorted: false, filtered: true, highlight: false},
-  {field: 'edmName', header: 'EDM', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
+  {
+    field: 'exposedLocation',
+    header: 'Exposed Location',
+    width: '90px',
+    type: 'indicator',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'analysisCurrency',
+    header: 'Source Currency',
+    width: '100px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'targetCurrency',
+    header: 'Target Currency',
+    width: '100px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: true,
+    visible: true
+  },
+  {
+    field: 'unitMultiplier',
+    header: 'Unit Multiplier',
+    width: '90px',
+    type: 'number',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'proportion',
+    header: 'Proportion',
+    width: '70px',
+    type: 'percentage',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'edmName',
+    header: 'EDM',
+    width: '150px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
 const frozenColsSummary = [
-  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false},
-  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false},
-  {field: 'dataSourceId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
-  {field: 'number', header: 'Number', width: '190px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'dataSourceName', header: 'Name', width: '190px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {
+    field: 'scan',
+    header: '',
+    width: '25px',
+    type: 'scan',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'status',
+    header: 'Status',
+    width: '40px',
+    type: 'progress',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'dataSourceId',
+    header: 'ID',
+    width: '40px',
+    type: 'text',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'number',
+    header: 'Number',
+    width: '190px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'dataSourceName',
+    header: 'Name',
+    width: '190px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
 ];
 
 const scrollableColsResults = [
-  {field: 'peril', header: 'Region Peril', width: '70px', type: 'text', sorted: false, filtered: true, highlight: true},
-  {field: 'analysisCurrency', header: 'Source Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true},
-  {field: 'elt', header: 'ELT FIN PERSP', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '90px', type: 'text', sorted: false, filtered: true, highlight: true},
-  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true},
-  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
+  {
+    field: 'peril',
+    header: 'Region Peril',
+    width: '70px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: true,
+    visible: true
+  },
+  {
+    field: 'analysisCurrency',
+    header: 'Source Currency',
+    width: '80px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'targetCurrency',
+    header: 'Target Currency',
+    width: '80px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: true,
+    visible: true
+  },
+  {
+    field: 'elt',
+    header: 'ELT FIN PERSP',
+    width: '70px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'occurrenceBasis',
+    header: 'Occurrence Basis',
+    width: '90px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: true,
+    visible: true
+  },
+  {
+    field: 'unitMultiplier',
+    header: 'Unit Multiplier',
+    width: '80px',
+    type: 'number',
+    sorted: false,
+    filtered: true,
+    highlight: true,
+    visible: true
+  },
+  {
+    field: 'targetRap',
+    header: 'Target RAP',
+    width: '80px',
+    type: 'number',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'peqt',
+    header: 'PEQT',
+    width: '80px',
+    type: 'number',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
 const frozenColsResults = [
-  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false},
-  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false},
-  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
-  {field: 'analysisName', header: 'Name', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false},
+  {
+    field: 'scan',
+    header: '',
+    width: '25px',
+    type: 'scan',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'status',
+    header: 'Status',
+    width: '40px',
+    type: 'progress',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'analysisId',
+    header: 'ID',
+    width: '40px',
+    type: 'text',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'analysisName',
+    header: 'Name',
+    width: '140px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'description',
+    header: 'Description',
+    width: '200px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
 ];
 
 const scrollableColsLinking = [
-  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false},
-  {field: 'icon', header: '', width: '25px', type: 'iconIndicator', sorted: false, filtered: false, highlight: false},
-  {field: 'id', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false},
-  {field: 'dataSourceName', header: 'Name', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'engineVersion', header: 'Eng Version', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false},
-  {field: 'iconManager', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},
+  {
+    field: 'selected',
+    header: '',
+    width: '25px',
+    type: 'select',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'icon',
+    header: '',
+    width: '25px',
+    type: 'iconIndicator',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'id',
+    header: 'ID',
+    width: '40px',
+    type: 'text',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'dataSourceName',
+    header: 'Name',
+    width: '100px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'description',
+    header: 'Description',
+    width: '200px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'engineVersion',
+    header: 'Eng Version',
+    width: '70px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'iconManager',
+    header: '',
+    width: '25px',
+    type: 'icon',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+];
+
+const colsFinancialAnalysis = [
+  {
+    field: 'selected',
+    header: '',
+    width: '25px',
+    type: 'select',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'id',
+    header: 'ID',
+    width: '50px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'name&desc',
+    header: 'Name & Description',
+    width: '300px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'regionPeril',
+    header: 'Region Peril',
+    width: '100px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'ty',
+    header: 'TY',
+    width: '70px',
+    type: 'icon-indicator',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'financialPerspective',
+    header: 'Financial Perspective',
+    width: '150px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'manager',
+    header: '',
+    width: '25px',
+    type: 'icon',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+];
+
+const colsFinancialStandard = [
+  {
+    field: 'selected',
+    header: '',
+    width: '25px',
+    type: 'select',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'code',
+    header: 'Code',
+    width: '40px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'financialPerspective',
+    header: 'Financial Perspective',
+    width: '300px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'ccy',
+    header: 'CCY',
+    width: '60px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'aal',
+    header: 'AAL',
+    width: '100px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'stdDev',
+    header: 'STD DEV',
+    width: '120px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'firstTarget',
+    header: 'OEP 100',
+    width: '50px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'secondTarget',
+    header: 'OEP 200',
+    width: '50px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'thirdTarget',
+    header: 'OEP 250',
+    width: '50px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'manager',
+    header: '',
+    width: '25px',
+    type: 'icon',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+];
+
+const financialStandarContent = [
+  {
+    selected: false,
+    code: 'CL',
+    financialPerspective: 'Client Loss',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
+  {
+    selected: false,
+    code: 'FA',
+    financialPerspective: 'Facultative Reinsurance Loss',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
+  {
+    selected: false,
+    code: 'GR',
+    financialPerspective: 'Gross Loss',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
+  {
+    selected: false,
+    code: 'GU',
+    financialPerspective: 'Ground Up Loss',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
+  {
+    selected: false,
+    code: 'QS',
+    financialPerspective: 'Quota Share Treaty Loss',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
+  {
+    selected: false,
+    code: 'RC',
+    financialPerspective: 'Net Loss Post Corporate Cat',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
+  {
+    selected: false,
+    code: 'RG',
+    financialPerspective: 'Reinsurance Gross Loss',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
+  {
+    selected: false,
+    code: 'RL',
+    financialPerspective: 'Net Loss Pre Cat',
+    ccy: 'USD',
+    aal: '55,837,813',
+    stdDev: '158,455,991',
+    firstTarget: '2,84',
+    secondTarget: '2,84',
+    thirdTarget: '2,84'
+  },
 ];
 
 export const DataTables = {
@@ -100,5 +648,8 @@ export const DataTables = {
   frozenColsAnalysis,
   frozenColsPortfolio,
   frozenColsSummary,
-  frozenColsResults
+  frozenColsResults,
+  colsFinancialAnalysis,
+  colsFinancialStandard,
+  financialStandarContent
 };

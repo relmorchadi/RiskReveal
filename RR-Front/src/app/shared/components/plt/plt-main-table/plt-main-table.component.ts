@@ -1,4 +1,13 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import * as _ from 'lodash';
 
 @Component({
@@ -8,6 +17,8 @@ import * as _ from 'lodash';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PltMainTableComponent implements OnInit {
+
+  @ViewChild('cm') cm: TemplateRef<any>;
 
   @Input() tableInputs: {
     filterInput: string,

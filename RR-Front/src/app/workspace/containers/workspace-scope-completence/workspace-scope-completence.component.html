@@ -1,7 +1,7 @@
 <app-left-menu></app-left-menu>
 <div class="a-app-wrapper">
   <div class="a-app-header">
-    <h4>Scope of Completeness</h4>
+    <h4>Expected Scope & Completeness</h4>
     <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
             nz-button nzType="primary" nzSize="default" nzShape="circle">
       <i style="color: #16617a;" nz-icon theme="outline">
@@ -70,7 +70,7 @@
       <p-table [value]="dataSource" scrollHeight="340px" dataKey="id">
         <ng-template pTemplate="header" let-columns>
           <tr>
-            <th style="width: 390px">
+            <th style="width: 420px">
               <div style="display: flex;">
                 <div style="width: 100px"></div>
                 <div style="width: 50px">ID</div>
@@ -80,7 +80,7 @@
               </div>
             </th>
 
-            <th *ngFor="let item of workspace.treatySections" style="width:120px; max-width: 120px" class="divided-col">
+            <th *ngFor="let item of workspace.treatySections" style="width:90px" class="divided-col">
               <div>{{item}}</div>
               <div class="icon-holder">
                 <i class="icon-share-folder"></i>

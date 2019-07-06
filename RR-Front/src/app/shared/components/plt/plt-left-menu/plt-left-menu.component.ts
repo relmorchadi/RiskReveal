@@ -19,7 +19,10 @@ export class PltLeftMenuComponent implements OnInit {
     projects: any[];
     showDeleted: boolean;
     filterData: any;
-    filters: any;
+    filters: {
+      systemTag: any,
+      userTag: any[]
+    };
     addTagModalIndex: number;
     fromPlts: boolean;
     deletedPltsLength: number;
@@ -86,9 +89,11 @@ export class PltLeftMenuComponent implements OnInit {
       this.unCkeckAllPlts.emit();
       if (this.menuInputs.filterData['project'] && this.menuInputs.filterData['project'] != '' && value == this.menuInputs.filterData['project']) {
         this.onWsHeaderSelection.emit(true);
+        console.log(_.omit(this.menuInputs.filterData, [key]))
         this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, [key]))
       } else {
         this.onWsHeaderSelection.emit(false);
+        console.log(_.merge({}, this.menuInputs.filterData, {[key]: value}));
         this.onProjectFilter.emit(_.merge({}, this.menuInputs.filterData, {[key]: value}))
       }
       this.onSelectProjects.emit(_.map(this.menuInputs.projects, t => {

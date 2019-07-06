@@ -8,7 +8,7 @@
           <i nz-dropdown  style="padding-left: 6px; padding-top: 6px; cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
           <ul nz-menu nzSelectable>
             <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> New Project</li>
-            <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> Existing Project</li>
+            <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> New Linked Project</li>
           </ul>
         </nz-dropdown>
       </div>
@@ -138,10 +138,12 @@
         </div>
       </div>
     </div>
-    <app-workspace-project-popup  [isVisible]="searchWorkspace"
-                                  (onCancel)="cancelCreateExistingProjectPopup()"
-                                  (onSelectProjectNext)="selectProjectNext($event)">
+    <app-workspace-project-popup [isVisible]="searchWorkspace"
+                                 (onVisibleChange)="cancelCreateExistingProjectPopup()"
+                                 [selectionStep]="'project'"
+                                 (onSelectProjectNext)="selectProjectNext($event)">
     </app-workspace-project-popup>
+
     <app-create-project-popup [isVisible]="newProject"
                               [workspace]="workspace"
                               [newProject]="selectedProject"

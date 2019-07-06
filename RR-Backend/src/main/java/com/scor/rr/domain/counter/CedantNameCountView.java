@@ -1,10 +1,13 @@
 package com.scor.rr.domain.counter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CEDANT_NAME_CNT_VW", schema = "dbo")
+@Table(name = "CEDANT_NAME_CNT_VW", schema = "poc")
 public class CedantNameCountView {
 
     @Id

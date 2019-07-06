@@ -10,6 +10,7 @@ import * as moment from 'moment';
 const initiaState: pltMainModel = {
   data: {},
   loading: false,
+  cloneConfig: {},
   filters: {
     systemTag: [],
     userTag: []
@@ -34,6 +35,10 @@ export class PltMainState implements NgxsOnInit {
   /**
    * Selectors
    */
+  @Selector()
+  static getCloneConfig(state: pltMainModel) {
+    return state.cloneConfig;
+  }
   @Selector()
   static getWorkspaceMainState(state: pltMainModel) {
     return state;
@@ -99,6 +104,13 @@ export class PltMainState implements NgxsOnInit {
 
   getRegion() {
     return this.regions[_.random(0, 3)]
+  }
+
+  @Action(fromPlt.setCloneConfig)
+  setCloneConfig(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setCloneConfig) {
+    ctx.patchState({
+      cloneConfig: payload
+    })
   }
 
   @Action(fromPlt.loadAllPlts)
@@ -616,6 +628,5 @@ export class PltMainState implements NgxsOnInit {
     localStorage.setItem('deletedPlts', JSON.stringify(ls));
 
   }
-
 }
 

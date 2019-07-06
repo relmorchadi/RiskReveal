@@ -1,19 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
 import {PltMainState} from '../../store';
-import {map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Table} from 'primeng/table';
 import {combineLatest} from 'rxjs';
@@ -71,7 +62,11 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       label: 'Clone To',
       command: (event) => {
         console.log('cloning')
-        this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
+        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({
+          from: 'pltManager',
+          payload: {wsId: this.workspaceId, uwYear: this.uwy}
+        }));
+        this.router$.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
       }
     },
     {
@@ -929,17 +924,17 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       ...$event,
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
-    }))
+    }));
   }
 
   toggleColumnsManager() {
-    this.managePopUp= !this.managePopUp;
-    if(this.managePopUp) this.pltColumnsForConfig= [...this.pltColumns];
+    this.managePopUp = !this.managePopUp;
+    if (this.managePopUp) this.pltColumnsForConfig = [...this.pltColumns];
   }
 
   saveColumns() {
     this.toggleColumnsManager();
-    this.pltColumns= [...this.pltColumnsForConfig];
+    this.pltColumns = [...this.pltColumnsForConfig];
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -948,10 +943,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   toggleCol(i: number) {
-    this.pltColumnsForConfig= _.merge(
+    this.pltColumnsForConfig = _.merge(
       [],
       this.pltColumnsForConfig,
       { [i]: {...this.pltColumnsForConfig[i], active: !this.pltColumnsForConfig[i].active} }
-      )
+    );
   }
 }

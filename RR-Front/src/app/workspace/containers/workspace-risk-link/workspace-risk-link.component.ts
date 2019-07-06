@@ -1,4 +1,12 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnDestroy,
+  OnInit,
+  ViewChild
+} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute} from '@angular/router';
@@ -6,10 +14,15 @@ import {Select, Store} from '@ngxs/store';
 import {Observable} from 'rxjs';
 import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
+import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {
-  AddToBasketAction, DeleteFromBasketAction, LoadAnalysisForLinkingAction, LoadPortfolioForLinkingAction,
+  AddToBasketAction,
+  DeleteFromBasketAction,
+  LoadAnalysisForLinkingAction,
+  LoadPortfolioForLinkingAction,
   PatchAddToBasketStateAction,
-  SearchRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction, TogglePortfolioForLinkingAction,
+  SearchRiskLinkEDMAndRDMAction,
+  ToggleAnalysisForLinkingAction,
   ToggleRiskLinkAnalysisAction,
   ToggleRiskLinkEDMAndRDMSelectedAction,
   ToggleRiskLinkPortfolioAction
@@ -22,7 +35,7 @@ import {
   SelectRiskLinkEDMAndRDMAction,
   ToggleRiskLinkEDMAndRDMAction
 } from '../../store/actions';
-import { DataTables } from './data';
+import {DataTables} from './data';
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -36,12 +49,15 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   filterModalVisibility = false;
   linkingModalVisibility = false;
   radioValue = 'all';
+  radioValueFinancialP = 'CurrentSelection';
+  columnsForConfig;
+  targetConfig;
 
-  inputSwitch = true;
+  @ViewChild('searchInput')
+  searchInput: ElementRef;
 
   displayDropdownRDMEDM = false;
   displayListRDMEDM = false;
-  closePrevent = false;
 
   serviceSubscription: any;
 
@@ -49,7 +65,6 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   tableLeftAnalysis: any;
   tableAnalysisLinking: any;
-
   tableLeftPortfolio: any;
   tablePortfolioLinking: any;
 
@@ -65,7 +80,15 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   scrollableColsResult: any;
   frozenColsResult: any;
 
-  selectedEDM: any;
+  colsFinancialStandard: any;
+  financialStandardContent: any;
+  colsFinancialAnalysis: any;
+
+  manual = false;
+  suggested = false;
+  managePopUp = false;
+  financialP = false;
+  selectedEDM = null;
   scrollableColslinking: any;
 
   @Select(RiskLinkState)
@@ -76,7 +99,6 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    console.log('init Risk');
     this.store.dispatch(new LoadRiskLinkDataAction());
     this.serviceSubscription = [
       this.state$.subscribe(value => this.state = _.merge({}, value)),
@@ -102,11 +124,76 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.scrollableColsResult = DataTables.scrollableColsResults;
     this.frozenColsResult = DataTables.frozenColsResults;
     this.scrollableColslinking = DataTables.scrollableColsLinking;
+    this.colsFinancialStandard = DataTables.colsFinancialStandard;
+    this.colsFinancialAnalysis = DataTables.colsFinancialAnalysis;
+    this.financialStandardContent = DataTables.financialStandarContent;
   }
 
   ngOnDestroy() {
     if (this.serviceSubscription)
       this.serviceSubscription.forEach(sub => sub.unsubscribe());
+  }
+
+  toggleColumnsManager(target) {
+    this.managePopUp = !this.managePopUp;
+    if (this.managePopUp) {
+      if (target === 'summaries') {
+        this.columnsForConfig = [...this.scrollableColsSummary];
+      } else if (target === 'results') {
+        this.columnsForConfig = [...this.scrollableColsResult];
+      }
+      this.targetConfig = target;
+    }
+  }
+
+  saveColumns() {
+    this.toggleColumnsManager(this.targetConfig);
+    if (this.targetConfig === 'summaries') {
+      this.scrollableColsSummary = [...this.columnsForConfig];
+    } else if (this.targetConfig === 'results') {
+      this.scrollableColsResult = [...this.columnsForConfig];
+    }
+
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.columnsForConfig, event.previousIndex, event.currentIndex);
+  }
+
+  toggleCol(i: number) {
+    this.columnsForConfig = _.merge(
+      [],
+      this.columnsForConfig,
+      {[i]: {...this.columnsForConfig[i], visible: !this.columnsForConfig[i].visible}}
+    );
+  }
+
+  focusInput() {
+    this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
+    this.searchInput.nativeElement.focus();
+  }
+
+  getChecked(item) {
+    if (this.selectedEDM !== null) {
+      if (item === null) {
+        return false;
+      } else {
+        return item.name === this.selectedEDM;
+      }
+    }
+  }
+
+  getSelectedRDM() {
+    return _.filter(_.toArray(this.state.linking.rdm), dt => dt.selected);
+  }
+
+  selectLinkedRDM(item) {
+    console.log(item);
+    this.store.dispatch(new LoadAnalysisForLinkingAction(item));
+  }
+
+  resetToMain() {
+    this.manual = this.suggested = false;
   }
 
   dataList(data, filter = null) {
@@ -118,11 +205,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
-  toggleItems(RDM) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne'}));
-  }
-
-  toggleItemsLink(RDM) {
+  toggleItems(RDM, event, source) {
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
+    if (event !== null) {
+      event.stopPropagation();
+    }
   }
 
   toggleItemsListRDM(RDM) {
@@ -130,11 +217,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   selectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll'}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll', source: 'solo'}));
   }
 
   unselectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll'}));
+    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll', source: 'solo'}));
   }
 
   refreshAll() {
@@ -172,12 +259,15 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.store.dispatch(new DeleteFromBasketAction({id: id, scope: target}));
   }
 
-  toggleForLinkingEDM(items) {
-    this.store.dispatch(new LoadPortfolioForLinkingAction(items));
+  toggleForLinkingEDM() {
+    const item = _.filter(this.dataList(this.state.linking.edm), dt => dt.name === this.selectedEDM)[0];
+    this.detectChanges();
+    console.log(item, this.selectedEDM);
+    this.store.dispatch(new LoadPortfolioForLinkingAction(item));
   }
 
   toggleForLinkingRDM(items) {
-    items.selected = !items.selected;
+    this.store.dispatch(new ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
   }
 
   getScrollableCols() {
@@ -205,9 +295,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   getLinkingAnalysis() {
-/*    const {id} = _.filter(this.state.linking.edm, (dt) => dt.selected === true)[0];
-    const dataTable = _.get(this.state.linking, `analysis[${id}].data`, null);
-    return _.toArray(dataTable);*/
+    if (this.state.linking.analysis === null) {
+      return null;
+    } else {
+      return _.toArray(this.state.linking.analysis.data);
+    }
   }
 
   getTableData() {

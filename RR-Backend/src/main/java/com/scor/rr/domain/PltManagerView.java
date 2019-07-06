@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Set;
 
 @Entity
+@Table(schema = "poc")
 @Data
 @AllArgsConstructor
 public class PltManagerView {

@@ -1,9 +1,6 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,7 +16,7 @@ import java.util.Set;
 @JsonIgnoreProperties({"currencyCode","geoCode","perilCode","fileName",
         "pltType","project","publishToArc","regionPeril","rrAnalysisId",
         "targetRap","udName","userSelectedGrain","xActPublicationDate","xactPublicationDate","userTags"})
-@Table(name = "[RR-PltHeader]", schema = "dbo")
+@Table(name = "[RR-PltHeader]", schema = "poc")
 public class PltHeader {
 
   @Id

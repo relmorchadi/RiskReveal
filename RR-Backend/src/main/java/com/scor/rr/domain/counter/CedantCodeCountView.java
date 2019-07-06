@@ -8,7 +8,7 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "CEDANT_CODE_CNT_VW", schema = "dbo")
+@Table(name = "CEDANT_CODE_CNT_VW", schema = "poc")
 public class CedantCodeCountView {
 
     @Id
