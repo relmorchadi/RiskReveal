@@ -3,18 +3,18 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  AddToBasketAction, DeleteFromBasketAction,
-  LoadAnalysisForLinkingAction, LoadPortfolioForLinkingAction,
+  AddToBasketAction, ApplyFinancialPerspectiveAction, DeleteFromBasketAction,
+  LoadAnalysisForLinkingAction, LoadFinancialPerspectiveAction, LoadPortfolioForLinkingAction,
   LoadRiskLinkDataAction, PatchAddToBasketStateAction,
   PatchRiskLinkAction,
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
-  PatchRiskLinkFinancialPerspectiveAction,
+  PatchRiskLinkFinancialPerspectiveAction, PatchTargetFPAction, SaveFinancialPerspectiveAction,
   SearchRiskLinkEDMAndRDMAction,
   SelectRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction,
   ToggleRiskLinkAnalysisAction,
-  ToggleRiskLinkEDMAndRDMAction,
-  ToggleRiskLinkPortfolioAction
+  ToggleRiskLinkEDMAndRDMAction, ToggleRiskLinkFPAnalysisAction, ToggleRiskLinkFPStandardAction,
+  ToggleRiskLinkPortfolioAction, ToggleRiskLinkResultAction, ToggleRiskLinkSummaryAction
 } from '../actions';
 import {
   LoadRiskLinkAnalysisDataAction,
@@ -68,6 +68,13 @@ const initiaState: RiskLinkModel = {
     },
     calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
   },
+  financialPerspective: {
+    rdm: {data: null, selected: null},
+    analysis: null,
+    treaty: null,
+    standard: null,
+    target: 'currentSelection'
+  },
   analysis: null,
   portfolios: null,
   results: null,
@@ -106,6 +113,11 @@ export class RiskLinkState implements NgxsOnInit {
   @Selector()
   static getFinancialValidatorAttr(path: string, value: any) {
     return (state: any) => _.get(state.RiskLinkModel, path, value);
+  }
+
+  @Selector()
+  static getFinancialPerspective(state: RiskLinkModel) {
+    return _.get(state, 'financialPerspective', null);
   }
 
   /**
@@ -169,6 +181,17 @@ export class RiskLinkState implements NgxsOnInit {
     });
     ctx.patchState({
       activeAddBasket: count > 0
+    });
+  }
+
+  @Action(PatchTargetFPAction)
+  patchTargetFP(ctx: StateContext<RiskLinkModel>, {payload}: PatchTargetFPAction) {
+    const state = ctx.getState();
+    ctx.patchState({
+      financialPerspective: {
+        ...state.financialPerspective,
+        target: payload
+      }
     });
   }
 
@@ -328,6 +351,116 @@ export class RiskLinkState implements NgxsOnInit {
     }
   }
 
+  @Action(ToggleRiskLinkResultAction)
+  toggleRiskLinkResult(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkResultAction) {
+    const state = ctx.getState();
+    const {action, value, item} = payload;
+    const result = _.toArray(state.results.data);
+    if (action === 'selectOne') {
+      ctx.patchState({
+        results: {
+          ...state.results,
+          data: {...state.results.data,
+            [item.id]: {...state.results.data[item.id], selected: value}
+          }
+        }
+      });
+    } else {
+      let selected: boolean;
+      action === 'selectAll' ? selected = true : selected = false;
+      ctx.patchState({
+        results: {
+          ...state.results,
+          data: Object.assign({}, ...result.map(dt => ({[dt.id]: {...dt, selected: selected}})))
+        },
+      });
+    }
+  }
+
+  @Action(ToggleRiskLinkSummaryAction)
+  toggleRiskLinkSummary(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkSummaryAction) {
+    const state = ctx.getState();
+    const {action, value, item} = payload;
+    const summaries = _.toArray(state.summaries.data);
+    if (action === 'selectOne') {
+      ctx.patchState({
+        summaries: {
+          ...state.summaries,
+          data: {...state.summaries.data,
+            [item.id]: {...state.summaries.data[item.id], selected: value}
+          }
+        }
+      });
+    } else {
+      let selected: boolean;
+      action === 'selectAll' ? selected = true : selected = false;
+      ctx.patchState({
+        summaries: {
+          ...state.summaries,
+          data: Object.assign({}, ...summaries.map(dt => ({[dt.id]: {...dt, selected: selected}})))
+        },
+      });
+    }
+  }
+
+  @Action(ToggleRiskLinkFPStandardAction)
+  toggleRiskLinkFPStandard(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkFPStandardAction) {
+    const state = ctx.getState();
+    const {action, value, item} = payload;
+    const fpStandard = _.toArray(state.financialPerspective.standard);
+    if (action === 'selectOne') {
+      ctx.patchState({
+        financialPerspective: {
+          ...state.financialPerspective,
+          standard: {...state.financialPerspective.standard,
+            [item.id]: {...state.financialPerspective.standard[item.id], selected: value}
+          }
+        }
+      });
+    } else {
+      let selected: boolean;
+      action === 'selectAll' ? selected = true : selected = false;
+      ctx.patchState({
+        financialPerspective: {
+          ...state.financialPerspective,
+          standard: Object.assign({}, ...fpStandard.map(dt => ({[dt.id]: {...dt, selected: selected}})))
+        },
+      });
+    }
+  }
+
+  @Action(ToggleRiskLinkFPAnalysisAction)
+  toggleRiskLinkFPAnalysis(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkFPAnalysisAction) {
+    const state = ctx.getState();
+    const {action, value, item} = payload;
+    const fpAnalysis = _.toArray(state.financialPerspective.analysis.data);
+    if (action === 'selectOne') {
+      ctx.patchState({
+        financialPerspective: {
+          ...state.financialPerspective,
+          analysis: {...state.financialPerspective.analysis,
+            data: {
+              ...state.financialPerspective.analysis.data,
+              [item.id]: {...state.financialPerspective.analysis.data[item.id], selected: value}
+            }
+          }
+        }
+      });
+    } else {
+      let selected: boolean;
+      action === 'selectAll' ? selected = true : selected = false;
+      ctx.patchState({
+        financialPerspective: {
+          ...state.financialPerspective,
+          analysis: {
+            ...state.financialPerspective.analysis,
+            data: Object.assign({}, ...fpAnalysis.map(dt => ({[dt.id]: {...dt, selected: selected}})))
+          }
+        },
+      });
+    }
+  }
+
   @Action(AddToBasketAction)
   addToBasket(ctx: StateContext<RiskLinkModel>) {
     const state = ctx.getState();
@@ -351,10 +484,12 @@ export class RiskLinkState implements NgxsOnInit {
             status: 100,
             unitMultiplier: 1,
             targetCurrency: 'USD',
-            elt: 'GR',
+            financialPerspective: ['GR'],
             occurrenceBasis: 'PerEvent',
+            regionPeril: 'NAEQ',
+            ty: true,
             targetRap: 'RDT',
-            peqt: '20',
+            peqt: '0/3',
             selected: false
           },
         },
@@ -387,6 +522,81 @@ export class RiskLinkState implements NgxsOnInit {
         results: results
       }
     );
+  }
+
+  @Action(ApplyFinancialPerspectiveAction)
+  applyFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: ApplyFinancialPerspectiveAction) {
+    const state = ctx.getState();
+    if (payload === 'replace') {
+      const fpApplied = _.filter(_.toArray(state.financialPerspective.standard), dt => dt.selected ).map(dt => dt.code);
+      if (state.financialPerspective.target === 'currentSelection') {
+        const selectedAnalysis = _.filter(_.toArray(state.financialPerspective.analysis.data), dt => dt.selected);
+        const modif = Object.assign({}, ...selectedAnalysis.map(item => {
+          return ({[item.id]: {...item, financialPerspective: fpApplied}});
+        }));
+        ctx.patchState({
+          financialPerspective: {
+            ...state.financialPerspective,
+            analysis: {
+              ...state.financialPerspective.analysis,
+              data: _.merge({}, state.financialPerspective.analysis.data, modif)
+            }
+          }
+        });
+      } else {
+        ctx.patchState({
+          financialPerspective: {
+            ...state.financialPerspective,
+            analysis: {
+              ...state.financialPerspective.analysis,
+              data: Object.assign({}, ..._.toArray(state.financialPerspective.analysis.data).map(item => {
+                return ({[item.id]: {...item, financialPerspective: fpApplied}});
+              }))
+            }
+          }
+        });
+      }
+    } else {
+      const fpApplied: any = _.filter(_.toArray(state.financialPerspective.standard), dt => dt.selected ).map(dt => dt.code);
+      if (state.financialPerspective.target === 'currentSelection') {
+        const selectedAnalysis = _.filter(_.toArray(state.financialPerspective.analysis), dt => dt.selected);
+        const modif = Object.assign({}, ...selectedAnalysis.map(item => {
+          return ({[item.id]: {...item, financialPerspective: [...item.financialPerspective, ...fpApplied]}});
+        }));
+        ctx.patchState({
+          financialPerspective: {
+            ...state.financialPerspective,
+            analysis: {
+              ...state.financialPerspective.analysis,
+              data: _.merge({}, state.financialPerspective.analysis.data, modif)
+            }
+          }
+        });
+      } else {
+        ctx.patchState({
+          financialPerspective: {
+            ...state.financialPerspective,
+            analysis: {
+              ...state.financialPerspective.analysis,
+              data: Object.assign({}, ..._.toArray(state.financialPerspective.analysis.data).map(item => {
+                return ({[item.id]: {...item, financialPerspective: [...item.financialPerspective, ...fpApplied]}});
+              }))
+            }
+          }
+        });
+      }
+    }
+  }
+
+  @Action(SaveFinancialPerspectiveAction)
+  saveFinancialperspective(ctx: StateContext<RiskLinkModel>) {
+    const state = ctx.getState();
+    ctx.patchState({
+      results: {
+        ...state.results,
+        data: state.financialPerspective.analysis.data
+      }
+    });
   }
 
   @Action(DeleteFromBasketAction)
@@ -743,6 +953,10 @@ export class RiskLinkState implements NgxsOnInit {
                         ...state.linking,
                         edm: listSelected.edm,
                         rdm: listSelected.rdm
+                      },
+                      financialPerspective: {
+                        ...state.financialPerspective,
+                        rdm: {data: listSelected.rdm, selected: null},
                       }
                     });
                     ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
@@ -754,7 +968,6 @@ export class RiskLinkState implements NgxsOnInit {
             }
           }
         );
-
       });
     } else {
       ctx.patchState({
@@ -769,6 +982,10 @@ export class RiskLinkState implements NgxsOnInit {
           ...state.linking,
           edm: listSelected.edm,
           rdm: listSelected.rdm
+        },
+        financialPerspective: {
+          ...state.financialPerspective,
+          rdm: {data: listSelected.rdm, selected: null},
         }
       });
       ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
@@ -814,6 +1031,20 @@ export class RiskLinkState implements NgxsOnInit {
     );
   }
 
+  /** LOAD DATA FOR FINANCIAL PERSPECTIVE */
+  @Action(LoadFinancialPerspectiveAction)
+  loadFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: LoadFinancialPerspectiveAction) {
+    const state = ctx.getState();
+    const FincancialPerspective = Object.assign({}, ...payload.map(item => ({[item.id]: {...item}})));
+    ctx.patchState({
+      financialPerspective: {
+        ...state.financialPerspective,
+        standard: FincancialPerspective,
+        analysis: state.results
+      }
+    });
+  }
+
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(LoadRiskLinkDataAction)
   loadRiskLinkData(ctx: StateContext<RiskLinkModel>) {
@@ -848,16 +1079,3 @@ export class RiskLinkState implements NgxsOnInit {
     );
   }
 }
-
-/*else if (action === 'selectLink') {
-  const {id, name} = RDM;
-  const searchTerm = name.substr(0, name.lastIndexOf('_'));
-  if (name.length - searchTerm.length < 4) {
-    this.riskApi.searchRiskLinkPortfolio('', searchTerm).pipe(
-      mergeMap(
-        (data: any) => {
-          return of();
-        }
-      )
-    );
-  }*/
