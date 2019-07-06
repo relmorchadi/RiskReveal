@@ -145,5 +145,7 @@ export class restorePlt {
 
 export class setCloneConfig {
   static readonly type = '[PLT Main] Clone Config';
-  constructor(public payload?: any) {}
+
+  constructor(public payload?: any) {
+  }
 }

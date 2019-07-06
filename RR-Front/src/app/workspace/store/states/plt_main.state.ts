@@ -147,6 +147,7 @@ export class PltMainState implements NgxsOnInit {
                       deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
                       status: this.status[this.getRandomInt()],
                       newPlt: Math.random() >= 0.5,
+                      EPM: ['1,080,913', '151,893', '14.05%']
                     }
                   }))
                 )

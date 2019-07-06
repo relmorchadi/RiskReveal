@@ -35,7 +35,8 @@
           <span class="subtitle-4">
             Cloning from:
           </span>
-          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': from.detail ?  '#fff' : '#e5e9fa','justify-content': from.detail ? 'unset' : 'center' }">
+          <div style="display: flex;flex-wrap: nowrap;"
+               [ngStyle]="{'background-color': from.detail ?  '#fff' : '#e5e9fa','justify-content': from.detail ? 'unset' : 'center' }">
             <ng-container *ngIf="from.detail">
               <div class="left-box">
                 {{from.detail}}
@@ -56,14 +57,16 @@
         </div>
         <div class="box-item" style="width: 780px;padding: 0 25px;margin: 0;">
           <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
-            <i style="cursor:pointer;font-size:27px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px" class="icon-compare_arrows_24px" (click)="swapCloneItems()"></i>
+            <i style="cursor:pointer;font-size:27px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px"
+               class="icon-compare_arrows_24px" (click)="swapCloneItems()"></i>
           </div>
         </div>
         <div class="box-item" style="width: 780px;padding-top: 0;margin: 0;">
           <span class="subtitle-4">
             Cloning to:
           </span>
-          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': to?.detail ?  '#fff' : '#e5e9fa','justify-content': to.detail ? 'unset' : 'center'}">
+          <div style="display: flex;flex-wrap: nowrap;"
+               [ngStyle]="{'background-color': to?.detail ?  '#fff' : '#e5e9fa','justify-content': to.detail ? 'unset' : 'center'}">
             <ng-container *ngIf="to.detail">
               <div class="left-box">
                 {{to.detail}}
