@@ -569,11 +569,17 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   }
 
-  checkRow(event, rowData) {
-    if (this.state.selectedEDMOrRDM === 'edm') {
-      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
-    } else {
-      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+  checkRow(event, rowData, target) {
+    if (target === 'A&P') {
+      if (this.state.selectedEDMOrRDM === 'edm') {
+        this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
+      } else {
+        this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+      }
+    } else if (target === 'fpS') {
+      this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
+    } else if (target === 'fpA') {
+      this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: event, item: rowData}));
     }
     console.log(event);
   }
