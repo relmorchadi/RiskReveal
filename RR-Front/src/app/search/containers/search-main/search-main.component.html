@@ -17,7 +17,7 @@
           <div class="title-section">
             <h6 style="margin-bottom: 0; display:flex; align-items: center">
               <ng-container *ngIf="!paginationOption?.total; else paginationHighlight">
-                0 Results
+                No Result Found
               </ng-container>
               <ng-template #paginationHighlight>
                 Showing {{paginationOption?.currentPage+1 + ' to ' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
