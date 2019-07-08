@@ -437,7 +437,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         return of(null);
       })
     ).subscribe( () => this.d.unsubscribe());
-    
+
     this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
       this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();

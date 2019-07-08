@@ -32,6 +32,15 @@ import { DataTables } from './data';
 })
 export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
+  hyperLinks: string[]= ['Risk link', 'File-based'];
+  hyperLinksRoutes: any= {
+    'Risk link': '/RiskLink',
+    'File-based': '/FileBasedImport'
+  };
+  hyperLinksConfig: {
+    wsId: string,
+    uwYear: string
+  };
   lastSelectedIndex = null;
   filterModalVisibility = false;
   linkingModalVisibility = false;
@@ -89,6 +98,13 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         this.detectChanges();
       }),
       this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
+        this.detectChanges();
+      }),
+      this.route.params.subscribe( ({wsId, year}) => {
+        this.hyperLinksConfig= {
+          wsId,
+          uwYear: year
+        }
         this.detectChanges();
       })
     ];

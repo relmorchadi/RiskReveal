@@ -11,6 +11,7 @@ import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import { PickKeysPipe } from './pipes/pull-keys.pipe';
+import { HyperLinksComponent } from './components/hyper-links/hyper-links.component';
 
 
 @NgModule({

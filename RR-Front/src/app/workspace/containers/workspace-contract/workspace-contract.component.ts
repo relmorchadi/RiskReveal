@@ -1,4 +1,5 @@
 import {Component, OnInit} from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-workspace-contract',
@@ -9,6 +10,16 @@ export class WorkspaceContractComponent implements OnInit {
   collapseHead = false;
   collapseLeft = false;
   collapseRight = false;
+  hyperLinks: string[]= ['projects', 'contract', 'activity'];
+  hyperLinksRoutes: any= {
+    'projects': '',
+    'contract': '/Contract',
+    'activity': '/Activity'
+  };
+  hyperLinksConfig: {
+    wsId: string,
+    uwYear: string
+  };
 
   scrollableColsTreaty = [
     {field: 'bouquet', header: 'Bouquet', width: '130px', display: true, filtered: false, type: 'text', indicator: true, color: '#8C54FF'},
@@ -223,9 +234,17 @@ export class WorkspaceContractComponent implements OnInit {
     },
   ];
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) {
+
+  }
 
   ngOnInit() {
+    this.route.params.subscribe( ({wsId, year}) => {
+      this.hyperLinksConfig= {
+        wsId,
+        uwYear: year
+      }
+    })
   }
 
   changeCollapse() {

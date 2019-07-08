@@ -54,18 +54,18 @@
     </ul>
   </li>
   <hr class="col-xs-12">
-  <li (click)="routerNavigate('Exposures')" nz-menu-item nz-tooltip nzPlacement="right"
-      [nzTitle]="state.leftNavbarIsCollapsed ? 'Exposure' : ''">
-          <span title>
-            <i nz-icon><i class="icon-adjust-half"></i></i>
-            <span>Exposures</span>
-          </span>
-  </li>
   <li (click)="routerNavigate('CloneData')" nz-menu-item nz-tooltip nzPlacement="right"
       [nzTitle]="state.leftNavbarIsCollapsed ? 'Clone Data' : ''">
           <span title>
             <i nz-icon><i class="icon-database"></i></i>
             <span>Clone Data</span>
+          </span>
+  </li>
+  <li (click)="routerNavigate('Exposures')" nz-menu-item nz-tooltip nzPlacement="right"
+      [nzTitle]="state.leftNavbarIsCollapsed ? 'Exposure' : ''">
+          <span title>
+            <i nz-icon><i class="icon-adjust-half"></i></i>
+            <span>Exposures</span>
           </span>
   </li>
   <li (click)="routerNavigate('Results')" nz-menu-item nz-tooltip nzPlacement="right"

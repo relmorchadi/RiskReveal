@@ -44,6 +44,16 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy {
   description: any;
   @Select(WorkspaceMainState.getData) data$;
   @Select(WorkspaceMainState.getProjects) projects$;
+  hyperLinks: string[]= ['projects', 'contract', 'activity'];
+  hyperLinksRoutes: any= {
+    'projects': '',
+    'contract': '/Contract',
+    'activity': '/Activity'
+  };
+  hyperLinksConfig: {
+    wsId: string,
+    uwYear: string
+  };
 
 
   constructor(private _helper: HelperService, private route: ActivatedRoute,

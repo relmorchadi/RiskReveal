@@ -138,7 +138,9 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   searchWorkSpaceModal: boolean;
   data: any[];
   from: SourceData;
+  fromCache: SourceData;
   to: SourceData;
+  toCache: SourceData;
   browesing: boolean;
   showDeleted: boolean;
   workspaceId: string;
@@ -192,6 +194,8 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
           uwYear: ''
         }
       }
+      this.fromCache= {...this.from};
+      this.toCache= {...this.to};
       this.detectChanges();
     })
     )
@@ -235,33 +239,99 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   }
 
   setSelectedWs(currentSourceOfItems: string,$event: any) {
+    console.log($event);
     console.log(currentSourceOfItems, $event);
     if(currentSourceOfItems == 'from') {
-      this.from = {...this.from, wsId: $event.workSpaceId, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
+      this.from = {...this.from, wsId: $event.workSpaceId, uwYear: $event.uwYear, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
     }
     if(currentSourceOfItems == 'to') {
-      this.to = {...this.to, wsId: $event.workSpaceId, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
+      this.to = {...this.to, wsId: $event.workSpaceId, uwYear: $event.uwYear, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
+    }
+  }
+
+  summaryCache= {
+    'Pre-Inured PLTs': {
+      'icon': 'icon-assignment_24px',
+      'color': '#c38fff',
+      'value': 14
+    },
+    'Post-Inured PLTs': {
+      'icon': 'fa fa-code-fork',
+      'color': '#c38fff',
+      'value': 7
+    },
+    'Inuring Packages': {
+      'icon': 'icon-layer-group',
+      'color': '#f5a623',
+      'value': 5
+    },
+    'Sources Projects': {
+      'icon': 'icon-assignment_24px',
+      'color': '#33d0bb',
+      'value': 8
     }
   }
 
   swapCloneItems() {
+    console.log(this.from.plts, this.to.plts);
     const t= {...this.from};
     this.from= {...this.to};
     this.to= t;
+
+    if(this.from.plts.length > 0) {
+      this.cloneConfig= {
+        ...this.cloneConfig,
+        summary: {...this.summaryCache}
+      }
+    }else {
+      const k= {};
+
+      _.forEach(this.cloneConfig.summary, (v,key) => {
+        k[key] = {...v, value: 0};
+      })
+
+      this.cloneConfig= {
+        ...this.cloneConfig,
+        summary: {...k}
+      }
+    }
   }
 
   setSelectedPlts(currentSourceOfItems: string, $event: any) {
-    console.log(currentSourceOfItems, $event)
+    console.log($event);
     if(currentSourceOfItems == 'from') {
       this.from = {...this.from, plts: $event}
     }
     if(currentSourceOfItems == 'to') {
       this.to = {...this.to, plts: $event}
     }
+
+    if(this.from.plts.length > 0) {
+      this.cloneConfig= {
+        ...this.cloneConfig,
+        summary: {...this.summaryCache}
+      }
+    }else {
+      const k= {};
+
+      _.forEach(this.cloneConfig.summary, (v,key) => {
+        k[key] = {...v, value: 0};
+      })
+
+      this.cloneConfig= {
+        ...this.cloneConfig,
+        summary: {...k}
+      }
+    }
   }
 
   openSearchPopUp(destination: string = 'from') {
     this.multiSteps= destination == 'from';
+    this.stepConfig = {
+      wsId: '',
+      uwYear: '',
+      plts: []
+    };
     this.searchWorkSpaceModal= true;
     this.setCloneConfig('currentSourceOfItems', destination);
   }
@@ -287,5 +357,30 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
     };
     this.multiSteps= true;
     this.openSearchPopUp();
+  }
+
+  reset() {
+    if(this.activeSubTitle === 0) {
+      this.from= {...this.fromCache};
+      this.to= {...this.toCache};
+
+      if(this.from.plts.length > 0) {
+        this.cloneConfig= {
+          ...this.cloneConfig,
+          summary: {...this.summaryCache}
+        }
+      }else {
+        const k= {};
+
+        _.forEach(this.cloneConfig.summary, (v,key) => {
+          k[key] = {...v, value: 0};
+        })
+
+        this.cloneConfig= {
+          ...this.cloneConfig,
+          summary: {...k}
+        }
+      }
+    }
   }
 }

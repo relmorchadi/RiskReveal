@@ -1,0 +1,35 @@
+.hyper-links {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .link {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 7px;
+    flex-wrap: nowrap;
+    color: var(--primary-7);
+
+    .link-title {
+      &:hover {
+        cursor: pointer;
+        text-decoration: underline;
+      }
+    }
+
+    .link-separator {
+      margin-left: 14px;
+      font-weight: 400;
+    }
+  }
+
+  .active-link {
+    font-weight: 700;
+    color: var(--primary-1);
+
+    .link-separator {
+      font-weight: 400;
+    }
+  }
+}
