@@ -40,11 +40,11 @@ public class SearchResource {
         return searchService.getWorkspaceYear(keyword, size);
     }
 
-    @GetMapping("workspace")
-//    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size){
-        return searchService.globalSearchWorkspaces(filter, offset, size);
-    }
+//    @GetMapping("workspace")
+////    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
+//    Page<?> globalSearchWorkspace(NewWorkspaceFilter filter, int offset, int size){
+//        return searchService.globalSearchWorkspaces(filter, offset, size);
+//    }
 
     @PostMapping("workspace")
 //    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
@@ -69,8 +69,8 @@ public class SearchResource {
         return searchService.getAllFacTreaties(filter, pageable);
     }
 
-    @PostMapping("workspace/expert-mode")
-    Page<?> expertModeSearch(@RequestBody ExpertModeFilterRequest request){
-        return searchService.expertModeSearch(request);
-    }
+//    @PostMapping("workspace/expert-mode")
+//    Page<?> expertModeSearch(@RequestBody ExpertModeFilterRequest request){
+//        return searchService.expertModeSearch(request);
+//    }
 }

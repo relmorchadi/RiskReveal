@@ -11,8 +11,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>RR-Front</module>
         <module>RR-Backend</module>
+		<module>RRADJUSTMENT</module>
     </modules>
 
     <properties>

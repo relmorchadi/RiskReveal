@@ -146,16 +146,16 @@ public class SearchService {
 
     }
 
-    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter,int offset, int size) {
-        String resultsQueryString= queryHelper.generateSqlQuery(filter, offset, size);
-        String countQueryString= queryHelper.generateCountQuery(filter);
-        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
-        Query countQuery = entityManager.createNativeQuery(countQueryString);
-        List<Object[]> resultList = resultsQuery.getResultList();
-        Object total = countQuery.getSingleResult();
-        List<ContractSearchResult> contractSearchResult = map(resultList);
-        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
-    }
+//    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter,int offset, int size) {
+//        String resultsQueryString= queryHelper.generateSqlQuery(filter, offset, size);
+//        String countQueryString= queryHelper.generateCountQuery(filter);
+//        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+//        Query countQuery = entityManager.createNativeQuery(countQueryString);
+//        List<Object[]> resultList = resultsQuery.getResultList();
+//        Object total = countQuery.getSingleResult();
+//        List<ContractSearchResult> contractSearchResult = map(resultList);
+//        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
+//    }
 
     public Page<?> countInWorkspace(TableNames table, String keyword, int size) {
         return ofNullable(countMapper.get(table))
@@ -176,16 +176,16 @@ public class SearchService {
         return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter),pageable);
     }
 
-    public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
-        String resultsQueryString= queryHelper.generateSqlQuery(request.getFilter(),request.getKeyword(), request.getOffset(), request.getSize());
-        String countQueryString= queryHelper.generateCountQuery(request.getFilter(),request.getKeyword());
-        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
-        Query countQuery = entityManager.createNativeQuery(countQueryString);
-        List<Object[]> resultList = resultsQuery.getResultList();
-        Object total = countQuery.getSingleResult();
-        List<ContractSearchResult> contractSearchResult = map(resultList);
-        return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
-    }
+//    public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
+//        String resultsQueryString= queryHelper.generateSqlQuery(request.getFilter(),request.getKeyword(), request.getOffset(), request.getSize());
+//        String countQueryString= queryHelper.generateCountQuery(request.getFilter(),request.getKeyword());
+//        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+//        Query countQuery = entityManager.createNativeQuery(countQueryString);
+//        List<Object[]> resultList = resultsQuery.getResultList();
+//        Object total = countQuery.getSingleResult();
+//        List<ContractSearchResult> contractSearchResult = map(resultList);
+//        return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+//    }
 
     private List<ContractSearchResult> map(List<Object[]> resultList) {
         return resultList.stream().map((r) ->

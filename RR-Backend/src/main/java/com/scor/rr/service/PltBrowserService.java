@@ -14,14 +14,18 @@ import com.scor.rr.repository.UserTagRepository;
 import com.scor.rr.repository.WorkspaceRepository;
 import com.scor.rr.repository.specification.PltTableSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static java.util.Arrays.asList;
 
 
 @Component
