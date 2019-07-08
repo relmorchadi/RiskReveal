@@ -119,7 +119,7 @@
     <mapping class="com.scor.rr.domain.TargetRapEntity"/>
     <mapping class="com.scor.rr.domain.TaskEntity"/>
     <mapping class="com.scor.rr.domain.UserRrEntity"/>
-    <mapping class="com.scor.rr.domain.WorkspaceEntity"/>
+    <mapping class="com.scor.rr.domain.Workspace"/>
     <mapping class="com.scor.rr.domain.XActPublicationEntity"/>
     <mapping class="com.scor.rr.domain.CatRequestsEntity"/>
     <!-- <property name="connection.username"/> -->

@@ -21,33 +21,33 @@ public class PltBrowserResource {
     @Autowired
     PltBrowserService pltBrowserService;
 
-
-    @GetMapping
-    public PltTagResponse searchPltTable(PltFilter filter) {
-        return pltBrowserService.searchPltTable(filter);
-    }
-
-    @PostMapping("assign-user-tag")
-    public UserTag createUserTag(@RequestBody AssignPltsRequest assignPltsRequest) {
-        return pltBrowserService.assignUserTag(assignPltsRequest);
-    }
-
-    @PostMapping("assign-update-user-tag")
-    public List<UserTag> assignUpdateUserTag(@RequestBody AssignUpdatePltsRequest request) {
-        return pltBrowserService.assignUpdateUserTag(request);
-    }
-    @DeleteMapping("user-tag/{id}")
-    public void deleteUserTag(@PathVariable Integer id) {
-        pltBrowserService.deleteUserTag(id);
-    }
-
-    @PutMapping("user-tag")
-    public ResponseEntity<UserTag> updateTag(@RequestBody UserTag userTag) {
-        try {
-            return ResponseEntity.ok(pltBrowserService.updateUserTag(userTag));
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//
+//    @GetMapping
+//    public PltTagResponse searchPltTable(PltFilter filter) {
+//        return pltBrowserService.searchPltTable(filter);
+//    }
+//
+//    @PostMapping("assign-user-tag")
+//    public UserTag createUserTag(@RequestBody AssignPltsRequest assignPltsRequest) {
+//        return pltBrowserService.assignUserTag(assignPltsRequest);
+//    }
+//
+//    @PostMapping("assign-update-user-tag")
+//    public List<UserTag> assignUpdateUserTag(@RequestBody AssignUpdatePltsRequest request) {
+//        return pltBrowserService.assignUpdateUserTag(request);
+//    }
+//    @DeleteMapping("user-tag/{id}")
+//    public void deleteUserTag(@PathVariable Integer id) {
+//        pltBrowserService.deleteUserTag(id);
+//    }
+//
+//    @PutMapping("user-tag")
+//    public ResponseEntity<UserTag> updateTag(@RequestBody UserTag userTag) {
+//        try {
+//            return ResponseEntity.ok(pltBrowserService.updateUserTag(userTag));
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
 }

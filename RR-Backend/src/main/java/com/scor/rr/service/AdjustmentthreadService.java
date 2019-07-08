@@ -3,7 +3,7 @@ package com.scor.rr.service;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.AdjustmentthreadRepository;
+import com.scor.rr.repository.AdjustmentThreadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,7 +18,7 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class AdjustmentthreadService {
 
     @Autowired
-    AdjustmentthreadRepository adjustmentthreadRepository;
+    AdjustmentThreadRepository adjustmentthreadRepository;
 
     public AdjustmentThreadEntity findOne(Integer id){
         return adjustmentthreadRepository.getOne(id);
