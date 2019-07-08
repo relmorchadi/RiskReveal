@@ -169,7 +169,7 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
         prn: this.prn.getPreviousUrl(),
         navigationPayload,wsId,year,currentWS
       });
-      if(this.prn.getPreviousUrl() == 'PltBrowser' && _.keys(navigationPayload).length){
+      if(_.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)){
         this.from = {
           ...navigationPayload.payload,
           detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
@@ -192,6 +192,23 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
           plts: [],
           wsId: '',
           uwYear: ''
+        }
+      }
+      if(this.from.plts.length > 0) {
+        this.cloneConfig= {
+          ...this.cloneConfig,
+          summary: {...this.summaryCache}
+        }
+      }else {
+        const k= {};
+
+        _.forEach(this.cloneConfig.summary, (v,key) => {
+          k[key] = {...v, value: 0};
+        })
+
+        this.cloneConfig= {
+          ...this.cloneConfig,
+          summary: {...k}
         }
       }
       this.fromCache= {...this.from};

@@ -196,6 +196,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           icon: null,
           type: 'checkbox',active: true
         },
+        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
         {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id',active: true},
         {
           fields: 'pltName',

@@ -69,7 +69,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Clone To',
       command: (event) => {
-        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltManager', payload: { wsId: this.workspaceId, uwYear: this.uwy}}));
+        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.selectedListOfPlts}}));
         this.router$.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
       }
     },
