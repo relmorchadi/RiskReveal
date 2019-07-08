@@ -104,6 +104,11 @@ export class LoadFinancialPerspectiveAction {
   constructor(public payload: any) {}
 }
 
+export class RemoveFinancialPerspectiveAction {
+  static readonly type = '[Risk Link] Remove Financial Perspective';
+  constructor(public payload: any) {}
+}
+
 export class SaveFinancialPerspectiveAction {
   static readonly type = '[Risk Link] Save Financial Perspective Data';
   constructor() {}
