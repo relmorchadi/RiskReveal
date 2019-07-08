@@ -70,7 +70,7 @@ const scrollableColsResults = [
   {field: 'financialPerspective', header: 'ELT FIN PERSP', width: '70px', type: 'multiple', sorted: false, filtered: true, highlight: true, visible: true},
   {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '90px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
+  // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'peqt', header: 'PEQT', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];

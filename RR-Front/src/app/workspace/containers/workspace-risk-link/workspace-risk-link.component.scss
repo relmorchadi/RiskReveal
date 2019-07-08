@@ -1359,7 +1359,8 @@ FINANCIAL PERSPECTIVE POPUP STYLE
   flex-direction: column;
 
   .fp-analysis {
-
+    display: flex;
+    justify-content: space-between;
   }
 
   .fp-header {

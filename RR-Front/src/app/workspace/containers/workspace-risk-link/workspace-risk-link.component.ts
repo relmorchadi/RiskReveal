@@ -21,7 +21,7 @@ import {
   LoadAnalysisForLinkingAction,
   LoadFinancialPerspectiveAction,
   LoadPortfolioForLinkingAction,
-  PatchAddToBasketStateAction, PatchTargetFPAction, SaveFinancialPerspectiveAction,
+  PatchAddToBasketStateAction, PatchTargetFPAction, RemoveFinancialPerspectiveAction, SaveFinancialPerspectiveAction,
   SearchRiskLinkEDMAndRDMAction,
   ToggleAnalysisForLinkingAction,
   ToggleRiskLinkAnalysisAction,
@@ -629,6 +629,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   addFinancialP() {
     this.store.dispatch(new ApplyFinancialPerspectiveAction('add'));
+  }
+
+  removeFP(item, fp) {
+    console.log(item, fp);
+    this.store.dispatch(new RemoveFinancialPerspectiveAction({item, fp}));
   }
 
   detectChanges() {

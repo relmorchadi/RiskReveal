@@ -488,7 +488,8 @@
                         <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
                                      [nzWidth]="20" nzType="circle"></nz-progress>
                       </div>
-                      <div class="text-data" (click)="openFinancialP()" *ngIf="col.type === 'multiple'" >
+                      <div class="text-data" (click)="openFinancialP()" [ngClass]="{'highlight-temp': col.highlight}"
+                           *ngIf="col.type === 'multiple'" >
                         <span *ngIf="rowData.financialPerspective.length > 1">M*</span>
                         <span *ngIf="rowData.financialPerspective.length <= 1">{{rowData?.financialPerspective[0]}}</span>
                       </div>
@@ -982,11 +983,11 @@
           <tr style="height: 45px">
             <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
               <div *ngIf="col.type === 'select'"><label nz-checkbox [nzChecked]="rowData.selected"></label></div>
-              <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'iconIndicator'">
+              <div class="text-data" (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'iconIndicator'">
                 <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
               </div>
-              <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'tags'" style="display: flex">
-                <span class="tags-secondary" *ngFor="let item of rowData.financialPerspective">{{item}}<i class="icon-close_24px"></i></span>
+              <div class="text-data" (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'tags'" style="display: flex">
+                <span class="tags-secondary" *ngFor="let item of rowData.financialPerspective">{{item}}<i (click)="removeFP(rowData, item)"  class="icon-close_24px"></i></span>
               </div>
               <div (click)="selectRows(rowData, i, 'fpA')" class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                    *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
