@@ -207,6 +207,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   searchWorkspace(value) {
+    this.togglePopup();
     const paginationOption = this.state.workspacePagination.paginationList.filter(page => page.id === value);
     this.store.dispatch(new PatchWorkspaceMainStateAction({
       key: 'appliedFilter',
