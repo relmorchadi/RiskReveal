@@ -3,18 +3,31 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
-  AddToBasketAction, ApplyFinancialPerspectiveAction, DeleteFromBasketAction,
-  LoadAnalysisForLinkingAction, LoadFinancialPerspectiveAction, LoadPortfolioForLinkingAction,
-  LoadRiskLinkDataAction, PatchAddToBasketStateAction,
+  AddToBasketAction,
+  ApplyFinancialPerspectiveAction,
+  DeleteFromBasketAction,
+  LoadAnalysisForLinkingAction,
+  LoadFinancialPerspectiveAction,
+  LoadPortfolioForLinkingAction,
+  LoadRiskLinkDataAction,
+  PatchAddToBasketStateAction,
   PatchRiskLinkAction,
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
-  PatchRiskLinkFinancialPerspectiveAction, PatchTargetFPAction, SaveFinancialPerspectiveAction,
+  PatchRiskLinkFinancialPerspectiveAction,
+  PatchTargetFPAction,
+  RemoveFinancialPerspectiveAction,
+  SaveFinancialPerspectiveAction,
   SearchRiskLinkEDMAndRDMAction,
-  SelectRiskLinkEDMAndRDMAction, ToggleAnalysisForLinkingAction,
+  SelectRiskLinkEDMAndRDMAction,
+  ToggleAnalysisForLinkingAction,
   ToggleRiskLinkAnalysisAction,
-  ToggleRiskLinkEDMAndRDMAction, ToggleRiskLinkFPAnalysisAction, ToggleRiskLinkFPStandardAction,
-  ToggleRiskLinkPortfolioAction, ToggleRiskLinkResultAction, ToggleRiskLinkSummaryAction
+  ToggleRiskLinkEDMAndRDMAction,
+  ToggleRiskLinkFPAnalysisAction,
+  ToggleRiskLinkFPStandardAction,
+  ToggleRiskLinkPortfolioAction,
+  ToggleRiskLinkResultAction,
+  ToggleRiskLinkSummaryAction
 } from '../actions';
 import {
   LoadRiskLinkAnalysisDataAction,
@@ -488,7 +501,6 @@ export class RiskLinkState implements NgxsOnInit {
             occurrenceBasis: 'PerEvent',
             regionPeril: 'NAEQ',
             ty: true,
-            targetRap: 'RDT',
             peqt: '0/3',
             selected: false
           },
@@ -503,6 +515,7 @@ export class RiskLinkState implements NgxsOnInit {
           ...summary.data,
           [dt.edmId + dt.dataSourceId]: {
             ...dt,
+            selected: false,
             scanned: true,
             status: 100,
             unitMultiplier: 1,
@@ -534,12 +547,13 @@ export class RiskLinkState implements NgxsOnInit {
         const modif = Object.assign({}, ...selectedAnalysis.map(item => {
           return ({[item.id]: {...item, financialPerspective: fpApplied}});
         }));
+        console.log(modif, state.financialPerspective.analysis.data);
         ctx.patchState({
           financialPerspective: {
             ...state.financialPerspective,
             analysis: {
               ...state.financialPerspective.analysis,
-              data: _.merge({}, state.financialPerspective.analysis.data, modif)
+              data:  {...state.financialPerspective.analysis.data, ...modif}
             }
           }
         });
@@ -559,16 +573,16 @@ export class RiskLinkState implements NgxsOnInit {
     } else {
       const fpApplied: any = _.filter(_.toArray(state.financialPerspective.standard), dt => dt.selected ).map(dt => dt.code);
       if (state.financialPerspective.target === 'currentSelection') {
-        const selectedAnalysis = _.filter(_.toArray(state.financialPerspective.analysis), dt => dt.selected);
+        const selectedAnalysis = _.filter(_.toArray(state.financialPerspective.analysis.data), dt => dt.selected);
         const modif = Object.assign({}, ...selectedAnalysis.map(item => {
-          return ({[item.id]: {...item, financialPerspective: [...item.financialPerspective, ...fpApplied]}});
+          return ({[item.id]: {...item, financialPerspective: _.unionBy([...item.financialPerspective, ...fpApplied])}});
         }));
         ctx.patchState({
           financialPerspective: {
             ...state.financialPerspective,
             analysis: {
               ...state.financialPerspective.analysis,
-              data: _.merge({}, state.financialPerspective.analysis.data, modif)
+              data: {...state.financialPerspective.analysis.data, ...modif}
             }
           }
         });
@@ -579,7 +593,7 @@ export class RiskLinkState implements NgxsOnInit {
             analysis: {
               ...state.financialPerspective.analysis,
               data: Object.assign({}, ..._.toArray(state.financialPerspective.analysis.data).map(item => {
-                return ({[item.id]: {...item, financialPerspective: [...item.financialPerspective, ...fpApplied]}});
+                return ({[item.id]: {...item, financialPerspective: _.unionBy([...item.financialPerspective, ...fpApplied])}});
               }))
             }
           }
@@ -594,7 +608,27 @@ export class RiskLinkState implements NgxsOnInit {
     ctx.patchState({
       results: {
         ...state.results,
-        data: state.financialPerspective.analysis.data
+        data: Object.assign({}, ..._.toArray(state.financialPerspective.analysis.data).map(item => {
+          return ({[item.id]: {...item, selected: false}});
+        }))
+      }
+    });
+  }
+
+  @Action(RemoveFinancialPerspectiveAction)
+  removeFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: RemoveFinancialPerspectiveAction) {
+    const state = ctx.getState();
+    const newData =  Object.assign({}, ...[payload.item].map(item => {
+      return({[item.id]: {...item, financialPerspective: _.remove(item.financialPerspective, dt => dt !== payload.fp)}});
+    }));
+    console.log(newData);
+    ctx.patchState({
+      financialPerspective: {
+        ...state.financialPerspective,
+        analysis: {
+          ...state.financialPerspective.analysis,
+          data: {...state.financialPerspective.analysis.data, ...newData}
+        }
       }
     });
   }
