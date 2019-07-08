@@ -10,11 +10,11 @@ export class WorkspaceContractComponent implements OnInit {
   collapseHead = false;
   collapseLeft = false;
   collapseRight = false;
-  hyperLinks: string[]= ['projects', 'contract', 'activity'];
+  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
   hyperLinksRoutes: any= {
-    'projects': '',
-    'contract': '/Contract',
-    'activity': '/Activity'
+    'Projects': '',
+    'Contract': '/Contract',
+    'Activity': '/Activity'
   };
   hyperLinksConfig: {
     wsId: string,

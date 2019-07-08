@@ -9,13 +9,13 @@ import * as _ from 'lodash'
 })
 export class HyperLinksComponent implements OnInit {
 
-  @Input() links: string[];
-  @Input() activeItem: string;
-  @Input() RoutingConfig: {
+  @Input('links') links: string[];
+  @Input('activeItem') activeItem: string;
+  @Input('RoutingConfig') RoutingConfig: {
     wsId: string,
     uwYear: string
   };
-  @Input() routes: any;
+  @Input('routes') routes: any;
 
   constructor(private _router: Router) { }
 

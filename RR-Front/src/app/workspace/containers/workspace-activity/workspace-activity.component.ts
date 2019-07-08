@@ -8,11 +8,11 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class WorkspaceActivityComponent implements OnInit {
 
-  hyperLinks: string[]= ['projects', 'contract', 'activity'];
+  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
   hyperLinksRoutes: any= {
-    'projects': '',
-    'contract': '/Contract',
-    'activity': '/Activity'
+    'Projects': '',
+    'Contract': '/Contract',
+    'Activity': '/Activity'
   };
   hyperLinksConfig: {
     wsId: string,
