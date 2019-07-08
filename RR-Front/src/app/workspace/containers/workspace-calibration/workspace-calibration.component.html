@@ -468,20 +468,8 @@
                       </div>
                     </th>
                     <th *ngIf="col?.dragable && !extended
-                                && col.fields !== 'overallLMF'
-                                && col.fields !== 'postInuring'
-                                && col.fields !== 'inuring'"
+                                && col.fields !== 'overallLMF'"
                         style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf=" col.fields == 'inuring'"
-                        style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
-                      <p-radioButton name="groupname" value="adjustments" label="Adjustments"
-                                     [(ngModel)]="tableType"></p-radioButton>
-                    </th>
-                    <th *ngIf=" col.fields == 'postInuring'"
-                        style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
-                      <p-radioButton name="groupname" value="EP Metrics" label="EP Metrics"
-                                     (onClick)="onTableTypeChange()" [(ngModel)]="tableType"></p-radioButton>
                     </th>
                     <th *ngIf="col.fields == 'overallLMF' && extended"
                         style="background-color: #ffffff !important; height: 70px!important;  position: relative; padding: 0;"
@@ -1166,13 +1154,9 @@
                     </th>
                     <th *ngIf=" col.fields == 'inuring'"
                         style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
-                      <p-radioButton name="groupname" value="adjustments" label="Adjustments"
-                                     [(ngModel)]="tableType"></p-radioButton>
                     </th>
                     <th *ngIf=" col.fields == 'postInuring'"
                         style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
-                      <p-radioButton name="groupname" value="EP Metrics" label="EP Metrics"
-                                     (onClick)="onTableTypeChange()" [(ngModel)]="tableType"></p-radioButton>
                     </th>
                     <th *ngIf="col.fields == 'overallLMF' && extended"
                         style="background-color: #ffffff !important; height: 70px!important;  position: relative; padding: 0;"
