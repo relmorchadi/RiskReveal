@@ -121,7 +121,7 @@
                     class="addRemove" (click)="addRemoveModal=true">Add/Remove</label>
                 </div>
               </div>
-              <div class="pull-right" style="margin-top: 8px; margin-right: 5px;">
+              <div class="pull-right" style="margin-top: 8px; margin-right: 3px;">
                 <i *ngIf="!extended && tableType=='adjustments'" (click)="extend()" class="icon-chevron_right_24px"
                    style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
                 <i *ngIf="extended && tableType=='adjustments'" (click)="extend()" class="icon-chevron_left_24px"
@@ -176,7 +176,7 @@
                   *ngIf="adjsArray.length > 0"
                   class="generic-thread-container"
                   dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                  style="margin-top: 8px; margin-left: 38px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                  style="margin-top: 8px; margin-left: 10px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                   <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                     <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
                          (mouseover)="shownDropDown = adj.id"
@@ -233,12 +233,12 @@
                   </ng-container>
                 </div>
               </div>
-              <div class="pull-right" style="margin-top: 25px; margin-right: 5px;">
+              <div class="pull-right radio-container">
                 <p-radioButton name="tableType" value="adjustments" label="Adjustments"
-                               [ngStyle]="{'padding-right':'20px'}" (onClick)="onTableTypeChange()"
+                               [ngStyle]="{'padding-right':'5px'}" (onClick)="onTableTypeChange()"
                                [(ngModel)]="tableType"></p-radioButton>
                 <p-radioButton name="tableType" value="EP Metrics" label="EP Metrics"
-                               [ngStyle]="{'padding-right':'30px'}" (onClick)="onTableTypeChange()"
+                               [ngStyle]="{'padding-right':'3px'}" (onClick)="onTableTypeChange()"
                                [(ngModel)]="tableType"></p-radioButton>
               </div>
             </div>
