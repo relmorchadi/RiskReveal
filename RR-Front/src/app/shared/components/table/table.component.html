@@ -81,7 +81,9 @@
   <i nz-tooltip nzTitle="Unselect All" nzPlacement="bottom" (click)="unselectAll()" class="icon-minus-square icons-font"></i>
 </div>-->
 
-<p-contextMenu appendTo="body" #cm [model]="getItems()"></p-contextMenu>
+<ng-container *ngIf="activateContextMenu">
+  <p-contextMenu appendTo="body" #cm [model]="getItems()"></p-contextMenu>
+</ng-container>
 
 <nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700">
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"

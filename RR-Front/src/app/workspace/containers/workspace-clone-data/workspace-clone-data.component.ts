@@ -356,7 +356,8 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
       plts: this.from.plts
     };
     this.multiSteps= true;
-    this.openSearchPopUp();
+    this.searchWorkSpaceModal= true;
+    this.setCloneConfig('currentSourceOfItems', 'from');
   }
 
   reset() {

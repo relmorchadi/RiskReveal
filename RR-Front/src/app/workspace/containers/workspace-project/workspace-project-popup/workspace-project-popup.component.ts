@@ -292,6 +292,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   getBrowesingItemsDirectly() {
+    console.log('edit');
     this.browesing= true;
     this.data$ = this.store$.select(PltMainState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
     this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
@@ -731,6 +732,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         this._loadData();
       });
 
+    console.log(this.stepConfig);
     if(this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
