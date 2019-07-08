@@ -180,6 +180,7 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
           wsId: '',
           uwYear: ''
         }
+        this.searchWorkSpaceModal= true;
       }else {
         this.to = {
           wsId: wsId,

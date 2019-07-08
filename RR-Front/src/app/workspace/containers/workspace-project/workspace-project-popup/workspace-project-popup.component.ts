@@ -513,16 +513,108 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this._filter= {};
     this.browesing= false;
     this.onVisibleChange.emit(false);
+    this.Inputs= {
+      filterInput: '',
+      pltColumns: [
+        {
+          width: '60',
+          filtred: false,
+          icon: null,
+          type: 'checkbox',active: true
+        },
+        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
+        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id',active: true},
+        {
+          fields: 'pltName',
+          header: 'PLT Name',
+          width: '160',
+          sorted: false,
+          filtred: true,
+          icon: null,
+          type: 'field',active: true
+        },
+        {
+          fields: 'peril',
+          header: 'Peril',
+          width: '40',
+          sorted: false,
+          filtred: false,
+          icon: null,
+          type: 'field',
+          textAlign: 'center',active: true
+        },
+        {
+          fields: 'regionPerilCode',
+          header: 'Region Peril Code',
+          width: '70',
+          sorted: false,
+          filtred: false,
+          icon: null,
+          type: 'field',active: true
+        },
+        {
+          fields: 'regionPerilName',
+          header: 'Region Peril Name',
+          width: '160',
+          sorted: false,
+          filtred: false,
+          icon: null,
+          type: 'field',active: true
+        },
+        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field',active: true},
+        {
+          sortDir: 1,
+          fields: 'vendorSystem',
+          header: 'Vendor System',
+          width: '90',
+          sorted: false,
+          filtred: false,
+          icon: null,
+          type: 'field',active: true
+        },
+        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field',active: true}
+      ],
+      listOfPltsData: [],
+      listOfDeletedPltsData: [],
+      listOfPltsCache: [],
+      listOfDeletedPltsCache: [],
+      listOfPlts: [],
+      listOfDeletedPlts: [],
+      selectedListOfPlts: [],
+      selectedListOfDeletedPlts: [],
+      selectAll: false,
+      someItemsAreSelected: false,
+      showDeleted: false,
+      filterData: {},
+      filters: {
+        systemTag: {},
+        userTag: []
+      },
+      sortData: {},
+      _tagModalVisible: false,
+      _modalSelect: [],
+      tagForMenu: {},
+      _editingTag: false,
+      wsId: '',
+      uwYear: '',
+      projects: [],
+      addTagModalIndex: 0,
+      fromPlts: false,
+      deletedPltsLength: 0,
+      userTags: [],
+      systemTagsCount: {},
+      wsHeaderSelected: true,
+      pathTab: true,
+      selectedItemForMenu: null
+    };
   }
   onRowSelect(d,event) {
     console.log(event);
    if(d == 'db') {
      this.selectedWorkspace = event;
-     this.onSelectWorkspace.emit(event);
      this.setInputs('wsId', event.workSpaceId)
    }else {
      this.selectedWorkspace = event.data;
-     this.onSelectWorkspace.emit(event.data);
      this.setInputs('wsId', event.data.workSpaceId)
    }
   }
@@ -707,7 +799,8 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
   setBrowesingItems() {
     if(this.selectionStep == 'plt') {
-      this.onSelectItems.emit(this.Inputs['selectedListOfPlts']);
+      this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
+      this.onSelectWorkspace.emit(this.selectedWorkspace);
       this.onVisibleChange.emit(false);
     }else {
       this.searchWorkspace = false;
@@ -733,7 +826,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         this._loadData();
       });
 
-    console.log(this.stepConfig);
     if(this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);

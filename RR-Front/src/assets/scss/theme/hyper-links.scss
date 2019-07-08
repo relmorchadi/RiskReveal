@@ -31,5 +31,11 @@
     .link-separator {
       font-weight: 400;
     }
+
+    .link-title {
+      &:hover {
+        text-decoration: none !important;
+      }
+    }
   }
 }

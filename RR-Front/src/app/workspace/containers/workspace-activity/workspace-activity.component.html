@@ -1,9 +1,9 @@
 <app-left-menu></app-left-menu>
 <div class="a-app-wrapper">
   <div class="a-app-header">
-    <div style="display: flex;">
-      <h4>Activity</h4>
+    <div style="display: flex;flex-flow: column;">
       <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Activity'" [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
+      <h4>Activity</h4>
     </div>
     <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
             nz-button nzType="primary" nzSize="default" nzShape="circle">

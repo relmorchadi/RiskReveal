@@ -85,8 +85,8 @@
 
     .body-wrap-header-text {
       display: flex;
-      width: 45%;
       align-items: baseline;
+      flex-flow: column;
 
       .body-wrap-header-text-title {
         color: rgba(0, 0, 0, 0.6);

@@ -22,7 +22,7 @@ import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-
 @NgModule({
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent,
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent
   ],
   imports: [
     GridsterModule,
