@@ -619,7 +619,7 @@ export class RiskLinkState implements NgxsOnInit {
   removeFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: RemoveFinancialPerspectiveAction) {
     const state = ctx.getState();
     const newData =  Object.assign({}, ...[payload.item].map(item => {
-      return({[item.id]: {...item, financialPerspective: _.remove(item.financialPerspective, dt => dt !== payload.fp)}});
+      return({[item.id]: {...item, financialPerspective: _.filter(item.financialPerspective, dt => dt !== payload.fp)}});
     }));
     console.log(newData);
     ctx.patchState({
