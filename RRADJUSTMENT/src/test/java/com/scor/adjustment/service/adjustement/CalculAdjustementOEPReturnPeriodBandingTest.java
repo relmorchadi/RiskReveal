@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
 
 public class CalculAdjustementOEPReturnPeriodBandingTest {
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustementNonLinearEventDrivenAdjustmentTest.class);
-
     private List<PLTLossData> pltLossDataList;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
     private double periodConstante;
