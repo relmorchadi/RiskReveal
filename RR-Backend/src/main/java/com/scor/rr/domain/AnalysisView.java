@@ -3,8 +3,10 @@ package com.scor.rr.domain;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import javax.persistence.*;
-import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 @Entity
 @Table(schema = "poc")

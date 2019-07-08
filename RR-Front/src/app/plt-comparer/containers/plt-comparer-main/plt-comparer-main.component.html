@@ -349,12 +349,20 @@
                 </tr>
                 <tr>
                   <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" disabled></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" disabled></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
+                                                                   name="new-field" style="width: 100%; margin: 0px;"
+                                                                   type="text"></th>
+                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
+                                                                   name="new-field" style="width: 100%; margin: 0px;"
+                                                                   type="text"></th>
                   <ng-container *ngFor="let th of listOfSelectedValues">
                   <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" disabled></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" style="width: 100%; margin: 0px;" type="text" name="new-field" disabled></th>
+                    <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
+                                                                     name="new-field" style="width: 100%; margin: 0px;"
+                                                                     type="text"></th>
+                    <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
+                                                                     name="new-field" style="width: 100%; margin: 0px;"
+                                                                     type="text"></th>
                   </ng-container></tr>
                 </tbody>
               </table>

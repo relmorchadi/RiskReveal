@@ -7,46 +7,25 @@
     <ng-container [ngSwitch]="activeSubTitle">
       <div class="box-container" *ngSwitchCase="0" style="padding: 0 0;">
         <div class="box-item" style="background-color: #e5e9fa;width: 100%;">
-          <div style="width: 780px;margin: auto;">
+          <div style="width: 812px;margin: auto;">
             <span class="subtitle-3">
               Summary of assets being cloned:
             </span>
             <div class="plts-detail-boxes">
-              <div class="box">
-                <div class="left" style="background-color: var(--primary-9);">
-                  <i class="icon-assignment_24px"></i>
+              <div *ngFor="let summaryItem of ( cloneConfig.summary | keys ) " class="box">
+                <div class="left" [ngStyle]="{ 'background-color': cloneConfig.summary[summaryItem].color }">
+                  <i [ngClass]="cloneConfig.summary[summaryItem].icon"></i>
                 </div>
                 <div class="right">
-                  <div class="regular1">Pre-Inured PLTs</div>
-                  <span class="regular">12</span>
+                  <div class="regular1">{{summaryItem}}</div>
+                  <span class="regular">{{cloneConfig.summary[summaryItem].value}}</span>
                 </div>
               </div>
-              <div class="box">
-                <div class="left" style="background-color: var(--scor-peril-2);">
-                  <i class="fa fa-code-fork" style="margin: 4px;"></i>
-                </div>
-                <div class="right">
-                  <div class="regular1">Post-Inured PLTs</div>
-                  <span class="regular">4</span>
-                </div>
-              </div>
-              <div class="box">
-                <div class="left" style="background-color: #33d0bb;">
-                  <i class="icon-layer-group" style="margin: 4px;"></i>
-                </div>
-                <div class="right">
-                  <div class="regular1">Inuring Packages</div>
-                  <span class="regular">1</span>
-                </div>
-              </div>
-              <div class="box">
-                <div class="left" style="background-color: var(--primary-10);">
-                  <i class="icon-assignment_24px"></i>
-                </div>
-                <div class="right">
-                  <div class="regular1">Sources Projects</div>
-                  <span class="regular">3</span>
-                </div>
+              <div *ngIf="from.wsId" class="box edit-box">
+                <i class="icon-down-arrow"  (click)="editPlts()"></i>
+                <span class="body-3" (click)="editPlts()">
+                  Edit PLT List
+                </span>
               </div>
             </div>
           </div>
@@ -56,7 +35,8 @@
           <span class="subtitle-4">
             Cloning from:
           </span>
-          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': from.detail ?  '#fff' : '#e5e9fa','justify-content': from.detail ? 'unset' : 'center' }">
+          <div style="display: flex;flex-wrap: nowrap;"
+               [ngStyle]="{'background-color': from.detail ?  '#fff' : '#e5e9fa','justify-content': from.detail ? 'unset' : 'center' }">
             <ng-container *ngIf="from.detail">
               <div class="left-box">
                 {{from.detail}}
@@ -77,14 +57,16 @@
         </div>
         <div class="box-item" style="width: 780px;padding: 0 25px;margin: 0;">
           <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
-            <i style="cursor:pointer;font-size:27px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px" class="icon-compare_arrows_24px" (click)="swapCloneItems()"></i>
+            <i style="cursor:pointer;font-size:27px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px"
+               class="icon-compare_arrows_24px" (click)="swapCloneItems()"></i>
           </div>
         </div>
         <div class="box-item" style="width: 780px;padding-top: 0;margin: 0;">
           <span class="subtitle-4">
             Cloning to:
           </span>
-          <div style="display: flex;flex-wrap: nowrap;" [ngStyle]="{'background-color': to?.detail ?  '#fff' : '#e5e9fa','justify-content': to.detail ? 'unset' : 'center'}">
+          <div style="display: flex;flex-wrap: nowrap;"
+               [ngStyle]="{'background-color': to?.detail ?  '#fff' : '#e5e9fa','justify-content': to.detail ? 'unset' : 'center'}">
             <ng-container *ngIf="to.detail">
               <div class="left-box">
                 {{to.detail}}
@@ -176,7 +158,9 @@
 <app-workspace-project-popup
   [isVisible]="searchWorkSpaceModal"
   [selectionStep]="'plt'"
+  [multiSteps]="multiSteps"
+  [stepConfig]="stepConfig"
   (onVisibleChange)="searchWorkSpaceModal= $event"
-  (onSelectWorkspace)="setSelectedWs($event)"
+  (onSelectWorkspace)="setSelectedWs(cloneConfig.currentSourceOfItems,$event)"
   (onSelectItems)="setSelectedPlts(cloneConfig.currentSourceOfItems,$event)"
 ></app-workspace-project-popup>

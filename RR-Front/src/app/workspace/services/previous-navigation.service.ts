@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 
 @Injectable({
@@ -20,7 +20,7 @@ export class PreviousNavigationService {
   }
 
   public getPreviousUrl() {
-    const t= this.previousUrl.split('/');
-    return t[t.length - 1 ];
+    const t = this.previousUrl.split('/');
+    return t[t.length - 1];
   }
 }

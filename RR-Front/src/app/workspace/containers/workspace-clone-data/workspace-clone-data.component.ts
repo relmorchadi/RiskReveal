@@ -1,12 +1,10 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, Output} from '@angular/core';
-import {ActivatedRoute, NavigationStart, Router} from '@angular/router';
-import {debounceTime, filter, map, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
 import { Store} from '@ngxs/store';
 import { MessageService} from 'primeng/api';
 import {combineLatest, of} from 'rxjs';
 import {WorkspaceMainState} from '../../../core/store/states';
-import {NavigationTransition} from '@angular/router/src/router';
-import * as _ from 'lodash';
+import * as _ from 'lodash'
 import {PltMainState} from '../../store/states';
 import * as fromWS from '../../store'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
@@ -15,7 +13,7 @@ interface SourceData {
   plts: any[];
   detail: string;
   wsId: string;
-  uwYear: string;
+  uwYear: string
 }
 
 @Component({
@@ -34,11 +32,11 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private prn: PreviousNavigationService
   ) {
-    this.activeSubTitle = 0;
-    this.cloningToItem = true;
-    this.projectForClone = -1;
-    this.searchWorkSpaceModal = false;
-    this.data = [
+    this.activeSubTitle= 0;
+    this.cloningToItem= true;
+    this.projectForClone= -1;
+    this.searchWorkSpaceModal= false;
+    this.data= [
       {
       id: 77897,
       year: 2019,
@@ -82,25 +80,53 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
       cedant: 87989,
       country: "Belgium"
     },];
-    this.browesing = false;
+    this.browesing= false;
     this.from = {
       detail: '',
       plts: [],
       uwYear: '',
       wsId: ''
     };
-    this.to = {
+    this.to= {
       detail: '',
       plts: [],
       uwYear: '',
       wsId: ''
     };
-    this.cloneConfig = {
-      currentSourceOfItems: 'to'
+    this.cloneConfig= {
+      currentSourceOfItems: 'to',
+      summary: {
+        'Pre-Inured PLTs': {
+          'icon': 'icon-assignment_24px',
+          'color': '#c38fff',
+          'value': 0
+        },
+        'Post-Inured PLTs': {
+          'icon': 'fa fa-code-fork',
+          'color': '#c38fff',
+          'value': 0
+        },
+        'Inuring Packages': {
+          'icon': 'icon-layer-group',
+          'color': '#f5a623',
+          'value': 0
+        },
+        'Sources Projects': {
+          'icon': 'icon-assignment_24px',
+          'color': '#33d0bb',
+          'value': 0
+        }
+      }
     };
+    this.multiSteps= true;
+    this.stepConfig= {
+      wsId: '',
+      uwYear: '',
+      plts: []
+    }
   }
 
-  subTitle = {
+  subTitle= {
     0: 'Clone Workspaces Assets',
     1: 'Source Workspace Selection',
     2: 'Target Workspace Selection'
@@ -117,10 +143,17 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   showDeleted: boolean;
   workspaceId: string;
   uwy: number;
-  subs: any[] = [];
+  subs: any[]= [];
 
   cloneConfig: {
-    currentSourceOfItems: string
+    currentSourceOfItems: string,
+    summary: any;
+  }
+  multiSteps: boolean;
+  stepConfig: {
+    wsId: string,
+    uwYear: string,
+    plts: any[]
   };
 
   ngOnInit() {
@@ -129,70 +162,70 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
       this.store$.select(PltMainState.getCloneConfig),
       this.route$.params,
       this.store$.select(WorkspaceMainState.getCurrentWS)
-    ).subscribe( ([navigationPayload, {wsId, year}, currentWS]: any) => {
+    ).subscribe( ([navigationPayload, {wsId, year}, currentWS] :any) => {
       console.log({
         prn: this.prn.getPreviousUrl(),
-        navigationPayload, wsId, year, currentWS
+        navigationPayload,wsId,year,currentWS
       });
-      if (this.prn.getPreviousUrl() == 'PltBrowser' && _.keys(navigationPayload).length) {
+      if(this.prn.getPreviousUrl() == 'PltBrowser' && _.keys(navigationPayload).length){
         this.from = {
           ...navigationPayload.payload,
-          detail: currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.workSpaceId
-        };
+          detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
+        }
         this.to = {
           detail: '',
           plts: [],
           wsId: '',
           uwYear: ''
-        };
-      } else {
+        }
+      }else {
         this.to = {
           wsId: wsId,
           uwYear: year,
           plts: [],
-          detail: currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.workSpaceId
-        };
+          detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
+        }
         this.from = {
           detail: '',
           plts: [],
           wsId: '',
           uwYear: ''
-        };
+        }
       }
       this.detectChanges();
     })
-    );
+    )
   }
 
   setSubTitle(number: number) {
-    this.activeSubTitle = number;
+    this.activeSubTitle= number;
   }
 
   onRadioChange($event) {
-    this.projectForClone = $event;
+    this.projectForClone= $event;
   }
 
   handleModalClick() {
-    if (!this.browesing) {
-      this.browesing = true;
-    } else {
-      this.searchWorkSpaceModal = false;
-      this.browesing = false;
+    if(!this.browesing) {
+      this.browesing= true;
+    }else {
+      this.searchWorkSpaceModal= false;
+      this.browesing= false;
     }
   }
 
   goToSearchWorkspace() {
-    this.searchWorkSpaceModal = true;
-    this.browesing = false;
+    this.searchWorkSpaceModal=true;
+    this.browesing= false;
   }
 
   cancelModal() {
-    this.browesing = false;
-    this.searchWorkSpaceModal = false;
+    this.browesing= false;
+    this.searchWorkSpaceModal= false;
   }
 
   getPlts() {
-    this.browesing = true;
+    this.browesing=true;
   }
 
   detectChanges() {
@@ -201,32 +234,40 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
     }
   }
 
-  setSelectedWs($event: any) {
-
+  setSelectedWs(currentSourceOfItems: string,$event: any) {
+    console.log(currentSourceOfItems, $event);
+    if(currentSourceOfItems == 'from') {
+      this.from = {...this.from, wsId: $event.workSpaceId, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
+    }
+    if(currentSourceOfItems == 'to') {
+      this.to = {...this.to, wsId: $event.workSpaceId, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
+    }
   }
 
   swapCloneItems() {
-    const t = {...this.from};
-    this.from = {...this.to};
-    this.to = t;
+    const t= {...this.from};
+    this.from= {...this.to};
+    this.to= t;
   }
 
   setSelectedPlts(currentSourceOfItems: string, $event: any) {
-    if (this.getCloneConfig('currentSourceOfItems') == 'from') {
-      this.from = {...this.from, plts: $event};
+    console.log(currentSourceOfItems, $event)
+    if(currentSourceOfItems == 'from') {
+      this.from = {...this.from, plts: $event}
     }
-    if (this.getCloneConfig('currentSourceOfItems') == 'to') {
-      this.to = {...this.to, plts: $event};
+    if(currentSourceOfItems == 'to') {
+      this.to = {...this.to, plts: $event}
     }
   }
 
   openSearchPopUp(destination: string = 'from') {
-    this.searchWorkSpaceModal = true;
+    this.multiSteps= destination == 'from';
+    this.searchWorkSpaceModal= true;
     this.setCloneConfig('currentSourceOfItems', destination);
   }
 
-  setCloneConfig(key, value) {
-    this.cloneConfig = { ...this.cloneConfig, [key]: value };
+  setCloneConfig(key,value) {
+    this.cloneConfig= { ...this.cloneConfig, [key]: value };
   }
 
   getCloneConfig(key) {
@@ -236,5 +277,15 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.store$.dispatch(new fromWS.setCloneConfig({}));
     _.each(this.subs, e => e && e.unsubscribe());
+  }
+
+  editPlts() {
+    this.stepConfig = {
+      wsId: this.from.wsId,
+      uwYear: this.from.uwYear,
+      plts: this.from.plts
+    };
+    this.multiSteps= true;
+    this.openSearchPopUp();
   }
 }
