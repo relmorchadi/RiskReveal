@@ -1,0 +1,10 @@
+<div class="hyper-links">
+  <ng-container *ngFor="let link of filter();let i=index;">
+    <div class="link" [ngClass]="{'active-link': link == activeItem }">
+    <span (click)="navigate(link)" class="link-title">
+      {{link}}
+    </span>
+      <div class="link-separator" *ngIf="i < filter().length - 1">/</div>
+    </div>
+  </ng-container>
+</div>

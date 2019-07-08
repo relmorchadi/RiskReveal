@@ -55,8 +55,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
-        console.log(this.selectedPlt);
-        this.openPltInDrawer(this.selectedPlt.pltId);
+        this.openPltInDrawer(this.selectedPlt)
       }
     },
     {
@@ -70,8 +69,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Clone To',
       command: (event) => {
-        console.log('cloning');
-        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltManager', payload: { wsId: this.workspaceId, uwYear: this.uwy}}));
+        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.selectedListOfPlts}}));
         this.router$.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
       }
     },
@@ -95,7 +93,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
         this.store$.dispatch(new fromWorkspaceStore.restorePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
           pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
-        }));
+        }))
         this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
         this.generateContextMenu(this.showDeleted);
       }
@@ -665,7 +663,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   filterInput: string = "";
 
   selectPltById(pltId) {
-    return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`));
+    return this.store$.select(state => _.get(state, `pltMainModel.data.${this.workspaceId + '-' + this.uwy}.${pltId}`));
   }
 
   openDrawer(index): void {
@@ -701,7 +699,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
     this.modalSelect = this.modalSelectCache = _.intersectionBy(...d, 'tagId');
     this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-    console.log(this.modalSelectCache, this.oldSelectedTags, d);
   }
 
   restore() {
@@ -715,8 +712,8 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId: plt
     }));
-    this.openDrawer(1);
     this.getTagsForSummary(plt);
+    this.drawerVisible = true;
   }
 
   getTagsForSummary(pltId) {
@@ -849,7 +846,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     const {
       selectedTags
     } = $event;
-    console.log('TAGS', $event);
     this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       ...$event,
@@ -930,17 +926,17 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       ...$event,
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
-    }));
+    }))
   }
 
   toggleColumnsManager() {
-    this.managePopUp = !this.managePopUp;
-    if (this.managePopUp) this.pltColumnsForConfig = [...this.pltColumns];
+    this.managePopUp= !this.managePopUp;
+    if(this.managePopUp) this.pltColumnsForConfig= [...this.pltColumns];
   }
 
   saveColumns() {
     this.toggleColumnsManager();
-    this.pltColumns = [...this.pltColumnsForConfig];
+    this.pltColumns= [...this.pltColumnsForConfig];
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -949,10 +945,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   toggleCol(i: number) {
-    this.pltColumnsForConfig = _.merge(
+    this.pltColumnsForConfig= _.merge(
       [],
       this.pltColumnsForConfig,
       { [i]: {...this.pltColumnsForConfig[i], active: !this.pltColumnsForConfig[i].active} }
-      );
+      )
   }
 }

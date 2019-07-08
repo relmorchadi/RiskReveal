@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-workspace-activity',
@@ -6,6 +7,17 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./workspace-activity.component.scss']
 })
 export class WorkspaceActivityComponent implements OnInit {
+
+  hyperLinks: string[]= ['projects', 'contract', 'activity'];
+  hyperLinksRoutes: any= {
+    'projects': '',
+    'contract': '/Contract',
+    'activity': '/Activity'
+  };
+  hyperLinksConfig: {
+    wsId: string,
+    uwYear: string
+  };
 
   contentActive = {
     today: [{
@@ -93,9 +105,15 @@ export class WorkspaceActivityComponent implements OnInit {
     ]
   };
 
-  constructor() { }
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.params.subscribe( ({wsId, year}) => {
+      this.hyperLinksConfig= {
+        wsId,
+        uwYear: year
+      }
+    })
   }
 
 }
