@@ -432,10 +432,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       tagId: null,
       tagName: '',
       tagColor: '#0700e4'
-    }
+    };
     this.generateContextMenu(this.showDeleted);
     this.generateColumns(this.showDeleted);
-    this.managePopUp= false;
+    this.managePopUp = false;
   }
 
   @Select(PltMainState.getUserTags) userTags$;
@@ -488,7 +488,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
           return combineLatest(
             this.data$,
             this.deletedPlts$
-          )
+          );
         })
       ).subscribe(([data, deletedData]: any) => {
         let d1 = [];
@@ -517,9 +517,9 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                 this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
                 this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
                 this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              })
+              });
 
-            })
+            });
           }
 
           _.forEach(data, (v, k) => {
@@ -544,7 +544,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                   };
                 }
               }
-            })
+            });
 
             //NONE grouped Sys Tags
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
@@ -571,7 +571,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                   max: max + 1
                 };
               }
-            })
+            });
             /*}*/
 
           });
@@ -582,7 +582,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
           _.forEach(data, (v, k) => {
             if (v.opened) {
               this.sumnaryPltDetailsPltId = k;
-              console.log(this.sumnaryPltDetailsPltId);
             }
           });
         }
@@ -941,6 +940,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   drop(event: CdkDragDrop<string[]>) {
+    console.log(event.previousIndex, event.currentIndex);
     moveItemInArray(this.pltColumnsForConfig, event.previousIndex + 1, event.currentIndex + 1);
   }
 

@@ -2,6 +2,7 @@
   padding: 7px;
   display: flex;
   align-items: center;
+
   i {
     font-size: 25px;
   }
@@ -22,7 +23,7 @@
   }
 
   .right, .left {
-    box-shadow: 0 1px 2px rgba(0,0,0,0.16), 0 0 6px rgba(0,0,0,0.23);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
     margin-right: 10px;
   }
 
@@ -57,14 +58,14 @@
   }
 }
 
-    nz-input-group {
-      min-width: 550px;
-      border-radius: 25px;
+nz-input-group {
+  min-width: 550px;
+  border-radius: 25px;
 
-      input {
-        border-radius: 25px;
-      }
-    }
+  input {
+    border-radius: 25px;
+  }
+}
 
 .project-card {
   width: 98%;
@@ -88,13 +89,24 @@
     display: flex;
 
     .project-header-icon {
-      background-color: #F5A623;
       width: 80px;
 
       i {
         color: white;
         font-size: 2em;
       }
+    }
+
+    .standard-flag-icon {
+      background-color: #F5A623;
+    }
+
+    .link-flag-icon {
+      background-color: #36C6FE;
+    }
+
+    .inuring-flag-icon {
+      background-color: #B482FE;
     }
 
     .project-header-title {

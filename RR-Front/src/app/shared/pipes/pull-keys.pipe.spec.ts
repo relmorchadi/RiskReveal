@@ -1,4 +1,4 @@
-import { PickKeysPipePipe } from './pull-keys.pipe';
+import {PickKeysPipePipe} from './pull-keys.pipe';
 
 describe('PickKeysPipePipe', () => {
   it('create an instance', () => {

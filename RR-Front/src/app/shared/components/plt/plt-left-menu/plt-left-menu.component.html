@@ -62,7 +62,7 @@
             <h4>
               Tag Manager
             </h4>
-            <i style="cursor: pointer" (click)="tagModal(false)" class="icon-close_24px"></i>
+            <i (click)="tagModal(false)" class="icon-close_24px" style="cursor: pointer"></i>
           </div>
         </p-header>
           <nz-tabset class="tab-content-cnt" [nzSelectedIndex]="menuInputs?.addTagModalIndex" (nzSelectedIndexChange)="tagModalIndexChange($event)">
@@ -154,7 +154,7 @@
         <div class="rest">
           <div *ngFor="let key of menuInputs.userTags | keys" nz-row class="ml-3 mt-1">
             <ng-container *ngIf="menuInputs.tagContextMenu">
-              <p-contextMenu appendTo="body" [target]="tagMenu" [model]="menuInputs.tagContextMenu"></p-contextMenu>
+              <p-contextMenu [model]="menuInputs.tagContextMenu" [target]="tagMenu" appendTo="body"></p-contextMenu>
             </ng-container>
             <span
               #tagMenu

@@ -243,9 +243,9 @@ node ('dcvprdadm04') {
         }
         }
 
-        stage ('clean workspace') {
-        cleanWs()
-        }
+        //stage ('clean workspace') {
+        //cleanWs()
+        //}
 
         //End of pipeline reached if no errors
         currentBuild.result = "SUCCESS"

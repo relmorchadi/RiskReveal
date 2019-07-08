@@ -15,8 +15,8 @@ export class WorkspaceMainService {
   constructor(private http: HttpClient) {
   }
 
-  addNewProject(project: any, workspaceId, uwYear): Observable<any> {
-      return this.http.post(`${this.api}`, {workspaceId, uwYear, project});
+  addNewProject(project: any, workspaceId, uwYear, id): Observable<any> {
+      return this.http.post(`${this.api}`, {workspaceId, uwYear, id, project});
      // return of({ workspaceId, uwYear, projectId: project.projectName, name: project.projectName, ...project});
   }
 

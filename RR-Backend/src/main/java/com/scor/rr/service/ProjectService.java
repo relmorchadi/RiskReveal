@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 
 @Service
@@ -29,7 +30,7 @@ public class ProjectService {
     public Project addNewProject(AddProjectRequest request) {
 
         Workspace workspace = workspaceRepository.findOptWorkspaceByWorkspaceId(request.workspaceId, request.uwYear)
-                .orElseGet(() -> getWorkspaceFromContractResultSearch(request.workspaceId, request.uwYear));
+                .orElseGet(() -> getWorkspaceFromContractResultSearch(request.id));
 
         if(workspace != null)
         {
@@ -41,15 +42,15 @@ public class ProjectService {
 
     }
 
-    private Workspace getWorkspaceFromContractResultSearch(String workspaceId, Integer uwYear){
+    private Workspace getWorkspaceFromContractResultSearch(String id){
         Workspace workspace = new Workspace();
-        ContractSearchResult c = contractSearchResultRepository.findByWorkspaceIdAndUwYear(workspaceId, uwYear+"");
-        if(c!=null) {
-            workspace.setCedantName(c.getCedantName());
-            workspace.setWorkspaceName(c.getWorkspaceName());
-            workspace.setWorkspaceContextFlag(c.getWorkSpaceId());
-            workspace.setContractId(c.getTreatyid());
-            workspace.setWorkspaceId(new Workspace.WorkspaceId(workspaceId,uwYear));
+        Optional<ContractSearchResult> c = contractSearchResultRepository.findById(id);
+        if(c.isPresent()) {
+            workspace.setCedantName(c.get().getCedantName());
+            workspace.setWorkspaceName(c.get().getWorkspaceName());
+            workspace.setWorkspaceContextFlag(c.get().getWorkSpaceId());
+            workspace.setContractId(c.get().getTreatyid());
+            workspace.setWorkspaceId(new Workspace.WorkspaceId(c.get().getWorkSpaceId(),c.get().getUwYear()));
             return  workspaceRepository.save(workspace);
         }
         return null;

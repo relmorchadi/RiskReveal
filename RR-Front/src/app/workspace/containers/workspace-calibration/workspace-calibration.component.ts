@@ -8,7 +8,6 @@ import {
   OnDestroy,
   OnInit,
   SimpleChanges,
-  TemplateRef,
   ViewChild
 } from '@angular/core';
 import * as _ from 'lodash'
@@ -22,14 +21,12 @@ import {
   replaceAdjustement,
   saveAdjModification,
   saveAdjustment,
-  saveAdjustmentApplication,
   saveAdjustmentInPlt
 } from "../../store/actions";
 import {map, switchMap} from 'rxjs/operators';
 import {CalibrationState, PltMainState} from "../../store/states";
 import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
-import {Table} from "primeng/table";
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 
@@ -49,6 +46,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
   frozenWidth: any = '463px';
+  headerWidth: any = '403px';
   genericWidth: any = ['409px', '33px', '157px'];
   selectedAdjustment: any;
   filterData: any;
@@ -58,17 +56,20 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   dataColumns = [];
   activeCheckboxSort: boolean;
   extended: boolean = true;
+  tableType = 'adjustments';
   inProgressCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
   lockedCheckbox: boolean = true;
   failedCheckbox: boolean = true;
   requiresRegenerationCheckbox: boolean = true;
   collapsedTags: boolean = false;
+  filterInput: string = "";
+  addRemoveModal: boolean = false;
+  dropdownEPM: boolean = false;
   isVisible = false;
   singleValue: any;
   dragPlaceHolderId: any;
   dragPlaceHolderCol: any;
-  dndBool: boolean = false;
   categorySelectedFromAdjustement: any;
   modalTitle: any;
   addAdjustement: any;
@@ -76,7 +77,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   idPlt: any;
   draggedAdjs: any;
   templateWidth = '130';
-  tableWidth = '1200';
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   iconNotePosition: any;
@@ -89,10 +89,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   @Select(CalibrationState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
   leftNavbarIsCollapsed: boolean;
   adjutmentApplication = [];
-  singleValueArray: any[] = [];
-  inputValueArray = [];
-  columnPositionArray = [];
   linear: boolean = false;
+  dropdownVisible = false;
   workspaceId: string;
   uwy: number;
   projects: any[];
@@ -102,13 +100,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   tagModalIndex: any = 0;
   mode = "calibration";
   @Select(CalibrationState) state$: Observable<any>;
-  private currentDraggableEvent: DragEvent;
   pltColumns = [
     {
       sortDir: 1,
       fields: 'checkbox',
       header: '',
       width: '43',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: null,
@@ -122,6 +120,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'userTags',
       header: 'User Tags',
       width: '80',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: null,
@@ -135,6 +134,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'pltId',
       header: 'PLT ID',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -148,6 +148,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'pltName',
       header: 'PLT Name',
       width: '150',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -161,6 +162,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'peril',
       header: 'Peril',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -174,6 +176,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'regionPerilCode',
       header: 'Region Peril Code',
       width: '80',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -187,6 +190,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'regionPerilName',
       header: 'Region Peril Name',
       width: '130',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -200,6 +204,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'grain',
       header: 'Grain',
       width: '160',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -213,6 +218,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'vendorSystem',
       header: 'Vendor System',
       width: '90',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -226,6 +232,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'rap',
       header: 'RAP',
       width: '70',
+      dragable: false,
       sorted: true,
       filtred: true,
       icon: null,
@@ -239,6 +246,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'action',
       header: '',
       width: '25',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: 'icon-focus-add',
@@ -252,6 +260,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       fields: 'action',
       header: '',
       width: '25',
+      dragable: false,
       sorted: false,
       filtred: false,
       icon: 'icon-note',
@@ -345,11 +354,385 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       frozen: false
     },
   ];
-  epMetricsCurrencySelected: any = 'EUR';
-  CalibrationImpactCurrencySelected: any = 'EUR';
-  epMetricsFinancialUnitSelected: any = 'Million';
-  CalibrationImpactFinancialUnitSelected: any = 'Million';
-  currentPath: any = null;
+  EPMColumns = [
+    {
+      sortDir: 1,
+      fields: 'checkbox',
+      header: '',
+      width: '43',
+      dragable: false,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'checkbox',
+      style: 'border: none !important',
+      extended: true,
+      frozen: true,
+    },
+    {
+      sortDir: 1,
+      fields: 'userTags',
+      header: 'User Tags',
+      width: '80',
+      dragable: false,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'checkbox',
+      style: 'border: none !important',
+      extended: true,
+      frozen: true,
+    },
+    {
+      sortDir: 1,
+      fields: 'pltId',
+      header: 'PLT ID',
+      width: '80',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: true,
+    },
+    {
+      sortDir: 1,
+      fields: 'pltName',
+      header: 'PLT Name',
+      width: '150',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: true
+    },
+    {
+      sortDir: 1,
+      fields: 'peril',
+      header: 'Peril',
+      width: '80',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'regionPerilCode',
+      header: 'Region Peril Code',
+      width: '80',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'regionPerilName',
+      header: 'Region Peril Name',
+      width: '130',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'grain',
+      header: 'Grain',
+      width: '160',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'vendorSystem',
+      header: 'Vendor System',
+      width: '90',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'rap',
+      header: 'RAP',
+      width: '70',
+      dragable: false,
+      sorted: true,
+      filtred: true,
+      icon: null,
+      type: 'field',
+      style: 'border: none !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'action',
+      header: '',
+      width: '25',
+      dragable: false,
+      sorted: false,
+      filtred: false,
+      icon: 'icon-focus-add',
+      type: 'icon',
+      style: 'border: none !important',
+      extended: true,
+      frozen: true
+    },
+    {
+      sortDir: 1,
+      fields: 'action',
+      header: '',
+      width: '25',
+      dragable: false,
+      sorted: false,
+      filtred: false,
+      icon: 'icon-note',
+      type: 'icon',
+      style: 'border: none !important',
+      extended: true,
+      frozen: true
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM2',
+      header: '2',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM5',
+      header: '5',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM10',
+      header: '10',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM25',
+      header: '25',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM50',
+      header: '50',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM100',
+      header: '100',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM250',
+      header: '250',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+    {
+      sortDir: 1,
+      fields: 'EPM500',
+      header: '500',
+      width: this.templateWidth,
+      dragable: true,
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+      extended: true,
+      frozen: false
+    },
+  ];
+  popUpPltColumns = [
+    {
+      width: '60',
+      filtred: false,
+      icon: null,
+      type: 'checkbox', active: true
+    },
+    /*{
+      fields: 'userTags',
+      header: 'User Tags',
+      width: '80',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'userTags',
+      active: true
+    },*/
+    {
+      fields: 'pltId',
+      header: 'PLT ID',
+      width: '80',
+      sorted: false,
+      filtred: true,
+      icon: null,
+      type: 'id',
+      active: true
+    },
+    {
+      fields: 'pltName',
+      header: 'PLT Name',
+      width: '160',
+      sorted: false,
+      filtred: true,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      fields: 'peril',
+      header: 'Peril',
+      width: '40',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      textAlign: 'center', active: true
+    },
+    {
+      fields: 'regionPerilCode',
+      header: 'Region Peril Code',
+      width: '70',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      fields: 'regionPerilName',
+      header: 'Region Peril Name',
+      width: '160',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'grain',
+      header: 'Grain',
+      width: '90',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'vendorSystem',
+      header: 'Vendor System',
+      width: '90',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field', active: true
+    },
+    {
+      sortDir: 1,
+      fields: 'rap',
+      header: 'RAP',
+      width: '52',
+      sorted: false,
+      filtred: false,
+      icon: null,
+      type: 'field',
+      active: true
+    }
+  ];
   visible = false;
   size = 'large';
   filters: {
@@ -357,120 +740,17 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     userTag: []
   }
   sumnaryPltDetailsPltId: any;
-  epMetricInputValue: string | null;
   pltdetailsSystemTags: any = [];
   pltdetailsUserTags: any = [];
   systemTags: any;
   systemTagsCount: any;
   userTags: any;
   userTagsCount: any;
-  currencies = [
-    {id: '1', name: 'Euro', label: 'EUR'},
-    {id: '2', name: 'Us Dollar', label: 'USD'},
-    {id: '3', name: 'Britsh Pound', label: 'GBP'},
-    {id: '4', name: 'Canadian Dollar', label: 'CAD'},
-    {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
-    {id: '5', name: 'Swiss Franc', label: 'CHF'},
-    {id: '5', name: 'Saudi Riyal', label: 'SAR'},
-    {id: '6', name: 'Bitcoin', label: 'XBT'},
-    {id: '7', name: 'Hungarian forint', label: 'HUF'},
-    {id: '8', name: 'Singapore Dollars', label: 'SGD'}
-  ];
   units = [
     {id: '3', label: 'Billion'},
     {id: '1', label: 'Thousands'},
     {id: '2', label: 'Million'},
     {id: '4', label: 'Unit'}
-  ];
-  metrics = [
-    {
-      metricID: '1',
-      retrunPeriod: '10000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '2',
-      retrunPeriod: '5,000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '4',
-      retrunPeriod: '1,000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '5',
-      retrunPeriod: '500',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '6',
-      retrunPeriod: '250',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '7',
-      retrunPeriod: '100',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '8',
-      retrunPeriod: '50',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '9',
-      retrunPeriod: '25',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '10',
-      retrunPeriod: '10',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '11',
-      retrunPeriod: '5',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '12',
-      retrunPeriod: '2',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    }
   ];
   theads = [
     {
@@ -552,8 +832,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   oldSelectedTags: any;
   private dropdown: NzDropdownContextComponent;
   private Subscriptions: any[] = [];
-  private table: Table;
-  private pageSize: number = 20;
   private lastClick: string;
   private renamingTag: boolean;
   private modalInputCache: any;
@@ -633,7 +911,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   wsHeaderSelected: boolean;
   modalSelect: any;
 
-
   constructor(
     private nzDropdownService: NzDropdownService,
     private store$: Store,
@@ -680,7 +957,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.leftNavbarIsCollapsed$.subscribe(data => {
       this.leftNavbarIsCollapsed = data;
     });
-
     this.adjutmentApplication$.subscribe(data => this.adjutmentApplication = _.merge({}, data));
     this.state$.subscribe((state: any) => {
       this.allAdjsArray = _.merge([], state.allAdjsArray);
@@ -835,27 +1111,46 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
         this.detectChanges();
       })
     );
-
   }
 
   initDataColumns() {
     this.dataColumns = [];
     this.frozenColumns = [];
     if (this.extended) {
-      _.forEach(this.pltColumns, (value, key) => {
-        if (value.extended) {
-          this.dataColumns.push(value);
-        }
-      });
+      if (this.tableType == 'adjustments') {
+        _.forEach(this.pltColumns, (value, key) => {
+          if (value.extended) {
+            this.dataColumns.push(value);
+          }
+        });
+      } else {
+        _.forEach(this.EPMColumns, (value, key) => {
+          if (value.extended) {
+            this.dataColumns.push(value);
+          }
+        });
+      }
+
     } else {
-      _.forEach(this.pltColumns, (value, key) => {
-        if (value.extended && !value.frozen) {
-          this.dataColumns.push(value);
-        }
-        if (value.extended && value.frozen) {
-          this.frozenColumns.push(value);
-        }
-      });
+      if (this.tableType == 'adjustments') {
+        _.forEach(this.pltColumns, (value, key) => {
+          if (value.extended && !value.frozen) {
+            this.dataColumns.push(value);
+          }
+          if (value.extended && value.frozen) {
+            this.frozenColumns.push(value);
+          }
+        });
+      } else {
+        _.forEach(this.EPMColumns, (value, key) => {
+          if (value.extended && !value.frozen) {
+            this.dataColumns.push(value);
+          }
+          if (value.extended && value.frozen) {
+            this.frozenColumns.push(value);
+          }
+        });
+      }
     }
     console.log('data =>', this.dataColumns)
     console.log('frozen =>', this.frozenColumns)
@@ -875,7 +1170,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
-  filter(key: string, value) {
+  filter(key: string, value?: any) {
     if (key == 'project') {
       if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
         this.filterData = _.omit(this.filterData, [key]);
@@ -899,53 +1194,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
-  setFilter(filter: string, tag, section) {
-    if (filter === 'userTag') {
-      this.filters =
-        _.findIndex(this.filters[filter], e => e == tag.tagId) < 0 ?
-          _.merge({}, this.filters, {[filter]: _.merge([], this.filters[filter], {[this.filters[filter].length]: tag.tagId})}) :
-          _.assign({}, this.filters, {[filter]: _.filter(this.filters[filter], e => e != tag.tagId)})
-
-      this.userTags = _.map(this.userTags, t => t.tagId == tag.tagId ? {...t, selected: !t.selected} : t)
-
-      this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
-        filters: this.filters
-      }))
-    } else {
-      const {
-        systemTag
-      } = this.filters;
-      /*this.filters =
-        _.findIndex(systemTag, e => e == tag.tagId) < 0 ?
-          _.merge({},
-            this.filters, {
-            systemTag: _.merge([], systemTag, {
-              [systemTag.length] : {section, }
-            } )
-          }) :
-          _.assign({}, this.filters, {systemTag: _.filter(systemTag, e => e.section != section)})*/
-
-      this.filters = _.findIndex(systemTag, sectionFilter => sectionFilter[tag] === section) < 0 ?
-        _.merge({}, this.filters, {
-          systemTag: _.merge([], systemTag, {
-            [systemTag.length]: {[tag]: section}
-          })
-        }) :
-        _.assign({}, this.filters, {systemTag: _.filter(systemTag, sectionFilter => sectionFilter[tag] != section)})
-    }
-  }
-
-  selectPltById(pltId) {
-    return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`));
-  }
 
   openDrawer(index): void {
     this.visible = true;
     this.drawerIndex = index;
-  }
-
-  closeDrawer(): void {
-    this.visible = false;
   }
 
   closePltInDrawer(pltId) {
@@ -959,68 +1211,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.getTagsForSummary();
   }
 
-  getColor(id, type) {
-    let item;
-    if (type === 'system') {
-      item = this.systemTags.filter(tag => tag.tagId == id);
-    } else {
-      item = this.userTags.filter(tag => tag.tagId == id);
-    }
-    if (item.length > 0)
-      return item[0].tagColor;
-    return null;
-  }
-
-  getDragableColor(type) {
-    switch (type) {
-      case 'overallLMF':
-        return '#F3F3F3';
-      case 'default':
-        return '#F3F3F3';
-      case 'inuring':
-        return '#FAEBD7';
-      default:
-        return 'none';
-
-    }
-  }
 
   getTagsForSummary() {
     this.pltdetailsSystemTags = this.systemTags;
     this.pltdetailsUserTags = this.userTags;
   }
 
-  selectCardThead(card) {
-    this.theads.forEach(thead => {
-      thead.cards.forEach(card => {
-        card.selected = false;
-      });
-    });
-    card.selected = true;
-  }
 
-  getCardBackground(selected) {
-    if (selected) return '#FFF';
-    else return '#f4f6fc';
-  }
-
-  getBoxShadow(selected) {
-    if (selected) return '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
-    else return 'none';
-  }
-
-  resetFilterByTags() {
-    this.filters = {
-      systemTag: [],
-      userTag: []
-    }
-    this.userTags = _.map(this.userTags, t => ({...t, selected: false}));
-    this.systemTags = _.map(this.systemTags, t => ({...t, selected: false}));
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      filters: this.filters
-    }))
-  }
 
   resetPath() {
     this.filterData = _.omit(this.filterData, 'project')
@@ -1028,19 +1225,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.showDeleted = false;
   }
 
-  contextMenuPltTable($event: MouseEvent, template: TemplateRef<void>): void {
-    this.dropdown = this.nzDropdownService.create($event, template);
-  }
 
   close(e: NzMenuItemDirective): void {
     this.dropdown.close();
-  }
-
-  runInNewConext(task) {
-    this.zone.runOutsideAngular(() => {
-      task();
-      this.detectChanges();
-    });
   }
 
   detectChanges() {
@@ -1069,7 +1256,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }));
   }
 
-  selectSinglePLT(pltId: number, $event: boolean) {
+  selectSinglePLT(pltId: number, $event?: boolean) {
     this.toggleSelectPlts({
       [pltId]: {
         type: $event
@@ -1094,17 +1281,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
-  selectProject(id: any) {
 
-  }
 
-  toDate(d) {
-    return new Date(d);
-  }
 
-  handleOk() {
-
-  }
 
   onSort($event: any) {
     console.log($event);
@@ -1112,10 +1291,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       multisortmeta
     } = $event;
 
-    /*if(_.find(multisortmeta, col => col.field == 'selected' && col.order == 1)){
-      this.table.reset();
-    }
-    this.multiSortMeta = multisortmeta;*/
   }
 
   checkBoxsort() {
@@ -1129,67 +1304,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
-  handlePopUpConfirm() {
-    if (this.renamingTag) {
-      if (this.addModalInput != this.modalInputCache) {
-        this.store$.dispatch(new fromWorkspaceStore.editTag({
-          ...this.tagFormenu,
-          tagName: this.addModalInput
-        }))
-      }
-    } else {
-      if (this.addTagModalIndex === 1) {
-        this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
-          plts: this.selectedListOfPlts,
-          wsId: this.workspaceId,
-          uwYear: this.uwy,
-          tags: this.addModalSelect,
-          type: 'many'
-        }))
-      }
-
-      if (this.addTagModalIndex === 0) {
-        this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
-          plts: this.fromPlts ? this.selectedListOfPlts : [],
-          wsId: this.workspaceId,
-          uwYear: this.uwy,
-          tag: {
-            tagName: this.addModalInput,
-            tagColor: this.initColor
-          }
-        }))
-      }
-    }
-
-    this.addTagModal = false;
-  }
-
-  selectUserTag(k) {
-    event.stopPropagation();
-    event.preventDefault();
-    if (_.find(this.selectedUserTags, t => t.tagId == k)) {
-      this.selectedUserTags = _.omit(this.selectedUserTags, k);
-    } else {
-      this.selectedUserTags[k] = this.userTags[k];
-    }
-    const l = _.toArray(this.selectedUserTags).length;
-
-    if (l == 0) {
-      //this.addTagModalPlaceholder= {'Select a Tag': {tagName: 'Select a Tag'}}
-      this.addTagModalPlaceholder = 'Seleetc'
-    }
-    if (l == 1) {
-      //this.addTagModalPlaceholder = _.toArray(this.selectedUserTags)[0]
-      this.addTagModalPlaceholder = 'hey'
-    }
-    if (l > 1) {
-      //this.addTagModalPlaceholder = {'multiple': {tagName: 'multiple'}}
-      this.addTagModalPlaceholder = 'multiple'
-    }
-    //this.addModalSelect = this.userTags[k];
-    console.log(this.addTagModalPlaceholder)
-
-  }
 
   selectSystemTag(section, tag) {
 
@@ -1206,29 +1320,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     })
   }
 
-  toggleModal() {
-    this.addTagModal = false;
-    if (!this.addTagModal) {
-      this.addModalInput = null;
-      this.addModalSelect = null;
-      this.addTagModalIndex = 0;
-    }
-  }
-
-  toggleColorPicker(from?: string) {
-    if (from == 'color') {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    this.colorPickerIsVisible = !this.colorPickerIsVisible;
-    if (!this.colorPickerIsVisible) this.initColor = '#fe45cd';
-  }
-
-  initColorPicker() {
-    this.colorPickerIsVisible = false;
-    this.initColor = '#fe45cd'
-  }
-
   sortChange(field: any, sortCol: any) {
     console.log(field, sortCol)
     if (!sortCol) {
@@ -1240,19 +1331,15 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     }
   }
 
-  handlePopUpCancel() {
-    this.addTagModal = false;
-    this.addModalInput = '';
-    this.addModalSelect = '';
-  }
-
   extend() {
     this.extended = !this.extended;
     if (this.extended) {
+      this.headerWidth = '1013px'
       this.frozenWidth = '0px'
       this.genericWidth = ['1019px', '33px', '157px'];
     } else {
-      this.frozenWidth = '463px'
+      this.headerWidth = '403px';
+      this.tableType == 'adjustments' ? this.frozenWidth = '463px' : this.frozenWidth = '403px';
       this.genericWidth = ['409px', '33px', '157px '];
     }
     this.adjustExention();
@@ -1265,8 +1352,19 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       _.forIn(this.pltColumns, function (value: any, key) {
         value.extended = true;
       })
+      _.forIn(this.EPMColumns, function (value: any, key) {
+        value.extended = true;
+      })
     } else {
       _.forIn(this.pltColumns, function (value: any, key) {
+        if (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable) {
+          value.extended = true;
+        } else {
+          value.extended = false;
+        }
+
+      })
+      _.forIn(this.EPMColumns, function (value: any, key) {
         if (value.header == "User Tags" || value.fields == "pltId" || value.fields == "checkbox" || value.fields == "pltName" || value.fields == "action" || value.dragable) {
           value.extended = true;
         } else {
@@ -1278,6 +1376,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   }
 
   clickButtonPlus(bool, data?: any) {
+    console.log("here");
     this.modalTitle = "Add New Adjustment";
     this.modifyModal = false;
     this.categorySelectedFromAdjustement = null;
@@ -1335,31 +1434,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     console.log(p);
   }
 
-  selectBasis(adjustement) {
-    if (adjustement.id == 1) {
+  selectBasis(adjustment) {
+    if (adjustment.id == 1) {
       this.linear = true;
     } else {
       this.linear = false;
     }
-  }
-
-  saveAdjustementApplicaiton(pltId, adj) {
-    this.appliedAdjutement.push({
-      pltId: pltId,
-      adj: adj
-    });
-    this.store$.dispatch(new saveAdjustmentApplication(this.appliedAdjutement));
-  }
-
-  filterArr(data, key) {
-    return data.reduce((result, current) => {
-      if (!result[current[key]]) {
-        result[current[key]] = 1;
-      } else {
-        result[current[key]] += 1;
-      }
-      return result;
-    }, {})
   }
 
   adjustColWidth(dndDragover = 10) {
@@ -1392,9 +1472,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     console.log('after adjustment ==> ', baseWidth);
   }
 
-  ondragOver(col, pltId) {
-
-  }
 
   applyToAll(adj) {
     console.log('applytoall');
@@ -1439,7 +1516,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
   applyToSelected(adj) {
     console.log('applytoselected');
-
+    console.log(this.selectedListOfPlts);
     this.store$.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
@@ -1503,39 +1580,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     console.log(col);
   }
 
-  onDragged(index, adj, pltId) {
-    // this.deleteAdjs(adj,index,pltId);
-    console.log(this.adjutmentApplication);
-  }
-
-  onDragEnd(event, adj) {
-
-  }
-
-  onDragStart(event, data: any) {
-    console.log(data);
-    this.draggedAdjs = data;
-  }
-
-  ondragEnter(col, pltId) {
-    console.log('ondragEnter');
-    if (col.fields == 'base' || col.fields == 'client') {
-      const width = +col.width;
-      col.width = (width + 40).toString();
-      // this.dragPlaceHolderId = pltId;
-      // this.dragPlaceHolderCol = col.fields
-    }
-  }
-
-  ondragLeave(col) {
-    if (col.fields == 'base' || col.fields == 'client') {
-      console.log('ondragLeave');
-      const width = +col.width;
-      col.width = (width - 40).toString();
-      // this.dragPlaceHolderId = null;
-      // this.dragPlaceHolderCol = null;
-    }
-  }
 
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
@@ -1567,19 +1611,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.collapsedTags = !this.collapsedTags;
   }
 
-  /*
-  adjustTabsetRight() {
-    if (this.collapsedTags && this.leftNavbarIsCollapsed) {
-      return 'calc(100vw - 50px + 80px - 174px)'
-    } else if (this.collapsedTags && !this.leftNavbarIsCollapsed) {
-      return 'calc(100vw - 190px + 80px - 174px)'
-    } else if (!this.collapsedTags && this.leftNavbarIsCollapsed) {
-      return 'calc(100vw - 50px - 80px - 174px)'
-    } else if (!this.collapsedTags && !this.leftNavbarIsCollapsed) {
-      return 'calc(100vw - 190px - 80px - 174px)'
-    }
-  }
-  */
 
   log(columns) {
     console.log(columns);
@@ -1710,7 +1741,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     switch (status) {
       case 'in progress':
         return this.inProgressCheckbox;
-      case 'checked':
+      case 'valid':
         return this.checkedCheckbox;
       case 'locked':
         return this.lockedCheckbox;
@@ -1719,5 +1750,16 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
       case 'requires regeneration':
         return this.requiresRegenerationCheckbox
     }
+  }
+
+  onLeaveAdjustment(id) {
+    this.shownDropDown = this.dropdownVisible ? id : null;
+
+  }
+
+  onTableTypeChange() {
+    this.initDataColumns();
+    this.headerWidth = '403px';
+    this.tableType == 'adjustments' ? this.frozenWidth = '463px' : this.frozenWidth = '403px';
   }
 }

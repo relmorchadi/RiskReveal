@@ -1,10 +1,13 @@
 package com.scor.rr.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "RREdmRdm", schema = "dbo")
+@Table(name = "RREdmRdm", schema = "poc")
 public class EdmRdm {
 
     @Id

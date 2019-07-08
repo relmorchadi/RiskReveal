@@ -1,5 +1,5 @@
 <ng-container *ngIf="tableInputs.contextMenuItems">
-  <p-contextMenu #cm appendTo="body" [model]="tableInputs.contextMenuItems"></p-contextMenu>
+  <p-contextMenu #cm [model]="tableInputs.contextMenuItems" appendTo="body"></p-contextMenu>
 </ng-container>
 <p-table
   [columns]="tableInputs.pltColumns"
@@ -68,7 +68,8 @@
         <ng-container *ngIf="col?.active">
           <td  *ngIf="col?.type == 'checkbox'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + 'px'}">
             <div style="padding-left: 21px;">
-              <label nz-checkbox [nzChecked]="rowData.selected" (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+              <label nz-checkbox [nzChecked]="rowData.selected"
+                     (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
             </div>
           </td>
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + 'px'}">

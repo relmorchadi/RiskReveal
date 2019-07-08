@@ -1,10 +1,13 @@
 package com.scor.rr.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "TREATY_VIEW", schema = "dbo")
+@Table(name = "TREATY_VIEW", schema = "poc")
 public class Treaty {
 
     @Id

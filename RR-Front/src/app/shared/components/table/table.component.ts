@@ -21,6 +21,14 @@ export class TableComponent implements OnInit {
   contextSelectedItem: any;
 
   @Input() loading: boolean;
+  _activateContextMenu: boolean;
+  get activateContextMenu(): boolean {
+    return this._activateContextMenu;
+  }
+  @Input('activateContextMenu')
+  set activateContextMenu(value: boolean) {
+    if (!_.isNil(value)) { this._activateContextMenu = value;  } else { this._activateContextMenu = true; }
+  }
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
@@ -206,4 +214,8 @@ export class TableComponent implements OnInit {
   rowUnselect($event) {
     this.onRowUnselect.emit($event);
   }
+  getContextMenu() {
+      return _.isNil(this.activateContextMenu) || this.activateContextMenu ? this.contextMenu : null;
+  }
+
 }

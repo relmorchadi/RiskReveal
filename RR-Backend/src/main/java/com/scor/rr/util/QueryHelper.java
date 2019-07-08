@@ -126,7 +126,7 @@ public class QueryHelper {
         else if (!fieldsSearchCondition.trim().equals("")) whereCondition = " where " + fieldsSearchCondition;
         String groupByClause = generateGroupByClause();
         String selectClause = generateSelectClause();
-        return "select " + selectClause + " from ContractSearchResult c " + whereCondition + " group by " + groupByClause;
+        return "select " + selectClause + " from [poc].[ContractSearchResult] c " + whereCondition + " group by " + groupByClause;
     }
 
     public String generateSqlQuery(List<ExpertModeFilter> filter,String keyword, int offset, int size){

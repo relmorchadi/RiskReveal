@@ -23,6 +23,11 @@ export class PatchAddToBasketStateAction {
   constructor() {}
 }
 
+export class PatchTargetFPAction {
+  static readonly type = '[Risk Link] Patch Target For Financial Perspective';
+  constructor(public payload: any) {}
+}
+
 export class ToggleRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Toggle Risk Link EDM And RDM';
   constructor(public payload: any) {}
@@ -38,6 +43,26 @@ export class ToggleRiskLinkAnalysisAction {
   constructor(public payload: any) {}
 }
 
+export class ToggleRiskLinkResultAction {
+  static readonly type = '[Risk Link] Toggle Result';
+  constructor(public payload: any) {}
+}
+
+export class ToggleRiskLinkSummaryAction {
+  static readonly type = '[Risk Link] Toggle Summary';
+  constructor(public payload: any) {}
+}
+
+export class ToggleRiskLinkFPStandardAction {
+  static readonly type = '[Risk Link] Toggle Financial Perspective Standard';
+  constructor(public payload: any) {}
+}
+
+export class ToggleRiskLinkFPAnalysisAction {
+  static readonly type = '[Risk Link] Toggle Financial Perspective Analysis';
+  constructor(public payload: any) {}
+}
+
 export class ToggleRiskLinkEDMAndRDMSelectedAction {
   static readonly type = '[Risk Link] Select Display Portfolio Or Analysis';
   constructor(public payload: any) {}
@@ -48,10 +73,6 @@ export class ToggleAnalysisForLinkingAction {
   constructor(public payload: any) {}
 }
 
-export class TogglePortfolioForLinkingAction {
-  static readonly type = '[Risk Link] Select Target EDM For Linking';
-  constructor(public payload: any) {}
-}
 
 export class AddToBasketAction {
   static readonly type = '[Risk Link] Add Analysis and Portfolio To Basket';
@@ -68,9 +89,24 @@ export class SelectRiskLinkEDMAndRDMAction {
   constructor() {}
 }
 
+export class ApplyFinancialPerspectiveAction {
+  static readonly type = '[Risk Link] Apply Financial Perspective For Analysis';
+  constructor(public payload: any) {}
+}
+
 export class SearchRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Search EDMs And RDMs';
   constructor(public payload: any) {}
+}
+
+export class LoadFinancialPerspectiveAction {
+  static readonly type = '[Risk Link] Load Financial Perspective Data';
+  constructor(public payload: any) {}
+}
+
+export class SaveFinancialPerspectiveAction {
+  static readonly type = '[Risk Link] Save Financial Perspective Data';
+  constructor() {}
 }
 
 export class LoadAnalysisForLinkingAction {

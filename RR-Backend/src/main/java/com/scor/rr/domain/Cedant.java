@@ -1,10 +1,13 @@
 package com.scor.rr.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "CEDANT_VIEW", schema = "dbo")
+@Table(name = "CEDANT_VIEW", schema = "poc")
 public class Cedant {
 
     @Id

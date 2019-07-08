@@ -1,10 +1,13 @@
 package com.scor.rr.domain;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "COUNTRY_VIEW", schema = "dbo")
+@Table(name = "COUNTRY_VIEW", schema = "poc")
 public class Country {
 
     @Id

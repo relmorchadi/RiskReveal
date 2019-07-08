@@ -1005,7 +1005,6 @@
       }
 
       th {
-        font-size: 12px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
         background-color: #F3F3F3;
@@ -1442,8 +1441,8 @@ body .ui-table .ui-table-thead > tr > th {
   font-size: 12px;
   font-weight: bold;
   color: #0700e4;
-  padding-top: 17px;
-  padding-left: 4px;
+  padding-top: 15px;
+  padding-left: 10px;
   cursor: pointer;
 }
 
@@ -1468,4 +1467,108 @@ body .ui-table .ui-table-thead > tr > th {
   padding: 0px 6px 0px 6px;
   background-color: #27c0ff;
   border-radius: 14px;
+}
+
+.content {
+  .right, .left {
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    margin-right: 10px;
+  }
+
+  .PLTs-content {
+    padding: 0 21px 0 16px !important;
+    position: relative;
+    flex: 1 1 auto;
+  }
+}
+
+::ng-deep.generic-thread-container.-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::ng-deep.generic-thread-container.-webkit-scrollbar:hover {
+  width: 8px;
+  height: 8px;
+}
+
+::ng-deep.ui-radiobutton .ui-radiobutton-box.ui-state-active {
+  border-color: #0700cf !important;
+  background-color: #0700cf !important;
+  color: #ffffff !important;
+}
+
+.table-radio {
+
+}
+
+.title-as-tab {
+  display: flex;
+  flex: 0 1 auto;
+  width: calc(100% - 302px);
+  float: left;
+  color: #585858;
+
+  span.title {
+    padding: 16px 0px 16px 23px;
+    font-size: 1.3em;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+  }
+}
+
+.table-header1 {
+  height: 80px !important;
+  border-right: 5px solid #f4f6fc;
+}
+
+.table-header2 {
+  height: 80px !important;
+}
+
+.EPM0 {
+  text-align: end;
+  font-weight: bold;
+  margin-right: 3px;
+}
+
+.EPM1 {
+  width: 50%;
+  float: left;
+  font-size: 12px;
+  margin-left: 3px;
+  color: #acacac;
+}
+
+.EPM2B {
+  width: 47%;
+  margin-left: 50%;
+  text-align: end;
+  font-size: 12px;
+  color: #06b9ff;
+}
+
+.EPM2R {
+  width: 47%;
+  margin-left: 50%;
+  text-align: end;
+  font-size: 12px;
+  color: #cf1912;
+}
+
+::ng-deep.ui-radiobutton-label {
+  color: #0700cf !important;
+}
+
+.title-as-tab-bis {
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: space-between;
+
+  span {
+    padding: 16px 43px;
+    font-size: 1.3em;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+  }
 }

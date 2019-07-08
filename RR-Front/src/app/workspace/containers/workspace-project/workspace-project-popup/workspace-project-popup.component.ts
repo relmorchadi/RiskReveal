@@ -531,14 +531,15 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this.setInputs('wsId', workspace.workSpaceId);
     this.setInputs('uwYear', workspace.uwYear);
     this.onSelectWorkspace.emit(workspace);
+    this.browesing= false;
     if(this.selectionStep == 'project') {
       this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
           this.selectedWorkspaceProjects = data.projects;
           if (!data.projects.length) {
             this.browesing = false;
-            this.notificationService.createNotification('Information',
-              'This workspace contains no project',
-              'error', 'topRight', 4000);
+            alert('This workspace contains no project');
+          }else {
+            this.browesing=true;
           }
           this.detectChanges();
         }
@@ -678,16 +679,19 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
               :
               this.getInputs('selectedListOfDeletedPlts').length < this.getInputs('listOfDeletedPlts').length && this.getInputs('selectedListOfDeletedPlts').length > 0
           );
+          this.browesing=true;
           this.detectChanges();
         })
 
         this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
           this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+          this.browesing=true;
           this.detectChanges();
         })
 
         this.pltUserTagsSubscription = this.store$.select(PltMainState.getUserTags).subscribe(userTags => {
           this.setInputs('userTags', userTags || {});
+          this.browesing=true;
           console.log(this.getInputs('userTags'))
           this.detectChanges();
         })
@@ -824,5 +828,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     if (!this.cdRef['destroyed'])
       this.cdRef.detectChanges();
   }
+
+  clear() {
+    // this.messageService.clear();
+  }
+
 
 }
