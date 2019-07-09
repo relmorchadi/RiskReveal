@@ -1,19 +1,14 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.configuration.file.BinaryPLTFileReader;
-import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.domain.*;
-import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
+import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
-import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -52,13 +47,20 @@ public class AdjustmentNodeService {
         return adjustmentnodeRepository.findAll();
     }
 
-    public AdjustmentNodeEntity save(AdjustmentNodeEntity adjustmentnodeModel, Integer adjustmentBasis, Integer adjustmentType,Integer adjustmentCategory,Integer adjustmentState,Integer adjustmentThreadId){
-        adjustmentnodeModel.setAdjustmentType(adjustmentTypeRepository.getOne(adjustmentType));
-        adjustmentnodeModel.setAdjustmentBasis(adjustmentBasisRepository.getOne(adjustmentBasis));
-        adjustmentnodeModel.setAdjustmentCategory(adjustmentCategoryRepository.getOne(adjustmentCategory));
-        adjustmentnodeModel.setAdjustmentState(adjustmentStateRepository.getOne(adjustmentState));
-        adjustmentnodeModel.setAdjustmentThread(adjustmentThread.getOne(adjustmentThreadId));
-        return adjustmentnodeRepository.save(adjustmentnodeModel);
+    public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest){
+        AdjustmentNodeEntity adjustmentNodeEntity = new AdjustmentNodeEntity();
+        adjustmentNodeEntity.setLayer(adjustmentNodeRequest.getLayer());
+        adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
+        adjustmentNodeEntity.setInputChanged(adjustmentNodeRequest.getInputChanged());
+        adjustmentNodeEntity.setAdjustmentParamsSource(adjustmentNodeRequest.getAdjustmentParamsSource());
+        adjustmentNodeEntity.setLossNetFlag(adjustmentNodeRequest.getLossNetFlag());
+        adjustmentNodeEntity.setHasNewParamsFile(adjustmentNodeRequest.getHasNewParamsFile());
+        adjustmentNodeEntity.setAdjustmentType(adjustmentTypeRepository.getOne(adjustmentNodeRequest.getAdjustmentType()));
+        adjustmentNodeEntity.setAdjustmentBasis(adjustmentBasisRepository.getOne(adjustmentNodeRequest.getAdjustmentBasis()));
+        adjustmentNodeEntity.setAdjustmentCategory(adjustmentCategoryRepository.getOne(adjustmentNodeRequest.getAdjustmentCategory()));
+        adjustmentNodeEntity.setAdjustmentState(adjustmentStateRepository.getOne(adjustmentNodeRequest.getAdjustmentState()));
+        adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.getOne(adjustmentNodeRequest.getAdjustmentThreadId()));
+        return adjustmentnodeRepository.save(adjustmentNodeEntity);
     }
 
     public void delete(Long id) {

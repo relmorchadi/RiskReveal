@@ -231,7 +231,7 @@ public class CalculAdjustement implements ICalculAdjustment{
                 return null;
             }
         } else {
-            log.info("plt vide");
+            log.info("plt empty");
             return null;
         }
     }
@@ -285,7 +285,7 @@ public class CalculAdjustement implements ICalculAdjustment{
                         cap ? Double.min(pltLossData.getLoss() * lmf, pltLossData.getMaxExposure() * lmf) : pltLossData.getLoss() * lmf))
                         .collect(Collectors.toList());
             } else {
-                log.info("plt vide");
+                log.info("plt empty");
                 return null;
             }
         } else {

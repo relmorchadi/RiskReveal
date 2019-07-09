@@ -1,6 +1,7 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
+import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentThreadRepository;
@@ -32,14 +33,18 @@ public class AdjustmentThreadService {
         return adjustmentthreadRepository.findAll();
     }
 
-    public AdjustmentThreadEntity savePurePlt(AdjustmentThreadEntity adjustmentthreadModel,String scorPltHeaderPureId){
-        adjustmentthreadModel.setScorPltHeaderByPurePltId(scorpltheaderRepository.getOne(scorPltHeaderPureId));
-        return adjustmentthreadRepository.save(adjustmentthreadModel);
+    public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest){
+        AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
+        adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
+        adjustmentThreadEntity.setScorPltHeaderByPurePltId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltPureId()));
+        return adjustmentthreadRepository.save(adjustmentThreadEntity);
     }
 
-    public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadEntity adjustmentthreadModel,String scorPltHeaderPureId){
-        adjustmentthreadModel.setScorPltHeaderByThreadPltId(scorpltheaderRepository.getOne(scorPltHeaderPureId));
-        return adjustmentthreadRepository.save(adjustmentthreadModel);
+    public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest){
+        AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
+        adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
+        adjustmentThreadEntity.setScorPltHeaderByThreadPltId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
+        return adjustmentthreadRepository.save(adjustmentThreadEntity);
     }
 
     public void delete(Integer id) {

@@ -53,7 +53,7 @@ public class AdjustmentNodeProcessingService {
         return adjustmentnodeprocessingRepository.findAll();
     }
 
-    public AdjustmentNodeProcessingEntity save(AdjustmentNodeProcessingEntity adjustmentnodeprocessingModel,String scorPltHeaderId,long adjustmentNodeId){
+    public AdjustmentNodeProcessingEntity save(AdjustmentNodeProcessingEntity adjustmentnodeprocessingModel,Integer scorPltHeaderId,long adjustmentNodeId){
         ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.getOne(scorPltHeaderId);
         AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.getOne(adjustmentNodeId);
         adjustmentnodeprocessingModel.setScorPltHeaderByInputPltId(scorPltHeader);
@@ -90,10 +90,10 @@ public class AdjustmentNodeProcessingService {
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
     }
-    public boolean adjustDefault(String projectId, String pltHeaderId, Long analysisId, String analysisName, Long rdmId, String rdmName, Integer targetRapId, String sourceConfigVendor) {
+    public boolean adjustDefault(String projectId, Integer pltHeaderId, Long analysisId, String analysisName, Long rdmId, String rdmName, Integer targetRapId, String sourceConfigVendor) {
         log.info("DEFAULT ADJUSTMENT for projectId {} analysisId {} targetRapId = {}", projectId, analysisId, targetRapId);
         ProjectView project = projectViewRepository.findByProjectId(projectId);
-        ScorPltHeaderEntity purePLTHeader = scorpltheaderRepository.findByScorPltHeaderId(pltHeaderId);
+        ScorPltHeaderEntity purePLTHeader = scorpltheaderRepository.getOne(pltHeaderId);
         log.info("DEFAULT ADJUSTMENT for RDM {} - {}, PLT {}, PLTHeader = {}", rdmName, rdmId, pltHeaderId, purePLTHeader);
         if (purePLTHeader == null) {
             log.error("No data found for PLT {}. Default adjustment error!", pltHeaderId);

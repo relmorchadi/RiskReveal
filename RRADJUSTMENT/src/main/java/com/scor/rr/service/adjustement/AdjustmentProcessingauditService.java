@@ -1,13 +1,9 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.domain.AdjustmentNodeEntity;
 import com.scor.rr.domain.AdjustmentProcessingAuditEntity;
-import com.scor.rr.domain.ScorPltHeaderEntity;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.AdjustmentnodeRepository;
 import com.scor.rr.repository.AdjustmentprocessingauditRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

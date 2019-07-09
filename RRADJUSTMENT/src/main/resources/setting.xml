@@ -9,7 +9,7 @@
       <mapping class="com.scor.rr.domain.ContractEntity"/>
     <mapping class="com.scor.rr.domain.Country"/>
     <mapping class="com.scor.rr.domain.ProjectEntity"/>
-    <mapping class="com.scor.rr.domain.WorkspaceEntity"/>
+    <mapping class="com.scor.rr.domain.Workspace"/>
     <mapping class="com.scor.rr.domain.RrWorkspaceProjectMappingEntity"/>
     <mapping class="com.scor.rr.domain.ReinstatementEntity"/>
 
@@ -117,7 +117,7 @@
     <mapping class="com.scor.rr.domain.TargetRapEntity"/>
     <mapping class="com.scor.rr.domain.TaskEntity"/>
     <mapping class="com.scor.rr.domain.UserRrEntity"/>
-    <mapping class="com.scor.rr.domain.WorkspaceEntity"/>
+    <mapping class="com.scor.rr.domain.Workspace"/>
     <mapping class="com.scor.rr.domain.XActPublicationEntity"/>
     <mapping class="com.scor.rr.domain.CatRequestsEntity"/>
       <mapping class="com.scor.rr.domain.AdjustmentBasisEntity"/>

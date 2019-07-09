@@ -33,8 +33,8 @@ public class DefaultAdjustmentService {
     ScorpltheaderRepository scorpltheaderRepository;
 
 
-    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePlt(String scorPltHeaderId) {
-        ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findByScorPltHeaderId(scorPltHeaderId);
+    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePlt(Integer scorPltHeaderId) {
+        ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.getOne(scorPltHeaderId);
         DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
                 !defaultAdjustmentEntity.getRegionPerilByRegionPerilId()
                         .equals(scorPltHeaderEntity.getRegionPerilByRegionPerilId()) || !defaultAdjustmentEntity.getTargetRapByTargetRapId()

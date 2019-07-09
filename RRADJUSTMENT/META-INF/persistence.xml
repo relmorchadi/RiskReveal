@@ -19,6 +19,13 @@
         <class>com.scor.rr.domain.AdjustmentThreadEntity</class>
         <class>com.scor.rr.domain.BinFileEntity</class>
         <class>com.scor.rr.domain.ScorPltHeaderEntity</class>
+        <class>ProjectEntity</class>
+        <class>AdjustmentBasisEntity</class>
+        <class>BinFileEntity</class>
+        <class>RrAnalysisNewEntity</class>
+        <class>RegionPerilEntity</class>
+        <class>ScorPltHeaderEntity</class>
+        <class>TargetRapEntity</class>
         <properties>
             <property name="hibernate.connection.url"
                       value="jdbc:jtds:sqlserver://DCVDEVSQL10:53713/RiskReveal;instance=SDGEN01"/>
