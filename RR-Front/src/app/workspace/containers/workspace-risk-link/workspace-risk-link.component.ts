@@ -50,10 +50,20 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   lastSelectedIndexSummary = null;
   lastSelectedIndexFPstandard = null;
   lastSelectedIndexFPAnalysis = null;
+
+  financialP = false;
   filterModalVisibility = false;
   linkingModalVisibility = false;
+  editRowPopUp = false;
+
+  manual = false;
+  suggested = false;
+  managePopUp = false;
+
+  singleColEdit = false;
+  editableRow = {item: null, target: null, title: null};
+
   radioValue = 'all';
-  radioValueFinancialP = 'CurrentSelection';
   columnsForConfig;
   targetConfig;
 
@@ -64,6 +74,8 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   displayListRDMEDM = false;
 
   serviceSubscription: any;
+
+  occurrenceBasis;
 
   listEdmRdm: any = [];
 
@@ -89,12 +101,20 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   workingFSC: any;
   colsFinancialAnalysis: any;
 
-  manual = false;
-  suggested = false;
-  managePopUp = false;
-  financialP = false;
   selectedEDM = null;
   scrollableColslinking: any;
+
+  contextSelectedItem: any;
+  itemCm = [
+    {
+      label: 'Edit', icon: 'pi pi-pencil', command: (event) => {this.editRowPopUp = true; }
+    },
+    {
+      label: 'Delete Item',
+      icon: 'pi pi-trash',
+      command: () => this.deleteFromBasket(this.contextSelectedItem.id , 'results')
+    },
+  ];
 
   @Select(RiskLinkState)
   state$: Observable<RiskLinkModel>;
@@ -271,6 +291,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   deleteFromBasket(id, target) {
+    console.log(id, target)
     this.store.dispatch(new DeleteFromBasketAction({id: id, scope: target}));
   }
 
@@ -624,6 +645,15 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   removeFP(item, fp) {
     console.log(item, fp);
     this.store.dispatch(new RemoveFinancialPerspectiveAction({item, fp}));
+  }
+
+  updateRow(item, target) {
+    let title;
+    if (target === 'Rp') {title = 'Override Region Peril';
+    } else if (target === 'Ob') {title = 'Override Occurrence Basis';
+    } else if (target === 'Peqt') {title = 'Target Rap Selection'; }
+    this.editableRow = {item: item, target: target, title: title};
+    this.singleColEdit = true;
   }
 
   detectChanges() {

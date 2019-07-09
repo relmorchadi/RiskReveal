@@ -64,23 +64,23 @@ const frozenColsSummary = [
 ];
 
 const scrollableColsResults = [
-  {field: 'peril', header: 'Region Peril', width: '70px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'analysisCurrency', header: 'Source Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'financialPerspective', header: 'ELT FIN PERSP', width: '70px', type: 'multiple', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '90px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true},
-  // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'peqt', header: 'PEQT', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'regionPeril', header: 'Region Peril', width: '70px', type: 'Rp', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
+  {field: 'analysisCurrency', header: 'Source Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
+  {field: 'financialPerspective', header: 'ELT FIN PERSP', width: '70px', type: 'multiple', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
+  {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '90px', type: 'Ob', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
+  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
+  // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'peqt', header: 'PEQT', width: '80px', type: 'Peqt', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
 const frozenColsResults = [
-  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'analysisName', header: 'Name', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'analysisName', header: 'Name', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
 ];
 
 const scrollableColsLinking = [
