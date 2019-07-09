@@ -5,7 +5,7 @@
       <h4>Calibration Editor</h4>
     </div>
 
-    <div class="my-tabs" style="margin-bottom: 10px;">
+    <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;width: 175px;">
         <div class="col-10" style="padding:unset; position: absolute;min-width: 175px">
           <app-plt-left-menu
@@ -128,9 +128,10 @@
                    style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
               </div>
             </div>
-            <div *ngIf="!extended" class="table-header2" [ngStyle]="{'margin-left': headerWidth}"
+            <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
+                 [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
-              <div class="title-as-tab">
+              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
                   <span class="title">
                     Generic Thread
                      <nz-dropdown [nzPlacement]="'bottomLeft'"
@@ -176,7 +177,7 @@
                   *ngIf="adjsArray.length > 0"
                   class="generic-thread-container"
                   dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                  style="margin-top: 8px; margin-left: 10px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                  style="margin-top: 15px; margin-left: 25px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                   <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                     <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
                          (mouseover)="shownDropDown = adj.id"
@@ -234,12 +235,49 @@
                 </div>
               </div>
               <div class="pull-right radio-container">
-                <p-radioButton name="tableType" value="adjustments" label="Adjustments"
-                               [ngStyle]="{'padding-right':'5px'}" (onClick)="onTableTypeChange()"
-                               [(ngModel)]="tableType"></p-radioButton>
-                <p-radioButton name="tableType" value="EP Metrics" label="EP Metrics"
-                               [ngStyle]="{'padding-right':'3px'}" (onClick)="onTableTypeChange()"
-                               [(ngModel)]="tableType"></p-radioButton>
+                <div class="Deltas" style="position: unset;">EP Metrics &nbsp;
+                  <div class="button-toggle">
+                    <nz-switch class="switch-input" (ngModelChange)="onTableTypeChange($event)"
+                               [(ngModel)]="EPMetricsTable"></nz-switch>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!extended && tableType=='EP Metrics'" class="table-header2"
+                 [ngStyle]="{'margin-left': headerWidth}"
+                 style="background-color: #fff">
+              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
+                  <span class="title">
+                    Thread Level EP Metrics
+                  </span>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 25px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Change Display</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{selectedEPM}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+              </div>
+
+              <div class="pull-right radio-container">
+                <div class="Deltas" style="position: unset;">EP Metrics &nbsp;
+                  <div class="button-toggle">
+                    <nz-switch class="switch-input" (ngModelChange)="onTableTypeChange($event)"
+                               [(ngModel)]="EPMetricsTable"></nz-switch>
+                  </div>
+                </div>
               </div>
             </div>
             <p-table
@@ -272,7 +310,7 @@
                   <ng-container *ngFor="let col of columns;">
                     <th *ngIf="col?.fields === 'checkbox'" [ngStyle]="{'overflow':'visible'}"
                         class="checkBoxHead"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
+                        style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
                       <div
                         style="width: 102px;position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;">
                         <span
@@ -327,13 +365,13 @@
                       </nz-dropdown>
                     </th>
                     <th *ngIf="col?.fields === 'userTags'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="col?.fields === 'pltId'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="col?.fields === 'pltName'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="extended &&
                     (col.fields === 'rap' ||
@@ -346,10 +384,10 @@
 
                     </th>
                     <th *ngIf="col?.icon === 'icon-focus-add'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
-                        style="background-color: #ffffff !important;height: 70px!important;padding: 10px 0 0 0;position:relative">
+                        style="background-color: #ffffff !important;height: 88px!important;padding: 10px 0 0 0;position:relative">
                       <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
                          style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
                       <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
@@ -357,7 +395,7 @@
                     </th>
                     <th *ngIf="col.fields == 'overallLMF' && !extended"
                         [ngStyle]="{'width': '43px','overflow':'visible'}"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
+                        style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
                       <div
                         style="width: 180px;position: absolute;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;    z-index: 100;"
                         [ngStyle]="{'left': genericWidth[0]}">
@@ -469,10 +507,10 @@
                     </th>
                     <th *ngIf="col?.dragable && !extended
                                 && col.fields !== 'overallLMF'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="col.fields == 'overallLMF' && extended"
-                        style="background-color: #ffffff !important; height: 70px!important;  position: relative; padding: 0;"
+                        style="background-color: #ffffff !important; height: 88px!important;  position: relative; padding: 0;"
                         colspan="6">
                       <div
                         style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 191px;">
@@ -951,7 +989,7 @@
                   <ng-container *ngFor="let col of columns;">
                     <th *ngIf="col?.fields === 'checkbox'" [ngStyle]="{'overflow':'visible'}"
                         class="checkBoxHead"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
+                        style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
                       <div
                         style="width: 102px;position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;">
                         <span
@@ -1006,13 +1044,13 @@
                       </nz-dropdown>
                     </th>
                     <th *ngIf="col?.fields === 'userTags'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="col?.fields === 'pltId'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="col?.fields === 'pltName'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="extended &&
                     (col.fields === 'rap' ||
@@ -1025,10 +1063,10 @@
 
                     </th>
                     <th *ngIf="col?.icon === 'icon-focus-add'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
-                        style="background-color: #ffffff !important;height: 70px!important;padding: 10px 0 0 0;position:relative">
+                        style="background-color: #ffffff !important;height: 88px!important;padding: 10px 0 0 0;position:relative">
                       <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
                          style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
                       <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
@@ -1036,7 +1074,7 @@
                     </th>
                     <th *ngIf="col.fields == 'overallLMF' && !extended"
                         [ngStyle]="{'width': '43px','overflow':'visible'}"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
+                        style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
                       <div
                         style="width: 180px;position: absolute;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;    z-index: 100;"
                         [ngStyle]="{'left': genericWidth[0]}">
@@ -1150,16 +1188,16 @@
                                 && col.fields !== 'overallLMF'
                                 && col.fields !== 'postInuring'
                                 && col.fields !== 'inuring'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
+                        style="background-color: #ffffff !important;height: 88px!important;">
                     </th>
                     <th *ngIf=" col.fields == 'inuring'"
-                        style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
+                        style="background-color: #ffffff !important;height: 88px!important; vertical-align: middle;">
                     </th>
                     <th *ngIf=" col.fields == 'postInuring'"
-                        style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
+                        style="background-color: #ffffff !important;height: 88px!important; vertical-align: middle;">
                     </th>
                     <th *ngIf="col.fields == 'overallLMF' && extended"
-                        style="background-color: #ffffff !important; height: 70px!important;  position: relative; padding: 0;"
+                        style="background-color: #ffffff !important; height: 88px!important;  position: relative; padding: 0;"
                         colspan="6">
                       <div
                         style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 180px;">
@@ -1499,7 +1537,8 @@
                     </ng-container>
                     <ng-container *ngIf="col?.dragable">
                       <div
-                        class="text-elipsice border-dragable">
+                        *ngIf="selectedEPM == 'AEP - Delta % & Actual Basis' ||selectedEPM == 'OEP - Delta % & Actual Basis'  "
+                        class="text-elipsice border-dragable threeValues">
                         <div class="EPM0">
                           {{ rowData.EPM[0] }}
                         </div>
@@ -1519,6 +1558,32 @@
                                       col.fields == 'EPM500'"
                              class="EPM2R">
                           {{ rowData.EPM[2] }}
+                        </div>
+                      </div>
+                      <div *ngIf="selectedEPM == 'AEP - Delta % Basis' ||selectedEPM == 'OEP - Delta % Basis'  "
+                           class="text-elipsice border-dragable twoValues">
+                        <div class="EPM0">
+                          {{ rowData.EPM[0] }}
+                        </div>
+                        <div *ngIf="col.fields == 'EPM2' ||
+                                      col.fields == 'EPM5' ||
+                                      col.fields == 'EPM10' ||
+                                      col.fields == 'EPM25' ||
+                                      col.fields == 'EPM50' ||
+                                      col.fields == 'EPM100'"
+                             class="EPM2B">
+                          {{ rowData.EPM[2] }}
+                        </div>
+                        <div *ngIf="col.fields == 'EPM250' ||
+                                      col.fields == 'EPM500'"
+                             class="EPM2R">
+                          {{ rowData.EPM[2] }}
+                        </div>
+                      </div>
+                      <div *ngIf="selectedEPM == 'AEP - Normal' ||selectedEPM == 'OEP - Normal'"
+                           class="text-elipsice border-dragable oneValue">
+                        <div class="EPM0">
+                          {{ rowData.EPM[0] }}
                         </div>
                       </div>
                     </ng-container>

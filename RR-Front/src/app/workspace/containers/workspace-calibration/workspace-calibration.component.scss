@@ -1,4 +1,6 @@
-
+::ng-deep * {
+  transition: none !important;
+}
 .AdjustmentCanvas {
   ::ng-deep {
     .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
@@ -1527,7 +1529,7 @@ body .ui-table .ui-table-thead > tr > th {
 
 @media (min-width: 1100px) {
   .radio-container {
-    margin-top: 25px;
+    margin-top: 0px;
     margin-right: 5px;
   }
   .title-as-tab {
@@ -1548,43 +1550,84 @@ body .ui-table .ui-table-thead > tr > th {
 }
 
 .table-header1 {
-  height: 80px !important;
+  height: 88px !important;
   border-right: 5px solid #f4f6fc;
 }
 
 .table-header2 {
-  height: 80px !important;
+  height: 88px !important;
 }
 
-.EPM0 {
-  text-align: end;
-  font-weight: bold;
-  margin-right: 3px;
+.threeValues {
+  .EPM0 {
+    text-align: end;
+    font-weight: bold;
+    margin-right: 3px;
+  }
+
+  .EPM1 {
+    width: 50%;
+    float: left;
+    font-size: 12px;
+    margin-left: 3px;
+    color: #acacac;
+  }
+
+  .EPM2B {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    color: #06b9ff;
+  }
+
+  .EPM2R {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    color: #cf1912;
+  }
 }
 
-.EPM1 {
-  width: 50%;
-  float: left;
-  font-size: 12px;
-  margin-left: 3px;
-  color: #acacac;
+.twoValues {
+  .EPM0 {
+    font-weight: bold;
+    width: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    float: left;
+  }
+
+  .EPM2B {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #06b9ff;
+  }
+
+  .EPM2R {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #cf1912;
+  }
 }
 
-.EPM2B {
-  width: 47%;
-  margin-left: 50%;
-  text-align: end;
-  font-size: 12px;
-  color: #06b9ff;
+.oneValue {
+  .EPM0 {
+    font-weight: bold;
+    margin: 10px 25px 10px 25px;
+  }
 }
 
-.EPM2R {
-  width: 47%;
-  margin-left: 50%;
-  text-align: end;
-  font-size: 12px;
-  color: #cf1912;
-}
+
 
 ::ng-deep.ui-radiobutton-label {
   color: #0700cf !important;
@@ -1602,3 +1645,65 @@ body .ui-table .ui-table-thead > tr > th {
     border-top: 3px solid #0700e4;
   }
 }
+
+.body-wrap-dropDowns-calibration {
+  display: flex;
+
+  .dropdown-wrap-calibration {
+    display: flex;
+    width: 205px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title-calibration {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title-calibration {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected-calibration {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}
+
+.Deltas {
+  display: flex;
+  color: rgba(0, 0, 0, 0.6);
+  font-family: Rubik;
+  font-size: 18.26px;
+  letter-spacing: 0.5px;
+  line-height: 55px;
+  margin-right: 10px;
+}
+
+.generic-thread-container::-webkit-scrollbar {
+  height: 3px !important;
+}
+
+.generic-thread-container:hover::-webkit-scrollbar {
+  height: 6px !important;
+}
+

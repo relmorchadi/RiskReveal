@@ -4,10 +4,8 @@ import {
   Component,
   ElementRef,
   NgZone,
-  OnChanges,
   OnDestroy,
   OnInit,
-  SimpleChanges,
   ViewChild
 } from '@angular/core';
 import * as _ from 'lodash'
@@ -37,7 +35,7 @@ import {ActivatedRoute, Router} from "@angular/router";
   styleUrls: ['./workspace-calibration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChanges {
+export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   searchAddress: string;
   listOfPlts: any[];
   listOfPltsData: any[];
@@ -57,6 +55,14 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
   activeCheckboxSort: boolean;
   extended: boolean = true;
   tableType = 'adjustments';
+  EPMetricsTable = false;
+  EPMS = ["AEP - Normal",
+    "AEP - Delta % Basis",
+    "AEP - Delta % & Actual Basis",
+    "OEP - Normal",
+    "OEP - Delta % Basis",
+    "OEP - Delta % & Actual Basis"];
+  selectedEPM = "OEP - Delta % & Actual Basis";
   inProgressCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
   lockedCheckbox: boolean = true;
@@ -1396,12 +1402,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
     this.isVisible = false;
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.iconNotePosition = this.iconNote.nativeElement.style.position;
-    console.log('change', changes);
-    console.log(this.iconNote.nativeElement.style);
-  }
-
   addAdjustmentFromPlusIcon(boolAdj, adjustementType?, adjustement?) {
     if (this.addAdjustement) {
       if (boolAdj) {
@@ -1757,9 +1757,14 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, OnChang
 
   }
 
-  onTableTypeChange() {
+  onTableTypeChange($event) {
+    this.tableType = $event ? 'EP Metrics' : 'adjustments';
     this.initDataColumns();
     this.headerWidth = '403px';
     this.tableType == 'adjustments' ? this.frozenWidth = '463px' : this.frozenWidth = '403px';
+  }
+
+  changeEPM(epm) {
+    this.selectedEPM = epm;
   }
 }

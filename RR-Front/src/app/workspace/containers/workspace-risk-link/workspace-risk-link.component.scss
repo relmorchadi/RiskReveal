@@ -832,8 +832,8 @@
 .input-group-modal {
   display: flex;
   flex-direction: column;
-  width: 500px;
-  margin: 0 55px;
+  width: 580px;
+  margin: 0 auto;
 
   .row-input {
     display: flex;
@@ -1219,23 +1219,24 @@ TABLE STYLE
         user-select: none;
       }
 
-      ::ng-deep {
-        .ant-progress-text {
-          display: block;
-          color: #03DAC4;
-        }
+      tr.ui-contextmenu-selected {
+        background-color: #f4f6fc !important;
+      }
 
-        .ant-progress-circle-path {
-          stroke: #03DAC4;
-          stroke-width: 8px;
-        }
+      .ant-progress-text {
+        display: block;
+        color: #03DAC4;
+      }
+
+      .ant-progress-circle-path {
+        stroke: #03DAC4;
+        stroke-width: 8px;
       }
 
       .hidden-text {
-        ::ng-deep {
-          .ant-progress-text {
-            display: none;
-          }
+
+        .ant-progress-text {
+          display: none;
         }
       }
 

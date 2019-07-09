@@ -76,7 +76,7 @@ const initiaState: RiskLinkModel = {
       selected: 'Net Loss Pre Cat (RL)'
     },
     targetCurrency: {
-      data: ['Main Liability Currency (MLC)', 'User Defined Currency', 'Underlying Currency'],
+      data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
       selected: 'Main Liability Currency (MLC)'
     },
     calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
@@ -373,7 +373,8 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.patchState({
         results: {
           ...state.results,
-          data: {...state.results.data,
+          data: {
+            ...state.results.data,
             [item.id]: {...state.results.data[item.id], selected: value}
           }
         }
@@ -399,7 +400,8 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.patchState({
         summaries: {
           ...state.summaries,
-          data: {...state.summaries.data,
+          data: {
+            ...state.summaries.data,
             [item.id]: {...state.summaries.data[item.id], selected: value}
           }
         }
@@ -425,7 +427,8 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.patchState({
         financialPerspective: {
           ...state.financialPerspective,
-          standard: {...state.financialPerspective.standard,
+          standard: {
+            ...state.financialPerspective.standard,
             [item.id]: {...state.financialPerspective.standard[item.id], selected: value}
           }
         }
@@ -451,7 +454,8 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.patchState({
         financialPerspective: {
           ...state.financialPerspective,
-          analysis: {...state.financialPerspective.analysis,
+          analysis: {
+            ...state.financialPerspective.analysis,
             data: {
               ...state.financialPerspective.analysis.data,
               [item.id]: {...state.financialPerspective.analysis.data[item.id], selected: value}
@@ -491,7 +495,7 @@ export class RiskLinkState implements NgxsOnInit {
       results = {
         ...results, data: {
           ...results.data,
-          [dt.rdmId + dt.analysisId]: {
+          [dt.analysisId]: {
             ...dt,
             scanned: true,
             status: 100,
@@ -499,7 +503,7 @@ export class RiskLinkState implements NgxsOnInit {
             targetCurrency: 'USD',
             financialPerspective: ['GR'],
             occurrenceBasis: 'PerEvent',
-            regionPeril: 'NAEQ',
+            regionPeril: 'EUET',
             ty: true,
             peqt: '0/3',
             selected: false
@@ -513,7 +517,7 @@ export class RiskLinkState implements NgxsOnInit {
       summary = {
         ...summary, data: {
           ...summary.data,
-          [dt.edmId + dt.dataSourceId]: {
+          [dt.dataSourceId]: {
             ...dt,
             selected: false,
             scanned: true,
@@ -541,7 +545,7 @@ export class RiskLinkState implements NgxsOnInit {
   applyFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: ApplyFinancialPerspectiveAction) {
     const state = ctx.getState();
     if (payload === 'replace') {
-      const fpApplied = _.filter(_.toArray(state.financialPerspective.standard), dt => dt.selected ).map(dt => dt.code);
+      const fpApplied = _.filter(_.toArray(state.financialPerspective.standard), dt => dt.selected).map(dt => dt.code);
       if (state.financialPerspective.target === 'currentSelection') {
         const selectedAnalysis = _.filter(_.toArray(state.financialPerspective.analysis.data), dt => dt.selected);
         const modif = Object.assign({}, ...selectedAnalysis.map(item => {
@@ -553,7 +557,7 @@ export class RiskLinkState implements NgxsOnInit {
             ...state.financialPerspective,
             analysis: {
               ...state.financialPerspective.analysis,
-              data:  {...state.financialPerspective.analysis.data, ...modif}
+              data: {...state.financialPerspective.analysis.data, ...modif}
             }
           }
         });
@@ -571,11 +575,16 @@ export class RiskLinkState implements NgxsOnInit {
         });
       }
     } else {
-      const fpApplied: any = _.filter(_.toArray(state.financialPerspective.standard), dt => dt.selected ).map(dt => dt.code);
+      const fpApplied: any = _.filter(_.toArray(state.financialPerspective.standard), dt => dt.selected).map(dt => dt.code);
       if (state.financialPerspective.target === 'currentSelection') {
         const selectedAnalysis = _.filter(_.toArray(state.financialPerspective.analysis.data), dt => dt.selected);
         const modif = Object.assign({}, ...selectedAnalysis.map(item => {
-          return ({[item.id]: {...item, financialPerspective: _.unionBy([...item.financialPerspective, ...fpApplied])}});
+          return ({
+            [item.id]: {
+              ...item,
+              financialPerspective: _.unionBy([...item.financialPerspective, ...fpApplied])
+            }
+          });
         }));
         ctx.patchState({
           financialPerspective: {
@@ -593,7 +602,12 @@ export class RiskLinkState implements NgxsOnInit {
             analysis: {
               ...state.financialPerspective.analysis,
               data: Object.assign({}, ..._.toArray(state.financialPerspective.analysis.data).map(item => {
-                return ({[item.id]: {...item, financialPerspective: _.unionBy([...item.financialPerspective, ...fpApplied])}});
+                return ({
+                  [item.id]: {
+                    ...item,
+                    financialPerspective: _.unionBy([...item.financialPerspective, ...fpApplied])
+                  }
+                });
               }))
             }
           }
@@ -618,8 +632,13 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(RemoveFinancialPerspectiveAction)
   removeFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: RemoveFinancialPerspectiveAction) {
     const state = ctx.getState();
-    const newData =  Object.assign({}, ...[payload.item].map(item => {
-      return({[item.id]: {...item, financialPerspective: _.filter(item.financialPerspective, dt => dt !== payload.fp)}});
+    const newData = Object.assign({}, ...[payload.item].map(item => {
+      return ({
+        [item.id]: {
+          ...item,
+          financialPerspective: _.filter(item.financialPerspective, dt => dt !== payload.fp)
+        }
+      });
     }));
     console.log(newData);
     ctx.patchState({
@@ -639,7 +658,7 @@ export class RiskLinkState implements NgxsOnInit {
     const {id, scope} = payload;
     let newData = {};
     if (scope === 'summary') {
-      const summary = _.filter(_.toArray(state.summaries.data), dt => dt.dataSourceId !== id);
+      const summary = _.filter(_.toArray(state.summaries.data), dt => dt.dataSourceId != id);
       summary.forEach(dt => {
         newData = {...newData, [dt.dataSourceId]: {...dt}};
       });
@@ -653,7 +672,8 @@ export class RiskLinkState implements NgxsOnInit {
         }
       );
     } else if (scope === 'results') {
-      const results = _.filter(_.toArray(state.results.data), dt => dt.analysisId !== id);
+      const results = _.filter(_.toArray(state.results.data), dt => dt.analysisId != id);
+      console.log(results);
       results.forEach(dt => {
         newData = {...newData, [dt.analysisId]: {...dt}};
       });
@@ -932,100 +952,100 @@ export class RiskLinkState implements NgxsOnInit {
         });
       }
     });
-
-    const filteredArray = listDataToArray.filter(e => e.source === 'link');
-    let count = 0;
-    if (filteredArray.length > 0) {
-      forkJoin(
-        filteredArray.map(dt => {
-          const searchTerm = dt.name.substr(0, dt.name.lastIndexOf('_'));
-          if (dt.name.length - searchTerm.length < 5) {
-            return of([this.riskApi.searchRiskLinkData(searchTerm, '20'), searchTerm]);
-          }
-          return of(null);
-        })
-      ).subscribe(data => {
-        data.forEach(dt => {
-            count = count + 1;
-            if (dt !== null) {
-              dt[0].subscribe(
-                ks => {
-                  ks.content.forEach(ws => {
-                    const trim = ws.name.substr(0, ws.name.lastIndexOf('_'));
-                    if (trim === dt[1]) {
-                      if (ws.type !== dt.type) {
-                        if (ws.type === 'edm') {
-                          listSelected.edm = _.merge({}, listSelected.edm, {
-                            [ws.id]: {
-                              ...ws,
-                              scanned: true,
-                              selected: false
-                            }
-                          });
-                        } else {
-                          listSelected.rdm = _.merge({}, listSelected.rdm, {
-                            [ws.id]: {
-                              ...ws,
-                              scanned: true,
-                              selected: false
-                            }
-                          });
-                        }
-                      }
-                    }
-                  });
-                  if (count === data.length) {
-                    ctx.patchState({
-                      listEdmRdm: {
-                        ...state.listEdmRdm,
-                        selectedListEDMAndRDM: {
-                          edm: listSelected.edm,
-                          rdm: listSelected.rdm
-                        }
-                      },
-                      linking: {
-                        ...state.linking,
-                        edm: listSelected.edm,
-                        rdm: listSelected.rdm
-                      },
-                      financialPerspective: {
-                        ...state.financialPerspective,
-                        rdm: {data: listSelected.rdm, selected: null},
-                      }
-                    });
-                    ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-                    ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.toArray(listSelected.rdm)));
-                    ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.toArray(listSelected.edm)));
+    /*
+        const filteredArray = listDataToArray.filter(e => e.source === 'link');
+        let count = 0;
+           if (filteredArray.length > 0) {
+              forkJoin(
+                filteredArray.map(dt => {
+                  const searchTerm = dt.name.substr(0, dt.name.lastIndexOf('_'));
+                  if (dt.name.length - searchTerm.length < 5) {
+                    return of([this.riskApi.searchRiskLinkData(searchTerm, '20'), searchTerm]);
                   }
-                }
-              );
-            }
-          }
-        );
-      });
-    } else {
-      ctx.patchState({
-        listEdmRdm: {
-          ...state.listEdmRdm,
-          selectedListEDMAndRDM: {
-            edm: listSelected.edm,
-            rdm: listSelected.rdm
-          }
-        },
-        linking: {
-          ...state.linking,
+                  return of(null);
+                })
+              ).subscribe(data => {
+                data.forEach(dt => {
+                    count = count + 1;
+                    if (dt !== null) {
+                      dt[0].subscribe(
+                        ks => {
+                          ks.content.forEach(ws => {
+                            const trim = ws.name.substr(0, ws.name.lastIndexOf('_'));
+                            if (trim === dt[1]) {
+                              if (ws.type !== dt.type) {
+                                if (ws.type === 'edm') {
+                                  listSelected.edm = _.merge({}, listSelected.edm, {
+                                    [ws.id]: {
+                                      ...ws,
+                                      scanned: true,
+                                      selected: false
+                                    }
+                                  });
+                                } else {
+                                  listSelected.rdm = _.merge({}, listSelected.rdm, {
+                                    [ws.id]: {
+                                      ...ws,
+                                      scanned: true,
+                                      selected: false
+                                    }
+                                  });
+                                }
+                              }
+                            }
+                          });
+                          if (count === data.length) {
+                            ctx.patchState({
+                              listEdmRdm: {
+                                ...state.listEdmRdm,
+                                selectedListEDMAndRDM: {
+                                  edm: listSelected.edm,
+                                  rdm: listSelected.rdm
+                                }
+                              },
+                              linking: {
+                                ...state.linking,
+                                edm: listSelected.edm,
+                                rdm: listSelected.rdm
+                              },
+                              financialPerspective: {
+                                ...state.financialPerspective,
+                                rdm: {data: listSelected.rdm, selected: null},
+                              }
+                            });
+                            ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+                            ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.toArray(listSelected.rdm)));
+                            ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.toArray(listSelected.edm)));
+                          }
+                        }
+                      );
+                    }
+                  }
+                );
+              });
+            } else {*/
+    ctx.patchState({
+      listEdmRdm: {
+        ...state.listEdmRdm,
+        selectedListEDMAndRDM: {
           edm: listSelected.edm,
           rdm: listSelected.rdm
-        },
-        financialPerspective: {
-          ...state.financialPerspective,
-          rdm: {data: listSelected.rdm, selected: null},
         }
-      });
-      ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-      ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, rt => rt.type === 'rdm' && rt.selected)));
-      ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, et => et.type === 'edm' && et.selected)));
-    }
+      },
+      linking: {
+        ...state.linking,
+        edm: listSelected.edm,
+        rdm: listSelected.rdm
+      },
+      financialPerspective: {
+        ...state.financialPerspective,
+        rdm: {data: listSelected.rdm, selected: null},
+      }
+    });
+    ctx.dispatch(new PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+    ctx.dispatch(new LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, rt => rt.type === 'rdm' && rt.selected)));
+    ctx.dispatch(new LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, et => et.type === 'edm' && et.selected)));
+    /*    }*/
 
 
   }
@@ -1069,12 +1089,19 @@ export class RiskLinkState implements NgxsOnInit {
   @Action(LoadFinancialPerspectiveAction)
   loadFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: LoadFinancialPerspectiveAction) {
     const state = ctx.getState();
-    const FincancialPerspective = Object.assign({}, ...payload.map(item => ({[item.id]: {...item}})));
     ctx.patchState({
       financialPerspective: {
         ...state.financialPerspective,
-        standard: FincancialPerspective,
-        analysis: state.results
+        standard: Object.assign({}, ...payload.map(item => ({[item.id]: {...item}}))),
+        analysis: {
+          ...state.results,
+          data: Object.assign({}, ..._.toArray(state.results.data).map(item => ({
+            [item.id]: {
+              ...item,
+              selected: false
+            }
+          })))
+        }
       }
     });
   }

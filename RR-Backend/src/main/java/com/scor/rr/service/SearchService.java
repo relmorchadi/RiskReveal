@@ -112,37 +112,11 @@ public class SearchService {
 
 
     public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-//    public Page<ContractSearchResult> getWorkspaces(WorkspaceFilter filter, int size) {
-//        if (filter.isEmpty())
-//            return contractSearchResultRepository.findAll(PageRequest.of(0, size));
-//        else if (filter.isGlobalSearch())
-//            return contractSearchResultRepository.findAll(filterGlobal(filter.getGlobalKeyword()), PageRequest.of(0, size));
-//        else
-//            return contractSearchResultRepository.findAll(filter(filter), PageRequest.of(0, size));
-//        return workspaceViewRepository.findAll(WorkspaceViewSpecification.filter(filter), PageRequest.of(0, size));
-
-//        return contractSearchResultRepository.customQuery(PageRequest.of(0, size));
         return new PageImpl<WorkspaceProjection>(
                 contractSearchResultRepository.getContracts(filter, offset,size),
                 PageRequest.of(offset/size, size),
                 contractSearchResultRepository.countContracts(filter)
         );
-
-//        return contractSearchResultRepository.findAll(selectAndGroupFields(),PageRequest.of(0,size));
-
-//        return entityManager.createNativeQuery("EXEC filterContracts '10', 'ax', '2015', NULL, NULL, NULL")
-//                .setParameter("workspaceId", null)
-//                .setParameter("workspaceName", null)
-//                .setParameter("year", null)
-//                .setParameter("cedantCode", null)
-//                .setParameter("cedantName", null)
-//                .setParameter("countryName", null)
-//                .getResultList();
-//        Page<WorkspaceProjection> workspaceProjectionPage= new PageImpl<WorkspaceProjection>(
-//                ctrP.getContent().stream().map(ctr -> new SpelAwareProxyProjectionFactory().createProjection(WorkspaceProjection.class, ctr)).collect(toList()),
-//                ctrP.getPageable(),
-//                ctrP.getTotalElements());
-//        return workspaceProjectionPage;
 
     }
 

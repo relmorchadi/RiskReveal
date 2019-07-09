@@ -319,7 +319,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   getBrowesingItemsDirectly() {
-    console.log('edit');
     this.browesing= true;
     this.data$ = this.store$.select(PltMainState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
     this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
@@ -549,8 +548,8 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this.pltProjectSubscription && this.pltProjectSubscription.unsubscribe();
     this.searchWorkspace = false;
     this.selectedWorkspace = null;
-    this._filter= {};
-    this.browesing= false;
+    this._filter = {};
+    this.browesing = false;
     this.onVisibleChange.emit(false);
     this.Inputs= {
       ...this.Inputs,
@@ -648,27 +647,27 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       selectedItemForMenu: null
     };
   }
-  onRowSelect(d,event) {
+
+  onRowSelect(event) {
     console.log(event);
-   if(d == 'db') {
-     this.selectedWorkspace = event;
-     this.setInputs('wsId', event.workSpaceId)
-   }else {
-     this.selectedWorkspace = event.data;
-     this.setInputs('wsId', event.data.workSpaceId)
-   }
+      this.selectedWorkspace = event;
+      this.onSelectWorkspace.emit(event);
+      this.setInputs('wsId', event.workSpaceId)
   }
+
   onRowUnselect(event) {
     // this.selectedWorkspace = null;
   }
+
   getBrowesingItems(workspace) {
     this.setInputs('wsId', workspace.workSpaceId);
     this.setInputs('uwYear', workspace.uwYear);
     this.onSelectWorkspace.emit(workspace);
-    this.browesing= false;
-    if(this.selectionStep == 'project') {
+    this.browesing = false;
+    if (this.selectionStep == 'project') {
+      console.log('in projects')
       this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
-          this.selectedWorkspaceProjects = data.projects;
+          this.selectedWorkspaceProjects = _.map(data.projects, (item) => ({...item, selected: false}));
           if (!data.projects.length) {
             this.browesing = false;
             alert('This workspace contains no project');
@@ -846,14 +845,11 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         this.onVisibleChange.emit(false);
       }
     }
-
-    this.browesing= true;
   }
 
   setBrowesingItems() {
     if(this.selectionStep == 'plt') {
       this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
-      this.onSelectWorkspace.emit(this.selectedWorkspace);
       this.onVisibleChange.emit(false);
     }else {
       this.searchWorkspace = false;
@@ -863,11 +859,11 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   selectThisProject(project) {
-    if (this.selectedProject === project) {
-      this.selectedProject = null;
-      return;
-    }
-    this.selectedProject = project;
+    const {projectIndex} = project;
+    let selectedProject = _.find(this.selectedWorkspaceProjects, item => item.selected);
+    selectedProject ? selectedProject.selected = false : null;
+    this.selectedProject = this.selectedWorkspaceProjects[projectIndex];
+    this.selectedProject.selected = true;
   }
 
   onShow() {
@@ -879,7 +875,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         this._loadData();
       });
 
-    if(this.stepConfig.uwYear && this.stepConfig.wsId) {
+    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();
