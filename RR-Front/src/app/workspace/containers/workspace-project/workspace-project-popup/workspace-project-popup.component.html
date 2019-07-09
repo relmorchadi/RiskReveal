@@ -166,7 +166,7 @@
 
         </app-plt-left-menu>
       </div>
-      <div class="right">
+      <div class="center">
         <div class="title-as-tab">
           <span>
             PLTs
@@ -179,8 +179,16 @@
             (onFilter)="filterPlts($event)"
             (onPltClick)="toggleSelectPlts($event)"
             (onSelectSinglePlt)="selectSinglePLT($event)"
+            (openPltInDrawer)="openPltInDrawer($event)"
+            (onItemSelectForMenu)="setSelectedPlt($event)"
           ></app-plt-main-table>
         </div>
+      </div>
+      <div class="right">
+        <app-plt-right-menu
+          (actionDispatcher)="rightMenuActionDispatcher($event)"
+          [Inputs]="rightMenuInputs"
+        ></app-plt-right-menu>
       </div>
     </div>
   </ng-container>

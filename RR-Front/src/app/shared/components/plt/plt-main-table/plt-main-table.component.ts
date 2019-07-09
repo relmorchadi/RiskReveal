@@ -47,7 +47,6 @@ export class PltMainTableComponent implements OnInit {
 
   contextMenuItems = [
     { label: 'View Detail', command: (event) => {
-        console.log(this.contextMenuSelect);
         this.openPltInDrawer.emit(this.contextMenuSelect.pltId);
       }},
     { label: 'Delete', command: (event) =>

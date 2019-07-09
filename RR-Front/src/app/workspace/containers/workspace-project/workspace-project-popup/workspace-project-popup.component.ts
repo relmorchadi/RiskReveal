@@ -12,6 +12,9 @@ import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {debounceTime, filter, first, last, mergeMap, take, takeUntil} from 'rxjs/operators';
 import * as fromWorkspaceStore from '../../../store';
 import {PltMainState} from '../../../store';
+import {Message} from '../../../../shared/message';
+import * as rightMenuStore from '../../../../shared/components/plt/plt-right-menu/store/';
+import {Actions as rightMenuActions} from '../../../../shared/components/plt/plt-right-menu/store/actionTypes';
 
 @Component({
   selector: 'app-workspace-project-popup',
@@ -42,6 +45,8 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     uwYear: string,
     plts: any[]
   };
+
+  rightMenuInputs: rightMenuStore.Input;
 
   workspace: any;
   index: any;
@@ -119,6 +124,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   browesing: boolean;
 
   Inputs: {
+    contextMenuItems: any,
     filterInput: string;
     pltColumns: any[];
     listOfPltsData: [];
@@ -155,7 +161,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     selectedItemForMenu: any;
   };
 
-  tableInputs= ['filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'listOfPlts', 'listOfDeletedPlts', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'someItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData'];
+  tableInputs= ['filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'listOfPlts', 'listOfDeletedPlts', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'someItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems'];
 
   menuInputs= ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
@@ -176,6 +182,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     nonGrouped: {}
   };
   private d: Subscription;
+  private selectedPlt: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -188,6 +195,13 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     private fb: FormBuilder,
   ) {
     this.Inputs= {
+      contextMenuItems: [
+        {
+          label: 'View Detail', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt)
+          }
+        },
+      ],
       filterInput: '',
       pltColumns: [
         {
@@ -286,6 +300,18 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       keyword: new FormControl(null)
     });
     this.browesing= false;
+    this.rightMenuInputs = {
+      basket: [],
+      pltDetail: null,
+      selectedTab: {
+        index: 0,
+        title: 'basket',
+      },
+      tabs: {'basket': true,'pltDetail': true},
+      visible: true,
+      mode: "pop-up"
+    }
+    this.setRightMenuSelectedTab('basket');
   }
 
   ngOnInit() {
@@ -394,7 +420,20 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         this.setInputs('listOfPlts', d2);
         this.setInputs('listOfPltsData', d1);
         this.setInputs('listOfPltsCache', d1);
-        this.setInputs('selectedListOfPlts', _.filter(d2, k => data[k].selected));
+        this.setInputs('selectedListOfPlts', []);
+        this.updateMenuKey('basket', []);
+
+        _.forEach(d2, k => {
+          if(data[k].selected) {
+            this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'),k));
+            this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
+              pltId: k,
+              ...data[k]
+            }));
+          }
+        })
+
+        console.log(this.getRightMenuKey('basket'),this.getInputs('selectedListOfPlts'))
       }
 
       if (deletedData) {
@@ -514,6 +553,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this.browesing= false;
     this.onVisibleChange.emit(false);
     this.Inputs= {
+      ...this.Inputs,
       filterInput: '',
       pltColumns: [
         {
@@ -742,7 +782,20 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
             this.setInputs('listOfPlts', d2);
             this.setInputs('listOfPltsData', d1);
             this.setInputs('listOfPltsCache', d1);
-            this.setInputs('selectedListOfPlts', _.filter(d2, k => data[k].selected));
+            this.setInputs('selectedListOfPlts', []);
+            this.updateMenuKey('basket', []);
+
+            _.forEach(d2, k => {
+              if(data[k].selected) {
+                this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'),k));
+                this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
+                  pltId: k,
+                  ...data[k]
+                }));
+              }
+            })
+
+            console.log(this.getRightMenuKey('basket'),this.getInputs('selectedListOfPlts'))
           }
 
           if (deletedData) {
@@ -928,5 +981,49 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     // this.messageService.clear();
   }
 
+  closePltInDrawer(pltId) {
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      pltId
+    }));
+  }
 
+  openPltInDrawer(plt) {
+    if(this.getRightMenuKey('pltDetail')) {
+      this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId)
+    }
+    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      pltId: plt
+    }));
+    this.updateMenuKey('pltDetail', _.find(this.getInputs('listOfPltsData'), e => e.pltId == plt))
+    this.updateMenuKey('visible', true);
+  }
+
+  rightMenuActionDispatcher(action: Message) {
+    switch (action.type) {
+      case rightMenuStore.closeDrawer:
+        this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
+        this.updateMenuKey('visible', false);
+        break;
+      default:
+        console.log('default right menu action');
+    }
+  }
+
+  setRightMenuSelectedTab(tab) {
+    this.rightMenuInputs = rightMenuActions.setSelectedTab.handler(this.rightMenuInputs, tab)
+  }
+
+  getRightMenuKey(key) {
+    return _.get(this.rightMenuInputs, key);
+  }
+
+  updateMenuKey(key: string, value: any) {
+    this.rightMenuInputs = rightMenuActions.updateKey.handler(this.rightMenuInputs, key, value);
+  }
+
+  setSelectedPlt($event: any) {
+    this.selectedPlt= $event;
+  }
 }
