@@ -1,0 +1,279 @@
+
+::ng-deep {
+  div.cdk-virtual-scroll-content-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    padding: 10px 0 50px;
+    margin: 0 auto;
+    justify-content: flex-start;
+  }
+}
+
+
+.card-holder-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  flex: 1;
+  padding: 10px 0 50px;
+  margin: 0 auto;
+  justify-content: flex-start;
+  height: 100%;
+  @media screen and (max-width: 1550px) and (min-width: 1200px) {
+    justify-content: space-between;
+  }
+  @media screen and (max-width: 1200px) {
+    justify-content: center;
+  }
+  /*
+  @media screen and (min-width: 2200px) {
+    width: 2250px;
+  }
+  @media screen and (max-width: 1650px) and (min-width: 1500px) {
+    width: 1315px;
+  }
+
+  @media screen and (max-width: 1350px) and (min-width: 1024px) {
+    width: 970px;
+  }
+  @media screen and (max-width: 1024px) and (min-width: 780px) {
+    width: 95%;
+    margin: 15px auto;
+  }
+  */
+}
+
+.card-holder {
+  margin: 10px 0;
+  width: 50%;
+  display: flex;
+  justify-content: center;
+
+  @media screen and (min-width: 2200px) {
+    width: 25%;
+  }
+
+  @media screen and (min-width: 1650px) and (max-width: 2200px) {
+    width: 33%;
+  }
+
+  @media screen and (max-width: 1350px) {
+    margin: 10px auto;
+    width: 60%;
+  }
+
+  &:hover {
+    .icon-card-wrapper {
+      display: flex !important;
+    }
+  }
+}
+
+::ng-deep .project-card {
+  width: 98%;
+  border: 3px solid transparent;
+  border-radius: 2px;
+  background-color: #FAFAFA;
+  box-shadow: 0 9px 12px 1px rgba(0, 0, 0, 0.1), 0 3px 16px 2px rgba(0, 0, 0, 0.08), 0 5px 6px -3px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    box-shadow: 0 9px 12px 1px rgba(0, 0, 0, 0.3), 0 3px 16px 2px rgba(0, 0, 0, 0.2), 0 5px 6px -3px rgba(0, 0, 0, 0.2);
+  }
+
+  @media screen and (max-width: 768px) {
+    margin: auto;
+    min-width: 400px !important;
+    max-width: 500px !important;
+  }
+
+  .project-header {
+    height: 80px;
+    display: flex;
+
+    .project-header-icon {
+      width: 80px;
+
+      i {
+        color: white;
+        font-size: 2em;
+      }
+    }
+
+    .standard-flag-icon {
+      background-color: #F5A623;
+    }
+
+    .link-flag-icon {
+      background-color: #36C6FE;
+    }
+
+    .inuring-flag-icon {
+      background-color: #B482FE;
+    }
+
+    .project-header-title {
+      span:nth-child(1) {
+        color: rgba(0, 0, 0, 0.87);
+        font-family: Rubik;
+        font-size: 18px;
+        font-weight: 500;
+        letter-spacing: 0.25px;
+        line-height: 24px;
+      }
+
+      span:nth-child(2) {
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 14px;
+        letter-spacing: 0.5px;
+        line-height: 28px;
+      }
+
+      flex: 1;
+      background: #F9FAFE;
+    }
+
+    .icon-card-wrapper {
+      align-items: center;
+      background-color: #F9FAFE;
+      display: flex;
+
+      i {
+        cursor: pointer;
+        margin-right: 15px;
+        font-size: 22px;
+      }
+
+      .icon-check_24px {
+        border-radius: 20px;
+        background-color: #06B8FF;
+        color: #fff;
+        padding: 1px;
+      }
+
+      span {
+        width: 22px;
+        cursor: pointer;
+        height: 22px;
+        border: 1px solid #000;
+        border-radius: 20px;
+        margin-right: 15px
+      }
+    }
+  }
+
+  .project-progress {
+    height: 80px;
+    background-color: #fff;
+
+    .project-flag {
+      width: 25%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      text-align: center;
+
+      hr {
+        border-top: 2px solid #03DAC4;
+      }
+    }
+
+    .steper-icon {
+      width: 15px;
+      height: 15px;
+      border: 2px solid #03DAC4;
+      border-radius: 20px;
+      display: flex;
+      position: absolute;
+      margin-top: -24px;
+      margin-left: 70px;
+      background: #fff;
+
+      @media screen and (min-width: 1650px) and (max-width: 2200px) {
+        margin-left: 52px;
+      }
+    }
+  }
+
+  .project-kpi {
+    font-size: 0.7em;
+    background-color: #fff;
+
+    .project-component {
+      justify-content: space-between;
+    }
+
+    div {
+      i {
+        height: 19.89px;
+        width: 16.89px;
+      }
+
+      .project-kpi-span {
+        padding-top: 12px;
+        font-size: 15px;
+        letter-spacing: 0.5px;
+        line-height: 20px;
+      }
+
+      span:nth-child(3) {
+        font-size: 30px;
+      }
+    }
+
+    .badge {
+      margin-top: 11px;
+      background: #e700104f;
+      border-radius: 12px;
+      font-size: 15px !important;
+    }
+  }
+
+  .project-kpi-details {
+    background: #F9FAFE;
+
+    .project-kpi-details-title {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      height: 35px;
+      padding: 10px !important;
+      font-size: 0.9em;
+      @media screen and (max-width: 1500px) and (min-width: 1350px) {
+        font-size: 0.7em;
+      }
+    }
+
+    .dt-11 {
+      font-size: 11px;
+      @media screen and (max-width: 1500px) and (min-width: 1350px) {
+        font-size: 10px;
+      }
+    }
+  }
+}
+
+
+.icon-generic {
+  font-size: 22px;
+  margin-left: 20px;
+  margin-top: 6px;
+}
+
+.contextMenu {
+  display: flex;
+
+  i {
+    margin-right: 10px;
+    font-size: 17px;
+    padding-top: 2px;
+  }
+}
+
+.project-kpi-creat-wrap {
+  flex: 1;
+  color: rgba(0, 0, 0, 0.87);
+  letter-spacing: 0.08px;
+  line-height: 32px;
+  white-space: nowrap;
+  overflow: hidden;
+}
