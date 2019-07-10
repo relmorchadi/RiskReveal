@@ -4,6 +4,10 @@
   overflow: hidden;
   display: flex;
   width: 100%;
+
+  ::ng-deep span.ant-checkbox > input.ant-checkbox-input{
+    z-index: -10 !important;
+  }
 }
 
 ::ng-deep {
@@ -1046,6 +1050,47 @@ SELECT EDM AND RDM DROPDOWN STYLE
         }
       }
 
+      .icon-check_box_outline_blank_24px{
+        color: rgba(0,0,0,0.36);
+      }
+
+
+      .no-check{
+        display: inline-block;
+        margin: 0px 5px;
+        vertical-align: middle;
+        width: 16px;
+        height: 16px;
+        background-color: #fff;
+        border: 1px solid #d9d9d9;
+        border-radius: 2px;
+        border-collapse: separate;
+        transition: all 0.3s;
+
+        &:hover {
+          border: 1.1px solid #0700CF;
+        }
+      }
+
+      .check {
+        width: 16px;
+        height: 16px;
+        background-color: #0700CF;
+        color: #FFFFFF;
+        font-size: 14px !important;
+        display: inline-block;
+        border-radius: 2px;
+        margin: 0 5px;
+        vertical-align: middle;
+        text-align: center;
+
+        i {
+          font-weight: bold;
+          margin-left: -1px;
+          margin-right: 0 !important;
+        }
+      }
+
       .loading-text {
         height: 20px;
         margin: auto;
@@ -1376,3 +1421,5 @@ FINANCIAL PERSPECTIVE POPUP STYLE
     }
   }
 }
+
+

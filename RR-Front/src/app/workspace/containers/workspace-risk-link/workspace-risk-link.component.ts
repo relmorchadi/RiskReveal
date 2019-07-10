@@ -678,4 +678,5 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       this.cdRef.detectChanges();
     }
   }
+
 }

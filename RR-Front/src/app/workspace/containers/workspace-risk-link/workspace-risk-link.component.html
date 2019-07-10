@@ -15,7 +15,8 @@
       <div class="body-wrap-header">
         <div class="body-wrap-header-text">
           <!--          <span class="body-wrap-header-text-title">TREATY</span>-->
-          <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Risk link'" [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
+          <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Risk link'"
+                           [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
       </div>
@@ -138,11 +139,20 @@
                                            [lazy]="true" (onLazyLoad)="loadItemsLazy($event)"
                                            [totalRecords]="state.listEdmRdm.totalNumberElement">
                           <ng-template let-item pTemplate="item">
-                            <div class="poover-menu-item" (click)="toggleItems(item, $event, 'link')"
+                            <div class="poover-menu-item"
+                                 (click)="$event.stopPropagation();toggleItems(item, $event, 'link')"
                                  [ngClass]="{'poover-menu-item-active': item?.selected}">
-                              <label nz-checkbox (ngModelChange)="toggleItems(item, null, 'link')"
+
+                              <span *ngIf="!item.selected; else selected" class="no-check"></span>
+                              <ng-template #selected>
+                                <span class="check">
+                                  <i style="margin-right: 5px" class="icon-check"></i>
+                                </span>
+                              </ng-template>
+
+<!--                              <label nz-checkbox
                                      style="margin-right: 5px"
-                                     [ngModel]="item.selected"></label>
+                                     [ngModel]="item.selected"></label>-->
                               <span class="logo" *ngIf="item?.type === 'rdm'" style="background: #03DAC4">R</span>
                               <span class="logo" *ngIf="item?.type === 'edm'" style="background: #0700CF">E</span>
                               <span>{{item?.name}}</span>
@@ -513,7 +523,8 @@
                            [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                       <div class="text-data highlight-temp" stytle="font-weight: 500"
-                           *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'" (click)="updateRow(rowData, col.type)">
+                           *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
+                           (click)="updateRow(rowData, col.type)">
                         {{rowData[col.field]}}
                       </div>
                       <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
