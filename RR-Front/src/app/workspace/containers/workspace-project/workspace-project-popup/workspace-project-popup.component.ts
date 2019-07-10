@@ -198,7 +198,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       contextMenuItems: [
         {
           label: 'View Detail', command: (event) => {
-            this.openPltInDrawer(this.selectedPlt)
+            this.openPltInDrawer(this.selectedPlt);
           }
         },
       ],
@@ -211,12 +211,12 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           type: 'checkbox',active: true
         },
         {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
-        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id',active: true},
+        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id',active: true},
         {
           fields: 'pltName',
           header: 'PLT Name',
           width: '160',
-          sorted: false,
+          sorted: true,
           filtred: true,
           icon: null,
           type: 'field',active: true
@@ -225,7 +225,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           fields: 'peril',
           header: 'Peril',
           width: '40',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',
@@ -235,7 +235,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
           width: '70',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',active: true
@@ -244,23 +244,23 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           fields: 'regionPerilName',
           header: 'Region Peril Name',
           width: '160',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field',active: true},
+        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: false, icon: null, type: 'field',active: true},
         {
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
           width: '90',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field',active: true}
+        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: false, icon: null, type: 'field',active: true}
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -308,9 +308,9 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         title: 'basket',
       },
       tabs: {'basket': true,'pltDetail': true},
-      visible: true,
+      visible: false,
       mode: "pop-up"
-    }
+    };
     this.setRightMenuSelectedTab('basket');
   }
 
@@ -432,7 +432,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           }
         })
 
-        console.log(this.getRightMenuKey('basket'),this.getInputs('selectedListOfPlts'))
       }
 
       if (deletedData) {
@@ -463,7 +462,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           :
           this.getInputs('selectedListOfDeletedPlts').length < this.getInputs('listOfDeletedPlts').length && this.getInputs('selectedListOfDeletedPlts').length > 0
       );
-      console.log('END');
       this.detectChanges();
     });
 
@@ -485,7 +483,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
     this.pltUserTagsSubscription = this.store$.select(PltMainState.getUserTags).subscribe(userTags => {
       this.setInputs('userTags', userTags || {});
-      console.log(this.getInputs('userTags'))
       this.detectChanges();
     });
   }
@@ -562,12 +559,12 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           type: 'checkbox',active: true
         },
         {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
-        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id',active: true},
+        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id',active: true},
         {
           fields: 'pltName',
           header: 'PLT Name',
           width: '160',
-          sorted: false,
+          sorted: true,
           filtred: true,
           icon: null,
           type: 'field',active: true
@@ -576,7 +573,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           fields: 'peril',
           header: 'Peril',
           width: '40',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',
@@ -586,7 +583,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
           width: '70',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',active: true
@@ -595,23 +592,23 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           fields: 'regionPerilName',
           header: 'Region Peril Name',
           width: '160',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field',active: true},
+        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: false, icon: null, type: 'field',active: true},
         {
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
           width: '90',
-          sorted: false,
+          sorted: true,
           filtred: false,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field',active: true}
+        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: false, icon: null, type: 'field',active: true}
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -646,10 +643,20 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       pathTab: true,
       selectedItemForMenu: null
     };
+    this.rightMenuInputs = {
+      basket: [],
+      pltDetail: null,
+      selectedTab: {
+        index: 0,
+        title: 'basket',
+      },
+      tabs: {'basket': true,'pltDetail': true},
+      visible: false,
+      mode: "pop-up"
+    };
   }
 
   onRowSelect(event) {
-    console.log(event);
       this.selectedWorkspace = event;
       this.onSelectWorkspace.emit(event);
       this.setInputs('wsId', event.workSpaceId)
@@ -665,7 +672,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
     if (this.selectionStep == 'project') {
-      console.log('in projects')
       this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
           this.selectedWorkspaceProjects = _.map(data.projects, (item) => ({...item, selected: false}));
           if (!data.projects.length) {
@@ -793,8 +799,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
                 }));
               }
             })
-
-            console.log(this.getRightMenuKey('basket'),this.getInputs('selectedListOfPlts'))
           }
 
           if (deletedData) {
@@ -838,7 +842,6 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         this.pltUserTagsSubscription = this.store$.select(PltMainState.getUserTags).subscribe(userTags => {
           this.setInputs('userTags', userTags || {});
           this.browesing=true;
-          console.log(this.getInputs('userTags'))
           this.detectChanges();
         })
       } else {
@@ -982,6 +985,8 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
       pltId
     }));
+    this.updateMenuKey('pltDetail', null);
+    this.setRightMenuSelectedTab('basket');
   }
 
   openPltInDrawer(plt) {
@@ -994,13 +999,28 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     }));
     this.updateMenuKey('pltDetail', _.find(this.getInputs('listOfPltsData'), e => e.pltId == plt))
     this.updateMenuKey('visible', true);
+    this.setRightMenuSelectedTab('pltDetail');
   }
 
   rightMenuActionDispatcher(action: Message) {
+    console.log(action);
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
+        if(this.getRightMenuKey('pltDetail')) {
+          this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
+        }
         this.updateMenuKey('visible', false);
+        break;
+      case rightMenuStore.openDrawer:
+        this.updateMenuKey('visible', true);
+        break;
+      case  rightMenuStore.unselectPlt:
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map([action.payload], plt => plt),
+            _.range([action.payload].length).map(el => ({type: false}))
+          )
+        );
         break;
       default:
         console.log('default right menu action');
@@ -1021,5 +1041,13 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
   setSelectedPlt($event: any) {
     this.selectedPlt= $event;
+  }
+
+  onSortChange($event: any) {
+    this.setInputs('sortData', $event);
+  }
+
+  onCheckBoxSort($event: any) {
+    this.setInputs('listOfPltsData', $event);
   }
 }

@@ -1,17 +1,25 @@
 .drawer {
   position: absolute;
   right: 0;
-  width: 650px;
   height: 100%;
+  width: 500px;
   padding: 10px 10px;
   background: #fff;
   box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
 }
 
+.drawer-content {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
 .drawer-pop-up {
-  width: 450px;
   height: 100%;
   padding: 10px 10px;
+
+  ::ng-deep .ant-tabs .ant-tabs-top-content > .ant-tabs-tabpane, .ant-tabs .ant-tabs-bottom-content > .ant-tabs-tabpane {
+    max-width: 450px;
+  }
 }
 
 .navigation-icons-drawer {
@@ -22,7 +30,6 @@
     color: #9C99EC;
     font-size: 24px;
     cursor: pointer;
-    float: right;
   }
 }
 
