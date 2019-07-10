@@ -23,6 +23,11 @@ export class PatchAddToBasketStateAction {
   constructor() {}
 }
 
+export class PatchResultsAction {
+  static readonly type = '[Risk Link] Patch Result';
+  constructor(public payload: any) {}
+}
+
 export class PatchTargetFPAction {
   static readonly type = '[Risk Link] Patch Target For Financial Perspective';
   constructor(public payload: any) {}
@@ -81,6 +86,11 @@ export class AddToBasketAction {
 
 export class DeleteFromBasketAction {
   static readonly type = '[Risk Link] Delete From Basket';
+  constructor(public payload: any) {}
+}
+
+export class DeleteEdmRdmaction {
+  static readonly type = '[Risk Link] Delete Edm Or Rdm';
   constructor(public payload: any) {}
 }
 

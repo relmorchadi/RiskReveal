@@ -14,11 +14,12 @@ import {workspaceRoutes} from './workspace.route';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
 import {CalendarModule, DialogModule, DragDropModule, RadioButtonModule} from 'primeng/primeng';
-import {ToastModule} from "primeng/toast";
+import {ToastModule} from 'primeng/toast';
 import {DndModule} from 'ng2-dnd';
 import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
 import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-up/adjustment-pop-up.component';
 import { ScrollingModule } from '@angular/cdk/scrolling';
+import {TreeModule} from 'primeng/tree';
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { ScrollingModule } from '@angular/cdk/scrolling';
     GridsterModule,
     SharedModule,
     FormsModule,
+    TreeModule,
     DialogModule,
     CalendarModule,
     VirtualScrollerModule,
