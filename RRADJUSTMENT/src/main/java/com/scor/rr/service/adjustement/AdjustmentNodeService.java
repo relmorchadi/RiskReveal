@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -47,6 +48,12 @@ public class AdjustmentNodeService {
         return adjustmentnodeRepository.findAll();
     }
 
+    public List<AdjustmentNodeEntity> findByThread(Integer threadId){
+        return adjustmentnodeRepository.findAll().stream().filter(adjustmentNodeEntity ->
+                adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId() == threadId)
+                .collect(Collectors.toList());
+    }
+
     public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest){
         AdjustmentNodeEntity adjustmentNodeEntity = new AdjustmentNodeEntity();
         adjustmentNodeEntity.setLayer(adjustmentNodeRequest.getLayer());
@@ -57,7 +64,6 @@ public class AdjustmentNodeService {
         adjustmentNodeEntity.setHasNewParamsFile(adjustmentNodeRequest.getHasNewParamsFile());
         adjustmentNodeEntity.setAdjustmentType(adjustmentTypeRepository.getOne(adjustmentNodeRequest.getAdjustmentType()));
         adjustmentNodeEntity.setAdjustmentBasis(adjustmentBasisRepository.getOne(adjustmentNodeRequest.getAdjustmentBasis()));
-        adjustmentNodeEntity.setAdjustmentCategory(adjustmentCategoryRepository.getOne(adjustmentNodeRequest.getAdjustmentCategory()));
         adjustmentNodeEntity.setAdjustmentState(adjustmentStateRepository.getOne(adjustmentNodeRequest.getAdjustmentState()));
         adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.getOne(adjustmentNodeRequest.getAdjustmentThreadId()));
         return adjustmentnodeRepository.save(adjustmentNodeEntity);

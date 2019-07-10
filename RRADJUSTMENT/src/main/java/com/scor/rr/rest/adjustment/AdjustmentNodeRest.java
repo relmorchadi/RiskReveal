@@ -16,7 +16,7 @@ public class AdjustmentNodeRest {
     AdjustmentNodeService adjustmentNodeService;
 
 
-    @GetMapping
+    @GetMapping("all")
     public List<AdjustmentNodeEntity> findAll() {
         return adjustmentNodeService.findAll();
     }
@@ -24,6 +24,11 @@ public class AdjustmentNodeRest {
     @PostMapping
     public AdjustmentNodeEntity save(@RequestBody AdjustmentNodeRequest request){
         return adjustmentNodeService.save(request);
+    }
+
+    @GetMapping("thread")
+    public List<AdjustmentNodeEntity> findByThread(Integer threadId){
+        return adjustmentNodeService.findByThread(threadId);
     }
 
     @DeleteMapping

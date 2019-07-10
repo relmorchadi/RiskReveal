@@ -26,6 +26,7 @@
         <class>RegionPerilEntity</class>
         <class>ScorPltHeaderEntity</class>
         <class>TargetRapEntity</class>
+        <class>AdjustmentCategoryEntity</class>
         <properties>
             <property name="hibernate.connection.url"
                       value="jdbc:jtds:sqlserver://DCVDEVSQL10:53713/RiskReveal;instance=SDGEN01"/>

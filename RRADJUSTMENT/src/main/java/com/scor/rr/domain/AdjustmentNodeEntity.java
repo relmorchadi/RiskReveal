@@ -13,11 +13,11 @@ public class AdjustmentNodeEntity {
     private String adjustmentParamsSource;
     private String lossNetFlag;
     private Boolean hasNewParamsFile;
+    private Boolean capped;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentBasisEntity adjustmentBasis;
     private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeEntityCloning;
     private AdjustmentTypeEntity adjustmentType;
-    private AdjustmentCategoryEntity adjustmentCategory;
     private AdjustmentStateEntity adjustmentState;
 
     @Id
@@ -90,6 +90,15 @@ public class AdjustmentNodeEntity {
         this.hasNewParamsFile = hasNewParamsFile;
     }
 
+    @Basic
+    @Column(name = "capped", nullable = true)
+    public Boolean getCapped() {
+        return capped;
+    }
+
+    public void setCapped(Boolean capped) {
+        this.capped = capped;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -101,12 +110,13 @@ public class AdjustmentNodeEntity {
                 Objects.equals(isInputChanged, that.isInputChanged) &&
                 Objects.equals(adjustmentParamsSource, that.adjustmentParamsSource) &&
                 Objects.equals(lossNetFlag, that.lossNetFlag) &&
-                Objects.equals(hasNewParamsFile, that.hasNewParamsFile);
+                Objects.equals(hasNewParamsFile, that.hasNewParamsFile) &&
+                Objects.equals(capped,that.capped);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentNodeId, layer, sequence, isInputChanged, adjustmentParamsSource, lossNetFlag, hasNewParamsFile);
+        return Objects.hash(adjustmentNodeId, layer, sequence, isInputChanged, adjustmentParamsSource, lossNetFlag, hasNewParamsFile,capped);
     }
 
     @ManyToOne
@@ -147,16 +157,6 @@ public class AdjustmentNodeEntity {
 
     public void setAdjustmentType(AdjustmentTypeEntity adjustmentType) {
         this.adjustmentType = adjustmentType;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "id_category", referencedColumnName = "id_category")
-    public AdjustmentCategoryEntity getAdjustmentCategory() {
-        return adjustmentCategory;
-    }
-
-    public void setAdjustmentCategory(AdjustmentCategoryEntity adjustmentCategory) {
-        this.adjustmentCategory = adjustmentCategory;
     }
 
     @ManyToOne

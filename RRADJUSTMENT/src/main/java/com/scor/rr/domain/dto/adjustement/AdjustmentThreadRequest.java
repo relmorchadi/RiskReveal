@@ -1,5 +1,7 @@
 package com.scor.rr.domain.dto.adjustement;
 
+import java.sql.Timestamp;
+
 public class AdjustmentThreadRequest {
 
     private int adjustmentThreadId;
@@ -7,6 +9,14 @@ public class AdjustmentThreadRequest {
     private Boolean locked;
     private Integer pltPureId;
     private Integer pltFinalId;
+    private String createdBy;
+    private Timestamp createdOn;
+    private String accessBy;
+    private Timestamp accessOn;
+    private String lastModifiedBy;
+    private Timestamp lastModifiedOn;
+    private Timestamp lastGeneratedOn;
+    private Timestamp generatedOn;
 
     public int getAdjustmentThreadId() {
         return adjustmentThreadId;
@@ -46,5 +56,69 @@ public class AdjustmentThreadRequest {
 
     public void setPltFinalId(Integer pltFinalId) {
         this.pltFinalId = pltFinalId;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Timestamp getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(Timestamp createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    public String getAccessBy() {
+        return accessBy;
+    }
+
+    public void setAccessBy(String accessBy) {
+        this.accessBy = accessBy;
+    }
+
+    public Timestamp getAccessOn() {
+        return accessOn;
+    }
+
+    public void setAccessOn(Timestamp accessOn) {
+        this.accessOn = accessOn;
+    }
+
+    public String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    public Timestamp getLastModifiedOn() {
+        return lastModifiedOn;
+    }
+
+    public void setLastModifiedOn(Timestamp lastModifiedOn) {
+        this.lastModifiedOn = lastModifiedOn;
+    }
+
+    public Timestamp getLastGeneratedOn() {
+        return lastGeneratedOn;
+    }
+
+    public void setLastGeneratedOn(Timestamp lastGeneratedOn) {
+        this.lastGeneratedOn = lastGeneratedOn;
+    }
+
+    public Timestamp getGeneratedOn() {
+        return generatedOn;
+    }
+
+    public void setGeneratedOn(Timestamp generatedOn) {
+        this.generatedOn = generatedOn;
     }
 }

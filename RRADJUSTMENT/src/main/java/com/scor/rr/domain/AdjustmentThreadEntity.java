@@ -1,6 +1,7 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -9,6 +10,14 @@ public class AdjustmentThreadEntity {
     private int adjustmentThreadId;
     private String threadType;
     private Boolean locked;
+    private String createdBy;
+    private Timestamp createdOn;
+    private String accessBy;
+    private Timestamp accessOn;
+    private String lastModifiedBy;
+    private Timestamp lastModifiedOn;
+    private Timestamp lastGeneratedOn;
+    private Timestamp generatedOn;
     private ScorPltHeaderEntity scorPltHeaderByPurePltId;
     private ScorPltHeaderEntity scorPltHeaderByThreadPltId;
 
@@ -41,7 +50,86 @@ public class AdjustmentThreadEntity {
     public void setLocked(Boolean locked) {
         this.locked = locked;
     }
+    
+    @Basic
+    @Column(name = "created_by", nullable = true, length = 100)
+    public java.lang.String getCreatedBy() {
+        return createdBy;
+    }
 
+    public void setCreatedBy(java.lang.String createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    @Basic
+    @Column(name = "created_on", nullable = true)
+    public java.sql.Timestamp getCreatedOn() {
+        return createdOn;
+    }
+
+    public void setCreatedOn(java.sql.Timestamp createdOn) {
+        this.createdOn = createdOn;
+    }
+
+    @Basic
+    @Column(name = "access_by", nullable = true, length = 100)
+    public java.lang.String getAccessBy() {
+        return accessBy;
+    }
+
+    public void setAccessBy(java.lang.String accessBy) {
+        this.accessBy = accessBy;
+    }
+
+    @Basic
+    @Column(name = "access_on", nullable = true)
+    public java.sql.Timestamp getAccessOn() {
+        return accessOn;
+    }
+
+    public void setAccessOn(java.sql.Timestamp accessOn) {
+        this.accessOn = accessOn;
+    }
+
+    @Basic
+    @Column(name = "last_modified_by", nullable = true, length = 100)
+    public java.lang.String getLastModifiedBy() {
+        return lastModifiedBy;
+    }
+
+    public void setLastModifiedBy(java.lang.String lastModifiedBy) {
+        this.lastModifiedBy = lastModifiedBy;
+    }
+
+    @Basic
+    @Column(name = "last_modified_on", nullable = true)
+    public java.sql.Timestamp getLastModifiedOn() {
+        return lastModifiedOn;
+    }
+
+    public void setLastModifiedOn(java.sql.Timestamp lastModifiedOn) {
+        this.lastModifiedOn = lastModifiedOn;
+    }
+
+    @Basic
+    @Column(name = "last_generated_on", nullable = true)
+    public java.sql.Timestamp getLastGeneratedOn() {
+        return lastGeneratedOn;
+    }
+
+    public void setLastGeneratedOn(java.sql.Timestamp lastGeneratedOn) {
+        this.lastGeneratedOn = lastGeneratedOn;
+    }
+
+    @Basic
+    @Column(name = "generated_on", nullable = true)
+    public java.sql.Timestamp getGeneratedOn() {
+        return generatedOn;
+    }
+
+    public void setGeneratedOn(java.sql.Timestamp generatedOn) {
+        this.generatedOn = generatedOn;
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
