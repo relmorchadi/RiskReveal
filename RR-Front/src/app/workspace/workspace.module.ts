@@ -18,12 +18,13 @@ import {ToastModule} from "primeng/toast";
 import {DndModule} from 'ng2-dnd';
 import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
 import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-up/adjustment-pop-up.component';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import {ScrollingModule} from '@angular/cdk/scrolling';
+import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-up/add-remove-pop-up.component';
 
 @NgModule({
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent
   ],
   imports: [
     GridsterModule,
