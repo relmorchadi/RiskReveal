@@ -1,17 +1,20 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {combineLatest, Observable, Subject, Subscription} from 'rxjs';
-import {Actions, Select, Store} from '@ngxs/store';
+import {combineLatest, Observable, of, Subject, Subscription} from 'rxjs';
+import {Actions, Select, Store, ofAction, ofActionDispatched} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../../core/store/states';
-import {LazyLoadEvent} from 'primeng/api';
+import {LazyLoadEvent, MessageService} from 'primeng/api';
 import {SearchService} from '../../../../core/service';
 import {Debounce} from '../../../../shared/decorators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {debounceTime} from 'rxjs/operators';
+import {debounceTime, filter, first, last, mergeMap, take, takeUntil} from 'rxjs/operators';
 import * as fromWorkspaceStore from '../../../store';
 import {PltMainState} from '../../../store';
+import {Message} from '../../../../shared/message';
+import * as rightMenuStore from '../../../../shared/components/plt/plt-right-menu/store/';
+import {Actions as rightMenuActions} from '../../../../shared/components/plt/plt-right-menu/store/actionTypes';
 
 @Component({
   selector: 'app-workspace-project-popup',
@@ -26,12 +29,39 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   @Select(WorkspaceMainState.getData) selectWsData$;
   @Select(WorkspaceMainState.getProjects) projects$;
   unSubscribe$: Subject<void>;
+  private pltTableSubscription: Subscription;
+  private pltProjectSubscription: Subscription;
+  private pltUserTagsSubscription: Subscription;
+
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
   @Output('onSelectItems') onSelectItems: EventEmitter<any> = new EventEmitter();
   @Output('onSelectWorkspace') onSelectWorkspace: EventEmitter<any> = new EventEmitter();
   @Input() isVisible;
   @Input('selectionStep') selectionStep: string;
+  @Input() multiSteps: boolean;
+  @Input() stepConfig: {
+    wsId: string,
+    uwYear: string,
+    plts: any[]
+  };
+
+  rightMenuInputs: rightMenuStore.Input;
+
+  workspace: any;
+  index: any;
+  newProject = false;
+  existingProject = false;
+  mgaProject = false;
+  searchWorkspace = false;
+  selectedWorkspace: any = null;
+  selectedWorkspaceProjects: any = null;
+  selectExistingProject = false;
+  selectedProject: any = null;
+  selectedWs: any;
+  globalSearchItem = '';
+  private _filter = {};
+  keywordFormGroup: FormGroup;
   selectWsTable = [
     {
       field: 'countryName',
@@ -88,8 +118,13 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       filterParam: 'workspaceId'
     }
   ];
+  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
+  contracts = [];
+  loading;
   browesing: boolean;
+
   Inputs: {
+    contextMenuItems: any,
     filterInput: string;
     pltColumns: any[];
     listOfPltsData: [];
@@ -126,25 +161,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     selectedItemForMenu: any;
   };
 
-  workspace: any;
-  index: any;
-  newProject = false;
-  existingProject = false;
-  mgaProject = false;
-  searchWorkspace = false;
-  selectedWorkspace: any = null;
-  selectedWorkspaceProjects: any = null;
-  selectExistingProject = false;
-  selectedProject: any = null;
-  selectedWs: any;
-  globalSearchItem = '';
-  private _filter = {};
-  keywordFormGroup: FormGroup;
-  tableInputs = ['filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'listOfPlts', 'listOfDeletedPlts', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'someItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData'];
-  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
-  contracts = [];
-  loading;
-  menuInputs = ['_tagModalVisible', '_modalSelect', 'tagForMenu', '_editingTag', 'wsId', 'uwYear', 'projects', 'showDeleted', 'filterData', 'filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
+  tableInputs= ['filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'listOfPlts', 'listOfDeletedPlts', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'someItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems'];
+
+  menuInputs= ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
+
   systemTagsMapping = {
     grouped: {
       peril: 'Peril',
@@ -161,9 +181,8 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     },
     nonGrouped: {}
   };
-  private pltTableSubscription: Subscription;
-  private pltProjectSubscription: Subscription;
-  private pltUserTagsSubscription: Subscription;
+  private d: Subscription;
+  private selectedPlt: string;
 
   constructor(
     private route: ActivatedRoute,
@@ -175,25 +194,24 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     private searchService: SearchService,
     private fb: FormBuilder,
   ) {
-    this.Inputs = {
+    this.Inputs= {
+      contextMenuItems: [
+        {
+          label: 'View Detail', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt)
+          }
+        },
+      ],
       filterInput: '',
       pltColumns: [
         {
           width: '60',
           filtred: false,
           icon: null,
-          type: 'checkbox', active: true
+          type: 'checkbox',active: true
         },
-        {
-          fields: 'pltId',
-          header: 'PLT ID',
-          width: '80',
-          sorted: false,
-          filtred: true,
-          icon: null,
-          type: 'id',
-          active: true
-        },
+        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
+        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id',active: true},
         {
           fields: 'pltName',
           header: 'PLT Name',
@@ -201,7 +219,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           sorted: false,
           filtred: true,
           icon: null,
-          type: 'field', active: true
+          type: 'field',active: true
         },
         {
           fields: 'peril',
@@ -211,7 +229,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           filtred: false,
           icon: null,
           type: 'field',
-          textAlign: 'center', active: true
+          textAlign: 'center',active: true
         },
         {
           fields: 'regionPerilCode',
@@ -220,7 +238,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           sorted: false,
           filtred: false,
           icon: null,
-          type: 'field', active: true
+          type: 'field',active: true
         },
         {
           fields: 'regionPerilName',
@@ -229,19 +247,9 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           sorted: false,
           filtred: false,
           icon: null,
-          type: 'field', active: true
+          type: 'field',active: true
         },
-        {
-          sortDir: 1,
-          fields: 'grain',
-          header: 'Grain',
-          width: '90',
-          sorted: false,
-          filtred: false,
-          icon: null,
-          type: 'field',
-          active: true
-        },
+        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field',active: true},
         {
           sortDir: 1,
           fields: 'vendorSystem',
@@ -250,19 +258,360 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           sorted: false,
           filtred: false,
           icon: null,
-          type: 'field', active: true
+          type: 'field',active: true
+        },
+        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field',active: true}
+      ],
+      listOfPltsData: [],
+      listOfDeletedPltsData: [],
+      listOfPltsCache: [],
+      listOfDeletedPltsCache: [],
+      listOfPlts: [],
+      listOfDeletedPlts: [],
+      selectedListOfPlts: [],
+      selectedListOfDeletedPlts: [],
+      selectAll: false,
+      someItemsAreSelected: false,
+      showDeleted: false,
+      filterData: {},
+      filters: {
+        systemTag: {},
+        userTag: []
+      },
+      sortData: {},
+      _tagModalVisible: false,
+      _modalSelect: [],
+      tagForMenu: {},
+      _editingTag: false,
+      wsId: '',
+      uwYear: '',
+      projects: [],
+      addTagModalIndex: 0,
+      fromPlts: false,
+      deletedPltsLength: 0,
+      userTags: [],
+      systemTagsCount: {},
+      wsHeaderSelected: true,
+      pathTab: true,
+      selectedItemForMenu: null
+  };
+    this.unSubscribe$ = new Subject<void>();
+    this.keywordFormGroup = new FormGroup({
+      keyword: new FormControl(null)
+    });
+    this.browesing= false;
+    this.rightMenuInputs = {
+      basket: [],
+      pltDetail: null,
+      selectedTab: {
+        index: 0,
+        title: 'basket',
+      },
+      tabs: {'basket': true,'pltDetail': true},
+      visible: true,
+      mode: "pop-up"
+    }
+    this.setRightMenuSelectedTab('basket');
+  }
+
+  ngOnInit() {
+
+  }
+
+  getBrowesingItemsDirectly() {
+    this.browesing= true;
+    this.data$ = this.store$.select(PltMainState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+      params: {
+        workspaceId: this.getInputs('wsId'),
+        uwy: this.getInputs('uwYear')
+      }
+    }));
+    this.pltTableSubscription = combineLatest(
+      this.data$,
+      this.deletedPlts$
+    ).subscribe(([data, deletedData]: any) => {
+      let d1 = [];
+      let dd1 = [];
+      let d2 = [];
+      let dd2 = [];
+      this.Inputs['systemTagsCount'] = {};
+
+      if (data) {
+        if (_.keys(this.Inputs['systemTagsCount']).length == 0) {
+          _.forEach(data, (v, k) => {
+            //Init Tags Counters
+
+            //Grouped Sys Tags
+            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
+              this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
+              const tag = _.toString(v[section]);
+              if (tag) {
+                this.Inputs['systemTagsCount'][sectionName][tag] = {selected: false, count: 0, max: 0}
+              }
+            });
+
+            //NONE grouped Sys Tags
+            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+              this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
+              this.Inputs['systemTagsCount'][sectionName][section] = {selected: false, count: 0};
+              this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
+            })
+
+          })
+        }
+
+        _.forEach(data, (v, k) => {
+          d1.push({...v, pltId: k});
+          d2.push(k);
+
+          /*if (v.visible) {*/
+          //Grouped Sys Tags
+          _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
+            const tag = _.toString(v[section]);
+            if (tag) {
+              if (this.Inputs['systemTagsCount'][sectionName][tag] || this.Inputs['systemTagsCount'][sectionName][tag].count === 0) {
+                const {
+                  count,
+                  max
+                } = this.Inputs['systemTagsCount'][sectionName][tag];
+
+                this.Inputs['systemTagsCount'][sectionName][tag] = {
+                  ...this.Inputs['systemTagsCount'][sectionName][tag],
+                  count: v.visible ? count + 1 : count,
+                  max: max + 1
+                };
+              }
+            }
+          })
+
+          //NONE grouped Sys Tags
+          _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+            const tag = v[section];
+            if (this.Inputs['systemTagsCount'][sectionName][section] || this.Inputs['systemTagsCount'][sectionName][section] == 0) {
+              const {
+                max,
+                count
+              } = this.Inputs['systemTagsCount'][sectionName][section];
+              this.Inputs['systemTagsCount'][sectionName][section] = {
+                ...this.Inputs['systemTagsCount'][sectionName][section],
+                count: v.visible ? count + 1 : count,
+                max: max + 1
+              };
+            }
+            if (this.Inputs['systemTagsCount'][sectionName]['non-' + section] || this.Inputs['systemTagsCount'][sectionName]['non-' + section].count == 0) {
+              const {
+                count,
+                max
+              } = this.Inputs['systemTagsCount'][sectionName]['non-' + section];
+              this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {
+                ...this.Inputs['systemTagsCount'][sectionName]['non-' + section],
+                count: v.visible ? count + 1 : count,
+                max: max + 1
+              };
+            }
+          })
+          /*}*/
+
+        });
+
+        this.setInputs('listOfPlts', d2);
+        this.setInputs('listOfPltsData', d1);
+        this.setInputs('listOfPltsCache', d1);
+        this.setInputs('selectedListOfPlts', []);
+        this.updateMenuKey('basket', []);
+
+        _.forEach(d2, k => {
+          if(data[k].selected) {
+            this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'),k));
+            this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
+              pltId: k,
+              ...data[k]
+            }));
+          }
+        })
+
+        console.log(this.getRightMenuKey('basket'),this.getInputs('selectedListOfPlts'))
+      }
+
+      if (deletedData) {
+        _.forEach(deletedData, (v, k) => {
+          dd1.push({...v, pltId: k});
+          dd2.push(k);
+        });
+
+        this.setInputs('listOfDeletedPlts', dd2);
+        this.setInputs('listOfDeletedPltsData', dd1);
+        this.setInputs('listOfDeletedPltsCache', dd1);
+        this.setInputs('selectedListOfDeletedPlts', _.filter(dd2, k => deletedData[k].selected))
+      }
+
+      this.setInputs(
+        'selectAll',
+        !this.getInputs('showDeleted')
+          ?
+          (this.getInputs('selectedListOfPlts').length > 0 || (this.getInputs('selectedListOfPlts').length == this.getInputs('listOfPlts').length)) && this.getInputs('listOfPltsData').length > 0
+          :
+          (this.getInputs('selectedListOfDeletedPlts').length > 0 || (this.getInputs('selectedListOfDeletedPlts').length == this.getInputs('listOfDeletedPlts').length)) && this.getInputs('listOfDeletedPltsData').length > 0
+      );
+
+      this.setInputs(
+        'someItemsAreSelected' ,
+        !this.getInputs('showDeleted') ?
+          this.getInputs('selectedListOfPlts').length < this.getInputs('listOfPlts').length && this.getInputs('selectedListOfPlts').length > 0
+          :
+          this.getInputs('selectedListOfDeletedPlts').length < this.getInputs('listOfDeletedPlts').length && this.getInputs('selectedListOfDeletedPlts').length > 0
+      );
+      console.log('END');
+      this.detectChanges();
+    });
+
+    this.d =this.actions$.pipe(
+      ofActionDispatched(fromWorkspaceStore.loadAllPltsSuccess),
+      mergeMap( () => {
+        this.toggleSelectPlts(_.zipObject(
+          _.map(_.map(this.stepConfig.plts, id => _.find(this.getInputs('listOfPltsData'), plt => id == plt.pltId)), plt => plt.pltId),
+          _.map(this.stepConfig.plts, plt =>   ({type: true }))
+        ));
+        return of(null);
+      })
+    ).subscribe( () => this.d.unsubscribe());
+
+    this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+      this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.detectChanges();
+    });
+
+    this.pltUserTagsSubscription = this.store$.select(PltMainState.getUserTags).subscribe(userTags => {
+      this.setInputs('userTags', userTags || {});
+      console.log(this.getInputs('userTags'))
+      this.detectChanges();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unSubscribe$.next();
+    this.unSubscribe$.complete();
+  }
+
+  openWorkspaceInSlider(event?) { console.log(event); }
+  @Debounce(500)
+  filterData($event, target) {
+    this._filter = {...this._filter, [target]: $event || null};
+    this._loadData();
+  }
+
+  private _loadData(offset = '0', size = '100') {
+    this.loading = true;
+    const keyword = this.keywordFormGroup.get('keyword').value === '' ? null : this.keywordFormGroup.get('keyword').value
+    const params = {
+      keyword,
+      filter: this.filter,
+      offset,
+      size
+    };
+    this.searchService.expertModeSearch(params)
+      .subscribe((data: any) => {
+        this.contracts = data.content.map(item => ({...item, selected: false}));
+        this.loading = false;
+        this.paginationOption = {
+          ...this.paginationOption,
+          page: data.number,
+          size: data.numberOfElements,
+          total: data.totalElements
+        };
+        this.detectChanges();
+      });
+  }
+
+  loadMore(event: LazyLoadEvent) {
+    this.paginationOption.currentPage = event.first;
+    this._loadData(String(event.first));
+  }
+
+  get filter() {
+    // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
+    const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
+    // return _.concat(tags ,  tableFilter).filter(({value}) => value).map((item: any) => ({
+    return tableFilter.filter(({value}) => value).map((item: any) => ({
+      ...item,
+      field: _.camelCase(item.key),
+      operator: item.operator || 'LIKE'
+    }));
+  }
+
+  onHide() {
+    this.subscriptions && this.subscriptions.unsubscribe();
+    this.pltTableSubscription && this.pltTableSubscription.unsubscribe();
+    this.pltProjectSubscription && this.pltProjectSubscription.unsubscribe();
+    this.pltProjectSubscription && this.pltProjectSubscription.unsubscribe();
+    this.searchWorkspace = false;
+    this.selectedWorkspace = null;
+    this._filter = {};
+    this.browesing = false;
+    this.onVisibleChange.emit(false);
+    this.Inputs= {
+      ...this.Inputs,
+      filterInput: '',
+      pltColumns: [
+        {
+          width: '60',
+          filtred: false,
+          icon: null,
+          type: 'checkbox',active: true
+        },
+        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
+        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: false, filtred: true, icon: null, type: 'id',active: true},
+        {
+          fields: 'pltName',
+          header: 'PLT Name',
+          width: '160',
+          sorted: false,
+          filtred: true,
+          icon: null,
+          type: 'field',active: true
         },
         {
-          sortDir: 1,
-          fields: 'rap',
-          header: 'RAP',
-          width: '52',
+          fields: 'peril',
+          header: 'Peril',
+          width: '40',
           sorted: false,
           filtred: false,
           icon: null,
           type: 'field',
-          active: true
-        }
+          textAlign: 'center',active: true
+        },
+        {
+          fields: 'regionPerilCode',
+          header: 'Region Peril Code',
+          width: '70',
+          sorted: false,
+          filtred: false,
+          icon: null,
+          type: 'field',active: true
+        },
+        {
+          fields: 'regionPerilName',
+          header: 'Region Peril Name',
+          width: '160',
+          sorted: false,
+          filtred: false,
+          icon: null,
+          type: 'field',active: true
+        },
+        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: false, filtred: false, icon: null, type: 'field',active: true},
+        {
+          sortDir: 1,
+          fields: 'vendorSystem',
+          header: 'Vendor System',
+          width: '90',
+          sorted: false,
+          filtred: false,
+          icon: null,
+          type: 'field',active: true
+        },
+        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: false, filtred: false, icon: null, type: 'field',active: true}
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -297,64 +646,17 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       pathTab: true,
       selectedItemForMenu: null
     };
-    this.unSubscribe$ = new Subject<void>();
-    this.keywordFormGroup = new FormGroup({
-      keyword: new FormControl(null)
-    });
-    this.browesing = false;
   }
 
-  ngOnInit() {}
-
-  ngOnDestroy(): void {
-    this.unSubscribe$.next();
-    this.unSubscribe$.complete();
-  }
-
-  openWorkspaceInSlider(event?) { console.log(event); }
-  @Debounce(500)
-  filterData($event, target) {
-    this._filter = {...this._filter, [target]: $event || null};
-    this._loadData();
-  }
-
-  onHide() {
-    this.subscriptions && this.subscriptions.unsubscribe();
-    this.pltTableSubscription && this.pltTableSubscription.unsubscribe();
-    this.pltProjectSubscription && this.pltProjectSubscription.unsubscribe();
-    this.pltProjectSubscription && this.pltProjectSubscription.unsubscribe();
-    this.searchWorkspace = false;
-    this.selectedWorkspace = null;
-    this._filter = {};
-    this.browesing = false;
-    this.onVisibleChange.emit(false);
-  }
-
-  loadMore(event: LazyLoadEvent) {
-    this.paginationOption.currentPage = event.first;
-    this._loadData(String(event.first));
-  }
-
-  get filter() {
-    // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
-    const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
-    // return _.concat(tags ,  tableFilter).filter(({value}) => value).map((item: any) => ({
-    return tableFilter.filter(({value}) => value).map((item: any) => ({
-      ...item,
-      field: _.camelCase(item.key),
-      operator: item.operator || 'LIKE'
-    }));
-  }
-
-  onRowSelect(d, event) {
+  onRowSelect(event) {
     console.log(event);
-    if (d == 'db') {
       this.selectedWorkspace = event;
+      this.onSelectWorkspace.emit(event);
       this.setInputs('wsId', event.workSpaceId)
-    } else {
-      this.selectedWorkspace = event.data;
-      this.setInputs('wsId', event.data.workSpaceId)
-    }
+  }
+
+  onRowUnselect(event) {
+    // this.selectedWorkspace = null;
   }
 
   getBrowesingItems(workspace) {
@@ -363,190 +665,208 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
     if (this.selectionStep == 'project') {
+      console.log('in projects')
       this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
-          console.log('This is projects', data.projects);
-        this.selectedWorkspaceProjects = data.projects;
+          this.selectedWorkspaceProjects = _.map(data.projects, (item) => ({...item, selected: false}));
           if (!data.projects.length) {
             this.browesing = false;
             alert('This workspace contains no project');
-          } else {
-            this.browesing = true;
+          }else {
+            this.browesing=true;
           }
           this.detectChanges();
         }
       );
     }
 
-    if (this.selectionStep == 'plt') {
+    if(this.selectionStep == 'plt') {
+      if(this.multiSteps) {
+        this.data$ = this.store$.select(PltMainState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+        this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+        this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+          params: {
+            workspaceId: this.getInputs('wsId'),
+            uwy: this.getInputs('uwYear')
+          }
+        }));
 
-      console.log(this.getInputs('wsId'), this.getInputs('uwYear'))
+        this.pltTableSubscription = combineLatest(
+          this.data$,
+          this.deletedPlts$
+        ).subscribe(([data, deletedData]: any) => {
+          let d1 = [];
+          let dd1 = [];
+          let d2 = [];
+          let dd2 = [];
+          this.Inputs['systemTagsCount'] = {};
 
-      this.data$ = this.store$.select(PltMainState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-      this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-      this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
-        params: {
-          workspaceId: this.getInputs('wsId'),
-          uwy: this.getInputs('uwYear')
-        }
-      }));
+          if (data) {
+            if (_.keys(this.Inputs['systemTagsCount']).length == 0) {
+              _.forEach(data, (v, k) => {
+                //Init Tags Counters
 
-      this.pltTableSubscription = combineLatest(
-        this.data$,
-        this.deletedPlts$
-      ).subscribe(([data, deletedData]: any) => {
-        let d1 = [];
-        let dd1 = [];
-        let d2 = [];
-        let dd2 = [];
-        this.Inputs['systemTagsCount'] = {};
+                //Grouped Sys Tags
+                _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
+                  this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
+                  const tag = _.toString(v[section]);
+                  if (tag) {
+                    this.Inputs['systemTagsCount'][sectionName][tag] = {selected: false, count: 0, max: 0}
+                  }
+                });
 
-        if (data) {
-          if (_.keys(this.Inputs['systemTagsCount']).length == 0) {
+                //NONE grouped Sys Tags
+                _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
+                  this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
+                  this.Inputs['systemTagsCount'][sectionName][section] = {selected: false, count: 0};
+                  this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
+                })
+
+              })
+            }
+
             _.forEach(data, (v, k) => {
-              //Init Tags Counters
+              d1.push({...v, pltId: k});
+              d2.push(k);
 
+              /*if (v.visible) {*/
               //Grouped Sys Tags
               _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-                this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
                 const tag = _.toString(v[section]);
                 if (tag) {
-                  this.Inputs['systemTagsCount'][sectionName][tag] = {selected: false, count: 0, max: 0}
+                  if (this.Inputs['systemTagsCount'][sectionName][tag] || this.Inputs['systemTagsCount'][sectionName][tag].count === 0) {
+                    const {
+                      count,
+                      max
+                    } = this.Inputs['systemTagsCount'][sectionName][tag];
+
+                    this.Inputs['systemTagsCount'][sectionName][tag] = {
+                      ...this.Inputs['systemTagsCount'][sectionName][tag],
+                      count: v.visible ? count + 1 : count,
+                      max: max + 1
+                    };
+                  }
                 }
-              });
+              })
 
               //NONE grouped Sys Tags
               _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-                this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
-                this.Inputs['systemTagsCount'][sectionName][section] = {selected: false, count: 0};
-                this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              })
-
-            })
-          }
-
-          _.forEach(data, (v, k) => {
-            d1.push({...v, pltId: k});
-            d2.push(k);
-
-            /*if (v.visible) {*/
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              const tag = _.toString(v[section]);
-              if (tag) {
-                if (this.Inputs['systemTagsCount'][sectionName][tag] || this.Inputs['systemTagsCount'][sectionName][tag].count === 0) {
+                const tag = v[section];
+                if (this.Inputs['systemTagsCount'][sectionName][section] || this.Inputs['systemTagsCount'][sectionName][section] == 0) {
                   const {
-                    count,
-                    max
-                  } = this.Inputs['systemTagsCount'][sectionName][tag];
-
-                  this.Inputs['systemTagsCount'][sectionName][tag] = {
-                    ...this.Inputs['systemTagsCount'][sectionName][tag],
+                    max,
+                    count
+                  } = this.Inputs['systemTagsCount'][sectionName][section];
+                  this.Inputs['systemTagsCount'][sectionName][section] = {
+                    ...this.Inputs['systemTagsCount'][sectionName][section],
                     count: v.visible ? count + 1 : count,
                     max: max + 1
                   };
                 }
+                if (this.Inputs['systemTagsCount'][sectionName]['non-' + section] || this.Inputs['systemTagsCount'][sectionName]['non-' + section].count == 0) {
+                  const {
+                    count,
+                    max
+                  } = this.Inputs['systemTagsCount'][sectionName]['non-' + section];
+                  this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {
+                    ...this.Inputs['systemTagsCount'][sectionName]['non-' + section],
+                    count: v.visible ? count + 1 : count,
+                    max: max + 1
+                  };
+                }
+              })
+              /*}*/
+
+            });
+
+            this.setInputs('listOfPlts', d2);
+            this.setInputs('listOfPltsData', d1);
+            this.setInputs('listOfPltsCache', d1);
+            this.setInputs('selectedListOfPlts', []);
+            this.updateMenuKey('basket', []);
+
+            _.forEach(d2, k => {
+              if(data[k].selected) {
+                this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'),k));
+                this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
+                  pltId: k,
+                  ...data[k]
+                }));
               }
             })
 
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              const tag = v[section];
-              if (this.Inputs['systemTagsCount'][sectionName][section] || this.Inputs['systemTagsCount'][sectionName][section] == 0) {
-                const {
-                  max,
-                  count
-                } = this.Inputs['systemTagsCount'][sectionName][section];
-                this.Inputs['systemTagsCount'][sectionName][section] = {
-                  ...this.Inputs['systemTagsCount'][sectionName][section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-              if (this.Inputs['systemTagsCount'][sectionName]['non-' + section] || this.Inputs['systemTagsCount'][sectionName]['non-' + section].count == 0) {
-                const {
-                  count,
-                  max
-                } = this.Inputs['systemTagsCount'][sectionName]['non-' + section];
-                this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {
-                  ...this.Inputs['systemTagsCount'][sectionName]['non-' + section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-            })
-            /*}*/
+            console.log(this.getRightMenuKey('basket'),this.getInputs('selectedListOfPlts'))
+          }
 
-          });
+          if (deletedData) {
+            _.forEach(deletedData, (v, k) => {
+              dd1.push({...v, pltId: k});
+              dd2.push(k);
+            });
 
-          this.setInputs('listOfPlts', d2);
-          this.setInputs('listOfPltsData', d1);
-          this.setInputs('listOfPltsCache', d1);
-          this.setInputs('selectedListOfPlts', _.filter(d2, k => data[k].selected));
-        }
+            this.setInputs('listOfDeletedPlts', dd2);
+            this.setInputs('listOfDeletedPltsData', dd1);
+            this.setInputs('listOfDeletedPltsCache', dd1);
+            this.setInputs('selectedListOfDeletedPlts', _.filter(dd2, k => deletedData[k].selected))
+          }
 
-        if (deletedData) {
-          _.forEach(deletedData, (v, k) => {
-            dd1.push({...v, pltId: k});
-            dd2.push(k);
-          });
+          this.setInputs(
+            'selectAll',
+            !this.getInputs('showDeleted')
+              ?
+              (this.getInputs('selectedListOfPlts').length > 0 || (this.getInputs('selectedListOfPlts').length == this.getInputs('listOfPlts').length)) && this.getInputs('listOfPltsData').length > 0
+              :
+              (this.getInputs('selectedListOfDeletedPlts').length > 0 || (this.getInputs('selectedListOfDeletedPlts').length == this.getInputs('listOfDeletedPlts').length)) && this.getInputs('listOfDeletedPltsData').length > 0
+          );
 
-          this.setInputs('listOfDeletedPlts', dd2);
-          this.setInputs('listOfDeletedPltsData', dd1);
-          this.setInputs('listOfDeletedPltsCache', dd1);
-          this.setInputs('selectedListOfDeletedPlts', _.filter(dd2, k => deletedData[k].selected))
-        }
+          this.setInputs(
+            'someItemsAreSelected' ,
+            !this.getInputs('showDeleted') ?
+              this.getInputs('selectedListOfPlts').length < this.getInputs('listOfPlts').length && this.getInputs('selectedListOfPlts').length > 0
+              :
+              this.getInputs('selectedListOfDeletedPlts').length < this.getInputs('listOfDeletedPlts').length && this.getInputs('selectedListOfDeletedPlts').length > 0
+          );
+          this.browesing=true;
+          this.detectChanges();
+        })
 
-        this.setInputs(
-          'selectAll',
-          !this.getInputs('showDeleted')
-            ?
-            (this.getInputs('selectedListOfPlts').length > 0 || (this.getInputs('selectedListOfPlts').length == this.getInputs('listOfPlts').length)) && this.getInputs('listOfPltsData').length > 0
-            :
-            (this.getInputs('selectedListOfDeletedPlts').length > 0 || (this.getInputs('selectedListOfDeletedPlts').length == this.getInputs('listOfDeletedPlts').length)) && this.getInputs('listOfDeletedPltsData').length > 0
-        );
+        this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+          this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+          this.browesing=true;
+          this.detectChanges();
+        })
 
-        this.setInputs(
-          'someItemsAreSelected',
-          !this.getInputs('showDeleted') ?
-            this.getInputs('selectedListOfPlts').length < this.getInputs('listOfPlts').length && this.getInputs('selectedListOfPlts').length > 0
-            :
-            this.getInputs('selectedListOfDeletedPlts').length < this.getInputs('listOfDeletedPlts').length && this.getInputs('selectedListOfDeletedPlts').length > 0
-        );
-        this.browesing = true;
-        this.detectChanges();
-      });
-
-      this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
-        this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
-        this.browesing = true;
-        this.detectChanges();
-      });
-
-      this.pltUserTagsSubscription = this.store$.select(PltMainState.getUserTags).subscribe(userTags => {
-        this.setInputs('userTags', userTags || {});
-        this.browesing = true;
-        console.log(this.getInputs('userTags'));
-        this.detectChanges();
-      })
+        this.pltUserTagsSubscription = this.store$.select(PltMainState.getUserTags).subscribe(userTags => {
+          this.setInputs('userTags', userTags || {});
+          this.browesing=true;
+          console.log(this.getInputs('userTags'))
+          this.detectChanges();
+        })
+      } else {
+        this.onVisibleChange.emit(false);
+      }
     }
   }
 
-  onRowUnselect(event) {
-    // this.selectedWorkspace = null;
-  }
-
   setBrowesingItems() {
-    if (this.selectionStep == 'plt') {
-      this.onSelectItems.emit(this.Inputs['selectedListOfPlts']);
-    } else {
+    if(this.selectionStep == 'plt') {
+      this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
+      this.onVisibleChange.emit(false);
+    }else {
       this.searchWorkspace = false;
       this.newProject = true;
       this.onSelectProjectNext.emit(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
     }
   }
 
+  selectThisProject(project) {
+    const {projectIndex} = project;
+    let selectedProject = _.find(this.selectedWorkspaceProjects, item => item.selected);
+    selectedProject ? selectedProject.selected = false : null;
+    this.selectedProject = this.selectedWorkspaceProjects[projectIndex];
+    this.selectedProject.selected = true;
+  }
+
   onShow() {
-    this._loadData();
     this.subscriptions = this.keywordFormGroup.get('keyword')
       .valueChanges
       .pipe(debounceTime(400))
@@ -554,20 +874,15 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
         this.loading = true;
         this._loadData();
       });
-  }
 
-  selectThisProject(project) {
-    if (this.selectedProject === project) {
-      this.selectedProject = null;
-      return;
+    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
+      this.setInputs('wsId', this.stepConfig.wsId);
+      this.setInputs('uwYear', this.stepConfig.uwYear);
+      this.getBrowesingItemsDirectly();
+    }else {
+      this._loadData();
     }
-    this.selectedProject = project;
-  }
 
-  goToSearchWorkspace() {
-    this._filter = {};
-    this._loadData();
-    this.browesing = false;
   }
 
   onEnter() { this._loadData(); }
@@ -575,6 +890,12 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   clearSearchValue() {
     this.keywordFormGroup.get('keyword').setValue(null);
     this._loadData();
+  }
+
+  goToSearchWorkspace() {
+    this._filter = {};
+    this._loadData();
+    this.browesing= false;
   }
 
   checkAll($event) {
@@ -603,12 +924,12 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     this.setInputs('filterData', filterData);
   }
 
-  getInputs(key) {
+  getInputs(key){
     return this.Inputs[key];
   }
 
   setInputs(key, value) {
-    this.Inputs = {...this.Inputs, [key]: value};
+    this.Inputs= {...this.Inputs, [key]: value };
   }
 
   setFilters($event) {
@@ -656,28 +977,49 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     // this.messageService.clear();
   }
 
-  private _loadData(offset = '0', size = '100') {
-    this.loading = true;
-    const keyword = this.keywordFormGroup.get('keyword').value === '' ? null : this.keywordFormGroup.get('keyword').value
-    const params = {
-      keyword,
-      filter: this.filter,
-      offset,
-      size
-    };
-    this.searchService.expertModeSearch(params)
-      .subscribe((data: any) => {
-        this.contracts = data.content.map(item => ({...item, selected: false}));
-        this.loading = false;
-        this.paginationOption = {
-          ...this.paginationOption,
-          page: data.number,
-          size: data.numberOfElements,
-          total: data.totalElements
-        };
-        this.detectChanges();
-      });
+  closePltInDrawer(pltId) {
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      pltId
+    }));
   }
 
+  openPltInDrawer(plt) {
+    if(this.getRightMenuKey('pltDetail')) {
+      this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId)
+    }
+    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      pltId: plt
+    }));
+    this.updateMenuKey('pltDetail', _.find(this.getInputs('listOfPltsData'), e => e.pltId == plt))
+    this.updateMenuKey('visible', true);
+  }
 
+  rightMenuActionDispatcher(action: Message) {
+    switch (action.type) {
+      case rightMenuStore.closeDrawer:
+        this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
+        this.updateMenuKey('visible', false);
+        break;
+      default:
+        console.log('default right menu action');
+    }
+  }
+
+  setRightMenuSelectedTab(tab) {
+    this.rightMenuInputs = rightMenuActions.setSelectedTab.handler(this.rightMenuInputs, tab)
+  }
+
+  getRightMenuKey(key) {
+    return _.get(this.rightMenuInputs, key);
+  }
+
+  updateMenuKey(key: string, value: any) {
+    this.rightMenuInputs = rightMenuActions.updateKey.handler(this.rightMenuInputs, key, value);
+  }
+
+  setSelectedPlt($event: any) {
+    this.selectedPlt= $event;
+  }
 }

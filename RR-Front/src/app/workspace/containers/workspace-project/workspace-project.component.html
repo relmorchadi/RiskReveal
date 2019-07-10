@@ -3,141 +3,36 @@
   <div class="a-app-wrapper">
     <div class="a-app-header">
       <div class="title-project-wrapper">
-        <h4>Projects</h4>
-        <nz-dropdown [nzTrigger]="'hover'">
-          <i nz-dropdown  style="padding-left: 6px; padding-top: 6px; cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
-          <ul nz-menu nzSelectable>
-            <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> New Project</li>
-            <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> New Linked Project</li>
-          </ul>
-        </nz-dropdown>
+        <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Projects'" [RoutingConfig]="workspaceUrl"></app-hyper-links>
+        <div style="display: flex;">
+          <h4>Projects</h4>
+          <nz-dropdown [nzTrigger]="'hover'">
+            <i nz-dropdown  style="padding-left: 6px; padding-top: 6px; cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
+            <ul nz-menu nzSelectable>
+              <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> New Project</li>
+              <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> New Linked Project</li>
+            </ul>
+          </nz-dropdown>
+        </div>
       </div>
       <div style="display: flex">
         <nz-select class="float-right mt-2 a-dropdown-small" style="width: 150px; margin-right: 70px;" nzShowSearch
                    [(ngModel)]="selectedPrStatus">
           <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
         </nz-select>
-        <button *ngIf="!workspace.pinged" (click)="pinWorkspace()"
-                class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-                nz-button nzType="primary" nzSize="default" nzShape="circle">
-          <i style="color: #9592E6" nz-icon theme="outline">
-            <i class="icon-map-pin-alt"></i>
-          </i>
-        </button>
-        <button *ngIf="workspace.pinged" (click)="pinWorkspace()" style="background-color: rgb(91, 139, 159);"
-                class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-                nz-button nzType="primary" nzSize="default" nzShape="circle">
-            <span style="color: #FFFFFF">
-              <i class="icon-map-pin-alt"></i>
-              <i style="position: absolute;margin-left: -17px" class="icon-line-alt"></i>
-            </span>
-        </button>
+        <app-pin
+          [active]="!workspace.pinged"
+          [workspace]="workspace"
+          [index]="index"
+        >
+        </app-pin>
       </div>
     </div>
-    <div class="card-holder-wrap">
-      <div *ngFor="let project of projects$ | async" (contextmenu)="contextMenu($event, template, project)" class="card-holder">
-        <div class="project-card mx-1" (click)="selectProject(project)"
-             [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
-          <div class="project-header">
-            <!--            <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
-                          <i class="fa fa-code-fork" aria-hidden="true"></i>
-                        </div>-->
-            <div [ngStyle]="{'background-color':project.linkFlag ? '#36c6fe': '#F5B74E' }"
-                 class="project-header-icon d-flex justify-content-center align-items-center">
-              <i [className]="project.linkFlag ? 'icon-link_24px' : 'icon-assignment_24px'"></i>
-            </div>
-            <div class="project-header-title d-flex flex-column justify-content-center pl-3">
-              <span>{{project?.name}}</span>
-              <span>{{project?.projectId}}</span>
-            </div>
-            <div class="icon-card-wrapper" [ngStyle]="{'display': project?.selected ? 'flex' : 'none'}">
-              <i class="icon-ellipsis-h"></i>
-              <i *ngIf="project?.selected" class="icon-check_24px"></i>
-              <span *ngIf="!project?.selected"></span>
-            </div>
-          </div>
-          <div class="project-progress d-flex justify-content-center align-items-center">
-            <div class="project-flag">
-              <div style="margin-right: 3px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Imported</span>
-            </div>
-            <div class="project-flag">
-              <div style="margin-right: 3px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Published to Pricing</span>
-            </div>
-            <div class="project-flag">
-              <div style="margin-right: 3px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Priced</span>
-            </div>
-            <div class="project-flag">
-              <div style="margin-right: 2px">
-                <hr>
-                <span class="steper-icon"></span>
-              </div>
-              <span>Accumulated</span>
-            </div>
-          </div>
-          <div class="project-kpi border-top d-flex">
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
-              <span class="project-kpi-span">Region Perils</span>
-              <span class="project-kpi-span"><b>{{project?.regionPerilSum || 0}}</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
-              <span class="project-kpi-span">Exp</span>
-              <span class="project-kpi-span"><b>-</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
-              <span class="project-kpi-span">PLT</span>
-              <span class="project-kpi-span"><b>{{project?.pltThreadSum || 0}}</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
-              <span class="project-kpi-span">Published</span>
-              <span class="project-kpi-span"><b>{{project?.xactSum || 0}}</b></span>
-            </div>
-            <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-dollar-alt mb-1"></i>
-              <span class="project-kpi-span">Pricing</span>
-              <span class="project-kpi-span"><b>-</b></span>
-            </div>
-            <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column project-component">
-              <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
-              <span class="project-kpi-span">Accum</span>
-              <span class="project-kpi-span"><b>-</b></span>
-            </div>
-          </div>
-          <div class="project-kpi-details pb-3">
-            <p class="project-kpi-details-title">
-              {{project?.description}}
-            </p>
-            <div class="border-top d-flex project-kpi-details-content">
-              <span class="pl-4 dt-11" style="flex:1;	letter-spacing: 0.08px;	line-height: 32px;">Created</span>
-              <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-              <span class="text-center dt-11"
-                    style="flex:1;color: rgba(0,0,0,0.87);  letter-spacing: 0.08px; line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
-            </div>
-            <div class="border-top d-flex project-kpi-details-content">
-              <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;	line-height: 32px;">Last Modified</span>
-              <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-              <span class="text-center dt-11"
-                    style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div style="height: 60vw">
+      <projects-list [projects]="projects$ | async" (select)="selectProject($event)"
+                     (delete)="delete($event)"></projects-list>
     </div>
+
     <app-workspace-project-popup [isVisible]="searchWorkspace"
                                  (onVisibleChange)="cancelCreateExistingProjectPopup()"
                                  [selectionStep]="'project'"
@@ -150,136 +45,7 @@
                               (onCancelCreateProject)="onCancelCreateProject()"
     ></app-create-project-popup>
   </div>
-  <!-- <button class="mx-4 plus-btn d-flex justify-content-center align-items-center"
-           nz-button nzType="primary" nzSize="large" nzShape="circle">
-     <i style="color: white;" nz-icon type="plus" theme="outline"></i>
-   </button>
-   -->
-  <!-- <ul class="mt-md-3 workspace-info-menu d-flex pl-5" style="background: transparent;color:rgba(255,255,255,0.6);"  nz-menu [nzMode]="'horizontal'">
-     <li style="font-size: 14.22px; font-weight: 500;" nz-menu-item>All projects <i style="margin-left:10px;color:rgb(115, 115, 118);" class="icon-menu_24px"></i></li>
-     <li style="font-size: 14.22px; font-weight: 500;" nz-menu-item>PLT's </li>
-     <li style="font-size: 14.22px; font-weight: 500;" nz-menu-item>Scope Of Completeness </li>
-     <li style="font-size: 14.22px; font-weight: 500;" nz-menu-item>Activity </li>
-   </ul>
-   -->
 
 
 </div>
 
-<ng-template #template>
-  <ul nz-menu nzInDropDown>
-    <li nz-menu-item class="contextMenu"><i class="icon-arrow-from-top"></i>Import</li>
-    <li nz-menu-item class="contextMenu"><i class="icon-copy-landscape"></i>Clone</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-sitemap"></i>Calibrate</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-export"></i>Publish To Pricing</li>
-    <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-    <li nz-menu-item class="contextMenu border-bottom" (click)="delete(contextMenuProject)"><i class="icon-trash-alt"></i>Delete</li>
-    <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
-  </ul>
-</ng-template>
-<!--  <div style="width:94%;margin:auto;">
-    <ng-masonry-grid
-    [masonryOptions]="{ transitionDuration: '0.8s', gutter: 5 }"
-    [useAnimation]="false"
-    [useImagesLoaded]="false"
-    [scrollAnimationOptions]="{ animationEffect: 'effect-1', minDuration : 0, maxDuration : 0 ,viewportFactor : 30}">
-        <ng-masonry-grid-item id="{{'masonry-item-'+i}}"  (click)="selectProject(project)" *ngFor="let project of state.openedWs.projects; let i = index" >
-          <div (contextmenu)="contextMenu($event, template)" class="card-holder">
-            <div class="project-card mx-1" [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
-              <div class="project-header">
-                <div style="background: #A363FF" class="project-header-icon d-flex justify-content-center align-items-center">
-                  <i class="fa fa-code-fork" aria-hidden="true"></i>
-                </div>
-                <div class="project-header-title d-flex flex-column justify-content-center pl-3">
-                  <span>{{project?.projectId}}</span>
-                  <span>{{project?.name}}</span>
-                </div>
-                <div class="icon-card-wrapper" [ngStyle]="{'display': project?.selected ? 'flex' : 'none'}">
-                  <i class="icon-ellipsis-h"></i>
-                  <i *ngIf="project?.selected" class="icon-check_24px"></i>
-                  <span *ngIf="!project?.selected"></span>
-                </div>
-              </div>
-              <div class="project-progress d-flex justify-content-center align-items-center">
-                <div class="project-flag">
-                  <div style="margin-right: 3px">
-                    <hr>
-                    <span class="steper-icon"></span>
-                  </div>
-                  <span>Imported</span>
-                </div>
-                <div class="project-flag">
-                  <div style="margin-right: 3px">
-                    <hr>
-                    <span class="steper-icon"></span>
-                  </div>
-                  <span>Published to Pricing</span>
-                </div>
-                <div class="project-flag">
-                  <div style="margin-right: 3px">
-                    <hr>
-                    <span class="steper-icon"></span>
-                  </div>
-                  <span>Priced</span>
-                </div>
-                <div class="project-flag">
-                  <div style="margin-right: 2px">
-                    <hr>
-                    <span class="steper-icon"></span>
-                  </div>
-                  <span>Accumulated</span>
-                </div>
-              </div>
-              <div class="project-kpi border-top d-flex">
-                <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
-                  <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-globe mb-1"></i>
-                  <span class="project-kpi-span">RP</span>
-                  <span class="project-kpi-span"><b>{{project?.regionPerilSum}}</b></span>
-                </div>
-                <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
-                  <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-adjust-half mb-1"></i>
-                  <span class="project-kpi-span">Exp</span>
-                  <span class="project-kpi-span"><b>-</b></span>
-                </div>
-                <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
-                  <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
-                  <span class="project-kpi-span">PLT</span>
-                  <span class="project-kpi-span"><b>{{project?.pltThreadSum}}</b></span>
-                </div>
-                <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
-                  <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-box mb-1"></i>
-                  <span class="project-kpi-span">Publish</span>
-                  <span class="project-kpi-span"><b>{{project?.xactSum}}</b></span>
-                </div>
-                <div style="flex:1" class="border-right py-2 px-3 d-inline-flex flex-column justify-content-end ">
-                  <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-note mb-1"></i>
-                  <span class="project-kpi-span">Pricing</span>
-                  <span class="project-kpi-span"><b>-</b></span>
-                </div>
-                <div style="flex:1" class="py-2 px-3 d-inline-flex flex-column justify-content-end ">
-                  <i style="font-size: 2.6em; color: rgba(0,0,0,0.3)" class="icon-focus-add mb-1"></i>
-                  <span class="project-kpi-span">Accum</span>
-                  <span class="project-kpi-span"><b>-</b></span>
-                </div>
-              </div>
-              <div class="project-kpi-details pb-3">
-                <p class="project-kpi-details-title">
-                  {{project?.description}}
-                </p>
-                <div class="border-top d-flex project-kpi-details-content">
-                  <span class="pl-4 dt-11" style="flex:1; letter-spacing: 0.08px; line-height: 32px;">Created</span>
-                  <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-                  <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);  letter-spacing: 0.08px; line-height: 32px;">{{project?.creationDate | date:'dd/MM/yyyy'}}</span>
-                </div>
-                <div class="border-top d-flex project-kpi-details-content">
-                  <span class="pl-4 dt-11" style="flex:1;letter-spacing: 0.08px;  line-height: 32px;">Owner</span>
-                  <span class="pr-4 dt-11 project-kpi-creat-wrap">{{project?.createdBy}}</span>
-                  <span class="text-center dt-11" style="flex:1;color: rgba(0,0,0,0.87);letter-spacing: 0.08px; line-height: 32px;">{{project?.dueDate | date:'dd/MM/yyyy'}}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </ng-masonry-grid-item>
-    </ng-masonry-grid>
-  </div>-->
-<p-toast></p-toast>

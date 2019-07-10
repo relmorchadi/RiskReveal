@@ -59,12 +59,12 @@ export class WorkspaceMainState implements NgxsOnInit {
 
   @Selector()
   static getFavorite(state: WorkspaceMain) {
-    return state.openedTabs.data.filter( dt => dt.favorite);
+    return state.openedTabs.data.filter(dt => dt.favorite);
   }
 
   @Selector()
   static getPinged(state: WorkspaceMain) {
-    return state.openedTabs.data.filter( dt => dt.pinged);
+    return state.openedTabs.data.filter(dt => dt.pinged);
   }
 
   @Selector()
@@ -73,17 +73,17 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Selector()
-  static getLoadingWS(state: WorkspaceMain){
+  static getLoadingWS(state: WorkspaceMain) {
     return state.loading;
   }
 
   @Selector()
-  static getCurrentWS(state: WorkspaceMain){
+  static getCurrentWS(state: WorkspaceMain) {
     return state.openedWs;
   }
 
   @Selector()
-  static getProjects(state: WorkspaceMain){
+  static getProjects(state: WorkspaceMain) {
     return state.openedWs.projects;
   }
 
@@ -113,7 +113,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   appendNewWorkspaces(ctx: StateContext<WorkspaceMain>, {payload}: AppendNewWorkspaceMainAction) {
     const state = ctx.getState();
     let recentlyOpenedWs = _.filter(state.recentWs, ws => {
-      if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) { return null; } else { return ws; }
+      if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) {
+        return null;
+      } else {
+        return ws;
+      }
     });
     recentlyOpenedWs.unshift(payload);
     recentlyOpenedWs = recentlyOpenedWs.map(ws => _.merge({}, ws, {selected: false}));
@@ -158,9 +162,9 @@ export class WorkspaceMainState implements NgxsOnInit {
       const workSpaceMenuItem = JSON.parse(localStorage.getItem('workSpaceMenuItem')) || {};
       openedTabs = openedTabs.map(dt => ({
         ...dt,
-        projects: dt.projects.map((prj,i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
-        pinged: _.get( workSpaceMenuItem[dt.workSpaceId+'-'+dt.uwYear],'pinged',false),
-        favorite: _.get( workSpaceMenuItem[dt.workSpaceId+'-'+dt.uwYear],'favorite',false)
+        projects: dt.projects.map((prj, i) => ({...prj, selected: dt.projects.length > 0 && i == 0})),
+        pinged: _.get(workSpaceMenuItem[dt.workSpaceId + '-' + dt.uwYear], 'pinged', false),
+        favorite: _.get(workSpaceMenuItem[dt.workSpaceId + '-' + dt.uwYear], 'favorite', false)
       }))
     });
     recentlyOpenedWs.unshift(...payload);
@@ -180,7 +184,7 @@ export class WorkspaceMainState implements NgxsOnInit {
   selectWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: SetWsRoutingAction) {
     const state = ctx.getState();
 
-    let index= _.findIndex(state.openedTabs.data, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear)
+    let index = _.findIndex(state.openedTabs.data, ws => ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear)
     const projectFormat = payload.projects.map(prj => prj = {...prj, selected: false});
     if (projectFormat.length > 0) {
       projectFormat[0] = {...projectFormat[0], selected: true};
@@ -189,7 +193,7 @@ export class WorkspaceMainState implements NgxsOnInit {
     ctx.patchState({
       openedWs: opened,
       openedTabs: {
-        data: _.merge([],state.openedTabs.data, {[index]: { ...payload}}),
+        data: _.merge([], state.openedTabs.data, {[index]: {...payload}}),
         tabsIndex: state.openedTabs.tabsIndex
       }
     });
@@ -199,10 +203,11 @@ export class WorkspaceMainState implements NgxsOnInit {
   selectProjectAction(ctx: StateContext<WorkspaceMain>, {payload}: SelectProjectAction) {
     const state = ctx.getState();
     const {
-      projectId
+      projectId,
+      projectIndex
     } = payload;
 
-    ctx.patchState({
+    return ctx.patchState({
       openedWs: _.merge({}, state.openedWs, {
         projects: _.map(state.openedWs.projects, pr => pr.projectId === projectId ? {
           ...pr,
@@ -226,20 +231,22 @@ export class WorkspaceMainState implements NgxsOnInit {
     opened = {...opened, projects: projectFormat};
     ctx.patchState(
       {
-        openedTabs: { data: _.filter(state.openedTabs.data, ws => {
-          if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) {
-            return null;
-          } else {
-            return ws;
-          }
-        }), tabsIndex: state.openedTabs.tabsIndex},
+        openedTabs: {
+          data: _.filter(state.openedTabs.data, ws => {
+            if (ws.workSpaceId === payload.workSpaceId && ws.uwYear == payload.uwYear) {
+              return null;
+            } else {
+              return ws;
+            }
+          }), tabsIndex: state.openedTabs.tabsIndex
+        },
         openedWs: opened
       }
     );
   }
 
   @Action(PatchWorkspace)
-  patchWorkspace(ctx: StateContext<WorkspaceMain>, { payload } : PatchWorkspace) {
+  patchWorkspace(ctx: StateContext<WorkspaceMain>, {payload}: PatchWorkspace) {
     const {
       ws,
       key,
@@ -255,7 +262,7 @@ export class WorkspaceMainState implements NgxsOnInit {
 
     let attrs = {};
 
-    _.forEach(key, (v,i) => {
+    _.forEach(key, (v, i) => {
       attrs[v] = value[i]
     })
 
@@ -267,7 +274,7 @@ export class WorkspaceMainState implements NgxsOnInit {
         ...openedTabs,
         data: _.merge([],
           openedTabs.data,
-          { [index]: {...ws, ...attrs} })
+          {[index]: {...ws, ...attrs}})
       }
     })
 
@@ -279,12 +286,16 @@ export class WorkspaceMainState implements NgxsOnInit {
     const recentlyOpenedWs = (JSON.parse(localStorage.getItem('usedWorkspaces')) || []);
     const currentOpenedWs = (JSON.parse(localStorage.getItem('workspaces')) || {data: []});
     const paginationList = this.makePagination(recentlyOpenedWs);
-    const projects =_.get(currentOpenedWs.data[state.openedTabs.tabsIndex], 'projects', [])
+    const projects = _.get(currentOpenedWs.data[state.openedTabs.tabsIndex], 'projects', [])
     ctx.patchState({
       workspacePagination: paginationList,
-      openedWs: {...currentOpenedWs.data[state.openedTabs.tabsIndex], projects: projects.map((prj, i) => ({...prj, selected: projects.length > 0 && i == 0}))},
-      openedTabs: {data: currentOpenedWs.data.map( ws => {
-        const wsFromLocal = recentlyOpenedWs.find(item => item.workspaceId == ws.workSpaceId && item.uwYear == ws.uwYear ); // JSON.parse(localStorage.getItem('workSpaceMenuItem'))[ws.workSpaceId+'-'+ws.uwYear]
+      openedWs: {
+        ...currentOpenedWs.data[state.openedTabs.tabsIndex],
+        projects: projects.map((prj, i) => ({...prj, selected: projects.length > 0 && i == 0}))
+      },
+      openedTabs: {
+        data: currentOpenedWs.data.map(ws => {
+          const wsFromLocal = recentlyOpenedWs.find(item => item.workspaceId == ws.workSpaceId && item.uwYear == ws.uwYear); // JSON.parse(localStorage.getItem('workSpaceMenuItem'))[ws.workSpaceId+'-'+ws.uwYear]
           return ({
             ...ws,
             favorite: _.get(wsFromLocal, 'favorite', false),
@@ -292,29 +303,31 @@ export class WorkspaceMainState implements NgxsOnInit {
             lastPModified: _.get(wsFromLocal, 'lastPModified', null),
             pinged: _.get(wsFromLocal, 'pinged', false)
           });
-        }), tabsIndex: state.openedTabs.tabsIndex},
+        }), tabsIndex: state.openedTabs.tabsIndex
+      },
       recentWs: recentlyOpenedWs
     });
   }
 
   @Action(AddNewProject)
   addNewProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
-   return this.workspaceMainService.addNewProject(payload.project, payload.workspaceId, payload.uwYear, payload.id)
-     .pipe(catchError(err => {
-       ctx.dispatch(new AddNewProjectFail({}));
-       return EMPTY; }))
-     .subscribe((result) => {
-     const state = ctx.getState();
-     if (result) {
-       const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
-       ctx.setState(
-         produce((draft) => {
-           draft.openedTabs.data[i].projects.push(result);
-           draft.openedWs.projects.push(result);
-         }));
-     }
-     ctx.dispatch(new AddNewProjectSuccess(result));
-   });
+    return this.workspaceMainService.addNewProject(payload.project, payload.workspaceId, payload.uwYear, payload.id)
+      .pipe(catchError(err => {
+        ctx.dispatch(new AddNewProjectFail({}));
+        return EMPTY;
+      }))
+      .subscribe((result) => {
+        const state = ctx.getState();
+        if (result) {
+          const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
+          ctx.setState(
+            produce((draft) => {
+              draft.openedTabs.data[i].projects.push(result);
+              draft.openedWs.projects.push(result);
+            }));
+        }
+        ctx.dispatch(new AddNewProjectSuccess(result));
+      });
   }
 
   @Action(DeleteProject)
@@ -322,7 +335,8 @@ export class WorkspaceMainState implements NgxsOnInit {
     return this.workspaceMainService.deleteProject(payload.project, payload.workspaceId, payload.uwYear)
       .pipe(catchError(err => {
         ctx.dispatch(new DeleteProjectFail({}));
-        return EMPTY; }))
+        return EMPTY;
+      }))
       .subscribe((result) => {
         const state = ctx.getState();
         if (result) {

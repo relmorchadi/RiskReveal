@@ -85,8 +85,8 @@
 
     .body-wrap-header-text {
       display: flex;
-      flex-direction: column;
-      width: 45%;
+      align-items: baseline;
+      flex-flow: column;
 
       .body-wrap-header-text-title {
         color: rgba(0, 0, 0, 0.6);
@@ -832,8 +832,8 @@
 .input-group-modal {
   display: flex;
   flex-direction: column;
-  width: 500px;
-  margin: 0 55px;
+  width: 580px;
+  margin: 0 auto;
 
   .row-input {
     display: flex;
@@ -1219,23 +1219,24 @@ TABLE STYLE
         user-select: none;
       }
 
-      ::ng-deep {
-        .ant-progress-text {
-          display: block;
-          color: #03DAC4;
-        }
+      tr.ui-contextmenu-selected {
+        background-color: #f4f6fc !important;
+      }
 
-        .ant-progress-circle-path {
-          stroke: #03DAC4;
-          stroke-width: 8px;
-        }
+      .ant-progress-text {
+        display: block;
+        color: #03DAC4;
+      }
+
+      .ant-progress-circle-path {
+        stroke: #03DAC4;
+        stroke-width: 8px;
       }
 
       .hidden-text {
-        ::ng-deep {
-          .ant-progress-text {
-            display: none;
-          }
+
+        .ant-progress-text {
+          display: none;
         }
       }
 
@@ -1257,6 +1258,12 @@ TABLE STYLE
           overflow: hidden;
           padding-top: 4px;
           font-weight: 400;
+        }
+
+        .branched-data {
+          display: flex;
+          flex-direction: column;
+          height: 100%;
         }
 
         .highlight-temp {
@@ -1353,13 +1360,19 @@ FINANCIAL PERSPECTIVE POPUP STYLE
   flex-direction: column;
 
   .fp-analysis {
-
+    display: flex;
+    justify-content: space-between;
   }
 
   .fp-header {
+    .subtitle-2 {
+      margin-right: 30px;
+      display: inline-flex;
+    }
+
     .icon-filter {
       color: rgba(0, 0, 0, 0.5);
-      font-size: 17px;
+      font-size: 21px;
     }
   }
 }

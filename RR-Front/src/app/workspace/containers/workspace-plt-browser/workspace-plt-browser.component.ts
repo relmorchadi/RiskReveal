@@ -1,15 +1,27 @@
-import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
 import {PltMainState} from '../../store';
-import {map, switchMap} from 'rxjs/operators';
+import {map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Table} from 'primeng/table';
 import {combineLatest} from 'rxjs';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
+import {Message} from '../../../shared/message';
+import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
+import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -17,6 +29,8 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
   styleUrls: ['./workspace-plt-browser.component.scss']
 })
 export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
+
+  rightMenuInputs: rightMenuStore.Input;
 
   private dropdown: NzDropdownContextComponent;
   private Subscriptions: any[] = [];
@@ -46,8 +60,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
-        console.log(this.selectedPlt)
-        this.openPltInDrawer(this.selectedPlt.pltId)
+        this.openPltInDrawer(this.selectedPlt)
       }
     },
     {
@@ -61,11 +74,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Clone To',
       command: (event) => {
-        console.log('cloning')
-        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({
-          from: 'pltManager',
-          payload: {wsId: this.workspaceId, uwYear: this.uwy}
-        }));
+        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.selectedListOfPlts}}));
         this.router$.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
       }
     },
@@ -196,24 +205,11 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   pltColumnsForConfig= [...this.pltColumns];
 
   pltColumnsCache = this.pltColumns;
-
-  epMetricsCurrencySelected: any = 'EUR';
-  CalibrationImpactCurrencySelected: any = 'EUR';
-  epMetricsFinancialUnitSelected: any = 'Million';
-  CalibrationImpactFinancialUnitSelected: any = 'Million';
-
-  drawerVisible = false;
   size = 'large';
   filters: {
     systemTag: {},
     userTag: []
   };
-  sumnaryPltDetailsPltId: any;
-
-  epMetricInputValue: string | null;
-
-  pltdetailsSystemTags: any = [];
-  pltdetailsUserTags: any = [];
 
   systemTags: any;
 
@@ -223,161 +219,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
   userTagsCount: any;
 
-  currencies = [
-    {id: '1', name: 'Euro', label: 'EUR'},
-    {id: '2', name: 'Us Dollar', label: 'USD'},
-    {id: '3', name: 'Britsh Pound', label: 'GBP'},
-    {id: '4', name: 'Canadian Dollar', label: 'CAD'},
-    {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
-    {id: '5', name: 'Swiss Franc', label: 'CHF'},
-    {id: '5', name: 'Saudi Riyal', label: 'SAR'},
-    {id: '6', name: 'Bitcoin', label: 'XBT'},
-    {id: '7', name: 'Hungarian forint', label: 'HUF'},
-    {id: '8', name: 'Singapore Dollars', label: 'SGD'}
-  ];
-
-  units = [
-    {id: '3', label: 'Billion'},
-    {id: '1', label: 'Thousands'},
-    {id: '2', label: 'Million'},
-    {id: '4', label: 'Unit'}
-  ];
-
-  metrics = [
-    {
-      metricID: '1',
-      retrunPeriod: '10000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '2',
-      retrunPeriod: '5,000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '4',
-      retrunPeriod: '1,000',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '5',
-      retrunPeriod: '500',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '6',
-      retrunPeriod: '250',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '7',
-      retrunPeriod: '100',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '8',
-      retrunPeriod: '50',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '9',
-      retrunPeriod: '25',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '10',
-      retrunPeriod: '10',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '11',
-      retrunPeriod: '5',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    },
-    {
-      metricID: '12',
-      retrunPeriod: '2',
-      OEP: '291,621.790',
-      AEP: '291,621.790',
-      TVaR_OEP: '3214,654.789',
-      TVaR_AEP: '458,711.620'
-    }
-  ];
-
-  theads = [
-    {
-      title: '', cards: [
-        {
-          chip: 'ID: 222881',
-          content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729',
-          borderColor: '#6e6cc0',
-          selected: false
-        },
-      ]
-    },
-    {
-      title: 'Base', cards: [
-        {chip: '1.25', content: 'Portfolio Evolution', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Default', cards: [
-        {chip: 'Event', content: 'Tsunami', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Analyst', cards: [
-        {chip: '1.13', content: 'ALAE', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Client', cards: [
-        {chip: '0.95', content: 'Cedant QI', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: '', cards: [
-        {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766', borderColor: '#6e6cc0', selected: false}
-      ]
-    }
-  ];
-
-  dependencies = [
-    {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analysis ID: 149'},
-    {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
-    {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
-    {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
-  ];
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
@@ -428,10 +269,22 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       tagId: null,
       tagName: '',
       tagColor: '#0700e4'
-    }
+    };
     this.generateContextMenu(this.showDeleted);
     this.generateColumns(this.showDeleted);
-    this.managePopUp= false;
+    this.managePopUp = false;
+    this.rightMenuInputs = {
+      basket: [],
+      pltDetail: null,
+      selectedTab: {
+        index: 0,
+        title: 'pltDetail',
+      },
+      tabs: {'pltDetail': true},
+      visible: false,
+      mode: "default"
+    }
+    this.setRightMenuSelectedTab('pltDetail');
   }
 
   @Select(PltMainState.getUserTags) userTags$;
@@ -484,7 +337,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
           return combineLatest(
             this.data$,
             this.deletedPlts$
-          )
+          );
         })
       ).subscribe(([data, deletedData]: any) => {
         let d1 = [];
@@ -513,9 +366,9 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                 this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
                 this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
                 this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              })
+              });
 
-            })
+            });
           }
 
           _.forEach(data, (v, k) => {
@@ -540,7 +393,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                   };
                 }
               }
-            })
+            });
 
             //NONE grouped Sys Tags
             _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
@@ -567,7 +420,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
                   max: max + 1
                 };
               }
-            })
+            });
             /*}*/
 
           });
@@ -575,9 +428,10 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
           this.listOfPlts = d2;
           this.listOfPltsData = this.listOfPltsCache = d1;
           this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
+
           _.forEach(data, (v, k) => {
             if (v.opened) {
-              this.sumnaryPltDetailsPltId = k;
+              this.updateMenuKey('pltDetail', {pltId: k, ...v})
             }
           });
         }
@@ -659,23 +513,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   filterInput: string = "";
 
   selectPltById(pltId) {
-    return this.store$.select(state => _.get(state, `pltMainModel.data.${pltId}`));
-  }
-
-  openDrawer(index): void {
-    this.drawerVisible = true;
-    this.drawerIndex = index;
-  }
-
-  closeDrawer(): void {
-    this.drawerVisible = false;
-  }
-
-  closePltInDrawer(pltId) {
-    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      pltId
-    }));
+    return this.store$.select(state => _.get(state, `pltMainModel.data.${this.workspaceId + '-' + this.uwy}.${pltId}`));
   }
 
   deletePlt() {
@@ -695,7 +533,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
     this.modalSelect = this.modalSelectCache = _.intersectionBy(...d, 'tagId');
     this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-    console.log(this.modalSelectCache, this.oldSelectedTags, d);
   }
 
   restore() {
@@ -703,38 +540,23 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
   }
 
+  closePltInDrawer(pltId) {
+    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      pltId
+    }));
+  }
+
   openPltInDrawer(plt) {
-    this.closePltInDrawer(this.sumnaryPltDetailsPltId);
+    if(this.getRightMenuKey('pltDetail')) {
+      this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId)
+    }
     this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId: plt
     }));
-    this.openDrawer(1);
-    this.getTagsForSummary(plt);
-  }
-
-  getTagsForSummary(pltId) {
-    //this.pltdetailsSystemTags = this.systemTags;
-    this.pltdetailsUserTags = _.find(this.listOfPltsData, e => e.pltId == pltId).userTags;
-  }
-
-  selectCardThead(card) {
-    this.theads.forEach(thead => {
-      thead.cards.forEach(card => {
-        card.selected = false;
-      });
-    });
-    card.selected = true;
-  }
-
-  getCardBackground(selected) {
-    if (selected) return '#FFF';
-    else return '#f4f6fc';
-  }
-
-  getBoxShadow(selected) {
-    if (selected) return '0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19)';
-    else return 'none';
+    this.updateMenuKey('pltDetail', _.find(this.listOfPltsData, e => e.pltId == plt))
+    this.updateMenuKey('visible', true);
   }
 
   resetPath() {
@@ -843,7 +665,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     const {
       selectedTags
     } = $event;
-    console.log('TAGS', $event);
     this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       ...$event,
@@ -924,17 +745,17 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
       ...$event,
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
-    }));
+    }))
   }
 
   toggleColumnsManager() {
-    this.managePopUp = !this.managePopUp;
-    if (this.managePopUp) this.pltColumnsForConfig = [...this.pltColumns];
+    this.managePopUp= !this.managePopUp;
+    if(this.managePopUp) this.pltColumnsForConfig= [...this.pltColumns];
   }
 
   saveColumns() {
     this.toggleColumnsManager();
-    this.pltColumns = [...this.pltColumnsForConfig];
+    this.pltColumns= [...this.pltColumnsForConfig];
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -943,10 +764,33 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   toggleCol(i: number) {
-    this.pltColumnsForConfig = _.merge(
+    this.pltColumnsForConfig= _.merge(
       [],
       this.pltColumnsForConfig,
       { [i]: {...this.pltColumnsForConfig[i], active: !this.pltColumnsForConfig[i].active} }
-    );
+      )
+  }
+
+  rightMenuActionDispatcher(action: Message) {
+    switch (action.type) {
+      case rightMenuStore.closeDrawer:
+        this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
+        this.rightMenuInputs = rightMenuActions.closeDrawer.handler(this.rightMenuInputs);
+        break;
+      default:
+        console.log('default right menu action');
+    }
+  }
+
+  setRightMenuSelectedTab(tab) {
+    this.rightMenuInputs = rightMenuActions.setSelectedTab.handler(this.rightMenuInputs, tab)
+  }
+
+  getRightMenuKey(key) {
+    return _.get(this.rightMenuInputs, key);
+  }
+
+  updateMenuKey(key: string, value: any) {
+    this.rightMenuInputs = rightMenuActions.updateKey.handler(this.rightMenuInputs, key, value);
   }
 }

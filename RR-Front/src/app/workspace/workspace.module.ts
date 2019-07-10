@@ -18,11 +18,12 @@ import {ToastModule} from "primeng/toast";
 import {DndModule} from 'ng2-dnd';
 import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
 import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-up/adjustment-pop-up.component';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @NgModule({
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent,
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent
   ],
   imports: [
     GridsterModule,
@@ -38,7 +39,8 @@ import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-
     NgxDndNodule,
     RadioButtonModule,
     RouterModule.forChild(workspaceRoutes),
-    ToastModule
+    ToastModule,
+    ScrollingModule
   ],
   exports: [
     RouterModule

@@ -15,6 +15,7 @@
       <div class="body-wrap-header">
         <div class="body-wrap-header-text">
           <!--          <span class="body-wrap-header-text-title">TREATY</span>-->
+          <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Risk link'" [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
       </div>
@@ -279,41 +280,6 @@
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter" (click)="filterModalVisibility = true"></i>
-                  <nz-modal [(nzVisible)]="filterModalVisibility" [nzTitle]="titleModal"
-                            (nzOnCancel)="handleCancel()"
-                            [nzFooter]="footerModal">
-                    <div class="input-group-modal">
-                      <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
-                        [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
-                      <div class="radio-wrapper default-radio">
-                        <span>AGG/DET</span>
-                        <nz-radio-group [(ngModel)]="radioValue">
-                          <label nz-radio nzValue="all">All</label>
-                          <label nz-radio nzValue="agg">AGG</label>
-                          <label nz-radio nzValue="det">DET</label>
-                        </nz-radio-group>
-                      </div>
-                      <div class="row-input"><span class="label-input">Number</span><input placeholder="Number"
-                                                                                           class="a-textfield-mini input-wrapper">
-                      </div>
-                      <div class="row-input"><span class="label-input">Name</span><input placeholder="Name"
-                                                                                         class="a-textfield-mini input-wrapper">
-                      </div>
-                      <div class="row-input"><span class="label-input">Description</span><input
-                        placeholder="Description" class="a-textfield-mini input-wrapper"></div>
-                    </div>
-                    <ng-template #titleModal>
-                      <h6>{{getTitle()}} Filter Criteria</h6>
-                    </ng-template>
-                    <ng-template #footerModal>
-                      <div class="modal-footer-wrapper">
-                        <button class="a-button-text-cancel">CLEAR</button>
-                        <button class="a-buttons-contained-disabled">APPLY</button>
-                      </div>
-                    </ng-template>
-                  </nz-modal>
-                  <button (click)="linkingModalVisibility = true" class="a-buttons-outlined">ADVANCED</button>
-
                 </div>
               </div>
               <div class="show-table">
@@ -343,12 +309,12 @@
                           [ngClass]="{'selected-item': rowData?.selected}"
                           [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
                         <div style=" display: flex;" *ngIf="col.type === 'select'">
-                          <label nz-checkbox (ngModelChange)="checkRow($event, rowData)"
+                          <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
                                  [ngModel]="rowData.selected"></label>
                         </div>
-                        <div class="text-data" (click)="selectRows(rowData, i)"
+                        <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
                              *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                        <div class="text-data" (click)="selectRows(rowData, i)"
+                        <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
                              *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
                       </td>
                     </tr>
@@ -418,22 +384,25 @@
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                 <tr>
                   <ng-container *ngFor="let col of columns">
-                    <th *ngIf="col.visible">
+                    <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
                       <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                       <div *ngIf="col.type === 'progress'">
                         <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
                                      [nzWidth]="20" nzType="circle"></nz-progress>
                       </div>
-                      <div *ngIf="col.type === 'indicator'">
-                      <span class="indicator-flag" *ngIf="rowData.exposedLocation"
-                            style="background-color: #0700CF"></span>
+                      <div *ngIf="col.type === 'indicator'" (click)="selectRows(rowData, i, 'S')">
+                        <span class="indicator-flag" *ngIf="rowData.exposedLocation"
+                              style="background-color: #0700CF"></span>
                       </div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'S')"
+                           [ngClass]="{'highlight-temp': rowData.highlight}"
                            *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'S')"
+                           [ngClass]="{'highlight-temp': rowData.highlight}"
                            *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
                       </div>
-                      <div class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'S')"
+                           [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                            [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                       <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
@@ -467,7 +436,6 @@
         </div>
       </div>
 
-
       <div class="body-wrap-body" *ngIf="state.display.displayImport && dataList(state.results.data).length > 0">
         <div class="body-wrapper">
           <div class="body-wrapper-header">
@@ -476,7 +444,9 @@
               <div>Analysis Results</div>
             </div>
             <div class="body-wrapper-header-right-summary">
-              <button class="a-buttons-outlined" *ngIf="state.collapse.collapseAnalysis"> LINKING</button>
+              <button class="a-buttons-outlined" (click)="linkingModalVisibility = true"
+                      *ngIf="state.collapse.collapseAnalysis"> LINKING
+              </button>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseAnalysis"
                    (click)="changeCollapse('collapseAnalysis')" class="icon-keyboard_arrow_up_24px"></i>
@@ -486,8 +456,11 @@
             </div>
           </div>
           <div class="summary-info" *ngIf="state.collapse.collapseAnalysis">
+            <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
             <p-table [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult"
                      [value]="dataList(state.results.data)"
+                     [(contextMenuSelection)]="contextSelectedItem"
+                     [contextMenu]="cmR"
                      #rt [scrollable]="true" frozenWidth="445px">
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>
@@ -514,29 +487,81 @@
                 </tr>
               </ng-template>
               <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-                <tr>
+                <tr [pContextMenuRow]="rowData">
                   <ng-container *ngFor="let col of columns">
-                    <th *ngIf="col.visible">
+                    <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
                       <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                       <div class="text-data" *ngIf="col.type === 'progress'">
                         <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
                                      [nzWidth]="20" nzType="circle"></nz-progress>
                       </div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                      <div class="text-data" (click)="openFinancialP()" [ngClass]="{'highlight-temp': col.highlight}"
+                           *ngIf="col.type === 'multiple'">
+                        <span *ngIf="rowData.financialPerspective.length > 1">M*</span>
+                        <span
+                          *ngIf="rowData.financialPerspective.length <= 1">{{rowData?.financialPerspective[0]}}</span>
+                      </div>
+                      <div class="text-data" (click)="selectRows(rowData, i, 'R')"
+                           [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'R')"
+                           [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
                       </div>
-                      <div class="text-data" [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                           [ngClass]="{'highlight-temp': col.highlight}" (click)="financialP = true"
+                      <div class="text-data" (click)="selectRows(rowData, i, 'R')"
+                           [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                           [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                      <div class="text-data highlight-temp" stytle="font-weight: 500"
+                           *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'" (click)="updateRow(rowData, col.type)">
+                        {{rowData[col.field]}}
+                      </div>
                       <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                      <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
-                           style="display: flex;justify-content: center;"
-                           (click)="deleteFromBasket(rowData.analysisId, 'results')" *ngIf="col.type === 'icon'"><i
-                        class="icon-trash-alt"></i></div>
                     </th>
+                    <ng-container *ngIf="col.edit">
+                      <th pEditableColumn *ngIf="col.field === 'unitMultiplier'"
+                          [ngClass]="{'selected-item': rowData?.selected}">
+                        <p-cellEditor>
+                          <ng-template pTemplate="input">
+                            <input pInputText type="text" style="width: 95%" class="a-textfield-mini"
+                                   [(ngModel)]="rowData.unitMultiplier">
+                          </ng-template>
+                          <ng-template pTemplate="output">
+                            <div class="text-data highlight-temp">{{rowData.unitMultiplier | number: '1.2-2'}}</div>
+                          </ng-template>
+                        </p-cellEditor>
+                      </th>
+                      <th pEditableColumn *ngIf="col.field === 'targetCurrency'"
+                          [ngClass]="{'selected-item': rowData?.selected}">
+                        <p-cellEditor>
+                          <ng-template pTemplate="input">
+                            <nz-select
+                              style="width: 100%"
+                              [(ngModel)]="rowData.targetCurrency"
+                              nzShowSearch
+                              class="a-dropdown-small input-wrapper"
+                              nzPlaceHolder="TAG CURRENCY"
+                            >
+                              <nz-option nzLabel="AED" nzValue="AED"></nz-option>
+                              <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
+                              <nz-option nzLabel="AFN" nzValue="AFN"></nz-option>
+                              <nz-option nzLabel="ALK" nzValue="ALK"></nz-option>
+                              <nz-option nzLabel="ALL" nzValue="ALL"></nz-option>
+                              <nz-option nzLabel="BBT" nzValue="BBT"></nz-option>
+                              <nz-option nzLabel="BBL" nzValue="BBL"></nz-option>
+                              <nz-option nzLabel="BMD" nzValue="BMD"></nz-option>
+                              <nz-option nzLabel="MGA" nzValue="MGA"></nz-option>
+                              <nz-option nzLabel="USD" nzValue="USD"></nz-option>
+                              <nz-option nzLabel="XXC" nzValue="XXC"></nz-option>
+                            </nz-select>
+                          </ng-template>
+                          <ng-template pTemplate="output">
+                            <div class="text-data highlight-temp">{{rowData.targetCurrency}}</div>
+                          </ng-template>
+                        </p-cellEditor>
+                      </th>
+                    </ng-container>
                   </ng-container>
                 </tr>
 
@@ -644,7 +669,50 @@
     </div>
   </p-footer>
 </p-dialog>
-
+<!--Pop Up Filter-->
+<p-dialog
+  [visible]="filterModalVisibility"
+  [closable]="false"
+  styleClass="m-dialog-modal-m"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h4>{{getTitle()}} Filter Criteria</h4>
+      <i style="cursor: pointer" (click)="handleCancel()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="input-group-modal">
+    <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
+      [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
+    <div class="radio-wrapper default-radio">
+      <span>AGG/DET</span>
+      <nz-radio-group [(ngModel)]="radioValue">
+        <label nz-radio nzValue="all">All</label>
+        <label nz-radio nzValue="agg">AGG</label>
+        <label nz-radio nzValue="det">DET</label>
+      </nz-radio-group>
+    </div>
+    <div class="row-input"><span class="label-input">Number</span><input placeholder="Number"
+                                                                         class="a-textfield-mini input-wrapper">
+    </div>
+    <div class="row-input"><span class="label-input">Name</span><input placeholder="Name"
+                                                                       class="a-textfield-mini input-wrapper">
+    </div>
+    <div class="row-input"><span class="label-input">Description</span><input
+      placeholder="Description" class="a-textfield-mini input-wrapper"></div>
+  </div>
+  <p-footer>
+    <div class="modal-footer-wrapper">
+      <button class="a-button-text-cancel">CLEAR</button>
+      <button class="a-buttons-contained-disabled">APPLY</button>
+    </div>
+  </p-footer>
+</p-dialog>
+<!--Pop Up Linking-->
 <nz-modal [(nzVisible)]="linkingModalVisibility" [nzTitle]="titleModalLinking"
           (nzOnCancel)="handleCancel()"
           [nzFooter]="footerModalLinking">
@@ -900,18 +968,17 @@
   </ng-template>
   <ng-template #footerModalLinking>
     <div>
-      <button class="a-button-text-cancel">CANCEL</button>
+      <button (click)="linkingModalVisibility = false" class="a-button-text-cancel">CANCEL</button>
       <button *ngIf="!selectedEDM" class="a-buttons-contained-disabled" disabled>NEXT</button>
       <button *ngIf="selectedEDM" (click)="manual = true" class="a-buttons-contained">NEXT</button>
     </div>
   </ng-template>
 </nz-modal>
-
+<!--Pop Up Financial Perspective-->
 <p-dialog
   [visible]="financialP"
   [closable]="false"
   styleClass="m-dialog-modal-lg"
-  appendTo="body"
   [modal]="true"
   [autoZIndex]="false"
   [responsive]="true">
@@ -929,11 +996,30 @@
           <i class="icon-filter"></i>
         </div>
         <div>
-
+          <nz-dropdown [nzTrigger]="'click'">
+            <div class="dropdown-wrap" nz-dropdown>
+              <div class="dropdown-wrap-title">
+                <span class="dropdown-title">select RDM</span>
+                <span class="dropdown-item-selected" *ngIf="state.financialPerspective.rdm.selected">
+                  {{state.financialPerspective.rdm.selected}}</span>
+                <span
+                  *ngIf="state.financialPerspective.rdm.data !== null && state.financialPerspective.rdm.selected === null">
+                  {{dataList(state.financialPerspective.rdm.data)[0].name}}
+                </span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item (click)="changeFinancialPTarget(item)"
+                  *ngFor="let item of dataList(workingFSC.rdm?.data)">{{item.name}}</li>
+            </ul>
+          </nz-dropdown>
         </div>
       </div>
-      <p-table #fat [columns]="colsFinancialAnalysis" [value]=""
-               [scrollable]="true" scrollHeight="300px">
+      <p-table #fat [columns]="colsFinancialAnalysis" [value]="dataList(workingFSC.analysis?.data)"
+               [scrollable]="true" scrollHeight="226px">
         <ng-template pTemplate="colgroup" let-columns>
           <colgroup>
             <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -958,35 +1044,26 @@
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-          <tr>
-            <th *ngFor="let col of columns">
-              <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
-              <div *ngIf="col.type === 'progress'">
-                <nz-progress [nzPercent]="rowData.status"
-                             [ngClass]="{'hidden-text': rowData.status < 100 }"
-                             [nzWidth]="20" nzType="circle"></nz-progress>
+          <tr style="height: 45px">
+            <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
+              <div *ngIf="col.type === 'select'"><label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'fpA')"
+                                                        [ngModel]="rowData.selected"></label></div>
+              <div class="text-data" (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'iconIndicator'">
+                <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
               </div>
-              <div *ngIf="col.type === 'indicator'">
-                                      <span class="indicator-flag" *ngIf="rowData.exposedLocation"
-                                            style="background-color: #0700CF"></span>
+              <div class="text-data" (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'tags'"
+                   style="display: flex">
+                <span class="tags-secondary" *ngFor="let item of rowData.financialPerspective">{{item}}<i
+                  (click)="removeFP(rowData, item)" class="icon-close_24px"></i></span>
               </div>
-              <div *ngIf="col.type === 'iconIndicator'">
-                <span style="background-color: #009575" class="indicator-icon">A</span>
-              </div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
-              </div>
-              <div class="text-data"
+              <div (click)="selectRows(rowData, i, 'fpA')" class="text-data"
                    [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                   [ngClass]="{'highlight-temp': col.highlight}"
                    *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-              <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                   style="display: flex;justify-content: center;"
-                   *ngIf="col.type === 'icon'"></div>
+              <div (click)="selectRows(rowData, i, 'fpA')" class="text-data branched-data"
+                   *ngIf="col.type === 'branched'">
+                <span>{{rowData?.analysisName}}</span>
+                <span>{{rowData?.description}}</span>
+              </div>
             </th>
           </tr>
         </ng-template>
@@ -997,7 +1074,7 @@
     <nz-tabset class="tabs-standard-top">
       <nz-tab nzTitle="Standard">
         <div style="padding-top:0" class="summary-info">
-          <p-table #fpt [columns]="colsFinancialStandard" [value]="financialStandardContent"
+          <p-table #fpt [columns]="colsFinancialStandard" [value]="dataList(workingFSC.standard)"
                    [scrollable]="true" scrollHeight="300px">
             <ng-template pTemplate="colgroup" let-columns>
               <colgroup>
@@ -1024,34 +1101,20 @@
             </ng-template>
             <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
               <tr>
-                <th *ngFor="let col of columns">
-                  <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
-                  <div *ngIf="col.type === 'progress'">
-                    <nz-progress [nzPercent]="rowData.status"
-                                 [ngClass]="{'hidden-text': rowData.status < 100 }"
-                                 [nzWidth]="20" nzType="circle"></nz-progress>
-                  </div>
-                  <div *ngIf="col.type === 'indicator'">
+                <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
+                  <div *ngIf="col.type === 'select'"><label nz-checkbox
+                                                            (ngModelChange)="checkRow($event, rowData, 'fpS')"
+                                                            [ngModel]="rowData.selected"></label></div>
+                  <div (click)="selectRows(rowData, i, 'fpS')" *ngIf="col.type === 'indicator'">
                     <span class="indicator-flag" *ngIf="rowData.exposedLocation"
                           style="background-color: #0700CF"></span>
                   </div>
-                  <div *ngIf="col.type === 'iconIndicator'">
-                    <span style="background-color: #009575" class="indicator-icon">A</span>
-                  </div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
-                  </div>
-                  <div class="text-data"
-                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                  <div (click)="selectRows(rowData, i, 'fpS')" class="text-data"
                        [ngClass]="{'highlight-temp': col.highlight}"
                        *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       style="display: flex;justify-content: center;"
-                       *ngIf="col.type === 'icon'"></div>
+                  <div (click)="selectRows(rowData, i, 'fpS')" class="text-data"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"></div>
                 </th>
               </tr>
             </ng-template>
@@ -1066,7 +1129,7 @@
   <div class="fp-options-wrapper">
     <span style="" class="subtitle-2 subtitle-override">Apply Selected Financial Perpective to Analysis in:</span>
     <div class="context-wrapper">
-      <nz-radio-group class="default-radio" [(ngModel)]="radioValueFinancialP">
+      <nz-radio-group class="default-radio" (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target">
         <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
         <label nz-radio nzValue="currentRDM"><span class="body-2">Current RDM</span></label>
         <label nz-radio nzValue="all"><span class="body-2">All RDM's</span></label>
@@ -1074,14 +1137,148 @@
       <!--      <p-radioButton value="currentSelection" label="Current Selection" [(ngModel)]="radioValueFinancialP"></p-radioButton>
             <p-radioButton value="currentRDM" label="Current RDM" [(ngModel)]="radioValueFinancialP"></p-radioButton>
             <p-radioButton value="all" label="All RDM's" [(ngModel)]="radioValueFinancialP"></p-radioButton>-->
-      <button style="margin-left: 150px" class="a-buttons-outlined">ADD</button>
-      <button class="a-buttons-outlined">REPLACE</button>
+      <button (click)="addFinancialP()" style="margin-left: 150px" class="a-buttons-outlined">ADD</button>
+      <button (click)="replaceFinancialP()" class="a-buttons-outlined">REPLACE</button>
     </div>
   </div>
   <p-footer>
     <div>
-      <button class="a-button-text-cancel">CANCEL</button>
-      <button class="a-buttons-contained">SAVE</button>
+      <button (click)="financialP = false" class="a-button-text-cancel">CANCEL</button>
+      <button (click)="saveFinancialP()" class="a-buttons-contained">SAVE</button>
     </div>
+  </p-footer>
+</p-dialog>
+<!--Pop Up Edit Row -->
+<p-dialog [visible]="editRowPopUp"
+          [closable]="false"
+          styleClass="m-dialog-modal-m-f"
+          [modal]="true"
+          [autoZIndex]="false"
+          [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h4>Edit Analysis</h4>
+      <i style="cursor: pointer" (click)="editRowPopUp = false" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="fp-options-wrapper">
+    <div class="input-group-modal">
+      <div class="row-input"><span class="label-input">Region Peril</span>
+        <nz-select
+          style="padding: 10px 0;"
+          [ngModel]="regionPeril"
+          nzShowSearch
+          class="a-dropdown-small input-wrapper"
+          nzPlaceHolder="Select Occurence Basis"
+        >
+          <nz-option nzLabel="[EUET] Europe Extra Tropical Cyclone" nzValue="EUET"></nz-option>
+          <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone" nzValue="EUET-AT"></nz-option>
+          <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone" nzValue="EUET-BE"></nz-option>
+          <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone" nzValue="EUET-CH"></nz-option>
+          <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone" nzValue="EUET-CZ"></nz-option>
+          <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone" nzValue="EUET-DE"></nz-option>
+          <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone" nzValue="EUET-DK"></nz-option>
+          <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone" nzValue="EUET-FR"></nz-option>
+        </nz-select>
+      </div>
+      <div class="row-input"><span class="label-input">Occurence Basis</span>
+        <nz-select
+          style="padding: 10px 0;"
+          [ngModel]="occurrenceBasis"
+          nzShowSearch
+          class="a-dropdown-small input-wrapper"
+          nzPlaceHolder="Select Occurence Basis"
+        >
+          <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>
+          <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
+        </nz-select>
+      </div>
+      <div class="row-input"><span class="label-input">Unit Miltiplier</span>
+        <input placeholder="Insert Unit Multiplier" class="a-textfield-mini input-wrapper">
+      </div>
+    </div>
+  </div>
+  <div class="fp-options-wrapper">
+    <span style="" class="subtitle-2 subtitle-override">Scope Of Editing:</span>
+    <div class="context-wrapper">
+      <nz-radio-group class="default-radio" (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target">
+        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
+        <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>
+      </nz-radio-group>
+    </div>
+  </div>
+  <p-footer>
+    <button (click)="editRowPopUp = false" class="a-button-text-cancel">CANCEL</button>
+    <button class="a-buttons-contained">SAVE</button>
+  </p-footer>
+</p-dialog>
+<!--Pop Up Low Lvl Edit-->
+<p-dialog [visible]="singleColEdit"
+          [closable]="false"
+          styleClass="m-dialog-modal-m-f"
+          [modal]="true"
+          [autoZIndex]="false"
+          [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h4>{{editableRow.title}}</h4>
+      <i style="cursor: pointer" (click)="singleColEdit = false" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div class="fp-options-wrapper">
+    <div class="input-group-modal">
+      <div class="row-input" *ngIf="editableRow.target === 'Rp'"><span class="label-input">Region Peril</span>
+        <nz-select
+          style="padding: 10px 0;"
+          [ngModel]="editableRow.item.regionPeril"
+          nzShowSearch
+          class="a-dropdown-small input-wrapper"
+          nzPlaceHolder="Select Occurence Basis"
+        >
+          <nz-option nzLabel="[EUET] Europe Extra Tropical Cyclone" nzValue="EUET"></nz-option>
+          <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone" nzValue="EUET-AT"></nz-option>
+          <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone" nzValue="EUET-BE"></nz-option>
+          <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone" nzValue="EUET-CH"></nz-option>
+          <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone" nzValue="EUET-CZ"></nz-option>
+          <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone" nzValue="EUET-DE"></nz-option>
+          <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone" nzValue="EUET-DK"></nz-option>
+          <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone" nzValue="EUET-FR"></nz-option>
+        </nz-select>
+      </div>
+      <div class="row-input" *ngIf="editableRow.target === 'Ob'"><span class="label-input">Occurence Basis</span>
+        <nz-select
+          style="padding: 10px 0;"
+          [ngModel]="editableRow.item.occurrenceBasis"
+          nzShowSearch
+          class="a-dropdown-small input-wrapper"
+          nzPlaceHolder="Select Occurence Basis"
+        >
+          <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>
+          <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
+        </nz-select>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <span style="" class="subtitle-2 subtitle-override">Override Reason:</span>
+        <textarea>
+
+        </textarea>
+      </div>
+    </div>
+  </div>
+  <div class="fp-options-wrapper">
+    <span style="" class="subtitle-2 subtitle-override">Scope Of Editing:</span>
+    <div class="context-wrapper">
+      <nz-radio-group class="default-radio" (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target">
+        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
+        <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>
+      </nz-radio-group>
+    </div>
+  </div>
+  <p-footer>
+    <button (click)="singleColEdit = false" class="a-button-text-cancel">CANCEL</button>
+    <button class="a-buttons-contained">SAVE</button>
   </p-footer>
 </p-dialog>
