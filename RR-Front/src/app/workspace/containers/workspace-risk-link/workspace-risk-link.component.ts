@@ -45,6 +45,7 @@ import { DataTables } from './data';
 })
 export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
+  regionPeril;
   hyperLinks: string[]= ['Risk link', 'File-based'];
   hyperLinksRoutes: any= {
     'Risk link': '/RiskLink',
