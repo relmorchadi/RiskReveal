@@ -37,6 +37,9 @@ public class ScorPltHeaderEntity {
     private Boolean narrativeChanged;
     private Integer previousNarrative;
     private Integer currentNarrative;
+    private String marketChannel;
+    private String engineType;
+    private String entity;
     private RrAnalysisNewEntity rrAnalysis;
     private TargetRapEntity targetRapByTargetRapId;
     private RegionPerilEntity regionPerilByRegionPerilId;
@@ -350,6 +353,30 @@ public class ScorPltHeaderEntity {
     @Column(name = "current_narrative", nullable = true)
     public java.lang.Integer getCurrentNarrative() {
         return currentNarrative;
+    }
+
+    public String getMarketChannel() {
+        return marketChannel;
+    }
+
+    public void setMarketChannel(String marketChannel) {
+        this.marketChannel = marketChannel;
+    }
+
+    public String getEngineType() {
+        return engineType;
+    }
+
+    public void setEngineType(String engineType) {
+        this.engineType = engineType;
+    }
+
+    public String getEntity() {
+        return entity;
+    }
+
+    public void setEntity(String entity) {
+        this.entity = entity;
     }
 
     public void setCurrentNarrative(java.lang.Integer currentNarrative) {
