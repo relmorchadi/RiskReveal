@@ -19,6 +19,7 @@ public class CalculAdjustementLinearTest {
     private List<PLTLossData> pltLossDataList;
     private double lmf;
     private boolean cap;
+    CalculAdjustement calculAdjustement;
     @Before
     public void setUp() {
         log.info("Launch test for Linear Adjustment");
@@ -31,19 +32,27 @@ public class CalculAdjustementLinearTest {
         }};
         cap = true;
         lmf = 0.7;
+        calculAdjustement = new CalculAdjustement();
+    }
+    //when lmf <= 0
+    @Test
+    public void lineaireAdjustementLmfNegative() {
 
+        log.info("Launch test for EEF Return Period Linear Adjustment with negative lmf");
+        assertNull(calculAdjustement.lineaireAdjustement(pltLossDataList, -1, cap));
+
+    }
+    //when PLT is empty or null
+    @Test
+    public void lineaireAdjustementNullPlt() {
+        log.info("Launch test for EEF Return Period Linear Adjustment with PLT NULL");
+        assertNull(calculAdjustement.lineaireAdjustement(null,lmf,cap));
     }
 
     @Test
-    public void lineaireAdjustement() {
-        CalculAdjustement calculAdjustement = new CalculAdjustement();
-        //when lmf <= 0
-        log.info("Launch test for EEF Return Period Linear Adjustment with negative lmf");
-        assertNull(calculAdjustement.lineaireAdjustement(pltLossDataList, -1, cap));
-        //when PLT is empty or null
-        log.info("Launch test for EEF Return Period Linear Adjustment with PLT NULL");
-        assertNull(calculAdjustement.lineaireAdjustement(null,lmf,cap));
+    public void lineaireAdjustementEmptyPlt() {
         log.info("Launch test for EEF Return Period Linear Adjustment with an EMPTY PLT");
         assertNull(calculAdjustement.lineaireAdjustement(new ArrayList<>(),lmf,cap));
     }
+
 }

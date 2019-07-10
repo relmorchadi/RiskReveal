@@ -18,6 +18,7 @@ public class CalculAdjustementEEFFrequencyTest {
     private List<PLTLossData> pltLossDataList;
     private double rpmf;
     private boolean cap;
+    CalculAdjustement calculAdjustement;
     @Before
     public void setUp() throws Exception {
         log.info("Launch test for EEF Frequency Adjustment");
@@ -30,22 +31,26 @@ public class CalculAdjustementEEFFrequencyTest {
         }};
         cap = true;
         rpmf =0.4;
-
+        calculAdjustement = new CalculAdjustement();
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
+        log.info("END test for EEF Frequency Adjustment");
     }
     @Test
-    public void eefFrequency() {
-        CalculAdjustement calculAdjustement = new CalculAdjustement();
+    public void eefFrequencyNegativeRpmf() {
         log.info("Launch test for EEF Frequency Adjustment for negative rpmf = {}",rpmf);
         assertNull(calculAdjustement.eefFrequency(pltLossDataList,cap,-2,1000000));
+    }
+    @Test
+    public void eefFrequencyNullPlt() {
         log.info("Launch test for EEF Frequency Adjustment for null plt ");
         assertNull(calculAdjustement.eefFrequency(null,cap,rpmf,1000000));
+    }
+    @Test
+    public void eefFrequencyEmptyPlt() {
         log.info("Launch test for EEF Frequency Adjustment for an empty plt ");
         assertNull(calculAdjustement.eefFrequency(new ArrayList<>(),cap,rpmf,1000000));
-        log.info("END test for EEF Frequency Adjustment");
-
     }
 }

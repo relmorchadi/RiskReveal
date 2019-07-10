@@ -19,6 +19,7 @@ public class CalculAdjustementNonLinearEventDrivenAdjustmentTest {
     private List<PLTLossData> pltLossDataList;
     private List<PEATData> adjustmentReturnPeriodBendings;
     private boolean cap;
+    CalculAdjustement calculAdjustement;
     @Before
     public void setUp() {
         log.info("Launch test for non linear event  driven adjustment");
@@ -37,19 +38,31 @@ public class CalculAdjustementNonLinearEventDrivenAdjustmentTest {
             add(new PEATData(36,8443694,1,0.7));
 
         }};
+
+        calculAdjustement = new CalculAdjustement();
     }
 
     @Test
-    public void nonLineaireEventDrivenAdjustment() {
-        CalculAdjustement calculAdjustement = new CalculAdjustement();
+    public void nonLineaireEventDrivenAdjustmentNullPeatData() {
         log.info("Launch test for non linear event  driven adjustment with parameter PEAT DATA NULL");
         assertNull(calculAdjustement.nonLineaireEventDrivenAdjustment(pltLossDataList,cap,null));
+    }
+    @Test
+    public void nonLineaireEventDrivenAdjustmentEmptyPeatData() {
         log.info("Launch test for non linear event  driven adjustment with parameter PEAT DATA EMPTY");
         assertNull(calculAdjustement.nonLineaireEventDrivenAdjustment(pltLossDataList,cap,new ArrayList<>()));
+    }
+
+    @Test
+    public void nonLineaireEventDrivenAdjustmentNullPlt() {
         log.info("Launch test for non linear event  driven adjustment with PLT NULL");
         assertNull(calculAdjustement.nonLineaireEventDrivenAdjustment(null,cap,adjustmentReturnPeriodBendings));
+    }
+
+    @Test
+    public void nonLineaireEventDrivenAdjustmentEmptyPlt() {
         log.info("Launch test for non linear event  driven adjustment with PLT Empty");
         assertNull(calculAdjustement.nonLineaireEventDrivenAdjustment(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
-        assertNotNull(calculAdjustement.nonLineaireEventDrivenAdjustment(pltLossDataList,cap,adjustmentReturnPeriodBendings));
     }
+
 }

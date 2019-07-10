@@ -19,6 +19,7 @@ public class CalculAdjustementNonLineaireEventPeriodDrivenTest {
     private List<PLTLossData> pltLossDataList;
     private List<PEATData> adjustmentReturnPeriodBendings;
     private boolean cap;
+    CalculAdjustement calculAdjustement;
     @Before
     public void setUp() {
         log.info("Launch test for non linear event period driven");
@@ -37,18 +38,27 @@ public class CalculAdjustementNonLineaireEventPeriodDrivenTest {
             add(new PEATData(36,8443694,1,0.7));
 
         }};
+        calculAdjustement = new CalculAdjustement();
     }
     @Test
-    public void nonLineaireEventPeriodDrivenAdjustment() {
-        CalculAdjustement calculAdjustement = new CalculAdjustement();
+    public void nonLineaireEventPeriodDrivenAdjustmentNullPeatData() {
         log.info("Launch test for non linear event period driven with reference parameter PEAT DATA null");
         assertNull(calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossDataList,cap,null));
+    }
+    @Test
+    public void nonLineaireEventPeriodDrivenAdjustmentEmptyPeatData() {
         log.info("Launch test for non linear event period driven with reference parameter PEAT DATA Empty");
         assertNull(calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossDataList,cap,new ArrayList<>()));
+    }
+    @Test
+    public void nonLineaireEventPeriodDrivenAdjustmentNullPlt() {
         log.info("Launch test for non linear event period driven with reference parameter PLT NULL");
         assertNull(calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(null,cap,adjustmentReturnPeriodBendings));
+    }
+    @Test
+    public void nonLineaireEventPeriodDrivenAdjustmentEmptyPlt() {
         log.info("Launch test for non linear event period driven with reference parameter PLT EMPTY");
         assertNull(calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
-        //assertNotNull(calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossDataList,cap,adjustmentReturnPeriodBendings));
     }
+
 }

@@ -19,6 +19,7 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
     private double periodConstante;
     private boolean cap;
+    CalculAdjustement calculAdjustement;
     @Before
     public void setUp() {
         log.info("Launch test for OEP Return Period adjustment");
@@ -38,19 +39,29 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
             add(new AdjustmentReturnPeriodBending(20000,0.97));
 
         }};
+        calculAdjustement = new CalculAdjustement();
 
     }
     @Test
-    public void oepReturnPeriodBanding() {
-        CalculAdjustement calculAdjustement = new CalculAdjustement();
+    public void oepReturnPeriodBandingNullParameterAdjustmentReturnPeriodBending() {
         log.info("Launch test for OEP Return Period adjustment with parameter Adjustment return Period Bending [return period,lmf] null");
         assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,null,periodConstante));
+    }
+    @Test
+    public void oepReturnPeriodBandingEmptyParameterAdjustmentReturnPeriodBending() {
         log.info("Launch test for OEP Return Period adjustment with parameter Adjustment return Period Bending [return period,lmf] empty");
         assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>(),periodConstante));
+    }
+
+    @Test
+    public void oepReturnPeriodBandingNullPlt() {
         log.info("Launch test for OEP Return Period adjustment with PLT null");
         assertNull(calculAdjustement.oepReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings,periodConstante));
+    }
+
+    @Test
+    public void oepReturnPeriodBandingEmptyPlt() {
         log.info("Launch test for OEP Return Period adjustment with PLT empty");
         assertNull(calculAdjustement.oepReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings,periodConstante));
-        //assertNotNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings,periodConstante));
     }
 }
