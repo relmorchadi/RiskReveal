@@ -1,18 +1,18 @@
-<div *ngIf="inputs['visible']" [ngClass]="{'drawer': inputs['mode'] == 'default', 'drawer-pop-up': inputs['mode'] == 'pop-up'}">
+<div *ngIf="inputs['visible'] || inputs['mode'] == 'pop-up'" [ngClass]="{'drawer': inputs['mode'] == 'default', 'drawer-pop-up': inputs['mode'] == 'pop-up'}">
   <div class="drawer-content">
     <div class="navigation-icons-drawer">
-      <i class="icon-multiply" (click)="closeDrawer()"></i>
+      <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
     </div>
 
-    <div class="noMargin">
+    <div *ngIf="inputs['visible']" class="noMargin">
       <nz-tabset [nzSelectedIndex]="inputs.selectedTab.index" class="tabset-drawer">
         <nz-tab *ngIf="inputs['tabs']['basket']" [nzTitle]="basket">
                 <ng-template #basket>
                   <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
-                    Basket
+                    Selected
                   </span>
                 </ng-template>
-                <div class="basket-content" nz-row>
+                <div class="basket-content">
                   <div class="title-section-drawer">
                     <div class="left">
                       <h3>{{ inputs['basket'].length }} PLT{{ inputs['basket'].length == 1 ? '' : 's'}} selected</h3>
@@ -56,8 +56,7 @@
                       </nz-dropdown>
                     </div>
                   </div>
-                  <div>
-                    <table class="table">
+                    <table class="table" style="display: block;overflow-x: auto;">
                       <tbody>
                       <tr *ngFor="let plt of inputs['basket']">
                         <td>{{plt?.pltId | textLength}}</td>
@@ -65,10 +64,10 @@
                         <td>{{plt?.peril}}</td>
                         <td>{{plt?.regionPerilName}}</td>
                         <td>{{plt?.rap}}</td>
+                        <td><i style="cursor: pointer;" class="icon-multiply" (click)="unselectPlt(plt?.pltId)"></i></td>
                       </tr>
                       </tbody>
                     </table>
-                  </div>
                 </div>
               </nz-tab>
         <nz-tab *ngIf="inputs['tabs']['pltDetail']" [nzTitle]="pltDetails" [nzDisabled]="!inputs['pltDetail']">
@@ -82,7 +81,7 @@
             </div>
 
           </ng-template>
-          <div nz-row>
+          <div>
             <div class="title-section-drawer">
               <div class="left">
                 <h3>{{inputs['pltDetail']?.pltId}} - {{inputs['pltDetail']?.pltName}}</h3>
@@ -164,11 +163,12 @@
                       <span nz-col
                             class="summaryTableBody">{{inputs['pltDetail']?.targetRapCode}}</span>
                     </div>
-                    <div nz-row style="padding: 12px 0 0px 0;">
+                    <!--<div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Peril:</span>
                       <span nz-col
                             class="summaryTableBody">{{inputs['pltDetail']?.peril}}</span>
                     </div>
+                    -->
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Region Peril:</span>
                       <span nz-col

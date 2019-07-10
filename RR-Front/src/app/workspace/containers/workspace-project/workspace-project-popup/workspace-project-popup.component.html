@@ -74,46 +74,48 @@
   </ng-container>
 
   <ng-container *ngIf="browesing && selectionStep == 'plt'">
-    <div class="content">
-      <div class="left">
-        <app-plt-left-menu
-          [menuInputs]="Inputs | pickKeys : menuInputs"
-          (onSetSelectedUserTags)="setUserTags($event)"
-          (onSetFilters)="setFilters($event)"
-          (emitFilters)="emitFilters($event)"
-          (onProjectFilter)="filterPlts($event)"
-          (onWsHeaderSelection)="setWsHeaderSelect($event)"
-          (onSelectProjects)="setSelectedProjects($event)"
-          (unCkeckAllPlts)="unCheckAll()"
-        >
+      <div class="content">
+        <div class="left">
+          <app-plt-left-menu
+            [menuInputs]="Inputs | pickKeys : menuInputs"
+            (onSetSelectedUserTags)="setUserTags($event)"
+            (onSetFilters)="setFilters($event)"
+            (emitFilters)="emitFilters($event)"
+            (onProjectFilter)="filterPlts($event)"
+            (onWsHeaderSelection)="setWsHeaderSelect($event)"
+            (onSelectProjects)="setSelectedProjects($event)"
+            (unCkeckAllPlts)="unCheckAll()"
+          >
 
-        </app-plt-left-menu>
-      </div>
-      <div class="center">
-        <div class="title-as-tab">
+          </app-plt-left-menu>
+        </div>
+        <div class="center">
+          <div class="title-as-tab">
           <span>
             PLTs
           </span>
+          </div>
+          <div class="PLTs-content">
+            <app-plt-main-table
+              [tableInputs]="Inputs | pickKeys : tableInputs"
+              (onCheckAll)="checkAll($event)"
+              (onFilter)="filterPlts($event)"
+              (onPltClick)="toggleSelectPlts($event)"
+              (onSelectSinglePlt)="selectSinglePLT($event)"
+              (openPltInDrawer)="openPltInDrawer($event)"
+              (onItemSelectForMenu)="setSelectedPlt($event)"
+              (onSortChange)="onSortChange($event)"
+              (onCheckBoxSort)="onCheckBoxSort($event)"
+            ></app-plt-main-table>
+          </div>
         </div>
-        <div class="PLTs-content">
-          <app-plt-main-table
-            [tableInputs]="Inputs | pickKeys : tableInputs"
-            (onCheckAll)="checkAll($event)"
-            (onFilter)="filterPlts($event)"
-            (onPltClick)="toggleSelectPlts($event)"
-            (onSelectSinglePlt)="selectSinglePLT($event)"
-            (openPltInDrawer)="openPltInDrawer($event)"
-            (onItemSelectForMenu)="setSelectedPlt($event)"
-          ></app-plt-main-table>
+        <div class="right">
+          <app-plt-right-menu
+            (actionDispatcher)="rightMenuActionDispatcher($event)"
+            [Inputs]="rightMenuInputs"
+          ></app-plt-right-menu>
         </div>
       </div>
-      <div class="right">
-        <app-plt-right-menu
-          (actionDispatcher)="rightMenuActionDispatcher($event)"
-          [Inputs]="rightMenuInputs"
-        ></app-plt-right-menu>
-      </div>
-    </div>
   </ng-container>
 
   <p-footer>
