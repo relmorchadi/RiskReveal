@@ -16,17 +16,26 @@ import {RiskLinkState} from '../../store/states';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {
-  AddToBasketAction, ApplyFinancialPerspectiveAction,
+  AddToBasketAction,
+  ApplyFinancialPerspectiveAction, DeleteEdmRdmaction,
   DeleteFromBasketAction,
   LoadAnalysisForLinkingAction,
   LoadFinancialPerspectiveAction,
   LoadPortfolioForLinkingAction,
-  PatchAddToBasketStateAction, PatchTargetFPAction, RemoveFinancialPerspectiveAction, SaveFinancialPerspectiveAction,
+  PatchAddToBasketStateAction,
+  PatchResultsAction,
+  PatchTargetFPAction,
+  RemoveFinancialPerspectiveAction,
+  SaveFinancialPerspectiveAction,
   SearchRiskLinkEDMAndRDMAction,
   ToggleAnalysisForLinkingAction,
   ToggleRiskLinkAnalysisAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkFPAnalysisAction, ToggleRiskLinkFPStandardAction,
-  ToggleRiskLinkPortfolioAction, ToggleRiskLinkResultAction, ToggleRiskLinkSummaryAction
+  ToggleRiskLinkEDMAndRDMSelectedAction,
+  ToggleRiskLinkFPAnalysisAction,
+  ToggleRiskLinkFPStandardAction,
+  ToggleRiskLinkPortfolioAction,
+  ToggleRiskLinkResultAction,
+  ToggleRiskLinkSummaryAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
@@ -36,7 +45,7 @@ import {
   SelectRiskLinkEDMAndRDMAction,
   ToggleRiskLinkEDMAndRDMAction
 } from '../../store/actions';
-import { DataTables } from './data';
+import {DataTables} from './data';
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -46,8 +55,8 @@ import { DataTables } from './data';
 export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   regionPeril;
-  hyperLinks: string[]= ['Risk link', 'File-based'];
-  hyperLinksRoutes: any= {
+  hyperLinks: string[] = ['Risk link', 'File-based'];
+  hyperLinksRoutes: any = {
     'Risk link': '/RiskLink',
     'File-based': '/FileBasedImport'
   };
@@ -55,6 +64,20 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     wsId: string,
     uwYear: string
   };
+
+  tree = [];
+  targetRap = [
+    {title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
+    {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
+    {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false},
+  ];
+
+  globalRap = [
+    {title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
+    {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
+    {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false},
+  ];
+
   lastSelectedIndex = null;
   lastSelectedIndexResult = null;
   lastSelectedIndexSummary = null;
@@ -79,6 +102,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
+  @ViewChild('obRes')
+  dropDownFPOb: any;
+  @ViewChild('rpRes')
+  dropDownFP: any;
+  scopeForChanges = 'currentSelection';
 
   displayDropdownRDMEDM = false;
   displayListRDMEDM = false;
@@ -117,12 +145,14 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   contextSelectedItem: any;
   itemCm = [
     {
-      label: 'Edit', icon: 'pi pi-pencil', command: (event) => {this.editRowPopUp = true; }
+      label: 'Edit', icon: 'pi pi-pencil', command: (event) => {
+        this.editRowPopUp = true;
+      }
     },
     {
       label: 'Delete Item',
       icon: 'pi pi-trash',
-      command: () => this.deleteFromBasket(this.contextSelectedItem.id , 'results')
+      command: () => this.deleteFromBasket(this.contextSelectedItem.id, 'results')
     },
   ];
 
@@ -155,11 +185,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
         this.detectChanges();
       }),
-      this.route.params.subscribe( ({wsId, year}) => {
-        this.hyperLinksConfig= {
+      this.route.params.subscribe(({wsId, year}) => {
+        this.hyperLinksConfig = {
           wsId,
           uwYear: year
-        }
+        };
         this.detectChanges();
       })
     ];
@@ -185,6 +215,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   changeFinancialPTarget(target) {
   }
+
   /** Manage Columns Method's */
   toggleColumnsManager(target) {
     this.managePopUp = !this.managePopUp;
@@ -216,9 +247,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.columnsForConfig = _.merge(
       [],
       this.columnsForConfig,
-      { [i]: {...this.columnsForConfig[i], visible: !this.columnsForConfig[i].visible} }
+      {[i]: {...this.columnsForConfig[i], visible: !this.columnsForConfig[i].visible}}
     );
   }
+
   /** */
   focusInput() {
     this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
@@ -260,6 +292,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   toggleItemsListRDM(RDM) {
     this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelectedAction(RDM));
   }
+
   /** Select EDM & RDM DropDown Method's */
   toggleItems(RDM, event, source) {
     this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
@@ -283,6 +316,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   closeDropdown() {
     this.displayDropdownRDMEDM = false;
   }
+
   /** */
   fillLists() {
     this.store.dispatch(new SelectRiskLinkEDMAndRDMAction());
@@ -372,9 +406,13 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     return this.state.selectedEDMOrRDM === 'rdm' ? 'Analysis' : 'Portfolio';
   }
 
+  clearSelection(item, target) {
+    this.store.dispatch(new DeleteEdmRdmaction({id: item.id, target: target}));
+  }
+
   getNumberElement(item, source) {
     if (source === 'portfolio') {
-      if (this.state.portfolios ===  null ) {
+      if (this.state.portfolios === null) {
         return 0;
       } else {
         if (typeof this.state.portfolios[item.id] !== 'undefined') {
@@ -384,7 +422,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         }
       }
     } else if (source === 'analysis') {
-      if (this.state.analysis ===  null) {
+      if (this.state.analysis === null) {
         return 0;
       } else {
         if (typeof this.state.analysis[item.id] !== 'undefined') {
@@ -398,13 +436,13 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   getNumberOfSelected(item, source) {
     if (source === 'portfolio') {
-      if (this.state.portfolios ===  null ) {
+      if (this.state.portfolios === null) {
         return 0;
       } else {
         return _.filter(_.toArray(this.state.portfolios[item.id].data), dt => dt.selected).length;
       }
     } else if (source === 'analysis') {
-      if (this.state.analysis ===  null) {
+      if (this.state.analysis === null) {
         return 0;
       } else {
         return _.filter(_.toArray(this.state.analysis[item.id].data), dt => dt.selected).length;
@@ -508,7 +546,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexSummary = index;
       }
-    }  else if (target === 'fpS') {
+    } else if (target === 'fpS') {
       if ((window as any).event.ctrlKey) {
         this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexFPstandard = index;
@@ -525,7 +563,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexFPstandard = index;
       }
-    }  else if (target === 'fpA') {
+    } else if (target === 'fpA') {
       if ((window as any).event.ctrlKey) {
         this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexFPAnalysis = index;
@@ -554,53 +592,101 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       }
       if (from === to) {
         if (this.state.selectedEDMOrRDM === 'rdm') {
-          this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: this.getTableData()[from]}));
+          this.store.dispatch(new ToggleRiskLinkAnalysisAction({
+            action: 'selectOne',
+            value: true,
+            item: this.getTableData()[from]
+          }));
         } else {
-          this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: this.getTableData()[from]}));
+          this.store.dispatch(new ToggleRiskLinkPortfolioAction({
+            action: 'selectOne',
+            value: true,
+            item: this.getTableData()[from]
+          }));
         }
       } else {
         for (let i = from; i <= to; i++) {
           if (this.state.selectedEDMOrRDM === 'rdm') {
-            this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: this.getTableData()[i]}));
+            this.store.dispatch(new ToggleRiskLinkAnalysisAction({
+              action: 'selectOne',
+              value: true,
+              item: this.getTableData()[i]
+            }));
           } else {
-            this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: this.getTableData()[i]}));
+            this.store.dispatch(new ToggleRiskLinkPortfolioAction({
+              action: 'selectOne',
+              value: true,
+              item: this.getTableData()[i]
+            }));
           }
         }
       }
     } else if (target === 'R') {
       this.store.dispatch(new ToggleRiskLinkResultAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: this.dataList(this.state.results.data)[from]}));
+        this.store.dispatch(new ToggleRiskLinkResultAction({
+          action: 'selectOne',
+          value: true,
+          item: this.dataList(this.state.results.data)[from]
+        }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: this.dataList(this.state.results.data)[i]}));
+          this.store.dispatch(new ToggleRiskLinkResultAction({
+            action: 'selectOne',
+            value: true,
+            item: this.dataList(this.state.results.data)[i]
+          }));
         }
       }
     } else if (target === 'S') {
       this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: this.dataList(this.state.summaries.data)[from]}));
+        this.store.dispatch(new ToggleRiskLinkSummaryAction({
+          action: 'selectOne',
+          value: true,
+          item: this.dataList(this.state.summaries.data)[from]
+        }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: this.dataList(this.state.summaries.data)[i]}));
+          this.store.dispatch(new ToggleRiskLinkSummaryAction({
+            action: 'selectOne',
+            value: true,
+            item: this.dataList(this.state.summaries.data)[i]
+          }));
         }
       }
     } else if (target === 'fpS') {
       this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.standard)[from]}));
+        this.store.dispatch(new ToggleRiskLinkFPStandardAction({
+          action: 'selectOne',
+          value: true,
+          item: this.dataList(this.workingFSC.standard)[from]
+        }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.standard)[i]}));
+          this.store.dispatch(new ToggleRiskLinkFPStandardAction({
+            action: 'selectOne',
+            value: true,
+            item: this.dataList(this.workingFSC.standard)[i]
+          }));
         }
       }
-    }  else if (target === 'fpA') {
+    } else if (target === 'fpA') {
       this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.analysis.data)[from]}));
+        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({
+          action: 'selectOne',
+          value: true,
+          item: this.dataList(this.workingFSC.analysis.data)[from]
+        }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.analysis.data)[i]}));
+          this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({
+            action: 'selectOne',
+            value: true,
+            item: this.dataList(this.workingFSC.analysis.data)[i]
+          }));
         }
       }
     }
@@ -666,11 +752,159 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   updateRow(item, target) {
     let title;
-    if (target === 'Rp') {title = 'Override Region Peril';
-    } else if (target === 'Ob') {title = 'Override Occurrence Basis';
-    } else if (target === 'Peqt') {title = 'Target Rap Selection'; }
+    if (target === 'Rp') {
+      title = 'Override Region Peril';
+    } else if (target === 'Ob') {
+      title = 'Override Occurrence Basis';
+    } else if (target === 'Peqt') {
+      title = 'Target Rap Selection';
+      this.getTreeApp();
+    }
+    this.scopeForChanges = 'currentSelection';
     this.editableRow = {item: item, target: target, title: title};
     this.singleColEdit = true;
+  }
+
+  getTreeApp() {
+    const data = _.toArray(this.state.results.data);
+    const regions = _.unionBy(data.map(dt => dt.regionPeril));
+    this.tree = regions.map(dt => {
+      return ({title: dt, expanded: true, selected: false, children: []});
+    });
+    this.tree.forEach(dt => {
+      dt.children = [...this.getInnerTree(dt.title)];
+    });
+  }
+
+  getInnerTree(target) {
+    const data = _.toArray(this.state.results.data);
+    let array = [];
+    data.forEach(dt => {
+      if (target === dt.regionPeril) {
+        array = [...array, {
+          title: `${dt.analysisId} | ${dt.analysisName} | ${dt.description}`,
+          selected: false,
+          selectedItems: this.targetRap
+        }];
+      }
+    });
+    return array;
+  }
+
+  getCheckedValue(item) {
+    let tab = _.filter(this.tree, dt => dt.selected === true);
+    if (tab.length === 0) {
+      this.tree.forEach(dt => {
+        tab = _.filter(dt.children, ws => ws.selected);
+      });
+      if (tab.length === 0) {
+        this.globalRap.forEach(dt => {
+          if (dt.title === item) {
+            return dt.selected;
+          }
+        });
+      } else {
+        tab[0].selectedItems.forEach(dt => {
+          if (dt.title === item) {
+            return dt.selected;
+          }
+        });
+      }
+    } else {
+      let selected = true;
+      tab[0].children.forEach(dt => dt.selectedItems.forEach(ws => {
+        if (ws.title === item) {
+          if (ws.selected === false) {
+            selected = false;
+          }
+        }
+      }));
+      return selected;
+    }
+  }
+
+  checkTargetRap(item, value) {
+    let tab = _.filter(this.tree, dt => dt.selected === true);
+    console.log(tab);
+    if (tab.length === 0) {
+      this.tree.forEach(dt => {
+        tab = _.filter(dt.children, ws => ws.selected);
+      });
+      console.log(tab);
+      if (tab.length === 0) {
+        this.tree.forEach(dt => dt.children.forEach(ws => ws.selectedItems.forEach(kt => {
+          if (kt.title === item) {
+            kt.selected = !value;
+          }
+        })));
+      } else {
+        this.tree.forEach(dt => {
+          dt.children.forEach(ws => {
+            if (ws.title === tab[0].title) {
+              ws.selectedItems.forEach(kt => {
+                if (kt.title === item) {
+                  kt.selected = !value;
+                }
+              });
+            }
+          });
+        });
+      }
+    } else {
+      this.tree.forEach(kt => {
+          if (kt.title === tab[0].title) {
+            kt.children.forEach(dt => dt.selectedItems.forEach(ws => {
+              if (ws.title === item) {
+                ws.selected = !value;
+              }
+            }));
+          }
+        }
+      );
+    }
+    console.log(this.tree);
+  }
+
+  hideChild(item) {
+    item.expanded = !item.expanded;
+  }
+
+  selectBranch(item) {
+    this.tree.forEach(dt => {
+      dt.selected = false;
+      dt.children.forEach(ws => ws.selected = false);
+    });
+    item.selected = true;
+  }
+
+  saveChangesForResult() {
+
+  }
+
+  editSingleColRes(target, $event = null, row = null) {
+    if (target === 'Rp') {
+      this.singleColEdit = false;
+      this.store.dispatch(new PatchResultsAction({
+        id: row.id,
+        target: 'regionPeril',
+        value: this.dropDownFP.value,
+        scope: this.scopeForChanges === 'currentSelection' ? 'Single' : 'All'
+      }));
+    } else if (target === 'Ob') {
+      this.singleColEdit = false;
+      this.store.dispatch(new PatchResultsAction({
+        id: row.id,
+        target: 'occurrenceBasis',
+        value: this.dropDownFPOb.value,
+        scope: this.scopeForChanges === 'currentSelection' ? 'Single' : 'All'
+      }));
+    } else if (target === 'TC') {
+      if ($event !== null && row !== null) {
+        this.store.dispatch(new PatchResultsAction({id: row.id, target: 'targetCurrency', value: $event}));
+      }
+    } else if (target === 'UM') {
+      this.store.dispatch(new PatchResultsAction({id: row.id, target: 'unitMultiplier', value: $event}));
+    }
   }
 
   detectChanges() {

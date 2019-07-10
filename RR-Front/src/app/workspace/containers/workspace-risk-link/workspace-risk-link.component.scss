@@ -4,10 +4,6 @@
   overflow: hidden;
   display: flex;
   width: 100%;
-
-  ::ng-deep span.ant-checkbox > input.ant-checkbox-input{
-    z-index: -10 !important;
-  }
 }
 
 ::ng-deep {
@@ -844,6 +840,14 @@
     align-items: center;
   }
 
+  .row-list {
+    display: flex;
+
+    .popover-menu {
+      width: 50%;
+    }
+  }
+
   .label-input {
     display: flex;
     font-weight: 500;
@@ -1422,4 +1426,15 @@ FINANCIAL PERSPECTIVE POPUP STYLE
   }
 }
 
+/*
+=======================================================================================
+PEQT POPUP STYLE
+=======================================================================================
+*/
 
+.parent-node {
+  font-size: 15px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  word-spacing: 3px;
+}

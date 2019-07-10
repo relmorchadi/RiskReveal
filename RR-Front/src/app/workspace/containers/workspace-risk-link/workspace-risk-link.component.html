@@ -250,6 +250,7 @@
                         <span class="loading">Scanning</span>
                         <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
                       </ng-container>
+                      <i (click)="clearSelection(itemsE, 'EDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
                 </ul>
@@ -275,6 +276,7 @@
                         <span class="loading">Scanning</span>
                         <i style="color: #0CB79B" class="logo-right icon-loop_24px"></i>
                       </ng-container>
+                      <i (click)="clearSelection(itemsR, 'RDM')" class="logo-right icon-trash-alt"></i>
                     </li>
                   </ng-container>
                 </ul>
@@ -352,6 +354,7 @@
               <div>Exposure Summaries</div>
             </div>
             <div class="body-wrapper-header-right-summary">
+              <i class="icon-filter" style="margin-right: 20px;font-size: 23px;" (click)="filterModalVisibility = true"></i>
               <div class="icon-drop">
                 <i *ngIf="state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
                    class="icon-keyboard_arrow_up_24px"></i>
@@ -454,6 +457,7 @@
               <div>Analysis Results</div>
             </div>
             <div class="body-wrapper-header-right-summary">
+              <i class="icon-filter" style="margin-right: 20px;font-size: 23px;" (click)="filterModalVisibility = true"></i>
               <button class="a-buttons-outlined" (click)="linkingModalVisibility = true"
                       *ngIf="state.collapse.collapseAnalysis"> LINKING
               </button>
@@ -549,7 +553,8 @@
                           <ng-template pTemplate="input">
                             <nz-select
                               style="width: 100%"
-                              [(ngModel)]="rowData.targetCurrency"
+                              (ngModelChange)="editSingleColRes('TC', $event, rowData)"
+                              [ngModel]="rowData.targetCurrency"
                               nzShowSearch
                               class="a-dropdown-small input-wrapper"
                               nzPlaceHolder="TAG CURRENCY"
@@ -607,8 +612,8 @@
               <nz-option *ngFor="let op of state.financialValidator.calibration.data" [nzLabel]="op"
                          [nzValue]="op"></nz-option>
             </nz-select>
-            <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish to ARC</label>
-            <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish for Pricing</label>
+            <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish For Accumulation</label>
+            <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish For Pricing</label>
           </div>
           <div class="body-wrap-footer-right">
             <button class="a-buttons-contained">IMPORT</button>
@@ -1221,13 +1226,13 @@
   </div>
   <p-footer>
     <button (click)="editRowPopUp = false" class="a-button-text-cancel">CANCEL</button>
-    <button class="a-buttons-contained">SAVE</button>
+    <button (click)="saveChangesForResult()" class="a-buttons-contained">SAVE</button>
   </p-footer>
 </p-dialog>
 <!--Pop Up Low Lvl Edit-->
 <p-dialog [visible]="singleColEdit"
           [closable]="false"
-          styleClass="m-dialog-modal-m-f"
+          styleClass="m-dialog-modal-sm-l"
           [modal]="true"
           [autoZIndex]="false"
           [responsive]="true"
@@ -1243,7 +1248,7 @@
     <div class="input-group-modal">
       <div class="row-input" *ngIf="editableRow.target === 'Rp'"><span class="label-input">Region Peril</span>
         <nz-select
-          style="padding: 10px 0;"
+          style="padding: 10px 0;" #rpRes
           [ngModel]="editableRow.item.regionPeril"
           nzShowSearch
           class="a-dropdown-small input-wrapper"
@@ -1261,7 +1266,7 @@
       </div>
       <div class="row-input" *ngIf="editableRow.target === 'Ob'"><span class="label-input">Occurence Basis</span>
         <nz-select
-          style="padding: 10px 0;"
+          style="padding: 10px 0;" #obRes
           [ngModel]="editableRow.item.occurrenceBasis"
           nzShowSearch
           class="a-dropdown-small input-wrapper"
@@ -1271,25 +1276,60 @@
           <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
         </nz-select>
       </div>
-      <div style="display: flex; flex-direction: column;">
+
+      <div style="display: flex; flex-direction: column;" *ngIf="editableRow.target !== 'Peqt'">
         <span style="" class="subtitle-2 subtitle-override">Override Reason:</span>
         <textarea>
 
         </textarea>
       </div>
     </div>
+    <div class="input-group-modal" style="width:100%; padding:0;">
+      <div class="row-list" *ngIf="editableRow.target === 'Peqt'">
+        <div class="popover-menu">
+          <span class="body-2">RL_EUWS_Mv11.2</span>
+          <ul>
+            <li *ngFor="let parent of tree" style="flex-direction: column">
+              <div class="parent-node" [ngStyle]="{'background-color': parent.selected ? 'yellow' : '#FFFFFF'}" (click)="selectBranch(parent)"
+                   (dblclick)="hideChild(parent)">
+                <i [ngClass]="{'icon-arrow_right_24px': parent.expanded, 'icon-arrow_drop_down_24px': !parent.expanded}"></i>
+                {{parent?.title}}
+              </div>
+              <ul *ngIf="parent.expanded">
+                <li style="padding: 2px 5px 2px 20px;" [ngStyle]="{'background-color': item.selected ? 'yellow' : '#FFFFFF'}"
+                    (click)="selectBranch(item)" *ngFor="let item of parent.children">
+                  {{item?.title}}
+                </li>
+              </ul>
+            </li>
+          </ul>
+<!--          <p-tree [value]="files" selectionMode="single" [(selection)]="selectedNode"
+                  (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>-->
+        </div>
+        <div class="popover-menu">
+          <ul>
+            <li (click)="checkTargetRap(item, getCheckedValue(item.title))" *ngFor="let item of targetRap">
+              <label nz-checkbox style="margin-right: 5px"
+                     [nzChecked]="getCheckedValue(item.title)">
+                {{item.title}}
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="fp-options-wrapper">
-    <span style="" class="subtitle-2 subtitle-override">Scope Of Editing:</span>
+  <div *ngIf="editableRow.target !== 'Peqt'" class="fp-options-wrapper">
+    <span class="subtitle-2 subtitle-override">Scope Of Editing:</span>
     <div class="context-wrapper">
-      <nz-radio-group class="default-radio" (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target">
-        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
+      <nz-radio-group class="default-radio" [(ngModel)]="scopeForChanges">
+        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Analysis</span></label>
         <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>
       </nz-radio-group>
     </div>
   </div>
   <p-footer>
     <button (click)="singleColEdit = false" class="a-button-text-cancel">CANCEL</button>
-    <button class="a-buttons-contained">SAVE</button>
+    <button (click)="editSingleColRes(editableRow.target, null, editableRow.item)" class="a-buttons-contained">SAVE</button>
   </p-footer>
 </p-dialog>

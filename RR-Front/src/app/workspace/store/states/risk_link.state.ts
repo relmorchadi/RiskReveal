@@ -4,13 +4,13 @@ import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
   AddToBasketAction,
-  ApplyFinancialPerspectiveAction,
+  ApplyFinancialPerspectiveAction, DeleteEdmRdmaction,
   DeleteFromBasketAction,
   LoadAnalysisForLinkingAction,
   LoadFinancialPerspectiveAction,
   LoadPortfolioForLinkingAction,
   LoadRiskLinkDataAction,
-  PatchAddToBasketStateAction,
+  PatchAddToBasketStateAction, PatchResultsAction,
   PatchRiskLinkAction,
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
@@ -70,7 +70,7 @@ const initiaState: RiskLinkModel = {
     checkedPricing: false,
   },
   financialValidator: {
-    rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-P-RL17-SQL15'], selected: 'AZU-P-RL17-SQL14'},
+    rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-U-RL17-SQL14', 'AZU-U2-RL181-SQL16'], selected: 'AZU-P-RL17-SQL14'},
     financialPerspectiveELT: {
       data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
       selected: 'Net Loss Pre Cat (RL)'
@@ -208,6 +208,55 @@ export class RiskLinkState implements NgxsOnInit {
     });
   }
 
+  @Action(PatchResultsAction)
+  patchResult(ctx: StateContext<RiskLinkModel>, {payload}: PatchResultsAction) {
+    const state = ctx.getState();
+    const {id, target, value, scope} = payload;
+    if (target === 'unitMultiplier') {
+      ctx.patchState({
+        results: {...state.results, data: {
+          ...state.results.data, [id]: {...state.results.data[id], unitMultiplier: value}
+          }}
+      });
+    } else if (target === 'regionPeril') {
+      if (scope === 'Single') {
+        ctx.patchState({
+          results: {...state.results, data: {
+              ...state.results.data, [id]: {...state.results.data[id], regionPeril: value}
+            }}
+        });
+      } else {
+        ctx.patchState({
+          results: {...state.results, data: Object.assign({}, ..._.toArray(state.results.data).map(dt => {
+            return ({[dt.id]: {...dt, regionPeril: value}});
+          }))}
+        });
+      }
+    } else if (target === 'targetCurrency') {
+      ctx.patchState({
+        results: {...state.results, data: {
+            ...state.results.data, [id]: {...state.results.data[id], targetCurrency: value}
+          }}
+      });
+    } else if (target === 'occurrenceBasis') {
+      if (scope === 'Single') {
+        ctx.patchState({
+          results: {
+            ...state.results, data: {
+              ...state.results.data, [id]: {...state.results.data[id], occurrenceBasis: value}
+            }
+          }
+        });
+      } else {
+        ctx.patchState({
+          results: {...state.results, data: Object.assign({}, ..._.toArray(state.results.data).map(dt => {
+              return ({[dt.id]: {...dt, occurrenceBasis: value}});
+            }))}
+        });
+      }
+    }
+  }
+
   @Action(ToggleRiskLinkEDMAndRDMAction)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: ToggleRiskLinkEDMAndRDMAction) {
     const state = ctx.getState();
@@ -226,10 +275,7 @@ export class RiskLinkState implements NgxsOnInit {
       ctx.patchState({
         listEdmRdm: {
           ...state.listEdmRdm,
-          data: {
-            ...state.listEdmRdm.data,
-            [item]: {...state.listEdmRdm.data[item], selected: !selected, source: !selected ? source : ''}
-          },
+          data: _.merge({},state.listEdmRdm.data, {[item]: {...state.listEdmRdm.data[item], selected: !selected, source: !selected ? source : ''}}),
           dataSelected: array
         }
       });
@@ -686,6 +732,37 @@ export class RiskLinkState implements NgxsOnInit {
           }
         }
       );
+    }
+  }
+
+  @Action(DeleteEdmRdmaction)
+  deleteEdmrdm(ctx: StateContext<RiskLinkModel>, {payload}: DeleteEdmRdmaction) {
+    const state = ctx.getState();
+    const {id, target} = payload;
+    if (target === 'RDM') {
+      ctx.patchState({
+        listEdmRdm: {
+          ...state.listEdmRdm,
+          selectedListEDMAndRDM: {
+            ...state.listEdmRdm.selectedListEDMAndRDM,
+            rdm: Object.assign({}, ..._.filter(_.toArray(state.listEdmRdm.selectedListEDMAndRDM.rdm), dt => dt.id !== id).map(ws => {
+              return ({[ws.id]: {...ws}});
+            }))
+          }
+        }
+      });
+    } else {
+      ctx.patchState({
+        listEdmRdm: {
+          ...state.listEdmRdm,
+          selectedListEDMAndRDM: {
+            ...state.listEdmRdm.selectedListEDMAndRDM,
+            edm: Object.assign({}, ..._.filter(_.toArray(state.listEdmRdm.selectedListEDMAndRDM.edm), dt => dt.id !== id).map(ws => {
+              return ({[ws.id]: {...ws}});
+            }))
+          }
+        }
+      });
     }
   }
 
