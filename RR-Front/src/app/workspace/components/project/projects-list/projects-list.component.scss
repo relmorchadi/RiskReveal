@@ -1,14 +1,14 @@
-
-::ng-deep {
-  div.cdk-virtual-scroll-content-wrapper {
-    display: flex;
-    flex-wrap: wrap;
-    padding: 10px 0 50px;
-    margin: 0 auto;
-    justify-content: flex-start;
+:host{
+  ::ng-deep {
+    div.cdk-virtual-scroll-content-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      padding: 10px 0 50px;
+      margin: 0 auto;
+      justify-content: flex-start;
+    }
   }
 }
-
 
 .card-holder-wrap {
   display: flex;
@@ -25,6 +25,8 @@
   @media screen and (max-width: 1200px) {
     justify-content: center;
   }
+
+
   /*
   @media screen and (min-width: 2200px) {
     width: 2250px;
