@@ -282,7 +282,7 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       tabs: {'basket': true, 'pltDetail': true},
       visible: true,
       mode: "pop-up"
-    }
+    };
     this.setRightMenuSelectedTab('basket');
   }
 
@@ -989,10 +989,24 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   }
 
   rightMenuActionDispatcher(action: Message) {
+    console.log(action);
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
+        if (this.getRightMenuKey('pltDetail')) {
+          this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
+        }
         this.updateMenuKey('visible', false);
+        break;
+      case rightMenuStore.openDrawer:
+        this.updateMenuKey('visible', true);
+        break;
+      case  rightMenuStore.unselectPlt:
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map([action.payload], plt => plt),
+            _.range([action.payload].length).map(el => ({type: false}))
+          )
+        );
         break;
       default:
         console.log('default right menu action');
