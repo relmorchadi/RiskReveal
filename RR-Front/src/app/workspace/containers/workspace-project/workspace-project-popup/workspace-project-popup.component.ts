@@ -1006,6 +1006,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     console.log(action);
     switch (action.type) {
       case rightMenuStore.closeDrawer:
+        console.log('closing');
         /*if(this.getRightMenuKey('pltDetail')) {
           this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
         }*/

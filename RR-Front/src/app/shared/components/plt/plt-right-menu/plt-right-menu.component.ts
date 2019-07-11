@@ -188,7 +188,7 @@ export class PltRightMenuComponent implements OnInit {
       type: this.inputs['visible'] ? rightMenuStore.closeDrawer : rightMenuStore.openDrawer
     })
   }
-
+  
   selectCardThead(card) {
     this.theads.forEach(thead => {
       thead.cards.forEach(card => {
