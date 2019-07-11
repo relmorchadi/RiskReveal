@@ -8,7 +8,21 @@
   }
 }
 
+::ng-deep .ui-dialog-content {
+  padding: 10px 2px 10px 10px !important;
+  overflow: hidden !important;
+}
+
+.tabset-plt-details {
+  ::ng-deep .ant-tabs .ant-tabs-top-content > .ant-tabs-tabpane, .ant-tabs .ant-tabs-bottom-content > .ant-tabs-tabpane {
+    overflow: hidden !important;
+  }
+}
+
 .content {
+  flex: 1;
+  height: 100%;
+
 
   .title-as-tab {
     display: flex;
@@ -26,6 +40,26 @@
   .right, .center, .left {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
     margin-right: 10px;
+  }
+
+  .right {
+    margin: 0;
+    max-width: 354px;
+  }
+
+  .left {
+    .tabset-left .title-list {
+      max-width: 210px !important;
+    }
+
+    ::ng-deep .tabset-left .ant-tabs-content {
+      height: 66vh !important;
+    }
+  }
+
+  ::ng-deep .ui-table-scrollable-body {
+    height: 47vh;
+    max-height: none;
   }
 
   .PLTs-content {
