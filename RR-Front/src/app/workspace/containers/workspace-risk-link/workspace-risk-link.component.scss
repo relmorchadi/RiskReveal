@@ -345,7 +345,7 @@
               font-size: 11px;
               border: 1px solid transparent;
               border-radius: 20px;
-              width: 35px;
+              min-width: 35px;
               background-color: rgba(0, 0, 0, 0.05);
               text-align: center;
               padding: 1px 3px 1px 1px;
@@ -1090,8 +1090,9 @@ SELECT EDM AND RDM DROPDOWN STYLE
 
         i {
           font-weight: bold;
-          margin-left: -1px;
-          margin-right: 0 !important;
+          margin-left: 1px;
+          margin-top: 1px;
+          display: flex;
         }
       }
 
@@ -1242,6 +1243,10 @@ TABLE STYLE
           }
         }
       }
+    }
+
+    .ui-table .ui-editable-column input:focus {
+      outline: 0;
     }
 
     .ui-table-tbody {
@@ -1437,4 +1442,11 @@ PEQT POPUP STYLE
   font-weight: bold;
   letter-spacing: 1px;
   word-spacing: 3px;
+}
+
+.absolute-menu {
+  position: absolute;
+  right: 25px;
+  width: 45% !important;
+  top: 40px;
 }

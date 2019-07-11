@@ -398,6 +398,10 @@
                 <tr>
                   <ng-container *ngFor="let col of columns">
                     <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
+                      <div class="" *ngIf="col.type === 'selection'">
+                        <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'S')"
+                               [ngModel]="rowData.selected"></label>
+                      </div>
                       <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                       <div *ngIf="col.type === 'progress'">
                         <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
@@ -488,13 +492,16 @@
                   <ng-container *ngFor="let col of columns">
                     <th *ngIf="col.visible">
                       <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                      <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
+                      <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
                         {{col.header}}
                         <div class="search-bar-table">
                           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                           <input pInputText type="text"
                                  (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
                         </div>
+                      </div>
+                      <div *ngIf="col.type === 'check'">
+                        <i style="font-size: 20px;" [ngClass]="col.icon"></i>
                       </div>
                     </th>
                   </ng-container>
@@ -504,6 +511,10 @@
                 <tr [pContextMenuRow]="rowData">
                   <ng-container *ngFor="let col of columns">
                     <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                      <div class="" *ngIf="col.type === 'selection'">
+                        <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'R')"
+                               [ngModel]="rowData.selected"></label>
+                      </div>
                       <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                       <div class="text-data" *ngIf="col.type === 'progress'">
                         <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
@@ -511,9 +522,19 @@
                       </div>
                       <div class="text-data" (click)="openFinancialP()" [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'multiple'">
-                        <span *ngIf="rowData.financialPerspective.length > 1">M*</span>
-                        <span
-                          *ngIf="rowData.financialPerspective.length <= 1">{{rowData?.financialPerspective[0]}}</span>
+                        <span [nzTitle]="infoFP" nzPlacement="topLeft" nz-tooltip
+                              *ngIf="rowData.financialPerspective.length > 1">M*</span>
+                        <span [nzTitle]="infoFP" nzPlacement="topLeft" nz-tooltip
+                              *ngIf="rowData.financialPerspective.length <= 1">{{rowData?.financialPerspective[0]}}</span>
+                        <ng-template #infoFP>
+                          <div class="popover-menu">
+                            <ul style="margin-bottom: 0">
+                              <li *ngFor="let item of rowData.financialPerspective" style="border: none;">
+                                <span>{{item}}: {{getCodeFp(item)}}</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </ng-template>
                       </div>
                       <div class="text-data" (click)="selectRows(rowData, i, 'R')"
                            [ngClass]="{'highlight-temp': col.highlight}"
@@ -533,6 +554,9 @@
                       </div>
                       <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                            *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                      <div style="padding-left: 10px;" *ngIf="col.type === 'check'">
+                        <label nz-checkbox [(ngModel)]="rowData[col.field]"></label>
+                      </div>
                     </th>
                     <ng-container *ngIf="col.edit">
                       <th pEditableColumn *ngIf="col.field === 'unitMultiplier'"
@@ -1296,26 +1320,25 @@
                 {{parent?.title}}
               </div>
               <ul *ngIf="parent.expanded">
-                <li style="padding: 2px 5px 2px 20px;" [ngStyle]="{'background-color': item.selected ? 'yellow' : '#FFFFFF'}"
+                <li style="padding: 2px 5px 2px 20px;" [ngStyle]="{'background-color': item.selected ? '#E9E9E9' : '#FFFFFF'}"
                     (click)="selectBranch(item)" *ngFor="let item of parent.children">
                   {{item?.title}}
+                  <div class="popover-menu absolute-menu" *ngIf="item.selected">
+                    <ul>
+                      <li *ngFor="let innerItem of item.selectedItems">
+                        <label nz-checkbox style="margin-right: 5px"
+                               [(ngModel)]="innerItem.selected">
+                          {{innerItem.title}}
+                        </label>
+                      </li>
+                    </ul>
+                  </div>
                 </li>
               </ul>
             </li>
           </ul>
-<!--          <p-tree [value]="files" selectionMode="single" [(selection)]="selectedNode"
-                  (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>-->
         </div>
-        <div class="popover-menu">
-          <ul>
-            <li (click)="checkTargetRap(item, getCheckedValue(item.title))" *ngFor="let item of targetRap">
-              <label nz-checkbox style="margin-right: 5px"
-                     [nzChecked]="getCheckedValue(item.title)">
-                {{item.title}}
-              </label>
-            </li>
-          </ul>
-        </div>
+
       </div>
     </div>
   </div>

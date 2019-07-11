@@ -700,6 +700,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       } else {
         this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
       }
+    } else if (target === 'R') {
+      this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: event, item: rowData}));
+    } else if (target === 'S') {
+      this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpS') {
       this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpA') {
@@ -784,86 +788,31 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         array = [...array, {
           title: `${dt.analysisId} | ${dt.analysisName} | ${dt.description}`,
           selected: false,
-          selectedItems: this.targetRap
+          selectedItems: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
+            {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
+            {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false}]
         }];
       }
     });
     return array;
   }
 
-  getCheckedValue(item) {
-    let tab = _.filter(this.tree, dt => dt.selected === true);
-    if (tab.length === 0) {
-      this.tree.forEach(dt => {
-        tab = _.filter(dt.children, ws => ws.selected);
-      });
-      if (tab.length === 0) {
-        this.globalRap.forEach(dt => {
-          if (dt.title === item) {
-            return dt.selected;
-          }
-        });
-      } else {
-        tab[0].selectedItems.forEach(dt => {
-          if (dt.title === item) {
-            return dt.selected;
-          }
-        });
-      }
-    } else {
-      let selected = true;
-      tab[0].children.forEach(dt => dt.selectedItems.forEach(ws => {
-        if (ws.title === item) {
-          if (ws.selected === false) {
-            selected = false;
-          }
-        }
-      }));
-      return selected;
-    }
+  getCodeFp(item) {
+    return _.filter(this.financialStandardContent, dt => dt.code === item)[0].financialPerspective;
   }
 
-  checkTargetRap(item, value) {
-    let tab = _.filter(this.tree, dt => dt.selected === true);
-    console.log(tab);
-    if (tab.length === 0) {
-      this.tree.forEach(dt => {
-        tab = _.filter(dt.children, ws => ws.selected);
-      });
-      console.log(tab);
-      if (tab.length === 0) {
-        this.tree.forEach(dt => dt.children.forEach(ws => ws.selectedItems.forEach(kt => {
-          if (kt.title === item) {
-            kt.selected = !value;
+/*  getCheckedValue(item) {
+    let value = false;
+    _.forEach(this.tree, dt => dt.children.map(kt => {
+      if (kt.selected === true) {
+        _.forEach(kt.selectedItems, ws => {
+          if (ws.title === item) {
+            value = ws.selected;
           }
-        })));
-      } else {
-        this.tree.forEach(dt => {
-          dt.children.forEach(ws => {
-            if (ws.title === tab[0].title) {
-              ws.selectedItems.forEach(kt => {
-                if (kt.title === item) {
-                  kt.selected = !value;
-                }
-              });
-            }
-          });
         });
-      }
-    } else {
-      this.tree.forEach(kt => {
-          if (kt.title === tab[0].title) {
-            kt.children.forEach(dt => dt.selectedItems.forEach(ws => {
-              if (ws.title === item) {
-                ws.selected = !value;
-              }
-            }));
-          }
-        }
-      );
-    }
-    console.log(this.tree);
-  }
+      }}));
+    return value;
+  }*/
 
   hideChild(item) {
     item.expanded = !item.expanded;

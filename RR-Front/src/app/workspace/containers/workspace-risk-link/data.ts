@@ -46,7 +46,7 @@ const frozenColsPortfolio = [
 ];
 
 const scrollableColsSummary = [
-  {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorted: false, filtered: true, highlight: false, visible: true},
+  // {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'analysisCurrency', header: 'Source Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
@@ -56,6 +56,7 @@ const scrollableColsSummary = [
 ];
 
 const frozenColsSummary = [
+  {field: 'selected', header: '', width: '25px', type: 'selection', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'dataSourceId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true},
@@ -72,10 +73,13 @@ const scrollableColsResults = [
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
   // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'peqt', header: 'PEQT', width: '80px', type: 'Peqt', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'publishAcc', header: '', width: '30px', type: 'check', icon: 'icon-focus-add', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'publishPri', header: '', width: '30px', type: 'check', icon: 'icon-note', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
 const frozenColsResults = [
+  {field: 'selected', header: '', width: '25px', type: 'selection', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
