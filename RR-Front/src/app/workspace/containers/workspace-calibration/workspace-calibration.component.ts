@@ -27,7 +27,6 @@ import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
-import * as rightMenuStore from "../../../shared/components/plt/plt-right-menu/store";
 
 
 @Component({
@@ -38,17 +37,6 @@ import * as rightMenuStore from "../../../shared/components/plt/plt-right-menu/s
 })
 export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   searchAddress: string;
-  rightMenuInputs: rightMenuStore.Input = {
-    basket: [],
-    pltDetail: null,
-    selectedTab: {
-      index: 0,
-      title: 'basket',
-    },
-    tabs: {'basket': true, 'pltDetail': true},
-    visible: true,
-    mode: "pop-up"
-  };
   listOfPlts: any[];
   listOfPltsData: any[];
   listOfPltsCache: any[];
@@ -816,7 +804,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
-  @Select(PltMainState.getUserTags) userTags$;
+  @Select(CalibrationState.getUserTags) userTags$;
   data$;
   deletedPlts$;
   deletedPlts: any;
@@ -987,9 +975,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
           this.workspaceId = wsId;
           this.uwy = year;
           this.loading= true;
-          this.data$= this.store$.select(PltMainState.getPlts(this.workspaceId+'-'+this.uwy));
-          this.deletedPlts$= this.store$.select(PltMainState.getDeletedPlts(this.workspaceId+'-'+this.uwy));
-          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+          this.data$ = this.store$.select(CalibrationState.getPlts(this.workspaceId + '-' + this.uwy));
+          this.deletedPlts$ = this.store$.select(CalibrationState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
+          this.store$.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
             params: {
               workspaceId: wsId, uwy: year
             }}));
@@ -1119,7 +1107,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
             this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+      this.store$.select(CalibrationState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
@@ -1267,7 +1255,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   toggleSelectPlts(plts: any) {
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       plts,
       forDeleted: this.showDeleted
@@ -1592,31 +1580,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     console.log(col);
   }
 
-
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(this.listOfPlts, plt => plt),
-            _.map(this.listOfPlts, (plt, i) => (i <= max && i >= min ? ({type: 'select'}) : ({type: 'unselect'}))),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
+  emitFilters(filters: any) {
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFiltersFromCalibration({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      filters: filters
+    }))
   }
 
   collapseTags() {
@@ -1713,11 +1681,30 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ('Restore' != e.label) : !_.find(t, el => el == e.label))
   }
 
-  emitFilters(filters: any) {
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      filters: filters
-    }))
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      console.log(i, this.lastSelectedId);
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
+            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({type: i <= max && i >= min})),
+          )
+        );
+      } else {
+        this.lastSelectedId = i;
+      }
+      return;
+    }
   }
 
   unCheckAll() {

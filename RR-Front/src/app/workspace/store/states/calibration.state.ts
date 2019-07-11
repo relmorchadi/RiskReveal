@@ -14,7 +14,7 @@ import {
   SYSTEM_TAGS,
   USER_TAGS
 } from "../../containers/workspace-calibration/data";
-import {tap} from "rxjs/operators";
+import {catchError, mergeMap, tap} from "rxjs/operators";
 import {PltApi} from "../../services/plt.api";
 import produce from "immer";
 import {WorkspaceMain} from "../../../core/model";
@@ -87,7 +87,7 @@ const initiaState: CalibrationModel = {
 })
 export class CalibrationState implements NgxsOnInit {
   ctx = null;
-
+  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
   constructor(private store$: Store, private pltApi: PltApi) {
 
   }
@@ -97,8 +97,26 @@ export class CalibrationState implements NgxsOnInit {
   }
 
   @Selector()
+  static getProjects() {
+    return (state: any) => state.workspaceMain.openedWs.projects
+  }
+
+  @Selector()
   static getAdjustmentApplication(state: CalibrationModel) {
     return _.get(state, "adjustmentApplication")
+  }
+
+  static getPlts(wsIdentifier: string) {
+    return createSelector([CalibrationState], (state: CalibrationModel) => _.keyBy(_.filter(_.get(state.data, `${wsIdentifier}`), e => !e.deleted), 'pltId'))
+  }
+
+  static getDeletedPlts(wsIdentifier: string) {
+    return createSelector([CalibrationState], (state: CalibrationModel) => _.keyBy(_.filter(_.get(state.data, `${wsIdentifier}`), e => e.deleted), 'pltId'));
+  }
+
+  @Selector()
+  static getUserTags(state: CalibrationModel) {
+    return _.get(state, 'userTags', {})
   }
 
   static getLeftNavbarIsCollapsed() {
@@ -107,7 +125,192 @@ export class CalibrationState implements NgxsOnInit {
     });
   }
 
+  getRandomInt(min = 0, max = 4) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
+  @Action(fromPlt.loadAllPltsFromCalibration)
+  loadAllPltsFromCalibration(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.loadAllPltsFromCalibration) {
+    const {
+      params
+    } = payload;
+
+    ctx.patchState({
+      loading: true
+    });
+
+    console.log('ls', JSON.parse(localStorage.getItem('deletedPlts')))
+
+    const ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
+
+    return this.pltApi.getAllPlts(params)
+      .pipe(
+        mergeMap((data) => {
+          ctx.patchState({
+            data: Object.assign({},
+              {
+                ...ctx.getState().data,
+                [params.workspaceId + '-' + params.uwy]: _.merge({},
+                  ...data.plts.map(plt => ({
+                    [plt.pltId]: {
+                      ...plt,
+                      selected: false,
+                      visible: true,
+                      tagFilterActive: false,
+                      opened: false,
+                      deleted: ls[plt.pltId] ? ls[plt.pltId].deleted : undefined,
+                      deletedBy: ls[plt.pltId] ? ls[plt.pltId].deletedBy : undefined,
+                      deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
+                      status: this.status[this.getRandomInt()],
+                      newPlt: Math.random() >= 0.5,
+                      EPM: ['1,080,913', '151,893', '14.05%'],
+                      calibrate: true
+                    }
+                  }))
+                )
+              }
+            ),
+            filters: {
+              systemTag: [],
+              userTag: []
+            }
+          });
+          return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: data.userTags}));
+        }),
+        catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationFail()))
+      );
+  }
+
+  @Action(fromPlt.loadAllPltsFromCalibrationSuccess)
+  loadAllPltsFromCalibrationSuccess(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.loadAllPltsFromCalibrationSuccess) {
+    ctx.patchState({
+      loading: false
+    });
+
+    ctx.dispatch(new fromPlt.constructUserTagsFromCalibration({userTags: payload.userTags}))
+  }
+
+  @Action(fromPlt.constructUserTagsFromCalibration)
+  constructUserTags(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.constructUserTagsFromCalibration) {
+    const {
+      data,
+      userTags
+    } = ctx.getState()
+
+    let uesrTagsSummary = {};
+
+
+    _.forEach(payload.userTags, (payloadTag) => {
+
+      const {
+        tagId,
+        pltHeaders,
+        ...rest
+      } = payloadTag
+
+      uesrTagsSummary[tagId] = {tagId, ...rest, selected: false, count: pltHeaders.length, pltHeaders}
+    })
+
+    ctx.patchState({
+      userTags: uesrTagsSummary
+    })
+
+  }
+
+  @Action(fromPlt.setUserTagsFiltersFromCalibration)
+  setFilterPlts(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.setUserTagsFiltersFromCalibration) {
+    const state = ctx.getState();
+    const {
+      filters
+    } = payload;
+
+    ctx.patchState({
+      filters: _.assign({}, state.filters, filters)
+    });
+
+    return ctx.dispatch(new fromPlt.FilterPltsByUserTagsFromCalibration(payload));
+
+  }
+
+  @Action(fromPlt.FilterPltsByUserTagsFromCalibration)
+  FilterPlts(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.FilterPltsByUserTagsFromCalibration) {
+    const state = ctx.getState();
+    const {
+      wsIdentifier
+    } = payload;
+    const {
+      filters
+    } = state;
+
+    let newData = {};
+
+    if (filters.userTag.length > 0) {
+      _.forEach(state.data[wsIdentifier], (plt: any, k) => {
+        if (_.some(filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
+          newData[k] = {...plt, visible: true};
+        } else {
+          newData[k] = {...plt, visible: false};
+        }
+      });
+    } else {
+      _.forEach(state.data[wsIdentifier], (plt, k) => {
+        newData[k] = {...plt, visible: true};
+      });
+    }
+
+    ctx.setState({
+      ...state,
+      data: {[wsIdentifier]: newData}
+    });
+  }
+
+  @Action(fromPlt.ToggleSelectPltsFromCalibration)
+  SelectPlts(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.ToggleSelectPltsFromCalibration) {
+    const state = ctx.getState();
+    const {
+      plts,
+      wsIdentifier
+    } = payload;
+
+    console.log(plts);
+
+    let inComingData = {};
+
+    _.forEach(plts, (v, k) => {
+      inComingData[k] = {
+        selected: v.type
+      };
+    });
+
+    ctx.patchState({
+      data: _.merge({}, state.data, {[wsIdentifier]: inComingData})
+    });
+
+  }
+
+  @Action(fromPlt.calibrateSelectPlts)
+  calibrateSelectPlts(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.calibrateSelectPlts) {
+    const state = ctx.getState();
+    const {
+      plts,
+      wsIdentifier
+    } = payload;
+
+    console.log(plts);
+
+    let inComingData = {};
+
+    _.forEach(plts, (v, k) => {
+      inComingData[k] = {
+        calibrate: v.type
+      };
+    });
+
+    ctx.patchState({
+      data: _.merge({}, state.data, {[wsIdentifier]: inComingData})
+    });
+
+  }
   @Action(fromPlt.initCalibrationData)
   initCalibrationData(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.initCalibrationData) {
 

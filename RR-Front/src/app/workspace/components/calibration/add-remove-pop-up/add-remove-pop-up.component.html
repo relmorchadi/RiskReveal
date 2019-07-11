@@ -40,15 +40,15 @@
           </span>
       </div>
       <div class="PLTs-content">
-        <app-plt-main-table
+        <app-pop-up-plt-table
           (onCheckAll)="checkAll($event)"
           (onFilter)="filterPlts($event)"
           (onItemSelectForMenu)="setSelectedPlt($event)"
-          (onPltClick)="toggleSelectPlts($event)"
+          (onPltClick)="calibrateSelectPlts($event)"
           (onSelectSinglePlt)="selectSinglePLT($event)"
           (openPltInDrawer)="openPltInDrawer($event)"
           [tableInputs]="Inputs | pickKeys : tableInputs"
-        ></app-plt-main-table>
+        ></app-pop-up-plt-table>
       </div>
     </div>
     <div class="right">
@@ -61,10 +61,10 @@
 
   <p-footer>
     <div class="footer">
-      <button (click)="onHide()" class="a-button-text">cancel</button>
-      <button (click)="onHide()" class="a-buttons-contained">
+      <button (click)="onHide()" class="a-button-text">Close</button>
+      <!--<button (click)="onHide()" class="a-buttons-contained">
         Save
-      </button>
+      </button>-->
     </div>
   </p-footer>
 
