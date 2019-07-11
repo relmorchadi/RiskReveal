@@ -11,6 +11,10 @@
 .drawer-content {
   display: flex;
   flex-direction: row-reverse;
+
+  ::ng-deep .tabset-drawer {
+    width: -webkit-fill-available;
+  }
 }
 
 .drawer-pop-up {
@@ -19,14 +23,14 @@
 
 
   ::ng-deep .ant-tabs .ant-tabs-top-content > .ant-tabs-tabpane, .ant-tabs .ant-tabs-bottom-content > .ant-tabs-tabpane {
-    max-width: 450px;
+    max-width: 480px;
     max-height: 64vh;
     overflow: auto;
   }
 
   .plt-details-content {
     ::ng-deep .ant-tabs .ant-tabs-top-content > .ant-tabs-tabpane, .ant-tabs .ant-tabs-bottom-content > .ant-tabs-tabpane {
-      overflow: hidden !important;
+      overflow: visible !important;
     }
   }
 }

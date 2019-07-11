@@ -59,7 +59,7 @@
                       <tbody>
                       <tr *ngFor="let plt of inputs['basket']">
                         <td>{{plt?.pltId | textLength}}</td>
-                        <td class="elipsis-text" style="max-width: 100px;">{{plt?.pltName}}</td>
+                        <td class="elipsis-text" style="max-width: 200px;">{{plt?.pltName}}</td>
                         <td class="elipsis-text" style="max-width: 58px;">{{plt?.regionPerilCode}}</td>
                         <td><i style="cursor: pointer;" class="icon-multiply" (click)="unselectPlt(plt?.pltId)"></i></td>
                       </tr>
