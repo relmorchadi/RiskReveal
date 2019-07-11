@@ -27,6 +27,7 @@ import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
+import * as rightMenuStore from "../../../shared/components/plt/plt-right-menu/store";
 
 
 @Component({
@@ -37,6 +38,17 @@ import {ActivatedRoute, Router} from "@angular/router";
 })
 export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   searchAddress: string;
+  rightMenuInputs: rightMenuStore.Input = {
+    basket: [],
+    pltDetail: null,
+    selectedTab: {
+      index: 0,
+      title: 'basket',
+    },
+    tabs: {'basket': true, 'pltDetail': true},
+    visible: true,
+    mode: "pop-up"
+  };
   listOfPlts: any[];
   listOfPltsData: any[];
   listOfPltsCache: any[];

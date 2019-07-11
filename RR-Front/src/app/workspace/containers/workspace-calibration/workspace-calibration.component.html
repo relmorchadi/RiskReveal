@@ -75,7 +75,7 @@
                   <nz-dropdown [nzPlacement]="'bottomLeft'"
                                style=" left: 100px; margin-top: 20px;">
                     <i class="icon-menu_24px" nz-dropdown
-                       style="font-size: 25px; float: right; margin-left: 7px"></i>
+                       style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>
                     <ul nz-menu>
                       <li nz-submenu>
                         <span title>Create</span>
@@ -137,7 +137,7 @@
                      <nz-dropdown [nzPlacement]="'bottomLeft'"
                                   style=" left: 100px; margin-top: 20px;">
                        <i class="icon-menu_24px" nz-dropdown
-                          style="font-size: 25px; float: right; margin-left: 7px"></i>
+                          style="font-size: 25px; float: right; margin-left: 7px; margin-top: 3px;"></i>
                             <ul nz-menu>
                               <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
                               <li nz-menu-item>Add from Template</li>
@@ -177,9 +177,10 @@
                   *ngIf="adjsArray.length > 0"
                   class="generic-thread-container"
                   dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                  style="margin-top: 15px; margin-left: 25px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                  style="margin-top: 10px; margin-left: 25px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                   <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                    <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
+                    <div class="adjustDiv"
+                         style="margin: 8px!important;"
                          (mouseover)="shownDropDown = adj.id"
                          (mouseleave)="onLeaveAdjustment(adj.id)"
                          dnd-sortable
@@ -235,7 +236,7 @@
                 </div>
               </div>
               <div class="pull-right radio-container">
-                <div class="Deltas" style="position: unset;">EP Metrics &nbsp;
+                <div class="Deltas" style="position: unset;">Impact on EP Metrics &nbsp;
                   <div class="button-toggle">
                     <nz-switch class="switch-input" (ngModelChange)="onTableTypeChange($event)"
                                [(ngModel)]="EPMetricsTable"></nz-switch>
@@ -272,7 +273,7 @@
               </div>
 
               <div class="pull-right radio-container">
-                <div class="Deltas" style="position: unset;">EP Metrics &nbsp;
+                <div class="Deltas" style="position: unset;">Impact on EP Metrics &nbsp;
                   <div class="button-toggle">
                     <nz-switch class="switch-input" (ngModelChange)="onTableTypeChange($event)"
                                [(ngModel)]="EPMetricsTable"></nz-switch>
@@ -448,9 +449,10 @@
                         *ngIf="adjsArray.length > 0"
                         class="generic-thread-container"
                         dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                        style="position: absolute; left: 604px; width: calc(100% - 614px);z-index: 100; top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                        style="position: absolute; left: 604px; width: calc(100% - 614px);z-index: 100; top: 10px;border: 1px solid #dddddd; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                         <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                          <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
+                          <div class="adjustDiv"
+                               style="margin: 8px!important;"
                                (mouseover)="shownDropDown = adj.id"
                                (mouseleave)="onLeaveAdjustment(adj.id)"
                                dnd-sortable
@@ -554,7 +556,8 @@
                         dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
                         style="position: absolute;left: 221px; max-width: calc(100% - 233px); margin-top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                         <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                          <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
+                          <div class="adjustDiv"
+                               style="margin: 8px!important;"
                                (mouseenter)="shownDropDown = adj.id"
                                (mouseleave)="onLeaveAdjustment(adj.id)"
                                dnd-sortable
@@ -1729,7 +1732,15 @@
   </ng-template>
 </nz-modal>
 
-<p-dialog
+<app-add-remove-pop-up
+  [isVisible]="addRemoveModal"
+  [selectionStep]="'plt'"
+  [stepConfig]=" {wsId: workspaceId,
+    uwYear: uwy,
+    plts: listOfPltsData}"
+  (onVisibleChange)="addRemoveModal= $event">
+</app-add-remove-pop-up>
+<!--<p-dialog
   [closable]="false"
   [styleClass]="'m-dialog-modal-lg borderless'"
   appendTo="body"
@@ -1777,7 +1788,7 @@
 
       </app-plt-left-menu>
     </div>
-    <div class="right">
+    <div class="center">
       <div class="title-as-tab-bis">
           <span>
             PLTs
@@ -1811,18 +1822,24 @@
         ></app-plt-main-table>
       </div>
     </div>
+    <div class="right">
+      <app-plt-right-menu
+        (actionDispatcher)="rightMenuActionDispatcher($event)"
+        [Inputs]="rightMenuInputs"
+      ></app-plt-right-menu>
+    </div>
   </div>
 
   <p-footer>
     <div class="footer">
       <button (click)="addRemoveModal=false" class="a-button-text">cancel</button>
       <button (click)="addRemoveModal=false" class="a-buttons-contained">
-        ADD
+        Save
       </button>
     </div>
   </p-footer>
 
-</p-dialog>
+</p-dialog>-->
 
 <!--<p-dialog
   (cancel)="handleCancel()"
