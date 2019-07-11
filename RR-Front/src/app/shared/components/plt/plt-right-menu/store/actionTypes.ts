@@ -41,5 +41,23 @@ export const Actions = {
         }
       }
     }
+  },
+  setSelectedTabByIndex: {
+    type: Types.setSelectedTabByIndex,
+    handler: (rightMenuInput: Input, index: number) => {
+      let tab="basket";
+
+      _.forEach(_.keys(rightMenuInput.tabs), (el, i) => {
+        if(i == index) tab = el;
+      });
+
+      return {
+        ...rightMenuInput,
+        selectedTab: {
+          index,
+          title: tab
+        }
+      }
+    }
   }
 }

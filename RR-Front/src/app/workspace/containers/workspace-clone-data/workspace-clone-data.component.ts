@@ -8,6 +8,7 @@ import * as _ from 'lodash'
 import {PltMainState} from '../../store/states';
 import * as fromWS from '../../store'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
+import {take} from 'rxjs/operators';
 
 interface SourceData {
   plts: any[];
@@ -160,63 +161,70 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.subs.push(
-    combineLatest(
-      this.store$.select(PltMainState.getCloneConfig),
-      this.route$.params,
-      this.store$.select(WorkspaceMainState.getCurrentWS)
-    ).subscribe( ([navigationPayload, {wsId, year}, currentWS] :any) => {
-      console.log({
-        prn: this.prn.getPreviousUrl(),
-        navigationPayload,wsId,year,currentWS
-      });
-      if(_.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)){
-        this.from = {
-          ...navigationPayload.payload,
-          detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
+      combineLatest(
+        this.store$.select(PltMainState.getCloneConfig),
+        this.route$.params,
+        this.store$.select(WorkspaceMainState.getCurrentWS)
+      ).pipe(take(1)).subscribe( ([navigationPayload, {wsId, year}, currentWS] :any) => {
+        const url = this.prn.getPreviousUrl();
+        console.log({
+          prn: url,
+          navigationPayload,wsId,year,currentWS
+        });
+        if(url == 'PltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)){
+          this.from = {
+            ...navigationPayload.payload,
+            detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
+          };
+          this.to = {
+            detail: '',
+            plts: [],
+            wsId: '',
+            uwYear: ''
+          };
+          this.setCloneConfig('currentSourceOfItems', 'to');
+          this.multiSteps= false;
+          this.stepConfig = {
+            wsId: '',
+            uwYear: '',
+            plts: []
+          };
+          this.searchWorkSpaceModal= true;
+        }else {
+          this.to = {
+            wsId: wsId,
+            uwYear: year,
+            plts: [],
+            detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
+          };
+          this.from = {
+            detail: '',
+            plts: [],
+            wsId: '',
+            uwYear: ''
+          };
         }
-        this.to = {
-          detail: '',
-          plts: [],
-          wsId: '',
-          uwYear: ''
-        }
-        this.setCloneConfig('currentSourceOfItems', 'to');
-        this.searchWorkSpaceModal= true;
-      }else {
-        this.to = {
-          wsId: wsId,
-          uwYear: year,
-          plts: [],
-          detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
-        }
-        this.from = {
-          detail: '',
-          plts: [],
-          wsId: '',
-          uwYear: ''
-        }
-      }
-      if(this.from.plts.length > 0) {
-        this.cloneConfig= {
-          ...this.cloneConfig,
-          summary: {...this.summaryCache}
-        }
-      }else {
-        const k= {};
+        if(this.from.plts.length > 0) {
+          this.cloneConfig= {
+            ...this.cloneConfig,
+            summary: {...this.summaryCache}
+          }
+        }else {
+          const k= {};
 
-        _.forEach(this.cloneConfig.summary, (v,key) => {
-          k[key] = {...v, value: 0};
-        })
+          _.forEach(this.cloneConfig.summary, (v,key) => {
+            k[key] = {...v, value: 0};
+          })
 
-        this.cloneConfig= {
-          ...this.cloneConfig,
-          summary: {...k}
+          this.cloneConfig= {
+            ...this.cloneConfig,
+            summary: {...k}
+          }
         }
-      }
-      this.fromCache= {...this.from};
-      this.toCache= {...this.to};
-      this.detectChanges();
-    })
+        this.fromCache= {...this.from};
+        this.toCache= {...this.to};
+        this.detectChanges();
+      })
     )
   }
 
@@ -258,8 +266,6 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   }
 
   setSelectedWs(currentSourceOfItems: string,$event: any) {
-    console.log($event);
-    console.log(currentSourceOfItems, $event);
     if(currentSourceOfItems == 'from') {
       this.from = {...this.from, wsId: $event.workSpaceId, uwYear: $event.uwYear, detail: $event.cedantName+' | '+$event.workspaceName+' | '+$event.uwYear+' | '+$event.workSpaceId}
     }
@@ -364,6 +370,7 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    console.log('hey');
     this.store$.dispatch(new fromWS.setCloneConfig({}));
     _.each(this.subs, e => e && e.unsubscribe());
   }

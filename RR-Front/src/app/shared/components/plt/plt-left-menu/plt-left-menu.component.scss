@@ -152,16 +152,11 @@
     }
   }
 
-  .Tabs-content {
-    display: flex;
-    flex-flow: column;
-    height: 80vh;
-  }
-
   .Tags-content {
     display: flex;
     flex-flow: column;
     overflow: auto;
+    min-width: 212px;
   }
 
   .user-tag-section, .sys-tag-section {
