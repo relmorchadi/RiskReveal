@@ -51,7 +51,7 @@ public class ContractEntity {
     private Timestamp lastsyncruncatdomain;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -81,7 +81,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKSUBSIDIARYLEDGERCODE_ID", nullable = true, length = 255)
+    @Column(name = "FKSUBSIDIARYLEDGERCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getFksubsidiaryledgercodeId() {
         return fksubsidiaryledgercodeId;
     }
@@ -91,7 +91,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
+    @Column(name = "TREATYID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTreatyid() {
         return treatyid;
     }
@@ -131,7 +131,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "TREATYLABEL", nullable = true, length = 255)
+    @Column(name = "TREATYLABEL", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTreatylabel() {
         return treatylabel;
     }
@@ -141,7 +141,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "STATUS_ID", nullable = true, length = 255)
+    @Column(name = "STATUS_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getStatusId() {
         return statusId;
     }
@@ -161,7 +161,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UWUNITID_ID", nullable = true, length = 255)
+    @Column(name = "UWUNITID_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUwunitidId() {
         return uwunitidId;
     }
@@ -171,7 +171,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARYLEDGERCODE", nullable = true, length = 255)
+    @Column(name = "SUBSIDIARYLEDGERCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSubsidiaryledgercode() {
         return subsidiaryledgercode;
     }
@@ -201,7 +201,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "PROGRAMID", nullable = true, length = 255)
+    @Column(name = "PROGRAMID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getProgramid() {
         return programid;
     }
@@ -211,7 +211,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "PROGRAMNAME", nullable = true, length = 255)
+    @Column(name = "PROGRAMNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getProgramname() {
         return programname;
     }
@@ -221,7 +221,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "BOUQUETID", nullable = true, length = 255)
+    @Column(name = "BOUQUETID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getBouquetid() {
         return bouquetid;
     }
@@ -231,7 +231,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "BOUQUETNAME", nullable = true, length = 255)
+    @Column(name = "BOUQUETNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getBouquetname() {
         return bouquetname;
     }
@@ -241,7 +241,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "CEDENTID_ID", nullable = true, length = 255)
+    @Column(name = "CEDENTID_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCedentidId() {
         return cedentidId;
     }
@@ -251,7 +251,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITERID", nullable = true, length = 255)
+    @Column(name = "UNDERWRITERID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUnderwriterid() {
         return underwriterid;
     }
@@ -261,7 +261,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITERFIRSTNAME", nullable = true, length = 255)
+    @Column(name = "UNDERWRITERFIRSTNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUnderwriterfirstname() {
         return underwriterfirstname;
     }
@@ -271,7 +271,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITERLASTNAME", nullable = true, length = 255)
+    @Column(name = "UNDERWRITERLASTNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUnderwriterlastname() {
         return underwriterlastname;
     }
@@ -281,7 +281,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LIABILITYCURRENCYCODE_ID", nullable = true, length = 255)
+    @Column(name = "LIABILITYCURRENCYCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLiabilitycurrencycodeId() {
         return liabilitycurrencycodeId;
     }
@@ -291,7 +291,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ANNUALLIMITAMOUNT", nullable = true, length = 255)
+    @Column(name = "ANNUALLIMITAMOUNT", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnnuallimitamount() {
         return annuallimitamount;
     }
@@ -301,7 +301,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "EVENTLIMITAMOUNT", nullable = true, length = 255)
+    @Column(name = "EVENTLIMITAMOUNT", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getEventlimitamount() {
         return eventlimitamount;
     }
@@ -321,7 +321,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LEADER", nullable = true, length = 255)
+    @Column(name = "LEADER", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLeader() {
         return leader;
     }
@@ -331,7 +331,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITINGUNITCODE", nullable = true, length = 255)
+    @Column(name = "UNDERWRITINGUNITCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUnderwritingunitcode() {
         return underwritingunitcode;
     }
@@ -341,7 +341,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITINGUNITNAMELL", nullable = true, length = 255)
+    @Column(name = "UNDERWRITINGUNITNAMELL", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUnderwritingunitnamell() {
         return underwritingunitnamell;
     }
@@ -351,7 +351,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITINGUNITNAMELS", nullable = true, length = 255)
+    @Column(name = "UNDERWRITINGUNITNAMELS", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUnderwritingunitnamels() {
         return underwritingunitnamels;
     }
@@ -361,7 +361,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ULTIMATEGROUPCODE", nullable = true, length = 255)
+    @Column(name = "ULTIMATEGROUPCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUltimategroupcode() {
         return ultimategroupcode;
     }
@@ -371,7 +371,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ULTIMATEGROUPNAME", nullable = true, length = 255)
+    @Column(name = "ULTIMATEGROUPNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUltimategroupname() {
         return ultimategroupname;
     }
@@ -381,7 +381,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "GROUPSEGMENTNAMELM", nullable = true, length = 255)
+    @Column(name = "GROUPSEGMENTNAMELM", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getGroupsegmentnamelm() {
         return groupsegmentnamelm;
     }
@@ -391,7 +391,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "GROUPSEGMENTCODE", nullable = true, length = 255)
+    @Column(name = "GROUPSEGMENTCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getGroupsegmentcode() {
         return groupsegmentcode;
     }
@@ -401,7 +401,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "GROUPSEGMENTNAMELS", nullable = true, length = 255)
+    @Column(name = "GROUPSEGMENTNAMELS", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getGroupsegmentnamels() {
         return groupsegmentnamels;
     }
@@ -411,7 +411,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "INTERMEDIARYCODE", nullable = true, length = 255)
+    @Column(name = "INTERMEDIARYCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getIntermediarycode() {
         return intermediarycode;
     }
@@ -421,7 +421,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UWUnitOmega2", nullable = true, length = 255)
+    @Column(name = "UWUnitOmega2", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getUwUnitOmega2() {
         return uwUnitOmega2;
     }

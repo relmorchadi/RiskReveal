@@ -1,11 +1,20 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
+import java.io.Serializable;
 import java.sql.Timestamp;
+import java.util.Objects;
 
 @Entity
 @Table(name = "ScorPLTHeader", schema = "dbo", catalog = "RiskReveal")
-public class ScorPltHeaderEntity {
+@JsonIgnoreProperties(value = {"rrAnalysis","targetRapByTargetRapId",
+        "regionPerilByRegionPerilId","projectByProjectId",
+        "scorPltHeaderByCloningSourceId","binFile",
+        "adjustmentBasisPrevious","adjustmentBasisCurrent"},ignoreUnknown = true)
+public class ScorPltHeaderEntity implements Serializable {
     private int scorPltHeaderId;
     private String pltType;
     private Boolean publishToPricing;
@@ -355,6 +364,8 @@ public class ScorPltHeaderEntity {
         return currentNarrative;
     }
 
+    @Basic
+    @Column(name = "market_channel", nullable = true, length = 255)
     public String getMarketChannel() {
         return marketChannel;
     }
@@ -363,6 +374,8 @@ public class ScorPltHeaderEntity {
         this.marketChannel = marketChannel;
     }
 
+    @Basic
+    @Column(name = "engine_type", nullable = true, length = 255)
     public String getEngineType() {
         return engineType;
     }
@@ -371,6 +384,8 @@ public class ScorPltHeaderEntity {
         this.engineType = engineType;
     }
 
+    @Basic
+    @Column(name = "entity", nullable = true, length = 255)
     public String getEntity() {
         return entity;
     }
@@ -391,54 +406,54 @@ public class ScorPltHeaderEntity {
         ScorPltHeaderEntity that = (ScorPltHeaderEntity) object;
 
         if (scorPltHeaderId != that.scorPltHeaderId) return false;
-        if (pltType != null ? !pltType.equals(that.pltType) : that.pltType != null) return false;
-        if (publishToPricing != null ? !publishToPricing.equals(that.publishToPricing) : that.publishToPricing != null)
+        if (!Objects.equals(pltType, that.pltType)) return false;
+        if (!Objects.equals(publishToPricing, that.publishToPricing))
             return false;
-        if (pltSimulationPeriods != null ? !pltSimulationPeriods.equals(that.pltSimulationPeriods) : that.pltSimulationPeriods != null)
+        if (!Objects.equals(pltSimulationPeriods, that.pltSimulationPeriods))
             return false;
-        if (generatedFromDefaultAdjustement != null ? !generatedFromDefaultAdjustement.equals(that.generatedFromDefaultAdjustement) : that.generatedFromDefaultAdjustement != null)
+        if (!Objects.equals(generatedFromDefaultAdjustement, that.generatedFromDefaultAdjustement))
             return false;
-        if (ccyCode != null ? !ccyCode.equals(that.ccyCode) : that.ccyCode != null) return false;
-        if (geoCode != null ? !geoCode.equals(that.geoCode) : that.geoCode != null) return false;
-        if (geoDescription != null ? !geoDescription.equals(that.geoDescription) : that.geoDescription != null)
+        if (!Objects.equals(ccyCode, that.ccyCode)) return false;
+        if (!Objects.equals(geoCode, that.geoCode)) return false;
+        if (!Objects.equals(geoDescription, that.geoDescription))
             return false;
-        if (rmsSimulationSet != null ? !rmsSimulationSet.equals(that.rmsSimulationSet) : that.rmsSimulationSet != null)
+        if (!Objects.equals(rmsSimulationSet, that.rmsSimulationSet))
             return false;
-        if (importSequence != null ? !importSequence.equals(that.importSequence) : that.importSequence != null)
+        if (!Objects.equals(importSequence, that.importSequence))
             return false;
-        if (threadName != null ? !threadName.equals(that.threadName) : that.threadName != null) return false;
-        if (udName != null ? !udName.equals(that.udName) : that.udName != null) return false;
-        if (userOccurrenceBasis != null ? !userOccurrenceBasis.equals(that.userOccurrenceBasis) : that.userOccurrenceBasis != null)
+        if (!Objects.equals(threadName, that.threadName)) return false;
+        if (!Objects.equals(udName, that.udName)) return false;
+        if (!Objects.equals(userOccurrenceBasis, that.userOccurrenceBasis))
             return false;
-        if (defaultPltName != null ? !defaultPltName.equals(that.defaultPltName) : that.defaultPltName != null)
+        if (!Objects.equals(defaultPltName, that.defaultPltName))
             return false;
-        if (truncationThreshold != null ? !truncationThreshold.equals(that.truncationThreshold) : that.truncationThreshold != null)
+        if (!Objects.equals(truncationThreshold, that.truncationThreshold))
             return false;
-        if (truncationExchangeRate != null ? !truncationExchangeRate.equals(that.truncationExchangeRate) : that.truncationExchangeRate != null)
+        if (!Objects.equals(truncationExchangeRate, that.truncationExchangeRate))
             return false;
-        if (truncationCurrency != null ? !truncationCurrency.equals(that.truncationCurrency) : that.truncationCurrency != null)
+        if (!Objects.equals(truncationCurrency, that.truncationCurrency))
             return false;
-        if (sourceLossModelingBasis != null ? !sourceLossModelingBasis.equals(that.sourceLossModelingBasis) : that.sourceLossModelingBasis != null)
+        if (!Objects.equals(sourceLossModelingBasis, that.sourceLossModelingBasis))
             return false;
-        if (deletedOn != null ? !deletedOn.equals(that.deletedOn) : that.deletedOn != null) return false;
-        if (deletedDue != null ? !deletedDue.equals(that.deletedDue) : that.deletedDue != null) return false;
-        if (deletedBy != null ? !deletedBy.equals(that.deletedBy) : that.deletedBy != null) return false;
-        if (sourceLossEntityingBasis != null ? !sourceLossEntityingBasis.equals(that.sourceLossEntityingBasis) : that.sourceLossEntityingBasis != null)
+        if (!Objects.equals(deletedOn, that.deletedOn)) return false;
+        if (!Objects.equals(deletedDue, that.deletedDue)) return false;
+        if (!Objects.equals(deletedBy, that.deletedBy)) return false;
+        if (!Objects.equals(sourceLossEntityingBasis, that.sourceLossEntityingBasis))
             return false;
-        if (createdBy != null ? !createdBy.equals(that.createdBy) : that.createdBy != null) return false;
-        if (createdOn != null ? !createdOn.equals(that.createdOn) : that.createdOn != null) return false;
-        if (lastModifiedBy != null ? !lastModifiedBy.equals(that.lastModifiedBy) : that.lastModifiedBy != null)
+        if (!Objects.equals(createdBy, that.createdBy)) return false;
+        if (!Objects.equals(createdOn, that.createdOn)) return false;
+        if (!Objects.equals(lastModifiedBy, that.lastModifiedBy))
             return false;
-        if (lastModifiedOn != null ? !lastModifiedOn.equals(that.lastModifiedOn) : that.lastModifiedOn != null)
+        if (!Objects.equals(lastModifiedOn, that.lastModifiedOn))
             return false;
-        if (lastGenerated != null ? !lastGenerated.equals(that.lastGenerated) : that.lastGenerated != null)
+        if (!Objects.equals(lastGenerated, that.lastGenerated))
             return false;
-        if (basisChanged != null ? !basisChanged.equals(that.basisChanged) : that.basisChanged != null) return false;
-        if (narrativeChanged != null ? !narrativeChanged.equals(that.narrativeChanged) : that.narrativeChanged != null)
+        if (!Objects.equals(basisChanged, that.basisChanged)) return false;
+        if (!Objects.equals(narrativeChanged, that.narrativeChanged))
             return false;
-        if (previousNarrative != null ? !previousNarrative.equals(that.previousNarrative) : that.previousNarrative != null)
+        if (!Objects.equals(previousNarrative, that.previousNarrative))
             return false;
-        if (currentNarrative != null ? !currentNarrative.equals(that.currentNarrative) : that.currentNarrative != null)
+        if (!Objects.equals(currentNarrative, that.currentNarrative))
             return false;
 
         return true;
@@ -558,5 +573,53 @@ public class ScorPltHeaderEntity {
 
     public void setAdjustmentBasisCurrent(AdjustmentBasisEntity adjustmentBasisByCurrentBasis) {
         this.adjustmentBasisCurrent = adjustmentBasisByCurrentBasis;
+    }
+
+    @Override
+    public String toString() {
+        return "ScorPltHeaderEntity{" +
+                "scorPltHeaderId=" + scorPltHeaderId +
+                ", pltType='" + pltType + '\'' +
+                ", publishToPricing=" + publishToPricing +
+                ", pltSimulationPeriods=" + pltSimulationPeriods +
+                ", generatedFromDefaultAdjustement=" + generatedFromDefaultAdjustement +
+                ", ccyCode='" + ccyCode + '\'' +
+                ", geoCode='" + geoCode + '\'' +
+                ", geoDescription='" + geoDescription + '\'' +
+                ", rmsSimulationSet=" + rmsSimulationSet +
+                ", importSequence=" + importSequence +
+                ", threadName='" + threadName + '\'' +
+                ", udName='" + udName + '\'' +
+                ", userOccurrenceBasis='" + userOccurrenceBasis + '\'' +
+                ", defaultPltName='" + defaultPltName + '\'' +
+                ", truncationThreshold='" + truncationThreshold + '\'' +
+                ", truncationExchangeRate='" + truncationExchangeRate + '\'' +
+                ", truncationCurrency='" + truncationCurrency + '\'' +
+                ", sourceLossModelingBasis='" + sourceLossModelingBasis + '\'' +
+                ", deletedOn=" + deletedOn +
+                ", deletedDue='" + deletedDue + '\'' +
+                ", deletedBy='" + deletedBy + '\'' +
+                ", sourceLossEntityingBasis='" + sourceLossEntityingBasis + '\'' +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdOn=" + createdOn +
+                ", lastModifiedBy='" + lastModifiedBy + '\'' +
+                ", lastModifiedOn='" + lastModifiedOn + '\'' +
+                ", lastGenerated=" + lastGenerated +
+                ", basisChanged=" + basisChanged +
+                ", narrativeChanged=" + narrativeChanged +
+                ", previousNarrative=" + previousNarrative +
+                ", currentNarrative=" + currentNarrative +
+                ", marketChannel='" + marketChannel + '\'' +
+                ", engineType='" + engineType + '\'' +
+                ", entity='" + entity + '\'' +
+                ", rrAnalysis=" + rrAnalysis +
+                ", targetRapByTargetRapId=" + targetRapByTargetRapId +
+                ", regionPerilByRegionPerilId=" + regionPerilByRegionPerilId +
+                ", projectByProjectId=" + projectByProjectId +
+                ", scorPltHeaderByCloningSourceId=" + scorPltHeaderByCloningSourceId +
+                ", binFile=" + binFile +
+                ", adjustmentBasisPrevious=" + adjustmentBasisPrevious +
+                ", adjustmentBasisCurrent=" + adjustmentBasisCurrent +
+                '}';
     }
 }

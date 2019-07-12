@@ -21,7 +21,7 @@ public class CountryEntity {
     private String replaceby;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -51,7 +51,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYCODE", nullable = true, length = 255)
+    @Column(name = "COUNTRYCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCountrycode() {
         return countrycode;
     }
@@ -61,7 +61,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYOFFICIALNAME", nullable = true, length = 255)
+    @Column(name = "COUNTRYOFFICIALNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCountryofficialname() {
         return countryofficialname;
     }
@@ -71,7 +71,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYSHORTNAME", nullable = true, length = 255)
+    @Column(name = "COUNTRYSHORTNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCountryshortname() {
         return countryshortname;
     }
@@ -81,7 +81,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "CURRENCYCODE", nullable = true, length = 255)
+    @Column(name = "CURRENCYCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCurrencycode() {
         return currencycode;
     }
@@ -91,7 +91,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "TELEPHONECODE", nullable = true, length = 255)
+    @Column(name = "TELEPHONECODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTelephonecode() {
         return telephonecode;
     }
@@ -131,7 +131,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "REPLACEBY", nullable = true, length = 255)
+    @Column(name = "REPLACEBY", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getReplaceby() {
         return replaceby;
     }

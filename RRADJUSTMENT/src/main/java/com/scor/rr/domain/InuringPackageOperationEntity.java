@@ -22,7 +22,7 @@ public class InuringPackageOperationEntity {
     }
 
     @Basic
-    @Column(name = "ExchangeRate_Id", nullable = true, length = 255)
+    @Column(name = "ExchangeRate_Id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getExchangeRateId() {
         return exchangeRateId;
     }

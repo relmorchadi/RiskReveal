@@ -27,7 +27,7 @@ public class CountryperilEntity {
 
     @Id
     @Basic
-    @Column(name = "id", nullable = true, length = 255)
+    @Column(name = "id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -57,7 +57,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "FKSECTION_ID", nullable = true, length = 255)
+    @Column(name = "FKSECTION_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getFksectionId() {
         return fksectionId;
     }
@@ -67,7 +67,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
+    @Column(name = "TREATYID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTreatyid() {
         return treatyid;
     }
@@ -117,7 +117,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "INCLUSIONID", nullable = true, length = 255)
+    @Column(name = "INCLUSIONID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getInclusionid() {
         return inclusionid;
     }
@@ -127,7 +127,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYCODE_ID", nullable = true, length = 255)
+    @Column(name = "COUNTRYCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCountrycodeId() {
         return countrycodeId;
     }
@@ -137,7 +137,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "PERILCODE_ID", nullable = true, length = 255)
+    @Column(name = "PERILCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPerilcodeId() {
         return perilcodeId;
     }

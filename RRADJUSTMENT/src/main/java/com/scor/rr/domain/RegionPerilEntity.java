@@ -33,7 +33,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilCode", nullable = true, length = 255)
+    @Column(name = "regionPerilCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getRegionPerilCode() {
         return regionPerilCode;
     }
@@ -43,7 +43,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilDesc", nullable = true, length = 255)
+    @Column(name = "regionPerilDesc", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getRegionPerilDesc() {
         return regionPerilDesc;
     }
@@ -53,7 +53,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "perilCode", nullable = true, length = 255)
+    @Column(name = "perilCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPerilCode() {
         return perilCode;
     }
@@ -63,7 +63,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupCode", nullable = true, length = 255)
+    @Column(name = "regionPerilGroupCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getRegionPerilGroupCode() {
         return regionPerilGroupCode;
     }
@@ -73,7 +73,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupDesc", nullable = true, length = 255)
+    @Column(name = "regionPerilGroupDesc", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getRegionPerilGroupDesc() {
         return regionPerilGroupDesc;
     }
@@ -93,7 +93,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionDesc", nullable = true, length = 255)
+    @Column(name = "regionDesc", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getRegionDesc() {
         return regionDesc;
     }
@@ -113,7 +113,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierachyParentCode", nullable = true, length = 255)
+    @Column(name = "hierachyParentCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getHierachyParentCode() {
         return hierachyParentCode;
     }
@@ -143,7 +143,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "parentMinimumGrainRegionPeril", nullable = true, length = 255)
+    @Column(name = "parentMinimumGrainRegionPeril", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getParentMinimumGrainRegionPeril() {
         return parentMinimumGrainRegionPeril;
     }

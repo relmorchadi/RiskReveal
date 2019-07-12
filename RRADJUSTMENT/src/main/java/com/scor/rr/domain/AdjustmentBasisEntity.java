@@ -28,7 +28,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "adjustmentBasisName", nullable = true, length = 255)
+    @Column(name = "adjustmentBasisName", nullable = true, length = 255,insertable = false ,updatable = false)
     public java.lang.String getAdjustmentBasisName() {
         return adjustmentBasisName;
     }
@@ -38,7 +38,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "basisShortname", nullable = true, length = 255)
+    @Column(name = "basisShortname", nullable = true, length = 255,insertable = false ,updatable = false)
     public java.lang.String getBasisShortname() {
         return basisShortname;
     }
@@ -48,7 +48,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
     public java.lang.String getDescription() {
         return description;
     }

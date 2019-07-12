@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
+import static com.scor.rr.exceptions.ExceptionCodename.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -56,17 +56,37 @@ public class AdjustmentNodeService {
 
     public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest){
         AdjustmentNodeEntity adjustmentNodeEntity = new AdjustmentNodeEntity();
-        adjustmentNodeEntity.setLayer(adjustmentNodeRequest.getLayer());
-        adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
-        adjustmentNodeEntity.setInputChanged(adjustmentNodeRequest.getInputChanged());
-        adjustmentNodeEntity.setAdjustmentParamsSource(adjustmentNodeRequest.getAdjustmentParamsSource());
-        adjustmentNodeEntity.setLossNetFlag(adjustmentNodeRequest.getLossNetFlag());
-        adjustmentNodeEntity.setHasNewParamsFile(adjustmentNodeRequest.getHasNewParamsFile());
-        adjustmentNodeEntity.setAdjustmentType(adjustmentTypeRepository.getOne(adjustmentNodeRequest.getAdjustmentType()));
-        adjustmentNodeEntity.setAdjustmentBasis(adjustmentBasisRepository.getOne(adjustmentNodeRequest.getAdjustmentBasis()));
-        adjustmentNodeEntity.setAdjustmentState(adjustmentStateRepository.getOne(adjustmentNodeRequest.getAdjustmentState()));
-        adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.getOne(adjustmentNodeRequest.getAdjustmentThreadId()));
-        return adjustmentnodeRepository.save(adjustmentNodeEntity);
+        if(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).isPresent()) {
+            adjustmentNodeEntity.setAdjustmentType(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).get());
+            if(adjustmentBasisRepository.findById(adjustmentNodeRequest.getAdjustmentBasis()).isPresent()) {
+                adjustmentNodeEntity.setAdjustmentBasis(adjustmentBasisRepository.findById(adjustmentNodeRequest.getAdjustmentBasis()).get());
+                if(adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).isPresent()) {
+                    adjustmentNodeEntity.setAdjustmentState(adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).get());
+                    if(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
+                        adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
+                        adjustmentNodeEntity.setLayer(adjustmentNodeRequest.getLayer());
+                        adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
+                        adjustmentNodeEntity.setInputChanged(adjustmentNodeRequest.getInputChanged());
+                        adjustmentNodeEntity.setAdjustmentParamsSource(adjustmentNodeRequest.getAdjustmentParamsSource());
+                        adjustmentNodeEntity.setLossNetFlag(adjustmentNodeRequest.getLossNetFlag());
+                        adjustmentNodeEntity.setHasNewParamsFile(adjustmentNodeRequest.getHasNewParamsFile());
+                        return adjustmentnodeRepository.save(adjustmentNodeEntity);
+                    } else {
+                        throwException(THREADNOTFOUND, NOT_FOUND);
+                        return null;
+                    }
+                } else {
+                    throwException(STATENOTFOUND, NOT_FOUND);
+                    return null;
+                }
+            } else {
+                throwException(BASISNOTFOUND, NOT_FOUND);
+                return null;
+            }
+        } else {
+            throwException(TYPENOTFOUND, NOT_FOUND);
+            return null;
+        }
     }
 
     public void delete(Long id) {

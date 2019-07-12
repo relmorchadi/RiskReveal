@@ -23,7 +23,7 @@ public class InuringExchangeRateEntity {
     }
 
     @Basic
-    @Column(name = "Target_Currency_Id", nullable = true, length = 255)
+    @Column(name = "Target_Currency_Id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTargetCurrencyId() {
         return targetCurrencyId;
     }
@@ -33,7 +33,7 @@ public class InuringExchangeRateEntity {
     }
 
     @Basic
-    @Column(name = "Source_Currency_Id", nullable = true, length = 255)
+    @Column(name = "Source_Currency_Id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSourceCurrencyId() {
         return sourceCurrencyId;
     }
@@ -53,7 +53,7 @@ public class InuringExchangeRateEntity {
     }
 
     @Basic
-    @Column(name = "ExchangeRate_Id", nullable = true, length = 255)
+    @Column(name = "ExchangeRate_Id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getExchangeRateId() {
         return exchangeRateId;
     }

@@ -22,7 +22,7 @@ public class RmsPortfolioEntity {
 
     @Id
     @Basic
-    @Column(name = "agCedent", nullable = true, length = 255)
+    @Column(name = "agCedent", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAgCedent() {
         return agCedent;
     }
@@ -32,7 +32,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "agCurrency", nullable = true, length = 255)
+    @Column(name = "agCurrency", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAgCurrency() {
         return agCurrency;
     }
@@ -42,7 +42,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "agSource", nullable = true, length = 255)
+    @Column(name = "agSource", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAgSource() {
         return agSource;
     }
@@ -62,7 +62,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getDescription() {
         return description;
     }
@@ -82,7 +82,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "edmName", nullable = true, length = 255)
+    @Column(name = "edmName", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getEdmName() {
         return edmName;
     }
@@ -92,7 +92,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getName() {
         return name;
     }
@@ -102,7 +102,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "number", nullable = true, length = 255)
+    @Column(name = "number", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getNumber() {
         return number;
     }
@@ -112,7 +112,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "peril", nullable = true, length = 255)
+    @Column(name = "peril", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPeril() {
         return peril;
     }
@@ -132,7 +132,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "type", nullable = true, length = 255)
+    @Column(name = "type", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getType() {
         return type;
     }

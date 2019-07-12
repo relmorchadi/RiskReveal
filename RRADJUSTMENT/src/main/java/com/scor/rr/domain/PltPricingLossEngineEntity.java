@@ -23,7 +23,7 @@ public class PltPricingLossEngineEntity {
     private Timestamp lastUpdateRiskReveal;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -53,7 +53,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingId", nullable = true, length = 255)
+    @Column(name = "pltPricingId", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -63,7 +63,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingSectionId", nullable = true, length = 255)
+    @Column(name = "pltPricingSectionId", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPltPricingSectionId() {
         return pltPricingSectionId;
     }
@@ -73,7 +73,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getName() {
         return name;
     }
@@ -93,7 +93,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "type", nullable = true, length = 255)
+    @Column(name = "type", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getType() {
         return type;
     }
@@ -113,7 +113,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltsRiskRevealId", nullable = true, length = 255)
+    @Column(name = "pltsRiskRevealId", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPltsRiskRevealId() {
         return pltsRiskRevealId;
     }
@@ -123,7 +123,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "franchiseDeductibleType", nullable = true, length = 255)
+    @Column(name = "franchiseDeductibleType", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getFranchiseDeductibleType() {
         return franchiseDeductibleType;
     }

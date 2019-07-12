@@ -26,7 +26,7 @@ public class FacEntity {
     private Integer modellingSystemInstance;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -36,7 +36,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisName", nullable = true, length = 255)
+    @Column(name = "analysisName", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisName() {
         return analysisName;
     }
@@ -46,7 +46,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrBusinessType", nullable = true, length = 255)
+    @Column(name = "analysisCtrBusinessType", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrBusinessType() {
         return analysisCtrBusinessType;
     }
@@ -56,7 +56,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrId", nullable = true, length = 255)
+    @Column(name = "analysisCtrId", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrId() {
         return analysisCtrId;
     }
@@ -66,7 +66,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrEndorsementNmber", nullable = true, length = 255)
+    @Column(name = "analysisCtrEndorsementNmber", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrEndorsementNmber() {
         return analysisCtrEndorsementNmber;
     }
@@ -76,7 +76,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrFacNumber", nullable = true, length = 255)
+    @Column(name = "analysisCtrFacNumber", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrFacNumber() {
         return analysisCtrFacNumber;
     }
@@ -86,7 +86,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrInsured", nullable = true, length = 255)
+    @Column(name = "analysisCtrInsured", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrInsured() {
         return analysisCtrInsured;
     }
@@ -96,7 +96,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrLabel", nullable = true, length = 255)
+    @Column(name = "analysisCtrLabel", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrLabel() {
         return analysisCtrLabel;
     }
@@ -106,7 +106,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrLob", nullable = true, length = 255)
+    @Column(name = "analysisCtrLob", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrLob() {
         return analysisCtrLob;
     }
@@ -116,7 +116,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrOrderNumber", nullable = true, length = 255)
+    @Column(name = "analysisCtrOrderNumber", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAnalysisCtrOrderNumber() {
         return analysisCtrOrderNumber;
     }
@@ -156,7 +156,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255)
+    @Column(name = "assignedTo", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -176,7 +176,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdatedBy", nullable = true, length = 255)
+    @Column(name = "lastUpdatedBy", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }

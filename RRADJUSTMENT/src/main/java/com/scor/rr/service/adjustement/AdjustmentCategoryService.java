@@ -25,7 +25,9 @@ public class AdjustmentCategoryService {
     }
 
     public AdjustmentCategoryEntity findOne(Integer id){
-        return adjustmentCategoryRepository.getOne(id);
+        if(adjustmentCategoryRepository.findById(id).isPresent()) {
+            return adjustmentCategoryRepository.findById(id).get();
+        } else return null;
     }
 
     public void delete(Integer id) {

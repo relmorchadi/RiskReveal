@@ -43,7 +43,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "Contract_Id", nullable = true, length = 255)
+    @Column(name = "Contract_Id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getContractId() {
         return contractId;
     }
@@ -53,7 +53,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "SubjectPremiumBasis_Id", nullable = true, length = 255)
+    @Column(name = "SubjectPremiumBasis_Id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSubjectPremiumBasisId() {
         return subjectPremiumBasisId;
     }

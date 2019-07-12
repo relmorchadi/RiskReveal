@@ -33,32 +33,41 @@ public class DefaultAdjustmentService {
 
     @Autowired
     ScorpltheaderRepository scorpltheaderRepository;
+
     public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltEntity(Integer scorPltHeaderId) {
-        ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.getOne(scorPltHeaderId);
-        DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
-                        !defaultAdjustmentEntity.getEntity().equals(scorPltHeaderEntity.getEntity()))
-                .findAny().orElse(null);
-        return getDefaultAdjustmentNode(defaultAdjustment);
+        if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
+            ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
+            DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
+                    !defaultAdjustmentEntity.getEntity().equals(scorPltHeaderEntity.getEntity()))
+                    .findAny().orElse(null);
+            return getDefaultAdjustmentNode(defaultAdjustment);
+        } else return null;
     }
 
     public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRPAndTRAndET(Integer scorPltHeaderId) {
-        ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.getOne(scorPltHeaderId);
-        DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
-                !defaultAdjustmentEntity.getRegionPerilByRegionPerilId().equals(scorPltHeaderEntity.getRegionPerilByRegionPerilId()) ||
-                !defaultAdjustmentEntity.getTargetRapByTargetRapId().equals(scorPltHeaderEntity.getTargetRapByTargetRapId()) ||
-                !defaultAdjustmentEntity.getEngineType().equals(scorPltHeaderEntity.getEngineType()))
-                .findAny().orElse(null);
-        return getDefaultAdjustmentNode(defaultAdjustment);
+        if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
+            ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
+            DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
+                    !defaultAdjustmentEntity.getRegionPerilByRegionPerilId().equals(scorPltHeaderEntity.getRegionPerilByRegionPerilId()) ||
+                            !defaultAdjustmentEntity.getTargetRapByTargetRapId().equals(scorPltHeaderEntity.getTargetRapByTargetRapId()) ||
+                            !defaultAdjustmentEntity.getEngineType().equals(scorPltHeaderEntity.getEngineType()))
+                    .findAny().orElse(null);
+            return getDefaultAdjustmentNode(defaultAdjustment);
+        } else return null;
 
     }
+
     public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltMarketChannel(Integer scorPltHeaderId) {
-        ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.getOne(scorPltHeaderId);
-        DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
-                !defaultAdjustmentEntity.getMarketChannel().equals(scorPltHeaderEntity.getMarketChannel()))
-                .findAny().orElse(null);
-        return getDefaultAdjustmentNode(defaultAdjustment);
+        if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
+            ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
+            DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
+                    !defaultAdjustmentEntity.getMarketChannel().equals(scorPltHeaderEntity.getMarketChannel()))
+                    .findAny().orElse(null);
+            return getDefaultAdjustmentNode(defaultAdjustment);
+        } else return null;
     }
-    private List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNode(DefaultAdjustmentEntity defaultAdjustment){
+
+    private List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNode(DefaultAdjustmentEntity defaultAdjustment) {
         if (defaultAdjustment != null) {
             List<DefaultAdjustmentVersionEntity> defaultAdjustmentVersion = defaultAdjustmentVersionRepository
                     .findAll()
@@ -105,7 +114,9 @@ public class DefaultAdjustmentService {
     }
 
     public DefaultAdjustmentEntity findOne(Integer id) {
-        return defaultAdjustmentRepository.getOne(id);
+        if(defaultAdjustmentRepository.findById(id).isPresent())
+        return defaultAdjustmentRepository.findById(id).get();
+        else return null;
     }
 
     public void delete(Integer id) {

@@ -26,7 +26,7 @@ public class AdjustmentProcessingAuditEntity {
     }
 
     @Basic
-    @Column(name = "adjustmentRecap", nullable = true, length = 255)
+    @Column(name = "adjustmentRecap", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAdjustmentRecap() {
         return adjustmentRecap;
     }

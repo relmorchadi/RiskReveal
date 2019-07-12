@@ -24,7 +24,7 @@ public class InuringPackageEntity {
     }
 
     @Basic
-    @Column(name = "Workspace_Id", nullable = true, length = 255)
+    @Column(name = "Workspace_Id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getWorkspaceId() {
         return workspaceId;
     }

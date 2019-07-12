@@ -22,7 +22,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "fileName", nullable = false, length = 255)
+    @Column(name = "fileName", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getFileName() {
         return fileName;
     }
@@ -32,7 +32,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "path", nullable = false, length = 255)
+    @Column(name = "path", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getPath() {
         return path;
     }
@@ -42,7 +42,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "fqn", nullable = false, length = 255)
+    @Column(name = "fqn", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getFqn() {
         return fqn;
     }

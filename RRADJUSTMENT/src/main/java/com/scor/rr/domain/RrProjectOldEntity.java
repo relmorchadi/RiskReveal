@@ -32,7 +32,7 @@ public class RrProjectOldEntity {
     private Integer xactSum;
 
     @Id
-    @Column(name = "_id", nullable = false, length = 255)
+    @Column(name = "_id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -42,7 +42,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255)
+    @Column(name = "assignedTo", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -62,7 +62,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "createdBy", nullable = true, length = 255)
+    @Column(name = "createdBy", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -82,7 +82,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getDescription() {
         return description;
     }
@@ -132,7 +132,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgaexpectedFrequencycode", nullable = true, length = 255)
+    @Column(name = "mgaexpectedFrequencycode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getMgaexpectedFrequencycode() {
         return mgaexpectedFrequencycode;
     }
@@ -142,7 +142,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgafinancialBasiscode", nullable = true, length = 255)
+    @Column(name = "mgafinancialBasiscode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getMgafinancialBasiscode() {
         return mgafinancialBasiscode;
     }
@@ -162,7 +162,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgasubmissionPeriod", nullable = true, length = 255)
+    @Column(name = "mgasubmissionPeriod", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getMgasubmissionPeriod() {
         return mgasubmissionPeriod;
     }
@@ -172,7 +172,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgatreatyId", nullable = true, length = 255)
+    @Column(name = "mgatreatyId", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getMgatreatyId() {
         return mgatreatyId;
     }
@@ -182,7 +182,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getName() {
         return name;
     }

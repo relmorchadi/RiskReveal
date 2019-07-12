@@ -3,6 +3,7 @@ package com.scor.rr.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
@@ -18,7 +19,7 @@ import java.io.File;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
+import static com.scor.rr.exceptions.ExceptionCodename.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -53,14 +54,25 @@ public class AdjustmentNodeProcessingService {
         return adjustmentnodeprocessingRepository.findAll();
     }
 
-    public AdjustmentNodeProcessingEntity save(AdjustmentNodeProcessingEntity adjustmentnodeprocessingModel,Integer scorPltHeaderId,long adjustmentNodeId){
-        ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.getOne(scorPltHeaderId);
-        AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.getOne(adjustmentNodeId);
-        adjustmentnodeprocessingModel.setScorPltHeaderByInputPltId(scorPltHeader);
-        adjustmentnodeprocessingModel.setAdjustmentNodeByAdjustmentNodeId(adjustmentNode);
-        List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(scorPltHeader);
+    public AdjustmentNodeProcessingEntity save(AdjustmentNodeProcessingRequest adjustmentNodeProcessingRequest){
+       if(scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).isPresent()) {
+           ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).get();
+           if(adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).isPresent()) {
+               AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).get();
+               AdjustmentNodeProcessingEntity nodeProcessing = new AdjustmentNodeProcessingEntity();
+               nodeProcessing.setScorPltHeaderByInputPltId(scorPltHeader);
+               nodeProcessing.setAdjustmentNodeByAdjustmentNodeId(adjustmentNode);
+               return adjustmentnodeprocessingRepository.save(nodeProcessing);
+           } else {
+               throwException(NODENOTFOUND, NOT_FOUND);
+               return null;
+           }
+       } else {
+           throwException(PLTNOTFOUNT, NOT_FOUND);
+           return null;
+       }
 
-       return adjustmentnodeprocessingRepository.save(adjustmentnodeprocessingModel);
+
     }
 
     public List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) {

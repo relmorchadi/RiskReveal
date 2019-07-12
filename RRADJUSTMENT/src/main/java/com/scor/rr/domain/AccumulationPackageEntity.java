@@ -22,7 +22,7 @@ public class AccumulationPackageEntity {
     }
 
     @Basic
-    @Column(name = "fkworkspace_id", nullable = true, length = 255)
+    @Column(name = "fkworkspace_id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getFkworkspaceId() {
         return fkworkspaceId;
     }

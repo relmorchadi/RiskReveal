@@ -20,7 +20,7 @@ public class AccumulationPackageStatusEntity {
     }
 
     @Basic
-    @Column(name = "label", nullable = true, length = 255)
+    @Column(name = "label", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLabel() {
         return label;
     }

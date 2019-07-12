@@ -26,7 +26,9 @@ public class AdjustmentBasisService {
     }
 
     public AdjustmentBasisEntity findOne(Integer id){
-        return adjustmentBasisRepository.getOne(id);
+        if(adjustmentBasisRepository.findById(id).isPresent()) {
+            return adjustmentBasisRepository.findById(id).get();
+        }else return null;
     }
 
     public void delete(Integer id) {

@@ -55,7 +55,7 @@ public class SectionEntity {
     private Integer accumulationPackagePltContractSectionId;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -85,7 +85,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKCONTRACT_ID", nullable = true, length = 255)
+    @Column(name = "FKCONTRACT_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getFkcontractId() {
         return fkcontractId;
     }
@@ -95,7 +95,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
+    @Column(name = "TREATYID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTreatyid() {
         return treatyid;
     }
@@ -155,7 +155,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "STATUS_ID", nullable = true, length = 255)
+    @Column(name = "STATUS_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getStatusId() {
         return statusId;
     }
@@ -165,7 +165,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "LINEOFBUSINESS_ID", nullable = true, length = 255)
+    @Column(name = "LINEOFBUSINESS_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLineofbusinessId() {
         return lineofbusinessId;
     }
@@ -175,7 +175,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "SCOPEOFBUSINESS_ID", nullable = true, length = 255)
+    @Column(name = "SCOPEOFBUSINESS_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getScopeofbusinessId() {
         return scopeofbusinessId;
     }
@@ -185,7 +185,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "TYPEOFPOLICY_ID", nullable = true, length = 255)
+    @Column(name = "TYPEOFPOLICY_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTypeofpolicyId() {
         return typeofpolicyId;
     }
@@ -195,7 +195,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "NATURECODE_ID", nullable = true, length = 255)
+    @Column(name = "NATURECODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getNaturecodeId() {
         return naturecodeId;
     }
@@ -275,7 +275,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "EGPICURRENCY_ID", nullable = true, length = 255)
+    @Column(name = "EGPICURRENCY_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getEgpicurrencyId() {
         return egpicurrencyId;
     }
@@ -295,7 +295,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "LIABILITYCURRENCY_ID", nullable = true, length = 255)
+    @Column(name = "LIABILITYCURRENCY_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLiabilitycurrencyId() {
         return liabilitycurrencyId;
     }
@@ -315,7 +315,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "CANCELLATIONDATE", nullable = true, length = 255)
+    @Column(name = "CANCELLATIONDATE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCancellationdate() {
         return cancellationdate;
     }
@@ -325,7 +325,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "PREMIUMRUNOFF", nullable = true, length = 255)
+    @Column(name = "PREMIUMRUNOFF", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPremiumrunoff() {
         return premiumrunoff;
     }
@@ -335,7 +335,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "CLAIMRUNOFF", nullable = true, length = 255)
+    @Column(name = "CLAIMRUNOFF", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getClaimrunoff() {
         return claimrunoff;
     }
@@ -345,7 +345,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "PREMIUMCUTOFF", nullable = true, length = 255)
+    @Column(name = "PREMIUMCUTOFF", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPremiumcutoff() {
         return premiumcutoff;
     }
@@ -355,7 +355,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "CLAIMCUTOFF", nullable = true, length = 255)
+    @Column(name = "CLAIMCUTOFF", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getClaimcutoff() {
         return claimcutoff;
     }
@@ -365,7 +365,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "RUNOFFYEARSDURATION", nullable = true, length = 255)
+    @Column(name = "RUNOFFYEARSDURATION", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getRunoffyearsduration() {
         return runoffyearsduration;
     }
@@ -375,7 +375,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "LIABILITYBYRISK", nullable = true, length = 255)
+    @Column(name = "LIABILITYBYRISK", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLiabilitybyrisk() {
         return liabilitybyrisk;
     }
@@ -385,7 +385,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "LIABILITYBYEVENT", nullable = true, length = 255)
+    @Column(name = "LIABILITYBYEVENT", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLiabilitybyevent() {
         return liabilitybyevent;
     }
@@ -395,7 +395,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "SECTIONTYPE", nullable = true, length = 255)
+    @Column(name = "SECTIONTYPE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSectiontype() {
         return sectiontype;
     }
@@ -405,7 +405,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "ACCOUNTINGTYPE", nullable = true, length = 255)
+    @Column(name = "ACCOUNTINGTYPE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAccountingtype() {
         return accountingtype;
     }
@@ -415,7 +415,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "WORKINGCAT", nullable = true, length = 255)
+    @Column(name = "WORKINGCAT", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getWorkingcat() {
         return workingcat;
     }
@@ -465,7 +465,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "REPORTINGCOUNTRY", nullable = true, length = 255)
+    @Column(name = "REPORTINGCOUNTRY", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getReportingcountry() {
         return reportingcountry;
     }
@@ -475,7 +475,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "OLDTREATY", nullable = true, length = 255)
+    @Column(name = "OLDTREATY", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getOldtreaty() {
         return oldtreaty;
     }

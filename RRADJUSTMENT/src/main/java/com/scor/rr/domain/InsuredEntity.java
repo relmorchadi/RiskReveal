@@ -16,7 +16,7 @@ public class InsuredEntity {
     private String clientcodeId;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -46,7 +46,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
+    @Column(name = "CODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCode() {
         return code;
     }
@@ -76,7 +76,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTCODE_ID", nullable = true, length = 255)
+    @Column(name = "CLIENTCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getClientcodeId() {
         return clientcodeId;
     }

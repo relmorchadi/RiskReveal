@@ -39,7 +39,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "targetCurrency", nullable = true, length = 255)
+    @Column(name = "targetCurrency", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTargetCurrency() {
         return targetCurrency;
     }
@@ -49,7 +49,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "targetRegionPeril", nullable = true, length = 255)
+    @Column(name = "targetRegionPeril", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTargetRegionPeril() {
         return targetRegionPeril;
     }
@@ -59,7 +59,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "overrideRegionPerilBasis", nullable = true, length = 255)
+    @Column(name = "overrideRegionPerilBasis", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getOverrideRegionPerilBasis() {
         return overrideRegionPerilBasis;
     }
@@ -69,7 +69,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "occurrenceBasis", nullable = true, length = 255)
+    @Column(name = "occurrenceBasis", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getOccurrenceBasis() {
         return occurrenceBasis;
     }
@@ -79,7 +79,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "financialPerspective", nullable = true, length = 255)
+    @Column(name = "financialPerspective", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getFinancialPerspective() {
         return financialPerspective;
     }
@@ -109,7 +109,7 @@ public class RmsSourceResultEntity {
     }
 
     @Basic
-    @Column(name = "targetRapCode", nullable = true, length = 255)
+    @Column(name = "targetRapCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTargetRapCode() {
         return targetRapCode;
     }

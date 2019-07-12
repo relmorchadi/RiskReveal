@@ -14,7 +14,7 @@ public class AdjustmentParameterEntity {
     private AdjustmentNodeEntity adjustmentNodeByAdjustmentNodeId;
 
     @Id
-    @Column(name = "adjustmentNodeId", nullable = false)
+    @Column(name = "adjustmentNodeId", nullable = false,insertable = false ,updatable = false)
     public int getAdjustmentNodeId() {
         return adjustmentNodeId;
     }
@@ -24,7 +24,7 @@ public class AdjustmentParameterEntity {
     }
 
     @Id
-    @Column(name = "paramField", nullable = false, length = 255)
+    @Column(name = "paramField", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getParamField() {
         return paramField;
     }
@@ -34,7 +34,7 @@ public class AdjustmentParameterEntity {
     }
 
     @Basic
-    @Column(name = "paramValue", nullable = true, length = 255)
+    @Column(name = "paramValue", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getParamValue() {
         return paramValue;
     }
@@ -44,7 +44,7 @@ public class AdjustmentParameterEntity {
     }
 
     @Basic
-    @Column(name = "paramType", nullable = true, length = 255)
+    @Column(name = "paramType", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getParamType() {
         return paramType;
     }
@@ -70,7 +70,7 @@ public class AdjustmentParameterEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustmentNodeId", referencedColumnName = "adjustmentNodeId", nullable = false)
+    @JoinColumn(name = "adjustmentNodeId", referencedColumnName = "adjustmentNodeId", nullable = false,insertable = false ,updatable = false)
     public AdjustmentNodeEntity getAdjustmentNodeByAdjustmentNodeId() {
         return adjustmentNodeByAdjustmentNodeId;
     }

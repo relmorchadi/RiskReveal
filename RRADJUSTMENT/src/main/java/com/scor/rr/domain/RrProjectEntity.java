@@ -29,7 +29,7 @@ public class RrProjectEntity {
 
     @Id
     @Basic
-    @Column(name = "id", nullable = true, length = 255)
+    @Column(name = "id", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -39,7 +39,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255)
+    @Column(name = "assignedTo", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -49,7 +49,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "cloneSourceProject", nullable = true, length = 255)
+    @Column(name = "cloneSourceProject", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCloneSourceProject() {
         return cloneSourceProject;
     }
@@ -59,7 +59,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "clonedFlag", nullable = true, length = 255)
+    @Column(name = "clonedFlag", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getClonedFlag() {
         return clonedFlag;
     }
@@ -69,7 +69,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "createdBy", nullable = true, length = 255)
+    @Column(name = "createdBy", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -89,7 +89,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getDescription() {
         return description;
     }
@@ -109,7 +109,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "linkFlag", nullable = true, length = 255)
+    @Column(name = "linkFlag", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLinkFlag() {
         return linkFlag;
     }
@@ -119,7 +119,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "masterFlag", nullable = true, length = 255)
+    @Column(name = "masterFlag", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getMasterFlag() {
         return masterFlag;
     }
@@ -129,7 +129,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getName() {
         return name;
     }
@@ -139,7 +139,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "pltSum", nullable = true, length = 255)
+    @Column(name = "pltSum", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPltSum() {
         return pltSum;
     }
@@ -159,7 +159,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "postInuredFlag", nullable = true, length = 255)
+    @Column(name = "postInuredFlag", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPostInuredFlag() {
         return postInuredFlag;
     }
@@ -169,7 +169,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "publishFlag", nullable = true, length = 255)
+    @Column(name = "publishFlag", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getPublishFlag() {
         return publishFlag;
     }
@@ -179,7 +179,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "receptionDate", nullable = true, length = 255)
+    @Column(name = "receptionDate", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getReceptionDate() {
         return receptionDate;
     }
@@ -199,7 +199,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "sourceID", nullable = true, length = 255)
+    @Column(name = "sourceID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSourceId() {
         return sourceId;
     }

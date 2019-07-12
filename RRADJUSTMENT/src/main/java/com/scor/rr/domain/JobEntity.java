@@ -47,7 +47,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "jobType", nullable = true, length = 255)
+    @Column(name = "jobType", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getJobType() {
         return jobType;
     }
@@ -57,7 +57,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "jobParams", nullable = true, length = 255)
+    @Column(name = "jobParams", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getJobParams() {
         return jobParams;
     }
@@ -67,7 +67,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255)
+    @Column(name = "status", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getStatus() {
         return status;
     }

@@ -16,7 +16,7 @@ public class SubsidiaryledgerEntity {
     private String subsidiarycodeId;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -46,7 +46,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARYLEDGERCODE", nullable = true, length = 255)
+    @Column(name = "SUBSIDIARYLEDGERCODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSubsidiaryledgercode() {
         return subsidiaryledgercode;
     }
@@ -76,7 +76,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARYCODE_ID", nullable = true, length = 255)
+    @Column(name = "SUBSIDIARYCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSubsidiarycodeId() {
         return subsidiarycodeId;
     }

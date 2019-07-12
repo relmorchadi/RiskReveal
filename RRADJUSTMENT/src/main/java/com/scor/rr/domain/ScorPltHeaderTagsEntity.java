@@ -31,7 +31,7 @@ public class ScorPltHeaderTagsEntity {
     }
 
     @Basic
-    @Column(name = "tag", nullable = true, length = 255)
+    @Column(name = "tag", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTag() {
         return tag;
     }

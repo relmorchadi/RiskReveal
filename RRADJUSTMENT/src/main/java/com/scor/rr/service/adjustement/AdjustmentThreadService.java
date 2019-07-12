@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
+import static com.scor.rr.exceptions.ExceptionCodename.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -36,8 +36,13 @@ public class AdjustmentThreadService {
     public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest){
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
-        adjustmentThreadEntity.setScorPltHeaderByPurePltId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltPureId()));
-        return adjustmentthreadRepository.save(adjustmentThreadEntity);
+        if(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).isPresent()) {
+            adjustmentThreadEntity.setScorPltHeaderByPurePltId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
+            return adjustmentthreadRepository.save(adjustmentThreadEntity);
+        } else {
+            throwException(PLTNOTFOUNT, NOT_FOUND);
+            return null;
+        }
     }
 
     public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest){
@@ -51,7 +56,7 @@ public class AdjustmentThreadService {
         this.adjustmentthreadRepository.delete(
                 this.adjustmentthreadRepository.
                         findById(id)
-                        .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
+                        .orElseThrow(throwException(THREADNOTFOUND, NOT_FOUND))
         );
     }
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

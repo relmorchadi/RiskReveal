@@ -27,7 +27,7 @@ public class ReinstatementEntity {
     private Timestamp lastsyncruncatdomain;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -57,7 +57,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
+    @Column(name = "TREATYID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTreatyid() {
         return treatyid;
     }
@@ -117,7 +117,7 @@ public class ReinstatementEntity {
     }
 
     @Basic
-    @Column(name = "REINSTATEMENTLABEL", nullable = true, length = 255)
+    @Column(name = "REINSTATEMENTLABEL", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getReinstatementlabel() {
         return reinstatementlabel;
     }

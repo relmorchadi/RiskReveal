@@ -36,7 +36,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "taskType", nullable = true, length = 255)
+    @Column(name = "taskType", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTaskType() {
         return taskType;
     }
@@ -46,7 +46,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "taskParams", nullable = true, length = 255)
+    @Column(name = "taskParams", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTaskParams() {
         return taskParams;
     }
@@ -56,7 +56,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255)
+    @Column(name = "status", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getStatus() {
         return status;
     }

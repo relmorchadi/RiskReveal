@@ -32,7 +32,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "threadType", nullable = true, length = 255)
+    @Column(name = "threadType", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getThreadType() {
         return threadType;
     }

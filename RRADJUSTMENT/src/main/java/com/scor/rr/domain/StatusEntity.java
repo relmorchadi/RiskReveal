@@ -15,7 +15,7 @@ public class StatusEntity {
     private String longname;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -45,7 +45,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
+    @Column(name = "CODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCode() {
         return code;
     }
@@ -55,7 +55,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "SHORTNAME", nullable = true, length = 255)
+    @Column(name = "SHORTNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getShortname() {
         return shortname;
     }
@@ -65,7 +65,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "LONGNAME", nullable = true, length = 255)
+    @Column(name = "LONGNAME", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLongname() {
         return longname;
     }

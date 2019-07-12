@@ -19,7 +19,7 @@ public class AdjustmentParameterEntityPK implements Serializable {
         this.adjustmentNodeId = adjustmentNodeId;
     }
 
-    @Column(name = "paramField", nullable = false, length = 255)
+    @Column(name = "paramField", nullable = false, length = 255,insertable = false ,updatable = false)
     @Id
     public String getParamField() {
         return paramField;

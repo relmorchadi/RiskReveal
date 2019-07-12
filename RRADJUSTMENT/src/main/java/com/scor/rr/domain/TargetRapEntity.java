@@ -20,7 +20,7 @@ public class TargetRapEntity {
     private Boolean isActive;
 
     @Basic
-    @Column(name = "modellingVendor", nullable = true, length = 255)
+    @Column(name = "modellingVendor", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getModellingVendor() {
         return modellingVendor;
     }
@@ -30,7 +30,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystem", nullable = true, length = 255)
+    @Column(name = "modellingSystem", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getModellingSystem() {
         return modellingSystem;
     }
@@ -40,7 +40,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystemVersion", nullable = true, length = 255)
+    @Column(name = "modellingSystemVersion", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getModellingSystemVersion() {
         return modellingSystemVersion;
     }
@@ -60,7 +60,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingVendor", nullable = true, length = 255)
+    @Column(name = "modellingVendor", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getEntitylingVendor() {
         return modellingVendor;
     }
@@ -70,7 +70,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystem", nullable = true, length = 255)
+    @Column(name = "modellingSystem", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getEntitylingSystem() {
         return modellingSystem;
     }
@@ -80,7 +80,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystemVersion", nullable = true, length = 255)
+    @Column(name = "modellingSystemVersion", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getEntitylingSystemVersion() {
         return modellingSystemVersion;
     }
@@ -90,7 +90,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "targetRapCode", nullable = true, length = 255)
+    @Column(name = "targetRapCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTargetRapCode() {
         return targetRapCode;
     }
@@ -100,7 +100,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "targetRapDesc", nullable = true, length = 255)
+    @Column(name = "targetRapDesc", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getTargetRapDesc() {
         return targetRapDesc;
     }
@@ -120,7 +120,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "sourceRapCode", nullable = true, length = 255)
+    @Column(name = "sourceRapCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSourceRapCode() {
         return sourceRapCode;
     }

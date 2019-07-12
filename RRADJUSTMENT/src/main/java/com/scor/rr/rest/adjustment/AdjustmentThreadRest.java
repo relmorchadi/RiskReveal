@@ -16,9 +16,14 @@ public class AdjustmentThreadRest {
     AdjustmentThreadService adjustmentThreadService;
 
 
-    @PostMapping
+    @PostMapping("pure")
     public AdjustmentThreadEntity savePurePlt(@RequestBody AdjustmentThreadRequest request){
         return adjustmentThreadService.savePurePlt(request);
+    }
+
+    @PostMapping("adjusted")
+    public AdjustmentThreadEntity saveAdjustedPlt(@RequestBody AdjustmentThreadRequest request){
+        return adjustmentThreadService.saveAdjustedPlt(request);
     }
 
 

@@ -19,7 +19,7 @@ public class CurrencyEntity {
     private Integer reportingcurrencycodeId;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -49,7 +49,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
+    @Column(name = "CODE", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCode() {
         return code;
     }
@@ -59,7 +59,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", nullable = true, length = 255)
+    @Column(name = "LABEL", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLabel() {
         return label;
     }
@@ -69,7 +69,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYCODE_ID", nullable = true, length = 255)
+    @Column(name = "COUNTRYCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCountrycodeId() {
         return countrycodeId;
     }

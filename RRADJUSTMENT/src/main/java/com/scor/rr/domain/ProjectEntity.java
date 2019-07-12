@@ -40,7 +40,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "workspaceId", nullable = true, length = 255)
+    @Column(name = "workspaceId", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getWorkspaceId() {
         return workspaceId;
     }
@@ -50,7 +50,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getName() {
         return name;
     }
@@ -60,7 +60,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getDescription() {
         return description;
     }
@@ -130,7 +130,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255)
+    @Column(name = "assignedTo", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -170,7 +170,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "createdBy", nullable = true, length = 255)
+    @Column(name = "createdBy", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -220,7 +220,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedDue", nullable = true, length = 255)
+    @Column(name = "deletedDue", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getDeletedDue() {
         return deletedDue;
     }
@@ -230,7 +230,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedBy", nullable = true, length = 255)
+    @Column(name = "deletedBy", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getDeletedBy() {
         return deletedBy;
     }

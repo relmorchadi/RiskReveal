@@ -31,7 +31,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "layer", nullable = true, length = 255)
+    @Column(name = "layer", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLayer() {
         return layer;
     }
@@ -61,7 +61,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "adjustmentParamsSource", nullable = true, length = 255)
+    @Column(name = "adjustmentParamsSource", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getAdjustmentParamsSource() {
         return adjustmentParamsSource;
     }
@@ -71,7 +71,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "lossNetFlag", nullable = true, length = 255)
+    @Column(name = "lossNetFlag", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getLossNetFlag() {
         return lossNetFlag;
     }

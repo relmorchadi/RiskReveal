@@ -13,7 +13,7 @@ public class WorkspaceEntity {
     private String cedantName;
 
     @Id
-    @Column(name = "workspaceId", nullable = false, length = 255)
+    @Column(name = "workspaceId", nullable = false, length = 255,insertable = false ,updatable = false)
     public String getWorkspaceId() {
         return workspaceId;
     }
@@ -23,7 +23,7 @@ public class WorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "workspaceContextCode", nullable = true, length = 255)
+    @Column(name = "workspaceContextCode", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getWorkspaceContextCode() {
         return workspaceContextCode;
     }
@@ -43,7 +43,7 @@ public class WorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "workspaceName", nullable = true, length = 255)
+    @Column(name = "workspaceName", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getWorkspaceName() {
         return workspaceName;
     }
@@ -53,7 +53,7 @@ public class WorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "cedantName", nullable = true, length = 255)
+    @Column(name = "cedantName", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getCedantName() {
         return cedantName;
     }

@@ -48,7 +48,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255)
+    @Column(name = "status", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getStatus() {
         return status;
     }
@@ -88,7 +88,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "importedBy", nullable = true, length = 255)
+    @Column(name = "importedBy", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getImportedBy() {
         return importedBy;
     }
@@ -98,7 +98,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "sourceConfigVendor", nullable = true, length = 255)
+    @Column(name = "sourceConfigVendor", nullable = true, length = 255,insertable = false ,updatable = false)
     public String getSourceConfigVendor() {
         return sourceConfigVendor;
     }
