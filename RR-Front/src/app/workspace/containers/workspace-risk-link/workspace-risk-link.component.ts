@@ -773,7 +773,12 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     const data = _.toArray(this.state.results.data);
     const regions = _.unionBy(data.map(dt => dt.regionPeril));
     this.tree = regions.map(dt => {
-      return ({title: dt, expanded: true, selected: false, children: []});
+      return ({
+        title: dt, expanded: true, selected: false, children: [],
+        selectedItems: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
+          {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
+          {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false}]
+      });
     });
     this.tree.forEach(dt => {
       dt.children = [...this.getInnerTree(dt.title)];
@@ -801,18 +806,46 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     return _.filter(this.financialStandardContent, dt => dt.code === item)[0].financialPerspective;
   }
 
-/*  getCheckedValue(item) {
-    let value = false;
-    _.forEach(this.tree, dt => dt.children.map(kt => {
-      if (kt.selected === true) {
-        _.forEach(kt.selectedItems, ws => {
-          if (ws.title === item) {
-            value = ws.selected;
-          }
-        });
-      }}));
-    return value;
-  }*/
+  changePeqt(parent, target, selected) {
+    _.forEach(parent.children, dt => {
+      _.forEach(dt.selectedItems, kt => {
+        if (kt.title === target) {
+          kt.selected = !selected;
+        }
+      });
+    });
+  }
+
+  changeInnerPeqt(parent, child, target, selected) {
+    const data = _.filter(parent.children, dt => _.filter(dt.selectedItems, kt => kt.title === target)[0].selected === true);
+    console.log(data.length === parent.children.length, selected);
+    if (data.length === parent.children.length - 1 && selected === false) {
+      _.forEach(parent.selectedItems, dt => {
+        if (dt.title === target) {
+          dt.selected = true;
+        }
+      });
+    } else {
+      _.forEach(parent.selectedItems, dt => {
+        if (dt.title === target) {
+          dt.selected = false;
+        }
+      });
+    }
+  }
+
+  /*  getCheckedValue(item) {
+      let value = false;
+      _.forEach(this.tree, dt => dt.children.map(kt => {
+        if (kt.selected === true) {
+          _.forEach(kt.selectedItems, ws => {
+            if (ws.title === item) {
+              value = ws.selected;
+            }
+          });
+        }}));
+      return value;
+    }*/
 
   hideChild(item) {
     item.expanded = !item.expanded;
@@ -824,10 +857,6 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
       dt.children.forEach(ws => ws.selected = false);
     });
     item.selected = true;
-  }
-
-  saveChangesForResult() {
-
   }
 
   editSingleColRes(target, $event = null, row = null) {

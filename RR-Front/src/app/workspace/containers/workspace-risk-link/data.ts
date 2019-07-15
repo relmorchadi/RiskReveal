@@ -73,8 +73,8 @@ const scrollableColsResults = [
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
   // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'peqt', header: 'PEQT', width: '80px', type: 'Peqt', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
-  {field: 'publishAcc', header: '', width: '30px', type: 'check', icon: 'icon-focus-add', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
-  {field: 'publishPri', header: '', width: '30px', type: 'check', icon: 'icon-note', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'publishAcc', header: 'Publish For Accumulation', width: '30px', type: 'check', icon: 'icon-focus-add', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'publishPri', header: 'Publish For Pricing', width: '30px', type: 'check', icon: 'icon-note', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
