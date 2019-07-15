@@ -40,8 +40,8 @@ public class AdjustmentNodeService {
     AdjustmentTypeRepository adjustmentTypeRepository;
 
 
-    public AdjustmentNodeEntity findOne(Long id){
-        return adjustmentnodeRepository.getOne(id);
+    public AdjustmentNodeEntity findOne(Integer id){
+        return adjustmentnodeRepository.findById(id).orElseThrow(throwException(NODENOTFOUND,NOT_FOUND));
     }
 
     public List<AdjustmentNodeEntity> findAll(){
@@ -89,7 +89,7 @@ public class AdjustmentNodeService {
         }
     }
 
-    public void delete(Long id) {
+    public void delete(Integer id) {
         this.adjustmentnodeRepository.delete(
                 this.adjustmentnodeRepository.
                         findById(id)

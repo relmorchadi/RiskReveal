@@ -21,6 +21,7 @@ public class AdjustmentNodeEntity {
     private AdjustmentStateEntity adjustmentState;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adjustmentNodeId", nullable = false)
     public int getAdjustmentNodeId() {
         return adjustmentNodeId;

@@ -22,7 +22,7 @@ public class MainApplication {
             csvpltFileWriter.write(pltLossData, new File("C:\\Users\\u008208\\Desktop\\Lineaire Adjustment with lmf 2 cap.csv"));
             pltLossData = calculAdjustement.lineaireAdjustement(pltLossData,250,true);
             csvpltFileWriter.write(pltLossData, new File("C:\\Users\\u008208\\Desktop\\Lineaire Adjustment with lmf 250  uncap.csv"));
-            pltLossData = calculAdjustement.eefFrequency(pltLossData,false,2,100000);
+            pltLossData = calculAdjustement.eefFrequency(pltLossData,false,2);
             csvpltFileWriter.write(pltLossData, new File("C:\\Users\\u008208\\Desktop\\eef frequency .csv"));
         } catch (RRException e) {
             e.printStackTrace();

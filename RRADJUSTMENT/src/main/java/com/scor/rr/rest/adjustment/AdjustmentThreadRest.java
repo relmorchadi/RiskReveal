@@ -26,5 +26,10 @@ public class AdjustmentThreadRest {
         return adjustmentThreadService.saveAdjustedPlt(request);
     }
 
+    @GetMapping
+    public AdjustmentThreadEntity findById(Integer id){
+        return adjustmentThreadService.findOne(id);
+    }
+
 
 }

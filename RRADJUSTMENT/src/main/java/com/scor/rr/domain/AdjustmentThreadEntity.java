@@ -1,11 +1,14 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentThread", schema = "dbo", catalog = "RiskReveal")
+@JsonIgnoreProperties({"scorPltHeaderByPurePltId","scorPltHeaderByThreadPltId"})
 public class AdjustmentThreadEntity {
     private int adjustmentThreadId;
     private String threadType;
@@ -22,6 +25,7 @@ public class AdjustmentThreadEntity {
     private ScorPltHeaderEntity scorPltHeaderByThreadPltId;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adjustmentThreadId", nullable = false)
     public int getAdjustmentThreadId() {
         return adjustmentThreadId;
@@ -63,11 +67,11 @@ public class AdjustmentThreadEntity {
 
     @Basic
     @Column(name = "created_on", nullable = true)
-    public java.sql.Timestamp getCreatedOn() {
+    public Timestamp getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(java.sql.Timestamp createdOn) {
+    public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
     }
 
@@ -83,11 +87,11 @@ public class AdjustmentThreadEntity {
 
     @Basic
     @Column(name = "access_on", nullable = true)
-    public java.sql.Timestamp getAccessOn() {
+    public Timestamp getAccessOn() {
         return accessOn;
     }
 
-    public void setAccessOn(java.sql.Timestamp accessOn) {
+    public void setAccessOn(Timestamp accessOn) {
         this.accessOn = accessOn;
     }
 
@@ -103,31 +107,31 @@ public class AdjustmentThreadEntity {
 
     @Basic
     @Column(name = "last_modified_on", nullable = true)
-    public java.sql.Timestamp getLastModifiedOn() {
+    public Timestamp getLastModifiedOn() {
         return lastModifiedOn;
     }
 
-    public void setLastModifiedOn(java.sql.Timestamp lastModifiedOn) {
+    public void setLastModifiedOn(Timestamp lastModifiedOn) {
         this.lastModifiedOn = lastModifiedOn;
     }
 
     @Basic
     @Column(name = "last_generated_on", nullable = true)
-    public java.sql.Timestamp getLastGeneratedOn() {
+    public Timestamp getLastGeneratedOn() {
         return lastGeneratedOn;
     }
 
-    public void setLastGeneratedOn(java.sql.Timestamp lastGeneratedOn) {
+    public void setLastGeneratedOn(Timestamp lastGeneratedOn) {
         this.lastGeneratedOn = lastGeneratedOn;
     }
 
     @Basic
     @Column(name = "generated_on", nullable = true)
-    public java.sql.Timestamp getGeneratedOn() {
+    public Timestamp getGeneratedOn() {
         return generatedOn;
     }
 
-    public void setGeneratedOn(java.sql.Timestamp generatedOn) {
+    public void setGeneratedOn(Timestamp generatedOn) {
         this.generatedOn = generatedOn;
     }
     @Override

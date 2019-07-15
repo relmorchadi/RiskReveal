@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static com.scor.rr.exceptions.ExceptionCodename.PARAMETERNOTFOUND;
 import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -22,7 +23,7 @@ public class AdjustmentParameterService {
     AdjustmentparameterRepository adjustmentparameterRepository;
 
     public AdjustmentParameterEntity findOne(AdjustmentParameterEntityPK id){
-        return adjustmentparameterRepository.getOne(id);
+        return adjustmentparameterRepository.findById(id).orElseThrow(throwException(PARAMETERNOTFOUND,NOT_FOUND));
     }
 
     public List<AdjustmentParameterEntity> findAll(){

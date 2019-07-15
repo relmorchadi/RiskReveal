@@ -17,9 +17,14 @@ public class AdjustmentTypeRest {
     AdjustmentTypeService adjustmentTypeService;
 
 
-    @GetMapping
+    @GetMapping("all")
     public List<AdjustmentTypeEntity> findAll(){
         return adjustmentTypeService.findAll();
+    }
+
+    @GetMapping("one")
+    public AdjustmentTypeEntity findOne(Integer id){
+        return adjustmentTypeService.findOne(id);
     }
 
 

@@ -6,6 +6,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentThreadRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
+import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,7 +27,7 @@ public class AdjustmentThreadService {
     ScorpltheaderRepository scorpltheaderRepository;
 
     public AdjustmentThreadEntity findOne(Integer id){
-        return adjustmentthreadRepository.getOne(id);
+        return adjustmentthreadRepository.findById(id).orElseThrow(throwException(THREADNOTFOUND,NOT_FOUND));
     }
 
     public List<AdjustmentThreadEntity> findAll(){
@@ -36,6 +37,11 @@ public class AdjustmentThreadService {
     public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest){
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
+        adjustmentThreadEntity.setAccessBy(adjustmentThreadRequest.getAccessBy());
+        adjustmentThreadEntity.setAccessOn(adjustmentThreadRequest.getAccessOn());
+        adjustmentThreadEntity.setCreatedOn(adjustmentThreadRequest.getCreatedOn());
+        adjustmentThreadEntity.setCreatedBy(adjustmentThreadRequest.getCreatedBy());
+        adjustmentThreadEntity.setLocked(adjustmentThreadRequest.getLocked());
         if(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).isPresent()) {
             adjustmentThreadEntity.setScorPltHeaderByPurePltId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
             return adjustmentthreadRepository.save(adjustmentThreadEntity);

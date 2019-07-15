@@ -45,23 +45,23 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
     @Test
     public void oepReturnPeriodBandingNullParameterAdjustmentReturnPeriodBending() {
         log.info("Launch test for OEP Return Period adjustment with parameter Adjustment return Period Bending [return period,lmf] null");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,null,periodConstante));
+        assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,null));
     }
     @Test
     public void oepReturnPeriodBandingEmptyParameterAdjustmentReturnPeriodBending() {
         log.info("Launch test for OEP Return Period adjustment with parameter Adjustment return Period Bending [return period,lmf] empty");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>(),periodConstante));
+        assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>()));
     }
 
     @Test
     public void oepReturnPeriodBandingNullPlt() {
         log.info("Launch test for OEP Return Period adjustment with PLT null");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings,periodConstante));
+        assertNull(calculAdjustement.oepReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
     public void oepReturnPeriodBandingEmptyPlt() {
         log.info("Launch test for OEP Return Period adjustment with PLT empty");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings,periodConstante));
+        assertNull(calculAdjustement.oepReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
     }
 }

@@ -41,16 +41,16 @@ public class CalculAdjustementEEFFrequencyTest {
     @Test
     public void eefFrequencyNegativeRpmf() {
         log.info("Launch test for EEF Frequency Adjustment for negative rpmf = {}",rpmf);
-        assertNull(calculAdjustement.eefFrequency(pltLossDataList,cap,-2,1000000));
+        assertNull(calculAdjustement.eefFrequency(pltLossDataList,cap,-2));
     }
     @Test
     public void eefFrequencyNullPlt() {
         log.info("Launch test for EEF Frequency Adjustment for null plt ");
-        assertNull(calculAdjustement.eefFrequency(null,cap,rpmf,1000000));
+        assertNull(calculAdjustement.eefFrequency(null,cap,rpmf));
     }
     @Test
     public void eefFrequencyEmptyPlt() {
         log.info("Launch test for EEF Frequency Adjustment for an empty plt ");
-        assertNull(calculAdjustement.eefFrequency(new ArrayList<>(),cap,rpmf,1000000));
+        assertNull(calculAdjustement.eefFrequency(new ArrayList<>(),cap,rpmf));
     }
 }

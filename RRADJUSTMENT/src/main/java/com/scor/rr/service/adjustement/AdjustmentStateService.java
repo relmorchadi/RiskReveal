@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static com.scor.rr.exceptions.ExceptionCodename.STATENOTFOUND;
 import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -22,7 +23,7 @@ public class AdjustmentStateService {
 
 
     public AdjustmentStateEntity findOne(Integer id){
-        return adjustmentStateRepository.getOne(id);
+        return adjustmentStateRepository.findById(id).orElseThrow(throwException(STATENOTFOUND,NOT_FOUND));
     }
 
     public List<AdjustmentStateEntity> findAll(){

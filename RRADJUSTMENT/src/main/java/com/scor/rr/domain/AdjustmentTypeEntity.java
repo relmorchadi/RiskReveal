@@ -1,5 +1,7 @@
 package com.scor.rr.domain;
 
+import com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -7,7 +9,7 @@ import java.util.Objects;
 @Table(name = "AdjustmentType", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentTypeEntity {
     private int idType;
-    private String type;
+    private AdjustmentTypeEnum type;
     private String description;
 
     @Id
@@ -22,11 +24,11 @@ public class AdjustmentTypeEntity {
 
     @Basic
     @Column(name = "type", nullable = true, length = 200)
-    public String getType() {
+    public AdjustmentTypeEnum getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(AdjustmentTypeEnum type) {
         this.type = type;
     }
 

@@ -16,8 +16,13 @@ public class AdjustmentStateRest {
     @Autowired
     AdjustmentStateService adjustmentStateService;
 
-    @GetMapping
+    @GetMapping("all")
     public List<AdjustmentStateEntity> findAll(){
         return adjustmentStateService.findAll();
+    }
+
+    @GetMapping("one")
+    public AdjustmentStateEntity findOne(Integer id) {
+        return adjustmentStateService.findOne(id);
     }
 }

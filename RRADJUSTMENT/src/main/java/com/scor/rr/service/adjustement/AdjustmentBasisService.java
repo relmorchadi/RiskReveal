@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static com.scor.rr.exceptions.ExceptionCodename.BASISNOTFOUND;
 import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -26,9 +27,7 @@ public class AdjustmentBasisService {
     }
 
     public AdjustmentBasisEntity findOne(Integer id){
-        if(adjustmentBasisRepository.findById(id).isPresent()) {
-            return adjustmentBasisRepository.findById(id).get();
-        }else return null;
+            return adjustmentBasisRepository.findById(id).orElseThrow(throwException(BASISNOTFOUND,NOT_FOUND));
     }
 
     public void delete(Integer id) {

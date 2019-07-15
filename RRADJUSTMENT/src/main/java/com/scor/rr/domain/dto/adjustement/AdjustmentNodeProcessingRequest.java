@@ -2,8 +2,7 @@ package com.scor.rr.domain.dto.adjustement;
 
 public class AdjustmentNodeProcessingRequest {
     private Integer scorPltHeaderIdPure;
-    private Integer scorPltHeaderIdAdjusted;
-    private long adjustmentNodeId;
+    private Integer adjustmentNodeId;
 
 
     public Integer getScorPltHeaderIdPure() {
@@ -14,19 +13,11 @@ public class AdjustmentNodeProcessingRequest {
         this.scorPltHeaderIdPure = scorPltHeaderIdPure;
     }
 
-    public Integer getScorPltHeaderIdAdjusted() {
-        return scorPltHeaderIdAdjusted;
-    }
-
-    public void setScorPltHeaderIdAdjusted(Integer scorPltHeaderIdAdjusted) {
-        this.scorPltHeaderIdAdjusted = scorPltHeaderIdAdjusted;
-    }
-
-    public long getAdjustmentNodeId() {
+    public Integer getAdjustmentNodeId() {
         return adjustmentNodeId;
     }
 
-    public void setAdjustmentNodeId(long adjustmentNodeId) {
+    public void setAdjustmentNodeId(Integer adjustmentNodeId) {
         this.adjustmentNodeId = adjustmentNodeId;
     }
 }

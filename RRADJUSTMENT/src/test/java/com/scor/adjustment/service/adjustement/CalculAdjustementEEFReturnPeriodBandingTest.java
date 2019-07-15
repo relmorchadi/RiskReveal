@@ -52,7 +52,7 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     @Test
     public void testEEFReturnPeriodBandingNullAdjustmentReturnPeriodBending() {
         log.info("Launch test for EEF Return Period Banding Adjustment with parameter table [return period,lmf] null");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,null,periodConstante));
+        assertNull(calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,null));
 
 
 
@@ -60,18 +60,18 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     @Test
     public void testEEFReturnPeriodBandingEmptyAdjustmentReturnPeriodBending() {
         log.info("Launch test for EEF Return Period Banding Adjustment with parameter table [return period,lmf] empty");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>(),periodConstante));
+        assertNull(calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>()));
     }
 
     @Test
     public void testEEFReturnPeriodBandingNullPlt() {
         log.info("Launch test for EEF Return Period Banding Adjustment with PLT NULL");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings,periodConstante));
+        assertNull(calculAdjustement.eefReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
     public void testEEFReturnPeriodBandingEmptyPlt() {
         log.info("Launch test for EEF Return Period Banding Adjustment with PLT empty");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings,periodConstante));
+        assertNull(calculAdjustement.eefReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
     }
 }
