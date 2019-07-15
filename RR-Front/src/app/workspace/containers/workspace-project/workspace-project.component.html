@@ -29,7 +29,7 @@
       </div>
     </div>
     <div style="height: 60vw">
-      <projects-list [projects]="projects$ | async" (select)="selectProject($event)"
+      <projects-list [projects]="workspace?.projects" (select)="selectProject($event)"
                      (delete)="delete($event)"></projects-list>
     </div>
 
@@ -49,3 +49,4 @@
 
 </div>
 
+<p-toast></p-toast>

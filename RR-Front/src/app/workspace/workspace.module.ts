@@ -23,6 +23,7 @@ import {TreeModule} from 'primeng/tree';
 import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-up/add-remove-pop-up.component';
 
 @NgModule({
+  entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
     ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent
@@ -49,7 +50,7 @@ import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-u
     RouterModule
   ],
   providers: [
-    ...SERVICE
+    ...SERVICE,
   ]
 })
 export class WorkspaceModule {

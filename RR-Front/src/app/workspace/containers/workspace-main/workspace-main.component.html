@@ -1,49 +1,57 @@
 <div class="card-container">
-  <nz-tabset class="tabs-main-component" [nzSelectedIndex]="state.openedTabs.tabsIndex" *ngIf="!state.loading"
-             [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-container *ngFor="let tab of state.openedTabs.data;let k = index; trackBy: trackWorkspaces">
+  <nz-tabset
+    class="tabs-main-component"
+    [nzSelectedIndex]="selectedTabIndex"
+    *ngIf="!loading"
+    [nzTabPosition]="'top'"
+    [nzType]="'card'">
+    <ng-container *ngFor="let wsIdentifier of data | keys;let k= index;">
       <ng-template #titleTemplate>
         <ng-container
           [ngTemplateOutlet]="tabTitle"
           [ngTemplateOutletContext]="{
-            index:tab,
-            tabsLength: state.openedTabs.data.length,
-            title:tab?.cedantName,
-            workspaceName: tab?.workspaceName,
-            workSpaceId: tab?.workSpaceId,
-            year:tab?.uwYear,
-            years:tab?.years
+            title: data[wsIdentifier]?.cedantName,
+            workspaceName: data[wsIdentifier]?.workspaceName,
+            workSpaceId: data[wsIdentifier]?.wsId,
+            year: data[wsIdentifier]?.uwYear,
+            years: data[wsIdentifier]?.years
           }"
         ></ng-container>
       </ng-template>
-      <nz-tab (nzSelect)="selectWorkspace(tab)" [nzTitle]="titleTemplate">
-        <ng-template nz-tab>
-          <div nz-row>
+
+      <nz-tab (nzSelect)="selectWorkspace(wsIdentifier,k)" [nzTitle]="titleTemplate">
+        <div nz-row>
           <div nz-col nzSpan="24">
             <div class="row tab-detail p-2 header-tab-wrapper">
               <div class="detail-wrapper">
-                <button (click)="patchWorkspaceDetail()"
+                <button (click)="patchWorkspaceDetail(wsIdentifier)"
                         class="mx-4 btn-detail d-flex justify-content-center align-items-center"
                         nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i *ngIf="state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down"
+                  <i *ngIf="data[wsIdentifier]?.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon
+                     type="down"
                      theme="outline"></i>
-                  <i *ngIf="!state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up"
+                  <i *ngIf="!data[wsIdentifier]?.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;"
+                     nz-icon type="up"
                      theme="outline"></i>
                 </button>
-                <span *ngIf="state.collapseWorkspaceDetail" class="span-detail">Detail</span>
-                <span *ngIf="!state.collapseWorkspaceDetail" class="span-detail">Hide</span>
+                <span *ngIf="data[wsIdentifier]?.collapseWorkspaceDetail" class="span-detail">Detail</span>
+                <span *ngIf="!data[wsIdentifier]?.collapseWorkspaceDetail" class="span-detail">Hide</span>
               </div>
               <div style="display: flex; flex: 1;">
                 <div class="workspace-title-wrapper">
                   <div class="d-inline-flex flex-column">
-                    <h3 class="workspace-title">{{tab?.cedantName}}
-                      <i *ngIf="!tab.favorite" (click)="addToFavorite(tab,k,true)" class="icon-star_border_24px"></i>
-                      <i *ngIf="tab.favorite" (click)="addToFavorite(tab,k,false)" class="icon-star_24px"></i>
+                    <h3 class="workspace-title">{{data[wsIdentifier]?.cedantName}}
+                      <i *ngIf="!data[wsIdentifier].isFavorite; else favoriteIcon"
+                         (click)="addToFavorite(wsIdentifier, data[wsIdentifier])" class="icon-star_border_24px"></i>
+                      <ng-template #favoriteIcon>
+                        <i (click)="unFavorite(wsIdentifier, data[wsIdentifier])" class="icon-star_24px"></i>
+                      </ng-template>
                     </h3>
-                    <h4 class="workspace-title"> {{tab?.workspaceName}} | {{tab?.uwYear}} | {{tab?.workSpaceId}} | </h4>
+                    <h4 class="workspace-title"> {{data[wsIdentifier]?.workspaceName}} | {{data[wsIdentifier]?.uwYear}}
+                      | {{data[wsIdentifier]?.wsId}} | </h4>
                   </div>
                 </div>
-                <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="header-tab-right">
+                <div [ngClass]="{'collapse':!data[wsIdentifier]?.collapseWorkspaceDetail}" class="header-tab-right">
                   <div nzTitle="Scope" nzPlacement="bottom" nz-tooltip
                        class="text-center my-2 px-4 d-inline-flex flex-column">
                     <i style="font-size: 1.6em" class="icon-location_searching_24px mb-2"></i>
@@ -78,7 +86,7 @@
               </div>
             </div>
           </div>
-          <div [ngClass]="{'collapse':state.collapseWorkspaceDetail}" nz-col [nzSpan]="24">
+          <div [ngClass]="{'collapse':data[wsIdentifier]?.collapseWorkspaceDetail}" nz-col [nzSpan]="24">
             <div class="row tab-detail p-2 pb-6" style="padding-bottom: 2rem !important;">
 
               <div class="col-md-12 col-lg-6 " style="padding-left: 65px; padding-right: 0;">
@@ -86,11 +94,13 @@
                   <div nz-col nz-row [nzSpan]="8">
                     <div class="row">
                       <span style="flex: 0 0 49.333333%;" class="col-7 tab-metadata-title">Subsidary :</span>
-                      <span class="col-5 tab-metadata-value">{{tab?.subsidiaryId}} - {{tab?.subsidiaryName}}</span>
+                      <span class="col-5 tab-metadata-value">{{data[wsIdentifier]?.subsidiaryId}}
+                        - {{data[wsIdentifier]?.subsidiaryName}}</span>
                     </div>
                     <div class="row">
                       <span style="flex: 0 0 49.333333%;" class="col-7 tab-metadata-title">Subsidary Ledger :</span>
-                      <span class="col-5 tab-metadata-value">{{tab?.subsidiaryLedgerId}} - {{tab?.ledgerName}}</span>
+                      <span class="col-5 tab-metadata-value">{{data[wsIdentifier]?.subsidiaryLedgerId}}
+                        - {{data[wsIdentifier]?.ledgerName}}</span>
                     </div>
                     <div class="row">
                         <span style="flex: 0 0 49.333333%;"
@@ -105,21 +115,24 @@
                          class="icon-calendar-alt mb-4"></i>
                       <div style="display:flex; flex-direction: column; padding-left: 15px;">
                         <span class="d-block tab-metadata-title">Inception Date :</span>
-                        <span class="d-block tab-metadata-value">{{tab?.inceptionDate | date:'dd/MM/yyyy'}}</span>
+                        <span
+                          class="d-block tab-metadata-value">{{data[wsIdentifier]?.inceptionDate | date:'dd/MM/yyyy'}}</span>
                         <span class="d-block tab-metadata-title">Expiry Date :</span>
-                        <span class="d-block tab-metadata-value">{{tab?.expiryDate | date:'dd/MM/yyyy'}}</span>
+                        <span
+                          class="d-block tab-metadata-value">{{data[wsIdentifier]?.expiryDate | date:'dd/MM/yyyy'}}</span>
                       </div>
                     </div>
                     <div nz-col style="border-left: 1px solid rgba(255,255,255,0.5);" class="pl-3" [nzSpan]="16">
                       <span style="line-height: 17px; padding-bottom: 4px;" class="d-block tab-metadata-title">Treaty Section :</span>
                       <ul class="treaty-list">
-                        <li *ngFor="let section of sliceContent(tab?.treatySections, state.sliceValidator)">
+                        <li
+                          *ngFor="let section of sliceContent(data[wsIdentifier]?.treatySections, state?.sliceValidator)">
                           {{section}}
                         </li>
                       </ul>
-                      <ng-container *ngIf="tab?.treatySections?.length > 2">
-                        <span *ngIf="state.sliceValidator" (click)="patchSliceValue(false)" class="tab-metadata-more">See All</span>
-                        <span *ngIf="!state.sliceValidator" (click)="patchSliceValue(true)" class="tab-metadata-more">Hide</span>
+                      <ng-container *ngIf="data[wsIdentifier]?.treatySections?.length > 2">
+                        <span *ngIf="state?.sliceValidator" (click)="patchSliceValue(false)" class="tab-metadata-more">See All</span>
+                        <span *ngIf="!state?.sliceValidator" (click)="patchSliceValue(true)" class="tab-metadata-more">Hide</span>
                       </ng-container>
                     </div>
                   </div>
@@ -164,121 +177,38 @@
 
             </div>
           </div>
-            <div style="display: flex;width: 100%;">
-              <router-outlet></router-outlet>
+          <div nz-col [nzSpan]="24">
+            <div style="display: flex">
+              <workspace-router [state]="{wsIdentifier: wsIdentifier , data: data[wsIdentifier]}"
+              (action)="dispatch($event)"></workspace-router>
+              <!-- <app-left-menu [isCollapsed]="data[wsIdentifier]?.leftNavbarCollapsed" (navigate)="leftMenuNavigation($event, data[wsIdentifier])" (toggleCollapse)="toggleLeftMenu(wsIdentifier)" ></app-left-menu>-->
+              <!-- <router-outlet></router-outlet> -->
             </div>
+          </div>
         </div>
-        </ng-template>
       </nz-tab>
     </ng-container>
   </nz-tabset>
-  <nz-tabset *ngIf="state.loading" [nzTabPosition]="'top'" [nzType]="'card'">
-    <ng-template #titleTemplate>
-      <ng-container
-        [ngTemplateOutlet]="tabTitle"
-        [ngTemplateOutletContext]="{
-          tabsLength:1
-          }"
-      ></ng-container>
-    </ng-template>
-    <nz-tab [nzTitle]="titleTemplate">
-      <div nz-row>
-        <div nz-col nzSpan="24">
-          <div class="row tab-detail p-2">
-            <div class="detail-wrapper">
-              <button (click)="patchWorkspaceDetail()"
-                      class="mx-4 btn-detail d-flex justify-content-center align-items-center"
-                      nz-button nzType="primary" nzSize="default" nzShape="circle">
-                <i *ngIf="state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="down"
-                   theme="outline"></i>
-                <i *ngIf="!state.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon type="up"
-                   theme="outline"></i>
-              </button>
-              <span *ngIf="state.collapseWorkspaceDetail" class="span-detail">Detail</span>
-              <span *ngIf="!state.collapseWorkspaceDetail" class="span-detail">Hide</span>
-            </div>
-            <div style="display: flex; flex: 1;">
-              <div class="col-md-12 pl-md-4 col-lg-6">
-                <div class="d-inline-flex flex-column">
-                  <h3 class="workspace-title" style="display:flex">
-                    <nz-skeleton class="skeleton-title" [nzActive]="true"></nz-skeleton>
-                    <nz-rate style="padding-top:7px" class="pl-2" [ngModel]="1" [nzCount]="1"></nz-rate>
-                  </h3>
-                  <h4 class="workspace-title">
-                    <nz-skeleton class="skeleton-title" [nzActive]="true"></nz-skeleton>
-                  </h4>
-                </div>
-              </div>
-              <div [ngClass]="{'collapse':!state.collapseWorkspaceDetail}" class="col-md-12 col-lg-6 pl-md-4">
-                <div nzTitle="Scope" nzPlacement="bottom" nz-tooltip
-                     class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-my_location_24px mb-2"></i>
-                  <span><b>4/6</b></span>
-                </div>
-                <div nzTitle="Exposures" nzPlacement="bottom" nz-tooltip
-                     class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-design-tool mb-2"></i>
-                  <span><b>1</b></span>
-                </div>
-                <div nzTitle="Qualifying PLTs" nzPlacement="bottom" nz-tooltip
-                     class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-box mb-2"></i>
-                  <span><b>3</b></span>
-                </div>
-                <div nzTitle="Published For Pricing" nzPlacement="bottom" nz-tooltip
-                     class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-note mb-2"></i>
-                  <span><b>2</b></span>
-                </div>
-                <div nzTitle="Priced" nzPlacement="bottom" nz-tooltip
-                     class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-dollar-alt mb-2"></i>
-                  <span><b>2</b></span>
-                </div>
-                <div nzTitle="Published For Accumulation" nzPlacement="bottom" nz-tooltip
-                     class="text-center border-left my-2 px-4 d-inline-flex flex-column">
-                  <i style="font-size: 1.6em" class="icon-focus-add mb-2"></i>
-                  <span><b>0</b></span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div [ngClass]="{'collapse':state.collapseWorkspaceDetail}" nz-col [nzSpan]="24">
-          <div class="row tab-detail p-2 pb-5" style="padding-bottom: 2rem !important;">
-            <div class="pl-md-4 col-md-12 col-lg-6">
-              <nz-skeleton [nzActive]="true"></nz-skeleton>
-            </div>
-            <div class="pl-md-4 col-md-12 col-lg-6" style="margin-top: -60px;">
-              <nz-skeleton [nzActive]="true"></nz-skeleton>
-            </div>
-          </div>
-        </div>
-        <!--        <div nz-col [nzSpan]="24">
-                  <div style="display: flex">
-                    <app-left-menu></app-left-menu>
-                    <router-outlet></router-outlet>
-                  </div>
-                </div>-->
-      </div>
-    </nz-tab>
-  </nz-tabset>
 </div>
 
-<ng-template let-title='title' let-name="workspaceName" let-workSpaceId="workSpaceId" let-year='year' let-years='years'
-             let-tabsLength='tabsLength' let-index='index'
-             #tabTitle>
+<ng-template
+  let-title='title'
+  let-name="workspaceName"
+  let-workSpaceId="workSpaceId"
+  let-year='year'
+  let-years='years'
+  #tabTitle>
   <div class="tab-title-container pl-3">
-    <ng-container *ngIf="!state.loading">
+    <ng-container *ngIf="!loading">
       <div class="tab-title">
         <span class="tab-title-main">{{title}}</span>
         <span class="tab-title-sub" [nz-tooltip]="name" nzPlacement="bottom">{{name}}</span>
       </div>
       <nz-dropdown [nzTrigger]="'click'">
         <a nz-dropdown>
-          <h6 class="d-flex align-items-center sub-title">{{year}}
-            <i class="pl-3 drop-icon" *ngIf="generateYear(year, years, workSpaceId).length >0"
-               nz-icon type="down"></i>
+          <h6 class="d-flex align-items-center sub-title">
+            {{year}}
+            <i class="pl-3 drop-icon" *ngIf="generateYear(year, years, workSpaceId).length >0" nz-icon type="down"></i>
           </h6>
         </a>
         <ul style="padding:0" nz-menu>
@@ -288,7 +218,7 @@
       </nz-dropdown>
       <i (click)="close(workSpaceId, year)" class="icon-clear_24px"></i>
     </ng-container>
-    <ng-container *ngIf="state.loading">
+    <ng-container *ngIf="loading">
       <nz-skeleton class="skeleton-title-header"></nz-skeleton>
     </ng-container>
   </div>
