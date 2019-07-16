@@ -61,14 +61,14 @@ public class CalculAdjustement implements ICalculAdjustment{
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((minRpAll.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))),
-                                            cap ? Double.min(((minRpAll.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss, pltLossData.getMaxExposure() * ((minRpAll.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod())))) : (((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss));
+                                            cap ? Double.min(((minRpAll.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss, pltLossData.getMaxExposure() ) : (((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (minRpAll.getReturnPeriod()))) * loss));
                                 } else {
                                     return new PLTLossData(pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * ((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))),
-                                            cap ? Double.min(((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss(), pltLossData.getMaxExposure() * ((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod())))) : (((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss()));
+                                            cap ? Double.min(((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss(), pltLossData.getMaxExposure()) : (((maxRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0)) / (maxRp.getReturnPeriod()))) * pltLossData.getLoss()));
                                 }
                             } else if (maxRp == null) {
                                 return getPltLossData(cap, oepEEF, maxReturnPeriodBanding, pltLossDatas, pltLossData);
@@ -88,7 +88,7 @@ public class CalculAdjustement implements ICalculAdjustment{
                                             pltLossData.getEventDate(),
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
-                                            pltLossData.getMaxExposure(),
+                                            cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure()*maxRp.getLmf(),
                                             cap ? Double.min(maxRp.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxRp.getLmf() * pltLossData.getLoss());
 
                                 }
@@ -107,7 +107,7 @@ public class CalculAdjustement implements ICalculAdjustment{
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * (minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))),
-                                            cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure() * ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))))) : (minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getLmf()) / (maxRp.getLmf() - minRp.getLmf()))) * pltLossData.getLoss()));
+                                            cap ? Double.min(((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) * pltLossData.getLoss(), pltLossData.getMaxExposure() ) : (minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getLmf()) / (maxRp.getLmf() - minRp.getLmf()))) * pltLossData.getLoss()));
                                 }
                             }
 
@@ -131,15 +131,15 @@ public class CalculAdjustement implements ICalculAdjustment{
                     pltLossData.getEventDate(),
                     pltLossData.getSimPeriod(),
                     pltLossData.getSeq(),
-                    pltLossData.getMaxExposure(),
-                    cap ? Double.min(maxReturnPeriodBanding.getLmf() * loss, maxReturnPeriodBanding.getLmf() * pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getLmf() * loss);
+                    cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxReturnPeriodBanding.getLmf(),
+                    cap ? Double.min(maxReturnPeriodBanding.getLmf() * loss, pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getLmf() * loss);
         } else {
             return new PLTLossData(pltLossData.getEventId(),
                     pltLossData.getEventDate(),
                     pltLossData.getSimPeriod(),
                     pltLossData.getSeq(),
-                    pltLossData.getMaxExposure(),
-                    cap ? Double.min(maxReturnPeriodBanding.getLmf() * pltLossData.getLoss(), maxReturnPeriodBanding.getLmf() * pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getLmf() * pltLossData.getLoss());
+                    cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * maxReturnPeriodBanding.getLmf(),
+                    cap ? Double.min(maxReturnPeriodBanding.getLmf() * pltLossData.getLoss(), pltLossData.getMaxExposure()) : maxReturnPeriodBanding.getLmf() * pltLossData.getLoss());
         }
     }
 
@@ -243,8 +243,8 @@ public class CalculAdjustement implements ICalculAdjustment{
                                 pltLossData.getEventDate(),
                                 pltLossData.getSimPeriod(),
                                 pltLossData.getSeq(),
-                                pltLossData.getMaxExposure(),
-                                cap ? Double.min(lmf * pltLossData.getLoss(), pltLossData.getMaxExposure() * lmf) : lmf * pltLossData.getLoss());
+                                cap ? pltLossData.getMaxExposure(): pltLossData.getMaxExposure() * lmf ,
+                                cap ? Double.min(lmf * pltLossData.getLoss(), pltLossData.getMaxExposure() ) : lmf * pltLossData.getLoss());
                     } else {
                         return null;
                     }
@@ -275,8 +275,8 @@ public class CalculAdjustement implements ICalculAdjustment{
                         pltLossData.getEventDate(),
                         pltLossData.getSimPeriod(),
                         pltLossData.getSeq(),
-                        pltLossData.getMaxExposure(),
-                        cap ? Double.min(pltLossData.getLoss() * lmf, pltLossData.getMaxExposure() * lmf) : pltLossData.getLoss() * lmf))
+                        cap ? pltLossData.getMaxExposure() : pltLossData.getMaxExposure() * lmf,
+                        cap ? Double.min(pltLossData.getLoss() * lmf, pltLossData.getMaxExposure() ) : pltLossData.getLoss() * lmf))
                         .collect(Collectors.toList());
             } else {
                 log.info("plt empty");
