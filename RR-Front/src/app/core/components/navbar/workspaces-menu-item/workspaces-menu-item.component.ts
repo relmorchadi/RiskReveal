@@ -1,5 +1,5 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {HelperService, NotificationService} from '../../../../shared';
+import {NotificationService} from '../../../../shared';
 import {Router} from '@angular/router';
 import {SearchService} from '../../../service/search.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
@@ -15,6 +15,7 @@ import {
 } from '../../../store/actions/workspace-main.action';
 import {HeaderState} from "../../../store/states/header.state";
 import * as fromHeader from "../../../store/actions/header.action";
+import {HelperService} from "../../../../shared/helper.service";
 
 @Component({
   selector: 'workspaces-menu-item',

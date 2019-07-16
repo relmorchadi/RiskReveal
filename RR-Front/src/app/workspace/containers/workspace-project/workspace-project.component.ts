@@ -1,31 +1,23 @@
-import {Component, EventEmitter, Input, OnDestroy, OnInit, TemplateRef} from '@angular/core';
-import {HelperService} from '../../../shared';
-import * as _ from 'lodash';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {HelperService, NotificationService} from '../../../shared';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Subject} from 'rxjs';
-import {Select, Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import {PatchWorkspace, SelectProjectAction} from '../../../core/store/actions/workspace-main.action';
 import * as moment from 'moment'
-import {takeUntil} from "rxjs/operators";
 import {StateSubscriber} from "../../model/state-subscriber";
 import * as fromHeader from "../../../core/store/actions/header.action";
 import * as fromWs from "../../store/actions";
-import {FormControl, FormGroup, Validators} from "@angular/forms";
 import {
   AddNewProjectFail,
   AddNewProjectSuccess,
   DeleteProject,
   DeleteProjectFail,
   DeleteProjectSuccess,
-  PatchWorkspace,
   SelectProjectAction
 } from '../../../core/store/actions/workspace-main.action';
-import * as moment from 'moment';
-import {takeUntil} from 'rxjs/operators';
 import {MessageService} from 'primeng/api';
-import {NotificationService} from '../../../shared/notification.service';
+import {BaseComponent, BaseContainer} from "../../../shared/base";
 
 @Component({
   selector: 'workspace-project',
@@ -33,7 +25,7 @@ import {NotificationService} from '../../../shared/notification.service';
   styleUrls: ['./workspace-project.component.scss'],
   providers: [MessageService]
 })
-export class WorkspaceProjectComponent implements OnInit, OnDestroy, StateSubscriber {
+export class WorkspaceProjectComponent extends BaseComponent implements OnInit, OnDestroy, StateSubscriber  {
   actionsEmitter: EventEmitter<any>;
   // unSubscribe$: Subject<void>;
   collapseWorkspaceDetail = true;
@@ -73,18 +65,21 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy, StateSubscr
     uwYear: string
   };
 
+  selectedProject;
 
   constructor(private _helper: HelperService, private route: ActivatedRoute,
               private nzDropdownService: NzDropdownService, private store: Store,
               private router: Router, private actions$: Actions, private messageService: MessageService,
-              private changeDetector: ChangeDetectorRef
+              private changeDetector: ChangeDetectorRef, private notificationService:NotificationService
   ) {
+    super(router,changeDetector);
     console.log('init project');
     this.actionsEmitter = new EventEmitter();
   }
 
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
+    console.log('this is ws data', data);
     this.wsIdentifier = wsIdentifier;
   }
 
@@ -96,20 +91,20 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy, StateSubscr
         this.notificationService.createNotification('Project added successfully', '',
           'success', 'topRight', 4000);
         this._helper.updateWorkspaceItems();
-        this.detectChanges();
+        // this.detectChanges();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
       this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
-      this.detectChanges();
+      // this.detectChanges();
     })
 
     this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
         this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
         this._helper.updateWorkspaceItems();
-        this.detectChanges();
+        // this.detectChanges();
       }
     );
   }
@@ -171,8 +166,7 @@ export class WorkspaceProjectComponent implements OnInit, OnDestroy, StateSubscr
   }
 
   ngOnDestroy(): void {
-    this.unSubscribe$.next();
-    this.unSubscribe$.complete();
+    this.destroy();
   }
 
   selectProjectNext(project) {
