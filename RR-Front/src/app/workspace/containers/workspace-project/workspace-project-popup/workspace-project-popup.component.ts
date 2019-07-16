@@ -226,7 +226,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           header: 'Peril',
           width: '40',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',
           textAlign: 'center',active: true
@@ -236,7 +236,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           header: 'Region Peril Code',
           width: '70',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',active: true
         },
@@ -245,22 +245,22 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           header: 'Region Peril Name',
           width: '160',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: false, icon: null, type: 'field',active: true},
+        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: true, icon: null, type: 'field',active: true},
         {
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
           width: '90',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: false, icon: null, type: 'field',active: true}
+        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: true, icon: null, type: 'field',active: true}
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -1006,9 +1006,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     console.log(action);
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        if(this.getRightMenuKey('pltDetail')) {
+        console.log('closing');
+        /*if(this.getRightMenuKey('pltDetail')) {
           this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
-        }
+        }*/
         this.updateMenuKey('visible', false);
         break;
       case rightMenuStore.openDrawer:
@@ -1021,6 +1022,9 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
             _.range([action.payload].length).map(el => ({type: false}))
           )
         );
+        break;
+      case rightMenuStore.setSelectedTabByIndex:
+        this.setSelectedPltByIndex(action.payload);
         break;
       default:
         console.log('default right menu action');
@@ -1041,6 +1045,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
   setSelectedPlt($event: any) {
     this.selectedPlt= $event;
+  }
+
+  setSelectedPltByIndex(index: any) {
+    this.rightMenuInputs = rightMenuActions.setSelectedTabByIndex.handler(this.rightMenuInputs, index );
   }
 
   onSortChange($event: any) {

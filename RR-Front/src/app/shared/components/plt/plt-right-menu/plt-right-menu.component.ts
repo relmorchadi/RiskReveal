@@ -188,7 +188,7 @@ export class PltRightMenuComponent implements OnInit {
       type: this.inputs['visible'] ? rightMenuStore.closeDrawer : rightMenuStore.openDrawer
     })
   }
-
+  
   selectCardThead(card) {
     this.theads.forEach(thead => {
       thead.cards.forEach(card => {
@@ -212,6 +212,14 @@ export class PltRightMenuComponent implements OnInit {
     this.actionDispatcher.emit({
       type: rightMenuStore.unselectPlt,
       payload: pltId
+    })
+  }
+
+  selectTab($event: void) {
+    console.log($event);
+    this.actionDispatcher.emit({
+      type: rightMenuStore.setSelectedTabByIndex,
+      payload: $event
     })
   }
 }

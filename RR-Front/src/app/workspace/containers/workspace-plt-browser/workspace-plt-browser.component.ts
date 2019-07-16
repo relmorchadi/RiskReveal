@@ -22,6 +22,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
 import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
+import {PreviousNavigationService} from '../../services/previous-navigation.service';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -234,7 +235,9 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     private zone: NgZone,
     private cdRef: ChangeDetectorRef,
     private router$: Router,
-    private route$: ActivatedRoute) {
+    private route$: ActivatedRoute,
+    private prn: PreviousNavigationService
+    ) {
     this.someItemsAreSelected = false;
     this.selectAll = false;
     this.listOfPlts = [];

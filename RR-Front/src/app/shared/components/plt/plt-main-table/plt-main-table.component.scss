@@ -8,6 +8,12 @@
       max-height: calc(85vh - 205px);
     }
 
+    .activate-header-scroll {
+      .ui-table-scrollable-header {
+        overflow: auto !important;
+      }
+    }
+
     .icon-check {
       background-color: #0700e4;
       color: #fff;
