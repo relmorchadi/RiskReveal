@@ -131,6 +131,16 @@ const financialStandarContent = [
   {id: '8', selected: false, code: 'RL', financialPerspective: 'Net Loss Pre Cat', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
 ];
 
+const regionPerilDataTable = [
+  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'analysisName', header: 'Analysis Name', width: '300px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'regionPeril', header: 'Region Peril', width: '60px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'override', header: 'Override', width: '100px', type: 'override', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'copy', header: 'Copy', width: '100px', type: 'function', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'reason', header: 'Reason', width: '100px', type: 'comment', sorted: false, filtered: true, highlight: false, visible: true},
+];
+
 export const DataTables = {
   scrollableColsAnalysis,
   scrollableColsPortfolio,
@@ -143,5 +153,6 @@ export const DataTables = {
   frozenColsResults,
   colsFinancialAnalysis,
   colsFinancialStandard,
-  financialStandarContent
+  financialStandarContent,
+  regionPerilDataTable
 };

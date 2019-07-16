@@ -21,11 +21,12 @@ import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import {TreeModule} from 'primeng/tree';
 import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-up/add-remove-pop-up.component';
+import { RiskLinkResSummaryComponent } from './containers/workspace-risk-link/risk-link-res-summary/risk-link-res-summary.component';
 
 @NgModule({
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent
   ],
   imports: [
     GridsterModule,
