@@ -1,31 +1,28 @@
 import { Injectable } from '@angular/core';
 import {StateContext} from '@ngxs/store';
-import {loadAllPlts} from '../store/actions';
+import * as fromPlt from '../store/actions/plt_main.actions';
 import {catchError, mergeMap} from 'rxjs/operators';
 import * as _ from 'lodash';
-import * as fromPlt from '../store/actions';
 import {PltApi} from './plt.api';
 import {pltMainModel} from '../model';
+import {of} from 'rxjs';
+import * as moment from 'moment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PltStateService {
 
-  ctx: StateContext<pltMainModel>;
 
   constructor(private pltApi: PltApi) { }
 
-  init(ctx: StateContext<pltMainModel>) {
-    this.ctx= ctx;
-  }
-
-  LoadAllPlts( {payload}: loadAllPlts){
+  LoadAllPlts(ctx: StateContext<pltMainModel>, payload: any){
+    console.log('load plts');
     const {
       params
     } = payload;
 
-    this.ctx.patchState({
+    ctx.patchState({
       loading: true
     });
 
@@ -36,10 +33,10 @@ export class PltStateService {
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
-          this.ctx.patchState({
+          ctx.patchState({
             data: Object.assign({},
               {
-                ...this.ctx.getState().data,
+                ...ctx.getState().data,
                 [params.workspaceId + '-' + params.uwy]: _.merge({},
                   ...data.plts.map(plt => ({
                     [plt.pltId]: {
@@ -64,9 +61,9 @@ export class PltStateService {
               userTag: []
             }
           });
-          return this.ctx.dispatch(new fromPlt.loadAllPltsSuccess({userTags: data.userTags}));
+          return ctx.dispatch(new fromPlt.loadAllPltsSuccess({userTags: data.userTags}));
         }),
-        catchError(err => this.ctx.dispatch(new fromPlt.loadAllPltsFail()))
+        catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
       );
   }
 
@@ -77,4 +74,368 @@ export class PltStateService {
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
 
+  setCloneConfig(ctx: StateContext<pltMainModel>, payload: any) {
+    ctx.patchState({
+      cloneConfig: payload
+    })
+  }
+
+  LoadAllPltsSuccess(ctx: StateContext<pltMainModel>, payload: any) {
+    ctx.patchState({
+      loading: false
+    });
+
+    ctx.dispatch(new fromPlt.constructUserTags({userTags: payload.userTags}))
+  }
+
+  SelectPlts(ctx: StateContext<pltMainModel>, payload: any) {
+    const state = ctx.getState();
+    const {
+      plts,
+      wsIdentifier
+    } = payload;
+
+    console.log(plts);
+
+    let inComingData = {};
+
+    _.forEach(plts, (v, k) => {
+      inComingData[k] = {
+        selected: v.type
+      };
+    });
+
+    ctx.patchState({
+      data: _.merge({}, state.data, {[wsIdentifier]: inComingData})
+    });
+  }
+
+  OpenPltinDrawer(ctx: StateContext<pltMainModel>, payload: any) {
+    const state = ctx.getState();
+
+    ctx.patchState({
+      data: _.merge({}, state.data, {[payload.wsIdentifier]: {[payload.pltId]: {opened: true}}})
+    });
+  }
+
+  ClosePLTinDrawer(ctx: StateContext<pltMainModel>, payload: any) {
+    const state = ctx.getState();
+    const {
+      pltId,
+      wsIdentifier
+    } = payload;
+
+    ctx.patchState({
+      data: _.merge({}, state.data, {[wsIdentifier]: {[pltId]: {opened: false}}})
+    });
+  }
+
+  setFilterPlts(ctx: StateContext<pltMainModel>, payload: any) {
+    const state = ctx.getState();
+    const {
+      filters
+    } = payload;
+
+    ctx.patchState({
+      filters: _.assign({}, state.filters, filters)
+    });
+
+    return ctx.dispatch(new fromPlt.FilterPltsByUserTags(payload));
+  }
+
+  filterPlts(ctx: StateContext<pltMainModel>, payload: any) {
+    const state = ctx.getState();
+    const {
+      wsIdentifier
+    } = payload;
+    const {
+      filters
+    } = state;
+
+    let newData = {};
+
+    if (filters.userTag.length > 0) {
+      _.forEach(state.data[wsIdentifier], (plt: any, k) => {
+        if (_.some(filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
+          newData[k] = {...plt, visible: true};
+        } else {
+          newData[k] = {...plt, visible: false};
+        }
+      });
+    } else {
+      _.forEach(state.data[wsIdentifier], (plt, k) => {
+        newData[k] = {...plt, visible: true};
+      });
+    }
+
+    ctx.setState({
+      ...state,
+      data: {[wsIdentifier]: newData}
+    });
+  }
+
+  setTableSortAndFilter(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      sortData,
+      filterData
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState();
+
+    const sortDataKeys = _.keys(sortData);
+    const filterDataKeys = _.keys(filterData)
+    let res = {...data};
+
+
+    if (filterDataKeys.length > 0) {
+
+      res = _.filter(data, row =>
+        _.every(
+          filterDataKeys,
+          filteredCol => _.some(
+            _.split(filterData[filteredCol], /[,;]/g), strs =>
+              _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)))
+          )
+        ))
+    }
+
+    if (sortDataKeys.length > 0) {
+      res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
+    }
+
+    ctx.patchState({
+      data: res
+    })
+  }
+
+  constructUserTags(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      data,
+      userTags
+    } = ctx.getState()
+
+    let uesrTagsSummary = {};
+
+
+    _.forEach(payload.userTags, (payloadTag) => {
+
+      const {
+        tagId,
+        pltHeaders,
+        ...rest
+      } = payloadTag
+
+      uesrTagsSummary[tagId] = {tagId, ...rest, selected: false, count: pltHeaders.length, pltHeaders}
+    })
+
+    ctx.patchState({
+      userTags: uesrTagsSummary
+    })
+  }
+
+  assignPltsToTag(ctx: StateContext<pltMainModel>, payload: any) {
+    switch (payload.type) {
+      case 'assignOrRemove':
+        return this.pltApi.assignPltsToTag(_.omit(payload, 'wsIdentifier')).pipe(
+          mergeMap((tags) => {
+            return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
+              workspaceId: payload.wsIdentifier.split('-')[0],
+              uwYear: payload.wsIdentifier.split('-')[1]
+            }));
+          })
+        );
+      case 'createTag':
+        return this.pltApi.creatUserTag(_.omit(payload, 'wsIdentifier')).pipe(
+          mergeMap((userTag) => {
+            return ctx.dispatch(new fromPlt.CreateTagSuccess({
+              wsIdentifier: payload.wsIdentifier,
+              userTag
+            }))
+          }),
+          catchError(() => of(new fromPlt.assignPltsToTagFail()))
+        )
+    }
+  }
+
+  createUserTagSuccess(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      data,
+      userTags
+    } = ctx.getState()
+
+    const {
+      userTag,
+      wsIdentifier
+    } = payload;
+
+    let newData = {};
+
+    _.forEach(userTag.pltHeaders, header => {
+      newData[header.id] = {
+        ...data[wsIdentifier][header.id],
+        userTags: [...data[wsIdentifier][header.id].userTags, userTag]
+      }
+    })
+
+    ctx.patchState({
+      data: _.merge({}, data, {[wsIdentifier]: newData}),
+      userTags: _.merge({}, userTags, {
+        [userTag.tagId]: {
+          ...userTag,
+          count: userTag.pltHeaders.length,
+          selected: false
+        }
+      })
+    })
+  }
+
+  assignPltsToTagSuccess(ctx: StateContext<pltMainModel>, payload: any) {
+    ctx.dispatch(new fromPlt.loadAllPlts({params: {workspaceId: payload.workspaceId, uwy: payload.uwYear}}))
+  }
+
+  deleteUserTag(ctx: StateContext<pltMainModel>, payload: any) {
+    return this.pltApi.deleteUserTag(payload.userTagId).pipe(
+      mergeMap(() => ctx.dispatch(new fromPlt.deleteUserTagSuccess(payload)))
+    )
+  }
+
+  deleteUserTagFromPlts(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      data,
+      userTags
+    } = ctx.getState();
+
+    const {
+      userTagId,
+      wsIdentifier
+    } = payload;
+
+    console.log(wsIdentifier);
+
+    let newData = {};
+
+    _.forEach(userTags[userTagId].pltHeaders, (plt) => {
+      newData[plt.id] = {
+        ...data[wsIdentifier][plt.id],
+        userTags: _.filter(data[wsIdentifier][plt.id].userTags, (userTag: any) => userTag.tagId !== userTagId)
+      }
+    })
+    console.log(newData);
+
+    ctx.patchState({
+      data: {...data, ...{[wsIdentifier]: {...data[wsIdentifier], ...newData}}},
+      userTags: _.omit(userTags, userTagId)
+    })
+  }
+
+  deletePlt(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      pltIds,
+      wsIdentifier
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState();
+
+    let newData = {};
+    let ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
+
+    _.forEach(pltIds, k => {
+      newData[k] = {...data[wsIdentifier][k], deleted: true, selected: false}
+      ls = _.merge({}, ls, {[k]: {deleted: true, deletedBy: 'DEV', deletedAt: moment.now()}})
+    });
+
+    ctx.patchState({
+      data: _.merge({}, data, {[wsIdentifier]: newData})
+    })
+
+    localStorage.setItem('deletedPlts', JSON.stringify(ls))
+  }
+
+  renameTag(ctx: StateContext<pltMainModel>, payload: any) {
+    return this.pltApi.editTag(payload.tag).pipe(
+      mergeMap(tag => ctx.dispatch(new fromPlt.editTagSuccess({
+        wsIdentifier: payload.workspaceId + '-' + payload.uwy,
+        tag
+      }))),
+      catchError(err => ctx.dispatch(new fromPlt.editTagFail()))
+    )
+  }
+
+  renameTagSuccess(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      data,
+      userTags
+    } = ctx.getState();
+
+    const {
+      tag: {
+        tagId,
+        tagName,
+        tagColor,
+        pltHeaders
+      },
+      wsIdentifier
+    } = payload;
+
+    let newData = {};
+
+    console.log(pltHeaders)
+    _.forEach(pltHeaders, pltId => {
+      const {
+        id
+      } = pltId;
+
+      let index = _.findIndex(data[wsIdentifier][id].userTags, (tag: any) => tag.tagId === tagId);
+
+      newData[id] = {
+        ...data[wsIdentifier][id],
+        userTags: _.merge([], data[wsIdentifier][id].userTags, {
+          [index]: {
+            ...data[wsIdentifier][id].userTags[index],
+            tagName,
+            tagColor
+          }
+        })
+      }
+    })
+
+    ctx.patchState({
+      data: _.merge({}, data, {[wsIdentifier]: {...data[wsIdentifier], ...newData}}),
+      userTags: _.merge({}, userTags, {
+        [tagId]: {
+          tagName,
+          tagColor
+        }
+      })
+    })
+  }
+
+  restorePlt(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      pltIds,
+      wsIdentifier
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState();
+
+    let newData = {};
+    let ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
+
+    _.forEach(pltIds, k => {
+      newData[k] = {...data[wsIdentifier][k], deleted: false, selected: false}
+      ls = _.omit(ls, `${k}`)
+    });
+
+    ctx.patchState({
+      data: _.merge({}, data, {[wsIdentifier]: newData})
+    });
+
+    localStorage.setItem('deletedPlts', JSON.stringify(ls));
+  }
 }

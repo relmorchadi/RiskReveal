@@ -1,4 +1,4 @@
-import {PltMainState} from './plt_main.state';
+import { PltMainState} from './plt_main.state';
 import {RiskLinkState} from './risk_link.state';
 import {CalibrationState} from "./calibration.state";
 import {WorkspaceState} from './workspace.state';

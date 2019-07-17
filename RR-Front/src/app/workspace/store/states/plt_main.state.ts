@@ -1,7 +1,7 @@
 import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import {pltMainModel} from "../../model";
-import * as fromPlt from '../actions'
+import * as fromPlt from '../actions/plt_main.actions'
 import {of} from 'rxjs';
 import {catchError, mergeMap} from 'rxjs/operators';
 import {PltApi} from '../../services/plt.api';
@@ -23,15 +23,9 @@ const initiaState: pltMainModel = {
   name: 'pltMainModel',
   defaults: initiaState
 })
-export class PltMainState implements NgxsOnInit {
-  ctx = null;
+export class PltMainState {
 
   constructor(private pltApi: PltApi, private pltFacade: PltStateService) {
-  }
-
-  ngxsOnInit(ctx?: StateContext<pltMainModel>): void | any {
-    this.ctx = ctx;
-    this.pltFacade.init(ctx);
   }
 
   /**
@@ -110,375 +104,83 @@ export class PltMainState implements NgxsOnInit {
 
   @Action(fromPlt.setCloneConfig)
   setCloneConfig(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setCloneConfig) {
-    ctx.patchState({
-      cloneConfig: payload
-    })
+    this.pltFacade.setCloneConfig(ctx, payload);
   }
 
   @Action(fromPlt.loadAllPlts)
-  LoadAllPlts(ctx: StateContext<pltMainModel>, action: fromPlt.loadAllPlts) {
-    this.pltFacade.LoadAllPlts(action);
+  LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
+    this.pltFacade.LoadAllPlts(ctx, payload);
   }
 
   @Action(fromPlt.loadAllPltsSuccess)
   LoadAllPltsSuccess(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPltsSuccess) {
-    ctx.patchState({
-      loading: false
-    });
-
-    ctx.dispatch(new fromPlt.constructUserTags({userTags: payload.userTags}))
+    this.pltFacade.LoadAllPltsSuccess(ctx, payload);
   }
 
   @Action(fromPlt.ToggleSelectPlts)
   SelectPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.ToggleSelectPlts) {
-    const state = ctx.getState();
-    const {
-      plts,
-      wsIdentifier
-    } = payload;
-
-    console.log(plts);
-
-    let inComingData = {};
-
-    _.forEach(plts, (v, k) => {
-      inComingData[k] = {
-        selected: v.type
-      };
-    });
-
-    ctx.patchState({
-      data: _.merge({}, state.data, {[wsIdentifier]: inComingData})
-    });
-
+    this.pltFacade.SelectPlts(ctx, payload);
   }
 
   @Action(fromPlt.OpenPLTinDrawer)
   OpenPltinDrawer(ctx: StateContext<pltMainModel>, {payload}: fromPlt.OpenPLTinDrawer) {
-    const state = ctx.getState();
-
-    ctx.patchState({
-      data: _.merge({}, state.data, {[payload.wsIdentifier]: {[payload.pltId]: {opened: true}}})
-    });
+    this.pltFacade.OpenPltinDrawer(ctx, payload);
   }
 
   @Action(fromPlt.ClosePLTinDrawer)
   ClosePLTinDrawer(ctx: StateContext<pltMainModel>, {payload}: fromPlt.ClosePLTinDrawer) {
-    const state = ctx.getState();
-    const {
-      pltId,
-      wsIdentifier
-    } = payload;
-
-    ctx.patchState({
-      data: _.merge({}, state.data, {[wsIdentifier]: {[pltId]: {opened: false}}})
-    });
+    this.pltFacade.ClosePLTinDrawer(ctx,payload);
   }
 
   @Action(fromPlt.setUserTagsFilters)
   setFilterPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setUserTagsFilters) {
-    const state = ctx.getState();
-    const {
-      filters
-    } = payload;
-
-    ctx.patchState({
-      filters: _.assign({}, state.filters, filters)
-    });
-
-    return ctx.dispatch(new fromPlt.FilterPltsByUserTags(payload));
-
+    this.pltFacade.setFilterPlts(ctx,payload);
   }
 
   @Action(fromPlt.FilterPltsByUserTags)
   FilterPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.FilterPltsByUserTags) {
-    const state = ctx.getState();
-    const {
-      wsIdentifier
-    } = payload;
-    const {
-      filters
-    } = state;
-
-    let newData = {};
-
-    if (filters.userTag.length > 0) {
-      _.forEach(state.data[wsIdentifier], (plt: any, k) => {
-        if (_.some(filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
-          newData[k] = {...plt, visible: true};
-        } else {
-          newData[k] = {...plt, visible: false};
-        }
-      });
-    } else {
-      _.forEach(state.data[wsIdentifier], (plt, k) => {
-        newData[k] = {...plt, visible: true};
-      });
-    }
-
-    ctx.setState({
-      ...state,
-      data: {[wsIdentifier]: newData}
-    });
+    this.pltFacade.filterPlts(ctx,payload);
   }
 
   @Action(fromPlt.setTableSortAndFilter)
   setTableSortAndFilter(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setTableSortAndFilter) {
-
-    const {
-      sortData,
-      filterData
-    } = payload;
-
-    const {
-      data
-    } = ctx.getState();
-
-    const sortDataKeys = _.keys(sortData);
-    const filterDataKeys = _.keys(filterData)
-    let res = {...data};
-
-
-    if (filterDataKeys.length > 0) {
-
-      res = _.filter(data, row =>
-        _.every(
-          filterDataKeys,
-          filteredCol => _.some(
-            _.split(filterData[filteredCol], /[,;]/g), strs =>
-              _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)))
-          )
-        ))
-    }
-
-    if (sortDataKeys.length > 0) {
-      res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
-    }
-
-    ctx.patchState({
-      data: res
-    })
+    this.pltFacade.setTableSortAndFilter(ctx,payload);
   }
 
   @Action(fromPlt.constructUserTags)
   constructUserTags(ctx: StateContext<pltMainModel>, {payload}: fromPlt.constructUserTags) {
-    const {
-      data,
-      userTags
-    } = ctx.getState()
-
-    let uesrTagsSummary = {};
-
-
-    _.forEach(payload.userTags, (payloadTag) => {
-
-      const {
-        tagId,
-        pltHeaders,
-        ...rest
-      } = payloadTag
-
-      uesrTagsSummary[tagId] = {tagId, ...rest, selected: false, count: pltHeaders.length, pltHeaders}
-    })
-
-    ctx.patchState({
-      userTags: uesrTagsSummary
-    })
-
+    this.pltFacade.constructUserTags(ctx,payload);
   }
 
   @Action(fromPlt.createOrAssignTags)
   assignPltsToTag(ctx: StateContext<pltMainModel>, {payload}: fromPlt.createOrAssignTags) {
-
-    // wsId(pin): "17P3398"
-    // uwYear(pin): "2016"
-    switch (payload.type) {
-      case 'assignOrRemove':
-        return this.pltApi.assignPltsToTag(_.omit(payload, 'wsIdentifier')).pipe(
-          mergeMap((tags) => {
-            return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
-              workspaceId: payload.wsIdentifier.split('-')[0],
-              uwYear: payload.wsIdentifier.split('-')[1]
-            }));
-          })
-        );
-      case 'createTag':
-        return this.pltApi.creatUserTag(_.omit(payload, 'wsIdentifier')).pipe(
-          mergeMap((userTag) => {
-            return ctx.dispatch(new fromPlt.CreateTagSuccess({
-              wsIdentifier: payload.wsIdentifier,
-              userTag
-            }))
-          }),
-          catchError(() => of(new fromPlt.assignPltsToTagFail()))
-        )
-    }
+    this.pltFacade.assignPltsToTag(ctx,payload);
   }
 
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<pltMainModel>, {payload}: fromPlt.CreateTagSuccess) {
-    console.log('state create tag');
-    const {
-      data,
-      userTags
-    } = ctx.getState()
-
-    const {
-      userTag,
-      wsIdentifier
-    } = payload;
-
-    let newData = {};
-
-    _.forEach(userTag.pltHeaders, header => {
-      newData[header.id] = {
-        ...data[wsIdentifier][header.id],
-        userTags: [...data[wsIdentifier][header.id].userTags, userTag]
-      }
-    })
-
-
-    ctx.patchState({
-      data: _.merge({}, data, {[wsIdentifier]: newData}),
-      userTags: _.merge({}, userTags, {
-        [userTag.tagId]: {
-          ...userTag,
-          count: userTag.pltHeaders.length,
-          selected: false
-        }
-      })
-    })
-
+    this.pltFacade.createUserTagSuccess(ctx,payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<pltMainModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-
-    ctx.dispatch(new fromPlt.loadAllPlts({params: {workspaceId: payload.workspaceId, uwy: payload.uwYear}}))
-
-    /*let newData = {};
-
-    let newTags = {};
-
-    _.forEach(tags, tag => {
-      const {
-        pltHeaders
-      } = tag;
-
-      let toDel = _.differenceBy(userTags[tag.tagId].pltHeaders, pltHeaders);
-      //let toAdd= _.differenceBy(pltHeaders, userTags[tag.tagId].pltHeaders);
-      let toAdd = _.filter(pltHeaders, h => _.findIndex(userTags[tag.tagId].pltHeaders, (e: any) => e.id === h.id) === -1);
-
-
-      console.log({
-        pltHeaders,
-        userTagsHeaders: userTags[tag.tagId].pltHeaders,
-        toDel,
-        toAdd,
-      });
-
-      //Process
-
-      _.forEach(toDel, ({id}) => {
-        newData[id] = {...data[wsIdentifier][id], ...newData[id]};
-        newData[id] = {
-          ...newData[id],
-          userTags: [..._.filter(newData[id].userTags, tagItem => tagItem.tagId != tag.tagId)]
-        }
-      });
-
-      console.log(newData);
-
-      _.forEach(toAdd, ({id}) => {
-        newData[id] = toDel.length > 0 ? newData[id] : {...data[wsIdentifier][id], ...newData[id]};
-        newData[id] = {...newData[id], userTags: [..._.concat(newData[id].userTags, tag)]}
-      });
-
-      console.log(newData);
-      newTags[tag.tagId] = {...tag, selected: userTags[tag.tagId].selected, count: tag.pltHeaders.length};
-    })
-
-    console.log(newData);
-
-    ctx.patchState({
-      data: {...data, ...{[wsIdentifier]: {...data[wsIdentifier], ...newData}}},
-      userTags: {...userTags, ...newTags}
-    })*/
-
+    this.pltFacade.assignPltsToTagSuccess(ctx,payload);
   }
 
 
   @Action(fromPlt.deleteUserTag)
   deleteUserTag(ctx: StateContext<pltMainModel>, {payload}: fromPlt.deleteUserTag) {
-    console.log(payload)
-    return this.pltApi.deleteUserTag(payload.userTagId).pipe(
-      mergeMap(() => ctx.dispatch(new fromPlt.deleteUserTagSuccess(payload)))
-    )
+    this.pltFacade.deleteUserTag(ctx,payload);
   }
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    const {
-      data,
-      userTags
-    } = ctx.getState();
-
-    const {
-      userTagId,
-      wsIdentifier
-    } = payload;
-
-    console.log(wsIdentifier);
-
-    let newData = {};
-
-    _.forEach(userTags[userTagId].pltHeaders, (plt) => {
-      newData[plt.id] = {
-        ...data[wsIdentifier][plt.id],
-        userTags: _.filter(data[wsIdentifier][plt.id].userTags, (userTag: any) => userTag.tagId !== userTagId)
-      }
-    })
-    console.log(newData);
-
-    ctx.patchState({
-      data: {...data, ...{[wsIdentifier]: {...data[wsIdentifier], ...newData}}},
-      userTags: _.omit(userTags, userTagId)
-    })
+    this.pltFacade.deleteUserTagFromPlts(ctx,payload);
   }
 
   @Action(fromPlt.deletePlt)
   deletePlt(ctx: StateContext<pltMainModel>, {payload}: fromPlt.deletePlt) {
-
-    const {
-      pltIds,
-      wsIdentifier
-    } = payload;
-
-    const {
-      data
-    } = ctx.getState();
-
-    let newData = {};
-    let ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
-
-    _.forEach(pltIds, k => {
-      newData[k] = {...data[wsIdentifier][k], deleted: true, selected: false}
-      ls = _.merge({}, ls, {[k]: {deleted: true, deletedBy: 'DEV', deletedAt: moment.now()}})
-    });
-
-    ctx.patchState({
-      data: _.merge({}, data, {[wsIdentifier]: newData})
-    })
-
-    localStorage.setItem('deletedPlts', JSON.stringify(ls))
-    console.log(ls);
-    /*return this.pltApi.deletePlt(payload.pltId).pipe(
-      mergeMap(plt => ctx.dispatch(new fromPlt.deletePltSucess({
-        pltId: payload.pltId
-      }))),
-      catchError(e => ctx.dispatch(new fromPlt.deletePltFail()))
-    )*/
-
+    this.pltFacade.deletePlt(ctx,payload);
   }
 
   @Action(fromPlt.deletePltSucess)
@@ -499,92 +201,17 @@ export class PltMainState implements NgxsOnInit {
 
   @Action(fromPlt.editTag)
   renameTag(ctx: StateContext<pltMainModel>, {payload}: fromPlt.editTag) {
-    console.log(payload);
-    return this.pltApi.editTag(payload.tag).pipe(
-      mergeMap(tag => ctx.dispatch(new fromPlt.editTagSuccess({
-        wsIdentifier: payload.workspaceId + '-' + payload.uwy,
-        tag
-      }))),
-      catchError(err => ctx.dispatch(new fromPlt.editTagFail()))
-    )
+    this.pltFacade.renameTag(ctx,payload);
   }
 
   @Action(fromPlt.editTagSuccess)
   renameTagSucces(ctx: StateContext<pltMainModel>, {payload}: fromPlt.editTagSuccess) {
-    const {
-      data,
-      userTags
-    } = ctx.getState();
-
-    const {
-      tag: {
-        tagId,
-        tagName,
-        tagColor,
-        pltHeaders
-      },
-      wsIdentifier
-    } = payload;
-
-    let newData = {};
-
-    console.log(pltHeaders)
-    _.forEach(pltHeaders, pltId => {
-      const {
-        id
-      } = pltId;
-
-      let index = _.findIndex(data[wsIdentifier][id].userTags, (tag: any) => tag.tagId === tagId);
-
-      newData[id] = {
-        ...data[wsIdentifier][id],
-        userTags: _.merge([], data[wsIdentifier][id].userTags, {
-          [index]: {
-            ...data[wsIdentifier][id].userTags[index],
-            tagName,
-            tagColor
-          }
-        })
-      }
-    })
-
-    ctx.patchState({
-      data: _.merge({}, data, {[wsIdentifier]: {...data[wsIdentifier], ...newData}}),
-      userTags: _.merge({}, userTags, {
-        [tagId]: {
-          tagName,
-          tagColor
-        }
-      })
-    })
-
+    this.pltFacade.renameTagSuccess(ctx,payload);
   }
 
   @Action(fromPlt.restorePlt)
   restorePlt(ctx: StateContext<pltMainModel>, {payload}: fromPlt.restorePlt) {
-    const {
-      pltIds,
-      wsIdentifier
-    } = payload;
-
-    const {
-      data
-    } = ctx.getState();
-
-    let newData = {};
-    let ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
-
-    _.forEach(pltIds, k => {
-      newData[k] = {...data[wsIdentifier][k], deleted: false, selected: false}
-      ls = _.omit(ls, `${k}`)
-    });
-
-    ctx.patchState({
-      data: _.merge({}, data, {[wsIdentifier]: newData})
-    });
-
-    localStorage.setItem('deletedPlts', JSON.stringify(ls));
-
+    this.pltFacade.restorePlt(ctx,payload);
   }
 }
 
