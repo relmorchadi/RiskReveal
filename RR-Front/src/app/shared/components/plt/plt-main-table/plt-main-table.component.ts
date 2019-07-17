@@ -176,4 +176,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
 
+  tmp(param: any) {
+    console.log(param);
+  }
 }

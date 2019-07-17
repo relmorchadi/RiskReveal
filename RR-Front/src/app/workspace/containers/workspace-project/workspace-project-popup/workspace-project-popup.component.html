@@ -17,7 +17,7 @@
               <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
             </button>
             <h4>
-              {{ selectionStep =='plt' ? 'Select PLTs' : 'Search For Project' }}
+              {{ selectionStep == 'plt' ? 'Select PLTs to Clone' : 'Search For Project' }}
             </h4>
           </div>
       </ng-container>
@@ -89,7 +89,9 @@
 
           </app-plt-left-menu>
         </div>
-        <div class="center">
+        <div
+          [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
+          class="center">
           <div class="title-as-tab">
           <span>
             PLTs
@@ -109,7 +111,7 @@
             ></app-plt-main-table>
           </div>
         </div>
-        <div class="right">
+        <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
           <app-plt-right-menu
             (actionDispatcher)="rightMenuActionDispatcher($event)"
             [Inputs]="rightMenuInputs"

@@ -1,9 +1,7 @@
 import {Injectable} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class PreviousNavigationService {
 
   private previousUrl: string = '';
@@ -11,10 +9,11 @@ export class PreviousNavigationService {
 
   constructor(private router: Router) {
     this.currentUrl = this.router.url;
-    router.events.subscribe(event => {
+    router.events.subscribe((event: any) => {
       if (event instanceof NavigationEnd) {
         this.previousUrl = this.currentUrl;
         this.currentUrl = event.url;
+        console.log(this.previousUrl, this.currentUrl);
       }
     });
   }

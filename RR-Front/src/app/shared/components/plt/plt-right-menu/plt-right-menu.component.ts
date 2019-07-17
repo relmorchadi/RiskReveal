@@ -214,4 +214,12 @@ export class PltRightMenuComponent implements OnInit {
       payload: pltId
     })
   }
+
+  selectTab($event: void) {
+    console.log($event);
+    this.actionDispatcher.emit({
+      type: rightMenuStore.setSelectedTabByIndex,
+      payload: $event
+    })
+  }
 }

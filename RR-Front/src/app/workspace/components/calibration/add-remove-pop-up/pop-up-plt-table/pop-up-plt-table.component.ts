@@ -32,13 +32,6 @@ export class PopUpPltTableComponent implements OnInit {
     };
     sortData: any;
   };
-
-  contextMenuSelect: any;
-  contextMenuItemsCache = this.contextMenuItems;
-  @Output() editTags = new EventEmitter();
-  @Output() deletePlt = new EventEmitter();
-  @Output() restore = new EventEmitter();
-  @Output() openPltInDrawer = new EventEmitter();
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
@@ -58,6 +51,12 @@ export class PopUpPltTableComponent implements OnInit {
       command: () => this.restore.emit()
     }
   ];
+  contextMenuSelect: any;
+  contextMenuItemsCache = this.contextMenuItems;
+  @Output() editTags = new EventEmitter();
+  @Output() deletePlt = new EventEmitter();
+  @Output() restore = new EventEmitter();
+  @Output() openPltInDrawer = new EventEmitter();
   @Output() onCheckAll = new EventEmitter();
   @Output() onCheckBoxSort = new EventEmitter();
   @Output() onSortChange = new EventEmitter();

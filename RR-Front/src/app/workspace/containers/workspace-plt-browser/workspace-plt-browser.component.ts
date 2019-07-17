@@ -1,19 +1,10 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  NgZone,
-  OnDestroy,
-  OnInit,
-  TemplateRef,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
 import {PltMainState} from '../../store';
-import {map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
+import {map, switchMap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Table} from 'primeng/table';
 import {combineLatest} from 'rxjs';
@@ -22,6 +13,7 @@ import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
 import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
+import {PreviousNavigationService} from '../../services/previous-navigation.service';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -234,7 +226,9 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     private zone: NgZone,
     private cdRef: ChangeDetectorRef,
     private router$: Router,
-    private route$: ActivatedRoute) {
+    private route$: ActivatedRoute,
+    private prn: PreviousNavigationService
+  ) {
     this.someItemsAreSelected = false;
     this.selectAll = false;
     this.listOfPlts = [];

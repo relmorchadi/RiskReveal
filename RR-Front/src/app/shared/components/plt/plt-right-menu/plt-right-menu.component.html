@@ -4,9 +4,9 @@
       <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
     </div>
 
-    <div *ngIf="inputs['visible']" class="noMargin">
-      <nz-tabset [nzSelectedIndex]="inputs.selectedTab.index" class="tabset-drawer">
-        <nz-tab *ngIf="inputs['tabs']['basket']" [nzTitle]="basket">
+    <nz-tabset (nzSelectedIndexChange)="selectTab($event)" *ngIf="inputs['visible']"
+               [nzSelectedIndex]="inputs.selectedTab.index" class="tabset-drawer">
+      <nz-tab *ngIf="inputs['tabs']['basket']" [nzTitle]="basket">
                 <ng-template #basket>
                   <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
                     Selected
@@ -60,10 +60,8 @@
                       <tbody>
                       <tr *ngFor="let plt of inputs['basket']">
                         <td>{{plt?.pltId | textLength}}</td>
-                        <td>{{plt?.pltName}}</td>
-                        <td>{{plt?.peril}}</td>
-                        <td>{{plt?.regionPerilName}}</td>
-                        <td>{{plt?.rap}}</td>
+                        <td class="elipsis-text" style="max-width: 200px;">{{plt?.pltName}}</td>
+                        <td class="elipsis-text" style="max-width: 58px;">{{plt?.regionPerilCode}}</td>
                         <td><i style="cursor: pointer;" class="icon-multiply" (click)="unselectPlt(plt?.pltId)"></i></td>
                       </tr>
                       </tbody>
@@ -76,7 +74,7 @@
             <div>
               <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
                 PLT Details
-                <i [ngClass]="{'icon-visibility_24px': inputs['pltDetail'], 'icon-visibility_off_24px': !inputs['pltDetail']}"></i>
+                <!--<i [ngClass]="{'icon-visibility_24px': inputs['pltDetail'], 'icon-visibility_off_24px': !inputs['pltDetail']}"></i>-->
               </span>
             </div>
 
@@ -163,12 +161,11 @@
                       <span nz-col
                             class="summaryTableBody">{{inputs['pltDetail']?.targetRapCode}}</span>
                     </div>
-                    <!--<div nz-row style="padding: 12px 0 0px 0;">
+                    <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Peril:</span>
                       <span nz-col
                             class="summaryTableBody">{{inputs['pltDetail']?.peril}}</span>
                     </div>
-                    -->
                     <div nz-row style="padding: 12px 0 0px 0;">
                       <span nz-col nzSpan="6" class="summaryTableHeader">Region Peril:</span>
                       <span nz-col
@@ -552,7 +549,6 @@
           </div>
         </nz-tab>
       </nz-tabset>
-    </div>
 
   </div>
 </div>

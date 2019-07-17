@@ -2,14 +2,14 @@ import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Ou
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {combineLatest, Observable, of, Subject, Subscription} from 'rxjs';
-import {Actions, Select, Store, ofAction, ofActionDispatched} from '@ngxs/store';
+import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../../core/store/states';
-import {LazyLoadEvent, MessageService} from 'primeng/api';
+import {LazyLoadEvent} from 'primeng/api';
 import {SearchService} from '../../../../core/service';
 import {Debounce} from '../../../../shared/decorators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {debounceTime, filter, first, last, mergeMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, mergeMap} from 'rxjs/operators';
 import * as fromWorkspaceStore from '../../../store';
 import {PltMainState} from '../../../store';
 import {Message} from '../../../../shared/message';
@@ -226,7 +226,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           header: 'Peril',
           width: '40',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',
           textAlign: 'center',active: true
@@ -236,7 +236,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           header: 'Region Peril Code',
           width: '70',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',active: true
         },
@@ -245,22 +245,42 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           header: 'Region Peril Name',
           width: '160',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: false, icon: null, type: 'field',active: true},
+        {
+          sortDir: 1,
+          fields: 'grain',
+          header: 'Grain',
+          width: '90',
+          sorted: true,
+          filtred: true,
+          icon: null,
+          type: 'field',
+          active: true
+        },
         {
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
           width: '90',
           sorted: true,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: false, icon: null, type: 'field',active: true}
+        {
+          sortDir: 1,
+          fields: 'rap',
+          header: 'RAP',
+          width: '52',
+          sorted: true,
+          filtred: true,
+          icon: null,
+          type: 'field',
+          active: true
+        }
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -1006,9 +1026,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
     console.log(action);
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        if(this.getRightMenuKey('pltDetail')) {
+        console.log('closing');
+        /*if(this.getRightMenuKey('pltDetail')) {
           this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
-        }
+        }*/
         this.updateMenuKey('visible', false);
         break;
       case rightMenuStore.openDrawer:
@@ -1021,6 +1042,9 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
             _.range([action.payload].length).map(el => ({type: false}))
           )
         );
+        break;
+      case rightMenuStore.setSelectedTabByIndex:
+        this.setSelectedPltByIndex(action.payload);
         break;
       default:
         console.log('default right menu action');
@@ -1041,6 +1065,10 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
 
   setSelectedPlt($event: any) {
     this.selectedPlt= $event;
+  }
+
+  setSelectedPltByIndex(index: any) {
+    this.rightMenuInputs = rightMenuActions.setSelectedTabByIndex.handler(this.rightMenuInputs, index);
   }
 
   onSortChange($event: any) {

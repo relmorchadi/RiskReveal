@@ -106,7 +106,7 @@ body {
 
     .borderless {
       .ui-dialog-content {
-        height: calc(#{map_get($size, "height")} - 150px);
+        height: calc(#{map_get($size, "height")} - 100px);
         border: none;
 
         .content {

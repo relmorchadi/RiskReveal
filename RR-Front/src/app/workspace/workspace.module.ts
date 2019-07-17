@@ -21,12 +21,14 @@ import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-
 import {ScrollingModule} from '@angular/cdk/scrolling';
 import {TreeModule} from 'primeng/tree';
 import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-up/add-remove-pop-up.component';
-import {PopUpPltTableComponent} from './components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component';
+import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk-link-res-summary/risk-link-res-summary.component';
+import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
 
 @NgModule({
+  entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, PopUpPltTableComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent
   ],
   imports: [
     GridsterModule,
@@ -42,16 +44,16 @@ import {PopUpPltTableComponent} from './components/calibration/add-remove-pop-up
     DragDropModule,
     NgxDndNodule,
     RadioButtonModule,
-    DropdownModule,
     RouterModule.forChild(workspaceRoutes),
     ToastModule,
-    ScrollingModule
+    ScrollingModule,
+    DropdownModule
   ],
   exports: [
     RouterModule
   ],
   providers: [
-    ...SERVICE
+    ...SERVICE,
   ]
 })
 export class WorkspaceModule {

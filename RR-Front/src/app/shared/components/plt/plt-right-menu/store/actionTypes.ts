@@ -1,4 +1,4 @@
-import { Input } from './input';
+import {Input} from './input';
 import * as Types from './types';
 import * as _ from 'lodash';
 
@@ -33,6 +33,24 @@ export const Actions = {
       _.forEach(_.keys(rightMenuInput.tabs), (el, i) => {
         if(el == tab) index= i;
       });
+      return {
+        ...rightMenuInput,
+        selectedTab: {
+          index,
+          title: tab
+        }
+      }
+    }
+  },
+  setSelectedTabByIndex: {
+    type: Types.setSelectedTabByIndex,
+    handler: (rightMenuInput: Input, index: number) => {
+      let tab = "basket";
+
+      _.forEach(_.keys(rightMenuInput.tabs), (el, i) => {
+        if (i == index) tab = el;
+      });
+
       return {
         ...rightMenuInput,
         selectedTab: {
