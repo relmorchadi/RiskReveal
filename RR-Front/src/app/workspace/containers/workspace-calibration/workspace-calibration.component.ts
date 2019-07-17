@@ -1157,8 +1157,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         });
       }
     }
-    console.log('data =>', this.dataColumns)
-    console.log('frozen =>', this.frozenColumns)
   }
 
   getAttr(path) {
@@ -1432,9 +1430,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   selectCategory(p) {
+    console.log(p);
     this.categorySelectedFromAdjustement = p;
     this.categorySelected = p.category;
-    console.log(p);
   }
 
   selectBasis(adjustment) {

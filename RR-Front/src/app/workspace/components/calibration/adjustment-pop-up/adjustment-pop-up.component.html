@@ -22,7 +22,7 @@
       </div>
       <div class="ui-g-8">
         <div class="body-wrap-dropDowns-calibration">
-          <p-dropdown (ngModelChange)="emitSelectCategory(categorySelectedFromAdjustement)"
+          <p-dropdown (ngModelChange)="emitSelectCategory($event)"
                       [(ngModel)]="categorySelectedFromAdjustement"
                       [ngStyle]="{'width':'100%'}"
                       [options]="allAdjsArray"
@@ -63,7 +63,7 @@
       </div>
       <div class="ui-g-8">
         <div class="body-wrap-dropDowns-calibration">
-          <p-dropdown (ngModelChange)="selectBasis(singleValue)"
+          <p-dropdown (ngModelChange)="selectBasis($event)"
                       [(ngModel)]="singleValue"
                       [ngStyle]="{'width':'100%'}"
                       [options]="AdjustementType"

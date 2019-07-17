@@ -23,12 +23,13 @@ import {TreeModule} from 'primeng/tree';
 import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-up/add-remove-pop-up.component';
 import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk-link-res-summary/risk-link-res-summary.component';
 import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
+import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent
   ],
   imports: [
     GridsterModule,
