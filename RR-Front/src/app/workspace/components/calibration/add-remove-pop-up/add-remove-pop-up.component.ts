@@ -26,7 +26,6 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
   subscriptions: Subscription;
-  addRemoveModal = false;
   @Select(WorkspaceMainState.getData) selectWsData$;
   @Select(WorkspaceMainState.getProjects) projects$;
   unSubscribe$: Subject<void>;
@@ -47,11 +46,8 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   rightMenuInputs: rightMenuStore.Input;
   workspace: any;
   index: any;
-  newProject = false;
   searchWorkspace = false;
   selectedWorkspace: any = null;
-  selectedWorkspaceProjects: any = null;
-  selectedProject: any = null;
   keywordFormGroup: FormGroup;
   paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
   contracts = [];

@@ -13,7 +13,7 @@ import {VirtualScrollerModule} from 'primeng/virtualscroller';
 import {workspaceRoutes} from './workspace.route';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
-import {CalendarModule, DialogModule, DragDropModule, RadioButtonModule} from 'primeng/primeng';
+import {CalendarModule, DialogModule, DragDropModule, DropdownModule, RadioButtonModule} from 'primeng/primeng';
 import {ToastModule} from 'primeng/toast';
 import {DndModule} from 'ng2-dnd';
 import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
@@ -42,6 +42,7 @@ import {PopUpPltTableComponent} from './components/calibration/add-remove-pop-up
     DragDropModule,
     NgxDndNodule,
     RadioButtonModule,
+    DropdownModule,
     RouterModule.forChild(workspaceRoutes),
     ToastModule,
     ScrollingModule

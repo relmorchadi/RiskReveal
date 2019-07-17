@@ -85,7 +85,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   templateWidth = '130';
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
-  iconNotePosition: any;
   allAdjsArray: any[] = [];
   AdjustementType: any;
   categorySelected: any;
@@ -1398,17 +1397,21 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   handleCancel(): void {
-    console.log('Button cancel clicked!');
     this.isVisible = false;
   }
 
-  addAdjustmentFromPlusIcon(boolAdj, adjustementType?, adjustement?) {
+  addAdjustmentFromPlusIcon($event) {
+
+    let boolAdj = $event.status;
+    let adjustementType = $event.singleValue;
+    let adjustement = $event.category;
+
     if (this.addAdjustement) {
       if (boolAdj) {
         this.isVisible = false;
       }
       this.store$.dispatch(new saveAdjustmentInPlt({
-        adjustementType: this.singleValue,
+        adjustementType: adjustementType,
         adjustement: adjustement,
         columnPosition: this.columnPosition,
         pltId: this.idPlt,
@@ -1419,7 +1422,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       }
       console.log(this.columnPosition);
       this.store$.dispatch(new saveAdjustment({
-        adjustementType: this.singleValue,
+        adjustementType: adjustementType,
         adjustement: adjustement,
         columnPosition: this.columnPosition
       }));
@@ -1530,15 +1533,16 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.modalTitle = "Modify Adjustment";
     this.modifyModal = true;
     this.lastModifiedAdj = adj.id;
+    console.log(adj);
     this.categorySelectedFromAdjustement = _.find(this.allAdjsArray, {name: adj.name});
     if (adj.linear) {
-      this.singleValue = _.find(this.AdjustementType, {name: adj.value});
+      this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
     } else {
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    this.isVisible = true
-    this.adjustColWidth(adj);
+    console.log(this.singleValue);
+    this.isVisible = true;
   }
 
   DeleteAdjustement(adj) {
@@ -1554,7 +1558,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       adjustement: adj,
       columnPosition: this.columnPosition
     }));
-    this.isVisible = false;
   }
 
   onChangeAdjValue(adj, event) {
