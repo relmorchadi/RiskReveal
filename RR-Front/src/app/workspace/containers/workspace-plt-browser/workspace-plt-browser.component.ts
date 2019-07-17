@@ -23,13 +23,14 @@ import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
 import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
+import {BaseContainer} from '../../../shared/base';
 
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
   styleUrls: ['./workspace-plt-browser.component.scss']
 })
-export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
+export class WorkspacePltBrowserComponent extends BaseContainer implements OnInit, OnDestroy {
 
   rightMenuInputs: rightMenuStore.Input;
 
@@ -66,7 +67,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     },
     {
       label: 'Delete', command: (event) => {
-        this.store$.dispatch(new fromWorkspaceStore.deletePlt({
+        this.dispatch(new fromWorkspaceStore.deletePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
           pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
         }));
@@ -75,8 +76,8 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Clone To',
       command: (event) => {
-        this.store$.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.selectedListOfPlts}}));
-        this.router$.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
+        this.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.selectedListOfPlts}}));
+        this.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
       }
     },
     {
@@ -96,7 +97,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Restore',
       command: () => {
-        this.store$.dispatch(new fromWorkspaceStore.restorePlt({
+        this.dispatch(new fromWorkspaceStore.restorePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
           pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
         }))
@@ -110,7 +111,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     {
       label: 'Delete Tag',
       icon: 'pi pi-trash',
-      command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag({
+      command: (event) => this.dispatch(new fromWorkspaceStore.deleteUserTag({
         wsIdentifier: this.workspaceId + '-' + this.uwy,
         userTagId: this.tagForMenu.tagId
       }))
@@ -231,13 +232,12 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
   constructor(
     private nzDropdownService: NzDropdownService,
-    private store$: Store,
     private zone: NgZone,
-    private cdRef: ChangeDetectorRef,
-    private router$: Router,
     private route$: ActivatedRoute,
-    private prn: PreviousNavigationService
+    private prn: PreviousNavigationService,
+    _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef
     ) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.someItemsAreSelected = false;
     this.selectAll = false;
     this.listOfPlts = [];
@@ -330,9 +330,9 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
           this.workspaceId = wsId;
           this.uwy = year;
           this.loading = true;
-          this.data$ = this.store$.select(PltMainState.getPlts(this.workspaceId + '-' + this.uwy));
-          this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
-          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+          this.data$ = this.select(PltMainState.getPlts(this.workspaceId + '-' + this.uwy));
+          this.deletedPlts$ = this.select(PltMainState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
+          this.dispatch(new fromWorkspaceStore.loadAllPlts({
             params: {
               workspaceId: wsId, uwy: year
             }
@@ -342,7 +342,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
             this.deletedPlts$
           );
         })
-      ).subscribe(([data, deletedData]: any) => {
+      ).pipe(this.unsubscribeOnDestroy).subscribe(([data, deletedData]: any) => {
         let d1 = [];
         let dd1 = [];
         let d2 = [];
@@ -464,16 +464,16 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
             this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+      this.select(PltMainState.getProjects()).pipe(this.unsubscribeOnDestroy).subscribe((projects: any) => {
         this.projects = _.map(projects, p => ({...p, selected: false}));
         this.detectChanges();
       }),
-      this.getAttr('loading').subscribe(l => this.loading = l),
-      this.userTags$.subscribe(userTags => {
+      this.getAttr('loading').pipe(this.unsubscribeOnDestroy).subscribe(l => this.loading = l),
+      this.userTags$.pipe(this.unsubscribeOnDestroy).subscribe(userTags => {
         this.userTags = userTags || {};
         this.detectChanges();
       }),
-      this.store$.select(WorkspaceMainState.getLeftNavbarIsCollapsed).subscribe(l => {
+      this.select(WorkspaceMainState.getLeftNavbarIsCollapsed).pipe(this.unsubscribeOnDestroy).subscribe(l => {
         this.leftIsHidden = l;
         this.detectChanges();
       })
@@ -481,7 +481,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   getAttr(path) {
-    return this.store$.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
+    return this.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
   }
 
   sort(sort: { key: string, value: string }): void {
@@ -516,11 +516,11 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   filterInput: string = "";
 
   selectPltById(pltId) {
-    return this.store$.select(state => _.get(state, `pltMainModel.data.${this.workspaceId + '-' + this.uwy}.${pltId}`));
+    return this.select(state => _.get(state, `pltMainModel.data.${this.workspaceId + '-' + this.uwy}.${pltId}`));
   }
 
   deletePlt() {
-    this.store$.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
+    this.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
   }
 
   editTags() {
@@ -539,12 +539,12 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   restore() {
-    this.store$.dispatch(new fromWorkspaceStore.restorePlt({pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
+    this.dispatch(new fromWorkspaceStore.restorePlt({pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
     this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
   }
 
   closePltInDrawer(pltId) {
-    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
+    this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId
     }));
@@ -554,7 +554,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     if(this.getRightMenuKey('pltDetail')) {
       this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId)
     }
-    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
+    this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId: plt
     }));
@@ -576,15 +576,6 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     this.dropdown.close();
   }
 
-  detectChanges() {
-    if (!this.cdRef['destroyed'])
-      this.cdRef.detectChanges();
-  }
-
-  ngOnDestroy(): void {
-    this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe());
-  }
-
   checkAll($event) {
     this.toggleSelectPlts(
       _.zipObject(
@@ -596,7 +587,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
 
   toggleSelectPlts(plts: any) {
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
+    this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       plts,
       forDeleted: this.showDeleted
@@ -612,7 +603,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   editTag() {
-    this.store$.dispatch(new fromWorkspaceStore.editTag({
+    this.dispatch(new fromWorkspaceStore.editTag({
       tag: this.tagForMenu,
       workspaceId: this.workspaceId,
       uwy: this.uwy
@@ -646,7 +637,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   emitFilters(filters: any) {
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
+    this.dispatch(new fromWorkspaceStore.setUserTagsFilters({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       filters: filters
     }))
@@ -668,7 +659,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
     const {
       selectedTags
     } = $event;
-    this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
+    this.dispatch(new fromWorkspaceStore.createOrAssignTags({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       ...$event,
       selectedTags: _.map(selectedTags, (el: any) => el.tagId),
@@ -744,7 +735,7 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
   }
 
   createTag($event: any) {
-    this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
+    this.dispatch(new fromWorkspaceStore.createOrAssignTags({
       ...$event,
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
@@ -795,5 +786,13 @@ export class WorkspacePltBrowserComponent implements OnInit, OnDestroy {
 
   updateMenuKey(key: string, value: any) {
     this.rightMenuInputs = rightMenuActions.updateKey.handler(this.rightMenuInputs, key, value);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  protected detectChanges() {
+    super.detectChanges();
   }
 }

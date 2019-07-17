@@ -6,6 +6,7 @@ import {of} from 'rxjs';
 import {catchError, mergeMap} from 'rxjs/operators';
 import {PltApi} from '../../services/plt.api';
 import * as moment from 'moment';
+import {PltStateService} from '../../services/plt-state.service';
 
 const initiaState: pltMainModel = {
   data: {},
@@ -25,11 +26,12 @@ const initiaState: pltMainModel = {
 export class PltMainState implements NgxsOnInit {
   ctx = null;
 
-  constructor(private pltApi: PltApi) {
+  constructor(private pltApi: PltApi, private pltFacade: PltStateService) {
   }
 
-  ngxsOnInit(ctx?: StateContext<PltMainState>): void | any {
+  ngxsOnInit(ctx?: StateContext<pltMainModel>): void | any {
     this.ctx = ctx;
+    this.pltFacade.init(ctx);
   }
 
   /**
@@ -114,54 +116,8 @@ export class PltMainState implements NgxsOnInit {
   }
 
   @Action(fromPlt.loadAllPlts)
-  LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
-    const {
-      params
-    } = payload;
-
-    ctx.patchState({
-      loading: true
-    });
-
-    console.log('ls', JSON.parse(localStorage.getItem('deletedPlts')))
-
-    const ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
-
-    return this.pltApi.getAllPlts(params)
-      .pipe(
-        mergeMap((data) => {
-          ctx.patchState({
-            data: Object.assign({},
-              {
-                ...ctx.getState().data,
-                [params.workspaceId + '-' + params.uwy]: _.merge({},
-                  ...data.plts.map(plt => ({
-                    [plt.pltId]: {
-                      ...plt,
-                      selected: false,
-                      visible: true,
-                      tagFilterActive: false,
-                      opened: false,
-                      deleted: ls[plt.pltId] ? ls[plt.pltId].deleted : undefined,
-                      deletedBy: ls[plt.pltId] ? ls[plt.pltId].deletedBy : undefined,
-                      deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
-                      status: this.status[this.getRandomInt()],
-                      newPlt: Math.random() >= 0.5,
-                      EPM: ['1,080,913', '151,893', '14.05%']
-                    }
-                  }))
-                )
-              }
-            ),
-            filters: {
-              systemTag: [],
-              userTag: []
-            }
-          });
-          return ctx.dispatch(new fromPlt.loadAllPltsSuccess({userTags: data.userTags}));
-        }),
-        catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
-      );
+  LoadAllPlts(ctx: StateContext<pltMainModel>, action: fromPlt.loadAllPlts) {
+    this.pltFacade.LoadAllPlts(action);
   }
 
   @Action(fromPlt.loadAllPltsSuccess)

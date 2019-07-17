@@ -25,7 +25,7 @@ import {BaseComponent, BaseContainer} from "../../../shared/base";
   styleUrls: ['./workspace-project.component.scss'],
   providers: [MessageService]
 })
-export class WorkspaceProjectComponent extends BaseComponent implements OnInit, OnDestroy, StateSubscriber  {
+export class WorkspaceProjectComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber  {
   actionsEmitter: EventEmitter<any>;
   // unSubscribe$: Subject<void>;
   collapseWorkspaceDetail = true;
@@ -67,12 +67,16 @@ export class WorkspaceProjectComponent extends BaseComponent implements OnInit, 
 
   selectedProject;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute,
-              private nzDropdownService: NzDropdownService, private store: Store,
-              private router: Router, private actions$: Actions, private messageService: MessageService,
-              private changeDetector: ChangeDetectorRef, private notificationService:NotificationService
+  constructor(private _helper: HelperService,
+              private route: ActivatedRoute,
+              private nzDropdownService: NzDropdownService,
+              private actions$: Actions,
+              private messageService: MessageService,
+              private changeDetector: ChangeDetectorRef,
+              private notificationService:NotificationService,
+              _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
-    super(router,changeDetector);
+    super(_baseRouter, _baseCdr, _baseStore);
     console.log('init project');
     this.actionsEmitter = new EventEmitter();
   }
@@ -86,7 +90,7 @@ export class WorkspaceProjectComponent extends BaseComponent implements OnInit, 
 
   ngOnInit() {
 
-    this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).subscribe(() => {
+    this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
         this.newProject = false;
         this.notificationService.createNotification('Project added successfully', '',
           'success', 'topRight', 4000);
@@ -94,13 +98,13 @@ export class WorkspaceProjectComponent extends BaseComponent implements OnInit, 
         // this.detectChanges();
       }
     );
-    this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).subscribe(() => {
+    this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
       this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
       // this.detectChanges();
     })
 
-    this.actions$.pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
+    this.actions$.pipe(this.unsubscribeOnDestroy).pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
         this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
         this._helper.updateWorkspaceItems();
@@ -130,7 +134,7 @@ export class WorkspaceProjectComponent extends BaseComponent implements OnInit, 
   }
 
   delete(project) {
-    this.store.dispatch(new DeleteProject({
+    this.dispatch(new DeleteProject({
       workspaceId: this.workspace.workSpaceId, uwYear: this.workspace.uwYear, project,
     }));
     this.dropdown.close();
@@ -165,10 +169,6 @@ export class WorkspaceProjectComponent extends BaseComponent implements OnInit, 
     ])
   }
 
-  ngOnDestroy(): void {
-    this.destroy();
-  }
-
   selectProjectNext(project) {
     this.searchWorkspace = false;
     this.newProject = true;
@@ -186,6 +186,14 @@ export class WorkspaceProjectComponent extends BaseComponent implements OnInit, 
 
   formatDateTime(dateTime: any) {
     moment(dateTime).format('x');
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  protected detectChanges() {
+    super.detectChanges();
   }
 
 }
