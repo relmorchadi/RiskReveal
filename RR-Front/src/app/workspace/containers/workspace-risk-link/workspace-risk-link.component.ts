@@ -69,18 +69,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
   tree = [];
 
   lastSelectedIndex = null;
-  lastSelectedIndexResult = null;
-  lastSelectedIndexSummary = null;
-  lastSelectedIndexFPstandard = null;
-  lastSelectedIndexFPAnalysis = null;
 
   financialP = false;
   filterModalVisibility = false;
   linkingModalVisibility = false;
   editRowPopUp = false;
 
-  manual = false;
-  suggested = false;
+
   managePopUp = false;
 
   singleColEdit = false;
@@ -149,8 +144,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
   state: RiskLinkModel = null;
 
   constructor(
-    private _helper: HelperService, 
-    private route: ActivatedRoute, 
+    private _helper: HelperService,
+    private route: ActivatedRoute,
     _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
