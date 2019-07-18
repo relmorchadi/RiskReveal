@@ -118,63 +118,63 @@ export class PltMainState {
 
   @Action(fromPlt.OpenPLTinDrawer)
   OpenPltinDrawer(ctx: StateContext<pltMainModel>, {payload}: fromPlt.OpenPLTinDrawer) {
-    this.pltFacade.OpenPltinDrawer(ctx, payload);
+    return this.pltFacade.OpenPltinDrawer(ctx, payload);
   }
 
   @Action(fromPlt.ClosePLTinDrawer)
   ClosePLTinDrawer(ctx: StateContext<pltMainModel>, {payload}: fromPlt.ClosePLTinDrawer) {
-    this.pltFacade.ClosePLTinDrawer(ctx,payload);
+    return this.pltFacade.ClosePLTinDrawer(ctx,payload);
   }
 
   @Action(fromPlt.setUserTagsFilters)
   setFilterPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setUserTagsFilters) {
-    this.pltFacade.setFilterPlts(ctx,payload);
+    return this.pltFacade.setFilterPlts(ctx,payload);
   }
 
   @Action(fromPlt.FilterPltsByUserTags)
   FilterPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.FilterPltsByUserTags) {
-    this.pltFacade.filterPlts(ctx,payload);
+    return this.pltFacade.filterPlts(ctx,payload);
   }
 
   @Action(fromPlt.setTableSortAndFilter)
   setTableSortAndFilter(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setTableSortAndFilter) {
-    this.pltFacade.setTableSortAndFilter(ctx,payload);
+    return this.pltFacade.setTableSortAndFilter(ctx,payload);
   }
 
   @Action(fromPlt.constructUserTags)
   constructUserTags(ctx: StateContext<pltMainModel>, {payload}: fromPlt.constructUserTags) {
-    this.pltFacade.constructUserTags(ctx,payload);
+    return this.pltFacade.constructUserTags(ctx,payload);
   }
 
   @Action(fromPlt.createOrAssignTags)
   assignPltsToTag(ctx: StateContext<pltMainModel>, {payload}: fromPlt.createOrAssignTags) {
-    this.pltFacade.assignPltsToTag(ctx,payload);
+    return this.pltFacade.assignPltsToTag(ctx,payload);
   }
 
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<pltMainModel>, {payload}: fromPlt.CreateTagSuccess) {
-    this.pltFacade.createUserTagSuccess(ctx,payload);
+    return this.pltFacade.createUserTagSuccess(ctx,payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<pltMainModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-    this.pltFacade.assignPltsToTagSuccess(ctx,payload);
+    return this.pltFacade.assignPltsToTagSuccess(ctx,payload);
   }
 
 
   @Action(fromPlt.deleteUserTag)
   deleteUserTag(ctx: StateContext<pltMainModel>, {payload}: fromPlt.deleteUserTag) {
-    this.pltFacade.deleteUserTag(ctx,payload);
+    return this.pltFacade.deleteUserTag(ctx,payload);
   }
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    this.pltFacade.deleteUserTagFromPlts(ctx,payload);
+    return this.pltFacade.deleteUserTagFromPlts(ctx,payload);
   }
 
   @Action(fromPlt.deletePlt)
   deletePlt(ctx: StateContext<pltMainModel>, {payload}: fromPlt.deletePlt) {
-    this.pltFacade.deletePlt(ctx,payload);
+    return this.pltFacade.deletePlt(ctx,payload);
   }
 
   @Action(fromPlt.deletePltSucess)
@@ -195,17 +195,17 @@ export class PltMainState {
 
   @Action(fromPlt.editTag)
   renameTag(ctx: StateContext<pltMainModel>, {payload}: fromPlt.editTag) {
-    this.pltFacade.renameTag(ctx,payload);
+    return this.pltFacade.renameTag(ctx,payload);
   }
 
   @Action(fromPlt.editTagSuccess)
   renameTagSucces(ctx: StateContext<pltMainModel>, {payload}: fromPlt.editTagSuccess) {
-    this.pltFacade.renameTagSuccess(ctx,payload);
+    return this.pltFacade.renameTagSuccess(ctx,payload);
   }
 
   @Action(fromPlt.restorePlt)
   restorePlt(ctx: StateContext<pltMainModel>, {payload}: fromPlt.restorePlt) {
-    this.pltFacade.restorePlt(ctx,payload);
+    return this.pltFacade.restorePlt(ctx,payload);
   }
 }
 

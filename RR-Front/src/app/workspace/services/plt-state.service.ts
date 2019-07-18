@@ -16,16 +16,16 @@ export class PltStateService {
   constructor(private pltApi: PltApi) { }
 
   LoadAllPlts(ctx: StateContext<pltMainModel>, payload: any){
-    console.log('load plts');
     const {
       wsIdentifier,
       params
     } = payload;
 
+
     ctx.patchState({
       data: {
-        [wsIdentifier]: {
-          ...ctx.getState().data[wsIdentifier],
+        [params.workspaceId + '-' + params.uwy]: {
+          ...ctx.getState().data[params.workspaceId + '-' + params.uwy],
           loading: true
         }
       }
@@ -56,17 +56,18 @@ export class PltStateService {
                       status: this.status[this.getRandomInt()],
                       newPlt: Math.random() >= 0.5,
                       EPM: ['1,080,913', '151,893', '14.05%'],
-                      filters: {
-                        systemTag: [],
-                        userTag: []
-                      }
                     }
-                  }))
-                )
+                  })),{
+                    filters: {
+                      systemTag: [],
+                      userTag: []
+                    }
+                  }
+                ),
               }
             ),
           });
-          return ctx.dispatch(new fromPlt.loadAllPltsSuccess({wsIdentifier: payload.wsIdentifier,userTags: data.userTags}));
+          return ctx.dispatch(new fromPlt.loadAllPltsSuccess({wsIdentifier: params.workspaceId + '-' + params.uwy,userTags: data.userTags}));
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
       );
