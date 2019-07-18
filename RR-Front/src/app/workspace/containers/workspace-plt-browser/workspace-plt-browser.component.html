@@ -82,25 +82,7 @@
         </div>
         <div class="PLTs-content">
           <app-plt-main-table
-            [tableInputs]="{
-                  contextMenuItems: contextMenuItems,
-                  filterInput: filterInput,
-                  pltColumns: pltColumns,
-                  listOfPltsData: listOfPltsData,
-                  listOfDeletedPltsData: listOfDeletedPltsData,
-                  listOfPltsCache: listOfPltsCache,
-                  listOfDeletedPltsCache: listOfDeletedPltsCache,
-                  listOfPlts: listOfPlts,
-                  listOfDeletedPlts: listOfDeletedPlts,
-                  selectedListOfPlts: selectedListOfPlts,
-                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
-                  selectAll: selectAll,
-                  someItemsAreSelected: someItemsAreSelected,
-                  showDeleted: showDeleted,
-                  filterData: filterData,
-                  filters: filters,
-                  sortData: sortData
-                }"
+            [tableInputs]="tableInputs"
 
             (deletePlt)="deletePlt()"
             (openPltInDrawer)="openPltInDrawer($event)"
