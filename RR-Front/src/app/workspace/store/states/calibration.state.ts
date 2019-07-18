@@ -124,7 +124,8 @@ export class CalibrationState implements NgxsOnInit {
 
   @Action(fromPlt.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<CalibrationModel>, {payload}: fromPlt.loadAllPltsFromCalibration) {
-    this.calibrationService.loadAllPltsFromCalibration(ctx, payload)
+    console.log(payload);
+    return this.calibrationService.loadAllPltsFromCalibration(ctx, payload)
   }
 
   @Action(fromPlt.loadAllPltsFromCalibrationSuccess)

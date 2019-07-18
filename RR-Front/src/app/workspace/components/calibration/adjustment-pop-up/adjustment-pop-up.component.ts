@@ -25,6 +25,7 @@ export class AdjustmentPopUpComponent implements OnInit {
   inputValue: any;
   @Input() categorySelectedFromAdjustement: any;
   @Input() isVisible: boolean;
+  @Input() global: boolean;
 
   constructor() {
   }
@@ -44,17 +45,24 @@ export class AdjustmentPopUpComponent implements OnInit {
     }
   }
 
-  emitAddAdjustmentFromPlusIcon(status, value, category) {
-    this.addAdjustmentFromPlusIcon.emit({status: status, singleValue: value, category: category})
+  emitAddAdjustmentFromPlusIcon(status, value, category, columnPosition) {
+    console.log(status);
+    this.addAdjustmentFromPlusIcon.emit({
+      status: status,
+      singleValue: value,
+      category: category,
+      columnPosition: columnPosition
+    });
+    this.hide();
   }
 
-  emitSaveAdjModification(category) {
-    this.saveAdjModification.emit(category)
+  emitSaveAdjModification(category, value, columnPosition) {
+    this.saveAdjModification.emit({category: category, value: value, columnPosition: columnPosition});
     this.hide();
   }
 
   hide() {
-    this.handleCancel.emit()
+    this.handleCancel.emit();
   }
 
 }

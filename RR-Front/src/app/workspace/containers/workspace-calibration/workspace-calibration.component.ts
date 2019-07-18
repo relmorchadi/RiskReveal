@@ -18,8 +18,7 @@ import {
   extendPltSection,
   replaceAdjustement,
   saveAdjModification,
-  saveAdjustment,
-  saveAdjustmentInPlt
+  saveAdjustment
 } from "../../store/actions";
 import {map, switchMap} from 'rxjs/operators';
 import {CalibrationState, PltMainState} from "../../store/states";
@@ -74,6 +73,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   dropdownEPM: boolean = false;
   isVisible = false;
   singleValue: any;
+  global: any;
   dragPlaceHolderId: any;
   dragPlaceHolderCol: any;
   categorySelectedFromAdjustement: any;
@@ -1379,7 +1379,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   clickButtonPlus(bool, data?: any) {
-    console.log("here");
+    this.global = bool;
     this.modalTitle = "Add New Adjustment";
     this.modifyModal = false;
     this.categorySelectedFromAdjustement = null;
@@ -1398,35 +1398,36 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.isVisible = false;
   }
 
-  addAdjustmentFromPlusIcon($event) {
+  addAdjustment($event) {
 
     let boolAdj = $event.status;
     let adjustementType = $event.singleValue;
+    console.log(adjustementType)
     let adjustement = $event.category;
+    let columnPosition = $event.columnPosition;
 
     if (this.addAdjustement) {
       if (boolAdj) {
         this.isVisible = false;
       }
-      this.store$.dispatch(new saveAdjustmentInPlt({
+      this.store$.dispatch(new applyAdjustment({
         adjustementType: adjustementType,
         adjustement: adjustement,
-        columnPosition: this.columnPosition,
-        pltId: this.idPlt,
+        columnPosition: columnPosition,
+        pltId: [this.idPlt],
       }));
     } else {
       if (boolAdj) {
         this.isVisible = false;
       }
-      console.log(this.columnPosition);
       this.store$.dispatch(new saveAdjustment({
         adjustementType: adjustementType,
         adjustement: adjustement,
-        columnPosition: this.columnPosition
+        columnPosition: columnPosition
       }));
-      console.log('here 2')
     }
-    this.adjustColWidth(adjustement);
+    this.singleValue = null;
+    this.columnPosition = null;
   }
 
   selectCategory(p) {
@@ -1475,7 +1476,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
 
   applyToAll(adj) {
-    console.log('applytoall');
+    if (adj.linear) {
+      this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
+    } else {
+      this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
+      this.columnPosition = adj.value;
+    }
     this.store$.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
@@ -1483,6 +1489,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       pltId: this.listOfPlts,
     }));
     this.adjustColWidth(adj);
+    this.singleValue = null;
+    this.columnPosition = null;
   }
 
   replaceToAllAdjustement(adj) {
@@ -1549,13 +1557,19 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     }))
   }
 
-  saveAdjModification(adj) {
-    adj.id = this.lastModifiedAdj;
+  saveAdjModification(event) {
+    event.category.id = this.lastModifiedAdj;
+    let adj = event.category;
+    let value = event.value;
+    let columnPosition = event.columnPosition;
     this.store$.dispatch(new saveAdjModification({
-      adjustementType: this.singleValue,
+      adjustementType: value,
       adjustement: adj,
-      columnPosition: this.columnPosition
+      columnPosition: columnPosition
     }));
+    this.singleValue = null;
+    this.columnPosition = null;
+
   }
 
   onChangeAdjValue(adj, event) {

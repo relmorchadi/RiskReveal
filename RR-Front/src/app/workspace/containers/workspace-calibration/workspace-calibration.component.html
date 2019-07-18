@@ -1606,10 +1606,11 @@
   [modalTitle]="modalTitle"
   [singleValue]="singleValue"
   [modifyModal]="modifyModal"
+  [global]="global"
   [categorySelectedFromAdjustement]="categorySelectedFromAdjustement"
   (selectCategory)="selectCategory($event)"
   (handleCancel)="handleCancel()"
-  (addAdjustmentFromPlusIcon)="addAdjustmentFromPlusIcon($event)"
+  (addAdjustmentFromPlusIcon)="addAdjustment($event)"
   (saveAdjModification)="saveAdjModification($event)">
 </app-adjustment-pop-up>
 <app-add-remove-pop-up

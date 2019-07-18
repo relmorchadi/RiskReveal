@@ -98,11 +98,13 @@
   <p-footer>
     <div class="footer">
       <button (click)="hide()" class="a-button-text">Close</button>
-      <button (click)="emitAddAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)"
-              *ngIf="!modifyModal" class="a-buttons-contained">
+      <button
+        (click)="emitAddAdjustmentFromPlusIcon(global ? true : false,singleValue,categorySelectedFromAdjustement,columnPosition)"
+        *ngIf="!modifyModal" class="a-buttons-contained">
         Save
       </button>
-      <button (click)="emitSaveAdjModification(categorySelectedFromAdjustement)" *ngIf="modifyModal"
+      <button (click)="emitSaveAdjModification(categorySelectedFromAdjustement,singleValue,columnPosition)"
+              *ngIf="modifyModal"
               class="a-buttons-contained">
         Save
       </button>
