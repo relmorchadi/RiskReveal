@@ -235,164 +235,23 @@ export class RiskLinkState {
 
   @Action(LoadRiskLinkAnalysisDataAction)
   loadRiskLinkAnalysisData(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkAnalysisDataAction) {
-    const state = ctx.getState();
-    return forkJoin(
-      payload.map(dt => this.riskApi.searchRiskLinkAnalysis(dt.id, dt.name))
-    ).pipe(
-      switchMap(out => {
-        let dataTable = {};
-        out.forEach((dt: any, i) => {
-            dataTable = {
-              ...dataTable,
-              [payload[i].id]: {
-                data: Object.assign({},
-                  ...dt.content.map(analysis => ({
-                      [analysis.analysisId]: {
-                        ...analysis,
-                        selected: false
-                      }
-                    }
-                  ))),
-                selectedData: [],
-                lastSelectedIndex: null,
-                totalNumberElement: dt.totalElements,
-                numberOfElement: dt.size,
-                filter: {}
-              }
-            };
-          }
-        );
-        console.log(state.listEdmRdm.selectedListEDMAndRDM.edm);
-        return of(ctx.patchState(
-          {
-            analysis: dataTable,
-          }
-        ));
-      }),
-      catchError(err => {
-        // @TODO Handle error case
-        console.error('Failed to search Analysis Count');
-        return of();
-      })
-    );
+    return this.riskLinkFacade.loadRiskLinkAnalysisData(ctx, payload);
   }
 
   @Action(LoadRiskLinkPortfolioDataAction)
   loadRiskLinkPortfolioData(ctx: StateContext<RiskLinkModel>, {payload}: LoadRiskLinkPortfolioDataAction) {
-    const state = ctx.getState();
-    return forkJoin(
-      payload.map(dt => this.riskApi.searchRiskLinkPortfolio(dt.id, dt.name))
-    ).pipe(
-      switchMap(out => {
-        let dataTable = {};
-        out.forEach((dt: any, i) => {
-            dataTable = {
-              ...dataTable,
-              [payload[i].id]: {
-                data: Object.assign({},
-                  ...dt.content.map(portfolio => ({
-                      [portfolio.dataSourceId]: {
-                        ...portfolio,
-                        selected: false
-                      }
-                    }
-                  ))),
-                selectedData: [],
-                lastSelectedIndex: null,
-                totalNumberElement: dt.totalElements,
-                numberOfElement: dt.size,
-                filter: {}
-              }
-            };
-          }
-        );
-        return of(ctx.patchState(
-          {
-            portfolios: dataTable,
-          }));
-      }),
-      catchError(err => {
-        // @TODO Handle error case
-        console.error('Failed to search contracts Count');
-        return of();
-      })
-    );
+    console.log('portfolio');
+    return this.riskLinkFacade.loadRiskLinkPortfolioData(ctx, payload);
   }
 
   @Action(LoadPortfolioForLinkingAction)
   loadPortfolioForLinking(ctx: StateContext<RiskLinkModel>, {payload}: LoadPortfolioForLinkingAction) {
-    const state = ctx.getState();
-    const {id, name} = payload;
-    return this.riskApi.searchRiskLinkPortfolio(id, name).pipe(
-      mergeMap(dt => {
-        const dataTable = {
-          data: Object.assign({},
-            ...dt.content.map(portfolio => ({
-                [portfolio.dataSourceId]: {
-                  ...portfolio,
-                  selected: false
-                }
-              }
-            ))),
-          selectedData: [],
-          lastSelectedIndex: null,
-          totalNumberElement: dt.totalElements,
-          numberOfElement: dt.size,
-          filter: {}
-        };
-        return of(ctx.patchState(
-          {
-            linking: {
-              ...state.linking,
-              portfolio: dataTable
-            }
-          }));
-      }),
-      catchError(err => {
-        // @TODO Handle error case
-        console.error('Failed to search Analysis Count');
-        return of();
-      })
-    );
+    return this.riskLinkFacade.loadPortfolioForLinking(ctx, payload);
   }
 
   @Action(LoadAnalysisForLinkingAction)
   loadAnalysisForLinking(ctx: StateContext<RiskLinkModel>, {payload}: LoadAnalysisForLinkingAction) {
-    const state = ctx.getState();
-
-    this.riskApi.searchRiskLinkAnalysis(payload.id, payload.name).pipe(
-      switchMap(dt => {
-        const dataTable = {
-          [payload.id]: {
-            data: Object.assign({},
-              ...dt.content.map(analysis => ({
-                  [analysis.analysisId]: {
-                    ...analysis,
-                    selected: false
-                  }
-                }
-              ))),
-            lastSelectedIndex: null,
-            totalNumberElement: dt.totalElements,
-            numberOfElement: dt.size,
-            filter: {}
-          }
-        };
-
-        return of(ctx.patchState(
-          {
-            linking: {
-              ...state.linking,
-              analysis: dataTable
-            }
-          }));
-      }),
-      catchError(err => {
-        // @TODO Handle error case
-        console.error('Failed to search contracts Count');
-        return of();
-      })
-    );
+    return this.riskLinkFacade.loadAnalysisForLinking(ctx, payload);
   }
 
   @Action(ToggleRiskLinkEDMAndRDMSelectedAction)
@@ -414,37 +273,7 @@ export class RiskLinkState {
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
   @Action(SearchRiskLinkEDMAndRDMAction)
   searchRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: SearchRiskLinkEDMAndRDMAction) {
-    const state = ctx.getState();
-    console.log('state: ', state);
-    const {keyword, size} = payload;
-    const array = state.listEdmRdm.dataSelected;
-    return this.riskApi.searchRiskLinkData(keyword, size).pipe(
-      mergeMap(
-        (ds: any) =>
-          of(ctx.patchState(
-            {
-              listEdmRdm: {
-                ...state.listEdmRdm,
-                data: Object.assign({},
-                  ...ds.content.map(item => {
-                    const validator = array.filter(vd => vd.id == item.id);
-                    const validate = validator.length === 1;
-                    return ({
-                        [item.id]: {
-                          ...item,
-                          selected: validate,
-                          scanned: false,
-                        }
-                      }
-                    );
-                  })),
-                totalNumberElement: ds.totalElements,
-                searchValue: keyword,
-                numberOfElement: ds.size
-              }
-            }))
-      )
-    );
+    return this.riskLinkFacade.searchRiskLinkEDMAndRDM(ctx, payload);
   }
 
   /** LOAD DATA FOR FINANCIAL PERSPECTIVE */
@@ -456,34 +285,6 @@ export class RiskLinkState {
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
   @Action(LoadRiskLinkDataAction)
   loadRiskLinkData(ctx: StateContext<RiskLinkModel>) {
-    const state = ctx.getState();
-    return this.riskApi.searchRiskLinkData().pipe(
-      mergeMap(
-        (ds: any) =>
-          of(ctx.patchState(
-            {
-              listEdmRdm: {
-                ...state.listEdmRdm,
-                data: Object.assign({},
-                  ...ds.content.map(item => ({
-                      [item.id]: {
-                        ...item,
-                        selected: false,
-                        source: '',
-                      }
-                    }
-                  ))),
-                searchValue: '',
-                totalNumberElement: ds.totalElements,
-                numberOfElement: ds.size
-              },
-              display: {displayImport: false, displayTable: false},
-              results: null,
-              summaries: null,
-              analysis: null,
-              portfolios: null
-            }))
-      )
-    );
+    return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
 }
