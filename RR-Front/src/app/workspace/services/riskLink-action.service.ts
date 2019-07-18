@@ -14,6 +14,7 @@ import {RiskApi} from './risk.api';
 import {forkJoin} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {RiskLinkState} from '../store/states';
+import {tap} from "rxjs/internal/operators/tap";
 
 @Injectable({
   providedIn: 'root'
@@ -622,10 +623,13 @@ export class RiskLinkStateService {
 
   loadRiskLinkAnalysisData(ctx: StateContext<RiskLinkModel>, payload) {
     const state = ctx.getState();
+    console.log('data');
     return forkJoin(
       payload.map(dt => this.riskApi.searchRiskLinkAnalysis(dt.id, dt.name))
     ).pipe(
+      tap(e => console.log(e)),
       switchMap(out => {
+        console.log('data');
         let dataTable = {};
         out.forEach((dt: any, i) => {
             dataTable = {
