@@ -13,7 +13,6 @@ import * as moment from 'moment';
 })
 export class PltStateService {
 
-
   constructor(private pltApi: PltApi) { }
 
   LoadAllPlts(ctx: StateContext<pltMainModel>, payload: any){
@@ -72,7 +71,6 @@ export class PltStateService {
   }
 
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
-
 
   setCloneConfig(ctx: StateContext<pltMainModel>, payload: any) {
     ctx.patchState({

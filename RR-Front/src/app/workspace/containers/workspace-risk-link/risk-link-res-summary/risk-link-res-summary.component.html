@@ -206,7 +206,13 @@
                 <div class="text-data highlight-temp" stytle="font-weight: 500"
                      *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
                      (click)="updateRow(rowData, col.type)">
-                  {{rowData[col.field]}}
+                  <span *ngIf="col.type === 'Peqt'">
+                    0/{{rowData.peqt.length}}
+                  </span>
+                  <span *ngIf="col.type !== 'Peqt'">
+                    {{rowData[col.field]}}
+                  </span>
+
                 </div>
                 <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                      *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
@@ -338,9 +344,27 @@
   </p-footer>
 </p-dialog>
 
-<nz-modal [(nzVisible)]="linkingModalVisibility" [nzTitle]="titleModalLinking"
-          (nzOnCancel)="handleCancel()"
-          [nzFooter]="footerModalLinking">
+<p-dialog [visible]="linkingModalVisibility"
+          [closable]="false"
+          styleClass="m-dialog-modal-lg"
+          [modal]="true"
+          [autoZIndex]="false"
+          [responsive]="true">
+  <p-header>
+    <h6 *ngIf="!suggested && !manual">
+      Link EDM & RDM
+    </h6>
+    <h6 *ngIf="suggested">
+      <i (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left"
+         nzTheme="outline"></i>
+      Suggested Linking
+    </h6>
+    <h6 *ngIf="manual">
+      <i (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left"
+         nzTheme="outline"></i>
+      Create Linking
+    </h6>
+  </p-header>
   <div class="modal-linking-wrapper" *ngIf="!manual && !suggested">
     <div class="modal-linking-head">
       <div class="modal-l-h-body-fill">
@@ -368,12 +392,12 @@
             </li>
           </ng-container>
         </ul>
-        <button style="margin: 0 15px 10px" (click)="suggested = true" class="a-buttons-outlined">LINK SUGGESTIONS
+        <button style="margin: 0 15px 10px" class="a-buttons-outlined">LINK SUGGESTIONS
         </button>
       </div>
     </div>
   </div>
-  <div class="modal-linking-wrapper" *ngIf="suggested">
+  <div class="modal-linking-wrapper">
     <div class="modal-linking-head">
       <div class="modal-l-h-body-fill">
         <span class="subtitle-2">Links Suggestions</span>
@@ -431,7 +455,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="manual" style="display: flex">
+  <div style="display: flex">
     <div class="modal-linking-wrapper" style="border-color: #C38FFF">
       <div class="modal-linking-head">
         <div class="modal-l-h-body-fill summary-info">
@@ -500,8 +524,8 @@
                 <div class="dropdown-wrap-title">
                   <span class="dropdown-title">RDM Select</span>
                   <span class="dropdown-item-selected">
-                                    {{getSelectedRDM()[0]?.name}}
-                                  </span>
+                    {{getSelectedRDM()[0]?.name}}
+                  </span>
                 </div>
                 <div class="dropdown-icon">
                   <i nz-icon type="down"></i>
@@ -576,29 +600,14 @@
       </div>
     </div>
   </div>
-  <ng-template #titleModalLinking>
-    <h6 *ngIf="!suggested && !manual">
-      Link EDM & RDM
-    </h6>
-    <h6 *ngIf="suggested">
-      <i (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left"
-         nzTheme="outline"></i>
-      Suggested Linking
-    </h6>
-    <h6 *ngIf="manual">
-      <i (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left"
-         nzTheme="outline"></i>
-      Create Linking
-    </h6>
-  </ng-template>
-  <ng-template #footerModalLinking>
+  <p-footer>
     <div>
       <button (click)="linkingModalVisibility = false" class="a-button-text-cancel">CANCEL</button>
       <button *ngIf="!selectedEDM" class="a-buttons-contained-disabled" disabled>NEXT</button>
       <button *ngIf="selectedEDM" (click)="manual = true" class="a-buttons-contained">NEXT</button>
     </div>
-  </ng-template>
-</nz-modal>
+  </p-footer>
+</p-dialog>
 <!--Pop Up Financial Perspective-->
 <p-dialog
   [visible]="financialP"
@@ -861,11 +870,11 @@
     </div>
   </p-header>
 
-  <div class="fp-options-wrapper">
+  <div>
     <div class="input-group-modal">
       <div class="summary-info" *ngIf="editableRow.target === 'Rp'">
         <p-table [columns]="regionPerilDataTable"
-                 [value]="" #rpt [scrollable]="true" >
+                 [value]="dataList(state.results.data)" #rpt [scrollable]="true" >
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
               <ng-container *ngFor="let col of columns">
@@ -911,7 +920,7 @@
                   </div>
                   <div *ngIf="col.type === 'override'">
                     <nz-select
-                      style="padding: 10px 0;" #rpRes
+                      style="padding: 10px 0; width: 300px" #rpRes
                       [ngModel]="rowData.override"
                       nzShowSearch
                       class="a-dropdown-small input-wrapper"
@@ -1006,7 +1015,7 @@
       </div>
     </div>
   </div>
-  <div *ngIf="editableRow.target !== 'Peqt'" class="fp-options-wrapper">
+  <div *ngIf="editableRow.target !== 'Peqt' && editableRow.target !== 'Rp'" class="fp-options-wrapper">
     <span class="subtitle-2 subtitle-override">Scope Of Editing:</span>
     <div class="context-wrapper">
       <nz-radio-group class="default-radio" [(ngModel)]="scopeForChanges">

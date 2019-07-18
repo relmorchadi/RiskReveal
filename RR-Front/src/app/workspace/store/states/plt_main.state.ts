@@ -49,22 +49,22 @@ export class PltMainState {
 
   @Selector()
   static getProjects() {
-    return (state: any) => state.workspaceMain.openedWs.projects
+    return (state: any) => state.workspaceMain.openedWs.projects;
   }
 
   @Selector()
   static getAttr(state: pltMainModel) {
-    return (path) => _.get(state, `${path}`)
+    return (path) => _.get(state, `${path}`);
   }
 
   @Selector()
   static getUserTags(state: pltMainModel) {
-    return _.get(state, 'userTags', {})
+    return _.get(state, 'userTags', {});
   }
 
   @Selector()
   static getSystemTags(state: pltMainModel) {
-    return _.get(state, 'systemTags', {})
+    return _.get(state, 'systemTags', {});
   }
 
 
