@@ -10,13 +10,6 @@ import {PltStateService} from '../../services/plt-state.service';
 
 const initiaState: pltMainModel = {
   data: {},
-  loading: false,
-  cloneConfig: {},
-  filters: {
-    systemTag: [],
-    userTag: []
-  },
-  userTags: {}
 };
 
 @State<pltMainModel>({
@@ -32,9 +25,10 @@ export class PltMainState {
    * Selectors
    */
   @Selector()
-  static getCloneConfig(state: pltMainModel) {
-    return state.cloneConfig;
+  static getCloneConfig(wsIdentifier: string) {
+    return (state: pltMainModel) => state.data[wsIdentifier]['cloneConfig'];
   }
+
   @Selector()
   static getWorkspaceMainState(state: pltMainModel) {
     return state;
@@ -63,8 +57,8 @@ export class PltMainState {
   }
 
   @Selector()
-  static getSystemTags(state: pltMainModel) {
-    return _.get(state, 'systemTags', {});
+  static getSystemTags(wsIdentifier: string) {
+    return (state: pltMainModel) => state[wsIdentifier]['systemTags'];
   }
 
 
@@ -104,22 +98,22 @@ export class PltMainState {
 
   @Action(fromPlt.setCloneConfig)
   setCloneConfig(ctx: StateContext<pltMainModel>, {payload}: fromPlt.setCloneConfig) {
-    this.pltFacade.setCloneConfig(ctx, payload);
+    return this.pltFacade.setCloneConfig(ctx, payload);
   }
 
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPlts) {
-    this.pltFacade.LoadAllPlts(ctx, payload);
+    return this.pltFacade.LoadAllPlts(ctx, payload);
   }
 
   @Action(fromPlt.loadAllPltsSuccess)
   LoadAllPltsSuccess(ctx: StateContext<pltMainModel>, {payload}: fromPlt.loadAllPltsSuccess) {
-    this.pltFacade.LoadAllPltsSuccess(ctx, payload);
+    return this.pltFacade.LoadAllPltsSuccess(ctx, payload);
   }
 
   @Action(fromPlt.ToggleSelectPlts)
   SelectPlts(ctx: StateContext<pltMainModel>, {payload}: fromPlt.ToggleSelectPlts) {
-    this.pltFacade.SelectPlts(ctx, payload);
+    return this.pltFacade.SelectPlts(ctx, payload);
   }
 
   @Action(fromPlt.OpenPLTinDrawer)

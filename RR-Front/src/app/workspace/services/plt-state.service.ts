@@ -18,14 +18,20 @@ export class PltStateService {
   LoadAllPlts(ctx: StateContext<pltMainModel>, payload: any){
     console.log('load plts');
     const {
+      wsIdentifier,
       params
     } = payload;
 
     ctx.patchState({
-      loading: true
+      data: {
+        [wsIdentifier]: {
+          ...ctx.getState().data[wsIdentifier],
+          loading: true
+        }
+      }
     });
 
-    console.log('ls', JSON.parse(localStorage.getItem('deletedPlts')))
+    console.log('ls', JSON.parse(localStorage.getItem('deletedPlts')));
 
     const ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
 
@@ -49,18 +55,18 @@ export class PltStateService {
                       deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
                       status: this.status[this.getRandomInt()],
                       newPlt: Math.random() >= 0.5,
-                      EPM: ['1,080,913', '151,893', '14.05%']
+                      EPM: ['1,080,913', '151,893', '14.05%'],
+                      filters: {
+                        systemTag: [],
+                        userTag: []
+                      }
                     }
                   }))
                 )
               }
             ),
-            filters: {
-              systemTag: [],
-              userTag: []
-            }
           });
-          return ctx.dispatch(new fromPlt.loadAllPltsSuccess({userTags: data.userTags}));
+          return ctx.dispatch(new fromPlt.loadAllPltsSuccess({wsIdentifier: payload.wsIdentifier,userTags: data.userTags}));
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
       );
@@ -73,17 +79,36 @@ export class PltStateService {
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
   setCloneConfig(ctx: StateContext<pltMainModel>, payload: any) {
+    const {
+      wsIdentifier,
+      cloneConfig
+    } = payload;
+
     ctx.patchState({
-      cloneConfig: payload
+      data: {
+        [wsIdentifier] : {
+          ...ctx.getState().data[wsIdentifier],
+          cloneConfig: cloneConfig
+        }
+      }
     })
   }
 
   LoadAllPltsSuccess(ctx: StateContext<pltMainModel>, payload: any) {
-    ctx.patchState({
-      loading: false
-    });
+    const {
+      wsIdentifier
+    } = payload;
 
-    ctx.dispatch(new fromPlt.constructUserTags({userTags: payload.userTags}))
+    ctx.patchState({
+      data: {
+        [wsIdentifier] : {
+          ...ctx.getState().data[wsIdentifier],
+          loading: false
+        }
+      }
+    })
+
+    ctx.dispatch(new fromPlt.constructUserTags({wsIdentifier: payload.wsIdentifier,userTags: payload.userTags}))
   }
 
   SelectPlts(ctx: StateContext<pltMainModel>, payload: any) {
@@ -92,8 +117,6 @@ export class PltStateService {
       plts,
       wsIdentifier
     } = payload;
-
-    console.log(plts);
 
     let inComingData = {};
 
@@ -131,11 +154,17 @@ export class PltStateService {
   setFilterPlts(ctx: StateContext<pltMainModel>, payload: any) {
     const state = ctx.getState();
     const {
-      filters
+      filters,
+      wsIdentifier
     } = payload;
 
     ctx.patchState({
-      filters: _.assign({}, state.filters, filters)
+      data: {
+        [wsIdentifier]: {
+          ...state.data[wsIdentifier],
+          filters: _.assign({}, state.data[wsIdentifier].filters, filters)
+        }
+      }
     });
 
     return ctx.dispatch(new fromPlt.FilterPltsByUserTags(payload));
@@ -147,28 +176,27 @@ export class PltStateService {
       wsIdentifier
     } = payload;
     const {
-      filters
+      data
     } = state;
 
     let newData = {};
 
-    if (filters.userTag.length > 0) {
-      _.forEach(state.data[wsIdentifier], (plt: any, k) => {
-        if (_.some(filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
+    if (data[wsIdentifier].filters.userTag.length > 0) {
+      _.forEach(data[wsIdentifier], (plt: any, k) => {
+        if (_.some(data[wsIdentifier].filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
           newData[k] = {...plt, visible: true};
         } else {
           newData[k] = {...plt, visible: false};
         }
       });
     } else {
-      _.forEach(state.data[wsIdentifier], (plt, k) => {
+      _.forEach(data[wsIdentifier], (plt, k) => {
         newData[k] = {...plt, visible: true};
       });
     }
 
     ctx.setState({
-      ...state,
-      data: {[wsIdentifier]: newData}
+      data: {...data, [wsIdentifier]: newData}
     });
   }
 
@@ -211,8 +239,11 @@ export class PltStateService {
   constructUserTags(ctx: StateContext<pltMainModel>, payload: any) {
     const {
       data,
-      userTags
     } = ctx.getState()
+
+    const {
+      wsIdentifier
+    } = payload;
 
     let uesrTagsSummary = {};
 
@@ -229,7 +260,12 @@ export class PltStateService {
     })
 
     ctx.patchState({
-      userTags: uesrTagsSummary
+      data: {
+        [wsIdentifier]: {
+          ...data[wsIdentifier],
+          userTags: uesrTagsSummary
+        }
+      }
     })
   }
 
@@ -259,8 +295,7 @@ export class PltStateService {
 
   createUserTagSuccess(ctx: StateContext<pltMainModel>, payload: any) {
     const {
-      data,
-      userTags
+      data
     } = ctx.getState()
 
     const {
@@ -278,14 +313,18 @@ export class PltStateService {
     })
 
     ctx.patchState({
-      data: _.merge({}, data, {[wsIdentifier]: newData}),
-      userTags: _.merge({}, userTags, {
-        [userTag.tagId]: {
-          ...userTag,
-          count: userTag.pltHeaders.length,
-          selected: false
+      data: _.merge({}, data, {
+        [wsIdentifier]: {
+          newData,
+          userTags: _.merge({}, data[wsIdentifier].userTags, {
+            [userTag.tagId]: {
+              ...userTag,
+              count: userTag.pltHeaders.length,
+              selected: false
+            }
+          })
         }
-      })
+      }),
     })
   }
 
@@ -301,8 +340,7 @@ export class PltStateService {
 
   deleteUserTagFromPlts(ctx: StateContext<pltMainModel>, payload: any) {
     const {
-      data,
-      userTags
+      data
     } = ctx.getState();
 
     const {
@@ -310,11 +348,9 @@ export class PltStateService {
       wsIdentifier
     } = payload;
 
-    console.log(wsIdentifier);
-
     let newData = {};
 
-    _.forEach(userTags[userTagId].pltHeaders, (plt) => {
+    _.forEach(data[wsIdentifier].userTags[userTagId].pltHeaders, (plt) => {
       newData[plt.id] = {
         ...data[wsIdentifier][plt.id],
         userTags: _.filter(data[wsIdentifier][plt.id].userTags, (userTag: any) => userTag.tagId !== userTagId)
@@ -323,8 +359,7 @@ export class PltStateService {
     console.log(newData);
 
     ctx.patchState({
-      data: {...data, ...{[wsIdentifier]: {...data[wsIdentifier], ...newData}}},
-      userTags: _.omit(userTags, userTagId)
+      data: {...data, ...{[wsIdentifier]: {...data[wsIdentifier], ...newData, userTags: _.omit(data[wsIdentifier].userTags, userTagId)}}},
     })
   }
 
@@ -365,8 +400,7 @@ export class PltStateService {
 
   renameTagSuccess(ctx: StateContext<pltMainModel>, payload: any) {
     const {
-      data,
-      userTags
+      data
     } = ctx.getState();
 
     const {
@@ -381,7 +415,6 @@ export class PltStateService {
 
     let newData = {};
 
-    console.log(pltHeaders)
     _.forEach(pltHeaders, pltId => {
       const {
         id
@@ -402,13 +435,15 @@ export class PltStateService {
     })
 
     ctx.patchState({
-      data: _.merge({}, data, {[wsIdentifier]: {...data[wsIdentifier], ...newData}}),
-      userTags: _.merge({}, userTags, {
-        [tagId]: {
-          tagName,
-          tagColor
-        }
-      })
+      data: _.merge({}, data, {[wsIdentifier]: {...data[wsIdentifier], ...newData, userTags: _.merge({},
+            data[wsIdentifier].userTags,
+            {
+              [tagId]: {
+                tagName,
+                tagColor
+              }
+            })
+      }}),
     })
   }
 
