@@ -17,7 +17,6 @@ const routes: Routes = [
     NgZorroAntdModule,
     FormsModule,
     TimezonePickerModule,
-    DragDropModule,
     CommonModule,
     RouterModule.forChild(routes)
   ],

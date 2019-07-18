@@ -159,7 +159,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
           wsId,
           uwYear: year
         };
-        this.dispatch(new LoadRiskLinkDataAction({routing: this.hyperLinksConfig}));
+        this.dispatch(new LoadRiskLinkDataAction());
         this.detectChanges();
       })
     ];
@@ -235,18 +235,18 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
 
   /** Select EDM & RDM DropDown Method's */
   toggleItems(RDM, event, source) {
-    this.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source, routing: this.hyperLinksConfig}));
+    this.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
     if (event !== null) {
       event.stopPropagation();
     }
   }
 
   selectAll() {
-    this.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll', source: 'solo', routing: this.hyperLinksConfig}));
+    this.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll', source: 'solo'}));
   }
 
   unselectAll() {
-    this.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll', source: 'solo', routing: this.hyperLinksConfig}));
+    this.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll', source: 'solo'}));
   }
 
   refreshAll() {
@@ -259,7 +259,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
 
   /** */
   fillLists() {
-    this.dispatch(new SelectRiskLinkEDMAndRDMAction({routing: this.hyperLinksConfig}));
+    this.dispatch(new SelectRiskLinkEDMAndRDMAction());
   }
 
   selectedItem() {
@@ -277,8 +277,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
   }
 
   displayImported() {
-    this.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true, routing: this.hyperLinksConfig}));
-    this.dispatch(new AddToBasketAction({routing: this.hyperLinksConfig}));
+    this.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
+    this.dispatch(new AddToBasketAction());
   }
 
   getScrollableCols() {
@@ -315,7 +315,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
   }
 
   clearSelection(item, target) {
-    this.dispatch(new DeleteEdmRdmaction({id: item.id, target: target, routing: this.hyperLinksConfig}));
+    this.dispatch(new DeleteEdmRdmaction({id: item.id, target: target}));
   }
 
   getNumberElement(item, source) {
@@ -360,9 +360,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
 
   onInputSearch(event) {
     if (event.target.value.length > 2) {
-      this.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20', routing: this.hyperLinksConfig}));
+      this.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
     } else {
-      this.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: '', size: '20', routing: this.hyperLinksConfig}));
+      this.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: '', size: '20'}));
     }
     this.detectChanges();
   }
@@ -379,7 +379,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
       this.dispatch(new SearchRiskLinkEDMAndRDMAction({
         keyword: this.state.listEdmRdm.searchValue,
         size: sizePage,
-        routing: this.hyperLinksConfig
       }));
     }
 
@@ -387,19 +386,19 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
 
   selectOne(row) {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      this.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row, routing: this.hyperLinksConfig}));
+      this.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
-      this.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row, routing: this.hyperLinksConfig}));
+      this.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
     }
   }
 
   selectWithUnselect(row) {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      this.dispatch(new ToggleRiskLinkAnalysisAction({action: 'unselectAll', routing: this.hyperLinksConfig}));
-      this.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row, routing: this.hyperLinksConfig}));
+      this.dispatch(new ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+      this.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
-      this.dispatch(new ToggleRiskLinkPortfolioAction({action: 'unselectAll', routing: this.hyperLinksConfig}));
-      this.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row, routing: this.hyperLinksConfig}));
+      this.dispatch(new ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
+      this.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
     }
   }
 
@@ -420,7 +419,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
         this.selectWithUnselect(row);
         this.lastSelectedIndex = index;
       }
-      this.dispatch(new PatchAddToBasketStateAction({routing: this.hyperLinksConfig}));
+      this.dispatch(new PatchAddToBasketStateAction());
     }
   }
 

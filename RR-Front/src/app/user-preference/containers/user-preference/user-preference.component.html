@@ -23,24 +23,24 @@
         <div>
           <span class="main-tab-title">General</span>
           <div class="settings-holder">
-<!--            <span class="head-title">Search</span>
-            <div class="settings-wrapper">
-              <div class="user-config-item">
-                <span>Search Target :</span>
-                <nz-select class="dropdown-default"
-                           style="width: 270px;"
-                           [ngModel]="searchTarget"
-                           (ngModelChange)="changeSearch($event)"
-                           nzShowSearch>
-                  <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
-                  <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
-                </nz-select>
-              </div>
-            </div>-->
+            <!--            <span class="head-title">Search</span>
+                        <div class="settings-wrapper">
+                          <div class="user-config-item">
+                            <span>Search Target :</span>
+                            <nz-select class="dropdown-default"
+                                       style="width: 270px;"
+                                       [ngModel]="searchTarget"
+                                       (ngModelChange)="changeSearch($event)"
+                                       nzShowSearch>
+                              <nz-option nzLabel="Treaty Search" nzValue="treaty"></nz-option>
+                              <nz-option nzLabel="FAC Search" nzValue="fac"></nz-option>
+                            </nz-select>
+                          </div>
+                        </div>-->
 
             <span class="head-title">Date & Time</span>
             <div class="a-card-list-wrap">
-              <div  class="a-card-item"><span>Short Date</span>
+              <div class="a-card-item"><span>Short Date</span>
                 <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
@@ -58,7 +58,7 @@
                   </nz-select>
                 </div>
               </div>
-              <div  class="a-card-item"><span>Long Date</span>
+              <div class="a-card-item"><span>Long Date</span>
                 <div class="a-card-item-right">
                   <nz-select
                     style="width: 270px;"
@@ -110,7 +110,8 @@
               </div>
               <div class="a-card-item"><span>Time Zone</span>
                 <div class="a-card-item-right">
-                  <ng2-timezone-picker  [(timezone)]="state.general.timeZone" style="width: 270px" showOffset="true" guess="true"></ng2-timezone-picker>
+                  <ng2-timezone-picker [(timezone)]="state.general.timeZone" style="width: 270px" showOffset="true"
+                                       guess="true"></ng2-timezone-picker>
                 </div>
               </div>
 
@@ -146,16 +147,16 @@
                       class="a-dropdown-small"
                       nzPlaceHolder="Select A Time Format"
                     >
-                      <nz-option nzLabel="Comma (,)"  nzValue=","></nz-option>
+                      <nz-option nzLabel="Comma (,)" nzValue=","></nz-option>
                       <nz-option nzLabel="Period (.)" nzValue="."></nz-option>
                       <nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>
                       <nz-option nzLabel="Space ( )" nzValue=" "></nz-option>
                     </nz-select>
-<!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
-                      <label nz-radio nzValue=",">,</label>
-                      <label nz-radio nzValue=".">.</label>
-                      <label nz-radio nzValue="'">'</label>
-                    </nz-radio-group>-->
+                    <!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalSeparator')" [ngModel]="state.general.numberFormat.decimalSeparator">
+                                          <label nz-radio nzValue=",">,</label>
+                                          <label nz-radio nzValue=".">.</label>
+                                          <label nz-radio nzValue="'">'</label>
+                                        </nz-radio-group>-->
                   </div>
                 </div>
                 <div class="a-card-item number-config-item"><span>Thousand Separator Character</span>
@@ -168,16 +169,16 @@
                       class="a-dropdown-small"
                       nzPlaceHolder="Select A Time Format"
                     >
-                      <nz-option nzLabel="Comma (,)"  nzValue=","></nz-option>
+                      <nz-option nzLabel="Comma (,)" nzValue=","></nz-option>
                       <nz-option nzLabel="Period (.)" nzValue="."></nz-option>
                       <nz-option nzLabel="Apostrophe (')" nzValue="'"></nz-option>
                       <nz-option nzLabel="Space ( )" nzValue=" "></nz-option>
                     </nz-select>
-<!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
-                      <label nz-radio nzValue=",">,</label>
-                      <label nz-radio nzValue=".">.</label>
-                      <label nz-radio nzValue="'">'</label>
-                    </nz-radio-group>-->
+                    <!--                    <nz-radio-group (ngModelChange)="changeNumberFormat($event , 'decimalThousandSeparator')" [ngModel]="state.general.numberFormat.decimalThousandSeparator">
+                                          <label nz-radio nzValue=",">,</label>
+                                          <label nz-radio nzValue=".">.</label>
+                                          <label nz-radio nzValue="'">'</label>
+                                        </nz-radio-group>-->
                   </div>
                 </div>
                 <div class="a-card-item number-config-item column-config"><span>Negative Numbers</span>
@@ -188,7 +189,7 @@
                         -{{number_format(9123.104687921545317523123,
                         state.general.numberFormat.numberOfDecimals,
                         state.general.numberFormat.decimalSeparator,
-                      state.general.numberFormat.decimalThousandSeparator)}}</li>
+                        state.general.numberFormat.decimalThousandSeparator)}}</li>
                       <li (click)="changeNumberFormat('redHue' , 'negativeFormat')"
                           [ngClass]="{'selected-config': state.general.numberFormat.negativeFormat === 'redHue'}">
                         <span style="color: red">{{number_format(9123.104687921545317523123,
@@ -206,7 +207,8 @@
                         ({{number_format(9123.104687921545317523123,
                         state.general.numberFormat.numberOfDecimals,
                         state.general.numberFormat.decimalSeparator,
-                        state.general.numberFormat.decimalThousandSeparator)}})</li>
+                        state.general.numberFormat.decimalThousandSeparator)}})
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -238,22 +240,22 @@
 
             <div class="a-card-list-wrap">
               <div class="a-card-item">
-                            <span>Default Import Type</span>
-                            <div class="a-card-item-right">
-                              <nz-select
-                                style="width: 270px;"
-                                [(ngModel)]="defaultImport"
-                                (ngModelChange)="defaultImportChange()"
-                                nzShowSearch
-                                class="a-dropdown-small"
-                                nzPlaceHolder="Select an import"
-                              >
-                                <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
-                                <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
-                                <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
-                              </nz-select>
-                            </div>
-                          </div>
+                <span>Default Import Type</span>
+                <div class="a-card-item-right">
+                  <nz-select
+                    style="width: 270px;"
+                    [(ngModel)]="defaultImport"
+                    (ngModelChange)="defaultImportChange()"
+                    nzShowSearch
+                    class="a-dropdown-small"
+                    nzPlaceHolder="Select an import"
+                  >
+                    <nz-option nzLabel="RiskLink Import" nzValue="RiskLink"></nz-option>
+                    <nz-option nzLabel="File-Based Import" nzValue="FileBasedImport"></nz-option>
+                    <nz-option nzLabel="Clone Data" nzValue="CloneData"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
             </div>
 
 
@@ -263,6 +265,7 @@
               <div class="a-card-item">
                 <span>Financial Perspective Event Level</span>
                 <div class="a-card-item-right">
+
                   <nz-select
                     style="width: 270px;"
                     [ngModel]="state.riskLink.financialPerspectiveELT?.selected"
@@ -307,7 +310,8 @@
                     class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                   >
-                    <nz-option *ngFor="let item of state.riskLink.targetCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                    <nz-option *ngFor="let item of state.riskLink.targetCurrency?.data" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
                   </nz-select>
                 </div>
               </div>
@@ -323,7 +327,8 @@
                     class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                   >
-                    <nz-option *ngFor="let item of state.riskLink.targetAnalysisCurrency?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                    <nz-option *ngFor="let item of state.riskLink.targetAnalysisCurrency?.data" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
                   </nz-select>
                 </div>
               </div>
@@ -339,7 +344,8 @@
                     class="a-dropdown-small"
                     nzPlaceHolder="Select an import"
                   >
-                    <nz-option *ngFor="let item of state.riskLink.rmsInstance?.data" [nzLabel]="item" [nzValue]="item"></nz-option>
+                    <nz-option *ngFor="let item of state.riskLink.rmsInstance?.data" [nzLabel]="item"
+                               [nzValue]="item"></nz-option>
                   </nz-select>
                 </div>
               </div>
