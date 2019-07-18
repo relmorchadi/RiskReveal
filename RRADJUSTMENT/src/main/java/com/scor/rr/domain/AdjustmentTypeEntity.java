@@ -9,7 +9,7 @@ import java.util.Objects;
 @Table(name = "AdjustmentType", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentTypeEntity {
     private int idType;
-    private AdjustmentTypeEnum type;
+    private String type;
     private String description;
 
     @Id
@@ -24,11 +24,11 @@ public class AdjustmentTypeEntity {
 
     @Basic
     @Column(name = "type", nullable = true, length = 200)
-    public AdjustmentTypeEnum getType() {
+    public String getType() {
         return type;
     }
 
-    public void setType(AdjustmentTypeEnum type) {
+    public void setType(String type) {
         this.type = type;
     }
 

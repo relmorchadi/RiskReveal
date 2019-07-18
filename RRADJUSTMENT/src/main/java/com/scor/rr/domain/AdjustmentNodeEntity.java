@@ -1,10 +1,13 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentNode", schema = "dbo", catalog = "RiskReveal")
+@JsonIgnoreProperties({"adjustmentThread","adjustmentBasis","adjustmentNodeByFkAdjustmentNodeEntityCloning","adjustmentType","adjustmentState"})
 public class AdjustmentNodeEntity {
     private int adjustmentNodeId;
     private String layer;
@@ -131,7 +134,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "fk_adjustment_basis", referencedColumnName = "code")
+    @JoinColumn(name = "id_adjustment_basis", referencedColumnName = "code")
     public AdjustmentBasisEntity getAdjustmentBasis() {
         return adjustmentBasis;
     }
@@ -141,7 +144,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "fk_adjustmentNodeEntityCloning", referencedColumnName = "adjustmentNodeId")
+    @JoinColumn(name = "id_adjustmentNodeEntityCloning", referencedColumnName = "adjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeEntityCloning() {
         return adjustmentNodeByFkAdjustmentNodeEntityCloning;
     }
@@ -151,7 +154,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustment_type", referencedColumnName = "id_type")
+    @JoinColumn(name = "id_adjustment_type", referencedColumnName = "id_type")
     public AdjustmentTypeEntity getAdjustmentType() {
         return adjustmentType;
     }

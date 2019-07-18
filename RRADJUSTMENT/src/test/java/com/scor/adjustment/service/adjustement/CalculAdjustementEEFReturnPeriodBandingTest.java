@@ -1,7 +1,13 @@
 package com.scor.adjustment.service.adjustement;
 
+import com.scor.rr.configuration.file.BinaryPLTFileReader;
+import com.scor.rr.configuration.file.CSVPLTFileReader;
+import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
+import com.scor.rr.exceptions.fileExceptionPlt.EventDateFormatException;
+import com.scor.rr.exceptions.fileExceptionPlt.PLTDataNullException;
+import com.scor.rr.exceptions.fileExceptionPlt.RRException;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import org.junit.After;
 import org.junit.Before;
@@ -9,9 +15,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 public class CalculAdjustementEEFReturnPeriodBandingTest {
@@ -73,5 +82,59 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     public void testEEFReturnPeriodBandingEmptyPlt() {
         log.info("Launch test for EEF Return Period Banding Adjustment with PLT empty");
         assertNull(calculAdjustement.eefReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
+    }
+
+    @Test
+    public void testEEFReturnPeriodBandingFileEmpty() {
+        BinaryPLTFileReader binarypltFileReader = new BinaryPLTFileReader();
+        log.info("Launch test for EEF Return Period Banding Adjustment with an empty plt file ");
+        try {
+            pltLossDataList = binarypltFileReader.read(new File("src/main/resources/file/empty.bin"));
+            assertThat(pltLossDataList.isEmpty(), is(true));
+        } catch (Exception anotherException) {
+            fail();
+        }
+        pltLossDataList = calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
+        try {
+            csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
+        } catch (PLTDataNullException e) {
+            assertEquals("PLT Data is null", e.getMessage());
+        } catch (Exception anotherException) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testEEFReturnPeriodBandingFileFormatDateWrong() {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test For EEF Return Period Banding Adjustment with a wrong plt file ");
+        try {
+            pltLossDataList = csvpltFileReader.read(new File("src/main/resources/file/event_date_format_wrong.csv"));
+        } catch (EventDateFormatException ex) {
+            assertEquals("Event Date format wrong. Correct format: dd/MM/yyyy HH:mm:ss", ex.getMessage());
+        } catch (Exception anotherException) {
+            fail();
+        }
+        pltLossDataList = calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
+        try {
+            csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
+        } catch (PLTDataNullException e) {
+            assertEquals("PLT Data is null", e.getMessage());
+        } catch (Exception anotherException) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testEEFReturnPeriodBandingFile() throws RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for EEF Return Period Banding Adjustment for a file");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        pltLossData = calculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
+        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
+        csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltEEFReturnPeriodBanding.csv"));
+        log.info("Launch test for EEF Return Period Banding Adjustment for a file");
     }
 }

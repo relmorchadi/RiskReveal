@@ -109,7 +109,7 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "fk_adjustment_basis", referencedColumnName = "code")
+    @JoinColumn(name = "id_adjustment_basis", referencedColumnName = "code")
     public AdjustmentBasisEntity getAdjustmentBasisByFkAdjustmentBasis() {
         return adjustmentBasisByFkAdjustmentBasis;
     }

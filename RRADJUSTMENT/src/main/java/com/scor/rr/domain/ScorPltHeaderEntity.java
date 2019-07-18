@@ -546,7 +546,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "fk_id_bin_file", referencedColumnName = "binFile_Id", nullable = true, table = "")
+    @JoinColumn(name = "id_bin_file", referencedColumnName = "binFile_Id", nullable = true, table = "")
     public BinFileEntity getBinFile() {
         return binFile;
     }

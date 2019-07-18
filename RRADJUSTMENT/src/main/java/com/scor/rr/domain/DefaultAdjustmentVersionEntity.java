@@ -70,7 +70,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "fk_default_adjustment", referencedColumnName = "id")
+    @JoinColumn(name = "id_default_adjustment", referencedColumnName = "id")
     public DefaultAdjustmentEntity getDefaultAdjustmentByFkDefaultAdjustment() {
         return defaultAdjustmentByFkDefaultAdjustment;
     }

@@ -24,7 +24,7 @@ import java.io.File;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.Linear;
+import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
 import static com.scor.rr.exceptions.ExceptionCodename.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -135,35 +135,39 @@ public class AdjustmentNodeProcessingService {
                 e.printStackTrace();
             }
         }
-        if(fileWrite != null) {
-            BinFileEntity binFileEntity = new BinFileEntity();
-            binFileEntity.setFileName(fileWrite.getName());
-            binFileEntity.setPath(fileWrite.getPath());
-            binFileEntity.setFqn(fileWrite.getAbsolutePath());
-            return binfileRepository.save(binFileEntity);
-        }else {
-            return null;
-        }
-
+        BinFileEntity binFileEntity = new BinFileEntity();
+        binFileEntity.setFileName(fileWrite.getName());
+        binFileEntity.setPath(fileWrite.getPath());
+        binFileEntity.setFqn(fileWrite.getAbsolutePath());
+        return binfileRepository.save(binFileEntity);
     }
 
 
     private List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) {
-        File file = new File(scorPltHeaderEntity.getBinFile().getFileName());
-        if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
-            CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
-            try {
-                return csvpltFileReader.read(file);
-            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
-                e.printStackTrace();
+        if(scorPltHeaderEntity != null) {
+            if(scorPltHeaderEntity.getBinFile() != null) {
+                File file = new File(scorPltHeaderEntity.getBinFile().getFileName());
+                if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
+                    CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+                    try {
+                        return csvpltFileReader.read(file);
+                    } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    BinaryPLTFileReader binpltFileReader = new BinaryPLTFileReader();
+                    try {
+                        return binpltFileReader.read(file);
+                    } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else {
+                throwException(BINFILEEXCEPTION,NOT_FOUND);
             }
         } else {
-            BinaryPLTFileReader binpltFileReader = new BinaryPLTFileReader();
-            try {
-                return binpltFileReader.read(file);
-            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
-                e.printStackTrace();
-            }
+            throwException(PLTNOTFOUNT,NOT_FOUND);
+            return null;
         }
         return null;
     }
@@ -176,18 +180,29 @@ public class AdjustmentNodeProcessingService {
         );
     }
 
-    private List<PLTLossData> calculateAdjustment(AdjustmentNodeEntity node,AdjustmentParameterRequest parameterRequest,List<PLTLossData> pltLossData){
+    private List<PLTLossData> calculateAdjustment(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData) {
         CalculAdjustement calculAdjustement = new CalculAdjustement();
-        switch (node.getAdjustmentType().getType()){
-            case Linear:return calculAdjustement.lineaireAdjustement(pltLossData,parameterRequest.getLmf(),node.getCapped());
-            case EEFFrequency:return calculAdjustement.eefFrequency(pltLossData,node.getCapped(),parameterRequest.getRpmf());
-            case NONLINEAROEP:return calculAdjustement.oepReturnPeriodBanding(pltLossData,node.getCapped(),parameterRequest.getAdjustmentReturnPeriodBendings());
-            case NonLinearEventDriven:return calculAdjustement.nonLineaireEventDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
-            case NONLINEAIRERETURNPERIOD:return calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
-            case NONLINEARRETURNEVENTPERIOD:return calculAdjustement.eefReturnPeriodBanding(pltLossData,node.getCapped(),parameterRequest.getAdjustmentReturnPeriodBendings());
-            default:throwException(TYPENOTFOUND,NOT_FOUND);return null;
-
+        if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
+            return calculAdjustement.lineaireAdjustement(pltLossData, parameterRequest.getLmf(), node.getCapped());
         }
+        if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
+            return calculAdjustement.eefFrequency(pltLossData, node.getCapped(), parameterRequest.getRpmf());
+        }
+        if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
+            return calculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), parameterRequest.getAdjustmentReturnPeriodBendings());
+        }
+        if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
+            return calculAdjustement.nonLineaireEventDrivenAdjustment(pltLossData, node.getCapped(), parameterRequest.getPeatData());
+        }
+        if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            return calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), parameterRequest.getPeatData());
+        }
+        if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            return calculAdjustement.eefReturnPeriodBanding(pltLossData, node.getCapped(), parameterRequest.getAdjustmentReturnPeriodBendings());
+        }
+        throwException(TYPENOTFOUND, NOT_FOUND);
+        return null;
+
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

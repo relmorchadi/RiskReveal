@@ -12,6 +12,7 @@ public class BinFileEntity {
     private String fqn;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "binFile_Id", nullable = false)
     public int getBinFileId() {
         return binFileId;

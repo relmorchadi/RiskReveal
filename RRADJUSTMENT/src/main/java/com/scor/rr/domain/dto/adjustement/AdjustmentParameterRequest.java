@@ -11,7 +11,6 @@ public class AdjustmentParameterRequest {
     private double lmf;
     private double rpmf;
     private List<PEATData> peatData;
-    private List<PLTLossData> pltLossData;
     private Integer scorPltHeaderInput;
     private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
@@ -38,14 +37,6 @@ public class AdjustmentParameterRequest {
 
     public void setPeatData(List<PEATData> peatData) {
         this.peatData = peatData;
-    }
-
-    public List<PLTLossData> getPltLossData() {
-        return pltLossData;
-    }
-
-    public void setPltLossData(List<PLTLossData> pltLossData) {
-        this.pltLossData = pltLossData;
     }
 
     public Integer getScorPltHeaderInput() {
