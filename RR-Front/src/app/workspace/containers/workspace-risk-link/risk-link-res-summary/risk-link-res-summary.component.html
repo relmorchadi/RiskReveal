@@ -8,7 +8,7 @@
       <div class="body-wrapper-header-right-summary">
         <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
            (click)="filterModalVisibility = true"></i>
-        <div class="body-wrapper-header-right" style="flex: inherit">
+        <div class="body-wrapper-header-right">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
           <i *ngIf="state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
              class="icon-keyboard_arrow_up_24px"></i>
@@ -115,12 +115,12 @@
         <div>Analysis Results</div>
       </div>
       <div class="body-wrapper-header-right-summary">
-        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
-           (click)="filterModalVisibility = true"></i>
         <button class="a-buttons-outlined" (click)="linkingModalVisibility = true"
                 *ngIf="state.collapse.collapseAnalysis"> LINKING
         </button>
-        <div class="body-wrapper-header-right" style="flex: inherit">
+        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
+           (click)="filterModalVisibility = true"></i>
+        <div class="body-wrapper-header-right">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
           <i *ngIf="state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
              class="icon-keyboard_arrow_up_24px"></i>

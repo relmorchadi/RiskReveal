@@ -265,22 +265,10 @@
               <div class="a-card-item">
                 <span>Financial Perspective Event Level</span>
                 <div class="a-card-item-right">
-
-                  <nz-select
-                    style="width: 270px;"
-                    [ngModel]="state.riskLink.financialPerspectiveELT?.selected"
-                    (ngModelChange)="changePerspective()"
-                    nzMode="multiple"
-                    [nzMaxTagCount]="1"
-                    [nzMaxTagPlaceholder]="tagPlaceHolder"
-                    nzShowSearch
-                    class="a-dropdown-small"
-                    nzPlaceHolder="Select an FP"
-                  >
-                    <nz-option *ngFor="let item of state.riskLink.financialPerspectiveELT?.data" [nzLabel]="item"
-                               [nzValue]="item"></nz-option>
-                  </nz-select>
-                  <ng-template #tagPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                  <p-multiSelect [options]="state.riskLink.financialPerspectiveELT.data" [style]="{width: '270px'}"
+                                 defaultLabel="Select Financial Perspective"
+                                 maxSelectedLabels="1"
+                                 [ngModel]="state.riskLink.financialPerspectiveELT.selected"></p-multiSelect>
                 </div>
               </div>
               <div class="a-card-item">
@@ -362,7 +350,7 @@
           <span>Import</span>
         </ng-template>
       </nz-tab>
-      <nz-tab [nzTitle]="widgetConfig">
+      <nz-tab [nzTitle]="widgetConfig" style="min-height: 100vh;">
         <div>
           <span class="main-tab-title">Widgets</span>
           <div class="settings-holder">
@@ -375,40 +363,20 @@
             <div class="a-card-list-wrap">
               <div class="a-card-item"><span>Country</span>
                 <div class="a-card-item-right">
-                  <nz-select
-                    style="width: 270px;"
-                    [ngModel]="state.contractOfInterest.country?.selected"
-                    (ngModelChange)="changeContract($event, 'country')"
-                    nzMode="multiple"
-                    [nzMaxTagCount]="1"
-                    [nzMaxTagPlaceholder]="tagCountryPlaceHolder"
-                    nzShowSearch
-                    class="a-dropdown-small"
-                    nzPlaceHolder="Select Countries"
-                  >
-                    <nz-option *ngFor="let item of state.contractOfInterest.country?.data" [nzLabel]="item.shortName"
-                               [nzValue]="item.countryCode"></nz-option>
-                  </nz-select>
-                  <ng-template #tagCountryPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                  <p-multiSelect [options]="state.contractOfInterest.country.data" [style]="{width: '270px'}"
+                                 defaultLabel="Select Countries"
+                                 maxSelectedLabels="1"
+                                 optionLabel="shortName"
+                                 [ngModel]="state.contractOfInterest.country.selected"></p-multiSelect>
                 </div>
               </div>
               <div class="a-card-item"><span>UW Unit</span>
                 <div class="a-card-item-right">
-                  <nz-select
-                    style="width: 270px;"
-                    [ngModel]="state.contractOfInterest.uwUnit?.selected"
-                    (ngModelChange)="changeContract($event, 'uwUnit')"
-                    nzMode="multiple"
-                    [nzMaxTagCount]="1"
-                    [nzMaxTagPlaceholder]="tagUnitPlaceHolder"
-                    nzShowSearch
-                    class="a-dropdown-small"
-                    nzPlaceHolder="Select UW Units"
-                  >
-                    <nz-option *ngFor="let item of state.contractOfInterest.uwUnit?.data" [nzLabel]="item.name"
-                               [nzValue]="item.id"></nz-option>
-                  </nz-select>
-                  <ng-template #tagUnitPlaceHolder let-selectedList> and {{ selectedList.length }} more</ng-template>
+                  <p-multiSelect [options]="state.contractOfInterest.uwUnit.data" [style]="{width: '270px'}"
+                                 defaultLabel="Select UW Unit"
+                                 maxSelectedLabels="1"
+                                 optionLabel="name"
+                                 [ngModel]="state.contractOfInterest.uwUnit.selected"></p-multiSelect>
                 </div>
               </div>
             </div>

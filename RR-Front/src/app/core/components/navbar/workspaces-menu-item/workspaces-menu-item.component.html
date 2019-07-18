@@ -21,8 +21,7 @@
           </div>
           <ul>
             <ng-container *ngFor="let workspace of recentWs$ | async; let i = index">
-              <li *ngIf="i < state.appliedFilter.shownElement"
-                  (click)="toggleWorkspace('workspacePopIn.recent',workspace, i)"
+              <li (click)="toggleWorkspace('workspacePopIn.recent',workspace, i)"
                   (dblclick)="openSingleWorkspaces(workspace)"
                   [ngClass]="{'a-active-item': workspace.selected}">
                 <div class="items-popover-wrapper">
@@ -42,12 +41,12 @@
             </ng-container>
           </ul>
           <div class="mt-2">
-            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"
+<!--            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"
                        class="float-left a-dropdown-small" style="width: 120px;" nzAllowClear
                        nzPlaceHolder="Choose">
               <nz-option *ngFor="let label of state.workspacePagination.paginationList ; let i = index"
                          [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>
-            </nz-select>
+            </nz-select>-->
             <div class="float-right">
               <button (click)="popOutWorkspaces()" class="a-button-text">POP OUT</button>
               <button (click)="openWorkspaces()" class="a-button-text">OPEN</button>
@@ -175,7 +174,7 @@
 
   <ng-template #RecentHeaderContent>
     <span style="width: 5px">Recent &nbsp; <span
-      class="tags-info">{{state.workspacePagination.numberOfElement}}</span></span>
+      class="tags-info"><!--{{state.workspacePagination.numberOfElement}}--></span></span>
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>

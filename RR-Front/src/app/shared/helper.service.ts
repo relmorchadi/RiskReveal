@@ -27,14 +27,6 @@ export class HelperService {
     this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
-  updateWorkspaceItems() {
-    localStorage.setItem('workspaces', JSON.stringify(this.state.openedTabs));
-  }
-
-  updateRecentWorkspaces() {
-    localStorage.setItem('usedWorkspaces', JSON.stringify(this.state.recentWs));
-  }
-
   public static upperFirstWordsInSetence(sentence){
     return sentence ? _.lowerCase(sentence).split(' ').map(_.upperFirst).join(' ') : sentence;
   }

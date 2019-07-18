@@ -67,7 +67,7 @@ export class WorkspaceService {
     const wsIdentifier = wsId + '-' + uwYear;
 
     if (state.content[wsIdentifier]) {
-      this.updateWsRouting(ctx, {wsId: wsIdentifier, route})
+      this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
       return ctx.dispatch(new fromWS.setCurrentTab({
         index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
         wsIdentifier
