@@ -26,8 +26,6 @@
                   [ngClass]="{'a-active-item': workspace.selected}">
                 <div class="items-popover-wrapper">
                   <label class="item-checkbox" nz-checkbox [ngModel]="workspace.selected" (ngModelChange)="toggleWorkspace('workspacePopIn.recent', workspace,i)"></label>
-
-                  <!--                  <i class="icon-window-section"></i>-->
                   <div class="item-popover-context">
                     <span class="item-popover-context-header">{{workspace?.cedantName}}</span>
                     <span
@@ -44,7 +42,7 @@
 <!--            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"
                        class="float-left a-dropdown-small" style="width: 120px;" nzAllowClear
                        nzPlaceHolder="Choose">
-              <nz-option *ngFor="let label of state.workspacePagination.paginationList ; let i = index"
+              <nz-option *ngFor="let label of recent.workspacePagination.paginationList ; let i = index"
                          [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>
             </nz-select>-->
             <div class="float-right">
@@ -55,7 +53,7 @@
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="FavouriteHeaderContent">
-        <div class="popup-tab-content-term">
+        <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search" [(ngModel)]="favoriteSearch"/>
@@ -97,7 +95,7 @@
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="AssignedHeaderContent">
-        <div class="popup-tab-content-term">
+        <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search"/>
@@ -127,7 +125,7 @@
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="PinnedHeaderContent">
-        <div class="popup-tab-content-term">
+        <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search" [(ngModel)]="pingedSearch"/>
@@ -174,7 +172,7 @@
 
   <ng-template #RecentHeaderContent>
     <span style="width: 5px">Recent &nbsp; <span
-      class="tags-info"><!--{{state.workspacePagination.numberOfElement}}--></span></span>
+      class="tags-info">{{recent.length}}</span></span>
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>

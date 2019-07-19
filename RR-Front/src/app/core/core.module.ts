@@ -63,7 +63,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    //NgxsStoragePluginModule.forRoot(),
+    NgxsStoragePluginModule.forRoot(),
     StoreModule,
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],

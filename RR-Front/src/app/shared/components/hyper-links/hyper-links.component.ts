@@ -1,6 +1,6 @@
 import {Component, Input, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
-import * as _ from 'lodash'
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-hyper-links',
@@ -22,13 +22,13 @@ export class HyperLinksComponent implements OnInit {
   ngOnInit() {
   }
 
-  navigate(to){
-    if(this.activeItem != to) {
+  navigate(to) {
+    if (this.activeItem != to) {
       this._router.navigate([`workspace/${this.RoutingConfig.wsId}/${this.RoutingConfig.uwYear}/${this.routes[to]}`]);
     }
   }
 
-  filter(){
+  filter() {
     return _.filter(this.links, e => e != this.activeItem);
   }
 

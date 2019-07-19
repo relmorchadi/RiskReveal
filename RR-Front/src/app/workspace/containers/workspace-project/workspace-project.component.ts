@@ -18,6 +18,9 @@ import {
 } from '../../../core/store/actions/workspace-main.action';
 import {MessageService} from 'primeng/api';
 import {BaseComponent, BaseContainer} from "../../../shared/base";
+import {HeaderState} from "../../../core/store/states";
+import {WorkspaceState} from "../../store/states";
+import * as _ from "lodash";
 
 @Component({
   selector: 'workspace-project',
@@ -33,7 +36,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   private dropdown: NzDropdownContextComponent;
   state: WorkspaceMain = null;
   workspaceUrl: any;
-  workspace: any;
+
   index: any;
   isVisible = false;
   wsIdentifier;
@@ -42,6 +45,12 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   //@Select(Workspacetate.getProjects)
   // projects$= of();
 
+  @Select(WorkspaceState.getWorkspaces) workspaces$;
+  @Select(WorkspaceState.getCurrentTab) current$;
+
+  current: any = null;
+  workspace: any = null;
+  pinned: boolean;
 
   newProject = false;
   existingProject = false;
@@ -54,9 +63,9 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   dueDate: any;
   contextMenuProject: any = null;
   description: any;
-  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
-  hyperLinksRoutes: any= {
-    'Projects': '',
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
+    'Projects': '/projects',
     'Contract': '/Contract',
     'Activity': '/Activity'
   };
@@ -89,6 +98,12 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
 
   ngOnInit() {
+    this.current$.subscribe(value => this.current = _.merge({}, value));
+    this.workspaces$.subscribe(value => {
+      this.workspace = _.merge({}, value);
+      this.pinned = _.get(_.merge({}, value), `${this.current.wsIdentifier}.isPinned`);
+      console.log(_.get(this.workspace, `${this.current.wsIdentifier}`));
+    });
 
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
         this.newProject = false;
@@ -102,7 +117,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
       this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
       // this.detectChanges();
-    })
+    });
 
     this.actions$.pipe(this.unsubscribeOnDestroy).pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
         this.notificationService.createNotification('Project deleted successfully', '',
@@ -150,23 +165,19 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   }
 
   pinWorkspace() {
-    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
-    this.actionsEmitter.emit([
-      new fromHeader.PinWs({
-        wsId,
-        uwYear,
-        workspaceName,
-        programName,
-        cedantName
-      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+    const {wsId, uwYear, workspaceName, programName, cedantName} = _.get(this.workspace, `${this.current.wsIdentifier}`);
+    console.log(this.pinned);
+    this.dispatch(new fromHeader.PinWs({
+      wsId, uwYear, workspaceName, programName, cedantName}));
+    this.dispatch(new fromWs.MarkWsAsPinned({wsIdentifier: this.current.wsIdentifier}));
+    this.detectChanges();
   }
 
   unPinWorkspace() {
-    const {wsId, uwYear} = this.workspace;
-    this.actionsEmitter.emit([
-      new fromHeader.UnPinWs({wsId, uwYear}),
-      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
-    ])
+    const {wsId, uwYear} = _.get(this.workspace, `${this.current.wsIdentifier}`);
+    this.dispatch(new fromHeader.UnPinWs({wsId, uwYear}));
+    this.dispatch(new fromWs.MarkWsAsNonPinned({wsIdentifier: this.current.wsIdentifier}));
+    this.detectChanges();
   }
 
   selectProjectNext(project) {

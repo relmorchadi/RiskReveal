@@ -18,7 +18,7 @@ export class WorkspaceService {
   constructor(private wsApi: WsApi, private store: Store) {
   }
 
-  loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWS) {
+  loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {
       wsId,
       uwYear,
@@ -27,17 +27,17 @@ export class WorkspaceService {
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
-        mergeMap(ws => ctx.dispatch(new fromWS.loadWsSuccess({
+        mergeMap(ws => ctx.dispatch(new fromWS.LoadWsSuccess({
           wsId,
           uwYear,
           ws,
           route
         }))),
-        catchError(e => ctx.dispatch(new fromWS.loadWsFail()))
-      )
+        catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
+      );
   }
 
-  loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWsSuccess) {
+  loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
     const {wsId, uwYear, ws, route} = payload;
     const {workspaceName, programName, cedantName} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
@@ -54,7 +54,7 @@ export class WorkspaceService {
         }
       });
       draft.loading = false;
-      ctx.dispatch(new fromWS.setCurrentTab({
+      ctx.dispatch(new fromWS.SetCurrentTab({
         index: _.size(draft.content),
         wsIdentifier
       }));
@@ -68,12 +68,12 @@ export class WorkspaceService {
 
     if (state.content[wsIdentifier]) {
       this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
-      return ctx.dispatch(new fromWS.setCurrentTab({
+      return ctx.dispatch(new fromWS.SetCurrentTab({
         index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
         wsIdentifier
       }));
     } else {
-      return ctx.dispatch(new fromWS.loadWS({
+      return ctx.dispatch(new fromWS.LoadWS({
         wsId,
         uwYear,
         route
@@ -81,26 +81,23 @@ export class WorkspaceService {
     }
   }
 
-  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.openMultiWS) {
+  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenMultiWS) {
     _.forEach(payload, item => {
       const {wsId, uwYear} = item;
       const state = ctx.getState();
       const wsIdentifier = wsId + '-' + uwYear;
       if (state.content[wsIdentifier]) {
-        return ctx.dispatch(new fromWS.setCurrentTab({
+        return ctx.dispatch(new fromWS.SetCurrentTab({
           index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
           wsIdentifier
         }));
       } else {
-        return ctx.dispatch(new fromWS.loadWS({
-          wsId,
-          uwYear
-        }));
+        return ctx.dispatch(new fromWS.LoadWS({wsId, uwYear}));
       }
     });
   }
 
-  setCurrentTab(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setCurrentTab) {
+  setCurrentTab(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SetCurrentTab) {
     const {
       index,
       wsIdentifier,
@@ -109,12 +106,12 @@ export class WorkspaceService {
       const ws = draft.content[wsIdentifier];
       const {route} = ws;
       draft.currentTab = {...draft.currentTab, index, wsIdentifier};
-      draft.content[wsIdentifier] = {...ws, isFavorite: this._isFavorite(ws), isPinned: this._isPinned(ws)}
+      draft.content[wsIdentifier] = {...ws, isFavorite: this._isFavorite(ws), isPinned: this._isPinned(ws)};
       ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
     }));
   }
 
-  closeWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.closeWS) {
+  closeWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CloseWS) {
     const {
       wsIdentifier
     } = payload;
@@ -130,28 +127,28 @@ export class WorkspaceService {
 
     if (wsIdentifier == currentTab.wsIdentifier) {
       if (currentTab.index === _.size(content) - 1) {
-        ctx.dispatch(new fromWS.setCurrentTab({
+        ctx.dispatch(new fromWS.SetCurrentTab({
           index: currentTab.index - 1,
           wsIdentifier: _.keys(content)[currentTab.index - 1]
-        }))
+        }));
       } else {
-        ctx.dispatch(new fromWS.setCurrentTab({
+        ctx.dispatch(new fromWS.SetCurrentTab({
           index: currentTab.index,
           wsIdentifier: _.keys(content)[currentTab.index + 1]
-        }))
+        }));
       }
     } else {
-      let i = _.findIndex(_.toArray(content), ws => ws.wsId + '-' + ws.uwYear == wsIdentifier)
+      let i = _.findIndex(_.toArray(content), ws => ws.wsId + '-' + ws.uwYear == wsIdentifier);
       if (currentTab.index > i) {
-        ctx.dispatch(new fromWS.setCurrentTab({
+        ctx.dispatch(new fromWS.SetCurrentTab({
           index: currentTab.index - 1,
           wsIdentifier: currentTab.wsIdentifier
-        }))
+        }));
       }
     }
     ctx.patchState({
       content: _.keyBy(_.filter(content, ws => ws.wsId + '-' + ws.uwYear != wsIdentifier), (el) => el.wsId + '-' + el.uwYear)
-    })
+    });
   }
 
   toggleWsDetails(ctx: StateContext<WorkspaceModel>, {wsId}: fromWS.ToggleWsDetails) {
@@ -176,28 +173,28 @@ export class WorkspaceService {
     const {wsIdentifier} = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: true};
-    }))
+    }));
   }
 
   markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonFavorite) {
     const {wsIdentifier} = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: false};
-    }))
+    }));
   }
 
   markWsAsPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsPinned) {
     const {wsIdentifier} = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: true};
-    }))
+    }));
   }
 
   markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonPinned) {
     const {wsIdentifier} = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: false};
-    }))
+    }));
   }
 
   private _isFavorite({wsId, uwYear}): boolean {
