@@ -345,7 +345,7 @@
               font-size: 11px;
               border: 1px solid transparent;
               border-radius: 20px;
-              width: 35px;
+              min-width: 35px;
               background-color: rgba(0, 0, 0, 0.05);
               text-align: center;
               padding: 1px 3px 1px 1px;
@@ -1090,8 +1090,9 @@ SELECT EDM AND RDM DROPDOWN STYLE
 
         i {
           font-weight: bold;
-          margin-left: -1px;
-          margin-right: 0 !important;
+          margin-left: 1px;
+          margin-top: 1px;
+          display: flex;
         }
       }
 
@@ -1244,6 +1245,10 @@ TABLE STYLE
       }
     }
 
+    .ui-table .ui-editable-column input:focus {
+      outline: 0;
+    }
+
     .ui-table-tbody {
       .icon-trash-alt {
         font-size: 20px;
@@ -1362,79 +1367,4 @@ TABLE STYLE
       width: 100%;
     }
   }
-}
-
-/*
-=======================================================================================
-FINANCIAL PERSPECTIVE POPUP STYLE
-=======================================================================================
-*/
-
-.fp-options-wrapper {
-  padding: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
-  margin-bottom: 5px;
-
-  .context-wrapper {
-    button {
-      margin: 0 5px;
-    }
-  }
-
-  .subtitle-override {
-    padding-bottom: 10px;
-    display: flex;
-  }
-
-  ::ng-deep {
-    label.ui-radiobutton-label {
-      color: rgba(0, 0, 0, 0.87);
-      font-family: Rubik;
-      font-size: 14.22px;
-      letter-spacing: 0.25px;
-      line-height: 20px;
-    }
-
-    p-radiobutton {
-      margin-right: 15px;
-    }
-  }
-}
-
-.summary-info-override {
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .fp-analysis {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .fp-header {
-    .subtitle-2 {
-      margin-right: 30px;
-      display: inline-flex;
-    }
-
-    .icon-filter {
-      color: rgba(0, 0, 0, 0.5);
-      font-size: 21px;
-    }
-  }
-}
-
-/*
-=======================================================================================
-PEQT POPUP STYLE
-=======================================================================================
-*/
-
-.parent-node {
-  font-size: 15px;
-  font-weight: bold;
-  letter-spacing: 1px;
-  word-spacing: 3px;
 }
