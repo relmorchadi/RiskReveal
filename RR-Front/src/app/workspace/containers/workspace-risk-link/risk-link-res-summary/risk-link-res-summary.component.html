@@ -8,7 +8,8 @@
       <div class="body-wrapper-header-right-summary">
         <i (click)="filterModalVisibility = true" class="icon-filter"
            style="margin-right: 20px;font-size: 23px;"></i>
-        <div class="icon-drop">
+        <div class="body-wrapper-header-right">
+          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
           <i (click)="changeCollapse('collapseResult')" *ngIf="state.collapse.collapseResult"
              class="icon-keyboard_arrow_up_24px"></i>
           <i (click)="changeCollapse('collapseResult')" *ngIf="!state.collapse.collapseResult"
@@ -114,14 +115,15 @@
         <div>Analysis Results</div>
       </div>
       <div class="body-wrapper-header-right-summary">
-        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
-           (click)="filterModalVisibility = true"></i>
         <button class="a-buttons-outlined" (click)="linkingModalVisibility = true"
                 *ngIf="state.collapse.collapseAnalysis"> LINKING
         </button>
-        <div class="icon-drop">
-          <i *ngIf="state.collapse.collapseAnalysis"
-             (click)="changeCollapse('collapseAnalysis')" class="icon-keyboard_arrow_up_24px"></i>
+        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
+           (click)="filterModalVisibility = true"></i>
+        <div class="body-wrapper-header-right">
+          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+          <i *ngIf="state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
+             class="icon-keyboard_arrow_up_24px"></i>
           <i *ngIf="!state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
              class="icon-keyboard_arrow_down_24px"></i>
         </div>
@@ -207,7 +209,7 @@
                      *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
                      (click)="updateRow(rowData, col.type)">
                   <span *ngIf="col.type === 'Peqt'">
-                    0/{{rowData.peqt.length}}
+                    {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
                   </span>
                   <span *ngIf="col.type !== 'Peqt'">
                     {{rowData[col.field]}}

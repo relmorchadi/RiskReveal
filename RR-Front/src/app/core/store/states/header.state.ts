@@ -70,6 +70,10 @@ const initialState: HeaderStateModel = {
 export class HeaderState implements NgxsOnInit {
 
 
+  ngxsOnInit(ctx?: StateContext<any>): void | any {
+    console.log('init');
+  }
+
   /**
    * Header State Selectors
    */
@@ -88,9 +92,6 @@ export class HeaderState implements NgxsOnInit {
     return state.workspacePopIn.pinned.items;
   }
 
-  ngxsOnInit(ctx?: StateContext<any>): void | any {
-    console.log('init')
-  }
 
   /**
    * Header State Commands

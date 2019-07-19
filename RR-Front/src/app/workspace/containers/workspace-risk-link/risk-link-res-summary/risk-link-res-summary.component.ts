@@ -230,6 +230,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
     } else if (target === 'UM') {
       this.store.dispatch(new PatchResultsAction({id: row.id, target: 'unitMultiplier', value: $event}));
+    } else if (target === 'peqt') {
+
     }
   }
 
@@ -433,6 +435,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   getCodeFp(item) {
     return _.filter(this.financialStandardContent, dt => dt.code === item)[0].financialPerspective;
+  }
+
+  getSelectedPeqt(row) {
+    return _.filter(_.filter(_.toArray(this.state.results.data), dt => dt.id === row.id)[0].peqt, ws => ws.selected === true).length;
   }
 
   changePeqt(parent, target, selected) {

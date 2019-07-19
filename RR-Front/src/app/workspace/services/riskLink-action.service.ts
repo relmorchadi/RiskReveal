@@ -1061,7 +1061,8 @@ export class RiskLinkStateService {
               results: null,
               summaries: null,
               analysis: null,
-              portfolios: null
+              portfolios: null,
+              activeAddBasket: false,
             }))
       )
     );

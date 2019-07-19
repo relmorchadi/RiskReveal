@@ -148,3 +148,17 @@
     margin: 0 !important;
   }
 }
+
+.a-closed-sidebar {
+  height: 100%;
+  border-top: 3px solid #0700CF;
+  background-color: #FFFFFF;
+  margin-right: 5px;
+
+  .icon-chevron_right_24px {
+    color: #FFFFFF;
+    background-color: #0700CF;
+    font-weight: 600;
+    border-radius: 20px;
+  }
+}
