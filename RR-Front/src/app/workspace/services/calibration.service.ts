@@ -1,9 +1,8 @@
 import {Injectable} from '@angular/core';
-import {StateContext, Store} from "@ngxs/store";
-import {CalibrationModel} from "../model";
+import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../store/actions";
 import {deselectAll, PatchCalibrationStateAction} from "../store/actions";
-import {catchError, mergeMap, tap} from "rxjs/operators";
+import {catchError, map, mergeMap, tap} from "rxjs/operators";
 import * as _ from "lodash";
 import {PltApi} from "./plt.api";
 import {
@@ -18,39 +17,45 @@ import {
   USER_TAGS
 } from "../containers/workspace-calibration/data";
 import produce from "immer";
-import {CalibrationState} from "../store/states";
+import {ActivatedRoute} from "@angular/router";
 
 @Injectable({
   providedIn: 'root'
 })
-export class CalibrationService {
+export class CalibrationService implements NgxsOnInit {
 
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
   ctx = null;
+  prefix = null;
 
-  constructor(private store$: Store, private pltApi: PltApi) {
+  constructor(private store$: Store, private pltApi: PltApi, private route$: ActivatedRoute) {
+
   }
 
+  ngxsOnInit(ctx?: StateContext<any>): void | any {
+    this.route$.params.pipe(
+      map(({wsId, year}) => {
+        this.prefix = wsId + '-' + year
+      }));
+  }
   getRandomInt(min = 0, max = 4) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  loadAllPltsFromCalibration(ctx: StateContext<CalibrationModel>, payload: any) {
+  loadAllPltsFromCalibration(ctx: StateContext<any>, payload: any) {
     this.ctx = ctx;
     const {params} = payload;
-    ctx.patchState({
-      loading: true
-    });
-    console.log('ls', JSON.parse(localStorage.getItem('deletedPlts')))
+    this.prefix = params.workspaceId + '-' + params.uwy;
+
     const ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
-          ctx.patchState({
-            data: Object.assign({},
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content[this.prefix].calibration.data = Object.assign({},
               {
                 ...ctx.getState().data,
-                [params.workspaceId + '-' + params.uwy]: _.merge({},
+                [this.prefix]: _.merge({},
                   ...data.plts.map(plt => ({
                     [plt.pltId]: {
                       ...plt,
@@ -68,28 +73,26 @@ export class CalibrationService {
                     }
                   }))
                 )
-              }
-            ),
-            filters: {
+              });
+            draft.content[this.prefix].calibration.filters = {
               systemTag: [],
               userTag: []
             }
-          });
+          }));
           return ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationSuccess({userTags: data.userTags}));
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationFail()))
       );
   }
 
-  loadAllPltsFromCalibrationSuccess(ctx: StateContext<CalibrationModel>, payload: any) {
-    ctx.patchState({
-      loading: false
-    });
-
-    ctx.dispatch(new fromPlt.constructUserTagsFromCalibration({userTags: payload.userTags}))
+  loadAllPltsFromCalibrationSuccess(ctx: StateContext<any>, payload: any) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.loading = false;
+      ctx.dispatch(new fromPlt.constructUserTagsFromCalibration({userTags: payload.userTags}))
+    }));
   }
 
-  constructUserTags(ctx: StateContext<CalibrationModel>, payload: any) {
+  constructUserTags(ctx: StateContext<any>, payload: any) {
     const {
       data,
       userTags
@@ -108,28 +111,31 @@ export class CalibrationService {
 
       uesrTagsSummary[tagId] = {tagId, ...rest, selected: false, count: pltHeaders.length, pltHeaders}
     })
-
-    ctx.patchState({
-      userTags: uesrTagsSummary
-    })
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.userTags = uesrTagsSummary;
+    }));
 
   }
 
-  setFilterPlts(ctx: StateContext<CalibrationModel>, payload: any) {
+  setFilterPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     const {
       filters
     } = payload;
-
-    ctx.patchState({
-      filters: _.assign({}, state.filters, filters)
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.filters = _.assign({}, state.filters, filters);
+    }));
 
     return ctx.dispatch(new fromPlt.FilterPltsByUserTagsFromCalibration(payload));
 
   }
 
-  FilterPlts(ctx: StateContext<CalibrationModel>, payload: any) {
+  FilterPlts(ctx
+               :
+               StateContext<any>, payload
+               :
+               any
+  ) {
     const state = ctx.getState();
     const {
       wsIdentifier
@@ -153,14 +159,15 @@ export class CalibrationService {
         newData[k] = {...plt, visible: true};
       });
     }
-
-    ctx.setState({
-      ...state,
-      data: {[wsIdentifier]: newData}
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.data = {[wsIdentifier]: newData}
+    }));
   }
 
-  SelectPlts(payload: any) {
+  SelectPlts(payload
+               :
+               any
+  ) {
     const state = this.ctx.getState();
     console.log(payload)
     const {
@@ -178,14 +185,12 @@ export class CalibrationService {
         selected: v.type
       };
     });
-
-    this.ctx.patchState({
-      data: _.merge({}, state.data, {[wsIdentifier]: inComingData})
-    });
-
+    this.ctx.patchState(produce(this.ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.data = _.merge({}, state.data, {[wsIdentifier]: inComingData})
+    }));
   }
 
-  calibrateSelectPlts(ctx: StateContext<CalibrationModel>, payload: any) {
+  calibrateSelectPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     const {
       plts,
@@ -201,55 +206,70 @@ export class CalibrationService {
         calibrate: v.type
       };
     });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.data = _.merge({}, state.data, {[wsIdentifier]: inComingData})
+    }));
+  }
+
+  initCalibrationData(ctx
+                        :
+                        StateContext<any>, payload
+                        :
+                        any
+  ) {
 
     ctx.patchState({
-      data: _.merge({}, state.data, {[wsIdentifier]: inComingData})
+      content: {
+        [this.prefix]: {
+          calibration: {
+            adjustementType: _.assign({}, ADJUSTMENT_TYPE),
+            pure: _.assign({}, PURE),
+            systemTags: _.assign({}, SYSTEM_TAGS),
+            userTags: _.assign({}, USER_TAGS),
+            allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+            listOfPlts: _.assign({}, LIST_OF_PLTS),
+            listOfDisplayPlts: _.assign({}, LIST_OF_DISPLAY_PLTS),
+            data: _.assign({}, DATA),
+            pltColumns: _.assign({}, PLT_COLUMNS),
+          }
+        }
+      }
     });
 
   }
 
-  initCalibrationData(ctx: StateContext<CalibrationModel>, payload: any) {
-
-    ctx.patchState({
-      adjustementType: _.assign({}, ADJUSTMENT_TYPE),
-      pure: _.assign({}, PURE),
-      systemTags: _.assign({}, SYSTEM_TAGS),
-      userTags: _.assign({}, USER_TAGS),
-      allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
-      listOfPlts: _.assign({}, LIST_OF_PLTS),
-      listOfDisplayPlts: _.assign({}, LIST_OF_DISPLAY_PLTS),
-      data: _.assign({}, DATA),
-      pltColumns: _.assign({}, PLT_COLUMNS),
-    });
-
-  }
-
-  setFilterCalibration(ctx: StateContext<CalibrationModel>, payload: any) {
+  setFilterCalibration(ctx
+                         :
+                         StateContext<any>, payload
+                         :
+                         any
+  ) {
     const state = ctx.getState();
 
-    ctx.patchState({
-      filters: _.assign({}, state.filters, payload)
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.filters = _.assign({}, state.filters, payload)
+    }));
 
   }
 
-  expandPltSection(ctx: StateContext<CalibrationModel>, payload: any) {
-
-    ctx.patchState({
-      extendPltSection: payload
-    });
-
+  expandPltSection(ctx: StateContext<any>, payload: any) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.extendPltSection = payload
+    }));
   }
 
-  collapseTags(ctx: StateContext<CalibrationModel>, payload: any) {
-
-    ctx.patchState({
-      collapseTags: payload
-    });
-
+  collapseTags(ctx: StateContext<any>, payload: any) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.collapseTags = payload
+    }));
   }
 
-  saveAdjustment(ctx: StateContext<CalibrationModel>, payload: any) {
+  saveAdjustment(ctx
+                   :
+                   StateContext<any>, payload
+                   :
+                   any
+  ) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -265,26 +285,30 @@ export class CalibrationService {
       adjustement.value = adjustementType.abv;
     }
     let newAdj = {...adjustement};
-    ctx.patchState({
-      adjustments: [
-        ...state.adjustments,
-        newAdj,
-      ]
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustments = [...state.adjustments, newAdj]
+    }));
 
   }
 
-  dropThreadAdjustment(ctx: StateContext<CalibrationModel>, payload: any) {
+  dropThreadAdjustment(ctx
+                         :
+                         StateContext<any>, payload
+                         :
+                         any
+  ) {
     let adjustmentArray = payload.adjustmentArray;
-    ctx.patchState({
-      adjustments: [
-        ...adjustmentArray
-      ]
-    });
-
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustments = [...adjustmentArray]
+    }));
   }
 
-  saveAdjModification(ctx: StateContext<CalibrationModel>, payload: any) {
+  saveAdjModification(ctx
+                        :
+                        StateContext<any>, payload
+                        :
+                        any
+  ) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -299,15 +323,18 @@ export class CalibrationService {
     }
     let newAdj = {...adjustement};
     let index = _.findIndex(state.adjustments, {id: newAdj.id});
-    ctx.patchState({
-      adjustments: [...
-        _.merge([], state.adjustments, {[index]: newAdj})
-      ]
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustments = [..._.merge([], state.adjustments, {[index]: newAdj})]
+    }));
 
   }
 
-  replaceAdjustement(ctx: StateContext<CalibrationModel>, payload: any) {
+  replaceAdjustement(ctx
+                       :
+                       StateContext<any>, payload
+                       :
+                       any
+  ) {
     const state = ctx.getState();
 
     let adjustement = payload.adjustement;
@@ -334,16 +361,14 @@ export class CalibrationService {
       index[value] = _.findIndex(state.adjustmentApplication, {pltId: value});
     })
     if (all) {
-      ctx.patchState({
-        adjustmentApplication: [...
-          _.merge([], state.adjustmentApplication, adjustmentApplication)
-        ]
-      });
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[this.prefix].calibration.adjustmentApplication = [..._.merge([], state.adjustmentApplication, adjustmentApplication)]
+      }));
     } else {
       console.log(index);
       ctx.patchState(produce(ctx.getState(), draft => {
         _.forEach(adjustmentApplication, (row) => {
-          draft.adjustmentApplication[index[row.pltId]] = row;
+          draft.content[this.prefix].calibration.adjustmentApplication[index[row.pltId]] = row;
         });
       }));
     }
@@ -355,7 +380,12 @@ export class CalibrationService {
 
   }
 
-  saveAdjustmentInPlt(ctx: StateContext<CalibrationModel>, payload: any) {
+  saveAdjustmentInPlt(ctx
+                        :
+                        StateContext<any>, payload
+                        :
+                        any
+  ) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -376,15 +406,17 @@ export class CalibrationService {
       pltId: pltId,
       adj: newAdj
     }
-    ctx.patchState({
-      adjustmentApplication: [
-        ...state.adjustmentApplication,
-        adjustmentApplication,
-      ]
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustmentApplication = [...state.adjustmentApplication, adjustmentApplication,]
+    }));
   }
 
-  applyAdjustment(ctx: StateContext<CalibrationModel>, payload: any) {
+  applyAdjustment(ctx
+                    :
+                    StateContext<any>, payload
+                    :
+                    any
+  ) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -412,39 +444,52 @@ export class CalibrationService {
         adjustmentApplication[value] = [newAdj]
       }
     })
-    ctx.patchState({
-      adjustmentApplication: {...adjustmentApplication}
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
+    }));
   }
 
-  dropAdjustment(ctx: StateContext<CalibrationModel>, payload: any) {
+  dropAdjustment(ctx
+                   :
+                   StateContext<any>, payload
+                   :
+                   any
+  ) {
     const state = ctx.getState();
 
     let pltId = payload.pltId;
     let newAdj = {...payload.adjustement};
 
-    ctx.patchState({
-      adjustmentApplication: [
-        ...state.adjustmentApplication,
-        {pltId: pltId, adj: newAdj}
-      ]
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustmentApplication = [...state.adjustmentApplication, {
+        pltId: pltId,
+        adj: newAdj
+      }]
+    }));
   }
 
-  deleteAdjsApplication(ctx: StateContext<CalibrationModel>, payload: any) {
+  deleteAdjsApplication(ctx
+                          :
+                          StateContext<any>, payload
+                          :
+                          any
+  ) {
     const state = ctx.getState();
     let index = payload.index;
     let pltId = payload.pltId;
     let adjustmentApplication = _.merge([], state.adjustmentApplication);
     adjustmentApplication[pltId].splice(index, 1);
-    ctx.patchState({
-      adjustmentApplication: [
-        ...adjustmentApplication,
-      ]
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustmentApplication = [...adjustmentApplication]
+    }));
   }
 
-  deleteAdjustment(ctx: StateContext<CalibrationModel>, payload: any) {
+  deleteAdjustment(ctx
+                     :
+                     StateContext<any>, payload
+                     :
+                     any
+  ) {
     const state = ctx.getState();
     let adjustement = payload.adjustment;
 
@@ -452,39 +497,51 @@ export class CalibrationService {
     let adjustments = _.merge([], state.adjustments);
 
     adjustments.splice(index, 1);
-    ctx.patchState({
-      adjustments: [
-        ...adjustments,
-      ]
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustments = [...adjustments]
+    }));
   }
 
-  saveSelectedPlts(ctx: StateContext<CalibrationModel>, payload: any) {
+  saveSelectedPlts(ctx
+                     :
+                     StateContext<any>, payload
+                     :
+                     any
+  ) {
     const state = ctx.getState();
-
-    ctx.patchState({
-      selectedPLT: _.merge({}, payload)
-    });
-
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.selectedPLT = _.merge({}, payload)
+    }));
   }
 
-  saveAdjustmentApplication(ctx: StateContext<CalibrationModel>, payload: any) {
+  saveAdjustmentApplication(ctx
+                              :
+                              StateContext<any>, payload
+                              :
+                              any
+  ) {
     const state = ctx.getState();
-
-    ctx.patchState({
-      adjustmentApplication: _.merge({}, payload)
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustmentApplication = _.merge({}, payload)
+    }));
 
   }
 
-  patchSearchState(ctx: StateContext<CalibrationState>, payload: any) {
+  patchSearchState(ctx: StateContext<any>, payload: any) {
     if (_.isArray(payload))
       payload.forEach(item => ctx.patchState({[item.key]: item.value}));
     else
-      ctx.patchState({[payload.key]: payload.value});
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[this.prefix].calibration[payload.key] = payload.value
+      }));
   }
 
-  selectRow(ctx: StateContext<CalibrationModel>, payload: any) {
+  selectRow(ctx
+              :
+              StateContext<any>, payload
+              :
+              any
+  ) {
     let state = ctx.getState();
     const event = payload.event;
     const datatable = payload.datatable;
@@ -509,7 +566,10 @@ export class CalibrationService {
       ctx.dispatch(new PatchCalibrationStateAction({key: 'lastCheckedBool', value: true}));
       let between = false;
       if (_.isNil(state.firstChecked)) {
-        ctx.dispatch(new PatchCalibrationStateAction({key: 'firstChecked', value: state.pure.dataTable[0].thread[0]}));
+        ctx.dispatch(new PatchCalibrationStateAction({
+          key: 'firstChecked',
+          value: state.pure.dataTable[0].thread[0]
+        }));
       }
       let lastChecked = state.firstChecked;
       // this.store$.dispatch(new deselectAll({lastChecked:lastChecked}))
@@ -546,21 +606,26 @@ export class CalibrationService {
                 }
               }
             })
-            ctx.patchState({
-              pure: pure
-            })
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content[this.prefix].calibration.pure = pure
+          }));
             this.store$.dispatch(new PatchCalibrationStateAction({key: 'lastCheckedBool', value: false}));
           }
         )
       );
     }
-    ctx.patchState({
-      pure: pure
-    })
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.pure = pure
+    }));
     this.store$.dispatch(new PatchCalibrationStateAction({key: 'lastCheckedBool', value: false}));
   }
 
-  deselectAll(ctx: StateContext<CalibrationModel>, payload: any) {
+  deselectAll(ctx
+                :
+                StateContext<any>, payload
+                :
+                any
+  ) {
     let state = ctx.getState();
     let pure = _.merge({}, state.pure);
     const lastChecked = payload.lastChecked;
@@ -570,9 +635,9 @@ export class CalibrationService {
         plt.checked = false;
       })
     })
-    ctx.patchState({
-      pure: pure
-    });
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.pure = pure
+    }));
   }
 
 }

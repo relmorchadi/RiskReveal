@@ -1,15 +1,18 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, Subscription} from "rxjs";
 import {filter, switchMap} from "rxjs/operators";
 import * as _ from "lodash";
 import {DndDropEvent, DropEffect} from 'ngx-drag-drop';
+import {Store} from '@ngxs/store';
+import {Router} from '@angular/router';
+import {BaseContainer} from '../../../shared/base';
 
 @Component({
   selector: 'app-workspace-inuring-package',
   templateUrl: './workspace-inuring-package.component.html',
   styleUrls: ['./workspace-inuring-package.component.scss']
 })
-export class WorkspaceInuringPackageComponent implements OnInit {
+export class WorkspaceInuringPackageComponent extends BaseContainer implements OnInit {
 
   size;
   disabled;
@@ -79,13 +82,14 @@ export class WorkspaceInuringPackageComponent implements OnInit {
   supscription1: Subscription;
   supscription2: Subscription;
   dndBool: boolean = false;
-  onHoverIcon: any;
   checked: boolean = false;
-  lastChecked;
+  onHoverIcon: any;
   lastCheckedBool: boolean = false;
+  lastChecked;
   private currentDraggableEvent: DragEvent;
 
-  constructor() {
+  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
 
     this.adjsArray = [
       {id: 1, name: 'Missing Exp', value: 2.1, linear: false, category: "pd"},
@@ -202,14 +206,14 @@ export class WorkspaceInuringPackageComponent implements OnInit {
     let scroll1Event$ = fromEvent(scrollOne, 'scroll');
     let supscription1 = scroll2Event$.pipe(
       filter(() => this.divIn === true)
-    ).subscribe(
+    ).pipe(this.unsubscribeOnDestroy).subscribe(
       value => {
         scrollOne.scrollTop = scrollTwo.scrollTop;
       }
     )
     let supscription2 = scroll1Event$.pipe(
       filter(() => this.divIn === false)
-    ).subscribe(
+    ).pipe(this.unsubscribeOnDestroy).subscribe(
       value => {
         scrollTwo.scrollTop = scrollOne.scrollTop;
       });
@@ -546,7 +550,7 @@ export class WorkspaceInuringPackageComponent implements OnInit {
       switchMap(event => {
         return scroll1Event$;
       })
-    ).subscribe(
+    ).pipe(this.unsubscribeOnDestroy).subscribe(
       value => {
         scrollTwo.scrollTop = scrollOne.scrollTop
       }
@@ -652,5 +656,13 @@ export class WorkspaceInuringPackageComponent implements OnInit {
 
   onMouseHover(threadIndex) {
     console.log("test", threadIndex);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  protected detectChanges() {
+    super.detectChanges();
   }
 }

@@ -29,10 +29,10 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
 
   constructor(
     private _helper: HelperService,
-    private _cdRef: ChangeDetectorRef,
+    _cdRef: ChangeDetectorRef,
     private _route: ActivatedRoute,
-    private _store: Store,
-    protected _router: Router,
+    _store: Store,
+    _router: Router,
   ) {
     super(_router, _cdRef, _store);
     this.loading = false;

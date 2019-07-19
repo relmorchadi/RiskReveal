@@ -8,7 +8,7 @@ import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {NotificationService} from "../../../../shared/notification.service";
 import {SearchService} from "../../../../core/service";
-import {CalibrationState} from "../../../store/states";
+import {WorkspaceState} from "../../../store/states";
 import * as fromWorkspaceStore from "../../../store";
 import * as _ from "lodash";
 import {mergeMap} from "rxjs/operators";
@@ -303,8 +303,8 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
 
   getBrowesingItemsDirectly() {
     this.browesing = true;
-    this.data$ = this.store$.select(CalibrationState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-    this.deletedPlts$ = this.store$.select(CalibrationState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.data$ = this.store$.select(WorkspaceState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
 
     this.pltTableSubscription = combineLatest(
       this.data$,
@@ -456,12 +456,12 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       })
     ).subscribe(() => this.d.unsubscribe());
 
-    this.pltProjectSubscription = this.store$.select(CalibrationState.getProjects()).subscribe((projects: any) => {
+    this.pltProjectSubscription = this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
       this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
-    this.pltUserTagsSubscription = this.store$.select(CalibrationState.getUserTags).subscribe(userTags => {
+    this.pltUserTagsSubscription = this.store$.select(WorkspaceState.getUserTags).subscribe(userTags => {
       this.setInputs('userTags', userTags || {});
       console.log(this.getInputs('userTags'))
       this.detectChanges();

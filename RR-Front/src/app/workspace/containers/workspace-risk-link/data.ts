@@ -83,6 +83,17 @@ const scrollableColsResults = [
   // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'peqt', header: 'PEQT', width: '80px', type: 'Peqt', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {
+    field: 'proportion',
+    header: 'Proportion',
+    width: '70px',
+    type: 'percentage',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true,
+    edit: false
+  },
+  {
     field: 'publishAcc',
     header: 'Publish For Accumulation',
     width: '30px',
@@ -174,19 +185,9 @@ const financialStandarContent = [
 
 const regionPerilDataTable = [
   {
-    field: 'selected',
-    header: '',
-    width: '25px',
-    type: 'select',
-    sorted: false,
-    filtered: false,
-    highlight: false,
-    visible: true
-  },
-  {
     field: 'analysisId',
     header: 'ID',
-    width: '40px',
+    width: '50px',
     type: 'text',
     sorted: false,
     filtered: true,
@@ -196,7 +197,7 @@ const regionPerilDataTable = [
   {
     field: 'analysisName',
     header: 'Analysis Name',
-    width: '300px',
+    width: '90px',
     type: 'text',
     sorted: false,
     filtered: true,
@@ -206,7 +207,7 @@ const regionPerilDataTable = [
   {
     field: 'regionPeril',
     header: 'Region Peril',
-    width: '60px',
+    width: '80px',
     type: 'text',
     sorted: false,
     filtered: true,
@@ -216,30 +217,30 @@ const regionPerilDataTable = [
   {
     field: 'override',
     header: 'Override',
-    width: '100px',
+    width: '300px',
     type: 'override',
     sorted: false,
-    filtered: true,
+    filtered: false,
     highlight: false,
     visible: true
   },
   {
     field: 'copy',
     header: 'Copy',
-    width: '100px',
+    width: '50px',
     type: 'function',
     sorted: false,
-    filtered: true,
+    filtered: false,
     highlight: false,
     visible: true
   },
   {
     field: 'reason',
     header: 'Reason',
-    width: '100px',
+    width: '150px',
     type: 'comment',
     sorted: false,
-    filtered: true,
+    filtered: false,
     highlight: false,
     visible: true
   },

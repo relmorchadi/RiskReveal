@@ -15,13 +15,12 @@ import {
   deleteAdjsApplication,
   deleteAdjustment,
   dropThreadAdjustment,
-  extendPltSection,
   replaceAdjustement,
   saveAdjModification,
   saveAdjustment
 } from "../../store/actions";
 import {map, switchMap} from 'rxjs/operators';
-import {CalibrationState, PltMainState} from "../../store/states";
+import {PltMainState, WorkspaceState} from "../../store/states";
 import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
@@ -90,8 +89,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   categorySelected: any;
   adjsArray: any[] = [];
   appliedAdjutement = [];
-  @Select(CalibrationState.getAdjustmentApplication) adjutmentApplication$;
-  @Select(CalibrationState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
+  @Select(WorkspaceState.getAdjustmentApplication) adjutmentApplication$;
+  @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
   leftNavbarIsCollapsed: boolean;
   adjutmentApplication = [];
   linear: boolean = false;
@@ -104,7 +103,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   lastSelectedId;
   tagModalIndex: any = 0;
   mode = "calibration";
-  @Select(CalibrationState) state$: Observable<any>;
+  @Select(WorkspaceState) state$: Observable<any>;
   pltColumns = [
     {
       sortDir: 1,
@@ -803,7 +802,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
-  @Select(CalibrationState.getUserTags) userTags$;
+  @Select(WorkspaceState.getUserTags) userTags$;
   data$;
   deletedPlts$;
   deletedPlts: any;
@@ -974,8 +973,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
           this.workspaceId = wsId;
           this.uwy = year;
           this.loading= true;
-          this.data$ = this.store$.select(CalibrationState.getPlts(this.workspaceId + '-' + this.uwy));
-          this.deletedPlts$ = this.store$.select(CalibrationState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
+          this.data$ = this.store$.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
+          this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
           this.store$.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
             params: {
               workspaceId: wsId, uwy: year
@@ -992,7 +991,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         let dd2 = [];
         this.loading = false;
         this.systemTagsCount = {};
-
+        console.log(data);
         if (data) {
           if (_.keys(this.systemTagsCount).length == 0) {
             _.forEach(data, (v, k) => {
@@ -1106,7 +1105,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
             this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.store$.select(CalibrationState.getProjects()).subscribe((projects: any) => {
+      this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
@@ -1347,7 +1346,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     }
     this.adjustExention();
     this.initDataColumns();
-    this.store$.dispatch(new extendPltSection(this.extended));
+    // this.store$.dispatch(new extendPltSection(this.extended));
   }
 
   adjustExention() {

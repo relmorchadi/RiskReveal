@@ -1,12 +1,14 @@
-import {Component, OnInit} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BaseContainer} from '../../../shared/base';
+import {Store} from '@ngxs/store';
 
 @Component({
   selector: 'app-workspace-contract',
   templateUrl: './workspace-contract.component.html',
   styleUrls: ['./workspace-contract.component.scss']
 })
-export class WorkspaceContractComponent implements OnInit {
+export class WorkspaceContractComponent extends BaseContainer implements OnInit {
   collapseHead = false;
   collapseLeft = false;
   collapseRight = false;
@@ -234,12 +236,12 @@ export class WorkspaceContractComponent implements OnInit {
     },
   ];
 
-  constructor(private route: ActivatedRoute) {
-
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
-    this.route.params.subscribe( ({wsId, year}) => {
+    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
       this.hyperLinksConfig= {
         wsId,
         uwYear: year
@@ -249,6 +251,14 @@ export class WorkspaceContractComponent implements OnInit {
 
   changeCollapse() {
     this.collapseHead = !this.collapseHead;
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  protected detectChanges() {
+    super.detectChanges();
   }
 
 }

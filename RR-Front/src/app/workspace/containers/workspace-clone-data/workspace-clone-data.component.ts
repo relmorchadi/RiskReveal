@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {MessageService} from 'primeng/api';
@@ -9,6 +9,7 @@ import {PltMainState} from '../../store/states';
 import * as fromWS from '../../store'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
 import {take} from 'rxjs/operators';
+import {BaseContainer} from '../../../shared/base';
 
 interface SourceData {
   plts: any[];
@@ -24,15 +25,14 @@ interface SourceData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MessageService]
 })
-export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
+export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit {
 
   constructor(
-    private router$: Router,
     private route$: ActivatedRoute,
-    private store$: Store,
-    private cdRef: ChangeDetectorRef,
-    private prn: PreviousNavigationService
+    private prn: PreviousNavigationService,
+    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
+    super(_baseRouter, _baseCdr, _baseStore);
     this.activeSubTitle= 0;
     this.cloningToItem= true;
     this.projectForClone= -1;
@@ -162,10 +162,10 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.subs.push(
       combineLatest(
-        this.store$.select(PltMainState.getCloneConfig),
+        this.select(PltMainState.getCloneConfig),
         this.route$.params,
-        this.store$.select(WorkspaceMainState.getCurrentWS)
-      ).pipe(take(1)).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
+        this.select(WorkspaceMainState.getCurrentWS)
+      ).pipe(take(1)).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
         const url = this.prn.getPreviousUrl();
         console.log({
           prn: url,
@@ -259,10 +259,9 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
     this.browesing=true;
   }
 
-  detectChanges() {
-    if (!this.cdRef['destroyed']) {
-      this.cdRef.detectChanges();
-    }
+  ngOnDestroy(): void {
+    this.dispatch(new fromWS.setCloneConfig({}));
+    this.destroy();
   }
 
   setSelectedWs(currentSourceOfItems: string,$event: any) {
@@ -369,10 +368,8 @@ export class WorkspaceCloneDataComponent implements OnInit, OnDestroy {
     return this.cloneConfig[key];
   }
 
-  ngOnDestroy(): void {
-    console.log('hey');
-    this.store$.dispatch(new fromWS.setCloneConfig({}));
-    _.each(this.subs, e => e && e.unsubscribe());
+  protected detectChanges() {
+    super.detectChanges();
   }
 
   editPlts() {
