@@ -21,11 +21,12 @@ import {WorkspaceMainState} from '../../../core/store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
-import * as tableStore from '../../../shared/components/plt/plt-main-table/store';
 import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
-import {Actions as tableActions} from '../../../shared/components/plt/plt-main-table/store/actionTypes'
+import {Actions as tableActions} from '../../../shared/components/plt/plt-main-table/store/actionTypes';
+import * as tableStore from '../../../shared/components/plt/plt-main-table/store';
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
 import {BaseContainer} from '../../../shared/base';
+import {SystemTagsService} from '../../../shared/services/system-tags.service';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -39,28 +40,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   private dropdown: NzDropdownContextComponent;
   searchAddress: string;
-  listOfPlts: any[];
-  listOfDeletedPlts: any[];
-  listOfPltsData: any[];
-  listOfDeletedPltsData: any[];
-  listOfDeletedPltsCache: any[];
-  listOfPltsCache: any[];
-  selectedListOfPlts: any[];
-  selectedListOfDeletedPlts: any[];
-  filterData: any;
-  sortData;
   activeCheckboxSort: boolean;
   @ViewChild('dt')
   private table: Table;
-
   workspaceId: string;
   uwy: number;
   projects: any[];
-
   params: any;
   lastSelectedId;
   managePopUp: boolean;
-
   tagContextMenu = [
     {
       label: 'Delete Tag',
@@ -78,7 +66,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       }
     }
   ];
-
   pltColumnsForConfig= [
     {
       sortDir: 1,
@@ -157,7 +144,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       type: 'icon',active: true
     },
   ];
-
   pltColumnsCache = [
     {
       sortDir: 1,
@@ -237,47 +223,26 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     },
   ];
   size = 'large';
-  filters: {
-    systemTag: {},
-    userTag: []
-  };
-
   systemTags: any;
-
   systemTagsCount: any;
-
   userTags: any;
-
   userTagsCount: any;
-
-  someItemsAreSelected: boolean;
-  selectAll: boolean;
   drawerIndex: any;
-  private pageSize: number = 20;
-  private lastClick: string;
   editingTag: boolean;
-  private modalInputCache: any;
-
 
   constructor(
     private nzDropdownService: NzDropdownService,
     private zone: NgZone,
     private route$: ActivatedRoute,
     private prn: PreviousNavigationService,
+    private systemTagService: SystemTagsService,
     _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef
     ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    this.listOfPlts = [];
-    this.listOfPltsData = [];
-    this.listOfDeletedPltsData = [];
-    this.selectedListOfPlts = [];
-    this.selectedListOfDeletedPlts = [];
     this.lastSelectedId = null;
     this.drawerIndex = 0;
     this.params = {};
-    this.loading = true;
     this.activeCheckboxSort = false;
-    this.loading = true;
     this.tagModalVisible = false;
     this.tagModalIndex = 0;
     this.systemTagsCount = {};
@@ -310,49 +275,21 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.tableInputs= {
       contextMenuItems: [
         {
-          label: 'View Detail', command: () => {
-            this.openPltInDrawer(this.selectedPlt)
-          }
+          label: 'View Detail', command: () => this.viewDetail()
         },
         {
-          label: 'Delete', command: () => {
-            this.dispatch(new fromWorkspaceStore.deletePlt({
-              wsIdentifier: this.workspaceId + '-' + this.uwy,
-              pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
-            }));
-          }
+          label: 'Delete', command: () => this.deletePlt()
         },
         {
           label: 'Clone To',
-          command: () => {
-            this.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.selectedListOfPlts}}));
-            this.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
-          }
+          command: () => this.cloneTo()
         },
         {
-          label: 'Manage Tags', command: () => {
-            this.tagModalVisible = true;
-            this.tagForMenu = {
-              ...this.tagForMenu,
-              tagName: ''
-            };
-            this.fromPlts = true;
-            this.editingTag = false;
-            let d = _.map(this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu], k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
-            this.modalSelect = _.intersectionBy(...d, 'tagId');
-            this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-          }
+          label: 'Manage Tags', command: () => this.manageTags()
         },
         {
           label: 'Restore',
-          command: () => {
-            this.dispatch(new fromWorkspaceStore.restorePlt({
-              wsIdentifier: this.workspaceId + '-' + this.uwy,
-              pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
-            }))
-            this.updateTable('showDeleted', !(this.listOfDeletedPlts.length === 0) ? this.getTableInputKey('showDeleted') : false);
-            this.generateContextMenu(this.getTableInputKey('showDeleted'));
-          }
+          command: () => this.restore()
         }
       ],
       filterData: {},
@@ -362,7 +299,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       },
       sortData: {},
       selectAll: false,
+      selectAllDeletedPlts: false,
       someItemsAreSelected: false,
+      someDeletedItemsAreSelected: false,
       showDeleted: false,
       pltColumns: [
         {
@@ -443,10 +382,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         },
       ],
       filterInput: '',
-      listOfDeletedPlts: [],
       listOfDeletedPltsCache: [],
       listOfDeletedPltsData: [],
-      listOfPlts: [],
       listOfPltsCache: [],
       listOfPltsData: [],
       selectedListOfDeletedPlts: [],
@@ -459,27 +396,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   data$: any;
   deletedPlts$: any;
   deletedPlts: any;
-  loading: boolean;
   selectedUserTags: any;
 
   generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
-
-  systemTagsMapping = {
-    grouped: {
-      peril: 'Peril',
-      regionDesc: 'Region',
-      currency: 'Currency',
-      sourceModellingVendor: 'Modelling Vendor',
-      sourceModellingSystem: 'Modelling System',
-      targetRapCode: 'Target RAP',
-      userOccurrenceBasis: 'User Occurence Basis',
-      xActAvailable: 'Published To Pricing',
-      xActUsed: 'Priced',
-      accumulated: 'Accumulated',
-      financial: 'Financial Perspectives'
-    },
-    nonGrouped: {}
-  };
 
   contextMenuItemsCache = this.getTableInputKey('contextMenuItems');
 
@@ -488,161 +407,110 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.updateTable( 'contextMenuItems',_.filter(this.contextMenuItemsCache, e => !toRestore ? ('Restore' != e.label) : !_.find(t, el => el == e.label)));
   }
 
-  ngOnInit() {
-      this.route$.params.pipe(
-        switchMap(({wsId, year}) => {
-          this.workspaceId = wsId;
-          this.uwy = year;
-          this.loading = true;
-          this.data$ = this.select(PltMainState.getPlts(this.workspaceId + '-' + this.uwy));
-          this.deletedPlts$ = this.select(PltMainState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
-          this.dispatch(new fromWorkspaceStore.loadAllPlts({
-            params: {
-              workspaceId: wsId, uwy: year
-            }
-          }));
-          return combineLatest(
-            this.data$,
-            this.deletedPlts$
-          );
-        })
-      ).pipe(this.unsubscribeOnDestroy).subscribe(([data, deletedData]: any) => {
-        let d1 = [];
-        let dd1 = [];
-        let d2 = [];
-        let dd2 = [];
-        this.loading = false;
-        this.systemTagsCount = {};
-
-        if (data) {
-          if (_.keys(this.systemTagsCount).length == 0) {
-            _.forEach(data, (v, k) => {
-              //Init Tags Counters
-
-              //Grouped Sys Tags
-              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                const tag = _.toString(v[section]);
-                if (tag) {
-                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
-                }
-              });
-
-              //NONE grouped Sys Tags
-              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
-                this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              });
-
-            });
-          }
-
-          _.forEach(data, (v, k) => {
-            d1.push({...v, pltId: k});
-            d2.push(k);
-
-            /*if (v.visible) {*/
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              const tag = _.toString(v[section]);
-              if (tag) {
-                if (this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0) {
-                  const {
-                    count,
-                    max
-                  } = this.systemTagsCount[sectionName][tag];
-
-                  this.systemTagsCount[sectionName][tag] = {
-                    ...this.systemTagsCount[sectionName][tag],
-                    count: v.visible ? count + 1 : count,
-                    max: max + 1
-                  };
-                }
-              }
-            });
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              const tag = v[section];
-              if (this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0) {
-                const {
-                  max,
-                  count
-                } = this.systemTagsCount[sectionName][section];
-                this.systemTagsCount[sectionName][section] = {
-                  ...this.systemTagsCount[sectionName][section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-              if (this.systemTagsCount[sectionName]['non-' + section] || this.systemTagsCount[sectionName]['non-' + section].count == 0) {
-                const {
-                  count,
-                  max
-                } = this.systemTagsCount[sectionName]['non-' + section];
-                this.systemTagsCount[sectionName]['non-' + section] = {
-                  ...this.systemTagsCount[sectionName]['non-' + section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-            });
-            /*}*/
-
-          });
-
-          this.listOfPlts = d2;
-          this.listOfPltsData = this.listOfPltsCache = d1;
-          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
-
-          _.forEach(data, (v, k) => {
-            if (v.opened) {
-              this.updateMenuKey('pltDetail', {pltId: k, ...v})
-            }
-          });
-        }
-
-        if (deletedData) {
-          _.forEach(deletedData, (v, k) => {
-            dd1.push({...v, pltId: k});
-            dd2.push(k);
-          });
-
-          this.listOfDeletedPlts = dd2;
-          this.listOfDeletedPltsData = this.listOfDeletedPltsCache = dd1;
-          this.selectedListOfDeletedPlts = _.filter(dd2, k => deletedData[k].selected);
-        }
-
-        this.updateTable('selectAll', !this.getTableInputKey('showDeleted')
-          ?
-          (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
-          :
-          (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0);
-
-        this.updateTable("someItemsAreSelected", !this.getTableInputKey('showDeleted') ?
-          this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
-          :
-          this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0)
-        this.detectChanges();
-      })
-      this.select(PltMainState.getProjects()).pipe(this.unsubscribeOnDestroy).subscribe((projects: any) => {
-        this.projects = _.map(projects, p => ({...p, selected: false}));
-        this.detectChanges();
-      })
-      this.getAttr('loading').pipe(this.unsubscribeOnDestroy).subscribe(l => this.loading = l)
-      this.userTags$.pipe(this.unsubscribeOnDestroy).subscribe(userTags => {
-        this.userTags = userTags || {};
-        this.detectChanges();
-      })
-      this.select(WorkspaceMainState.getLeftNavbarIsCollapsed).pipe(this.unsubscribeOnDestroy).subscribe(l => {
-        this.leftIsHidden = l;
-        this.detectChanges();
-      })
+  observeRouteParams(){
+    return this.route$.params.pipe(tap( ({wsId, year}) => {
+      this.workspaceId = wsId;
+      this.uwy = year;
+    }))
   }
 
-  getAttr(path) {
-    return this.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
+  observeRouteParamsWithSelector(operator){
+    return this.observeRouteParams()
+      .pipe(
+        switchMap( () => operator()),
+        this.unsubscribeOnDestroy
+      )
+  }
+
+  getPlts(){
+    return this.select(PltMainState.getPlts(this.workspaceId + '-' + this.uwy));
+  }
+
+  getDeletedPlts(){
+    return this.select(PltMainState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
+  }
+
+  getProjects() {
+    return this.select(PltMainState.getProjects(this.workspaceId + '-' + this.uwy));
+  }
+
+  getLeftNavBarIsCollapsed(){
+    return this.select(WorkspaceMainState.getLeftNavbarIsCollapsed);
+  }
+
+  getOpenedPlt(){
+    return this.select(PltMainState.getOpenedPlt(this.workspaceId + '-' + this.uwy));
+  }
+
+  ngOnInit() {
+    this.observeRouteParams()
+      .pipe(
+        switchMap( () => {
+          this.data$= this.getPlts();
+          this.dispatch(new fromWorkspaceStore.loadAllPlts({
+            params: {
+              workspaceId: this.workspaceId, uwy: this.uwy
+            }
+          }));
+          return this.data$;
+        }),
+        this.unsubscribeOnDestroy
+      ).subscribe( (data) => {
+        this.systemTagsCount= this.systemTagService.countSystemTags(this.systemTagsCount, data);
+
+        this.updateMenuKey('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
+        this.updateMenuKey('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
+        this.updateMenuKey('selectedListOfPlts', _.filter(data, (v,k) => v.selected));
+
+        this.detectChanges();
+    });
+
+    this.observeRouteParams()
+      .pipe(
+        switchMap( () => {
+          this.deletedPlts$ = this.getDeletedPlts();
+          this.dispatch(new fromWorkspaceStore.loadAllPlts({
+            params: {
+              workspaceId: this.workspaceId, uwy: this.uwy
+            }
+          }));
+          return this.deletedPlts$;
+        }),
+        this.unsubscribeOnDestroy
+      ).subscribe( (deletedData) => {
+        this.updateMenuKey('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
+        this.updateMenuKey('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
+        this.updateMenuKey('selectedListOfDeletedPlts', _.filter(deletedData, (v,k) => v.selected));
+
+        this.detectChanges();
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe( data => {
+      this.updateTable('selectAll', (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length)) && this.getTableInputKey('listOfPltsData').length > 0);
+      this.updateTable("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
+      this.detectChanges();
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getDeletedPlts()).subscribe(deletedPlts => {
+      this.updateTable('selectAllDeletedPlts', (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length)) && this.getTableInputKey('listOfDeletedPltsData').length > 0);
+      this.updateTable("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0);
+      this.detectChanges();
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
+      this.projects = _.map(projects, p => ({...p, selected: false}));
+      this.detectChanges();
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getLeftNavBarIsCollapsed).subscribe( l => {
+      this.leftIsHidden= l;
+      this.detectChanges();
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
+      this.updateMenuKey('pltDetail', openedPlt);
+      this.detectChanges();
+    })
   }
 
   sort(sort: { key: string, value: string }): void {
@@ -659,12 +527,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   tagModalIndex: any;
   tagModalVisible: boolean;
   modalSelect: any;
-  modalSelectCache: any;
   oldSelectedTags: any;
   tagForMenu: any;
   fromPlts: any;
   colorPickerIsVisible: any;
-  initColor: any;
   addTagModalPlaceholder: any;
   showDeleted: boolean;
   selectedItemForMenu: string;
@@ -672,32 +538,42 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   leftIsHidden: any;
   filterInput: string = "";
 
-  selectPltById(pltId) {
-    return this.select(state => _.get(state, `pltMainModel.data.${this.workspaceId + '-' + this.uwy}.${pltId}`));
+  viewDetail(){
+    this.openPltInDrawer(this.selectedPlt)
   }
 
   deletePlt() {
-    this.dispatch(new fromWorkspaceStore.deletePlt({pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]}))
+    this.dispatch(new fromWorkspaceStore.deletePlt({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      pltIds: this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu]
+    }));
   }
 
-  editTags() {
+  cloneTo() {
+    this.dispatch(new fromWorkspaceStore.setCloneConfig({from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.getTableInputKey('selectedListOfPlts')}}));
+    this.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`]);
+  }
+
+  manageTags() {
     this.tagModalVisible = true;
+    this.tagForMenu = {
+      ...this.tagForMenu,
+      tagName: ''
+    };
     this.fromPlts = true;
-    let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
-
-    /* _.forEach( this.listOfPltsData, (v,k) => {
-       if(v.selected) d.push(v.userTags);
-     })*/
-
-    //this.selectedUserTags = _.keyBy(_.intersectionBy(...d, 'tagId'), 'tagId')
-
-    this.modalSelect = this.modalSelectCache = _.intersectionBy(...d, 'tagId');
+    this.editingTag = false;
+    let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == k).userTags);
+    this.modalSelect = _.intersectionBy(...d, 'tagId');
     this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
   }
 
   restore() {
-    this.dispatch(new fromWorkspaceStore.restorePlt({pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))
-    this.updateTable('showDelete', !(this.listOfDeletedPlts.length === 0) ? this.getTableInputKey('showDeleted') : false);
+    this.dispatch(new fromWorkspaceStore.restorePlt({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      pltIds: this.getTableInputKey('selectedListOfDeletedPlts').length > 0 ? this.getTableInputKey('selectedListOfDeletedPlts') : [this.selectedItemForMenu]
+    }));
+    this.updateTable('showDeleted', !(this.getTableInputKey('listOfDeletedPlts').length === 0) ? this.getTableInputKey('showDeleted') : false);
+    this.generateContextMenu(this.getTableInputKey('showDeleted'));
   }
 
   closePltInDrawer(pltId) {
@@ -715,13 +591,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       pltId: plt
     }));
-    this.updateMenuKey('pltDetail', _.find(this.listOfPltsData, e => e.pltId == plt))
+    this.updateMenuKey('pltDetail', _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == plt));
     this.updateMenuKey('visible', true);
   }
 
   resetPath() {
     this.updateTable('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
-    this.projects = _.map(this.projects, p => ({...p, selected: false}))
+    this.projects = _.map(this.projects, p => ({...p, selected: false}));
     this.updateTable('showDeleted', false);
   }
 
@@ -731,15 +607,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   close(e: NzMenuItemDirective): void {
     this.dropdown.close();
-  }
-
-  checkAll($event) {
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map(!$event ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-        _.range(!$event ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({type: !this.getTableInputKey('selectAll') && !this.getTableInputKey("someItemsAreSelected")}))
-      )
-    );
   }
 
 
@@ -753,10 +620,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   selectSinglePLT($event) {
     this.toggleSelectPlts($event);
-  }
-
-  checkBoxSort($event) {
-    this.listOfPltsData = $event;
   }
 
   editTag() {
@@ -832,24 +695,20 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   toggleDeletePlts($event) {
     this.updateTable('showDeleted', $event)
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
-    this.updateTable('selectAll', !this.getTableInputKey('showDeleted')
-      ?
-      (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
-      :
-      (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0);
 
-    this.updateTable("someItemsAreSelected", !this.getTableInputKey('showDeleted') ?
-      this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
-      :
-      this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0)
+    this.updateTable('selectAll', (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length)) && this.getTableInputKey('listOfPltsData').length > 0);
+    this.updateTable("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
+
+    this.updateTable('selectAllDeletedPlts', (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length)) && this.getTableInputKey('listOfDeletedPltsData').length > 0);
+    this.updateTable("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0)
     // this.generateContextMenu(this.showDeleted);
   }
 
   unCheckAll() {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
-        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({type: false}))
+        _.map([...this.getTableInputKey('listOfPltsData'), ...this.getTableInputKey('listOfDeletedPltsData')], plt => plt.pltId),
+        _.range(this.getTableInputKey('listOfPltsData').length + this.getTableInputKey('listOfDeletedPltsData').length).map(el => ({type: false}))
       )
     );
   }
@@ -954,6 +813,25 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         break;
       case tableStore.sortChange:
         this.updateTable('sortData', action.payload);
+        break;
+      case tableStore.checkBoxSort:
+        this.updateTable('listOfPltData', action.payload);
+        break;
+      case tableStore.onCheckAll:
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(!action.payload ? this.getTableInputKey('listOfPltsData') : this.getTableInputKey('listOfDeletedPltsData'), plt => plt.pltId),
+            _.range(!action.payload ? this.getTableInputKey('listOfPltsData').length : this.getTableInputKey('listOfDeletedPltsData').length).map(el => ({type: !this.getTableInputKey('showDeleted') ? !this.getTableInputKey('selectAll') && !this.getTableInputKey("someItemsAreSelected") : !this.getTableInputKey('selectAllDeletedPlts') && !this.getTableInputKey("someDeletedItemsAreSelected")}))
+          )
+        );
+        break;
+      case tableStore.setSelectedMenuItem:
+        this.selectedItemForMenu = action.payload;
+        this.selectedPlt = action.payload;
+        break;
+
+      case tableStore.toggleSelectedPlts:
+        this.toggleSelectPlts(action.payload);
         break;
       default:
         console.log('table action dispatcher')

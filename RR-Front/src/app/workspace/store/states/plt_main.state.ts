@@ -42,8 +42,8 @@ export class PltMainState {
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
   @Selector()
-  static getProjects() {
-    return (state: any) => state.workspaceMain.openedWs.projects;
+  static getProjects(wsIdentifier: string) {
+    return (state: pltMainModel) => state[wsIdentifier].projects;
   }
 
   @Selector()
@@ -52,8 +52,13 @@ export class PltMainState {
   }
 
   @Selector()
-  static getUserTags(state: pltMainModel) {
-    return _.get(state, 'userTags', {});
+  static getUserTags(wsIdentifier: string) {
+    return (state: pltMainModel) => _.get(state[wsIdentifier], 'userTags', {});
+  }
+
+  @Selector()
+  static getOpenedPlt(wsIdentifier: string) {
+    return (state: pltMainModel) => _.get(state[wsIdentifier], 'openedPlt', {});
   }
 
   @Selector()
