@@ -6,7 +6,7 @@
       <h4>Contract</h4>
     </div>
     <app-pin
-      [active]="!workspace?.isPinned"
+      [active]="!workspaceInfo?.isPinned"
       (pinWs)="pinWorkspace()"
       (unpinWs)="unPinWorkspace()"
     >

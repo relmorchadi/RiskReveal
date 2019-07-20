@@ -4,6 +4,7 @@ import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
+import {StateSubscriber} from '../../model/state-subscriber';
 import {UpdateWsRouting} from "../../store/actions";
 import {Navigate} from "@ngxs/router-plugin";
 
@@ -12,7 +13,7 @@ import {Navigate} from "@ngxs/router-plugin";
   templateUrl: './workspace-activity.component.html',
   styleUrls: ['./workspace-activity.component.scss']
 })
-export class WorkspaceActivityComponent extends BaseContainer implements OnInit {
+export class WorkspaceActivityComponent extends BaseContainer implements OnInit, StateSubscriber {
 
   wsIdentifier;
   workspaceInfo: any;

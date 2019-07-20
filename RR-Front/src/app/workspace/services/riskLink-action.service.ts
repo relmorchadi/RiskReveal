@@ -15,6 +15,8 @@ import {forkJoin} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {RiskLinkState} from '../store/states';
 import {tap} from "rxjs/internal/operators/tap";
+import {WorkspaceModel} from "../model";
+import produce from "immer";
 
 @Injectable({
   providedIn: 'root'
@@ -1035,35 +1037,41 @@ export class RiskLinkStateService {
   }
 
   /** LOAD DATA WHEN OPEN RISK LINK PAGE */
-  loadRiskLinkData(ctx: StateContext<RiskLinkModel>) {
+  loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     return this.riskApi.searchRiskLinkData().pipe(
       mergeMap(
         (ds: any) =>
           of(ctx.patchState(
-            {
-              listEdmRdm: {
-                ...state.listEdmRdm,
-                data: Object.assign({},
-                  ...ds.content.map(item => ({
-                      [item.id]: {
-                        ...item,
-                        selected: false,
-                        source: '',
-                      }
-                    }
-                  ))),
-                searchValue: '',
-                totalNumberElement: ds.totalElements,
-                numberOfElement: ds.size
-              },
-              display: {displayImport: false, displayTable: false},
-              results: null,
-              summaries: null,
-              analysis: null,
-              portfolios: null,
-              activeAddBasket: false,
-            }))
+            produce(
+              ctx.getState(), draft => {
+                draft.content[wsIdentifier].riskLink = {
+                  listEdmRdm: {
+                    ...draft.content[wsIdentifier].riskLink.listEdmRdm,
+                    data: Object.assign({},
+                      ...ds.content.map(item => ({
+                          [item.id]: {
+                            ...item,
+                            selected: false,
+                            source: '',
+                          }
+                        }
+                      ))),
+                    searchValue: '',
+                    totalNumberElement: ds.totalElements,
+                    numberOfElement: ds.size
+                  },
+                  display: {displayImport: false, displayTable: false},
+                  results: null,
+                  summaries: null,
+                  analysis: null,
+                  portfolios: null,
+                  activeAddBasket: false,
+                };
+              }
+            )
+          ))
       )
     );
   }

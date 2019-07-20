@@ -3,8 +3,8 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
 import {StateSubscriber} from '../../model/state-subscriber';
-import * as fromHeader from "../../../core/store/actions/header.action";
-import * as fromWs from "../../store/actions";
+import * as fromHeader from '../../../core/store/actions/header.action';
+import * as fromWs from '../../store/actions';
 import {UpdateWsRouting} from "../../store/actions";
 import {Navigate} from "@ngxs/router-plugin";
 

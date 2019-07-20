@@ -1,9 +1,11 @@
 import {
   Component,
   ComponentFactoryResolver,
+  EventEmitter,
   Input,
   OnChanges,
   OnInit,
+  Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -41,7 +43,6 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
 
   @ViewChild(WsRouterDirective)
   routingTemplate: WsRouterDirective;
-
   readonly componentsMapper = {
     projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
     Contract: {component: WorkspaceContractComponent, selector: (state) => state},
@@ -68,6 +69,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log('Changes', changes);
     if (changes.state && this.currentInstance) {
       if (changes.state.currentValue.data.route != changes.state.previousValue.data.route)
         this.initComponent(changes.state.currentValue.data.route);

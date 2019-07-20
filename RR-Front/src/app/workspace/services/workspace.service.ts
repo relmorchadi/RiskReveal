@@ -230,11 +230,12 @@ export class WorkspaceService {
 
   private _isFavorite({wsId, uwYear}): boolean {
     const favoriteWs = this.store.selectSnapshot(HeaderState.getFavorite);
-    return _.find(favoriteWs, item => item.wsId == wsId && item.uwYear == uwYear);
+    return _.findIndex(favoriteWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
   }
 
   private _isPinned({wsId, uwYear}): boolean {
     const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
-    return _.find(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear);
+    console.log(_.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1);
+    return _.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
   }
 }
