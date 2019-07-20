@@ -198,22 +198,22 @@ export class WorkspaceState {
 
   @Action(fromPlt.loadAllPltsSuccess)
   LoadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPltsSuccess) {
-    return this.pltStateService.LoadAllPltsSuccess(ctx, payload);
+    return this.pltStateService.loadAllPltsSuccess(ctx, payload);
   }
 
   @Action(fromPlt.ToggleSelectPlts)
   ptlManagerSelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.ToggleSelectPlts) {
-    return this.pltStateService.SelectPlts(ctx, payload);
+    return this.pltStateService.selectPlts(ctx, payload);
   }
 
   @Action(fromPlt.OpenPLTinDrawer)
   OpenPltinDrawer(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.OpenPLTinDrawer) {
-    return this.pltStateService.OpenPltinDrawer(ctx, payload);
+    return this.pltStateService.openPltInDrawer(ctx, payload);
   }
 
   @Action(fromPlt.ClosePLTinDrawer)
   ClosePLTinDrawer(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.ClosePLTinDrawer) {
-    return this.pltStateService.ClosePLTinDrawer(ctx,payload);
+    return this.pltStateService.closePLTinDrawer(ctx,payload);
   }
 
   @Action(fromPlt.setUserTagsFilters)
@@ -411,7 +411,6 @@ export class WorkspaceState {
   @Action(fromWS.saveSelectedPlts)
   saveSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveSelectedPlts) {
     this.calibrationService.saveSelectedPlts(ctx, payload)
-
   }
 
   @Action(fromWS.saveAdjustmentApplication)

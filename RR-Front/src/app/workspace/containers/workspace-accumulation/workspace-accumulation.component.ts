@@ -18,7 +18,6 @@ import * as fromWs from "../../store/actions";
 })
 export class WorkspaceAccumulationComponent extends BaseContainer implements OnInit, StateSubscriber {
 
-  actionsEmitter: EventEmitter<any>;
   wsIdentifier;
   workspaceInfo: any;
 
@@ -57,7 +56,7 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
 
   pinWorkspace() {
     const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
-    this.actionsEmitter.emit([
+    this.dispatch([
       new fromHeader.PinWs({
         wsId,
         uwYear,
@@ -69,7 +68,7 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
 
   unPinWorkspace() {
     const {wsId, uwYear} = this.workspaceInfo;
-    this.actionsEmitter.emit([
+    this.dispatch([
       new fromHeader.UnPinWs({wsId, uwYear}),
       new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
     ]);

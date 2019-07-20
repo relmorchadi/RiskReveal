@@ -17,7 +17,6 @@ import * as fromWs from '../../store/actions';
 })
 export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
 
-  actionsEmitter: EventEmitter<any>;
   wsIdentifier;
   workspaceInfo: any;
 
@@ -33,7 +32,6 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
-    this.actionsEmitter = new EventEmitter();
   }
 
   ngOnInit() {
@@ -58,7 +56,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
 
   pinWorkspace() {
     const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
-    this.actionsEmitter.emit([
+    this.dispatch([
       new fromHeader.PinWs({
         wsId,
         uwYear,
@@ -70,7 +68,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
 
   unPinWorkspace() {
     const {wsId, uwYear} = this.workspaceInfo;
-    this.actionsEmitter.emit([
+    this.dispatch([
       new fromHeader.UnPinWs({wsId, uwYear}),
       new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
     ]);
