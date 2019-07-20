@@ -16,7 +16,7 @@ import {PIPES} from './pipes';
 import {DIRECTIVES} from './directives';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {NgxsStoragePluginModule, STORAGE_ENGINE, StorageEngine} from '@ngxs/storage-plugin';
+import {STORAGE_ENGINE, StorageEngine} from '@ngxs/storage-plugin';
 import {SharedModule} from '../shared/shared.module';
 import {StoreModule} from './store';
 import * as _ from 'lodash';
@@ -63,7 +63,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
-    NgxsStoragePluginModule.forRoot(),
+    /*    NgxsStoragePluginModule.forRoot(),*/
     StoreModule,
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],

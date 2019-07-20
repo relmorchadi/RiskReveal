@@ -1,9 +1,8 @@
 import {Action, createSelector, Selector, State, StateContext, Store} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions'
-import {deselectAll, PatchCalibrationStateAction, selectRow} from '../actions'
+import {PatchCalibrationStateAction} from '../actions'
 import {WsApi} from '../../services/workspace.api';
-import {WorkspaceMainState} from "../../../core/store/states";
 import {WorkspaceMain} from "../../../core/model";
 import {CalibrationService} from "../../services/calibration.service";
 import {WorkspaceService} from "../../services/workspace.service";
@@ -87,11 +86,15 @@ export class WorkspaceState {
   }
 
   static getPlts(wsIdentifier: string) {
-    return createSelector([WorkspaceMainState], (state: WorkspaceModel) => _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => !e.deleted), 'pltId'))
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => {
+      return _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => !e.deleted), 'pltId')
+    })
   }
 
   static getDeletedPlts(wsIdentifier: string) {
-    return createSelector([WorkspaceMainState], (state: WorkspaceModel) => _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => e.deleted), 'pltId'));
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => {
+      return _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => e.deleted), 'pltId')
+    });
   }
 
   @Selector()
@@ -100,7 +103,7 @@ export class WorkspaceState {
   }
 
   static getLeftNavbarIsCollapsed() {
-    return createSelector([WorkspaceMainState], (state: WorkspaceMain) => {
+    return createSelector([WorkspaceState], (state: WorkspaceMain) => {
       return _.get(state, "leftNavbarIsCollapsed");
     });
   }
@@ -213,7 +216,7 @@ export class WorkspaceState {
 
   @Action(fromWS.ToggleSelectPltsFromCalibration)
   SelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectPltsFromCalibration) {
-    this.calibrationService.SelectPlts(payload)
+    this.calibrationService.SelectPlts(ctx, payload)
   }
 
   @Action(fromWS.calibrateSelectPlts)
@@ -302,16 +305,5 @@ export class WorkspaceState {
   @Action(PatchCalibrationStateAction)
   patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: PatchCalibrationStateAction) {
     this.calibrationService.patchSearchState(ctx, payload)
-  }
-
-
-  @Action(selectRow)
-  selectRow(ctx: StateContext<WorkspaceModel>, {payload}: selectRow) {
-    this.calibrationService.selectRow(ctx, payload)
-  }
-
-  @Action(deselectAll)
-  deselectAll(ctx: StateContext<WorkspaceModel>, {payload}: deselectAll) {
-    this.calibrationService.deselectAll(ctx, payload)
   }
 }

@@ -1,8 +1,7 @@
 import {Injectable} from '@angular/core';
 import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../store/actions";
-import {deselectAll, PatchCalibrationStateAction} from "../store/actions";
-import {catchError, map, mergeMap, tap} from "rxjs/operators";
+import {catchError, map, mergeMap} from "rxjs/operators";
 import * as _ from "lodash";
 import {PltApi} from "./plt.api";
 import {
@@ -38,10 +37,12 @@ export class CalibrationService implements NgxsOnInit {
         this.prefix = wsId + '-' + year
       }));
   }
+
   getRandomInt(min = 0, max = 4) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  /*Load Plts*/
   loadAllPltsFromCalibration(ctx: StateContext<any>, payload: any) {
     this.ctx = ctx;
     const {params} = payload;
@@ -130,24 +131,19 @@ export class CalibrationService implements NgxsOnInit {
 
   }
 
-  FilterPlts(ctx
-               :
-               StateContext<any>, payload
-               :
-               any
-  ) {
+  FilterPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     const {
       wsIdentifier
     } = payload;
     const {
       filters
-    } = state;
+    } = state.content[this.prefix].calibration;
 
     let newData = {};
 
     if (filters.userTag.length > 0) {
-      _.forEach(state.data[wsIdentifier], (plt: any, k) => {
+      _.forEach(state.content[this.prefix].calibration.data[wsIdentifier], (plt: any, k) => {
         if (_.some(filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
           newData[k] = {...plt, visible: true};
         } else {
@@ -155,7 +151,7 @@ export class CalibrationService implements NgxsOnInit {
         }
       });
     } else {
-      _.forEach(state.data[wsIdentifier], (plt, k) => {
+      _.forEach(state.content[this.prefix].calibration.data[wsIdentifier], (plt, k) => {
         newData[k] = {...plt, visible: true};
       });
     }
@@ -164,29 +160,15 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
-  SelectPlts(payload
-               :
-               any
-  ) {
-    const state = this.ctx.getState();
-    console.log(payload)
+  /*Toggle Select Plts*/
+  SelectPlts(ctx: StateContext<any>, payload: any) {
+    const state = ctx.getState();
     const {
       plts,
       wsIdentifier
     } = payload;
-
-
-    console.log(plts);
-
-    let inComingData = {};
-
-    _.forEach(plts, (v, k) => {
-      inComingData[k] = {
-        selected: v.type
-      };
-    });
-    this.ctx.patchState(produce(this.ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data = _.merge({}, state.data, {[wsIdentifier]: inComingData})
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.data[wsIdentifier] = _.merge({}, state.content[wsIdentifier].calibration.data[wsIdentifier], plts)
     }));
   }
 
@@ -211,13 +193,7 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
-  initCalibrationData(ctx
-                        :
-                        StateContext<any>, payload
-                        :
-                        any
-  ) {
-
+  initCalibrationData(ctx: StateContext<any>, payload: any) {
     ctx.patchState({
       content: {
         [this.prefix]: {
@@ -235,19 +211,13 @@ export class CalibrationService implements NgxsOnInit {
         }
       }
     });
-
   }
 
-  setFilterCalibration(ctx
-                         :
-                         StateContext<any>, payload
-                         :
-                         any
-  ) {
+  setFilterCalibration(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
 
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.filters = _.assign({}, state.filters, payload)
+      draft.content[this.prefix].calibration.filters = _.assign({}, state.content[this.prefix].calibration.filters, payload)
     }));
 
   }
@@ -264,12 +234,7 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
-  saveAdjustment(ctx
-                   :
-                   StateContext<any>, payload
-                   :
-                   any
-  ) {
+  saveAdjustment(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -286,29 +251,19 @@ export class CalibrationService implements NgxsOnInit {
     }
     let newAdj = {...adjustement};
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.adjustments = [...state.adjustments, newAdj]
+      draft.content[this.prefix].calibration.adjustments = [...state.content[this.prefix].calibration.adjustments, newAdj]
     }));
 
   }
 
-  dropThreadAdjustment(ctx
-                         :
-                         StateContext<any>, payload
-                         :
-                         any
-  ) {
+  dropThreadAdjustment(ctx: StateContext<any>, payload: any) {
     let adjustmentArray = payload.adjustmentArray;
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.adjustments = [...adjustmentArray]
     }));
   }
 
-  saveAdjModification(ctx
-                        :
-                        StateContext<any>, payload
-                        :
-                        any
-  ) {
+  saveAdjModification(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -322,19 +277,15 @@ export class CalibrationService implements NgxsOnInit {
       adjustement.value = adjustementType.abv;
     }
     let newAdj = {...adjustement};
-    let index = _.findIndex(state.adjustments, {id: newAdj.id});
+    console.log("==================>", newAdj);
+    let index = _.findIndex(state.content[this.prefix].calibration.adjustments, {id: newAdj.id});
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.adjustments = [..._.merge([], state.adjustments, {[index]: newAdj})]
+      draft.content[this.prefix].calibration.adjustments[index] = newAdj
     }));
 
   }
 
-  replaceAdjustement(ctx
-                       :
-                       StateContext<any>, payload
-                       :
-                       any
-  ) {
+  replaceAdjustement(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
 
     let adjustement = payload.adjustement;
@@ -362,7 +313,7 @@ export class CalibrationService implements NgxsOnInit {
     })
     if (all) {
       ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[this.prefix].calibration.adjustmentApplication = [..._.merge([], state.adjustmentApplication, adjustmentApplication)]
+        draft.content[this.prefix].calibration.adjustmentApplication = [..._.merge([], state.content[this.prefix].calibration.adjustmentApplication.adjustmentApplication, adjustmentApplication)]
       }));
     } else {
       console.log(index);
@@ -380,12 +331,7 @@ export class CalibrationService implements NgxsOnInit {
 
   }
 
-  saveAdjustmentInPlt(ctx
-                        :
-                        StateContext<any>, payload
-                        :
-                        any
-  ) {
+  saveAdjustmentInPlt(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -411,12 +357,7 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
-  applyAdjustment(ctx
-                    :
-                    StateContext<any>, payload
-                    :
-                    any
-  ) {
+  applyAdjustment(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
@@ -433,7 +374,7 @@ export class CalibrationService implements NgxsOnInit {
       adjustement.linear = true;
       adjustement.value = adjustementType.abv;
     }
-    let adjustmentApplication = _.merge({}, state.adjustmentApplication);
+    let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
     console.log(adjustmentApplication);
     let newAdj = {...adjustement};
 
@@ -449,52 +390,37 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
-  dropAdjustment(ctx
-                   :
-                   StateContext<any>, payload
-                   :
-                   any
-  ) {
+  dropAdjustment(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
 
     let pltId = payload.pltId;
     let newAdj = {...payload.adjustement};
 
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.adjustmentApplication = [...state.adjustmentApplication, {
+      draft.content[this.prefix].calibration.adjustmentApplication = [...state.content[this.prefix].calibration.adjustmentApplication, {
         pltId: pltId,
         adj: newAdj
       }]
     }));
   }
 
-  deleteAdjsApplication(ctx
-                          :
-                          StateContext<any>, payload
-                          :
-                          any
-  ) {
+  deleteAdjsApplication(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let index = payload.index;
     let pltId = payload.pltId;
-    let adjustmentApplication = _.merge([], state.adjustmentApplication);
+    let adjustmentApplication = _.merge([], state.content[this.prefix].calibration.adjustmentApplication);
     adjustmentApplication[pltId].splice(index, 1);
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.adjustmentApplication = [...adjustmentApplication]
     }));
   }
 
-  deleteAdjustment(ctx
-                     :
-                     StateContext<any>, payload
-                     :
-                     any
-  ) {
+  deleteAdjustment(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let adjustement = payload.adjustment;
 
-    let index = _.findIndex(state.adjustments, adjustement);
-    let adjustments = _.merge([], state.adjustments);
+    let index = _.findIndex(state.content[this.prefix].calibration.adjustments, adjustement);
+    let adjustments = _.merge([], state.content[this.prefix].calibration.adjustments);
 
     adjustments.splice(index, 1);
     ctx.patchState(produce(ctx.getState(), draft => {
@@ -502,24 +428,14 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
-  saveSelectedPlts(ctx
-                     :
-                     StateContext<any>, payload
-                     :
-                     any
-  ) {
+  saveSelectedPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.selectedPLT = _.merge({}, payload)
     }));
   }
 
-  saveAdjustmentApplication(ctx
-                              :
-                              StateContext<any>, payload
-                              :
-                              any
-  ) {
+  saveAdjustmentApplication(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.adjustmentApplication = _.merge({}, payload)
@@ -535,109 +451,4 @@ export class CalibrationService implements NgxsOnInit {
         draft.content[this.prefix].calibration[payload.key] = payload.value
       }));
   }
-
-  selectRow(ctx
-              :
-              StateContext<any>, payload
-              :
-              any
-  ) {
-    let state = ctx.getState();
-    const event = payload.event;
-    const datatable = payload.datatable;
-    let pure = _.merge({}, state.pure);
-    let index;
-    if (event.ctrlKey) {
-      console.log('ctrl')
-      ctx.dispatch(new PatchCalibrationStateAction({key: 'lastCheckedBool', value: true}));
-      _.forIn(pure.dataTable, function (value, key) {
-        if (_.findIndex(value.thread, datatable) != -1) {
-          index = _.findIndex(value.thread, datatable);
-          if (value.thread[index].checked == false) {
-            value.thread[index].checked = true;
-          } else {
-            value.thread[index].checked = false;
-          }
-        }
-      })
-    } else if (event.shiftKey) {
-      console.log('shift')
-
-      ctx.dispatch(new PatchCalibrationStateAction({key: 'lastCheckedBool', value: true}));
-      let between = false;
-      if (_.isNil(state.firstChecked)) {
-        ctx.dispatch(new PatchCalibrationStateAction({
-          key: 'firstChecked',
-          value: state.pure.dataTable[0].thread[0]
-        }));
-      }
-      let lastChecked = state.firstChecked;
-      // this.store$.dispatch(new deselectAll({lastChecked:lastChecked}))
-      if (lastChecked == datatable) {
-        return;
-      }
-      _.forIn(pure.dataTable, function (value, key) {
-        _.forIn(value.thread, function (plt, key) {
-          if (between) {
-            plt.checked = true
-          }
-          if (plt == lastChecked || plt == datatable) {
-            plt.checked = true;
-            between = !between;
-          }
-        })
-      })
-    } else {
-      console.log('else')
-      let checked = datatable.checked;
-      let booShift = state.lastCheckedBool;
-      console.log('booShift', booShift);
-      console.log('checked', checked);
-      return ctx.dispatch(new deselectAll({lastChecked: null})).pipe(
-        tap(() => {
-            ctx.dispatch(new PatchCalibrationStateAction({key: 'firstChecked', value: datatable}));
-            _.forIn(pure.dataTable, function (value, key) {
-              if (_.findIndex(value.thread, datatable) != -1) {
-                index = _.findIndex(value.thread, datatable);
-                if (!booShift) {
-                  value.thread[index].checked = !checked;
-                } else {
-                  value.thread[index].checked = true;
-                }
-              }
-            })
-          ctx.patchState(produce(ctx.getState(), draft => {
-            draft.content[this.prefix].calibration.pure = pure
-          }));
-            this.store$.dispatch(new PatchCalibrationStateAction({key: 'lastCheckedBool', value: false}));
-          }
-        )
-      );
-    }
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.pure = pure
-    }));
-    this.store$.dispatch(new PatchCalibrationStateAction({key: 'lastCheckedBool', value: false}));
-  }
-
-  deselectAll(ctx
-                :
-                StateContext<any>, payload
-                :
-                any
-  ) {
-    let state = ctx.getState();
-    let pure = _.merge({}, state.pure);
-    const lastChecked = payload.lastChecked;
-    this.store$.dispatch(new PatchCalibrationStateAction({key: 'firstChecked', value: lastChecked}));
-    _.forIn(pure.dataTable, function (value, key) {
-      _.forIn(value.thread, function (plt, key) {
-        plt.checked = false;
-      })
-    })
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.pure = pure
-    }));
-  }
-
 }
