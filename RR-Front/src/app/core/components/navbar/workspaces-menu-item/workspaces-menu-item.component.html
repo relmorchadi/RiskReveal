@@ -57,7 +57,7 @@
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="FavouriteHeaderContent">
-        <div class="popup-tab-content-term">
+        <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search" [(ngModel)]="favoriteSearch"/>
@@ -101,7 +101,7 @@
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="AssignedHeaderContent">
-        <div class="popup-tab-content-term">
+        <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search"/>
@@ -132,7 +132,7 @@
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="PinnedHeaderContent">
-        <div class="popup-tab-content-term">
+        <div class="popup-tab-content popover-menu">
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search" [(ngModel)]="pingedSearch"/>
@@ -181,7 +181,7 @@
 
   <ng-template #RecentHeaderContent>
     <span style="width: 5px">Recent &nbsp; <span
-      class="tags-info"><!--{{state.workspacePagination.numberOfElement}}--></span></span>
+      class="tags-info">{{(recent | keys)?.length}}</span></span>
   </ng-template>
 
   <ng-template #FavouriteHeaderContent>

@@ -94,7 +94,6 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   }
 
   private initComponent(route = this.state.data.route) {
-    console.log('Init component', route);
     this.subscription ? this.subscription.unsubscribe() : null;
     const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.projects;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(correspondingComponent.component);
@@ -102,9 +101,11 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     containerRef.clear();
     const componentRef = containerRef.createComponent(componentFactory);
     this.currentInstance = <StateSubscriber>componentRef.instance;
-    this.currentInstance.patchState(this.state);
-    this.subscription = this.currentInstance.actionsEmitter
-      .subscribe(action => this.actionsEmitter.emit(action));
+    if (this.currentInstance) {
+      this.currentInstance.patchState(this.state);
+      this.subscription = this.currentInstance.actionsEmitter
+        .subscribe(action => this.actionsEmitter.emit(action));
+    }
   }
 
 

@@ -2,9 +2,9 @@
   <div class="a-app-header">
     <h4>Expected Scope & Completeness</h4>
     <app-pin
-      [active]="!workspace.pinged"
-      [workspace]="workspace"
-      [index]="index"
+      [active]="!workspaceInfo?.isPinned"
+      (pinWs)="pinWorkspace()"
+      (unpinWs)="unPinWorkspace()"
     >
     </app-pin>
   </div>
@@ -79,7 +79,7 @@
               </div>
             </th>
 
-            <th *ngFor="let item of workspace.treatySections" style="width:90px" class="divided-col">
+            <th *ngFor="let item of workspace?.treatySections" style="width:90px" class="divided-col">
               <div>{{item}}</div>
               <div class="icon-holder">
                 <i class="icon-share-folder"></i>
@@ -102,7 +102,7 @@
                 <i class="icon-map-marker-alt"></i><span class="code-rp">{{rowData?.regionPerilCode}}</span><span style="font-weight: 400">{{rowData?.type}}</span>
               </div>
             </th>
-            <th *ngFor="let item of workspace.treatySections" class="divided-col">
+            <th *ngFor="let item of workspace?.treatySections" class="divided-col">
               <div class="icon-holder">
                 <ng-container>
                   <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
@@ -123,7 +123,7 @@
 
         </ng-template>
         <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
-          <ng-container *ngFor="let grain of rowData.grain">
+          <ng-container *ngFor="let grain of rowData?.grain">
             <tr [ngClass]="{'expanded-inner-row': grain.expanded}">
               <th class="inner-line">
                 <div class="grain-info-wrapper" (click)="grain.expanded = !grain.expanded">
@@ -136,7 +136,7 @@
                   </div>
                 </div>
               </th>
-              <th class="divided-col" *ngFor="let item of workspace.treatySections">
+              <th class="divided-col" *ngFor="let item of workspace?.treatySections">
                 <div class="icon-holder">
                   <ng-container>
                     <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
@@ -171,7 +171,7 @@
                     <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
                   </div>
                 </th>
-                <th class="divided-col" *ngFor="let item of workspace.treatySections">
+                <th class="divided-col" *ngFor="let item of workspace?.treatySections">
                   <div class="icon-holder">
                     <ng-container>
                       <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>

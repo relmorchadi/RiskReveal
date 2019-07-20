@@ -1,19 +1,26 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {PltMainState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {combineLatest} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {data} from '../workspace-scope-completence/data';
+import {dataTable} from '../workspace-scope-completence/data';
 import * as _ from 'lodash';
 import {BaseContainer} from '../../../shared/base';
+import {StateSubscriber} from "../../model/state-subscriber";
+import * as fromHeader from "../../../core/store/actions/header.action";
+import * as fromWs from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-accumulation',
   templateUrl: './workspace-accumulation.component.html',
   styleUrls: ['./workspace-accumulation.component.scss']
 })
-export class WorkspaceAccumulationComponent extends BaseContainer implements OnInit {
+export class WorkspaceAccumulationComponent extends BaseContainer implements OnInit, StateSubscriber {
+
+  actionsEmitter: EventEmitter<any>;
+  wsIdentifier;
+  workspaceInfo: any;
 
   check = true;
   @Select(PltMainState.getPlts) data$;
@@ -30,7 +37,7 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
   }
 
   ngOnInit() {
-    this.dataSource = data.dataSource;
+    this.dataSource = dataTable.dataSource;
     combineLatest(
       this.wsData$,
       this.route.params
@@ -41,6 +48,31 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
         console.log(this.workspace);
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
+  }
+
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
+    this.wsIdentifier = wsIdentifier;
+  }
+
+  pinWorkspace() {
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
+    this.actionsEmitter.emit([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
+
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.actionsEmitter.emit([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ]);
   }
 
   ngOnDestroy(): void {

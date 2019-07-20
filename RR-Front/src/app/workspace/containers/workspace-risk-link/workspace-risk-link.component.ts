@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -24,15 +24,18 @@ import {
   SelectRiskLinkEDMAndRDMAction,
   ToggleRiskLinkEDMAndRDMAction
 } from '../../store/actions';
+import * as fromWs from '../../store/actions';
 import {DataTables} from './data';
 import {BaseContainer} from '../../../shared/base';
+import {StateSubscriber} from '../../model/state-subscriber';
+import * as fromHeader from '../../../core/store/actions/header.action';
 
 @Component({
   selector: 'app-workspace-risk-link',
   templateUrl: './workspace-risk-link.component.html',
   styleUrls: ['./workspace-risk-link.component.scss'],
 })
-export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit {
+export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit, StateSubscriber {
 
   regionPeril;
   hyperLinks: string[] = ['Risk link', 'File-based'];
@@ -44,6 +47,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
     wsId: string,
     uwYear: string
   };
+
+  actionsEmitter: EventEmitter<any>;
+  wsIdentifier;
+  workspaceInfo: any;
 
   tree = [];
 
@@ -110,6 +117,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
+    this.actionsEmitter = new EventEmitter();
   }
 
   ngOnInit() {
@@ -153,6 +161,31 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
     this.financialStandardContent = DataTables.financialStandarContent;
   }
 
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
+    console.log('this is ws data', data);
+    this.wsIdentifier = wsIdentifier;
+  }
+
+  pinWorkspace() {
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
+    this.actionsEmitter.emit([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
+
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.actionsEmitter.emit([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ]);
+  }
 
   changeFinancialPTarget(target) {
   }

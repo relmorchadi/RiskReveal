@@ -3,15 +3,15 @@ import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import * as fromWs from '../../store/actions/workspace.actions'
-import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/actions/workspace.actions'
-import {BaseContainer} from "../../../shared/base";
-import {WorkspaceState} from "../../store/states";
-import {PatchWorkspaceMainStateAction} from "../../../core/store/actions";
-import {Navigate} from "@ngxs/router-plugin";
-import {map} from "rxjs/operators";
+import * as fromWs from '../../store/actions/workspace.actions';
+import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/actions/workspace.actions';
+import {BaseContainer} from '../../../shared/base';
+import {WorkspaceState} from '../../store/states';
+import {PatchWorkspaceMainStateAction} from '../../../core/store/actions';
+import {Navigate} from '@ngxs/router-plugin';
+import {map} from 'rxjs/operators';
 import * as fromHeader from 'src/app/core/store/actions/header.action';
-import {HelperService} from "../../../shared/services";
+import {HelperService} from '../../../shared/services';
 
 
 @Component({
@@ -99,7 +99,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
       wsId,
       uwYear,
       route: 'projects'
-    }))
+    }));
   }
 
   generateYear(year, years, title = '') {

@@ -1,17 +1,25 @@
-import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
+import {StateSubscriber} from '../../model/state-subscriber';
+import * as fromHeader from "../../../core/store/actions/header.action";
+import * as fromWs from "../../store/actions";
 
 @Component({
   selector: 'app-workspace-contract',
   templateUrl: './workspace-contract.component.html',
   styleUrls: ['./workspace-contract.component.scss']
 })
-export class WorkspaceContractComponent extends BaseContainer implements OnInit {
+export class WorkspaceContractComponent extends BaseContainer implements OnInit, StateSubscriber {
   collapseHead = false;
   collapseLeft = false;
   collapseRight = false;
+
+  actionsEmitter: EventEmitter<any>;
+  wsIdentifier;
+  workspaceInfo: any;
+
   hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
   hyperLinksRoutes: any = {
     'Projects': '/projects',
@@ -238,15 +246,41 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit 
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
+    this.actionsEmitter = new EventEmitter();
   }
 
   ngOnInit() {
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
-      this.hyperLinksConfig= {
+      this.hyperLinksConfig = {
         wsId,
         uwYear: year
-      }
-    })
+      };
+    });
+  }
+
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
+    this.wsIdentifier = wsIdentifier;
+  }
+
+  pinWorkspace() {
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
+    this.actionsEmitter.emit([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
+
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.actionsEmitter.emit([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ]);
   }
 
   changeCollapse() {
