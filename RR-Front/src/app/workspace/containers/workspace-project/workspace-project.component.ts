@@ -26,7 +26,6 @@ import {BaseContainer} from "../../../shared/base";
   providers: [MessageService]
 })
 export class WorkspaceProjectComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
-  actionsEmitter: EventEmitter<any>;
   // unSubscribe$: Subject<void>;
   collapseWorkspaceDetail = true;
   selectedPrStatus = '1';
@@ -73,7 +72,6 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     console.log('init project');
-    this.actionsEmitter = new EventEmitter();
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -125,7 +123,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   }
 
   selectProject(project) {
-    this.actionsEmitter.emit(new SelectProjectAction(project));
+    this.dispatch(new SelectProjectAction(project));
   }
 
   delete(project) {
@@ -146,7 +144,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   pinWorkspace() {
     const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
-    this.actionsEmitter.emit([
+    this.dispatch([
       new fromHeader.PinWs({
         wsId,
         uwYear,
@@ -158,7 +156,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   unPinWorkspace() {
     const {wsId, uwYear} = this.workspace;
-    this.actionsEmitter.emit([
+    this.dispatch([
       new fromHeader.UnPinWs({wsId, uwYear}),
       new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
     ])
