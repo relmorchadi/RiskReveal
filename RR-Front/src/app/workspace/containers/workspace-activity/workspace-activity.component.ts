@@ -4,6 +4,8 @@ import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
+import {UpdateWsRouting} from "../../store/actions";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-activity',
@@ -149,6 +151,15 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit 
       new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
     ]);
   }
+
+  navigateFromHyperLink({route}){
+    const {wsId, uwYear}= this.workspaceInfo;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
+  }
+
 
   ngOnDestroy(): void {
     this.destroy();

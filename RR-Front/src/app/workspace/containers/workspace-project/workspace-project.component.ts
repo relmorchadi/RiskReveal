@@ -18,6 +18,8 @@ import {
 } from '../../../core/store/actions/workspace-main.action';
 import {MessageService} from 'primeng/api';
 import {BaseContainer} from "../../../shared/base";
+import {UpdateWsRouting} from "../../store/actions";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'workspace-project',
@@ -26,7 +28,6 @@ import {BaseContainer} from "../../../shared/base";
   providers: [MessageService]
 })
 export class WorkspaceProjectComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
-  // unSubscribe$: Subject<void>;
   collapseWorkspaceDetail = true;
   selectedPrStatus = '1';
   private dropdown: NzDropdownContextComponent;
@@ -48,8 +49,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   dueDate: any;
   contextMenuProject: any = null;
   description: any;
-  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
-  hyperLinksRoutes: any= {
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
     'Projects': '',
     'Contract': '/Contract',
     'Activity': '/Activity'
@@ -71,24 +72,23 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    console.log('init project');
   }
 
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
-    console.log('this is ws data', wsIdentifier,data);
     this.wsIdentifier = wsIdentifier;
+
   }
 
 
   ngOnInit() {
 
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
-      this.newProject = false;
-      this.notificationService.createNotification('Project added successfully', '',
-        'success', 'topRight', 4000);
-      this._helper.updateWorkspaceItems();
-      // this.detectChanges();
+        this.newProject = false;
+        this.notificationService.createNotification('Project added successfully', '',
+          'success', 'topRight', 4000);
+        this._helper.updateWorkspaceItems();
+        // this.detectChanges();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
@@ -101,13 +101,9 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
         this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
         this._helper.updateWorkspaceItems();
-      // this.detectChanges();
+        // this.detectChanges();
       }
     );
-  }
-
-  handleOk(): void {
-    this.isVisible = false;
   }
 
   handleCancel(): void {
@@ -177,16 +173,20 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.newProject = false;
   }
 
-  formatDateTime(dateTime: any) {
-    moment(dateTime).format('x');
-  }
-
   ngOnDestroy(): void {
     this.destroy();
   }
 
   protected detectChanges() {
     super.detectChanges();
+  }
+
+  navigateFromHyperLink({route}) {
+    const {wsId, uwYear}= this.workspace;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
   }
 
 }

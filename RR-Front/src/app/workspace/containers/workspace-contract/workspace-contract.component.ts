@@ -5,6 +5,8 @@ import {Store} from '@ngxs/store';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from "../../../core/store/actions/header.action";
 import * as fromWs from "../../store/actions";
+import {UpdateWsRouting} from "../../store/actions";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-contract',
@@ -17,7 +19,7 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   collapseRight = false;
 
   wsIdentifier;
-  workspaceInfo: any;
+  workspace: any;
 
   hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
   hyperLinksRoutes: any = {
@@ -257,12 +259,12 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   }
 
   patchState({wsIdentifier, data}: any): void {
-    this.workspaceInfo = data;
+    this.workspace = data;
     this.wsIdentifier = wsIdentifier;
   }
 
   pinWorkspace() {
-    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
     this.dispatch([
       new fromHeader.PinWs({
         wsId,
@@ -274,7 +276,7 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   }
 
   unPinWorkspace() {
-    const {wsId, uwYear} = this.workspaceInfo;
+    const {wsId, uwYear} = this.workspace;
     this.dispatch([
       new fromHeader.UnPinWs({wsId, uwYear}),
       new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
@@ -284,6 +286,15 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit,
   changeCollapse() {
     this.collapseHead = !this.collapseHead;
   }
+
+  navigateFromHyperLink({route}){
+    const {wsId, uwYear}= this.workspace;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
+  }
+
 
   ngOnDestroy(): void {
     this.destroy();

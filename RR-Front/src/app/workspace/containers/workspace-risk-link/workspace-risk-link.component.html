@@ -15,7 +15,7 @@
         <div class="body-wrap-header-text">
           <!--          <span class="body-wrap-header-text-title">TREATY</span>-->
           <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Risk link'"
-                           [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
+                           (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
       </div>

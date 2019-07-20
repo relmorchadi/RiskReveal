@@ -1,7 +1,8 @@
 <div class="a-app-wrapper">
   <div class="a-app-header">
     <div style="display: flex;flex-flow: column;">
-      <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Contract'" [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
+      <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Contract'"
+                       (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
       <h4>Contract</h4>
     </div>
     <app-pin

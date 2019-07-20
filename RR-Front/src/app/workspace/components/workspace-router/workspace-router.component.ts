@@ -1,11 +1,9 @@
 import {
   Component,
   ComponentFactoryResolver,
-  EventEmitter,
   Input,
   OnChanges,
   OnInit,
-  Output,
   SimpleChanges,
   ViewChild
 } from '@angular/core';
@@ -26,10 +24,10 @@ import {
 } from "../../containers";
 import {WsRouterDirective} from "../../directives/ws-router.directive";
 import {StateSubscriber} from "../../model/state-subscriber";
-import {Subscription} from "rxjs";
 import {ToggleWsLeftMenu, UpdateWsRouting} from "../../store/actions";
 import {Navigate} from "@ngxs/router-plugin";
 import {Store} from "@ngxs/store";
+import * as _ from 'lodash';
 
 @Component({
   selector: 'workspace-router',
@@ -43,6 +41,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
 
   @ViewChild(WsRouterDirective)
   routingTemplate: WsRouterDirective;
+
   readonly componentsMapper = {
     projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
     Contract: {component: WorkspaceContractComponent, selector: (state) => state},
@@ -58,10 +57,10 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     ScopeCompleteness: {component: WorkspaceScopeCompletenceComponent, selector: (state) => state},
     Accumulation: {component: WorkspaceAccumulationComponent, selector: (state) => state},
   };
-  private subscription: Subscription = null;
+
   private currentInstance: StateSubscriber;
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver, private store:Store) {
+  constructor(private componentFactoryResolver: ComponentFactoryResolver, private store: Store) {
   }
 
   ngOnInit() {
@@ -69,7 +68,6 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('Changes', changes);
     if (changes.state && this.currentInstance) {
       if (changes.state.currentValue.data.route != changes.state.previousValue.data.route)
         this.initComponent(changes.state.currentValue.data.route);
@@ -89,14 +87,13 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   }
 
   private initComponent(route = this.state.data.route) {
-    this.subscription ? this.subscription.unsubscribe() : null;
     const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.projects;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(correspondingComponent.component);
     const containerRef = this.routingTemplate.viewContainerRef;
     containerRef.clear();
     const componentRef = containerRef.createComponent(componentFactory);
     this.currentInstance = <StateSubscriber>componentRef.instance;
-    if (this.currentInstance) {
+    if (this.currentInstance && _.isFunction(this.currentInstance.patchState)) {
       this.currentInstance.patchState(this.state);
     }
   }

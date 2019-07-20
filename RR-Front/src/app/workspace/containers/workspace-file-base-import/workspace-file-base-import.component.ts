@@ -5,6 +5,8 @@ import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
+import {UpdateWsRouting} from "../../store/actions";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-file-base-import',
@@ -67,6 +69,14 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   ngOnDestroy(): void {
     this.destroy();
+  }
+
+  navigateFromHyperLink({route}){
+    const {wsId, uwYear}= this.workspaceInfo;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
   }
 
   protected detectChanges() {

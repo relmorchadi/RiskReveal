@@ -51,6 +51,7 @@ export class WorkspaceService {
           route,
           leftNavbarCollapsed: false,
           isFavorite: false,
+          plts: {},
           pltManager: {
             data: {},
             filters: {

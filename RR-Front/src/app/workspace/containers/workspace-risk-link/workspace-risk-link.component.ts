@@ -22,13 +22,14 @@ import {
   PatchRiskLinkDisplayAction,
   PatchRiskLinkFinancialPerspectiveAction,
   SelectRiskLinkEDMAndRDMAction,
-  ToggleRiskLinkEDMAndRDMAction
+  ToggleRiskLinkEDMAndRDMAction, UpdateWsRouting
 } from '../../store/actions';
 import * as fromWs from '../../store/actions';
 import {DataTables} from './data';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -494,6 +495,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   handleCancel() {
     this.filterModalVisibility = false;
     this.linkingModalVisibility = false;
+  }
+
+  navigateFromHyperLink({route}){
+    const {wsId, uwYear}= this.workspaceInfo;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
   }
 
   ngOnDestroy(): void {
