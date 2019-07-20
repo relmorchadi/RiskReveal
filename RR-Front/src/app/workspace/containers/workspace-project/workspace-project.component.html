@@ -20,7 +20,7 @@
           <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
         </nz-select>
         <app-pin
-          [active]="workspace?.isPinned"
+          [active]="!workspace?.isPinned"
           (pinWs)="pinWorkspace()"
           (unpinWs)="unPinWorkspace()"
         >

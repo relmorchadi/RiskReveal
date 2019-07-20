@@ -1,10 +1,10 @@
 <div class="workspace-main-content">
-  <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-          nz-button nzType="primary" nzSize="default" nzShape="circle">
-    <i style="color: #16617a;" nz-icon theme="outline">
-      <i class="icon-map-pin-alt"></i>
-    </i>
-  </button>
+  <app-pin
+    [active]="!workspaceInfo?.isPinned"
+    (pinWs)="pinWorkspace()"
+    (unpinWs)="unPinWorkspace()"
+  >
+  </app-pin>
   <div class="app-wrap">
     <div class="header-wrap">
       <span class="header-wrap-text">Project P - 00723</span>

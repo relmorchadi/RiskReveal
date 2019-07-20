@@ -467,7 +467,6 @@ export class WorkspaceState {
   @Action(fromWS.saveSelectedPlts)
   saveSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveSelectedPlts) {
     this.calibrationService.saveSelectedPlts(ctx, payload)
-
   }
 
   @Action(fromWS.saveAdjustmentApplication)
