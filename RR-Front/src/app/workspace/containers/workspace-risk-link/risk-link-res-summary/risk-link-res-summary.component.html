@@ -1,4 +1,4 @@
-<div class="body-wrap-body" *ngIf="state.display.displayImport && dataList(state.summaries.data).length > 0 ">
+<div *ngIf="state.display.displayImport && dataList(state.summaries.data).length > 0 " class="body-wrap-body">
   <div class="body-wrapper">
     <div class="body-wrapper-header">
       <div class="body-wrapper-header-left">
@@ -6,38 +6,39 @@
         <div>Exposure Summaries</div>
       </div>
       <div class="body-wrapper-header-right-summary">
-        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
-           (click)="filterModalVisibility = true"></i>
-        <div class="icon-drop">
-          <i *ngIf="state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
+        <i (click)="filterModalVisibility = true" class="icon-filter"
+           style="margin-right: 20px;font-size: 23px;"></i>
+        <div class="body-wrapper-header-right">
+          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+          <i (click)="changeCollapse('collapseResult')" *ngIf="state.collapse.collapseResult"
              class="icon-keyboard_arrow_up_24px"></i>
-          <i *ngIf="!state.collapse.collapseResult" (click)="changeCollapse('collapseResult')"
+          <i (click)="changeCollapse('collapseResult')" *ngIf="!state.collapse.collapseResult"
              class="icon-keyboard_arrow_down_24px"></i>
         </div>
       </div>
     </div>
-    <div class="summary-info" *ngIf="state.collapse.collapseResult">
-      <p-table [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
-               [value]="dataList(state.summaries.data)"
-               #st [scrollable]="true" frozenWidth="485px">
-        <ng-template pTemplate="colgroup" let-columns>
+    <div *ngIf="state.collapse.collapseResult" class="summary-info">
+      <p-table #st [columns]="scrollableColsSummary"
+               [frozenColumns]="frozenColsSummary"
+               [scrollable]="true" [value]="dataList(state.summaries.data)" frozenWidth="485px">
+        <ng-template let-columns pTemplate="colgroup">
           <colgroup>
             <ng-container *ngFor="let col of columns">
               <col [ngStyle]="{'width': col.width}">
             </ng-container>
           </colgroup>
         </ng-template>
-        <ng-template pTemplate="header" let-columns>
+        <ng-template let-columns pTemplate="header">
           <tr>
             <ng-container *ngFor="let col of columns">
               <th *ngIf="col.visible">
-                <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
+                <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
                   {{col.header}}
                   <div class="search-bar-table">
                     <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                    <input pInputText type="text"
-                           (input)="st.filter($event.target.value, col.field, col.filterMatchMode)">
+                    <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                           type="text">
                   </div>
                 </div>
                 <div *ngIf="col.type === 'icon'">
@@ -47,39 +48,39 @@
             </ng-container>
           </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+        <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
           <tr>
             <ng-container *ngFor="let col of columns">
               <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
-                <div class="" *ngIf="col.type === 'selection'">
-                  <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'S')"
-                         [ngModel]="rowData.selected"></label>
+                <div *ngIf="col.type === 'selection'" class="">
+                  <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
+                         nz-checkbox></label>
                 </div>
                 <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
                 <div *ngIf="col.type === 'progress'">
-                  <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
+                  <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
                                [nzWidth]="20" nzType="circle"></nz-progress>
                 </div>
-                <div *ngIf="col.type === 'indicator'" (click)="selectRows(rowData, i, 'S')">
-                        <span class="indicator-flag" *ngIf="rowData.exposedLocation"
+                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'indicator'">
+                        <span *ngIf="rowData.exposedLocation" class="indicator-flag"
                               style="background-color: #0700CF"></span>
                 </div>
-                <div class="text-data" (click)="selectRows(rowData, i, 'S')"
+                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'number'"
                      [ngClass]="{'highlight-temp': rowData.highlight}"
-                     *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                <div class="text-data" (click)="selectRows(rowData, i, 'S')"
+                     class="text-data">{{rowData[col.field]}}</div>
+                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'percentage'"
                      [ngClass]="{'highlight-temp': rowData.highlight}"
-                     *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
+                     class="text-data">{{rowData[col.field]}}%
                 </div>
-                <div class="text-data" (click)="selectRows(rowData, i, 'S')"
+                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'text'"
                      [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                      [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                     *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                     style="display: flex;justify-content: center;"
-                     (click)="deleteFromBasket(rowData.dataSourceId, 'summaries')" *ngIf="col.type === 'icon'"><i
+                     class="text-data">{{rowData[col.field]}}</div>
+                <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                     class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                <div (click)="deleteFromBasket(rowData.dataSourceId, 'summaries')" *ngIf="col.type === 'icon'"
+                     [ngClass]="{'highlight-temp': rowData.highlight}"
+                     class="text-data" style="display: flex;justify-content: center;"><i
                   class="icon-trash-alt"></i></div>
               </th>
             </ng-container>
@@ -87,8 +88,8 @@
         </ng-template>
       </p-table>
       <div class="menu-icon-wrap">
-        <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-          <a style="max-height: 28px;display: flex;" nz-dropdown>
+        <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
+          <a nz-dropdown style="max-height: 28px;display: flex;">
             <i class="icon-menu_24px"></i>
           </a>
           <ul nz-menu style="font-size: 12px">
@@ -96,7 +97,7 @@
             <li nz-menu-item>Reset Filters</li>
             <li nz-menu-item>Reset Sort/Filters</li>
             <li nz-menu-divider></li>
-            <li nz-menu-item (click)="toggleColumnsManager('summaries')">Manage Columns</li>
+            <li (click)="toggleColumnsManager('summaries')" nz-menu-item>Manage Columns</li>
             <li nz-menu-divider></li>
             <li nz-menu-item>Unselect All</li>
           </ul>
@@ -114,14 +115,15 @@
         <div>Analysis Results</div>
       </div>
       <div class="body-wrapper-header-right-summary">
-        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
-           (click)="filterModalVisibility = true"></i>
         <button class="a-buttons-outlined" (click)="linkingModalVisibility = true"
                 *ngIf="state.collapse.collapseAnalysis"> LINKING
         </button>
-        <div class="icon-drop">
-          <i *ngIf="state.collapse.collapseAnalysis"
-             (click)="changeCollapse('collapseAnalysis')" class="icon-keyboard_arrow_up_24px"></i>
+        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
+           (click)="filterModalVisibility = true"></i>
+        <div class="body-wrapper-header-right">
+          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+          <i *ngIf="state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
+             class="icon-keyboard_arrow_up_24px"></i>
           <i *ngIf="!state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
              class="icon-keyboard_arrow_down_24px"></i>
         </div>
@@ -207,7 +209,7 @@
                      *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
                      (click)="updateRow(rowData, col.type)">
                   <span *ngIf="col.type === 'Peqt'">
-                    0/{{rowData.peqt.length}}
+                    {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
                   </span>
                   <span *ngIf="col.type !== 'Peqt'">
                     {{rowData[col.field]}}
@@ -874,7 +876,7 @@
     <div class="input-group-modal">
       <div class="summary-info" *ngIf="editableRow.target === 'Rp'">
         <p-table [columns]="regionPerilDataTable"
-                 [value]="dataList(state.results.data)" #rpt [scrollable]="true" >
+                 [value]="dataList(state.results.data)" #rpt [scrollable]="true">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
               <ng-container *ngFor="let col of columns">
@@ -916,7 +918,7 @@
                        [ngClass]="{'highlight-temp': col.highlight}"
                        *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                   <div style="padding-left: 10px;" *ngIf="col.type === 'comment'">
-                    <input class="a-textfield-mini" [(ngModel)]="rowData.reason" />
+                    <input class="a-textfield-mini" [(ngModel)]="rowData.reason"/>
                   </div>
                   <div *ngIf="col.type === 'override'">
                     <nz-select
@@ -927,13 +929,20 @@
                       nzPlaceHolder="Select Occurence Basis"
                     >
                       <nz-option nzLabel="[EUET] Europe Extra Tropical Cyclone" nzValue="EUET"></nz-option>
-                      <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone" nzValue="EUET-AT"></nz-option>
-                      <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone" nzValue="EUET-BE"></nz-option>
-                      <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone" nzValue="EUET-CH"></nz-option>
-                      <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone" nzValue="EUET-CZ"></nz-option>
-                      <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone" nzValue="EUET-DE"></nz-option>
-                      <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone" nzValue="EUET-DK"></nz-option>
-                      <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone" nzValue="EUET-FR"></nz-option>
+                      <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone"
+                                 nzValue="EUET-AT"></nz-option>
+                      <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone"
+                                 nzValue="EUET-BE"></nz-option>
+                      <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone"
+                                 nzValue="EUET-CH"></nz-option>
+                      <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone"
+                                 nzValue="EUET-CZ"></nz-option>
+                      <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone"
+                                 nzValue="EUET-DE"></nz-option>
+                      <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone"
+                                 nzValue="EUET-DK"></nz-option>
+                      <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone"
+                                 nzValue="EUET-FR"></nz-option>
                     </nz-select>
                   </div>
                   <div *ngIf="col.type === 'copy'">
@@ -959,7 +968,8 @@
         </nz-select>
       </div>
 
-      <div style="display: flex; flex-direction: column;" *ngIf="editableRow.target !== 'Peqt' && editableRow.target !== 'Rp'">
+      <div style="display: flex; flex-direction: column;"
+           *ngIf="editableRow.target !== 'Peqt' && editableRow.target !== 'Rp'">
         <span style="" class="subtitle-2 subtitle-override">Override Reason:</span>
         <textarea>
 

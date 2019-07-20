@@ -20,15 +20,15 @@
           <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
         </nz-select>
         <app-pin
-          [active]="!workspace?.pinged"
-          [workspace]="workspace"
-          [index]="index"
+          [active]="workspace?.isPinned"
+          (pinWs)="pinWorkspace()"
+          (unpinWs)="unPinWorkspace()"
         >
         </app-pin>
       </div>
     </div>
     <div style="height: 60vw">
-      <projects-list [projects]="workspace?.projects" (select)="selectProject($event)"
+      <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
                      (delete)="delete($event)"></projects-list>
     </div>
 
@@ -48,4 +48,4 @@
 
 </div>
 
-<p-toast></p-toast>
+<!--<p-toast></p-toast>-->

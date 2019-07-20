@@ -1,10 +1,8 @@
-
-
-export class HeaderStateModel{
+export class HeaderStateModel {
   workspacePopIn: {
     recent: {
       keyword: string,
-      items: {selected, wsId, uwYear, workspaceName, programName, cedantName}[],
+      items: { selected, wsId, uwYear, workspaceName, programName, cedantName }[],
       pagination: number
     },
     favorite: {
@@ -27,32 +25,32 @@ export class HeaderStateModel{
     active: {
       keyword: string,
       items: any[],
-      filter: {date, type}
+      filter: { date, type }
     },
     completed: {
       keyword: string,
       items: any[],
-      filter: {date, type}
+      filter: { date, type }
     }
   };
   notificationPopIn: {
-    all:{
-      keyword:string,
+    all: {
+      keyword: string,
       items: any,
       filter: {}
     },
-    errors:{
-      keyword:string,
+    errors: {
+      keyword: string,
       items: any,
       filter: {}
     },
-    warnings:{
-      keyword:string,
+    warnings: {
+      keyword: string,
       items: any,
       filter: {}
     },
-    informational:{
-      keyword:string,
+    informational: {
+      keyword: string,
       items: any,
       filter: {}
     }

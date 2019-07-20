@@ -1,10 +1,10 @@
 <div class="card-container">
   <nz-tabset
-    class="tabs-main-component"
-    [nzSelectedIndex]="selectedTabIndex"
     *ngIf="!loading"
+    [nzSelectedIndex]="selectedTabIndex"
     [nzTabPosition]="'top'"
-    [nzType]="'card'">
+    [nzType]="'card'"
+    class="tabs-main-component">
     <ng-container *ngFor="let wsIdentifier of data | keys;let k= index;">
       <ng-template #titleTemplate>
         <ng-container
@@ -27,11 +27,11 @@
                 <button (click)="patchWorkspaceDetail(wsIdentifier)"
                         class="mx-4 btn-detail d-flex justify-content-center align-items-center"
                         nz-button nzType="primary" nzSize="default" nzShape="circle">
-                  <i *ngIf="data[wsIdentifier]?.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;" nz-icon
+                  <i *ngIf="data[wsIdentifier]?.collapseWorkspaceDetail" nz-icon style="color: #16617a;font-size: 14px;"
                      type="down"
                      theme="outline"></i>
-                  <i *ngIf="!data[wsIdentifier]?.collapseWorkspaceDetail" style="color: #16617a;font-size: 14px;"
-                     nz-icon type="up"
+                  <i *ngIf="!data[wsIdentifier]?.collapseWorkspaceDetail" nz-icon
+                     style="color: #16617a;font-size: 14px;" type="up"
                      theme="outline"></i>
                 </button>
                 <span *ngIf="data[wsIdentifier]?.collapseWorkspaceDetail" class="span-detail">Detail</span>
@@ -41,8 +41,8 @@
                 <div class="workspace-title-wrapper">
                   <div class="d-inline-flex flex-column">
                     <h3 class="workspace-title">{{data[wsIdentifier]?.cedantName}}
-                      <i *ngIf="!data[wsIdentifier].isFavorite; else favoriteIcon"
-                         (click)="addToFavorite(wsIdentifier, data[wsIdentifier])" class="icon-star_border_24px"></i>
+                      <i (click)="addToFavorite(wsIdentifier, data[wsIdentifier])"
+                         *ngIf="!data[wsIdentifier].isFavorite; else favoriteIcon" class="icon-star_border_24px"></i>
                       <ng-template #favoriteIcon>
                         <i (click)="unFavorite(wsIdentifier, data[wsIdentifier])" class="icon-star_24px"></i>
                       </ng-template>
@@ -86,7 +86,7 @@
               </div>
             </div>
           </div>
-          <div [ngClass]="{'collapse':data[wsIdentifier]?.collapseWorkspaceDetail}" nz-col [nzSpan]="24">
+          <div [ngClass]="{'collapse':data[wsIdentifier]?.collapseWorkspaceDetail}" [nzSpan]="24" nz-col>
             <div class="row tab-detail p-2 pb-6" style="padding-bottom: 2rem !important;">
 
               <div class="col-md-12 col-lg-6 " style="padding-left: 65px; padding-right: 0;">
@@ -131,8 +131,8 @@
                         </li>
                       </ul>
                       <ng-container *ngIf="data[wsIdentifier]?.treatySections?.length > 2">
-                        <span *ngIf="state?.sliceValidator" (click)="patchSliceValue(false)" class="tab-metadata-more">See All</span>
-                        <span *ngIf="!state?.sliceValidator" (click)="patchSliceValue(true)" class="tab-metadata-more">Hide</span>
+                        <span (click)="patchSliceValue(false)" *ngIf="state?.sliceValidator" class="tab-metadata-more">See All</span>
+                        <span (click)="patchSliceValue(true)" *ngIf="!state?.sliceValidator" class="tab-metadata-more">Hide</span>
                       </ng-container>
                     </div>
                   </div>
@@ -177,10 +177,10 @@
 
             </div>
           </div>
-          <div nz-col [nzSpan]="24">
+          <div [nzSpan]="24" nz-col>
             <div style="display: flex">
-              <workspace-router [state]="{wsIdentifier: wsIdentifier , data: data[wsIdentifier]}"
-              (action)="dispatch($event)"></workspace-router>
+              <workspace-router (action)="dispatch($event)"
+                                [state]="{wsIdentifier: wsIdentifier , data: data[wsIdentifier]}"></workspace-router>
               <!-- <app-left-menu [isCollapsed]="data[wsIdentifier]?.leftNavbarCollapsed" (navigate)="leftMenuNavigation($event, data[wsIdentifier])" (toggleCollapse)="toggleLeftMenu(wsIdentifier)" ></app-left-menu>-->
               <!-- <router-outlet></router-outlet> -->
             </div>

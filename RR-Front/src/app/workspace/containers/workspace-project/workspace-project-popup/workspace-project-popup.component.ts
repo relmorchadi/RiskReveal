@@ -2,14 +2,14 @@ import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Ou
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {combineLatest, Observable, of, Subject, Subscription} from 'rxjs';
-import {Actions, Select, Store, ofAction, ofActionDispatched} from '@ngxs/store';
+import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../../core/store/states';
-import {LazyLoadEvent, MessageService} from 'primeng/api';
+import {LazyLoadEvent} from 'primeng/api';
 import {SearchService} from '../../../../core/service';
 import {Debounce} from '../../../../shared/decorators';
 import {NotificationService} from '../../../../shared/notification.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {debounceTime, filter, first, last, mergeMap, take, takeUntil} from 'rxjs/operators';
+import {debounceTime, mergeMap} from 'rxjs/operators';
 import * as fromWorkspaceStore from '../../../store';
 import {PltMainState} from '../../../store';
 import {Message} from '../../../../shared/message';
@@ -249,7 +249,17 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: true, icon: null, type: 'field',active: true},
+        {
+          sortDir: 1,
+          fields: 'grain',
+          header: 'Grain',
+          width: '90',
+          sorted: true,
+          filtred: true,
+          icon: null,
+          type: 'field',
+          active: true
+        },
         {
           sortDir: 1,
           fields: 'vendorSystem',
@@ -260,7 +270,17 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           icon: null,
           type: 'field',active: true
         },
-        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: true, icon: null, type: 'field',active: true}
+        {
+          sortDir: 1,
+          fields: 'rap',
+          header: 'RAP',
+          width: '52',
+          sorted: true,
+          filtred: true,
+          icon: null,
+          type: 'field',
+          active: true
+        }
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -476,7 +496,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
       })
     ).subscribe( () => this.d.unsubscribe());
 
-    this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+    this.pltProjectSubscription = this.store$.select(PltMainState.getProjects('hey')).subscribe((projects: any) => {
       this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
@@ -833,7 +853,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
           this.detectChanges();
         })
 
-        this.pltProjectSubscription = this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+        this.pltProjectSubscription = this.store$.select(PltMainState.getProjects('hey')).subscribe((projects: any) => {
           this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
           this.browesing=true;
           this.detectChanges();
@@ -1048,7 +1068,7 @@ export class WorkspaceProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   setSelectedPltByIndex(index: any) {
-    this.rightMenuInputs = rightMenuActions.setSelectedTabByIndex.handler(this.rightMenuInputs, index );
+    this.rightMenuInputs = rightMenuActions.setSelectedTabByIndex.handler(this.rightMenuInputs, index);
   }
 
   onSortChange($event: any) {

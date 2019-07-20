@@ -18,9 +18,13 @@ export class HelperService {
   state: WorkspaceMain = null;
 
   constructor(private store: Store) {
-    const obs$: any =  of(localStorage.getItem('usedWorkspaces')).pipe(map( ls => JSON.parse(ls)));
+    const obs$: any = of(localStorage.getItem('usedWorkspaces')).pipe(map(ls => JSON.parse(ls)));
     this.recentWorkspaces$ = obs$;
     this.state$.subscribe(value => this.state = _.merge({}, value));
+  }
+
+  public static upperFirstWordsInSetence(sentence) {
+    return sentence ? _.lowerCase(sentence).split(' ').map(_.upperFirst).join(' ') : sentence;
   }
 
   updateWorkspaceItems() {
@@ -29,9 +33,5 @@ export class HelperService {
 
   updateRecentWorkspaces() {
     localStorage.setItem('usedWorkspaces', JSON.stringify(this.state.recentWs));
-  }
-
-  public static upperFirstWordsInSetence(sentence){
-    return sentence ? _.lowerCase(sentence).split(' ').map(_.upperFirst).join(' ') : sentence;
   }
 }

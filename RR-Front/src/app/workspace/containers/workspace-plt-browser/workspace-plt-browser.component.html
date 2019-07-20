@@ -57,7 +57,7 @@
           </span>
           <div class="right">
             <div>
-              {{selectedListOfPlts.length ? selectedListOfPlts.length + ' Rows are selected' : ''}}
+              {{tableInputs['selectedListOfPlts']?.length ? tableInputs['selectedListOfPlts']?.length + ' Rows are selected' : ''}}
             </div>
             <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'" >
               <a style="max-height: 28px;display: flex;" nz-dropdown>
@@ -83,18 +83,7 @@
         <div class="PLTs-content">
           <app-plt-main-table
             [tableInputs]="tableInputs"
-
-            (deletePlt)="deletePlt()"
-            (openPltInDrawer)="openPltInDrawer($event)"
-            (editTags)="editTags()"
-            (restore)="restore()"
-            (onCheckAll)="checkAll($event)"
-            (onCheckBoxSort)="checkBoxSort($event)"
-            (onFilter)="filter($event)"
-            (onItemSelectForMenu)="setSelectedMenuItem($event)"
-            (onPltClick)="toggleSelectPlts($event)"
-            (onSelectSinglePlt)="selectSinglePLT($event)"
-            (onSortChange)="sortChange($event)"
+            (actionDispatcher)="tableActionDispatcher($event)"
           ></app-plt-main-table>
         </div>
       </div>

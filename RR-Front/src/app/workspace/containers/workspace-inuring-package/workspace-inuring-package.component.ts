@@ -82,13 +82,13 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
   supscription1: Subscription;
   supscription2: Subscription;
   dndBool: boolean = false;
-  private currentDraggableEvent: DragEvent;
+  checked: boolean = false;
   onHoverIcon: any;
-  checked:boolean=false;
+  lastCheckedBool: boolean = false;
   lastChecked;
-  lastCheckedBool:boolean=false;
+  private currentDraggableEvent: DragEvent;
 
-  constructor(_baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
 
     this.adjsArray = [
@@ -362,19 +362,18 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
         if (_.findIndex(value.thread, a) != -1) {
           o = i;
           x = _.findIndex(value.thread, a);
-          if (value.thread[x].checked==false)
+          if (value.thread[x].checked == false)
             value.thread[x].checked = true;
           else
             value.thread[x].checked = false;
         }
       })
-    }
-    else if (event.shiftKey) {
+    } else if (event.shiftKey) {
       let between = false;
       let lastChecked = this.lastChecked;
       console.log(lastChecked);
-      if(!lastChecked){
-          lastChecked=this.pure.dataTable[0].thread[0]
+      if (!lastChecked) {
+        lastChecked = this.pure.dataTable[0].thread[0]
         console.log("test")
       }
       console.log(lastChecked);
@@ -390,29 +389,29 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
           }
         })
       })
-    }
-    else{
+    } else {
       console.log(a);
-      this.lastChecked=false;
-      let checked = a.checked ;
+      this.lastChecked = false;
+      let checked = a.checked;
       this.deselectAll();
       _.forIn(this.pure.dataTable, function (value, key) {
         if (_.findIndex(value.thread, a) != -1) {
           o = i;
           x = _.findIndex(value.thread, a);
-             value.thread[x].checked = !checked;
+          value.thread[x].checked = !checked;
         }
       })
     }
-    if(!this.lastCheckedBool){
-      this.lastChecked=a;
-    }else{
-      this.lastCheckedBool=false;
+    if (!this.lastCheckedBool) {
+      this.lastChecked = a;
+    } else {
+      this.lastCheckedBool = false;
     }
 
   }
-  changeBackgroundCheckBox(event, a){
-    let checked = a.checked ;
+
+  changeBackgroundCheckBox(event, a) {
+    let checked = a.checked;
     console.log("event Check")
     let o = 0;
     let x;
@@ -431,8 +430,7 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
           }
         })
       })
-    }
-    else{
+    } else {
       _.forIn(this.pure.dataTable, function (value, key) {
         if (_.findIndex(value.thread, a) != -1) {
           o = i;
@@ -449,14 +447,15 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
     else
       return "#fff";
   }
-  deselectAll(){
-    this.lastCheckedBool=true;
-    const checkboxs=document.querySelectorAll(".checkboxInput input[type='checkbox']");
-    checkboxs.forEach((checkbox:any)=>checkbox.checked=false);
+
+  deselectAll() {
+    this.lastCheckedBool = true;
+    const checkboxs = document.querySelectorAll(".checkboxInput input[type='checkbox']");
+    checkboxs.forEach((checkbox: any) => checkbox.checked = false);
     _.forIn(this.pure.dataTable, function (value, key) {
-          _.forIn(value.thread,function (plt, key) {
-            plt.checked= false;
-          })
+      _.forIn(value.thread, function (plt, key) {
+        plt.checked = false;
+      })
     })
   }
 
@@ -603,9 +602,9 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
   }
 
   onDragged(event: DragEvent, item: any, list: any[], effect: DropEffect, a?) {
-    if(effect=="none") return;
-    if(this.dndBool){
-      console.log("here1",this.dndBool)
+    if (effect == "none") return;
+    if (this.dndBool) {
+      console.log("here1", this.dndBool)
       const index = list.indexOf(item);
       list.splice(index, 1);
 
@@ -628,15 +627,15 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
     }
     let id = event.event.toElement.id;
     event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
-    console.log("heeeee. ",event.data.category )
+    console.log("heeeee. ", event.data.category)
 
-    if (event.data.category == "bd" || event.data.category =="pd") {
-      console.log("dropTrue",this.dndBool)
+    if (event.data.category == "bd" || event.data.category == "pd") {
+      console.log("dropTrue", this.dndBool)
       this.dndBool = true;
       list.splice(index, 0, event.data);
-    }else {
-      this.dndBool=false;
-      console.log("dropFalse",this.dndBool)
+    } else {
+      this.dndBool = false;
+      console.log("dropFalse", this.dndBool)
     }
 
   }
@@ -655,8 +654,8 @@ export class WorkspaceInuringPackageComponent extends BaseContainer implements O
     this.pure.dataTable[dataTableIndex].thread[threadIndex].adj.splice(adjindex, 1);
   }
 
-  onMouseHover(threadIndex){
-    console.log("test",threadIndex);
+  onMouseHover(threadIndex) {
+    console.log("test", threadIndex);
   }
 
   ngOnDestroy(): void {

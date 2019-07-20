@@ -4,10 +4,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import * as fromWs from '../../store/actions/workspace.actions'
+import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/actions/workspace.actions'
 import {BaseContainer} from "../../../shared/base";
 import {WorkspaceState} from "../../store/states";
 import {PatchWorkspaceMainStateAction} from "../../../core/store/actions";
-import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from "../../store/actions/workspace.actions";
 import {Navigate} from "@ngxs/router-plugin";
 import {map} from "rxjs/operators";
 import * as fromHeader from 'src/app/core/store/actions/header.action';
@@ -89,7 +89,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   close(wsId, uwYear) {
-    this.dispatch(new fromWs.closeWS({
+    this.dispatch(new fromWs.CloseWS({
       wsIdentifier: wsId + '-' + uwYear
     }));
   }
@@ -123,10 +123,10 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   selectWorkspace(wsIdentifier, index) {
-    this.dispatch(new fromWs.setCurrentTab({
+    this.dispatch(new fromWs.SetCurrentTab({
       wsIdentifier,
       index
-    }))
+    }));
   }
 
   addToFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {

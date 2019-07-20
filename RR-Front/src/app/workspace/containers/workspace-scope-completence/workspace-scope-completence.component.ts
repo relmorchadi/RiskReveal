@@ -2,8 +2,7 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {PltMainState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
-import {combineLatest, Subject} from 'rxjs';
-import {takeUntil} from 'rxjs/operators';
+import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {data} from './data';
@@ -25,7 +24,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   index: any;
   workspaceUrl: any;
 
-  constructor(private route: ActivatedRoute, _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 

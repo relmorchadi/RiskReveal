@@ -12,9 +12,9 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit 
   collapseHead = false;
   collapseLeft = false;
   collapseRight = false;
-  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
-  hyperLinksRoutes: any= {
-    'Projects': '',
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
+    'Projects': '/projects',
     'Contract': '/Contract',
     'Activity': '/Activity'
   };
@@ -236,12 +236,12 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit 
     },
   ];
 
-  constructor(private route: ActivatedRoute, _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
-    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe( ({wsId, year}) => {
+    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
       this.hyperLinksConfig= {
         wsId,
         uwYear: year

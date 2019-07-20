@@ -1,22 +1,19 @@
 import {
-  ChangeDetectionStrategy,
   ChangeDetectorRef,
-  Component,
+  Component, EventEmitter,
   NgZone,
   OnDestroy,
   OnInit,
-  TemplateRef,
   ViewChild
 } from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
-import {Select, Store} from '@ngxs/store';
+import {Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
-import {PltMainState} from '../../store';
-import {map, mapTo, mergeMap, switchMap, tap} from 'rxjs/operators';
+import { WorkspaceState} from '../../store';
+import { switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Table} from 'primeng/table';
-import {combineLatest} from 'rxjs';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
@@ -27,13 +24,14 @@ import * as tableStore from '../../../shared/components/plt/plt-main-table/store
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
 import {BaseContainer} from '../../../shared/base';
 import {SystemTagsService} from '../../../shared/services/system-tags.service';
+import {StateSubscriber} from '../../model/state-subscriber';
 
 @Component({
   selector: 'app-workspace-plt-browser',
   templateUrl: './workspace-plt-browser.component.html',
   styleUrls: ['./workspace-plt-browser.component.scss']
 })
-export class WorkspacePltBrowserComponent extends BaseContainer implements OnInit, OnDestroy {
+export class WorkspacePltBrowserComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
   rightMenuInputs: rightMenuStore.Input;
   tableInputs: tableStore.Input;
@@ -391,10 +389,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     };
     this.setRightMenuSelectedTab('pltDetail');
   }
-
-  @Select(PltMainState.getUserTags) userTags$;
-  data$: any;
-  deletedPlts$: any;
   deletedPlts: any;
   selectedUserTags: any;
 
@@ -423,15 +417,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   getPlts(){
-    return this.select(PltMainState.getPlts(this.workspaceId + '-' + this.uwy));
+    return this.select(WorkspaceState.getPltsForPlts(this.workspaceId + '-' + this.uwy));
   }
 
   getDeletedPlts(){
-    return this.select(PltMainState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
+    return this.select(WorkspaceState.getDeletedPltsForPlt(this.workspaceId + '-' + this.uwy));
   }
 
   getProjects() {
-    return this.select(PltMainState.getProjects(this.workspaceId + '-' + this.uwy));
+    return this.select(WorkspaceState.getProjectsPlt(this.workspaceId + '-' + this.uwy));
   }
 
   getLeftNavBarIsCollapsed(){
@@ -439,20 +433,24 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   getOpenedPlt(){
-    return this.select(PltMainState.getOpenedPlt(this.workspaceId + '-' + this.uwy));
+    return this.select(WorkspaceState.getOpenedPlt(this.workspaceId + '-' + this.uwy));
+  }
+
+  getUserTags() {
+    return this.select(WorkspaceState.getUserTagsPlt(this.workspaceId+ '-' + this.uwy));
   }
 
   ngOnInit() {
     this.observeRouteParams()
       .pipe(
         switchMap( () => {
-          this.data$= this.getPlts();
           this.dispatch(new fromWorkspaceStore.loadAllPlts({
             params: {
               workspaceId: this.workspaceId, uwy: this.uwy
-            }
+            },
+            wsIdentifier: this.workspaceId+'-'+this.uwy
           }));
-          return this.data$;
+          return this.getPlts();
         }),
         this.unsubscribeOnDestroy
       ).subscribe( (data) => {
@@ -468,13 +466,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.observeRouteParams()
       .pipe(
         switchMap( () => {
-          this.deletedPlts$ = this.getDeletedPlts();
           this.dispatch(new fromWorkspaceStore.loadAllPlts({
             params: {
               workspaceId: this.workspaceId, uwy: this.uwy
-            }
+            },
+            wsIdentifier: this.workspaceId+'-'+this.uwy
           }));
-          return this.deletedPlts$;
+          return this.getDeletedPlts();
         }),
         this.unsubscribeOnDestroy
       ).subscribe( (deletedData) => {
@@ -509,6 +507,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
     this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
       this.updateMenuKey('pltDetail', openedPlt);
+      this.detectChanges();
+    })
+
+    this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe( userTags => {
+
       this.detectChanges();
     })
   }
@@ -640,11 +643,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       })
     })
 
-  }
-
-  setSelectedMenuItem($event: any) {
-    this.selectedPlt = $event;
-    this.selectedItemForMenu = $event;
   }
 
   emitFilters(filters: any) {
@@ -844,6 +842,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   getTableInputKey(key) {
     return _.get(this.tableInputs, key);
+  }
+
+  actionsEmitter: EventEmitter<any>;
+
+  patchState(state: any): void {
+    console.log(state);
   }
 
 }

@@ -1,7 +1,6 @@
-
 export class WorkspaceModel {
-  content : {
-    [key: string] : any
+  content: {
+    [key: string]: any
   };
   currentTab: {
     index: number,

@@ -728,7 +728,7 @@ export class PltComparerMainComponent implements OnInit {
     this.colorThePlt();
     this.Subscriptions.push(
       this.state$.subscribe(value => this.listOfWs = _.merge({}, value.openedTabs)),
-      this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+      this.store$.select(PltMainState.getProjects('hey')).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),

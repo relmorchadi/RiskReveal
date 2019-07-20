@@ -5,7 +5,7 @@ export interface Input {
     index: number,
     title: string,
   };
-  tabs: { [key: string] : any };
+  tabs: { [key: string]: any };
   pltDetail: any;
   basket: any[];
 }

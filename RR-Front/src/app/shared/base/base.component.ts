@@ -17,10 +17,11 @@ export abstract class BaseComponent implements OnDestroy {
     return takeUntil(this.unSubscriton$);
   }
 
+  abstract ngOnDestroy(): void;
+
   protected navigate(commands: any[]) {
     this._baseRouter.navigate(commands);
   }
-
 
   protected detectChanges() {
     if (!this._baseCdr['destroyed'])
@@ -31,7 +32,5 @@ export abstract class BaseComponent implements OnDestroy {
     this.unSubscriton$.next();
     this.unSubscriton$.complete();
   }
-
-  abstract ngOnDestroy(): void;
 
 }

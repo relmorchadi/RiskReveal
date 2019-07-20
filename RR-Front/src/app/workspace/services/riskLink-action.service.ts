@@ -1,12 +1,12 @@
-import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {StateContext} from '@ngxs/store';
 
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../model/risk_link.model';
 import {
-  PatchAddToBasketStateAction,
-  PatchRiskLinkDisplayAction,
   LoadRiskLinkAnalysisDataAction,
   LoadRiskLinkPortfolioDataAction,
+  PatchAddToBasketStateAction,
+  PatchRiskLinkDisplayAction,
 } from '../store/actions';
 import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
@@ -21,7 +21,8 @@ import {tap} from "rxjs/internal/operators/tap";
 })
 export class RiskLinkStateService {
 
-  constructor(private riskApi: RiskApi) { }
+  constructor(private riskApi: RiskApi) {
+  }
 
   patchRiskLinkState(ctx: StateContext<RiskLinkState>, payload) {
     if (_.isArray(payload))
@@ -94,42 +95,54 @@ export class RiskLinkStateService {
     const {id, target, value, scope} = payload;
     if (target === 'unitMultiplier') {
       ctx.patchState({
-        results: {...state.results, data: {
+        results: {
+          ...state.results, data: {
             ...state.results.data, [id]: {...state.results.data[id], unitMultiplier: value}
-          }}
+          }
+        }
       });
     } else if (target === 'regionPeril') {
       if (scope === 'Single') {
         ctx.patchState({
-          results: {...state.results, data: {
+          results: {
+            ...state.results, data: {
               ...state.results.data, [id]: {...state.results.data[id], regionPeril: value}
-            }}
+            }
+          }
         });
       } else {
         ctx.patchState({
-          results: {...state.results, data: Object.assign({}, ..._.toArray(state.results.data).map(dt => {
+          results: {
+            ...state.results, data: Object.assign({}, ..._.toArray(state.results.data).map(dt => {
               return ({[dt.id]: {...dt, regionPeril: value}});
-            }))}
+            }))
+          }
         });
       }
     } else if (target === 'targetCurrency') {
       ctx.patchState({
-        results: {...state.results, data: {
+        results: {
+          ...state.results, data: {
             ...state.results.data, [id]: {...state.results.data[id], targetCurrency: value}
-          }}
+          }
+        }
       });
     } else if (target === 'occurrenceBasis') {
       if (scope === 'Single') {
         ctx.patchState({
-          results: {...state.results, data: {
+          results: {
+            ...state.results, data: {
               ...state.results.data, [id]: {...state.results.data[id], occurrenceBasis: value}
-            }}
+            }
+          }
         });
       } else {
         ctx.patchState({
-          results: {...state.results, data: Object.assign({}, ..._.toArray(state.results.data).map(dt => {
+          results: {
+            ...state.results, data: Object.assign({}, ..._.toArray(state.results.data).map(dt => {
               return ({[dt.id]: {...dt, occurrenceBasis: value}});
-            }))}
+            }))
+          }
         });
       }
     }
@@ -786,12 +799,16 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     let selected;
     const {id, type} = payload;
-    const newDataSelectedEDM = Object.assign({}, ..._.toArray(state.listEdmRdm.selectedListEDMAndRDM.edm).map(item => ({[item.id]: {
+    const newDataSelectedEDM = Object.assign({}, ..._.toArray(state.listEdmRdm.selectedListEDMAndRDM.edm).map(item => ({
+      [item.id]: {
         ...item, selected: false
-      }})));
-    const newDataSelectedRDM = Object.assign({}, ..._.toArray(state.listEdmRdm.selectedListEDMAndRDM.rdm).map(item => ({[item.id]: {
+      }
+    })));
+    const newDataSelectedRDM = Object.assign({}, ..._.toArray(state.listEdmRdm.selectedListEDMAndRDM.rdm).map(item => ({
+      [item.id]: {
         ...item, selected: false
-      }})));
+      }
+    })));
     type === 'edm'
       ? selected = state.listEdmRdm.selectedListEDMAndRDM.edm[id].selected
       : selected = state.listEdmRdm.selectedListEDMAndRDM.rdm[id].selected;
@@ -1044,7 +1061,8 @@ export class RiskLinkStateService {
               results: null,
               summaries: null,
               analysis: null,
-              portfolios: null
+              portfolios: null,
+              activeAddBasket: false,
             }))
       )
     );

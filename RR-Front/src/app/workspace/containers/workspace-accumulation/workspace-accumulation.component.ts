@@ -2,10 +2,9 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {PltMainState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
-import {combineLatest, Subject} from 'rxjs';
+import {combineLatest} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
 import {data} from '../workspace-scope-completence/data';
-import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {BaseContainer} from '../../../shared/base';
 
@@ -26,7 +25,7 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
   index: any;
   workspaceUrl: any;
 
-  constructor(private route: ActivatedRoute, _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 

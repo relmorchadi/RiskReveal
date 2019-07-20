@@ -10,7 +10,7 @@ import {Router} from '@angular/router';
 })
 export class WorkspaceResultsComponent extends BaseContainer implements OnInit {
 
-  constructor(_baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 

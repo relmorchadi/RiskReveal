@@ -1,6 +1,6 @@
-<ul nz-menu [nzMode]="'inline'"  [nzInlineCollapsed]="isCollapsed">
-  <li (click)="collapse($event)" style="text-align: right"  nz-menu-item nz-tooltip nzPlacement="right">
-          <span  title>
+<ul [nzInlineCollapsed]="isCollapsed" [nzMode]="'inline'" nz-menu>
+  <li (click)="collapse($event)" nz-menu-item nz-tooltip nzPlacement="right" style="text-align: right">
+          <span title>
             <i nz-icon>
               <i *ngIf="!isCollapsed" class="icon-chevron_left_24px"></i>
               <!--i *ngIf="!isCollapsed" (click)="collapse($event)" nz-icon nzType="double-left" nzTheme="outline"></i-->
@@ -8,7 +8,7 @@
             </i>
           </span>
   </li>
-  <li nz-submenu="" nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Workspace' : ''">
+  <li [nzTitle]="isCollapsed ? 'Workspace' : ''" nz-submenu="" nz-tooltip nzPlacement="right">
           <span title>
             <i nz-icon><i class="icon-window-section"></i></i>
             <span>Workspace</span>
@@ -28,7 +28,8 @@
           </span>
   </li>
 
-  <li (click)="routerNavigate('PltBrowser')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'PLT Manager' : ''">
+  <li (click)="routerNavigate('PltBrowser')" [nzTitle]="isCollapsed ? 'PLT Manager' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
           <span title>
             <i nz-icon><i class="icon-file-search-alt"></i></i>
             <span>PLT Manager</span>
@@ -41,7 +42,7 @@
           </span>
   </li-->
   <hr class="col-xs-12">
-  <li class="pr-1"  nz-submenu nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Data sources Import' : ''">
+  <li [nzTitle]="isCollapsed ? 'Data sources Import' : ''" class="pr-1" nz-submenu nz-tooltip nzPlacement="right">
           <span title>
             <i style="z-index: 99" (click)="riskLinkImportNavigation()" nz-icon><i class="icon-call_merge_24px"></i></i>
             <span (click)="riskLinkImportNavigation()">Data Sources Import</span>
@@ -49,11 +50,12 @@
     <ul>
       <li (click)="routerNavigate('RiskLink')" nz-menu-item>RiskLink Import</li>
       <li (click)="routerNavigate('FileBasedImport')" nz-menu-item>File-Based Import</li>
-<!--      <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>-->
+      <!--      <li (click)="routerNavigate('CloneData')" nz-menu-item>Clone Data</li>-->
     </ul>
   </li>
   <hr class="col-xs-12">
-  <li (click)="routerNavigate('CloneData')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]=" isCollapsed ? 'Clone Data' : ''">
+  <li (click)="routerNavigate('CloneData')" [nzTitle]=" isCollapsed ? 'Clone Data' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
           <span title>
             <i nz-icon><i class="icon-database"></i></i>
             <span>Clone Data</span>
@@ -66,26 +68,30 @@
             <span>Exposures</span>
           </span>
   </li>
-  <li (click)="routerNavigate('Results')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Results' : ''">
+  <li (click)="routerNavigate('Results')" [nzTitle]="isCollapsed ? 'Results' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
           <span title>
             <i nz-icon><i class="icon-chart-growth"></i></i>
             <span>Results</span>
           </span>
   </li>
-  <li (click)="routerNavigate('Calibration')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Calibration' : ''">
-          <span title >
+  <li (click)="routerNavigate('Calibration')" [nzTitle]="isCollapsed ? 'Calibration' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
+          <span title>
             <i nz-icon><i class="icon-sitemap"></i></i>
             <span>Calibration</span>
           </span>
   </li>
   <hr class="col-xs-12">
-  <li (click)="routerNavigate('Inuring')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Inuring' : ''">
+  <li (click)="routerNavigate('Inuring')" [nzTitle]="isCollapsed ? 'Inuring' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
           <span title>
             <i nz-icon><i class="fa fa-code-fork"></i></i>
             <span>Inuring</span>
           </span>
   </li>
-  <li (click)="routerNavigate('Accumulation')" nz-menu-item nz-tooltip nzPlacement="right" [nzTitle]="isCollapsed ? 'Accumulation' : ''">
+  <li (click)="routerNavigate('Accumulation')" [nzTitle]="isCollapsed ? 'Accumulation' : ''" nz-menu-item nz-tooltip
+      nzPlacement="right">
           <span title>
             <i nz-icon><i class="icon-focus-add"></i></i>
             <span>Accumulation</span>

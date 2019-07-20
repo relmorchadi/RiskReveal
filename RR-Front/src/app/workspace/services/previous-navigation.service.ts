@@ -1,6 +1,5 @@
 import {Injectable} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import {filter} from 'rxjs/operators';
 
 @Injectable()
 export class PreviousNavigationService {
@@ -11,7 +10,7 @@ export class PreviousNavigationService {
   constructor(private router: Router) {
     this.currentUrl = this.router.url;
     router.events.subscribe((event: any) => {
-      if(event instanceof NavigationEnd) {
+      if (event instanceof NavigationEnd) {
         this.previousUrl = this.currentUrl;
         this.currentUrl = event.url;
         console.log(this.previousUrl, this.currentUrl);

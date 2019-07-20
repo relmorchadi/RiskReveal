@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { Store} from '@ngxs/store';
-import { MessageService} from 'primeng/api';
-import {combineLatest, of} from 'rxjs';
+import {Store} from '@ngxs/store';
+import {MessageService} from 'primeng/api';
+import {combineLatest} from 'rxjs';
 import {WorkspaceMainState} from '../../../core/store/states';
 import * as _ from 'lodash'
 import {PltMainState} from '../../store/states';
@@ -30,7 +30,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   constructor(
     private route$: ActivatedRoute,
     private prn: PreviousNavigationService,
-    _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef
+    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.activeSubTitle= 0;
@@ -165,16 +165,16 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         this.select(PltMainState.getCloneConfig),
         this.route$.params,
         this.select(WorkspaceMainState.getCurrentWS)
-      ).pipe(take(1)).pipe(this.unsubscribeOnDestroy).subscribe( ([navigationPayload, {wsId, year}, currentWS] :any) => {
+      ).pipe(take(1)).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
         const url = this.prn.getPreviousUrl();
         console.log({
           prn: url,
-          navigationPayload,wsId,year,currentWS
+          navigationPayload, wsId, year, currentWS
         });
-        if(url == 'PltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)){
+        if (url == 'PltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
           this.from = {
             ...navigationPayload.payload,
-            detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
+            detail: currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.workSpaceId
           };
           this.to = {
             detail: '',
@@ -183,19 +183,19 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
             uwYear: ''
           };
           this.setCloneConfig('currentSourceOfItems', 'to');
-          this.multiSteps= false;
+          this.multiSteps = false;
           this.stepConfig = {
             wsId: '',
             uwYear: '',
             plts: []
           };
-          this.searchWorkSpaceModal= true;
-        }else {
+          this.searchWorkSpaceModal = true;
+        } else {
           this.to = {
             wsId: wsId,
             uwYear: year,
             plts: [],
-            detail: currentWS.cedantName+' | '+currentWS.workspaceName+' | '+currentWS.uwYear+' | '+currentWS.workSpaceId
+            detail: currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.workSpaceId
           };
           this.from = {
             detail: '',
@@ -204,25 +204,25 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
             uwYear: ''
           };
         }
-        if(this.from.plts.length > 0) {
-          this.cloneConfig= {
+        if (this.from.plts.length > 0) {
+          this.cloneConfig = {
             ...this.cloneConfig,
             summary: {...this.summaryCache}
           }
-        }else {
-          const k= {};
+        } else {
+          const k = {};
 
-          _.forEach(this.cloneConfig.summary, (v,key) => {
+          _.forEach(this.cloneConfig.summary, (v, key) => {
             k[key] = {...v, value: 0};
           })
 
-          this.cloneConfig= {
+          this.cloneConfig = {
             ...this.cloneConfig,
             summary: {...k}
           }
         }
-        this.fromCache= {...this.from};
-        this.toCache= {...this.to};
+        this.fromCache = {...this.from};
+        this.toCache = {...this.to};
         this.detectChanges();
       })
     )
@@ -259,8 +259,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     this.browesing=true;
   }
 
-  protected detectChanges() {
-    super.detectChanges();
+  ngOnDestroy(): void {
+    this.dispatch(new fromWS.setCloneConfig({}));
+    this.destroy();
   }
 
   setSelectedWs(currentSourceOfItems: string,$event: any) {
@@ -367,9 +368,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     return this.cloneConfig[key];
   }
 
-  ngOnDestroy(): void {
-    this.dispatch(new fromWS.setCloneConfig({}));
-    this.destroy();
+  protected detectChanges() {
+    super.detectChanges();
   }
 
   editPlts() {

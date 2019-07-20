@@ -1,12 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -17,25 +9,12 @@ import {RiskLinkModel} from '../../model/risk_link.model';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {
   AddToBasketAction,
-  ApplyFinancialPerspectiveAction, DeleteEdmRdmaction,
-  DeleteFromBasketAction,
-  LoadAnalysisForLinkingAction,
-  LoadFinancialPerspectiveAction,
-  LoadPortfolioForLinkingAction,
+  DeleteEdmRdmaction,
   PatchAddToBasketStateAction,
-  PatchResultsAction,
-  PatchTargetFPAction,
-  RemoveFinancialPerspectiveAction,
-  SaveFinancialPerspectiveAction,
   SearchRiskLinkEDMAndRDMAction,
-  ToggleAnalysisForLinkingAction,
   ToggleRiskLinkAnalysisAction,
   ToggleRiskLinkEDMAndRDMSelectedAction,
-  ToggleRiskLinkFPAnalysisAction,
-  ToggleRiskLinkFPStandardAction,
-  ToggleRiskLinkPortfolioAction,
-  ToggleRiskLinkResultAction,
-  ToggleRiskLinkSummaryAction
+  ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
 import {
   LoadRiskLinkDataAction,
@@ -70,16 +49,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
 
   lastSelectedIndex = null;
 
-  financialP = false;
   filterModalVisibility = false;
   linkingModalVisibility = false;
-  editRowPopUp = false;
-
 
   managePopUp = false;
-
-  singleColEdit = false;
-  editableRow = {item: null, target: null, title: null};
 
   radioValue = 'all';
   columnsForConfig;
@@ -126,18 +99,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
   scrollableColslinking: any;
 
   contextSelectedItem: any;
-  itemCm = [
-    {
-      label: 'Edit', icon: 'pi pi-pencil', command: (event) => {
-        this.editRowPopUp = true;
-      }
-    },
-    {
-      label: 'Delete Item',
-      icon: 'pi pi-trash',
-      command: () => this.deleteFromBasket(this.contextSelectedItem.id, 'results')
-    },
-  ];
 
   @Select(RiskLinkState)
   state$: Observable<RiskLinkModel>;
@@ -146,13 +107,12 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
   constructor(
     private _helper: HelperService,
     private route: ActivatedRoute,
-    _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef
+    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
-    this.dispatch(new LoadRiskLinkDataAction());
     combineLatest(
       this.select(RiskLinkState.getFinancialPerspective)
     ).pipe(this.unsubscribeOnDestroy).subscribe(
@@ -178,6 +138,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
           wsId,
           uwYear: year
         };
+        this.dispatch(new LoadRiskLinkDataAction());
         this.detectChanges();
       })
     ];
@@ -192,7 +153,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
     this.financialStandardContent = DataTables.financialStandarContent;
   }
 
-  
 
   changeFinancialPTarget(target) {
   }
@@ -299,11 +259,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
     this.dispatch(new AddToBasketAction());
   }
 
-  deleteFromBasket(id, target) {
-    console.log(id, target)
-    this.dispatch(new DeleteFromBasketAction({id: id, scope: target}));
-  }
-
   getScrollableCols() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
       return this.scrollableColsAnalysis;
@@ -401,7 +356,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
       console.log('you called for :' + sizePage);
       this.dispatch(new SearchRiskLinkEDMAndRDMAction({
         keyword: this.state.listEdmRdm.searchValue,
-        size: sizePage
+        size: sizePage,
       }));
     }
 
@@ -505,57 +460,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit 
     this.dispatch(new PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
   }
 
-
   handleCancel() {
     this.filterModalVisibility = false;
     this.linkingModalVisibility = false;
   }
-
-  getTreeApp() {
-    const data = _.toArray(this.state.results.data);
-    const regions = _.unionBy(data.map(dt => dt.regionPeril));
-    this.tree = regions.map(dt => {
-      return ({
-        title: dt, expanded: true, selected: false, children: [],
-        selectedItems: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
-          {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
-          {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false}]
-      });
-    });
-    this.tree.forEach(dt => {
-      dt.children = [...this.getInnerTree(dt.title)];
-    });
-  }
-
-  getInnerTree(target) {
-    const data = _.toArray(this.state.results.data);
-    let array = [];
-    data.forEach(dt => {
-      if (target === dt.regionPeril) {
-        array = [...array, {
-          title: `${dt.analysisId} | ${dt.analysisName} | ${dt.description}`,
-          selected: false,
-          selectedItems: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
-            {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
-            {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false}]
-        }];
-      }
-    });
-    return array;
-  }
-
-  /*  getCheckedValue(item) {
-      let value = false;
-      _.forEach(this.tree, dt => dt.children.map(kt => {
-        if (kt.selected === true) {
-          _.forEach(kt.selectedItems, ws => {
-            if (ws.title === item) {
-              value = ws.selected;
-            }
-          });
-        }}));
-      return value;
-    }*/
 
   ngOnDestroy(): void {
     this.destroy();

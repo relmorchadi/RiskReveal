@@ -13,21 +13,23 @@ import {VirtualScrollerModule} from 'primeng/virtualscroller';
 import {workspaceRoutes} from './workspace.route';
 import {TagsComponent} from './components/calibration/tags/tags.component';
 import {LastAdjustmentMatrixComponent} from './components/calibration/last-adjustment-matrix/last-adjustment-matrix.component';
-import {CalendarModule, DialogModule, DragDropModule, RadioButtonModule} from 'primeng/primeng';
+import {CalendarModule, DialogModule, DragDropModule, DropdownModule, RadioButtonModule} from 'primeng/primeng';
 import {ToastModule} from 'primeng/toast';
 import {DndModule} from 'ng2-dnd';
 import {DndModule as NgxDndNodule} from 'ngx-drag-drop';
 import {AdjustmentPopUpComponent} from './components/calibration/adjustment-pop-up/adjustment-pop-up.component';
-import { ScrollingModule } from '@angular/cdk/scrolling';
+import {ScrollingModule} from '@angular/cdk/scrolling';
 import {TreeModule} from 'primeng/tree';
 import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-up/add-remove-pop-up.component';
-import { RiskLinkResSummaryComponent } from './containers/workspace-risk-link/risk-link-res-summary/risk-link-res-summary.component';
+import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk-link-res-summary/risk-link-res-summary.component';
+import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
+import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent
   ],
   imports: [
     GridsterModule,
@@ -45,7 +47,8 @@ import { RiskLinkResSummaryComponent } from './containers/workspace-risk-link/ri
     RadioButtonModule,
     RouterModule.forChild(workspaceRoutes),
     ToastModule,
-    ScrollingModule
+    ScrollingModule,
+    DropdownModule
   ],
   exports: [
     RouterModule

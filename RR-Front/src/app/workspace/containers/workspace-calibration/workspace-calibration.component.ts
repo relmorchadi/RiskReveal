@@ -15,19 +15,16 @@ import {
   deleteAdjsApplication,
   deleteAdjustment,
   dropThreadAdjustment,
-  extendPltSection,
   replaceAdjustement,
   saveAdjModification,
-  saveAdjustment,
-  saveAdjustmentInPlt
+  saveAdjustment
 } from "../../store/actions";
 import {map, switchMap} from 'rxjs/operators';
-import {CalibrationState, PltMainState} from "../../store/states";
+import {PltMainState, WorkspaceState} from "../../store/states";
 import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
-import * as rightMenuStore from "../../../shared/components/plt/plt-right-menu/store";
 
 
 @Component({
@@ -38,17 +35,6 @@ import * as rightMenuStore from "../../../shared/components/plt/plt-right-menu/s
 })
 export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   searchAddress: string;
-  rightMenuInputs: rightMenuStore.Input = {
-    basket: [],
-    pltDetail: null,
-    selectedTab: {
-      index: 0,
-      title: 'basket',
-    },
-    tabs: {'basket': true, 'pltDetail': true},
-    visible: true,
-    mode: "pop-up"
-  };
   listOfPlts: any[];
   listOfPltsData: any[];
   listOfPltsCache: any[];
@@ -86,6 +72,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   dropdownEPM: boolean = false;
   isVisible = false;
   singleValue: any;
+  global: any;
   dragPlaceHolderId: any;
   dragPlaceHolderCol: any;
   categorySelectedFromAdjustement: any;
@@ -97,14 +84,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   templateWidth = '130';
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
-  iconNotePosition: any;
   allAdjsArray: any[] = [];
   AdjustementType: any;
   categorySelected: any;
   adjsArray: any[] = [];
   appliedAdjutement = [];
-  @Select(CalibrationState.getAdjustmentApplication) adjutmentApplication$;
-  @Select(CalibrationState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
+  @Select(WorkspaceState.getAdjustmentApplication) adjutmentApplication$;
+  @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
   leftNavbarIsCollapsed: boolean;
   adjutmentApplication = [];
   linear: boolean = false;
@@ -117,7 +103,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   lastSelectedId;
   tagModalIndex: any = 0;
   mode = "calibration";
-  @Select(CalibrationState) state$: Observable<any>;
+  @Select(WorkspaceState) state$: Observable<any>;
   pltColumns = [
     {
       sortDir: 1,
@@ -816,7 +802,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
-  @Select(PltMainState.getUserTags) userTags$;
+  @Select(WorkspaceState.getUserTags) userTags$;
   data$;
   deletedPlts$;
   deletedPlts: any;
@@ -987,9 +973,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
           this.workspaceId = wsId;
           this.uwy = year;
           this.loading= true;
-          this.data$= this.store$.select(PltMainState.getPlts(this.workspaceId+'-'+this.uwy));
-          this.deletedPlts$= this.store$.select(PltMainState.getDeletedPlts(this.workspaceId+'-'+this.uwy));
-          this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
+          this.data$ = this.store$.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
+          this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
+          this.store$.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
             params: {
               workspaceId: wsId, uwy: year
             }}));
@@ -1005,7 +991,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         let dd2 = [];
         this.loading = false;
         this.systemTagsCount = {};
-
+        console.log(data);
         if (data) {
           if (_.keys(this.systemTagsCount).length == 0) {
             _.forEach(data, (v, k) => {
@@ -1119,7 +1105,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
             this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+      this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
@@ -1170,8 +1156,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         });
       }
     }
-    console.log('data =>', this.dataColumns)
-    console.log('frozen =>', this.frozenColumns)
   }
 
   getAttr(path) {
@@ -1267,7 +1251,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   toggleSelectPlts(plts: any) {
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
+    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       plts,
       forDeleted: this.showDeleted
@@ -1362,7 +1346,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     }
     this.adjustExention();
     this.initDataColumns();
-    this.store$.dispatch(new extendPltSection(this.extended));
+    // this.store$.dispatch(new extendPltSection(this.extended));
   }
 
   adjustExention() {
@@ -1394,7 +1378,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   clickButtonPlus(bool, data?: any) {
-    console.log("here");
+    this.global = bool;
     this.modalTitle = "Add New Adjustment";
     this.modifyModal = false;
     this.categorySelectedFromAdjustement = null;
@@ -1410,40 +1394,45 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   handleCancel(): void {
-    console.log('Button cancel clicked!');
     this.isVisible = false;
   }
 
-  addAdjustmentFromPlusIcon(boolAdj, adjustementType?, adjustement?) {
+  addAdjustment($event) {
+
+    let boolAdj = $event.status;
+    let adjustementType = $event.singleValue;
+    console.log(adjustementType)
+    let adjustement = $event.category;
+    let columnPosition = $event.columnPosition;
+
     if (this.addAdjustement) {
       if (boolAdj) {
         this.isVisible = false;
       }
-      this.store$.dispatch(new saveAdjustmentInPlt({
-        adjustementType: this.singleValue,
+      this.store$.dispatch(new applyAdjustment({
+        adjustementType: adjustementType,
         adjustement: adjustement,
-        columnPosition: this.columnPosition,
-        pltId: this.idPlt,
+        columnPosition: columnPosition,
+        pltId: [this.idPlt],
       }));
     } else {
       if (boolAdj) {
         this.isVisible = false;
       }
-      console.log(this.columnPosition);
       this.store$.dispatch(new saveAdjustment({
-        adjustementType: this.singleValue,
+        adjustementType: adjustementType,
         adjustement: adjustement,
-        columnPosition: this.columnPosition
+        columnPosition: columnPosition
       }));
-      console.log('here 2')
     }
-    this.adjustColWidth(adjustement);
+    this.singleValue = null;
+    this.columnPosition = null;
   }
 
   selectCategory(p) {
+    console.log(p);
     this.categorySelectedFromAdjustement = p;
     this.categorySelected = p.category;
-    console.log(p);
   }
 
   selectBasis(adjustment) {
@@ -1486,7 +1475,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
 
   applyToAll(adj) {
-    console.log('applytoall');
+    if (adj.linear) {
+      this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
+    } else {
+      this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
+      this.columnPosition = adj.value;
+    }
     this.store$.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
@@ -1494,6 +1488,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       pltId: this.listOfPlts,
     }));
     this.adjustColWidth(adj);
+    this.singleValue = null;
+    this.columnPosition = null;
   }
 
   replaceToAllAdjustement(adj) {
@@ -1542,15 +1538,16 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.modalTitle = "Modify Adjustment";
     this.modifyModal = true;
     this.lastModifiedAdj = adj.id;
+    console.log(adj);
     this.categorySelectedFromAdjustement = _.find(this.allAdjsArray, {name: adj.name});
     if (adj.linear) {
-      this.singleValue = _.find(this.AdjustementType, {name: adj.value});
+      this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
     } else {
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    this.isVisible = true
-    this.adjustColWidth(adj);
+    console.log(this.singleValue);
+    this.isVisible = true;
   }
 
   DeleteAdjustement(adj) {
@@ -1559,14 +1556,19 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     }))
   }
 
-  saveAdjModification(adj) {
-    adj.id = this.lastModifiedAdj;
+  saveAdjModification(event) {
+    event.category.id = this.lastModifiedAdj;
+    let adj = event.category;
+    let value = event.value;
+    let columnPosition = event.columnPosition;
     this.store$.dispatch(new saveAdjModification({
-      adjustementType: this.singleValue,
+      adjustementType: value,
       adjustement: adj,
-      columnPosition: this.columnPosition
+      columnPosition: columnPosition
     }));
-    this.isVisible = false;
+    this.singleValue = null;
+    this.columnPosition = null;
+
   }
 
   onChangeAdjValue(adj, event) {
@@ -1592,31 +1594,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     console.log(col);
   }
 
-
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(this.listOfPlts, plt => plt),
-            _.map(this.listOfPlts, (plt, i) => (i <= max && i >= min ? ({type: 'select'}) : ({type: 'unselect'}))),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
+  emitFilters(filters: any) {
+    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFiltersFromCalibration({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      filters: filters
+    }))
   }
 
   collapseTags() {
@@ -1713,11 +1695,30 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ('Restore' != e.label) : !_.find(t, el => el == e.label))
   }
 
-  emitFilters(filters: any) {
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFilters({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      filters: filters
-    }))
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      console.log(i, this.lastSelectedId);
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
+            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({type: i <= max && i >= min})),
+          )
+        );
+      } else {
+        this.lastSelectedId = i;
+      }
+      return;
+    }
   }
 
   unCheckAll() {

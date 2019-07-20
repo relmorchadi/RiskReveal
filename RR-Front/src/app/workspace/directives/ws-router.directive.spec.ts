@@ -1,4 +1,4 @@
-import { WsRouterDirective } from './ws-router.directive';
+import {WsRouterDirective} from './ws-router.directive';
 
 describe('WsRouterDirective', () => {
   it('should create an instance', () => {

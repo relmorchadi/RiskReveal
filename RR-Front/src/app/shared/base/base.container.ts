@@ -9,7 +9,7 @@ export abstract class BaseContainer {
 
   protected unSubscriton$: Subject<void>;
 
-  protected constructor(private _baseRouter: Router, private _baseCdr: ChangeDetectorRef, private _baseStore:Store) {
+  protected constructor(private _baseRouter: Router, private _baseCdr: ChangeDetectorRef, private _baseStore: Store) {
     this.unSubscriton$ = new Subject<void>();
   }
 
@@ -18,10 +18,11 @@ export abstract class BaseContainer {
     return takeUntil(this.unSubscriton$);
   }
 
+  abstract ngOnDestroy(): void;
+
   protected navigate(commands: any[]) {
     this._baseRouter.navigate(commands);
   }
-
 
   protected detectChanges() {
     if (!this._baseCdr['destroyed'])
@@ -33,7 +34,6 @@ export abstract class BaseContainer {
     this.unSubscriton$.complete();
   }
 
-
   protected dispatch(action: any | any[]): Observable<any> {
     return this._baseStore.dispatch(action);
   }
@@ -41,7 +41,5 @@ export abstract class BaseContainer {
   protected select(selector): Observable<any> {
     return this._baseStore.select(selector);
   }
-
-  abstract ngOnDestroy(): void;
 
 }

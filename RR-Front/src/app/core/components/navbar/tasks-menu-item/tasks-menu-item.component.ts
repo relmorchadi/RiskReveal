@@ -448,7 +448,6 @@ export class TasksMenuItemComponent implements OnInit {
     },
   ];
 
-
   @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
   state: WorkspaceMain = null;
@@ -469,9 +468,10 @@ export class TasksMenuItemComponent implements OnInit {
       this.year = _.get(ws, 'uwYear', null);
     });
     HelperService.headerBarPopinChange$.subscribe( ({from}) => {
-      if(from != this.componentName)
-        this.visible= false;
-    })
+      if (from != this.componentName) {
+        this.visible = false;
+      }
+    });
   }
 
   formatter = (_) => '';
@@ -560,16 +560,12 @@ export class TasksMenuItemComponent implements OnInit {
             {key: 'openedWs', value: _.merge({}, alreadyOpened[0], {routing: routerLink})},
             {key: 'openedTabs', value: {data: this.state.openedTabs.data, tabsIndex: index}}]));
           this.store.dispatch(new SetWsRoutingAction(_.merge({}, alreadyOpened[0], {routing: routerLink})));
-          this.helperService.updateRecentWorkspaces();
-          this.helperService.updateWorkspaceItems();
           this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.tabsIndex]);
         } else {
           this.store.dispatch(new AppendNewWorkspaceMainAction(workspace));
           alreadyOpened = this.state.openedTabs.data.filter(ws => ws.workSpaceId === wsId && ws.uwYear == year);
           index = _.findIndex(this.state.openedTabs.data, ws => ws.workSpaceId === wsId && ws.uwYear == year);
           this.store.dispatch(new SetWsRoutingAction(_.merge({}, alreadyOpened[0], {routing: routerLink})));
-          this.helperService.updateRecentWorkspaces();
-          this.helperService.updateWorkspaceItems();
           this.navigateToTab(this.state.openedTabs.data[this.state.openedTabs.data.length - 1]);
         }
         this.visible = false;
@@ -590,7 +586,7 @@ export class TasksMenuItemComponent implements OnInit {
     this.visible = false;
   }
 
-  togglePopup(){
+  togglePopup() {
     HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 }

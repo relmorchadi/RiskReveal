@@ -22,12 +22,12 @@ export class SystemTagsService {
     },
     nonGrouped: {}
   };
-  
+
   constructor() { }
-  
+
   countSystemTags(systemTagsCount, data) {
     let newSysTagCount={...systemTagsCount};
-    
+
     if (_.keys(newSysTagCount).length == 0) {
       _.forEach(data, (v, k) => {
         //Init Tags Counters

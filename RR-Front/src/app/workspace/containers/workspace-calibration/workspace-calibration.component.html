@@ -3,7 +3,6 @@
     <div class="a-app-header">
       <h4>Calibration Editor</h4>
     </div>
-
     <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;width: 175px;">
         <div class="col-10" style="padding:unset; position: absolute;min-width: 175px">
@@ -56,10 +55,10 @@
              style="font-size: 25px; cursor: pointer"></i>
         </div>
       </div>
-      <div *ngIf="collapsedTags" class="noMargin row" style="position: relative;width: 37px;height:44px">
-        <div class="collapseTags col-2" style="padding:10px 0px 0px 5px; position: absolute;">
+      <div *ngIf="collapsedTags" class="noMargin row" class="a-closed-sidebar" style="position: relative;width: 37px">
+        <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
           <i (click)="collapseTags()" class="icon-chevron_right_24px"
-             style="font-size: 25px; cursor: pointer"></i>
+             style="font-size: 20px; cursor: pointer"></i>
         </div>
       </div>
       <div class="tabset-right" style="flex: 1;background: #fff;">
@@ -970,7 +969,7 @@
               [columns]="dataColumns"
               [frozenColumns]="frozenColumns"
               [frozenWidth]="frozenWidth"
-              [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]"
+              [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag] "
               [resizableColumns]="true"
               [contextMenu]="cm"
               [scrollHeight]="'600px'"
@@ -1600,137 +1599,20 @@
     </div>
   </div>
 </div>
-
-<nz-modal [(nzVisible)]="isVisible" [nzFooter]="modalFooter" class="modelAdjustment"
-          (nzOnCancel)="handleCancel()"
-          [nzTitle]="modalTitle">
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Basis</b>
-    </div>
-    <div nz-col nzSpan="16">
-      <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
-      <nz-select [(ngModel)]="categorySelectedFromAdjustement"
-                 (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
-                 [nzPlaceHolder]="'Select Adjustment'"
-                 [nzSize]="size" style="width: 260px;">
-        <ng-container *ngFor="let option of allAdjsArray">
-          <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
-                     [nzValue]="option"></nz-option>
-        </ng-container>
-      </nz-select>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col nzSpan="24">
-      <nz-collapse *ngIf="categorySelectedFromAdjustement?.description" [nzBordered]="false">
-        <nz-collapse-panel [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis" [nzActive]="true">
-          <p>{{categorySelectedFromAdjustement?.description}}</p>
-        </nz-collapse-panel>
-      </nz-collapse>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8">
-      <b>Category</b>
-    </div>
-    <div nz-col nzSpan="16" style="line-height: 2.2rem;">
-      <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
-      <b style="margin-left: 10px;">{{categorySelected}}</b>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col nzSpan="24">
-      &nbsp;
-    </div>
-  </div>
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Narrative</b>
-    </div>
-    <div nz-col nzSpan="16">
-      <textarea style="margin-left: 10px; width: 95%" rows="4" nz-input [(ngModel)]="inputValue"></textarea>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col nzSpan="24">
-      &nbsp;
-    </div>
-  </div>
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Type</b>
-    </div>
-    <div nz-col nzSpan="16">
-      <nz-select [(ngModel)]="singleValue" (ngModelChange)="selectBasis(singleValue)"
-                 [nzPlaceHolder]="'choose Type'"
-                 [nzSize]="size" style="width: 260px;">
-        <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
-      </nz-select>
-    </div>
-  </div>
-  <div nz-row style="margin-top: 20px;" *ngIf="categorySelectedFromAdjustement">
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin: 5px;">
-      Capped
-    </div>
-    <div nzSpan="16" style="line-height: 2.2rem;">
-      <nz-switch [nzDisabled]="true" [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" nzSize="small"
-                 style="margin-left: 15px;"></nz-switch>
-    </div>
-  </div>
-
-  <ng-container *ngIf="linear">
-    <div nz-row>
-      <div nz-col nzSpan="24" style="margin: 5px;">
-        <hr>
-      </div>
-    </div>
-    <div nz-row>
-      <div nz-col nzSpan="24" style="margin: 5px;">
-        <b>Parameter</b>
-      </div>
-    </div>
-    <div nz-row>
-      <div nz-col nzSpan="2">
-        &nbsp;
-      </div>
-      <div nz-col nzSpan="11">
-        Loss Modification Factor (LMF)
-      </div>
-      <div nz-col nzSpan="9">
-        <input
-          #inputElement
-          [(ngModel)]="columnPosition"
-          nz-input
-          nz-tooltip
-          style="width: 200px;
-        height: 40px;
-        background: #f9f9f9;
-        border-radius: 0;
-        border:0;
-        border-bottom: 1px solid black;
-        color:#0700CF"
-        />
-      </div>
-    </div>
-  </ng-container>
-  <ng-template #modalFooter>
-    <button (click)="handleCancel()"
-            class="ant-btn"
-            style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
-    </button>
-
-    <button *ngIf="!modifyModal" (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)"
-            class="ant-btn ant-btn-default"
-            style="width: 130px; height: 30px; ">SAVE
-    </button>
-    <button *ngIf="modifyModal" (click)="saveAdjModification(categorySelectedFromAdjustement)"
-            class="ant-btn ant-btn-default"
-            style="width: 130px; height: 30px; ">SAVE
-    </button>
-  </ng-template>
-</nz-modal>
-
+<app-adjustment-pop-up
+  [isVisible]="isVisible"
+  [allAdjsArray]="allAdjsArray"
+  [AdjustementType]="AdjustementType"
+  [modalTitle]="modalTitle"
+  [singleValue]="singleValue"
+  [modifyModal]="modifyModal"
+  [global]="global"
+  [categorySelectedFromAdjustement]="categorySelectedFromAdjustement"
+  (selectCategory)="selectCategory($event)"
+  (handleCancel)="handleCancel()"
+  (addAdjustmentFromPlusIcon)="addAdjustment($event)"
+  (saveAdjModification)="saveAdjModification($event)">
+</app-adjustment-pop-up>
 <app-add-remove-pop-up
   [isVisible]="addRemoveModal"
   [selectionStep]="'plt'"
@@ -1739,209 +1621,3 @@
     plts: listOfPltsData}"
   (onVisibleChange)="addRemoveModal= $event">
 </app-add-remove-pop-up>
-<!--<p-dialog
-  [closable]="false"
-  [styleClass]="'m-dialog-modal-lg borderless'"
-  appendTo="body"
-  [modal]="true"
-  [responsive]="true"
-  [visible]="addRemoveModal"
-  [baseZIndex]="1"
-  [autoZIndex]="false"
->
-
-  <p-header>
-    <div class="header">
-      <h4>
-        Select PLTs to Calibrate
-      </h4>
-      <i (click)="addRemoveModal=false" style="cursor: pointer" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-  <div class="content">
-    <div class="left">
-      <app-plt-left-menu
-        [menuInputs]="{
-            tagContextMenu: tagContextMenu,
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
-            addTagModalIndex: tagModalIndex,
-            fromPlts: fromPlts,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
-            userTags: userTags,
-            systemTags: systemTags,
-            selectedListOfPlts: selectedListOfPlts,
-            systemTagsCount: systemTagsCount,
-            _tagModalVisible: tagModalVisible,
-            _editingTag: editingTag,
-            _modalSelect: modalSelect,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:true
-          }"
-      >
-
-      </app-plt-left-menu>
-    </div>
-    <div class="center">
-      <div class="title-as-tab-bis">
-          <span>
-            PLTs
-          </span>
-      </div>
-      <div class="PLTs-content">
-        <app-plt-main-table
-          [tableInputs]="{
-                  contextMenuItems: contextMenuItems,
-                  filterInput: filterInput,
-                  pltColumns: popUpPltColumns,
-                  listOfPltsData: listOfPltsData,
-                  listOfDeletedPltsData: listOfDeletedPltsData,
-                  listOfPltsCache: listOfPltsCache,
-                  listOfDeletedPltsCache: listOfDeletedPltsCache,
-                  listOfPlts: listOfPlts,
-                  listOfDeletedPlts: listOfDeletedPlts,
-                  selectedListOfPlts: selectedListOfPlts,
-                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
-                  selectAll: selectAll,
-                  someItemsAreSelected: someItemsAreSelected,
-                  showDeleted: showDeleted,
-                  filterData: filterData,
-                  filters: filters,
-                  sortData: sortData
-                }"
-          (onCheckAll)="checkAll($event)"
-          (onFilter)="filter($event)"
-          (onPltClick)="toggleSelectPlts($event)"
-          (onSelectSinglePlt)="selectSinglePLT($event)"
-        ></app-plt-main-table>
-      </div>
-    </div>
-    <div class="right">
-      <app-plt-right-menu
-        (actionDispatcher)="rightMenuActionDispatcher($event)"
-        [Inputs]="rightMenuInputs"
-      ></app-plt-right-menu>
-    </div>
-  </div>
-
-  <p-footer>
-    <div class="footer">
-      <button (click)="addRemoveModal=false" class="a-button-text">cancel</button>
-      <button (click)="addRemoveModal=false" class="a-buttons-contained">
-        Save
-      </button>
-    </div>
-  </p-footer>
-
-</p-dialog>-->
-
-<!--<p-dialog
-  (cancel)="handleCancel()"
-  [closable]="false"
-  [modal]="true"
-  [responsive]="true"
-  [visible]="true"
-  appendTo="body"
-  styleClass="m-dialog-modal-m-74">
-<p-header>
-  <h3>
-    {{modalTitle}}
-  </h3>
-  <i (click)="handleCancel()" class="icon-close_24px" style="cursor: pointer"></i>
-</p-header>
-<div nz-row>
-  <div nz-col nzSpan="8" style="margin-top: 10px">
-    <b>Basis</b>
-  </div>
-  <div nz-col nzSpan="16">
-    &lt;!&ndash; (ngModelChange)="selectCategory(categorySelectedFromBasis)"&ndash;&gt;
-    <nz-select (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
-               [(ngModel)]="categorySelectedFromAdjustement"
-               [nzPlaceHolder]="'Select Adjustment'"
-               [nzSize]="size" style="width: 260px;">
-      <ng-container *ngFor="let option of allAdjsArray">
-        <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
-                   [nzValue]="option"></nz-option>
-      </ng-container>
-    </nz-select>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="24">
-    <nz-collapse *ngIf="categorySelectedFromAdjustement?.description" [nzBordered]="false">
-      <nz-collapse-panel [nzActive]="true" [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis">
-        <p>{{categorySelectedFromAdjustement?.description}}</p>
-      </nz-collapse-panel>
-    </nz-collapse>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="8">
-    <b>Category</b>
-  </div>
-  <div nz-col nzSpan="16" style="line-height: 2.2rem;">
-    &lt;!&ndash; (ngModelChange)="selectCategory(categorySelectedFromBasis)"&ndash;&gt;
-    <b style="margin-left: 10px;">{{categorySelected}}</b>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="24">
-    &nbsp;
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="8" style="margin-top: 10px">
-    <b>Narrative</b>
-  </div>
-  <div nz-col nzSpan="16">
-    <textarea [(ngModel)]="inputValue" nz-input rows="4" style="margin-left: 10px; width: 95%"></textarea>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="24">
-    &nbsp;
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="8" style="margin-top: 10px">
-    <b>Type</b>
-  </div>
-  <div nz-col nzSpan="16">
-    <nz-select (ngModelChange)="selectBasis(singleValue)" [(ngModel)]="singleValue"
-               [nzPlaceHolder]="'choose Type'"
-               [nzSize]="size" style="width: 260px;">
-      <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
-    </nz-select>
-  </div>
-</div>
-<div *ngIf="categorySelectedFromAdjustement" nz-row style="margin-top: 20px;">
-  <div nz-col nzSpan="8" style="margin: 5px;">
-    Capped
-  </div>
-  <div nz-col nzSpan="16" style="line-height: 2.2rem;">
-    <nz-switch [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" [nzDisabled]="true" nzSize="small"
-               style="margin-left: 15px;"></nz-switch>
-  </div>
-</div>
-<p-footer>
-  <button (click)="handleCancel()"
-          class="a-button-text-cancel a-buttons-contained"
-          style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
-  </button>
-
-  <button (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)" *ngIf="!modifyModal"
-          class="a-buttons-contained"
-          style="width: 130px; height: 30px; ">SAVE
-  </button>
-  <button (click)="saveAdjModification(categorySelectedFromAdjustement)" *ngIf="modifyModal"
-          class="a-buttons-contained"
-          style="width: 130px; height: 30px; ">SAVE
-  </button>
-</p-footer>
-</p-dialog>-->
-

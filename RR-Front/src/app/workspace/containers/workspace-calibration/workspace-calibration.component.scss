@@ -1714,3 +1714,20 @@ body .ui-table .ui-table-thead > tr > th {
 ::ng-deep.ant-switch {
   height: 19px !important;
 }
+
+::ng-deep.ui-dropdown {
+  background: #ffffff;
+  border: 1px solid #a6a6a6;
+  width: 95%;
+  margin-left: 10px;
+}
+
+.add-adjustment-input {
+  width: 200px;
+  height: 40px;
+  background: #f9f9f9;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid black;
+  color: #0700CF;
+}

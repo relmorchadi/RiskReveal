@@ -20,12 +20,12 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     uwYear: string
   };
 
-  constructor(private route: ActivatedRoute,_baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
-    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe( ({wsId, year}) => {
+    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
       this.hyperLinksConfig= {
         wsId,
         uwYear: year

@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { WorkspaceInuringPackageComponent } from './workspace-inuring-package.component';
+import {WorkspaceInuringPackageComponent} from './workspace-inuring-package.component';
 
 describe('WorkspqceInuringPackageComponent', () => {
   let component: WorkspaceInuringPackageComponent;
@@ -8,9 +8,9 @@ describe('WorkspqceInuringPackageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkspaceInuringPackageComponent ]
+      declarations: [WorkspaceInuringPackageComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

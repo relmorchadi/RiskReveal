@@ -1,16 +1,18 @@
-import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {Action, Selector, State, StateContext} from '@ngxs/store';
 
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';
 import {
   AddToBasketAction,
-  ApplyFinancialPerspectiveAction, DeleteEdmRdmaction,
+  ApplyFinancialPerspectiveAction,
+  DeleteEdmRdmaction,
   DeleteFromBasketAction,
   LoadAnalysisForLinkingAction,
   LoadFinancialPerspectiveAction,
   LoadPortfolioForLinkingAction,
   LoadRiskLinkDataAction,
-  PatchAddToBasketStateAction, PatchResultsAction,
+  PatchAddToBasketStateAction,
+  PatchResultsAction,
   PatchRiskLinkAction,
   PatchRiskLinkCollapseAction,
   PatchRiskLinkDisplayAction,
@@ -34,10 +36,7 @@ import {
   LoadRiskLinkPortfolioDataAction,
   ToggleRiskLinkEDMAndRDMSelectedAction
 } from '../actions/risk_link.actions';
-import {catchError, mergeMap, switchMap} from 'rxjs/operators';
-import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from '../../services/risk.api';
-import {forkJoin} from 'rxjs';
 import {RiskLinkStateService} from '../../services/riskLink-action.service';
 
 const initiaState: RiskLinkModel = {

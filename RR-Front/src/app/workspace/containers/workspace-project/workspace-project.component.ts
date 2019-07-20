@@ -1,7 +1,7 @@
-import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {HelperService, NotificationService} from '../../../shared';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as moment from 'moment'
@@ -17,7 +17,7 @@ import {
   SelectProjectAction
 } from '../../../core/store/actions/workspace-main.action';
 import {MessageService} from 'primeng/api';
-import {BaseComponent, BaseContainer} from "../../../shared/base";
+import {BaseContainer} from "../../../shared/base";
 
 @Component({
   selector: 'workspace-project',
@@ -25,7 +25,7 @@ import {BaseComponent, BaseContainer} from "../../../shared/base";
   styleUrls: ['./workspace-project.component.scss'],
   providers: [MessageService]
 })
-export class WorkspaceProjectComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber  {
+export class WorkspaceProjectComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
   actionsEmitter: EventEmitter<any>;
   // unSubscribe$: Subject<void>;
   collapseWorkspaceDetail = true;
@@ -37,11 +37,6 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   index: any;
   isVisible = false;
   wsIdentifier;
-  //@Select(WorkspaceState.getData)
-  // data$= of();
-  //@Select(Workspacetate.getProjects)
-  // projects$= of();
-
 
   newProject = false;
   existingProject = false;
@@ -73,8 +68,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
               private actions$: Actions,
               private messageService: MessageService,
               private changeDetector: ChangeDetectorRef,
-              private notificationService:NotificationService,
-              _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef
+              private notificationService: NotificationService,
+              _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     console.log('init project');
@@ -83,7 +78,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
-    console.log('this is ws data', data);
+    console.log('this is ws data', wsIdentifier,data);
     this.wsIdentifier = wsIdentifier;
   }
 
@@ -91,11 +86,11 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   ngOnInit() {
 
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
-        this.newProject = false;
-        this.notificationService.createNotification('Project added successfully', '',
-          'success', 'topRight', 4000);
-        this._helper.updateWorkspaceItems();
-        // this.detectChanges();
+      this.newProject = false;
+      this.notificationService.createNotification('Project added successfully', '',
+        'success', 'topRight', 4000);
+      this._helper.updateWorkspaceItems();
+      // this.detectChanges();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
@@ -108,7 +103,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
         this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
         this._helper.updateWorkspaceItems();
-        // this.detectChanges();
+      // this.detectChanges();
       }
     );
   }

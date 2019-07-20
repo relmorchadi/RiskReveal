@@ -1,9 +1,8 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
-import {combineLatest, Subject} from 'rxjs';
+import {combineLatest} from 'rxjs';
 import {data} from '../workspace-scope-completence/data';
-import {takeUntil} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {PltMainState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
@@ -26,7 +25,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   index: any;
   workspaceUrl: any;
 
-  constructor(private route: ActivatedRoute, _baseStore:Store,_baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
 

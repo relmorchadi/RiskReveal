@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { WorkspaceRouterComponent } from './workspace-router.component';
+import {WorkspaceRouterComponent} from './workspace-router.component';
 
 describe('WorkspaceRouterComponent', () => {
   let component: WorkspaceRouterComponent;
@@ -8,9 +8,9 @@ describe('WorkspaceRouterComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ WorkspaceRouterComponent ]
+      declarations: [WorkspaceRouterComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

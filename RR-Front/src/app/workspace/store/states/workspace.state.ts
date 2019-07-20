@@ -1,13 +1,14 @@
-import {Action, createSelector, NgxsOnInit, Select, Selector, State, StateContext, Store} from '@ngxs/store';
+import {Action, createSelector, Selector, State, StateContext, Store} from '@ngxs/store';
 import * as _ from 'lodash';
-import {WorkspaceModel} from "../../model";
 import * as fromWS from '../actions'
-import {WsApi} from '../../services/workspace.api';
-import {catchError, mergeMap, take, takeUntil} from 'rxjs/operators';
-import {Navigate} from '@ngxs/router-plugin';
-import produce from "immer";
-import * as fromHeader from "../../../core/store/actions/header.action";
-import {HeaderState} from "../../../core/store/states/header.state";
+import {deselectAll, PatchCalibrationStateAction, selectRow} from '../actions'
+import {WorkspaceMainState} from "../../../core/store/states";
+import {WorkspaceMain} from "../../../core/model";
+import {CalibrationService} from "../../services/calibration.service";
+import {WorkspaceService} from "../../services/workspace.service";
+import {WorkspaceModel} from '../../model';
+import * as fromPlt from "../actions/plt_main.actions";
+import {PltStateService} from "../../services/plt-state.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -27,11 +28,15 @@ const initialState: WorkspaceModel = {
 })
 export class WorkspaceState {
 
-  constructor(private wsApi: WsApi, private store: Store) {
+  constructor(private wsService:WorkspaceService, private pltStateService:PltStateService, private calibrationService: CalibrationService) {
   }
 
 
-  //Selectors
+  /***********************************
+   *
+   * Workspace Selectors
+   *
+   ***********************************/
   @Selector()
   static getWorkspaces(state: WorkspaceModel) {
     return state.content;
@@ -62,216 +67,427 @@ export class WorkspaceState {
     return state.pinned;
   }
 
-  //Actions
-  @Action(fromWS.loadWS)
-  loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWS) {
-    const {
-      wsId,
-      uwYear,
-      route
-    } = payload;
+  /***********************************
+   *
+   * Plt Selectors
+   *
+   ***********************************/
 
-    ctx.patchState({
-      loading: true
-    });
-
-    return this.wsApi.searchWorkspace(wsId, uwYear)
-      .pipe(
-        mergeMap(ws => ctx.dispatch(new fromWS.loadWsSuccess({
-          wsId,
-          uwYear,
-          ws,
-          route
-        }))),
-        catchError(e => ctx.dispatch(new fromWS.loadWsFail()))
-      )
+  @Selector()
+  static getCloneConfig(wsIdentifier: string) {
+    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager['cloneConfig'];
   }
 
-  @Action(fromWS.loadWsSuccess)
-  loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWsSuccess) {
-    const {wsId, uwYear, ws, route} = payload;
-    const {workspaceName, programName, cedantName} = ws;
-    const wsIdentifier = `${wsId}-${uwYear}`;
-    ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content = _.merge(draft.content, {
-        [wsIdentifier]: {
-          wsId,
-          uwYear, ...ws,
-          collapseWorkspaceDetail: true,
-          route,
-          leftNavbarCollapsed: false,
-          isFavorite: false
-        }
-      });
-      draft.loading = false;
-      ctx.dispatch(new fromWS.setCurrentTab({
-        index: _.size(draft.content),
-        wsIdentifier
-      }));
-    }));
+  @Selector()
+  static getWorkspaceMainState(state: WorkspaceModel) {
+    return state;
+  }
+
+  @Selector()
+  static data(wsIdentifier: string) {
+    return (state: WorkspaceModel) => state.content[wsIdentifier];
+  }
+
+  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
+
+  @Selector()
+  static getProjectsPlt(wsIdentifier: string) {
+    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.projects;
+  }
+
+
+  @Selector()
+  static getUserTagsPlt(wsIdentifier: string) {
+    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTags;
+  }
+
+  @Selector()
+  static getOpenedPlt(wsIdentifier: string) {
+    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt;
+  }
+
+  /*@Selector()
+  static getSystemTags(wsIdentifier: string) {
+    return (state: WorkspaceModel) => state.content[wsIdentifier]['systemTags'];
+  }*/
+
+
+  static getDeletedPltsForPlt(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => e.deleted), 'pltId'));
+  }
+
+
+  static getPltsForPlts(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => !e.deleted), 'pltId'))
+  }
+
+  /***********************************
+   *
+   * Calibration Selectors
+   *
+   ***********************************/
+  @Selector()
+  static getProjects() {
+    return (state: any) => state.workspaceMain.openedWs.projects
+  }
+
+  @Selector()
+  static getAttr(state: WorkspaceModel) {
+    return (path) => _.get(state.content.wsIdentifier.Calibration, `${path}`);
+  }
+
+  @Selector()
+  static getAdjustmentApplication(state: WorkspaceModel) {
+    return _.get(state.content.wsIdentifier.Calibration, "adjustmentApplication")
+  }
+
+  static getPlts(wsIdentifier: string) {
+    return createSelector([WorkspaceMainState], (state: WorkspaceModel) => _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => !e.deleted), 'pltId'))
+  }
+
+  static getDeletedPlts(wsIdentifier: string) {
+    return createSelector([WorkspaceMainState], (state: WorkspaceModel) => _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => e.deleted), 'pltId'));
+  }
+
+  @Selector()
+  static getUserTags(state: WorkspaceModel) {
+    return _.get(state.content.wsIdentifier.Calibration, 'userTags', {})
+  }
+
+  static getLeftNavbarIsCollapsed() {
+    return createSelector([WorkspaceMainState], (state: WorkspaceMain) => {
+      return _.get(state, "leftNavbarIsCollapsed");
+    });
+  }
+
+
+  /***********************************
+   *
+   * Workspace Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadWS)
+  loadWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWS) {
+    return this.wsService.loadWs(ctx, payload);
+  }
+
+  @Action(fromWS.LoadWsSuccess)
+  loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWsSuccess) {
+    return this.wsService.loadWsSuccess(ctx, payload);
   }
 
   @Action(fromWS.openWS)
-  openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.openWS) {
-    const {wsId, uwYear, route} = payload;
-    const state = ctx.getState();
-    const wsIdentifier = wsId + '-' + uwYear;
-    console.log('open ws handler', payload);
-
-    if (state.content[wsIdentifier]) {
-      this.updateWsRouting(ctx, {wsId: wsIdentifier, route})
-      return ctx.dispatch(new fromWS.setCurrentTab({
-        index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
-        wsIdentifier
-      }));
-    } else {
-      return ctx.dispatch(new fromWS.loadWS({
-        wsId,
-        uwYear,
-        route
-      }));
-    }
+  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.openWS) {
+    return this.wsService.openWorkspace(ctx, payload);
   }
 
-  @Action(fromWS.openMultiWS)
-  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.openMultiWS) {
-    _.forEach(payload, item => {
-      const {wsId, uwYear} = item;
-      const state = ctx.getState();
-      const wsIdentifier = wsId + '-' + uwYear;
-      if (state.content[wsIdentifier]) {
-        return ctx.dispatch(new fromWS.setCurrentTab({
-          index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
-          wsIdentifier
-        }));
-      } else {
-        return ctx.dispatch(new fromWS.loadWS({
-          wsId,
-          uwYear
-        }));
-      }
-    });
+  @Action(fromWS.OpenMultiWS)
+  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenMultiWS) {
+    return this.wsService.openMultipleWorkspaces(ctx, payload);
   }
 
-  @Action(fromWS.setCurrentTab)
-  setCurrentTab(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setCurrentTab) {
-    const {
-      index,
-      wsIdentifier,
-    } = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      const ws = draft.content[wsIdentifier];
-      const {route} = ws;
-      console.log('TOTO', route);
-      draft.currentTab = {...draft.currentTab, index, wsIdentifier};
-      draft.content[wsIdentifier] = {...ws, isFavorite: this._isFavorite(ws), isPinned: this._isPinned(ws)}
-      ctx.dispatch(new Navigate([`workspace/${_.replace(wsIdentifier, '-', '/')}${route ? '/' + route : '/projects'}`]))
-    }));
+  @Action(fromWS.SetCurrentTab)
+  setCurrentTab(ctx: StateContext<WorkspaceModel>, payload: fromWS.SetCurrentTab) {
+    return this.wsService.setCurrentTab(ctx, payload);
   }
 
-  @Action(fromWS.closeWS)
-  closeWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.closeWS) {
-    const {
-      wsIdentifier
-    } = payload;
-
-    const {
-      currentTab,
-      content
-    } = ctx.getState();
-
-    // To keep at least one tab open
-    if (_.size(content) == 1)
-      return;
-
-    if (wsIdentifier == currentTab.wsIdentifier) {
-      if (currentTab.index === _.size(content) - 1) {
-        ctx.dispatch(new fromWS.setCurrentTab({
-          index: currentTab.index - 1,
-          wsIdentifier: _.keys(content)[currentTab.index - 1]
-        }))
-      } else {
-        ctx.dispatch(new fromWS.setCurrentTab({
-          index: currentTab.index,
-          wsIdentifier: _.keys(content)[currentTab.index + 1]
-        }))
-      }
-    } else {
-      let i = _.findIndex(_.toArray(content), ws => ws.wsId + '-' + ws.uwYear == wsIdentifier)
-      if (currentTab.index > i) {
-        ctx.dispatch(new fromWS.setCurrentTab({
-          index: currentTab.index - 1,
-          wsIdentifier: currentTab.wsIdentifier
-        }))
-      }
-    }
-    ctx.patchState({
-      content: _.keyBy(_.filter(content, ws => ws.wsId + '-' + ws.uwYear != wsIdentifier), (el) => el.wsId + '-' + el.uwYear)
-    })
+  @Action(fromWS.CloseWS)
+  closeWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.CloseWS) {
+    return this.wsService.closeWorkspace(ctx, payload);
   }
 
   @Action(fromWS.ToggleWsDetails)
-  toggleWsDetails(ctx: StateContext<WorkspaceModel>, {wsId}: fromWS.ToggleWsDetails) {
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsId].collapseWorkspaceDetail = !draft.content[wsId].collapseWorkspaceDetail;
-    }));
+  toggleWsDetails(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleWsDetails) {
+    return this.wsService.toggleWsDetails(ctx, payload);
   }
 
   @Action(fromWS.ToggleWsLeftMenu)
-  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, {wsId}: fromWS.ToggleWsLeftMenu) {
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsId].leftNavbarCollapsed = !draft.content[wsId].leftNavbarCollapsed;
-    }));
+  toggleWsLeftMenu(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleWsLeftMenu) {
+    return this.wsService.toggleWsLeftMenu(ctx, payload);
   }
 
   @Action(fromWS.UpdateWsRouting)
-  updateWsRouting(ctx: StateContext<WorkspaceModel>, {wsId, route}: fromWS.UpdateWsRouting) {
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsId].route = route;
-    }));
+  updateWsRouting(ctx: StateContext<WorkspaceModel>, payload: fromWS.UpdateWsRouting) {
+    return this.wsService.updateWsRouting(ctx, payload);
   }
 
   @Action(fromWS.MarkWsAsFavorite)
-  markWsAsFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsFavorite) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: true};
-    }))
+  markWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsFavorite) {
+    return this.wsService.markWsAsFavorite(ctx, payload);
   }
 
   @Action(fromWS.MarkWsAsNonFavorite)
-  markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonFavorite) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: false};
-    }))
+  markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonFavorite) {
+    return this.wsService.markWsAsNonFavorite(ctx, payload);
   }
 
   @Action(fromWS.MarkWsAsPinned)
-  markWsAsPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsPinned) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: true};
-    }))
+  markWsAsPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsPinned) {
+    return this.wsService.markWsAsPinned(ctx, payload);
   }
 
   @Action(fromWS.MarkWsAsNonPinned)
-  markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkWsAsNonPinned) {
-    const {wsIdentifier} = payload;
-    return ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: false};
-    }))
+  markWsAsNonPinned(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonPinned) {
+    return this.wsService.markWsAsNonPinned(ctx, payload);
   }
 
-  private _isFavorite({wsId, uwYear}): boolean {
-    const favoriteWs = this.store.selectSnapshot(HeaderState.getFavorite);
-    return _.find(favoriteWs, item => item.wsId == wsId && item.uwYear == uwYear);
+
+  /***********************************
+   *
+   * Plt Manager Actions
+   *
+   ***********************************/
+
+
+  @Action(fromPlt.setCloneConfig)
+  setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {
+    return this.pltStateService.setCloneConfig(ctx, payload);
   }
 
-  private _isPinned({wsId, uwYear}): boolean {
-    const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
-    return _.find(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear);
+  @Action(fromPlt.loadAllPlts)
+  LoadAllPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPlts) {
+    return this.pltStateService.LoadAllPlts(ctx, payload);
   }
 
+  @Action(fromPlt.loadAllPltsSuccess)
+  LoadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPltsSuccess) {
+    return this.pltStateService.loadAllPltsSuccess(ctx, payload);
+  }
+
+  @Action(fromPlt.ToggleSelectPlts)
+  ptlManagerSelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.ToggleSelectPlts) {
+    return this.pltStateService.selectPlts(ctx, payload);
+  }
+
+  @Action(fromPlt.OpenPLTinDrawer)
+  OpenPltinDrawer(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.OpenPLTinDrawer) {
+    return this.pltStateService.openPltInDrawer(ctx, payload);
+  }
+
+  @Action(fromPlt.ClosePLTinDrawer)
+  ClosePLTinDrawer(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.ClosePLTinDrawer) {
+    return this.pltStateService.closePLTinDrawer(ctx,payload);
+  }
+
+  @Action(fromPlt.setUserTagsFilters)
+  pltManagerSetFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setUserTagsFilters) {
+    return this.pltStateService.setFilterPlts(ctx,payload);
+  }
+
+  @Action(fromPlt.FilterPltsByUserTags)
+  pltManagerFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByUserTags) {
+    return this.pltStateService.filterPlts(ctx,payload);
+  }
+
+  @Action(fromPlt.setTableSortAndFilter)
+  setTableSortAndFilter(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setTableSortAndFilter) {
+    return this.pltStateService.setTableSortAndFilter(ctx,payload);
+  }
+
+  @Action(fromPlt.constructUserTags)
+  pltManagerConstructUserTags(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.constructUserTags) {
+    return this.pltStateService.constructUserTags(ctx,payload);
+  }
+
+  @Action(fromPlt.createOrAssignTags)
+  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.createOrAssignTags) {
+    return this.pltStateService.assignPltsToTag(ctx,payload);
+  }
+
+  @Action(fromPlt.CreateTagSuccess)
+  createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
+    return this.pltStateService.createUserTagSuccess(ctx,payload);
+  }
+
+  @Action(fromPlt.assignPltsToTagSuccess)
+  assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
+    return this.pltStateService.assignPltsToTagSuccess(ctx,payload);
+  }
+
+
+  @Action(fromPlt.deleteUserTag)
+  deleteUserTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTag) {
+    return this.pltStateService.deleteUserTag(ctx,payload);
+  }
+
+  @Action(fromPlt.deleteUserTagSuccess)
+  deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
+    return this.pltStateService.deleteUserTagFromPlts(ctx,payload);
+  }
+
+  @Action(fromPlt.deletePlt)
+  deletePlt(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deletePlt) {
+    return this.pltStateService.deletePlt(ctx,payload);
+  }
+
+  @Action(fromPlt.deletePltSucess)
+  deletePltSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deletePltSucess) {
+
+    const {
+      pltId
+    } = payload;
+
+    const {
+      // data
+    } = ctx.getState();
+
+    /*
+     return of(JSON.parse(localStorage.getItem('deletedPlts')) || {})
+       .pipe()*/
+  }
+
+  @Action(fromPlt.editTag)
+  renameTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.editTag) {
+    return this.pltStateService.renameTag(ctx,payload);
+  }
+
+  @Action(fromPlt.editTagSuccess)
+  renameTagSucces(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.editTagSuccess) {
+    return this.pltStateService.renameTagSuccess(ctx,payload);
+  }
+
+  @Action(fromPlt.restorePlt)
+  restorePlt(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.restorePlt) {
+    return this.pltStateService.restorePlt(ctx,payload);
+  }
+
+  /***********************************
+   *
+   * Calibration Actions
+   *
+   ***********************************/
+
+
+
+  @Action(fromWS.loadAllPltsFromCalibration)
+  loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
+    return this.calibrationService.loadAllPltsFromCalibration(ctx, payload)
+  }
+
+  @Action(fromWS.loadAllPltsFromCalibrationSuccess)
+  loadAllPltsFromCalibrationSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibrationSuccess) {
+    this.calibrationService.loadAllPltsFromCalibrationSuccess(ctx, payload)
+  }
+
+  @Action(fromWS.constructUserTagsFromCalibration)
+  constructUserTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.constructUserTagsFromCalibration) {
+    this.calibrationService.constructUserTags(ctx, payload)
+  }
+
+  @Action(fromWS.setUserTagsFiltersFromCalibration)
+  setFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setUserTagsFiltersFromCalibration) {
+    this.calibrationService.setFilterPlts(ctx, payload)
+  }
+
+  @Action(fromWS.FilterPltsByUserTagsFromCalibration)
+  FilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.FilterPltsByUserTagsFromCalibration) {
+    this.calibrationService.FilterPlts(ctx, payload)
+  }
+
+  @Action(fromWS.ToggleSelectPltsFromCalibration)
+  SelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectPltsFromCalibration) {
+    this.calibrationService.SelectPlts(payload)
+  }
+
+  @Action(fromWS.calibrateSelectPlts)
+  calibrateSelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.calibrateSelectPlts) {
+    this.calibrationService.calibrateSelectPlts(ctx, payload)
+  }
+
+  @Action(fromWS.initCalibrationData)
+  initCalibrationData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.initCalibrationData) {
+    this.calibrationService.initCalibrationData(ctx, payload)
+  }
+
+  @Action(fromWS.setFilterCalibration)
+  setFilterCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setFilterCalibration) {
+    this.calibrationService.setFilterCalibration(ctx, payload)
+  }
+
+  @Action(fromWS.extendPltSection)
+  expandPltSection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.extendPltSection) {
+    this.calibrationService.expandPltSection(ctx, payload)
+  }
+
+  @Action(fromWS.collapseTags)
+  collapseTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.collapseTags) {
+    this.calibrationService.collapseTags(ctx, payload)
+  }
+
+  @Action(fromWS.saveAdjustment)
+  saveAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustment) {
+    this.calibrationService.saveAdjustment(ctx, payload)
+  }
+
+  @Action(fromWS.dropThreadAdjustment)
+  dropThreadAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.dropThreadAdjustment) {
+    this.calibrationService.dropThreadAdjustment(ctx, payload)
+
+  }
+
+  @Action(fromWS.saveAdjModification)
+  saveAdjModification(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjModification) {
+    this.calibrationService.saveAdjModification(ctx, payload)
+  }
+
+  @Action(fromWS.replaceAdjustement)
+  replaceAdjustement(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.replaceAdjustement) {
+    this.calibrationService.replaceAdjustement(ctx, payload)
+  }
+
+  @Action(fromWS.saveAdjustmentInPlt)
+  saveAdjustmentInPlt(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustmentInPlt) {
+    this.calibrationService.saveAdjustmentInPlt(ctx, payload)
+  }
+
+
+  @Action(fromWS.applyAdjustment)
+  applyAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.applyAdjustment) {
+    this.calibrationService.applyAdjustment(ctx, payload)
+  }
+
+  @Action(fromWS.dropAdjustment)
+  dropAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.dropAdjustment) {
+    this.calibrationService.dropAdjustment(ctx, payload)
+  }
+
+  @Action(fromWS.deleteAdjsApplication)
+  deleteAdjsApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.deleteAdjsApplication) {
+    this.calibrationService.deleteAdjsApplication(ctx, payload)
+  }
+
+  @Action(fromWS.deleteAdjustment)
+  deleteAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.deleteAdjustment) {
+    this.calibrationService.deleteAdjustment(ctx, payload)
+  }
+
+  @Action(fromWS.saveSelectedPlts)
+  saveSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveSelectedPlts) {
+    this.calibrationService.saveSelectedPlts(ctx, payload)
+
+  }
+
+  @Action(fromWS.saveAdjustmentApplication)
+  saveAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustmentApplication) {
+    this.calibrationService.saveAdjustmentApplication(ctx, payload)
+  }
+
+  @Action(PatchCalibrationStateAction)
+  patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: PatchCalibrationStateAction) {
+    this.calibrationService.patchSearchState(ctx, payload)
+  }
+
+
+  @Action(selectRow)
+  selectRow(ctx: StateContext<WorkspaceModel>, {payload}: selectRow) {
+    this.calibrationService.selectRow(ctx, payload)
+  }
+
+  @Action(deselectAll)
+  deselectAll(ctx: StateContext<WorkspaceModel>, {payload}: deselectAll) {
+    this.calibrationService.deselectAll(ctx, payload)
+  }
 }

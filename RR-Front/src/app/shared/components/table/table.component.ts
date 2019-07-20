@@ -34,7 +34,7 @@ export class TableComponent implements OnInit {
   allChecked = false;
   indeterminate = false;
 
-  selectedRow: any
+  selectedRow: any;
 
   items = [
     {

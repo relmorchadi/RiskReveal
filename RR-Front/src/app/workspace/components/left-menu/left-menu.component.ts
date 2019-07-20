@@ -14,16 +14,16 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   isCollapsed;
 
   @Output('toggleCollapse')
-  toggleCollapseEmitter:EventEmitter<void>;
+  toggleCollapseEmitter: EventEmitter<void>;
 
   @Output('navigate')
-  navigationEmitter:EventEmitter<{route:string}>;
+  navigationEmitter: EventEmitter<{ route: string }>;
 
 
   constructor(private _router: Router) {
     super(_router, null, null);
-    this.toggleCollapseEmitter= new EventEmitter();
-    this.navigationEmitter= new EventEmitter();
+    this.toggleCollapseEmitter = new EventEmitter();
+    this.navigationEmitter = new EventEmitter();
   }
 
   ngOnInit() {
@@ -38,7 +38,7 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   }
 
   routerNavigate(route) {
-    this.navigationEmitter.emit({ route });
+    this.navigationEmitter.emit({route});
 
     // let patchRouting;
     // if (routerLink) {

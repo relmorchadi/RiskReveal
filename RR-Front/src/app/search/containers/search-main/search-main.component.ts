@@ -1,6 +1,6 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {SearchService} from '../../../core/service/search.service';
-import {HelperService} from '../../../shared';
+import {Debounce, HelperService} from '../../../shared';
 import {Router} from '@angular/router';
 import {Location} from '@angular/common';
 import * as _ from 'lodash';
@@ -9,8 +9,7 @@ import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {Debounce} from "../../../shared";
-import {CloseTagByIndexAction, CloseAllTagsAction} from "../../../core/store";
+import {CloseAllTagsAction, CloseTagByIndexAction} from "../../../core/store";
 import {BaseContainer} from "../../../shared/base";
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 
@@ -148,45 +147,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
   }
 
-  private _checkSearchContent(value: string | any[]) {
-    if (_.isString(value) || value == null) {
-      this.globalSearchItem = (value as string);
-      this.searchContent = [];
-    } else {
-      this.globalSearchItem = null;
-      this.searchContent = value;
-    }
-  }
-
-  private _loadData(offset = '0', size = '100') {
-    this.loading = true;
-    let params = {
-      keyword: this.globalSearchItem,
-      filter: this.filter,
-      offset,
-      size
-    };
-    this._searchService.expertModeSearch(params)
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe((data: any) => {
-        this.contracts = data.content.map(item => ({...item, selected: false}));
-        this.loading = false;
-        this.paginationOption = {
-          ...this.paginationOption,
-          page: data.number,
-          size: data.numberOfElements,
-          total: data.totalElements
-        };
-        this.detectChanges();
-      });
-  }
-
-
-  loadMore(event: LazyLoadEvent) {
-    this.paginationOption.currentPage = event.first;
-    this._loadData(String(event.first));
-  }
-
   openWorkspace(wsId, year) {
     this.dispatch(new workspaceActions.openWS({wsId, uwYear: year, route: 'projects'}));
   }
@@ -197,6 +157,12 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     } else {
       this._router.navigate([`workspace/${value.workSpaceId}/${value.uwYear}/${value.routing}`]);
     }
+  }
+
+
+  loadMore(event: LazyLoadEvent) {
+    this.paginationOption.currentPage = event.first;
+    this._loadData(String(event.first));
   }
 
   openWorkspaceInSlider(contract) {
@@ -223,6 +189,20 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
           window.open(`/workspace/${wsId}/${year}/PopOut`);
         }
       );
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  private _checkSearchContent(value: string | any[]) {
+    if (_.isString(value) || value == null) {
+      this.globalSearchItem = (value as string);
+      this.searchContent = [];
+    } else {
+      this.globalSearchItem = null;
+      this.searchContent = value;
+    }
   }
 
   @Debounce(500)
@@ -261,9 +241,27 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
     return this._searchService.searchWorkspace(id || '', year || '2019');
   }
 
-
-  ngOnDestroy(): void {
-    this.destroy();
+  private _loadData(offset = '0', size = '100') {
+    this.loading = true;
+    let params = {
+      keyword: this.globalSearchItem,
+      filter: this.filter,
+      offset,
+      size
+    };
+    this._searchService.expertModeSearch(params)
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe((data: any) => {
+        this.contracts = data.content.map(item => ({...item, selected: false}));
+        this.loading = false;
+        this.paginationOption = {
+          ...this.paginationOption,
+          page: data.number,
+          size: data.numberOfElements,
+          total: data.totalElements
+        };
+        this.detectChanges();
+      });
   }
 
 
