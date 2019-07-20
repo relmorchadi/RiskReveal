@@ -101,6 +101,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     containerRef.clear();
     const componentRef = containerRef.createComponent(componentFactory);
     this.currentInstance = <StateSubscriber>componentRef.instance;
+    console.log('currentState: ', this.currentInstance);
     if (this.currentInstance) {
       this.currentInstance.patchState(this.state);
       this.subscription = this.currentInstance.actionsEmitter

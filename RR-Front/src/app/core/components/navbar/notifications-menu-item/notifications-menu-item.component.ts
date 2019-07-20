@@ -1,9 +1,12 @@
 import {Component, OnInit} from '@angular/core';
-import {SearchService} from "../../../service/search.service";
+import {SearchService} from '../../../service/search.service';
 import {Router} from '@angular/router';
 import * as _ from 'lodash';
 import * as moment from 'moment';
-import {HelperService} from "../../../../shared/helper.service";
+import {HelperService} from '../../../../shared/helper.service';
+import {Select, Store} from '@ngxs/store';
+import {HeaderState} from '../../../store/states';
+import {DeleteNotification} from "../../../store/actions/header.action";
 
 @Component({
   selector: 'notifications-menu-item',
@@ -20,95 +23,19 @@ export class NotificationsMenuItemComponent implements OnInit {
   cleared = false;
   date = 'all';
   searchValue = '';
-  notification: any = {
-    all: [
-      {
-        avatar: 'H.P',
-        icon: null,
-        iconColor: '#7ED321',
-        content: 'Project P-6458 has been assigned to you by Huw Parry',
-        date: 1562076960605,
-        today: 'today',
-        type: 'informational',
-        backgroundColor: '#06B8FF',
-        textColor: '#FFFFFF'
-      },
-      {
-        avatar: null,
-        icon: 'icon-check_24px',
-        iconColor: '#7ED321',
-        content: 'Accumulation Package AP-3857 has been successfully published to ARC',
-        date: 1562076960605,
-        today: 'yesterday',
-        type: 'informational',
-        backgroundColor: '#FCF9D6',
-        textColor: 'rgba(0,0,0,0.6)'
-      },
-      {
-        avatar: null,
-        icon: 'icon-check_circle_24px',
-        iconColor: '#7ED321',
-        content: 'Calculation on Inuring Package IP-2645 is now complete',
-        date: 1561990366477,
-        today: 'today',
-        type: 'informational',
-        backgroundColor: '#F4F6FC',
-        textColor: 'rgba(0,0,0,0.6)'
-      },
-      {
-        avatar: null,
-        icon: 'icon-poll_24px',
-        iconColor: '#FFFFFF',
-        /*        content: 'Project P-8687 : <br/>7PLTs have been successfully published to pricing',*/
-        content: 'Project P-8687 : 7PLTs have been successfully published to pricing',
-        date: 1561472085346,
-        today: 'lastWeek',
-        type: 'informational',
-        backgroundColor: '#0700CF',
-        textColor: '#FFFFFF'
-      },
-      {
-        avatar: null,
-        icon: 'icon-warning_amber_24px',
-        iconColor: '#FFFFFF',
-        content: 'Project P-003458 Has been paused for 1 week please resume or cancel Job.',
-        date: 1561990366477,
-        today: 'yesterday',
-        type: 'Error',
-        backgroundColor: '#D0021B',
-        textColor: '#FFFFFF'
-      },
-      {
-        avatar: null,
-        icon: 'icon-graph-bar',
-        iconColor: '#DCAA2B',
-        content: 'You have many jobs in need of completion.',
-        date: 1561472085346,
-        today: 'today',
-        type: 'warning',
-        backgroundColor: '#D1F4DA',
-        textColor: '#477938'
-      },
-      {
-        avatar: null,
-        icon: 'icon-check_circle_24px',
-        iconColor: '#7ED321',
-        content: 'You need to resume Action From yesterday',
-        date: 1562076960605,
-        today: 'lastWeek',
-        type: 'warning',
-        backgroundColor: '#F4F6FC',
-        textColor: 'rgba(0,0,0,0.6)'
-      },
-    ],
-  };
   filteredNotification: any;
 
-  constructor(private _searchService: SearchService, private router: Router) {
+  @Select(HeaderState.getNotif) notif$;
+  notif: any;
+
+  constructor(private _searchService: SearchService, private router: Router, private store: Store) {
   }
 
   ngOnInit() {
-    this.filteredNotification = [...this.notification.all];
+    this.notif$.subscribe(value => {
+      this.notif = _.merge([], value);
+      this.filteredNotification = [...this.notif];
+    });
     this.getDateIntervals();
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
     HelperService.headerBarPopinChange$.subscribe(({from}) => {
@@ -128,9 +55,9 @@ export class NotificationsMenuItemComponent implements OnInit {
 
   changeDate(event) {
     if (event === 'all') {
-      this.filteredNotification = [...this.notification.all];
+      this.filteredNotification = [...this.notif];
     } else {
-      this.filteredNotification = this.notification.all.filter(dt => {
+      this.filteredNotification = this.notif.filter(dt => {
         let compareDate: any = new Date();
         if (event === 'today') {
           compareDate = compareDate.setDate(compareDate.getDate() - 1);
@@ -152,7 +79,7 @@ export class NotificationsMenuItemComponent implements OnInit {
   }
 
   searchNotification(event) {
-    this.filteredNotification = this.notification.all.filter(text => _.includes(_.toLower(text.content), _.toLower(event.target.value)));
+    this.filteredNotification = this.notif.filter(text => _.includes(_.toLower(text.content), _.toLower(event.target.value)));
   }
 
   updateNotif() {
@@ -162,26 +89,20 @@ export class NotificationsMenuItemComponent implements OnInit {
   }
 
   clearNotif(target) {
-    if (target === 'all') {
-      this.notification = {};
-      this.cleared = true;
-      this.visible = false;
-    } else {
-      this.notification = {all: [...this.notification.all.filter(dt => dt.type !== target)]};
-    }
+    this.store.dispatch(new DeleteNotification({target}));
   }
 
   countNotif(type) {
     if (type === 'all') {
-      return this.notification.all.length;
+      return this.notif.length;
     } else {
-      return this.notification.all.filter(dt => dt.type === type).length;
+      return this.notif.filter(dt => dt.type === type).length;
     }
   }
 
   getDates() {
     const dateArray = [];
-    const listElement = [...this.notification.all.map(dt => dt.date)];
+    const listElement = [...this.notif.map(dt => dt.date)];
 
     const currentDate = new Date(_.min(listElement));
     const lastDate = new Date(_.max(listElement) + 1000000);
@@ -229,22 +150,24 @@ export class NotificationsMenuItemComponent implements OnInit {
     const dateIntervals = ['All'];
     let oldestDate = this.getDates()[this.getDates().length - 1];
     const todayDate = new Date();
-    oldestDate = todayDate.valueOf() - oldestDate.valueOf();
-    if (oldestDate > 0) {
-      dateIntervals.push('Today');
-      oldestDate = oldestDate - 1000 * 60 * 60 * 24;
-    }
-    if (oldestDate > 0) {
-      dateIntervals.push('Yesterday');
-      oldestDate = oldestDate - 1000 * 60 * 60 * 24;
-    }
-    if (oldestDate > 0) {
-      dateIntervals.push('Last Week');
-      oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 6;
-    }
-    if (oldestDate > 0) {
-      dateIntervals.push('Last Month');
-      oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 25;
+    if (oldestDate) {
+      oldestDate = todayDate.valueOf() - oldestDate.valueOf();
+      if (oldestDate > 0) {
+        dateIntervals.push('Today');
+        oldestDate = oldestDate - 1000 * 60 * 60 * 24;
+      }
+      if (oldestDate > 0) {
+        dateIntervals.push('Yesterday');
+        oldestDate = oldestDate - 1000 * 60 * 60 * 24;
+      }
+      if (oldestDate > 0) {
+        dateIntervals.push('Last Week');
+        oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 6;
+      }
+      if (oldestDate > 0) {
+        dateIntervals.push('Last Month');
+        oldestDate = oldestDate - 1000 * 60 * 60 * 24 * 25;
+      }
     }
     return dateIntervals;
   }
@@ -264,11 +187,10 @@ export class NotificationsMenuItemComponent implements OnInit {
 
   changeToDate(event) {
     if (event === 'all') {
-      this.filteredNotification = [...this.notification.all];
+      this.filteredNotification = [...this.notif];
     } else {
-      this.filteredNotification = this.notification.all.filter(dt => dt.today === event);
+      this.filteredNotification = this.notif.filter(dt => dt.today === event);
     }
-
   }
 
 }

@@ -25,9 +25,8 @@ export class WorkspaceResultsComponent extends BaseContainer implements OnInit, 
   ngOnInit() {
   }
 
-  patchState({wsIdentifier, dataTable}: any): void {
-    this.workspaceInfo = dataTable;
-    console.log('this is ws data', dataTable);
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
     this.wsIdentifier = wsIdentifier;
   }
 

@@ -1,10 +1,11 @@
-import {Action, NgxsOnInit, Selector, State, StateContext} from "@ngxs/store";
-import {HeaderStateModel} from "../../model/header-state.model";
+import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {HeaderStateModel} from '../../model/header-state.model';
 import * as fromHeader from '../actions/header.action';
 import produce from 'immer';
 import * as _ from 'lodash';
 
 import {DataTables} from '../../../shared/data/job-data-tables';
+import {DataTableNotif} from '../../../shared/data/notification-data-tables';
 
 const initialState: HeaderStateModel = {
   workspacePopIn: {
@@ -44,7 +45,7 @@ const initialState: HeaderStateModel = {
   notificationPopIn: {
     all: {
       keyword: '',
-      items: {},
+      items: DataTableNotif.notification.all,
       filter: {}
     },
     errors: {
@@ -94,6 +95,15 @@ export class HeaderState implements NgxsOnInit {
     return state.workspacePopIn.pinned.items;
   }
 
+  @Selector()
+  static getJobs(state: HeaderStateModel) {
+    return state.jobManagerPopIn.active.items;
+  }
+
+  @Selector()
+  static getNotif(state: HeaderStateModel) {
+    return state.notificationPopIn.all.items;
+  }
 
   /**
    * Header State Commands
@@ -184,6 +194,66 @@ export class HeaderState implements NgxsOnInit {
         });
       }
     }));
+  }
+
+  /**
+   * Header Task Action
+   */
+
+  @Action(fromHeader.DeleteTask)
+  deleteTask(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.DeleteTask) {
+    const {id} = payload;
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        _.set(draft, 'jobManagerPopIn.active.items',
+          _.get(draft, 'jobManagerPopIn.active.items', []).filter(item => item.id !== id));
+      }
+    ));
+  }
+
+  @Action(fromHeader.PauseTask)
+  pauseTask(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.PauseTask) {
+    const {id} = payload;
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        draft.jobManagerPopIn.active.items[id].isPaused = true;
+        draft.jobManagerPopIn.active.items =
+          [..._.sortBy(_.filter(draft.jobManagerPopIn.active.items, (dt) => !dt.pending), (dt) => dt.isPaused),
+          ..._.filter(draft.jobManagerPopIn.active.items, (dt) => dt.pending)];
+      }
+    ));
+  }
+
+  @Action(fromHeader.ResumeTask)
+  resumeTask(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.ResumeTask) {
+    const {id} = payload;
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        draft.jobManagerPopIn.active.items[id].isPaused = false;
+        draft.jobManagerPopIn.active.items =
+          [..._.sortBy(_.filter(draft.jobManagerPopIn.active.items, (dt) => !dt.pending), (dt) => dt.isPaused),
+            ..._.filter(draft.jobManagerPopIn.active.items, (dt) => dt.pending)];
+      }
+    ));
+  }
+
+  /**
+   * Header Notification Action
+   */
+
+  @Action(fromHeader.DeleteNotification)
+  deleteNotification(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.DeleteNotification) {
+    const {target} = payload;
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        if (target === 'all') {
+          _.set(draft, 'notificationPopIn.all.items', []);
+        } else {
+          _.set(draft, 'notificationPopIn.all.items',
+            _.get(draft, 'notificationPopIn.all.items', []).filter(item => item.type !== target));
+        }
+      }
+    ));
   }
 
   private _addItem(state, target, value): any[] {
