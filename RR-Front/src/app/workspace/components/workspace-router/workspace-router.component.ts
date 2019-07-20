@@ -97,8 +97,6 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     console.log('Init component', route);
     this.subscription ? this.subscription.unsubscribe() : null;
     const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.projects;
-
-
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(correspondingComponent.component);
     const containerRef = this.routingTemplate.viewContainerRef;
     containerRef.clear();

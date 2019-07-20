@@ -78,7 +78,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
-    console.log('this is ws data', data);
+    console.log('this is ws data', wsIdentifier,data);
     this.wsIdentifier = wsIdentifier;
   }
 
