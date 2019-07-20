@@ -1,6 +1,5 @@
 import {Action, createSelector, Selector, State, StateContext, Store} from '@ngxs/store';
 import * as _ from 'lodash';
-import {WorkspaceModel} from "../../model";
 import * as fromWS from '../actions'
 import {deselectAll, PatchCalibrationStateAction, selectRow} from '../actions'
 import {WsApi} from '../../services/workspace.api';
@@ -8,6 +7,7 @@ import {WorkspaceMainState} from "../../../core/store/states";
 import {WorkspaceMain} from "../../../core/model";
 import {CalibrationService} from "../../services/calibration.service";
 import {WorkspaceService} from "../../services/workspace.service";
+import {WorkspaceModel} from "../../model";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -112,13 +112,13 @@ export class WorkspaceState {
    *
    ***********************************/
 
-  @Action(fromWS.loadWS)
-  loadWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.loadWS) {
+  @Action(fromWS.LoadWS)
+  loadWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWS) {
     return this.wsService.loadWs(ctx, payload);
   }
 
-  @Action(fromWS.loadWsSuccess)
-  loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.loadWsSuccess) {
+  @Action(fromWS.LoadWsSuccess)
+  loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWsSuccess) {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
@@ -127,18 +127,18 @@ export class WorkspaceState {
     return this.wsService.openWorkspace(ctx, payload);
   }
 
-  @Action(fromWS.openMultiWS)
-  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, payload: fromWS.openMultiWS) {
+  @Action(fromWS.OpenMultiWS)
+  openMultipleWorkspaces(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenMultiWS) {
     return this.wsService.openMultipleWorkspaces(ctx, payload);
   }
 
-  @Action(fromWS.setCurrentTab)
-  setCurrentTab(ctx: StateContext<WorkspaceModel>, payload: fromWS.setCurrentTab) {
+  @Action(fromWS.SetCurrentTab)
+  setCurrentTab(ctx: StateContext<WorkspaceModel>, payload: fromWS.SetCurrentTab) {
     return this.wsService.setCurrentTab(ctx, payload);
   }
 
-  @Action(fromWS.closeWS)
-  closeWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.closeWS) {
+  @Action(fromWS.CloseWS)
+  closeWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.CloseWS) {
     return this.wsService.closeWorkspace(ctx, payload);
   }
 
@@ -188,7 +188,6 @@ export class WorkspaceState {
 
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
-    console.log(payload);
     return this.calibrationService.loadAllPltsFromCalibration(ctx, payload)
   }
 

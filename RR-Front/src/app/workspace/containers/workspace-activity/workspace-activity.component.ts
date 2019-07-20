@@ -10,9 +10,9 @@ import {Store} from '@ngxs/store';
 })
 export class WorkspaceActivityComponent extends BaseContainer implements OnInit {
 
-  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
-  hyperLinksRoutes: any= {
-    'Projects': '',
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
+    'Projects': '/projects',
     'Contract': '/Contract',
     'Activity': '/Activity'
   };

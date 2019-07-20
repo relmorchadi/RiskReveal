@@ -89,7 +89,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   close(wsId, uwYear) {
-    this.dispatch(new fromWs.closeWS({
+    this.dispatch(new fromWs.CloseWS({
       wsIdentifier: wsId + '-' + uwYear
     }));
   }
@@ -123,10 +123,10 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   selectWorkspace(wsIdentifier, index) {
-    this.dispatch(new fromWs.setCurrentTab({
+    this.dispatch(new fromWs.SetCurrentTab({
       wsIdentifier,
       index
-    }))
+    }));
   }
 
   addToFavorite(wsIdentifier: string, {wsId, uwYear, workspaceName, programName, cedantName}) {

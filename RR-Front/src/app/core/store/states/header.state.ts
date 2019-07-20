@@ -1,8 +1,10 @@
 import {Action, NgxsOnInit, Selector, State, StateContext} from "@ngxs/store";
 import {HeaderStateModel} from "../../model/header-state.model";
 import * as fromHeader from '../actions/header.action';
-import produce from "immer";
+import produce from 'immer';
 import * as _ from 'lodash';
+
+import {DataTables} from '../../../shared/data/job-data-tables';
 
 const initialState: HeaderStateModel = {
   workspacePopIn: {
@@ -30,12 +32,12 @@ const initialState: HeaderStateModel = {
   jobManagerPopIn: {
     active: {
       keyword: '',
-      items: [],
+      items: DataTables.tasks,
       filter: {date: '', type: ''}
     },
     completed: {
       keyword: '',
-      items: [],
+      items: DataTables.tasks,
       filter: {date: '', type: ''}
     }
   },
@@ -100,6 +102,8 @@ export class HeaderState implements NgxsOnInit {
   addWsToRecent(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.AddWsToRecent) {
     ctx.patchState(produce(ctx.getState(), draft => {
       _.set(draft, 'workspacePopIn.recent.items', this._addItem(draft, 'workspacePopIn.recent.items', payload));
+      draft.workspacePopIn.recent.items.forEach(dt => dt.selected = false);
+      draft.workspacePopIn.recent.items[0].selected = true;
     }));
   }
 
@@ -114,9 +118,10 @@ export class HeaderState implements NgxsOnInit {
 
   @Action(fromHeader.DeleteWsFromFavorite)
   deleteWsFromFavorite(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.DeleteWsFromFavorite) {
-    //@TODO delete workspace
+    // @TODO delete workspace
     ctx.patchState(produce(ctx.getState(), draft => {
-      _.set(draft, 'workspacePopIn.favorite.items', _.get(draft, 'workspacePopIn.favorite.items', []).filter(item => item.uwYear == payload.uwYear && item.wsId == payload.wsId));
+      _.set(draft, 'workspacePopIn.favorite.items',
+        _.get(draft, 'workspacePopIn.favorite.items', []).filter(item => item.uwYear == payload.uwYear && item.wsId == payload.wsId));
     }));
   }
 
@@ -131,7 +136,8 @@ export class HeaderState implements NgxsOnInit {
   @Action(fromHeader.UnPinWs)
   unPinWs(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.UnPinWs) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      _.set(draft, 'workspacePopIn.pinned.items', _.get(draft, 'workspacePopIn.pinned.items', []).filter(item => item.uwYear == payload.uwYear && item.wsId == payload.wsId));
+      _.set(draft, 'workspacePopIn.pinned.items',
+        _.get(draft, 'workspacePopIn.pinned.items', []).filter(item => item.uwYear == payload.uwYear && item.wsId == payload.wsId));
     }));
   }
 

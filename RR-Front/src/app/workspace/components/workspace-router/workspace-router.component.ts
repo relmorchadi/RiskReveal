@@ -75,7 +75,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     if (changes.state && this.currentInstance) {
       if (changes.state.currentValue.data.route != changes.state.previousValue.data.route)
         this.initComponent(changes.state.currentValue.data.route);
-      // this.currentInstance.patchState(changes.state.currentValue);
+      this.currentInstance.patchState(changes.state.currentValue);
     }
 
 
@@ -104,9 +104,9 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     containerRef.clear();
     const componentRef = containerRef.createComponent(componentFactory);
     this.currentInstance = <StateSubscriber>componentRef.instance;
-    // this.currentInstance.patchState(this.state);
-    // this.subscription = this.currentInstance.actionsEmitter
-    //   .subscribe(action => this.actionsEmitter.emit(action));
+    this.currentInstance.patchState(this.state);
+    this.subscription = this.currentInstance.actionsEmitter
+      .subscribe(action => this.actionsEmitter.emit(action));
   }
 
 

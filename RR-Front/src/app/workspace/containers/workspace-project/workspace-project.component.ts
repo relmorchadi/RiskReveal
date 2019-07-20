@@ -37,11 +37,6 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   index: any;
   isVisible = false;
   wsIdentifier;
-  //@Select(WorkspaceState.getData)
-  // data$= of();
-  //@Select(Workspacetate.getProjects)
-  // projects$= of();
-
 
   newProject = false;
   existingProject = false;

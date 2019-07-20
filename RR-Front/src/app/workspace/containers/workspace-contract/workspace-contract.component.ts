@@ -12,9 +12,9 @@ export class WorkspaceContractComponent extends BaseContainer implements OnInit 
   collapseHead = false;
   collapseLeft = false;
   collapseRight = false;
-  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
-  hyperLinksRoutes: any= {
-    'Projects': '',
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
+    'Projects': '/projects',
     'Contract': '/Contract',
     'Activity': '/Activity'
   };
