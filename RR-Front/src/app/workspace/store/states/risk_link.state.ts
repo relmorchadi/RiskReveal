@@ -132,7 +132,7 @@ export class RiskLinkState {
   /**
    * Commands
    */
-  @Action(PatchRiskLinkAction)
+/*  @Action(PatchRiskLinkAction)
   patchRiskLinkState(ctx: StateContext<RiskLinkState>, {payload}: PatchRiskLinkAction) {
     this.riskLinkFacade.patchRiskLinkState(ctx, payload);
   }
@@ -263,27 +263,27 @@ export class RiskLinkState {
     this.riskLinkFacade.toggleAnalysisForLinking(ctx, payload);
   }
 
-  /** ACTION ADDED EDM AND RDM */
+  /!** ACTION ADDED EDM AND RDM *!/
   @Action(SelectRiskLinkEDMAndRDMAction)
   selectRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>) {
     this.riskLinkFacade.selectRiskLinkEDMAndRDM(ctx);
   }
 
-  /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
+  /!** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM *!/
   @Action(SearchRiskLinkEDMAndRDMAction)
   searchRiskLinkEDMAndRDM(ctx: StateContext<RiskLinkModel>, {payload}: SearchRiskLinkEDMAndRDMAction) {
     return this.riskLinkFacade.searchRiskLinkEDMAndRDM(ctx, payload);
   }
 
-  /** LOAD DATA FOR FINANCIAL PERSPECTIVE */
+  /!** LOAD DATA FOR FINANCIAL PERSPECTIVE *!/
   @Action(LoadFinancialPerspectiveAction)
   loadFinancialPerspective(ctx: StateContext<RiskLinkModel>, {payload}: LoadFinancialPerspectiveAction) {
     this.riskLinkFacade.loadFinancialPerspective(ctx, payload);
   }
 
-  /** LOAD DATA WHEN OPEN RISK LINK PAGE */
+  /!** LOAD DATA WHEN OPEN RISK LINK PAGE *!/
   @Action(LoadRiskLinkDataAction)
   loadRiskLinkData(ctx: StateContext<RiskLinkModel>) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
-  }
+  }*/
 }

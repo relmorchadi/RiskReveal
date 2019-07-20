@@ -76,7 +76,6 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
-    console.log('this is ws data', wsIdentifier,data);
     this.wsIdentifier = wsIdentifier;
   }
 
@@ -156,10 +155,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   unPinWorkspace() {
     const {wsId, uwYear} = this.workspace;
-    this.dispatch([
-      new fromHeader.UnPinWs({wsId, uwYear}),
-      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
-    ])
+    this.dispatch(new fromHeader.UnPinWs({wsId, uwYear}));
+    this.dispatch(new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier}));
   }
 
   selectProjectNext(project) {
