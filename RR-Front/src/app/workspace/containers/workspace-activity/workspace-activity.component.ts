@@ -2,13 +2,19 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
+import * as fromHeader from '../../../core/store/actions/header.action';
+import * as fromWs from '../../store/actions';
+import {StateSubscriber} from '../../model/state-subscriber';
 
 @Component({
   selector: 'app-workspace-activity',
   templateUrl: './workspace-activity.component.html',
   styleUrls: ['./workspace-activity.component.scss']
 })
-export class WorkspaceActivityComponent extends BaseContainer implements OnInit {
+export class WorkspaceActivityComponent extends BaseContainer implements OnInit, StateSubscriber {
+
+  wsIdentifier;
+  workspaceInfo: any;
 
   hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
   hyperLinksRoutes: any = {
@@ -113,11 +119,36 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit 
 
   ngOnInit() {
     this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
-      this.hyperLinksConfig= {
+      this.hyperLinksConfig = {
         wsId,
         uwYear: year
-      }
-    })
+      };
+    });
+  }
+
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
+    this.wsIdentifier = wsIdentifier;
+  }
+
+  pinWorkspace() {
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
+    this.dispatch([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
+
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.dispatch([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ]);
   }
 
   ngOnDestroy(): void {

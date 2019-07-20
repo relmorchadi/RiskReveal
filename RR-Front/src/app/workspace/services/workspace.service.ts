@@ -52,6 +52,13 @@ export class WorkspaceService {
           route,
           leftNavbarCollapsed: false,
           isFavorite: false,
+          pltManager: {
+            data: {},
+            filters: {
+              systemTag: [], userTag: []
+            },
+            userTags: {},
+          },
           calibration: {
             data: {},
             loading: false,

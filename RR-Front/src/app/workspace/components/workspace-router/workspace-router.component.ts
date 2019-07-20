@@ -1,14 +1,4 @@
-import {
-  Component,
-  ComponentFactoryResolver,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
   WorkspaceAccumulationComponent,
   WorkspaceActivityComponent,
@@ -29,6 +19,7 @@ import {StateSubscriber} from "../../model/state-subscriber";
 import {Subscription} from "rxjs";
 import {ToggleWsLeftMenu, UpdateWsRouting} from "../../store/actions";
 import {Navigate} from "@ngxs/router-plugin";
+import {Store} from "@ngxs/store";
 
 @Component({
   selector: 'workspace-router',
@@ -39,9 +30,6 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
 
   @Input('state')
   state: { wsIdentifier, data };
-
-  @Output('action')
-  actionsEmitter: EventEmitter<any> = new EventEmitter();
 
   @ViewChild(WsRouterDirective)
   routingTemplate: WsRouterDirective;
@@ -63,7 +51,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   private subscription: Subscription = null;
   private currentInstance: StateSubscriber;
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) {
+  constructor(private componentFactoryResolver: ComponentFactoryResolver, private store: Store) {
   }
 
   ngOnInit() {
@@ -77,36 +65,31 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
         this.initComponent(changes.state.currentValue.data.route);
       this.currentInstance.patchState(changes.state.currentValue);
     }
-
-
   }
 
   handleLeftMenuNavigation({route}) {
     const {wsId, uwYear} = this.state.data;
-    console.log('route', route);
-    this.actionsEmitter.emit(
+    this.store.dispatch(
       [new UpdateWsRouting(this.state.wsIdentifier, route), new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
     );
   }
 
   handleLeftMenuToggle() {
-    this.actionsEmitter.emit(new ToggleWsLeftMenu(this.state.wsIdentifier));
+    this.store.dispatch(new ToggleWsLeftMenu(this.state.wsIdentifier));
   }
 
   private initComponent(route = this.state.data.route) {
-    console.log('Init component', route);
     this.subscription ? this.subscription.unsubscribe() : null;
     const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.projects;
-
-
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(correspondingComponent.component);
     const containerRef = this.routingTemplate.viewContainerRef;
     containerRef.clear();
     const componentRef = containerRef.createComponent(componentFactory);
     this.currentInstance = <StateSubscriber>componentRef.instance;
-    this.currentInstance.patchState(this.state);
-    this.subscription = this.currentInstance.actionsEmitter
-      .subscribe(action => this.actionsEmitter.emit(action));
+    console.log('currentState: ', this.currentInstance);
+    if (this.currentInstance) {
+      this.currentInstance.patchState(this.state);
+    }
   }
 
 

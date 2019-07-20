@@ -54,5 +54,5 @@ export class HeaderStateModel {
       items: any,
       filter: {}
     }
-  }
+  };
 }

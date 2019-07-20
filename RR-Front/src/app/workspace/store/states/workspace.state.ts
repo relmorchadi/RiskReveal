@@ -1,12 +1,13 @@
-import {Action, createSelector, Selector, State, StateContext, Store} from '@ngxs/store';
+import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions'
 import {PatchCalibrationStateAction} from '../actions'
-import {WsApi} from '../../services/workspace.api';
 import {WorkspaceMain} from "../../../core/model";
 import {CalibrationService} from "../../services/calibration.service";
 import {WorkspaceService} from "../../services/workspace.service";
 import {WorkspaceModel} from "../../model";
+import * as fromPlt from "../actions/plt_main.actions";
+import {PltStateService} from "../../services/plt-state.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -26,7 +27,7 @@ const initialState: WorkspaceModel = {
 })
 export class WorkspaceState {
 
-  constructor(private wsApi: WsApi, private store: Store, private calibrationService: CalibrationService, private wsService: WorkspaceService) {
+  constructor(private wsService: WorkspaceService, private pltStateService: PltStateService, private calibrationService: CalibrationService) {
   }
 
 
@@ -183,6 +184,125 @@ export class WorkspaceState {
 
   /***********************************
    *
+   * Plt Manager Actions
+   *
+   ***********************************/
+
+
+  @Action(fromPlt.setCloneConfig)
+  setCloneConfig(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setCloneConfig) {
+    return this.pltStateService.setCloneConfig(ctx, payload);
+  }
+
+  @Action(fromPlt.loadAllPlts)
+  LoadAllPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPlts) {
+    return this.pltStateService.LoadAllPlts(ctx, payload);
+  }
+
+  @Action(fromPlt.loadAllPltsSuccess)
+  LoadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPltsSuccess) {
+    return this.pltStateService.loadAllPltsSuccess(ctx, payload);
+  }
+
+  @Action(fromPlt.ToggleSelectPlts)
+  ptlManagerSelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.ToggleSelectPlts) {
+    return this.pltStateService.selectPlts(ctx, payload);
+  }
+
+  @Action(fromPlt.OpenPLTinDrawer)
+  OpenPltinDrawer(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.OpenPLTinDrawer) {
+    return this.pltStateService.openPltInDrawer(ctx, payload);
+  }
+
+  @Action(fromPlt.ClosePLTinDrawer)
+  ClosePLTinDrawer(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.ClosePLTinDrawer) {
+    return this.pltStateService.closePLTinDrawer(ctx, payload);
+  }
+
+  @Action(fromPlt.setUserTagsFilters)
+  pltManagerSetFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setUserTagsFilters) {
+    return this.pltStateService.setFilterPlts(ctx, payload);
+  }
+
+  @Action(fromPlt.FilterPltsByUserTags)
+  pltManagerFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByUserTags) {
+    return this.pltStateService.filterPlts(ctx, payload);
+  }
+
+  @Action(fromPlt.setTableSortAndFilter)
+  setTableSortAndFilter(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.setTableSortAndFilter) {
+    return this.pltStateService.setTableSortAndFilter(ctx, payload);
+  }
+
+  @Action(fromPlt.constructUserTags)
+  pltManagerConstructUserTags(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.constructUserTags) {
+    return this.pltStateService.constructUserTags(ctx, payload);
+  }
+
+  @Action(fromPlt.createOrAssignTags)
+  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.createOrAssignTags) {
+    return this.pltStateService.assignPltsToTag(ctx, payload);
+  }
+
+  @Action(fromPlt.CreateTagSuccess)
+  createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
+    return this.pltStateService.createUserTagSuccess(ctx, payload);
+  }
+
+  @Action(fromPlt.assignPltsToTagSuccess)
+  assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
+    return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
+  }
+
+
+  @Action(fromPlt.deleteUserTag)
+  deleteUserTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTag) {
+    return this.pltStateService.deleteUserTag(ctx, payload);
+  }
+
+  @Action(fromPlt.deleteUserTagSuccess)
+  deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
+    return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
+  }
+
+  @Action(fromPlt.deletePlt)
+  deletePlt(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deletePlt) {
+    return this.pltStateService.deletePlt(ctx, payload);
+  }
+
+  @Action(fromPlt.deletePltSucess)
+  deletePltSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deletePltSucess) {
+
+    const {
+      pltId
+    } = payload;
+
+    const {
+      // data
+    } = ctx.getState();
+
+    /*
+     return of(JSON.parse(localStorage.getItem('deletedPlts')) || {})
+       .pipe()*/
+  }
+
+  @Action(fromPlt.editTag)
+  renameTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.editTag) {
+    return this.pltStateService.renameTag(ctx, payload);
+  }
+
+  @Action(fromPlt.editTagSuccess)
+  renameTagSucces(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.editTagSuccess) {
+    return this.pltStateService.renameTagSuccess(ctx, payload);
+  }
+
+  @Action(fromPlt.restorePlt)
+  restorePlt(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.restorePlt) {
+    return this.pltStateService.restorePlt(ctx, payload);
+  }
+
+  /***********************************
+   *
    * Calibration Actions
    *
    ***********************************/
@@ -294,7 +414,6 @@ export class WorkspaceState {
   @Action(fromWS.saveSelectedPlts)
   saveSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveSelectedPlts) {
     this.calibrationService.saveSelectedPlts(ctx, payload)
-
   }
 
   @Action(fromWS.saveAdjustmentApplication)

@@ -818,4 +818,4 @@ const dataSource = [
   }
 ];
 
-export const data = {dataSource};
+export const dataTable = {dataSource};

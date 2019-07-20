@@ -18,7 +18,6 @@ export abstract class BaseContainer {
     return takeUntil(this.unSubscriton$);
   }
 
-  abstract ngOnDestroy(): void;
 
   protected navigate(commands: any[]) {
     this._baseRouter.navigate(commands);

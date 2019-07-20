@@ -2,9 +2,9 @@
   <div class="a-app-header">
     <h4>Accumulation</h4>
     <app-pin
-      [active]="!workspace.pinged"
-      [workspace]="workspace"
-      [index]="index"
+      (pinWs)="pinWorkspace()"
+      (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
     >
     </app-pin>
   </div>

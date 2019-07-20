@@ -4,12 +4,12 @@
       <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'File-based'" [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
       <h4>File-Based Import</h4>
     </div>
-    <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-            nz-button nzType="primary" nzSize="default" nzShape="circle">
-      <i style="color: #16617a;" nz-icon theme="outline">
-        <i class="icon-map-pin-alt"></i>
-      </i>
-    </button>
+    <app-pin
+      (pinWs)="pinWorkspace()"
+      (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
+    >
+    </app-pin>
   </div>
   <div class="app-body">
 
