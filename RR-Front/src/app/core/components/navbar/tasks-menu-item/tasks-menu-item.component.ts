@@ -1,11 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {SearchService} from '../../../service/search.service';
 import * as _ from 'lodash';
-import {
-  AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction,
-  SetWsRoutingAction
-} from '../../../store/actions/workspace-main.action';
 import {Select, Store} from '@ngxs/store';
 import {HeaderState, WorkspaceMainState} from '../../../store/states';
 import {Observable} from 'rxjs';

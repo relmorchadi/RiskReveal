@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {PltMainState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
@@ -78,9 +78,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   }
 
   perilZone(peril) {
-    if (peril === 'YY') { return {peril: 'EQ', color: '#E70010'}; }
-    if (peril === 'WS') { return {peril: 'WS', color: '#7BBE31'}; }
-    if (peril === 'FL') { return {peril: 'FL', color: '#008694'}; }
+    if (peril === 'YY') {
+      return {peril: 'EQ', color: '#E70010'};
+    }
+    if (peril === 'WS') {
+      return {peril: 'WS', color: '#7BBE31'};
+    }
+    if (peril === 'FL') {
+      return {peril: 'FL', color: '#008694'};
+    }
   }
 
   ngOnDestroy(): void {

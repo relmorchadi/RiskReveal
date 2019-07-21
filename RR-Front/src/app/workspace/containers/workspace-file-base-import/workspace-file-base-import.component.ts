@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {BaseContainer} from '../../../shared/base';

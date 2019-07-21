@@ -1,14 +1,4 @@
-import {
-  Component,
-  ComponentFactoryResolver,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-  ViewChild
-} from '@angular/core';
+import {Component, ComponentFactoryResolver, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import {
   WorkspaceAccumulationComponent,
   WorkspaceActivityComponent,

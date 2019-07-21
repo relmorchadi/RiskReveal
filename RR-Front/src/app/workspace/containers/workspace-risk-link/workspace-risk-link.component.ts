@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -16,6 +16,7 @@ import {
   ToggleRiskLinkEDMAndRDMSelectedAction,
   ToggleRiskLinkPortfolioAction
 } from '../../store/actions/risk_link.actions';
+import * as fromWs from '../../store/actions';
 import {
   LoadRiskLinkDataAction,
   PatchRiskLinkCollapseAction,
@@ -24,7 +25,6 @@ import {
   SelectRiskLinkEDMAndRDMAction,
   ToggleRiskLinkEDMAndRDMAction, UpdateWsRouting
 } from '../../store/actions';
-import * as fromWs from '../../store/actions';
 import {DataTables} from './data';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';

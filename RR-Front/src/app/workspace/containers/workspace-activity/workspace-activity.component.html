@@ -7,9 +7,9 @@
       <h4>Activity</h4>
     </div>
     <app-pin
-      [active]="!workspaceInfo?.isPinned"
       (pinWs)="pinWorkspace()"
       (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
     >
     </app-pin>
   </div>

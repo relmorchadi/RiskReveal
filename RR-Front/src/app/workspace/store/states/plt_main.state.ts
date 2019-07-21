@@ -1,4 +1,4 @@
-import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {createSelector, Selector, State} from '@ngxs/store';
 import * as _ from 'lodash';
 import {pltMainModel} from "../../model";
 import {PltApi} from '../../services/plt.api';
@@ -66,6 +66,7 @@ export class PltMainState {
   static getPlts(wsIdentifier: string) {
     return createSelector([PltMainState], (state: pltMainModel) => _.keyBy(_.filter(_.get(state.data, `${wsIdentifier}`), e => !e.deleted), 'pltId'))
   }
+
   //
   //
   // @Action(fromPlt.setCloneConfig)

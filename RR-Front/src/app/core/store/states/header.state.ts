@@ -219,7 +219,7 @@ export class HeaderState implements NgxsOnInit {
         draft.jobManagerPopIn.active.items[id].isPaused = true;
         draft.jobManagerPopIn.active.items =
           [..._.sortBy(_.filter(draft.jobManagerPopIn.active.items, (dt) => !dt.pending), (dt) => dt.isPaused),
-          ..._.filter(draft.jobManagerPopIn.active.items, (dt) => dt.pending)];
+            ..._.filter(draft.jobManagerPopIn.active.items, (dt) => dt.pending)];
       }
     ));
   }

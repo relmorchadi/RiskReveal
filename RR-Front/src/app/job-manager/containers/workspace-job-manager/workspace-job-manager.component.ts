@@ -2,11 +2,6 @@ import {Component, HostListener, OnInit, ViewChild} from '@angular/core';
 import {Location} from '@angular/common';
 import {LazyLoadEvent} from 'primeng/api';
 import * as _ from 'lodash';
-import {
-  AppendNewWorkspaceMainAction,
-  PatchWorkspaceMainStateAction,
-  SetWsRoutingAction
-} from '../../../core/store/actions';
 import {SearchService} from '../../../core/service';
 import {Select, Store} from '@ngxs/store';
 import {HeaderState, WorkspaceMainState} from '../../../core/store/states';
@@ -308,7 +303,7 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   filterByUser(event) {
     console.log(event);
-    event === 'all' ? this.savedTask = this.jobs:
+    event === 'all' ? this.savedTask = this.jobs :
       this.savedTask = this.jobs.filter(dt => dt.jobOwner === event);
   }
 

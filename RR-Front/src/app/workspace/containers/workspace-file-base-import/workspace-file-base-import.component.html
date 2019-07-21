@@ -6,9 +6,9 @@
       <h4>File-Based Import</h4>
     </div>
     <app-pin
-      [active]="!workspaceInfo?.isPinned"
       (pinWs)="pinWorkspace()"
       (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
     >
     </app-pin>
   </div>

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {PltMainState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';

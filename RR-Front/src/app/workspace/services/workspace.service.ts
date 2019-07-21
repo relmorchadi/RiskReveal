@@ -9,6 +9,7 @@ import produce from "immer";
 import * as _ from "lodash";
 import {Navigate} from "@ngxs/router-plugin";
 import {HeaderState} from "../../core/store/states/header.state";
+import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
 
 @Injectable({
   providedIn: 'root'
@@ -74,13 +75,8 @@ export class WorkspaceService {
             firstChecked: '',
             adjustments: [],
             adjustmentApplication: {},
-            adjustementType: [],
-            pure: {},
-            systemTags: [],
-            allAdjsArray: [],
-            listOfPlts: [],
-            listOfDisplayPlts: [],
-            pltColumns: [],
+            adjustementType: _.assign({}, ADJUSTMENT_TYPE),
+            allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
           }
         }
       });

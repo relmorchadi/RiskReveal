@@ -1,10 +1,7 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {SYSTEM_TAGS, USER_TAGS} from "../../../containers/workspace-calibration/data";
-import {Select, Store} from "@ngxs/store";
+import {Store} from "@ngxs/store";
 import {collapseTags} from "../../../store/actions";
-import {CalibrationState} from "../../../store/states";
-import {Observable} from "rxjs";
-import {take} from "rxjs/operators";
 
 @Component({
   selector: 'app-tags',
@@ -23,7 +20,6 @@ export class TagsComponent implements OnInit {
   userTags = [];
   currentSystemTag = null;
   currentUserTag = null;
-  @Select(CalibrationState) state$: Observable<any>;
 
   constructor(private store$: Store) {
 
@@ -34,11 +30,6 @@ export class TagsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.state$.pipe(take(1)).subscribe((data: any) => {
-      if (!data.collapseTags) {
-        this.Colpa();
-      }
-    });
   }
 
   Colpa() {
