@@ -55,7 +55,7 @@
              style="font-size: 25px; cursor: pointer"></i>
         </div>
       </div>
-      <div *ngIf="collapsedTags" class="noMargin row" class="a-closed-sidebar" style="position: relative;width: 37px">
+      <div *ngIf="collapsedTags" class="noMargin row a-closed-sidebar" style="position: relative;width: 37px">
         <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
           <i (click)="collapseTags()" class="icon-chevron_right_24px"
              style="font-size: 20px; cursor: pointer"></i>
@@ -292,6 +292,7 @@
               [totalRecords]="listOfPltsData.length"
               (onSort)="onSort($event)"
               [responsive]="true"
+              [rowTrackBy]="trackby"
             >
               <ng-template pTemplate="colgroup" let-columns>
                 <colgroup>

@@ -3,7 +3,6 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
-  EventEmitter,
   NgZone,
   OnDestroy,
   OnInit,
@@ -16,6 +15,7 @@ import {
   deleteAdjsApplication,
   deleteAdjustment,
   dropThreadAdjustment,
+  extendPltSection,
   replaceAdjustement,
   saveAdjModification,
   saveAdjustment
@@ -27,6 +27,8 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
+import {BaseContainer} from "../../../shared/base";
+import {DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
 
 
 @Component({
@@ -35,8 +37,7 @@ import {StateSubscriber} from "../../model/state-subscriber";
   styleUrls: ['./workspace-calibration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSubscriber {
-  actionsEmitter: EventEmitter<any> = new EventEmitter();
+export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
   searchAddress: string;
   listOfPlts: any[];
   listOfPltsData: any[];
@@ -54,15 +55,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   lastModifiedAdj;
   dataColumns = [];
   activeCheckboxSort: boolean;
-  extended: boolean = true;
+  extended: boolean = false;
   tableType = 'adjustments';
   EPMetricsTable = false;
-  EPMS = ["AEP - Normal",
-    "AEP - Delta % Basis",
-    "AEP - Delta % & Actual Basis",
-    "OEP - Normal",
-    "OEP - Delta % Basis",
-    "OEP - Delta % & Actual Basis"];
+  EPMS = EPMS;
   selectedEPM = "OEP - Delta % & Actual Basis";
   inProgressCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
@@ -72,7 +68,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   collapsedTags: boolean = false;
   filterInput: string = "";
   addRemoveModal: boolean = false;
-  dropdownEPM: boolean = false;
   isVisible = false;
   singleValue: any;
   global: any;
@@ -84,16 +79,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   modifyModal: any;
   idPlt: any;
   draggedAdjs: any;
-  templateWidth = '130';
-  @ViewChild('dt')
-  @ViewChild('iconNote') iconNote: ElementRef;
   allAdjsArray: any[] = [];
   AdjustementType: any;
   categorySelected: any;
   adjsArray: any[] = [];
-  appliedAdjutement = [];
-  @Select(WorkspaceState.getAdjustmentApplication) adjutmentApplication$;
-  @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
+
   leftNavbarIsCollapsed: boolean;
   adjutmentApplication = [];
   linear: boolean = false;
@@ -106,640 +96,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   lastSelectedId;
   tagModalIndex: any = 0;
   mode = "calibration";
-  @Select(WorkspaceState) state$: Observable<any>;
-  pltColumns = [
-    {
-      sortDir: 1,
-      fields: 'checkbox',
-      header: '',
-      width: '43',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'checkbox',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true,
-    },
-    {
-      sortDir: 1,
-      fields: 'userTags',
-      header: 'User Tags',
-      width: '80',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'checkbox',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true,
-    },
-    {
-      sortDir: 1,
-      fields: 'pltId',
-      header: 'PLT ID',
-      width: '80',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true,
-    },
-    {
-      sortDir: 1,
-      fields: 'pltName',
-      header: 'PLT Name',
-      width: '150',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true
-    },
-    {
-      sortDir: 1,
-      fields: 'peril',
-      header: 'Peril',
-      width: '80',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilCode',
-      header: 'Region Peril Code',
-      width: '80',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilName',
-      header: 'Region Peril Name',
-      width: '130',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'grain',
-      header: 'Grain',
-      width: '160',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'vendorSystem',
-      header: 'Vendor System',
-      width: '90',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'rap',
-      header: 'RAP',
-      width: '70',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'action',
-      header: '',
-      width: '25',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: 'icon-focus-add',
-      type: 'icon',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true
-    },
-    {
-      sortDir: 1,
-      fields: 'action',
-      header: '',
-      width: '25',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: 'icon-note',
-      type: 'icon',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true
-    },
-    {
-      sortDir: 1,
-      fields: 'overallLMF',
-      header: 'Overall LMF',
-      width: '60',
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: true
-    },
-    {
-      sortDir: 1,
-      fields: 'base',
-      header: 'Base',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'default',
-      header: 'Default',
-      width: '60',
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'client',
-      header: 'Client',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'inuring',
-      header: 'Inuring',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'postInuring',
-      header: 'Post-Inuring',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-  ];
-  EPMColumns = [
-    {
-      sortDir: 1,
-      fields: 'checkbox',
-      header: '',
-      width: '43',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'checkbox',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true,
-    },
-    {
-      sortDir: 1,
-      fields: 'userTags',
-      header: 'User Tags',
-      width: '80',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'checkbox',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true,
-    },
-    {
-      sortDir: 1,
-      fields: 'pltId',
-      header: 'PLT ID',
-      width: '80',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true,
-    },
-    {
-      sortDir: 1,
-      fields: 'pltName',
-      header: 'PLT Name',
-      width: '150',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true
-    },
-    {
-      sortDir: 1,
-      fields: 'peril',
-      header: 'Peril',
-      width: '80',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilCode',
-      header: 'Region Peril Code',
-      width: '80',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilName',
-      header: 'Region Peril Name',
-      width: '130',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'grain',
-      header: 'Grain',
-      width: '160',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'vendorSystem',
-      header: 'Vendor System',
-      width: '90',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'rap',
-      header: 'RAP',
-      width: '70',
-      dragable: false,
-      sorted: true,
-      filtred: true,
-      icon: null,
-      type: 'field',
-      style: 'border: none !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'action',
-      header: '',
-      width: '25',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: 'icon-focus-add',
-      type: 'icon',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true
-    },
-    {
-      sortDir: 1,
-      fields: 'action',
-      header: '',
-      width: '25',
-      dragable: false,
-      sorted: false,
-      filtred: false,
-      icon: 'icon-note',
-      type: 'icon',
-      style: 'border: none !important',
-      extended: true,
-      frozen: true
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM2',
-      header: '2',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM5',
-      header: '5',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM10',
-      header: '10',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM25',
-      header: '25',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM50',
-      header: '50',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM100',
-      header: '100',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM250',
-      header: '250',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-    {
-      sortDir: 1,
-      fields: 'EPM500',
-      header: '500',
-      width: this.templateWidth,
-      dragable: true,
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
-      extended: true,
-      frozen: false
-    },
-  ];
-  popUpPltColumns = [
-    {
-      width: '60',
-      filtred: false,
-      icon: null,
-      type: 'checkbox', active: true
-    },
-    /*{
-      fields: 'userTags',
-      header: 'User Tags',
-      width: '80',
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'userTags',
-      active: true
-    },*/
-    {
-      fields: 'pltId',
-      header: 'PLT ID',
-      width: '80',
-      sorted: false,
-      filtred: true,
-      icon: null,
-      type: 'id',
-      active: true
-    },
-    {
-      fields: 'pltName',
-      header: 'PLT Name',
-      width: '160',
-      sorted: false,
-      filtred: true,
-      icon: null,
-      type: 'field', active: true
-    },
-    {
-      fields: 'peril',
-      header: 'Peril',
-      width: '40',
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      textAlign: 'center', active: true
-    },
-    {
-      fields: 'regionPerilCode',
-      header: 'Region Peril Code',
-      width: '70',
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field', active: true
-    },
-    {
-      fields: 'regionPerilName',
-      header: 'Region Peril Name',
-      width: '160',
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field', active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'grain',
-      header: 'Grain',
-      width: '90',
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'vendorSystem',
-      header: 'Vendor System',
-      width: '90',
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field', active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'rap',
-      header: 'RAP',
-      width: '52',
-      sorted: false,
-      filtred: false,
-      icon: null,
-      type: 'field',
-      active: true
-    }
-  ];
+  pltColumns = PLT_COLUMNS;
+  EPMColumns = EPM_COLUMNS;
   visible = false;
   size = 'large';
   filters: {
@@ -753,83 +111,21 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   systemTagsCount: any;
   userTags: any;
   userTagsCount: any;
-  units = [
-    {id: '3', label: 'Billion'},
-    {id: '1', label: 'Thousands'},
-    {id: '2', label: 'Million'},
-    {id: '4', label: 'Unit'}
-  ];
-  theads = [
-    {
-      title: '', cards: [
-        {
-          chip: 'ID: 222881',
-          content: 'HDIGlobal_CC_IT1607_XCV_SV_SURPLUS_729',
-          borderColor: '#6e6cc0',
-          selected: false
-        },
-      ]
-    },
-    {
-      title: 'Base', cards: [
-        {chip: '1.25', content: 'Portfolio Evolution', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Default', cards: [
-        {chip: 'Event', content: 'Tsunami', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Analyst', cards: [
-        {chip: '1.13', content: 'ALAE', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: 'Client', cards: [
-        {chip: '0.95', content: 'Cedant QI', borderColor: '#03dac4', selected: false}
-      ]
-    },
-    {
-      title: '', cards: [
-        {chip: 'ID: 232896', content: 'JEPQ_RL_DefAdj_CC_IT1607_GGDHHT7766', borderColor: '#6e6cc0', selected: false}
-      ]
-    }
-  ];
-  dependencies = [
-    {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analysis ID: 149'},
-    {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
-    {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
-    {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
-  ]
+  units = UNITS;
+  dependencies = DEPENDENCIES;
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
-  @Select(WorkspaceState.getUserTags) userTags$;
   data$;
   deletedPlts$;
   deletedPlts: any;
   loading: boolean;
   selectedUserTags: any;
-  systemTagsMapping = {
-    grouped: {
-      regionPerilCode: 'Region Peril',
-      currency: 'Currency',
-      sourceModellingVendor: 'Modelling Vendor',
-      sourceModellingSystem: 'Model System',
-      targetRapCode: 'Target RAP',
-      userOccurrenceBasis: 'User Occurence Basis',
-      pltType: 'Loss Asset Type',
-    },
-    nonGrouped: {}
-  };
+  systemTagsMapping = SYSTEM_TAGS_MAPPING;
   selectedPlt: any;
   addTagModalIndex: any;
   addTagModal: boolean;
-  addModalInput: any;
   inputValue: any;
-  addModalSelect: any;
-  tagFormenu: any;
   fromPlts: any;
   colorPickerIsVisible: any;
   initColor: any;
@@ -840,8 +136,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   private dropdown: NzDropdownContextComponent;
   private Subscriptions: any[] = [];
   private lastClick: string;
-  private renamingTag: boolean;
-  private modalInputCache: any;
   tagForMenu: any;
   listOfDeletedPltsData: any;
   listOfDeletedPltsCache: any;
@@ -849,13 +143,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
-        console.log(this.selectedPlt)
         this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
     {
       label: 'Delete', command: (event) => {
-        this.store$.dispatch(new fromWorkspaceStore.deletePlt({
+        this.dispatch(new fromWorkspaceStore.deletePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
           pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
         }));
@@ -864,7 +157,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     {
       label: 'Clone To',
       command: (event) => {
-        console.log('cloning')
         this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
       }
     },
@@ -880,13 +172,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
         let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
         this.modalSelect = _.intersectionBy(...d, 'tagId');
         this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-        console.log(this.oldSelectedTags, this.modalSelect)
       }
     },
     {
       label: 'Restore',
       command: () => {
-        this.store$.dispatch(new fromWorkspaceStore.restorePlt({
+        this.dispatch(new fromWorkspaceStore.restorePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
           pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
         }))
@@ -902,7 +193,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     {
       label: 'Delete Tag',
       icon: 'pi pi-trash',
-      command: (event) => this.store$.dispatch(new fromWorkspaceStore.deleteUserTag({
+      command: (event) => this.dispatch(new fromWorkspaceStore.deleteUserTag({
         wsIdentifier: this.workspaceId + '-' + this.uwy,
         userTagId: this.tagForMenu.tagId
       }))
@@ -918,6 +209,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   wsHeaderSelected: boolean;
   modalSelect: any;
 
+  @Select(WorkspaceState.getUserTags) userTags$;
+  @Select(WorkspaceState) state$: Observable<any>;
+  @Select(WorkspaceState.getAdjustmentApplication) adjutmentApplication$;
+  @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
+  @ViewChild('dt')
+  @ViewChild('iconNote') iconNote: ElementRef;
+
   constructor(
     private nzDropdownService: NzDropdownService,
     private store$: Store,
@@ -925,6 +223,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     private cdRef: ChangeDetectorRef,
     private router$: Router,
     private route$: ActivatedRoute) {
+    super(router$, cdRef, store$);
     this.someItemsAreSelected = false;
     this.selectAll = false;
     this.listOfPlts = [];
@@ -958,18 +257,17 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       tagColor: '#0700e4'
     }
   }
-
   ngOnInit() {
-    this.extend();
+    this.initDataColumns();
     this.Subscriptions.push(
       this.route$.params.pipe(
         switchMap(({wsId, year}) => {
           this.workspaceId = wsId;
           this.uwy = year;
           this.loading = true;
-          this.data$ = this.store$.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
-          this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
-          this.store$.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
+          this.data$ = this.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
+          this.deletedPlts$ = this.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
+          this.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
             params: {
               workspaceId: wsId, uwy: year
             }
@@ -978,7 +276,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
             this.data$,
             this.deletedPlts$
           )
-        })
+        }),
+        this.unsubscribeOnDestroy
       ).subscribe(([data, deletedData]: any) => {
         let d1 = [];
         let dd1 = [];
@@ -1099,27 +398,23 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
             this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
+      this.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
       this.getAttr('loading').subscribe(l => this.loading = l),
     );
   }
-
   patchState(state: any): void {
     const path = state.data.calibration;
-    console.log('STATE ======>', state);
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
     this.adjutmentApplication = _.merge({}, path.adjustmentApplication);
-    console.log('adjutmentApplication ======>', this.adjutmentApplication);
     this.allAdjsArray = _.merge([], path.allAdjsArray);
     this.AdjustementType = _.merge([], path.adjustementType);
     this.adjsArray = _.merge([], path.adjustments);
     this.userTags = _.merge({}, path.userTags);
     this.detectChanges();
   }
-
   initDataColumns() {
     this.dataColumns = [];
     this.frozenColumns = [];
@@ -1160,11 +455,9 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       }
     }
   }
-
   getAttr(path) {
-    return this.store$.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
+    return this.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
   }
-
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.sortData = _.merge({}, this.sortData, {
@@ -1174,7 +467,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.sortData = _.omit(this.sortData, [sort.key]);
     }
   }
-
   filter(key: string, value?: any) {
     if (key == 'project') {
       if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
@@ -1198,51 +490,34 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       }
     }
   }
-
-
   openDrawer(index): void {
     this.visible = true;
     this.drawerIndex = index;
   }
-
   closePltInDrawer(pltId) {
-    this.store$.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}));
+    this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}));
   }
-
   openPltInDrawer(plt) {
     this.closePltInDrawer(this.sumnaryPltDetailsPltId);
-    this.store$.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}));
+    this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}));
     this.openDrawer(1);
     this.getTagsForSummary();
   }
-
-
   getTagsForSummary() {
     this.pltdetailsSystemTags = this.systemTags;
     this.pltdetailsUserTags = this.userTags;
   }
-
-
   resetPath() {
     this.filterData = _.omit(this.filterData, 'project')
     this.projects = _.map(this.projects, p => ({...p, selected: false}))
     this.showDeleted = false;
   }
-
-
   close(e: NzMenuItemDirective): void {
     this.dropdown.close();
   }
-
-  detectChanges() {
-    if (!this.cdRef['destroyed'])
-      this.cdRef.detectChanges();
-  }
-
   ngOnDestroy(): void {
-    this.Subscriptions && _.forEach(this.Subscriptions, el => el.unsubscribe());
+    this.destroy();
   }
-
   checkAll($event) {
     this.toggleSelectPlts(
       _.zipObject(
@@ -1251,16 +526,13 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       )
     );
   }
-
   toggleSelectPlts(plts: any) {
-    console.log(plts);
-    this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration({
+    this.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       plts,
       forDeleted: this.showDeleted
     }));
   }
-
   selectSinglePLT(pltId: number, $event?: boolean) {
     this.toggleSelectPlts({
       [pltId]: {
@@ -1268,7 +540,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       }
     });
   }
-
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
     const isSelected = _.findIndex(!this.showDeleted ? this.selectedListOfPlts : this.listOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
@@ -1285,16 +556,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.lastClick = null;
     }
   }
-
-
   onSort($event: any) {
-    console.log($event);
     const {
-      multisortmeta
     } = $event;
 
   }
-
   checkBoxsort() {
     this.activeCheckboxSort = !this.activeCheckboxSort;
     if (this.activeCheckboxSort) {
@@ -1305,25 +571,18 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.listOfPltsData = this.listOfPltsCache;
     }
   }
-
-
   selectSystemTag(section, tag) {
-
     _.forEach(this.systemTagsCount, (s, sKey) => {
       _.forEach(s, (t, tKey) => {
         if (tag == tKey && section == sKey) {
           this.systemTagsCount[sKey][tKey] = {...t, selected: !t.selected}
-          console.log(this.systemTagsCount[sKey][tKey]);
         } else {
           this.systemTagsCount[sKey][tKey] = {...t, selected: false}
-          console.log(this.systemTagsCount[sKey][tKey]);
         }
       })
     })
   }
-
   sortChange(field: any, sortCol: any) {
-    console.log(field, sortCol)
     if (!sortCol) {
       this.sortData[field] = 'asc';
     } else if (sortCol === 'asc') {
@@ -1332,7 +591,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.sortData[field] = null
     }
   }
-
   extend() {
     this.extended = !this.extended;
     if (this.extended) {
@@ -1346,9 +604,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     }
     this.adjustExention();
     this.initDataColumns();
-    // this.store$.dispatch(new extendPltSection(this.extended));
+    this.dispatch(new extendPltSection(this.extended));
   }
-
   adjustExention() {
     if (this.extended) {
       _.forIn(this.pltColumns, function (value: any, key) {
@@ -1376,7 +633,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       })
     }
   }
-
   clickButtonPlus(bool, data?: any) {
     this.global = bool;
     this.modalTitle = "Add New Adjustment";
@@ -1392,16 +648,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     }
     this.isVisible = true;
   }
-
   handleCancel(): void {
     this.isVisible = false;
   }
-
   addAdjustment($event) {
-
     let boolAdj = $event.status;
     let adjustementType = $event.singleValue;
-    console.log(adjustementType)
     let adjustement = $event.category;
     let columnPosition = $event.columnPosition;
 
@@ -1409,7 +661,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       if (boolAdj) {
         this.isVisible = false;
       }
-      this.store$.dispatch(new applyAdjustment({
+      this.dispatch(new applyAdjustment({
         adjustementType: adjustementType,
         adjustement: adjustement,
         columnPosition: columnPosition,
@@ -1419,7 +671,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       if (boolAdj) {
         this.isVisible = false;
       }
-      this.store$.dispatch(new saveAdjustment({
+      this.dispatch(new saveAdjustment({
         adjustementType: adjustementType,
         adjustement: adjustement,
         columnPosition: columnPosition
@@ -1428,21 +680,10 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     this.singleValue = null;
     this.columnPosition = null;
   }
-
   selectCategory(p) {
-    console.log(p);
     this.categorySelectedFromAdjustement = p;
     this.categorySelected = p.category;
   }
-
-  selectBasis(adjustment) {
-    if (adjustment.id == 1) {
-      this.linear = true;
-    } else {
-      this.linear = false;
-    }
-  }
-
   adjustColWidth(dndDragover = 10) {
     let countBase = 0;
     let countClient = 0;
@@ -1470,7 +711,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();
     this.dataColumns[indexClient].width = clientWidth.toString();
-    console.log('after adjustment ==> ', baseWidth);
   }
 
 
@@ -1481,7 +721,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    this.store$.dispatch(new applyAdjustment({
+    this.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
@@ -1499,7 +739,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    this.store$.dispatch(new replaceAdjustement({
+    this.dispatch(new replaceAdjustement({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
@@ -1516,7 +756,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    this.store$.dispatch(new replaceAdjustement({
+    this.dispatch(new replaceAdjustement({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
@@ -1527,7 +767,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   }
 
   deleteAdjs(adj, index, pltId) {
-    this.store$.dispatch(new deleteAdjsApplication({
+    this.dispatch(new deleteAdjsApplication({
       index: index,
       pltId: pltId
     }));
@@ -1541,7 +781,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    this.store$.dispatch(new applyAdjustment({
+    this.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
@@ -1554,7 +794,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     this.modalTitle = "Modify Adjustment";
     this.modifyModal = true;
     this.lastModifiedAdj = adj.id;
-    console.log(adj);
     this.categorySelectedFromAdjustement = _.find(this.allAdjsArray, {name: adj.name});
     if (adj.linear) {
       this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
@@ -1562,12 +801,11 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    console.log(this.singleValue);
     this.isVisible = true;
   }
 
   DeleteAdjustement(adj) {
-    this.store$.dispatch(new deleteAdjustment({
+    this.dispatch(new deleteAdjustment({
       adjustment: adj
     }))
   }
@@ -1577,7 +815,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     let adj = event.category;
     let value = event.value;
     let columnPosition = event.columnPosition;
-    this.store$.dispatch(new saveAdjModification({
+    this.dispatch(new saveAdjModification({
       adjustementType: value,
       adjustement: adj,
       columnPosition: columnPosition
@@ -1590,7 +828,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   onChangeAdjValue(adj, event) {
     adj.value = event.target.value;
     this.columnPosition = event.target.value;
-    this.store$.dispatch(new saveAdjModification({
+    this.dispatch(new saveAdjModification({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition
@@ -1599,19 +837,17 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
 
 
   onDrop(col, pltId) {
-    console.log('col == >', col);
-    /* this.store$.dispatch(new dropAdjustment({
+    /* this.dispatch(new dropAdjustment({
        pltId: pltId,
        adjustement: this.draggedAdjs
      }))*/
     this.adjustColWidth(this.draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
-    console.log(col);
   }
 
   emitFilters(filters: any) {
-    this.store$.dispatch(new fromWorkspaceStore.setUserTagsFiltersFromCalibration({
+    this.dispatch(new fromWorkspaceStore.setUserTagsFiltersFromCalibration({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       filters: filters
     }))
@@ -1631,7 +867,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     const {
       selectedTags
     } = $event;
-    this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
+    this.dispatch(new fromWorkspaceStore.createOrAssignTags({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       ...$event,
       selectedTags: _.map(selectedTags, (el: any) => el.tagId),
@@ -1641,7 +877,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   }
 
   createTag($event: any) {
-    this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({
+    this.dispatch(new fromWorkspaceStore.createOrAssignTags({
       ...$event,
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
@@ -1649,7 +885,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   }
 
   editTag() {
-    this.store$.dispatch(new fromWorkspaceStore.editTag({
+    this.dispatch(new fromWorkspaceStore.editTag({
       tag: this.tagForMenu,
       workspaceId: this.workspaceId,
       uwy: this.uwy
@@ -1728,7 +964,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     }
 
     if ($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
       if (!this.lastSelectedId) this.lastSelectedId = 0;
       if (this.lastSelectedId || this.lastSelectedId == 0) {
         const max = _.max([i, this.lastSelectedId]);
@@ -1755,7 +990,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   }
 
   dropThreadAdjustment() {
-    this.store$.dispatch(new dropThreadAdjustment({adjustmentArray: this.adjsArray}))
+    this.dispatch(new dropThreadAdjustment({adjustmentArray: this.adjsArray}))
   }
 
   selectedAdjust(adjId) {
@@ -1797,4 +1032,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     this.selectedEPM = epm;
   }
 
+  trackby(row, index) {
+    return row.pltId;
+  }
 }
