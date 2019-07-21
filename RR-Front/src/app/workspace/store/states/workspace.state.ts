@@ -104,6 +104,11 @@ export class WorkspaceState {
     return state.pinned;
   }
 
+  @Selector()
+  static getLastWorkspace(state: WorkspaceModel){
+    return  _.last(_.values(state.content));
+  }
+
   /***********************************
    *
    * Calibration Selectors
