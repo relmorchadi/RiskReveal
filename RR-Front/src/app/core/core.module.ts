@@ -29,7 +29,6 @@ export class MyStorageEngine implements StorageEngine {
   }
 
   getItem(key: string): any {
-    console.log('Get item', key);
     if (key == '@@STATE') {
       let state = JSON.parse(localStorage.getItem(key));
       return JSON.stringify(_.omit(state, ['router']));
