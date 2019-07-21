@@ -4,10 +4,10 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import * as moment from 'moment'
 import {StateSubscriber} from "../../model/state-subscriber";
 import * as fromHeader from "../../../core/store/actions/header.action";
 import * as fromWs from "../../store/actions";
+import {UpdateWsRouting} from "../../store/actions";
 import {
   AddNewProjectFail,
   AddNewProjectSuccess,
@@ -18,6 +18,7 @@ import {
 } from '../../../core/store/actions/workspace-main.action';
 import {MessageService} from 'primeng/api';
 import {BaseContainer} from "../../../shared/base";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'workspace-project',
@@ -26,7 +27,6 @@ import {BaseContainer} from "../../../shared/base";
   providers: [MessageService]
 })
 export class WorkspaceProjectComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
-  // unSubscribe$: Subject<void>;
   collapseWorkspaceDetail = true;
   selectedPrStatus = '1';
   private dropdown: NzDropdownContextComponent;
@@ -48,8 +48,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   dueDate: any;
   contextMenuProject: any = null;
   description: any;
-  hyperLinks: string[]= ['Projects', 'Contract', 'Activity'];
-  hyperLinksRoutes: any= {
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
     'Projects': '',
     'Contract': '/Contract',
     'Activity': '/Activity'
@@ -71,13 +71,12 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
-    console.log('init project');
   }
 
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
-    console.log('this is ws data', wsIdentifier, data);
     this.wsIdentifier = wsIdentifier;
+
   }
 
 
@@ -104,10 +103,6 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
       // this.detectChanges();
       }
     );
-  }
-
-  handleOk(): void {
-    this.isVisible = false;
   }
 
   handleCancel(): void {
@@ -156,10 +151,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   unPinWorkspace() {
     const {wsId, uwYear} = this.workspace;
-    this.dispatch([
-      new fromHeader.UnPinWs({wsId, uwYear}),
-      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
-    ])
+    this.dispatch(new fromHeader.UnPinWs({wsId, uwYear}));
+    this.dispatch(new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier}));
   }
 
   selectProjectNext(project) {
@@ -177,16 +170,20 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.newProject = false;
   }
 
-  formatDateTime(dateTime: any) {
-    moment(dateTime).format('x');
-  }
-
   ngOnDestroy(): void {
     this.destroy();
   }
 
   protected detectChanges() {
     super.detectChanges();
+  }
+
+  navigateFromHyperLink({route}) {
+    const {wsId, uwYear} = this.workspace;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
   }
 
 }

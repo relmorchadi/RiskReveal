@@ -147,7 +147,6 @@ export class PopUpPltTableComponent implements OnInit {
     }
 
     if ($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
       if (!this.lastSelectedId) this.lastSelectedId = 0;
       if (this.lastSelectedId || this.lastSelectedId == 0) {
         const max = _.max([i, this.lastSelectedId]);

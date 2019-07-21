@@ -274,8 +274,9 @@ export class WorkspaceJobManagerComponent implements OnInit {
 
   ngOnInit() {
     this.jobs$.subscribe(value => {
-      this.jobs = _.merge([], value);
-      this.savedTask = [...this.jobs];
+      this.jobs = _.toArray(_.merge({}, value));
+      this.savedTask = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
+        ..._.filter(this.jobs, (dt) => dt.pending)];
     });
     this.state$.subscribe(value => this.state = _.merge({}, value));
   }
@@ -302,7 +303,6 @@ export class WorkspaceJobManagerComponent implements OnInit {
   }
 
   filterByUser(event) {
-    console.log(event);
     event === 'all' ? this.savedTask = this.jobs :
       this.savedTask = this.jobs.filter(dt => dt.jobOwner === event);
   }

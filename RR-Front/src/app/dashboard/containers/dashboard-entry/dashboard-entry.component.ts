@@ -271,7 +271,6 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   changeItemPosition() {
-    console.log('here');
     let rowEmpty = true;
     this.selectedDashboard.items.forEach(ds => {
       if (ds.selected && ds.position.y === 0 ) {
@@ -342,7 +341,6 @@ export class DashboardEntryComponent implements OnInit {
       dashboard.items.push(copy);
       newItem[0].selected = false;
     } else {
-      console.log(_.findIndex(dashboard.items, {id: itemId}));
       let index = _.findIndex(dashboard.items, {id: itemId});
       dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
     }
@@ -352,7 +350,6 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   duplicate(dashboardId: any, itemName: any) {
-    console.log({dashboardId, itemName});
     const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
     const duplicatedItem: any = dashboard.items.filter(ds => ds.name === itemName);
     const copy = Object.assign({}, duplicatedItem[0], {

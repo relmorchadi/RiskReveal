@@ -51,7 +51,6 @@ export class TagsComponent implements OnInit {
         this.templateSpan = 15;
       }
     }
-    console.log('tags collapse', this.ColpasBool);
     this.store$.dispatch(new collapseTags(this.ColpasBool));
     this.collapse.emit({templateSpan: this.templateSpan, pltSpan: this.pltSpan});
 

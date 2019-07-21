@@ -13,7 +13,11 @@ import {
 import * as fromHeader from '../../../store/actions/header.action';
 import {HelperService} from '../../../../shared/helper.service';
 import * as workspaceActions from '../../../../workspace/store/actions/workspace.actions';
+import {UpdateWsRouting} from '../../../../workspace/store/actions/workspace.actions';
 import {NotificationService} from "../../../../shared/notification.service";
+import {Navigate} from "@ngxs/router-plugin";
+import {WorkspaceState} from "../../../../workspace/store/states";
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -48,10 +52,12 @@ export class WorkspacesMenuItemComponent implements OnInit {
   @Select(HeaderState.getFavorite) favorites$;
   @Select(HeaderState.getPinned) pinged$;
   @Select(HeaderState.getRecent) recentWs$;
+  @Select(WorkspaceState.getLastWorkspace) lastWorkspace$;
   favoriteSize: any;
   pingedSize: any;
   favoriteSearch: any;
   pingedSearch: any;
+
 
   paginationParams: [
     { id: 0, shownElement: 10, label: 'Last 10' },
@@ -145,9 +151,6 @@ export class WorkspacesMenuItemComponent implements OnInit {
   openWorkspaces() {
     const selectedItems = this.recent.filter(ws => ws.selected);
 
-    console.log('Selected items', selectedItems);
-    // this.store.dispatch(new fromWs.openWS())
-
     let workspaces = [];
     selectedItems.forEach(
       (ws) => {
@@ -210,14 +213,22 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   redirectWorkspace() {
-    if (this.recent.openedTabs.data.length > 0) {
-      this.navigateToTab(this.recent.openedTabs.data[0]);
-      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: this.recent.openedTabs.data[0]}));
-    } else {
-      this.notificationService.createNotification('Information',
-        'There is no Opened Workspaces please try searching for some before!',
-        'error', 'bottomRight', 4000);
-    }
+    this.lastWorkspace$
+      .pipe(take(1))
+      .subscribe(data => {
+        if (data) {
+          const {wsId, uwYear, route} = data;
+          return this.store.dispatch(
+            [new UpdateWsRouting(wsId.concat('-', uwYear), route),
+              new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+          );
+        } else {
+          return this.notificationService.createNotification('Information',
+            'There is no Opened Workspaces please try searching for some before!',
+            'error', 'bottomRight', 4000);
+        }
+      });
+
   }
 
   searchWorkspace(value) {

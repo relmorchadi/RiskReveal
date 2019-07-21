@@ -33,12 +33,12 @@ const initialState: HeaderStateModel = {
   jobManagerPopIn: {
     active: {
       keyword: '',
-      items: DataTables.tasks,
+      items: _.merge({}, ...DataTables.tasks.map(dt => ({[dt.id]: {...dt}}))),
       filter: {date: '', type: ''}
     },
     completed: {
       keyword: '',
-      items: DataTables.tasks,
+      items: _.merge({}, ...DataTables.tasks.map(dt => ({[dt.id]: {...dt}}))),
       filter: {date: '', type: ''}
     }
   },
@@ -74,7 +74,6 @@ export class HeaderState implements NgxsOnInit {
 
 
   ngxsOnInit(ctx?: StateContext<any>): void | any {
-    console.log('init');
   }
 
   /**
@@ -214,12 +213,13 @@ export class HeaderState implements NgxsOnInit {
   @Action(fromHeader.PauseTask)
   pauseTask(ctx: StateContext<HeaderStateModel>, {payload}: fromHeader.PauseTask) {
     const {id} = payload;
+    const state = ctx.getState();
+    console.log(
+      [..._.sortBy(_.filter(_.toArray(state.jobManagerPopIn.active.items), (dt) => !dt.pending), (dt) => dt.isPaused),
+        ..._.filter(_.toArray(state.jobManagerPopIn.active.items), (dt) => dt.pending)]);
     ctx.patchState(produce(
       ctx.getState(), draft => {
         draft.jobManagerPopIn.active.items[id].isPaused = true;
-        draft.jobManagerPopIn.active.items =
-          [..._.sortBy(_.filter(draft.jobManagerPopIn.active.items, (dt) => !dt.pending), (dt) => dt.isPaused),
-            ..._.filter(draft.jobManagerPopIn.active.items, (dt) => dt.pending)];
       }
     ));
   }
@@ -230,9 +230,6 @@ export class HeaderState implements NgxsOnInit {
     ctx.patchState(produce(
       ctx.getState(), draft => {
         draft.jobManagerPopIn.active.items[id].isPaused = false;
-        draft.jobManagerPopIn.active.items =
-          [..._.sortBy(_.filter(draft.jobManagerPopIn.active.items, (dt) => !dt.pending), (dt) => dt.isPaused),
-            ..._.filter(draft.jobManagerPopIn.active.items, (dt) => dt.pending)];
       }
     ));
   }

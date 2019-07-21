@@ -44,7 +44,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       .subscribe(([dtt, {wsId, year}]: any) => {
         this.workspaceUrl = {wsId, uwYear: year};
         this.workspace = _.find(dtt, dt => dt.workSpaceId == wsId && dt.uwYear == year);
-        console.log(this.workspace);
         this.index = _.findIndex(dtt, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
   }

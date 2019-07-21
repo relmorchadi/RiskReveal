@@ -45,8 +45,9 @@ export class TasksMenuItemComponent implements OnInit {
 
   ngOnInit() {
     this.jobs$.subscribe(value => {
-      this.jobs = _.merge([], value);
-      this.savedTasksLocal = [...this.jobs];
+      this.jobs = _.toArray(_.merge({}, value));
+      this.savedTasksLocal = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
+        ..._.filter(this.jobs, (dt) => dt.pending)];
     });
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());

@@ -4688,7 +4688,6 @@ export class RenewalContractScopeComponent implements OnInit {
     }))
 
     this.uwyUnits = _.uniqBy(this.mockData, 'UNDERWRITINGUNITCODE');
-    console.log(this.uwyUnits);
   }
 
   ngOnInit() {
@@ -4717,7 +4716,6 @@ export class RenewalContractScopeComponent implements OnInit {
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>): void {
     this.dropdown = this.nzDropdownService.create($event, template);
-    console.log(this.dropdown);
   }
 
   close(e: NzMenuItemDirective): void {

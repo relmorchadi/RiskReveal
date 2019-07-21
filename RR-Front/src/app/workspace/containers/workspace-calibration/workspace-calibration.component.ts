@@ -83,7 +83,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   AdjustementType: any;
   categorySelected: any;
   adjsArray: any[] = [];
-
   leftNavbarIsCollapsed: boolean;
   adjutmentApplication = [];
   linear: boolean = false;

@@ -179,6 +179,7 @@ export class CalibrationService implements NgxsOnInit {
       wsIdentifier
     } = payload;
 
+
     let inComingData = {};
 
     _.forEach(plts, (v, k) => {
