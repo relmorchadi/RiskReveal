@@ -93,7 +93,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   contextSelectedItem: any;
 
   @Select(WorkspaceState.getRiskLinkState) state$;
-  state: RiskLinkModel = null;
+  state: any;
 
   @Select(WorkspaceState.getListEdmRdm) listEdmRdm$;
   listEdmRdm: any;
@@ -127,6 +127,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       }),
       this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.listEdmRdm = _.merge({}, value);
+        this.detectChanges();
+        console.log(this.listEdmRdm);
       }),
       this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.analysis = _.merge({}, value);

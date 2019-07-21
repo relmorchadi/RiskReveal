@@ -25,8 +25,8 @@
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">RMS Instance</span>
-              <span class="dropdown-item-selected" *ngIf="state.financialValidator.rmsInstance.selected">
-                {{state.financialValidator.rmsInstance.selected}}
+              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.rmsInstance?.selected">
+                {{state?.financialValidator?.rmsInstance?.selected}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -35,15 +35,15 @@
           </div>
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('rmsInstance', item)"
-                *ngFor="let item of state.financialValidator.rmsInstance.data">{{item}}</li>
+                *ngFor="let item of state?.financialValidator?.rmsInstance?.data">{{item}}</li>
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective ELT</span>
-              <span class="dropdown-item-selected" *ngIf="state.financialValidator.financialPerspectiveELT.selected">
-                {{state.financialValidator.financialPerspectiveELT.selected}}
+              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.financialPerspectiveELT?.selected">
+                {{state?.financialValidator?.financialPerspectiveELT?.selected}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -52,7 +52,7 @@
           </div>
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('financialPerspectiveELT', item)"
-                *ngFor="let item of state.financialValidator.financialPerspectiveELT.data">{{item}}</li>
+                *ngFor="let item of state?.financialValidator?.financialPerspectiveELT?.data">{{item}}</li>
           </ul>
         </nz-dropdown>
         <!--        <nz-dropdown [nzTrigger]="'click'">
@@ -76,8 +76,8 @@
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Target Currency</span>
-              <span class="dropdown-item-selected" *ngIf="state.financialValidator.targetCurrency.selected">
-                {{state.financialValidator.targetCurrency.selected}}
+              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.targetCurrency?.selected">
+                {{state?.financialValidator?.targetCurrency?.selected}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -86,7 +86,7 @@
           </div>
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('targetCurrency', item)"
-                *ngFor="let item of state.financialValidator.targetCurrency.data">{{item}}</li>
+                *ngFor="let item of state?.financialValidator?.targetCurrency?.data">{{item}}</li>
           </ul>
         </nz-dropdown>
       </div>
@@ -98,7 +98,7 @@
               <div>Select EDM & RDM</div>
             </div>
             <div class="body-wrapper-header-middle">
-              <div *ngIf="state.collapse.collapseHead" class="body-wrapper-search" clickOutside
+              <div *ngIf="state?.collapse?.collapseHead" class="body-wrapper-search" clickOutside
                    (clickOutside)="closeDropdown()"
                    [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': displayListRDMEDM}">
                 <div class="search-bar"
@@ -213,15 +213,15 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-              <i *ngIf="state.collapse.collapseHead" (click)="changeCollapse('collapseHead')"
+              <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
-              <i *ngIf="!state.collapse.collapseHead" (click)="changeCollapse('collapseHead')"
+              <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_down_24px"></i>
             </div>
           </div>
         </div>
         <div class="body-main-wrapper" style="" *ngIf="displayListRDMEDM">
-          <div class="left" *ngIf="state.collapse.collapseHead">
+          <div class="left" *ngIf="state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
@@ -283,12 +283,12 @@
               </div>
             </div>
           </div>
-          <div class="right" *ngIf="state.display.displayTable && state.collapse.collapseHead">
+          <div class="right" *ngIf="state?.display?.displayTable && state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
-                  <span *ngIf="state.selectedEDMOrRDM === 'rdm'">Select Analysis For Import</span>
-                  <span *ngIf="state.selectedEDMOrRDM === 'edm'">Select Portfolio For Import</span>
+                  <span *ngIf="state?.selectedEDMOrRDM === 'rdm'">Select Analysis For Import</span>
+                  <span *ngIf="state?.selectedEDMOrRDM === 'edm'">Select Portfolio For Import</span>
                 </div>
                 <div class="body-wrapper-header-right">
                   <i class="icon-filter" (click)="filterModalVisibility = true"></i>
@@ -334,10 +334,10 @@
                 </p-table>
               </div>
               <div class="import-button">
-                <button *ngIf="state.activeAddBasket" (click)="displayImported()" class="a-buttons-contained">ADD TO
+                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained">ADD TO
                   BASKET
                 </button>
-                <button *ngIf="!state.activeAddBasket" class="a-buttons-contained-disabled" disabled>ADD TO BASKET
+                <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled" disabled>ADD TO BASKET
                 </button>
               </div>
             </div>
@@ -347,11 +347,11 @@
 
       <app-risk-link-res-summary></app-risk-link-res-summary>
 
-      <div class="footer-section" *ngIf="state.display.displayImport">
+      <div class="footer-section" *ngIf="state?.display?.displayImport">
         <div class="body-wrap-footer">
           <div class="body-wrap-footer-left">
             <nz-select nzShowSearch nzAllowClear [ngModel]="state.financialValidator.calibration.selected">
-              <nz-option *ngFor="let op of state.financialValidator.calibration.data" [nzLabel]="op"
+              <nz-option *ngFor="let op of state?.financialValidator?.calibration?.data" [nzLabel]="op"
                          [nzValue]="op"></nz-option>
             </nz-select>
             <label nz-checkbox [ngModel]="state.checked.checkedARC">Publish For Accumulation</label>

@@ -78,7 +78,8 @@ export class WorkspaceService {
             adjustementType: _.assign({}, ADJUSTMENT_TYPE),
             allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
           },
-          riskLink: {listEdmRdm: {
+          riskLink: {
+            listEdmRdm: {
               data: null,
               dataSelected: [],
               selectedListEDMAndRDM: {edm: null, rdm: null},

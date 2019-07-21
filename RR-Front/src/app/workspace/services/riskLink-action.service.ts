@@ -981,27 +981,22 @@ export class RiskLinkStateService {
           of(ctx.patchState(
             produce(
               ctx.getState(), draft => {
-                draft.content[wsIdentifier].riskLink.listEdmRdm = {
-                    ...draft.content[wsIdentifier].riskLink.listEdmRdm,
-                    data: Object.assign({},
-                      ...ds.content.map(item => ({
-                          [item.id]: {
-                            ...item,
-                            selected: false,
-                            source: '',
-                          }
-                        }
-                      ))),
-                    searchValue: '',
-                    totalNumberElement: ds.totalElements,
-                    numberOfElement: ds.size
-/*                  display: {displayImport: false, displayTable: false},
-                  results: null,
-                  summaries: null,
-                  analysis: null,
-                  portfolios: null,
-                  activeAddBasket: false,*/
-                };
+                draft.content[wsIdentifier].riskLink = {
+                  ...draft.content[wsIdentifier].riskLink, listEdmRdm: {
+                ...draft.content[wsIdentifier].riskLink.listEdmRdm,
+                  data: Object.assign({},
+                  ...ds.content.map(item => ({
+                      [item.id]: {
+                        ...item,
+                        selected: false,
+                        source: '',
+                      }
+                    }
+                  ))),
+                  searchValue: '',
+                  totalNumberElement: ds.totalElements,
+                  numberOfElement: ds.size
+                  }};
               }
             )
           ))
