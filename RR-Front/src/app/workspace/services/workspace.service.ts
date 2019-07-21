@@ -77,6 +77,61 @@ export class WorkspaceService {
             adjustmentApplication: {},
             adjustementType: _.assign({}, ADJUSTMENT_TYPE),
             allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+          },
+          riskLink: {listEdmRdm: {
+              data: null,
+              dataSelected: [],
+              selectedListEDMAndRDM: {edm: null, rdm: null},
+              totalNumberElement: 0,
+              searchValue: '',
+              numberOfElement: 0
+            },
+            linking: {
+              edm: null,
+              rdm: null,
+              autoLinks: null,
+              linked: null,
+              analysis: null,
+              portfolio: null
+            },
+            display: {
+              displayTable: false,
+              displayImport: false,
+            },
+            collapse: {
+              collapseHead: true,
+              collapseAnalysis: true,
+              collapseResult: true,
+            },
+            checked: {
+              checkedARC: false,
+              checkedPricing: false,
+            },
+            financialValidator: {
+              rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-U-RL17-SQL14', 'AZU-U2-RL181-SQL16'], selected: 'AZU-P-RL17-SQL14'},
+              financialPerspectiveELT: {
+                data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
+                selected: 'Net Loss Pre Cat (RL)'
+              },
+              targetCurrency: {
+                data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
+                selected: 'Main Liability Currency (MLC)'
+              },
+              calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
+            },
+            financialPerspective: {
+              rdm: {data: null, selected: null},
+              analysis: null,
+              treaty: null,
+              standard: null,
+              target: 'currentSelection'
+            },
+            analysis: null,
+            portfolios: null,
+            results: null,
+            summaries: null,
+            selectedEDMOrRDM: null,
+            activeAddBasket: false
           }
         }
       });
