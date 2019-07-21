@@ -231,7 +231,6 @@ export class WorkspaceService {
 
   private _isPinned({wsId, uwYear}): boolean {
     const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
-    console.log(_.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1);
     return _.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
   }
 }

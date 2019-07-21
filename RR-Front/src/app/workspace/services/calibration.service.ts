@@ -179,7 +179,6 @@ export class CalibrationService implements NgxsOnInit {
       wsIdentifier
     } = payload;
 
-    console.log(plts);
 
     let inComingData = {};
 
@@ -277,7 +276,6 @@ export class CalibrationService implements NgxsOnInit {
       adjustement.value = adjustementType.abv;
     }
     let newAdj = {...adjustement};
-    console.log("==================>", newAdj);
     let index = _.findIndex(state.content[this.prefix].calibration.adjustments, {id: newAdj.id});
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.adjustments[index] = newAdj
@@ -316,7 +314,6 @@ export class CalibrationService implements NgxsOnInit {
         draft.content[this.prefix].calibration.adjustmentApplication = [..._.merge([], state.content[this.prefix].calibration.adjustmentApplication.adjustmentApplication, adjustmentApplication)]
       }));
     } else {
-      console.log(index);
       ctx.patchState(produce(ctx.getState(), draft => {
         _.forEach(adjustmentApplication, (row) => {
           draft.content[this.prefix].calibration.adjustmentApplication[index[row.pltId]] = row;
@@ -375,7 +372,6 @@ export class CalibrationService implements NgxsOnInit {
       adjustement.value = adjustementType.abv;
     }
     let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
-    console.log(adjustmentApplication);
     let newAdj = {...adjustement};
 
     _.forEach(pltId, (value) => {

@@ -1,7 +1,7 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions'
-import {PatchCalibrationStateAction} from '../actions'
+import {deselectAll, PatchCalibrationStateAction, selectRow} from '../actions'
 import {WorkspaceMain} from "../../../core/model";
 import {CalibrationService} from "../../services/calibration.service";
 import {WorkspaceService} from "../../services/workspace.service";
@@ -495,15 +495,15 @@ export class WorkspaceState {
   }
 
 
-  @Action(selectRow)
-  selectRow(ctx: StateContext<WorkspaceModel>, {payload}: selectRow) {
-    this.calibrationService.selectRow(ctx, payload)
-  }
-
-  @Action(deselectAll)
-  deselectAll(ctx: StateContext<WorkspaceModel>, {payload}: deselectAll) {
-    this.calibrationService.deselectAll(ctx, payload)
-  }
+  // @Action(selectRow)
+  // selectRow(ctx: StateContext<WorkspaceModel>, {payload}: selectRow) {
+  //   this.calibrationService.selectRow(ctx, payload)
+  // }
+  //
+  // @Action(deselectAll)
+  // deselectAll(ctx: StateContext<WorkspaceModel>, {payload}: deselectAll) {
+  //   this.calibrationService.deselectAll(ctx, payload)
+  // }
 
   /***********************************
    *
@@ -618,7 +618,6 @@ export class WorkspaceState {
 
   @Action(LoadRiskLinkPortfolioDataAction)
   loadRiskLinkPortfolioData(ctx: StateContext<WorkspaceModel>, {payload}: LoadRiskLinkPortfolioDataAction) {
-    console.log('portfolio');
     // return this.riskLinkFacade.loadRiskLinkPortfolioData(ctx, payload);
   }
 

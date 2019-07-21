@@ -43,7 +43,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   patchState({wsIdentifier, data}: any): void {
     this.workspaceInfo = data;
-    console.log('this is ws data', data);
     this.wsIdentifier = wsIdentifier;
   }
 

@@ -892,7 +892,6 @@ export class PltComparerMainComponent implements OnInit {
   colorThePlt() {
     while (this.cardContainer.length > this.colorSwitcher.length) {
       this.colorSwitcher = this.colorSwitcher.concat(this.colorSwitcher);
-      console.log(this.colorSwitcher);
     }
     for (let i = 0; i < this.cardContainer.length; i++) {
       this.cardContainer[i].color = this.colorSwitcher[i];
@@ -935,7 +934,6 @@ export class PltComparerMainComponent implements OnInit {
   }
 
   close(e: NzMenuItemDirective): void {
-    console.log(e);
 
     this.dropdown.close();
   }
@@ -981,7 +979,6 @@ export class PltComparerMainComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.cardContainer, event.previousIndex, event.currentIndex);
-    console.log(this.listOfSelectedValues.length);
   }
 
   deleteItem(i) {
@@ -1058,7 +1055,6 @@ export class PltComparerMainComponent implements OnInit {
   }
 
   assignPltsToTag($event: any) {
-    console.log($event)
     this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({wsIdentifier: this.workspaceId+'-'+this.uwy,...$event}))
   }
 
@@ -1133,7 +1129,6 @@ export class PltComparerMainComponent implements OnInit {
 
     this.addModalSelect = this.addModalSelectCache = _.intersectionBy(...d, 'tagId');
     this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-    console.log(this.addModalSelectCache, this.oldSelectedTags, d);
   }
   restore() {
     this.store$.dispatch(new fromWorkspaceStore.restorePlt({wsIdentifier: this.workspaceId+'-'+this.uwy,pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))

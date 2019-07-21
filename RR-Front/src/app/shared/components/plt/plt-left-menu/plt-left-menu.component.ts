@@ -89,11 +89,9 @@ export class PltLeftMenuComponent implements OnInit {
       this.unCkeckAllPlts.emit();
       if (this.menuInputs.filterData['project'] && this.menuInputs.filterData['project'] != '' && value == this.menuInputs.filterData['project']) {
         this.onWsHeaderSelection.emit(true);
-        console.log(_.omit(this.menuInputs.filterData, [key]))
         this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, [key]))
       } else {
         this.onWsHeaderSelection.emit(false);
-        console.log(_.merge({}, this.menuInputs.filterData, {[key]: value}));
         this.onProjectFilter.emit(_.merge({}, this.menuInputs.filterData, {[key]: value}))
       }
       this.onSelectProjects.emit(_.map(this.menuInputs.projects, t => {
@@ -129,7 +127,6 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   modalSelect(value: any) {
-    console.log(value);
     this.onModalSelect.emit(value);
   }
 
@@ -152,7 +149,6 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   handlePopUpCancel() {
-    console.log(this.menuInputs._editingTag,this.menuInputs.fromPlts,this.menuInputs.addTagModalIndex)
     this.tagModal(false);
     this.modalInput('');
     this.modalSelect('');
@@ -247,7 +243,6 @@ export class PltLeftMenuComponent implements OnInit {
 
   toggleArrayItem(item,arr, compare){
     const i = _.findIndex(arr, e => compare(e,item));
-    console.log(i,i >= 0 ? [...arr.slice(0, i), ...arr.slice(i+1)] :  [...arr, item]);
     return i >= 0 ? [...arr.slice(0, i), ...arr.slice(i+1)] :  [...arr, item];
   }
 
@@ -259,7 +254,6 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   setTagForMenu(any: any) {
-    console.log(any);
     this.onSetTagForMenu.emit(_.pick(any, ['tagName','tagColor','tagId']));
   }
 
@@ -269,7 +263,6 @@ export class PltLeftMenuComponent implements OnInit {
 
   getProjectID(projectId: string | string) {
     const str= _.split(projectId,'-');
-    console.log(_.join([str[0],_.trimStart(str[1],'0')],'-'));
     return _.join([str[0],_.trimStart(str[1],'0')],'-')
   }
 

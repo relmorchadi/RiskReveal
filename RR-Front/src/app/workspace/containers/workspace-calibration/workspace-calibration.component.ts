@@ -36,7 +36,6 @@ import {StateSubscriber} from "../../model/state-subscriber";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSubscriber {
-  actionsEmitter: EventEmitter<any> = new EventEmitter();
   searchAddress: string;
   listOfPlts: any[];
   listOfPltsData: any[];
@@ -849,7 +848,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
-        console.log(this.selectedPlt)
         this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
@@ -864,7 +862,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     {
       label: 'Clone To',
       command: (event) => {
-        console.log('cloning')
         this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
       }
     },
@@ -880,7 +877,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
         let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
         this.modalSelect = _.intersectionBy(...d, 'tagId');
         this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-        console.log(this.oldSelectedTags, this.modalSelect)
       }
     },
     {
@@ -1109,10 +1105,8 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
 
   patchState(state: any): void {
     const path = state.data.calibration;
-    console.log('STATE ======>', state);
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
     this.adjutmentApplication = _.merge({}, path.adjustmentApplication);
-    console.log('adjutmentApplication ======>', this.adjutmentApplication);
     this.allAdjsArray = _.merge([], path.allAdjsArray);
     this.AdjustementType = _.merge([], path.adjustementType);
     this.adjsArray = _.merge([], path.adjustments);
@@ -1253,7 +1247,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   }
 
   toggleSelectPlts(plts: any) {
-    console.log(plts);
     this.store$.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       plts,
@@ -1288,7 +1281,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
 
 
   onSort($event: any) {
-    console.log($event);
     const {
       multisortmeta
     } = $event;
@@ -1313,17 +1305,14 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       _.forEach(s, (t, tKey) => {
         if (tag == tKey && section == sKey) {
           this.systemTagsCount[sKey][tKey] = {...t, selected: !t.selected}
-          console.log(this.systemTagsCount[sKey][tKey]);
         } else {
           this.systemTagsCount[sKey][tKey] = {...t, selected: false}
-          console.log(this.systemTagsCount[sKey][tKey]);
         }
       })
     })
   }
 
   sortChange(field: any, sortCol: any) {
-    console.log(field, sortCol)
     if (!sortCol) {
       this.sortData[field] = 'asc';
     } else if (sortCol === 'asc') {
@@ -1401,7 +1390,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
 
     let boolAdj = $event.status;
     let adjustementType = $event.singleValue;
-    console.log(adjustementType)
     let adjustement = $event.category;
     let columnPosition = $event.columnPosition;
 
@@ -1430,7 +1418,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
   }
 
   selectCategory(p) {
-    console.log(p);
     this.categorySelectedFromAdjustement = p;
     this.categorySelected = p.category;
   }
@@ -1470,7 +1457,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();
     this.dataColumns[indexClient].width = clientWidth.toString();
-    console.log('after adjustment ==> ', baseWidth);
   }
 
 
@@ -1554,7 +1540,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     this.modalTitle = "Modify Adjustment";
     this.modifyModal = true;
     this.lastModifiedAdj = adj.id;
-    console.log(adj);
     this.categorySelectedFromAdjustement = _.find(this.allAdjsArray, {name: adj.name});
     if (adj.linear) {
       this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
@@ -1562,7 +1547,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    console.log(this.singleValue);
     this.isVisible = true;
   }
 
@@ -1599,7 +1583,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
 
 
   onDrop(col, pltId) {
-    console.log('col == >', col);
     /* this.store$.dispatch(new dropAdjustment({
        pltId: pltId,
        adjustement: this.draggedAdjs
@@ -1607,7 +1590,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     this.adjustColWidth(this.draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
-    console.log(col);
   }
 
   emitFilters(filters: any) {
@@ -1623,7 +1605,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
 
 
   log(columns) {
-    console.log(columns);
   }
 
   // Tags Component
@@ -1728,7 +1709,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSu
     }
 
     if ($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
       if (!this.lastSelectedId) this.lastSelectedId = 0;
       if (this.lastSelectedId || this.lastSelectedId == 0) {
         const max = _.max([i, this.lastSelectedId]);

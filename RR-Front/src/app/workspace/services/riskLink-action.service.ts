@@ -471,7 +471,6 @@ export class RiskLinkStateService {
         const modif = Object.assign({}, ...selectedAnalysis.map(item => {
           return ({[item.id]: {...item, financialPerspective: fpApplied}});
         }));
-        console.log(modif, state.financialPerspective.analysis.data);
         ctx.patchState({
           financialPerspective: {
             ...state.financialPerspective,
@@ -558,7 +557,6 @@ export class RiskLinkStateService {
         }
       });
     }));
-    console.log(newData);
     ctx.patchState({
       financialPerspective: {
         ...state.financialPerspective,
@@ -590,7 +588,6 @@ export class RiskLinkStateService {
       );
     } else if (scope === 'results') {
       const results = _.filter(_.toArray(state.results.data), dt => dt.analysisId != id);
-      console.log(results);
       results.forEach(dt => {
         newData = {...newData, [dt.analysisId]: {...dt}};
       });
@@ -638,13 +635,11 @@ export class RiskLinkStateService {
 
   loadRiskLinkAnalysisData(ctx: StateContext<RiskLinkModel>, payload) {
     const state = ctx.getState();
-    console.log('data');
     return forkJoin(
       payload.map(dt => this.riskApi.searchRiskLinkAnalysis(dt.id, dt.name))
     ).pipe(
       tap(e => console.log(e)),
       switchMap(out => {
-        console.log('data');
         let dataTable = {};
         out.forEach((dt: any, i) => {
             dataTable = {
@@ -667,7 +662,6 @@ export class RiskLinkStateService {
             };
           }
         );
-        console.log(state.listEdmRdm.selectedListEDMAndRDM.edm);
         return of(ctx.patchState(
           {
             analysis: dataTable,

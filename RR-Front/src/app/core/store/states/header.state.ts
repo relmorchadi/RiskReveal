@@ -74,7 +74,6 @@ export class HeaderState implements NgxsOnInit {
 
 
   ngxsOnInit(ctx?: StateContext<any>): void | any {
-    console.log('init');
   }
 
   /**

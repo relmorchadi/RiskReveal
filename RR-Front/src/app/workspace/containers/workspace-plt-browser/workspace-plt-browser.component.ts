@@ -1065,7 +1065,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    console.log(event.previousIndex, event.currentIndex);
     moveItemInArray(this.pltColumnsForConfig, event.previousIndex + 1, event.currentIndex + 1);
   }
 

@@ -384,7 +384,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       sizePage = event.first === 0 ? '20' : (event.first + event.rows).toString();
     }
     if (this.state.listEdmRdm.numberOfElement < event.first + event.rows) {
-      console.log('you called for :' + sizePage);
       this.dispatch(new SearchRiskLinkEDMAndRDMAction({
         keyword: this.state.listEdmRdm.searchValue,
         size: sizePage,

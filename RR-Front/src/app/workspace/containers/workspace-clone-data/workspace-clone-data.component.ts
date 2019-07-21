@@ -167,10 +167,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         this.select(WorkspaceMainState.getCurrentWS)
       ).pipe(take(1)).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
         const url = this.prn.getPreviousUrl();
-        console.log({
-          prn: url,
-          navigationPayload, wsId, year, currentWS
-        });
         if (url == 'PltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
           this.from = {
             ...navigationPayload.payload,
@@ -297,7 +293,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   swapCloneItems() {
-    console.log(this.from.plts, this.to.plts);
     const t= {...this.from};
     this.from= {...this.to};
     this.to= t;
@@ -322,7 +317,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   setSelectedPlts(currentSourceOfItems: string, $event: any) {
-    console.log($event);
     if(currentSourceOfItems == 'from') {
       this.from = {...this.from, plts: $event}
     }

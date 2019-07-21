@@ -175,7 +175,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         dt => {
           this.selectedWorkspace = dt;
           this.cdRef.detectChanges();
-          console.log(this.selectedWorkspace);
         }
       );
 

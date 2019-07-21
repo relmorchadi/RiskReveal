@@ -151,9 +151,6 @@ export class WorkspacesMenuItemComponent implements OnInit {
   openWorkspaces() {
     const selectedItems = this.recent.filter(ws => ws.selected);
 
-    console.log('Selected items', selectedItems);
-    // this.store.dispatch(new fromWs.openWS())
-
     let workspaces = [];
     selectedItems.forEach(
       (ws) => {
@@ -219,7 +216,6 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this.lastWorkspace$
       .pipe(take(1))
       .subscribe(data => {
-        console.log('this is data', data);
         if (data) {
           const {wsId, uwYear, route} = data;
           return this.store.dispatch(

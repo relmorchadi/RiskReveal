@@ -302,7 +302,6 @@ export class WorkspaceJobManagerComponent implements OnInit {
   }
 
   filterByUser(event) {
-    console.log(event);
     event === 'all' ? this.savedTask = this.jobs :
       this.savedTask = this.jobs.filter(dt => dt.jobOwner === event);
   }
