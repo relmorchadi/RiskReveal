@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ErrorHandler, Injectable, NgModule} from '@angular/core';
 
 import {NgxsModule, StateContext} from '@ngxs/store';
 import {environment} from '../../environments/environment';
@@ -49,11 +49,23 @@ export class MyStorageEngine implements StorageEngine {
   }
 }
 
+@Injectable()
+class GlobalErrorHandler implements ErrorHandler {
+  handleError(error: any): void {
+    console.info('From error handler');
+    console.error(error);
+    throw error;
+  }
+}
+
 registerLocaleData(en);
 
 @NgModule({
   declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES, ...PIPES],
-  providers: [{provide: STORAGE_ENGINE, useClass: MyStorageEngine}],
+  providers: [
+    {provide: STORAGE_ENGINE, useClass: MyStorageEngine},
+    {provide: ErrorHandler, useClass: GlobalErrorHandler}
+  ],
   imports: [
     NgZorroAntdModule,
     RouterModule,
@@ -77,7 +89,7 @@ export class CoreModule implements NgxsHmrLifeCycle<Snapshot> {
     return {
       ngModule: CoreModule,
       providers: [{provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
-        {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, { provide: NZ_I18N, useValue: en_US }],
+        {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, {provide: NZ_I18N, useValue: en_US}],
     };
   }
 

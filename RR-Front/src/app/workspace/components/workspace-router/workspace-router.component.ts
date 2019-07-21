@@ -21,6 +21,10 @@ import {Navigate} from "@ngxs/router-plugin";
 import {Store} from "@ngxs/store";
 import * as _ from 'lodash';
 
+/**
+ * @Component Workspace Router
+ * @Desc A container that hold and manage Dynamic instantiation on Workspace components
+ */
 @Component({
   selector: 'workspace-router',
   templateUrl: './workspace-router.component.html',
@@ -31,8 +35,16 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   @Input('state')
   state: { wsIdentifier, data };
 
+  /**
+   * The template Reference where we instantiate our target component
+   */
   @ViewChild(WsRouterDirective)
   routingTemplate: WsRouterDirective;
+
+  /**
+   * A map of Components referred by a component name
+   * We use to check the route attribute from the workspace resolve the corresponding component then instantiate it
+   */
   readonly componentsMapper = {
     projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
     Contract: {component: WorkspaceContractComponent, selector: (state) => state},
@@ -58,14 +70,23 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     this.initComponent();
   }
 
+  /**
+   *
+   * @param changes
+   */
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.state && this.currentInstance) {
       if (changes.state.currentValue.data.route != changes.state.previousValue.data.route)
         this.initComponent(changes.state.currentValue.data.route);
-      this.currentInstance.patchState(changes.state.currentValue);
+      if (this.currentInstance && _.isFunction(this.currentInstance.patchState))
+        this.currentInstance.patchState(changes.state.currentValue);
     }
   }
 
+  /**
+   * @desc Handle left menu navigations
+   * @param route
+   */
   handleLeftMenuNavigation({route}) {
     const {wsId, uwYear} = this.state.data;
     this.store.dispatch(
@@ -73,10 +94,17 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     );
   }
 
+  /**
+   * @desc Handle left menu Toggle
+   */
   handleLeftMenuToggle() {
     this.store.dispatch(new ToggleWsLeftMenu(this.state.wsIdentifier));
   }
 
+  /**
+   * @desc Instantiate the workspace router component instance
+   * @param route
+   */
   private initComponent(route = this.state.data.route) {
     const correspondingComponent = this.componentsMapper[route] || this.componentsMapper.projects;
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(correspondingComponent.component);
