@@ -134,10 +134,10 @@
                   <nz-tabset class="a-tab-minitab">
                     <nz-tab nzTitle="EDM & RDM">
                       <div class="search-bar-result-list">
-                        <p-virtualScroller [value]="dataList(state.listEdmRdm.data)" scrollHeight="305px"
-                                           [itemSize]="30" [rows]="state.listEdmRdm.numberOfElement"
+                        <p-virtualScroller [value]="dataList(listEdmRdm.data)" scrollHeight="305px"
+                                           [itemSize]="30" [rows]="listEdmRdm.numberOfElement"
                                            [lazy]="true" (onLazyLoad)="loadItemsLazy($event)"
-                                           [totalRecords]="state.listEdmRdm.totalNumberElement">
+                                           [totalRecords]="listEdmRdm.totalNumberElement">
                           <ng-template let-item pTemplate="item">
                             <div class="poover-menu-item"
                                  (click)="$event.stopPropagation();toggleItems(item, $event, 'link')"
@@ -170,7 +170,7 @@
                     <nz-tab nzTitle="EDM">
                       <div class="search-bar-result-list">
                         <ul>
-                          <ng-container *ngFor="let item of dataList(state.listEdmRdm.data)">
+                          <ng-container *ngFor="let item of dataList(listEdmRdm.data)">
                             <li *ngIf="item?.type === 'edm'" class="poover-menu-item"
                                 (click)="toggleItems(item, $event, 'solo')"
                                 [ngClass]="{'poover-menu-item-active': item?.selected}">
@@ -190,7 +190,7 @@
                     <nz-tab nzTitle="RDM">
                       <div class="search-bar-result-list">
                         <ul>
-                          <ng-container *ngFor="let item of dataList(state.listEdmRdm.data)">
+                          <ng-container *ngFor="let item of dataList(listEdmRdm.data)">
                             <li *ngIf="item?.type === 'rdm'" class="poover-menu-item"
                                 (click)="toggleItems(item, $event, 'solo')"
                                 [ngClass]="{'poover-menu-item-active': item?.selected}">
@@ -296,7 +296,7 @@
               </div>
               <div class="show-table">
                 <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                         [scrollable]="true" scrollHeight="340px" frozenWidth="240px">
+                         [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                   <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
                       <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
