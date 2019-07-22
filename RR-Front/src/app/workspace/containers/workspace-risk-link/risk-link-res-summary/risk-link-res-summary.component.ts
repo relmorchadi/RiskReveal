@@ -6,7 +6,6 @@ import {Select, Store} from '@ngxs/store';
 import * as _ from 'lodash';
 import {WorkspaceState} from '../../../store/states';
 import {combineLatest} from 'rxjs';
-import {RiskLinkModel} from '../../../model/risk_link.model';
 
 @Component({
   selector: 'app-risk-link-res-summary',
@@ -76,7 +75,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   regionPeril;
 
   @Select(WorkspaceState.getRiskLinkState) state$;
-  state: RiskLinkModel = null;
+  state: any;
 
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
@@ -90,7 +89,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
     );
     this.serviceSubscription = [
-      this.state$.subscribe(value => this.state = _.merge({}, value)),
+      this.state$.subscribe(value => {
+        this.state = _.merge({}, value);
+        console.log(this.state);
+      })
     ];
     this.scrollableColsSummary = DataTables.scrollableColsSummary;
     this.frozenColsSummary = DataTables.frozenColsSummary;
@@ -151,27 +153,38 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   getLinkingPortfolio() {
-    if (this.state.linking.portfolio === null) {
+    if (this.state.linking === undefined) {
       return null;
     } else {
-      return _.toArray(this.state.linking.portfolio.data);
+      if (this.state.linking.portfolio === null) {
+        return null;
+      } else {
+        return _.toArray(this.state.linking.portfolio.data);
+      }
     }
   }
 
   getLinkingAnalysis() {
-    if (this.state.linking.analysis === null) {
+    if (this.state.linking === undefined) {
       return null;
     } else {
-      return _.toArray(this.state.linking.analysis.data);
+      if (this.state.linking.analysis === null) {
+        return null;
+      } else {
+        return _.toArray(this.state.linking.analysis.data);
+      }
     }
   }
 
   getSelectedRDM() {
-    return _.filter(_.toArray(this.state.linking.rdm), dt => dt.selected);
+    if (this.state.linking === undefined) {
+      return null;
+    } else {
+      return _.filter(_.toArray(this.state.linking.rdm), dt => dt.selected);
+    }
   }
 
   selectLinkedRDM(item) {
-    console.log(item);
     this.store.dispatch(new fromWs.LoadAnalysisForLinkingAction(item));
   }
 

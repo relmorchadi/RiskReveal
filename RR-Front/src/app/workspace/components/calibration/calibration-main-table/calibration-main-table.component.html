@@ -10,6 +10,7 @@
   [scrollHeight]="'600px'"
   [scrollable]="true"
   [totalRecords]="listOfPltsData.length"
+  [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
   <ng-template let-columns pTemplate="colgroup">
     <colgroup>
@@ -109,120 +110,6 @@
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
           <i (click)="extend()" *ngIf="extended" class="icon-chevron_left_24px"
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
-        </th>
-        <th *ngIf="col.fields == 'overallLMF' && !extended"
-            [ngStyle]="{'width': '43px','overflow':'visible'}"
-            style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
-          <div
-            [ngStyle]="{'left': genericWidth[0]}"
-            style="width: 180px;position: absolute;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;    z-index: 100;">
-
-                        <span
-                          [ngStyle]="{'left': genericWidth[1]}"
-                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: rgba(0, 0, 0, 0.65);top: 16px;position: absolute;overflow: hidden;white-space: nowrap;">Generic Thread</span>
-            <nz-dropdown [ngStyle]="{'left': genericWidth[2]}"
-                         [nzPlacement]="'bottomLeft'"
-                         style="position: absolute; top: 20px;z-index: 100;">
-              <i class="icon-menu_24px" nz-dropdown
-                 style="font-size: 25px; float: right; margin-right: 7px"></i>
-              <ul nz-menu>
-                <li (click)="clickButtonPlus(true)" nz-menu-item>Add New Adjustment</li>
-                <li nz-menu-item>Add from Template</li>
-                <li nz-menu-item>Reset/Clear</li>
-                <li nz-menu-item>Save</li>
-                <li nz-menu-item>Save As</li>
-                <li nz-submenu>
-                  <span title>Apply</span>
-                  <ul nz-menu>
-                    <li nz-submenu>
-                      <span title>Add to Existing Threads</span>
-                      <ul nz-menu>
-                        <li nz-menu-item>For Selected Threads only</li>
-                        <li nz-menu-item>For All Threads</li>
-                      </ul>
-                    </li>
-                    <li nz-submenu>
-                      <span title>Create New Alternate Threads</span>
-                      <ul nz-menu>
-                        <li nz-menu-item>For Selected Threads only</li>
-                        <li nz-menu-item>For All Threads</li>
-                      </ul>
-                    </li>
-                    <li nz-submenu>
-                      <span title>Replace Existing Threads</span>
-                      <ul nz-menu>
-                        <li nz-menu-item>For Selected Threads only</li>
-                        <li nz-menu-item>For All Threads</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </nz-dropdown>
-          </div>
-
-          <div
-            *ngIf="adjsArray.length > 0"
-            [dropZones]="['adjustment-dropZone']"
-            [sortableData]="adjsArray" class="generic-thread-container" dnd-sortable-container
-            style="position: absolute; left: 604px; width: calc(100% - 614px);z-index: 100; top: 10px;border: 1px solid #dddddd; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-            <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-              <div (click)="selectedAdjust(adj.id)"
-                   (mouseleave)="onLeaveAdjustment(adj.id)"
-                   (mouseover)="shownDropDown = adj.id"
-                   (onDropSuccess)="dropThreadAdjustment()"
-                   [dragData]="adj"
-                   [dragEnabled]="true"
-                   [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                   [sortableIndex]="adjIndex"
-                   class="adjustDiv"
-                   dnd-sortable style="margin: 8px!important;">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                             *ngIf="shownDropDown === adj.id"
-                             [(nzVisible)]="dropdownVisible"
-                             [nzPlacement]="'bottomLeft'" class="dropD">
-                  <i class="icon-menu_24px" nz-dropdown
-                     style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                  <ul nz-menu>
-                    <li (click)="ModifyAdjustement(adj)" nz-menu-item>Edit</li>
-                    <li (click)="DeleteAdjustement(adj)" nz-menu-item>Delete</li>
-                    <li nz-submenu>
-                      <span title>Apply</span>
-                      <ul nz-menu>
-                        <li nz-submenu>
-                          <span title>Add to Existing Threads</span>
-                          <ul nz-menu>
-                            <li (click)="applyToSelected(adj)" nz-menu-item>For Selected Threads only</li>
-                            <li (click)="applyToAll(adj)" nz-menu-item>For All Threads</li>
-                          </ul>
-                        </li>
-                        <li nz-submenu>
-                          <span title>Create New Alternate Threads</span>
-                          <ul nz-menu>
-                            <li nz-menu-item>For Selected Threads only</li>
-                            <li nz-menu-item>For All Threads</li>
-                          </ul>
-                        </li>
-                        <li nz-submenu>
-                          <span title>Replace Existing Threads</span>
-                          <ul nz-menu>
-                            <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>For Selected Threads only
-                            </li>
-                            <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>For All Threads</li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </nz-dropdown>
-                <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                       class="templateInput"
-                >
-              </div>
-            </ng-container>
-          </div>
         </th>
         <th *ngIf="col?.dragable && !extended
                                 && col.fields !== 'overallLMF'"
@@ -490,14 +377,8 @@
         [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
         [pContextMenuRow]="rowData">
       <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
-          (drop)="onDrop(col,rowData.pltId)"
           *ngFor="let col of columns; let i = index"
-          [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-          [dropZones]="['widget-dropZone']"
-          [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}"
-          [sortableData]="adjutmentApplication[rowData.pltId]"
-          dnd-droppable
-          dnd-sortable-container>
+          [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}">
 
         <ng-container *ngIf="col.fields === 'checkbox'">
           <label (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)" [nzChecked]="rowData.selected"
@@ -611,8 +492,7 @@
                      [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
                      [sortableIndex]="i"
                      class="adjustDiv"
-                     dnd-sortable
-                >
+                     dnd-sortable>
                               <span class="spanStyle"
                                     style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
                   <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
@@ -699,6 +579,7 @@
   [totalRecords]="listOfPltsData.length"
   (onSort)="onSort($event)"
   [responsive]="true"
+  [rowTrackBy]="trackby"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -794,118 +675,6 @@
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
           <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
-        </th>
-        <th *ngIf="col.fields == 'overallLMF' && !extended"
-            [ngStyle]="{'width': '43px','overflow':'visible'}"
-            style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
-          <div
-            style="width: 180px;position: absolute;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;    z-index: 100;"
-            [ngStyle]="{'left': genericWidth[0]}">
-
-                        <span
-                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: rgba(0, 0, 0, 0.65);top: 16px;position: absolute;overflow: hidden;white-space: nowrap;"
-                          [ngStyle]="{'left': genericWidth[1]}">Generic Thread</span>
-            <nz-dropdown [nzPlacement]="'bottomLeft'"
-                         style="position: absolute; top: 20px;z-index: 100;"
-                         [ngStyle]="{'left': genericWidth[2]}">
-              <i class="icon-menu_24px" nz-dropdown
-                 style="font-size: 25px; float: right; margin-right: 7px"></i>
-              <ul nz-menu>
-                <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                <li nz-menu-item>Add from Template</li>
-                <li nz-menu-item>Reset/Clear</li>
-                <li nz-menu-item>Save</li>
-                <li nz-menu-item>Save As</li>
-                <li nz-submenu>
-                  <span title>Apply</span>
-                  <ul nz-menu>
-                    <li nz-submenu>
-                      <span title>Add to Existing Threads</span>
-                      <ul nz-menu>
-                        <li nz-menu-item>For Selected Threads only</li>
-                        <li nz-menu-item>For All Threads</li>
-                      </ul>
-                    </li>
-                    <li nz-submenu>
-                      <span title>Create New Alternate Threads</span>
-                      <ul nz-menu>
-                        <li nz-menu-item>For Selected Threads only</li>
-                        <li nz-menu-item>For All Threads</li>
-                      </ul>
-                    </li>
-                    <li nz-submenu>
-                      <span title>Replace Existing Threads</span>
-                      <ul nz-menu>
-                        <li nz-menu-item>For Selected Threads only</li>
-                        <li nz-menu-item>For All Threads</li>
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
-            </nz-dropdown>
-          </div>
-
-          <div
-            *ngIf="adjsArray.length > 0"
-            class="generic-thread-container"
-            dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-            style="position: absolute; left: 604px; width: calc(100% - 614px);z-index: 100; top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-            <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-              <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
-                   (mouseover)="shownDropDown = adj.id"
-                   (mouseleave)="onLeaveAdjustment(adj.id)"
-                   dnd-sortable
-                   [sortableIndex]="adjIndex"
-                   [dragEnabled]="true"
-                   (click)="selectedAdjust(adj.id)"
-                   [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                   [dragData]="adj" (onDropSuccess)="dropThreadAdjustment()">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                             (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                             [nzPlacement]="'bottomLeft'" class="dropD">
-                  <i class="icon-menu_24px" nz-dropdown
-                     style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                  <ul nz-menu>
-                    <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                    <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
-                    <li nz-submenu>
-                      <span title>Apply</span>
-                      <ul nz-menu>
-                        <li nz-submenu>
-                          <span title>Add to Existing Threads</span>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                            <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                          </ul>
-                        </li>
-                        <li nz-submenu>
-                          <span title>Create New Alternate Threads</span>
-                          <ul nz-menu>
-                            <li nz-menu-item>For Selected Threads only</li>
-                            <li nz-menu-item>For All Threads</li>
-                          </ul>
-                        </li>
-                        <li nz-submenu>
-                          <span title>Replace Existing Threads</span>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                            </li>
-                            <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </nz-dropdown>
-                <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                       class="templateInput"
-                >
-              </div>
-            </ng-container>
-          </div>
         </th>
         <th *ngIf="col?.dragable && !extended
                                 && col.fields !== 'overallLMF'

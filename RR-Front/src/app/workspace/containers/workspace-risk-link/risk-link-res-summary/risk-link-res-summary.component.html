@@ -1,43 +1,679 @@
-<div *ngIf="state.display.displayImport && dataList(state.summaries.data).length > 0 " class="body-wrap-body">
-  <div class="body-wrapper">
-    <div class="body-wrapper-header">
-      <div class="body-wrapper-header-left">
-        <hr>
-        <div>Exposure Summaries</div>
+<div *ngIf="state?.linking !== undefined">
+  <div *ngIf="state.display.displayImport && dataList(state.summaries?.data).length > 0 " class="body-wrap-body">
+    <div class="body-wrapper">
+      <div class="body-wrapper-header">
+        <div class="body-wrapper-header-left">
+          <hr>
+          <div>Exposure Summaries</div>
+        </div>
+        <div class="body-wrapper-header-right-summary">
+          <i (click)="filterModalVisibility = true" class="icon-filter"
+             style="margin-right: 20px;font-size: 23px;"></i>
+          <div class="body-wrapper-header-right">
+            <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+            <i (click)="changeCollapse('collapseResult')" *ngIf="state.collapse.collapseResult"
+               class="icon-keyboard_arrow_up_24px"></i>
+            <i (click)="changeCollapse('collapseResult')" *ngIf="!state.collapse.collapseResult"
+               class="icon-keyboard_arrow_down_24px"></i>
+          </div>
+        </div>
       </div>
-      <div class="body-wrapper-header-right-summary">
-        <i (click)="filterModalVisibility = true" class="icon-filter"
-           style="margin-right: 20px;font-size: 23px;"></i>
-        <div class="body-wrapper-header-right">
-          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-          <i (click)="changeCollapse('collapseResult')" *ngIf="state.collapse.collapseResult"
-             class="icon-keyboard_arrow_up_24px"></i>
-          <i (click)="changeCollapse('collapseResult')" *ngIf="!state.collapse.collapseResult"
-             class="icon-keyboard_arrow_down_24px"></i>
+      <div *ngIf="state.collapse.collapseResult" class="summary-info">
+        <p-table #st [columns]="scrollableColsSummary"
+                 [frozenColumns]="frozenColsSummary"
+                 [scrollable]="true" [value]="dataList(state.summaries.data)" frozenWidth="485px">
+          <ng-template let-columns pTemplate="colgroup">
+            <colgroup>
+              <ng-container *ngFor="let col of columns">
+                <col [ngStyle]="{'width': col.width}">
+              </ng-container>
+            </colgroup>
+          </ng-template>
+          <ng-template let-columns pTemplate="header">
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible">
+                  <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                  <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                    {{col.header}}
+                    <div class="search-bar-table">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                             type="text">
+                    </div>
+                  </div>
+                  <div *ngIf="col.type === 'icon'">
+                    <i class="icon-menu_24px"></i>
+                  </div>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+          <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
+                  <div *ngIf="col.type === 'selection'" class="">
+                    <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
+                           nz-checkbox></label>
+                  </div>
+                  <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                  <div *ngIf="col.type === 'progress'">
+                    <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
+                                 [nzWidth]="20" nzType="circle"></nz-progress>
+                  </div>
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'indicator'">
+                        <span *ngIf="rowData.exposedLocation" class="indicator-flag"
+                              style="background-color: #0700CF"></span>
+                  </div>
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'number'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data">{{rowData[col.field]}}</div>
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'percentage'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data">{{rowData[col.field]}}%
+                  </div>
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'text'"
+                       [ngClass]="{'highlight-temp': col.highlight}"
+                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                       class="text-data">{{rowData[col.field]}}</div>
+                  <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                  <div (click)="deleteFromBasket(rowData.dataSourceId, 'summaries')" *ngIf="col.type === 'icon'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data" style="display: flex;justify-content: center;"><i
+                    class="icon-trash-alt"></i></div>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+        </p-table>
+        <div class="menu-icon-wrap">
+          <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
+            <a nz-dropdown style="max-height: 28px;display: flex;">
+              <i class="icon-menu_24px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+              <li nz-menu-item>Reset Sort</li>
+              <li nz-menu-item>Reset Filters</li>
+              <li nz-menu-item>Reset Sort/Filters</li>
+              <li nz-menu-divider></li>
+              <li (click)="toggleColumnsManager('summaries')" nz-menu-item>Manage Columns</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item>Unselect All</li>
+            </ul>
+          </nz-dropdown>
         </div>
       </div>
     </div>
-    <div *ngIf="state.collapse.collapseResult" class="summary-info">
-      <p-table #st [columns]="scrollableColsSummary"
-               [frozenColumns]="frozenColsSummary"
-               [scrollable]="true" [value]="dataList(state.summaries.data)" frozenWidth="485px">
-        <ng-template let-columns pTemplate="colgroup">
-          <colgroup>
-            <ng-container *ngFor="let col of columns">
-              <col [ngStyle]="{'width': col.width}">
+  </div>
+
+  <div *ngIf="state.display.displayImport && dataList(state.results?.data).length > 0" class="body-wrap-body">
+    <div class="body-wrapper">
+      <div class="body-wrapper-header">
+        <div class="body-wrapper-header-left">
+          <hr>
+          <div>Analysis Results</div>
+        </div>
+        <div class="body-wrapper-header-right-summary">
+          <button (click)="linkingModalVisibility = true" *ngIf="state.collapse.collapseAnalysis"
+                  class="a-buttons-outlined"> LINKING
+          </button>
+          <i (click)="filterModalVisibility = true" class="icon-filter"
+             style="margin-right: 20px;font-size: 23px;"></i>
+          <div class="body-wrapper-header-right">
+            <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+            <i (click)="changeCollapse('collapseAnalysis')" *ngIf="state.collapse.collapseAnalysis"
+               class="icon-keyboard_arrow_up_24px"></i>
+            <i (click)="changeCollapse('collapseAnalysis')" *ngIf="!state.collapse.collapseAnalysis"
+               class="icon-keyboard_arrow_down_24px"></i>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="state.collapse.collapseAnalysis" class="summary-info">
+        <p-contextMenu #cmR [model]="itemCm" appendTo="body"></p-contextMenu>
+        <p-table #rt [(contextMenuSelection)]="contextSelectedItem"
+                 [columns]="scrollableColsResult"
+                 [contextMenu]="cmR"
+                 [frozenColumns]="frozenColsResult"
+                 [scrollable]="true" [value]="dataList(state.results.data)" frozenWidth="445px">
+          <ng-template let-columns pTemplate="colgroup">
+            <colgroup>
+              <ng-container *ngFor="let col of columns">
+                <col [ngStyle]="{'width': col.width}">
+              </ng-container>
+            </colgroup>
+          </ng-template>
+          <ng-template let-columns pTemplate="header">
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible">
+                  <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                  <div *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'"
+                       style="white-space: nowrap;">
+                    {{col.header}}
+                    <div class="search-bar-table">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                             type="text">
+                    </div>
+                  </div>
+                  <div *ngIf="col.type === 'check'">
+                    <i [ngClass]="col.icon" [nzTitle]="col.header" nz-tooltip nzPlacement="top"
+                       style="font-size: 20px;"></i>
+                  </div>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+          <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+            <tr [pContextMenuRow]="rowData">
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                  <div *ngIf="col.type === 'selection'" class="">
+                    <label (ngModelChange)="checkRow($event, rowData, 'R')" [ngModel]="rowData.selected"
+                           nz-checkbox></label>
+                  </div>
+                  <div *ngIf="col.type === 'scan'" class="text-data"><i class="icon-loop_24px"></i></div>
+                  <div *ngIf="col.type === 'progress'" class="text-data">
+                    <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
+                                 [nzWidth]="20" nzType="circle"></nz-progress>
+                  </div>
+                  <div (click)="openFinancialP()" *ngIf="col.type === 'multiple'"
+                       [ngClass]="{'highlight-temp': col.highlight}"
+                       class="text-data">
+                        <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
+                              *ngIf="rowData.financialPerspective.length > 1">M*</span>
+                    <span *ngIf="rowData.financialPerspective.length <= 1" [nzTitle]="infoFP" nz-tooltip
+                          nzPlacement="top">{{rowData?.financialPerspective[0]}}</span>
+                    <ng-template #infoFP>
+                      <div class="popover-menu">
+                        <ul style="margin-bottom: 0">
+                          <li *ngFor="let item of rowData.financialPerspective" style="border: none;">
+                            <span>{{item}}: {{getCodeFp(item)}}</span>
+                          </li>
+                        </ul>
+                      </div>
+                    </ng-template>
+                  </div>
+                  <div (click)="selectRows(rowData, i, 'R')" *ngIf="col.type === 'number'"
+                       [ngClass]="{'highlight-temp': col.highlight}"
+                       class="text-data">{{rowData[col.field]}}</div>
+                  <div (click)="selectRows(rowData, i, 'R')" *ngIf="col.type === 'percentage'"
+                       [ngClass]="{'highlight-temp': col.highlight}"
+                       class="text-data">{{rowData[col.field]}}%
+                  </div>
+                  <div (click)="selectRows(rowData, i, 'R')" *ngIf="col.type === 'text'"
+                       [ngClass]="{'highlight-temp': col.highlight}"
+                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                       class="text-data">{{rowData[col.field]}}</div>
+                  <div (click)="updateRow(rowData, col.type)"
+                       *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
+                       class="text-data highlight-temp"
+                       stytle="font-weight: 500">
+                  <span *ngIf="col.type === 'Peqt'">
+                    {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
+                  </span>
+                    <span *ngIf="col.type !== 'Peqt'">
+                    {{rowData[col.field]}}
+                  </span>
+
+                  </div>
+                  <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': col.highlight}"
+                       class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                  <div *ngIf="col.type === 'check'" style="padding-left: 10px;">
+                    <label [(ngModel)]="rowData[col.field]" nz-checkbox></label>
+                  </div>
+                </th>
+                <ng-container *ngIf="col.edit">
+                  <th *ngIf="col.field === 'unitMultiplier'" [ngClass]="{'selected-item': rowData?.selected}"
+                      pEditableColumn>
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <input [(ngModel)]="rowData.unitMultiplier" class="a-textfield-mini" pInputText
+                               style="width: 95%"
+                               type="text">
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        <div class="text-data highlight-temp">{{rowData.unitMultiplier | number: '1.2-2'}}</div>
+                      </ng-template>
+                    </p-cellEditor>
+                  </th>
+                  <th *ngIf="col.field === 'targetCurrency'" [ngClass]="{'selected-item': rowData?.selected}"
+                      pEditableColumn>
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <nz-select
+                          (ngModelChange)="editSingleColRes('TC', $event, rowData)"
+                          [ngModel]="rowData.targetCurrency"
+                          class="a-dropdown-small input-wrapper"
+                          nzPlaceHolder="TAG CURRENCY"
+                          nzShowSearch
+                          style="width: 100%"
+                        >
+                          <nz-option nzLabel="AED" nzValue="AED"></nz-option>
+                          <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
+                          <nz-option nzLabel="AFN" nzValue="AFN"></nz-option>
+                          <nz-option nzLabel="ALK" nzValue="ALK"></nz-option>
+                          <nz-option nzLabel="ALL" nzValue="ALL"></nz-option>
+                          <nz-option nzLabel="BBT" nzValue="BBT"></nz-option>
+                          <nz-option nzLabel="BBL" nzValue="BBL"></nz-option>
+                          <nz-option nzLabel="BMD" nzValue="BMD"></nz-option>
+                          <nz-option nzLabel="MGA" nzValue="MGA"></nz-option>
+                          <nz-option nzLabel="USD" nzValue="USD"></nz-option>
+                          <nz-option nzLabel="XXC" nzValue="XXC"></nz-option>
+                        </nz-select>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        <div class="text-data highlight-temp">{{rowData.targetCurrency}}</div>
+                      </ng-template>
+                    </p-cellEditor>
+                  </th>
+                </ng-container>
+              </ng-container>
+            </tr>
+
+          </ng-template>
+        </p-table>
+        <div class="menu-icon-wrap">
+          <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
+            <a nz-dropdown style="max-height: 28px;display: flex;">
+              <i class="icon-menu_24px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+              <li nz-menu-item>Reset Sort</li>
+              <li nz-menu-item>Reset Filters</li>
+              <li nz-menu-item>Reset Sort/Filters</li>
+              <li nz-menu-divider></li>
+              <li (click)="toggleColumnsManager('results')" nz-menu-item>Manage Columns</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item>Unselect All</li>
+            </ul>
+          </nz-dropdown>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <p-dialog
+    [autoZIndex]="false"
+    [closable]="false"
+    [modal]="true"
+    [responsive]="true"
+    [visible]="managePopUp"
+    appendTo="body"
+    styleClass="m-dialog-modal-lg-h"
+  >
+
+    <p-header>
+      <div class="header">
+        <h4>Columns Manager</h4>
+        <i (click)="toggleColumnsManager(targetConfig)" class="icon-close_24px" style="cursor: pointer"></i>
+      </div>
+    </p-header>
+
+    <div (cdkDropListDropped)="drop($event)" cdkDropList class="m-box-d">
+      <ng-container *ngFor="let col of columnsForConfig; let i=index">
+        <div *ngIf="col.header" cdkDrag class="m-box-drag">
+          <div class="m-box-overlay">
+            <div class="left">
+              <div class="burger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+              </div>
+              <span class="subtitle-2">
+          {{col.header}}
+        </span>
+            </div>
+            <div class="right">
+              <i (click)="toggleCol(i)" *ngIf="col?.visible" class="icon-visibility_24px"></i>
+              <i (click)="toggleCol(i)" *ngIf="!col?.visible" class="icon-visibility_off_24px"></i>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+
+    <p-footer>
+      <div class="footer">
+        <button (click)="toggleColumnsManager(targetConfig)" class="a-button-text-cancel">cancel</button>
+        <button (click)="saveColumns()" class="a-buttons-contained">Save</button>
+      </div>
+    </p-footer>
+  </p-dialog>
+
+  <p-dialog [autoZIndex]="false"
+            [closable]="false"
+            [modal]="true"
+            [responsive]="true"
+            [visible]="linkingModalVisibility"
+            styleClass="m-dialog-modal-lg">
+    <p-header>
+      <h6 *ngIf="!suggested && !manual">
+        Link EDM & RDM
+      </h6>
+      <h6 *ngIf="suggested">
+        <i (click)="resetToMain()" nz-icon nzTheme="outline" nzType="arrow-left"
+           style="cursor: pointer;"></i>
+        Suggested Linking
+      </h6>
+      <h6 *ngIf="manual">
+        <i (click)="resetToMain()" nz-icon nzTheme="outline" nzType="arrow-left"
+           style="cursor: pointer;"></i>
+        Create Linking
+      </h6>
+    </p-header>
+    <div *ngIf="!manual && !suggested" class="modal-linking-wrapper">
+      <div class="modal-linking-head">
+        <div class="modal-l-h-body-fill">
+          <span class="subtitle-2">Data Sources</span>
+          <div class="radio-wrapper">
+            <div (click)="toggleForLinkingEDM()"
+                 *ngFor="let itemsE of dataList(state.linking.edm)"
+                 [ngClass]="{'popover-menu-item-active': getChecked(itemsE)}"
+                 class="popover-menu-item">
+              <p-radioButton [(ngModel)]="selectedEDM" [label]="itemsE.name" [value]="itemsE.name">
+              </p-radioButton>
+            </div>
+          </div>
+        </div>
+        <div class="modal-l-h-body-right">
+          <ul>
+            <ng-container *ngFor="let itemsR of dataList(state.linking.rdm)">
+              <li (click)="toggleForLinkingRDM(itemsR)" *ngIf="itemsR.type === 'rdm'"
+                  [ngClass]="{'popover-menu-item-active': itemsR.selected}"
+                  class="popover-menu-item">
+                <label [nzChecked]="itemsR.selected" nz-checkbox>
+                  <span class="logo" style="background: #03DAC4">R</span>
+                  <span [title]="itemsR?.name" class="text">{{itemsR?.name}}</span>
+                </label>
+              </li>
             </ng-container>
-          </colgroup>
-        </ng-template>
-        <ng-template let-columns pTemplate="header">
-          <tr>
-            <ng-container *ngFor="let col of columns">
-              <th *ngIf="col.visible">
+          </ul>
+          <button class="a-buttons-outlined" style="margin: 0 15px 10px">LINK SUGGESTIONS
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="modal-linking-wrapper">
+      <div class="modal-linking-head">
+        <div class="modal-l-h-body-fill">
+          <span class="subtitle-2">Links Suggestions</span>
+          <div class="suggestion-card">
+            <div class="suggestion-card-header">
+              <label nz-checkbox>Link 1</label>
+              <i class="icon-trash-alt"></i>
+            </div>
+
+            <div class="suggestion-card-body">
+              <div class="suggestion-card-left">
+                <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;">
+                  <span class="logo" style="background: #C38FFF">P</span>
+                  <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
+                </div>
+              </div>
+              <div class="suggestion-card-right">
+                <div class="suggestion-card-item popover-menu-item">
+                  <span class="logo" style="background: #009575">A</span>
+                  <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="suggestion-card">
+            <div class="suggestion-card-header">
+              <label nz-checkbox>Link 1</label>
+              <i class="icon-trash-alt"></i>
+            </div>
+
+            <div class="suggestion-card-body">
+              <div class="suggestion-card-left">
+                <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;">
+                  <span class="logo" style="background: #C38FFF">P</span>
+                  <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
+                </div>
+                <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;">
+                  <span class="logo" style="background: #C38FFF">P</span>
+                  <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
+                </div>
+              </div>
+              <div class="suggestion-card-right">
+                <div class="suggestion-card-item popover-menu-item">
+                  <span class="logo" style="background: #009575">A</span>
+                  <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
+                </div>
+                <div class="suggestion-card-item popover-menu-item">
+                  <span class="logo" style="background: #009575">A</span>
+                  <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="display: flex">
+      <div class="modal-linking-wrapper" style="border-color: #C38FFF">
+        <div class="modal-linking-head">
+          <div class="modal-l-h-body-fill summary-info">
+            <span class="subtitle-2">EDM Portfolio</span>
+            <p-table #lt [columns]="scrollableColslinking" [scrollable]="true"
+                     [value]="getLinkingPortfolio()" scrollHeight="300px">
+              <ng-template let-columns pTemplate="colgroup">
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template let-columns pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                    <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                      {{col.header}}
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                               type="text">
+                      </div>
+                    </div>
+                    <div *ngIf="col.type === 'icon'">
+                      <i class="icon-menu_24px"></i>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+                <tr>
+                  <ng-container *ngFor="let col of columns">
+                    <th *ngIf="col.visible">
+                      <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
+                      <div *ngIf="col.type === 'iconIndicator'">
+                        <span class="indicator-icon" style="background-color: #C38FFF">P</span>
+                      </div>
+                      <div *ngIf="col.type === 'indicator'">
+                                        <span class="indicator-flag" *ngIf="rowData.exposedLocation"
+                                              style="background-color: #0700CF"></span>
+                      </div>
+                      <div *ngIf="col.type === 'text'"
+                           [ngClass]="{'highlight-temp': col.highlight}"
+                           [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                           class="text-data">{{rowData[col.field]}}</div>
+                      <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                           class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                      <div *ngIf="col.type === 'icon'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                           class="text-data" style="display: flex;justify-content: center;"><i
+                        class="icon-trash-alt"></i></div>
+                    </th>
+                  </ng-container>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-linking-wrapper" style="border-color: #009575">
+        <div class="modal-linking-head">
+          <div class="modal-l-h-body-fill summary-info">
+            <div style="display: flex; justify-content: space-between;">
+              <span class="subtitle-2">RDM Analysis</span>
+              <nz-dropdown [nzTrigger]="'click'">
+                <div class="dropdown-wrap" nz-dropdown>
+                  <div class="dropdown-wrap-title">
+                    <span class="dropdown-title">RDM Select</span>
+                    <span class="dropdown-item-selected">
+                    {{getSelectedRDM()[0]?.name}}
+                  </span>
+                  </div>
+                  <div class="dropdown-icon">
+                    <i nz-icon type="down"></i>
+                  </div>
+                </div>
+                <ul nz-menu>
+                  <li (click)="selectLinkedRDM(item)" *ngFor="let item of getSelectedRDM()"
+                      nz-menu-item>{{item.name}}</li>
+                </ul>
+              </nz-dropdown>
+            </div>
+            <p-table #lt [columns]="scrollableColslinking" [scrollable]="true"
+                     [value]="getLinkingAnalysis()" scrollHeight="300px">
+              <ng-template let-columns pTemplate="colgroup">
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template let-columns pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                    <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                      {{col.header}}
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input (input)="lt.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                               type="text">
+                      </div>
+                    </div>
+                    <div *ngIf="col.type === 'icon'">
+                      <i class="icon-menu_24px"></i>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
+                    <div *ngIf="col.type === 'progress'">
+                      <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }"
+                                   [nzPercent]="rowData.status"
+                                   [nzWidth]="20" nzType="circle"></nz-progress>
+                    </div>
+                    <div *ngIf="col.type === 'indicator'">
+                                      <span class="indicator-flag" *ngIf="rowData.exposedLocation"
+                                            style="background-color: #0700CF"></span>
+                    </div>
+                    <div *ngIf="col.type === 'iconIndicator'">
+                      <span class="indicator-icon" style="background-color: #009575">A</span>
+                    </div>
+                    <div *ngIf="col.type === 'number'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         class="text-data">{{rowData[col.field]}}</div>
+                    <div *ngIf="col.type === 'percentage'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         class="text-data">{{rowData[col.field]}}%
+                    </div>
+                    <div *ngIf="col.type === 'text'"
+                         [ngClass]="{'highlight-temp': col.highlight}"
+                         [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                         class="text-data">{{rowData[col.field]}}</div>
+                    <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                    <div *ngIf="col.type === 'icon'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                         class="text-data"
+                         style="display: flex;justify-content: center;"></div>
+                  </th>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p-footer>
+      <div>
+        <button (click)="linkingModalVisibility = false" class="a-button-text-cancel">CANCEL</button>
+        <button *ngIf="!selectedEDM" class="a-buttons-contained-disabled" disabled>NEXT</button>
+        <button (click)="manual = true" *ngIf="selectedEDM" class="a-buttons-contained">NEXT</button>
+      </div>
+    </p-footer>
+  </p-dialog>
+  <!--Pop Up Financial Perspective-->
+  <p-dialog
+    [autoZIndex]="false"
+    [closable]="false"
+    [modal]="true"
+    [responsive]="true"
+    [visible]="financialP"
+    styleClass="m-dialog-modal-lg">
+    <p-header>
+      <div class="header">
+        <h4>Financial Perspective Selection</h4>
+        <i (click)="financialP = false" class="icon-close_24px" style="cursor: pointer"></i>
+      </div>
+    </p-header>
+    <div class="fp-options-wrapper">
+      <div class="summary-info summary-info-override">
+        <div class="fp-analysis">
+          <div class="fp-header">
+            <span class="subtitle-2">Analysis</span>
+            <i class="icon-filter"></i>
+          </div>
+          <div>
+            <nz-dropdown [nzTrigger]="'click'">
+              <div class="dropdown-wrap" nz-dropdown>
+                <div class="dropdown-wrap-title">
+                  <span class="dropdown-title">select RDM</span>
+                  <span *ngIf="state.financialPerspective.rdm.selected" class="dropdown-item-selected">
+                  {{state.financialPerspective.rdm.selected}}</span>
+                  <span
+                    *ngIf="state.financialPerspective.rdm.data !== null && state.financialPerspective.rdm.selected === null">
+                  {{dataList(state.financialPerspective.rdm.data)[0].name}}
+                </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
+              </div>
+              <ul nz-menu>
+                <li (click)="changeFinancialPTarget(item)" *ngFor="let item of dataList(workingFSC.rdm?.data)"
+                    nz-menu-item>{{item.name}}</li>
+              </ul>
+            </nz-dropdown>
+          </div>
+        </div>
+        <p-table #fat [columns]="colsFinancialAnalysis" [scrollable]="true"
+                 [value]="dataList(workingFSC.analysis?.data)" scrollHeight="226px">
+          <ng-template let-columns pTemplate="colgroup">
+            <colgroup>
+              <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+            </colgroup>
+          </ng-template>
+          <ng-template let-columns pTemplate="header">
+            <tr>
+              <th *ngFor="let col of columns">
                 <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
                 <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
                   {{col.header}}
                   <div class="search-bar-table">
                     <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                    <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                    <input (input)="fat.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
                            type="text">
                   </div>
                 </div>
@@ -45,998 +681,371 @@
                   <i class="icon-menu_24px"></i>
                 </div>
               </th>
-            </ng-container>
-          </tr>
-        </ng-template>
-        <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-          <tr>
-            <ng-container *ngFor="let col of columns">
-              <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
-                <div *ngIf="col.type === 'selection'" class="">
-                  <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
-                         nz-checkbox></label>
+            </tr>
+          </ng-template>
+          <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+            <tr style="height: 45px">
+              <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
+                <div *ngIf="col.type === 'select'"><label (ngModelChange)="checkRow($event, rowData, 'fpA')"
+                                                          [ngModel]="rowData.selected"
+                                                          nz-checkbox></label></div>
+                <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'iconIndicator'" class="text-data">
+                  <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
                 </div>
-                <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                <div *ngIf="col.type === 'progress'">
-                  <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
-                               [nzWidth]="20" nzType="circle"></nz-progress>
+                <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'tags'" class="text-data"
+                     style="display: flex">
+                <span class="tags-secondary" *ngFor="let item of rowData.financialPerspective">{{item}}<i
+                  (click)="removeFP(rowData, item)" class="icon-close_24px"></i></span>
                 </div>
-                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'indicator'">
-                        <span *ngIf="rowData.exposedLocation" class="indicator-flag"
-                              style="background-color: #0700CF"></span>
-                </div>
-                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'number'"
-                     [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data">{{rowData[col.field]}}</div>
-                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'percentage'"
-                     [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data">{{rowData[col.field]}}%
-                </div>
-                <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'text'"
+                <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'text'"
                      [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                     [ngClass]="{'highlight-temp': col.highlight}"
                      class="text-data">{{rowData[col.field]}}</div>
-                <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                <div (click)="deleteFromBasket(rowData.dataSourceId, 'summaries')" *ngIf="col.type === 'icon'"
-                     [ngClass]="{'highlight-temp': rowData.highlight}"
-                     class="text-data" style="display: flex;justify-content: center;"><i
-                  class="icon-trash-alt"></i></div>
-              </th>
-            </ng-container>
-          </tr>
-        </ng-template>
-      </p-table>
-      <div class="menu-icon-wrap">
-        <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
-          <a nz-dropdown style="max-height: 28px;display: flex;">
-            <i class="icon-menu_24px"></i>
-          </a>
-          <ul nz-menu style="font-size: 12px">
-            <li nz-menu-item>Reset Sort</li>
-            <li nz-menu-item>Reset Filters</li>
-            <li nz-menu-item>Reset Sort/Filters</li>
-            <li nz-menu-divider></li>
-            <li (click)="toggleColumnsManager('summaries')" nz-menu-item>Manage Columns</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item>Unselect All</li>
-          </ul>
-        </nz-dropdown>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="body-wrap-body" *ngIf="state.display.displayImport && dataList(state.results.data).length > 0">
-  <div class="body-wrapper">
-    <div class="body-wrapper-header">
-      <div class="body-wrapper-header-left">
-        <hr>
-        <div>Analysis Results</div>
-      </div>
-      <div class="body-wrapper-header-right-summary">
-        <button class="a-buttons-outlined" (click)="linkingModalVisibility = true"
-                *ngIf="state.collapse.collapseAnalysis"> LINKING
-        </button>
-        <i class="icon-filter" style="margin-right: 20px;font-size: 23px;"
-           (click)="filterModalVisibility = true"></i>
-        <div class="body-wrapper-header-right">
-          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-          <i *ngIf="state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
-             class="icon-keyboard_arrow_up_24px"></i>
-          <i *ngIf="!state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
-             class="icon-keyboard_arrow_down_24px"></i>
-        </div>
-      </div>
-    </div>
-    <div class="summary-info" *ngIf="state.collapse.collapseAnalysis">
-      <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
-      <p-table [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult"
-               [value]="dataList(state.results.data)"
-               [(contextMenuSelection)]="contextSelectedItem"
-               [contextMenu]="cmR"
-               #rt [scrollable]="true" frozenWidth="445px">
-        <ng-template pTemplate="colgroup" let-columns>
-          <colgroup>
-            <ng-container *ngFor="let col of columns">
-              <col [ngStyle]="{'width': col.width}">
-            </ng-container>
-          </colgroup>
-        </ng-template>
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <ng-container *ngFor="let col of columns">
-              <th *ngIf="col.visible">
-                <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                <div style="white-space: nowrap;"
-                     *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
-                  {{col.header}}
-                  <div class="search-bar-table">
-                    <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                    <input pInputText type="text"
-                           (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
-                  </div>
-                </div>
-                <div *ngIf="col.type === 'check'">
-                  <i [nzTitle]="col.header" nzPlacement="top" nz-tooltip style="font-size: 20px;"
-                     [ngClass]="col.icon"></i>
+                <div (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'branched'"
+                     class="text-data branched-data">
+                  <span>{{rowData?.analysisName}}</span>
+                  <span>{{rowData?.description}}</span>
                 </div>
               </th>
-            </ng-container>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-          <tr [pContextMenuRow]="rowData">
-            <ng-container *ngFor="let col of columns">
-              <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                <div class="" *ngIf="col.type === 'selection'">
-                  <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'R')"
-                         [ngModel]="rowData.selected"></label>
-                </div>
-                <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                <div class="text-data" *ngIf="col.type === 'progress'">
-                  <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
-                               [nzWidth]="20" nzType="circle"></nz-progress>
-                </div>
-                <div class="text-data" (click)="openFinancialP()" [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'multiple'">
-                        <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
-                              *ngIf="rowData.financialPerspective.length > 1">M*</span>
-                  <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
-                        *ngIf="rowData.financialPerspective.length <= 1">{{rowData?.financialPerspective[0]}}</span>
-                  <ng-template #infoFP>
-                    <div class="popover-menu">
-                      <ul style="margin-bottom: 0">
-                        <li *ngFor="let item of rowData.financialPerspective" style="border: none;">
-                          <span>{{item}}: {{getCodeFp(item)}}</span>
-                        </li>
-                      </ul>
+            </tr>
+          </ng-template>
+        </p-table>
+      </div>
+    </div>
+    <div class="fp-options-wrapper" style="padding: 0">
+      <nz-tabset class="tabs-standard-top">
+        <nz-tab nzTitle="Standard">
+          <div class="summary-info" style="padding-top:0">
+            <p-table #fpt [columns]="colsFinancialStandard" [scrollable]="true"
+                     [value]="dataList(workingFSC.standard)" scrollHeight="300px">
+              <ng-template let-columns pTemplate="colgroup">
+                <colgroup>
+                  <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                </colgroup>
+              </ng-template>
+              <ng-template let-columns pTemplate="header">
+                <tr>
+                  <th *ngFor="let col of columns">
+                    <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                    <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                      {{col.header}}
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input (input)="fpt.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                               type="text">
+                      </div>
                     </div>
-                  </ng-template>
-                </div>
-                <div class="text-data" (click)="selectRows(rowData, i, 'R')"
-                     [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                <div class="text-data" (click)="selectRows(rowData, i, 'R')"
-                     [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
-                </div>
-                <div class="text-data" (click)="selectRows(rowData, i, 'R')"
-                     [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                     [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                <div class="text-data highlight-temp" stytle="font-weight: 500"
-                     *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
-                     (click)="updateRow(rowData, col.type)">
-                  <span *ngIf="col.type === 'Peqt'">
-                    {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
-                  </span>
-                  <span *ngIf="col.type !== 'Peqt'">
-                    {{rowData[col.field]}}
-                  </span>
+                    <div *ngIf="col.type === 'icon'">
+                      <i class="icon-menu_24px"></i>
+                    </div>
+                  </th>
+                </tr>
+              </ng-template>
+              <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+                <tr>
+                  <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
+                    <div *ngIf="col.type === 'select'">
+                      <label (ngModelChange)="checkRow($event, rowData, 'fpS')"
+                             [ngModel]="rowData.selected"
+                             nz-checkbox></label></div>
+                    <div (click)="selectRows(rowData, i, 'fpS')" *ngIf="col.type === 'indicator'">
+                    <span class="indicator-flag" *ngIf="rowData.exposedLocation"
+                          style="background-color: #0700CF"></span>
+                    </div>
+                    <div (click)="selectRows(rowData, i, 'fpS')" *ngIf="col.type === 'text'"
+                         [ngClass]="{'highlight-temp': col.highlight}"
+                         class="text-data">{{rowData[col.field]}}</div>
+                    <div (click)="selectRows(rowData, i, 'fpS')" *ngIf="col.type === 'icon'"
+                         [ngClass]="{'highlight-temp': rowData.highlight}"
+                         class="text-data" style="display: flex;justify-content: center;"></div>
+                  </th>
+                </tr>
+              </ng-template>
+            </p-table>
+          </div>
+        </nz-tab>
+        <nz-tab nzDisabled nzTitle="Treaty">
 
-                </div>
-                <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
-                     *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                <div style="padding-left: 10px;" *ngIf="col.type === 'check'">
-                  <label nz-checkbox [(ngModel)]="rowData[col.field]"></label>
-                </div>
-              </th>
-              <ng-container *ngIf="col.edit">
-                <th pEditableColumn *ngIf="col.field === 'unitMultiplier'"
-                    [ngClass]="{'selected-item': rowData?.selected}">
-                  <p-cellEditor>
-                    <ng-template pTemplate="input">
-                      <input pInputText type="text" style="width: 95%" class="a-textfield-mini"
-                             [(ngModel)]="rowData.unitMultiplier">
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      <div class="text-data highlight-temp">{{rowData.unitMultiplier | number: '1.2-2'}}</div>
-                    </ng-template>
-                  </p-cellEditor>
-                </th>
-                <th pEditableColumn *ngIf="col.field === 'targetCurrency'"
-                    [ngClass]="{'selected-item': rowData?.selected}">
-                  <p-cellEditor>
-                    <ng-template pTemplate="input">
-                      <nz-select
-                        style="width: 100%"
-                        (ngModelChange)="editSingleColRes('TC', $event, rowData)"
-                        [ngModel]="rowData.targetCurrency"
-                        nzShowSearch
-                        class="a-dropdown-small input-wrapper"
-                        nzPlaceHolder="TAG CURRENCY"
-                      >
-                        <nz-option nzLabel="AED" nzValue="AED"></nz-option>
-                        <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
-                        <nz-option nzLabel="AFN" nzValue="AFN"></nz-option>
-                        <nz-option nzLabel="ALK" nzValue="ALK"></nz-option>
-                        <nz-option nzLabel="ALL" nzValue="ALL"></nz-option>
-                        <nz-option nzLabel="BBT" nzValue="BBT"></nz-option>
-                        <nz-option nzLabel="BBL" nzValue="BBL"></nz-option>
-                        <nz-option nzLabel="BMD" nzValue="BMD"></nz-option>
-                        <nz-option nzLabel="MGA" nzValue="MGA"></nz-option>
-                        <nz-option nzLabel="USD" nzValue="USD"></nz-option>
-                        <nz-option nzLabel="XXC" nzValue="XXC"></nz-option>
-                      </nz-select>
-                    </ng-template>
-                    <ng-template pTemplate="output">
-                      <div class="text-data highlight-temp">{{rowData.targetCurrency}}</div>
-                    </ng-template>
-                  </p-cellEditor>
-                </th>
-              </ng-container>
-            </ng-container>
-          </tr>
-
-        </ng-template>
-      </p-table>
-      <div class="menu-icon-wrap">
-        <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-          <a style="max-height: 28px;display: flex;" nz-dropdown>
-            <i class="icon-menu_24px"></i>
-          </a>
-          <ul nz-menu style="font-size: 12px">
-            <li nz-menu-item>Reset Sort</li>
-            <li nz-menu-item>Reset Filters</li>
-            <li nz-menu-item>Reset Sort/Filters</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
-            <li nz-menu-divider></li>
-            <li nz-menu-item>Unselect All</li>
-          </ul>
-        </nz-dropdown>
+        </nz-tab>
+      </nz-tabset>
+    </div>
+    <div class="fp-options-wrapper">
+      <span class="subtitle-2 subtitle-override" style="">Apply Selected Financial Perpective to Analysis in:</span>
+      <div class="context-wrapper">
+        <nz-radio-group (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target" class="default-radio">
+          <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
+          <label nz-radio nzValue="currentRDM"><span class="body-2">Current RDM</span></label>
+          <label nz-radio nzValue="all"><span class="body-2">All RDM's</span></label>
+        </nz-radio-group>
+        <!--      <p-radioButton value="currentSelection" label="Current Selection" [(ngModel)]="radioValueFinancialP"></p-radioButton>
+              <p-radioButton value="currentRDM" label="Current RDM" [(ngModel)]="radioValueFinancialP"></p-radioButton>
+              <p-radioButton value="all" label="All RDM's" [(ngModel)]="radioValueFinancialP"></p-radioButton>-->
+        <button (click)="addFinancialP()" class="a-buttons-outlined" style="margin-left: 150px">ADD</button>
+        <button (click)="replaceFinancialP()" class="a-buttons-outlined">REPLACE</button>
       </div>
-
     </div>
-  </div>
-</div>
-
-<p-dialog
-  [visible]="managePopUp"
-  [closable]="false"
-  styleClass="m-dialog-modal-lg-h"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
->
-
-  <p-header>
-    <div class="header">
-      <h4>Columns Manager</h4>
-      <i style="cursor: pointer" (click)="toggleColumnsManager(targetConfig)" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-
-  <div cdkDropList class="m-box-d" (cdkDropListDropped)="drop($event)">
-    <ng-container *ngFor="let col of columnsForConfig; let i=index">
-      <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-        <div class="m-box-overlay">
-          <div class="left">
-            <div class="burger">
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-            </div>
-            <span class="subtitle-2">
-          {{col.header}}
-        </span>
-          </div>
-          <div class="right">
-            <i *ngIf="col?.visible" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-            <i *ngIf="!col?.visible" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-          </div>
+    <p-footer>
+      <div>
+        <button (click)="financialP = false" class="a-button-text-cancel">CANCEL</button>
+        <button (click)="saveFinancialP()" class="a-buttons-contained">SAVE</button>
+      </div>
+    </p-footer>
+  </p-dialog>
+  <!--Pop Up Edit Row -->
+  <p-dialog [autoZIndex]="false"
+            [closable]="false"
+            [modal]="true"
+            [responsive]="true"
+            [visible]="editRowPopUp"
+            styleClass="m-dialog-modal-m-f"
+  >
+    <p-header>
+      <div class="header">
+        <h4>Edit Analysis</h4>
+        <i (click)="editRowPopUp = false" class="icon-close_24px" style="cursor: pointer"></i>
+      </div>
+    </p-header>
+    <div class="fp-options-wrapper">
+      <div class="input-group-modal">
+        <div class="row-input"><span class="label-input">Region Peril</span>
+          <nz-select
+            [ngModel]="regionPeril"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select Occurence Basis"
+            nzShowSearch
+            style="padding: 10px 0;"
+          >
+            <nz-option nzLabel="[EUET] Europe Extra Tropical Cyclone" nzValue="EUET"></nz-option>
+            <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone" nzValue="EUET-AT"></nz-option>
+            <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone" nzValue="EUET-BE"></nz-option>
+            <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone" nzValue="EUET-CH"></nz-option>
+            <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone" nzValue="EUET-CZ"></nz-option>
+            <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone" nzValue="EUET-DE"></nz-option>
+            <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone" nzValue="EUET-DK"></nz-option>
+            <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone" nzValue="EUET-FR"></nz-option>
+          </nz-select>
         </div>
-      </div>
-    </ng-container>
-  </div>
-
-  <p-footer>
-    <div class="footer">
-      <button (click)="toggleColumnsManager(targetConfig)" class="a-button-text-cancel">cancel</button>
-      <button class="a-buttons-contained" (click)="saveColumns()">Save</button>
-    </div>
-  </p-footer>
-</p-dialog>
-
-<p-dialog [visible]="linkingModalVisibility"
-          [closable]="false"
-          styleClass="m-dialog-modal-lg"
-          [modal]="true"
-          [autoZIndex]="false"
-          [responsive]="true">
-  <p-header>
-    <h6 *ngIf="!suggested && !manual">
-      Link EDM & RDM
-    </h6>
-    <h6 *ngIf="suggested">
-      <i (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left"
-         nzTheme="outline"></i>
-      Suggested Linking
-    </h6>
-    <h6 *ngIf="manual">
-      <i (click)="resetToMain()" style="cursor: pointer;" nz-icon nzType="arrow-left"
-         nzTheme="outline"></i>
-      Create Linking
-    </h6>
-  </p-header>
-  <div class="modal-linking-wrapper" *ngIf="!manual && !suggested">
-    <div class="modal-linking-head">
-      <div class="modal-l-h-body-fill">
-        <span class="subtitle-2">Data Sources</span>
-        <div class="radio-wrapper">
-          <div class="popover-menu-item"
-               (click)="toggleForLinkingEDM()"
-               [ngClass]="{'popover-menu-item-active': getChecked(itemsE)}"
-               *ngFor="let itemsE of dataList(state.linking.edm)">
-            <p-radioButton [value]="itemsE.name" [label]="itemsE.name" [(ngModel)]="selectedEDM">
-            </p-radioButton>
-          </div>
+        <div class="row-input"><span class="label-input">Occurence Basis</span>
+          <nz-select
+            [ngModel]="occurrenceBasis"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select Occurence Basis"
+            nzShowSearch
+            style="padding: 10px 0;"
+          >
+            <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>
+            <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
+          </nz-select>
         </div>
-      </div>
-      <div class="modal-l-h-body-right">
-        <ul>
-          <ng-container *ngFor="let itemsR of dataList(state.linking.rdm)">
-            <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item"
-                (click)="toggleForLinkingRDM(itemsR)"
-                [ngClass]="{'popover-menu-item-active': itemsR.selected}">
-              <label nz-checkbox [nzChecked]="itemsR.selected">
-                <span class="logo" style="background: #03DAC4">R</span>
-                <span [title]="itemsR?.name" class="text">{{itemsR?.name}}</span>
-              </label>
-            </li>
-          </ng-container>
-        </ul>
-        <button style="margin: 0 15px 10px" class="a-buttons-outlined">LINK SUGGESTIONS
-        </button>
-      </div>
-    </div>
-  </div>
-  <div class="modal-linking-wrapper">
-    <div class="modal-linking-head">
-      <div class="modal-l-h-body-fill">
-        <span class="subtitle-2">Links Suggestions</span>
-        <div class="suggestion-card">
-          <div class="suggestion-card-header">
-            <label nz-checkbox>Link 1</label>
-            <i class="icon-trash-alt"></i>
-          </div>
-
-          <div class="suggestion-card-body">
-            <div class="suggestion-card-left">
-              <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;">
-                <span class="logo" style="background: #C38FFF">P</span>
-                <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
-              </div>
-            </div>
-            <div class="suggestion-card-right">
-              <div class="suggestion-card-item popover-menu-item">
-                <span class="logo" style="background: #009575">A</span>
-                <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
-              </div>
-            </div>
-          </div>
+        <div class="row-input"><span class="label-input">Unit Miltiplier</span>
+          <input class="a-textfield-mini input-wrapper" placeholder="Insert Unit Multiplier">
         </div>
-
-        <div class="suggestion-card">
-          <div class="suggestion-card-header">
-            <label nz-checkbox>Link 1</label>
-            <i class="icon-trash-alt"></i>
-          </div>
-
-          <div class="suggestion-card-body">
-            <div class="suggestion-card-left">
-              <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;">
-                <span class="logo" style="background: #C38FFF">P</span>
-                <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
-              </div>
-              <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;">
-                <span class="logo" style="background: #C38FFF">P</span>
-                <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
-              </div>
-            </div>
-            <div class="suggestion-card-right">
-              <div class="suggestion-card-item popover-menu-item">
-                <span class="logo" style="background: #009575">A</span>
-                <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
-              </div>
-              <div class="suggestion-card-item popover-menu-item">
-                <span class="logo" style="background: #009575">A</span>
-                <span class="text">10 | CFS PORT MAR 18 | SBS_REF_v07.0_EQ_EUR.ITA / EUEQ > EUEQ-IT</span>
-              </div>
-            </div>
-          </div>
+        <div class="row-input">
+          <span class=""></span>
+        </div>
+        <div class="row-input">
+          <label nz-checkbox>publish For Pricing</label>
+          <label nz-checkbox>publish For Accumulation</label>
         </div>
       </div>
     </div>
-  </div>
-  <div style="display: flex">
-    <div class="modal-linking-wrapper" style="border-color: #C38FFF">
-      <div class="modal-linking-head">
-        <div class="modal-l-h-body-fill summary-info">
-          <span class="subtitle-2">EDM Portfolio</span>
-          <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingPortfolio()"
-                   [scrollable]="true" scrollHeight="300px">
-            <ng-template pTemplate="colgroup" let-columns>
+    <div class="fp-options-wrapper">
+      <span class="subtitle-2 subtitle-override" style="">Scope Of Editing:</span>
+      <div class="context-wrapper">
+        <nz-radio-group (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target" class="default-radio">
+          <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
+          <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>
+        </nz-radio-group>
+      </div>
+    </div>
+    <p-footer>
+      <button (click)="editRowPopUp = false" class="a-button-text-cancel">CANCEL</button>
+      <button class="a-buttons-contained">SAVE</button>
+    </p-footer>
+  </p-dialog>
+  <!--Pop Up Low Lvl Edit-->
+  <p-dialog [autoZIndex]="false"
+            [closable]="false"
+            [modal]="true"
+            [responsive]="true"
+            [visible]="singleColEdit"
+            styleClass="m-dialog-modal-sm-l"
+  >
+    <p-header>
+      <div class="header">
+        <h4>{{editableRow.title}}</h4>
+        <i (click)="singleColEdit = false" class="icon-close_24px" style="cursor: pointer"></i>
+      </div>
+    </p-header>
+
+    <div>
+      <div class="input-group-modal">
+        <div *ngIf="editableRow.target === 'Rp'" class="summary-info">
+          <p-table #rpt
+                   [columns]="regionPerilDataTable" [scrollable]="true" [value]="dataList(state.results.data)">
+            <ng-template let-columns pTemplate="colgroup">
               <colgroup>
-                <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                <ng-container *ngFor="let col of columns">
+                  <col [ngStyle]="{'width': col.width}">
+                </ng-container>
               </colgroup>
             </ng-template>
-            <ng-template pTemplate="header" let-columns>
-              <tr>
-                <th *ngFor="let col of columns">
-                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                  <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
-                    {{col.header}}
-                    <div class="search-bar-table">
-                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                      <input pInputText type="text"
-                             (input)="st.filter($event.target.value, col.field, col.filterMatchMode)">
-                    </div>
-                  </div>
-                  <div *ngIf="col.type === 'icon'">
-                    <i class="icon-menu_24px"></i>
-                  </div>
-                </th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+            <ng-template let-columns pTemplate="header">
               <tr>
                 <ng-container *ngFor="let col of columns">
                   <th *ngIf="col.visible">
-                    <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
-                    <div *ngIf="col.type === 'iconIndicator'">
-                      <span style="background-color: #C38FFF" class="indicator-icon">P</span>
+                    <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                    <div *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'"
+                         style="white-space: nowrap;">
+                      {{col.header}}
+                      <div class="search-bar-table">
+                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                        <input (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                               type="text">
+                      </div>
                     </div>
-                    <div *ngIf="col.type === 'indicator'">
-                                        <span class="indicator-flag" *ngIf="rowData.exposedLocation"
-                                              style="background-color: #0700CF"></span>
+                    <div *ngIf="col.type === 'check'">
+                      <i [ngClass]="col.icon" [nzTitle]="col.header" nz-tooltip nzPlacement="top"
+                         style="font-size: 20px;"></i>
                     </div>
-                    <div class="text-data"
-                         [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                         [ngClass]="{'highlight-temp': col.highlight}"
-                         *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                    <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                         *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                    <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                         style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"><i
-                      class="icon-trash-alt"></i></div>
                   </th>
                 </ng-container>
               </tr>
             </ng-template>
-          </p-table>
-        </div>
-      </div>
-    </div>
-    <div class="modal-linking-wrapper" style="border-color: #009575">
-      <div class="modal-linking-head">
-        <div class="modal-l-h-body-fill summary-info">
-          <div style="display: flex; justify-content: space-between;">
-            <span class="subtitle-2">RDM Analysis</span>
-            <nz-dropdown [nzTrigger]="'click'">
-              <div class="dropdown-wrap" nz-dropdown>
-                <div class="dropdown-wrap-title">
-                  <span class="dropdown-title">RDM Select</span>
-                  <span class="dropdown-item-selected">
-                    {{getSelectedRDM()[0]?.name}}
-                  </span>
-                </div>
-                <div class="dropdown-icon">
-                  <i nz-icon type="down"></i>
-                </div>
-              </div>
-              <ul nz-menu>
-                <li nz-menu-item (click)="selectLinkedRDM(item)"
-                    *ngFor="let item of getSelectedRDM()">{{item.name}}</li>
-              </ul>
-            </nz-dropdown>
-          </div>
-          <p-table #lt [columns]="scrollableColslinking" [value]="getLinkingAnalysis()"
-                   [scrollable]="true" scrollHeight="300px">
-            <ng-template pTemplate="colgroup" let-columns>
-              <colgroup>
-                <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
-              </colgroup>
-            </ng-template>
-            <ng-template pTemplate="header" let-columns>
+            <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
               <tr>
-                <th *ngFor="let col of columns">
-                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                  <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
-                    {{col.header}}
-                    <div class="search-bar-table">
-                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                      <input pInputText type="text"
-                             (input)="lt.filter($event.target.value, col.field, col.filterMatchMode)">
+                <ng-container *ngFor="let col of columns">
+                  <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                    <div *ngIf="col.type === 'selection'" class="">
+                      <label [(ngModel)]="rowData.selected" nz-checkbox></label>
                     </div>
-                  </div>
-                  <div *ngIf="col.type === 'icon'">
-                    <i class="icon-menu_24px"></i>
-                  </div>
-                </th>
+                    <div (click)="selectRows(rowData, i, 'R')" *ngIf="col.type === 'text'"
+                         [ngClass]="{'highlight-temp': col.highlight}"
+                         [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                         class="text-data">{{rowData[col.field]}}</div>
+                    <div *ngIf="col.type === 'comment'" style="padding-left: 10px;">
+                      <input [(ngModel)]="rowData.reason" class="a-textfield-mini"/>
+                    </div>
+                    <div *ngIf="col.type === 'override'">
+                      <nz-select
+                        #rpRes [ngModel]="rowData.override"
+                        class="a-dropdown-small input-wrapper"
+                        nzPlaceHolder="Select Occurence Basis"
+                        nzShowSearch
+                        style="padding: 10px 0; width: 300px"
+                      >
+                        <nz-option nzLabel="[EUET] Europe Extra Tropical Cyclone" nzValue="EUET"></nz-option>
+                        <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone"
+                                   nzValue="EUET-AT"></nz-option>
+                        <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone"
+                                   nzValue="EUET-BE"></nz-option>
+                        <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone"
+                                   nzValue="EUET-CH"></nz-option>
+                        <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone"
+                                   nzValue="EUET-CZ"></nz-option>
+                        <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone"
+                                   nzValue="EUET-DE"></nz-option>
+                        <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone"
+                                   nzValue="EUET-DK"></nz-option>
+                        <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone"
+                                   nzValue="EUET-FR"></nz-option>
+                      </nz-select>
+                    </div>
+                    <div *ngIf="col.type === 'copy'">
+
+                    </div>
+                  </th>
+                </ng-container>
               </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-              <tr>
-                <th *ngFor="let col of columns">
-                  <div *ngIf="col.type === 'select'"><label nz-checkbox></label></div>
-                  <div *ngIf="col.type === 'progress'">
-                    <nz-progress [nzPercent]="rowData.status"
-                                 [ngClass]="{'hidden-text': rowData.status < 100 }"
-                                 [nzWidth]="20" nzType="circle"></nz-progress>
-                  </div>
-                  <div *ngIf="col.type === 'indicator'">
-                                      <span class="indicator-flag" *ngIf="rowData.exposedLocation"
-                                            style="background-color: #0700CF"></span>
-                  </div>
-                  <div *ngIf="col.type === 'iconIndicator'">
-                    <span style="background-color: #009575" class="indicator-icon">A</span>
-                  </div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'number'">{{rowData[col.field]}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'percentage'">{{rowData[col.field]}}%
-                  </div>
-                  <div class="text-data"
-                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                       [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       style="display: flex;justify-content: center;"
-                       *ngIf="col.type === 'icon'"></div>
-                </th>
-              </tr>
+
             </ng-template>
           </p-table>
         </div>
-      </div>
-    </div>
-  </div>
-  <p-footer>
-    <div>
-      <button (click)="linkingModalVisibility = false" class="a-button-text-cancel">CANCEL</button>
-      <button *ngIf="!selectedEDM" class="a-buttons-contained-disabled" disabled>NEXT</button>
-      <button *ngIf="selectedEDM" (click)="manual = true" class="a-buttons-contained">NEXT</button>
-    </div>
-  </p-footer>
-</p-dialog>
-<!--Pop Up Financial Perspective-->
-<p-dialog
-  [visible]="financialP"
-  [closable]="false"
-  styleClass="m-dialog-modal-lg"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true">
-  <p-header>
-    <div class="header">
-      <h4>Financial Perspective Selection</h4>
-      <i style="cursor: pointer" (click)="financialP = false" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-  <div class="fp-options-wrapper">
-    <div class="summary-info summary-info-override">
-      <div class="fp-analysis">
-        <div class="fp-header">
-          <span class="subtitle-2">Analysis</span>
-          <i class="icon-filter"></i>
+        <div *ngIf="editableRow.target === 'Ob'" class="row-input"><span class="label-input">Occurence Basis</span>
+          <nz-select
+            #obRes [ngModel]="editableRow.item.occurrenceBasis"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select Occurence Basis"
+            nzShowSearch
+            style="padding: 10px 0;"
+          >
+            <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>
+            <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
+          </nz-select>
         </div>
-        <div>
-          <nz-dropdown [nzTrigger]="'click'">
-            <div class="dropdown-wrap" nz-dropdown>
-              <div class="dropdown-wrap-title">
-                <span class="dropdown-title">select RDM</span>
-                <span class="dropdown-item-selected" *ngIf="state.financialPerspective.rdm.selected">
-                  {{state.financialPerspective.rdm.selected}}</span>
-                <span
-                  *ngIf="state.financialPerspective.rdm.data !== null && state.financialPerspective.rdm.selected === null">
-                  {{dataList(state.financialPerspective.rdm.data)[0].name}}
-                </span>
-              </div>
-              <div class="dropdown-icon">
-                <i nz-icon type="down"></i>
-              </div>
-            </div>
-            <ul nz-menu>
-              <li nz-menu-item (click)="changeFinancialPTarget(item)"
-                  *ngFor="let item of dataList(workingFSC.rdm?.data)">{{item.name}}</li>
-            </ul>
-          </nz-dropdown>
-        </div>
-      </div>
-      <p-table #fat [columns]="colsFinancialAnalysis" [value]="dataList(workingFSC.analysis?.data)"
-               [scrollable]="true" scrollHeight="226px">
-        <ng-template pTemplate="colgroup" let-columns>
-          <colgroup>
-            <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
-          </colgroup>
-        </ng-template>
-        <ng-template pTemplate="header" let-columns>
-          <tr>
-            <th *ngFor="let col of columns">
-              <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-              <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
-                {{col.header}}
-                <div class="search-bar-table">
-                  <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                  <input pInputText type="text"
-                         (input)="fat.filter($event.target.value, col.field, col.filterMatchMode)">
-                </div>
-              </div>
-              <div *ngIf="col.type === 'icon'">
-                <i class="icon-menu_24px"></i>
-              </div>
-            </th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-          <tr style="height: 45px">
-            <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
-              <div *ngIf="col.type === 'select'"><label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'fpA')"
-                                                        [ngModel]="rowData.selected"></label></div>
-              <div class="text-data" (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'iconIndicator'">
-                <i *ngIf="rowData[col.field]" class="icon-sitemap"></i>
-              </div>
-              <div class="text-data" (click)="selectRows(rowData, i, 'fpA')" *ngIf="col.type === 'tags'"
-                   style="display: flex">
-                <span class="tags-secondary" *ngFor="let item of rowData.financialPerspective">{{item}}<i
-                  (click)="removeFP(rowData, item)" class="icon-close_24px"></i></span>
-              </div>
-              <div (click)="selectRows(rowData, i, 'fpA')" class="text-data"
-                   [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                   *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-              <div (click)="selectRows(rowData, i, 'fpA')" class="text-data branched-data"
-                   *ngIf="col.type === 'branched'">
-                <span>{{rowData?.analysisName}}</span>
-                <span>{{rowData?.description}}</span>
-              </div>
-            </th>
-          </tr>
-        </ng-template>
-      </p-table>
-    </div>
-  </div>
-  <div style="padding: 0" class="fp-options-wrapper">
-    <nz-tabset class="tabs-standard-top">
-      <nz-tab nzTitle="Standard">
-        <div style="padding-top:0" class="summary-info">
-          <p-table #fpt [columns]="colsFinancialStandard" [value]="dataList(workingFSC.standard)"
-                   [scrollable]="true" scrollHeight="300px">
-            <ng-template pTemplate="colgroup" let-columns>
-              <colgroup>
-                <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
-              </colgroup>
-            </ng-template>
-            <ng-template pTemplate="header" let-columns>
-              <tr>
-                <th *ngFor="let col of columns">
-                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                  <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
-                    {{col.header}}
-                    <div class="search-bar-table">
-                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                      <input pInputText type="text"
-                             (input)="fpt.filter($event.target.value, col.field, col.filterMatchMode)">
-                    </div>
-                  </div>
-                  <div *ngIf="col.type === 'icon'">
-                    <i class="icon-menu_24px"></i>
-                  </div>
-                </th>
-              </tr>
-            </ng-template>
-            <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-              <tr>
-                <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
-                  <div *ngIf="col.type === 'select'">
-                    <label nz-checkbox
-                           (ngModelChange)="checkRow($event, rowData, 'fpS')"
-                           [ngModel]="rowData.selected"></label></div>
-                  <div (click)="selectRows(rowData, i, 'fpS')" *ngIf="col.type === 'indicator'">
-                    <span class="indicator-flag" *ngIf="rowData.exposedLocation"
-                          style="background-color: #0700CF"></span>
-                  </div>
-                  <div (click)="selectRows(rowData, i, 'fpS')" class="text-data"
-                       [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                  <div (click)="selectRows(rowData, i, 'fpS')" class="text-data"
-                       [ngClass]="{'highlight-temp': rowData.highlight}"
-                       style="display: flex;justify-content: center;" *ngIf="col.type === 'icon'"></div>
-                </th>
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
-      </nz-tab>
-      <nz-tab nzTitle="Treaty" nzDisabled>
 
-      </nz-tab>
-    </nz-tabset>
-  </div>
-  <div class="fp-options-wrapper">
-    <span style="" class="subtitle-2 subtitle-override">Apply Selected Financial Perpective to Analysis in:</span>
-    <div class="context-wrapper">
-      <nz-radio-group class="default-radio" (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target">
-        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
-        <label nz-radio nzValue="currentRDM"><span class="body-2">Current RDM</span></label>
-        <label nz-radio nzValue="all"><span class="body-2">All RDM's</span></label>
-      </nz-radio-group>
-      <!--      <p-radioButton value="currentSelection" label="Current Selection" [(ngModel)]="radioValueFinancialP"></p-radioButton>
-            <p-radioButton value="currentRDM" label="Current RDM" [(ngModel)]="radioValueFinancialP"></p-radioButton>
-            <p-radioButton value="all" label="All RDM's" [(ngModel)]="radioValueFinancialP"></p-radioButton>-->
-      <button (click)="addFinancialP()" style="margin-left: 150px" class="a-buttons-outlined">ADD</button>
-      <button (click)="replaceFinancialP()" class="a-buttons-outlined">REPLACE</button>
-    </div>
-  </div>
-  <p-footer>
-    <div>
-      <button (click)="financialP = false" class="a-button-text-cancel">CANCEL</button>
-      <button (click)="saveFinancialP()" class="a-buttons-contained">SAVE</button>
-    </div>
-  </p-footer>
-</p-dialog>
-<!--Pop Up Edit Row -->
-<p-dialog [visible]="editRowPopUp"
-          [closable]="false"
-          styleClass="m-dialog-modal-m-f"
-          [modal]="true"
-          [autoZIndex]="false"
-          [responsive]="true"
->
-  <p-header>
-    <div class="header">
-      <h4>Edit Analysis</h4>
-      <i style="cursor: pointer" (click)="editRowPopUp = false" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-  <div class="fp-options-wrapper">
-    <div class="input-group-modal">
-      <div class="row-input"><span class="label-input">Region Peril</span>
-        <nz-select
-          style="padding: 10px 0;"
-          [ngModel]="regionPeril"
-          nzShowSearch
-          class="a-dropdown-small input-wrapper"
-          nzPlaceHolder="Select Occurence Basis"
-        >
-          <nz-option nzLabel="[EUET] Europe Extra Tropical Cyclone" nzValue="EUET"></nz-option>
-          <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone" nzValue="EUET-AT"></nz-option>
-          <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone" nzValue="EUET-BE"></nz-option>
-          <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone" nzValue="EUET-CH"></nz-option>
-          <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone" nzValue="EUET-CZ"></nz-option>
-          <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone" nzValue="EUET-DE"></nz-option>
-          <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone" nzValue="EUET-DK"></nz-option>
-          <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone" nzValue="EUET-FR"></nz-option>
-        </nz-select>
-      </div>
-      <div class="row-input"><span class="label-input">Occurence Basis</span>
-        <nz-select
-          style="padding: 10px 0;"
-          [ngModel]="occurrenceBasis"
-          nzShowSearch
-          class="a-dropdown-small input-wrapper"
-          nzPlaceHolder="Select Occurence Basis"
-        >
-          <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>
-          <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
-        </nz-select>
-      </div>
-      <div class="row-input"><span class="label-input">Unit Miltiplier</span>
-        <input placeholder="Insert Unit Multiplier" class="a-textfield-mini input-wrapper">
-      </div>
-      <div class="row-input">
-        <span class=""></span>
-      </div>
-      <div class="row-input">
-        <label nz-checkbox>publish For Pricing</label>
-        <label nz-checkbox>publish For Accumulation</label>
-      </div>
-    </div>
-  </div>
-  <div class="fp-options-wrapper">
-    <span style="" class="subtitle-2 subtitle-override">Scope Of Editing:</span>
-    <div class="context-wrapper">
-      <nz-radio-group class="default-radio" (ngModelChange)="changeTargetFP($event)" [ngModel]="workingFSC.target">
-        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Selection</span></label>
-        <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>
-      </nz-radio-group>
-    </div>
-  </div>
-  <p-footer>
-    <button (click)="editRowPopUp = false" class="a-button-text-cancel">CANCEL</button>
-    <button class="a-buttons-contained">SAVE</button>
-  </p-footer>
-</p-dialog>
-<!--Pop Up Low Lvl Edit-->
-<p-dialog [visible]="singleColEdit"
-          [closable]="false"
-          styleClass="m-dialog-modal-sm-l"
-          [modal]="true"
-          [autoZIndex]="false"
-          [responsive]="true"
->
-  <p-header>
-    <div class="header">
-      <h4>{{editableRow.title}}</h4>
-      <i style="cursor: pointer" (click)="singleColEdit = false" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-
-  <div>
-    <div class="input-group-modal">
-      <div class="summary-info" *ngIf="editableRow.target === 'Rp'">
-        <p-table [columns]="regionPerilDataTable"
-                 [value]="dataList(state.results.data)" #rpt [scrollable]="true">
-          <ng-template pTemplate="colgroup" let-columns>
-            <colgroup>
-              <ng-container *ngFor="let col of columns">
-                <col [ngStyle]="{'width': col.width}">
-              </ng-container>
-            </colgroup>
-          </ng-template>
-          <ng-template pTemplate="header" let-columns>
-            <tr>
-              <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible">
-                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                  <div style="white-space: nowrap;"
-                       *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
-                    {{col.header}}
-                    <div class="search-bar-table">
-                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                      <input pInputText type="text"
-                             (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
-                    </div>
-                  </div>
-                  <div *ngIf="col.type === 'check'">
-                    <i [nzTitle]="col.header" nzPlacement="top" nz-tooltip style="font-size: 20px;"
-                       [ngClass]="col.icon"></i>
-                  </div>
-                </th>
-              </ng-container>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-            <tr>
-              <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                  <div class="" *ngIf="col.type === 'selection'">
-                    <label nz-checkbox [(ngModel)]="rowData.selected"></label>
-                  </div>
-                  <div class="text-data" (click)="selectRows(rowData, i, 'R')"
-                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                       [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                  <div style="padding-left: 10px;" *ngIf="col.type === 'comment'">
-                    <input class="a-textfield-mini" [(ngModel)]="rowData.reason"/>
-                  </div>
-                  <div *ngIf="col.type === 'override'">
-                    <nz-select
-                      style="padding: 10px 0; width: 300px" #rpRes
-                      [ngModel]="rowData.override"
-                      nzShowSearch
-                      class="a-dropdown-small input-wrapper"
-                      nzPlaceHolder="Select Occurence Basis"
-                    >
-                      <nz-option nzLabel="[EUET] Europe Extra Tropical Cyclone" nzValue="EUET"></nz-option>
-                      <nz-option nzLabel="[EUET-AT] Europe (Austria) Extra Tropical Cyclone"
-                                 nzValue="EUET-AT"></nz-option>
-                      <nz-option nzLabel="[EUET-BE] Europe (Belgium) Extra Tropical Cyclone"
-                                 nzValue="EUET-BE"></nz-option>
-                      <nz-option nzLabel="[EUET-CH] Europe (Switzerland) Extra Tropical Cyclone"
-                                 nzValue="EUET-CH"></nz-option>
-                      <nz-option nzLabel="[EUET-CZ] Europe (Czech Republic) Extra Tropical Cyclone"
-                                 nzValue="EUET-CZ"></nz-option>
-                      <nz-option nzLabel="[EUET-DE] Europe (Germany) Extra Tropical Cyclone"
-                                 nzValue="EUET-DE"></nz-option>
-                      <nz-option nzLabel="[EUET-DK] Europe (Denmark) Extra Tropical Cyclone"
-                                 nzValue="EUET-DK"></nz-option>
-                      <nz-option nzLabel="[EUET-FR] Europe (France) Extra Tropical Cyclone"
-                                 nzValue="EUET-FR"></nz-option>
-                    </nz-select>
-                  </div>
-                  <div *ngIf="col.type === 'copy'">
-
-                  </div>
-                </th>
-              </ng-container>
-            </tr>
-
-          </ng-template>
-        </p-table>
-      </div>
-      <div class="row-input" *ngIf="editableRow.target === 'Ob'"><span class="label-input">Occurence Basis</span>
-        <nz-select
-          style="padding: 10px 0;" #obRes
-          [ngModel]="editableRow.item.occurrenceBasis"
-          nzShowSearch
-          class="a-dropdown-small input-wrapper"
-          nzPlaceHolder="Select Occurence Basis"
-        >
-          <nz-option nzLabel="PerEvent" nzValue="PerEvent"></nz-option>
-          <nz-option nzLabel="PerRisk" nzValue="PerRisk"></nz-option>
-        </nz-select>
-      </div>
-
-      <div style="display: flex; flex-direction: column;"
-           *ngIf="editableRow.target !== 'Peqt' && editableRow.target !== 'Rp'">
-        <span style="" class="subtitle-2 subtitle-override">Override Reason:</span>
-        <textarea>
+        <div *ngIf="editableRow.target !== 'Peqt' && editableRow.target !== 'Rp'"
+             style="display: flex; flex-direction: column;">
+          <span class="subtitle-2 subtitle-override" style="">Override Reason:</span>
+          <textarea>
 
         </textarea>
+        </div>
       </div>
-    </div>
-    <div class="input-group-modal" style="width:100%; padding:0;">
-      <div class="row-list" *ngIf="editableRow.target === 'Peqt'">
-        <div class="popover-menu">
-          <span class="body-2">RL_EUWS_Mv11.2</span>
-          <ul>
-            <li *ngFor="let parent of tree" style="flex-direction: column">
-              <div class="parent-node" [ngStyle]="{'background-color': parent.selected ? '#E9E9E9' : '#FFFFFF'}"
-                   (click)="selectBranch(parent)"
-                   (dblclick)="hideChild(parent)">
-                <i
-                  [ngClass]="{'icon-arrow_right_24px': parent.expanded, 'icon-arrow_drop_down_24px': !parent.expanded}"></i>
-                {{parent?.title}}
-                <div class="popover-menu absolute-menu" *ngIf="parent.selected">
-                  <ul>
-                    <li *ngFor="let innerItem of parent.selectedItems">
-                      <label nz-checkbox style="margin-right: 5px"
-                             (ngModelChange)="changePeqt(parent, innerItem.title, innerItem.selected)"
-                             [(ngModel)]="innerItem.selected">
-                        {{innerItem.title}}
-                      </label>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-              <ul *ngIf="parent.expanded">
-                <li style="padding: 2px 5px 2px 20px;"
-                    [ngStyle]="{'background-color': child.selected ? '#E9E9E9' : '#FFFFFF'}"
-                    (click)="selectBranch(child)" *ngFor="let child of parent.children">
-                  {{child?.title}}
-                  <div class="popover-menu absolute-menu" *ngIf="child.selected">
+      <div class="input-group-modal" style="width:100%; padding:0;">
+        <div *ngIf="editableRow.target === 'Peqt'" class="row-list">
+          <div class="popover-menu">
+            <span class="body-2">RL_EUWS_Mv11.2</span>
+            <ul>
+              <li *ngFor="let parent of tree" style="flex-direction: column">
+                <div (click)="selectBranch(parent)" (dblclick)="hideChild(parent)"
+                     [ngStyle]="{'background-color': parent.selected ? '#E9E9E9' : '#FFFFFF'}"
+                     class="parent-node">
+                  <i
+                    [ngClass]="{'icon-arrow_right_24px': parent.expanded, 'icon-arrow_drop_down_24px': !parent.expanded}"></i>
+                  {{parent?.title}}
+                  <div *ngIf="parent.selected" class="popover-menu absolute-menu">
                     <ul>
-                      <li *ngFor="let innerItem of child.selectedItems">
-                        <label nz-checkbox style="margin-right: 5px"
-                               (ngModelChange)="changeInnerPeqt(parent, child, innerItem.title, innerItem.selected)"
-                               [(ngModel)]="innerItem.selected">
+                      <li *ngFor="let innerItem of parent.selectedItems">
+                        <label (ngModelChange)="changePeqt(parent, innerItem.title, innerItem.selected)"
+                               [(ngModel)]="innerItem.selected"
+                               nz-checkbox
+                               style="margin-right: 5px">
                           {{innerItem.title}}
                         </label>
                       </li>
                     </ul>
                   </div>
-                </li>
-              </ul>
-            </li>
-          </ul>
-        </div>
+                </div>
+                <ul *ngIf="parent.expanded">
+                  <li (click)="selectBranch(child)"
+                      *ngFor="let child of parent.children"
+                      [ngStyle]="{'background-color': child.selected ? '#E9E9E9' : '#FFFFFF'}"
+                      style="padding: 2px 5px 2px 20px;">
+                    {{child?.title}}
+                    <div *ngIf="child.selected" class="popover-menu absolute-menu">
+                      <ul>
+                        <li *ngFor="let innerItem of child.selectedItems">
+                          <label (ngModelChange)="changeInnerPeqt(parent, child, innerItem.title, innerItem.selected)"
+                                 [(ngModel)]="innerItem.selected"
+                                 nz-checkbox
+                                 style="margin-right: 5px">
+                            {{innerItem.title}}
+                          </label>
+                        </li>
+                      </ul>
+                    </div>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
 
+        </div>
       </div>
     </div>
-  </div>
-  <div *ngIf="editableRow.target !== 'Peqt' && editableRow.target !== 'Rp'" class="fp-options-wrapper">
-    <span class="subtitle-2 subtitle-override">Scope Of Editing:</span>
-    <div class="context-wrapper">
-      <nz-radio-group class="default-radio" [(ngModel)]="scopeForChanges">
-        <label nz-radio nzValue="currentSelection"><span class="body-2">Current Analysis</span></label>
-        <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>
-      </nz-radio-group>
+    <div *ngIf="editableRow.target !== 'Peqt' && editableRow.target !== 'Rp'" class="fp-options-wrapper">
+      <span class="subtitle-2 subtitle-override">Scope Of Editing:</span>
+      <div class="context-wrapper">
+        <nz-radio-group [(ngModel)]="scopeForChanges" class="default-radio">
+          <label nz-radio nzValue="currentSelection"><span class="body-2">Current Analysis</span></label>
+          <label nz-radio nzValue="currentRDM"><span class="body-2">All Analysis</span></label>
+        </nz-radio-group>
+      </div>
     </div>
-  </div>
-  <p-footer>
-    <button (click)="singleColEdit = false" class="a-button-text-cancel">CANCEL</button>
-    <button (click)="editSingleColRes(editableRow.target, null, editableRow.item)" class="a-buttons-contained">SAVE
-    </button>
-  </p-footer>
-</p-dialog>
+    <p-footer>
+      <button (click)="singleColEdit = false" class="a-button-text-cancel">CANCEL</button>
+      <button (click)="editSingleColRes(editableRow.target, null, editableRow.item)" class="a-buttons-contained">SAVE
+      </button>
+    </p-footer>
+  </p-dialog>
+</div>

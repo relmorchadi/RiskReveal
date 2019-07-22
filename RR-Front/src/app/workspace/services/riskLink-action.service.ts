@@ -958,12 +958,12 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].riskLink.financialPerspective = {
-          ...draft.content[wsIdentifier].riskLink.financialPerspective,
-          standard: Object.assign({}, ...payload.map(item => ({[item.id]: {...item}}))),
-          analysis: {
-            ...draft.content[wsIdentifier].riskLink.results,
-            data: Object.assign({}, ..._.toArray(draft.content[wsIdentifier].riskLink.results.data).map(item => ({
+      draft.content[wsIdentifier].riskLink.financialPerspective = {
+        ...draft.content[wsIdentifier].riskLink.financialPerspective,
+        standard: Object.assign({}, ...payload.map(item => ({[item.id]: {...item}}))),
+        analysis: {
+          ...draft.content[wsIdentifier].riskLink.results,
+          data: Object.assign({}, ..._.toArray(draft.content[wsIdentifier].riskLink.results.data).map(item => ({
               [item.id]: {
                 ...item,
                 selected: false
@@ -985,8 +985,9 @@ export class RiskLinkStateService {
           of(ctx.patchState(
             produce(
               ctx.getState(), draft => {
-                draft.content[wsIdentifier].riskLink.listEdmRdm = {
-                  ...draft.content[wsIdentifier].riskLink.listEdmRdm,
+                draft.content[wsIdentifier].riskLink = {
+                  ...draft.content[wsIdentifier].riskLink, listEdmRdm: {
+                    ...draft.content[wsIdentifier].riskLink.listEdmRdm,
                   data: Object.assign({},
                     ...ds.content.map(item => ({
                         [item.id]: {
@@ -999,12 +1000,7 @@ export class RiskLinkStateService {
                   searchValue: '',
                   totalNumberElement: ds.totalElements,
                   numberOfElement: ds.size
-                  /*                  display: {displayImport: false, displayTable: false},
-                                    results: null,
-                                    summaries: null,
-                                    analysis: null,
-                                    portfolios: null,
-                                    activeAddBasket: false,*/
+                  }
                 };
               }
             )

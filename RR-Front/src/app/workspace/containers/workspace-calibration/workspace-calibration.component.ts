@@ -20,16 +20,14 @@ import {
   saveAdjModification,
   saveAdjustment
 } from "../../store/actions";
-import {map, switchMap} from 'rxjs/operators';
-import {PltMainState, WorkspaceState} from "../../store/states";
-import {combineLatest, Observable} from 'rxjs';
-import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
+import {WorkspaceState} from "../../store/states";
+import {Observable} from 'rxjs';
+import {NzDropdownService} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {BaseContainer} from "../../../shared/base";
-import {DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
-
+import {DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, UNITS} from "./data";
 
 @Component({
   selector: 'app-workspace-calibration',
@@ -47,7 +45,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   frozenColumns: any[] = [];
   frozenWidth: any = '463px';
   headerWidth: any = '403px';
-  genericWidth: any = ['409px', '33px', '157px'];
   selectedAdjustment: any;
   filterData: any;
   shownDropDown: any;
@@ -60,19 +57,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   EPMetricsTable = false;
   EPMS = EPMS;
   selectedEPM = "OEP - Delta % & Actual Basis";
-  inProgressCheckbox: boolean = true;
-  checkedCheckbox: boolean = true;
-  lockedCheckbox: boolean = true;
-  failedCheckbox: boolean = true;
-  requiresRegenerationCheckbox: boolean = true;
   collapsedTags: boolean = false;
   filterInput: string = "";
   addRemoveModal: boolean = false;
   isVisible = false;
   singleValue: any;
   global: any;
-  dragPlaceHolderId: any;
-  dragPlaceHolderCol: any;
   categorySelectedFromAdjustement: any;
   modalTitle: any;
   addAdjustement: any;
@@ -115,12 +105,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   someItemsAreSelected: boolean;
   selectAll: boolean;
   drawerIndex: any;
-  data$;
-  deletedPlts$;
   deletedPlts: any;
   loading: boolean;
   selectedUserTags: any;
-  systemTagsMapping = SYSTEM_TAGS_MAPPING;
   selectedPlt: any;
   addTagModalIndex: any;
   addTagModal: boolean;
@@ -132,9 +119,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   showDeleted: boolean;
   selectedItemForMenu: string;
   oldSelectedTags: any;
-  private dropdown: NzDropdownContextComponent;
-  private Subscriptions: any[] = [];
-  private lastClick: string;
   tagForMenu: any;
   listOfDeletedPltsData: any;
   listOfDeletedPltsCache: any;
@@ -258,151 +242,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
   ngOnInit() {
     this.initDataColumns();
-    this.Subscriptions.push(
-      this.route$.params.pipe(
-        switchMap(({wsId, year}) => {
-          this.workspaceId = wsId;
-          this.uwy = year;
-          this.loading = true;
-          this.data$ = this.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
-          this.deletedPlts$ = this.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
-          this.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
-            params: {
-              workspaceId: wsId, uwy: year
-            }
-          }));
-          return combineLatest(
-            this.data$,
-            this.deletedPlts$
-          )
-        }),
-        this.unsubscribeOnDestroy
-      ).subscribe(([data, deletedData]: any) => {
-        let d1 = [];
-        let dd1 = [];
-        let d2 = [];
-        let dd2 = [];
-        this.loading = false;
-        this.systemTagsCount = {};
-        if (data) {
-          if (_.keys(this.systemTagsCount).length == 0) {
-            _.forEach(data, (v, k) => {
-              //Init Tags Counters
-
-              //Grouped Sys Tags
-              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                const tag = _.toString(v[section]);
-                if (tag) {
-                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
-                }
-              });
-
-              //NONE grouped Sys Tags
-              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
-                this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              })
-
-            })
-          }
-
-          _.forEach(data, (v, k) => {
-            d1.push({...v, pltId: k});
-            d2.push(k);
-
-            /*if (v.visible) {*/
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              const tag = _.toString(v[section]);
-              if (tag) {
-                if (this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0) {
-                  const {
-                    count,
-                    max
-                  } = this.systemTagsCount[sectionName][tag];
-
-                  this.systemTagsCount[sectionName][tag] = {
-                    ...this.systemTagsCount[sectionName][tag],
-                    count: v.visible ? count + 1 : count,
-                    max: max + 1
-                  };
-                }
-              }
-            })
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              const tag = v[section];
-              if (this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0) {
-                const {
-                  max,
-                  count
-                } = this.systemTagsCount[sectionName][section];
-                this.systemTagsCount[sectionName][section] = {
-                  ...this.systemTagsCount[sectionName][section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-              if (this.systemTagsCount[sectionName]['non-' + section] || this.systemTagsCount[sectionName]['non-' + section].count == 0) {
-                const {
-                  count,
-                  max
-                } = this.systemTagsCount[sectionName]['non-' + section];
-                this.systemTagsCount[sectionName]['non-' + section] = {
-                  ...this.systemTagsCount[sectionName]['non-' + section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-            })
-            /*}*/
-
-          });
-
-          this.listOfPlts = d2;
-          this.listOfPltsData = this.listOfPltsCache = d1;
-          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
-          _.forEach(data, (v, k) => {
-            if (v.opened) {
-              this.sumnaryPltDetailsPltId = k;
-            }
-          });
-        }
-
-        if (deletedData) {
-          _.forEach(deletedData, (v, k) => {
-            dd1.push({...v, pltId: k});
-            dd2.push(k);
-          });
-
-          this.listOfDeletedPlts = dd2;
-          this.listOfDeletedPltsData = this.listOfDeletedPltsCache = dd1;
-          this.selectedListOfDeletedPlts = _.filter(dd2, k => deletedData[k].selected);
-        }
-
-        this.selectAll =
-          !this.showDeleted
-            ?
-            (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
-            :
-            (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
-
-        this.someItemsAreSelected =
-          !this.showDeleted ?
-            this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
-            :
-            this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
-        this.detectChanges();
-      }),
-      this.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
-        this.projects = projects;
-        this.detectChanges();
-      }),
-      this.getAttr('loading').subscribe(l => this.loading = l),
-    );
+    _.forEach(this.listOfPltsData, (value, key) => {
+      this.adjutmentApplication[key] = [];
+    })
   }
   patchState(state: any): void {
     const path = state.data.calibration;
@@ -454,18 +296,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       }
     }
   }
-  getAttr(path) {
-    return this.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
-  }
-  sort(sort: { key: string, value: string }): void {
-    if (sort.value) {
-      this.sortData = _.merge({}, this.sortData, {
-        [sort.key]: sort.value === 'descend' ? 'desc' : 'asc'
-      });
-    } else {
-      this.sortData = _.omit(this.sortData, [sort.key]);
-    }
-  }
   filter(key: string, value?: any) {
     if (key == 'project') {
       if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
@@ -511,98 +341,25 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.projects = _.map(this.projects, p => ({...p, selected: false}))
     this.showDeleted = false;
   }
-  close(e: NzMenuItemDirective): void {
-    this.dropdown.close();
-  }
   ngOnDestroy(): void {
     this.destroy();
   }
-  checkAll($event) {
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-        _.range(!this.showDeleted ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
-      )
-    );
-  }
-  toggleSelectPlts(plts: any) {
-    this.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration({
-      wsIdentifier: this.workspaceId + '-' + this.uwy,
-      plts,
-      forDeleted: this.showDeleted
-    }));
-  }
-  selectSinglePLT(pltId: number, $event?: boolean) {
-    this.toggleSelectPlts({
-      [pltId]: {
-        selected: $event
-      }
-    });
-  }
-  handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(!this.showDeleted ? this.selectedListOfPlts : this.listOfDeletedPlts, el => el == pltId) >= 0;
-    if ($event.ctrlKey || $event.shiftKey) {
-      this.lastClick = "withKey";
-      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
-    } else {
-      this.lastSelectedId = i;
-      this.toggleSelectPlts(
-        _.zipObject(
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => ({selected: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
-        )
-      );
-      this.lastClick = null;
-    }
-  }
-  onSort($event: any) {
-    const {
-    } = $event;
 
-  }
-  checkBoxsort() {
-    this.activeCheckboxSort = !this.activeCheckboxSort;
-    if (this.activeCheckboxSort) {
-      this.listOfPltsData = _.sortBy(this.listOfPltsData, [(o) => {
-        return !o.selected;
-      }]);
-    } else {
-      this.listOfPltsData = this.listOfPltsCache;
-    }
-  }
-  selectSystemTag(section, tag) {
-    _.forEach(this.systemTagsCount, (s, sKey) => {
-      _.forEach(s, (t, tKey) => {
-        if (tag == tKey && section == sKey) {
-          this.systemTagsCount[sKey][tKey] = {...t, selected: !t.selected}
-        } else {
-          this.systemTagsCount[sKey][tKey] = {...t, selected: false}
-        }
-      })
-    })
-  }
-  sortChange(field: any, sortCol: any) {
-    if (!sortCol) {
-      this.sortData[field] = 'asc';
-    } else if (sortCol === 'asc') {
-      this.sortData[field] = 'desc';
-    } else if (sortCol === 'desc') {
-      this.sortData[field] = null
-    }
+  toggleSelectPlts(event) {
+    this.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration(event));
   }
   extend() {
     this.extended = !this.extended;
     if (this.extended) {
       this.headerWidth = '1013px'
       this.frozenWidth = '0px'
-      this.genericWidth = ['1019px', '33px', '157px'];
     } else {
       this.headerWidth = '403px';
       this.tableType == 'adjustments' ? this.frozenWidth = '463px' : this.frozenWidth = '403px';
-      this.genericWidth = ['409px', '33px', '157px '];
     }
     this.adjustExention();
     this.initDataColumns();
+
     this.dispatch(new extendPltSection(this.extended));
   }
   adjustExention() {
@@ -946,39 +703,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ('Restore' != e.label) : !_.find(t, el => el == e.label))
   }
 
-  unCheckAll() {
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
-        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({selected: false}))
-      )
-    );
-  }
-
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({selected: i <= max && i >= min})),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
-  }
 
   setWsHeaderSelect($event: any) {
     this.wsHeaderSelected = $event;
@@ -1000,21 +724,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }
   }
 
-  statusFilterActive(status) {
-    switch (status) {
-      case 'in progress':
-        return this.inProgressCheckbox;
-      case 'valid':
-        return this.checkedCheckbox;
-      case 'locked':
-        return this.lockedCheckbox;
-      case 'failed':
-        return this.failedCheckbox;
-      case 'requires regeneration':
-        return this.requiresRegenerationCheckbox
-    }
-  }
-
   onLeaveAdjustment(id) {
     this.shownDropDown = this.dropdownVisible ? id : null;
 
@@ -1029,9 +738,5 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   changeEPM(epm) {
     this.selectedEPM = epm;
-  }
-
-  trackby(row, index) {
-    return row.pltId;
   }
 }
