@@ -1,26 +1,10 @@
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DataTables} from '../data';
-import {
-  ApplyFinancialPerspectiveAction,
-  DeleteFromBasketAction,
-  LoadAnalysisForLinkingAction,
-  LoadFinancialPerspectiveAction,
-  LoadPortfolioForLinkingAction,
-  PatchResultsAction,
-  PatchRiskLinkCollapseAction,
-  PatchTargetFPAction,
-  RemoveFinancialPerspectiveAction,
-  SaveFinancialPerspectiveAction,
-  ToggleAnalysisForLinkingAction,
-  ToggleRiskLinkFPAnalysisAction,
-  ToggleRiskLinkFPStandardAction,
-  ToggleRiskLinkResultAction,
-  ToggleRiskLinkSummaryAction
-} from '../../../store/actions';
+import * as fromWs from '../../../store/actions';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Select, Store} from '@ngxs/store';
 import * as _ from 'lodash';
-import {RiskLinkState} from '../../../store/states';
+import {RiskLinkState, WorkspaceState} from '../../../store/states';
 import {combineLatest, Observable} from 'rxjs';
 import {RiskLinkModel} from '../../../model/risk_link.model';
 
@@ -91,23 +75,25 @@ export class RiskLinkResSummaryComponent implements OnInit {
   tree = [];
   regionPeril;
 
-  @Select(RiskLinkState)
-  state$: Observable<RiskLinkModel>;
-  state: RiskLinkModel = null;
+  @Select(WorkspaceState.getRiskLinkState) state$;
+  state: any;
 
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     combineLatest(
-      this.store.select(RiskLinkState.getFinancialPerspective)
+      this.store.select(WorkspaceState.getFinancialPerspective)
     ).subscribe(
       ([fp]: any) => {
         this.workingFSC = fp;
       }
     );
     this.serviceSubscription = [
-      this.state$.subscribe(value => this.state = _.merge({}, value)),
+      this.state$.subscribe(value => {
+        this.state = _.merge({}, value);
+        console.log(this.state);
+      })
     ];
     this.scrollableColsSummary = DataTables.scrollableColsSummary;
     this.frozenColsSummary = DataTables.frozenColsSummary;
@@ -168,28 +154,39 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   getLinkingPortfolio() {
-    if (this.state.linking.portfolio === null) {
+    if (this.state.linking === undefined) {
       return null;
     } else {
-      return _.toArray(this.state.linking.portfolio.data);
+      if (this.state.linking.portfolio === null) {
+        return null;
+      } else {
+        return _.toArray(this.state.linking.portfolio.data);
+      }
     }
   }
 
   getLinkingAnalysis() {
-    if (this.state.linking.analysis === null) {
+    if (this.state.linking === undefined) {
       return null;
     } else {
-      return _.toArray(this.state.linking.analysis.data);
+      if (this.state.linking.analysis === null) {
+        return null;
+      } else {
+        return _.toArray(this.state.linking.analysis.data);
+      }
     }
   }
 
   getSelectedRDM() {
-    return _.filter(_.toArray(this.state.linking.rdm), dt => dt.selected);
+    if (this.state.linking === undefined) {
+      return null;
+    } else {
+      return _.filter(_.toArray(this.state.linking.rdm), dt => dt.selected);
+    }
   }
 
   selectLinkedRDM(item) {
-    console.log(item);
-    this.store.dispatch(new LoadAnalysisForLinkingAction(item));
+    this.store.dispatch(new fromWs.LoadAnalysisForLinkingAction(item));
   }
 
   resetToMain() {
@@ -200,17 +197,17 @@ export class RiskLinkResSummaryComponent implements OnInit {
     const item = _.filter(this.dataList(this.state.linking.edm), dt => dt.name === this.selectedEDM)[0];
     this.detectChanges();
     console.log(item, this.selectedEDM);
-    this.store.dispatch(new LoadPortfolioForLinkingAction(item));
+    this.store.dispatch(new fromWs.LoadPortfolioForLinkingAction(item));
   }
 
   toggleForLinkingRDM(items) {
-    this.store.dispatch(new ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
+    this.store.dispatch(new fromWs.ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
   }
 
   editSingleColRes(target, $event = null, row = null) {
     if (target === 'Rp') {
       this.singleColEdit = false;
-      this.store.dispatch(new PatchResultsAction({
+      this.store.dispatch(new fromWs.PatchResultsAction({
         id: row.id,
         target: 'regionPeril',
         value: this.dropDownFP.value,
@@ -218,7 +215,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }));
     } else if (target === 'Ob') {
       this.singleColEdit = false;
-      this.store.dispatch(new PatchResultsAction({
+      this.store.dispatch(new fromWs.PatchResultsAction({
         id: row.id,
         target: 'occurrenceBasis',
         value: this.dropDownFPOb.value,
@@ -226,10 +223,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }));
     } else if (target === 'TC') {
       if ($event !== null && row !== null) {
-        this.store.dispatch(new PatchResultsAction({id: row.id, target: 'targetCurrency', value: $event}));
+        this.store.dispatch(new fromWs.PatchResultsAction({id: row.id, target: 'targetCurrency', value: $event}));
       }
     } else if (target === 'UM') {
-      this.store.dispatch(new PatchResultsAction({id: row.id, target: 'unitMultiplier', value: $event}));
+      this.store.dispatch(new fromWs.PatchResultsAction({id: row.id, target: 'unitMultiplier', value: $event}));
     } else if (target === 'peqt') {
 
     }
@@ -237,90 +234,90 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   checkRow(event, rowData, target) {
     if (target === 'R') {
-      this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: event, item: rowData}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'S') {
-      this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: event, item: rowData}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpS') {
-      this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpA') {
-      this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: event, item: rowData}));
     }
   }
 
   selectRows(row: any, index: number, target) {
     if (target === 'R') {
       if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexResult = index;
       } else if ((window as any).event.shiftKey) {
         event.preventDefault();
         if (this.lastSelectedIndexResult || this.lastSelectedIndexResult === 0) {
           this.selectSection(Math.min(index, this.lastSelectedIndexResult), Math.max(index, this.lastSelectedIndexResult), 'R');
         } else {
-          this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
+          this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
           this.lastSelectedIndexResult = index;
         }
       } else {
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'unselectAll'}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexResult = index;
       }
     } else if (target === 'S') {
       if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexSummary = index;
       } else if ((window as any).event.shiftKey) {
         event.preventDefault();
         if (this.lastSelectedIndexSummary || this.lastSelectedIndexSummary === 0) {
           this.selectSection(Math.min(index, this.lastSelectedIndexSummary), Math.max(index, this.lastSelectedIndexSummary), 'S');
         } else {
-          this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
+          this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
           this.lastSelectedIndexSummary = index;
         }
       } else {
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexSummary = index;
       }
     } else if (target === 'fpS') {
       if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexFPstandard = index;
       } else if ((window as any).event.shiftKey) {
         event.preventDefault();
         if (this.lastSelectedIndexFPstandard || this.lastSelectedIndexFPstandard === 0) {
           this.selectSection(Math.min(index, this.lastSelectedIndexFPstandard), Math.max(index, this.lastSelectedIndexFPstandard), 'fpS');
         } else {
-          this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
+          this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
           this.lastSelectedIndexFPstandard = index;
         }
       } else {
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexFPstandard = index;
       }
     } else if (target === 'fpA') {
       if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexFPAnalysis = index;
       } else if ((window as any).event.shiftKey) {
         event.preventDefault();
         if (this.lastSelectedIndexFPAnalysis || this.lastSelectedIndexFPAnalysis === 0) {
           this.selectSection(Math.min(index, this.lastSelectedIndexFPAnalysis), Math.max(index, this.lastSelectedIndexFPAnalysis), 'fpA');
         } else {
-          this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
+          this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
           this.lastSelectedIndexFPAnalysis = index;
         }
       } else {
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
         this.lastSelectedIndexFPAnalysis = index;
       }
     }
   }
 
   changeCollapse(value) {
-    this.store.dispatch(new PatchRiskLinkCollapseAction({key: value}));
+    this.store.dispatch(new fromWs.PatchRiskLinkCollapseAction({key: value}));
   }
 
   dataList(data, filter = null) {
@@ -333,18 +330,18 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   deleteFromBasket(id, target) {
-    this.store.dispatch(new DeleteFromBasketAction({id: id, scope: target}));
+    this.store.dispatch(new fromWs.DeleteFromBasketAction({id: id, scope: target}));
   }
 
   openFinancialP() {
     this.financialP = true;
-    this.store.dispatch(new LoadFinancialPerspectiveAction(this.financialStandardContent));
+    this.store.dispatch(new fromWs.LoadFinancialPerspectiveAction(this.financialStandardContent));
     this.lastSelectedIndexFPstandard = null;
     this.lastSelectedIndexFPAnalysis = null;
   }
 
   changeTargetFP(event) {
-    this.store.dispatch(new PatchTargetFPAction(event));
+    this.store.dispatch(new fromWs.PatchTargetFPAction(event));
   }
 
   changeFinancialPTarget(target) {
@@ -356,21 +353,21 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   replaceFinancialP() {
-    this.store.dispatch(new ApplyFinancialPerspectiveAction('replace'));
+    this.store.dispatch(new fromWs.ApplyFinancialPerspectiveAction('replace'));
   }
 
   saveFinancialP() {
-    this.store.dispatch(new SaveFinancialPerspectiveAction());
+    this.store.dispatch(new fromWs.SaveFinancialPerspectiveAction());
     this.financialP = false;
   }
 
   addFinancialP() {
-    this.store.dispatch(new ApplyFinancialPerspectiveAction('add'));
+    this.store.dispatch(new fromWs.ApplyFinancialPerspectiveAction('add'));
   }
 
   removeFP(item, fp) {
     console.log(item, fp);
-    this.store.dispatch(new RemoveFinancialPerspectiveAction({item, fp}));
+    this.store.dispatch(new fromWs.RemoveFinancialPerspectiveAction({item, fp}));
   }
 
   updateRow(item, target) {
@@ -477,16 +474,16 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   private selectSection(from, to, target) {
     if (target === 'R') {
-      this.store.dispatch(new ToggleRiskLinkResultAction({action: 'unselectAll'}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkResultAction({
+        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({
           action: 'selectOne',
           value: true,
           item: this.dataList(this.state.results.data)[from]
         }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkResultAction({
+          this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({
             action: 'selectOne',
             value: true,
             item: this.dataList(this.state.results.data)[i]
@@ -494,16 +491,16 @@ export class RiskLinkResSummaryComponent implements OnInit {
         }
       }
     } else if (target === 'S') {
-      this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({
+        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({
           action: 'selectOne',
           value: true,
           item: this.dataList(this.state.summaries.data)[from]
         }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkSummaryAction({
+          this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({
             action: 'selectOne',
             value: true,
             item: this.dataList(this.state.summaries.data)[i]
@@ -511,16 +508,16 @@ export class RiskLinkResSummaryComponent implements OnInit {
         }
       }
     } else if (target === 'fpS') {
-      this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({
           action: 'selectOne',
           value: true,
           item: this.dataList(this.workingFSC.standard)[from]
         }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkFPStandardAction({
+          this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({
             action: 'selectOne',
             value: true,
             item: this.dataList(this.workingFSC.standard)[i]
@@ -528,16 +525,16 @@ export class RiskLinkResSummaryComponent implements OnInit {
         }
       }
     } else if (target === 'fpA') {
-      this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
       if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({
           action: 'selectOne',
           value: true,
           item: this.dataList(this.workingFSC.analysis.data)[from]
         }));
       } else {
         for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({
+          this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({
             action: 'selectOne',
             value: true,
             item: this.dataList(this.workingFSC.analysis.data)[i]

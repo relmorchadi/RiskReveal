@@ -1,7 +1,4 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {PatchWorkspace} from '../../../core/store/actions';
-import * as _ from 'lodash';
-import * as moment from 'moment';
 import {Store} from '@ngxs/store';
 
 @Component({

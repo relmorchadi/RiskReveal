@@ -561,7 +561,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   cloneTo() {
     this.dispatch(new fromWorkspaceStore.setCloneConfig({
       cloneConfig: {
-        from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: this.getTableInputKey('selectedListOfPlts')}
+        from: 'pltBrowser', payload: { wsId: this.workspaceId, uwYear: this.uwy,plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId)}
       },
       wsIdentifier: this.workspaceId+"-"+this.uwy
     }));

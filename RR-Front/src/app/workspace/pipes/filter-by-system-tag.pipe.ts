@@ -7,7 +7,6 @@ export class FilterBySystemTagPipe implements PipeTransform {
 
   transform(array:Array<any>, badge): any {
 
-    console.log(array)
 
     return array
   }

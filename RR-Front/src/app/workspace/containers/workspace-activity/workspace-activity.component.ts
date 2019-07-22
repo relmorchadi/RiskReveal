@@ -1,16 +1,19 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
+import {StateSubscriber} from '../../model/state-subscriber';
+import {UpdateWsRouting} from "../../store/actions";
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-activity',
   templateUrl: './workspace-activity.component.html',
   styleUrls: ['./workspace-activity.component.scss']
 })
-export class WorkspaceActivityComponent extends BaseContainer implements OnInit {
+export class WorkspaceActivityComponent extends BaseContainer implements OnInit, StateSubscriber {
 
   wsIdentifier;
   workspaceInfo: any;
@@ -149,6 +152,15 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit 
       new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
     ]);
   }
+
+  navigateFromHyperLink({route}){
+    const {wsId, uwYear}= this.workspaceInfo;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
+  }
+
 
   ngOnDestroy(): void {
     this.destroy();

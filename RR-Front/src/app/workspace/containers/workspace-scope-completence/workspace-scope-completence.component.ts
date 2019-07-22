@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {PltMainState, WorkspaceState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
@@ -44,7 +44,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       .subscribe(([dtt, {wsId, year}]: any) => {
         this.workspaceUrl = {wsId, uwYear: year};
         this.workspace = _.find(dtt, dt => dt.workSpaceId == wsId && dt.uwYear == year);
-        console.log(this.workspace);
         this.index = _.findIndex(dtt, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
   }
@@ -78,9 +77,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   }
 
   perilZone(peril) {
-    if (peril === 'YY') { return {peril: 'EQ', color: '#E70010'}; }
-    if (peril === 'WS') { return {peril: 'WS', color: '#7BBE31'}; }
-    if (peril === 'FL') { return {peril: 'FL', color: '#008694'}; }
+    if (peril === 'YY') {
+      return {peril: 'EQ', color: '#E70010'};
+    }
+    if (peril === 'WS') {
+      return {peril: 'WS', color: '#7BBE31'};
+    }
+    if (peril === 'FL') {
+      return {peril: 'FL', color: '#008694'};
+    }
   }
 
   ngOnDestroy(): void {

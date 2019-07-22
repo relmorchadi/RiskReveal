@@ -33,7 +33,6 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   collapse($event) {
     $event.stopPropagation();
     $event.preventDefault();
-    console.log('Collapse/Expand');
     this.toggleCollapseEmitter.emit();
   }
 

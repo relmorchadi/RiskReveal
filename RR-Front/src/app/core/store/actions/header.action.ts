@@ -61,3 +61,30 @@ export class UnPinWs {
   }
 }
 
+export class DeleteTask {
+  static readonly type = '[Tasks PopIn] Delete Task';
+
+  constructor(public payload: { id }) {
+  }
+}
+
+export class PauseTask {
+  static readonly type = '[Tasks PopIn] Pause Task';
+
+  constructor(public payload: { id }) {
+  }
+}
+
+export class ResumeTask {
+  static readonly type = '[Tasks PopIn] Resume Task';
+
+  constructor(public payload: { id }) {
+  }
+}
+
+export class DeleteNotification {
+  static readonly type = '[Notification PopIn] Delete Notifications';
+
+  constructor(public payload: { target }) {
+  }
+}

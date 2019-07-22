@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {PltMainState, WorkspaceState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
@@ -44,7 +44,6 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
       .subscribe(([data, {wsId, year}]: any) => {
         this.workspaceUrl = {wsId, uwYear: year};
         this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
-        console.log(this.workspace);
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
   }

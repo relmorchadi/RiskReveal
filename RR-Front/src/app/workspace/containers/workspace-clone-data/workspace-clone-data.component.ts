@@ -383,8 +383,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       plts: this.from.plts
     };
     this.multiSteps= true;
-    this.searchWorkSpaceModal= true;
     this.setCloneConfig('currentSourceOfItems', 'from');
+    this.searchWorkSpaceModal= true;
   }
 
   reset() {

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
 import {Router} from '@angular/router';
@@ -23,9 +23,8 @@ export class WorkspaceResultsComponent extends BaseContainer implements OnInit, 
   ngOnInit() {
   }
 
-  patchState({wsIdentifier, dataTable}: any): void {
-    this.workspaceInfo = dataTable;
-    console.log('this is ws data', dataTable);
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
     this.wsIdentifier = wsIdentifier;
   }
 

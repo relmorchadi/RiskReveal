@@ -59,7 +59,6 @@ export class SearchService {
   }
 
   set globalSearchItem(value: string) {
-    console.log(this._globalSearchItem);
     this._globalSearchItem = value;
     this.globalSearch$.next();
   }

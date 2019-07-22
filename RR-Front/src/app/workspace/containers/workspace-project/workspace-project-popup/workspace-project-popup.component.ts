@@ -445,6 +445,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.d= this.actions$.pipe(
       ofActionDispatched(fromWorkspaceStore.loadAllPltsSuccess),
       mergeMap( () => {
+        console.log(this.stepConfig, this.getInputs('listOfPltsData'));
         this.toggleSelectPlts(_.zipObject(
           _.map(_.map(this.stepConfig.plts, id => _.find(this.getInputs('listOfPltsData'), plt => id == plt.pltId)), plt => plt.pltId),
           _.map(this.stepConfig.plts, plt =>   ({type: true }))
@@ -776,8 +777,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();
-    }else {
-      this._loadData();
     }
 
   }

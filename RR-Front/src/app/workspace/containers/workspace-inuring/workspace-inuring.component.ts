@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {combineLatest} from 'rxjs';
@@ -43,14 +43,12 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
       .subscribe(([data, {wsId, year}]: any) => {
         this.workspaceUrl = {wsId, uwYear: year};
         this.workspace = _.find(data, dt => dt.workSpaceId == wsId && dt.uwYear == year);
-        console.log(this.workspace);
         this.index = _.findIndex(data, (dt: any) => dt.workSpaceId == wsId && dt.uwYear == year);
       });
   }
 
   patchState({wsIdentifier, data}: any): void {
     this.workspaceInfo = data;
-    console.log('this is ws data', data);
     this.wsIdentifier = wsIdentifier;
   }
 

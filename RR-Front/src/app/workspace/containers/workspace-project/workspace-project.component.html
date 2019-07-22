@@ -2,7 +2,9 @@
   <div class="a-app-wrapper">
     <div class="a-app-header">
       <div class="title-project-wrapper">
-        <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Projects'" [RoutingConfig]="workspaceUrl"></app-hyper-links>
+        <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Projects'"
+          (navigate)="navigateFromHyperLink($event)"
+        ></app-hyper-links>
         <div style="display: flex;">
           <h4>Projects</h4>
           <nz-dropdown [nzTrigger]="'hover'">

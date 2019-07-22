@@ -253,7 +253,6 @@ export class WorkspaceMainState implements NgxsOnInit {
       openedTabs
     } = ctx.getState()
 
-    console.log(ws);
 
     let attrs = {};
 
@@ -262,7 +261,6 @@ export class WorkspaceMainState implements NgxsOnInit {
     })
 
     const index = k ? k : _.findIndex(openedTabs.data, wS => wS.workSpaceId == ws.workSpaceId && wS.uwYear == ws.uwYear);
-    console.log(index);
 
     ctx.patchState({
       openedTabs: {

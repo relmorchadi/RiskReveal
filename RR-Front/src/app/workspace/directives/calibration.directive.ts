@@ -50,7 +50,6 @@ export class CalibrationDirective implements OnInit {
   onBlur(value) {
     this.elementRef.nativeElement.style.display = "inline-block";
     this.elementRef.nativeElement.style.height = "20px";
-    console.log(this.elementRef.nativeElement.children[0].value);
     this.elementRef.nativeElement.children[0].style.visibility = "visible";
     this.elementRef.nativeElement.children[1].style.visibility = "visible";
   }

@@ -1,6 +1,6 @@
 const tasks = [
   {
-    id: 1,
+    id: 0,
     selected: false,
     progress: 75,
     cedantName: 'SCOR SE',
@@ -54,7 +54,7 @@ const tasks = [
       }]
   },
   {
-    id: 2,
+    id: 1,
     selected: false,
     progress: 50,
     cedantName: 'NFU MUTUAL',
@@ -90,7 +90,7 @@ const tasks = [
     }]
   },
   {
-    id: 3,
+    id: 2,
     selected: false,
     progress: 25,
     cedantName: 'NFU MUTUAL',
@@ -135,7 +135,7 @@ const tasks = [
       }]
   },
   {
-    id: 4,
+    id: 3,
     selected: false,
     progress: 0,
     cedantName: 'CALIFORNIA EQ AUTHORITY',
@@ -189,7 +189,7 @@ const tasks = [
       }]
   },
   {
-    id: 5,
+    id: 4,
     selected: false,
     progress: 0,
     cedantName: 'SCOR SE',
@@ -234,7 +234,7 @@ const tasks = [
       }]
   },
   {
-    id: 6,
+    id: 5,
     selected: false,
     progress: 30,
     cedantName: 'SCOR SE',
@@ -279,7 +279,7 @@ const tasks = [
       }]
   },
   {
-    id: 7,
+    id: 6,
     selected: false,
     progress: 40,
     cedantName: 'SCOR SE',
@@ -324,7 +324,7 @@ const tasks = [
       }]
   },
   {
-    id: 8,
+    id: 7,
     selected: false,
     progress: 30,
     cedantName: 'SCOR SE',
@@ -369,7 +369,7 @@ const tasks = [
       }]
   },
   {
-    id: 9,
+    id: 8,
     selected: false,
     progress: 40,
     cedantName: 'SCOR SE',

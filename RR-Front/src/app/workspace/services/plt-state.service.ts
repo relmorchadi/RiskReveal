@@ -4,7 +4,7 @@ import * as fromPlt from '../store/actions/plt_main.actions';
 import {catchError, mergeMap} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {PltApi} from './plt.api';
-import { WorkspaceModel} from '../model';
+import {WorkspaceModel} from '../model';
 import {of} from 'rxjs';
 import * as moment from 'moment';
 import produce from "immer";
@@ -16,6 +16,8 @@ export class PltStateService {
 
   constructor(private pltApi: PltApi) {
   }
+
+  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
   LoadAllPlts(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {
@@ -46,21 +48,6 @@ export class PltStateService {
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
       );
   }
-
-
-  private _appendPltMetaData(plt, deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {}) {
-    return ({
-      ...plt, selected: false,
-      visible: true,
-      tagFilterActive: false,
-      opened: false,
-      deleted: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deleted : undefined,
-      deletedBy: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deletedBy : undefined,
-      deletedAt: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deletedAt : undefined,
-    });
-  }
-
-  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
   setCloneConfig(ctx: StateContext<WorkspaceModel>, payload: any
   ) {
@@ -234,7 +221,6 @@ export class PltStateService {
       draft.content[wsIdentifier].pltManager.userTags = uesrTagsSummary;
     }));
   }
-
 
   /** @ToRefactor **/
   assignPltsToTag(ctx: StateContext<WorkspaceModel>, payload: any) {
@@ -428,5 +414,17 @@ export class PltStateService {
     }));
 
     localStorage.setItem('deletedPlts', JSON.stringify(ls));
+  }
+
+  private _appendPltMetaData(plt, deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {}) {
+    return ({
+      ...plt, selected: false,
+      visible: true,
+      tagFilterActive: false,
+      opened: false,
+      deleted: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deleted : undefined,
+      deletedBy: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deletedBy : undefined,
+      deletedAt: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deletedAt : undefined,
+    });
   }
 }

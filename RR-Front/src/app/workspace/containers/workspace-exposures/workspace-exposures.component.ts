@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {BaseContainer} from '../../../shared/base';
 import {Store} from '@ngxs/store';
 import {Router} from '@angular/router';
@@ -11,7 +11,7 @@ import * as fromWs from "../../store/actions";
   templateUrl: './workspace-exposures.component.html',
   styleUrls: ['./workspace-exposures.component.scss']
 })
-export class WorkspaceExposuresComponent extends BaseContainer implements OnInit, StateSubscriber  {
+export class WorkspaceExposuresComponent extends BaseContainer implements OnInit, StateSubscriber {
   wsIdentifier;
   workspaceInfo: any;
 

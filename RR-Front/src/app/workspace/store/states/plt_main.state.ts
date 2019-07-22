@@ -1,4 +1,4 @@
-import {Action, createSelector, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
+import {createSelector, Selector, State} from '@ngxs/store';
 import * as _ from 'lodash';
 import {pltMainModel} from "../../model";
 import {PltApi} from '../../services/plt.api';

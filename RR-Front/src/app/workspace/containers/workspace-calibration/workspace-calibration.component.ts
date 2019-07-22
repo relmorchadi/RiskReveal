@@ -3,6 +3,7 @@ import {
   ChangeDetectorRef,
   Component,
   ElementRef,
+  EventEmitter,
   NgZone,
   OnDestroy,
   OnInit,
@@ -25,6 +26,7 @@ import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
+import {StateSubscriber} from "../../model/state-subscriber";
 
 
 @Component({
@@ -33,7 +35,7 @@ import {ActivatedRoute, Router} from "@angular/router";
   styleUrls: ['./workspace-calibration.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
+export class WorkspaceCalibrationComponent implements OnInit, OnDestroy, StateSubscriber {
   searchAddress: string;
   listOfPlts: any[];
   listOfPltsData: any[];
@@ -846,7 +848,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
-        console.log(this.selectedPlt)
         this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
@@ -861,7 +862,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     {
       label: 'Clone To',
       command: (event) => {
-        console.log('cloning')
         this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
       }
     },
@@ -877,7 +877,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
         this.modalSelect = _.intersectionBy(...d, 'tagId');
         this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-        console.log(this.oldSelectedTags, this.modalSelect)
       }
     },
     {
@@ -958,40 +957,31 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.extend();
-    this.leftNavbarIsCollapsed$.subscribe(data => {
-      this.leftNavbarIsCollapsed = data;
-    });
-    this.adjutmentApplication$.subscribe(data => this.adjutmentApplication = _.merge({}, data));
-    this.state$.subscribe((state: any) => {
-      this.allAdjsArray = _.merge([], state.allAdjsArray);
-      this.AdjustementType = _.merge([], state.adjustementType);
-      this.adjsArray = _.merge([], state.adjustments);
-    });
     this.Subscriptions.push(
       this.route$.params.pipe(
         switchMap(({wsId, year}) => {
           this.workspaceId = wsId;
           this.uwy = year;
-          this.loading= true;
+          this.loading = true;
           this.data$ = this.store$.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
           this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
           this.store$.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
             params: {
               workspaceId: wsId, uwy: year
-            }}));
+            }
+          }));
           return combineLatest(
             this.data$,
             this.deletedPlts$
           )
         })
-      ).subscribe( ([data, deletedData]: any) => {
+      ).subscribe(([data, deletedData]: any) => {
         let d1 = [];
         let dd1 = [];
         let d2 = [];
         let dd2 = [];
         this.loading = false;
         this.systemTagsCount = {};
-        console.log(data);
         if (data) {
           if (_.keys(this.systemTagsCount).length == 0) {
             _.forEach(data, (v, k) => {
@@ -1029,7 +1019,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
                   const {
                     count,
                     max
-                  } =this.systemTagsCount[sectionName][tag];
+                  } = this.systemTagsCount[sectionName][tag];
 
                   this.systemTagsCount[sectionName][tag] = {
                     ...this.systemTagsCount[sectionName][tag],
@@ -1110,11 +1100,18 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         this.detectChanges();
       }),
       this.getAttr('loading').subscribe(l => this.loading = l),
-      this.userTags$.subscribe(userTags => {
-        this.userTags = userTags || {};
-        this.detectChanges();
-      })
     );
+  }
+
+  patchState(state: any): void {
+    const path = state.data.calibration;
+    this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
+    this.adjutmentApplication = _.merge({}, path.adjustmentApplication);
+    this.allAdjsArray = _.merge([], path.allAdjsArray);
+    this.AdjustementType = _.merge([], path.adjustementType);
+    this.adjsArray = _.merge([], path.adjustments);
+    this.userTags = _.merge({}, path.userTags);
+    this.detectChanges();
   }
 
   initDataColumns() {
@@ -1220,7 +1217,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
 
-
   resetPath() {
     this.filterData = _.omit(this.filterData, 'project')
     this.projects = _.map(this.projects, p => ({...p, selected: false}))
@@ -1245,7 +1241,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.toggleSelectPlts(
       _.zipObject(
         _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-        _.range(!this.showDeleted ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({type: !this.selectAll && !this.someItemsAreSelected}))
+        _.range(!this.showDeleted ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
       )
     );
   }
@@ -1261,7 +1257,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   selectSinglePLT(pltId: number, $event?: boolean) {
     this.toggleSelectPlts({
       [pltId]: {
-        type: $event
+        selected: $event
       }
     });
   }
@@ -1276,7 +1272,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       this.toggleSelectPlts(
         _.zipObject(
           _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => ({selected: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
@@ -1284,11 +1280,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
 
-
-
-
   onSort($event: any) {
-    console.log($event);
     const {
       multisortmeta
     } = $event;
@@ -1313,17 +1305,14 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       _.forEach(s, (t, tKey) => {
         if (tag == tKey && section == sKey) {
           this.systemTagsCount[sKey][tKey] = {...t, selected: !t.selected}
-          console.log(this.systemTagsCount[sKey][tKey]);
         } else {
           this.systemTagsCount[sKey][tKey] = {...t, selected: false}
-          console.log(this.systemTagsCount[sKey][tKey]);
         }
       })
     })
   }
 
   sortChange(field: any, sortCol: any) {
-    console.log(field, sortCol)
     if (!sortCol) {
       this.sortData[field] = 'asc';
     } else if (sortCol === 'asc') {
@@ -1401,7 +1390,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
     let boolAdj = $event.status;
     let adjustementType = $event.singleValue;
-    console.log(adjustementType)
     let adjustement = $event.category;
     let columnPosition = $event.columnPosition;
 
@@ -1430,7 +1418,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   selectCategory(p) {
-    console.log(p);
     this.categorySelectedFromAdjustement = p;
     this.categorySelected = p.category;
   }
@@ -1470,7 +1457,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();
     this.dataColumns[indexClient].width = clientWidth.toString();
-    console.log('after adjustment ==> ', baseWidth);
   }
 
 
@@ -1493,6 +1479,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   replaceToAllAdjustement(adj) {
+    if (adj.linear) {
+      this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
+    } else {
+      this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
+      this.columnPosition = adj.value;
+    }
     this.store$.dispatch(new replaceAdjustement({
       adjustementType: this.singleValue,
       adjustement: adj,
@@ -1504,6 +1496,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   replaceToSelectedPlt(adj) {
+    if (adj.linear) {
+      this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
+    } else {
+      this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
+      this.columnPosition = adj.value;
+    }
     this.store$.dispatch(new replaceAdjustement({
       adjustementType: this.singleValue,
       adjustement: adj,
@@ -1523,8 +1521,12 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   applyToSelected(adj) {
-    console.log('applytoselected');
-    console.log(this.selectedListOfPlts);
+    if (adj.linear) {
+      this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
+    } else {
+      this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
+      this.columnPosition = adj.value;
+    }
     this.store$.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
@@ -1538,7 +1540,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.modalTitle = "Modify Adjustment";
     this.modifyModal = true;
     this.lastModifiedAdj = adj.id;
-    console.log(adj);
     this.categorySelectedFromAdjustement = _.find(this.allAdjsArray, {name: adj.name});
     if (adj.linear) {
       this.singleValue = _.find(this.AdjustementType, {abv: adj.value});
@@ -1546,7 +1547,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
-    console.log(this.singleValue);
     this.isVisible = true;
   }
 
@@ -1583,7 +1583,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
 
   onDrop(col, pltId) {
-    console.log('col == >', col);
     /* this.store$.dispatch(new dropAdjustment({
        pltId: pltId,
        adjustement: this.draggedAdjs
@@ -1591,7 +1590,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.adjustColWidth(this.draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
-    console.log(col);
   }
 
   emitFilters(filters: any) {
@@ -1607,7 +1605,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
 
 
   log(columns) {
-    console.log(columns);
   }
 
   // Tags Component
@@ -1695,6 +1692,15 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ('Restore' != e.label) : !_.find(t, el => el == e.label))
   }
 
+  unCheckAll() {
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
+        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({selected: false}))
+      )
+    );
+  }
+
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
       this.selectSinglePLT(pltId, isSelected);
@@ -1703,7 +1709,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
     }
 
     if ($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
       if (!this.lastSelectedId) this.lastSelectedId = 0;
       if (this.lastSelectedId || this.lastSelectedId == 0) {
         const max = _.max([i, this.lastSelectedId]);
@@ -1711,7 +1716,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
         this.toggleSelectPlts(
           _.zipObject(
             _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({type: i <= max && i >= min})),
+            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({selected: i <= max && i >= min})),
           )
         );
       } else {
@@ -1719,15 +1724,6 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
       }
       return;
     }
-  }
-
-  unCheckAll() {
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
-        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({type: false}))
-      )
-    );
   }
 
   setWsHeaderSelect($event: any) {
@@ -1780,4 +1776,5 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   changeEPM(epm) {
     this.selectedEPM = epm;
   }
+
 }

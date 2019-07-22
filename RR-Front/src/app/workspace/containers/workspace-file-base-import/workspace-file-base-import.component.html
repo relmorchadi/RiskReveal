@@ -1,13 +1,14 @@
 <div class="a-app-wrapper">
   <div class="a-app-header">
     <div style="display: flex;flex-direction: column;align-items: flex-start;">
-      <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'File-based'" [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
+      <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'File-based'"
+                       (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
       <h4>File-Based Import</h4>
     </div>
     <app-pin
-      [active]="!workspaceInfo?.isPinned"
       (pinWs)="pinWorkspace()"
       (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
     >
     </app-pin>
   </div>
