@@ -78,6 +78,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
 
+  @Select(WorkspaceState.getLinkingData) linking$;
+  linking: any;
+
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
 
@@ -92,7 +95,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.serviceSubscription = [
       this.state$.subscribe(value => {
         this.state = _.merge({}, value);
-        console.log(this.state);
+      }),
+      this.linking$.pipe().subscribe(value => {
+        this.linking = _.merge({}, value);
+        this.detectChanges();
       })
     ];
     this.scrollableColsSummary = DataTables.scrollableColsSummary;
@@ -154,49 +160,33 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   getLinkingPortfolio() {
-    if (this.state.linking === undefined) {
+    if (this.linking.portfolio === null) {
       return null;
     } else {
-      if (this.state.linking.portfolio === null) {
-        return null;
-      } else {
-        return _.toArray(this.state.linking.portfolio.data);
-      }
+      return _.toArray(this.linking.portfolio.data);
     }
   }
 
   getLinkingAnalysis() {
-    if (this.state.linking === undefined) {
+    if (this.linking.analysis === null) {
       return null;
     } else {
-      if (this.state.linking.analysis === null) {
-        return null;
-      } else {
-        return _.toArray(this.state.linking.analysis.data);
-      }
+      return _.toArray(this.linking.analysis[this.linking.rdm.selected.id].data);
     }
   }
 
   getSelectedRDM() {
-    if (this.state.linking === undefined) {
-      return null;
-    } else {
-      return _.filter(_.toArray(this.state.linking.rdm), dt => dt.selected);
-    }
+    return _.filter(_.toArray(this.linking.rdm.data), dt => dt.selected);
   }
 
   selectLinkedRDM(item) {
+    console.log('action Load Analysis');
     this.store.dispatch(new fromWs.LoadAnalysisForLinkingAction(item));
   }
 
-  resetToMain() {
-    this.manual = this.suggested = false;
-  }
-
   toggleForLinkingEDM() {
-    const item = _.filter(this.dataList(this.state.linking.edm), dt => dt.name === this.selectedEDM)[0];
+    const item = _.filter(this.dataList(this.linking.edm), dt => dt.name === this.selectedEDM)[0];
     this.detectChanges();
-    console.log(item, this.selectedEDM);
     this.store.dispatch(new fromWs.LoadPortfolioForLinkingAction(item));
   }
 
@@ -238,81 +228,84 @@ export class RiskLinkResSummaryComponent implements OnInit {
     } else if (target === 'S') {
       this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpS') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({
+        action: 'selectOne',
+        value: event,
+        item: rowData
+      }));
     } else if (target === 'fpA') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({
+        action: 'selectOne',
+        value: event,
+        item: rowData
+      }));
+    }
+  }
+
+  private _selectRowsProvider(row, index, lastIndex, action: any, target) {
+    if ((window as any).event.ctrlKey) {
+      this.store.dispatch(action({action: 'selectOne', value: true, item: row}));
+    } else if ((window as any).event.shiftKey) {
+      event.preventDefault();
+      if (lastIndex || lastIndex === 0) {
+        this._selectSection(Math.min(index, lastIndex), Math.max(index, lastIndex), target);
+      } else {
+        this.store.dispatch(action({action: 'selectOne', value: true, item: row}));
+      }
+    } else {
+      this.store.dispatch(action({action: 'unselectAll'}));
+      this.store.dispatch(action({action: 'selectOne', value: true, item: row}));
     }
   }
 
   selectRows(row: any, index: number, target) {
     if (target === 'R') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexResult = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexResult || this.lastSelectedIndexResult === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexResult), Math.max(index, this.lastSelectedIndexResult), 'R');
-        } else {
-          this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexResult = index;
-        }
-      } else {
-        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'unselectAll'}));
-        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexResult = index;
-      }
+      const action = (payload) => new fromWs.ToggleRiskLinkResultAction(payload);
+      this._selectRowsProvider(row, index, this.lastSelectedIndexResult, action, 'R');
+      this.lastSelectedIndexResult = index;
     } else if (target === 'S') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexSummary = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexSummary || this.lastSelectedIndexSummary === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexSummary), Math.max(index, this.lastSelectedIndexSummary), 'S');
-        } else {
-          this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexSummary = index;
-        }
-      } else {
-        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
-        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexSummary = index;
-      }
+      const action = (payload) => new fromWs.ToggleRiskLinkSummaryAction(payload);
+      this._selectRowsProvider(row, index, this.lastSelectedIndexSummary, action, 'S');
+      this.lastSelectedIndexSummary = index;
     } else if (target === 'fpS') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPstandard = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexFPstandard || this.lastSelectedIndexFPstandard === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexFPstandard), Math.max(index, this.lastSelectedIndexFPstandard), 'fpS');
-        } else {
-          this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexFPstandard = index;
-        }
-      } else {
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPstandard = index;
-      }
+      const action = (payload) => new fromWs.ToggleRiskLinkFPStandardAction(payload);
+      this._selectRowsProvider(row, index, this.lastSelectedIndexFPstandard, action, 'fpS');
+      this.lastSelectedIndexFPstandard = index;
     } else if (target === 'fpA') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPAnalysis = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexFPAnalysis || this.lastSelectedIndexFPAnalysis === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexFPAnalysis), Math.max(index, this.lastSelectedIndexFPAnalysis), 'fpA');
-        } else {
-          this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexFPAnalysis = index;
-        }
-      } else {
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPAnalysis = index;
+      const action = (payload) => new fromWs.ToggleRiskLinkFPAnalysisAction(payload);
+      this._selectRowsProvider(row, index, this.lastSelectedIndexFPAnalysis, action, 'fpS');
+      this.lastSelectedIndexFPAnalysis = index;
+    }
+  }
+
+  private _selectSectionProvider(from, to, action: any, state) {
+    this.store.dispatch(action({action: 'unselectAll'}));
+    if (from === to) {
+      this.store.dispatch(action({
+        action: 'selectOne', value: true, item: this.dataList(state)[from]
+      }));
+    } else {
+      for (let i = from; i <= to; i++) {
+        this.store.dispatch(action({
+          action: 'selectOne', value: true, item: this.dataList(state)[i]
+        }));
       }
+    }
+  }
+
+  private _selectSection(from, to, target) {
+    if (target === 'R') {
+      const action = (payload) => new fromWs.ToggleRiskLinkResultAction(payload);
+      this._selectSectionProvider(from, to, action, this.state.results.data);
+    } else if (target === 'S') {
+      const action = (payload) => new fromWs.ToggleRiskLinkSummaryAction(payload);
+      this._selectSectionProvider(from, to, action, this.state.summaries.data);
+    } else if (target === 'fpS') {
+      const action = (payload) => new fromWs.ToggleRiskLinkFPStandardAction(payload);
+      this._selectSectionProvider(from, to, action, this.workingFSC.standard);
+    } else if (target === 'fpA') {
+      const action = (payload) => new fromWs.ToggleRiskLinkFPAnalysisAction(payload);
+      this._selectSectionProvider(from, to, action, this.workingFSC.analysis.data);
     }
   }
 
@@ -466,81 +459,14 @@ export class RiskLinkResSummaryComponent implements OnInit {
     }
   }
 
+  setLinkingState() {
+    this.linkingModalVisibility = true;
+
+  }
+
   detectChanges() {
     if (!this.cdRef['destroyed']) {
       this.cdRef.detectChanges();
-    }
-  }
-
-  private selectSection(from, to, target) {
-    if (target === 'R') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({
-          action: 'selectOne',
-          value: true,
-          item: this.dataList(this.state.results.data)[from]
-        }));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({
-            action: 'selectOne',
-            value: true,
-            item: this.dataList(this.state.results.data)[i]
-          }));
-        }
-      }
-    } else if (target === 'S') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({
-          action: 'selectOne',
-          value: true,
-          item: this.dataList(this.state.summaries.data)[from]
-        }));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({
-            action: 'selectOne',
-            value: true,
-            item: this.dataList(this.state.summaries.data)[i]
-          }));
-        }
-      }
-    } else if (target === 'fpS') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({
-          action: 'selectOne',
-          value: true,
-          item: this.dataList(this.workingFSC.standard)[from]
-        }));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({
-            action: 'selectOne',
-            value: true,
-            item: this.dataList(this.workingFSC.standard)[i]
-          }));
-        }
-      }
-    } else if (target === 'fpA') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({
-          action: 'selectOne',
-          value: true,
-          item: this.dataList(this.workingFSC.analysis.data)[from]
-        }));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({
-            action: 'selectOne',
-            value: true,
-            item: this.dataList(this.workingFSC.analysis.data)[i]
-          }));
-        }
-      }
     }
   }
 }

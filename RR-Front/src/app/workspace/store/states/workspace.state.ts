@@ -217,6 +217,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getLinkingData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].riskLink.linking;
+  }
+
+  @Selector()
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;

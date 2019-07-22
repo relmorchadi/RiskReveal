@@ -92,7 +92,7 @@ export class WorkspaceService {
             },
             linking: {
               edm: null,
-              rdm: null,
+              rdm: {data: null, selected: null},
               autoLinks: null,
               linked: null,
               analysis: null,
