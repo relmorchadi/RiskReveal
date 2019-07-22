@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
-import {PltMainState} from '../../store/states';
+import {PltMainState, WorkspaceState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {combineLatest} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -22,7 +22,7 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
   workspaceInfo: any;
 
   check = true;
-  @Select(PltMainState.getPlts) data$;
+  @Select(WorkspaceState.getPlts) data$;
   @Select(WorkspaceMainState.getData) wsData$;
 
   dataSource: any;

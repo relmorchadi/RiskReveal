@@ -10,15 +10,15 @@
             wsId: workspaceId,
             uwYear: uwy,
             projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
+            showDeleted: tableInputs['showDeleted'],
+            filterData: tableInputs['filterData'],
+            filters: tableInputs['filters'],
             addTagModalIndex: tagModalIndex,
             fromPlts: fromPlts,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
+            deletedPltsLength: (tableInputs['listOfDeletedPltsData'] | keys).length,
             userTags: userTags,
             systemTags: systemTags,
-            selectedListOfPlts: selectedListOfPlts,
+            selectedListOfPlts: tableInputs['selectedListOfPlts'],
             systemTagsCount: systemTagsCount,
             _tagModalVisible: tagModalVisible,
             _editingTag: editingTag,
@@ -74,7 +74,7 @@
 
                 <li nz-menu-divider></li>
 
-                <li nz-menu-item (click)="checkAll(false)" >Unselect All</li>
+                <li nz-menu-item (click)="unselectAll()" >Unselect All</li>
 
               </ul>
             </nz-dropdown>

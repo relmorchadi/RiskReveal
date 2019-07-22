@@ -4,7 +4,7 @@ import {Select, Store} from '@ngxs/store';
 import {combineLatest} from 'rxjs';
 import {dataTable} from '../workspace-scope-completence/data';
 import * as _ from 'lodash';
-import {PltMainState} from '../../store/states';
+import {PltMainState, WorkspaceState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {BaseContainer} from '../../../shared/base';
 import * as fromHeader from '../../../core/store/actions/header.action';
@@ -21,7 +21,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   workspaceInfo: any;
 
   check = true;
-  @Select(PltMainState.getPlts) data$;
+  @Select(WorkspaceState.getPlts) data$;
   @Select(WorkspaceMainState.getData) wsData$;
 
   dataSource: any;

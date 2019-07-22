@@ -67,6 +67,11 @@ export class WorkspaceState {
     return state.pinned;
   }
 
+  @Selector()
+  static getCurrentWS(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier];
+  }
+
   /***********************************
    *
    * Plt Selectors
@@ -74,8 +79,8 @@ export class WorkspaceState {
    ***********************************/
 
   @Selector()
-  static getCloneConfig(wsIdentifier: string) {
-    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager['cloneConfig'];
+  static getCloneConfig(state: WorkspaceModel) {
+    return state.content[state.currentTab.wsIdentifier].pltManager['cloneConfig'];
   }
 
   @Selector()
@@ -90,37 +95,26 @@ export class WorkspaceState {
 
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
-  @Selector()
-  static getProjectsPlt(wsIdentifier: string) {
-    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.projects;
-  }
-
-
-  @Selector()
-  static getUserTagsPlt(wsIdentifier: string) {
-    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTags;
-  }
-
-  @Selector()
-  static getOpenedPlt(wsIdentifier: string) {
-    return (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt;
-  }
-
-  /*@Selector()
-  static getSystemTags(wsIdentifier: string) {
-    return (state: WorkspaceModel) => state.content[wsIdentifier]['systemTags'];
-  }*/
-
-
   static getDeletedPltsForPlt(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => e.deleted), 'pltId'));
   }
 
-
   static getPltsForPlts(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => !e.deleted), 'pltId'))
+  }
+
+  static getProjectsPlt(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].projects)
+  }
+
+  static getUserTagsPlt(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTags)
+  }
+
+  static getOpenedPlt(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt)
   }
 
   /***********************************

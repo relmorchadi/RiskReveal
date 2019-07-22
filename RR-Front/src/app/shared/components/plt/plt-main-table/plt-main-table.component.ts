@@ -32,7 +32,9 @@ export class PltMainTableComponent implements OnInit {
   private lastSelectedId: number;
   private lastClick: string;
 
-  constructor() {}
+  constructor() {
+    this.activeCheckboxSort= false;
+  }
 
   ngOnInit() {
   }
@@ -54,6 +56,7 @@ export class PltMainTableComponent implements OnInit {
           :
           this.tableInputs.listOfDeletedPltsData, [(o: any) => !o.selected]) : !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsCache : this.tableInputs.listOfDeletedPltsCache
     })
+
   }
 
   sortChange(field: any, sortCol: any) {
@@ -154,5 +157,9 @@ export class PltMainTableComponent implements OnInit {
 
   tmp(param: any) {
     console.log(param);
+  }
+
+  rowTrackBy = (index, item) => {
+    return item[this.tableInputs.dataKey || this.tableInputs.pltColumns[0].field];
   }
 }

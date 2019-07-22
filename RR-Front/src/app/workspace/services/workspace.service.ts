@@ -44,6 +44,7 @@ export class WorkspaceService {
     ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
+
         [wsIdentifier]: {
           wsId,
           uwYear, ...ws,
@@ -58,6 +59,7 @@ export class WorkspaceService {
             },
             openedPlt: {},
             userTags: {},
+            cloneConfig: {},
             loading: false
           },
           calibration: {

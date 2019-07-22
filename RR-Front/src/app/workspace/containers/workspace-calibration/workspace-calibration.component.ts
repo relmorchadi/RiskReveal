@@ -20,7 +20,7 @@ import {
   saveAdjustment
 } from "../../store/actions";
 import {map, switchMap} from 'rxjs/operators';
-import {PltMainState, WorkspaceState} from "../../store/states";
+import {WorkspaceState} from "../../store/states";
 import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
@@ -1159,7 +1159,7 @@ export class WorkspaceCalibrationComponent implements OnInit, OnDestroy {
   }
 
   getAttr(path) {
-    return this.store$.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
+    return this.store$.select(WorkspaceState.getAttr).pipe(map(fn => fn(path)));
   }
 
   sort(sort: { key: string, value: string }): void {

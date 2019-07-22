@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
-import {PltMainState} from '../../store/states';
+import {PltMainState, WorkspaceState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
@@ -18,7 +18,7 @@ import * as fromWs from '../../store/actions';
 })
 export class WorkspaceScopeCompletenceComponent extends BaseContainer implements OnInit, StateSubscriber {
   check = true;
-  @Select(PltMainState.getPlts) data$;
+  @Select(WorkspaceState.getPlts) data$;
   @Select(WorkspaceMainState.getData) wsData$;
 
   wsIdentifier;

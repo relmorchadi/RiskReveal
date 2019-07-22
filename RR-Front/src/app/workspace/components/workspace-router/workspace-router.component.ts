@@ -69,7 +69,6 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    console.log('Changes', changes);
     if (changes.state && this.currentInstance) {
       if (changes.state.currentValue.data.route != changes.state.previousValue.data.route)
         this.initComponent(changes.state.currentValue.data.route);

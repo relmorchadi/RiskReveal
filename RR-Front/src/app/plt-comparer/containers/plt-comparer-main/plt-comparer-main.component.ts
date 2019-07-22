@@ -2,7 +2,7 @@ import {ChangeDetectorRef, Component, NgZone, OnInit, TemplateRef, ViewChild} fr
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWorkspaceStore from "../../../workspace/store";
-import {PltMainState} from '../../../workspace/store';
+import {WorkspaceState} from '../../../workspace/store';
 import {Select, Store} from '@ngxs/store';
 import * as _ from 'lodash';
 import {Table} from "primeng/table";
@@ -338,7 +338,7 @@ export class PltComparerMainComponent implements OnInit {
     sortData: null
   };
 
-  @Select(PltMainState.getUserTags) userTags$;
+  @Select(WorkspaceState.getUserTags) userTags$;
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
 
@@ -728,7 +728,7 @@ export class PltComparerMainComponent implements OnInit {
     this.colorThePlt();
     this.Subscriptions.push(
       this.state$.subscribe(value => this.listOfWs = _.merge({}, value.openedTabs)),
-      this.store$.select(PltMainState.getProjects('hey')).subscribe((projects: any) => {
+      this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
@@ -742,8 +742,8 @@ export class PltComparerMainComponent implements OnInit {
           this.workspaceId = defaultImport.workSpaceId;
           this.uwy = defaultImport.uwYear;
           this.loading = true;
-          this.data$ = this.store$.select(PltMainState.getPlts(this.workspaceId+'-'+this.uwy));
-          this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.workspaceId+'-'+this.uwy));
+          this.data$ = this.store$.select(WorkspaceState.getPlts(this.workspaceId+'-'+this.uwy));
+          this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.workspaceId+'-'+this.uwy));
           this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
             params: {
               workspaceId: this.workspaceId, uwy: this.uwy
@@ -886,7 +886,7 @@ export class PltComparerMainComponent implements OnInit {
 
 
   getAttr(path) {
-    return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)));
+    return this.store$.select(WorkspaceState.getAttr).pipe(map( fn => fn(path)));
   }
 
   colorThePlt() {

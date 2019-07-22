@@ -25,10 +25,9 @@ export class SystemTagsService {
 
   constructor() { }
 
-  countSystemTags(systemTagsCount, data) {
-    let newSysTagCount={...systemTagsCount};
+  countSystemTags(data) {
+    let newSysTagCount= {};
 
-    if (_.keys(newSysTagCount).length == 0) {
       _.forEach(data, (v, k) => {
         //Init Tags Counters
 
@@ -49,7 +48,6 @@ export class SystemTagsService {
         });
 
       });
-    }
 
     _.forEach(data, (v, k) => {
 
