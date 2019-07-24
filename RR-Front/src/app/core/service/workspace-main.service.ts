@@ -4,13 +4,14 @@ import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import * as _ from 'lodash';
 import {Observable, of} from 'rxjs';
+import {backendUrl} from "../../shared/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceMainService {
 
-  private readonly api = environment.API_URI + 'workspace/projects/';
+  private readonly api = backendUrl() + 'workspace/projects/';
 
   constructor(private http: HttpClient) {
   }

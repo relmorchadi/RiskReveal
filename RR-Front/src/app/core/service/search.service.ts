@@ -1,9 +1,9 @@
 import {Subject} from 'rxjs';
 import {Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
 import * as _ from 'lodash'
+import {backendUrl} from "../../shared/api";
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +24,7 @@ export class SearchService {
   public loading$ = new Subject<any>();
   public loading = false;
 
-  private readonly api = environment.API_URI + 'search/';
+  private readonly api = backendUrl() + 'search/';
 
   constructor(private _http: HttpClient) {
   }
