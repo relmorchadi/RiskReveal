@@ -2,13 +2,14 @@ import {Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
+import {HelperService} from "../../shared/helper.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PltApi {
 
-  protected URL = `${environment.API_URI}plt`;
+  protected URL = `${HelperService.getApiUrl()}plt`;
 
   constructor(private http: HttpClient) {
   }
