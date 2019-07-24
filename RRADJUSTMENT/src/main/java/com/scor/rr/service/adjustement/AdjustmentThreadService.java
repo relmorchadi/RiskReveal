@@ -37,13 +37,11 @@ public class AdjustmentThreadService {
     public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest){
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
-        adjustmentThreadEntity.setAccessBy(adjustmentThreadRequest.getAccessBy());
-        adjustmentThreadEntity.setAccessOn(adjustmentThreadRequest.getAccessOn());
         adjustmentThreadEntity.setCreatedOn(adjustmentThreadRequest.getCreatedOn());
         adjustmentThreadEntity.setCreatedBy(adjustmentThreadRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(adjustmentThreadRequest.getLocked());
         if(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).isPresent()) {
-            adjustmentThreadEntity.setScorPltHeaderByPurePltId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
+            adjustmentThreadEntity.setScorPltHeaderByIdPurePlt(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
             return adjustmentthreadRepository.save(adjustmentThreadEntity);
         } else {
             throwException(PLTNOTFOUNT, NOT_FOUND);
@@ -54,7 +52,7 @@ public class AdjustmentThreadService {
     public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest){
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
-        adjustmentThreadEntity.setScorPltHeaderByThreadPltId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
+        adjustmentThreadEntity.setScorPltHeaderByIdThreadPlt(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
         return adjustmentthreadRepository.save(adjustmentThreadEntity);
     }
 

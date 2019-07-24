@@ -131,6 +131,13 @@
       <mapping class="com.scor.rr.domain.TargetRapEntity"/>
       <mapping class="com.scor.rr.domain.DefaultAdjustmentNodeEntity"/>
       <mapping class="com.scor.rr.domain.DefaultAdjustmentThreadEntity"/>
+      <mapping class="com.scor.rr.domain.DefaultAdjustmentRegionPerilEntity"/>
+      <mapping class="com.scor.rr.domain.DefaultRetPerBandingParamsEntity"/>
+      <mapping class="com.scor.rr.domain.EntityEntity"/>
+      <mapping class="com.scor.rr.domain.MarketChannelEntity"/>
+      <mapping class="com.scor.rr.EntityEntity"/>
+      <mapping class="com.scor.rr.MarketChannelEntity"/>
+      <mapping class="com.scor.rr.ScorPltHeaderEntity"/>
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 

@@ -6,28 +6,17 @@ import java.util.Objects;
 @Entity
 @Table(name = "DefaultAdjustmentThread", schema = "dbo", catalog = "RiskReveal")
 public class DefaultAdjustmentThreadEntity {
-    private int id;
-    private String defaultVersionId;
+    private int idDefaultAdjustmentThread;
     private DefaultAdjustmentVersionEntity defaultAdjustmentVersionByIdDefaultAdjustmentVersion;
 
     @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
-        return id;
+    @Column(name = "id_default_adjustment_thread", nullable = false)
+    public int getIdDefaultAdjustmentThread() {
+        return idDefaultAdjustmentThread;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
-    @Column(name = "default_version_id", nullable = true, length = 50)
-    public String getDefaultVersionId() {
-        return defaultVersionId;
-    }
-
-    public void setDefaultVersionId(String defaultVersionId) {
-        this.defaultVersionId = defaultVersionId;
+    public void setIdDefaultAdjustmentThread(int idDefaultAdjustmentThread) {
+        this.idDefaultAdjustmentThread = idDefaultAdjustmentThread;
     }
 
     @Override
@@ -35,17 +24,16 @@ public class DefaultAdjustmentThreadEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentThreadEntity that = (DefaultAdjustmentThreadEntity) o;
-        return id == that.id &&
-                Objects.equals(defaultVersionId, that.defaultVersionId);
+        return idDefaultAdjustmentThread == that.idDefaultAdjustmentThread;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, defaultVersionId);
+        return Objects.hash(idDefaultAdjustmentThread);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_default_adjustment_version", referencedColumnName = "id")
+    @JoinColumn(name = "id_default_adjustment_version", referencedColumnName = "id_default_adjustment_version")
     public DefaultAdjustmentVersionEntity getDefaultAdjustmentVersionByIdDefaultAdjustmentVersion() {
         return defaultAdjustmentVersionByIdDefaultAdjustmentVersion;
     }

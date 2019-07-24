@@ -28,7 +28,7 @@ public class DefaultAdjustmentRest {
     }
 
     @GetMapping("rptret")
-    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRpAndTrAndEt(Integer scorPltHeaderId) {
+    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRPAndTRAndET(Integer scorPltHeaderId) {
         return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndET(scorPltHeaderId);
     }
 }

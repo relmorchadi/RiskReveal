@@ -6,20 +6,19 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentNodeProcessing", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNodeProcessingEntity {
-    private int id;
-    private AdjustmentNodeEntity adjustmentNodeByAdjustmentNodeId;
-    private ScorPltHeaderEntity scorPltHeaderByInputPltId;
-    private ScorPltHeaderEntity scorPltHeaderByAdjustedPltId;
+    private int idNodeProcessing;
+    private AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode;
+    private ScorPltHeaderEntity scorPltHeaderByIdInputPlt;
+    private ScorPltHeaderEntity scorPltHeaderByIdAdjustedPlt;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id", nullable = false)
-    public int getId() {
-        return id;
+    @Column(name = "id_node_processing", nullable = false)
+    public int getIdNodeProcessing() {
+        return idNodeProcessing;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdNodeProcessing(int idNodeProcessing) {
+        this.idNodeProcessing = idNodeProcessing;
     }
 
     @Override
@@ -27,41 +26,41 @@ public class AdjustmentNodeProcessingEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentNodeProcessingEntity that = (AdjustmentNodeProcessingEntity) o;
-        return id == that.id;
+        return idNodeProcessing == that.idNodeProcessing;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(idNodeProcessing);
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustmentNodeId", referencedColumnName = "adjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNodeByAdjustmentNodeId() {
-        return adjustmentNodeByAdjustmentNodeId;
+    @JoinColumn(name = "id_adjustment_node", referencedColumnName = "id_adjustment_node")
+    public AdjustmentNodeEntity getAdjustmentNodeByIdAdjustmentNode() {
+        return adjustmentNodeByIdAdjustmentNode;
     }
 
-    public void setAdjustmentNodeByAdjustmentNodeId(AdjustmentNodeEntity adjustmentNodeByAdjustmentNodeId) {
-        this.adjustmentNodeByAdjustmentNodeId = adjustmentNodeByAdjustmentNodeId;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "inputPltId", referencedColumnName = "scorPLTHeaderId")
-    public ScorPltHeaderEntity getScorPltHeaderByInputPltId() {
-        return scorPltHeaderByInputPltId;
-    }
-
-    public void setScorPltHeaderByInputPltId(ScorPltHeaderEntity scorPltHeaderByInputPltId) {
-        this.scorPltHeaderByInputPltId = scorPltHeaderByInputPltId;
+    public void setAdjustmentNodeByIdAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
+        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustedPltId", referencedColumnName = "scorPLTHeaderId")
-    public ScorPltHeaderEntity getScorPltHeaderByAdjustedPltId() {
-        return scorPltHeaderByAdjustedPltId;
+    @JoinColumn(name = "id_input_plt", referencedColumnName = "scorPLTHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByIdInputPlt() {
+        return scorPltHeaderByIdInputPlt;
     }
 
-    public void setScorPltHeaderByAdjustedPltId(ScorPltHeaderEntity scorPltHeaderByAdjustedPltId) {
-        this.scorPltHeaderByAdjustedPltId = scorPltHeaderByAdjustedPltId;
+    public void setScorPltHeaderByIdInputPlt(ScorPltHeaderEntity scorPltHeaderByIdInputPlt) {
+        this.scorPltHeaderByIdInputPlt = scorPltHeaderByIdInputPlt;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_adjusted_plt", referencedColumnName = "scorPLTHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByIdAdjustedPlt() {
+        return scorPltHeaderByIdAdjustedPlt;
+    }
+
+    public void setScorPltHeaderByIdAdjustedPlt(ScorPltHeaderEntity scorPltHeaderByIdAdjustedPlt) {
+        this.scorPltHeaderByIdAdjustedPlt = scorPltHeaderByIdAdjustedPlt;
     }
 }

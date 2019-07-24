@@ -6,38 +6,12 @@ import java.util.Objects;
 @Entity
 @Table(name = "DefaultAdjustmentNode", schema = "dbo", catalog = "RiskReveal")
 public class DefaultAdjustmentNodeEntity {
-    private int adjustmentNodeId;
-    private String layer;
     private Integer sequence;
-    private Boolean isInputChanged;
-    private String adjustmentParamsSource;
-    private String lossNetFlag;
-    private Boolean hasNewParamsFile;
-    private AdjustmentBasisEntity adjustmentBasisByFkAdjustmentBasis;
-    private AdjustmentTypeEntity adjustmentTypeByAdjustmentType;
-    private AdjustmentCategoryEntity adjustmentCategoryByIdCategory;
-    private AdjustmentStateEntity adjustmentStateByIdState;
-    private DefaultAdjustmentThreadEntity defaultAdjustmentThreadByIdAdjustmentThread;
-
-    @Id
-    @Column(name = "adjustmentNodeId", nullable = false)
-    public int getAdjustmentNodeId() {
-        return adjustmentNodeId;
-    }
-
-    public void setAdjustmentNodeId(int adjustmentNodeId) {
-        this.adjustmentNodeId = adjustmentNodeId;
-    }
-
-    @Basic
-    @Column(name = "layer", nullable = true, length = 255,insertable = false ,updatable = false)
-    public String getLayer() {
-        return layer;
-    }
-
-    public void setLayer(String layer) {
-        this.layer = layer;
-    }
+    private int idDefaultAdjustmentNode;
+    private Boolean isCappedMaxExposure;
+    private AdjustmentBasisEntity adjustmentBasis;
+    private AdjustmentTypeEntity adjustmentType;
+    private DefaultAdjustmentThreadEntity defaultAdjustmentThread;
 
     @Basic
     @Column(name = "sequence", nullable = true)
@@ -49,44 +23,24 @@ public class DefaultAdjustmentNodeEntity {
         this.sequence = sequence;
     }
 
-    @Basic
-    @Column(name = "isInputChanged", nullable = true)
-    public Boolean getInputChanged() {
-        return isInputChanged;
+    @Id
+    @Column(name = "id_default_adjustment_node", nullable = false)
+    public int getIdDefaultAdjustmentNode() {
+        return idDefaultAdjustmentNode;
     }
 
-    public void setInputChanged(Boolean inputChanged) {
-        isInputChanged = inputChanged;
-    }
-
-    @Basic
-    @Column(name = "adjustmentParamsSource", nullable = true, length = 255,insertable = false ,updatable = false)
-    public String getAdjustmentParamsSource() {
-        return adjustmentParamsSource;
-    }
-
-    public void setAdjustmentParamsSource(String adjustmentParamsSource) {
-        this.adjustmentParamsSource = adjustmentParamsSource;
+    public void setIdDefaultAdjustmentNode(int idDefaultAdjustmentNode) {
+        this.idDefaultAdjustmentNode = idDefaultAdjustmentNode;
     }
 
     @Basic
-    @Column(name = "lossNetFlag", nullable = true, length = 255,insertable = false ,updatable = false)
-    public String getLossNetFlag() {
-        return lossNetFlag;
+    @Column(name = "is_capped_max_exposure", nullable = true)
+    public Boolean getCappedMaxExposure() {
+        return isCappedMaxExposure;
     }
 
-    public void setLossNetFlag(String lossNetFlag) {
-        this.lossNetFlag = lossNetFlag;
-    }
-
-    @Basic
-    @Column(name = "hasNewParamsFile", nullable = true)
-    public Boolean getHasNewParamsFile() {
-        return hasNewParamsFile;
-    }
-
-    public void setHasNewParamsFile(Boolean hasNewParamsFile) {
-        this.hasNewParamsFile = hasNewParamsFile;
+    public void setCappedMaxExposure(Boolean cappedMaxExposure) {
+        isCappedMaxExposure = cappedMaxExposure;
     }
 
     @Override
@@ -94,67 +48,43 @@ public class DefaultAdjustmentNodeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentNodeEntity that = (DefaultAdjustmentNodeEntity) o;
-        return adjustmentNodeId == that.adjustmentNodeId &&
-                Objects.equals(layer, that.layer) &&
+        return idDefaultAdjustmentNode == that.idDefaultAdjustmentNode &&
                 Objects.equals(sequence, that.sequence) &&
-                Objects.equals(isInputChanged, that.isInputChanged) &&
-                Objects.equals(adjustmentParamsSource, that.adjustmentParamsSource) &&
-                Objects.equals(lossNetFlag, that.lossNetFlag) &&
-                Objects.equals(hasNewParamsFile, that.hasNewParamsFile);
+                Objects.equals(isCappedMaxExposure, that.isCappedMaxExposure);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentNodeId, layer, sequence, isInputChanged, adjustmentParamsSource, lossNetFlag, hasNewParamsFile);
+        return Objects.hash(sequence, idDefaultAdjustmentNode, isCappedMaxExposure);
     }
 
     @ManyToOne
     @JoinColumn(name = "id_adjustment_basis", referencedColumnName = "code")
-    public AdjustmentBasisEntity getAdjustmentBasisByFkAdjustmentBasis() {
-        return adjustmentBasisByFkAdjustmentBasis;
+    public AdjustmentBasisEntity getAdjustmentBasis() {
+        return adjustmentBasis;
     }
 
-    public void setAdjustmentBasisByFkAdjustmentBasis(AdjustmentBasisEntity adjustmentBasisByFkAdjustmentBasis) {
-        this.adjustmentBasisByFkAdjustmentBasis = adjustmentBasisByFkAdjustmentBasis;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "adjustment_type", referencedColumnName = "id_type")
-    public AdjustmentTypeEntity getAdjustmentTypeByAdjustmentType() {
-        return adjustmentTypeByAdjustmentType;
-    }
-
-    public void setAdjustmentTypeByAdjustmentType(AdjustmentTypeEntity adjustmentTypeByAdjustmentType) {
-        this.adjustmentTypeByAdjustmentType = adjustmentTypeByAdjustmentType;
+    public void setAdjustmentBasis(AdjustmentBasisEntity adjustmentBasis) {
+        this.adjustmentBasis = adjustmentBasis;
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_category", referencedColumnName = "id_category")
-    public AdjustmentCategoryEntity getAdjustmentCategoryByIdCategory() {
-        return adjustmentCategoryByIdCategory;
+    @JoinColumn(name = "id_adjustment_type", referencedColumnName = "id_type")
+    public AdjustmentTypeEntity getAdjustmentType() {
+        return adjustmentType;
     }
 
-    public void setAdjustmentCategoryByIdCategory(AdjustmentCategoryEntity adjustmentCategoryByIdCategory) {
-        this.adjustmentCategoryByIdCategory = adjustmentCategoryByIdCategory;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "id_state", referencedColumnName = "id_state")
-    public AdjustmentStateEntity getAdjustmentStateByIdState() {
-        return adjustmentStateByIdState;
-    }
-
-    public void setAdjustmentStateByIdState(AdjustmentStateEntity adjustmentStateByIdState) {
-        this.adjustmentStateByIdState = adjustmentStateByIdState;
+    public void setAdjustmentType(AdjustmentTypeEntity adjustmentType) {
+        this.adjustmentType = adjustmentType;
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_thread", referencedColumnName = "id")
-    public DefaultAdjustmentThreadEntity getDefaultAdjustmentThreadByIdAdjustmentThread() {
-        return defaultAdjustmentThreadByIdAdjustmentThread;
+    @JoinColumn(name = "id_adjustment_thread", referencedColumnName = "id_default_adjustment_thread")
+    public DefaultAdjustmentThreadEntity getDefaultAdjustmentThread() {
+        return defaultAdjustmentThread;
     }
 
-    public void setDefaultAdjustmentThreadByIdAdjustmentThread(DefaultAdjustmentThreadEntity defaultAdjustmentThreadByIdAdjustmentThread) {
-        this.defaultAdjustmentThreadByIdAdjustmentThread = defaultAdjustmentThreadByIdAdjustmentThread;
+    public void setDefaultAdjustmentThread(DefaultAdjustmentThreadEntity defaultAdjustmentThread) {
+        this.defaultAdjustmentThread = defaultAdjustmentThread;
     }
 }

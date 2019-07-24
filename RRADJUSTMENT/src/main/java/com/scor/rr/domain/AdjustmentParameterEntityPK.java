@@ -6,20 +6,20 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class AdjustmentParameterEntityPK implements Serializable {
-    private int adjustmentNodeId;
+    private int idAdjustmentNode;
     private String paramField;
 
-    @Column(name = "adjustmentNodeId", nullable = false)
+    @Column(name = "id_adjustment_node", nullable = false)
     @Id
-    public int getAdjustmentNodeId() {
-        return adjustmentNodeId;
+    public int getIdAdjustmentNode() {
+        return idAdjustmentNode;
     }
 
-    public void setAdjustmentNodeId(int adjustmentNodeId) {
-        this.adjustmentNodeId = adjustmentNodeId;
+    public void setIdAdjustmentNode(int idAdjustmentNode) {
+        this.idAdjustmentNode = idAdjustmentNode;
     }
 
-    @Column(name = "paramField", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "param_field", nullable = false, length = 255)
     @Id
     public String getParamField() {
         return paramField;
@@ -34,12 +34,12 @@ public class AdjustmentParameterEntityPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentParameterEntityPK that = (AdjustmentParameterEntityPK) o;
-        return adjustmentNodeId == that.adjustmentNodeId &&
+        return idAdjustmentNode == that.idAdjustmentNode &&
                 Objects.equals(paramField, that.paramField);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentNodeId, paramField);
+        return Objects.hash(idAdjustmentNode, paramField);
     }
 }

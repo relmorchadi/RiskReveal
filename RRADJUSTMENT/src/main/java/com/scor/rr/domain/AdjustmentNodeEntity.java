@@ -1,48 +1,19 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentNode", schema = "dbo", catalog = "RiskReveal")
-@JsonIgnoreProperties({"adjustmentThread","adjustmentBasis","adjustmentNodeByFkAdjustmentNodeEntityCloning","adjustmentType","adjustmentState"})
 public class AdjustmentNodeEntity {
-    private int adjustmentNodeId;
-    private String layer;
     private Integer sequence;
-    private Boolean isInputChanged;
-    private String adjustmentParamsSource;
-    private String lossNetFlag;
-    private Boolean hasNewParamsFile;
     private Boolean capped;
+    private int idAdjustmentNode;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentBasisEntity adjustmentBasis;
-    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeEntityCloning;
+    private AdjustmentNodeEntity adjustmentNodeById;
     private AdjustmentTypeEntity adjustmentType;
     private AdjustmentStateEntity adjustmentState;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "adjustmentNodeId", nullable = false)
-    public int getAdjustmentNodeId() {
-        return adjustmentNodeId;
-    }
-
-    public void setAdjustmentNodeId(int adjustmentNodeId) {
-        this.adjustmentNodeId = adjustmentNodeId;
-    }
-
-    @Basic
-    @Column(name = "layer", nullable = true, length = 255,insertable = false ,updatable = false)
-    public String getLayer() {
-        return layer;
-    }
-
-    public void setLayer(String layer) {
-        this.layer = layer;
-    }
 
     @Basic
     @Column(name = "sequence", nullable = true)
@@ -55,46 +26,6 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "isInputChanged", nullable = true)
-    public Boolean getInputChanged() {
-        return isInputChanged;
-    }
-
-    public void setInputChanged(Boolean inputChanged) {
-        isInputChanged = inputChanged;
-    }
-
-    @Basic
-    @Column(name = "adjustmentParamsSource", nullable = true, length = 255,insertable = false ,updatable = false)
-    public String getAdjustmentParamsSource() {
-        return adjustmentParamsSource;
-    }
-
-    public void setAdjustmentParamsSource(String adjustmentParamsSource) {
-        this.adjustmentParamsSource = adjustmentParamsSource;
-    }
-
-    @Basic
-    @Column(name = "lossNetFlag", nullable = true, length = 255,insertable = false ,updatable = false)
-    public String getLossNetFlag() {
-        return lossNetFlag;
-    }
-
-    public void setLossNetFlag(String lossNetFlag) {
-        this.lossNetFlag = lossNetFlag;
-    }
-
-    @Basic
-    @Column(name = "hasNewParamsFile", nullable = true)
-    public Boolean getHasNewParamsFile() {
-        return hasNewParamsFile;
-    }
-
-    public void setHasNewParamsFile(Boolean hasNewParamsFile) {
-        this.hasNewParamsFile = hasNewParamsFile;
-    }
-
-    @Basic
     @Column(name = "capped", nullable = true)
     public Boolean getCapped() {
         return capped;
@@ -103,28 +34,34 @@ public class AdjustmentNodeEntity {
     public void setCapped(Boolean capped) {
         this.capped = capped;
     }
+
+    @Id
+    @Column(name = "id_adjustment_node", nullable = false)
+    public int getIdAdjustmentNode() {
+        return idAdjustmentNode;
+    }
+
+    public void setIdAdjustmentNode(int idAdjustmentNode) {
+        this.idAdjustmentNode = idAdjustmentNode;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentNodeEntity that = (AdjustmentNodeEntity) o;
-        return adjustmentNodeId == that.adjustmentNodeId &&
-                Objects.equals(layer, that.layer) &&
+        return idAdjustmentNode == that.idAdjustmentNode &&
                 Objects.equals(sequence, that.sequence) &&
-                Objects.equals(isInputChanged, that.isInputChanged) &&
-                Objects.equals(adjustmentParamsSource, that.adjustmentParamsSource) &&
-                Objects.equals(lossNetFlag, that.lossNetFlag) &&
-                Objects.equals(hasNewParamsFile, that.hasNewParamsFile) &&
-                Objects.equals(capped,that.capped);
+                Objects.equals(capped, that.capped);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentNodeId, layer, sequence, isInputChanged, adjustmentParamsSource, lossNetFlag, hasNewParamsFile,capped);
+        return Objects.hash(sequence, capped, idAdjustmentNode);
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustmentThreadId", referencedColumnName = "adjustmentThreadId")
+    @JoinColumn(name = "adjustmentThreadId", referencedColumnName = "id_adjustment_thread")
     public AdjustmentThreadEntity getAdjustmentThread() {
         return adjustmentThread;
     }
@@ -144,13 +81,13 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustmentNodeEntityCloning", referencedColumnName = "adjustmentNodeId")
-    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeEntityCloning() {
-        return adjustmentNodeByFkAdjustmentNodeEntityCloning;
+    @JoinColumn(name = "id_adjustmentNodeEntityCloning", referencedColumnName = "id_adjustment_node")
+    public AdjustmentNodeEntity getAdjustmentNodeById() {
+        return adjustmentNodeById;
     }
 
-    public void setAdjustmentNodeByFkAdjustmentNodeEntityCloning(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeEntityCloning) {
-        this.adjustmentNodeByFkAdjustmentNodeEntityCloning = adjustmentNodeByFkAdjustmentNodeEntityCloning;
+    public void setAdjustmentNodeById(AdjustmentNodeEntity adjustmentNodeById) {
+        this.adjustmentNodeById = adjustmentNodeById;
     }
 
     @ManyToOne

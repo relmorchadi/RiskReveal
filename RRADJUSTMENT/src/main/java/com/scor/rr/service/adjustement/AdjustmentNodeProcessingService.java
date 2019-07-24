@@ -61,8 +61,8 @@ public class AdjustmentNodeProcessingService {
             if (adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).isPresent()) {
                 AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).get();
                 AdjustmentNodeProcessingEntity nodeProcessing = new AdjustmentNodeProcessingEntity();
-                nodeProcessing.setScorPltHeaderByInputPltId(scorPltHeader);
-                nodeProcessing.setAdjustmentNodeByAdjustmentNodeId(adjustmentNode);
+                nodeProcessing.setScorPltHeaderByIdInputPlt(scorPltHeader);
+                nodeProcessing.setAdjustmentNodeByIdAdjustmentNode(adjustmentNode);
                 return adjustmentnodeprocessingRepository.save(nodeProcessing);
             } else {
                 throwException(NODENOTFOUND, NOT_FOUND);
@@ -87,9 +87,9 @@ public class AdjustmentNodeProcessingService {
                     ScorPltHeaderEntity scorPltHeaderAdjusted = new ScorPltHeaderEntity();
                     scorPltHeaderAdjusted.setBinFile(binFileEntity);
                     scorpltheaderRepository.save(scorPltHeaderAdjusted);
-                    nodeProcessing.setScorPltHeaderByAdjustedPltId(scorPltHeaderAdjusted);
-                    nodeProcessing.setScorPltHeaderByInputPltId(scorPltHeader);
-                    nodeProcessing.setAdjustmentNodeByAdjustmentNodeId(adjustmentNode);
+                    nodeProcessing.setScorPltHeaderByIdAdjustedPlt(scorPltHeaderAdjusted);
+                    nodeProcessing.setScorPltHeaderByIdInputPlt(scorPltHeader);
+                    nodeProcessing.setAdjustmentNodeByIdAdjustmentNode(adjustmentNode);
                     return adjustmentnodeprocessingRepository.save(nodeProcessing);
                 } else {
                     throwException(BINFILEEXCEPTION, NOT_FOUND);
@@ -108,7 +108,7 @@ public class AdjustmentNodeProcessingService {
     public AdjustmentNodeProcessingEntity getProcessingByNode(Integer nodeId) {
         return adjustmentnodeprocessingRepository.findAll()
                 .stream()
-                .filter(ape -> ape.getScorPltHeaderByInputPltId()
+                .filter(ape -> ape.getScorPltHeaderByIdInputPlt()
                         .getScorPltHeaderId() == nodeId)
                 .findAny()
                 .orElseThrow(throwException(PLTNOTFOUNT, NOT_FOUND));

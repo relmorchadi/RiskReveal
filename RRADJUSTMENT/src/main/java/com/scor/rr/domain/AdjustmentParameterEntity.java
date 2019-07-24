@@ -7,24 +7,24 @@ import java.util.Objects;
 @Table(name = "AdjustmentParameter", schema = "dbo", catalog = "RiskReveal")
 @IdClass(AdjustmentParameterEntityPK.class)
 public class AdjustmentParameterEntity {
-    private int adjustmentNodeId;
+    private int idAdjustmentNode;
     private String paramField;
     private String paramValue;
     private String paramType;
-    private AdjustmentNodeEntity adjustmentNodeByAdjustmentNodeId;
+    private AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode;
 
     @Id
-    @Column(name = "adjustmentNodeId", nullable = false,insertable = false ,updatable = false)
-    public int getAdjustmentNodeId() {
-        return adjustmentNodeId;
+    @Column(name = "id_adjustment_node", nullable = false)
+    public int getIdAdjustmentNode() {
+        return idAdjustmentNode;
     }
 
-    public void setAdjustmentNodeId(int adjustmentNodeId) {
-        this.adjustmentNodeId = adjustmentNodeId;
+    public void setIdAdjustmentNode(int idAdjustmentNode) {
+        this.idAdjustmentNode = idAdjustmentNode;
     }
 
     @Id
-    @Column(name = "paramField", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "param_field", nullable = false, length = 255)
     public String getParamField() {
         return paramField;
     }
@@ -34,7 +34,7 @@ public class AdjustmentParameterEntity {
     }
 
     @Basic
-    @Column(name = "paramValue", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "param_value", nullable = true, length = 255)
     public String getParamValue() {
         return paramValue;
     }
@@ -44,7 +44,7 @@ public class AdjustmentParameterEntity {
     }
 
     @Basic
-    @Column(name = "paramType", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "param_type", nullable = true, length = 255)
     public String getParamType() {
         return paramType;
     }
@@ -58,7 +58,7 @@ public class AdjustmentParameterEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentParameterEntity that = (AdjustmentParameterEntity) o;
-        return adjustmentNodeId == that.adjustmentNodeId &&
+        return idAdjustmentNode == that.idAdjustmentNode &&
                 Objects.equals(paramField, that.paramField) &&
                 Objects.equals(paramValue, that.paramValue) &&
                 Objects.equals(paramType, that.paramType);
@@ -66,16 +66,16 @@ public class AdjustmentParameterEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentNodeId, paramField, paramValue, paramType);
+        return Objects.hash(idAdjustmentNode, paramField, paramValue, paramType);
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustmentNodeId", referencedColumnName = "adjustmentNodeId", nullable = false,insertable = false ,updatable = false)
-    public AdjustmentNodeEntity getAdjustmentNodeByAdjustmentNodeId() {
-        return adjustmentNodeByAdjustmentNodeId;
+    @JoinColumn(name = "id_adjustment_node", referencedColumnName = "id_adjustment_node", nullable = false,insertable = false, updatable = false)
+    public AdjustmentNodeEntity getAdjustmentNodeByIdAdjustmentNode() {
+        return adjustmentNodeByIdAdjustmentNode;
     }
 
-    public void setAdjustmentNodeByAdjustmentNodeId(AdjustmentNodeEntity adjustmentNodeByAdjustmentNodeId) {
-        this.adjustmentNodeByAdjustmentNodeId = adjustmentNodeByAdjustmentNodeId;
+    public void setAdjustmentNodeByIdAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
+        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
     }
 }

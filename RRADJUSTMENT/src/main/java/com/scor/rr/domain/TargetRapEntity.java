@@ -1,6 +1,7 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,8 @@ public class TargetRapEntity {
     private Boolean isScorCurrent;
     private Boolean isScorDefault;
     private Boolean isActive;
+    private Timestamp auditCreateDt;
+    private Timestamp auditUpdateDt;
 
     @Basic
     @Column(name = "modellingVendor", nullable = true, length = 255,insertable = false ,updatable = false)
@@ -191,5 +194,25 @@ public class TargetRapEntity {
     @Override
     public int hashCode() {
         return Objects.hash(targetRapId, modellingVendor, modellingSystem, modellingSystemVersion, targetRapCode, targetRapDesc, petId, sourceRapCode, isScorGenerated, isScorCurrent, isScorDefault, isActive);
+    }
+
+    @Basic
+    @Column(name = "auditCreateDt", nullable = true)
+    public Timestamp getAuditCreateDt() {
+        return auditCreateDt;
+    }
+
+    public void setAuditCreateDt(Timestamp auditCreateDt) {
+        this.auditCreateDt = auditCreateDt;
+    }
+
+    @Basic
+    @Column(name = "auditUpdateDt", nullable = true)
+    public Timestamp getAuditUpdateDt() {
+        return auditUpdateDt;
+    }
+
+    public void setAuditUpdateDt(Timestamp auditUpdateDt) {
+        this.auditUpdateDt = auditUpdateDt;
     }
 }

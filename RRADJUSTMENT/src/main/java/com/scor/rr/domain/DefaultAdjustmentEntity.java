@@ -6,43 +6,11 @@ import java.util.Objects;
 @Entity
 @Table(name = "DefaultAdjustment", schema = "dbo", catalog = "RiskReveal")
 public class DefaultAdjustmentEntity {
-    private int id;
-    private String entity;
-    private String marketChannel;
     private String engineType;
-    private Integer sequence;
-    private TargetRapEntity targetRapByTargetRapId;
-    private RegionPerilEntity regionPerilByRegionPerilId;
-
-    @Id
-    @Column(name = "id", nullable = false)
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    @Basic
-    @Column(name = "entity", nullable = true, length = 200)
-    public String getEntity() {
-        return entity;
-    }
-
-    public void setEntity(String entity) {
-        this.entity = entity;
-    }
-
-    @Basic
-    @Column(name = "market_channel", nullable = true, length = 200)
-    public String getMarketChannel() {
-        return marketChannel;
-    }
-
-    public void setMarketChannel(String marketChannel) {
-        this.marketChannel = marketChannel;
-    }
+    private int idDefaultAdjustment;
+    private MarketChannelEntity marketChannel;
+    private TargetRapEntity targetRap;
+    private EntityEntity entity;
 
     @Basic
     @Column(name = "engine_type", nullable = true, length = 200)
@@ -54,14 +22,14 @@ public class DefaultAdjustmentEntity {
         this.engineType = engineType;
     }
 
-    @Basic
-    @Column(name = "sequence", nullable = true)
-    public Integer getSequence() {
-        return sequence;
+    @Id
+    @Column(name = "id_default_adjustment", nullable = false)
+    public int getIdDefaultAdjustment() {
+        return idDefaultAdjustment;
     }
 
-    public void setSequence(Integer sequence) {
-        this.sequence = sequence;
+    public void setIdDefaultAdjustment(int idDefaultAdjustment) {
+        this.idDefaultAdjustment = idDefaultAdjustment;
     }
 
     @Override
@@ -69,35 +37,42 @@ public class DefaultAdjustmentEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentEntity that = (DefaultAdjustmentEntity) o;
-        return id == that.id &&
-                Objects.equals(entity, that.entity) &&
-                Objects.equals(marketChannel, that.marketChannel) &&
-                Objects.equals(engineType, that.engineType) &&
-                Objects.equals(sequence, that.sequence);
+        return idDefaultAdjustment == that.idDefaultAdjustment &&
+                Objects.equals(engineType, that.engineType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, entity, marketChannel, engineType, sequence);
+        return Objects.hash(engineType, idDefaultAdjustment);
     }
 
     @ManyToOne
-    @JoinColumn(name = "target_rap_id", referencedColumnName = "targetRapId")
-    public TargetRapEntity getTargetRapByTargetRapId() {
-        return targetRapByTargetRapId;
+    @JoinColumn(name = "id_market_channel", referencedColumnName = "id_market_channel")
+    public MarketChannelEntity getMarketChannel() {
+        return marketChannel;
     }
 
-    public void setTargetRapByTargetRapId(TargetRapEntity targetRapByTargetRapId) {
-        this.targetRapByTargetRapId = targetRapByTargetRapId;
+    public void setMarketChannel(MarketChannelEntity marketChannel) {
+        this.marketChannel = marketChannel;
     }
 
     @ManyToOne
-    @JoinColumn(name = "region_peril_id", referencedColumnName = "regionPerilId")
-    public RegionPerilEntity getRegionPerilByRegionPerilId() {
-        return regionPerilByRegionPerilId;
+    @JoinColumn(name = "id_target_rap", referencedColumnName = "targetRapId")
+    public TargetRapEntity getTargetRap() {
+        return targetRap;
     }
 
-    public void setRegionPerilByRegionPerilId(RegionPerilEntity regionPerilByRegionPerilId) {
-        this.regionPerilByRegionPerilId = regionPerilByRegionPerilId;
+    public void setTargetRap(TargetRapEntity targetRap) {
+        this.targetRap = targetRap;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_entity", referencedColumnName = "id_entity")
+    public EntityEntity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(EntityEntity entity) {
+        this.entity = entity;
     }
 }

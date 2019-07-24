@@ -8,14 +8,14 @@ import java.util.Objects;
 public class AdjustmentBasisEntity {
     private int code;
     private String adjustmentBasisName;
-    private String basisShortname;
+    private String basisShortName;
     private String description;
     private String exposureFlag;
     private Boolean capped;
     private Boolean isActive;
     private Boolean isExposureGrowth;
     private Integer sequence;
-    private AdjustmentCategoryEntity adjustmentCategory;
+    private AdjustmentCategoryEntity adjustmentCategoryByIdCategory;
 
     @Id
     @Column(name = "code", nullable = false)
@@ -28,130 +28,113 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "adjustmentBasisName", nullable = true, length = 255,insertable = false ,updatable = false)
-    public java.lang.String getAdjustmentBasisName() {
+    @Column(name = "adjustment_basis_name", nullable = true, length = 255)
+    public String getAdjustmentBasisName() {
         return adjustmentBasisName;
     }
 
-    public void setAdjustmentBasisName(java.lang.String adjustmentBasisName) {
+    public void setAdjustmentBasisName(String adjustmentBasisName) {
         this.adjustmentBasisName = adjustmentBasisName;
     }
 
     @Basic
-    @Column(name = "basisShortname", nullable = true, length = 255,insertable = false ,updatable = false)
-    public java.lang.String getBasisShortname() {
-        return basisShortname;
+    @Column(name = "basis_short_name", nullable = true, length = 255)
+    public String getBasisShortName() {
+        return basisShortName;
     }
 
-    public void setBasisShortname(java.lang.String basisShortname) {
-        this.basisShortname = basisShortname;
+    public void setBasisShortName(String basisShortName) {
+        this.basisShortName = basisShortName;
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
-    public java.lang.String getDescription() {
+    @Column(name = "description", nullable = true, length = 255)
+    public String getDescription() {
         return description;
     }
 
-    public void setDescription(java.lang.String description) {
+    public void setDescription(String description) {
         this.description = description;
     }
 
     @Basic
-    @Column(name = "exposureFlag", nullable = true, length = 50)
-    public java.lang.String getExposureFlag() {
+    @Column(name = "exposure_flag", nullable = true, length = 50)
+    public String getExposureFlag() {
         return exposureFlag;
     }
 
-    public void setExposureFlag(java.lang.String exposureFlag) {
+    public void setExposureFlag(String exposureFlag) {
         this.exposureFlag = exposureFlag;
     }
 
     @Basic
     @Column(name = "capped", nullable = true)
-    public java.lang.Boolean getCapped() {
+    public Boolean getCapped() {
         return capped;
     }
 
-    public void setCapped(java.lang.Boolean capped) {
+    public void setCapped(Boolean capped) {
         this.capped = capped;
     }
 
     @Basic
-    @Column(name = "isActive", nullable = true)
-    public java.lang.Boolean getActive() {
+    @Column(name = "is_active", nullable = true)
+    public Boolean getActive() {
         return isActive;
     }
 
-    public void setActive(java.lang.Boolean active) {
+    public void setActive(Boolean active) {
         isActive = active;
     }
 
     @Basic
-    @Column(name = "isExposureGrowth", nullable = true)
-    public java.lang.Boolean getExposureGrowth() {
+    @Column(name = "is_exposure_growth", nullable = true)
+    public Boolean getExposureGrowth() {
         return isExposureGrowth;
     }
 
-    public void setExposureGrowth(java.lang.Boolean exposureGrowth) {
+    public void setExposureGrowth(Boolean exposureGrowth) {
         isExposureGrowth = exposureGrowth;
     }
 
     @Basic
     @Column(name = "sequence", nullable = true)
-    public java.lang.Integer getSequence() {
+    public Integer getSequence() {
         return sequence;
     }
 
-    public void setSequence(java.lang.Integer sequence) {
+    public void setSequence(Integer sequence) {
         this.sequence = sequence;
     }
 
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-
-        AdjustmentBasisEntity that = (AdjustmentBasisEntity) object;
-
-        if (code != that.code) return false;
-        if (!Objects.equals(adjustmentBasisName, that.adjustmentBasisName))
-            return false;
-        if (!Objects.equals(basisShortname, that.basisShortname))
-            return false;
-        if (!Objects.equals(description, that.description)) return false;
-        if (!Objects.equals(exposureFlag, that.exposureFlag)) return false;
-        if (!Objects.equals(capped, that.capped)) return false;
-        if (!Objects.equals(isActive, that.isActive)) return false;
-        if (!Objects.equals(isExposureGrowth, that.isExposureGrowth))
-            return false;
-        if (!Objects.equals(sequence, that.sequence)) return false;
-
-        return true;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AdjustmentBasisEntity that = (AdjustmentBasisEntity) o;
+        return code == that.code &&
+                Objects.equals(adjustmentBasisName, that.adjustmentBasisName) &&
+                Objects.equals(basisShortName, that.basisShortName) &&
+                Objects.equals(description, that.description) &&
+                Objects.equals(exposureFlag, that.exposureFlag) &&
+                Objects.equals(capped, that.capped) &&
+                Objects.equals(isActive, that.isActive) &&
+                Objects.equals(isExposureGrowth, that.isExposureGrowth) &&
+                Objects.equals(sequence, that.sequence);
     }
 
+    @Override
     public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + code;
-        result = 31 * result + (adjustmentBasisName != null ? adjustmentBasisName.hashCode() : 0);
-        result = 31 * result + (basisShortname != null ? basisShortname.hashCode() : 0);
-        result = 31 * result + (description != null ? description.hashCode() : 0);
-        result = 31 * result + (exposureFlag != null ? exposureFlag.hashCode() : 0);
-        result = 31 * result + (capped != null ? capped.hashCode() : 0);
-        result = 31 * result + (isActive != null ? isActive.hashCode() : 0);
-        result = 31 * result + (isExposureGrowth != null ? isExposureGrowth.hashCode() : 0);
-        result = 31 * result + (sequence != null ? sequence.hashCode() : 0);
-        return result;
+        return Objects.hash(code, adjustmentBasisName, basisShortName, description, exposureFlag, capped, isActive, isExposureGrowth, sequence);
     }
 
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "id_category", referencedColumnName = "id_category", nullable = true, table = "")
-    public AdjustmentCategoryEntity getAdjustmentCategory() {
-        return adjustmentCategory;
+    @ManyToOne
+    @JoinColumn(name = "id_category", referencedColumnName = "id_category")
+    public AdjustmentCategoryEntity getAdjustmentCategoryByIdCategory() {
+        return adjustmentCategoryByIdCategory;
     }
 
-    public void setAdjustmentCategory(AdjustmentCategoryEntity adjustmentCategory) {
-        this.adjustmentCategory = adjustmentCategory;
+    public void setAdjustmentCategoryByIdCategory(AdjustmentCategoryEntity adjustmentCategoryByIdCategory) {
+        this.adjustmentCategoryByIdCategory = adjustmentCategoryByIdCategory;
     }
 }
-

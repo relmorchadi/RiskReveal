@@ -50,7 +50,7 @@ public class AdjustmentNodeService {
 
     public List<AdjustmentNodeEntity> findByThread(Integer threadId){
         return adjustmentnodeRepository.findAll().stream().filter(adjustmentNodeEntity ->
-                adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId() == threadId)
+                adjustmentNodeEntity.getAdjustmentThread().getIdAdjustmentThread() == threadId)
                 .collect(Collectors.toList());
     }
 
@@ -64,12 +64,7 @@ public class AdjustmentNodeService {
                     adjustmentNodeEntity.setAdjustmentState(adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).get());
                     if(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
                         adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
-                        adjustmentNodeEntity.setLayer(adjustmentNodeRequest.getLayer());
                         adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
-                        adjustmentNodeEntity.setInputChanged(adjustmentNodeRequest.getInputChanged());
-                        adjustmentNodeEntity.setAdjustmentParamsSource(adjustmentNodeRequest.getAdjustmentParamsSource());
-                        adjustmentNodeEntity.setLossNetFlag(adjustmentNodeRequest.getLossNetFlag());
-                        adjustmentNodeEntity.setHasNewParamsFile(adjustmentNodeRequest.getHasNewParamsFile());
                         return adjustmentnodeRepository.save(adjustmentNodeEntity);
                     } else {
                         throwException(THREADNOTFOUND, NOT_FOUND);

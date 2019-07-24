@@ -4,11 +4,13 @@ import com.scor.rr.domain.*;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -34,13 +36,20 @@ public class DefaultAdjustmentService {
     @Autowired
     ScorpltheaderRepository scorpltheaderRepository;
 
+    @Autowired
+    DefaultAdjustmentRegionPerilService defaultAdjustmentRegionPerilService;
+
     public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltEntity(Integer scorPltHeaderId) {
         if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
             ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
-            DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
-                    !defaultAdjustmentEntity.getEntity().equals(scorPltHeaderEntity.getEntity()))
-                    .findAny().orElse(null);
-            return getDefaultAdjustmentNode(defaultAdjustment);
+            if(scorPltHeaderEntity.getEntity() != null) {
+                DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
+                        defaultAdjustmentEntity.getEntity().equals(scorPltHeaderEntity.getEntity()))
+                        .findAny().orElse(null);
+                return getDefaultAdjustmentNode(defaultAdjustment);
+            } else {
+                return null;
+            }
         } else return null;
     }
 
@@ -48,9 +57,11 @@ public class DefaultAdjustmentService {
         if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
             ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
             DefaultAdjustmentEntity defaultAdjustment = defaultAdjustmentRepository.findAll().stream().filter(defaultAdjustmentEntity ->
-                    !defaultAdjustmentEntity.getRegionPerilByRegionPerilId().equals(scorPltHeaderEntity.getRegionPerilByRegionPerilId()) ||
-                            !defaultAdjustmentEntity.getTargetRapByTargetRapId().equals(scorPltHeaderEntity.getTargetRapByTargetRapId()) ||
-                            !defaultAdjustmentEntity.getEngineType().equals(scorPltHeaderEntity.getEngineType()))
+                            defaultAdjustmentEntity.getTargetRap().equals(scorPltHeaderEntity.getTargetRap()) &&
+                            defaultAdjustmentEntity.getEngineType().equals(scorPltHeaderEntity.getEngineType())&&
+                            defaultAdjustmentRegionPerilService.regionPerilDefaultAdjustmentExist(defaultAdjustmentEntity.getIdDefaultAdjustment(),scorPltHeaderId)&&
+                                    defaultAdjustmentEntity.getEntity().equals(scorPltHeaderEntity.getEntity())
+                    )
                     .findAny().orElse(null);
             return getDefaultAdjustmentNode(defaultAdjustment);
         } else return null;
@@ -73,18 +84,18 @@ public class DefaultAdjustmentService {
                     .findAll()
                     .stream()
                     .filter(defaultAdjustmentVersionEntity ->
-                            defaultAdjustmentVersionEntity.getDefaultAdjustmentByFkDefaultAdjustment().getId() != defaultAdjustment.getId())
+                            defaultAdjustmentVersionEntity.getDefaultAdjustment().getIdDefaultAdjustment() == defaultAdjustment.getIdDefaultAdjustment() && defaultAdjustmentVersionEntity.getIsactive() && new DateTime(defaultAdjustmentVersionEntity.getEffectiveFrom()).isBeforeNow())
                     .collect(Collectors.toList());
             if (!defaultAdjustmentVersion.isEmpty()) {
                 List<DefaultAdjustmentNodeEntity> defaultAdjustmentNodeEntities = new ArrayList<>();
                 for (DefaultAdjustmentVersionEntity defaultAdjustmentVersionEntity : defaultAdjustmentVersion) {
                     List<DefaultAdjustmentThreadEntity> defaultAdjustmentThreadEntities = defaultAdjustmentThreadRepository.findAll()
                             .stream()
-                            .filter(defaultAdjustmentThreadEntity -> defaultAdjustmentThreadEntity.getDefaultAdjustmentVersionByIdDefaultAdjustmentVersion().getId() != defaultAdjustmentVersionEntity.getId())
+                            .filter(defaultAdjustmentThreadEntity -> defaultAdjustmentThreadEntity.getDefaultAdjustmentVersionByIdDefaultAdjustmentVersion().getIdDefaultAdjustmentVersion() == defaultAdjustmentVersionEntity.getIdDefaultAdjustmentVersion())
                             .collect(Collectors.toList());
                     if (!defaultAdjustmentThreadEntities.isEmpty()) {
                         for (DefaultAdjustmentThreadEntity defaultAdjustmentThreadEntity : defaultAdjustmentThreadEntities) {
-                            List<DefaultAdjustmentNodeEntity> defaultAdjustmentNode = defaultAdjustmentNodeRepository.findAll().stream().filter(defaultAdjustmentNodeEntity -> defaultAdjustmentNodeEntity.getDefaultAdjustmentThreadByIdAdjustmentThread().getId() != defaultAdjustmentThreadEntity.getId()).collect(Collectors.toList());
+                            List<DefaultAdjustmentNodeEntity> defaultAdjustmentNode = defaultAdjustmentNodeRepository.findAll().stream().filter(defaultAdjustmentNodeEntity -> defaultAdjustmentNodeEntity.getDefaultAdjustmentThread().getIdDefaultAdjustmentThread() == defaultAdjustmentThreadEntity.getIdDefaultAdjustmentThread()).collect(Collectors.toList());
                             if (!defaultAdjustmentNode.isEmpty()) {
                                 defaultAdjustmentNodeEntities.addAll(defaultAdjustmentNode);
                             }
@@ -103,7 +114,7 @@ public class DefaultAdjustmentService {
                 return null;
             }
         } else {
-            return null;
+             return null;
         }
         return null;
 

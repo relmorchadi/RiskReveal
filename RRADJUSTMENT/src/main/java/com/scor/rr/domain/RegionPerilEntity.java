@@ -1,6 +1,7 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
@@ -21,6 +22,14 @@ public class RegionPerilEntity {
     private String parentMinimumGrainRegionPeril;
     private Boolean isActive;
     private Boolean isModelled;
+    private String regionPerilGroupDescription;
+    private Integer regionHierarchy;
+    private String hierarchyParentCode;
+    private Integer hierarchyLevel;
+    private Timestamp lastUpdatedRiskReveal;
+    private Timestamp lastUpdatedCatDomain;
+    private Timestamp lastSyncRunCatDomain;
+    private String comments;
 
     @Id
     @Column(name = "regionPerilId", nullable = false)
@@ -196,5 +205,85 @@ public class RegionPerilEntity {
 
     public void setModelled(Boolean modelled) {
         isModelled = modelled;
+    }
+
+    @Basic
+    @Column(name = "regionPerilGroupDescription", nullable = true, length = 255)
+    public String getRegionPerilGroupDescription() {
+        return regionPerilGroupDescription;
+    }
+
+    public void setRegionPerilGroupDescription(String regionPerilGroupDescription) {
+        this.regionPerilGroupDescription = regionPerilGroupDescription;
+    }
+
+    @Basic
+    @Column(name = "regionHierarchy", nullable = true)
+    public Integer getRegionHierarchy() {
+        return regionHierarchy;
+    }
+
+    public void setRegionHierarchy(Integer regionHierarchy) {
+        this.regionHierarchy = regionHierarchy;
+    }
+
+    @Basic
+    @Column(name = "hierarchyParentCode", nullable = true, length = 255)
+    public String getHierarchyParentCode() {
+        return hierarchyParentCode;
+    }
+
+    public void setHierarchyParentCode(String hierarchyParentCode) {
+        this.hierarchyParentCode = hierarchyParentCode;
+    }
+
+    @Basic
+    @Column(name = "hierarchyLevel", nullable = true)
+    public Integer getHierarchyLevel() {
+        return hierarchyLevel;
+    }
+
+    public void setHierarchyLevel(Integer hierarchyLevel) {
+        this.hierarchyLevel = hierarchyLevel;
+    }
+
+    @Basic
+    @Column(name = "LastUpdatedRiskReveal", nullable = true)
+    public Timestamp getLastUpdatedRiskReveal() {
+        return lastUpdatedRiskReveal;
+    }
+
+    public void setLastUpdatedRiskReveal(Timestamp lastUpdatedRiskReveal) {
+        this.lastUpdatedRiskReveal = lastUpdatedRiskReveal;
+    }
+
+    @Basic
+    @Column(name = "LastUpdatedCatDomain", nullable = true)
+    public Timestamp getLastUpdatedCatDomain() {
+        return lastUpdatedCatDomain;
+    }
+
+    public void setLastUpdatedCatDomain(Timestamp lastUpdatedCatDomain) {
+        this.lastUpdatedCatDomain = lastUpdatedCatDomain;
+    }
+
+    @Basic
+    @Column(name = "LastSyncRunCatDomain", nullable = true)
+    public Timestamp getLastSyncRunCatDomain() {
+        return lastSyncRunCatDomain;
+    }
+
+    public void setLastSyncRunCatDomain(Timestamp lastSyncRunCatDomain) {
+        this.lastSyncRunCatDomain = lastSyncRunCatDomain;
+    }
+
+    @Basic
+    @Column(name = "comments", nullable = true, length = 100)
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
     }
 }

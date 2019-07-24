@@ -1,7 +1,5 @@
 package com.scor.rr.domain;
 
-import com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum;
-
 import javax.persistence.*;
 import java.util.Objects;
 

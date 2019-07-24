@@ -1,42 +1,26 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentThread", schema = "dbo", catalog = "RiskReveal")
-@JsonIgnoreProperties({"scorPltHeaderByPurePltId","scorPltHeaderByThreadPltId"})
 public class AdjustmentThreadEntity {
-    private int adjustmentThreadId;
     private String threadType;
     private Boolean locked;
     private String createdBy;
     private Timestamp createdOn;
-    private String accessBy;
-    private Timestamp accessOn;
     private String lastModifiedBy;
     private Timestamp lastModifiedOn;
     private Timestamp lastGeneratedOn;
     private Timestamp generatedOn;
-    private ScorPltHeaderEntity scorPltHeaderByPurePltId;
-    private ScorPltHeaderEntity scorPltHeaderByThreadPltId;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "adjustmentThreadId", nullable = false)
-    public int getAdjustmentThreadId() {
-        return adjustmentThreadId;
-    }
-
-    public void setAdjustmentThreadId(int adjustmentThreadId) {
-        this.adjustmentThreadId = adjustmentThreadId;
-    }
+    private int idAdjustmentThread;
+    private ScorPltHeaderEntity scorPltHeaderByIdPurePlt;
+    private ScorPltHeaderEntity scorPltHeaderByIdThreadPlt;
 
     @Basic
-    @Column(name = "threadType", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "thread_type", nullable = true, length = 255)
     public String getThreadType() {
         return threadType;
     }
@@ -54,14 +38,14 @@ public class AdjustmentThreadEntity {
     public void setLocked(Boolean locked) {
         this.locked = locked;
     }
-    
+
     @Basic
     @Column(name = "created_by", nullable = true, length = 100)
-    public java.lang.String getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(java.lang.String createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -76,32 +60,12 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "access_by", nullable = true, length = 100)
-    public java.lang.String getAccessBy() {
-        return accessBy;
-    }
-
-    public void setAccessBy(java.lang.String accessBy) {
-        this.accessBy = accessBy;
-    }
-
-    @Basic
-    @Column(name = "access_on", nullable = true)
-    public Timestamp getAccessOn() {
-        return accessOn;
-    }
-
-    public void setAccessOn(Timestamp accessOn) {
-        this.accessOn = accessOn;
-    }
-
-    @Basic
     @Column(name = "last_modified_by", nullable = true, length = 100)
-    public java.lang.String getLastModifiedBy() {
+    public String getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(java.lang.String lastModifiedBy) {
+    public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
@@ -134,38 +98,55 @@ public class AdjustmentThreadEntity {
     public void setGeneratedOn(Timestamp generatedOn) {
         this.generatedOn = generatedOn;
     }
+
+    @Id
+    @Column(name = "id_adjustment_thread", nullable = false)
+    public int getIdAdjustmentThread() {
+        return idAdjustmentThread;
+    }
+
+    public void setIdAdjustmentThread(int idAdjustmentThread) {
+        this.idAdjustmentThread = idAdjustmentThread;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentThreadEntity that = (AdjustmentThreadEntity) o;
-        return adjustmentThreadId == that.adjustmentThreadId &&
+        return idAdjustmentThread == that.idAdjustmentThread &&
                 Objects.equals(threadType, that.threadType) &&
-                Objects.equals(locked, that.locked);
+                Objects.equals(locked, that.locked) &&
+                Objects.equals(createdBy, that.createdBy) &&
+                Objects.equals(createdOn, that.createdOn) &&
+                Objects.equals(lastModifiedBy, that.lastModifiedBy) &&
+                Objects.equals(lastModifiedOn, that.lastModifiedOn) &&
+                Objects.equals(lastGeneratedOn, that.lastGeneratedOn) &&
+                Objects.equals(generatedOn, that.generatedOn);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(adjustmentThreadId, threadType, locked);
+        return Objects.hash(threadType, locked, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGeneratedOn, generatedOn, idAdjustmentThread);
     }
 
     @ManyToOne
-    @JoinColumn(name = "purePltId", referencedColumnName = "scorPLTHeaderId")
-    public ScorPltHeaderEntity getScorPltHeaderByPurePltId() {
-        return scorPltHeaderByPurePltId;
+    @JoinColumn(name = "id_pure_plt", referencedColumnName = "scorPLTHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByIdPurePlt() {
+        return scorPltHeaderByIdPurePlt;
     }
 
-    public void setScorPltHeaderByPurePltId(ScorPltHeaderEntity scorPltHeaderByPurePltId) {
-        this.scorPltHeaderByPurePltId = scorPltHeaderByPurePltId;
+    public void setScorPltHeaderByIdPurePlt(ScorPltHeaderEntity scorPltHeaderByIdPurePlt) {
+        this.scorPltHeaderByIdPurePlt = scorPltHeaderByIdPurePlt;
     }
 
     @ManyToOne
-    @JoinColumn(name = "threadPltId", referencedColumnName = "scorPLTHeaderId")
-    public ScorPltHeaderEntity getScorPltHeaderByThreadPltId() {
-        return scorPltHeaderByThreadPltId;
+    @JoinColumn(name = "id_thread_plt", referencedColumnName = "scorPLTHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByIdThreadPlt() {
+        return scorPltHeaderByIdThreadPlt;
     }
 
-    public void setScorPltHeaderByThreadPltId(ScorPltHeaderEntity scorPltHeaderByThreadPltId) {
-        this.scorPltHeaderByThreadPltId = scorPltHeaderByThreadPltId;
+    public void setScorPltHeaderByIdThreadPlt(ScorPltHeaderEntity scorPltHeaderByIdThreadPlt) {
+        this.scorPltHeaderByIdThreadPlt = scorPltHeaderByIdThreadPlt;
     }
 }

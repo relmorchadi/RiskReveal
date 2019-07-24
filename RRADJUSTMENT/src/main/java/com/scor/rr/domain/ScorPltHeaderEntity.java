@@ -1,17 +1,17 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "ScorPLTHeader", schema = "dbo", catalog = "RiskReveal")
-@JsonIgnoreProperties(value = {"rrAnalysis","targetRapByTargetRapId",
-        "regionPerilByRegionPerilId","projectByProjectId",
+@JsonIgnoreProperties(value = {"rrAnalysis","targetRap",
+        "regionPeril","projectByProjectId",
         "scorPltHeaderByCloningSourceId","binFile",
         "adjustmentBasisPrevious","adjustmentBasisCurrent"},ignoreUnknown = true)
 public class ScorPltHeaderEntity implements Serializable {
@@ -46,14 +46,20 @@ public class ScorPltHeaderEntity implements Serializable {
     private Boolean narrativeChanged;
     private Integer previousNarrative;
     private Integer currentNarrative;
-    private String marketChannel;
+    private Date createdDate;
+    private String e;
+    private Integer inuringPackageId;
+    private String perilCode;
+    private String pltLossDataFileName;
+    private String pltLossDataFilePath;
     private String engineType;
-    private String entity;
     private RrAnalysisNewEntity rrAnalysis;
-    private TargetRapEntity targetRapByTargetRapId;
-    private RegionPerilEntity regionPerilByRegionPerilId;
+    private TargetRapEntity targetRap;
+    private RegionPerilEntity regionPeril;
     private ProjectEntity projectByProjectId;
     private ScorPltHeaderEntity scorPltHeaderByCloningSourceId;
+    private EntityEntity entity;
+    private MarketChannelEntity marketChannel;
     private BinFileEntity binFile;
     private AdjustmentBasisEntity adjustmentBasisPrevious;
     private AdjustmentBasisEntity adjustmentBasisCurrent;
@@ -70,308 +76,362 @@ public class ScorPltHeaderEntity implements Serializable {
 
     @Basic
     @Column(name = "pltType", nullable = true, length = 255)
-    public java.lang.String getPltType() {
+    public String getPltType() {
         return pltType;
     }
 
-    public void setPltType(java.lang.String pltType) {
+    public void setPltType(String pltType) {
         this.pltType = pltType;
     }
 
     @Basic
     @Column(name = "publishToPricing", nullable = true)
-    public java.lang.Boolean getPublishToPricing() {
+    public Boolean getPublishToPricing() {
         return publishToPricing;
     }
 
-    public void setPublishToPricing(java.lang.Boolean publishToPricing) {
+    public void setPublishToPricing(Boolean publishToPricing) {
         this.publishToPricing = publishToPricing;
     }
 
     @Basic
     @Column(name = "pltSimulationPeriods", nullable = true)
-    public java.lang.Integer getPltSimulationPeriods() {
+    public Integer getPltSimulationPeriods() {
         return pltSimulationPeriods;
     }
 
-    public void setPltSimulationPeriods(java.lang.Integer pltSimulationPeriods) {
+    public void setPltSimulationPeriods(Integer pltSimulationPeriods) {
         this.pltSimulationPeriods = pltSimulationPeriods;
     }
 
     @Basic
     @Column(name = "generatedFromDefaultAdjustement", nullable = true)
-    public java.lang.Boolean getGeneratedFromDefaultAdjustement() {
+    public Boolean getGeneratedFromDefaultAdjustement() {
         return generatedFromDefaultAdjustement;
     }
 
-    public void setGeneratedFromDefaultAdjustement(java.lang.Boolean generatedFromDefaultAdjustement) {
+    public void setGeneratedFromDefaultAdjustement(Boolean generatedFromDefaultAdjustement) {
         this.generatedFromDefaultAdjustement = generatedFromDefaultAdjustement;
     }
 
     @Basic
     @Column(name = "ccyCode", nullable = true, length = 255)
-    public java.lang.String getCcyCode() {
+    public String getCcyCode() {
         return ccyCode;
     }
 
-    public void setCcyCode(java.lang.String ccyCode) {
+    public void setCcyCode(String ccyCode) {
         this.ccyCode = ccyCode;
     }
 
     @Basic
     @Column(name = "geoCode", nullable = true, length = 255)
-    public java.lang.String getGeoCode() {
+    public String getGeoCode() {
         return geoCode;
     }
 
-    public void setGeoCode(java.lang.String geoCode) {
+    public void setGeoCode(String geoCode) {
         this.geoCode = geoCode;
     }
 
     @Basic
     @Column(name = "geoDescription", nullable = true, length = 255)
-    public java.lang.String getGeoDescription() {
+    public String getGeoDescription() {
         return geoDescription;
     }
 
-    public void setGeoDescription(java.lang.String geoDescription) {
+    public void setGeoDescription(String geoDescription) {
         this.geoDescription = geoDescription;
     }
 
     @Basic
     @Column(name = "rmsSimulationSet", nullable = true)
-    public java.lang.Integer getRmsSimulationSet() {
+    public Integer getRmsSimulationSet() {
         return rmsSimulationSet;
     }
 
-    public void setRmsSimulationSet(java.lang.Integer rmsSimulationSet) {
+    public void setRmsSimulationSet(Integer rmsSimulationSet) {
         this.rmsSimulationSet = rmsSimulationSet;
     }
 
     @Basic
     @Column(name = "importSequence", nullable = true)
-    public java.lang.Integer getImportSequence() {
+    public Integer getImportSequence() {
         return importSequence;
     }
 
-    public void setImportSequence(java.lang.Integer importSequence) {
+    public void setImportSequence(Integer importSequence) {
         this.importSequence = importSequence;
     }
 
     @Basic
     @Column(name = "threadName", nullable = true, length = 255)
-    public java.lang.String getThreadName() {
+    public String getThreadName() {
         return threadName;
     }
 
-    public void setThreadName(java.lang.String threadName) {
+    public void setThreadName(String threadName) {
         this.threadName = threadName;
     }
 
     @Basic
     @Column(name = "udName", nullable = true, length = 255)
-    public java.lang.String getUdName() {
+    public String getUdName() {
         return udName;
     }
 
-    public void setUdName(java.lang.String udName) {
+    public void setUdName(String udName) {
         this.udName = udName;
     }
 
     @Basic
     @Column(name = "userOccurrenceBasis", nullable = true, length = 255)
-    public java.lang.String getUserOccurrenceBasis() {
+    public String getUserOccurrenceBasis() {
         return userOccurrenceBasis;
     }
 
-    public void setUserOccurrenceBasis(java.lang.String userOccurrenceBasis) {
+    public void setUserOccurrenceBasis(String userOccurrenceBasis) {
         this.userOccurrenceBasis = userOccurrenceBasis;
     }
 
     @Basic
     @Column(name = "defaultPltName", nullable = true, length = 255)
-    public java.lang.String getDefaultPltName() {
+    public String getDefaultPltName() {
         return defaultPltName;
     }
 
-    public void setDefaultPltName(java.lang.String defaultPltName) {
+    public void setDefaultPltName(String defaultPltName) {
         this.defaultPltName = defaultPltName;
     }
 
     @Basic
     @Column(name = "truncationThreshold", nullable = true, length = 255)
-    public java.lang.String getTruncationThreshold() {
+    public String getTruncationThreshold() {
         return truncationThreshold;
     }
 
-    public void setTruncationThreshold(java.lang.String truncationThreshold) {
+    public void setTruncationThreshold(String truncationThreshold) {
         this.truncationThreshold = truncationThreshold;
     }
 
     @Basic
     @Column(name = "truncationExchangeRate", nullable = true, length = 255)
-    public java.lang.String getTruncationExchangeRate() {
+    public String getTruncationExchangeRate() {
         return truncationExchangeRate;
     }
 
-    public void setTruncationExchangeRate(java.lang.String truncationExchangeRate) {
+    public void setTruncationExchangeRate(String truncationExchangeRate) {
         this.truncationExchangeRate = truncationExchangeRate;
     }
 
     @Basic
     @Column(name = "truncationCurrency", nullable = true, length = 255)
-    public java.lang.String getTruncationCurrency() {
+    public String getTruncationCurrency() {
         return truncationCurrency;
     }
 
-    public void setTruncationCurrency(java.lang.String truncationCurrency) {
+    public void setTruncationCurrency(String truncationCurrency) {
         this.truncationCurrency = truncationCurrency;
     }
 
     @Basic
     @Column(name = "sourceLossModelingBasis", nullable = true, length = 255)
-    public java.lang.String getSourceLossModelingBasis() {
+    public String getSourceLossModelingBasis() {
         return sourceLossModelingBasis;
     }
 
-    public void setSourceLossModelingBasis(java.lang.String sourceLossModelingBasis) {
+    public void setSourceLossModelingBasis(String sourceLossModelingBasis) {
         this.sourceLossModelingBasis = sourceLossModelingBasis;
     }
 
     @Basic
     @Column(name = "deletedOn", nullable = true)
-    public java.sql.Timestamp getDeletedOn() {
+    public Timestamp getDeletedOn() {
         return deletedOn;
     }
 
-    public void setDeletedOn(java.sql.Timestamp deletedOn) {
+    public void setDeletedOn(Timestamp deletedOn) {
         this.deletedOn = deletedOn;
     }
 
     @Basic
     @Column(name = "deletedDue", nullable = true, length = 255)
-    public java.lang.String getDeletedDue() {
+    public String getDeletedDue() {
         return deletedDue;
     }
 
-    public void setDeletedDue(java.lang.String deletedDue) {
+    public void setDeletedDue(String deletedDue) {
         this.deletedDue = deletedDue;
     }
 
     @Basic
     @Column(name = "deletedBy", nullable = true, length = 255)
-    public java.lang.String getDeletedBy() {
+    public String getDeletedBy() {
         return deletedBy;
     }
 
-    public void setDeletedBy(java.lang.String deletedBy) {
+    public void setDeletedBy(String deletedBy) {
         this.deletedBy = deletedBy;
     }
 
     @Basic
     @Column(name = "sourceLossEntityingBasis", nullable = true, length = 255)
-    public java.lang.String getSourceLossEntityingBasis() {
+    public String getSourceLossEntityingBasis() {
         return sourceLossEntityingBasis;
     }
 
-    public void setSourceLossEntityingBasis(java.lang.String sourceLossEntityingBasis) {
+    public void setSourceLossEntityingBasis(String sourceLossEntityingBasis) {
         this.sourceLossEntityingBasis = sourceLossEntityingBasis;
     }
 
     @Basic
     @Column(name = "created_by", nullable = true, length = 255)
-    public java.lang.String getCreatedBy() {
+    public String getCreatedBy() {
         return createdBy;
     }
 
-    public void setCreatedBy(java.lang.String createdBy) {
+    public void setCreatedBy(String createdBy) {
         this.createdBy = createdBy;
     }
 
     @Basic
     @Column(name = "created_on", nullable = true)
-    public java.sql.Timestamp getCreatedOn() {
+    public Timestamp getCreatedOn() {
         return createdOn;
     }
 
-    public void setCreatedOn(java.sql.Timestamp createdOn) {
+    public void setCreatedOn(Timestamp createdOn) {
         this.createdOn = createdOn;
     }
 
     @Basic
     @Column(name = "last_modified_by", nullable = true, length = 255)
-    public java.lang.String getLastModifiedBy() {
+    public String getLastModifiedBy() {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(java.lang.String lastModifiedBy) {
+    public void setLastModifiedBy(String lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
     @Basic
     @Column(name = "last_modified_on", nullable = true, length = 255)
-    public java.lang.String getLastModifiedOn() {
+    public String getLastModifiedOn() {
         return lastModifiedOn;
     }
 
-    public void setLastModifiedOn(java.lang.String lastModifiedOn) {
+    public void setLastModifiedOn(String lastModifiedOn) {
         this.lastModifiedOn = lastModifiedOn;
     }
 
     @Basic
     @Column(name = "last_generated", nullable = true)
-    public java.sql.Timestamp getLastGenerated() {
+    public Timestamp getLastGenerated() {
         return lastGenerated;
     }
 
-    public void setLastGenerated(java.sql.Timestamp lastGenerated) {
+    public void setLastGenerated(Timestamp lastGenerated) {
         this.lastGenerated = lastGenerated;
     }
 
     @Basic
     @Column(name = "basis_changed", nullable = true)
-    public java.lang.Boolean getBasisChanged() {
+    public Boolean getBasisChanged() {
         return basisChanged;
     }
 
-    public void setBasisChanged(java.lang.Boolean basisChanged) {
+    public void setBasisChanged(Boolean basisChanged) {
         this.basisChanged = basisChanged;
     }
 
     @Basic
     @Column(name = "narrative_changed", nullable = true)
-    public java.lang.Boolean getNarrativeChanged() {
+    public Boolean getNarrativeChanged() {
         return narrativeChanged;
     }
 
-    public void setNarrativeChanged(java.lang.Boolean narrativeChanged) {
+    public void setNarrativeChanged(Boolean narrativeChanged) {
         this.narrativeChanged = narrativeChanged;
     }
 
     @Basic
     @Column(name = "previous_narrative", nullable = true)
-    public java.lang.Integer getPreviousNarrative() {
+    public Integer getPreviousNarrative() {
         return previousNarrative;
     }
 
-    public void setPreviousNarrative(java.lang.Integer previousNarrative) {
+    public void setPreviousNarrative(Integer previousNarrative) {
         this.previousNarrative = previousNarrative;
     }
 
     @Basic
     @Column(name = "current_narrative", nullable = true)
-    public java.lang.Integer getCurrentNarrative() {
+    public Integer getCurrentNarrative() {
         return currentNarrative;
     }
 
-    @Basic
-    @Column(name = "market_channel", nullable = true, length = 255)
-    public String getMarketChannel() {
-        return marketChannel;
+    public void setCurrentNarrative(Integer currentNarrative) {
+        this.currentNarrative = currentNarrative;
     }
 
-    public void setMarketChannel(String marketChannel) {
-        this.marketChannel = marketChannel;
+    @Basic
+    @Column(name = "createdDate", nullable = true)
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    @Basic
+    @Column(name = "e", nullable = true, length = 255)
+    public String getE() {
+        return e;
+    }
+
+    public void setE(String e) {
+        this.e = e;
+    }
+
+    @Basic
+    @Column(name = "inuringPackageId", nullable = true)
+    public Integer getInuringPackageId() {
+        return inuringPackageId;
+    }
+
+    public void setInuringPackageId(Integer inuringPackageId) {
+        this.inuringPackageId = inuringPackageId;
+    }
+
+    @Basic
+    @Column(name = "perilCode", nullable = true, length = 255)
+    public String getPerilCode() {
+        return perilCode;
+    }
+
+    public void setPerilCode(String perilCode) {
+        this.perilCode = perilCode;
+    }
+
+    @Basic
+    @Column(name = "pltLossDataFileName", nullable = true, length = 255)
+    public String getPltLossDataFileName() {
+        return pltLossDataFileName;
+    }
+
+    public void setPltLossDataFileName(String pltLossDataFileName) {
+        this.pltLossDataFileName = pltLossDataFileName;
+    }
+
+    @Basic
+    @Column(name = "pltLossDataFilePath", nullable = true, length = 255)
+    public String getPltLossDataFilePath() {
+        return pltLossDataFilePath;
+    }
+
+    public void setPltLossDataFilePath(String pltLossDataFilePath) {
+        this.pltLossDataFilePath = pltLossDataFilePath;
     }
 
     @Basic
@@ -383,116 +443,51 @@ public class ScorPltHeaderEntity implements Serializable {
     public void setEngineType(String engineType) {
         this.engineType = engineType;
     }
+    
 
-    @Basic
-    @Column(name = "entity", nullable = true, length = 255)
-    public String getEntity() {
+    @Override
+    public int hashCode() {
+        return Objects.hash(scorPltHeaderId, pltType, publishToPricing, pltSimulationPeriods, generatedFromDefaultAdjustement, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGenerated, basisChanged, narrativeChanged, previousNarrative, currentNarrative, createdDate, e, inuringPackageId, perilCode, pltLossDataFileName, pltLossDataFilePath, engineType, entity);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "cloningSourceId", referencedColumnName = "scorPLTHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByCloningSourceId() {
+        return scorPltHeaderByCloningSourceId;
+    }
+
+    public void setScorPltHeaderByCloningSourceId(ScorPltHeaderEntity scorPltHeaderByCloningSourceId) {
+        this.scorPltHeaderByCloningSourceId = scorPltHeaderByCloningSourceId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "id_entity", referencedColumnName = "id_entity")
+    public EntityEntity getEntity() {
         return entity;
     }
 
-    public void setEntity(String entity) {
+    public void setEntity(EntityEntity entity) {
         this.entity = entity;
     }
 
-    public void setCurrentNarrative(java.lang.Integer currentNarrative) {
-        this.currentNarrative = currentNarrative;
+    @ManyToOne
+    @JoinColumn(name = "id_market_channel", referencedColumnName = "id_market_channel",insertable = false, updatable = false)
+    public MarketChannelEntity getMarketChannel() {
+        return marketChannel;
     }
 
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
-        if (!super.equals(object)) return false;
-
-        ScorPltHeaderEntity that = (ScorPltHeaderEntity) object;
-
-        if (scorPltHeaderId != that.scorPltHeaderId) return false;
-        if (!Objects.equals(pltType, that.pltType)) return false;
-        if (!Objects.equals(publishToPricing, that.publishToPricing))
-            return false;
-        if (!Objects.equals(pltSimulationPeriods, that.pltSimulationPeriods))
-            return false;
-        if (!Objects.equals(generatedFromDefaultAdjustement, that.generatedFromDefaultAdjustement))
-            return false;
-        if (!Objects.equals(ccyCode, that.ccyCode)) return false;
-        if (!Objects.equals(geoCode, that.geoCode)) return false;
-        if (!Objects.equals(geoDescription, that.geoDescription))
-            return false;
-        if (!Objects.equals(rmsSimulationSet, that.rmsSimulationSet))
-            return false;
-        if (!Objects.equals(importSequence, that.importSequence))
-            return false;
-        if (!Objects.equals(threadName, that.threadName)) return false;
-        if (!Objects.equals(udName, that.udName)) return false;
-        if (!Objects.equals(userOccurrenceBasis, that.userOccurrenceBasis))
-            return false;
-        if (!Objects.equals(defaultPltName, that.defaultPltName))
-            return false;
-        if (!Objects.equals(truncationThreshold, that.truncationThreshold))
-            return false;
-        if (!Objects.equals(truncationExchangeRate, that.truncationExchangeRate))
-            return false;
-        if (!Objects.equals(truncationCurrency, that.truncationCurrency))
-            return false;
-        if (!Objects.equals(sourceLossModelingBasis, that.sourceLossModelingBasis))
-            return false;
-        if (!Objects.equals(deletedOn, that.deletedOn)) return false;
-        if (!Objects.equals(deletedDue, that.deletedDue)) return false;
-        if (!Objects.equals(deletedBy, that.deletedBy)) return false;
-        if (!Objects.equals(sourceLossEntityingBasis, that.sourceLossEntityingBasis))
-            return false;
-        if (!Objects.equals(createdBy, that.createdBy)) return false;
-        if (!Objects.equals(createdOn, that.createdOn)) return false;
-        if (!Objects.equals(lastModifiedBy, that.lastModifiedBy))
-            return false;
-        if (!Objects.equals(lastModifiedOn, that.lastModifiedOn))
-            return false;
-        if (!Objects.equals(lastGenerated, that.lastGenerated))
-            return false;
-        if (!Objects.equals(basisChanged, that.basisChanged)) return false;
-        if (!Objects.equals(narrativeChanged, that.narrativeChanged))
-            return false;
-        if (!Objects.equals(previousNarrative, that.previousNarrative))
-            return false;
-        if (!Objects.equals(currentNarrative, that.currentNarrative))
-            return false;
-
-        return true;
+    public void setMarketChannel(MarketChannelEntity marketChannel) {
+        this.marketChannel = marketChannel;
     }
 
-    public int hashCode() {
-        int result = super.hashCode();
-        result = 31 * result + scorPltHeaderId;
-        result = 31 * result + (pltType != null ? pltType.hashCode() : 0);
-        result = 31 * result + (publishToPricing != null ? publishToPricing.hashCode() : 0);
-        result = 31 * result + (pltSimulationPeriods != null ? pltSimulationPeriods.hashCode() : 0);
-        result = 31 * result + (generatedFromDefaultAdjustement != null ? generatedFromDefaultAdjustement.hashCode() : 0);
-        result = 31 * result + (ccyCode != null ? ccyCode.hashCode() : 0);
-        result = 31 * result + (geoCode != null ? geoCode.hashCode() : 0);
-        result = 31 * result + (geoDescription != null ? geoDescription.hashCode() : 0);
-        result = 31 * result + (rmsSimulationSet != null ? rmsSimulationSet.hashCode() : 0);
-        result = 31 * result + (importSequence != null ? importSequence.hashCode() : 0);
-        result = 31 * result + (threadName != null ? threadName.hashCode() : 0);
-        result = 31 * result + (udName != null ? udName.hashCode() : 0);
-        result = 31 * result + (userOccurrenceBasis != null ? userOccurrenceBasis.hashCode() : 0);
-        result = 31 * result + (defaultPltName != null ? defaultPltName.hashCode() : 0);
-        result = 31 * result + (truncationThreshold != null ? truncationThreshold.hashCode() : 0);
-        result = 31 * result + (truncationExchangeRate != null ? truncationExchangeRate.hashCode() : 0);
-        result = 31 * result + (truncationCurrency != null ? truncationCurrency.hashCode() : 0);
-        result = 31 * result + (sourceLossModelingBasis != null ? sourceLossModelingBasis.hashCode() : 0);
-        result = 31 * result + (deletedOn != null ? deletedOn.hashCode() : 0);
-        result = 31 * result + (deletedDue != null ? deletedDue.hashCode() : 0);
-        result = 31 * result + (deletedBy != null ? deletedBy.hashCode() : 0);
-        result = 31 * result + (sourceLossEntityingBasis != null ? sourceLossEntityingBasis.hashCode() : 0);
-        result = 31 * result + (createdBy != null ? createdBy.hashCode() : 0);
-        result = 31 * result + (createdOn != null ? createdOn.hashCode() : 0);
-        result = 31 * result + (lastModifiedBy != null ? lastModifiedBy.hashCode() : 0);
-        result = 31 * result + (lastModifiedOn != null ? lastModifiedOn.hashCode() : 0);
-        result = 31 * result + (lastGenerated != null ? lastGenerated.hashCode() : 0);
-        result = 31 * result + (basisChanged != null ? basisChanged.hashCode() : 0);
-        result = 31 * result + (narrativeChanged != null ? narrativeChanged.hashCode() : 0);
-        result = 31 * result + (previousNarrative != null ? previousNarrative.hashCode() : 0);
-        result = 31 * result + (currentNarrative != null ? currentNarrative.hashCode() : 0);
-        return result;
+    @ManyToOne(cascade = {})
+    @JoinColumn(name = "id_bin_file", referencedColumnName = "binFile_Id", nullable = true, table = "")
+    public BinFileEntity getBinFile() {
+        return binFile;
+    }
+
+    public void setBinFile(BinFileEntity binFile) {
+        this.binFile = binFile;
     }
 
     @ManyToOne(cascade = {})
@@ -506,23 +501,23 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "targetRapId", referencedColumnName = "targetRapId", nullable = true, table = "")
-    public TargetRapEntity getTargetRapByTargetRapId() {
-        return targetRapByTargetRapId;
+    @JoinColumn(name = "id_target_rap", referencedColumnName = "targetRapId", nullable = true, table = "")
+    public TargetRapEntity getTargetRap() {
+        return targetRap;
     }
 
-    public void setTargetRapByTargetRapId(TargetRapEntity targetRapByTargetRapId) {
-        this.targetRapByTargetRapId = targetRapByTargetRapId;
+    public void setTargetRap(TargetRapEntity targetRap) {
+        this.targetRap = targetRap;
     }
 
     @ManyToOne(cascade = {})
     @JoinColumn(name = "regionPerilId", referencedColumnName = "regionPerilId", nullable = true, table = "")
-    public RegionPerilEntity getRegionPerilByRegionPerilId() {
-        return regionPerilByRegionPerilId;
+    public RegionPerilEntity getRegionPeril() {
+        return regionPeril;
     }
 
-    public void setRegionPerilByRegionPerilId(RegionPerilEntity regionPerilByRegionPerilId) {
-        this.regionPerilByRegionPerilId = regionPerilByRegionPerilId;
+    public void setRegionPeril(RegionPerilEntity regionPeril) {
+        this.regionPeril = regionPeril;
     }
 
     @ManyToOne(cascade = {})
@@ -533,26 +528,6 @@ public class ScorPltHeaderEntity implements Serializable {
 
     public void setProject(ProjectEntity projectByProjectId) {
         this.projectByProjectId = projectByProjectId;
-    }
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "cloningSourceId", referencedColumnName = "scorPLTHeaderId", nullable = true, table = "")
-    public ScorPltHeaderEntity getScorPltHeaderByCloningSourceId() {
-        return scorPltHeaderByCloningSourceId;
-    }
-
-    public void setScorPltHeaderByCloningSourceId(ScorPltHeaderEntity scorPltHeaderByCloningSourceId) {
-        this.scorPltHeaderByCloningSourceId = scorPltHeaderByCloningSourceId;
-    }
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "id_bin_file", referencedColumnName = "binFile_Id", nullable = true, table = "")
-    public BinFileEntity getBinFile() {
-        return binFile;
-    }
-
-    public void setBinFile(BinFileEntity binFile) {
-        this.binFile = binFile;
     }
 
     @ManyToOne(cascade = {})
@@ -573,53 +548,5 @@ public class ScorPltHeaderEntity implements Serializable {
 
     public void setAdjustmentBasisCurrent(AdjustmentBasisEntity adjustmentBasisByCurrentBasis) {
         this.adjustmentBasisCurrent = adjustmentBasisByCurrentBasis;
-    }
-
-    @Override
-    public String toString() {
-        return "ScorPltHeaderEntity{" +
-                "scorPltHeaderId=" + scorPltHeaderId +
-                ", pltType='" + pltType + '\'' +
-                ", publishToPricing=" + publishToPricing +
-                ", pltSimulationPeriods=" + pltSimulationPeriods +
-                ", generatedFromDefaultAdjustement=" + generatedFromDefaultAdjustement +
-                ", ccyCode='" + ccyCode + '\'' +
-                ", geoCode='" + geoCode + '\'' +
-                ", geoDescription='" + geoDescription + '\'' +
-                ", rmsSimulationSet=" + rmsSimulationSet +
-                ", importSequence=" + importSequence +
-                ", threadName='" + threadName + '\'' +
-                ", udName='" + udName + '\'' +
-                ", userOccurrenceBasis='" + userOccurrenceBasis + '\'' +
-                ", defaultPltName='" + defaultPltName + '\'' +
-                ", truncationThreshold='" + truncationThreshold + '\'' +
-                ", truncationExchangeRate='" + truncationExchangeRate + '\'' +
-                ", truncationCurrency='" + truncationCurrency + '\'' +
-                ", sourceLossModelingBasis='" + sourceLossModelingBasis + '\'' +
-                ", deletedOn=" + deletedOn +
-                ", deletedDue='" + deletedDue + '\'' +
-                ", deletedBy='" + deletedBy + '\'' +
-                ", sourceLossEntityingBasis='" + sourceLossEntityingBasis + '\'' +
-                ", createdBy='" + createdBy + '\'' +
-                ", createdOn=" + createdOn +
-                ", lastModifiedBy='" + lastModifiedBy + '\'' +
-                ", lastModifiedOn='" + lastModifiedOn + '\'' +
-                ", lastGenerated=" + lastGenerated +
-                ", basisChanged=" + basisChanged +
-                ", narrativeChanged=" + narrativeChanged +
-                ", previousNarrative=" + previousNarrative +
-                ", currentNarrative=" + currentNarrative +
-                ", marketChannel='" + marketChannel + '\'' +
-                ", engineType='" + engineType + '\'' +
-                ", entity='" + entity + '\'' +
-                ", rrAnalysis=" + rrAnalysis +
-                ", targetRapByTargetRapId=" + targetRapByTargetRapId +
-                ", regionPerilByRegionPerilId=" + regionPerilByRegionPerilId +
-                ", projectByProjectId=" + projectByProjectId +
-                ", scorPltHeaderByCloningSourceId=" + scorPltHeaderByCloningSourceId +
-                ", binFile=" + binFile +
-                ", adjustmentBasisPrevious=" + adjustmentBasisPrevious +
-                ", adjustmentBasisCurrent=" + adjustmentBasisCurrent +
-                '}';
     }
 }
