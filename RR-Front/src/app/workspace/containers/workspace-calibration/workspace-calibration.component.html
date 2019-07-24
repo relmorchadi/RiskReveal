@@ -283,10 +283,9 @@
               (clickButtonPlus)="clickButtonPlus($event.bool,$event.data)"
               (extend)="extend()"
               (toggleSelectPlts)="toggleSelectPlts($event)"
+              [adjutmentApplication]="adjutmentApplication"
 
               [EPMColumns]="EPMColumns"
-
-              [adjutmentApplication]="adjutmentApplication"
 
               [frozenColumns]="frozenColumns"
               [cm]="cm"
@@ -299,6 +298,14 @@
 
               [pltColumns]="pltColumns"
               [tableType]="tableType"
+
+              [deletedPlts]="deletedPlts"
+              [listOfDeletedPltsData]="listOfDeletedPltsData"
+              [listOfDeletedPlts]="listOfDeletedPlts"
+              [listOfPltsData]="listOfPltsData"
+              [listOfPlts]="listOfPlts"
+              [showDeleted]="showDeleted"
+              [systemTagsCount]="systemTagsCount"
             >
             </app-calibration-main-table>
           </div>

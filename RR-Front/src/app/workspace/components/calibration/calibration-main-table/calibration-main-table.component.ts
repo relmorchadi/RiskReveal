@@ -1,4 +1,5 @@
 import {
+  ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -25,15 +26,16 @@ import {
   WorkspaceState
 } from "../../../store";
 import {Select, Store} from "@ngxs/store";
-import {combineLatest, Observable} from "rxjs";
+import {Observable} from "rxjs";
 import {ActivatedRoute, Router} from "@angular/router";
-import {map, switchMap} from "rxjs/operators";
+import {map} from "rxjs/operators";
 import {BaseContainer} from "../../../../shared/base";
 
 @Component({
   selector: 'app-calibration-main-table',
   templateUrl: './calibration-main-table.component.html',
-  styleUrls: ['./calibration-main-table.component.scss']
+  styleUrls: ['./calibration-main-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CalibrationMainTableComponent extends BaseContainer implements OnInit, OnDestroy {
 
@@ -41,6 +43,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('toggleSelectPlts') toggleSelectPltsEmitter: EventEmitter<any> = new EventEmitter();
   @Output('extend') extendEmitter: EventEmitter<any> = new EventEmitter();
   @Output('clickButtonPlus') clickButtonPlusEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
   @Input('extended') extended: boolean;
   @Input('cm') cm: any;
   @Input('tableType') tableType: any;
@@ -52,15 +55,23 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   //generic width
   @Input('frozenWidth') frozenWidth: any;
   @Input('headerWidth') headerWidth: any;
+  // @Input('adjutmentApplication') adjutmentApplication: any;
+  // @Input('adjutmentApplicationSubs') adjutmentApplication$: Observable<any>;
   @Input('adjutmentApplication') adjutmentApplication: any;
+  @Input('systemTagsCount') systemTagsCount: any;
+
+  @Input('listOfPlts') listOfPlts: any;
+  @Input('listOfPltsData') listOfPltsData: any;
+  @Input('listOfDeletedPlts') listOfDeletedPlts: any;
+  @Input('listOfDeletedPltsData') listOfDeletedPltsData: any;
+  @Input('showDeleted') showDeleted: any;
+  @Input('deletedPlts') deletedPlts: any;
 
 
   searchAddress: string;
-  listOfPlts: any[];
-  listOfPltsData: any[];
+
   listOfPltsCache: any[];
   selectedListOfPlts: any[];
-  listOfDeletedPlts: any[] = [];
   selectedAdjustment: any;
   filterData: any;
   shownDropDown: any;
@@ -110,7 +121,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   pltdetailsSystemTags: any = [];
   pltdetailsUserTags: any = [];
   systemTags: any;
-  systemTagsCount: any;
   userTags: any;
   userTagsCount: any;
   units = UNITS;
@@ -120,7 +130,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   drawerIndex: any;
   data$;
   deletedPlts$;
-  deletedPlts: any;
   loading: boolean;
   selectedUserTags: any;
   systemTagsMapping = SYSTEM_TAGS_MAPPING;
@@ -132,18 +141,11 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   colorPickerIsVisible: any;
   initColor: any;
   addTagModalPlaceholder: any;
-  showDeleted: boolean;
   selectedItemForMenu: string;
   oldSelectedTags: any;
   tagForMenu: any;
-  listOfDeletedPltsData: any;
   listOfDeletedPltsCache: any;
   selectedListOfDeletedPlts: any;
-  contextMenuItemsCache = this.contextMenuItems;
-  tagModalVisible: boolean;
-  editingTag: boolean;
-  wsHeaderSelected: boolean;
-  modalSelect: any;
   contextMenuItems = [
     {
       label: 'View Detail', command: (event) => {
@@ -190,6 +192,12 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       }
     }
   ];
+  contextMenuItemsCache = this.contextMenuItems;
+  tagModalVisible: boolean;
+  editingTag: boolean;
+  wsHeaderSelected: boolean;
+  modalSelect: any;
+  initAdjutmentApplication: any;
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
   @ViewChild('dt')
@@ -241,151 +249,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   ngOnInit() {
-    this.Subscriptions.push(
-      this.route$.params.pipe(
-        switchMap(({wsId, year}) => {
-          this.workspaceId = wsId;
-          this.uwy = year;
-          this.loading = true;
-          this.data$ = this.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
-          this.deletedPlts$ = this.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
-          this.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
-            params: {
-              workspaceId: wsId, uwy: year
-            }
-          }));
-          return combineLatest(
-            this.data$,
-            this.deletedPlts$
-          )
-        }),
-        this.unsubscribeOnDestroy
-      ).subscribe(([data, deletedData]: any) => {
-        let d1 = [];
-        let dd1 = [];
-        let d2 = [];
-        let dd2 = [];
-        this.loading = false;
-        this.systemTagsCount = {};
-        if (data) {
-          if (_.keys(this.systemTagsCount).length == 0) {
-            _.forEach(data, (v, k) => {
-              //Init Tags Counters
-
-              //Grouped Sys Tags
-              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                const tag = _.toString(v[section]);
-                if (tag) {
-                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
-                }
-              });
-
-              //NONE grouped Sys Tags
-              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
-                this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              })
-
-            })
-          }
-
-          _.forEach(data, (v, k) => {
-            d1.push({...v, pltId: k});
-            d2.push(k);
-
-            /*if (v.visible) {*/
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              const tag = _.toString(v[section]);
-              if (tag) {
-                if (this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0) {
-                  const {
-                    count,
-                    max
-                  } = this.systemTagsCount[sectionName][tag];
-
-                  this.systemTagsCount[sectionName][tag] = {
-                    ...this.systemTagsCount[sectionName][tag],
-                    count: v.visible ? count + 1 : count,
-                    max: max + 1
-                  };
-                }
-              }
-            })
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              const tag = v[section];
-              if (this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0) {
-                const {
-                  max,
-                  count
-                } = this.systemTagsCount[sectionName][section];
-                this.systemTagsCount[sectionName][section] = {
-                  ...this.systemTagsCount[sectionName][section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-              if (this.systemTagsCount[sectionName]['non-' + section] || this.systemTagsCount[sectionName]['non-' + section].count == 0) {
-                const {
-                  count,
-                  max
-                } = this.systemTagsCount[sectionName]['non-' + section];
-                this.systemTagsCount[sectionName]['non-' + section] = {
-                  ...this.systemTagsCount[sectionName]['non-' + section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-            })
-            /*}*/
-
-          });
-
-          this.listOfPlts = d2;
-          this.listOfPltsData = this.listOfPltsCache = d1;
-          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
-          _.forEach(data, (v, k) => {
-            if (v.opened) {
-              this.sumnaryPltDetailsPltId = k;
-            }
-          });
-        }
-
-        if (deletedData) {
-          _.forEach(deletedData, (v, k) => {
-            dd1.push({...v, pltId: k});
-            dd2.push(k);
-          });
-
-          this.listOfDeletedPlts = dd2;
-          this.listOfDeletedPltsData = this.listOfDeletedPltsCache = dd1;
-          this.selectedListOfDeletedPlts = _.filter(dd2, k => deletedData[k].selected);
-        }
-
-        this.selectAll =
-          !this.showDeleted
-            ?
-            (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
-            :
-            (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
-
-        this.someItemsAreSelected =
-          !this.showDeleted ?
-            this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
-            :
-            this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
-        this.detectChanges();
-      }),
-      this.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
-        this.projects = projects;
-        this.detectChanges();
-      }),
-      this.getAttr('loading').subscribe(l => this.loading = l),
-    );
+    // console.log((this.showDeleted ? this.deletedPlts : this.listOfPltsData))
   }
 
 
@@ -462,6 +326,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       plts,
       forDeleted: this.showDeleted
     });
+    this.cdRef.detectChanges();
   }
 
   checkAll($event) {

@@ -163,12 +163,9 @@ export class CalibrationService implements NgxsOnInit {
   /*Toggle Select Plts*/
   SelectPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
-    const {
-      plts,
-      wsIdentifier
-    } = payload;
+    const plts = payload.plts;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data[wsIdentifier] = _.merge({}, state.content[wsIdentifier].calibration.data[wsIdentifier], plts)
+      draft.content[this.prefix].calibration.data[this.prefix] = _.merge({}, state.content[this.prefix].calibration.data[this.prefix], plts)
     }));
   }
 

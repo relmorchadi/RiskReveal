@@ -10,7 +10,6 @@
   [scrollHeight]="'600px'"
   [scrollable]="true"
   [totalRecords]="listOfPltsData.length"
-  [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
   <ng-template let-columns pTemplate="colgroup">
     <colgroup>
@@ -727,60 +726,6 @@
               </li>
             </ul>
           </nz-dropdown>
-          <div
-            *ngIf="adjsArray.length > 0"
-            class="generic-thread-container"
-            dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-            style="position: absolute;left: 221px; width: calc(100% - 233px); margin-top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-            <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-              <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
-                   (mouseenter)="shownDropDown = adj.id"
-                   (mouseleave)="onLeaveAdjustment(adj.id)"
-                   dnd-sortable
-                   [sortableIndex]="adjIndex"
-                   [dragEnabled]="true"
-                   (click)="selectedAdjust(adj.id)"
-                   [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                   [dragData]="adj" (onDropSuccess)="dropThreadAdjustment()">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                             (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                             [nzPlacement]="'bottomLeft'" class="dropD">
-                  <i class="icon-menu_24px" nz-dropdown
-                     style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                  <ul nz-menu>
-                    <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                    <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
-                    <li nz-submenu>
-                      <span title>Apply</span>
-                      <ul nz-menu>
-                        <li nz-submenu>
-                          <span title>Create New Alternate Threads</span>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                            <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                          </ul>
-                        </li>
-                        <li nz-submenu>
-                          <span title>Replace Existing Threads</span>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                            </li>
-                            <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                          </ul>
-                        </li>
-                      </ul>
-                    </li>
-                  </ul>
-                </nz-dropdown>
-                <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                       class="templateInput"
-                >
-              </div>
-            </ng-container>
-          </div>
-
         </th>
       </ng-container>
     </tr>
@@ -940,12 +885,6 @@
         [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
         *ngIf="(filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive) &&  statusFilterActive(rowData.status)">
       <td *ngFor="let col of columns; let i = index"
-          dnd-droppable
-          dnd-sortable-container
-          [sortableData]="adjutmentApplication[rowData.pltId]"
-          [dropZones]="['widget-dropZone']"
-          [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-          (drop)="onDrop(col,rowData.pltId)"
           [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}"
           (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
 
@@ -1038,11 +977,11 @@
               {{ rowData.EPM[1] }}
             </div>
             <div *ngIf="col.fields == 'EPM2' ||
-                                      col.fields == 'EPM5' ||
-                                      col.fields == 'EPM10' ||
-                                      col.fields == 'EPM25' ||
-                                      col.fields == 'EPM50' ||
-                                      col.fields == 'EPM100'"
+                        col.fields == 'EPM5' ||
+                        col.fields == 'EPM10' ||
+                        col.fields == 'EPM25' ||
+                        col.fields == 'EPM50' ||
+                        col.fields == 'EPM100'"
                  class="EPM2B">
               {{ rowData.EPM[2] }}
             </div>
@@ -1058,11 +997,11 @@
               {{ rowData.EPM[0] }}
             </div>
             <div *ngIf="col.fields == 'EPM2' ||
-                                      col.fields == 'EPM5' ||
-                                      col.fields == 'EPM10' ||
-                                      col.fields == 'EPM25' ||
-                                      col.fields == 'EPM50' ||
-                                      col.fields == 'EPM100'"
+                        col.fields == 'EPM5' ||
+                        col.fields == 'EPM10' ||
+                        col.fields == 'EPM25' ||
+                        col.fields == 'EPM50' ||
+                        col.fields == 'EPM100'"
                  class="EPM2B">
               {{ rowData.EPM[2] }}
             </div>
