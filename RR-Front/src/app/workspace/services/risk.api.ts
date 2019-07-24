@@ -2,13 +2,12 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {HelperService} from "../../shared/helper.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RiskApi {
-  protected URL = `${HelperService.getApiUrl()}risk-link/`;
+  protected URL = `${environment.API_URI}risk-link/`;
 
   constructor(private http: HttpClient) {
   }

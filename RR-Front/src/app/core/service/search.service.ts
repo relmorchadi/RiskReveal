@@ -4,7 +4,6 @@ import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
 import {WorkspaceFilter} from '../model/workspace-filter';
 import * as _ from 'lodash'
-import {HelperService} from "../../shared/helper.service";
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +24,7 @@ export class SearchService {
   public loading$ = new Subject<any>();
   public loading = false;
 
-  private readonly api = HelperService.getApiUrl() + 'search/';
+  private readonly api = environment.API_URI + 'search/';
 
   constructor(private _http: HttpClient) {
   }

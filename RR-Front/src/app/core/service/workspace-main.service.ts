@@ -1,15 +1,16 @@
 
 import {Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
+import * as _ from 'lodash';
 import {Observable, of} from 'rxjs';
-import {HelperService} from "../../shared/helper.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceMainService {
 
-  private readonly api = HelperService.getApiUrl() + 'workspace/projects/';
+  private readonly api = environment.API_URI + 'workspace/projects/';
 
   constructor(private http: HttpClient) {
   }
