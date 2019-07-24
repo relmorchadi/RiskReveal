@@ -153,6 +153,16 @@ export class RiskLinkStateService {
     }
   }
 
+  patchLinkingMode(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        draft.content[wsIdentifier].riskLink.linking.autoMode = !draft.content[wsIdentifier].riskLink.linking.autoMode;
+      }
+    ));
+  }
+
   toggleRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const {action, RDM, source} = payload;
@@ -343,6 +353,51 @@ export class RiskLinkStateService {
     }
   }
 
+  toggleAnalysisLinking(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {action, wrapper, value, item} = payload;
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    console.log(wrapper, _.toArray(state.content[wsIdentifier].riskLink.linking.analysis));
+    const linkAnalysis = _.toArray(state.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].data);
+
+    if (action === 'selectOne') {
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].data[item.id].selected = value;
+        }));
+    } else {
+      let selected: boolean;
+      action === 'selectAll' ? selected = true : selected = false;
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].data = Object.assign({},
+            ...linkAnalysis.map(dt => ({[dt.id]: {...dt, selected: selected}})));
+        }));
+    }
+  }
+
+  togglePortfolioLinking(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const {action, value, item} = payload;
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const linkPortfolio = _.toArray(state.content[wsIdentifier].riskLink.linking.portfolio.data);
+
+    if (action === 'selectOne') {
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.linking.portfolio.data[item.id].selected = value;
+        }));
+    } else {
+      let selected: boolean;
+      action === 'selectAll' ? selected = true : selected = false;
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.linking.portfolio.data = Object.assign({},
+            ...linkPortfolio.map(dt => ({[dt.id]: {...dt, selected: selected}})));
+        }));
+    }
+  }
+
   addToBasket(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -482,6 +537,27 @@ export class RiskLinkStateService {
         );
       })
     );
+  }
+
+  createlinking(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const portfolio = _.toArray(state.content[wsIdentifier].riskLink.linking.portfolio.data);
+    const listAnalysis = _.toArray(state.content[wsIdentifier].riskLink.linking.analysis);
+    const selectedPortfolios = _.filter(portfolio, item => item.selected);
+    let selectedAnalysis = [];
+    listAnalysis.forEach(item => {
+      selectedAnalysis = [...selectedAnalysis, ..._.filter(_.toArray(item.data), analysis => analysis.selected)];
+    });
+    console.log(listAnalysis, portfolio, selectedAnalysis, selectedPortfolios);
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        if (selectedPortfolios.length > 0 && selectedPortfolios.length > 0) {
+          draft.content[wsIdentifier].riskLink.linking.linked = [...draft.content[wsIdentifier].riskLink.linking.linked,
+            {analysis: [...selectedAnalysis], portfolio: [...selectedPortfolios]}];
+        }
+      }
+    ));
   }
 
   removeFinancialPerspective(ctx: StateContext<WorkspaceModel>, payload) {
@@ -686,7 +762,6 @@ export class RiskLinkStateService {
   loadAnalysisForLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    console.log(payload.id, payload.name)
     return this.riskApi.searchRiskLinkAnalysis(payload.id, payload.name).pipe(
       mergeMap(dt => {
         const dataTable = {
@@ -705,7 +780,6 @@ export class RiskLinkStateService {
             filter: {}
           }
         };
-        console.log(dataTable);
         return of(ctx.patchState(
           produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].riskLink.linking.rdm.selected = payload;
@@ -784,10 +858,25 @@ export class RiskLinkStateService {
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const linking = state.content[wsIdentifier].riskLink.linking;
     const {item: {id}} = payload;
+    const selected = linking.rdm.data[id].selected;
+    const currentSelection = linking.rdm.selected;
     ctx.patchState( produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].riskLink.linking.rdm.data[id].selected = !linking.rdm.data[id].selected;
-    })
-    );
+      draft.content[wsIdentifier].riskLink.linking.rdm.data[id].selected = !selected;
+      const selectedRdm = _.filter( _.toArray(draft.content[wsIdentifier].riskLink.linking.rdm.data),
+        dt => dt.selected );
+      if ( selectedRdm.length === 0) {
+        draft.content[wsIdentifier].riskLink.linking.rdm.selected = null;
+        draft.content[wsIdentifier].riskLink.linking.analysis = null;
+      }
+    }));
+    const selectedRdms = _.filter( _.toArray(state.content[wsIdentifier].riskLink.linking.rdm.data),
+      dt => dt.selected );
+    if (selectedRdms.length === 0 && selected === false) {
+      ctx.dispatch(new fromWs.LoadAnalysisForLinkingAction(payload.item));
+    }
+    if (_.get(currentSelection, 'id', null) === id && selected) {
+      ctx.dispatch(new fromWs.LoadAnalysisForLinkingAction(selectedRdms[0]));
+    }
   }
 
   /** ACTION ADDED EDM AND RDM */
@@ -898,7 +987,7 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.linking = {
               ...draft.content[wsIdentifier].riskLink.linking,
               edm: listSelected.edm,
-              rdm: {data: listSelected.rdm, selected: _.toArray(listSelected.rdm)[0]}
+              rdm: {data: listSelected.rdm, selected: null}
           };
           draft.content[wsIdentifier].riskLink.financialPerspective = {
           ...draft.content[wsIdentifier].riskLink.financialPerspective,
@@ -999,6 +1088,53 @@ export class RiskLinkStateService {
                   totalNumberElement: ds.totalElements,
                   numberOfElement: ds.size
                   }};
+                draft.content[wsIdentifier].riskLink = {
+                  ...draft.content[wsIdentifier].riskLink,
+                  linking: {
+                    edm: null,
+                    rdm: {data: null, selected: null},
+                    autoLinks: null,
+                    linked: [],
+                    analysis: null,
+                    portfolio: null
+                  },
+                  financialValidator: {
+                    rmsInstance: {data: ['AZU-P-RL17-SQL14', 'AZU-U-RL17-SQL14', 'AZU-U2-RL181-SQL16'], selected: 'AZU-P-RL17-SQL14'},
+                    financialPerspectiveELT: {
+                      data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
+                      selected: 'Net Loss Pre Cat (RL)'
+                    },
+                    targetCurrency: {
+                      data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
+                      selected: 'Main Liability Currency (MLC)'
+                    },
+                    calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
+                  },
+                  display: {
+                    displayTable: false,
+                    displayImport: false,
+                  },
+                  collapse: {
+                    collapseHead: true,
+                    collapseAnalysis: true,
+                    collapseResult: true,
+                  },
+                  checked: {
+                    checkedARC: false,
+                    checkedPricing: false,
+                  },
+                  financialPerspective: {
+                    rdm: {data: null, selected: null},
+                    analysis: null,
+                    treaty: null,
+                    standard: null,
+                    target: 'currentSelection'
+                  },
+                  results: null,
+                  summaries: null,
+                  selectedEDMOrRDM: null,
+                  activeAddBasket: false
+                };
               }
             )
           ))

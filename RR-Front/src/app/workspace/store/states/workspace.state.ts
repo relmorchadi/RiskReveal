@@ -597,6 +597,11 @@ export class WorkspaceState {
     this.riskLinkFacade.patchResult(ctx, payload);
   }
 
+  @Action(fromWS.PatchLinkingModeAction)
+  patchLinkingMode(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.patchLinkingMode(ctx);
+  }
+
   @Action(fromWS.ToggleRiskLinkEDMAndRDMAction)
   toggleRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMAction) {
     this.riskLinkFacade.toggleRiskLinkEDMAndRDM(ctx, payload);
@@ -632,6 +637,16 @@ export class WorkspaceState {
     this.riskLinkFacade.toggleRiskLinkFPAnalysis(ctx, payload);
   }
 
+  @Action(fromWS.ToggleAnalysisLinkingAction)
+  toggleAnalysisLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleAnalysisLinkingAction) {
+    this.riskLinkFacade.toggleAnalysisLinking(ctx, payload);
+  }
+
+  @Action(fromWS.TogglePortfolioLinkingAction)
+  togglePortfolioLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePortfolioLinkingAction) {
+    this.riskLinkFacade.togglePortfolioLinking(ctx, payload);
+  }
+
   @Action(fromWS.AddToBasketAction)
   addToBasket(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.addToBasket(ctx);
@@ -645,6 +660,11 @@ export class WorkspaceState {
   @Action(fromWS.SaveFinancialPerspectiveAction)
   saveFinancialPerspective(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.saveFinancialPerspective(ctx);
+  }
+
+  @Action(fromWS.CreateLinkingAction)
+  createLinking(ctx: StateContext<WorkspaceModel>) {
+    this.riskLinkFacade.createlinking(ctx);
   }
 
   @Action(fromWS.RemoveFinancialPerspectiveAction)
