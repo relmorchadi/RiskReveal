@@ -4,10 +4,16 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
+  <parent>
+    <groupId>com.scor.rr</groupId>
+    <artifactId>risk-reveal-root</artifactId>
+    <version>${revison}</version>
+    <relativePath>..</relativePath>
+  </parent>
 
   <groupId>com.scor.rr</groupId>
   <artifactId>risk-reveal-front</artifactId>
-  <version>${rr_version}</version>
+  <version>${revison}</version>
   <name>Risk reveal Front</name>
   <packaging>pom</packaging>
 
