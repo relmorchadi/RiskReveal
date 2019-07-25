@@ -6,7 +6,7 @@
 
     <groupId>com.scor.rr</groupId>
     <artifactId>risk-reveal-root</artifactId>
-    <version>${revison}</version>
+    <version>${rr_version}</version>
     <description>Risk Reveal project by Scor</description>
     <packaging>pom</packaging>
 
