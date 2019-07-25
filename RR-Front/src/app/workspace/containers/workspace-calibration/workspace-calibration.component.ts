@@ -20,8 +20,8 @@ import {
   saveAdjModification,
   saveAdjustment
 } from "../../store/actions";
-import {map, switchMap} from 'rxjs/operators';
-import {PltMainState, WorkspaceState} from "../../store/states";
+import {switchMap} from 'rxjs/operators';
+import {WorkspaceState} from "../../store/states";
 import {combineLatest, Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
@@ -38,41 +38,60 @@ import {DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
+
+  someItemsAreSelected = false;
+  selectAll = false;
+  listOfPlts = [];
+  listOfPltsData = [];
+  selectedListOfPlts = [];
+  drawerIndex = 0;
+  params = {};
+  loading = true;
+  filters = {
+    systemTag: [],
+    userTag: []
+  }
+  filterData = {};
+  sortData = {};
+  addTagModalIndex = 0;
+  systemTagsCount: any;
+  fromPlts = false;
+  showDeleted = false;
+  tagForMenu = {
+    tagId: null,
+    tagName: '',
+    tagColor: '#0700e4'
+  }
+
   searchAddress: string;
-  listOfPlts: any[];
-  listOfPltsData: any[];
   listOfPltsCache: any[];
-  selectedListOfPlts: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
   frozenWidth: any = '463px';
   headerWidth: any = '403px';
   genericWidth: any = ['409px', '33px', '157px'];
   selectedAdjustment: any;
-  filterData: any;
   shownDropDown: any;
-  sortData;
   lastModifiedAdj;
   dataColumns = [];
-  activeCheckboxSort: boolean;
   extended: boolean = false;
   tableType = 'adjustments';
   EPMetricsTable = false;
   EPMS = EPMS;
-  selectedEPM = "OEP - Delta % & Actual Basis";
-  inProgressCheckbox: boolean = true;
-  checkedCheckbox: boolean = true;
-  lockedCheckbox: boolean = true;
-  failedCheckbox: boolean = true;
-  requiresRegenerationCheckbox: boolean = true;
+  selectedEPM = "AEP";
+
+  normalDisplay = true;
+  deltaBasisDisplay = true;
+  deltaActualDisplay = true;
+
+  EPMDisplay = 'percentage';
+
   collapsedTags: boolean = false;
   filterInput: string = "";
   addRemoveModal: boolean = false;
   isVisible = false;
   singleValue: any;
   global: any;
-  dragPlaceHolderId: any;
-  dragPlaceHolderCol: any;
   categorySelectedFromAdjustement: any;
   modalTitle: any;
   addAdjustement: any;
@@ -91,51 +110,29 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   uwy: number;
   projects: any[];
   columnPosition: number;
-  params: any;
-  lastSelectedId;
   tagModalIndex: any = 0;
   mode = "calibration";
   pltColumns = PLT_COLUMNS;
   EPMColumns = EPM_COLUMNS;
   visible = false;
   size = 'large';
-  filters: {
-    systemTag: [],
-    userTag: []
-  }
   sumnaryPltDetailsPltId: any;
   pltdetailsSystemTags: any = [];
   pltdetailsUserTags: any = [];
   systemTags: any;
-  systemTagsCount: any;
   userTags: any;
-  userTagsCount: any;
   units = UNITS;
   dependencies = DEPENDENCIES;
-  someItemsAreSelected: boolean;
-  selectAll: boolean;
-  drawerIndex: any;
   data$;
   deletedPlts$;
   deletedPlts: any;
-  loading: boolean;
-  selectedUserTags: any;
   systemTagsMapping = SYSTEM_TAGS_MAPPING;
   selectedPlt: any;
-  addTagModalIndex: any;
-  addTagModal: boolean;
   inputValue: any;
-  fromPlts: any;
-  colorPickerIsVisible: any;
-  initColor: any;
-  addTagModalPlaceholder: any;
-  showDeleted: boolean;
   selectedItemForMenu: string;
   oldSelectedTags: any;
   private dropdown: NzDropdownContextComponent;
   private Subscriptions: any[] = [];
-  private lastClick: string;
-  tagForMenu: any;
   listOfDeletedPltsData: any;
   listOfDeletedPltsCache: any;
   selectedListOfDeletedPlts: any;
@@ -208,6 +205,15 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   wsHeaderSelected: boolean;
   modalSelect: any;
 
+  financialPerspectives = {
+    data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
+    selected: 'Net Loss Pre Cat (RL)'
+  };
+  currencies = {
+    data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
+    selected: 'Main Liability Currency (MLC)'
+  };
+
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
   @Select(WorkspaceState.getAdjustmentApplication) adjutmentApplication$;
@@ -223,38 +229,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     private router$: Router,
     private route$: ActivatedRoute) {
     super(router$, cdRef, store$);
-    this.someItemsAreSelected = false;
-    this.selectAll = false;
-    this.listOfPlts = [];
-    this.listOfPltsData = [];
-    this.selectedListOfPlts = [];
-    this.lastSelectedId = null;
-    this.drawerIndex = 0;
-    this.params = {};
-    this.loading = true;
-    this.filters = {
-      systemTag: [],
-      userTag: []
-    }
-    this.filterData = {};
-    this.sortData = {};
-    this.activeCheckboxSort = false;
-    this.loading = true;
-    this.addTagModal = false;
-    this.addTagModalIndex = 0;
-    this.systemTagsCount = {};
-    this.userTagsCount = {};
-    this.fromPlts = false;
-    this.selectedUserTags = {};
-    this.initColor = '#fe45cd'
-    this.colorPickerIsVisible = false;
-    this.addTagModalPlaceholder = 'Select a Tag';
-    this.showDeleted = false;
-    this.tagForMenu = {
-      tagId: null,
-      tagName: '',
-      tagColor: '#0700e4'
-    }
   }
   ngOnInit() {
     this.initDataColumns();
@@ -454,10 +428,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }
   }
 
-  getAttr(path) {
-    return this.select(PltMainState.getAttr).pipe(map(fn => fn(path)));
-  }
-
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.sortData = _.merge({}, this.sortData, {
@@ -520,66 +490,17 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.destroy();
   }
 
-  checkAll($event) {
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-        _.range(!this.showDeleted ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
-      )
-    );
-  }
 
-  toggleSelectPlts(plts: any) {
-    console.log(this.workspaceId + '-' + this.uwy)
+  toggleSelectPlts(event: any) {
     this.dispatch(new fromWorkspaceStore.ToggleSelectPltsFromCalibration({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
-      plts,
+      plts: event.plts,
       forDeleted: this.showDeleted
     }));
     console.log(this.listOfPltsData);
     this.cdRef.detectChanges()
   }
 
-  selectSinglePLT(pltId: number, $event?: boolean) {
-    this.toggleSelectPlts({
-      [pltId]: {
-        selected: $event
-      }
-    });
-  }
-
-  handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(!this.showDeleted ? this.selectedListOfPlts : this.listOfDeletedPlts, el => el == pltId) >= 0;
-    if ($event.ctrlKey || $event.shiftKey) {
-      this.lastClick = "withKey";
-      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
-    } else {
-      this.lastSelectedId = i;
-      this.toggleSelectPlts(
-        _.zipObject(
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => ({selected: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
-        )
-      );
-      this.lastClick = null;
-    }
-  }
-
-  onSort($event: any) {
-    const {} = $event;
-
-  }
-
-  checkBoxsort() {
-    this.activeCheckboxSort = !this.activeCheckboxSort;
-    if (this.activeCheckboxSort) {
-      this.listOfPltsData = _.sortBy(this.listOfPltsData, [(o) => {
-        return !o.selected;
-      }]);
-    } else {
-      this.listOfPltsData = this.listOfPltsCache;
-    }
-  }
 
   selectSystemTag(section, tag) {
     _.forEach(this.systemTagsCount, (s, sKey) => {
@@ -958,29 +879,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => !toRestore ? ('Restore' != e.label) : !_.find(t, el => el == e.label))
   }
 
-  unCheckAll() {
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
-        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({selected: false}))
-      )
-    );
-  }
-
-  statusFilterActive(status) {
-    switch (status) {
-      case 'in progress':
-        return this.inProgressCheckbox;
-      case 'valid':
-        return this.checkedCheckbox;
-      case 'locked':
-        return this.lockedCheckbox;
-      case 'failed':
-        return this.failedCheckbox;
-      case 'requires regeneration':
-        return this.requiresRegenerationCheckbox
-    }
-  }
 
   setWsHeaderSelect($event: any) {
     this.wsHeaderSelected = $event;
@@ -1002,10 +900,6 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }
   }
 
-  trackby(row, index) {
-    return row.pltId;
-  }
-
   onLeaveAdjustment(id) {
     this.shownDropDown = this.dropdownVisible ? id : null;
 
@@ -1022,28 +916,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.selectedEPM = epm;
   }
 
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({selected: i <= max && i >= min})),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
+  changeFinancialPerspective(financialPerspective: string) {
+    this.financialPerspectives.selected = financialPerspective
   }
+
+  changeCurrency(currency: string) {
+    this.currencies.selected = currency
+  }
+
 }

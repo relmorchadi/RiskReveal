@@ -7,18 +7,14 @@
   [frozenWidth]="frozenWidth"
   [resizableColumns]="true"
   [responsive]="true"
-  [scrollHeight]="'600px'"
   [scrollable]="true"
   [totalRecords]="listOfPltsData.length"
+  [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
   <ng-template let-columns pTemplate="colgroup">
     <colgroup>
       <ng-container *ngFor="let col of columns">
-        <col *ngIf="col.frozen" [ngStyle]="{'width': col.width+'px'}">
-        <col *ngIf="col.fields ==='default'" [ngStyle]="{'width': '122px'}">
-        <col *ngIf="col.fields ==='inuring'" [ngStyle]="{'width': '122px'}">
-        <col *ngIf="!col.frozen && col.fields !=='default'&& col.fields !=='inuring'"
-             [ngStyle]="{'width':  col.width+'px'}">
+        <col [ngStyle]="{'width': col.width+'px'}">
       </ng-container>
     </colgroup>
   </ng-template>
@@ -967,34 +963,26 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col?.dragable">
-          <div
-            *ngIf="selectedEPM == 'AEP - Delta % & Actual Basis' ||selectedEPM == 'OEP - Delta % & Actual Basis'  "
-            class="text-elipsice border-dragable threeValues">
+          <div class="text-elipsice border-dragable threeValues">
             <div class="EPM0">
-              {{ rowData.EPM[0] }}
+              {{  getRandomInt(10000, 2000000).toString() }}
             </div>
-            <div class="EPM1">
-              {{ rowData.EPM[1] }}
+            <div *ngIf="EPMDisplay == 'amount'" class="EPM1">
+              {{ getRandomInt(1000, 1000000) }}
             </div>
-            <div *ngIf="col.fields == 'EPM2' ||
-                        col.fields == 'EPM5' ||
-                        col.fields == 'EPM10' ||
-                        col.fields == 'EPM25' ||
-                        col.fields == 'EPM50' ||
-                        col.fields == 'EPM100'"
+            <div *ngIf="EPMDisplay == 'percentage' && getPercentage()[0] != '-'"
                  class="EPM2B">
-              {{ rowData.EPM[2] }}
+              {{ randomPercentage }}
             </div>
-            <div *ngIf="col.fields == 'EPM250' ||
-                                      col.fields == 'EPM500'"
+            <div *ngIf="EPMDisplay == 'percentage' && randomPercentage[0] == '-'"
                  class="EPM2R">
-              {{ rowData.EPM[2] }}
+              {{ randomPercentage }}
             </div>
           </div>
-          <div *ngIf="selectedEPM == 'AEP - Delta % Basis' ||selectedEPM == 'OEP - Delta % Basis'  "
+          <!--<div *ngIf="selectedEPM == 'AEP - Delta % Basis' ||selectedEPM == 'OEP - Delta % Basis'  "
                class="text-elipsice border-dragable twoValues">
             <div class="EPM0">
-              {{ rowData.EPM[0] }}
+              {{  getRandomInt(10000,2000000).toString() }}
             </div>
             <div *ngIf="col.fields == 'EPM2' ||
                         col.fields == 'EPM5' ||
@@ -1014,9 +1002,9 @@
           <div *ngIf="selectedEPM == 'AEP - Normal' ||selectedEPM == 'OEP - Normal'"
                class="text-elipsice border-dragable oneValue">
             <div class="EPM0">
-              {{ rowData.EPM[0] }}
+              {{  getRandomInt(10000,2000000).toString() }}
             </div>
-          </div>
+          </div>-->
         </ng-container>
       </td>
     </tr>

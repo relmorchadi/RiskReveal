@@ -1,5 +1,4 @@
-import {createSelector, Selector, State} from '@ngxs/store';
-import * as _ from 'lodash';
+import {State} from '@ngxs/store';
 import {pltMainModel} from "../../model";
 import {PltApi} from '../../services/plt.api';
 import {PltStateService} from '../../services/plt-state.service';
@@ -20,7 +19,7 @@ export class PltMainState {
   /**
    * Selectors
    */
-  @Selector()
+  /*@Selector()
   static getCloneConfig(wsIdentifier: string) {
     return (state: pltMainModel) => state.data[wsIdentifier]['cloneConfig'];
   }
@@ -38,18 +37,23 @@ export class PltMainState {
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
 
   @Selector()
-  static getProjects() {
-    return (state: any) => state.workspaceMain.openedWs.projects;
+  static getProjectsPlt(wsIdentifier: string) {
+    return (state: pltMainModel) => state[wsIdentifier].projects;
   }
 
   @Selector()
-  static getAttr(state: pltMainModel) {
+  static getAttrPlt(state: pltMainModel) {
     return (path) => _.get(state, `${path}`);
   }
 
   @Selector()
-  static getUserTags(state: pltMainModel) {
-    return _.get(state, 'userTags', {});
+  static getUserTagsPlt(wsIdentifier: string) {
+    return (state: pltMainModel) => _.get(state[wsIdentifier], 'userTags', {});
+  }
+
+  @Selector()
+  static getOpenedPlt(wsIdentifier: string) {
+    return (state: pltMainModel) => _.get(state[wsIdentifier], 'openedPlt', {});
   }
 
   @Selector()
@@ -58,15 +62,14 @@ export class PltMainState {
   }
 
 
-  static getDeletedPlts(wsIdentifier: string) {
+  static getDeletedPltsForPlt(wsIdentifier: string) {
     return createSelector([PltMainState], (state: pltMainModel) => _.keyBy(_.filter(_.get(state.data, `${wsIdentifier}`), e => e.deleted), 'pltId'));
   }
 
 
-  static getPlts(wsIdentifier: string) {
+  static getPltsForPlts(wsIdentifier: string) {
     return createSelector([PltMainState], (state: pltMainModel) => _.keyBy(_.filter(_.get(state.data, `${wsIdentifier}`), e => !e.deleted), 'pltId'))
-  }
-
+  }*/
   //
   //
   // @Action(fromPlt.setCloneConfig)

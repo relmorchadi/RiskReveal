@@ -690,8 +690,9 @@ export class RiskLinkStateService {
   loadAnalysisForLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    this.riskApi.searchRiskLinkAnalysis(payload.id, payload.name).pipe(
-      switchMap(dt => {
+    console.log(payload.id, payload.name)
+    return this.riskApi.searchRiskLinkAnalysis(payload.id, payload.name).pipe(
+      mergeMap(dt => {
         const dataTable = {
           [payload.id]: {
             data: Object.assign({},
@@ -708,9 +709,10 @@ export class RiskLinkStateService {
             filter: {}
           }
         };
-
+        console.log(dataTable);
         return of(ctx.patchState(
           produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].riskLink.linking.rdm.selected = payload;
             draft.content[wsIdentifier].riskLink.linking = {
               ...draft.content[wsIdentifier].riskLink.linking,
               analysis: dataTable
@@ -787,7 +789,7 @@ export class RiskLinkStateService {
     const linking = state.content[wsIdentifier].riskLink.linking;
     const {item: {id}} = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].riskLink.linking.rdm[id].selected = !linking.rdm[id].selected;
+        draft.content[wsIdentifier].riskLink.linking.rdm.data[id].selected = !linking.rdm.data[id].selected;
       })
     );
   }
@@ -900,7 +902,7 @@ export class RiskLinkStateService {
         draft.content[wsIdentifier].riskLink.linking = {
           ...draft.content[wsIdentifier].riskLink.linking,
           edm: listSelected.edm,
-          rdm: listSelected.rdm
+          rdm: {data: listSelected.rdm, selected: _.toArray(listSelected.rdm)[0]}
         };
         draft.content[wsIdentifier].riskLink.financialPerspective = {
           ...draft.content[wsIdentifier].riskLink.financialPerspective,

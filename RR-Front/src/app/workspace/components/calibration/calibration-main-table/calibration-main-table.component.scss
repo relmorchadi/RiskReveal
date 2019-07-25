@@ -1568,11 +1568,12 @@ body .ui-table .ui-table-thead > tr > th {
   }
 
   .EPM1 {
-    width: 50%;
-    float: left;
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
     font-size: 12px;
-    margin-left: 3px;
     color: #acacac;
+
   }
 
   .EPM2B {
@@ -1647,12 +1648,55 @@ body .ui-table .ui-table-thead > tr > th {
   }
 }
 
-.body-wrap-dropDowns-calibration {
+.body-wrap-dropDowns-calibration-display {
   display: flex;
 
   .dropdown-wrap-calibration {
     display: flex;
     width: 205px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title-calibration {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title-calibration {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected-calibration {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}
+
+.body-wrap-dropDowns-calibration-currency {
+  display: flex;
+
+  .dropdown-wrap-calibration {
+    display: flex;
+    width: 105px;
     height: 35px;
     margin-right: 10px;
     justify-content: space-between;

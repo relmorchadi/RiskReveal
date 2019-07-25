@@ -1531,6 +1531,7 @@ body .ui-table .ui-table-thead > tr > th {
   .radio-container {
     margin-top: 0px;
     margin-right: 5px;
+
   }
   .title-as-tab {
     display: flex;
@@ -1651,7 +1652,8 @@ body .ui-table .ui-table-thead > tr > th {
 
   .dropdown-wrap-calibration {
     display: flex;
-    width: 205px;
+    width: 128px;
+    padding-right: 14px;
     height: 35px;
     margin-right: 10px;
     justify-content: space-between;
@@ -1688,6 +1690,7 @@ body .ui-table .ui-table-thead > tr > th {
     }
   }
 }
+
 
 .Deltas {
   display: flex;

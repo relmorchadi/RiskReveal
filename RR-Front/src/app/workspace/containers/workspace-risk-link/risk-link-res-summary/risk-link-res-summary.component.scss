@@ -647,6 +647,26 @@ LINKING MODAL STYLE
 =======================================================================================
 */
 
+.linking-wrapper {
+  display: flex;
+
+  .linking-left {
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+
+    .modal-linking-table-wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+
+  .linking-right {
+    width: 50%;
+  }
+}
+
+
 .modal-linking-wrapper {
   border-top: 3px solid #0700CF;
   margin: 0 5px;
@@ -656,7 +676,6 @@ LINKING MODAL STYLE
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-top: none;
     margin-bottom: 15px;
-    min-width: 660px;
 
     .modal-l-h-body-fill {
       flex: 1;
@@ -667,7 +686,8 @@ LINKING MODAL STYLE
       .radio-wrapper {
         display: flex;
         flex-direction: column;
-        height: 195px;
+        height: auto;
+        max-height: 195px;
         overflow: auto;
       }
 

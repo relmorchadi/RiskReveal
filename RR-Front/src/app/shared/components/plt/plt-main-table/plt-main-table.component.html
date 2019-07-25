@@ -9,9 +9,9 @@
   [resizableColumns]="true"
   [columnResizeMode]="'expand'"
   [responsive]="true"
+  [rowTrackBy]="rowTrackBy"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag])?.length ? 'activate-header-scroll' : ''"
-  (click)="tmp(dt)"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -23,7 +23,10 @@
       <ng-container *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col?.active">
           <th *ngIf="col?.type == 'checkbox'"  class="checkBoxHead" [ngStyle]="{'width': col?.width + 'px'}">
-            <label nz-checkbox [nzChecked]="tableInputs.selectAll" (nzCheckedChange)="checkAll($event)" [nzIndeterminate]="tableInputs.someItemsAreSelected"></label>
+            <label nz-checkbox
+                   [nzChecked]="!tableInputs.showDeleted ? tableInputs.selectAll : tableInputs.selectAllDeletedPlts"
+                   (nzCheckedChange)="checkAll($event)"
+                   [nzIndeterminate]="!tableInputs.showDeleted ? tableInputs.someItemsAreSelected : tableInputs.someDeletedItemsAreSelected"></label>
             <i (click)="checkBoxSort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
           </th>
           <th *ngIf="col?.type === 'tags'" [ngStyle]="{'width': col?.width + 'px'}">
@@ -65,7 +68,7 @@
     <tr
       (contextmenu)="selectedItemForMenu(rowData.pltId)"
       [pContextMenuRow]="rowData"
-      [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
+      [ngClass]="{'active_plt_item': rowData.selected && !(tableInputs['openedPlt'] === rowData.pltId), 'opened_plt_item': tableInputs['openedPlt'] === rowData.pltId }"
       *ngIf="(tableInputs.filters.systemTag | keys ).length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive">
       <ng-container *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col?.active">

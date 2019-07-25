@@ -303,8 +303,8 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
 
   getBrowesingItemsDirectly() {
     this.browesing = true;
-    this.data$ = this.store$.select(WorkspaceState.getPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.data$ = this.store$.select(WorkspaceState.getPltsForPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPltsForPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
 
     this.pltTableSubscription = combineLatest(
       this.data$,
@@ -461,7 +461,7 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       this.detectChanges();
     });
 
-    this.pltUserTagsSubscription = this.store$.select(WorkspaceState.getUserTags).subscribe(userTags => {
+    this.pltUserTagsSubscription = this.store$.select(WorkspaceState.getUserTagsPlt).subscribe(userTags => {
       this.setInputs('userTags', userTags || {});
       console.log(this.getInputs('userTags'))
       this.detectChanges();

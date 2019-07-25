@@ -162,7 +162,7 @@ export class PltLeftMenuComponent implements OnInit {
 
       if(this.menuInputs.addTagModalIndex === 1 ){
         this.onAssignPltsToTag.emit({
-          plts: this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu] ,
+          plts: _.map(this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu], plt => plt.pltId),
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
           selectedTags: this.menuInputs._modalSelect
@@ -171,7 +171,7 @@ export class PltLeftMenuComponent implements OnInit {
 
       if(this.menuInputs.addTagModalIndex === 0) {
         this.onCreateTag.emit({
-          plts: this.menuInputs.fromPlts ? (this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu]) : [],
+          plts: this.menuInputs.fromPlts ? _.map((this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu]), plt => plt.pltId) : [],
           wsId: this.menuInputs.wsId,
           uwYear: this.menuInputs.uwYear,
           tag: _.omit(this.menuInputs.tagForMenu, 'tagId')

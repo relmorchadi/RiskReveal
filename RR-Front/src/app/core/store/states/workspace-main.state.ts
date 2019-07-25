@@ -58,11 +58,6 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Selector()
-  static getLeftNavbarIsCollapsed(state: WorkspaceMain) {
-    return state.leftNavbarIsCollapsed;
-  }
-
-  @Selector()
   static getFavorite(state: WorkspaceMain) {
     return state.openedTabs.data.filter(dt => dt.favorite);
   }
@@ -82,10 +77,10 @@ export class WorkspaceMainState implements NgxsOnInit {
     return state.loading;
   }
 
-  @Selector()
+  /*@Selector()
   static getCurrentWS(state: WorkspaceMain) {
     return state.openedWs;
-  }
+  }*/
 
   @Selector()
   static getProjects(state: WorkspaceMain) {

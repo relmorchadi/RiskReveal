@@ -49,7 +49,7 @@ export class WorkspaceRouterComponent implements OnInit, OnChanges {
     projects: {component: WorkspaceProjectComponent, selector: (state) => state.project},
     Contract: {component: WorkspaceContractComponent, selector: (state) => state},
     Activity: {component: WorkspaceActivityComponent, selector: (state) => state},
-    PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state},
+    PltBrowser: {component: WorkspacePltBrowserComponent, selector: (state) => state.pltManager},
     RiskLink: {component: WorkspaceRiskLinkComponent, selector: (state) => state},
     FileBasedImport: {component: WorkspaceFileBaseImportComponent, selector: (state) => state},
     CloneData: {component: WorkspaceCloneDataComponent, selector: (state) => state},

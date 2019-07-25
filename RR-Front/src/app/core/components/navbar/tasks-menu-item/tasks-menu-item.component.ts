@@ -10,6 +10,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
 import {DeleteTask, PauseTask, ResumeTask} from '../../../store/actions/header.action';
 import * as workspaceActions from '../../../../workspace/store/actions/workspace.actions';
+import {WorkspaceState} from '../../../../workspace/store/states';
 
 @Component({
   selector: 'tasks-menu-item',
@@ -51,7 +52,7 @@ export class TasksMenuItemComponent implements OnInit {
     });
     this.state$.subscribe(value => this.state = _.merge({}, value));
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
-    this.store.select(WorkspaceMainState.getCurrentWS).subscribe((ws) => {
+    this.store.select(WorkspaceState.getCurrentWS).subscribe((ws) => {
       this.wsId = _.get(ws, 'workSpaceId', null);
       this.year = _.get(ws, 'uwYear', null);
     });

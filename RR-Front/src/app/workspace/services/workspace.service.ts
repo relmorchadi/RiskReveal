@@ -58,7 +58,10 @@ export class WorkspaceService {
             filters: {
               systemTag: [], userTag: []
             },
+            openedPlt: {},
             userTags: {},
+            cloneConfig: {},
+            loading: false
           },
           calibration: {
             data: {},
@@ -89,7 +92,7 @@ export class WorkspaceService {
             },
             linking: {
               edm: null,
-              rdm: null,
+              rdm: {data: null, selected: null},
               autoLinks: null,
               linked: null,
               analysis: null,

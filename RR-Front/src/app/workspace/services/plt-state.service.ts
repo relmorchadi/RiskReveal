@@ -24,8 +24,9 @@ export class PltStateService {
       wsIdentifier,
       params
     } = payload;
+    console.log(payload);
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].loadingPlts = true;
+      draft.content[wsIdentifier].pltManager.loading = true;
     }));
     return this.pltApi.getAllPlts(params)
       .pipe(
@@ -67,7 +68,7 @@ export class PltStateService {
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.loading = false;
-      draft.content[wsIdentifier].loadingPlts = false;
+      draft.content[wsIdentifier].loading = false;
     }));
 
     return ctx.dispatch(new fromPlt.constructUserTags({wsIdentifier: payload.wsIdentifier, userTags: payload.userTags}))
@@ -94,19 +95,22 @@ export class PltStateService {
   openPltInDrawer(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {wsIdentifier, pltId} = payload;
 
+    const {
+      data
+    } = ctx.getState().content[wsIdentifier].pltManager;
+
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.data[pltId].opened = true;
+      draft.content[wsIdentifier].pltManager.openedPlt = data[pltId];
     }));
   }
 
   closePLTinDrawer(ctx: StateContext<WorkspaceModel>, payload: any) {
     const {
-      pltId,
       wsIdentifier
     } = payload;
 
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].pltManager.data[pltId].opened = false;
+      draft.content[wsIdentifier].pltManager.openedPlt = {};
     }));
   }
 
@@ -129,21 +133,22 @@ export class PltStateService {
       wsIdentifier
     } = payload;
     const {
-      data
+      data,
+      filters
     } = state.content[wsIdentifier].pltManager;
 
     let newData = {};
 
-    if (data[wsIdentifier].filters.userTag.length > 0) {
-      _.forEach(data[wsIdentifier], (plt: any, k) => {
-        if (_.some(data[wsIdentifier].filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
+    if (filters.userTag.length > 0) {
+      _.forEach(data, (plt: any, k) => {
+        if (_.some(filters.userTag, (userTag) => _.find(plt.userTags, tag => tag.tagId == userTag))) {
           newData[k] = {...plt, visible: true};
         } else {
           newData[k] = {...plt, visible: false};
         }
       });
     } else {
-      _.forEach(data[wsIdentifier], (plt, k) => {
+      _.forEach(data, (plt, k) => {
         newData[k] = {...plt, visible: true};
       });
     }
@@ -223,6 +228,7 @@ export class PltStateService {
       case 'assignOrRemove':
         return this.pltApi.assignPltsToTag(_.omit(payload, 'wsIdentifier')).pipe(
           mergeMap((tags) => {
+            console.log(payload);
             return ctx.dispatch(new fromPlt.assignPltsToTagSuccess({
               workspaceId: payload.wsIdentifier.split('-')[0],
               uwYear: payload.wsIdentifier.split('-')[1]
@@ -249,7 +255,8 @@ export class PltStateService {
     } = payload;
 
     const {
-      data
+      data,
+      userTags
     } = ctx.getState().content[wsIdentifier].pltManager;
 
     let newData = {};
@@ -264,13 +271,18 @@ export class PltStateService {
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.data = {...data, ...newData};
-      draft.content[wsIdentifier].pltManager.userTags[userTag.tagId].count = userTag.pltHeaders.length;
-      draft.content[wsIdentifier].pltManager.userTags[userTag.tagId].selected = false;
+      draft.content[wsIdentifier].pltManager.userTags = {
+        ...userTags,
+        [userTag.tagId]: {...userTag, count: userTag.pltHeaders.length, selected: false}
+      }
     }));
   }
 
   assignPltsToTagSuccess(ctx: StateContext<WorkspaceModel>, payload: any) {
-    ctx.dispatch(new fromPlt.loadAllPlts({params: {workspaceId: payload.workspaceId, uwy: payload.uwYear}}))
+    ctx.dispatch(new fromPlt.loadAllPlts({
+      params: {workspaceId: payload.workspaceId, uwy: payload.uwYear}, wsIdentifier: payload.workspaceId
+        + "-" + payload.uwYear
+    }))
   }
 
   deleteUserTag(ctx: StateContext<WorkspaceModel>, payload: any) {
@@ -397,7 +409,8 @@ export class PltStateService {
     let ls = JSON.parse(localStorage.getItem('deletedPlts')) || {};
 
     _.forEach(pltIds, k => {
-      newData[k] = {...data[wsIdentifier][k], deleted: false, selected: false}
+
+      newData[k] = {...data[k], deleted: false, selected: false}
       ls = _.omit(ls, `${k}`)
     });
 

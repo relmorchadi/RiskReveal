@@ -42,6 +42,10 @@ export class CalibrationService implements NgxsOnInit {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  getPercentage() {
+    let random = Math.floor(Math.random() * 199) - 99;
+    return random;
+  }
   /*Load Plts*/
   loadAllPltsFromCalibration(ctx: StateContext<any>, payload: any) {
     this.ctx = ctx;
@@ -69,7 +73,7 @@ export class CalibrationService implements NgxsOnInit {
                       deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
                       status: this.status[this.getRandomInt()],
                       newPlt: Math.random() >= 0.5,
-                      EPM: ['1,080,913', '151,893', '14.05%'],
+                      EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage() + '%'],
                       calibrate: true
                     }
                   }))
@@ -163,9 +167,13 @@ export class CalibrationService implements NgxsOnInit {
   /*Toggle Select Plts*/
   SelectPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
-    const plts = payload.plts;
+    const {
+      plts,
+      wsIdentifier
+    } = payload;
+    console.log(payload)
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data[this.prefix] = _.merge({}, state.content[this.prefix].calibration.data[this.prefix], plts)
+      draft.content[this.prefix].calibration.data[wsIdentifier] = _.merge({}, state.content[wsIdentifier].calibration.data[wsIdentifier], plts)
     }));
   }
 

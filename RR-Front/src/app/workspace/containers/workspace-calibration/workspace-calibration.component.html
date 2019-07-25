@@ -250,7 +250,7 @@
                     Thread Level EP Metrics
                   </span>
                 <div class="body-wrap-dropDowns-calibration">
-                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 25px;margin-top: 15px;">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
                     <div class="dropdown-wrap-calibration" nz-dropdown>
                       <div class="dropdown-wrap-title-calibration">
                         <span class="dropdown-title-calibration">Change Display</span>
@@ -268,11 +268,56 @@
                     </ul>
                   </nz-dropdown>
                 </div>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Financial Perspective</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{financialPerspectives.selected}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li (click)="changeFinancialPerspective(financialPerspective)"
+                          *ngFor="let financialPerspective of financialPerspectives.data" nz-menu-item>
+                        {{financialPerspective}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Change Currency</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{currencies.selected}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li (click)="changeCurrency(currency)" *ngFor="let currency of currencies.data" nz-menu-item>
+                        {{currency}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
               </div>
-
-              <div class="pull-right radio-container">
-                <div class="Deltas" style="position: unset;">Impact on EP Metrics &nbsp;
+              <div class="pull-right radio-container" style="width: 100% !important;">
+                <div class="Deltas" style="position: unset; justify-content: flex-end">
+                  <nz-radio-group [(ngModel)]="EPMDisplay" style="margin-right: 25px; color: #0700e4;">
+                    <label nz-radio nzValue="percentage">Delta by % Basis</label>
+                    <label nz-radio nzValue="amount">Delta by amount</label>
+                  </nz-radio-group>
                   <div class="button-toggle">
+                    Impact on EP Metrics &nbsp;
                     <nz-switch class="switch-input" (ngModelChange)="onTableTypeChange($event)"
                                [(ngModel)]="EPMetricsTable"></nz-switch>
                   </div>
@@ -295,10 +340,11 @@
               [headerWidth]="headerWidth"
               [frozenWidth]="frozenWidth"
 
+              [EPMDisplay]="EPMDisplay"
 
               [pltColumns]="pltColumns"
               [tableType]="tableType"
-
+              [selectedAdjustment]="selectedAdjustment"
               [deletedPlts]="deletedPlts"
               [listOfDeletedPltsData]="listOfDeletedPltsData"
               [listOfDeletedPlts]="listOfDeletedPlts"
@@ -306,6 +352,8 @@
               [listOfPlts]="listOfPlts"
               [showDeleted]="showDeleted"
               [systemTagsCount]="systemTagsCount"
+
+              [selectedEPM]="selectedEPM"
             >
             </app-calibration-main-table>
           </div>

@@ -100,14 +100,7 @@
           <div class="PLTs-content">
             <app-plt-main-table
               [tableInputs]="Inputs | pickKeys : tableInputs"
-              (onCheckAll)="checkAll($event)"
-              (onFilter)="filterPlts($event)"
-              (onPltClick)="toggleSelectPlts($event)"
-              (onSelectSinglePlt)="selectSinglePLT($event)"
-              (openPltInDrawer)="openPltInDrawer($event)"
-              (onItemSelectForMenu)="setSelectedPlt($event)"
-              (onSortChange)="onSortChange($event)"
-              (onCheckBoxSort)="onCheckBoxSort($event)"
+              (actionDispatcher)="tableActionDispatcher($event)"
             ></app-plt-main-table>
           </div>
         </div>
