@@ -6,7 +6,7 @@
 
     <groupId>com.scor.rr</groupId>
     <artifactId>risk-reveal-root</artifactId>
-    <version>${rr_version}</version>
+    <version>${revison}</version>
     <description>Risk Reveal project by Scor</description>
     <packaging>pom</packaging>
 
@@ -17,7 +17,8 @@
 
     <properties>
         <!-- SONAR LIBRARIES -->
-        <rr_version>0.0.1-SNAPSHOT</rr_version>
+        <rr_version>${revison}</rr_version>
+        <revison>0.0.1-SNAPSHOT</revison>
         <sonar.jacoco.reportPath>${project.basedir}/../report/jacoco.exec</sonar.jacoco.reportPath>
         <sonar.surefire.reportPath>${project.basedir}/../report/surefire-reports</sonar.surefire.reportPath>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
