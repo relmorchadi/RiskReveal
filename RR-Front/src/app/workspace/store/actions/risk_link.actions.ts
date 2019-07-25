@@ -103,8 +103,13 @@ export class DeleteFromBasketAction {
   constructor(public payload: any) {}
 }
 
-export class DeleteEdmRdmaction {
+export class DeleteEdmRdmAction {
   static readonly type = '[Risk Link] Delete Edm Or Rdm';
+  constructor(public payload: any) {}
+}
+
+export class DeleteLinkAction {
+  static readonly type = '[Risk Link] Delete Linking Between Analysis';
   constructor(public payload: any) {}
 }
 
@@ -136,6 +141,11 @@ export class RemoveFinancialPerspectiveAction {
 export class SaveFinancialPerspectiveAction {
   static readonly type = '[Risk Link] Save Financial Perspective Data';
   constructor() {}
+}
+
+export class SaveEditAnalysisAction {
+  static readonly type = '[Risk Link] Save Edit On Analysis';
+  constructor(public payload: any) {}
 }
 
 export class CreateLinkingAction {

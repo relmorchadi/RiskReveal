@@ -7,6 +7,7 @@ import * as _ from 'lodash';
 import {RiskLinkState, WorkspaceState} from '../../../store/states';
 import {combineLatest, Observable} from 'rxjs';
 import {RiskLinkModel} from '../../../model/risk_link.model';
+import {SaveEditAnalysisAction} from "../../../store/actions";
 
 @Component({
   selector: 'app-risk-link-res-summary',
@@ -75,6 +76,11 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   occurrenceBasis;
   targetCurrency;
+  proportion;
+  unitMultiplier;
+
+  targetOfEdit = 'currentSelection';
+
   tree = [];
   regionPeril;
 
@@ -112,6 +118,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
           if (_.get(this.linking, 'portfolio', null) !== null) {
             this.portfolio = _.toArray(this.linking.portfolio.data);
           }
+        }
+        if (this.linking.portfolio === null && this.linking.analysis === null ) {
+          this.portfolio = this.analysis = [];
         }
         this.detectChanges();
       })
@@ -229,6 +238,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpA') {
       this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: event, item: rowData}));
+    } else if (target === 'linkAnalysis') {
+      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne', value: event, item: rowData}));
+    } else if (target === 'linkPortfolio') {
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: event, item: rowData}));
     }
   }
 
@@ -248,7 +261,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
     }
   }
 
-  selectRows(row: any, index: number, target) {
+  selectRows(row: any, index: number, target, source = null) {
+    console.log(source);
     if (target === 'R') {
       const action = (payload) => new fromWs.ToggleRiskLinkResultAction(payload);
       this._selectRowsProvider(row, index, this.lastSelectedIndexResult, action, 'R');
@@ -286,6 +300,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
       this.lastSelectedIndexLinkAnalysis = index;
     } else if (target === 'linkPortfolio') {
+      console.log('it should toggle');
       const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
       this._selectRowsProvider(row, index, this.lastSelectedIndexLinkPortfolio, action, 'linkPortfolio');
       this.lastSelectedIndexLinkPortfolio = index;
@@ -409,6 +424,17 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.singleColEdit = true;
   }
 
+  saveEdit() {
+    this.store.dispatch(new SaveEditAnalysisAction({
+      occurenceBasis: this.occurrenceBasis,
+      targetCurrency: this.targetCurrency,
+      proportion: this.proportion,
+      unitMultiplier: this.unitMultiplier,
+      scope: this.targetOfEdit
+    }));
+    this.editRowPopUp = false;
+  }
+
   hideChild(item) {
     item.expanded = !item.expanded;
   }
@@ -502,6 +528,14 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   createLinking() {
     this.store.dispatch(new fromWs.CreateLinkingAction());
+  }
+
+  deleteLink(item) {
+    this.store.dispatch(new fromWs.DeleteLinkAction(item));
+  }
+
+  rowTrackBy = (index, item) => {
+    return item.id;
   }
 
   detectChanges() {

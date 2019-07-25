@@ -662,9 +662,14 @@ export class WorkspaceState {
     this.riskLinkFacade.saveFinancialPerspective(ctx);
   }
 
+  @Action(fromWS.SaveEditAnalysisAction)
+  saveEditAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveEditAnalysisAction) {
+    this.riskLinkFacade.saveEditAnalysis(ctx, payload);
+  }
+
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.createlinking(ctx);
+    this.riskLinkFacade.createLinking(ctx);
   }
 
   @Action(fromWS.RemoveFinancialPerspectiveAction)
@@ -677,9 +682,14 @@ export class WorkspaceState {
     this.riskLinkFacade.deleteFromBasket(ctx, payload);
   }
 
-  @Action(fromWS.DeleteEdmRdmaction)
-  deleteEdmRdm(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteEdmRdmaction) {
+  @Action(fromWS.DeleteEdmRdmAction)
+  deleteEdmRdm(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteEdmRdmAction) {
     this.riskLinkFacade.deleteEdmRdm(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteLinkAction)
+  deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
+    this.riskLinkFacade.deleteLink(ctx, payload);
   }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)

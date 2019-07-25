@@ -193,6 +193,28 @@ TABLE STYLE
   }
 }
 
+.empty-table {
+  ::ng-deep {
+    .ui-table-scrollable-body-table {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ui-table-tbody {
+      diaply: flex;
+    }
+
+  }
+
+  .empty-notif-wrapper {
+    background-color: #f4f6fc;
+    margin: 4px 2px;
+    padding: 7px;
+    display: flex;
+    justify-content: center;
+  }
+}
+
 /*
 =======================================================================================
 FINANCIAL PERSPECTIVE POPUP STYLE
