@@ -7,7 +7,7 @@
   <parent>
     <groupId>com.scor.rr</groupId>
     <artifactId>risk-reveal-root</artifactId>
-    <version>${revison}</version>
+    <version>${rr_version}</version>
     <relativePath>..</relativePath>
   </parent>
 
