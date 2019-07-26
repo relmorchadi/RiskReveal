@@ -1,6 +1,7 @@
 <div (click)="redirectWorkspace()"
      class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}}</div>
-<div (click)="togglePopup()" class="dropdown-icon" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click">
+<div (click)="togglePopup()" class="dropdown-icon" nz-popover [(nzVisible)]="visible"
+     [nzContent]="workspacePopoverContent" nzTrigger="click">
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 8px"></i>
 </div>
 <ng-template #workspacePopoverContent>
@@ -85,7 +86,7 @@
             </ng-container>
           </ul>
           <div class="footer-workspace-menu mt-2">
-            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="float-left a-dropdown-small"
+            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false"  class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
@@ -116,7 +117,7 @@
             </li>
           </ul>
           <div class="footer-workspace-menu mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left a-dropdown-small"
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
@@ -160,7 +161,7 @@
             </ng-container>
           </ul>
           <div class="footer-workspace-menu mt-2">
-            <nz-select [(ngModel)]="pingedSize" [nzAllowClear]="false" class="float-left a-dropdown-small"
+            <nz-select [(ngModel)]="pingedSize" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>

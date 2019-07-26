@@ -5,6 +5,16 @@
 
 }
 
+.delta-context {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'Delta Context';
+      width: fit-content;
+    }
+  }
+}
+
+
 /*::ng-deep  {
   .ant-modal-mask {
     -webkit-filter: blur(5px) grayscale(90%);

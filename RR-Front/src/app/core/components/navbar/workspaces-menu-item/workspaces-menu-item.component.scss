@@ -11,6 +11,15 @@
   }
 }
 
+.last-label {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'List Limit';
+      width: fit-content;
+    }
+  }
+}
+
 .dropdown-icon {
   color: rgba(0, 0, 0, 0.6);
   cursor: pointer;

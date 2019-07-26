@@ -6,14 +6,14 @@
                [tableColumn]="cols" [listOfData]="mockData"
                [virtualScroll]="false" [totalRecords]="mockData.length"></app-table>
     <div class="select-sections">
-      <nz-select nzPlaceHolder="Country" class="float-right mt-2 mr-2 a-dropdown-small" style="width: 140px;" nzShowSearch nzAllowClear
+      <nz-select  class="country a-dropdown-label" style="width: 140px;" nzShowSearch nzAllowClear
                  [(ngModel)]="activeCountry"
                  (ngModelChange)="setFilter('country', $event)"
       >
         <nz-option *ngFor="let country of Countries" [nzLabel]="country.COUNTRYSHORTNAME" [nzValue]="country.COUNTRYSHORTNAME"></nz-option>
       </nz-select>
 
-      <nz-select nzPlaceHolder="UW Units" class="float-right mt-2 mr-2 a-dropdown-small" style="width: 140px;" nzShowSearch nzAllowClear
+      <nz-select class="uw-units a-dropdown-label" style="width: 140px;" nzShowSearch nzAllowClear
                  [ngModel]="activeUwUnit"
                  (ngModelChange)="setFilter('UNDERWRITINGUNITCODE', $event)"
       >
@@ -21,8 +21,7 @@
       </nz-select>
 
       <nz-select
-        nzPlaceHolder="Renewal Period"
-        class="float-right mt-2 mr-2 a-dropdown-small"
+        class="renewal-periode a-dropdown-label"
         style="width: 140px;"
         nzShowSearch
         nzAllowClear
