@@ -142,32 +142,21 @@
                               <li nz-menu-item>Reset/Clear</li>
                               <li nz-menu-item>Save</li>
                               <li nz-menu-item>Save As</li>
-                              <li nz-submenu>
-                                <span title>Apply</span>
-                                <ul nz-menu>
-                                  <li nz-submenu>
-                                    <span title>Add to Existing Threads</span>
-                                    <ul nz-menu>
-                                      <li nz-menu-item>For Selected Threads only</li>
-                                      <li nz-menu-item>For All Threads</li>
-                                    </ul>
-                                  </li>
-                                  <li nz-submenu>
-                                    <span title>Create New Alternate Threads</span>
-                                    <ul nz-menu>
-                                      <li nz-menu-item>For Selected Threads only</li>
-                                      <li nz-menu-item>For All Threads</li>
-                                    </ul>
-                                  </li>
-                                  <li nz-submenu>
-                                    <span title>Replace Existing Threads</span>
-                                    <ul nz-menu>
-                                      <li nz-menu-item>For Selected Threads only</li>
-                                      <li nz-menu-item>For All Threads</li>
-                                    </ul>
-                                  </li>
-                                </ul>
-                              </li>
+                               <li nz-submenu>
+                                  <span title>Apply For All Threads</span>
+                                  <ul nz-menu>
+                                    <li nz-menu-item>Add to Existing Threads</li>
+                                    <li nz-menu-item>New Alternate Threads</li>
+                                    <li nz-menu-item>Replace Existing Threads</li>
+                                  </ul>
+                                <li nz-submenu>
+                                  <span title>Apply For Selected Threads only</span>
+                                  <ul nz-menu>
+                                    <li nz-menu-item>Add to Existing Threads</li>
+                                    <li nz-menu-item>New Alternate Threads</li>
+                                    <li nz-menu-item>Replace Existing Threads</li>
+                                  </ul>
+                                </li>
                             </ul>
                     </nz-dropdown>
                   </span>
@@ -198,30 +187,18 @@
                           <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
                           <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
                           <li nz-submenu>
-                            <span title>Apply</span>
+                            <span title>Apply For All Threads</span>
                             <ul nz-menu>
-                              <li nz-submenu>
-                                <span title>Add to Existing Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                                  <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Create New Alternate Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>For Selected Threads only</li>
-                                  <li nz-menu-item>For All Threads</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Replace Existing Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                                  </li>
-                                  <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                                </ul>
-                              </li>
+                              <li (click)="applyToAll(adj)" nz-menu-item>Add to Existing Threads</li>
+                              <li nz-menu-item>New Alternate Threads</li>
+                              <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>Replace Existing Threads</li>
+                            </ul>
+                          <li nz-submenu>
+                            <span title>Apply For Selected Threads only</span>
+                            <ul nz-menu>
+                              <li (click)="applyToSelected(adj)" nz-menu-item>Add to Existing Threads</li>
+                              <li nz-menu-item>New Alternate Threads</li>
+                              <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>Replace Existing Threads</li>
                             </ul>
                           </li>
                         </ul>
