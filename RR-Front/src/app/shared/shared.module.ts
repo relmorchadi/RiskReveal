@@ -9,10 +9,12 @@ import {ContextMenuModule, DialogModule, MultiSelectModule} from 'primeng/primen
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
+import {DragDropModule} from '@angular/cdk/drag-drop';
+import {DIRECTIVES} from "./directives";
 
 
 @NgModule({
-  declarations: [...COMPONENTS, ...PIPES],
+  declarations: [...COMPONENTS, ...PIPES, ...DIRECTIVES ],
   imports: [
     CommonModule,
     NgZorroAntdModule,
@@ -34,6 +36,7 @@ import {ColorSketchModule} from 'ngx-color/sketch';
     TableModule,
     ReactiveFormsModule,
     FormsModule,
+    DragDropModule,
     ...COMPONENTS,
     ...PIPES
   ]
