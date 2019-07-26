@@ -24,7 +24,10 @@ export class PltStateService {
       wsIdentifier,
       params
     } = payload;
-    console.log(payload);
+    const {
+      data
+    } = ctx.getState().content[wsIdentifier].pltManager;
+
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.loading = true;
     }));
@@ -37,7 +40,7 @@ export class PltStateService {
             draft.content[wsIdentifier].pltManager = {
               ...draft.content[wsIdentifier].pltManager,
               filters: {systemTag: [], userTag: []},
-              data: _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: this._appendPltMetaData(plt, deletedPlts)})))
+              data: _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: this._appendPltMetaData(data,plt, deletedPlts)})))
             };
           }));
           return ctx.dispatch(new fromPlt.loadAllPltsSuccess({
@@ -204,6 +207,10 @@ export class PltStateService {
       wsIdentifier
     } = payload;
 
+    const {
+      userTags
+    } = ctx.getState().content[wsIdentifier].pltManager.userTags;
+
     let uesrTagsSummary = {};
 
     _.forEach(payload.userTags, (payloadTag) => {
@@ -212,9 +219,9 @@ export class PltStateService {
         tagId,
         pltHeaders,
         ...rest
-      } = payloadTag
+      } = payloadTag;
 
-      uesrTagsSummary[tagId] = {tagId, ...rest, selected: false, count: pltHeaders.length, pltHeaders}
+      uesrTagsSummary[tagId] = {tagId, ...rest, selected: userTags && userTags[tagId] ? userTags[tagId].selected : false, count: pltHeaders.length, pltHeaders}
     });
 
     ctx.patchState(produce(ctx.getState(), draft => {
@@ -224,6 +231,7 @@ export class PltStateService {
 
   /** @ToRefactor **/
   assignPltsToTag(ctx: StateContext<WorkspaceModel>, payload: any) {
+    console.log(payload);
     switch (payload.type) {
       case 'assignOrRemove':
         return this.pltApi.assignPltsToTag(_.omit(payload, 'wsIdentifier')).pipe(
@@ -302,9 +310,12 @@ export class PltStateService {
       userTags
     } = ctx.getState().content[wsIdentifier].pltManager;
 
+    console.log(payload);
+    console.log(data,userTags)
+
     let newData = {};
 
-    _.forEach(data.userTags[userTagId].pltHeaders, (plt) => {
+    _.forEach(userTags[userTagId].pltHeaders, (plt) => {
       newData[plt.id] = {
         ...data[plt.id],
         userTags: _.filter(data[plt.id].userTags, (userTag: any) => userTag.tagId !== userTagId)
@@ -421,9 +432,10 @@ export class PltStateService {
     localStorage.setItem('deletedPlts', JSON.stringify(ls));
   }
 
-  private _appendPltMetaData(plt, deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {}) {
+  private _appendPltMetaData(data,plt, deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {}) {
     return ({
-      ...plt, selected: false,
+      ...plt,
+      selected: data[plt.pltId] ? data[plt.pltId].selected : undefined,
       visible: true,
       tagFilterActive: false,
       opened: false,

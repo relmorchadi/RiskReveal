@@ -9,7 +9,6 @@ import {ContextMenuModule, DialogModule, MultiSelectModule} from 'primeng/primen
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
-import {DragDropModule} from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -35,7 +34,6 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
     TableModule,
     ReactiveFormsModule,
     FormsModule,
-    DragDropModule,
     ...COMPONENTS,
     ...PIPES
   ]
