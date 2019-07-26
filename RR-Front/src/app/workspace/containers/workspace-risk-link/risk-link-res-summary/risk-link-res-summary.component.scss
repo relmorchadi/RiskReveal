@@ -193,6 +193,28 @@ TABLE STYLE
   }
 }
 
+.empty-table {
+  ::ng-deep {
+    .ui-table-scrollable-body-table {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ui-table-tbody {
+      diaply: flex;
+    }
+
+  }
+
+  .empty-notif-wrapper {
+    background-color: #f4f6fc;
+    margin: 4px 2px;
+    padding: 7px;
+    display: flex;
+    justify-content: center;
+  }
+}
+
 /*
 =======================================================================================
 FINANCIAL PERSPECTIVE POPUP STYLE
@@ -227,6 +249,56 @@ FINANCIAL PERSPECTIVE POPUP STYLE
 
     p-radiobutton {
       margin-right: 15px;
+    }
+  }
+}
+
+.input-group-modal {
+  display: flex;
+  flex-direction: column;
+  width: 580px;
+  margin: 0 auto;
+
+  .row-input {
+    display: flex;
+    align-items: center;
+  }
+
+  .row-list {
+    display: flex;
+
+    .popover-menu {
+      width: 50%;
+    }
+  }
+
+  .label-input {
+    display: flex;
+    font-weight: 500;
+    flex: 1;
+  }
+
+  .input-wrapper {
+    margin: 5px 0;
+    padding: 10px 15px;
+    width: 78%;
+  }
+
+  .radio-wrapper {
+    display: flex;
+    flex-direction: column;
+    padding: 15px 0;
+
+    ::ng-deep {
+      .ant-radio-group {
+        display: flex !important;
+        justify-content: space-between;
+      }
+
+      .ant-radio-wrapper {
+        align-items: center;
+        display: flex;
+      }
     }
   }
 }
@@ -714,6 +786,13 @@ LINKING MODAL STYLE
           justify-content: space-between;
           width: 100%;
           padding-bottom: 15px;
+
+          .icon-edit_24px {
+            font-size: 20px;
+            cursor: pointer;
+            color: rgba(0, 0, 0, 0.5);
+            margin-right: 5px;
+          }
 
           .icon-trash-alt {
             font-size: 20px;

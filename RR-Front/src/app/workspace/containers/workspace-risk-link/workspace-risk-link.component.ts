@@ -123,7 +123,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.listEdmRdm = _.merge({}, value);
         this.detectChanges();
-        console.log(this.listEdmRdm);
       }),
       this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.analysis = _.merge({}, value);
@@ -312,7 +311,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   clearSelection(item, target) {
-    this.dispatch(new fromWs.DeleteEdmRdmaction({id: item.id, target: target}));
+    this.dispatch(new fromWs.DeleteEdmRdmAction({id: item.id, target: target}));
   }
 
   getNumberElement(item, source) {

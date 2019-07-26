@@ -33,6 +33,11 @@ export class PatchTargetFPAction {
   constructor(public payload: any) {}
 }
 
+export class PatchLinkingModeAction {
+  static readonly type = '[Risk Link] Patch Linking Mode';
+  constructor() {}
+}
+
 export class ToggleRiskLinkEDMAndRDMAction {
   static readonly type = '[Risk Link] Toggle Risk Link EDM And RDM';
   constructor(public payload: any) {}
@@ -78,6 +83,15 @@ export class ToggleAnalysisForLinkingAction {
   constructor(public payload: any) {}
 }
 
+export class ToggleAnalysisLinkingAction {
+  static readonly type = '[Risk Link] Select Linked Analysis';
+  constructor(public payload: any) {}
+}
+
+export class TogglePortfolioLinkingAction {
+  static readonly type = '[Risk Link] Select linked Portfolios';
+  constructor(public payload: any) {}
+}
 
 export class AddToBasketAction {
   static readonly type = '[Risk Link] Add Analysis and Portfolio To Basket';
@@ -89,8 +103,13 @@ export class DeleteFromBasketAction {
   constructor(public payload: any) {}
 }
 
-export class DeleteEdmRdmaction {
+export class DeleteEdmRdmAction {
   static readonly type = '[Risk Link] Delete Edm Or Rdm';
+  constructor(public payload: any) {}
+}
+
+export class DeleteLinkAction {
+  static readonly type = '[Risk Link] Delete Linking Between Analysis';
   constructor(public payload: any) {}
 }
 
@@ -121,6 +140,16 @@ export class RemoveFinancialPerspectiveAction {
 
 export class SaveFinancialPerspectiveAction {
   static readonly type = '[Risk Link] Save Financial Perspective Data';
+  constructor() {}
+}
+
+export class SaveEditAnalysisAction {
+  static readonly type = '[Risk Link] Save Edit On Analysis';
+  constructor(public payload: any) {}
+}
+
+export class CreateLinkingAction {
+  static readonly type = '[Risk Link] Create Linking';
   constructor() {}
 }
 

@@ -25,7 +25,7 @@
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">RMS Instance</span>
-              <span *ngIf="state?.financialValidator?.rmsInstance?.selected" class="dropdown-item-selected">
+              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.rmsInstance?.selected">
                 {{state?.financialValidator?.rmsInstance?.selected}}
               </span>
             </div>
@@ -42,7 +42,7 @@
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Financial Perspective ELT</span>
-              <span *ngIf="state?.financialValidator?.financialPerspectiveELT?.selected" class="dropdown-item-selected">
+              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.financialPerspectiveELT?.selected">
                 {{state?.financialValidator?.financialPerspectiveELT?.selected}}
               </span>
             </div>
@@ -76,7 +76,7 @@
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Target Currency</span>
-              <span *ngIf="state?.financialValidator?.targetCurrency?.selected" class="dropdown-item-selected">
+              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.targetCurrency?.selected">
                 {{state?.financialValidator?.targetCurrency?.selected}}
               </span>
             </div>
@@ -134,11 +134,10 @@
                   <nz-tabset class="a-tab-minitab">
                     <nz-tab nzTitle="EDM & RDM">
                       <div class="search-bar-result-list">
-                        <p-virtualScroller [itemSize]="30" [rows]="listEdmRdm.numberOfElement"
-                                           [totalRecords]="listEdmRdm.totalNumberElement"
-                                           [value]="dataList(listEdmRdm.data)"
+                        <p-virtualScroller [value]="dataList(listEdmRdm.data)" scrollHeight="305px"
+                                           [itemSize]="30" [rows]="listEdmRdm.numberOfElement"
                                            [lazy]="true" (onLazyLoad)="loadItemsLazy($event)"
-                                           scrollHeight="305px">
+                                           [totalRecords]="listEdmRdm.totalNumberElement">
                           <ng-template let-item pTemplate="item">
                             <div class="poover-menu-item"
                                  (click)="$event.stopPropagation();toggleItems(item, $event, 'link')"
@@ -214,15 +213,15 @@
             </div>
             <div class="body-wrapper-header-right" style="flex: inherit">
               <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-              <i (click)="changeCollapse('collapseHead')" *ngIf="state?.collapse?.collapseHead"
+              <i *ngIf="state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_up_24px"></i>
-              <i (click)="changeCollapse('collapseHead')" *ngIf="!state?.collapse?.collapseHead"
+              <i *ngIf="!state?.collapse?.collapseHead" (click)="changeCollapse('collapseHead')"
                  class="icon-keyboard_arrow_down_24px"></i>
             </div>
           </div>
         </div>
         <div class="body-main-wrapper" style="" *ngIf="displayListRDMEDM">
-          <div *ngIf="state?.collapse?.collapseHead" class="left">
+          <div class="left" *ngIf="state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
@@ -284,7 +283,7 @@
               </div>
             </div>
           </div>
-          <div *ngIf="state?.display?.displayTable && state?.collapse?.collapseHead" class="right">
+          <div class="right" *ngIf="state?.display?.displayTable && state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
                 <div class="body-wrapper-header-left">
@@ -297,8 +296,7 @@
               </div>
               <div class="show-table">
                 <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                         [dataKey]="'id'" [rowTrackBy]="rowTrackBy" [scrollable]="true" frozenWidth="240px"
-                         scrollHeight="340px">
+                         [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                   <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
                       <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -336,10 +334,9 @@
                 </p-table>
               </div>
               <div class="import-button">
-                <button (click)="displayImported()" *ngIf="state?.activeAddBasket" class="a-buttons-contained">ADD TO
-                  BASKET
+                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained">ADD FOR IMPORT
                 </button>
-                <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled" disabled>ADD TO BASKET
+                <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled" disabled>ADD FOR IMPORT
                 </button>
               </div>
             </div>
@@ -349,7 +346,7 @@
 
       <app-risk-link-res-summary></app-risk-link-res-summary>
 
-      <div *ngIf="state?.display?.displayImport" class="footer-section">
+      <div class="footer-section" *ngIf="state?.display?.displayImport">
         <div class="body-wrap-footer">
           <div class="body-wrap-footer-left">
             <nz-select nzShowSearch nzAllowClear [ngModel]="state.financialValidator.calibration.selected">

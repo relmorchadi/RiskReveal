@@ -94,9 +94,10 @@ export class WorkspaceService {
               edm: null,
               rdm: {data: null, selected: null},
               autoLinks: null,
-              linked: null,
+              linked: [],
               analysis: null,
-              portfolio: null
+              portfolio: null,
+              autoMode: false
             },
             display: {
               displayTable: false,
