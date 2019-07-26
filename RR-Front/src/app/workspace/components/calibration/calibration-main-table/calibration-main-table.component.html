@@ -970,13 +970,13 @@
             <div *ngIf="EPMDisplay == 'amount'" class="EPM1">
               {{ getRandomInt(1000, 1000000) }}
             </div>
-            <div *ngIf="EPMDisplay == 'percentage' && getPercentage()[0] != '-'"
+            <div *ngIf="EPMDisplay == 'percentage' && getPercentage() > 0"
                  class="EPM2B">
-              {{ randomPercentage }}
+              {{ randomPercentage + '%' }}
             </div>
-            <div *ngIf="EPMDisplay == 'percentage ' && randomPercentage[0] == '-'"
+            <div *ngIf="EPMDisplay == 'percentage' && randomPercentage < 0"
                  class="EPM2R">
-              {{ randomPercentage }}
+              {{ randomPercentage + '%'}}
             </div>
           </div>
           <!--<div *ngIf="selectedEPM == 'AEP - Delta % Basis' ||selectedEPM == 'OEP - Delta % Basis'  "

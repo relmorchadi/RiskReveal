@@ -459,9 +459,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
 
   getPercentage() {
     let random = Math.floor(Math.random() * 199) - 99;
-    const result = random + '%';
-    this.randomPercentage = result;
-    return result;
+    this.randomPercentage = random;
+    console.log(this.randomPercentage)
+    return random;
   }
 
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {

@@ -73,7 +73,7 @@ export class CalibrationService implements NgxsOnInit {
                       deletedAt: ls[plt.pltId] ? ls[plt.pltId].deletedAt : undefined,
                       status: this.status[this.getRandomInt()],
                       newPlt: Math.random() >= 0.5,
-                      EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage() + '%'],
+                      EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage()],
                       calibrate: true
                     }
                   }))
