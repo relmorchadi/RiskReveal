@@ -50,7 +50,7 @@ export class MyStorageEngine implements StorageEngine {
 }
 
 @Injectable()
-class GlobalErrorHandler implements ErrorHandler {
+export class GlobalErrorHandler implements ErrorHandler {
   handleError(error: any): void {
     console.info('From error handler');
     console.error(error);

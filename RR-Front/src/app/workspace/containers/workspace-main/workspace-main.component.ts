@@ -24,7 +24,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
 
   state: WorkspaceMain = null;
   private selectedTabIndex: number;
-  private loading: boolean;
+  loading: boolean;
   private data: { [p: string]: any };
 
   constructor(
