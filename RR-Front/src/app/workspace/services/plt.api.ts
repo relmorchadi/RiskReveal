@@ -18,17 +18,14 @@ export class PltApi {
   }
 
   public assignPltsToTag(params?): Observable<any> {
-    console.log(params);
     return this.http.post(`${this.URL}/assign-user-tag`, params)
   }
 
   public creatUserTag(params?): Observable<any> {
-    console.log(params);
     return this.http.post(`${this.URL}/create-user-tag`, params)
   }
 
   public editTag(params: any): Observable<any> {
-    console.log(params)
     return this.http.put(`${this.URL}/update-user-tag`,params)
   }
 

@@ -1,4 +1,4 @@
-.a-dropdown-small,.a-dropdown-label {
+.a-dropdown-small, .a-dropdown-label {
   .ant-select-selection.ant-select-selection--single {
     background-color: transparent;
     border: none;
@@ -6,6 +6,7 @@
     border-bottom: 2px solid #0700CF;
     color: #0700cf;
   }
+
   .ant-select-selection {
     &:focus {
       box-shadow: none;
@@ -146,4 +147,22 @@
     align-items: center;
     padding-right: 8px;
   }
+}
+
+body .ui-multiselect {
+  border: none;
+  border-bottom: 2px solid #0700CF;
+  border-radius: 0;
+
+  .ui-multiselect-label {
+    color: #0700CF;
+  }
+
+  &:hover {
+    border-color: #0700CF !important;
+  }
+}
+
+body .ui-multiselect .ui-multiselect-trigger {
+  background-color: transparent;
 }

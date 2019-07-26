@@ -25,7 +25,9 @@ const initiaState: GeneralConfig = {
     riskLink: {
       importPage: '',
       financialPerspectiveELT: {
-        data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
+        data: [{label: 'Net Loss Pre Cat (RL)', value: 'Net Loss Pre Cat (RL)'},
+          {label: 'Gross Loss (GR)', value: 'Gross Loss (GR)'},
+          {label: 'Net Cat (NC)', value: 'Net Cat (NC)'}],
         selected: ['Net Loss Pre Cat (RL)']
       },
       financialPerspectiveEPM: {

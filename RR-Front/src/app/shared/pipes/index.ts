@@ -10,9 +10,10 @@ import {TableSortAndFilterPipe} from "./table-sort-and-filter.pipe";
 import {TextLengthPipe} from "./text-length.pipe";
 import {ReFormatPIDPipe} from './re-format-pid.pipe';
 import {PickKeysPipe} from './pull-keys.pipe';
+import {CalibratePipe} from "./calibrate.pipe";
 
 
-export const PIPES = [PickKeysPipe, ReFormatPIDPipe, HighlightDirective, TableSortAndFilterPipe, TextLengthPipe, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe, LogPipe, BoldPipe, SystemTagFilterPipe]
+export const PIPES = [CalibratePipe, PickKeysPipe, ReFormatPIDPipe, HighlightDirective, TableSortAndFilterPipe, TextLengthPipe, KeysPipe, ShowLastPipe, InputSearchPipe, ToArrayPipe, LogPipe, BoldPipe, SystemTagFilterPipe]
 
 export * from './input-search.pipe';
 export * from './keys.pipe';

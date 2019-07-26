@@ -1531,6 +1531,7 @@ body .ui-table .ui-table-thead > tr > th {
   .radio-container {
     margin-top: 0px;
     margin-right: 5px;
+
   }
   .title-as-tab {
     display: flex;
@@ -1651,7 +1652,8 @@ body .ui-table .ui-table-thead > tr > th {
 
   .dropdown-wrap-calibration {
     display: flex;
-    width: 205px;
+    width: 128px;
+    padding-right: 14px;
     height: 35px;
     margin-right: 10px;
     justify-content: space-between;
@@ -1689,6 +1691,7 @@ body .ui-table .ui-table-thead > tr > th {
   }
 }
 
+
 .Deltas {
   display: flex;
   color: rgba(0, 0, 0, 0.6);
@@ -1713,4 +1716,21 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.ant-switch {
   height: 19px !important;
+}
+
+::ng-deep.ui-dropdown {
+  background: #ffffff;
+  border: 1px solid #a6a6a6;
+  width: 95%;
+  margin-left: 10px;
+}
+
+.add-adjustment-input {
+  width: 200px;
+  height: 40px;
+  background: #f9f9f9;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid black;
+  color: #0700CF;
 }

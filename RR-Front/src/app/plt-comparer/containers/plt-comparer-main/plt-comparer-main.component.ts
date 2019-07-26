@@ -2,12 +2,12 @@ import {ChangeDetectorRef, Component, NgZone, OnInit, TemplateRef, ViewChild} fr
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWorkspaceStore from "../../../workspace/store";
-import {PltMainState} from '../../../workspace/store';
+import {WorkspaceState} from "../../../workspace/store";
 import {Select, Store} from '@ngxs/store';
 import * as _ from 'lodash';
 import {Table} from "primeng/table";
 import {map, switchMap} from 'rxjs/operators';
-import {combineLatest, Observable, Subscription} from 'rxjs';
+import {combineLatest, Observable} from 'rxjs';
 import {WorkspaceMainState} from "../../../core/store/states";
 import {WorkspaceMain} from "../../../core/model";
 import {FormBuilder, FormGroup} from '@angular/forms';
@@ -338,7 +338,7 @@ export class PltComparerMainComponent implements OnInit {
     sortData: null
   };
 
-  @Select(PltMainState.getUserTags) userTags$;
+  @Select(WorkspaceState.getUserTags) userTags$;
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
 
@@ -728,7 +728,7 @@ export class PltComparerMainComponent implements OnInit {
     this.colorThePlt();
     this.Subscriptions.push(
       this.state$.subscribe(value => this.listOfWs = _.merge({}, value.openedTabs)),
-      this.store$.select(PltMainState.getProjects()).subscribe((projects: any) => {
+      this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
@@ -742,8 +742,8 @@ export class PltComparerMainComponent implements OnInit {
           this.workspaceId = defaultImport.workSpaceId;
           this.uwy = defaultImport.uwYear;
           this.loading = true;
-          this.data$ = this.store$.select(PltMainState.getPlts(this.workspaceId+'-'+this.uwy));
-          this.deletedPlts$ = this.store$.select(PltMainState.getDeletedPlts(this.workspaceId+'-'+this.uwy));
+          this.data$ = this.store$.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
+          this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
           this.store$.dispatch(new fromWorkspaceStore.loadAllPlts({
             params: {
               workspaceId: this.workspaceId, uwy: this.uwy
@@ -886,13 +886,12 @@ export class PltComparerMainComponent implements OnInit {
 
 
   getAttr(path) {
-    return this.store$.select(PltMainState.getAttr).pipe(map( fn => fn(path)));
+    return this.store$.select(WorkspaceState.getAttr).pipe(map(fn => fn(path)));
   }
 
   colorThePlt() {
     while (this.cardContainer.length > this.colorSwitcher.length) {
       this.colorSwitcher = this.colorSwitcher.concat(this.colorSwitcher);
-      console.log(this.colorSwitcher);
     }
     for (let i = 0; i < this.cardContainer.length; i++) {
       this.cardContainer[i].color = this.colorSwitcher[i];
@@ -935,7 +934,6 @@ export class PltComparerMainComponent implements OnInit {
   }
 
   close(e: NzMenuItemDirective): void {
-    console.log(e);
 
     this.dropdown.close();
   }
@@ -981,7 +979,6 @@ export class PltComparerMainComponent implements OnInit {
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.cardContainer, event.previousIndex, event.currentIndex);
-    console.log(this.listOfSelectedValues.length);
   }
 
   deleteItem(i) {
@@ -1058,7 +1055,6 @@ export class PltComparerMainComponent implements OnInit {
   }
 
   assignPltsToTag($event: any) {
-    console.log($event)
     this.store$.dispatch(new fromWorkspaceStore.createOrAssignTags({wsIdentifier: this.workspaceId+'-'+this.uwy,...$event}))
   }
 
@@ -1133,7 +1129,6 @@ export class PltComparerMainComponent implements OnInit {
 
     this.addModalSelect = this.addModalSelectCache = _.intersectionBy(...d, 'tagId');
     this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-    console.log(this.addModalSelectCache, this.oldSelectedTags, d);
   }
   restore() {
     this.store$.dispatch(new fromWorkspaceStore.restorePlt({wsIdentifier: this.workspaceId+'-'+this.uwy,pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]}))

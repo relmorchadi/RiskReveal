@@ -27,6 +27,7 @@
     "@ngxs/form-plugin": "3.4.1-dev.master-ab0a0cc",
     "@ngxs/logger-plugin": "3.4.1-dev.master-543c32f",
     "@ngxs/router-plugin": "3.4.1-dev.master-ab0a0cc",
+    "@ngxs/storage-plugin": "^3.4.1-dev.master-ab0a0cc",
     "@ngxs/store": "3.4.1-dev.master-543c32f",
     "angular-gridster2": "^7.1.0",
     "core-js": "2.5.4",

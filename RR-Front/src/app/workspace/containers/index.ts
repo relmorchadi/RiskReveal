@@ -3,7 +3,6 @@ import {WorkspaceProjectComponent} from './workspace-project/workspace-project.c
 import {WorkspaceRiskLinkComponent} from './workspace-risk-link/workspace-risk-link.component';
 import {WorkspacePltBrowserComponent} from './workspace-plt-browser/workspace-plt-browser.component';
 import {WorkspaceCalibrationComponent} from './workspace-calibration/workspace-calibration.component';
-import {WorkspqceInuringPackageComponent} from './workspqce-inuring-package/workspqce-inuring-package.component';
 import {WorkspaceAccumulationComponent} from './workspace-accumulation/workspace-accumulation.component';
 import {WorkspaceActivityComponent} from './workspace-activity/workspace-activity.component';
 import {WorkspaceCloneDataComponent} from './workspace-clone-data/workspace-clone-data.component';
@@ -15,6 +14,7 @@ import {WorkspaceResultsComponent} from './workspace-results/workspace-results.c
 import {WorkspaceScopeCompletenceComponent} from './workspace-scope-completence/workspace-scope-completence.component';
 import {WorkspaceProjectPopupComponent} from './workspace-project/workspace-project-popup/workspace-project-popup.component';
 import {CreateProjectPopupComponent} from './workspace-project/create-project-popup/create-project-popup.component';
+import {WorkspaceInuringPackageComponent} from './workspace-inuring-package/workspace-inuring-package.component';
 
 export const CONTAINERS = [
   WorkspaceMainComponent,
@@ -22,7 +22,7 @@ export const CONTAINERS = [
   WorkspaceRiskLinkComponent,
   WorkspacePltBrowserComponent,
   WorkspaceCalibrationComponent,
-  WorkspqceInuringPackageComponent,
+  WorkspaceInuringPackageComponent,
   WorkspaceAccumulationComponent,
   WorkspaceActivityComponent,
   WorkspaceCloneDataComponent,

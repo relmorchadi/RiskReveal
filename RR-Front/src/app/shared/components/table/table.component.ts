@@ -34,7 +34,7 @@ export class TableComponent implements OnInit {
   allChecked = false;
   indeterminate = false;
 
-  selectedRow: any
+  selectedRow: any;
 
   items = [
     {
@@ -199,9 +199,9 @@ export class TableComponent implements OnInit {
     this.selectedRows = this.listOfData.filter(dt => dt.selected);
     const data = this.selectedRows.filter(dt => dt === row) || [];
     data.length === 0 ? this.selectedRows = [...this.selectedRows, row] : null;
-    console.log(this.selectedRows);
     row.selected = true;
     tableColumn.handler(this.selectedRows);
+
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
