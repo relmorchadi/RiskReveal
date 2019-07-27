@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import {RiskLinkState, WorkspaceState} from '../../../store/states';
 import {combineLatest, Observable} from 'rxjs';
 import {RiskLinkModel} from '../../../model/risk_link.model';
-import {SaveEditAnalysisAction} from "../../../store/actions";
+import {SaveEditAnalysisAction} from '../../../store/actions';
 
 @Component({
   selector: 'app-risk-link-res-summary',
@@ -18,8 +18,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   filterModalVisibility = false;
   linkingModalVisibility = false;
   editRowPopUp = false;
-  manual = false;
-  suggested = false;
   managePopUp = false;
   columnsForConfig;
   targetConfig;
@@ -91,6 +89,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   linking: any;
   analysis = [];
   portfolio = [];
+  updateMode = false;
 
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
@@ -528,6 +527,18 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   createLinking() {
     this.store.dispatch(new fromWs.CreateLinkingAction());
+  }
+
+  initUpdateLink() {
+    this.updateMode = true;
+  }
+
+  updateLinking() {
+    this.updateMode = false;
+  }
+
+  cancelUpdate() {
+    this.updateMode = false;
   }
 
   deleteLink(item) {
