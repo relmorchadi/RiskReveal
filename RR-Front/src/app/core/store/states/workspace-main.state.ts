@@ -2,9 +2,14 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import produce from 'immer';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
-  AddNewProject, AddNewProjectFail, AddNewProjectSuccess,
+  AddNewProject,
+  AddNewProjectFail,
+  AddNewProjectSuccess,
   AppendNewWorkspaceMainAction,
-  CloseWorkspaceMainAction, DeleteProject, DeleteProjectFail, DeleteProjectSuccess,
+  CloseWorkspaceMainAction,
+  DeleteProject,
+  DeleteProjectFail,
+  DeleteProjectSuccess,
   LoadWorkspacesAction,
   OpenNewWorkspacesAction,
   PatchWorkspace,
@@ -15,8 +20,8 @@ import {
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
 import {WorkspaceMainService} from '../../service/workspace-main.service';
-import {catchError, tap} from "rxjs/operators";
-import {EMPTY, Observable} from "rxjs";
+import {catchError} from "rxjs/operators";
+import {EMPTY} from "rxjs";
 
 const initiaState: WorkspaceMain = {
   leftNavbarIsCollapsed: false,
@@ -53,11 +58,6 @@ export class WorkspaceMainState implements NgxsOnInit {
   }
 
   @Selector()
-  static getLeftNavbarIsCollapsed(state: WorkspaceMain) {
-    return state.leftNavbarIsCollapsed;
-  }
-
-  @Selector()
   static getFavorite(state: WorkspaceMain) {
     return state.openedTabs.data.filter(dt => dt.favorite);
   }
@@ -77,10 +77,10 @@ export class WorkspaceMainState implements NgxsOnInit {
     return state.loading;
   }
 
-  @Selector()
+  /*@Selector()
   static getCurrentWS(state: WorkspaceMain) {
     return state.openedWs;
-  }
+  }*/
 
   @Selector()
   static getProjects(state: WorkspaceMain) {
@@ -258,7 +258,6 @@ export class WorkspaceMainState implements NgxsOnInit {
       openedTabs
     } = ctx.getState()
 
-    console.log(ws);
 
     let attrs = {};
 
@@ -267,7 +266,6 @@ export class WorkspaceMainState implements NgxsOnInit {
     })
 
     const index = k ? k : _.findIndex(openedTabs.data, wS => wS.workSpaceId == ws.workSpaceId && wS.uwYear == ws.uwYear);
-    console.log(index);
 
     ctx.patchState({
       openedTabs: {

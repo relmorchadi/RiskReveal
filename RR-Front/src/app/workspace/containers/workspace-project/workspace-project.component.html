@@ -1,9 +1,10 @@
-<app-left-menu></app-left-menu>
 <div class="workspace-main-content">
   <div class="a-app-wrapper">
     <div class="a-app-header">
       <div class="title-project-wrapper">
-        <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Projects'" [RoutingConfig]="workspaceUrl"></app-hyper-links>
+        <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Projects'" [links]="hyperLinks"
+                         [routes]="hyperLinksRoutes"
+        ></app-hyper-links>
         <div style="display: flex;">
           <h4>Projects</h4>
           <nz-dropdown [nzTrigger]="'hover'">
@@ -21,15 +22,15 @@
           <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
         </nz-select>
         <app-pin
-          [active]="!workspace.pinged"
-          [workspace]="workspace"
-          [index]="index"
+          [active]="!workspace?.isPinned"
+          (pinWs)="pinWorkspace()"
+          (unpinWs)="unPinWorkspace()"
         >
         </app-pin>
       </div>
     </div>
     <div style="height: 60vw">
-      <projects-list [projects]="projects$ | async" (select)="selectProject($event)"
+      <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
                      (delete)="delete($event)"></projects-list>
     </div>
 
@@ -49,3 +50,4 @@
 
 </div>
 
+<!--<p-toast></p-toast>-->

@@ -20,10 +20,10 @@
     </div>
     <div class="a-info-card-data">
       <div class="a-info-data-left">
-        <span class="a-info-title">{{workspace.cedantName}}</span>
-        <span class="a-info-subtitle">{{workspace.uwYear}} - {{workspace.workspaceName}}</span>
+        <span class="a-info-title">{{workspace?.cedantName}}</span>
+        <span class="a-info-subtitle">{{workspace?.uwYear}} - {{workspace?.workspaceName}}</span>
       </div>
-      <div class="a-info-data-right"><span class="a-info-caption">{{workspace.workSpaceId}}</span></div>
+      <div class="a-info-data-right"><span class="a-info-caption">{{workspace?.workSpaceId}}</span></div>
     </div>
   </div>
   <div class="a-form-control" [formGroup]="newProjectForm" style="margin-top: 16px;">

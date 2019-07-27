@@ -1,16 +1,17 @@
-<app-left-menu></app-left-menu>
 <div class="a-app-wrapper">
   <div class="a-app-header">
     <div style="display: flex;flex-flow: column;">
-      <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Activity'" [RoutingConfig]="hyperLinksConfig"></app-hyper-links>
+      <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Activity'" [links]="hyperLinks"
+                       [routes]="hyperLinksRoutes"
+      ></app-hyper-links>
       <h4>Activity</h4>
     </div>
-    <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-            nz-button nzType="primary" nzSize="default" nzShape="circle">
-      <i style="color: #16617a;" nz-icon theme="outline">
-        <i class="icon-map-pin-alt"></i>
-      </i>
-    </button>
+    <app-pin
+      (pinWs)="pinWorkspace()"
+      (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
+    >
+    </app-pin>
   </div>
   <div class="app-body">
     <nz-tabset class="a-tab-minitab">

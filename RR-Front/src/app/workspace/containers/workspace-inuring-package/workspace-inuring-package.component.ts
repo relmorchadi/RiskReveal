@@ -1,15 +1,18 @@
-import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {fromEvent, Subscription} from "rxjs";
 import {filter, switchMap} from "rxjs/operators";
 import * as _ from "lodash";
 import {DndDropEvent, DropEffect} from 'ngx-drag-drop';
+import {Store} from '@ngxs/store';
+import {Router} from '@angular/router';
+import {BaseContainer} from '../../../shared/base';
 
 @Component({
-  selector: 'app-workspqce-inuring-package',
-  templateUrl: './workspqce-inuring-package.component.html',
-  styleUrls: ['./workspqce-inuring-package.component.scss']
+  selector: 'app-workspace-inuring-package',
+  templateUrl: './workspace-inuring-package.component.html',
+  styleUrls: ['./workspace-inuring-package.component.scss']
 })
-export class WorkspqceInuringPackageComponent implements OnInit {
+export class WorkspaceInuringPackageComponent extends BaseContainer implements OnInit {
 
   size;
   disabled;
@@ -79,13 +82,14 @@ export class WorkspqceInuringPackageComponent implements OnInit {
   supscription1: Subscription;
   supscription2: Subscription;
   dndBool: boolean = false;
-  private currentDraggableEvent: DragEvent;
+  checked: boolean = false;
   onHoverIcon: any;
-  checked:boolean=false;
+  lastCheckedBool: boolean = false;
   lastChecked;
-  lastCheckedBool:boolean=false;
+  private currentDraggableEvent: DragEvent;
 
-  constructor() {
+  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
 
     this.adjsArray = [
       {id: 1, name: 'Missing Exp', value: 2.1, linear: false, category: "pd"},
@@ -202,14 +206,14 @@ export class WorkspqceInuringPackageComponent implements OnInit {
     let scroll1Event$ = fromEvent(scrollOne, 'scroll');
     let supscription1 = scroll2Event$.pipe(
       filter(() => this.divIn === true)
-    ).subscribe(
+    ).pipe(this.unsubscribeOnDestroy).subscribe(
       value => {
         scrollOne.scrollTop = scrollTwo.scrollTop;
       }
     )
     let supscription2 = scroll1Event$.pipe(
       filter(() => this.divIn === false)
-    ).subscribe(
+    ).pipe(this.unsubscribeOnDestroy).subscribe(
       value => {
         scrollTwo.scrollTop = scrollOne.scrollTop;
       });
@@ -358,19 +362,18 @@ export class WorkspqceInuringPackageComponent implements OnInit {
         if (_.findIndex(value.thread, a) != -1) {
           o = i;
           x = _.findIndex(value.thread, a);
-          if (value.thread[x].checked==false)
+          if (value.thread[x].checked == false)
             value.thread[x].checked = true;
           else
             value.thread[x].checked = false;
         }
       })
-    }
-    else if (event.shiftKey) {
+    } else if (event.shiftKey) {
       let between = false;
       let lastChecked = this.lastChecked;
       console.log(lastChecked);
-      if(!lastChecked){
-          lastChecked=this.pure.dataTable[0].thread[0]
+      if (!lastChecked) {
+        lastChecked = this.pure.dataTable[0].thread[0]
         console.log("test")
       }
       console.log(lastChecked);
@@ -386,29 +389,29 @@ export class WorkspqceInuringPackageComponent implements OnInit {
           }
         })
       })
-    }
-    else{
+    } else {
       console.log(a);
-      this.lastChecked=false;
-      let checked = a.checked ;
+      this.lastChecked = false;
+      let checked = a.checked;
       this.deselectAll();
       _.forIn(this.pure.dataTable, function (value, key) {
         if (_.findIndex(value.thread, a) != -1) {
           o = i;
           x = _.findIndex(value.thread, a);
-             value.thread[x].checked = !checked;
+          value.thread[x].checked = !checked;
         }
       })
     }
-    if(!this.lastCheckedBool){
-      this.lastChecked=a;
-    }else{
-      this.lastCheckedBool=false;
+    if (!this.lastCheckedBool) {
+      this.lastChecked = a;
+    } else {
+      this.lastCheckedBool = false;
     }
 
   }
-  changeBackgroundCheckBox(event, a){
-    let checked = a.checked ;
+
+  changeBackgroundCheckBox(event, a) {
+    let checked = a.checked;
     console.log("event Check")
     let o = 0;
     let x;
@@ -427,8 +430,7 @@ export class WorkspqceInuringPackageComponent implements OnInit {
           }
         })
       })
-    }
-    else{
+    } else {
       _.forIn(this.pure.dataTable, function (value, key) {
         if (_.findIndex(value.thread, a) != -1) {
           o = i;
@@ -445,14 +447,15 @@ export class WorkspqceInuringPackageComponent implements OnInit {
     else
       return "#fff";
   }
-  deselectAll(){
-    this.lastCheckedBool=true;
-    const checkboxs=document.querySelectorAll(".checkboxInput input[type='checkbox']");
-    checkboxs.forEach((checkbox:any)=>checkbox.checked=false);
+
+  deselectAll() {
+    this.lastCheckedBool = true;
+    const checkboxs = document.querySelectorAll(".checkboxInput input[type='checkbox']");
+    checkboxs.forEach((checkbox: any) => checkbox.checked = false);
     _.forIn(this.pure.dataTable, function (value, key) {
-          _.forIn(value.thread,function (plt, key) {
-            plt.checked= false;
-          })
+      _.forIn(value.thread, function (plt, key) {
+        plt.checked = false;
+      })
     })
   }
 
@@ -547,7 +550,7 @@ export class WorkspqceInuringPackageComponent implements OnInit {
       switchMap(event => {
         return scroll1Event$;
       })
-    ).subscribe(
+    ).pipe(this.unsubscribeOnDestroy).subscribe(
       value => {
         scrollTwo.scrollTop = scrollOne.scrollTop
       }
@@ -599,9 +602,9 @@ export class WorkspqceInuringPackageComponent implements OnInit {
   }
 
   onDragged(event: DragEvent, item: any, list: any[], effect: DropEffect, a?) {
-    if(effect=="none") return;
-    if(this.dndBool){
-      console.log("here1",this.dndBool)
+    if (effect == "none") return;
+    if (this.dndBool) {
+      console.log("here1", this.dndBool)
       const index = list.indexOf(item);
       list.splice(index, 1);
 
@@ -624,15 +627,15 @@ export class WorkspqceInuringPackageComponent implements OnInit {
     }
     let id = event.event.toElement.id;
     event.data.category = id.charAt(id.length - 1) == '1' ? id.slice(0, id.length - 1) : id;
-    console.log("heeeee. ",event.data.category )
+    console.log("heeeee. ", event.data.category)
 
-    if (event.data.category == "bd" || event.data.category =="pd") {
-      console.log("dropTrue",this.dndBool)
+    if (event.data.category == "bd" || event.data.category == "pd") {
+      console.log("dropTrue", this.dndBool)
       this.dndBool = true;
       list.splice(index, 0, event.data);
-    }else {
-      this.dndBool=false;
-      console.log("dropFalse",this.dndBool)
+    } else {
+      this.dndBool = false;
+      console.log("dropFalse", this.dndBool)
     }
 
   }
@@ -650,7 +653,16 @@ export class WorkspqceInuringPackageComponent implements OnInit {
     console.log(this.pure.dataTable[dataTableIndex].thread[threadIndex].adj);
     this.pure.dataTable[dataTableIndex].thread[threadIndex].adj.splice(adjindex, 1);
   }
-  onMouseHover(threadIndex){
-    console.log("test",threadIndex);
+
+  onMouseHover(threadIndex) {
+    console.log("test", threadIndex);
+  }
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  protected detectChanges() {
+    super.detectChanges();
   }
 }

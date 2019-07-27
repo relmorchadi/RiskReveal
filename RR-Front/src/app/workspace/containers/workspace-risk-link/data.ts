@@ -56,7 +56,16 @@ const scrollableColsSummary = [
 ];
 
 const frozenColsSummary = [
-  {field: 'selected', header: '', width: '25px', type: 'selection', sorted: false, filtered: false, highlight: false, visible: true},
+  {
+    field: 'selected',
+    header: '',
+    width: '25px',
+    type: 'selection',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
   {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'dataSourceId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true},
@@ -73,13 +82,56 @@ const scrollableColsResults = [
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
   // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'peqt', header: 'PEQT', width: '80px', type: 'Peqt', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
-  {field: 'publishAcc', header: 'Publish For Accumulation', width: '30px', type: 'check', icon: 'icon-focus-add', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
-  {field: 'publishPri', header: 'Publish For Pricing', width: '30px', type: 'check', icon: 'icon-note', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {
+    field: 'proportion',
+    header: 'Proportion',
+    width: '70px',
+    type: 'percentage',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true,
+    edit: false
+  },
+  {
+    field: 'publishAcc',
+    header: 'Publish For Accumulation',
+    width: '30px',
+    type: 'check',
+    icon: 'icon-focus-add',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true,
+    edit: false
+  },
+  {
+    field: 'publishPri',
+    header: 'Publish For Pricing',
+    width: '30px',
+    type: 'check',
+    icon: 'icon-note',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true,
+    edit: false
+  },
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
 const frozenColsResults = [
-  {field: 'selected', header: '', width: '25px', type: 'selection', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {
+    field: 'selected',
+    header: '',
+    width: '25px',
+    type: 'selection',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true,
+    edit: false
+  },
   {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
@@ -132,13 +184,66 @@ const financialStandarContent = [
 ];
 
 const regionPerilDataTable = [
-  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'analysisName', header: 'Analysis Name', width: '300px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'regionPeril', header: 'Region Peril', width: '60px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'override', header: 'Override', width: '100px', type: 'override', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'copy', header: 'Copy', width: '100px', type: 'function', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'reason', header: 'Reason', width: '100px', type: 'comment', sorted: false, filtered: true, highlight: false, visible: true},
+  {
+    field: 'analysisId',
+    header: 'ID',
+    width: '50px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'analysisName',
+    header: 'Analysis Name',
+    width: '90px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'regionPeril',
+    header: 'Region Peril',
+    width: '80px',
+    type: 'text',
+    sorted: false,
+    filtered: true,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'override',
+    header: 'Override',
+    width: '300px',
+    type: 'override',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'copy',
+    header: 'Copy',
+    width: '50px',
+    type: 'function',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
+  {
+    field: 'reason',
+    header: 'Reason',
+    width: '150px',
+    type: 'comment',
+    sorted: false,
+    filtered: false,
+    highlight: false,
+    visible: true
+  },
 ];
 
 export const DataTables = {

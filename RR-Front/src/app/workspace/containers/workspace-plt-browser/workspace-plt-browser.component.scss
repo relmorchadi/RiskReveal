@@ -217,3 +217,15 @@
     overflow: hidden;
   }
 }
+
+.toolkit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+::ng-deep .ui-dialog-content {
+  display: flex !important;
+  align-items: center !important;
+}

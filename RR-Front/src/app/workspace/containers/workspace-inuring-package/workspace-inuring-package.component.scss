@@ -99,7 +99,7 @@
 */
 :host {
   width: 100%;
-  @media  screen and (min-width: 1900px) {
+  @media screen and (min-width: 1900px) {
     height: 100vh;
   }
 }
@@ -386,7 +386,7 @@
 
       padding: 4px;
       min-width: 25% !important;
-      max-width: 25%  !important;
+      max-width: 25% !important;
     }
 
     .ant-table-tbody > tr > td {

@@ -22,10 +22,12 @@ export class RiskApi {
     this.http.get(`${this.URL}analysis?rdmId=${paramId}&rdmName=${paramName}&size=20`).subscribe(
       (dt: any) => console.log(dt.content)
     );*/
+    console.log(paramId, paramName);
     return this.http.get(`${this.URL}analysis?size=20`);
   }
 
   searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
+    console.log('hey')
     return this.http.get(`${this.URL}portfolio?size=20`, {params: {edmId: paramId, edmName: paramName}});
   }
 }

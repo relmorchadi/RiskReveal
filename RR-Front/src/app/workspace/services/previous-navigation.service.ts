@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
-import {NavigationEnd, Router} from '@angular/router';
-import {filter} from 'rxjs/operators';
+import {Actions, ofActionDispatched} from '@ngxs/store';
+import {Navigate} from '@ngxs/router-plugin';
 
 @Injectable()
 export class PreviousNavigationService {
@@ -8,19 +8,18 @@ export class PreviousNavigationService {
   private previousUrl: string = '';
   private currentUrl: string = '';
 
-  constructor(private router: Router) {
-    this.currentUrl = this.router.url;
-    router.events.subscribe((event: any) => {
-      if(event instanceof NavigationEnd) {
-        this.previousUrl = this.currentUrl;
-        this.currentUrl = event.url;
-        console.log(this.previousUrl, this.currentUrl);
-      }
+  constructor(private actions: Actions) {
+
+    this.actions.pipe(
+      ofActionDispatched(Navigate)
+    ).subscribe(e => {
+      this.previousUrl = this.currentUrl;
+      const t = e.path[0].split('/');
+      this.currentUrl = t[t.length - 1];
     });
   }
 
   public getPreviousUrl() {
-    const t = this.previousUrl.split('/');
-    return t[t.length - 1];
+    return this.previousUrl
   }
 }

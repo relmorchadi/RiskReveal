@@ -1,4 +1,3 @@
-<app-left-menu></app-left-menu>
 <div class="plt-browser-wrapper">
   <div class="a-app-wrapper">
     <div class="a-app-header">
@@ -11,15 +10,15 @@
             wsId: workspaceId,
             uwYear: uwy,
             projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
+            showDeleted: tableInputs['showDeleted'],
+            filterData: tableInputs['filterData'],
+            filters: tableInputs['filters'],
             addTagModalIndex: tagModalIndex,
             fromPlts: fromPlts,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
+            deletedPltsLength: (tableInputs['listOfDeletedPltsData'] | keys).length,
             userTags: userTags,
             systemTags: systemTags,
-            selectedListOfPlts: selectedListOfPlts,
+            selectedListOfPlts: tableInputs['selectedListOfPlts'],
             systemTagsCount: systemTagsCount,
             _tagModalVisible: tagModalVisible,
             _editingTag: editingTag,
@@ -58,7 +57,7 @@
           </span>
           <div class="right">
             <div>
-              {{selectedListOfPlts.length ? selectedListOfPlts.length + ' Rows are selected' : ''}}
+              {{tableInputs['selectedListOfPlts']?.length ? tableInputs['selectedListOfPlts']?.length + ' Rows are selected' : ''}}
             </div>
             <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'" >
               <a style="max-height: 28px;display: flex;" nz-dropdown>
@@ -75,7 +74,7 @@
 
                 <li nz-menu-divider></li>
 
-                <li nz-menu-item (click)="checkAll(false)" >Unselect All</li>
+                <li (click)="unselectAll()" nz-menu-item>Unselect All</li>
 
               </ul>
             </nz-dropdown>
@@ -83,37 +82,8 @@
         </div>
         <div class="PLTs-content">
           <app-plt-main-table
-            [tableInputs]="{
-                  contextMenuItems: contextMenuItems,
-                  filterInput: filterInput,
-                  pltColumns: pltColumns,
-                  listOfPltsData: listOfPltsData,
-                  listOfDeletedPltsData: listOfDeletedPltsData,
-                  listOfPltsCache: listOfPltsCache,
-                  listOfDeletedPltsCache: listOfDeletedPltsCache,
-                  listOfPlts: listOfPlts,
-                  listOfDeletedPlts: listOfDeletedPlts,
-                  selectedListOfPlts: selectedListOfPlts,
-                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
-                  selectAll: selectAll,
-                  someItemsAreSelected: someItemsAreSelected,
-                  showDeleted: showDeleted,
-                  filterData: filterData,
-                  filters: filters,
-                  sortData: sortData
-                }"
-
-            (deletePlt)="deletePlt()"
-            (openPltInDrawer)="openPltInDrawer($event)"
-            (editTags)="editTags()"
-            (restore)="restore()"
-            (onCheckAll)="checkAll($event)"
-            (onCheckBoxSort)="checkBoxSort($event)"
-            (onFilter)="filter($event)"
-            (onItemSelectForMenu)="setSelectedMenuItem($event)"
-            (onPltClick)="toggleSelectPlts($event)"
-            (onSelectSinglePlt)="selectSinglePLT($event)"
-            (onSortChange)="sortChange($event)"
+            [tableInputs]="tableInputs"
+            (actionDispatcher)="tableActionDispatcher($event)"
           ></app-plt-main-table>
         </div>
       </div>
@@ -129,7 +99,7 @@
 <p-dialog
   [visible]="managePopUp"
   [closable]="false"
-  styleClass="m-dialog-modal-lg-h"
+  styleClass="m-dialog-modal"
   appendTo="body"
   [modal]="true"
   [autoZIndex]="false"
@@ -145,33 +115,97 @@
     </div>
   </p-header>
 
-  <div cdkDropList class="m-box-d" (cdkDropListDropped)="drop($event)">
-    <ng-container *ngFor="let col of pltColumnsForConfig;let i=index">
-      <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-        <div class="m-box-overlay">
-          <div class="left">
-            <div class="burger">
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
+  <div class="content">
+
+    <div
+      cdkDropList
+      [id]="'availableListOfColumns'"
+      #availbleListOfColumns="cdkDropList"
+      [cdkDropListConnectedTo]="[usedListOfColumns]"
+      [cdkDropListData]="listOfAvailbleColumns"
+      class="m-box-d"
+      (cdkDropListDropped)="drop($event)">
+      <ng-container *ngFor="let col of listOfAvailbleColumns;let i=index">
+        <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+          <div class="m-box-overlay">
+            <div class="left">
+              <div class="burger" cdkDragHandle>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+              </div>
+              <span class="subtitle-2">
+              {{col.header}}
+              </span>
             </div>
-            <span class="subtitle-2">
-          {{col.header}}
-        </span>
-          </div>
-          <div class="right">
-            <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-            <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+            <!--
+            <div class="right">
+              <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+              <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+            </div>
+            -->
           </div>
         </div>
+      </ng-container>
+    </div>
+
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
       </div>
-    </ng-container>
+    </div>
+
+    <div
+      cdkDropList
+      [id]="'usedListOfColumns'"
+      #usedListOfColumns="cdkDropList"
+      [cdkDropListConnectedTo]="[availbleListOfColumns]"
+      [cdkDropListData]="listOfUsedColumns"
+      class="m-box-d"
+      (cdkDropListDropped)="drop($event)">
+      <ng-container *ngFor="let col of listOfUsedColumns;let i=index">
+        <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+          <div class="m-box-overlay">
+            <div class="left">
+              <div class="burger" cdkDragHandle>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+              </div>
+              <span class="subtitle-2">
+              {{col.header}}
+              </span>
+            </div>
+            <!--
+            <div class="right">
+              <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+              <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+            </div>
+            -->
+          </div>
+        </div>
+      </ng-container>
+    </div>
   </div>
 
   <p-footer>

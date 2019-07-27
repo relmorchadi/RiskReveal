@@ -4,8 +4,9 @@
       <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
     </div>
 
-      <nz-tabset *ngIf="inputs['visible']" [nzSelectedIndex]="inputs.selectedTab.index" (nzSelectedIndexChange)="selectTab($event)" class="tabset-drawer">
-        <nz-tab *ngIf="inputs['tabs']['basket']" [nzTitle]="basket" >
+    <nz-tabset (nzSelectedIndexChange)="selectTab($event)" *ngIf="inputs['visible']"
+               [nzSelectedIndex]="inputs.selectedTab.index" class="tabset-drawer">
+      <nz-tab *ngIf="inputs['tabs']['basket']" [nzTitle]="basket">
                 <ng-template #basket>
                   <span style="font-size: 16px;color: #000; padding: 3px 5px 3px 5px;">
                     Selected

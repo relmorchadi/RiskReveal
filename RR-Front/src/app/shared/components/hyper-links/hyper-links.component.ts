@@ -1,6 +1,5 @@
-import {Component, Input, OnInit} from '@angular/core';
-import { Router } from '@angular/router';
-import * as _ from 'lodash'
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-hyper-links',
@@ -11,24 +10,25 @@ export class HyperLinksComponent implements OnInit {
 
   @Input('links') links: string[];
   @Input('activeItem') activeItem: string;
-  @Input('RoutingConfig') RoutingConfig: {
-    wsId: string,
-    uwYear: string
-  };
   @Input('routes') routes: any;
 
-  constructor(private _router: Router) { }
+  @Output('navigate') navigate: EventEmitter<any>;
+
+  constructor() {
+    this.navigate = new EventEmitter();
+  }
 
   ngOnInit() {
   }
 
-  navigate(to){
-    if(this.activeItem != to) {
-      this._router.navigate([`workspace/${this.RoutingConfig.wsId}/${this.RoutingConfig.uwYear}/${this.routes[to]}`]);
+  onNavigate(to) {
+    if (this.activeItem != to) {
+      this.navigate.emit({route: this.routes[to]});
+      // this._router.navigate([`workspace/${this.RoutingConfig.wsId}/${this.RoutingConfig.uwYear}/${this.routes[to]}`]);
     }
   }
 
-  filter(){
+  filter() {
     return _.filter(this.links, e => e != this.activeItem);
   }
 

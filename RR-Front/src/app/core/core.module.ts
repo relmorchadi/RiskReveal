@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ErrorHandler, Injectable, NgModule} from '@angular/core';
 
 import {NgxsModule, StateContext} from '@ngxs/store';
 import {environment} from '../../environments/environment';
@@ -16,13 +16,56 @@ import {PIPES} from './pipes';
 import {DIRECTIVES} from './directives';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {NgxsStoragePluginModule, STORAGE_ENGINE, StorageEngine} from '@ngxs/storage-plugin';
 import {SharedModule} from '../shared/shared.module';
 import {StoreModule} from './store';
+import * as _ from 'lodash';
+
+
+export class MyStorageEngine implements StorageEngine {
+  get length(): number {
+    return localStorage.length;
+    // Your logic here
+  }
+
+  getItem(key: string): any {
+    if (key == '@@STATE') {
+      let state = JSON.parse(localStorage.getItem(key));
+      return JSON.stringify(_.omit(state, ['router']));
+    }
+    return localStorage.getItem(key);
+  }
+
+  setItem(key: string, val: any): void {
+    localStorage.setItem(key, val);
+  }
+
+  removeItem(key: string): void {
+    localStorage.removeItem(key);
+  }
+
+  clear(): void {
+    localStorage.clear();
+  }
+}
+
+@Injectable()
+export class GlobalErrorHandler implements ErrorHandler {
+  handleError(error: any): void {
+    console.info('From error handler');
+    console.error(error);
+    throw error;
+  }
+}
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES, ...PIPES],
+  providers: [
+    {provide: STORAGE_ENGINE, useClass: MyStorageEngine},
+    {provide: ErrorHandler, useClass: GlobalErrorHandler}
+  ],
   imports: [
     NgZorroAntdModule,
     RouterModule,
@@ -31,6 +74,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
+    NgxsStoragePluginModule.forRoot(),
     StoreModule,
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
@@ -45,7 +89,7 @@ export class CoreModule implements NgxsHmrLifeCycle<Snapshot> {
     return {
       ngModule: CoreModule,
       providers: [{provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
-        {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, { provide: NZ_I18N, useValue: en_US }],
+        {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, {provide: NZ_I18N, useValue: en_US}],
     };
   }
 
