@@ -8,9 +8,8 @@ import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
 import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
-import {WorkspaceMain} from '../../../core/model/workspace-main';
-import {CloseAllTagsAction, CloseTagByIndexAction} from "../../../core/store";
-import {BaseContainer} from "../../../shared/base";
+import {CloseAllTagsAction, CloseTagByIndexAction} from '../../../core/store';
+import {BaseContainer} from '../../../shared/base';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 
 
@@ -122,9 +121,9 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filtered: false
     }
   ];
-  @Select(WorkspaceMainState)
+/*  @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
-  state: WorkspaceMain = null;
+  state: WorkspaceMain = null;*/
   private _filter = {};
   searchContent;
 
@@ -135,9 +134,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   ngOnInit() {
-    this.state$
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe(value => this.state = _.merge({}, value));
     this.searchContent$
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(({value}) => {

@@ -132,13 +132,15 @@ export class WorkspaceState {
    *
    ***********************************/
   @Selector()
-  static getProjects() {
-    return (state: any) => state.workspaceMain.openedWs.projects
+  static getProjects(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].projects;
   }
 
   @Selector()
   static getAttr(state: WorkspaceModel) {
-    return (path) => _.get(state.content.wsIdentifier.Calibration, `${path}`);
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return (path) => _.get(state.content[wsIdentifier].Calibration, `${path}`);
   }
 
   @Selector()
@@ -160,7 +162,7 @@ export class WorkspaceState {
 
   @Selector()
   static getUserTags(state: WorkspaceModel) {
-    return _.get(state.content.wsIdentifier.Calibration, 'userTags', {})
+    return _.get(state.content.wsIdentifier.Calibration, 'userTags', {});
   }
 
   static getLeftNavbarIsCollapsed() {

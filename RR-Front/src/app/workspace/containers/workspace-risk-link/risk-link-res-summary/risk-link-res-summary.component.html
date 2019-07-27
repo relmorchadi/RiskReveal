@@ -150,8 +150,11 @@
           <div>Analysis Results</div>
         </div>
         <div class="body-wrapper-header-right-summary">
-          <button class="a-buttons-outlined" (click)="setLinkingState()"
-                  *ngIf="state.collapse.collapseAnalysis"> LINKING
+          <button class="a-buttons-outlined"
+                  style="margin: 0 10px 0 0"
+                  *ngIf="state.collapse.collapseAnalysis"> IMPORT FOR CALIBRATION
+          </button>
+          <button class="a-buttons-outlined" (click)="setLinkingState()" *ngIf="state.collapse.collapseAnalysis"> LINKING
           </button>
           <i class="icon-filter" style="margin: 0px 10px; font-size: 23px;"
              (click)="filterModalVisibility = true"></i>
@@ -1036,7 +1039,7 @@
                   <div *ngIf="col.type === 'override'">
                     <nz-select
                       style="padding: 10px 0; width: 300px" #rpRes
-                      [ngModel]="rowData.override"
+                      [(ngModel)]="rowData.override"
                       nzShowSearch
                       class="a-dropdown-small input-wrapper"
                       nzPlaceHolder="Select Occurence Basis"
@@ -1064,7 +1067,6 @@
                 </th>
               </ng-container>
             </tr>
-
           </ng-template>
         </p-table>
       </div>

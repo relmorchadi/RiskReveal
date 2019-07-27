@@ -338,6 +338,8 @@ export class PltComparerMainComponent implements OnInit {
     sortData: null
   };
 
+  @Select()
+
   @Select(WorkspaceState.getUserTags) userTags$;
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
@@ -346,7 +348,7 @@ export class PltComparerMainComponent implements OnInit {
   loading: boolean;
   selectedUserTags: any;
 
-  @Select(WorkspaceMainState)
+  @Select(WorkspaceState)
   state$: Observable<WorkspaceMain>;
   listOfWs: any = null;
 
@@ -715,7 +717,7 @@ export class PltComparerMainComponent implements OnInit {
     this.fromPlts = false;
     this.renamingTag = false;
     this.selectedUserTags = {};
-    this.initColor = '#fe45cd'
+    this.initColor = '#fe45cd';
     this.colorPickerIsVisible = false;
     this.addTagModalPlaceholder = 'Select a Tag';
     this.showDeleted = false;
@@ -728,7 +730,7 @@ export class PltComparerMainComponent implements OnInit {
     this.colorThePlt();
     this.Subscriptions.push(
       this.state$.subscribe(value => this.listOfWs = _.merge({}, value.openedTabs)),
-      this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
+      this.store$.select(WorkspaceState.getProjects).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
