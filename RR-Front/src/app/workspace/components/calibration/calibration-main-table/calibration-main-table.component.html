@@ -6,6 +6,7 @@
   [frozenColumns]="frozenColumns"
   [frozenWidth]="frozenWidth"
   [resizableColumns]="true"
+  [columnResizeMode]="'fit'"
   [responsive]="true"
   [scrollable]="true"
   scrollHeight="calc(90vh - 205px)"
@@ -236,7 +237,7 @@
                       </span>
         </th>
 
-        <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;">
+        <th *ngIf="col?.fields === 'pltName'" pResizableColumn style="padding: 0 !important;">
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -569,6 +570,7 @@
   [frozenWidth]="frozenWidth"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag] "
   [resizableColumns]="true"
+  [columnResizeMode]="'fit'"
   [contextMenu]="cm"
   [scrollHeight]="'600px'"
   [scrollable]="true"
@@ -753,7 +755,7 @@
                       </span>
         </th>
 
-        <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;">
+        <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;" pResizableColumn>
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
