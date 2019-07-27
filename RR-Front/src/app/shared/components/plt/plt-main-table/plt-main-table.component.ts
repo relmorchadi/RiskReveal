@@ -168,4 +168,11 @@ export class PltMainTableComponent implements OnInit {
       return;
     }
   }
+
+  filterByStatus(statue: string) {
+    this.actionDispatcher.emit({
+      type: tableStore.filterByStatus,
+      payload: statue
+    })
+  }
 }

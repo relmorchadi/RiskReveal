@@ -56,12 +56,20 @@
             PLTs
           </span>
           <div class="right">
-            <div>
-              {{tableInputs['selectedListOfPlts']?.length ? tableInputs['selectedListOfPlts']?.length + ' Rows are selected' : ''}}
+            <div style="display: flex;align-items: center;">
+              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length ? tableInputs['selectedListOfPlts']?.length + ' PLTs are selected' : ''}}</p>
+              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                <a style="max-height: 28px;display: flex;" nz-dropdown>
+                  <i class="icon-menu_24px"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item (click)="cloneFrom()">Clone From</li>
+                </ul>
+              </nz-dropdown>
             </div>
             <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'" >
               <a style="max-height: 28px;display: flex;" nz-dropdown>
-                <i class="icon-menu_24px"></i>
+                <i class="icon-cog"></i>
               </a>
               <ul nz-menu style="font-size: 12px">
                 <li nz-menu-item (click)="resetSort()">Reset Sort</li>

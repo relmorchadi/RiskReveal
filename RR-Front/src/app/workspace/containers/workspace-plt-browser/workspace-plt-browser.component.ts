@@ -748,7 +748,18 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       listOfPltsCache: [],
       listOfPltsData: [],
       selectedListOfDeletedPlts: [],
-      selectedListOfPlts: []
+      selectedListOfPlts: [],
+      status: {
+        Published: {
+          selected: false
+        },
+        Priced: {
+          selected: false
+        },
+        Accumulated: {
+          selected: false
+        },
+      }
     };
     this.setRightMenuSelectedTab('pltDetail');
   }
@@ -799,7 +810,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
     ).subscribe(() => {
-      console.log("LOADING PLTS")
       this.dispatch(new fromWorkspaceStore.loadAllPlts({
         params: {
           workspaceId: this.workspaceId, uwy: this.uwy
@@ -1194,7 +1204,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.updateTable('sortData', action.payload);
         break;
       case tableStore.checkBoxSort:
-        console.log(action.payload);
         this.updateTable('listOfPltsData', action.payload);
         break;
       case tableStore.onCheckAll:
@@ -1213,13 +1222,27 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       case tableStore.toggleSelectedPlts:
         this.toggleSelectPlts(action.payload);
         break;
+
+      case tableStore.filterByStatus:
+        const status= this.getTableInputKey('status');
+
+        this.updateTable('status', {
+          ...status,
+          [action.payload]: {
+            selected: !status[action.payload].selected
+          }
+        });
+        this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
+          wsIdentifier: this.workspaceId+"-"+this.uwy,
+          status: this.getTableInputKey('status')
+        }));
+        break;
       default:
         console.log('table action dispatcher')
     }
   }
 
   patchState({data: {leftNavbarCollapsed}}): void {
-    console.log('patchState')
     this.leftIsHidden = leftNavbarCollapsed;
     this.detectChanges();
   }
@@ -1261,5 +1284,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.listOfAvailbleColumns= [...this.pltColumnsCache];
       this.listOfUsedColumns= [];
     }
+  }
+
+  cloneFrom() {
+    this.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`])
   }
 }

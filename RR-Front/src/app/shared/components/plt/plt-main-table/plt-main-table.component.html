@@ -11,7 +11,7 @@
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
   #dt
-  [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag])?.length ? 'activate-header-scroll' : ''"
+  [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
 >
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -58,11 +58,20 @@
                   <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
                 </ng-container>
               </span>
-              <i *ngIf="col.icon" [nzTitle]="tooltipInfo" nzPlacement="top" nz-tooltip style="font-size: 1.6em" [ngClass]="col.icon">
-                <ng-template #tooltipInfo>
-                  {{ col?.tooltip }}
-                </ng-template>
-              </i>
+              <ng-container *ngIf="col.icon">
+                <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'" [nzClickHide]="false">
+                  <i nz-dropdown [nzTitle]="tooltipInfo" nzPlacement="top" nz-tooltip style="font-size: 1.6em" [ngClass]="col.icon">
+                    <ng-template #tooltipInfo>
+                      {{ col?.tooltip }}
+                    </ng-template>
+                  </i>
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let statue of tableInputs.status | keys">
+                      <label nz-checkbox [ngModel]="tableInputs.status[statue]?.selected" (ngModelChange)="filterByStatus(statue)">{{statue}}</label>
+                    </li>
+                  </ul>
+                </nz-dropdown>
+              </ng-container>
             </th>
           </ng-container>
         </ng-container>
@@ -125,7 +134,14 @@
             </ng-container>
           </td>
           <td *ngIf="col?.type == 'icon'" [ngStyle]="{'width': col?.width + 'px'}">
-            <i [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
+            <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+              <i nz-dropdown [ngClass]="{ 'icon-check': rowData?.isScorCurrent, 'icon-remove_24px': !rowData?.isScorCurrent }"></i>
+              <ul nz-menu>
+                <li nz-menu-item (click)="log('1st menu item')">1st menu item</li>
+                <li nz-menu-item (click)="log('2nd menu item')">2nd menu item</li>
+                <li nz-menu-item (click)="log('3rd menu item')">3rd menu item</li>
+              </ul>
+            </nz-dropdown>
           </td>
         </ng-container>
       </ng-container>

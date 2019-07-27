@@ -444,4 +444,44 @@ export class PltStateService {
       deletedAt: deletedPlts[plt.pltId] ? deletedPlts[plt.pltId].deletedAt : undefined,
     });
   }
+
+  mappingColumns= {
+    'Published': 'isScorCurrent',
+    'Priced': 'isScorDefault',
+    'Accumulated': 'isScorGenerated'
+  }
+
+  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, payload: any) {
+    const {
+      wsIdentifier,
+      status
+    } = payload;
+
+    const {
+      data
+    } = ctx.getState().content[wsIdentifier].pltManager;
+
+
+    let newData= {};
+    let activeStatus = {};
+
+    _.forEach(status, (v,k) => {
+      if(v.selected) {
+        activeStatus[k]= v;
+      }
+    });
+
+    if(_.keys(activeStatus).length) {
+      _.forEach(data, (plt,k) => {
+
+        newData[k]= {...plt, visible: _.some(activeStatus, (v,statue) => plt[this.mappingColumns[statue]])};
+
+      });
+
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].pltManager.data = {...data, ...newData};
+      }));
+    }
+
+  }
 }
