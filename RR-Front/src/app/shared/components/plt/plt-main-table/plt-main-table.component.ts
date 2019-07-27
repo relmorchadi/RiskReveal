@@ -20,6 +20,13 @@ import {Message} from '../../../message';
 })
 export class PltMainTableComponent implements OnInit {
 
+  perilColors = {
+    'EQ': 'red',
+    'FL': '#0b99cc',
+    'WS': '#62ec07',
+    'CS': '#62ec07'
+  }
+
   @ViewChild('cm') cm: TemplateRef<any>;
 
   @Input() tableInputs: tableStore.Input;
@@ -160,5 +167,12 @@ export class PltMainTableComponent implements OnInit {
       }
       return;
     }
+  }
+
+  filterByStatus(statue: string) {
+    this.actionDispatcher.emit({
+      type: tableStore.filterByStatus,
+      payload: statue
+    })
   }
 }

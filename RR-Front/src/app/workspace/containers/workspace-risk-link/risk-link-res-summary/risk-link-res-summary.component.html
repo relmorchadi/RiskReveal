@@ -52,7 +52,7 @@
           <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
+                <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
                   <div *ngIf="col.type === 'selection'" class="">
                     <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
                            nz-checkbox></label>
@@ -84,6 +84,40 @@
                        class="text-data" style="display: flex;justify-content: center;"><i
                     class="icon-trash-alt"></i></div>
                 </th>
+                <ng-container *ngIf="col.edit">
+                  <th pEditableColumn *ngIf="col.field === 'targetCurrency'"
+                      [ngClass]="{'selected-item': rowData?.selected}">
+                    <p-cellEditor>
+                      <ng-template pTemplate="input">
+                        <nz-select
+                          style="width: 100%"
+                          [(ngModel)]="rowData.targetCurrency"
+                          nzShowSearch
+                          class="a-dropdown-small input-wrapper"
+                          nzPlaceHolder="TAG CURRENCY"
+                        >
+                          <nz-option nzLabel="Main Liablity Currency (MLC)" nzValue="USD"></nz-option>
+                          <nz-option nzLabel="User Defined Currency (UDC)" nzValue="EUW"></nz-option>
+                          <nz-option nzLabel="Underlying Exposure Currency (UEC)" nzValue="UEC"></nz-option>
+                          <nz-option nzLabel="AED" nzValue="AED"></nz-option>
+                          <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
+                          <nz-option nzLabel="AFN" nzValue="AFN"></nz-option>
+                          <nz-option nzLabel="ALK" nzValue="ALK"></nz-option>
+                          <nz-option nzLabel="ALL" nzValue="ALL"></nz-option>
+                          <nz-option nzLabel="BBT" nzValue="BBT"></nz-option>
+                          <nz-option nzLabel="BBL" nzValue="BBL"></nz-option>
+                          <nz-option nzLabel="BMD" nzValue="BMD"></nz-option>
+                          <nz-option nzLabel="MGA" nzValue="MGA"></nz-option>
+                          <nz-option nzLabel="USD" nzValue="USD"></nz-option>
+                          <nz-option nzLabel="XXC" nzValue="XXC"></nz-option>
+                        </nz-select>
+                      </ng-template>
+                      <ng-template pTemplate="output">
+                        <div class="text-data highlight-temp">{{rowData.targetCurrency}}</div>
+                      </ng-template>
+                    </p-cellEditor>
+                  </th>
+                </ng-container>
               </ng-container>
             </tr>
           </ng-template>
@@ -248,6 +282,9 @@
                           class="a-dropdown-small input-wrapper"
                           nzPlaceHolder="TAG CURRENCY"
                         >
+                          <nz-option nzLabel="Main Liablity Currency (MLC)" nzValue="USD"></nz-option>
+                          <nz-option nzLabel="User Defined Currency (UDC)" nzValue="EUW"></nz-option>
+                          <nz-option nzLabel="Underlying Analysis Currency (UAC)" nzValue="UAC"></nz-option>
                           <nz-option nzLabel="AED" nzValue="AED"></nz-option>
                           <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
                           <nz-option nzLabel="AFN" nzValue="AFN"></nz-option>
@@ -552,7 +589,12 @@
                     </ng-template>
                   </p-table>
                   <div style="display: flex; justify-content: flex-end; margin: 10px 10px 15px;">
-                    <button (click)="createLinking()" class="a-buttons-outlined">LINK</button>
+                    <button *ngIf="!updateMode" (click)="createLinking()" style="padding: 6px 45px;" class="a-buttons-outlined">LINK</button>
+                    <ng-container *ngIf="updateMode">
+                      <button (click)="cancelUpdate()" style="padding: 6px 45px;" class="a-button-text-cancel">CANCEL</button>
+                      <button (click)="updateLinking()" style="padding: 6px 45px;" class="a-buttons-outlined">UPDATE LINK</button>
+                    </ng-container>
+
                   </div>
                 </div>
               </div>
@@ -631,9 +673,9 @@
               <span class="subtitle-2">Created Links</span>
               <div class="suggestion-card" *ngFor="let link of linking.linked; let i = index">
                 <div class="suggestion-card-header">
-                  <label nz-checkbox>Link {{i}}</label>
+                  <label nz-checkbox>Link {{i + 1}}</label>
                   <div>
-                    <i class="icon-edit_24px"></i>
+                    <i (click)="initUpdateLink()" class="icon-edit_24px"></i>
                     <i (click)="deleteLink(link)" class="icon-trash-alt"></i>
                   </div>
                 </div>
@@ -869,6 +911,9 @@
             class="a-dropdown-small input-wrapper"
             nzPlaceHolder="Select Target Currency"
           >
+            <nz-option nzLabel="Main Liablity Currency (MLC)" nzValue="USD"></nz-option>
+            <nz-option nzLabel="User Defined Currency (UDC)" nzValue="EUW"></nz-option>
+            <nz-option nzLabel="Underlying Analysis Currency (UAC)" nzValue="UAC"></nz-option>
             <nz-option nzLabel="AED" nzValue="AED"></nz-option>
             <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
             <nz-option nzLabel="AFN" nzValue="AFN"></nz-option>

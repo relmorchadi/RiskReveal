@@ -18,4 +18,5 @@ export interface Input {
   filterData: any;
   filters: any;
   sortData: any;
+  status: any;
 }

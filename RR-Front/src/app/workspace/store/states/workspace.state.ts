@@ -420,6 +420,11 @@ export class WorkspaceState {
     return this.pltStateService.restorePlt(ctx, payload);
   }
 
+  @Action(fromPlt.FilterPltsByStatus)
+  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByStatus){
+    this.pltStateService.filterPltsByStatus(ctx, payload);
+  }
+
   /***********************************
    *
    * Calibration Actions
