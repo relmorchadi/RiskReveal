@@ -1443,11 +1443,22 @@ body .ui-table .ui-table-thead > tr > th {
   font-size: 14px;
   font-weight: bold;
   color: #0700e4;
-  margin-top: 30px;
+  margin-top: 20px;
   margin-left: 15px;
   cursor: pointer;
 }
 
+.regenerate-all {
+  font-size: 17px;
+  margin-top: 20px;
+  margin-right: 25px;
+  color: #0700e4;
+  cursor: pointer;
+}
+
+.regenerate-all:hover {
+  color: #1890ff;
+}
 .addRemove:hover {
   color: #1890ff;
 }

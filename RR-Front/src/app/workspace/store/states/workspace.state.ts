@@ -132,13 +132,15 @@ export class WorkspaceState {
    *
    ***********************************/
   @Selector()
-  static getProjects() {
-    return (state: any) => state.workspaceMain.openedWs.projects
+  static getProjects(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].projects;
   }
 
   @Selector()
   static getAttr(state: WorkspaceModel) {
-    return (path) => _.get(state.content.wsIdentifier.Calibration, `${path}`);
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return (path) => _.get(state.content[wsIdentifier].Calibration, `${path}`);
   }
 
   @Selector()
@@ -160,7 +162,7 @@ export class WorkspaceState {
 
   @Selector()
   static getUserTags(state: WorkspaceModel) {
-    return _.get(state.content.wsIdentifier.Calibration, 'userTags', {})
+    return _.get(state.content.wsIdentifier.Calibration, 'userTags', {});
   }
 
   static getLeftNavbarIsCollapsed() {
@@ -662,6 +664,11 @@ export class WorkspaceState {
     this.riskLinkFacade.applyFinancialPerspective(ctx, payload);
   }
 
+  @Action(fromWS.ApplyRegionPerilAction)
+  applyRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyRegionPerilAction) {
+    this.riskLinkFacade.applyRegionPeril(ctx, payload);
+  }
+
   @Action(fromWS.SaveFinancialPerspectiveAction)
   saveFinancialPerspective(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.saveFinancialPerspective(ctx);
@@ -675,6 +682,11 @@ export class WorkspaceState {
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.createLinking(ctx);
+  }
+
+  @Action(fromWS.UpdateStatusLinkAction)
+  updateStatusLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.UpdateStatusLinkAction) {
+    this.riskLinkFacade.updateStatusLink(ctx, payload);
   }
 
   @Action(fromWS.RemoveFinancialPerspectiveAction)
@@ -695,6 +707,11 @@ export class WorkspaceState {
   @Action(fromWS.DeleteLinkAction)
   deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
     this.riskLinkFacade.deleteLink(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteInnerLinkAction)
+  deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
+    this.riskLinkFacade.deleteInnerLink(ctx, payload);
   }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)

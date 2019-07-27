@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import {RiskLinkState, WorkspaceState} from '../../../store/states';
 import {combineLatest, Observable} from 'rxjs';
 import {RiskLinkModel} from '../../../model/risk_link.model';
-import {SaveEditAnalysisAction} from "../../../store/actions";
+import {ApplyRegionPerilAction, SaveEditAnalysisAction} from '../../../store/actions';
 
 @Component({
   selector: 'app-risk-link-res-summary',
@@ -18,8 +18,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   filterModalVisibility = false;
   linkingModalVisibility = false;
   editRowPopUp = false;
-  manual = false;
-  suggested = false;
   managePopUp = false;
   columnsForConfig;
   targetConfig;
@@ -91,6 +89,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   linking: any;
   analysis = [];
   portfolio = [];
+  updateMode = false;
 
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
@@ -447,6 +446,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
     item.selected = true;
   }
 
+  applyRpToAll(row) {
+    this.store.dispatch(new ApplyRegionPerilAction(row));
+  }
+
   getTreeApp() {
     const data = _.toArray(this.state.results.data);
     const regions = _.unionBy(data.map(dt => dt.regionPeril));
@@ -530,8 +533,29 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.store.dispatch(new fromWs.CreateLinkingAction());
   }
 
+  selectLink(link) {
+    this.store.dispatch(new fromWs.UpdateStatusLinkAction({link: link, select: !link.selected, updated: link.update}));
+  }
+
+  initUpdateLink(link) {
+    this.updateMode = true;
+    this.store.dispatch(new fromWs.UpdateStatusLinkAction({link: link, select: true, updated: true}));
+  }
+
+  updateLinking() {
+    this.updateMode = false;
+  }
+
+  cancelUpdate() {
+    this.updateMode = false;
+  }
+
   deleteLink(item) {
     this.store.dispatch(new fromWs.DeleteLinkAction(item));
+  }
+
+  deleteComponentLink(link, item, target) {
+    this.store.dispatch(new fromWs.DeleteInnerLinkAction({link: link, item: item, target: target}));
   }
 
   rowTrackBy = (index, item) => {

@@ -5,7 +5,6 @@ import {combineLatest} from 'rxjs';
 import {dataTable} from '../workspace-scope-completence/data';
 import * as _ from 'lodash';
 import {WorkspaceState} from '../../store/states';
-import {WorkspaceMainState} from '../../../core/store/states';
 import {BaseContainer} from '../../../shared/base';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
@@ -22,7 +21,6 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
 
   check = true;
   @Select(WorkspaceState.getPlts) data$;
-  @Select(WorkspaceMainState.getData) wsData$;
 
   dataSource: any;
 
@@ -37,7 +35,6 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   ngOnInit() {
     this.dataSource = dataTable.dataSource;
     combineLatest(
-      this.wsData$,
       this.route.params
     ).pipe(this.unsubscribeOnDestroy)
       .subscribe(([data, {wsId, year}]: any) => {
