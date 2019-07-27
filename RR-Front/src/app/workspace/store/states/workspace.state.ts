@@ -662,6 +662,11 @@ export class WorkspaceState {
     this.riskLinkFacade.applyFinancialPerspective(ctx, payload);
   }
 
+  @Action(fromWS.ApplyRegionPerilAction)
+  applyRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyRegionPerilAction) {
+    this.riskLinkFacade.applyRegionPeril(ctx, payload);
+  }
+
   @Action(fromWS.SaveFinancialPerspectiveAction)
   saveFinancialPerspective(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.saveFinancialPerspective(ctx);
@@ -675,6 +680,11 @@ export class WorkspaceState {
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.createLinking(ctx);
+  }
+
+  @Action(fromWS.UpdateStatusLinkAction)
+  updateStatusLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.UpdateStatusLinkAction) {
+    this.riskLinkFacade.updateStatusLink(ctx, payload);
   }
 
   @Action(fromWS.RemoveFinancialPerspectiveAction)
@@ -695,6 +705,11 @@ export class WorkspaceState {
   @Action(fromWS.DeleteLinkAction)
   deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
     this.riskLinkFacade.deleteLink(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteInnerLinkAction)
+  deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
+    this.riskLinkFacade.deleteInnerLink(ctx, payload);
   }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)

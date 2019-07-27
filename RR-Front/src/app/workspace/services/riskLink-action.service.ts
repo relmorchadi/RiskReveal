@@ -534,6 +534,18 @@ export class RiskLinkStateService {
     }
   }
 
+  applyRegionPeril(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const {regionPeril, override} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const matchingPeril =
+      _.filter(_.toArray(draft.content[wsIdentifier].riskLink.results.data), item => item.regionPeril === regionPeril);
+      draft.content[wsIdentifier].riskLink.results.data = _.merge(draft.content[wsIdentifier].riskLink.results.data,
+        ...matchingPeril.map(item => ({[item.id]: {...item, override: override}})));
+    }));
+  }
+
   saveFinancialPerspective(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -597,8 +609,21 @@ export class RiskLinkStateService {
       ctx.getState(), draft => {
         if (selectedPortfolios.length > 0 && selectedPortfolios.length > 0) {
           draft.content[wsIdentifier].riskLink.linking.linked = [...draft.content[wsIdentifier].riskLink.linking.linked,
-            {analysis: [...selectedAnalysis], portfolio: [...selectedPortfolios]}];
+            {analysis: [...selectedAnalysis], portfolio: [...selectedPortfolios], selected: false, update: false}];
         }
+      }
+    ));
+  }
+
+  updateStatusLink(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const {link, select, updated} = payload;
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        const index = _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link);
+        draft.content[wsIdentifier].riskLink.linking.linked[index] = {...draft.content[wsIdentifier].riskLink.linking.linked[index],
+        selected: select, update: updated};
       }
     ));
   }
@@ -687,6 +712,36 @@ export class RiskLinkStateService {
       draft.content[wsIdentifier].riskLink.linking.linked.splice(
         _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, payload), 1);
     }));
+  }
+
+  deleteInnerLink(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const {item, link, target} = payload;
+    console.log(state.content[wsIdentifier].riskLink.linking.linked, link, item);
+    if (target === 'portfolio') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        const index = _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link);
+        if (draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio.length === 1) {
+          draft.content[wsIdentifier].riskLink.linking.linked.splice(
+            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link), 1);
+        } else {
+          draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio.splice(
+            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked[index].portfolio, item), 1);
+        }
+      }));
+    } else if (target === 'analysis') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        const index = _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link);
+        if (draft.content[wsIdentifier].riskLink.linking.linked[index].analysis.length === 1) {
+          draft.content[wsIdentifier].riskLink.linking.linked.splice(
+            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked, link), 1);
+        } else {
+          draft.content[wsIdentifier].riskLink.linking.linked[index].analysis.splice(
+            _.findIndex(draft.content[wsIdentifier].riskLink.linking.linked[index].analysis, item), 1);
+        }
+      }));
+    }
   }
 
   loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, payload) {
