@@ -1270,6 +1270,20 @@ export const EPM_COLUMNS = [
   },
   {
     sortDir: 1,
+    fields: 'AAL',
+    header: 'AAL',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
     fields: 'EPM2',
     header: '2',
     width: '80',
@@ -1448,3 +1462,27 @@ export const SYSTEM_TAGS_MAPPING = {
   },
   nonGrouped: {}
 };
+
+export class RANDOM_METRIC_DATA {
+  result: any;
+
+  constructor(length: number) {
+    const cols: any[] = ['ALL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
+    for (let i = 0; i < length; i++) {
+      if (i == 0) {
+        this.result[cols[i]] = [
+          Math.floor(Math.random() * (200000000 - 1000000 + 1)) + 1000000,
+          Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
+          Math.floor(Math.random() * 199) - 99
+        ];
+      } else {
+        this.result[cols[i]] = [
+          Math.floor(Math.random() * (2000000 - 10000 + 1)) + 10000,
+          Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
+          Math.floor(Math.random() * 199) - 99
+        ];
+      }
+      console.log(this.result);
+    }
+  }
+}
