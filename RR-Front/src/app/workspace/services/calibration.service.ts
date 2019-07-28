@@ -23,7 +23,7 @@ import {ActivatedRoute} from "@angular/router";
 })
 export class CalibrationService implements NgxsOnInit {
 
-  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
+  status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed', 'new'];
   ctx = null;
   prefix = null;
 
@@ -38,7 +38,7 @@ export class CalibrationService implements NgxsOnInit {
       }));
   }
 
-  getRandomInt(min = 0, max = 4) {
+  getRandomInt(min = 0, max = 5) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
@@ -184,16 +184,8 @@ export class CalibrationService implements NgxsOnInit {
       wsIdentifier
     } = payload;
 
-
-    let inComingData = {};
-
-    _.forEach(plts, (v, k) => {
-      inComingData[k] = {
-        calibrate: v.type
-      };
-    });
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data = _.merge({}, state.data, {[wsIdentifier]: inComingData})
+      draft.content[this.prefix].calibration.data = _.merge({}, state.content[this.prefix].calibration.data, {[wsIdentifier]: plts})
     }));
   }
 

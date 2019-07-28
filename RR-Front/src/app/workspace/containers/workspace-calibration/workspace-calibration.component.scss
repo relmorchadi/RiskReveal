@@ -1663,8 +1663,8 @@ body .ui-table .ui-table-thead > tr > th {
 
   .dropdown-wrap-calibration {
     display: flex;
-    width: 128px;
-    padding-right: 14px;
+    width: 108px;
+    padding-right: 13px;
     height: 35px;
     margin-right: 10px;
     justify-content: space-between;
@@ -1690,6 +1690,7 @@ body .ui-table .ui-table-thead > tr > th {
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
+        width: 100px;
       }
     }
 
@@ -1744,4 +1745,8 @@ body .ui-table .ui-table-thead > tr > th {
   border: 0;
   border-bottom: 1px solid black;
   color: #0700CF;
+}
+
+.menu-bottom-separator {
+  border-bottom: 1px solid #d1d1d1;
 }

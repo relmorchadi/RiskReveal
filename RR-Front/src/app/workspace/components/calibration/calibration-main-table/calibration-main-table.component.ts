@@ -87,6 +87,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   listOfPltsCache: any[];
   shownDropDown: any;
   inProgressCheckbox: boolean = true;
+  newCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
   lockedCheckbox: boolean = true;
   failedCheckbox: boolean = true;
@@ -450,6 +451,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     switch (status) {
       case 'in progress':
         return this.inProgressCheckbox;
+      case 'new':
+        return this.newCheckbox;
       case 'valid':
         return this.checkedCheckbox;
       case 'locked':

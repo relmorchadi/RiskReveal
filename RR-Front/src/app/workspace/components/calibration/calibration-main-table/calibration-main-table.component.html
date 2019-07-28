@@ -267,6 +267,16 @@
                           </li>
                           <li nz-menu-item>
                             <div class="checkboxInput">
+                              <label [(ngModel)]="newCheckbox"
+                                     nz-checkbox
+                                     nzChecked
+                                     style="margin-right: 12px;">
+                                <i class="icon-star iconBlue"></i> New
+                              </label>
+                            </div>
+                          </li>
+                          <li nz-menu-item>
+                            <div class="checkboxInput">
                               <label [(ngModel)]="checkedCheckbox"
                                      nz-checkbox
                                      nzChecked
@@ -392,9 +402,8 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div *ngIf="rowData.status !== 'requires regeneration' || !rowData.newPlt" class="text-elipsice"
+          <div class="text-elipsice"
                style="font-weight: bold">{{rowData.pltId | textLength}}</div>
-          <div *ngIf="rowData.status == 'requires regeneration' && rowData.newPlt" class="newTag">NEW</div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
           <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
@@ -407,6 +416,7 @@
                                          'icon-check-circle iconGreen': rowData?.status=='valid' ,
                                          'icon-lock-alt iconRed': rowData?.status=='locked',
                                          'icon-error_24px iconRed2': rowData?.status=='failed',
+                                         'icon-star iconBlue': rowData?.status=='new',
                                          'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }"
                  [nz-tooltip]="rowData.status[0].toUpperCase() + rowData.status.slice(1)"
                  class="tooltipMsg">
@@ -785,6 +795,16 @@
                           </li>
                           <li nz-menu-item>
                             <div class="checkboxInput">
+                              <label [(ngModel)]="newCheckbox"
+                                     nzChecked
+                                     nz-checkbox
+                                     style="margin-right: 12px;">
+                                <i class="icon-star iconBlue"></i> New
+                              </label>
+                            </div>
+                          </li>
+                          <li nz-menu-item>
+                            <div class="checkboxInput">
                               <label [(ngModel)]="checkedCheckbox"
                                      nzChecked
                                      nz-checkbox
@@ -850,7 +870,7 @@
         </th>
         <th *ngIf="!col.frozen" style="padding: 0 !important; border-bottom: none !important;">
                       <span style="display:flex;justify-content: space-between; float: right;margin-right: 4px;">
-                            <i *ngIf="col.fields ==='EPM10000'" class="icon-menu_24px" nz-dropdown
+                            <i *ngIf="col.fields ==='EPM10000'" class="icon-settings_24px" nz-dropdown
                                style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
                                (click)="openMetricModal()"></i>
                       </span>
@@ -904,9 +924,8 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div *ngIf="rowData.status !== 'requires regeneration' || !rowData.newPlt" class="text-elipsice"
+          <div class="text-elipsice"
                style="font-weight: bold">{{rowData.pltId | textLength}}</div>
-          <div *ngIf="rowData.status == 'requires regeneration' && rowData.newPlt" class="newTag">NEW</div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
           <div class="text-elipsice"
@@ -921,6 +940,7 @@
                                          'icon-check-circle iconGreen': rowData?.status=='valid' ,
                                          'icon-lock-alt iconRed': rowData?.status=='locked',
                                          'icon-error_24px iconRed2': rowData?.status=='failed',
+                                         'icon-star iconBlue': rowData?.status=='new',
                                          'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }">
               </i>
             </div>

@@ -61,6 +61,16 @@ export class WorkspaceState {
     return state.currentTab;
   }
 
+  static getDeletedPltsForCalibration(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
+  }
+
+  static getPltsForCalibration(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => !e.deleted), 'pltId'))
+  }
+
   @Selector()
   static getLoading(state: WorkspaceModel) {
     return state.loading;
