@@ -545,10 +545,14 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     this._projectName.markAsDirty();
     this._projectDescription.updateValueAndValidity();
     this._projectDescription.markAsDirty();
+
+
   }
 
   cloneAndOpen() {
 
     this.clone();
+
+    if(this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
   }
 }
