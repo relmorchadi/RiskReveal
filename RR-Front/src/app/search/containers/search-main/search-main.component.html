@@ -19,8 +19,13 @@
                 No Result Found
               </ng-container>
               <ng-template #paginationHighlight>
-                Showing {{paginationOption?.currentPage+1 + ' to ' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
-                Results
+                <div *ngIf="dt.selectedRows && dt.selectedRows.length; else noSelects">
+                  {{dt?.selectedRows?.length}} of {{paginationOption?.total}} selected
+                </div>
+                <ng-template #noSelects>
+                  Showing {{paginationOption?.currentPage + 1 + ' to ' }}{{paginationOption?.total > paginationOption?.currentPage + 100 ? (paginationOption?.currentPage + 100) : paginationOption?.total}}{{' of ' + paginationOption?.total}}
+                  Results
+                </ng-template>
               </ng-template>
             </h6>
           </div>

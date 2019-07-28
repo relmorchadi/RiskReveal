@@ -89,7 +89,7 @@ public class SearchService {
         countMapper.put(TableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.COUNTRY, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TableNames.YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
         countMapper.put(TableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
@@ -113,14 +113,14 @@ public class SearchService {
     }
 
 
-    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-        return new PageImpl<WorkspaceProjection>(
-                contractSearchResultRepository.getContracts(filter, offset, size),
-                PageRequest.of(offset / size, size),
-                contractSearchResultRepository.countContracts(filter)
-        );
-
-    }
+//    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
+//        return new PageImpl<WorkspaceProjection>(
+//                contractSearchResultRepository.getContracts(filter, offset, size),
+//                PageRequest.of(offset / size, size),
+//                contractSearchResultRepository.countContracts(filter)
+//        );
+//
+//    }
 
     public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
         String resultsQueryString = queryHelper.generateSqlQuery(filter, offset, size);

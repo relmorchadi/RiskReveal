@@ -173,13 +173,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   popUpWorkspace(wsId, year) {
-    this.searchData(wsId, year)
-      .pipe(this.unsubscribeOnDestroy)
-      .subscribe(
-        () => {
-          window.open(`/workspace/${wsId}/${year}/projects`);
-        }
-      );
+    window.open(`/workspace/${wsId}/${year}/projects`);
   }
 
   ngOnDestroy(): void {
@@ -254,6 +248,5 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
         this.detectChanges();
       });
   }
-
 
 }

@@ -2,7 +2,7 @@ import {Injectable} from '@angular/core';
 import {StateContext, Store} from "@ngxs/store";
 import {WorkspaceModel} from "../model";
 import * as fromWS from "../store/actions";
-import {catchError, mergeMap} from "rxjs/operators";
+import {catchError, map, mergeMap} from "rxjs/operators";
 import {WsApi} from "./workspace.api";
 import * as fromHeader from "../../core/store/actions/header.action";
 import produce from "immer";
@@ -10,13 +10,15 @@ import * as _ from "lodash";
 import {Navigate} from "@ngxs/router-plugin";
 import {HeaderState} from "../../core/store/states/header.state";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
+import {EMPTY} from "rxjs";
+import {WsProjectService} from "./ws-project.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class WorkspaceService {
 
-  constructor(private wsApi: WsApi, private store: Store) {
+  constructor(private wsApi: WsApi, private store: Store, private wsProjectService: WsProjectService) {
   }
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
@@ -297,6 +299,37 @@ export class WorkspaceService {
     }))
   }
 
+  addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
+    const {wsId, uwYear, id, project} = payload;
+    const wsIdentifier = `${wsId}-${uwYear}`;
+    return this.wsProjectService.addNewProject(project, wsId, uwYear, id)
+      .pipe(map(p => {
+        ctx.patchState(produce(ctx.getState(), draft => {
+          p ? draft.content[wsIdentifier].projects.unshift(p) : null
+        }));
+        return ctx.dispatch(new fromWS.AddNewProjectSuccess(p));
+      }), catchError(err => {
+        ctx.dispatch(new fromWS.AddNewProjectFail({}));
+        return EMPTY;
+      }));
+  }
+
+  deleteProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteProject) {
+    const {project, wsId, uwYear, id} = payload;
+    const wsIdentifier = `${wsId}-${uwYear}`;
+    return this.wsProjectService.deleteProject(project, wsId, uwYear)
+      .pipe(catchError(err => {
+        ctx.dispatch(new fromWS.DeleteProjectFails({}));
+        return EMPTY;
+      }))
+      .subscribe((p) => {
+        ctx.patchState(produce(ctx.getState(), draft => {
+          p ? draft.content[wsIdentifier].projects = _.filter(draft.content[wsIdentifier].projects, e => e.projectId !== p.projectId) : null
+        }));
+        return ctx.dispatch(new fromWS.DeleteProjectSuccess(p));
+      });
+  }
+
   private _selectProject(projects: any, projectIndex: number): Array<any> {
     if (!_.isArray(projects))
       return [];
@@ -314,4 +347,5 @@ export class WorkspaceService {
     const pinnedWs = this.store.selectSnapshot(HeaderState.getPinned);
     return _.findIndex(pinnedWs, item => item.wsId == wsId && item.uwYear == uwYear) !== -1;
   }
+
 }

@@ -9,6 +9,16 @@ import {WorkspaceModel} from '../../model';
 import * as fromPlt from "../actions/plt_main.actions";
 import {PltStateService} from "../../services/plt-state.service";
 import {RiskLinkStateService} from "../../services/riskLink-action.service";
+import {
+  AddNewProject,
+  AddNewProjectFail,
+  AddNewProjectSuccess,
+  DeleteProject,
+  DeleteProjectFail, DeleteProjectSuccess
+} from "../../../core/store/actions";
+import {catchError} from "rxjs/operators";
+import {EMPTY} from "rxjs";
+import produce from "immer";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -303,8 +313,19 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.ToggleProjectSelection)
-  toggleProjectSelection(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleProjectSelection){
+  toggleProjectSelection(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleProjectSelection) {
     return this.wsService.toggleProjectSelection(ctx, payload);
+  }
+
+  @Action(fromWS.AddNewProject)
+  addNewProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.AddNewProject) {
+    console.log('add new project', payload);
+    return this.wsService.addNewProject(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteProject)
+  deleteProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteProject) {
+    return this.wsService.deleteProject(ctx, payload);
   }
 
 
@@ -428,7 +449,7 @@ export class WorkspaceState {
   }
 
   @Action(fromPlt.FilterPltsByStatus)
-  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByStatus){
+  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByStatus) {
     this.pltStateService.filterPltsByStatus(ctx, payload);
   }
 
