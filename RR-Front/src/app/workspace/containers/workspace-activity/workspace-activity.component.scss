@@ -56,6 +56,16 @@
           display: flex;
           align-items: center;
 
+          nz-tag{
+            height: 30px;
+            line-height: 30px;
+            vertical-align: middle;
+
+            i{
+              margin-top: 2px;
+            }
+          }
+
           i {
             font-size: 17px;
             color: #0700CF;

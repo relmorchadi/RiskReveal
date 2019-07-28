@@ -30,6 +30,10 @@
                   <span>{{items.text}}</span>
                 </div>
                 <div class="item-right">
+                  <nz-tag [nzColor]="'#2db7f5'">
+                    <i class="icon-user-circle"></i>
+                    {{items.user}}
+                  </nz-tag>
                   <span>{{items.timeStamp}}</span>
                   <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
                   <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
@@ -62,6 +66,10 @@
                   <span>{{items.text}}</span>
                 </div>
                 <div class="item-right">
+                  <nz-tag [nzColor]="'#2db7f5'">
+                    <i class="icon-user-circle"></i>
+                    {{items.user}}
+                  </nz-tag>
                   <span>{{items.timeStamp}}</span>
                   <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
                   <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
