@@ -4,7 +4,7 @@
   [closable]="false"
   [modal]="true"
   [responsive]="true"
-  [styleClass]="'m-dialog-modal-m-74 borderless'"
+  [styleClass]="'m-dialog-modal-m-74'"
   [visible]="isVisible"
   appendTo="body">
   <p-header>
@@ -27,6 +27,7 @@
                       [ngStyle]="{'width':'100%'}"
                       [options]="allAdjsArray"
                       [showClear]="true"
+                      filter="true"
                       optionLabel="name"
                       placeholder="Select a basis"></p-dropdown>
         </div>
@@ -68,6 +69,7 @@
                       [ngStyle]="{'width':'100%'}"
                       [options]="AdjustementType"
                       [showClear]="true"
+                      filter="true"
                       optionLabel="name" placeholder="Select a type">
 
           </p-dropdown>

@@ -215,6 +215,16 @@ TABLE STYLE
   }
 }
 
+::ng-deep {
+  .ant-select-dropdown.ant-select-dropdown--single.ng-trigger.ng-trigger-slideMotion.ant-select-dropdown-placement-bottomLeft {
+    min-width: 250px;
+  }
+
+  .ant-select-dropdown.ant-select-dropdown--single.ng-trigger.ng-trigger-slideMotion.ant-select-dropdown-placement-topLeft {
+    min-width: 250px;
+  }
+}
+
 /*
 =======================================================================================
 FINANCIAL PERSPECTIVE POPUP STYLE
@@ -738,7 +748,6 @@ LINKING MODAL STYLE
   }
 }
 
-
 .modal-linking-wrapper {
   border-top: 3px solid #0700CF;
   margin: 0 5px;
@@ -778,6 +787,7 @@ LINKING MODAL STYLE
 
       .suggestion-card {
         background-color: #F4F6FC;
+        border: 1px solid transparent;
         margin: 15px;
         padding: 15px;
 
@@ -813,10 +823,17 @@ LINKING MODAL STYLE
           }
 
           .suggestion-card-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
             background-color: #FFFFFF;
             margin-bottom: 5px;
           }
         }
+      }
+
+      .selected-link {
+        border: 1px solid #0700CF;
       }
     }
 

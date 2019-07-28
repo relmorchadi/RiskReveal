@@ -2,9 +2,9 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 
 import {Subject} from 'rxjs';
 import {Store} from '@ngxs/store';
-import {AddNewProject} from '../../../../core/store/actions';
 import {FormControl, FormGroup, Validators} from '@angular/forms';
 import * as _ from 'lodash';
+import * as fromWS from '../../../store/actions/workspace.actions'
 
 @Component({
   selector: 'app-create-project-popup',
@@ -42,9 +42,9 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
     if (this.newProjectForm.controls.projectId.value) {
       project = {...project, linkFlag: true};
     }
-    this.store.dispatch(new AddNewProject({
+    this.store.dispatch(new fromWS.AddNewProject({
       id: _.get(this.workspace, 'id', null),
-      workspaceId: this.workspace.workSpaceId,
+      wsId: this.workspace.wsId,
       uwYear: this.workspace.uwYear,
       project
     }));

@@ -60,8 +60,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('selectedEPM') selectedEPM: any;
 
   @Input('EPMDisplay') EPMDisplay: any;
+  @Input('randomMetaData') randomMetaData: any;
 
-
+  returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   someItemsAreSelected = false;
   selectAll = false;
   selectedListOfPlts = [];
@@ -86,6 +87,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   listOfPltsCache: any[];
   shownDropDown: any;
   inProgressCheckbox: boolean = true;
+  newCheckbox: boolean = true;
   checkedCheckbox: boolean = true;
   lockedCheckbox: boolean = true;
   failedCheckbox: boolean = true;
@@ -168,6 +170,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   modalSelect: any;
   initAdjutmentApplication: any;
   randomPercentage: any;
+  randomAmount: number;
+  AALNumber: number = null;
 
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
@@ -175,6 +179,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @ViewChild('iconNote') iconNote: ElementRef;
   private dropdown: NzDropdownContextComponent;
   private lastClick: string;
+  returnPeriodInput: any;
+  hoveredRow: any;
+  isVisible: boolean;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -188,9 +195,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   ngOnInit() {
-    // console.log((this.showDeleted ? this.deletedPlts : this.listOfPltsData))
   }
-
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.sortData = _.merge({}, this.sortData, {
@@ -304,6 +309,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   adjustColWidth(dndDragover = 10) {
 
   }
+
   onSort($event: any) {
     const {} = $event;
 
@@ -400,8 +406,16 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
 
   }
 
-  getRandomInt(min = 0, max = 4) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+  getRandomInt(min = 0, max = 4, randomCase = false, col = null) {
+    if (randomCase) {
+      this.randomAmount = Math.floor((Math.random() - 0.5) * (max - min + 1)) + min;
+      return this.randomAmount;
+    } else {
+      const result = Math.floor(Math.random() * (max - min + 1)) + min
+      this.AALNumber = col == 'EPM10000' ? result * 8 : this.AALNumber;
+      return result;
+    }
+
   }
 
   setSelectedProjects($event) {
@@ -437,6 +451,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     switch (status) {
       case 'in progress':
         return this.inProgressCheckbox;
+      case 'new':
+        return this.newCheckbox;
       case 'valid':
         return this.checkedCheckbox;
       case 'locked':
@@ -487,5 +503,26 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       }
       return;
     }
+  }
+
+  openMetricModal() {
+    this.isVisible = true;
+  }
+
+  hide() {
+    this.isVisible = false;
+  }
+
+  addToReturnPeriods() {
+    if (this.returnPeriodInput != null && this.returnPeriodInput != undefined) {
+      this.returnPeriods.push(this.returnPeriodInput)
+      this.returnPeriodInput = null;
+    }
+
+  }
+
+  removeReturnPeriod(rowData) {
+    let index = _.findIndex(this.returnPeriods, row => row == rowData);
+    this.returnPeriods.splice(index, 1);
   }
 }

@@ -24,6 +24,7 @@ import {AddRemovePopUpComponent} from './components/calibration/add-remove-pop-u
 import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk-link-res-summary/risk-link-res-summary.component';
 import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
+import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS],
@@ -43,6 +44,7 @@ import {CalibrationMainTableComponent} from './components/calibration/calibratio
     NgMasonryGridModule,
     DndModule.forRoot(),
     DragDropModule,
+    DragDropModuleAngular,
     NgxDndNodule,
     RadioButtonModule,
     RouterModule.forChild(workspaceRoutes),

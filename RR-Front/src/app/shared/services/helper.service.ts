@@ -27,11 +27,5 @@ export class HelperService {
     return sentence ? _.lowerCase(sentence).split(' ').map(_.upperFirst).join(' ') : sentence;
   }
 
-  updateWorkspaceItems() {
-    localStorage.setItem('workspaces', JSON.stringify(this.state.openedTabs));
-  }
 
-  updateRecentWorkspaces() {
-    localStorage.setItem('usedWorkspaces', JSON.stringify(this.state.recentWs));
-  }
 }

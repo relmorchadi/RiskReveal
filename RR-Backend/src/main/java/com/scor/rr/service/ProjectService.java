@@ -29,8 +29,8 @@ public class ProjectService {
 
     public Project addNewProject(AddProjectRequest request) {
 
-        Workspace workspace = workspaceRepository.findOptWorkspaceByWorkspaceId(request.workspaceId, request.uwYear)
-                .orElseGet(() -> getWorkspaceFromContractResultSearch(request.id));
+        Workspace workspace = workspaceRepository.findOptWorkspaceByWorkspaceId(request.wsId, request.uwYear)
+                .orElseGet(() -> getWorkspaceFromContractResultSearch(request.wsId, request.uwYear));
 
         if(workspace != null)
         {
@@ -42,9 +42,9 @@ public class ProjectService {
 
     }
 
-    private Workspace getWorkspaceFromContractResultSearch(String id){
+    private Workspace getWorkspaceFromContractResultSearch(String wsId, Integer uwYear){
         Workspace workspace = new Workspace();
-        Optional<ContractSearchResult> c = contractSearchResultRepository.findById(id);
+        Optional<ContractSearchResult> c = contractSearchResultRepository.findByWorkspaceIdAndUwYear(wsId,uwYear);
         if(c.isPresent()) {
             workspace.setCedantName(c.get().getCedantName());
             workspace.setWorkspaceName(c.get().getWorkspaceName());
@@ -57,7 +57,7 @@ public class ProjectService {
     }
 
     public Project deleteProject(AddProjectRequest request) {
-        Workspace workspace = workspaceRepository.findOptWorkspaceByWorkspaceId(request.workspaceId, request.uwYear).orElse(null);
+        Workspace workspace = workspaceRepository.findOptWorkspaceByWorkspaceId(request.wsId, request.uwYear).orElse(null);
         if(workspace != null)
         {
             projectRepository.deleteProjectFromWorkspace(workspace.getId(),request.getProject().getProjectId());

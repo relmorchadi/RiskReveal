@@ -28,7 +28,7 @@ import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {BaseContainer} from "../../../shared/base";
-import {DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
+import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
 
 
 @Component({
@@ -204,14 +204,14 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   ];
   wsHeaderSelected: boolean;
   modalSelect: any;
-
-  financialPerspectives = {
-    data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
-    selected: 'Net Loss Pre Cat (RL)'
+  randomMetaData = {};
+  financialUnits = {
+    data: UNITS,
+    selected: {id: '2', label: 'Million'}
   };
   currencies = {
-    data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
-    selected: 'Main Liability Currency (MLC)'
+    data: CURRENCIES,
+    selected: {id: '1', name: 'Euro', label: 'EUR'}
   };
 
   @Select(WorkspaceState.getUserTags) userTags$;
@@ -230,6 +230,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     private route$: ActivatedRoute) {
     super(router$, cdRef, store$);
   }
+
   ngOnInit() {
     this.initDataColumns();
     this.Subscriptions.push(
@@ -371,12 +372,39 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
             this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
+      this.select(WorkspaceState.getProjects).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),
     );
+    this.initRandomMetaData()
   }
+
+  initRandomMetaData() {
+    const cols: any[] = ['AAL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
+    _.forEach(this.listOfPlts, value => {
+      this.randomMetaData[value] = {}
+    })
+    _.forEach(this.listOfPlts, value => {
+      _.forEach(cols, col => {
+        if (col == 'AAL') {
+          this.randomMetaData[value][col] = [
+            Math.floor(Math.random() * (200000000 - 1000000 + 1)) + 1000000,
+            Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
+            Math.floor(Math.random() * 199) - 99
+          ];
+        } else {
+          this.randomMetaData[value][col] = [
+            Math.floor(Math.random() * (2000000 - 10000 + 1)) + 10000,
+            Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
+            Math.floor(Math.random() * 199) - 99
+          ];
+        }
+      })
+    })
+    console.log(this.randomMetaData)
+  }
+
   patchState(state: any): void {
     const path = state.data.calibration;
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
@@ -387,6 +415,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.userTags = _.merge({}, path.userTags);
     this.detectChanges();
   }
+
   initDataColumns() {
     this.dataColumns = [];
     this.frozenColumns = [];
@@ -437,6 +466,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.sortData = _.omit(this.sortData, [sort.key]);
     }
   }
+
   filter(key: string, value?: any) {
     if (key == 'project') {
       if (this.filterData['project'] && this.filterData['project'] != '' && value == this.filterData['project']) {
@@ -460,23 +490,28 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       }
     }
   }
+
   openDrawer(index): void {
     this.visible = true;
     this.drawerIndex = index;
   }
+
   closePltInDrawer(pltId) {
     this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({pltId}));
   }
+
   openPltInDrawer(plt) {
     this.closePltInDrawer(this.sumnaryPltDetailsPltId);
     this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({pltId: plt}));
     this.openDrawer(1);
     this.getTagsForSummary();
   }
+
   getTagsForSummary() {
     this.pltdetailsSystemTags = this.systemTags;
     this.pltdetailsUserTags = this.userTags;
   }
+
   resetPath() {
     this.filterData = _.omit(this.filterData, 'project')
     this.projects = _.map(this.projects, p => ({...p, selected: false}))
@@ -486,6 +521,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   close(e: NzMenuItemDirective): void {
     this.dropdown.close();
   }
+
   ngOnDestroy(): void {
     this.destroy();
   }
@@ -523,6 +559,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.sortData[field] = null
     }
   }
+
   extend() {
     this.extended = !this.extended;
     if (this.extended) {
@@ -538,6 +575,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.initDataColumns();
     this.dispatch(new extendPltSection(this.extended));
   }
+
   adjustExention() {
     if (this.extended) {
       _.forIn(this.pltColumns, function (value: any, key) {
@@ -565,6 +603,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       })
     }
   }
+
   clickButtonPlus(bool, data?: any) {
     this.global = bool;
     this.modalTitle = "Add New Adjustment";
@@ -580,9 +619,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }
     this.isVisible = true;
   }
+
   handleCancel(): void {
+    this.singleValue = null;
+    this.columnPosition = null;
     this.isVisible = false;
   }
+
   addAdjustment($event) {
     let boolAdj = $event.status;
     let adjustementType = $event.singleValue;
@@ -612,10 +655,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.singleValue = null;
     this.columnPosition = null;
   }
+
   selectCategory(p) {
     this.categorySelectedFromAdjustement = p;
     this.categorySelected = p.category;
   }
+
   adjustColWidth(dndDragover = 10) {
     let countBase = 0;
     let countClient = 0;
@@ -916,11 +961,11 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.selectedEPM = epm;
   }
 
-  changeFinancialPerspective(financialPerspective: string) {
-    this.financialPerspectives.selected = financialPerspective
+  changeFinancialUnit(financialUnit: any) {
+    this.financialUnits.selected = financialUnit
   }
 
-  changeCurrency(currency: string) {
+  changeCurrency(currency: any) {
     this.currencies.selected = currency
   }
 

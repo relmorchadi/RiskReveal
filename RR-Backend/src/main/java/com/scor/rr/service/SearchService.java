@@ -22,7 +22,9 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -87,7 +89,7 @@ public class SearchService {
         countMapper.put(TableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.COUNTRY, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TableNames.YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
         countMapper.put(TableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
@@ -111,18 +113,18 @@ public class SearchService {
     }
 
 
-    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-        return new PageImpl<WorkspaceProjection>(
-                contractSearchResultRepository.getContracts(filter, offset,size),
-                PageRequest.of(offset/size, size),
-                contractSearchResultRepository.countContracts(filter)
-        );
+//    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
+//        return new PageImpl<WorkspaceProjection>(
+//                contractSearchResultRepository.getContracts(filter, offset, size),
+//                PageRequest.of(offset / size, size),
+//                contractSearchResultRepository.countContracts(filter)
+//        );
+//
+//    }
 
-    }
-
-    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter,int offset, int size) {
-        String resultsQueryString= queryHelper.generateSqlQuery(filter, offset, size);
-        String countQueryString= queryHelper.generateCountQuery(filter);
+    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
+        String resultsQueryString = queryHelper.generateSqlQuery(filter, offset, size);
+        String countQueryString = queryHelper.generateCountQuery(filter);
         Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
         Query countQuery = entityManager.createNativeQuery(countQueryString);
         List<Object[]> resultList = resultsQuery.getResultList();
@@ -142,17 +144,20 @@ public class SearchService {
         if (items == null || items.isEmpty())
             return Optional.empty();
         List<String> years = contractSearchResultRepository.findDistinctByWorkSpaceId(worspaceId).map(item -> item.getUwYear()).filter(Objects::nonNull).map(String::valueOf).distinct().sorted().collect(toList());
-        List<ProjectView> projects= projectViewRepository.findByWorkspaceIdAndUwy(worspaceId, Integer.valueOf(uwy));
-        return Optional.of(new WorkspaceDetailsDTO(items, years, projects));
+        final List<ProjectView> projects = projectViewRepository.findByWorkspaceIdAndUwy(worspaceId, Integer.valueOf(uwy));
+        List<ProjectView> filtredProjects = projectViewRepository.findFirstByWorkspaceIdAndUwyAndPostInuredFlagIsTrue(worspaceId, Integer.valueOf(uwy))
+                .map(postInuredProject -> Stream.concat(asList(postInuredProject).stream(), projects.stream()).collect(toList()))
+                .orElse(projects);
+        return Optional.of(new WorkspaceDetailsDTO(items, years, filtredProjects));
     }
 
     public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
-        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter),pageable);
+        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter), pageable);
     }
 
     public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
-        String resultsQueryString= queryHelper.generateSqlQuery(request.getFilter(),request.getKeyword(), request.getOffset(), request.getSize());
-        String countQueryString= queryHelper.generateCountQuery(request.getFilter(),request.getKeyword());
+        String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(), request.getKeyword(), request.getOffset(), request.getSize());
+        String countQueryString = queryHelper.generateCountQuery(request.getFilter(), request.getKeyword());
         Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
         Query countQuery = entityManager.createNativeQuery(countQueryString);
         List<Object[]> resultList = resultsQuery.getResultList();

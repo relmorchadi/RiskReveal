@@ -35,6 +35,7 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit,
         icon: 'icon-chat_24px',
         text: 'Project P-6458 has been assigned to you by Huw Parry',
         projectInfo: [],
+        user: 'Parry Huw',
         expanded: false,
         project: 'P-6458',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
@@ -44,6 +45,7 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit,
         icon: 'icon-focus-add',
         text: 'Accumulation Package AP-3857 has been successfully published to ARC',
         projectInfo: [],
+        user: 'Nathalie Dulac',
         expanded: false,
         project: 'AP-3857',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
@@ -53,6 +55,7 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit,
         icon: 'icon-check_24px',
         text: 'Calculation on Inuring Package IP-2645 is now complete',
         projectInfo: [],
+        user: 'Chi Choy',
         expanded: false,
         project: 'IP-2645',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
@@ -72,6 +75,7 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit,
           ['937080', 'NATC-USM_RL_lmf.T1'],
           ['937080', 'NATC-USM_RL_lmf.T1']
         ],
+        user: 'Amina Cheref',
         expanded: false,
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
       },
@@ -86,6 +90,7 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit,
           ['937080', 'NATC-USM_RL_lmf.T1'],
           ['937080', 'NATC-USM_RL_lmf.T1']
         ],
+        user: 'Amina Cheref',
         expanded: false,
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
       }
@@ -100,6 +105,7 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit,
           ['937080', 'NATC-USM_RL_lmf.T1'],
           ['937080', 'NATC-USM_RL_lmf.T1']
         ],
+        user: 'Amina Cheref',
         expanded: false,
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
       },
@@ -108,6 +114,7 @@ export class WorkspaceActivityComponent extends BaseContainer implements OnInit,
         icon: 'icon-window-section',
         text: 'Workspace 02PY376 created by Huw Parry',
         projectInfo: [],
+        user: 'Amina Cheref',
         expanded: false,
         project: '02PY376',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
