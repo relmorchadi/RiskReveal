@@ -40,7 +40,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       header: '',
       width: '20px',
       display: true,
-      sorted: false,
+      sorted: true,
       filtered: false,
       type: 'checkbox',
       class: 'icon-check_24px',
@@ -50,7 +50,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       header: 'Country',
       width: '90px',
       display: true,
-      sorted: false,
+      sorted: true,
       filtered: true,
       filterParam: 'countryName'
     },
@@ -59,7 +59,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       header: 'Cedent Name',
       width: '90px',
       display: true,
-      sorted: false,
+      sorted: true,
       filtered: true,
       filterParam: 'cedantName'
     },
@@ -68,7 +68,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       header: 'Cedant Code',
       width: '90px',
       display: true,
-      sorted: false,
+      sorted: true,
       filtered: true,
       filterParam: 'cedantCode'
     },
@@ -77,7 +77,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       header: 'Uw Year',
       width: '90px',
       display: true,
-      sorted: false,
+      sorted: true,
       filtered: true,
       filterParam: 'year'
     },
@@ -86,7 +86,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       header: 'Workspace Name',
       width: '160px',
       display: true,
-      sorted: false,
+      sorted: true,
       filtered: true,
       filterParam: 'workspaceName'
     },
@@ -95,7 +95,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       header: 'Workspace Context',
       width: '90px',
       display: true,
-      sorted: false,
+      sorted: true,
       filtered: true,
       filterParam: 'workspaceId'
     },
@@ -118,8 +118,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       class: 'icon-open_in_new_24px',
       handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)),
       display: false,
-      sorted: false,
-      filtered: false
+      sorted: true,
+      filtered: true
     }
   ];
   @Select(WorkspaceMainState)

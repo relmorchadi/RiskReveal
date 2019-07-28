@@ -1,6 +1,7 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
+import * as tableStore from './store';
 
 @Component({
   selector: 'app-table',
@@ -19,6 +20,7 @@ export class TableComponent implements OnInit {
   @ViewChild('cm') contextMenu;
 
   contextSelectedItem: any;
+  @Input() tableInputs: tableStore.Input;
 
   @Input() loading: boolean;
   _activateContextMenu: boolean;
@@ -63,7 +65,7 @@ export class TableComponent implements OnInit {
   @Input()
   totalRecords;
   @Input()
-  sortable = false;
+  sortable = true;
   @Input()
   listOfData: any[];
   @Input()
