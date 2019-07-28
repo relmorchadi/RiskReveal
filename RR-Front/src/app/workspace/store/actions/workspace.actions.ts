@@ -75,3 +75,10 @@ export class MarkWsAsNonPinned {
   static readonly type = '[Workspace] Mark workspace as non pinned';
   constructor(public payload: { wsIdentifier: string }) {}
 }
+
+export class ToggleProjectSelection {
+  static readonly type = '[Workspace] Toggle project selection';
+  constructor(public payload: { wsIdentifier: string, projectIndex: number }) {}
+}
+
+

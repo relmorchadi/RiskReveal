@@ -83,11 +83,11 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   ngOnInit() {
 
     this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
-      this.newProject = false;
-      this.notificationService.createNotification('Project added successfully', '',
-        'success', 'topRight', 4000);
-      this._helper.updateWorkspaceItems();
-      // this.detectChanges();
+        this.newProject = false;
+        this.notificationService.createNotification('Project added successfully', '',
+          'success', 'topRight', 4000);
+        this._helper.updateWorkspaceItems();
+        // this.detectChanges();
       }
     );
     this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
@@ -100,7 +100,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
         this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
         this._helper.updateWorkspaceItems();
-      // this.detectChanges();
+        // this.detectChanges();
       }
     );
   }
@@ -117,8 +117,10 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.searchWorkspace = false;
   }
 
-  selectProject(project) {
-    this.dispatch(new SelectProjectAction(project));
+  selectProject(selectionEvent) {
+    // console.log('[WsProjects] selection action --> ', selectionEvent);
+    const {projectIndex} = selectionEvent;
+    this.dispatch(new fromWs.ToggleProjectSelection({projectIndex, wsIdentifier: this.wsIdentifier}));
   }
 
   delete(project) {

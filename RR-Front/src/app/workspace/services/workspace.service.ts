@@ -40,14 +40,16 @@ export class WorkspaceService {
 
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
     const {wsId, uwYear, ws, route} = payload;
-    const {workspaceName, programName, cedantName} = ws;
+    const {workspaceName, programName, cedantName, projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
+    ws.projects = this._selectProject(projects, 0);
     ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
         [wsIdentifier]: {
           wsId,
           uwYear, ...ws,
+          projects,
           collapseWorkspaceDetail: true,
           route,
           leftNavbarCollapsed: false,
@@ -285,6 +287,22 @@ export class WorkspaceService {
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isPinned: false};
     }));
+  }
+
+  toggleProjectSelection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleProjectSelection) {
+    const {wsIdentifier, projectIndex} = payload;
+    return ctx.patchState(produce(ctx.getState(), draft => {
+      const {projects} = draft.content[wsIdentifier];
+      draft.content[wsIdentifier].projects = [...this._selectProject(projects, projectIndex)];
+    }))
+  }
+
+  private _selectProject(projects: any, projectIndex: number): Array<any> {
+    if (!_.isArray(projects))
+      return [];
+    _.filter(projects, p => p.selected === true).forEach(p => p.selected = false);
+    projects[projectIndex].selected = true;
+    return projects;
   }
 
   private _isFavorite({wsId, uwYear}): boolean {

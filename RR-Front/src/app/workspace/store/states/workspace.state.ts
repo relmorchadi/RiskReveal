@@ -302,6 +302,11 @@ export class WorkspaceState {
     return this.wsService.markWsAsNonPinned(ctx, payload);
   }
 
+  @Action(fromWS.ToggleProjectSelection)
+  toggleProjectSelection(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleProjectSelection){
+    return this.wsService.toggleProjectSelection(ctx, payload);
+  }
+
 
   /***********************************
    *
