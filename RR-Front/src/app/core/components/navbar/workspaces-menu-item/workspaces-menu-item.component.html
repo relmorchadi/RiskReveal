@@ -10,12 +10,12 @@
     <nz-tabset class="a-tab-minitab">
       <nz-tab [nzTitle]="RecentHeaderContent">
         <div class="popup-tab-content popover-menu">
-          <nz-alert
-            nzType="info"
-            nzCloseable
-            nzShowIcon
-            nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"
-          ></nz-alert>
+<!--          <nz-alert-->
+<!--            nzType="info"-->
+<!--            nzCloseable-->
+<!--            nzShowIcon-->
+<!--            nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"-->
+<!--          ></nz-alert>-->
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search" (input)="searchNewWorkspace($event)"/>
@@ -43,18 +43,32 @@
               </li>
             </ng-container>
           </ul>
-          <div class="mt-2">
-            <!--            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"
-                                   class="float-left a-dropdown-small" style="width: 120px;" nzAllowClear
-                                   nzPlaceHolder="Choose">
-                          <nz-option *ngFor="let label of state.workspacePagination.paginationList ; let i = index"
-                                     [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>
-                        </nz-select>-->
+          <div class="footer-workspace-menu mt-2">
+            <nz-select  [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="a-dropdown-label last-label"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>
+            </nz-select>
+
             <div class="float-right">
-              <button (click)="popOutWorkspaces()" class="a-button-text">POP OUT</button>
-              <button (click)="openWorkspaces()" class="a-button-text">OPEN</button>
+              <button class="a-button-text" nz-button nzType="default">POP OUT</button>
+              <button class="a-button-text" nz-button nzType="default">OPEN</button>
             </div>
           </div>
+          <!--          <div class="mt-2">-->
+          <!--            &lt;!&ndash;            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"-->
+          <!--                                   class="float-left a-dropdown-small" style="width: 120px;" nzAllowClear-->
+          <!--                                   nzPlaceHolder="Choose">-->
+          <!--                          <nz-option *ngFor="let label of state.workspacePagination.paginationList ; let i = index"-->
+          <!--                                     [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>-->
+          <!--                        </nz-select>&ndash;&gt;-->
+          <!--            <div class="float-right">-->
+          <!--              <button (click)="popOutWorkspaces()" class="a-button-text">POP OUT</button>-->
+          <!--              <button (click)="openWorkspaces()" class="a-button-text">OPEN</button>-->
+          <!--            </div>-->
+          <!--          </div>-->
         </div>
       </nz-tab>
       <nz-tab [nzTitle]="FavouriteHeaderContent">
@@ -86,7 +100,7 @@
             </ng-container>
           </ul>
           <div class="footer-workspace-menu mt-2">
-            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false"  class="a-dropdown-label last-label"
+            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>

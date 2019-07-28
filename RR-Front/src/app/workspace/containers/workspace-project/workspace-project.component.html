@@ -5,10 +5,14 @@
         <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Projects'" [links]="hyperLinks"
                          [routes]="hyperLinksRoutes"
         ></app-hyper-links>
-        <div style="display: flex;">
+        <div style="display: flex ">
           <h4>Projects</h4>
-          <nz-dropdown [nzTrigger]="'hover'">
-            <i nz-dropdown  style="padding-left: 6px; padding-top: 6px; cursor: pointer; font-size: 27px" class="icon-menu_24px float-right mr-1 mt1"></i>
+          <nz-dropdown nzTrigger="click" style="margin-left: 15px">
+            <button  class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7"
+                     nz-button nzGhost nz-dropdown >
+              <i class="icon-plus"></i>
+              Add Project
+            </button>
             <ul nz-menu nzSelectable>
               <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> New Project</li>
               <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> New Linked Project</li>
