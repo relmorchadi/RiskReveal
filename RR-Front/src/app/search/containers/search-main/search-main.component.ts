@@ -249,4 +249,5 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       });
   }
 
+
 }
