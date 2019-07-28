@@ -906,7 +906,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   deletePlt() {
     this.dispatch(new fromWorkspaceStore.deletePlt({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
-      pltIds: this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu]
+      pltIds: this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts').map(plt => plt.pltId) : [this.selectedItemForMenu]
     }));
   }
 
@@ -914,6 +914,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.dispatch(new fromWorkspaceStore.setCloneConfig({
       cloneConfig: {
         from: 'pltBrowser',
+        type: 'cloneTo',
         payload: {
           wsId: this.workspaceId,
           uwYear: this.uwy,
@@ -942,7 +943,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   restore() {
     this.dispatch(new fromWorkspaceStore.restorePlt({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
-      pltIds: this.getTableInputKey('selectedListOfDeletedPlts').length > 0 ? this.getTableInputKey('selectedListOfDeletedPlts') : [this.selectedItemForMenu]
+      pltIds: this.getTableInputKey('selectedListOfDeletedPlts').length > 0 ? this.getTableInputKey('selectedListOfDeletedPlts').map(plt => plt.pltId) : [this.selectedItemForMenu]
     }));
     this.updateTable('showDeleted', !(this.getTableInputKey('listOfDeletedPltsData').length === 0) ? this.getTableInputKey('showDeleted') : false);
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
@@ -1220,6 +1221,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         break;
 
       case tableStore.toggleSelectedPlts:
+        console.log(action.payload);
         this.toggleSelectPlts(action.payload);
         break;
 
@@ -1287,6 +1289,18 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   cloneFrom() {
+    this.dispatch(new fromWorkspaceStore.setCloneConfig({
+      cloneConfig: {
+        from: 'pltBrowser',
+        type: 'cloneFrom',
+        payload: {
+          wsId: this.workspaceId,
+          uwYear: this.uwy,
+          plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId)
+        }
+      },
+      wsIdentifier: this.workspaceId + "-" + this.uwy
+    }));
     this.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`])
   }
 }

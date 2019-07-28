@@ -128,7 +128,7 @@ export class PltMainTableComponent implements OnInit {
         type: tableStore.toggleSelectedPlts,
         payload: _.zipObject(
           _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => ({type: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       })
       this.lastClick= null;

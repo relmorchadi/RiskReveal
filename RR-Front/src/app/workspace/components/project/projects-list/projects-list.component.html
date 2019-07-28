@@ -1,6 +1,8 @@
-<cdk-virtual-scroll-viewport class="card-holder-wrap" [itemSize]="420/3" >
+<!--<cdk-virtual-scroll-viewport class="card-holder-wrap" [itemSize]="420/3">-->
   <!--      <div *cdkVirtualFor="let project of projects$ | async" class="card-holder">-->
-  <div *cdkVirtualFor="let project of projects; let i=index" class="card-holder">
+  <!--  <div *cdkVirtualFor="let project of projects; let i=index" class="card-holder">-->
+<div class="card-holder-wrap">
+  <div *ngFor="let project of projects; let i=index" class="card-holder">
     <div class="project-card mx-1" (click)="select({projectId: project?.projectId ,projectIndex: i})"
          [ngStyle]="{'border': project.selected ? '2px solid #06B8FF' : '2px solid transparent'}">
       <div class="project-header">
@@ -26,7 +28,8 @@
             </a>
             <ul nz-menu style="font-size: 12px">
               <li nz-menu-item class="contextMenu border-bottom"><i class="icon-archive"></i>Archive</li>
-              <li nz-menu-item class="contextMenu border-bottom" (click)="delete({projectId: project?.projectId ,projectIndex: i})"><i
+              <li nz-menu-item class="contextMenu border-bottom"
+                  (click)="delete({projectId: project?.projectId ,projectIndex: i})"><i
                 class="icon-trash-alt"></i>Delete
               </li>
               <li nz-menu-item class="contextMenu"><i class="icon-edit"></i>Project Properties</li>
@@ -118,5 +121,9 @@
       </div>
     </div>
   </div>
+</div>
 
-</cdk-virtual-scroll-viewport>
+
+  <!--  </div>-->
+
+<!--</cdk-virtual-scroll-viewport>-->

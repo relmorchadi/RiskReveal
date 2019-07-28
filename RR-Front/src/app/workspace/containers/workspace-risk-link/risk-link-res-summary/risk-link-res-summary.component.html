@@ -150,8 +150,11 @@
           <div>Analysis Results</div>
         </div>
         <div class="body-wrapper-header-right-summary">
-          <button class="a-buttons-outlined" (click)="setLinkingState()"
-                  *ngIf="state.collapse.collapseAnalysis"> LINKING
+          <button class="a-buttons-outlined"
+                  style="margin: 0 10px 0 0"
+                  *ngIf="state.collapse.collapseAnalysis"> IMPORT FOR CALIBRATION
+          </button>
+          <button class="a-buttons-outlined" (click)="setLinkingState()" *ngIf="state.collapse.collapseAnalysis"> LINKING
           </button>
           <i class="icon-filter" style="margin: 0px 10px; font-size: 23px;"
              (click)="filterModalVisibility = true"></i>
@@ -671,11 +674,11 @@
           <div class="modal-linking-head">
             <div class="modal-l-h-body-fill">
               <span class="subtitle-2">Created Links</span>
-              <div class="suggestion-card" *ngFor="let link of linking.linked; let i = index">
+              <div class="suggestion-card" *ngFor="let link of linking.linked; let i = index" [ngClass]="{'selected-link': link.selected}">
                 <div class="suggestion-card-header">
-                  <label nz-checkbox>Link {{i + 1}}</label>
+                  <label [nzChecked]="link.selected" (click)="selectLink(link)" nz-checkbox>Link {{i + 1}}</label>
                   <div>
-                    <i (click)="initUpdateLink()" class="icon-edit_24px"></i>
+                    <i (click)="initUpdateLink(link)" class="icon-edit_24px"></i>
                     <i (click)="deleteLink(link)" class="icon-trash-alt"></i>
                   </div>
                 </div>
@@ -683,14 +686,24 @@
                 <div class="suggestion-card-body">
                   <div class="suggestion-card-left">
                     <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;" *ngFor="let portfolio of link.portfolio">
-                      <span class="logo" style="background: #C38FFF">P</span>
-                      <span class="text">{{portfolio.dataSourceId}} | {{portfolio.dataSourceName}} | {{portfolio.descriptionType}} {{portfolio.number}}</span>
+                      <div>
+                        <span class="logo" style="background: #C38FFF">P</span>
+                        <span class="text">{{portfolio.dataSourceId}} | {{portfolio.dataSourceName}} | {{portfolio.descriptionType}} {{portfolio.number}}</span>
+                      </div>
+                      <div *ngIf="link.update">
+                        <i (click)="deleteComponentLink(link, portfolio, 'portfolio')" class="icon-close_24px"></i>
+                      </div>
                     </div>
                   </div>
                   <div class="suggestion-card-right">
                     <div class="suggestion-card-item popover-menu-item" *ngFor="let analysis of link.analysis">
-                      <span class="logo" style="background: #009575">A</span>
-                      <span class="text">{{analysis.id}} | {{analysis.analysisName}} | {{analysis.description}}</span>
+                      <div>
+                        <span class="logo" style="background: #009575">A</span>
+                        <span class="text">{{analysis.id}} | {{analysis.analysisName}} | {{analysis.description}}</span>
+                      </div>
+                      <div *ngIf="link.update">
+                        <i (click)="deleteComponentLink(link, analysis, 'analysis')" class="icon-close_24px"></i>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -998,7 +1011,7 @@
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                       <input pInputText type="text"
-                             (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
+                             (input)="rpt.filter($event.target.value, col.field, col.filterMatchMode)">
                     </div>
                   </div>
                   <div *ngIf="col.type === 'check'">
@@ -1026,7 +1039,7 @@
                   <div *ngIf="col.type === 'override'">
                     <nz-select
                       style="padding: 10px 0; width: 300px" #rpRes
-                      [ngModel]="rowData.override"
+                      [(ngModel)]="rowData.override"
                       nzShowSearch
                       class="a-dropdown-small input-wrapper"
                       nzPlaceHolder="Select Occurence Basis"
@@ -1048,13 +1061,12 @@
                                  nzValue="EUET-FR"></nz-option>
                     </nz-select>
                   </div>
-                  <div *ngIf="col.type === 'copy'">
-
+                  <div *ngIf="col.type === 'function'">
+                    <i class="icon-download-alt" (click)="applyRpToAll(rowData)" style="opacity: 0.7; font-size: 25px;"></i>
                   </div>
                 </th>
               </ng-container>
             </tr>
-
           </ng-template>
         </p-table>
       </div>

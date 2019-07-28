@@ -125,42 +125,45 @@
 
   <div class="content">
 
-    <div
-      cdkDropList
-      [id]="'availableListOfColumns'"
-      #availbleListOfColumns="cdkDropList"
-      [cdkDropListConnectedTo]="[usedListOfColumns]"
-      [cdkDropListData]="listOfAvailbleColumns"
-      class="m-box-d"
-      (cdkDropListDropped)="drop($event)">
-      <ng-container *ngFor="let col of listOfAvailbleColumns;let i=index">
-        <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-          <div class="m-box-overlay">
-            <div class="left">
-              <div class="burger" cdkDragHandle>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-              </div>
-              <span class="subtitle-2">
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfColumns]"
+        [cdkDropListData]="listOfAvailbleColumns"
+        class="m-box-d"
+        (cdkDropListDropped)="drop($event)">
+        <ng-container *ngFor="let col of listOfAvailbleColumns;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
               {{col.header}}
               </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
             </div>
-            <!--
-            <div class="right">
-              <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-              <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-            </div>
-            -->
           </div>
-        </div>
-      </ng-container>
+        </ng-container>
+      </div>
     </div>
 
     <div class="toolkit">
@@ -177,42 +180,45 @@
       </div>
     </div>
 
-    <div
-      cdkDropList
-      [id]="'usedListOfColumns'"
-      #usedListOfColumns="cdkDropList"
-      [cdkDropListConnectedTo]="[availbleListOfColumns]"
-      [cdkDropListData]="listOfUsedColumns"
-      class="m-box-d"
-      (cdkDropListDropped)="drop($event)">
-      <ng-container *ngFor="let col of listOfUsedColumns;let i=index">
-        <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-          <div class="m-box-overlay">
-            <div class="left">
-              <div class="burger" cdkDragHandle>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-              </div>
-              <span class="subtitle-2">
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfColumns]"
+        [cdkDropListData]="listOfUsedColumns"
+        class="m-box-d"
+        (cdkDropListDropped)="drop($event)">
+        <ng-container *ngFor="let col of listOfUsedColumns;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
               {{col.header}}
               </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
             </div>
-            <!--
-            <div class="right">
-              <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-              <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-            </div>
-            -->
           </div>
-        </div>
-      </ng-container>
+        </ng-container>
+      </div>
     </div>
   </div>
 

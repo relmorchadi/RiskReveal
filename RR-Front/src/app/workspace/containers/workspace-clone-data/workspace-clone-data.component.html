@@ -20,7 +20,7 @@
                   <span class="regular">{{cloneConfig.summary[summaryItem].value}}</span>
                 </div>
               </div>
-              <div *ngIf="from.wsId" class="box edit-box">
+              <div *ngIf="_from.value?.wsId" class="box edit-box">
                 <i class="icon-down-arrow"  (click)="editPlts()"></i>
                 <span class="body-3" (click)="editPlts()">
                   Edit PLT List
@@ -35,10 +35,10 @@
             Cloning from:
           </span>
           <div style="display: flex;flex-wrap: nowrap;"
-               [ngStyle]="{'background-color': from.detail ?  '#fff' : '#e5e9fa','justify-content': from.detail ? 'unset' : 'center' }">
-            <ng-container *ngIf="from.detail">
+               [ngStyle]="{'background-color': _from.value?.detail ?  '#fff' : '#e5e9fa','justify-content': _from.value?.detail ? 'unset' : 'center' }">
+            <ng-container *ngIf="_from.value?.detail">
               <div class="left-box">
-                {{from.detail}}
+                {{_from.value?.detail}}
               </div>
               <div class="right-box">
                 <button class="a-buttons-contained override">
@@ -46,7 +46,7 @@
                 </button>
               </div>
             </ng-container>
-            <ng-container *ngIf="!from.detail">
+            <ng-container *ngIf="!_from.value?.detail">
               <button (click)="openSearchPopUp('from')" class="a-buttons-contained override" style="margin: 9px">
                 <i class="icon-search_24px"></i>
                 Select workspace
@@ -65,10 +65,10 @@
             Cloning to:
           </span>
           <div style="display: flex;flex-wrap: nowrap;"
-               [ngStyle]="{'background-color': to?.detail ?  '#fff' : '#e5e9fa','justify-content': to.detail ? 'unset' : 'center'}">
-            <ng-container *ngIf="to.detail">
+               [ngStyle]="{'background-color': _to.value?.detail ?  '#fff' : '#e5e9fa','justify-content': _to.value?.detail ? 'unset' : 'center'}">
+            <ng-container *ngIf="_to.value?.detail">
               <div class="left-box">
-                {{to.detail}}
+                {{_to.value?.detail}}
               </div>
               <div class="right-box">
                 <button class="a-buttons-contained override">
@@ -76,7 +76,7 @@
                 </button>
               </div>
             </ng-container>
-            <ng-container *ngIf="!to.detail">
+            <ng-container *ngIf="!_to.value?.detail">
               <button (click)="openSearchPopUp('to')" class="a-buttons-contained override" style="margin: 9px">
                 <i class="icon-search_24px"></i>
                 Select workspace
@@ -86,20 +86,22 @@
         </div>
         <div class="box-item" style="width: 780px;">
           <div class="default-radio">
-            <nz-radio-group [(ngModel)]="projectForClone">
-              <label nz-radio [nzValue]="-1" class="body-2">Keep Source Project Name(s)</label>
-              <label nz-radio [nzValue]="0" class="body-2" [ngClass]="{'label-border': projectForClone == 0}">
-                Clone into New Project
-                <div class="toHide"></div>
-              </label>
-              <label nz-radio [nzValue]="1" class="body-2" [ngClass]="{'label-border': projectForClone == 1}">
-                Clone into Existing Project
-                <div class="toHide"></div>
-              </label>
-            </nz-radio-group>
+            <form [formGroup]="projectsForm">
+              <nz-radio-group formControlName="projectStep">
+                <label nz-radio [nzValue]="-1" class="body-2">Keep Source Project Name(s)</label>
+                <label nz-radio [nzValue]="0" class="body-2" [ngClass]="{'label-border': _projectStep.value == 0}">
+                  Clone into New Project
+                  <div class="toHide"></div>
+                </label>
+                <label nz-radio [nzValue]="1" class="body-2" [ngClass]="{'label-border': _projectStep.value == 1}">
+                  Clone into Existing Project
+                  <div class="toHide"></div>
+                </label>
+              </nz-radio-group>
+            </form>
           </div>
-          <div style="display: flex;justify-content: center">
-            <div *ngIf="projectForClone == 0" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
+          <form [formGroup]="projectsForm" style="display: flex;justify-content: center">
+            <div *ngIf="_projectStep.value == 0" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
     align-items: stretch;
     justify-content: center;
     padding: 13px;
@@ -107,10 +109,16 @@
     z-index: 0;
     border: 3px solid var(--primary-1);
 ">
-              <input class="a-textfield-standard" type="text" placeholder="Project name" style="margin: 0 16px;">
-              <input class="a-textfield-standard" type="text" placeholder="Project description" style="margin: 0 16px;">
+              <div class="form-group">
+                <input formControlName="projectName" class="a-textfield-standard" type="text" placeholder="Project name" style="margin: 0 16px;">
+                <div *ngIf="_projectName.invalid && _projectName.dirty" class="input-err"><span *ngIf="_projectName.errors.required">Name is required</span></div>
+              </div>
+              <div class="form-group">
+                <input formControlName="projectDescription" class="a-textfield-standard" type="text" placeholder="Project description" style="margin: 0 16px;">
+                <div *ngIf="_projectDescription.invalid && _projectDescription.dirty" class="input-err"><span *ngIf="_projectDescription.errors.required">Description is required</span></div>
+              </div>
             </div>
-            <div *ngIf="projectForClone == 1" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
+            <form [formGroup]="projectsForm" *ngIf="_projectStep.value == 1" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
     align-items: stretch;
     justify-content: center;
     padding: 13px;
@@ -122,16 +130,13 @@
                 style="width: 270px;"
                 nzShowSearch
                 class="a-dropdown-small"
-                nzPlaceHolder="Choose target workspace"
+                nzPlaceHolder="Choose target project"
+                formControlName="selectedProjectIndex"
               >
-                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
-                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
-                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
-                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
-                <nz-option nzLabel="17p3398" nzValue="17p3398"></nz-option>
+                <nz-option *ngFor="let project of listOfProjects;let i=index;" [nzLabel]="project?.name+ ' | ' + project?.projectId" [nzValue]="i"></nz-option>
               </nz-select>
-            </div>
-          </div>
+            </form>
+          </form>
         </div>
         <div class="box-item" style="width: 880px;margin: 0;padding: 0;">
           <nz-divider></nz-divider>
@@ -139,8 +144,8 @@
         <div class="box-item" style="width: 780px;">
           <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
             <button (click)="reset()" [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
-            <button class="a-buttons-contained" style="margin-left: 10px;">clone</button>
-            <button class="a-buttons-contained" style="margin-left: 10px;">clone AND open</button>
+            <button (click)="clone()" class="a-buttons-contained" style="margin-left: 10px;">clone</button>
+            <button (click)="cloneAndOpen()" class="a-buttons-contained" style="margin-left: 10px;">clone AND open</button>
           </div>
         </div>
       </div>
