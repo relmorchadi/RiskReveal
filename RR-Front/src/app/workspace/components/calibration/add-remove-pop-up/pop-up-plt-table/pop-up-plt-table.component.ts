@@ -113,7 +113,7 @@ export class PopUpPltTableComponent implements OnInit {
   selectSinglePLT(pltId: number, $event: boolean) {
     this.onSelectSinglePlt.emit({
       [pltId]: {
-        type: $event
+        calibrate: $event
       }
     })
   }
@@ -132,7 +132,7 @@ export class PopUpPltTableComponent implements OnInit {
       this.onPltClick.emit(
         _.zipObject(
           _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => ({calibrate: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
@@ -154,7 +154,7 @@ export class PopUpPltTableComponent implements OnInit {
         this.onPltClick.emit(
           _.zipObject(
             _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, (plt, i) => ({type: i <= max && i >= min})),
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, (plt, i) => ({calibrate: i <= max && i >= min})),
           )
         )
       } else {

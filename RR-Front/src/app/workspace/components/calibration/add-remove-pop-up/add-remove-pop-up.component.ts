@@ -303,8 +303,8 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
 
   getBrowesingItemsDirectly() {
     this.browesing = true;
-    this.data$ = this.store$.select(WorkspaceState.getPltsForPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPltsForPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.data$ = this.store$.select(WorkspaceState.getPltsForCalibration(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPltsForCalibration(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
 
     this.pltTableSubscription = combineLatest(
       this.data$,

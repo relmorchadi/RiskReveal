@@ -14,3 +14,17 @@
   border-bottom: 1px solid black;
   color: #0700CF;
 }
+
+::ng-deep.ui-dropdown {
+  display: flex !important;
+  width: 100% !important;
+  height: 35px !important;
+  justify-content: space-between !important;
+  background-color: #fff !important;
+  border: 1px solid #1FCBB4 !important;
+  cursor: pointer !important;
+}
+
+/*::ng-deep.m-dialog-modal-sm {
+  height: 50vh !important;
+}*/

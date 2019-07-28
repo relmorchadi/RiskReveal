@@ -28,7 +28,7 @@ import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {BaseContainer} from "../../../shared/base";
-import {DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
+import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
 
 
 @Component({
@@ -205,13 +205,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   wsHeaderSelected: boolean;
   modalSelect: any;
   randomMetaData = {};
-  financialPerspectives = {
-    data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
-    selected: 'Net Loss Pre Cat (RL)'
+  financialUnits = {
+    data: UNITS,
+    selected: {id: '2', label: 'Million'}
   };
   currencies = {
-    data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
-    selected: 'Main Liability Currency (MLC)'
+    data: CURRENCIES,
+    selected: {id: '1', name: 'Euro', label: 'EUR'}
   };
 
   @Select(WorkspaceState.getUserTags) userTags$;
@@ -621,6 +621,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   handleCancel(): void {
+    this.singleValue = null;
+    this.columnPosition = null;
     this.isVisible = false;
   }
 
@@ -959,11 +961,11 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.selectedEPM = epm;
   }
 
-  changeFinancialPerspective(financialPerspective: string) {
-    this.financialPerspectives.selected = financialPerspective
+  changeFinancialUnit(financialUnit: any) {
+    this.financialUnits.selected = financialUnit
   }
 
-  changeCurrency(currency: string) {
+  changeCurrency(currency: any) {
     this.currencies.selected = currency
   }
 

@@ -1462,27 +1462,16 @@ export const SYSTEM_TAGS_MAPPING = {
   },
   nonGrouped: {}
 };
+export const CURRENCIES = [
+  {id: '1', name: 'Euro', label: 'EUR'},
+  {id: '2', name: 'Us Dollar', label: 'USD'},
+  {id: '3', name: 'Britsh Pound', label: 'GBP'},
+  {id: '4', name: 'Canadian Dollar', label: 'CAD'},
+  {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
+  {id: '5', name: 'Swiss Franc', label: 'CHF'},
+  {id: '5', name: 'Saudi Riyal', label: 'SAR'},
+  {id: '6', name: 'Bitcoin', label: 'XBT'},
+  {id: '7', name: 'Hungarian forint', label: 'HUF'},
+  {id: '8', name: 'Singapore Dollars', label: 'SGD'}
+];
 
-export class RANDOM_METRIC_DATA {
-  result: any;
-
-  constructor(length: number) {
-    const cols: any[] = ['ALL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
-    for (let i = 0; i < length; i++) {
-      if (i == 0) {
-        this.result[cols[i]] = [
-          Math.floor(Math.random() * (200000000 - 1000000 + 1)) + 1000000,
-          Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
-          Math.floor(Math.random() * 199) - 99
-        ];
-      } else {
-        this.result[cols[i]] = [
-          Math.floor(Math.random() * (2000000 - 10000 + 1)) + 10000,
-          Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
-          Math.floor(Math.random() * 199) - 99
-        ];
-      }
-      console.log(this.result);
-    }
-  }
-}
