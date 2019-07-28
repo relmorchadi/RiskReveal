@@ -181,7 +181,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private lastClick: string;
   returnPeriodInput: any;
   hoveredRow: any;
-  private isVisible: boolean;
+  isVisible: boolean;
 
   constructor(
     private nzDropdownService: NzDropdownService,
