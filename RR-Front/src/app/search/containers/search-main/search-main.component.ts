@@ -6,8 +6,7 @@ import {Location} from '@angular/common';
 import * as _ from 'lodash';
 import {LazyLoadEvent} from 'primeng/api';
 import {Select, Store} from '@ngxs/store';
-import {SearchNavBarState, WorkspaceMainState} from '../../../core/store/states';
-import {Observable} from 'rxjs';
+import {SearchNavBarState} from '../../../core/store/states';
 import {CloseAllTagsAction, CloseTagByIndexAction} from '../../../core/store';
 import {BaseContainer} from '../../../shared/base';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
@@ -121,9 +120,6 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       filtered: false
     }
   ];
-/*  @Select(WorkspaceMainState)
-  state$: Observable<WorkspaceMain>;
-  state: WorkspaceMain = null;*/
   private _filter = {};
   searchContent;
 
@@ -181,7 +177,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(
         () => {
-          window.open(`/workspace/${wsId}/${year}/PopOut`);
+          window.open(`/workspace/${wsId}/${year}/projects`);
         }
       );
   }

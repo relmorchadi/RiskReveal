@@ -53,6 +53,7 @@
                    (filterData)="filterData($event.searchValue, $event.searchAddress)"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
                    [tableHeight]="'640px'"
+                   [activateContextMenu]="true"
                    [loading]="loading">
         </app-table>
 
