@@ -104,9 +104,9 @@
       </div>
       <div class="project-kpi-details pb-3">
         <div class="project-kpi-details-title flex-align-Ws">
-          <i *ngIf="project.sourceWsName" class="icon-external-link-alt"></i>
+          <i *ngIf="project.sourceWsName" class="icon-link_24px"></i>
           <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
-          <span>{{project?.sourceProjectId}} {{project?.sourceProjectName}}</span>
+          <span *ngIf="project.sourceWsName">|&nbsp;&nbsp; {{project?.sourceProjectName}}[{{project?.sourceProjectId}}]</span>
         </div>
         <p class="project-kpi-details-title">
           {{project?.description}}
