@@ -152,7 +152,7 @@
         <div class="body-wrapper-header-right-summary">
           <button class="a-buttons-outlined"
                   style="margin: 0 10px 0 0"
-                  *ngIf="state.collapse.collapseAnalysis"> IMPORT FOR CALIBRATION
+                  *ngIf="state.collapse.collapseAnalysis"> ADD TO CALIBRATION
           </button>
           <button class="a-buttons-outlined" (click)="setLinkingState()" *ngIf="state.collapse.collapseAnalysis"> LINKING
           </button>
@@ -955,7 +955,7 @@
         <div class="row-input"><span class="label-input">Proportion</span>
           <input [(ngModel)]="proportion" placeholder="Insert Proportion" class="a-textfield-mini input-wrapper">
         </div>
-        <div class="row-input"><span class="label-input">Unit Miltiplier</span>
+        <div class="row-input"><span class="label-input">Unit Multiplier</span>
           <input [(ngModel)]="unitMultiplier" placeholder="Insert Unit Multiplier" class="a-textfield-mini input-wrapper">
         </div>
       </div>

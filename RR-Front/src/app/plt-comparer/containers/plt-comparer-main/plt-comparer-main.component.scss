@@ -69,6 +69,7 @@
 }
 
 .button-toggle {
+  display: flex;
   margin-right: 10px;
 }
 
@@ -144,18 +145,42 @@ div.blank-space {
   padding: 0;
   margin: 28px auto 0;
   height: 60px;
-  ::ng-deep{
-    .ant-select-search--inline{
+
+  .header-comparer-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
+    .header-left {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .header-right {
+      display: flex;
+      flex: 0 0 55%;
+      justify-content: space-between;
+
+      .header-right-wrap {
+        display: flex;
+      }
+    }
+  }
+
+  ::ng-deep {
+    .ant-select-search--inline {
       position: unset;
     }
   }
-  .multiple-selection{
-    ::ng-deep{
+
+  .multiple-selection {
+    ::ng-deep {
       .ant-select-selection__placeholder {
         top: 30%;
-        display:block !important;
+        display: block !important;
       }
-      .ant-select-selection__choice{
+
+      .ant-select-selection__choice {
         display: none;
       }
     }
@@ -176,7 +201,6 @@ div.blank-space {
   line-height: 41px;
   height: 50px;
   align-items: center;
-
 
 
   h3 {
@@ -281,7 +305,7 @@ div.blank-space {
 
       span {
         color: #E5E9FA;
-        font-size:14px ;
+        font-size: 14px;
         line-height: 15px;
       }
     }
@@ -494,7 +518,7 @@ div.blank-space {
 
       span {
         color: #E5E9FA;
-        font-size:14px ;
+        font-size: 14px;
         line-height: 15px;
       }
     }

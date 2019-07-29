@@ -240,8 +240,24 @@
       height: 35px;
       padding: 10px !important;
       font-size: 0.9em;
+
+      .source-Ws {
+        font-weight: bold;
+        margin-right: 10px;
+      }
+
       @media screen and (max-width: 1500px) and (min-width: 1350px) {
         font-size: 0.7em;
+      }
+    }
+
+    .flex-align-Ws {
+      display: flex;
+      align-items: center;
+
+      i {
+        font-size: 20px;
+        margin-right: 10px;
       }
     }
 

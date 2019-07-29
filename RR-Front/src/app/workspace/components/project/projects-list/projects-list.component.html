@@ -103,6 +103,11 @@
         </div>
       </div>
       <div class="project-kpi-details pb-3">
+        <div class="project-kpi-details-title flex-align-Ws">
+          <i *ngIf="project.sourceWsName" class="icon-external-link-alt"></i>
+          <span *ngIf="project.sourceWsName" class="source-Ws">{{project?.sourceWsId}}-{{project?.sourceWsName}}</span>
+          <span>{{project?.sourceProjectId}} {{project?.sourceProjectName}}</span>
+        </div>
         <p class="project-kpi-details-title">
           {{project?.description}}
         </p>

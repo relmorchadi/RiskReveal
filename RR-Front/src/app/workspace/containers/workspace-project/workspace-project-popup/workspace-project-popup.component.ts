@@ -744,15 +744,19 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   setBrowesingItems() {
-    if(this.selectionStep == 'plt') {
-      console.log(this.selectedWorkspace);
+    if (this.selectionStep == 'plt') {
+      console.log(this.selectedWorkspace, 'should switch to project selection');
       this.onSelectWorkspace.emit(this.selectedWorkspace);
       this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
       this.onVisibleChange.emit(false);
-    }else {
+    } else {
       this.searchWorkspace = false;
       this.newProject = true;
-      this.onSelectProjectNext.emit(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
+      this.onSelectProjectNext.emit(_.omit({...this.selectedProject,
+          sourceWsId: this.selectedWorkspace.workSpaceId,
+          sourceWsName: this.selectedWorkspace.uwYear
+        },
+        ['receptionDate', 'dueDate', 'createdBy']));
     }
   }
 
