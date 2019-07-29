@@ -10,7 +10,7 @@ import {PreviousNavigationService} from '../../services/previous-navigation.serv
 import {take} from 'rxjs/operators';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {WsApi} from "../../services/workspace.api";
 
 interface SourceData {
@@ -152,11 +152,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   }
 
   loadProjects(wsId, uwYear) {
-    console.log('loading projects');
     forkJoin(
       this.wsApi.searchWorkspace(wsId,uwYear)
     ).subscribe( ([{projects}]: any) => {
-      console.log(projects)
       this.listOfProjects =projects;
       this.detectChanges();
     })
@@ -194,28 +192,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
   ngOnInit() {
 
-    this.projectsForm.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe( (change: any) => {
-      console.log(this.projectsForm);
-      switch (change.projectStep) {
-        case -1:
-        case 1:
-          this._projectName.clearValidators();
-          this._projectDescription.clearValidators();
-          if(this._projectName.errors) this._projectName.updateValueAndValidity();
-          if(this._projectDescription.errors) this._projectDescription.updateValueAndValidity();
-          this.detectChanges();
-          break;
-        case 0:
-          this._projectName.setValidators([Validators.required]);
-          this._projectDescription.setValidators([Validators.required]);
-          this.detectChanges();
-          break;
-        default:
-          console.log("form group")
-      }
-      this.detectChanges();
-    });
-
     this._to.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe( (from) => {
       const {
         detail,
@@ -233,12 +209,30 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       }
     });
     this._projectStep.valueChanges.pipe(this.unsubscribeOnDestroy).subscribe( step => {
-      if(step != 0 && (this._projectName.errors || this._projectDescription.errors)) {
-        this._projectDescription.reset();
-        this._projectName.reset();
-        this.detectChanges();
+      switch (step) {
+        case -1:
+        case 1:
+          this._projectName.clearValidators();
+          this._projectName.reset();
+          this._projectDescription.clearValidators();
+          this._projectDescription.reset();
+          if(step == 1) {
+            this._selectedProjectIndex.setValidators([this.selectedProjectValidator()]);
+          }else{
+            this._selectedProjectIndex.clearValidators();
+          }
+          break;
+        case 0:
+          this._projectName.setValidators([Validators.required]);
+          this._projectDescription.setValidators([Validators.required]);
+          this._selectedProjectIndex.clearValidators();
+          break;
+        default:
+          console.log("form group")
       }
+      this.detectChanges();
     });
+
     this.subs.push(
       combineLatest(
         this.select(WorkspaceState.getCloneConfig),
@@ -248,10 +242,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         const url = this.prn.getPreviousUrl();
         this.workspaceId = wsId;
         this.uwy = year;
-        console.log({
-          prn: url,
-          navigationPayload, wsId, year, currentWS
-        });
         if (url == 'PltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
           this.patchProjectForm('from', {
             ...navigationPayload.payload,
@@ -535,18 +525,24 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     return this.projectsForm.get('to');
   }
 
+  get _selectedProjectIndex(): AbstractControl {
+    return this.projectsForm.get('selectedProjectIndex');
+  }
+
+  selectedProjectValidator = (): ValidatorFn => (control: AbstractControl): {[key: string]: any} | null => control.value >= 0 ? null : ({ noSelectedProject: {value: control.value}})
 
 
   patchState(state: any): void {
   }
 
   clone() {
-    this._projectName.updateValueAndValidity();
-    this._projectName.markAsDirty();
-    this._projectDescription.updateValueAndValidity();
-    this._projectDescription.markAsDirty();
-
-
+    if(this._projectStep.value === 0) {
+      this._projectName.markAsDirty();
+      this._projectDescription.markAsDirty();
+    }
+    if(this._projectStep.value === 1) {
+      this._selectedProjectIndex.markAsDirty();
+    }
   }
 
   cloneAndOpen() {

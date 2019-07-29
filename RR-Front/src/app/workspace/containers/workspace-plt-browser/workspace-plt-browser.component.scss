@@ -1,10 +1,6 @@
 :host {
   display: flex;
   width: 100%;
-  @media screen and (min-width: 1900px) {
-    height: 100vh;
-  }
-  height: 100vh;
 
   .PLTs-content {
     padding: 0 21px 0 16px !important;
@@ -225,7 +221,7 @@
   padding: 12px;
 }
 
-::ng-deep .ui-dialog-content {
-  display: flex !important;
-  align-items: center !important;
+
+.a-app-wrapper {
+  margin: 20px 16px 20px 12px !important;
 }

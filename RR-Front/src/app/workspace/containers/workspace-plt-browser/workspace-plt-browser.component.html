@@ -56,9 +56,9 @@
             PLTs
           </span>
           <div class="right">
-            <div style="display: flex;align-items: center;">
-              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length ? tableInputs['selectedListOfPlts']?.length + ' PLTs are selected' : ''}}</p>
-              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+            <div *ngIf="tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
+              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ' PLTs are selected'}}</p>
+              <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
                 <a style="max-height: 28px;display: flex;" nz-dropdown>
                   <i class="icon-menu_24px"></i>
                 </a>
@@ -107,7 +107,7 @@
 <p-dialog
   [visible]="managePopUp"
   [closable]="false"
-  styleClass="m-dialog-modal-lg-h"
+  styleClass="m-dialog-modal"
   appendTo="body"
   [modal]="true"
   [autoZIndex]="false"
@@ -117,7 +117,7 @@
   <p-header>
     <div class="header">
       <h4>
-        Columns Manager
+        Manage Columns
       </h4>
       <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
     </div>
@@ -140,8 +140,6 @@
             <div class="m-box-overlay">
               <div class="left">
                 <div class="burger" cdkDragHandle>
-                  <div class="line"></div>
-                  <div class="line"></div>
                   <div class="line"></div>
                   <div class="line"></div>
                   <div class="line"></div>
