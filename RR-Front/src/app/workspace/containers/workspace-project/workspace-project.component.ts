@@ -78,7 +78,8 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
         this.newProject = false;
         this.notificationService.createNotification('Project added successfully', '',
           'success', 'topRight', 4000);
-        setTimeout(()=> {this.newProject= false; this.detectChanges()},4000);
+        this.newProject= false;
+        this.detectChanges()
       }
     );
     this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectFail, fromWs.DeleteProjectFails)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
