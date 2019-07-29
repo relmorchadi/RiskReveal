@@ -1,6 +1,5 @@
 <nz-layout>
 
-
   <div nz-row class="row top-separator">
     <div nz-col nzSpan=24>
       <span>
@@ -54,6 +53,7 @@
                    (filterData)="filterData($event.searchValue, $event.searchAddress)"
                    (dbClickItem)="openWorkspace($event?.workSpaceId,$event?.uwYear)"
                    [tableHeight]="'640px'"
+                   [activateContextMenu]="true"
                    [loading]="loading">
         </app-table>
 

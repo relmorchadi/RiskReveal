@@ -411,7 +411,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
             this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
         this.detectChanges();
       }),
-      this.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
+      this.select(WorkspaceState.getProjects).subscribe((projects: any) => {
         this.projects = projects;
         this.detectChanges();
       }),

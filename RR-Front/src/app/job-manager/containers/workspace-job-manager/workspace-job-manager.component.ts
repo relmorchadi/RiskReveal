@@ -4,13 +4,14 @@ import {LazyLoadEvent} from 'primeng/api';
 import * as _ from 'lodash';
 import {SearchService} from '../../../core/service';
 import {Select, Store} from '@ngxs/store';
-import {HeaderState, WorkspaceMainState} from '../../../core/store/states';
+import {HeaderState} from '../../../core/store/states';
 import {Observable} from 'rxjs';
 import {WorkspaceMain} from '../../../core/model';
 import {HelperService} from '../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
-import {DeleteTask, PauseTask, ResumeTask} from "../../../core/store/actions/header.action";
-import * as workspaceActions from "../../../workspace/store/actions/workspace.actions";
+import {DeleteTask, PauseTask, ResumeTask} from '../../../core/store/actions/header.action';
+import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
+import {WorkspaceState} from "../../../workspace/store/states";
 
 @Component({
   selector: 'app-workspace-job-manager',
@@ -264,10 +265,6 @@ export class WorkspaceJobManagerComponent implements OnInit {
   @Select(HeaderState.getJobs) jobs$;
   jobs: any;
 
-  @Select(WorkspaceMainState)
-  state$: Observable<WorkspaceMain>;
-  state: WorkspaceMain = null;
-
   constructor(public location: Location, private _searchService: SearchService, private store: Store,
               private helperService: HelperService, private route: ActivatedRoute, private router: Router) {
   }
@@ -278,7 +275,6 @@ export class WorkspaceJobManagerComponent implements OnInit {
       this.savedTask = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
         ..._.filter(this.jobs, (dt) => dt.pending)];
     });
-    this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 
   private searchData(id, year) {
