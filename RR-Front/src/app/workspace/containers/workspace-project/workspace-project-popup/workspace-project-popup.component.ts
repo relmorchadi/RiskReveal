@@ -987,7 +987,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         this._loadData();
       });
 
-    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
+    console.log('[Ws Project popup] step config', this.stepConfig);
+
+    if (this.stepConfig && this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();
