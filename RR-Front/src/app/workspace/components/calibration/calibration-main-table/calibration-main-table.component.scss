@@ -1017,6 +1017,7 @@
         height: 45px;
         border: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+        text-align: center !important;
 
         .filter-input {
           width: 100%;
@@ -1790,3 +1791,16 @@ body .ui-table .ui-table-thead > tr > th {
   width: 417px !important;
 }
 
+:host::ng-deep.on-hover:hover {
+  .plt-dropdown {
+    display: block !important;
+  }
+}
+
+::ng-deep.plt-dropdown {
+  display: none;
+}
+
+.menu-bottom-separator {
+  border-bottom: 1px solid #d1d1d1;
+}

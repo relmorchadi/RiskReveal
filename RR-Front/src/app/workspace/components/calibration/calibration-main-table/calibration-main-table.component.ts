@@ -35,7 +35,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('clickButtonPlus') clickButtonPlusEmitter: EventEmitter<any> = new EventEmitter();
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
   @Input('extended') extended: boolean;
-  @Input('cm') cm: any;
+  // @Input('cm') cm: any;
   @Input('tableType') tableType: any;
   //columns
   @Input('pltColumns') pltColumns: any;
@@ -55,17 +55,17 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('listOfDeletedPlts') listOfDeletedPlts: any;
   @Input('listOfDeletedPltsData') listOfDeletedPltsData: any;
   @Input('showDeleted') showDeleted: any;
+  @Input('selectedListOfPlts') selectedListOfPlts: any;
   @Input('deletedPlts') deletedPlts: any;
   @Input('selectedAdjustment') selectedAdjustment: any;
   @Input('selectedEPM') selectedEPM: any;
 
   @Input('EPMDisplay') EPMDisplay: any;
   @Input('randomMetaData') randomMetaData: any;
+  @Input('someItemsAreSelected') someItemsAreSelected: any;
+  @Input('selectAll') selectAll: any;
 
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
-  someItemsAreSelected = false;
-  selectAll = false;
-  selectedListOfPlts = [];
   lastSelectedId = null;
   params = {};
   loading = true;
@@ -119,22 +119,92 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   selectedListOfDeletedPlts: any;
   contextMenuItems = [
     {
-      label: 'View Detail', command: (event) => {
+      label: 'Regenerate', command: (event) => {
         this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
     {
-      label: 'Delete', command: (event) => {
-        this.dispatch(new fromWorkspaceStore.deletePlt({
-          wsIdentifier: this.workspaceId + '-' + this.uwy,
-          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
-        }));
+      label: 'Add New Adjustment', command: (event) => {
+        this.clickButtonPlus(false, event)
       }
     },
     {
-      label: 'Clone To',
+      label: 'Create', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      },
+      items: [
+        {
+          label: 'New Default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+        {
+          label: 'New Non-default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+      ]
+    },
+    {
+      label: 'Clone',
       command: (event) => {
         this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
+      },
+      items: [
+        {
+          label: 'New Default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+        {
+          label: 'New Non-default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+      ]
+    },
+    {separator: true},
+    {
+      label: 'Publish to Pricing', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Publish to Accumulation', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Inuring', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      },
+      items: [
+        {
+          label: 'Add to New Inuring Package', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+        {
+          label: 'Add to Existing Inuring Package', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+      ]
+    },
+    {
+      label: 'Add ro Comparer', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Export', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {separator: true},
+    {
+      label: 'View Detail', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
     {
@@ -152,14 +222,19 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       }
     },
     {
-      label: 'Restore',
-      command: () => {
-        this.dispatch(new fromWorkspaceStore.restorePlt({
+      label: 'Remove', command: (event) => {
+        this.dispatch(new fromWorkspaceStore.deletePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
-          pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
-        }))
-        this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
-        this.generateContextMenu(this.showDeleted);
+          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
+        }));
+      }
+    },
+    {
+      label: 'Delete', command: (event) => {
+        this.dispatch(new fromWorkspaceStore.deletePlt({
+          wsIdentifier: this.workspaceId + '-' + this.uwy,
+          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
+        }));
       }
     }
   ];
@@ -180,7 +255,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private dropdown: NzDropdownContextComponent;
   private lastClick: string;
   returnPeriodInput: any;
-  hoveredRow: any;
   isVisible: boolean;
 
   constructor(
@@ -518,7 +592,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       this.returnPeriods.push(this.returnPeriodInput)
       this.returnPeriodInput = null;
     }
-
+    this.returnPeriods.sort((a, b) => b - a)
   }
 
   removeReturnPeriod(rowData) {
