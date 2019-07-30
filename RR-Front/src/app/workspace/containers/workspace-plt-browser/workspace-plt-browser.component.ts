@@ -1233,7 +1233,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         payload: {
           wsId: this.workspaceId,
           uwYear: this.uwy,
-          plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId)
         }
       },
       wsIdentifier: this.workspaceId + "-" + this.uwy

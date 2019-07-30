@@ -276,7 +276,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           });
         }
 
-        if(_.get(navigationPayload, 'payload.type', null) == 'cloneFrom') {
+        if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {
           this.setCloneConfig('currentSourceOfItems', 'from');
           this.multiSteps = true;
           this.stepConfig = {
@@ -286,6 +286,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           };
           this.searchWorkSpaceModal = true;
         }
+
+        console.log(this.multiSteps, navigationPayload, this.stepConfig)
         if (this.getFormValueByKey('from').plts.length > 0) {
           this.cloneConfig = {
             ...this.cloneConfig,

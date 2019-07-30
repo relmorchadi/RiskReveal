@@ -63,7 +63,9 @@
                   <i class="icon-menu_24px"></i>
                 </a>
                 <ul nz-menu style="font-size: 12px">
-                  <li nz-menu-item (click)="cloneFrom()">Clone From</li>
+                  <li nz-menu-item (click)="deletePlt()">Delete</li>
+                  <li nz-menu-item (click)="cloneTo()">Clone To</li>
+                  <li nz-menu-item >Calibrate</li>
                 </ul>
               </nz-dropdown>
             </div>
@@ -87,6 +89,16 @@
               </ul>
             </nz-dropdown>
           </div>
+          <span style="    font-size: 14px;
+    font-weight: bold;
+    color: #0700e4;
+    cursor: pointer;
+    position: absolute;
+    border: 0;
+    left: 48px;
+    bottom: -7px;
+    z-index: 10;
+    padding: 0;" (click)="cloneFrom()">Clone from</span>
         </div>
         <div class="PLTs-content">
           <app-plt-main-table
