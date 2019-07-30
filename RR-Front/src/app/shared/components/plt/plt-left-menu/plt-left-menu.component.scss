@@ -1,8 +1,9 @@
-::ng-deep .m-dialog-modal {
+::ng-deep .tag-manager-pop-up {
 
 
   nz-tabset, .ui-dialog-content {
     overflow: visible;
+    width: 500px;
   }
     .ant-modal {
       top: 0;

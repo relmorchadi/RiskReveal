@@ -31,7 +31,8 @@
       .checkBoxHead div {
         display: flex;
         align-items: center;
-        justify-content: space-around;
+        justify-content: center;
+
         .ant-checkbox-indeterminate .ant-checkbox-inner::after {
           background-color: #fff;
           height: 2px;
@@ -121,10 +122,11 @@
           display: flex;
           align-items: center;
           justify-content: center;
-          width: 50% !important;
-          height: 40px !important;
+          width: 30px !important;
+          height: 30px !important;
           margin: auto;
           border-radius: 100%;
+          color: #fff !important;
         }
 
         .text-elipsice {

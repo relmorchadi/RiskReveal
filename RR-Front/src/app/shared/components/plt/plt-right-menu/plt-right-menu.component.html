@@ -14,10 +14,10 @@
                 </ng-template>
                 <div class="basket-content">
                   <div class="title-section-drawer">
-                    <div class="left">
+                    <div>
                       <h3>{{ inputs['basket'].length }} PLT{{ inputs['basket'].length == 1 ? '' : 's'}} selected</h3>
                     </div>
-                    <div class="right">
+                    <div>
                       <nz-dropdown [nzTrigger]="'click'">
                         <a nz-dropdown>
                           <button>
@@ -58,11 +58,11 @@
                   </div>
                     <table class="table" style="display: block;overflow-x: auto;">
                       <tbody>
-                      <tr *ngFor="let plt of inputs['basket']">
+                      <tr class="plt-detail-tr" *ngFor="let plt of inputs['basket']">
                         <td>{{plt?.pltId | textLength}}</td>
                         <td class="elipsis-text" style="max-width: 200px;">{{plt?.pltName}}</td>
                         <td class="elipsis-text" style="max-width: 58px;">{{plt?.regionPerilCode}}</td>
-                        <td><i style="cursor: pointer;" class="icon-multiply" (click)="unselectPlt(plt?.pltId)"></i></td>
+                        <td><i style="display:none;cursor: pointer;" class="icon-trash-alt" (click)="unselectPlt(plt?.pltId)"></i></td>
                       </tr>
                       </tbody>
                     </table>

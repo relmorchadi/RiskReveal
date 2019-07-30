@@ -169,22 +169,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
-  systemTagsMapping = {
-    grouped: {
-      peril: 'Peril',
-      regionDesc: 'Region',
-      currency: 'Currency',
-      sourceModellingVendor: 'Modelling Vendor',
-      sourceModellingSystem: 'Modelling System',
-      targetRapCode: 'Target RAP',
-      userOccurrenceBasis: 'User Occurence Basis',
-      xActAvailable: 'Published To Pricing',
-      xActUsed: 'Priced',
-      accumulated: 'Accumulated',
-      financial: 'Financial Perspectives'
-    },
-    nonGrouped: {}
-  };
   private d: Subscription;
   private selectedPlt: string;
 
@@ -209,49 +193,89 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       filterInput: '',
       pltColumns: [
         {
+          sortDir: 1,
+          fields: '',
+          header: '',
           width: '60',
+          sorted: false,
           filtred: false,
+          resizable: false,
           icon: null,
-          type: 'checkbox',active: true
+          type: 'checkbox',
+          active: true
         },
-        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
-        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id',active: true},
         {
+          sortDir: 1,
+          fields: '',
+          header: 'User Tags',
+          width: '60',
+          sorted: false,
+          filtred: false,
+          resizable: false,
+          icon: null,
+          type: 'tags',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'pltId',
+          header: 'PLT ID',
+          width: '80',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'id',
+          active: true
+        },
+        {
+          sortDir: 1,
           fields: 'pltName',
           header: 'PLT Name',
-          width: '160',
+          width: '60',
           sorted: true,
           filtred: true,
-          icon: null,
-          type: 'field',active: true
-        },
-        {
-          fields: 'peril',
-          header: 'Peril',
-          width: '40',
-          sorted: true,
-          filtred: true,
+          resizable: true,
           icon: null,
           type: 'field',
-          textAlign: 'center',active: true
+          active: true
         },
         {
-          fields: 'regionPerilCode',
-          header: 'Region Peril Code',
-          width: '70',
+          sortDir: 1,
+          fields: 'peril',
+          header: 'Peril',
+          width: '80',
           sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          textAlign: 'center',
+          active: true
         },
         {
+          sortDir: 1,
+          fields: 'regionPerilCode',
+          header: 'Region Peril Code',
+          width: '130',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
           width: '160',
           sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          active: true
         },
         {
           sortDir: 1,
@@ -260,9 +284,34 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           width: '90',
           sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
           type: 'field',
           active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedBy',
+          forDelete: true,
+          header: 'Deleted By',
+          width: '50',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field', active: false
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedAt',
+          forDelete: true,
+          header: 'Deleted On',
+          width: '50',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'date', active: false
         },
         {
           sortDir: 1,
@@ -271,8 +320,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           width: '90',
           sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          type: 'field', active: true
         },
         {
           sortDir: 1,
@@ -281,10 +331,47 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           width: '52',
           sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
           type: 'field',
           active: true
-        }
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-note',
+          type: 'icon',
+          width: '50',
+          active: true,
+          tooltip: "Published for Pricing"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-dollar-alt',
+          type: 'icon',
+          width: '50',
+          active: true,
+          tooltip: "Priced"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-focus-add',
+          type: 'icon',
+          width: '50',
+          active: true,
+          tooltip: "Published for Accumulation"
+        },
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -530,62 +617,185 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       filterInput: '',
       pltColumns: [
         {
+          sortDir: 1,
+          fields: '',
+          header: '',
           width: '60',
+          sorted: false,
           filtred: false,
+          resizable: false,
           icon: null,
-          type: 'checkbox',active: true
+          type: 'checkbox',
+          active: true
         },
-        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
-        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id',active: true},
         {
-          fields: 'pltName',
-          header: 'PLT Name',
-          width: '160',
+          sortDir: 1,
+          fields: '',
+          header: 'User Tags',
+          width: '60',
+          sorted: false,
+          filtred: false,
+          resizable: false,
+          icon: null,
+          type: 'tags',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'pltId',
+          header: 'PLT ID',
+          width: '80',
           sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          type: 'id',
+          active: true
         },
         {
-          fields: 'peril',
-          header: 'Peril',
-          width: '40',
+          sortDir: 1,
+          fields: 'pltName',
+          header: 'PLT Name',
+          width: '60',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
           icon: null,
           type: 'field',
-          textAlign: 'center',active: true
+          active: true
         },
         {
+          sortDir: 1,
+          fields: 'peril',
+          header: 'Peril',
+          width: '80',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field',
+          textAlign: 'center',
+          active: true
+        },
+        {
+          sortDir: 1,
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
-          width: '70',
+          width: '130',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          active: true
         },
         {
+          sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
           width: '160',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          active: true
         },
-        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: false, icon: null, type: 'field',active: true},
+        {
+          sortDir: 1,
+          fields: 'grain',
+          header: 'Grain',
+          width: '90',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedBy',
+          forDelete: true,
+          header: 'Deleted By',
+          width: '50',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field', active: false
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedAt',
+          forDelete: true,
+          header: 'Deleted On',
+          width: '50',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'date', active: false
+        },
         {
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
           width: '90',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          type: 'field', active: true
         },
-        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: false, icon: null, type: 'field',active: true}
+        {
+          sortDir: 1,
+          fields: 'rap',
+          header: 'RAP',
+          width: '52',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-note',
+          type: 'icon',
+          width: '50',
+          active: true,
+          tooltip: "Published for Pricing"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-dollar-alt',
+          type: 'icon',
+          width: '50',
+          active: true,
+          tooltip: "Priced"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          icon: 'icon-focus-add',
+          type: 'icon',
+          width: '50',
+          active: true,
+          tooltip: "Published for Accumulation"
+        },
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
