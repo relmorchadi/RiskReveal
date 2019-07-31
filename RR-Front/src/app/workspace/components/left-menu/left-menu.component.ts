@@ -20,8 +20,8 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
 
   @Output('navigate')
   navigationEmitter: EventEmitter<{ route: string }>;
-  private wsId: string;
-  private uwYear: string;
+  wsId: string;
+  uwYear: string;
 
 
   constructor(private _router: Router, private _store: Store) {
