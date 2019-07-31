@@ -256,6 +256,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private lastClick: string;
   returnPeriodInput: any;
   isVisible: boolean;
+  clickedDropdown: any;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -598,5 +599,13 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   removeReturnPeriod(rowData) {
     let index = _.findIndex(this.returnPeriods, row => row == rowData);
     this.returnPeriods.splice(index, 1);
+  }
+
+  changeDropdownDisplay($event: boolean, pltId: any) {
+    if ($event) {
+      this.clickedDropdown = pltId;
+    } else {
+      this.clickedDropdown = null;
+    }
   }
 }
