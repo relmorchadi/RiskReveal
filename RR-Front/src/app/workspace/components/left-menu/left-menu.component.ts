@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Router} from '@angular/router';
 import {BaseContainer} from "../../../shared/base";
+import {Store} from "@ngxs/store";
+import { WorkspaceState } from '../../store/states/workspace.state';
 
 
 @Component({
@@ -18,15 +20,22 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
 
   @Output('navigate')
   navigationEmitter: EventEmitter<{ route: string }>;
+  private wsId: string;
+  private uwYear: string;
 
 
-  constructor(private _router: Router) {
+  constructor(private _router: Router, private _store: Store) {
     super(_router, null, null);
     this.toggleCollapseEmitter = new EventEmitter();
     this.navigationEmitter = new EventEmitter();
   }
 
   ngOnInit() {
+    this._store.select(WorkspaceState.getCurrentTab).subscribe( ({wsIdentifier}): any => {
+      this.wsId= wsIdentifier.split('-')[0];
+      this.uwYear= wsIdentifier.split('-')[1];
+      console.log(wsIdentifier);
+    })
     // this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 

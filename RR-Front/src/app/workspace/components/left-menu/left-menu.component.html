@@ -14,9 +14,15 @@
             <span>Workspace</span>
           </span>
     <ul>
-      <li (click)="routerNavigate(null)" nz-menu-item>Projects</li>
-      <li (click)="routerNavigate('Contract')" nz-menu-item>Contract</li>
-      <li (click)="routerNavigate('Activity')" nz-menu-item>Activity</li>
+      <li nz-menu-item nzMatchRouter>
+        <a [routerLink]="['/'+ wsId, uwYear, 'Projects']">Projects</a>
+      </li>
+      <li nz-menu-item nzMatchRouter>
+        <a [routerLink]="['/'+ wsId, uwYear, 'Contract']">Contract</a>
+      </li>
+      <li (click)="routerNavigate('Activity')" nz-menu-item>
+        <a [routerLink]="['/'+ wsId, uwYear, 'Activity']">Activity</a>
+      </li>
     </ul>
   </li>
 
