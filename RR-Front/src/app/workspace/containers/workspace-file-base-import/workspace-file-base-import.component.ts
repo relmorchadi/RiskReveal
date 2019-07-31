@@ -6,7 +6,8 @@ import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
 import {UpdateWsRouting} from '../../store/actions';
-import {Navigate} from "@ngxs/router-plugin";
+import {Navigate} from '@ngxs/router-plugin';
+import {DataTables} from './data';
 
 @Component({
   selector: 'app-workspace-file-base-import',
@@ -28,6 +29,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     uwYear: string
   };
 
+  pltColumns: any;
+  directoryTree: any;
+  selectedFile: any;
+
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
@@ -39,6 +44,9 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         uwYear: year
       };
     });
+
+    this.pltColumns = DataTables.PltDataTables;
+    this.directoryTree = DataTables.directoryTree;
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -76,6 +84,18 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       [new UpdateWsRouting(this.wsIdentifier, route),
         new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
     );
+  }
+
+  selectRows(row, index) {
+  }
+
+  deleteRow(id) {
+  }
+
+  nodeSelect(event) {
+  }
+
+  nodeUnselect(event) {
   }
 
   protected detectChanges() {
