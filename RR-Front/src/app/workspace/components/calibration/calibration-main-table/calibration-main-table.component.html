@@ -10,7 +10,7 @@
   [columnResizeMode]="'fit'"
   [responsive]="true"
   [scrollable]="true"
-  scrollHeight="calc(90vh - 205px)"
+  scrollHeight="calc(100vh - 480px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -590,7 +590,7 @@
   [resizableColumns]="true"
   [columnResizeMode]="'fit'"
   [contextMenu]="cm"
-  scrollHeight="calc(90vh - 205px)"
+  scrollHeight="calc(100vh - 480px)"
   [scrollable]="true"
   [totalRecords]="listOfPltsData.length"
   (onSort)="onSort($event)"
@@ -959,7 +959,9 @@
             </div>
             <div
               *ngIf="col.icon=='icon-note' && (selectedListOfPlts.length <= 1 || !selectedListOfPlts.includes(rowData.pltId))">
-              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click" class="plt-dropdown">
+              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click" class="plt-dropdown"
+                           [ngClass]=" {'display-dropdown':clickedDropdown == rowData.pltId,'undisplay-dropdown':!clickedDropdown == rowData.pltId }"
+                           (nzVisibleChange)="changeDropdownDisplay($event,rowData.pltId)">
                 <i class="icon-menu_24px"
                    nz-dropdown
                    style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
@@ -1053,7 +1055,7 @@
       </ng-template>
       <ng-template pTemplate="body" let-rowData>
         <tr>
-          <td pEditableColumn style="background-color: #ffffff">
+          <td pEditableColumn style="background-color: #ffffff" class="on-hover-pop-up">
             <p-cellEditor>
               <ng-template pTemplate="input">
                 <label>
@@ -1065,7 +1067,8 @@
                 {{rowData}}
               </ng-template>
             </p-cellEditor>
-            <i (click)="removeReturnPeriod(rowData)" class="icon-close_24px" style="cursor: pointer;color: red"></i>
+            <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-right"
+               style="cursor: pointer;color: red; display: none;"></i>
           </td>
         </tr>
       </ng-template>

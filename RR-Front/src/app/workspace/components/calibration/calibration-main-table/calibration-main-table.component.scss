@@ -1801,6 +1801,20 @@ body .ui-table .ui-table-thead > tr > th {
   display: none;
 }
 
+::ng-deep.undisplay-dropdown {
+  display: none;
+}
+
+::ng-deep.display-dropdown {
+  display: block !important;
+}
+
+::ng-deep.on-hover-pop-up:hover {
+  .icon-trash-alt {
+    display: block !important;
+  }
+}
+
 .menu-bottom-separator {
   border-bottom: 1px solid #d1d1d1;
 }
