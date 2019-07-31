@@ -513,7 +513,7 @@ export class RiskLinkStateService {
         ctx.patchState(
           produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].riskLink.financialPerspective.analysis.data = Object.assign({},
-              ..._.toArray(draft.content[wsIdentifier].riskLink.financialPerspective.analysis.analysis.data).map(item => {
+              ..._.toArray(draft.content[wsIdentifier].riskLink.financialPerspective.analysis.data).map(item => {
                 return ({
                   [item.id]: {
                     ...item,

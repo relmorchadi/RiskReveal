@@ -145,7 +145,8 @@ export class WorkspaceService {
             summaries: null,
             selectedEDMOrRDM: null,
             activeAddBasket: false
-          }
+          },
+          fileBaseImport: {}
         }
       });
       draft.loading = false;
