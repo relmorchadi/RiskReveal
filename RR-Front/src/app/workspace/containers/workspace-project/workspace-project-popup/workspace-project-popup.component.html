@@ -70,7 +70,9 @@
     </div>
   </ng-container>
   <ng-container *ngIf="browesing && selectionStep == 'project'">
-    <projects-list [projects]="selectedWorkspaceProjects" (select)="selectThisProject($event)"></projects-list>
+    <div style="overflow: scroll; height: -webkit-fill-available;">
+      <projects-list [projects]="selectedWorkspaceProjects" (select)="selectThisProject($event)"></projects-list>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="browesing && selectionStep == 'plt'">

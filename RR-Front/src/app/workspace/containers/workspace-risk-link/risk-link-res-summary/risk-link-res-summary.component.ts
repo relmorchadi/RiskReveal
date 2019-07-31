@@ -29,8 +29,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   searchInput: ElementRef;
   @ViewChild('obRes')
   dropDownFPOb: any;
-  @ViewChild('rpRes')
-  dropDownFP: any;
   scopeForChanges = 'currentSelection';
 
   singleColEdit = false;
@@ -203,18 +201,11 @@ export class RiskLinkResSummaryComponent implements OnInit {
   editSingleColRes(target, $event = null, row = null) {
     if (target === 'Rp') {
       this.singleColEdit = false;
-      this.store.dispatch(new fromWs.PatchResultsAction({
-        id: row.id,
-        target: 'regionPeril',
-        value: this.dropDownFP.value,
-        scope: this.scopeForChanges === 'currentSelection' ? 'Single' : 'All'
-      }));
+      this.store.dispatch(new fromWs.PatchResultsAction({target: 'regionPeril'}));
     } else if (target === 'Ob') {
       this.singleColEdit = false;
       this.store.dispatch(new fromWs.PatchResultsAction({
-        id: row.id,
-        target: 'occurrenceBasis',
-        value: this.dropDownFPOb.value,
+        id: row.id, target: 'occurrenceBasis', value: this.dropDownFPOb.value,
         scope: this.scopeForChanges === 'currentSelection' ? 'Single' : 'All'
       }));
     } else if (target === 'TC') {
