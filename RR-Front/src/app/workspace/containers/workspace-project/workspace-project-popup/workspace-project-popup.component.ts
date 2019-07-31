@@ -953,7 +953,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   setBrowesingItems() {
     if(this.selectionStep == 'plt') {
-      console.log(this.selectedWorkspace);
       this.onSelectWorkspace.emit(this.selectedWorkspace);
       this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
       this.onVisibleChange.emit(false);
