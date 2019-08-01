@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {combineLatest, Observable, of, Subject, Subscription} from "rxjs";
-import {Actions, ofActionDispatched, Select, Store} from "@ngxs/store";
+import {Actions, ofActionDispatched, Store} from "@ngxs/store";
 import * as rightMenuStore from "../../../../shared/components/plt/plt-right-menu/store";
 import {Actions as rightMenuActions} from "../../../../shared/components/plt/plt-right-menu/store";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
@@ -30,6 +30,8 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
   @Output('onSelectItems') onSelectItems: EventEmitter<any> = new EventEmitter();
   @Output('onSelectWorkspace') onSelectWorkspace: EventEmitter<any> = new EventEmitter();
+  @Output('onSave') onSaveEmitter: EventEmitter<any> = new EventEmitter();
+
   @Input() isVisible;
   @Input('selectionStep') selectionStep: string;
   @Input() multiSteps: boolean;
@@ -628,6 +630,11 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       pathTab: true,
       selectedItemForMenu: null
     };
+  }
+
+  onSave() {
+    this.onSaveEmitter.emit(this.Inputs.selectedListOfPlts);
+    this.onHide();
   }
 
   onRowSelect(event) {

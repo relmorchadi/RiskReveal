@@ -442,6 +442,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       })
     })
     console.log(this.randomMetaData)
+    this.initDataList();
   }
 
   patchState(state: any): void {
@@ -453,6 +454,11 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.adjsArray = _.merge([], path.adjustments);
     this.userTags = _.merge({}, path.userTags);
     this.detectChanges();
+  }
+
+  initDataList() {
+    console.log('DATA INIIIIT')
+    this.listOfPltsData = _.filter(this.listOfPltsData, value => value.calibrate)
   }
 
   initDataColumns() {
@@ -1008,4 +1014,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.currencies.selected = currency
   }
 
+  addRemoveOnSave(plts: any) {
+    let res: any = {};
+    _.forEach(this.listOfPltsData, plt => {
+      if (plts.includes(plt.pltId)) {
+        res[plt.pltId] = plt;
+      }
+    })
+    this.listOfPltsData = res;
+  }
 }

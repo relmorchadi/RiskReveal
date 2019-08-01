@@ -21,7 +21,7 @@ export class AdjustmentPopUpComponent implements OnInit {
   @Input() modifyModal;
   @Input() columnPosition;
   size = 'large';
-  categorySelected: any;
+  @Input() categorySelected: any;
   inputValue: any;
   @Input() categorySelectedFromAdjustement: any;
   @Input() isVisible: boolean;

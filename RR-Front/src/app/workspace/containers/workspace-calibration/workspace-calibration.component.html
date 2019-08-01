@@ -61,7 +61,7 @@
              style="font-size: 20px; cursor: pointer"></i>
         </div>
       </div>
-      <div class="tabset-right" style="flex: 1;background: #fff;">
+      <div class="tabset-right" style="flex: 1;background-color: #ffffff;">
         <div>
           <div class="PLTs-content">
 
@@ -355,6 +355,7 @@
   [singleValue]="singleValue"
   [modifyModal]="modifyModal"
   [global]="global"
+  [categorySelected]="categorySelected"
   [categorySelectedFromAdjustement]="categorySelectedFromAdjustement"
   (selectCategory)="selectCategory($event)"
   (handleCancel)="handleCancel()"
@@ -364,6 +365,7 @@
 <app-add-remove-pop-up
   [isVisible]="addRemoveModal"
   [selectionStep]="'plt'"
+  (onSave)="addRemoveOnSave($event)"
   [stepConfig]=" {wsId: workspaceId,
     uwYear: uwy,
     plts: listOfPltsData}"

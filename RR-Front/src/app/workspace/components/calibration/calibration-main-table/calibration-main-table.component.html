@@ -13,7 +13,7 @@
   scrollHeight="calc(100vh - 480px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
-  [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
+  [value]="(showDeleted ? deletedPlts : listOfPltsData)  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
   <ng-template let-columns pTemplate="colgroup">
     <colgroup>
       <ng-container *ngFor="let col of columns">
@@ -29,12 +29,11 @@
             style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
           <div
             style="width: 102px;position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;">
-                        <span
-                          style="width: 90px; font-size: 1.3em; font-weight: bold;     color: rgba(0, 0, 0, 0.65);top: 16px;left: 33px;position: absolute;">PLTs</span>
+            <span
+              style="width: 90px; font-size: 1.3em; font-weight: bold;     color: rgba(0, 0, 0, 0.65);top: 16px;left: 33px;position: absolute;">PLTs</span>
           </div>
           <div style="left: -1px;top: 32px; position:absolute; margin-right: 3px;">
-                        <span
-                          (click)="addRemoveModal=true" class="addRemove">Add/Remove</span>
+            <span (click)="addRemoveModal=true" class="addRemove">Add/Remove</span>
           </div>
           <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
                        [nzPlacement]="'bottomLeft'" nzTrigger="click"
@@ -333,7 +332,6 @@
         </th>
         <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
             style="padding: 0 !important;text-align: center !important;">
-          <i [ngClass]="col.icon"></i>
           <span style="justify-content: space-between;">
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
                           <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
@@ -372,7 +370,7 @@
           </div>
         </th>
         <th *ngIf="col?.icon === 'icon-focus-add'"></th>
-        <th *ngIf="col?.icon === 'icon-note'" style="border-right: 8px solid #F4F6FC !important;">
+        <th *ngIf="col?.icon === 'icon-note'" class="separator-right">
         </th>
         <th *ngIf="col?.fields === 'overallLMF'"></th>
         <th *ngIf="col?.fields === 'base'"></th>
@@ -429,7 +427,9 @@
             </div>
             <div
               *ngIf="col.icon=='icon-note' && (selectedListOfPlts.length <= 1 ||  !selectedListOfPlts.includes(rowData.pltId))">
-              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click" class="plt-dropdown">
+              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click" class="plt-dropdown"
+                           [ngClass]=" {'display-dropdown':clickedDropdown == rowData.pltId,'undisplay-dropdown':!clickedDropdown == rowData.pltId }"
+                           (nzVisibleChange)="changeDropdownDisplay($event,rowData.pltId)">
                 <i class="icon-menu_24px"
                    nz-dropdown
                    style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
