@@ -13,93 +13,119 @@
     </app-pin>
   </div>
   <div class="app-body">
-    <div>
-      <div class="menu-left-wrapper">
-        <div class="popover-menu">
-          <span>Find Directory</span>
-          <p-tree [value]="directoryTree.data" selectionMode="single" [(selection)]="selectedFile"
-                  (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
-        </div>
-
-        <div class="popover-menu">
-          <span>Text Files Available</span>
-          <ul>
-            <li></li>
-          </ul>
-        </div>
-
+    <div class="menu-left-wrapper">
+      <span class="subtitle-1 subtitle-2 menu-left-header"
+            style="border-top: 4px solid #0700CF;">
+        Find Directory
+      </span>
+      <div class="tree-menu-wrapper">
+        <p-tree [value]="directoryTree.data" selectionMode="single" [(selection)]="selectedFile"
+                (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
       </div>
-      <div class="menu-right-wrapper">
-        <div class="summary-info">
-          <p-table #st [columns]="pltColumns"
-                   [scrollable]="true"
-                   [value]="" frozenWidth="485px">
-            <ng-template let-columns pTemplate="colgroup">
-              <colgroup>
-                <ng-container *ngFor="let col of columns">
-                  <col [ngStyle]="{'width': col.width}">
-                </ng-container>
-              </colgroup>
-            </ng-template>
-            <ng-template let-columns pTemplate="header">
-              <tr>
-                <ng-container *ngFor="let col of columns">
-                  <th *ngIf="col.visible">
-                    <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
-                    <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
-                      {{col.header}}
-                      <div class="search-bar-table">
-                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                        <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
-                               type="text">
-                      </div>
+
+      <span class="subtitle-1 subtitle-2 menu-left-header">
+        Filter
+      </span>
+
+      <div class="tab-search-input search-document-wrap">
+        <i class="icon-search_24px"></i>
+        <input class="input-search" />
+      </div>
+
+
+      <span class="subtitle-1 subtitle-2 menu-left-header">
+        Text Files Available
+      </span>
+      <div *ngIf="!emptyData" class="popover-menu files-selection-wrap">
+        <ul>
+          <li *ngFor="let items of textFilesData">
+            <label nz-checkbox>
+              <span  [nzTitle]="items.name" nzPlacement="top" nz-tooltip>{{items.name}}</span>
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <div *ngIf="emptyData" class="empty-data-wrap">
+        <nz-empty></nz-empty>
+      </div>
+
+    </div>
+    <div class="menu-right-wrapper">
+      <span class="body-1 menu-left-header"
+            style="border-top: 4px solid #0700CF;">
+        Selected PLT To Import
+      </span>
+      <div class="summary-info">
+        <p-table #st [columns]="pltColumns"
+                 [scrollable]="true"
+                 [value]="" frozenWidth="485px">
+          <ng-template let-columns pTemplate="colgroup">
+            <colgroup>
+              <ng-container *ngFor="let col of columns">
+                <col [ngStyle]="{'width': col.width}">
+              </ng-container>
+            </colgroup>
+          </ng-template>
+          <ng-template let-columns pTemplate="header">
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible">
+                  <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                  <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                    {{col.header}}
+                    <div class="search-bar-table">
+                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                      <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                             type="text">
                     </div>
-                    <div *ngIf="col.type === 'icon'">
-                      <i class="icon-menu_24px"></i>
-                    </div>
-                  </th>
-                </ng-container>
-              </tr>
-            </ng-template>
-            <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-              <tr>
-                <ng-container *ngFor="let col of columns">
-                  <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                    <div *ngIf="col.type === 'selection'" class="">
-                      <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
-                             nz-checkbox></label>
-                    </div>
-                    <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                    <div *ngIf="col.type === 'progress'">
-                      <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
-                                   [nzWidth]="20" nzType="circle"></nz-progress>
-                    </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
+                  </div>
+                  <div *ngIf="col.type === 'icon'">
+                    <i class="icon-menu_24px"></i>
+                  </div>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+          <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+            <tr>
+              <ng-container *ngFor="let col of columns">
+                <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                  <div *ngIf="col.type === 'selection'" class="">
+                    <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
+                           nz-checkbox></label>
+                  </div>
+                  <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                  <div *ngIf="col.type === 'progress'">
+                    <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
+                                 [nzWidth]="20" nzType="circle"></nz-progress>
+                  </div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
                         <span *ngIf="rowData.exposedLocation" class="indicator-flag"
                               style="background-color: #0700CF"></span>
-                    </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'number'"
-                         [ngClass]="{'highlight-temp': rowData.highlight}"
-                         class="text-data">{{rowData[col.field]}}</div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'percentage'"
-                         [ngClass]="{'highlight-temp': rowData.highlight}"
-                         class="text-data">{{rowData[col.field]}}%
-                    </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
-                         [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                         [ngClass]="{'highlight-temp': col.highlight}"
-                         class="text-data">{{rowData[col.field]}}</div>
-                    <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
-                         class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                    <div (click)="deleteRow(rowData.dataSourceId)" *ngIf="col.type === 'action'"
-                         [ngClass]="{'highlight-temp': rowData.highlight}"
-                         class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i></div>
-                  </th>
-                </ng-container>
-              </tr>
-            </ng-template>
-          </p-table>
-        </div>
+                  </div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'number'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data">{{rowData[col.field]}}</div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'percentage'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data">{{rowData[col.field]}}%
+                  </div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
+                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                       [ngClass]="{'highlight-temp': col.highlight}"
+                       class="text-data">{{rowData[col.field]}}</div>
+                  <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                  <div (click)="deleteRow(rowData.dataSourceId)" *ngIf="col.type === 'action'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
+                  </div>
+                </th>
+              </ng-container>
+            </tr>
+          </ng-template>
+        </p-table>
       </div>
     </div>
   </div>

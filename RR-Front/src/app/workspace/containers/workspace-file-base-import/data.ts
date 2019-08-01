@@ -2,7 +2,7 @@ const directoryTree = {
   data:
     [
       {
-        label: 'Documents',
+        label: 'Parry Huw (U000886)',
         data: 'Documents Folder',
         expandedIcon: 'fa fa-folder-open',
         collapsedIcon: 'fa fa-folder',
@@ -23,7 +23,7 @@ const directoryTree = {
           }]
       },
       {
-        label: 'Pictures',
+        label: 'CHOY CHI (U001141)',
         data: 'Pictures Folder',
         expandedIcon: 'fa fa-folder-open',
         collapsedIcon: 'fa fa-folder',
@@ -33,7 +33,97 @@ const directoryTree = {
           {label: 'primeui.png', icon: 'fa fa-file-image-o', data: 'PrimeUI Logo'}]
       },
       {
-        label: 'Movies',
+        label: 'BORDOY Roger (U001372)',
+        data: 'Movies Folder',
+        expandedIcon: 'fa fa-folder-open',
+        collapsedIcon: 'fa fa-folder',
+        children: [{
+          label: 'Al Pacino',
+          data: 'Pacino Movies',
+          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
+            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
+        },
+          {
+            label: 'Robert De Niro',
+            data: 'De Niro Movies',
+            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
+              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
+          }]
+      },
+      {
+        label: 'NGUYEN Viet Thanh Trung (U004602)',
+        data: 'Movies Folder',
+        expandedIcon: 'fa fa-folder-open',
+        collapsedIcon: 'fa fa-folder',
+        children: [{
+          label: 'Al Pacino',
+          data: 'Pacino Movies',
+          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
+            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
+        },
+          {
+            label: 'Robert De Niro',
+            data: 'De Niro Movies',
+            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
+              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
+          }]
+      },
+      {
+        label: 'MACK Soon Ling (U005384)',
+        data: 'Movies Folder',
+        expandedIcon: 'fa fa-folder-open',
+        collapsedIcon: 'fa fa-folder',
+        children: [{
+          label: 'Al Pacino',
+          data: 'Pacino Movies',
+          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
+            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
+        },
+          {
+            label: 'Robert De Niro',
+            data: 'De Niro Movies',
+            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
+              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
+          }]
+      },
+      {
+        label: 'DANG Hong Phuc (U006930)',
+        data: 'Movies Folder',
+        expandedIcon: 'fa fa-folder-open',
+        collapsedIcon: 'fa fa-folder',
+        children: [{
+          label: 'Al Pacino',
+          data: 'Pacino Movies',
+          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
+            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
+        },
+          {
+            label: 'Robert De Niro',
+            data: 'De Niro Movies',
+            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
+              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
+          }]
+      },
+      {
+        label: 'Reveal Risk (USYS)',
+        data: 'Movies Folder',
+        expandedIcon: 'fa fa-folder-open',
+        collapsedIcon: 'fa fa-folder',
+        children: [{
+          label: 'Al Pacino',
+          data: 'Pacino Movies',
+          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
+            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
+        },
+          {
+            label: 'Robert De Niro',
+            data: 'De Niro Movies',
+            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
+              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
+          }]
+      },
+      {
+        label: 'Unknown User (Y422)',
         data: 'Movies Folder',
         expandedIcon: 'fa fa-folder-open',
         collapsedIcon: 'fa fa-folder',
@@ -52,6 +142,18 @@ const directoryTree = {
       }
     ]
 };
+
+const textFilesData = [
+  {id: 0, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
+  {id: 1, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
+  {id: 2, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
+  {id: 3, name: '31_2A_ALGERIA_Fire_SP - Analysis_2A_IF_Fire_SP_EventSetId_1190_100', selected: false},
+  {id: 4, name: '351_2018 APAC TWN SOUTHCHINA ENG OS_Shinkong EventSetId_1190_100', selected: false},
+  {id: 5, name: '360_SGDOOD YONGSHI TRAINING_Nationwide - TAIWAN EventSetId_1190_100', selected: false},
+  {id: 6, name: '360_SGDOOD YONGSHI TRAINING_Nationwide - TAIWAN EventSetId_1190_100', selected: false},
+  {id: 7, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false},
+  {id: 8, name: '27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100', selected: false}
+];
 
 const PltDataTables = [
   {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
@@ -79,5 +181,6 @@ const PltDataTables = [
 
 export const DataTables = {
   directoryTree,
+  textFilesData,
   PltDataTables
 };

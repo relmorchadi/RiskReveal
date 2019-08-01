@@ -32,6 +32,9 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   pltColumns: any;
   directoryTree: any;
   selectedFile: any;
+  textFilesData: any;
+
+  emptyData = false;
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -45,6 +48,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       };
     });
 
+    this.textFilesData = DataTables.textFilesData;
     this.pltColumns = DataTables.PltDataTables;
     this.directoryTree = DataTables.directoryTree;
   }

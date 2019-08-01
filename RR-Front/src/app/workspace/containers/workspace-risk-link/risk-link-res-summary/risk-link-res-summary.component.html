@@ -63,7 +63,7 @@
                                  [nzWidth]="20" nzType="circle"></nz-progress>
                   </div>
                   <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'indicator'">
-                        <span *ngIf="rowData.exposedLocation" class="indicator-flag"
+                        <span *ngIf="rowData?.exposedLocation" class="indicator-flag"
                               style="background-color: #0700CF"></span>
                   </div>
                   <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'number'"
@@ -752,10 +752,10 @@
                 <div class="dropdown-wrap-title">
                   <span class="dropdown-title">select RDM</span>
                   <span class="dropdown-item-selected" *ngIf="state.financialPerspective.rdm.selected">
-                  {{state.financialPerspective.rdm.selected}}</span>
+                  {{state?.financialPerspective?.rdm?.selected}}</span>
                   <span
-                    *ngIf="state.financialPerspective.rdm.data !== null && state.financialPerspective.rdm.selected === null">
-                  {{dataList(state.financialPerspective.rdm.data)[0].name}}
+                    *ngIf="state.financialPerspective?.rdm?.data !== null && state.financialPerspective?.rdm?.selected === null">
+                  {{dataList(state.financialPerspective.rdm.data)[0]?.name}}
                 </span>
                 </div>
                 <div class="dropdown-icon">
@@ -977,7 +977,7 @@
   <!--Pop Up Low Lvl Edit-->
   <p-dialog [visible]="singleColEdit"
             [closable]="false"
-            styleClass="m-dialog-modal-sm-l"
+            [styleClass]="editableRow.target === 'Rp' ? 'm-dialog-modal-m-60' : 'm-dialog-modal-sm-l'"
             [modal]="true"
             [autoZIndex]="false"
             [responsive]="true"
@@ -992,6 +992,7 @@
     <div>
       <div class="summary-info" *ngIf="editableRow.target === 'Rp'">
         <p-table [columns]="regionPerilDataTable"
+                 [scrollHeight]="'270px'"
                  [value]="dataList(state.results.data)" #rpt [scrollable]="true">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -1034,11 +1035,11 @@
                        [ngClass]="{'highlight-temp': col.highlight}"
                        *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
                   <div style="padding-left: 10px;" *ngIf="col.type === 'comment'">
-                    <input class="a-textfield-mini" [(ngModel)]="rowData.reason"/>
+                    <input class="a-textfield-mini" style="width: 90%" [(ngModel)]="rowData.reason"/>
                   </div>
                   <div *ngIf="col.type === 'override'">
                     <nz-select
-                      style="padding: 10px 0; width: 300px" #rpRes
+                      style="padding: 10px 0; width: 90%"
                       [(ngModel)]="rowData.override"
                       nzShowSearch
                       class="a-dropdown-small input-wrapper"
