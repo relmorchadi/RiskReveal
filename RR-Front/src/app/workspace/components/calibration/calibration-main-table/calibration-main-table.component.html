@@ -1006,23 +1006,23 @@
         <ng-container *ngIf="col?.dragable">
           <div class="text-elipsice border-dragable threeValues">
             <div class="EPM0">
-              {{  randomMetaData[rowData.pltId][col.fields][0] }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][0])}}
             </div>
             <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1] > 0"
                  class="EPM2B">
-              {{ randomMetaData[rowData.pltId][col.fields][1]  }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][1])  }}
             </div>
             <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1]  < 0"
                  class="EPM2R">
-              {{ randomMetaData[rowData.pltId][col.fields][1]  }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][1])  }}
             </div>
             <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  > 0"
                  class="EPM2B">
-              {{ randomMetaData[rowData.pltId][col.fields][2] + '%' }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][2]) + '%' }}
             </div>
             <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  < 0"
                  class="EPM2R">
-              {{ randomMetaData[rowData.pltId][col.fields][2] + '%'}}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][2]) + '%'}}
             </div>
           </div>
         </ng-container>
@@ -1056,7 +1056,9 @@
       <ng-template pTemplate="body" let-rowData>
         <tr>
           <td pEditableColumn style="background-color: #ffffff" class="on-hover-pop-up">
-            <p-cellEditor>
+            <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-right"
+               style="margin-left: 10px;cursor: pointer;color: red; visibility: hidden;"></i>
+            <p-cellEditor class="pull-right">
               <ng-template pTemplate="input">
                 <label>
                   <input class="a-textfield-mini" pInputText type="text" style="font-size: 14px;margin-left: 5px"
@@ -1067,8 +1069,6 @@
                 {{rowData}}
               </ng-template>
             </p-cellEditor>
-            <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-right"
-               style="cursor: pointer;color: red; display: none;"></i>
           </td>
         </tr>
       </ng-template>

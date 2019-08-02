@@ -20,15 +20,16 @@ import {
   saveAdjModification,
   saveAdjustment
 } from "../../store/actions";
-import {switchMap} from 'rxjs/operators';
+import {switchMap, tap} from 'rxjs/operators';
 import {WorkspaceState} from "../../store/states";
-import {combineLatest, Observable} from 'rxjs';
+import {Observable} from 'rxjs';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {BaseContainer} from "../../../shared/base";
 import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
+import {SystemTagsService} from "../../../shared/services/system-tags.service";
 
 
 @Component({
@@ -266,13 +267,61 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     private zone: NgZone,
     private cdRef: ChangeDetectorRef,
     private router$: Router,
+    private systemTagService: SystemTagsService,
     private route$: ActivatedRoute) {
     super(router$, cdRef, store$);
   }
 
+  observeRouteParams() {
+    return this.route$.params.pipe(tap(({wsId, year}) => {
+      this.workspaceId = wsId;
+      this.uwy = year;
+    }))
+  }
+
+  observeRouteParamsWithSelector(operator) {
+    return this.observeRouteParams()
+      .pipe(
+        switchMap(() => operator()),
+        this.unsubscribeOnDestroy
+      )
+  }
+
+  getPlts() {
+    return this.select(WorkspaceState.getPltsForCalibration(this.workspaceId + '-' + this.uwy));
+  }
+
   ngOnInit() {
     this.initDataColumns();
-    this.Subscriptions.push(
+
+    this.observeRouteParams().pipe(
+      this.unsubscribeOnDestroy
+    ).subscribe(() => {
+      this.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
+        params: {
+          workspaceId: this.workspaceId, uwy: this.uwy
+        },
+        wsIdentifier: this.workspaceId + '-' + this.uwy
+      }));
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
+      this.systemTagsCount = this.systemTagService.countSystemTags(data);
+      this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
+      this.listOfPltsData = [...this.listOfPltsCache];
+      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected);
+
+      this.detectChanges();
+    });
+
+    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
+      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsData.length) && this.listOfPltsData.length > 0;
+
+      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsData.length && this.selectedListOfPlts.length > 0;
+      this.detectChanges();
+    });
+
+    /*this.Subscriptions.push(
       this.route$.params.pipe(
         switchMap(({wsId, year}) => {
           this.workspaceId = wsId;
@@ -326,7 +375,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
             d1.push({...v, pltId: k});
             d2.push(k);
 
-            /*if (v.visible) {*/
+            /!*if (v.visible) {*!/
             //Grouped Sys Tags
             _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
               const tag = _.toString(v[section]);
@@ -372,7 +421,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
                 };
               }
             })
-            /*}*/
+            /!*}*!/
 
           });
 
@@ -415,25 +464,25 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         this.projects = projects;
         this.detectChanges();
       }),
-    );
+    );*/
     this.initRandomMetaData()
   }
 
   initRandomMetaData() {
     const cols: any[] = ['AAL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
-    _.forEach(this.listOfPlts, value => {
-      this.randomMetaData[value] = {}
+    _.forEach(this.listOfPltsData, value => {
+      this.randomMetaData[value.pltId] = {}
     })
-    _.forEach(this.listOfPlts, value => {
+    _.forEach(this.listOfPltsData, value => {
       _.forEach(cols, col => {
         if (col == 'AAL') {
-          this.randomMetaData[value][col] = [
+          this.randomMetaData[value.pltId][col] = [
             Math.floor(Math.random() * (200000000 - 1000000 + 1)) + 1000000,
             Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
             Math.floor(Math.random() * 199) - 99
           ];
         } else {
-          this.randomMetaData[value][col] = [
+          this.randomMetaData[value.pltId][col] = [
             Math.floor(Math.random() * (2000000 - 10000 + 1)) + 10000,
             Math.floor((Math.random() - 0.5) * (1000000 - 1000 + 1)) + 1000,
             Math.floor(Math.random() * 199) - 99
@@ -747,7 +796,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.listOfPlts,
+      pltId: this.listOfPltsData,
     }));
     this.adjustColWidth(adj);
     this.singleValue = null;
@@ -765,7 +814,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.listOfPlts,
+      pltId: this.listOfPltsData,
       all: true
     }));
     this.adjustColWidth(adj);
@@ -940,13 +989,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.selectAll =
       !this.showDeleted
         ?
-        (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
+        (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsData.length)) && this.listOfPltsData.length > 0
         :
         (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
 
     this.someItemsAreSelected =
       !this.showDeleted ?
-        this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
+        this.selectedListOfPlts.length < this.listOfPltsData.length && this.selectedListOfPlts.length > 0
         :
         this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
     // this.generateContextMenu(this.showDeleted);
@@ -1015,12 +1064,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   addRemoveOnSave(plts: any) {
-    let res: any = {};
-    _.forEach(this.listOfPltsData, plt => {
-      if (plts.includes(plt.pltId)) {
-        res[plt.pltId] = plt;
-      }
-    })
-    this.listOfPltsData = res;
+    /*_.forEach(plts, pltId => {
+      this.listOfPltsData[pltId].toCalibrate = false;
+    });
+    console.log(this.listOfPltsData);
+    this.store$.dispatch(new toCalibratePlts( {
+      plts:this.listOfPltsData,
+      wsIdentifier:this.workspaceId + "-" + this.uwy
+    }))*/
   }
 }

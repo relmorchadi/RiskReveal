@@ -74,7 +74,8 @@ export class CalibrationService implements NgxsOnInit {
                       status: this.status[this.getRandomInt()],
                       newPlt: Math.random() >= 0.5,
                       EPM: [this.getRandomInt(900000, 2000000).toString(), this.getRandomInt(90000, 1000000), this.getPercentage()],
-                      calibrate: true
+                      calibrate: true,
+                      toCalibrate: true
                     }
                   }))
                 )
@@ -184,6 +185,17 @@ export class CalibrationService implements NgxsOnInit {
       wsIdentifier
     } = payload;
 
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.data = _.merge({}, state.content[this.prefix].calibration.data, {[wsIdentifier]: plts})
+    }));
+  }
+
+  toCalibratePlts(ctx: StateContext<any>, payload: any) {
+    const state = ctx.getState();
+    const {
+      plts,
+      wsIdentifier
+    } = payload;
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.data = _.merge({}, state.content[this.prefix].calibration.data, {[wsIdentifier]: plts})
     }));
@@ -302,10 +314,10 @@ export class CalibrationService implements NgxsOnInit {
     let index = {};
     _.forEach(pltId, (value) => {
       adjustmentApplication.push({
-        pltId: value,
+        pltId: value.pltId,
         adj: newAdj
       })
-      index[value] = _.findIndex(state.adjustmentApplication, {pltId: value});
+      index[value.pltId] = _.findIndex(state.adjustmentApplication, {pltId: value});
     })
     if (all) {
       ctx.patchState(produce(ctx.getState(), draft => {
@@ -375,10 +387,10 @@ export class CalibrationService implements NgxsOnInit {
     let newAdj = {...adjustement};
 
     _.forEach(pltId, (value) => {
-      if (adjustmentApplication[value] !== undefined) {
-        adjustmentApplication[value].push(newAdj);
+      if (adjustmentApplication[value.pltId] !== undefined) {
+        adjustmentApplication[value.pltId].push(newAdj);
       } else {
-        adjustmentApplication[value] = [newAdj]
+        adjustmentApplication[value.pltId] = [newAdj]
       }
     })
     ctx.patchState(produce(ctx.getState(), draft => {

@@ -827,15 +827,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.detectChanges();
     });
 
-    this.observeRouteParamsWithSelector(() => this.getDeletedPlts())
-      .subscribe((deletedData) => {
-        this.updateTable('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
-        this.updateTable('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
-        this.updateTable('selectedListOfDeletedPlts', _.filter(deletedData, (v, k) => v.selected));
-
-        this.detectChanges();
-      });
-
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
       this.updateTable('selectAll',
         (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
@@ -845,6 +836,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.updateTable("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
       this.detectChanges();
     });
+
+    this.observeRouteParamsWithSelector(() => this.getDeletedPlts())
+      .subscribe((deletedData) => {
+        this.updateTable('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
+        this.updateTable('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
+        this.updateTable('selectedListOfDeletedPlts', _.filter(deletedData, (v, k) => v.selected));
+
+        this.detectChanges();
+      });
 
     this.observeRouteParamsWithSelector(() => this.getDeletedPlts()).subscribe(deletedPlts => {
       this.updateTable('selectAllDeletedPlts',

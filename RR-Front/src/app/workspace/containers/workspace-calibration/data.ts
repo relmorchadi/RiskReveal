@@ -1,10 +1,10 @@
 export const ADJUSTMENT_TYPE = [
-  {id: 1, name: "Linear", abv: false},
+  {id: 6, name: "CAT XL", abv: "CAT XL"},
   {id: 2, name: "Event Driven", abv: "Event Driven"},
+  {id: 5, name: "Frequency (EEF)", abv: "Freq (EEF)"},
+  {id: 1, name: "Linear", abv: false},
   {id: 3, name: "Return Period Banding Severity (EEF)", abv: "RP (EEF)"},
   {id: 4, name: "Return Period Banding Severity (OEP)", abv: "RP (OEP)"},
-  {id: 5, name: "Frequency (EEF)", abv: "Freq (EEF)"},
-  {id: 6, name: "CAT XL", abv: "CAT XL"},
   {id: 7, name: "Quota Share", abv: "QS"}
 ];
 export const PURE = {

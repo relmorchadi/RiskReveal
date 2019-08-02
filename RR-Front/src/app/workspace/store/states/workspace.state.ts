@@ -58,6 +58,11 @@ export class WorkspaceState {
 
   static getPltsForCalibration(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.toCalibrate), 'pltId'))
+  }
+
+  static getPltsForCalibrationPopUp(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => !e.deleted), 'pltId'))
   }
 
@@ -483,6 +488,11 @@ export class WorkspaceState {
   @Action(fromWS.calibrateSelectPlts)
   calibrateSelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.calibrateSelectPlts) {
     this.calibrationService.calibrateSelectPlts(ctx, payload)
+  }
+
+  @Action(fromWS.toCalibratePlts)
+  toCalibratePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.toCalibratePlts) {
+    this.calibrationService.toCalibratePlts(ctx, payload)
   }
 
   @Action(fromWS.initCalibrationData)

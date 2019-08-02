@@ -1811,7 +1811,7 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.on-hover-pop-up:hover {
   .icon-trash-alt {
-    display: block !important;
+    visibility: visible !important;
   }
 }
 
