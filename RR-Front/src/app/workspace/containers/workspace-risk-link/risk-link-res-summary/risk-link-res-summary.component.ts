@@ -89,6 +89,14 @@ export class RiskLinkResSummaryComponent implements OnInit {
   portfolio = [];
   updateMode = false;
 
+  allCheckedAnalysis: boolean;
+  indeterminateAnalysis: boolean;
+
+  allCheckedPortfolio: boolean;
+  indeterminatePortfolio: boolean;
+
+  collapseDataSources = false;
+
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
 
@@ -109,11 +117,15 @@ export class RiskLinkResSummaryComponent implements OnInit {
         if (this.linking.analysis !== null) {
           if (_.get(this.linking.analysis, `${this.linking.rdm.selected.id}`, null) !== null) {
             this.analysis = _.toArray(this.linking.analysis[this.linking.rdm.selected.id].data);
+            this.allCheckedAnalysis = this.linking.analysis[this.linking.rdm.selected.id].allChecked;
+            this.indeterminateAnalysis = this.linking.analysis[this.linking.rdm.selected.id].indeterminate;
           }
         }
         if (this.linking.portfolio !== null) {
           if (_.get(this.linking, 'portfolio', null) !== null) {
             this.portfolio = _.toArray(this.linking.portfolio.data);
+            this.allCheckedPortfolio = this.linking.portfolio.allChecked;
+            this.indeterminatePortfolio = this.linking.portfolio.indeterminate;
           }
         }
         if (this.linking.portfolio === null && this.linking.analysis === null ) {
@@ -219,6 +231,20 @@ export class RiskLinkResSummaryComponent implements OnInit {
     }
   }
 
+  updateAllChecked(value, scope) {
+    const selection = value ? 'selectAll' : 'unselectAll';
+    if (scope === 'summaries') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: selection}));
+    } else if (scope === 'results') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: selection}));
+    } else if (scope === 'linkingAnalysis') {
+      const wrapperEDM = this.linking.rdm.selected;
+      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: selection, wrapper: wrapperEDM}));
+    } else if (scope === 'linkingPortfolio') {
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: selection}));
+    }
+  }
+
   checkRow(event, rowData, target) {
     if (target === 'R') {
       this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: event, item: rowData}));
@@ -229,7 +255,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
     } else if (target === 'fpA') {
       this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'linkAnalysis') {
-      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne', value: event, item: rowData}));
+      const wrapperEDM = this.linking.rdm.selected;
+      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne', wrapper: wrapperEDM, value: event, item: rowData}));
     } else if (target === 'linkPortfolio') {
       this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: event, item: rowData}));
     }
@@ -281,16 +308,14 @@ export class RiskLinkResSummaryComponent implements OnInit {
             Math.max(index, this.lastSelectedIndexLinkAnalysis), target);
         } else {
           this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne',
-            wrapper: this.selectedEDM, value: true, item: row}));
+            wrapper: wrapperEDM, value: true, item: row}));
         }
       } else {
         this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
-        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne',
-          wrapper: wrapperEDM, value: true, item: row}));
+        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne', wrapper: wrapperEDM, value: true, item: row}));
       }
       this.lastSelectedIndexLinkAnalysis = index;
     } else if (target === 'linkPortfolio') {
-      console.log('it should toggle');
       const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
       this._selectRowsProvider(row, index, this.lastSelectedIndexLinkPortfolio, action, 'linkPortfolio');
       this.lastSelectedIndexLinkPortfolio = index;

@@ -33,6 +33,11 @@
             <tr>
               <ng-container *ngFor="let col of columns">
                 <th *ngIf="col.visible">
+                  <ng-container *ngIf="col.type === 'selection'">
+                    <label style="margin-top:20px" nz-checkbox [ngModel]="state.summaries.allChecked" (ngModelChange)="updateAllChecked($event, 'summaries')"
+                           [nzIndeterminate]="state.summaries.indeterminate"></label>
+                    <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                  </ng-container>
                   <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
                   <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
                     {{col.header}}
@@ -185,6 +190,11 @@
             <tr>
               <ng-container *ngFor="let col of columns">
                 <th *ngIf="col.visible">
+                  <ng-container *ngIf="col.type === 'selection'">
+                    <label style="margin-top:20px" nz-checkbox [ngModel]="state.results.allChecked" (ngModelChange)="updateAllChecked($event, 'results')"
+                           [nzIndeterminate]="state.results.indeterminate"></label>
+                    <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                  </ng-container>
                   <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
                   <div style="white-space: nowrap;"
                        *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
@@ -405,7 +415,7 @@
           <div class="modal-linking-head">
             <div class="modal-l-h-body-fill">
               <span class="subtitle-2">Data Sources</span>
-              <div class="radio-wrapper">
+              <div class="radio-wrapper" *ngIf="!collapseDataSources">
                 <div class="popover-menu-item"
                      (click)="toggleForLinkingEDM()"
                      [ngClass]="{'popover-menu-item-active': getChecked(itemsE)}"
@@ -416,7 +426,14 @@
               </div>
             </div>
             <div class="modal-l-h-body-right">
-              <ul>
+              <div class="wrap-icon-right">
+                <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+                <i (click)="collapseDataSources = true" *ngIf="!collapseDataSources"
+                   class="icon-keyboard_arrow_up_24px"></i>
+                <i (click)="collapseDataSources = false" *ngIf="collapseDataSources"
+                   class="icon-keyboard_arrow_down_24px"></i>
+              </div>
+              <ul *ngIf="!collapseDataSources">
                 <ng-container *ngFor="let itemsR of dataList(linking.rdm.data)">
                   <li *ngIf="itemsR.type === 'rdm'" class="popover-menu-item"
                       (click)="toggleForLinkingRDM(itemsR)"
@@ -428,10 +445,10 @@
                   </li>
                 </ng-container>
               </ul>
-              <button *ngIf="!linking?.autoMode" (click)="patchLinkingMode()"
+              <button *ngIf="!linking?.autoMode && !collapseDataSources" (click)="patchLinkingMode()"
                       style="margin: 0 15px 10px" class="a-buttons-outlined">LINK SUGGESTIONS
               </button>
-              <button *ngIf="linking?.autoMode" (click)="patchLinkingMode()"
+              <button *ngIf="linking?.autoMode && !collapseDataSources" (click)="patchLinkingMode()"
                       style="margin: 0 15px 10px" class="a-buttons-outlined">MANUAL LINKING</button>
             </div>
           </div>
@@ -452,6 +469,11 @@
                     <ng-template pTemplate="header" let-columns>
                       <tr>
                         <th *ngFor="let col of columns">
+                          <ng-container *ngIf="col.type === 'select'">
+                            <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedPortfolio" (ngModelChange)="updateAllChecked($event, 'linkingPortfolio')"
+                                   [nzIndeterminate]="indeterminatePortfolio"></label>
+<!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                          </ng-container>
                           <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
                           <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
                             {{col.header}}
@@ -471,7 +493,9 @@
                       <tr>
                         <ng-container *ngFor="let col of columns">
                           <th *ngIf="col.visible" [ngClass]="{'selected-item': rowData?.selected}">
-                            <div *ngIf="col.type === 'select'"><label nz-checkbox [ngModel]="rowData.selected"></label></div>
+                            <div *ngIf="col.type === 'select'">
+                              <label nz-checkbox [ngModel]="rowData.selected" (ngModelChange)="checkRow($event, rowData, 'linkPortfolio')"></label>
+                            </div>
                             <div *ngIf="col.type === 'iconIndicator'" (click)="selectRows(rowData, i, 'linkPortfolio')">
                               <span style="background-color: #C38FFF" class="indicator-icon">P</span>
                             </div>
@@ -532,6 +556,11 @@
                     <ng-template pTemplate="header" let-columns>
                       <tr>
                         <th *ngFor="let col of columns">
+                          <ng-container *ngIf="col.type === 'select'">
+                            <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis" (ngModelChange)="updateAllChecked($event, 'linkingAnalysis')"
+                                   [nzIndeterminate]="indeterminateAnalysis"></label>
+                            <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                          </ng-container>
                           <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
                           <div style="white-space: nowrap;" *ngIf="col.filtered && col.type !== 'icon'">
                             {{col.header}}
@@ -550,7 +579,10 @@
                     <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                       <tr *ngIf="analysis.length > 0">
                         <th *ngFor="let col of columns" [ngClass]="{'selected-item': rowData?.selected}">
-                          <div *ngIf="col.type === 'select'"><label nz-checkbox [ngModel]="rowData.selected"></label></div>
+                          <div *ngIf="col.type === 'select'">
+                            <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'linkAnalysis')"
+                                   [ngModel]="rowData.selected" ></label>
+                          </div>
                           <div *ngIf="col.type === 'progress'">
                             <nz-progress [nzPercent]="rowData.status"
                                          [ngClass]="{'hidden-text': rowData.status < 100 }"

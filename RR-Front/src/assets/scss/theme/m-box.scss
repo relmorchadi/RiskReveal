@@ -9,6 +9,7 @@
   overflow: hidden;
   flex: 1 1 auto;
 }
+
 .m-box-drag {
   padding: 5px 10px;
   border-bottom: solid 1px #ccc;
@@ -88,6 +89,7 @@
 
 .cdk-drag-placeholder {
   background-color: var(--surface-5);
+
   .m-box-overlay {
     visibility: hidden;
   }

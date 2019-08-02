@@ -16,9 +16,6 @@ import {
   DeleteProject,
   DeleteProjectFail, DeleteProjectSuccess
 } from "../../../core/store/actions";
-import {catchError} from "rxjs/operators";
-import {EMPTY} from "rxjs";
-import produce from "immer";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -473,119 +470,119 @@ export class WorkspaceState {
 
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
-    return this.calibrationService.loadAllPltsFromCalibration(ctx, payload)
+    return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
   }
 
   @Action(fromWS.loadAllPltsFromCalibrationSuccess)
   loadAllPltsFromCalibrationSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibrationSuccess) {
-    this.calibrationService.loadAllPltsFromCalibrationSuccess(ctx, payload)
+    this.calibrationService.loadAllPltsFromCalibrationSuccess(ctx, payload);
   }
 
   @Action(fromWS.constructUserTagsFromCalibration)
   constructUserTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.constructUserTagsFromCalibration) {
-    this.calibrationService.constructUserTags(ctx, payload)
+    this.calibrationService.constructUserTags(ctx, payload);
   }
 
   @Action(fromWS.setUserTagsFiltersFromCalibration)
   setFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setUserTagsFiltersFromCalibration) {
-    this.calibrationService.setFilterPlts(ctx, payload)
+    this.calibrationService.setFilterPlts(ctx, payload);
   }
 
   @Action(fromWS.FilterPltsByUserTagsFromCalibration)
   FilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.FilterPltsByUserTagsFromCalibration) {
-    this.calibrationService.FilterPlts(ctx, payload)
+    this.calibrationService.FilterPlts(ctx, payload);
   }
 
   @Action(fromWS.ToggleSelectPltsFromCalibration)
   SelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectPltsFromCalibration) {
-    this.calibrationService.SelectPlts(ctx, payload)
+    this.calibrationService.SelectPlts(ctx, payload);
   }
 
   @Action(fromWS.calibrateSelectPlts)
   calibrateSelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.calibrateSelectPlts) {
-    this.calibrationService.calibrateSelectPlts(ctx, payload)
+    this.calibrationService.calibrateSelectPlts(ctx, payload);
   }
 
   @Action(fromWS.initCalibrationData)
   initCalibrationData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.initCalibrationData) {
-    this.calibrationService.initCalibrationData(ctx, payload)
+    this.calibrationService.initCalibrationData(ctx, payload);
   }
 
   @Action(fromWS.setFilterCalibration)
   setFilterCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setFilterCalibration) {
-    this.calibrationService.setFilterCalibration(ctx, payload)
+    this.calibrationService.setFilterCalibration(ctx, payload);
   }
 
   @Action(fromWS.extendPltSection)
   expandPltSection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.extendPltSection) {
-    this.calibrationService.expandPltSection(ctx, payload)
+    this.calibrationService.expandPltSection(ctx, payload);
   }
 
   @Action(fromWS.collapseTags)
   collapseTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.collapseTags) {
-    this.calibrationService.collapseTags(ctx, payload)
+    this.calibrationService.collapseTags(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustment)
   saveAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustment) {
-    this.calibrationService.saveAdjustment(ctx, payload)
+    this.calibrationService.saveAdjustment(ctx, payload);
   }
 
   @Action(fromWS.dropThreadAdjustment)
   dropThreadAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.dropThreadAdjustment) {
-    this.calibrationService.dropThreadAdjustment(ctx, payload)
+    this.calibrationService.dropThreadAdjustment(ctx, payload);
 
   }
 
   @Action(fromWS.saveAdjModification)
   saveAdjModification(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjModification) {
-    this.calibrationService.saveAdjModification(ctx, payload)
+    this.calibrationService.saveAdjModification(ctx, payload);
   }
 
   @Action(fromWS.replaceAdjustement)
   replaceAdjustement(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.replaceAdjustement) {
-    this.calibrationService.replaceAdjustement(ctx, payload)
+    this.calibrationService.replaceAdjustement(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustmentInPlt)
   saveAdjustmentInPlt(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustmentInPlt) {
-    this.calibrationService.saveAdjustmentInPlt(ctx, payload)
+    this.calibrationService.saveAdjustmentInPlt(ctx, payload);
   }
 
 
   @Action(fromWS.applyAdjustment)
   applyAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.applyAdjustment) {
-    this.calibrationService.applyAdjustment(ctx, payload)
+    this.calibrationService.applyAdjustment(ctx, payload);
   }
 
   @Action(fromWS.dropAdjustment)
   dropAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.dropAdjustment) {
-    this.calibrationService.dropAdjustment(ctx, payload)
+    this.calibrationService.dropAdjustment(ctx, payload);
   }
 
   @Action(fromWS.deleteAdjsApplication)
   deleteAdjsApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.deleteAdjsApplication) {
-    this.calibrationService.deleteAdjsApplication(ctx, payload)
+    this.calibrationService.deleteAdjsApplication(ctx, payload);
   }
 
   @Action(fromWS.deleteAdjustment)
   deleteAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.deleteAdjustment) {
-    this.calibrationService.deleteAdjustment(ctx, payload)
+    this.calibrationService.deleteAdjustment(ctx, payload);
   }
 
   @Action(fromWS.saveSelectedPlts)
   saveSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveSelectedPlts) {
-    this.calibrationService.saveSelectedPlts(ctx, payload)
+    this.calibrationService.saveSelectedPlts(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustmentApplication)
   saveAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustmentApplication) {
-    this.calibrationService.saveAdjustmentApplication(ctx, payload)
+    this.calibrationService.saveAdjustmentApplication(ctx, payload);
   }
 
   @Action(PatchCalibrationStateAction)
   patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: PatchCalibrationStateAction) {
-    this.calibrationService.patchSearchState(ctx, payload)
+    this.calibrationService.patchSearchState(ctx, payload);
   }
 
 
