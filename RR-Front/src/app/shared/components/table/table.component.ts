@@ -75,8 +75,6 @@ export class TableComponent implements OnInit {
   @Input()
   tableColumn: any[];
   @Input()
-  tableHeight: string;
-  @Input()
   tableWidth: string;
   @Input()
   selectionMode: string = null;
@@ -89,6 +87,7 @@ export class TableComponent implements OnInit {
   }
 
   ngOnInit() {
+
   }
 
   getItems() {
@@ -186,6 +185,7 @@ export class TableComponent implements OnInit {
     }
     this.selectedRows = this.listOfData.filter(ws => ws.selected === true);
     this.isIndeterminate();
+
   }
 
   isIndeterminate() {

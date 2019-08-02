@@ -161,6 +161,7 @@ app-table{
   flex: 1;
   min-height: 10px;
   overflow: hidden;
+  overflow-x: scroll;
   ::ng-deep{
     .ui-table.ui-widget.ui-table-responsive.ui-table-resizable.ui-table-resizable-fit{
       height:100%;

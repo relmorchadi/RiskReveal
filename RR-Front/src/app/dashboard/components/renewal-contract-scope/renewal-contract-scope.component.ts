@@ -15,6 +15,7 @@ export class RenewalContractScopeComponent implements OnInit {
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
+
   private dropdown: NzDropdownContextComponent;
   renewalPeriod = '1';
   uwyUnits;
@@ -27,7 +28,6 @@ export class RenewalContractScopeComponent implements OnInit {
   dashboard: any;
   @Input()
   identifier: number;
-
   newDashboard: any;
   editName = false;
 

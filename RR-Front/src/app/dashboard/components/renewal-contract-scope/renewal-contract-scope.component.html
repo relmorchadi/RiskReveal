@@ -4,8 +4,12 @@
 <div class="renewal-contract-table">
   <ng-container *ngTemplateOutlet="title"></ng-container>
   <app-table [sortable]="true"
-             [tableColumn]="cols" [listOfData]="mockData"
-             [virtualScroll]="false" [totalRecords]="mockData.length"></app-table>
+             [tableColumn]="cols"
+             [listOfData]="mockData"
+             [virtualScroll]="false"
+             [totalRecords]="mockData.length"
+  >
+  </app-table>
   <div class="select-sections">
     <nz-select class="country a-dropdown-label" style="width: 140px;" nzShowSearch nzAllowClear
                [(ngModel)]="activeCountry"

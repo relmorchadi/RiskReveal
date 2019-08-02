@@ -172,18 +172,15 @@
          [resizableColumns]="true"
          [columnResizeMode]="'expand'"
          [scrollable]="true"
-         [scrollHeight]="tableHeight"
-         [responsive]="true"
+         [scrollHeight]="'570px'"
          class="table-ngPrime"
 >
-  C
-
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
       <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
     </colgroup>
   </ng-template>
-  <ng-template pTemplate="header" let-columns>
+  <ng-template pTemplate="header"  let-columns>
     <tr>
       <th  *ngFor="let col of columns" pResizableColumn>
         <span *ngIf="col?.display" style="display:flex ;justify-content: space-between ; white-space:nowrap ;text-overflow: ellipsis ">
@@ -206,7 +203,7 @@
       </th>
     </tr>
   </ng-template>
-  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns" style="overflow-y: auto">
     <tr
       [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
@@ -217,7 +214,7 @@
         </td>
         <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
           <div style="display:flex">
-            <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
+            <i *ngIf="col?.type === 'date'" ></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
           </div>
         </td>

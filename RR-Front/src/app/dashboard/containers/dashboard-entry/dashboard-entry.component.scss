@@ -16,6 +16,7 @@
       padding: 5px 1px 5px 16px;
     }
   }
+ overflow: hidden;
 }
 
 .popover-title {
@@ -280,4 +281,14 @@ ul.widgets-list {
 
 .icon-visibility_off_24px {
   color: var(--surface-6);
+}
+
+::ng-deep {
+  .ant-tabs-content {
+    height: calc(100vh - 100px);
+  }
+
+  .ant-tabs-tabpane.ant-tabs-tabpane-active {
+    height: calc(100vh - 150px);
+  }
 }

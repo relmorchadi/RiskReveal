@@ -31,6 +31,7 @@
     "@ngxs/store": "3.4.1-dev.master-543c32f",
     "angular-gridster2": "^7.1.0",
     "core-js": "2.5.4",
+    "floatthead": "^2.1.3",
     "font-awesome": "4.7.0",
     "imagesloaded": "^4.1.4",
     "immer": "^2.1.5",
