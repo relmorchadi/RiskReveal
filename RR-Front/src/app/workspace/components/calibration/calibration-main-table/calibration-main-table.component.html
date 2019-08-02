@@ -6,8 +6,10 @@
   [frozenColumns]="frozenColumns"
   [frozenWidth]="frozenWidth"
   [resizableColumns]="true"
+  [columnResizeMode]="'fit'"
   [responsive]="true"
   [scrollable]="true"
+  scrollHeight="calc(90vh - 205px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -235,7 +237,7 @@
                       </span>
         </th>
 
-        <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;">
+        <th *ngIf="col?.fields === 'pltName'" pResizableColumn style="padding: 0 !important;">
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -260,6 +262,16 @@
                                      nzChecked
                                      style="margin-right: 12px;">
                                 <i class="icon-history-alt iconYellow"></i> In Progress
+                              </label>
+                            </div>
+                          </li>
+                          <li nz-menu-item>
+                            <div class="checkboxInput">
+                              <label [(ngModel)]="newCheckbox"
+                                     nz-checkbox
+                                     nzChecked
+                                     style="margin-right: 12px;">
+                                <i class="icon-star iconBlue"></i> New
                               </label>
                             </div>
                           </li>
@@ -390,9 +402,8 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div *ngIf="rowData.status !== 'requires regeneration' || !rowData.newPlt" class="text-elipsice"
+          <div class="text-elipsice"
                style="font-weight: bold">{{rowData.pltId | textLength}}</div>
-          <div *ngIf="rowData.status == 'requires regeneration' && rowData.newPlt" class="newTag">NEW</div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
           <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
@@ -405,14 +416,15 @@
                                          'icon-check-circle iconGreen': rowData?.status=='valid' ,
                                          'icon-lock-alt iconRed': rowData?.status=='locked',
                                          'icon-error_24px iconRed2': rowData?.status=='failed',
+                                         'icon-star iconBlue': rowData?.status=='new',
                                          'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }"
                  [nz-tooltip]="rowData.status[0].toUpperCase() + rowData.status.slice(1)"
                  class="tooltipMsg">
               </i>
             </div>
             <div *ngIf="col.icon=='icon-note' && !selectedListOfPlts.includes(rowData.pltId)">
-              <nz-dropdown [nzPlacement]="'bottomLeft'">
-                <i (click)="clickButtonPlus(false,rowData)" class="icon-menu_24px"
+              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click">
+                <i class="icon-menu_24px"
                    nz-dropdown
                    style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
                 <ul nz-menu>
@@ -568,6 +580,7 @@
   [frozenWidth]="frozenWidth"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag] "
   [resizableColumns]="true"
+  [columnResizeMode]="'fit'"
   [contextMenu]="cm"
   [scrollHeight]="'600px'"
   [scrollable]="true"
@@ -752,7 +765,7 @@
                       </span>
         </th>
 
-        <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;">
+        <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;" pResizableColumn>
                       <span style="display:flex;justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -777,6 +790,16 @@
                                      nz-checkbox
                                      style="margin-right: 12px;">
                                 <i class="icon-history-alt iconYellow"></i> In Progress
+                              </label>
+                            </div>
+                          </li>
+                          <li nz-menu-item>
+                            <div class="checkboxInput">
+                              <label [(ngModel)]="newCheckbox"
+                                     nzChecked
+                                     nz-checkbox
+                                     style="margin-right: 12px;">
+                                <i class="icon-star iconBlue"></i> New
                               </label>
                             </div>
                           </li>
@@ -833,7 +856,7 @@
                       </span>
         </th>
         <th *ngIf="col?.icon === 'icon-note'" style="padding: 0 !important;" class="separator-right">
-          <i [ngClass]="col.icon"></i>
+
           <span style="display:flex;justify-content: space-between;">
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
                           <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
@@ -847,7 +870,9 @@
         </th>
         <th *ngIf="!col.frozen" style="padding: 0 !important; border-bottom: none !important;">
                       <span style="display:flex;justify-content: space-between; float: right;margin-right: 4px;">
-
+                            <i *ngIf="col.fields ==='EPM10000'" class="icon-settings_24px" nz-dropdown
+                               style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
+                               (click)="openMetricModal()"></i>
                       </span>
         </th>
       </ng-container>
@@ -899,9 +924,8 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div *ngIf="rowData.status !== 'requires regeneration' || !rowData.newPlt" class="text-elipsice"
+          <div class="text-elipsice"
                style="font-weight: bold">{{rowData.pltId | textLength}}</div>
-          <div *ngIf="rowData.status == 'requires regeneration' && rowData.newPlt" class="newTag">NEW</div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
           <div class="text-elipsice"
@@ -916,14 +940,14 @@
                                          'icon-check-circle iconGreen': rowData?.status=='valid' ,
                                          'icon-lock-alt iconRed': rowData?.status=='locked',
                                          'icon-error_24px iconRed2': rowData?.status=='failed',
+                                         'icon-star iconBlue': rowData?.status=='new',
                                          'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }">
               </i>
             </div>
             <div *ngIf="col.icon=='icon-note' && !selectedListOfPlts.includes(rowData.pltId)">
-              <nz-dropdown [nzPlacement]="'bottomLeft'">
+              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click">
                 <i class="icon-menu_24px" nz-dropdown
-                   style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
-                   (click)="clickButtonPlus(false,rowData)"></i>
+                   style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
                 <ul nz-menu>
                   <li nz-menu-item (click)="clickButtonPlus(false,rowData)">Add New Adjustment</li>
                   <li nz-submenu>
@@ -965,48 +989,89 @@
         <ng-container *ngIf="col?.dragable">
           <div class="text-elipsice border-dragable threeValues">
             <div class="EPM0">
-              {{  getRandomInt(10000, 2000000).toString() }}
+              {{  randomMetaData[rowData.pltId][col.fields][0] }}
             </div>
-            <div *ngIf="EPMDisplay == 'amount'" class="EPM1">
-              {{ getRandomInt(1000, 1000000) }}
-            </div>
-            <div *ngIf="EPMDisplay == 'percentage' && getPercentage() > 0"
+            <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1] > 0"
                  class="EPM2B">
-              {{ randomPercentage + '%' }}
+              {{ randomMetaData[rowData.pltId][col.fields][1]  }}
             </div>
-            <div *ngIf="EPMDisplay == 'percentage' && randomPercentage < 0"
+            <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1]  < 0"
                  class="EPM2R">
-              {{ randomPercentage + '%'}}
+              {{ randomMetaData[rowData.pltId][col.fields][1]  }}
+            </div>
+            <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  > 0"
+                 class="EPM2B">
+              {{ randomMetaData[rowData.pltId][col.fields][2] + '%' }}
+            </div>
+            <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  < 0"
+                 class="EPM2R">
+              {{ randomMetaData[rowData.pltId][col.fields][2] + '%'}}
             </div>
           </div>
-          <!--<div *ngIf="selectedEPM == 'AEP - Delta % Basis' ||selectedEPM == 'OEP - Delta % Basis'  "
-               class="text-elipsice border-dragable twoValues">
-            <div class="EPM0">
-              {{  getRandomInt(10000,2000000).toString() }}
-            </div>
-            <div *ngIf="col.fields == 'EPM2' ||
-                        col.fields == 'EPM5' ||
-                        col.fields == 'EPM10' ||
-                        col.fields == 'EPM25' ||
-                        col.fields == 'EPM50' ||
-                        col.fields == 'EPM100'"
-                 class="EPM2B">
-              {{ rowData.EPM[2] }}
-            </div>
-            <div *ngIf="col.fields == 'EPM250' ||
-                                      col.fields == 'EPM500'"
-                 class="EPM2R">
-              {{ rowData.EPM[2] }}
-            </div>
-          </div>
-          <div *ngIf="selectedEPM == 'AEP - Normal' ||selectedEPM == 'OEP - Normal'"
-               class="text-elipsice border-dragable oneValue">
-            <div class="EPM0">
-              {{  getRandomInt(10000,2000000).toString() }}
-            </div>
-          </div>-->
         </ng-container>
       </td>
     </tr>
   </ng-template>
 </p-table>
+
+<p-dialog
+  [autoZIndex]="false"
+  [baseZIndex]="1"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [styleClass]="'m-dialog-modal returned-periods'"
+  [visible]="isVisible"
+  appendTo="body">
+  <p-header>
+    <div class="header">
+      <h4>
+        Configure Return Period
+      </h4>
+      <i (click)="hide()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content" style="display: unset;">
+
+    <p-table [value]="returnPeriods" [scrollable]="true" scrollHeight="365px">
+      <ng-template pTemplate="header">
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData>
+        <tr>
+          <td pEditableColumn style="background-color: #ffffff">
+            <i (click)="removeReturnPeriod(rowData)" class="icon-close_24px" style="cursor: pointer;color: red"></i>
+            <p-cellEditor>
+              <ng-template pTemplate="input">
+                <label>
+                  <input class="a-textfield-mini" pInputText type="text" style="font-size: 14px;margin-left: 5px"
+                         [(ngModel)]="rowData">
+                </label>
+              </ng-template>
+              <ng-template pTemplate="output">
+                {{rowData}}
+              </ng-template>
+            </p-cellEditor>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="footer">
+        <tr>
+          <th style="padding-top: 10px;"><i (click)="addToReturnPeriods()"
+                                            style="font-size: 14px; margin-right: 1px; margin-top: 3px"
+                                            [ngStyle]="{'cursor' : 'pointer'}"
+                                            class="icon-plus-circle"></i>
+            <input class="a-textfield-mini" style="width: 95%" type="text" [(ngModel)]="returnPeriodInput"
+                   name="new-field"></th>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="hide()" class="a-button-text">Close</button>
+      <button class="a-buttons-contained">Save</button>
+    </div>
+  </p-footer>
+</p-dialog>
+
+

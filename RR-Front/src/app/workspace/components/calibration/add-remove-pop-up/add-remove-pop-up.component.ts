@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {combineLatest, Observable, of, Subject, Subscription} from "rxjs";
 import {Actions, ofActionDispatched, Select, Store} from "@ngxs/store";
-import {WorkspaceMainState} from "../../../../core/store/states";
 import * as rightMenuStore from "../../../../shared/components/plt/plt-right-menu/store";
 import {Actions as rightMenuActions} from "../../../../shared/components/plt/plt-right-menu/store";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
@@ -26,8 +25,6 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
   subscriptions: Subscription;
-  @Select(WorkspaceMainState.getData) selectWsData$;
-  @Select(WorkspaceMainState.getProjects) projects$;
   unSubscribe$: Subject<void>;
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
@@ -303,8 +300,8 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
 
   getBrowesingItemsDirectly() {
     this.browesing = true;
-    this.data$ = this.store$.select(WorkspaceState.getPltsForPlts(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPltsForPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.data$ = this.store$.select(WorkspaceState.getPltsForCalibration(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPltsForCalibration(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
 
     this.pltTableSubscription = combineLatest(
       this.data$,
@@ -335,9 +332,9 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
               this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
               this.Inputs['systemTagsCount'][sectionName][section] = {selected: false, count: 0};
               this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-            })
+            });
 
-          })
+          });
         }
 
         _.forEach(data, (v, k) => {
@@ -456,7 +453,7 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       })
     ).subscribe(() => this.d.unsubscribe());
 
-    this.pltProjectSubscription = this.store$.select(WorkspaceState.getProjects()).subscribe((projects: any) => {
+    this.pltProjectSubscription = this.store$.select(WorkspaceState.getProjects).subscribe((projects: any) => {
       this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });

@@ -9,6 +9,16 @@ import {WorkspaceModel} from '../../model';
 import * as fromPlt from "../actions/plt_main.actions";
 import {PltStateService} from "../../services/plt-state.service";
 import {RiskLinkStateService} from "../../services/riskLink-action.service";
+import {
+  AddNewProject,
+  AddNewProjectFail,
+  AddNewProjectSuccess,
+  DeleteProject,
+  DeleteProjectFail, DeleteProjectSuccess
+} from "../../../core/store/actions";
+import {catchError} from "rxjs/operators";
+import {EMPTY} from "rxjs";
+import produce from "immer";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -49,6 +59,16 @@ export class WorkspaceState {
   @Selector()
   static getCurrentTab(state: WorkspaceModel) {
     return state.currentTab;
+  }
+
+  static getDeletedPltsForCalibration(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
+  }
+
+  static getPltsForCalibration(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => !e.deleted), 'pltId'))
   }
 
   @Selector()
@@ -132,13 +152,15 @@ export class WorkspaceState {
    *
    ***********************************/
   @Selector()
-  static getProjects() {
-    return (state: any) => state.workspaceMain.openedWs.projects
+  static getProjects(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].projects;
   }
 
   @Selector()
   static getAttr(state: WorkspaceModel) {
-    return (path) => _.get(state.content.wsIdentifier.Calibration, `${path}`);
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return (path) => _.get(state.content[wsIdentifier].Calibration, `${path}`);
   }
 
   @Selector()
@@ -160,7 +182,7 @@ export class WorkspaceState {
 
   @Selector()
   static getUserTags(state: WorkspaceModel) {
-    return _.get(state.content.wsIdentifier.Calibration, 'userTags', {})
+    return _.get(state.content.wsIdentifier.Calibration, 'userTags', {});
   }
 
   static getLeftNavbarIsCollapsed() {
@@ -300,6 +322,22 @@ export class WorkspaceState {
     return this.wsService.markWsAsNonPinned(ctx, payload);
   }
 
+  @Action(fromWS.ToggleProjectSelection)
+  toggleProjectSelection(ctx: StateContext<WorkspaceModel>, payload: fromWS.ToggleProjectSelection) {
+    return this.wsService.toggleProjectSelection(ctx, payload);
+  }
+
+  @Action(fromWS.AddNewProject)
+  addNewProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.AddNewProject) {
+    console.log('add new project', payload);
+    return this.wsService.addNewProject(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteProject)
+  deleteProject(ctx: StateContext<WorkspaceModel>, payload: fromWS.DeleteProject) {
+    return this.wsService.deleteProject(ctx, payload);
+  }
+
 
   /***********************************
    *
@@ -418,6 +456,11 @@ export class WorkspaceState {
   @Action(fromPlt.restorePlt)
   restorePlt(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.restorePlt) {
     return this.pltStateService.restorePlt(ctx, payload);
+  }
+
+  @Action(fromPlt.FilterPltsByStatus)
+  filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByStatus) {
+    this.pltStateService.filterPltsByStatus(ctx, payload);
   }
 
   /***********************************
@@ -657,6 +700,11 @@ export class WorkspaceState {
     this.riskLinkFacade.applyFinancialPerspective(ctx, payload);
   }
 
+  @Action(fromWS.ApplyRegionPerilAction)
+  applyRegionPeril(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ApplyRegionPerilAction) {
+    this.riskLinkFacade.applyRegionPeril(ctx, payload);
+  }
+
   @Action(fromWS.SaveFinancialPerspectiveAction)
   saveFinancialPerspective(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.saveFinancialPerspective(ctx);
@@ -670,6 +718,11 @@ export class WorkspaceState {
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>) {
     this.riskLinkFacade.createLinking(ctx);
+  }
+
+  @Action(fromWS.UpdateStatusLinkAction)
+  updateStatusLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.UpdateStatusLinkAction) {
+    this.riskLinkFacade.updateStatusLink(ctx, payload);
   }
 
   @Action(fromWS.RemoveFinancialPerspectiveAction)
@@ -690,6 +743,11 @@ export class WorkspaceState {
   @Action(fromWS.DeleteLinkAction)
   deleteLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteLinkAction) {
     this.riskLinkFacade.deleteLink(ctx, payload);
+  }
+
+  @Action(fromWS.DeleteInnerLinkAction)
+  deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
+    this.riskLinkFacade.deleteInnerLink(ctx, payload);
   }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)

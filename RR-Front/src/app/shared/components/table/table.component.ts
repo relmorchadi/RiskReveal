@@ -228,7 +228,7 @@ export class TableComponent implements OnInit {
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
-    this.contextMenu.hide();
+    this.contextMenu ? this.contextMenu.hide() : null
   }
 
   rowSelect($event) {

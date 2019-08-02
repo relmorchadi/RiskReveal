@@ -1,14 +1,14 @@
 import {Injectable} from '@angular/core';
-import {environment} from '../../../environments/environment';
 import {Observable} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
+import {backendUrl} from "../../shared/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PltApi {
 
-  protected URL = `${environment.API_URI}plt`;
+  protected URL = `${backendUrl()}plt`;
 
   constructor(private http: HttpClient) {
   }

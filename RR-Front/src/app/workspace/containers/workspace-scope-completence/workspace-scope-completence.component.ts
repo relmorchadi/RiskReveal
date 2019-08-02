@@ -1,7 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
-import {WorkspaceMainState} from '../../../core/store/states';
 import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
@@ -19,7 +18,6 @@ import * as fromWs from '../../store/actions';
 export class WorkspaceScopeCompletenceComponent extends BaseContainer implements OnInit, StateSubscriber {
   check = true;
   @Select(WorkspaceState.getPlts) data$;
-  @Select(WorkspaceMainState.getData) wsData$;
 
   wsIdentifier;
 
@@ -38,7 +36,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   ngOnInit() {
     this.dataSource = dataTable.dataSource;
     combineLatest(
-      this.wsData$,
       this.route.params
     ).pipe(this.unsubscribeOnDestroy)
       .subscribe(([dtt, {wsId, year}]: any) => {

@@ -1270,6 +1270,20 @@ export const EPM_COLUMNS = [
   },
   {
     sortDir: 1,
+    fields: 'AAL',
+    header: 'AAL',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
     fields: 'EPM2',
     header: '2',
     width: '80',
@@ -1448,3 +1462,16 @@ export const SYSTEM_TAGS_MAPPING = {
   },
   nonGrouped: {}
 };
+export const CURRENCIES = [
+  {id: '1', name: 'Euro', label: 'EUR'},
+  {id: '2', name: 'Us Dollar', label: 'USD'},
+  {id: '3', name: 'Britsh Pound', label: 'GBP'},
+  {id: '4', name: 'Canadian Dollar', label: 'CAD'},
+  {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
+  {id: '5', name: 'Swiss Franc', label: 'CHF'},
+  {id: '5', name: 'Saudi Riyal', label: 'SAR'},
+  {id: '6', name: 'Bitcoin', label: 'XBT'},
+  {id: '7', name: 'Hungarian forint', label: 'HUF'},
+  {id: '8', name: 'Singapore Dollars', label: 'SGD'}
+];
+
