@@ -115,7 +115,7 @@
               </div>
               <div class="form-group">
                 <input formControlName="projectDescription" class="a-textfield-standard" type="text" placeholder="Project description" style="margin: 0 16px;">
-                <div *ngIf="_projectDescription.invalid && _projectDescription.dirty" class="input-err"><span *ngIf="_projectDescription.errors.required">Description is required</span></div>
+                <div *ngIf="_projectDescription.invalid && _projectDescription.dirty" class="input-err"><span *ngIf="_projectDescription.errors?.required">Description is required</span></div>
               </div>
             </div>
             <form [formGroup]="projectsForm" *ngIf="_projectStep.value == 1" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
@@ -126,15 +126,18 @@
     z-index: 0;
     border: 3px solid var(--primary-1);
 ">
-              <nz-select
-                style="width: 270px;"
-                nzShowSearch
-                class="a-dropdown-small"
-                nzPlaceHolder="Choose target project"
-                formControlName="selectedProjectIndex"
-              >
-                <nz-option *ngFor="let project of listOfProjects;let i=index;" [nzLabel]="project?.name+ ' | ' + project?.projectId" [nzValue]="i"></nz-option>
-              </nz-select>
+              <div class="form-group">
+                <nz-select
+                  style="width: 270px;"
+                  nzShowSearch
+                  class="a-dropdown-small"
+                  nzPlaceHolder="Choose target project"
+                  formControlName="selectedProjectIndex"
+                >
+                  <nz-option *ngFor="let project of listOfProjects;let i=index;" [nzLabel]="project?.name+ ' | ' + project?.projectId" [nzValue]="i"></nz-option>
+                </nz-select>
+                <div *ngIf="_selectedProjectIndex.invalid && _selectedProjectIndex.dirty" class="input-err"><span *ngIf="_selectedProjectIndex.errors?.noSelectedProject">Project is required</span></div>
+              </div>
             </form>
           </form>
         </div>

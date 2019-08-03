@@ -143,9 +143,8 @@
 
 :host {
   width: 100%;
-  height: max-content;
+  height: calc(100vh - 200px);
   display: flex;
-  min-height: 100vh;
   background-color: #F4F6FC;
 
   ::ng-deep.plt-browser-wrapper {
@@ -1196,8 +1195,8 @@
 :host {
   ::ng-deep {
     nz-collapse {
-      max-height: 48%;
-      overflow: auto;
+      /*max-height: 48%;
+      overflow: auto;*/
     }
 
     .Tags-content {
@@ -1217,7 +1216,7 @@
     }
 
     .ant-collapse-content > .ant-collapse-content-box {
-      max-width: 190px;
+      //max-width: 190px;
       padding: 0;
     }
 

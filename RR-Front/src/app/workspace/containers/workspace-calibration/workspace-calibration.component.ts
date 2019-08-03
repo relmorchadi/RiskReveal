@@ -138,22 +138,56 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   selectedListOfDeletedPlts: any;
   contextMenuItems = [
     {
-      label: 'View Detail', command: (event) => {
+      label: 'Regenerate', command: (event) => {
         this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
     {
-      label: 'Delete', command: (event) => {
-        this.dispatch(new fromWorkspaceStore.deletePlt({
-          wsIdentifier: this.workspaceId + '-' + this.uwy,
-          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
-        }));
+      label: 'Add New Adjustment', command: (event) => {
+        this.clickButtonPlus(false, event)
       }
     },
     {
-      label: 'Clone To',
+      label: 'Create', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Clone',
       command: (event) => {
         this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
+      }
+    },
+    {separator: true},
+    {
+      label: 'Publish to Pricing', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Publish to Accumulation', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Inuring', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Add ro Comparer', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Export', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {separator: true},
+    {
+      label: 'View Detail', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
     {
@@ -171,14 +205,19 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       }
     },
     {
-      label: 'Restore',
-      command: () => {
-        this.dispatch(new fromWorkspaceStore.restorePlt({
+      label: 'Remove', command: (event) => {
+        this.dispatch(new fromWorkspaceStore.deletePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
-          pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
-        }))
-        this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
-        this.generateContextMenu(this.showDeleted);
+          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
+        }));
+      }
+    },
+    {
+      label: 'Delete', command: (event) => {
+        this.dispatch(new fromWorkspaceStore.deletePlt({
+          wsIdentifier: this.workspaceId + '-' + this.uwy,
+          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
+        }));
       }
     }
   ];

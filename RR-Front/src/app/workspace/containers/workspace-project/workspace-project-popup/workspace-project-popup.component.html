@@ -1,6 +1,6 @@
 <p-dialog [(visible)]="isVisible"
           [closable]="false"
-          [styleClass]="'m-dialog-modal-lg' + (browesing ? ' borderless' : '')"
+          [styleClass]="'m-dialog-modal-lg project-clone-pop-up' + (browesing ? ' borderless' : '')"
           appendTo="body"
           [modal]="true"
           [responsive]="true"
@@ -70,7 +70,9 @@
     </div>
   </ng-container>
   <ng-container *ngIf="browesing && selectionStep == 'project'">
-    <projects-list [projects]="selectedWorkspaceProjects" (select)="selectThisProject($event)"></projects-list>
+    <div style="overflow: scroll; height: -webkit-fill-available;">
+      <projects-list [projects]="selectedWorkspaceProjects" (select)="selectThisProject($event)"></projects-list>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="browesing && selectionStep == 'plt'">
