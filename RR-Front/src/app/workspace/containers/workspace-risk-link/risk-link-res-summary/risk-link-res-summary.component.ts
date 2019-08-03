@@ -96,6 +96,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   indeterminatePortfolio: boolean;
 
   collapseDataSources = false;
+  collapseFPDataTable = false;
 
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
@@ -111,6 +112,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.serviceSubscription = [
       this.state$.subscribe(value => {
         this.state = _.merge({}, value);
+        this.detectChanges();
       }),
       this.linking$.pipe().subscribe(value => {
         this.linking = _.merge({}, value);
@@ -237,6 +239,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: selection}));
     } else if (scope === 'results') {
       this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: selection}));
+    } else if (scope === 'FPAnalysis') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: selection}));
+    } else if (scope === 'FPStandard') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: selection}));
     } else if (scope === 'linkingAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
       this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: selection, wrapper: wrapperEDM}));
@@ -294,7 +300,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this.lastSelectedIndexFPstandard = index;
     } else if (target === 'fpA') {
       const action = (payload) => new fromWs.ToggleRiskLinkFPAnalysisAction(payload);
-      this._selectRowsProvider(row, index, this.lastSelectedIndexFPAnalysis, action, 'fpS');
+      this._selectRowsProvider(row, index, this.lastSelectedIndexFPAnalysis, action, 'fpA');
       this.lastSelectedIndexFPAnalysis = index;
     }  else if (target === 'linkAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
@@ -346,7 +352,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this._selectSectionProvider(from, to, action, this.state.summaries.data);
     } else if (target === 'fpS') {
       const action = (payload) => new fromWs.ToggleRiskLinkFPStandardAction(payload);
-      this._selectSectionProvider(from, to, action, this.workingFSC.standard);
+      this._selectSectionProvider(from, to, action, this.workingFSC.standard.data);
     } else if (target === 'fpA') {
       const action = (payload) => new fromWs.ToggleRiskLinkFPAnalysisAction(payload);
       this._selectSectionProvider(from, to, action, this.workingFSC.analysis.data);
@@ -387,9 +393,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.store.dispatch(new fromWs.DeleteFromBasketAction({id: id, scope: target}));
   }
 
-  openFinancialP() {
+  openFinancialP(row) {
     this.financialP = true;
     this.store.dispatch(new fromWs.LoadFinancialPerspectiveAction(this.financialStandardContent));
+    this.selectRows(row, null, 'fpA');
     this.lastSelectedIndexFPstandard = null;
     this.lastSelectedIndexFPAnalysis = null;
   }
@@ -546,7 +553,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   createLinking() {
-    this.store.dispatch(new fromWs.CreateLinkingAction());
+    this.store.dispatch(new fromWs.CreateLinkingAction(this.linking.rdm.selected));
   }
 
   selectLink(link) {

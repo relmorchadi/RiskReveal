@@ -223,7 +223,11 @@ export class WorkspaceState {
     let selectedAnalysis: any = _.toArray(_.get(state.content[wsIdentifier],
       `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
     selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
-    return state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data;
+    return {
+      data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
+      allChecked: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked,
+      indeterminate: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate
+    };
   }
 
   @Selector()
@@ -232,7 +236,11 @@ export class WorkspaceState {
     let selectedPortfolio: any = _.toArray(_.get(state.content[wsIdentifier],
       `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
     selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
-    return state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data;
+    return {
+      data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
+      allChecked: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked,
+      indeterminate: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate
+    };
   }
 
   @Selector()
@@ -713,8 +721,8 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.CreateLinkingAction)
-  createLinking(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.createLinking(ctx);
+  createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
+    this.riskLinkFacade.createLinking(ctx, payload);
   }
 
   @Action(fromWS.UpdateStatusLinkAction)

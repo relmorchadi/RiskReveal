@@ -2,7 +2,7 @@ import {StateContext} from '@ngxs/store';
 import * as fromWs from '../store/actions';
 import * as _ from 'lodash';
 import {
-  PatchRiskLinkDisplayAction,
+  PatchRiskLinkDisplayAction, ToggleAnalysisForLinkingAction,
 } from '../store/actions';
 import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
@@ -203,11 +203,16 @@ export class RiskLinkStateService {
     const selectedPortfolio = _.filter(_.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm),
       dt => dt.selected)[0];
     const portfolios = _.toArray(state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data);
+    const numSelectedItems = _.filter(portfolios, items => items.selected).length;
     let newData = {};
     if (action === 'selectOne') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data[item.dataSourceId].selected = value
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data[item.dataSourceId].selected = value;
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate =
+            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === portfolios.length - 1 && value === true);
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked =
+            (numSelectedItems === portfolios.length - 1 && value === true);
         }));
     } else {
       let selected: boolean;
@@ -224,6 +229,8 @@ export class RiskLinkStateService {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data = newData;
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate = false;
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked = selected;
         })
       );
     }
@@ -236,11 +243,16 @@ export class RiskLinkStateService {
     const selectedAnalysis = _.filter(_.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm),
       dt => dt.selected)[0];
     const analysis = _.toArray(state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data);
+    const numSelectedItems = _.filter(analysis, items => items.selected).length;
     let newData = {};
     if (action === 'selectOne') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data[item.analysisId].selected = value;
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate =
+            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === analysis.length - 1 && value === true);
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked =
+            (numSelectedItems === analysis.length - 1 && value === true);
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
@@ -258,6 +270,8 @@ export class RiskLinkStateService {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data = newData;
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate = false;
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked = selected;
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     }
@@ -268,10 +282,15 @@ export class RiskLinkStateService {
     const {action, value, item} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const result = _.toArray(state.content[wsIdentifier].riskLink.results.data);
+    const numSelectedItems = _.filter(result, items => items.selected).length;
     if (action === 'selectOne') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.results.data[item.id].selected = value;
+          draft.content[wsIdentifier].riskLink.results.indeterminate =
+            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === result.length - 1 && value === true);
+          draft.content[wsIdentifier].riskLink.results.allChecked =
+            (numSelectedItems === result.length - 1 && value === true);
         }));
     } else {
       let selected: boolean;
@@ -280,6 +299,8 @@ export class RiskLinkStateService {
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.results.data = Object.assign({},
             ...result.map(dt => ({[dt.id]: {...dt, selected: selected}})));
+          draft.content[wsIdentifier].riskLink.results.indeterminate = false;
+          draft.content[wsIdentifier].riskLink.results.allChecked = selected;
         }));
     }
   }
@@ -289,10 +310,15 @@ export class RiskLinkStateService {
     const {action, value, item} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const summaries = _.toArray(state.content[wsIdentifier].riskLink.summaries.data);
+    const numSelectedItems = _.filter(summaries, items => items.selected).length;
     if (action === 'selectOne') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.summaries.data[item.id].selected = value;
+          draft.content[wsIdentifier].riskLink.summaries.indeterminate =
+            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === summaries.length - 1 && value === true);
+          draft.content[wsIdentifier].riskLink.summaries.allChecked =
+            (numSelectedItems === summaries.length - 1 && value === true);
         }));
     } else {
       let selected: boolean;
@@ -301,6 +327,8 @@ export class RiskLinkStateService {
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.summaries.data = Object.assign({},
             ...summaries.map(dt => ({[dt.id]: {...dt, selected: selected}})));
+          draft.content[wsIdentifier].riskLink.summaries.indeterminate = false;
+          draft.content[wsIdentifier].riskLink.summaries.allChecked = selected;
         }));
     }
   }
@@ -309,19 +337,26 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const {action, value, item} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const fpStandard = _.toArray(state.content[wsIdentifier].riskLink.financialPerspective.standard);
+    const fpStandard = _.toArray(state.content[wsIdentifier].riskLink.financialPerspective.standard.data);
+    const numSelectedItems = _.filter(fpStandard, items => items.selected).length;
     if (action === 'selectOne') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.financialPerspective.standard[item.id].selected = value;
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.data[item.id].selected = value;
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.indeterminate =
+            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === fpStandard.length - 1 && value === true);
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.allChecked =
+            (numSelectedItems === fpStandard.length - 1 && value === true);
         }));
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.financialPerspective.standard = Object.assign({},
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.data = Object.assign({},
             ...fpStandard.map(dt => ({[dt.id]: {...dt, selected: selected}})));
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.indeterminate = false;
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.allChecked = selected;
         })
       );
     }
@@ -332,10 +367,15 @@ export class RiskLinkStateService {
     const {action, value, item} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const fpAnalysis = _.toArray(state.content[wsIdentifier].riskLink.financialPerspective.analysis.data);
+    const numSelectedItems = _.filter(fpAnalysis, items => items.selected).length;
     if (action === 'selectOne') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.financialPerspective.analysis.data[item.id].selected = value;
+          draft.content[wsIdentifier].riskLink.financialPerspective.analysis.indeterminate =
+            !(numSelectedItems === 1 && value === false) && !(numSelectedItems === fpAnalysis.length - 1 && value === true);
+          draft.content[wsIdentifier].riskLink.financialPerspective.analysis.allChecked =
+            (numSelectedItems === fpAnalysis.length - 1 && value === true);
         }));
     } else {
       let selected: boolean;
@@ -344,6 +384,8 @@ export class RiskLinkStateService {
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.financialPerspective.analysis.data = Object.assign({},
             ...fpAnalysis.map(dt => ({[dt.id]: {...dt, selected: selected}})));
+          draft.content[wsIdentifier].riskLink.financialPerspective.analysis.indeterminate = false;
+          draft.content[wsIdentifier].riskLink.financialPerspective.analysis.allChecked = selected;
         }));
     }
   }
@@ -595,7 +637,7 @@ export class RiskLinkStateService {
     }
   }
 
-  createLinking(ctx: StateContext<WorkspaceModel>) {
+  createLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const portfolio = _.toArray(state.content[wsIdentifier].riskLink.linking.portfolio.data);
@@ -613,6 +655,9 @@ export class RiskLinkStateService {
         }
       }
     ));
+    console.log(payload);
+    ctx.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: payload}));
+    ctx.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
   }
 
   updateStatusLink(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1155,15 +1200,17 @@ export class RiskLinkStateService {
     ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].riskLink.financialPerspective = {
           ...draft.content[wsIdentifier].riskLink.financialPerspective,
-          standard: Object.assign({}, ...payload.map(item => ({[item.id]: {...item}}))),
+          standard: {data: Object.assign({}, ...payload.map(item => ({[item.id]: {...item}}))),
+            allChecked: false,
+            indeterminate: false
+          },
           analysis: {
             ...draft.content[wsIdentifier].riskLink.results,
             data: Object.assign({}, ..._.toArray(draft.content[wsIdentifier].riskLink.results.data).map(item => ({
-              [item.id]: {
-                ...item,
-                selected: false
-              }
-            })))
+              [item.id]: {...item, selected: false}
+            }))),
+            allChecked: false,
+            indeterminate: false
           }
         };
       })

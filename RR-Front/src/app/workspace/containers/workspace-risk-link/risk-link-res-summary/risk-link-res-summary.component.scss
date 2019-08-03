@@ -848,31 +848,6 @@ LINKING MODAL STYLE
         max-height: 160px;
         overflow-y: auto;
       }
-
-      .wrap-icon-right {
-        display: flex;
-        justify-content: flex-end;
-        margin: 5px 10px;
-
-        .icon-keyboard_arrow_down_24px, .icon-keyboard_arrow_up_24px {
-          color: #fff;
-          border-radius: 24px;
-          font-size: 19px;
-          width: 19px;
-          height: 19px;
-          display: flex;
-          cursor: pointer;
-        }
-
-        .icon-keyboard_arrow_down_24px {
-          background-color: #0700CF;
-        }
-
-        .icon-keyboard_arrow_up_24px {
-          background-color: rgba(0, 0, 0, 0.05);
-          color: rgba(0, 0, 0, 0.35);
-        }
-      }
     }
 
     .modal-l-h-body {
@@ -985,5 +960,30 @@ LINKING MODAL STYLE
 
   .popover-menu-item-active {
     background-color: #FCF9D6;
+  }
+}
+
+.wrap-icon-right {
+  display: flex;
+  justify-content: flex-end;
+  margin: 5px 10px;
+
+  .icon-keyboard_arrow_down_24px, .icon-keyboard_arrow_up_24px {
+    color: #fff;
+    border-radius: 24px;
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .icon-keyboard_arrow_down_24px {
+    background-color: #0700CF;
+  }
+
+  .icon-keyboard_arrow_up_24px {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.35);
   }
 }
