@@ -1,6 +1,8 @@
 package com.scor.rr.configuration.file;
 
 import com.scor.rr.configuration.utils.Constant;
+import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 
 import com.scor.rr.exceptions.fileExceptionPlt.*;
@@ -55,4 +57,66 @@ public class CSVPLTFileReader implements PLTFileReader {
             throw new EventDateFormatException();
         }
     }
+
+    public List<PEATData> readPeatData(File file) throws RRException {
+        if (file == null || !file.exists())
+            throw new PLTFileNotFoundException();
+        if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
+            throw new PLTFileExtNotSupportedException();
+
+        try {
+            List<PEATData> peatData = new ArrayList<>();
+            Scanner sc = new Scanner(new FileReader(file));
+            sc.useDelimiter("\\r\\n|;");
+            if (sc.hasNextLine()) {
+                sc.nextLine();
+            }
+            while (sc.hasNext()) {
+                Integer eventId = Integer.valueOf(sc.next()); //Simulated Period ID
+                Integer simPeriod = Integer.valueOf(sc.next()); //Event ID
+                int seq = Integer.valueOf(sc.next());
+                Double lmf = Double.valueOf(sc.next()); //Lmf
+
+                peatData.add(new PEATData(eventId,
+                        simPeriod,
+                        seq,
+                        lmf));
+            }
+            return peatData;
+        } catch (IOException | NoSuchElementException e) {
+            throw new PLTFileCorruptedException();
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(e.getMessage());
+        }
+    }
+
+    public List<AdjustmentReturnPeriodBending> readAdjustmentReturnPeriodBanding(File file) throws RRException {
+        if (file == null || !file.exists())
+            throw new PLTFileNotFoundException();
+        if (! "csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName())))
+            throw new PLTFileExtNotSupportedException();
+
+        try {
+            List<AdjustmentReturnPeriodBending> returnPeriodBendings = new ArrayList<>();
+            Scanner sc = new Scanner(new FileReader(file));
+            sc.useDelimiter("\\r\\n|;");
+            if (sc.hasNextLine()) {
+                sc.nextLine();
+            }
+            while (sc.hasNext()) {
+                Integer returnPeriod = Integer.valueOf(sc.next()); //Simulated Period ID
+                Double lmf = Double.valueOf(sc.next()); //Lmf
+
+                returnPeriodBendings.add(new AdjustmentReturnPeriodBending(returnPeriod,
+                        lmf));
+            }
+            return returnPeriodBendings;
+        } catch (IOException | NoSuchElementException e) {
+            throw new PLTFileCorruptedException();
+        } catch (NumberFormatException e) {
+            throw new NumberFormatException(e.getMessage());
+        }
+    }
+
+
 }

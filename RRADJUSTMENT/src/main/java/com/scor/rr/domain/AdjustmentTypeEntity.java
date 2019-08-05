@@ -21,7 +21,7 @@ public class AdjustmentTypeEntity {
     }
 
     @Basic
-    @Column(name = "type", nullable = true, length = 200)
+    @Column(name = "type", length = 200)
     public String getType() {
         return type;
     }
@@ -31,7 +31,7 @@ public class AdjustmentTypeEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 200)
+    @Column(name = "description", length = 200)
     public String getDescription() {
         return description;
     }

@@ -28,7 +28,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "adjustment_basis_name", nullable = true, length = 255)
+    @Column(name = "adjustment_basis_name", length = 255)
     public String getAdjustmentBasisName() {
         return adjustmentBasisName;
     }
@@ -38,7 +38,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "basis_short_name", nullable = true, length = 255)
+    @Column(name = "basis_short_name", length = 255)
     public String getBasisShortName() {
         return basisShortName;
     }
@@ -48,7 +48,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", length = 255)
     public String getDescription() {
         return description;
     }
@@ -58,7 +58,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "exposure_flag", nullable = true, length = 50)
+    @Column(name = "exposure_flag", length = 50)
     public String getExposureFlag() {
         return exposureFlag;
     }
@@ -68,7 +68,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "capped", nullable = true)
+    @Column(name = "capped")
     public Boolean getCapped() {
         return capped;
     }
@@ -78,7 +78,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "is_active", nullable = true)
+    @Column(name = "is_active")
     public Boolean getActive() {
         return isActive;
     }
@@ -88,7 +88,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "is_exposure_growth", nullable = true)
+    @Column(name = "is_exposure_growth")
     public Boolean getExposureGrowth() {
         return isExposureGrowth;
     }
@@ -98,7 +98,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "sequence", nullable = true)
+    @Column(name = "sequence")
     public Integer getSequence() {
         return sequence;
     }

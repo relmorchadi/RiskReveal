@@ -22,7 +22,7 @@ public class AdjustmentStateEntity {
     }
 
     @Basic
-    @Column(name = "code", nullable = true, length = 200)
+    @Column(name = "code", length = 200)
     public String getCode() {
         return code;
     }
@@ -32,7 +32,7 @@ public class AdjustmentStateEntity {
     }
 
     @Basic
-    @Column(name = "state_name", nullable = true, length = 200)
+    @Column(name = "state_name", length = 200)
     public String getStateName() {
         return stateName;
     }
@@ -42,7 +42,7 @@ public class AdjustmentStateEntity {
     }
 
     @Basic
-    @Column(name = "state_desc", nullable = true, length = 800)
+    @Column(name = "state_desc", length = 800)
     public String getStateDesc() {
         return stateDesc;
     }

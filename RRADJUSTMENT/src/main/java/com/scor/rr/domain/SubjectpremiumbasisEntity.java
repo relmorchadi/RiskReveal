@@ -25,7 +25,7 @@ public class SubjectpremiumbasisEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -35,7 +35,7 @@ public class SubjectpremiumbasisEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -45,7 +45,7 @@ public class SubjectpremiumbasisEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CODE", length = 255,insertable = false ,updatable = false)
     public String getCode() {
         return code;
     }
@@ -55,7 +55,7 @@ public class SubjectpremiumbasisEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "LABEL", length = 255,insertable = false ,updatable = false)
     public String getLabel() {
         return label;
     }
@@ -65,7 +65,7 @@ public class SubjectpremiumbasisEntity {
     }
 
     @Basic
-    @Column(name = "LONGNAME", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "LONGNAME", length = 255,insertable = false ,updatable = false)
     public String getLongname() {
         return longname;
     }

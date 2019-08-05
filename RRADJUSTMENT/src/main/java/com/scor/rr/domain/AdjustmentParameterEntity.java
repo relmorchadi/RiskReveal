@@ -34,7 +34,7 @@ public class AdjustmentParameterEntity {
     }
 
     @Basic
-    @Column(name = "param_value", nullable = true, length = 255)
+    @Column(name = "param_value", length = 255)
     public String getParamValue() {
         return paramValue;
     }
@@ -44,7 +44,7 @@ public class AdjustmentParameterEntity {
     }
 
     @Basic
-    @Column(name = "param_type", nullable = true, length = 255)
+    @Column(name = "param_type", length = 255)
     public String getParamType() {
         return paramType;
     }

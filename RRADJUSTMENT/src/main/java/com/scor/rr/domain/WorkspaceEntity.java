@@ -23,7 +23,7 @@ public class WorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "workspaceContextCode", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "workspaceContextCode", length = 255,insertable = false ,updatable = false)
     public String getWorkspaceContextCode() {
         return workspaceContextCode;
     }
@@ -33,7 +33,7 @@ public class WorkspaceEntity {
     }
 
     @Basic
-    @Column(name = "workspaceUwYear", nullable = true)
+    @Column(name = "workspaceUwYear")
     public Integer getWorkspaceUwYear() {
         return workspaceUwYear;
     }

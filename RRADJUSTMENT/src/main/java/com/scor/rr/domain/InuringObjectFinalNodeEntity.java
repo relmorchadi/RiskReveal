@@ -20,7 +20,7 @@ public class InuringObjectFinalNodeEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackage_Id", nullable = true, precision = 0)
+    @Column(name = "InuringPackage_Id", precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }

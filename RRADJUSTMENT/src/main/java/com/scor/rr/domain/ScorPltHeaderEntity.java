@@ -75,7 +75,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "pltType", nullable = true, length = 255)
+    @Column(name = "pltType", length = 255)
     public String getPltType() {
         return pltType;
     }
@@ -85,7 +85,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "publishToPricing", nullable = true)
+    @Column(name = "publishToPricing")
     public Boolean getPublishToPricing() {
         return publishToPricing;
     }
@@ -95,7 +95,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "pltSimulationPeriods", nullable = true)
+    @Column(name = "pltSimulationPeriods")
     public Integer getPltSimulationPeriods() {
         return pltSimulationPeriods;
     }
@@ -105,7 +105,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "generatedFromDefaultAdjustement", nullable = true)
+    @Column(name = "generatedFromDefaultAdjustement")
     public Boolean getGeneratedFromDefaultAdjustement() {
         return generatedFromDefaultAdjustement;
     }
@@ -115,7 +115,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "ccyCode", nullable = true, length = 255)
+    @Column(name = "ccyCode", length = 255)
     public String getCcyCode() {
         return ccyCode;
     }
@@ -125,7 +125,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "geoCode", nullable = true, length = 255)
+    @Column(name = "geoCode", length = 255)
     public String getGeoCode() {
         return geoCode;
     }
@@ -135,7 +135,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "geoDescription", nullable = true, length = 255)
+    @Column(name = "geoDescription", length = 255)
     public String getGeoDescription() {
         return geoDescription;
     }
@@ -145,7 +145,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "rmsSimulationSet", nullable = true)
+    @Column(name = "rmsSimulationSet")
     public Integer getRmsSimulationSet() {
         return rmsSimulationSet;
     }
@@ -155,7 +155,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "importSequence", nullable = true)
+    @Column(name = "importSequence")
     public Integer getImportSequence() {
         return importSequence;
     }
@@ -165,7 +165,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "threadName", nullable = true, length = 255)
+    @Column(name = "threadName", length = 255)
     public String getThreadName() {
         return threadName;
     }
@@ -175,7 +175,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "udName", nullable = true, length = 255)
+    @Column(name = "udName", length = 255)
     public String getUdName() {
         return udName;
     }
@@ -185,7 +185,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "userOccurrenceBasis", nullable = true, length = 255)
+    @Column(name = "userOccurrenceBasis", length = 255)
     public String getUserOccurrenceBasis() {
         return userOccurrenceBasis;
     }
@@ -195,7 +195,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "defaultPltName", nullable = true, length = 255)
+    @Column(name = "defaultPltName", length = 255)
     public String getDefaultPltName() {
         return defaultPltName;
     }
@@ -205,7 +205,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "truncationThreshold", nullable = true, length = 255)
+    @Column(name = "truncationThreshold", length = 255)
     public String getTruncationThreshold() {
         return truncationThreshold;
     }
@@ -215,7 +215,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "truncationExchangeRate", nullable = true, length = 255)
+    @Column(name = "truncationExchangeRate", length = 255)
     public String getTruncationExchangeRate() {
         return truncationExchangeRate;
     }
@@ -225,7 +225,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "truncationCurrency", nullable = true, length = 255)
+    @Column(name = "truncationCurrency", length = 255)
     public String getTruncationCurrency() {
         return truncationCurrency;
     }
@@ -235,7 +235,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "sourceLossModelingBasis", nullable = true, length = 255)
+    @Column(name = "sourceLossModelingBasis", length = 255)
     public String getSourceLossModelingBasis() {
         return sourceLossModelingBasis;
     }
@@ -245,7 +245,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "deletedOn", nullable = true)
+    @Column(name = "deletedOn")
     public Timestamp getDeletedOn() {
         return deletedOn;
     }
@@ -255,7 +255,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "deletedDue", nullable = true, length = 255)
+    @Column(name = "deletedDue", length = 255)
     public String getDeletedDue() {
         return deletedDue;
     }
@@ -265,7 +265,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "deletedBy", nullable = true, length = 255)
+    @Column(name = "deletedBy", length = 255)
     public String getDeletedBy() {
         return deletedBy;
     }
@@ -275,7 +275,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "sourceLossEntityingBasis", nullable = true, length = 255)
+    @Column(name = "sourceLossEntityingBasis", length = 255)
     public String getSourceLossEntityingBasis() {
         return sourceLossEntityingBasis;
     }
@@ -285,7 +285,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "created_by", nullable = true, length = 255)
+    @Column(name = "created_by", length = 255)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -295,7 +295,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "created_on", nullable = true)
+    @Column(name = "created_on")
     public Timestamp getCreatedOn() {
         return createdOn;
     }
@@ -305,7 +305,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "last_modified_by", nullable = true, length = 255)
+    @Column(name = "last_modified_by", length = 255)
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -315,7 +315,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "last_modified_on", nullable = true, length = 255)
+    @Column(name = "last_modified_on", length = 255)
     public String getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -325,7 +325,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "last_generated", nullable = true)
+    @Column(name = "last_generated")
     public Timestamp getLastGenerated() {
         return lastGenerated;
     }
@@ -335,7 +335,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "basis_changed", nullable = true)
+    @Column(name = "basis_changed")
     public Boolean getBasisChanged() {
         return basisChanged;
     }
@@ -345,7 +345,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "narrative_changed", nullable = true)
+    @Column(name = "narrative_changed")
     public Boolean getNarrativeChanged() {
         return narrativeChanged;
     }
@@ -355,7 +355,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "previous_narrative", nullable = true)
+    @Column(name = "previous_narrative")
     public Integer getPreviousNarrative() {
         return previousNarrative;
     }
@@ -365,7 +365,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "current_narrative", nullable = true)
+    @Column(name = "current_narrative")
     public Integer getCurrentNarrative() {
         return currentNarrative;
     }
@@ -375,7 +375,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "createdDate", nullable = true)
+    @Column(name = "createdDate")
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -385,7 +385,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "e", nullable = true, length = 255)
+    @Column(name = "e", length = 255)
     public String getE() {
         return e;
     }
@@ -395,7 +395,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "inuringPackageId", nullable = true)
+    @Column(name = "inuringPackageId")
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }
@@ -405,7 +405,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "perilCode", nullable = true, length = 255)
+    @Column(name = "perilCode", length = 255)
     public String getPerilCode() {
         return perilCode;
     }
@@ -415,7 +415,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "pltLossDataFileName", nullable = true, length = 255)
+    @Column(name = "pltLossDataFileName", length = 255)
     public String getPltLossDataFileName() {
         return pltLossDataFileName;
     }
@@ -425,7 +425,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "pltLossDataFilePath", nullable = true, length = 255)
+    @Column(name = "pltLossDataFilePath", length = 255)
     public String getPltLossDataFilePath() {
         return pltLossDataFilePath;
     }
@@ -435,7 +435,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "engine_type", nullable = true, length = 255)
+    @Column(name = "engine_type", length = 255)
     public String getEngineType() {
         return engineType;
     }
@@ -481,7 +481,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "id_bin_file", referencedColumnName = "binFile_Id", nullable = true, table = "")
+    @JoinColumn(name = "id_bin_file", referencedColumnName = "binFile_Id", table = "")
     public BinFileEntity getBinFile() {
         return binFile;
     }
@@ -491,7 +491,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "rrAnalysisId", referencedColumnName = "rrAnalysisId", nullable = true, table = "")
+    @JoinColumn(name = "rrAnalysisId", referencedColumnName = "rrAnalysisId", table = "")
     public RrAnalysisNewEntity getRrAnalysis() {
         return rrAnalysis;
     }
@@ -501,7 +501,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "id_target_rap", referencedColumnName = "targetRapId", nullable = true, table = "")
+    @JoinColumn(name = "id_target_rap", referencedColumnName = "targetRapId", table = "")
     public TargetRapEntity getTargetRap() {
         return targetRap;
     }
@@ -511,7 +511,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "regionPerilId", referencedColumnName = "regionPerilId", nullable = true, table = "")
+    @JoinColumn(name = "regionPerilId", referencedColumnName = "regionPerilId", table = "")
     public RegionPerilEntity getRegionPeril() {
         return regionPeril;
     }
@@ -521,7 +521,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "projectId", referencedColumnName = "projectId", nullable = true, table = "")
+    @JoinColumn(name = "projectId", referencedColumnName = "projectId", table = "")
     public ProjectEntity getProject() {
         return projectByProjectId;
     }
@@ -531,7 +531,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "previous_basis", referencedColumnName = "code", nullable = true, table = "")
+    @JoinColumn(name = "previous_basis", referencedColumnName = "code", table = "")
     public AdjustmentBasisEntity getAdjustmentBasisPrevious() {
         return adjustmentBasisPrevious;
     }
@@ -541,7 +541,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne(cascade = {})
-    @JoinColumn(name = "current_basis", referencedColumnName = "code", nullable = true, table = "")
+    @JoinColumn(name = "current_basis", referencedColumnName = "code", table = "")
     public AdjustmentBasisEntity getAdjustmentBasisCurrent() {
         return adjustmentBasisCurrent;
     }

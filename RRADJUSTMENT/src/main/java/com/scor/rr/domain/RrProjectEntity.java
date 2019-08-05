@@ -29,7 +29,7 @@ public class RrProjectEntity {
 
     @Id
     @Basic
-    @Column(name = "id", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "id", length = 255,insertable = false ,updatable = false)
     public String getId() {
         return id;
     }
@@ -39,7 +39,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "assignedTo", length = 255,insertable = false ,updatable = false)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -49,7 +49,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "cloneSourceProject", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "cloneSourceProject", length = 255,insertable = false ,updatable = false)
     public String getCloneSourceProject() {
         return cloneSourceProject;
     }
@@ -59,7 +59,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "clonedFlag", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "clonedFlag", length = 255,insertable = false ,updatable = false)
     public String getClonedFlag() {
         return clonedFlag;
     }
@@ -69,7 +69,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "createdBy", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "createdBy", length = 255,insertable = false ,updatable = false)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -79,7 +79,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "creationDate", nullable = true)
+    @Column(name = "creationDate")
     public Timestamp getCreationDate() {
         return creationDate;
     }
@@ -89,7 +89,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "description", length = 255,insertable = false ,updatable = false)
     public String getDescription() {
         return description;
     }
@@ -99,7 +99,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "dueDate", nullable = true)
+    @Column(name = "dueDate")
     public Timestamp getDueDate() {
         return dueDate;
     }
@@ -109,7 +109,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "linkFlag", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "linkFlag", length = 255,insertable = false ,updatable = false)
     public String getLinkFlag() {
         return linkFlag;
     }
@@ -119,7 +119,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "masterFlag", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "masterFlag", length = 255,insertable = false ,updatable = false)
     public String getMasterFlag() {
         return masterFlag;
     }
@@ -129,7 +129,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "name", length = 255,insertable = false ,updatable = false)
     public String getName() {
         return name;
     }
@@ -139,7 +139,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "pltSum", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltSum", length = 255,insertable = false ,updatable = false)
     public String getPltSum() {
         return pltSum;
     }
@@ -149,7 +149,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "pltThreadSum", nullable = true, precision = 0)
+    @Column(name = "pltThreadSum", precision = 0)
     public Double getPltThreadSum() {
         return pltThreadSum;
     }
@@ -159,7 +159,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "postInuredFlag", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "postInuredFlag", length = 255,insertable = false ,updatable = false)
     public String getPostInuredFlag() {
         return postInuredFlag;
     }
@@ -169,7 +169,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "publishFlag", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "publishFlag", length = 255,insertable = false ,updatable = false)
     public String getPublishFlag() {
         return publishFlag;
     }
@@ -179,7 +179,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "receptionDate", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "receptionDate", length = 255,insertable = false ,updatable = false)
     public String getReceptionDate() {
         return receptionDate;
     }
@@ -189,7 +189,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilSum", nullable = true, precision = 0)
+    @Column(name = "regionPerilSum", precision = 0)
     public Double getRegionPerilSum() {
         return regionPerilSum;
     }
@@ -199,7 +199,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "sourceID", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceID", length = 255,insertable = false ,updatable = false)
     public String getSourceId() {
         return sourceId;
     }
@@ -209,7 +209,7 @@ public class RrProjectEntity {
     }
 
     @Basic
-    @Column(name = "xactSum", nullable = true, precision = 0)
+    @Column(name = "xactSum", precision = 0)
     public Double getXactSum() {
         return xactSum;
     }

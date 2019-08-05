@@ -20,7 +20,7 @@ public class AdjustmentThreadEntity {
     private ScorPltHeaderEntity scorPltHeaderByIdThreadPlt;
 
     @Basic
-    @Column(name = "thread_type", nullable = true, length = 255)
+    @Column(name = "thread_type", length = 255)
     public String getThreadType() {
         return threadType;
     }
@@ -30,7 +30,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "locked", nullable = true)
+    @Column(name = "locked")
     public Boolean getLocked() {
         return locked;
     }
@@ -40,7 +40,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "created_by", nullable = true, length = 100)
+    @Column(name = "created_by", length = 100)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -50,7 +50,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "created_on", nullable = true)
+    @Column(name = "created_on")
     public Timestamp getCreatedOn() {
         return createdOn;
     }
@@ -60,7 +60,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "last_modified_by", nullable = true, length = 100)
+    @Column(name = "last_modified_by", length = 100)
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -70,7 +70,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "last_modified_on", nullable = true)
+    @Column(name = "last_modified_on")
     public Timestamp getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -80,7 +80,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "last_generated_on", nullable = true)
+    @Column(name = "last_generated_on")
     public Timestamp getLastGeneratedOn() {
         return lastGeneratedOn;
     }
@@ -90,7 +90,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "generated_on", nullable = true)
+    @Column(name = "generated_on")
     public Timestamp getGeneratedOn() {
         return generatedOn;
     }

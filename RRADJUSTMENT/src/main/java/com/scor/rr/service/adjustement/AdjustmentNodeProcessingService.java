@@ -43,9 +43,9 @@ public class AdjustmentNodeProcessingService {
     @Autowired
     AdjustmentnodeRepository adjustmentnodeRepository;
 
-    final static String pathcsv = "C:\\Users\\u008208\\Desktop\\plt.csv";
+    final static String pathcsv = "src/main/resources/file/plt.csv";
 
-    final static String pathbin = "C:\\Users\\u008208\\Desktop\\plt.bin";
+    final static String pathbin = "src/main/resources/file/plt.bin";
 
     public AdjustmentNodeProcessingEntity findOne(Integer id) {
         return adjustmentnodeprocessingRepository.getOne(id);

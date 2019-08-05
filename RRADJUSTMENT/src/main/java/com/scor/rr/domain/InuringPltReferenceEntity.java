@@ -20,7 +20,7 @@ public class InuringPltReferenceEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackageOperation_Id", nullable = true, precision = 0)
+    @Column(name = "InuringPackageOperation_Id", precision = 0)
     public Integer getInuringPackageOperationId() {
         return inuringPackageOperationId;
     }

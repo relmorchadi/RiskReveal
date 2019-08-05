@@ -1,15 +1,14 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
 @Table(name = "DefaultRetPerBandingParams", schema = "dbo", catalog = "RiskReveal")
 public class DefaultRetPerBandingParamsEntity {
     private int idParam;
-    private BigDecimal lmf;
-    private BigDecimal rpmf;
+    private Double lmf;
+    private Double rpmf;
     private String peatDataPath;
     private String adjustmentReturnPeriodPath;
     private DefaultAdjustmentNodeEntity defaultAdjustmentNodeByIdDefaultNode;
@@ -25,27 +24,27 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "lmf", nullable = true, precision = 7)
-    public BigDecimal getLmf() {
+    @Column(name = "lmf", precision = 7)
+    public Double getLmf() {
         return lmf;
     }
 
-    public void setLmf(BigDecimal lmf) {
+    public void setLmf(Double lmf) {
         this.lmf = lmf;
     }
 
     @Basic
-    @Column(name = "rpmf", nullable = true, precision = 7)
-    public BigDecimal getRpmf() {
+    @Column(name = "rpmf", precision = 7)
+    public Double getRpmf() {
         return rpmf;
     }
 
-    public void setRpmf(BigDecimal rpmf) {
+    public void setRpmf(Double rpmf) {
         this.rpmf = rpmf;
     }
 
     @Basic
-    @Column(name = "peat_data_path", nullable = true, length = 200)
+    @Column(name = "peat_data_path", length = 200)
     public String getPeatDataPath() {
         return peatDataPath;
     }
@@ -55,7 +54,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "adjustment_return_period_path", nullable = true, length = 200)
+    @Column(name = "adjustment_return_period_path", length = 200)
     public String getAdjustmentReturnPeriodPath() {
         return adjustmentReturnPeriodPath;
     }

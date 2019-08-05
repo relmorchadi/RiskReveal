@@ -20,7 +20,7 @@ public class InuringOutboundPltConfigEntity {
     }
 
     @Basic
-    @Column(name = "Contract_Id", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "Contract_Id", length = 255,insertable = false ,updatable = false)
     public String getContractId() {
         return contractId;
     }

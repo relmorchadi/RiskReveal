@@ -26,7 +26,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "jobId", nullable = true)
+    @Column(name = "jobId")
     public Integer getJobId() {
         return jobId;
     }
@@ -36,7 +36,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "taskType", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "taskType", length = 255,insertable = false ,updatable = false)
     public String getTaskType() {
         return taskType;
     }
@@ -46,7 +46,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "taskParams", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "taskParams", length = 255,insertable = false ,updatable = false)
     public String getTaskParams() {
         return taskParams;
     }
@@ -56,7 +56,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "status", length = 255,insertable = false ,updatable = false)
     public String getStatus() {
         return status;
     }
@@ -66,7 +66,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "startedDate", nullable = true)
+    @Column(name = "startedDate")
     public Timestamp getStartedDate() {
         return startedDate;
     }
@@ -76,7 +76,7 @@ public class TaskEntity {
     }
 
     @Basic
-    @Column(name = "finishedDate", nullable = true)
+    @Column(name = "finishedDate")
     public Timestamp getFinishedDate() {
         return finishedDate;
     }

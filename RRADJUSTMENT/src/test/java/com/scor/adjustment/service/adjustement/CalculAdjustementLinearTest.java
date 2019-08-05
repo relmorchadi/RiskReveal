@@ -118,4 +118,30 @@ public class CalculAdjustementLinearTest {
         log.info("End test for Linear Adjustment for a File ");
     }
 
+    @Test
+    public void testLinearFileLmf2Cap() throws RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for Linear Adjustment for a File ");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        pltLossData = calculAdjustement.lineaireAdjustement(pltLossData,2,true);
+        List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 2 cap.csv"));
+        for(int i=0;i<pltLossData.size();i++) {
+            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
+        }
+    }
+
+    @Test
+    public void testLinearFileLmf250Uncap() throws RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for Linear Adjustment for a File ");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        pltLossData = calculAdjustement.lineaireAdjustement(pltLossData,250,false);
+        List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 250  uncap.csv"));
+        for(int i=0;i<pltLossData.size();i++) {
+            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
+        }
+    }
+
+
+
 }

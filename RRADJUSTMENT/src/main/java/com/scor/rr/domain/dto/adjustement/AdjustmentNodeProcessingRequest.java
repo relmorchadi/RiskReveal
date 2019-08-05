@@ -4,6 +4,13 @@ public class AdjustmentNodeProcessingRequest {
     private Integer scorPltHeaderIdPure;
     private Integer adjustmentNodeId;
 
+    public AdjustmentNodeProcessingRequest(Integer scorPltHeaderIdPure, Integer adjustmentNodeId) {
+        this.scorPltHeaderIdPure = scorPltHeaderIdPure;
+        this.adjustmentNodeId = adjustmentNodeId;
+    }
+
+    public AdjustmentNodeProcessingRequest() {
+    }
 
     public Integer getScorPltHeaderIdPure() {
         return scorPltHeaderIdPure;

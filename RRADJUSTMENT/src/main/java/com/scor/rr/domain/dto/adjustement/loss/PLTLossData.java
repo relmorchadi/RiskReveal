@@ -1,6 +1,8 @@
 package com.scor.rr.domain.dto.adjustement.loss;
 
 
+import java.util.Objects;
+
 public class PLTLossData {
 
     private int simPeriod;
@@ -87,5 +89,23 @@ public class PLTLossData {
 
     public void setLoss(double loss) {
         this.loss = loss;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PLTLossData that = (PLTLossData) o;
+        return simPeriod == that.simPeriod &&
+                eventId == that.eventId &&
+                Double.compare(that.eventDate, eventDate) == 0 &&
+                seq == that.seq &&
+                Double.compare(that.maxExposure, maxExposure) == 0 &&
+                Double.compare(that.loss, loss) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(simPeriod, eventId, eventDate, seq, maxExposure, loss);
     }
 }

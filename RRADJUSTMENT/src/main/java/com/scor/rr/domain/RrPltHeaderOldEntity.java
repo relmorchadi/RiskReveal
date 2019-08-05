@@ -32,7 +32,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "currencyCode", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "currencyCode", length = 255,insertable = false ,updatable = false)
     public String getCurrencyCode() {
         return currencyCode;
     }
@@ -42,7 +42,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "geoCode", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "geoCode", length = 255,insertable = false ,updatable = false)
     public String getGeoCode() {
         return geoCode;
     }
@@ -52,7 +52,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "perilCode", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "perilCode", length = 255,insertable = false ,updatable = false)
     public String getPerilCode() {
         return perilCode;
     }
@@ -62,7 +62,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "fileName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "fileName", length = 255,insertable = false ,updatable = false)
     public String getFileName() {
         return fileName;
     }
@@ -72,7 +72,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "pltType", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltType", length = 255,insertable = false ,updatable = false)
     public String getPltType() {
         return pltType;
     }
@@ -82,7 +82,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "project", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "project", length = 255,insertable = false ,updatable = false)
     public String getProject() {
         return project;
     }
@@ -92,7 +92,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "publishToArc", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "publishToArc", length = 255,insertable = false ,updatable = false)
     public String getPublishToArc() {
         return publishToArc;
     }
@@ -102,7 +102,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "regionPeril", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "regionPeril", length = 255,insertable = false ,updatable = false)
     public String getRegionPeril() {
         return regionPeril;
     }
@@ -112,7 +112,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "rrAnalysisId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "rrAnalysisId", length = 255,insertable = false ,updatable = false)
     public String getRrAnalysisId() {
         return rrAnalysisId;
     }
@@ -122,7 +122,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "targetRap", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetRap", length = 255,insertable = false ,updatable = false)
     public String getTargetRap() {
         return targetRap;
     }
@@ -132,7 +132,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "udName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "udName", length = 255,insertable = false ,updatable = false)
     public String getUdName() {
         return udName;
     }
@@ -142,7 +142,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "userSelectedGrain", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "userSelectedGrain", length = 255,insertable = false ,updatable = false)
     public String getUserSelectedGrain() {
         return userSelectedGrain;
     }
@@ -152,7 +152,7 @@ public class RrPltHeaderOldEntity {
     }
 
     @Basic
-    @Column(name = "xActPublicationDate", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "xActPublicationDate", length = 255,insertable = false ,updatable = false)
     public String getxActPublicationDate() {
         return xActPublicationDate;
     }

@@ -31,7 +31,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -41,7 +41,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -51,7 +51,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYCODE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "COUNTRYCODE", length = 255,insertable = false ,updatable = false)
     public String getCountrycode() {
         return countrycode;
     }
@@ -61,7 +61,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYOFFICIALNAME", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "COUNTRYOFFICIALNAME", length = 255,insertable = false ,updatable = false)
     public String getCountryofficialname() {
         return countryofficialname;
     }
@@ -71,7 +71,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYSHORTNAME", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "COUNTRYSHORTNAME", length = 255,insertable = false ,updatable = false)
     public String getCountryshortname() {
         return countryshortname;
     }
@@ -81,7 +81,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "CURRENCYCODE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CURRENCYCODE", length = 255,insertable = false ,updatable = false)
     public String getCurrencycode() {
         return currencycode;
     }
@@ -91,7 +91,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "TELEPHONECODE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "TELEPHONECODE", length = 255,insertable = false ,updatable = false)
     public String getTelephonecode() {
         return telephonecode;
     }
@@ -101,7 +101,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "EMBARGOSTATUS", nullable = true)
+    @Column(name = "EMBARGOSTATUS")
     public Boolean getEmbargostatus() {
         return embargostatus;
     }
@@ -111,7 +111,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "EXPIRYDATE", nullable = true)
+    @Column(name = "EXPIRYDATE")
     public Timestamp getExpirydate() {
         return expirydate;
     }
@@ -121,7 +121,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "INCEPTIONDATE", nullable = true)
+    @Column(name = "INCEPTIONDATE")
     public Timestamp getInceptiondate() {
         return inceptiondate;
     }
@@ -131,7 +131,7 @@ public class CountryEntity {
     }
 
     @Basic
-    @Column(name = "REPLACEBY", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "REPLACEBY", length = 255,insertable = false ,updatable = false)
     public String getReplaceby() {
         return replaceby;
     }

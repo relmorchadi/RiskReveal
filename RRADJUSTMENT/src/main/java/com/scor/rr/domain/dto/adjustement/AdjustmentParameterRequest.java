@@ -15,6 +15,15 @@ public class AdjustmentParameterRequest {
     private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
 
+    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+        this.lmf = lmf;
+        this.rpmf = rpmf;
+        this.peatData = peatData;
+        this.scorPltHeaderInput = scorPltHeaderInput;
+        this.nodeId = nodeId;
+        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    }
+
     public double getLmf() {
         return lmf;
     }

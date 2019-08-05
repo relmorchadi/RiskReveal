@@ -11,7 +11,7 @@ public class RrWorkspaceProjectMappingEntity {
 
     @Id
     @Basic
-    @Column(name = "workspace", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "workspace", length = 255,insertable = false ,updatable = false)
     public String getWorkspace() {
         return workspace;
     }
@@ -21,7 +21,7 @@ public class RrWorkspaceProjectMappingEntity {
     }
 
     @Basic
-    @Column(name = "project", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "project", length = 255,insertable = false ,updatable = false)
     public String getProject() {
         return project;
     }

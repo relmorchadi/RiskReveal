@@ -28,7 +28,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "runId", nullable = true)
+    @Column(name = "runId")
     public Integer getRunId() {
         return runId;
     }
@@ -38,7 +38,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "projectId", nullable = true)
+    @Column(name = "projectId")
     public Integer getProjectId() {
         return projectId;
     }
@@ -48,7 +48,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "status", length = 255,insertable = false ,updatable = false)
     public String getStatus() {
         return status;
     }
@@ -58,7 +58,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "startDate", nullable = true)
+    @Column(name = "startDate")
     public Timestamp getStartDate() {
         return startDate;
     }
@@ -68,7 +68,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "endDate", nullable = true)
+    @Column(name = "endDate")
     public Timestamp getEndDate() {
         return endDate;
     }
@@ -78,7 +78,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "lossImportEndDate", nullable = true)
+    @Column(name = "lossImportEndDate")
     public Timestamp getLossImportEndDate() {
         return lossImportEndDate;
     }
@@ -88,7 +88,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "importedBy", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "importedBy", length = 255,insertable = false ,updatable = false)
     public String getImportedBy() {
         return importedBy;
     }
@@ -98,7 +98,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "sourceConfigVendor", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceConfigVendor", length = 255,insertable = false ,updatable = false)
     public String getSourceConfigVendor() {
         return sourceConfigVendor;
     }

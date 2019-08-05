@@ -13,7 +13,7 @@ public class DefaultAdjustmentEntity {
     private EntityEntity entity;
 
     @Basic
-    @Column(name = "engine_type", nullable = true, length = 200)
+    @Column(name = "engine_type", length = 200)
     public String getEngineType() {
         return engineType;
     }

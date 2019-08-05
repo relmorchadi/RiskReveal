@@ -29,7 +29,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -39,7 +39,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -49,7 +49,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "NATURECODE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "NATURECODE", length = 255,insertable = false ,updatable = false)
     public String getNaturecode() {
         return naturecode;
     }
@@ -59,7 +59,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "SHORTNAME", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "SHORTNAME", length = 255,insertable = false ,updatable = false)
     public String getShortname() {
         return shortname;
     }
@@ -69,7 +69,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "LONGNAME", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "LONGNAME", length = 255,insertable = false ,updatable = false)
     public String getLongname() {
         return longname;
     }
@@ -79,7 +79,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "MNEMONIC", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "MNEMONIC", length = 255,insertable = false ,updatable = false)
     public String getMnemonic() {
         return mnemonic;
     }
@@ -89,7 +89,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "GENERALNATURE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "GENERALNATURE", length = 255,insertable = false ,updatable = false)
     public String getGeneralnature() {
         return generalnature;
     }
@@ -99,7 +99,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "FAMILYCODE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FAMILYCODE", length = 255,insertable = false ,updatable = false)
     public String getFamilycode() {
         return familycode;
     }
@@ -109,7 +109,7 @@ public class NatureEntity {
     }
 
     @Basic
-    @Column(name = "FAMILYLABEL", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FAMILYLABEL", length = 255,insertable = false ,updatable = false)
     public String getFamilylabel() {
         return familylabel;
     }
