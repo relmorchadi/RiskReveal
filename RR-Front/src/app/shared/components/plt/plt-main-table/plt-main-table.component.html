@@ -78,19 +78,19 @@
       </ng-container>
     </tr>
     <tr>
-      <ng-container *ngFor="let col of columns;let i=index;">
-        <ng-container *ngIf="col?.active">
-          <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
-            <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
-              <div class="filter-input">
-                <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterInput">
-              </div>
-            </th>
-          </ng-container>
+    <ng-container *ngFor="let col of columns;let i=index;">
+      <ng-container *ngIf="col?.active">
+        <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
+          <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
+            <div class="filter-input">
+              <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+              <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterInput">
+            </div>
+          </th>
         </ng-container>
       </ng-container>
-    </tr>
+    </ng-container>
+  </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
     <tr

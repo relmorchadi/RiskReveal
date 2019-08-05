@@ -7,7 +7,7 @@ import * as _ from 'lodash'
 export class TableSortAndFilterPipe implements PipeTransform {
 
   transform(data: any, args?: any): any {
-    const sortData= args[0];
+  const sortData= args[0];
     const sortDataKeys =_.keys(sortData);
     const filterData= args[1];
     const filterDataKeys = _.keys(filterData)
@@ -18,17 +18,17 @@ export class TableSortAndFilterPipe implements PipeTransform {
 
       res = _.filter(data, row =>
         _.every(
-          filterDataKeys,
-            filteredCol => _.some(
-              _.split(filterData[filteredCol],/[,;]/g), strs =>
-              _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)))
-            )
+        filterDataKeys,
+        filteredCol =>   _.some(
+          _.split(filterData[filteredCol],/[,;]/g), strs =>
+            _.includes(_.toLower(_.toString(row[filteredCol])), _.toLower(_.toString(strs)))
+        )
         ))
     }
     if(sortDataKeys.length > 0){
         res = _.orderBy(res, [...sortDataKeys], [..._.values(sortData)])
     }
-
+    console.log('res',res );
     return res;
   }
 
