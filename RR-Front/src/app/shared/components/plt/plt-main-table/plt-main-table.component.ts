@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -40,7 +40,7 @@ export class PltMainTableComponent implements OnInit {
   private lastClick: string;
   private userTagsLength: number;
 
-  constructor() {
+  constructor(private _baseCdr: ChangeDetectorRef) {
     this.activeCheckboxSort = false;
     this.userTagsLength= 10000;
   }
@@ -188,6 +188,12 @@ export class PltMainTableComponent implements OnInit {
     if( innerText == "User Tags" ) {
       console.log(_.floor(scrollWidth/18));
       this.userTagsLength= _.floor(scrollWidth/18);
+      this.detectChanges();
     }
+  }
+
+  protected detectChanges() {
+    if (!this._baseCdr['destroyed'])
+      this._baseCdr.detectChanges();
   }
 }

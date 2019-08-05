@@ -799,11 +799,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
+      console.log(openedPlt);
       this.updateMenuKey('pltDetail', openedPlt);
       this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
       this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
       this.detectChanges();
-    })
+    });
 
     this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
       this.userTags = userTags;
