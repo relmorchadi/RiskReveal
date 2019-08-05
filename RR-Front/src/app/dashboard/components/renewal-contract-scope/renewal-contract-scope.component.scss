@@ -51,6 +51,32 @@
   }
 }
 
+.uw-units  {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'UW Units';
+      width: fit-content;
+    }
+  }
+}
+.renewal-periode  {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'Renewal Periode';
+      width: fit-content;
+    }
+  }
+}
+
+.country {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'Country';
+    }
+  }
+}
+
+
 .title-wrapper{
   display:flex;
   justify-content: space-between;

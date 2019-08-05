@@ -8,17 +8,10 @@ import {StateSubscriber} from "../../model/state-subscriber";
 import * as fromHeader from "../../../core/store/actions/header.action";
 import * as fromWs from "../../store/actions";
 import {UpdateWsRouting} from "../../store/actions";
-import {
-  AddNewProjectFail,
-  AddNewProjectSuccess,
-  DeleteProject,
-  DeleteProjectFail,
-  DeleteProjectSuccess,
-  SelectProjectAction
-} from '../../../core/store/actions/workspace-main.action';
 import {MessageService} from 'primeng/api';
 import {BaseContainer} from "../../../shared/base";
 import {Navigate} from "@ngxs/router-plugin";
+import {debounceTime} from "rxjs/operators";
 
 @Component({
   selector: 'workspace-project',
@@ -82,25 +75,24 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   ngOnInit() {
 
-    this.actions$.pipe(ofActionSuccessful(AddNewProjectSuccess)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
+    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess))
+      .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
+      .subscribe(() => {
         this.newProject = false;
+        this.detectChanges()
         this.notificationService.createNotification('Project added successfully', '',
           'success', 'topRight', 4000);
-        this._helper.updateWorkspaceItems();
-        // this.detectChanges();
+        // this.detectChanges()
       }
     );
-    this.actions$.pipe(ofActionSuccessful(AddNewProjectFail, DeleteProjectFail)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
+    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectFail, fromWs.DeleteProjectFails)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
       this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
-      // this.detectChanges();
     })
 
-    this.actions$.pipe(this.unsubscribeOnDestroy).pipe(ofActionSuccessful(DeleteProjectSuccess)).subscribe(() => {
-        this.notificationService.createNotification('Project deleted successfully', '',
+    this.actions$.pipe(this.unsubscribeOnDestroy).pipe(ofActionSuccessful(fromWs.DeleteProjectSuccess)).subscribe(() => {
+      this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
-        this._helper.updateWorkspaceItems();
-        // this.detectChanges();
       }
     );
   }
@@ -124,10 +116,9 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   }
 
   delete(project) {
-    this.dispatch(new DeleteProject({
-      workspaceId: this.workspace.workSpaceId, uwYear: this.workspace.uwYear, project,
+    this.dispatch(new fromWs.DeleteProject({
+      wsId: this.workspace.wsId, uwYear: this.workspace.uwYear, project,
     }));
-    this.dropdown.close();
   }
 
   contextMenu($event: MouseEvent, template: TemplateRef<void>, project): void {
@@ -161,6 +152,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.searchWorkspace = false;
     this.newProject = true;
     this.selectedProject = project;
+    console.log(project);
   }
 
   cancelCreateExistingProjectPopup() {

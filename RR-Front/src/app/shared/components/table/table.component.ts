@@ -1,6 +1,9 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
+import * as tableStore from './store';
+import {Message} from '../../message';
+
 
 @Component({
   selector: 'app-table',
@@ -19,6 +22,7 @@ export class TableComponent implements OnInit {
   @ViewChild('cm') contextMenu;
 
   contextSelectedItem: any;
+  @Input() tableInputs: tableStore.Input;
 
   @Input() loading: boolean;
   _activateContextMenu: boolean;
@@ -59,11 +63,11 @@ export class TableComponent implements OnInit {
       command: () => this.handler(_.filter(this.tableColumn, e => e.field === 'openInPopup')[0], this.contextSelectedItem)
     },
   ];
-
+  @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
   @Input()
   totalRecords;
   @Input()
-  sortable = false;
+  sortable = true;
   @Input()
   listOfData: any[];
   @Input()
@@ -93,6 +97,25 @@ export class TableComponent implements OnInit {
       return this.items.filter(item => item.label !== 'View Detail');
     } else {
       return this.items;
+    }
+  }
+
+  sortChange(field: any, sortCol: any) {
+    if(!sortCol){
+      this.actionDispatcher.emit({
+        type: tableStore.sortChange,
+        payload: _.merge({}, this.tableInputs.sortData, {[field]: 'asc'})
+      })
+    }else if(sortCol === 'asc'){
+      this.actionDispatcher.emit({
+        type: tableStore.sortChange,
+        payload: _.merge({}, this.tableInputs.sortData, {[field]: 'desc'})
+      })
+    } else if(sortCol === 'desc') {
+      this.actionDispatcher.emit({
+        type: tableStore.sortChange,
+        payload: _.omit(this.tableInputs.sortData, `${field}`)
+      })
     }
   }
 
@@ -205,7 +228,7 @@ export class TableComponent implements OnInit {
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
-    this.contextMenu.hide();
+    this.contextMenu ? this.contextMenu.hide() : null
   }
 
   rowSelect($event) {

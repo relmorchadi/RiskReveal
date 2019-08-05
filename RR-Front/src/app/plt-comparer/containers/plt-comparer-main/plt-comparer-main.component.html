@@ -1,29 +1,32 @@
 <div class="layout-comparer">
   <div class="header container-fluid">
-    <div class="row" style="width:100%">
-    <div class="title-section-comparer col-md-3">
-      <h4>PLT Comparer &nbsp;</h4>
-      <i class="icon-plus-circle icon-generic" (click)="showModal()" style="font-size: 25px; cursor: pointer;margin-bottom: 8px;"></i>
-      <nz-modal
-        [(nzVisible)]="isVisible"
-        nzFooter=" "
-        nzTitle="Browse For Comparer"
-        (nzOnCancel)="handleCancel()">
-        <form [formGroup]="form">
-          <nz-select
-            formControlName="defaultImport"
-            nzShowSearch
-            nzAllowClear
-            class="a-dropdown-small"
-            style="width: 200px; margin-bottom: 5px;"
-            nzPlaceHolder="Select Workspace"
+    <div class="header-comparer-wrapper">
+      <div class="header-left">
+<!--        <div class="title-section-comparer">-->
+          <h4>PLT Comparer &nbsp;</h4>
+          <i class="icon-plus-circle icon-generic" (click)="showModal()"
+           style="font-size: 25px; cursor: pointer;margin-bottom: 8px;"></i>
+          <nz-modal
+          [(nzVisible)]="isVisible"
+          nzFooter=" "
+          nzTitle="Browse For Comparer"
+          (nzOnCancel)="handleCancel()">
+          <form [formGroup]="form">
+            <nz-select
+              formControlName="defaultImport"
+              nzShowSearch
+              nzAllowClear
+              class="a-dropdown-small"
+              style="width: 200px; margin-bottom: 5px;"
+              nzPlaceHolder="Select Workspace"
             >
-            <nz-option nzCustomContent *ngFor="let item of listOfWs.data" [nzLabel]="item.workSpaceId" [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
-          </nz-select>
-        </form>
-        <div class="my-modal">
-          <app-plt-left-menu
-            [menuInputs]="{
+              <nz-option nzCustomContent *ngFor="let item of listOfWs.data" [nzLabel]="item.workSpaceId"
+                         [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
+            </nz-select>
+          </form>
+          <div class="my-modal">
+            <app-plt-left-menu
+              [menuInputs]="{
             tagContextMenu: tagContextMenu,
             wsId: workspaceId,
             uwYear: uwy,
@@ -44,37 +47,37 @@
             tagForMenu: tagFormenu,
             wsHeaderSelected: wsHeaderSelected
           }"
-            (onAssignPltsToTag)="assignPltsToTag($event)"
-            (onProjectFilter)="filter($event)"
-            (onEditTag)="renameTag($event)"
-            (onResetPath)="resetPath()"
-            (onSelectProjects)="setSelectedProjects($event)"
-            (onSelectSysTagCount)="selectSystemTag($event)"
-            (onSetFilters)="setFilters($event)"
-            (onSetFromPlts)="setFromPlts($event)"
-            (onSetSelectedUserTags)="setUserTags($event)"
-            (onToggleDeletedPlts)="toggleDeletePlts()"
-            (setTagModalIndex)="setModalIndex($event)"
-            (setTagModalVisibility)="setTagModal($event)"
-            (onSetTagForMenu)="setTagForMenu($event)"
-            (onSetRenameTag)="setRenameTag($event)"
-            (emitFilters)="emitFilters($event)"
-            (unCkeckAllPlts)="unCheckAll()"
-            (onWsHeaderSelection)="setWsHeaderSelect($event)"
-            (onModalSelect)="setModalSelectedItems($event)"
-          >
+              (onAssignPltsToTag)="assignPltsToTag($event)"
+              (onProjectFilter)="filter($event)"
+              (onEditTag)="renameTag($event)"
+              (onResetPath)="resetPath()"
+              (onSelectProjects)="setSelectedProjects($event)"
+              (onSelectSysTagCount)="selectSystemTag($event)"
+              (onSetFilters)="setFilters($event)"
+              (onSetFromPlts)="setFromPlts($event)"
+              (onSetSelectedUserTags)="setUserTags($event)"
+              (onToggleDeletedPlts)="toggleDeletePlts()"
+              (setTagModalIndex)="setModalIndex($event)"
+              (setTagModalVisibility)="setTagModal($event)"
+              (onSetTagForMenu)="setTagForMenu($event)"
+              (onSetRenameTag)="setRenameTag($event)"
+              (emitFilters)="emitFilters($event)"
+              (unCkeckAllPlts)="unCheckAll()"
+              (onWsHeaderSelection)="setWsHeaderSelect($event)"
+              (onModalSelect)="setModalSelectedItems($event)"
+            >
 
-        </app-plt-left-menu>
-          <div class="title-right">
-            <div class="title-as-tab">
+            </app-plt-left-menu>
+            <div class="title-right">
+              <div class="title-as-tab">
           <span>
             PLTs
           </span>
-            </div>
-            <div class="PLTs-content">
-              <!--<i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;font-size: 15px;"></i>-->
-              <app-plt-main-table
-                [tableInputs]="{
+              </div>
+              <div class="PLTs-content">
+                <!--<i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;font-size: 15px;"></i>-->
+                <app-plt-main-table
+                  [tableInputs]="{
                   pltColumns: pltColumns,
                   listOfPltsData: listOfPltsData,
                   listOfDeletedPltsData: listOfDeletedPltsData,
@@ -92,310 +95,320 @@
                   sortData: sortData
                 }"
 
-                (deletePlt)="deletePlt()"
-                (openPltInDrawer)="openPltInDrawer($event)"
-                (editTags)="editTags()"
-                (restore)="restore()"
-                (onCheckAll)="checkAll()"
-                (onCheckBoxSort)="checkBoxSort($event)"
-                (onFilter)="filter($event)"
-                (onItemSelectForMenu)="setSelectedMenuItem($event)"
-                (onPltClick)="toggleSelectPlts($event)"
-                (onSelectSinglePlt)="selectSinglePLT($event)"
-                (onSortChange)="sortChange($event)"
-              ></app-plt-main-table>
+                  (deletePlt)="deletePlt()"
+                  (openPltInDrawer)="openPltInDrawer($event)"
+                  (editTags)="editTags()"
+                  (restore)="restore()"
+                  (onCheckAll)="checkAll()"
+                  (onCheckBoxSort)="checkBoxSort($event)"
+                  (onFilter)="filter($event)"
+                  (onItemSelectForMenu)="setSelectedMenuItem($event)"
+                  (onPltClick)="toggleSelectPlts($event)"
+                  (onSelectSinglePlt)="selectSinglePLT($event)"
+                  (onSortChange)="sortChange($event)"
+                ></app-plt-main-table>
+              </div>
             </div>
-        </div>
-        </div>
-      </nz-modal>
-    </div>
-
-    <div class="Deltas col-md-1"  style="position: unset;">Deltas &nbsp;
-      <div class="button-toggle">
-        <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch>
+          </div>
+        </nz-modal>
+<!--        </div>-->
       </div>
-    </div>
-    <div class="dropdown-group col-md-7" style="position: unset;">
-      <div class="row">
-        <div class="col-md-3">
-          <div style="width: 200px;">
-            <nz-select *ngIf="switchValue"
-
-                       nzShowSearch
-                       nzAllowClear
-                       class="a-dropdown-small"
-                       nzPlaceHolder="Baseline"
-                       [(ngModel)]="defaultImport" style="width: 140px;"
-            >
-              <nz-option nzLabel="Baseline" nzValue="Baseline"></nz-option>
-              <nz-option nzLabel="Year-On-Year" nzValue="Year-On-Year"></nz-option>
-            </nz-select>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="body-wrap-dropDowns-comparer">
-            <nz-dropdown [nzTrigger]="'click'">
-              <div class="dropdown-wrap-comparer" nz-dropdown>
-                <div class="dropdown-wrap-title-comparer">
-                  <span class="dropdown-title-comparer">Display Currency</span>
-                  <span class="dropdown-item-selected-comparer">
-              {{selectedCurrency}}
-              </span>
-                </div>
-                <div class="dropdown-icon">
-                  <i nz-icon type="down"></i>
-                </div>
-              </div>
-              <ul nz-menu>
-                <li nz-menu-item *ngFor="let currency of currencies" (click)="changeCurrency(currency.label)">{{currency.label}}
-                </li>
-              </ul>
-            </nz-dropdown>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="body-wrap-dropDowns-comparer">
-            <nz-dropdown [nzTrigger]="'click'">
-              <div class="dropdown-wrap-comparer" nz-dropdown>
-                <div class="dropdown-wrap-title-comparer">
-                  <span class="dropdown-title-comparer">Financial Unit</span>
-                  <span class="dropdown-item-selected-comparer">
-              {{selectedUnit}}
-              </span>
-                </div>
-                <div class="dropdown-icon">
-                  <i nz-icon type="down"></i>
-                </div>
-              </div>
-              <ul nz-menu>
-                <li nz-menu-item *ngFor="let unit of units" (click)="changeUnit(unit.label)">{{unit.label}}
-                </li>
-              </ul>
-            </nz-dropdown>
-          </div>
-        </div>
-        <div class="col-md-3 multiple-selection">
-          <nz-select
-          [nzMaxTagCount]="0"
-          nzMode="multiple"
-          nzPlaceHolder="EP Metrics"
-          [(ngModel)]="listOfSelectedValues" style="width: 100%;"
-        >
-          <nz-option nzLabel="OEP" nzValue="OEP"  nzDisabled></nz-option>
-          <nz-option nzLabel="AEP" nzValue="AEP"></nz-option>
-          <nz-option nzLabel="TVaR-OEP" nzValue="TVaR-OEP"></nz-option>
-          <nz-option nzLabel="TVaR-AEP" nzValue="TVaR-AEP"></nz-option>
-          <nz-option nzLabel="EEF" nzValue="EEF"></nz-option>
-          <nz-option nzLabel="CEP" nzValue="CEP"></nz-option>
-        </nz-select>
-        </div>
-      </div>
-
-    </div>
-
-
-
-
-    <div class="export col-md-1">
-      <button class="a-buttons-outlined">
-        EXPORT
-      </button>
-    </div>
-    </div>
-  </div>
-  <div class="body">
-    <div class="lefter">
-      <div class="cards-wrapper1">
-        <div class="card-header-title" style="height: 88px;">
-        </div>
-        <div class="card-table">
-          <table>
-            <thead>
-            <tr>
-              <th style="width: 92px;">Return Period</th>
-              <th>Probability</th>
-            </tr>
-            </thead>
-            <tbody style="text-align: right;">
-            <tr>
-              <th>10,000</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>5,000</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>1,000</th>
-              <th>50%</th>
-
-            </tr>
-            <tr>
-              <th>500</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>250</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>200</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>100</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>50</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>25</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>10</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>5</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th>2</th>
-              <th>50%</th>
-            </tr>
-            <tr>
-              <th><i style="font-size: 14px; margin-right: 1px;" [ngStyle]="{'cursor' : switchValue? '' : 'pointer'
-, 'color' : switchValue? '' : 'blue'}" class="icon-plus-circle"></i> <input class="a-textfield-mini" style="width: 80%" type="text" name="new-field"></th>
-            <th><input class="a-textfield-mini" style="width: 80%" type="text" name="new-field"></th>
-            </tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="card-footer-detail">
-          <div class="card-table-row" style="width: 134px;">
-            <div>Pure Premium &nbsp;
-              Standard Deviation&nbsp;
-              CoV
+      <div class="header-center">
+        <div class="Deltas" style="position: unset;">Deltas &nbsp;
+          <div class="button-toggle">
+            <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch>
+            <div style="width: 200px; margin-left: 10px">
+              <nz-select *ngIf="switchValue"
+                         class="delta-context a-dropdown-label"
+                         [(ngModel)]="defaultImport" style="width: 150px;"
+              >
+                <nz-option nzLabel="Baseline" nzValue="Baseline"></nz-option>
+                <nz-option nzLabel="Year-On-Year" nzValue="Year-On-Year"></nz-option>
+              </nz-select>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="righter">
-      <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
-        <div [class.selected-item]="item.selected == true" *ngFor="let item of cardContainer; let i = index" class="card-outer" cdkDrag>
+      <div class="dropdown-group header-right">
+          <div class="header-right-wrap">
+            <div class="body-wrap-dropDowns-comparer">
+              <div class="body-wrap-dropDowns-comparer">
+                <nz-dropdown [nzTrigger]="'click'">
+                  <div class="dropdown-wrap-comparer" nz-dropdown>
+                    <div class="dropdown-wrap-title-comparer">
+                      <span class="dropdown-title-comparer">Display Currency</span>
+                      <span class="dropdown-item-selected-comparer">
+                        {{selectedCurrency}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                      <i nz-icon type="down"></i>
+                    </div>
+                  </div>
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let currency of currencies"
+                        (click)="changeCurrency(currency.label)">{{currency.label}}
+                    </li>
+                  </ul>
+                </nz-dropdown>
+              </div>
+            </div>
+            <div>
+              <div class="body-wrap-dropDowns-comparer">
+                <nz-dropdown [nzTrigger]="'click'">
+                  <div class="dropdown-wrap-comparer" nz-dropdown>
+                    <div class="dropdown-wrap-title-comparer">
+                      <span class="dropdown-title-comparer">Financial Unit</span>
+                      <span class="dropdown-item-selected-comparer">
+                        {{selectedUnit}}
+                      </span>
+                    </div>
+                    <div class="dropdown-icon">
+                      <i nz-icon type="down"></i>
+                    </div>
+                  </div>
+                  <ul nz-menu>
+                    <li nz-menu-item *ngFor="let unit of units" (click)="changeUnit(unit.label)">{{unit.label}}
+                    </li>
+                  </ul>
+                </nz-dropdown>
+              </div>
+            </div>
+            <div class="multiple-selection">
+              <nz-select
+                [nzMaxTagCount]="0"
+                nzMode="multiple"
+                nzPlaceHolder="EP Metrics"
+                [(ngModel)]="listOfSelectedValues" style="width: 150px;"
+              >
+                <nz-option nzLabel="OEP" nzValue="OEP" nzDisabled></nz-option>
+                <nz-option nzLabel="AEP" nzValue="AEP"></nz-option>
+                <nz-option nzLabel="TVaR-OEP" nzValue="TVaR-OEP"></nz-option>
+                <nz-option nzLabel="TVaR-AEP" nzValue="TVaR-AEP"></nz-option>
+                <nz-option nzLabel="EEF" nzValue="EEF"></nz-option>
+                <nz-option nzLabel="CEP" nzValue="CEP"></nz-option>
+              </nz-select>
+            </div>
+          </div>
 
-          <div class="cards-wrapper" *ngIf="!item.deleted" [ngStyle]="{'border-top': item.selected ? 'none' : '5px solid ' + item.color ,
+
+          <div class="export">
+            <button class="a-buttons-outlined">
+              EXPORT
+            </button>
+          </div>
+        </div>
+    </div>
+    <div>
+
+
+
+
+    </div>
+    <div class="body">
+      <div class="lefter">
+        <div class="cards-wrapper1">
+          <div class="card-header-title" style="height: 88px;">
+          </div>
+          <div class="card-table">
+            <table>
+              <thead>
+              <tr>
+                <th style="width: 92px;">Return Period</th>
+                <th>Probability</th>
+              </tr>
+              </thead>
+              <tbody style="text-align: right;">
+              <tr>
+                <th>10,000</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>5,000</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>1,000</th>
+                <th>50%</th>
+
+              </tr>
+              <tr>
+                <th>500</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>250</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>200</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>100</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>50</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>25</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>10</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>5</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th>2</th>
+                <th>50%</th>
+              </tr>
+              <tr>
+                <th><i style="font-size: 14px; margin-right: 1px;" [ngStyle]="{'cursor' : switchValue? '' : 'pointer'
+, 'color' : switchValue? '' : 'blue'}" class="icon-plus-circle"></i> <input class="a-textfield-mini" style="width: 80%"
+                                                                            type="text" name="new-field"></th>
+                <th><input class="a-textfield-mini" style="width: 80%" type="text" name="new-field"></th>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="card-footer-detail">
+            <div class="card-table-row" style="width: 134px;">
+              <div>Pure Premium &nbsp;
+                Standard Deviation&nbsp;
+                CoV
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="righter">
+        <div cdkDropList cdkDropListOrientation="horizontal" class="example-list" (cdkDropListDropped)="drop($event)">
+          <div [class.selected-item]="item.selected == true" *ngFor="let item of cardContainer; let i = index"
+               class="card-outer" cdkDrag>
+
+            <div class="cards-wrapper" *ngIf="!item.deleted" [ngStyle]="{'border-top': item.selected ? 'none' : '5px solid ' + item.color ,
     'border-bottom': item.selected ? 'none' : '5px solid transparent',
     'height':item.selected ? ' 500px' : ''}" (contextmenu)="contextMenu($event, template)">
 
-            <div class="card-header-title">
-              <div class="card-header-icons">
-                <i class="icon-map-pin-alt" style="cursor: pointer; color: #0700CF;font-size: 20px;"></i>
-                <i *ngIf="!item.selected" [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden'}"
-                   class="icon-check-circle" (click)="selectItem($event); item.selected = !item.selected"></i>
-                <i *ngIf="item.selected" class="icon-check_24px" (click)="item.selected = !item.selected"></i>
-                <span
-                  [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden', 'color': item.selected? '#03DAC4' : '' }">BL</span>
-                <span style="flex: 1;">
-                <i class="icon-cancel_24px" (click)="deleteItem(i)" style="font-size: 18px; float: right; color: darkred;cursor: pointer; margin-right: 1px;"></i>
+              <div class="card-header-title">
+                <div class="card-header-icons">
+                  <i class="icon-map-pin-alt" style="cursor: pointer; color: #0700CF;font-size: 20px;"></i>
+                  <i *ngIf="!item.selected" [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden'}"
+                     class="icon-check-circle" (click)="selectItem($event); item.selected = !item.selected"></i>
+                  <i *ngIf="item.selected" class="icon-check_24px" (click)="item.selected = !item.selected"></i>
+                  <span
+                    [ngStyle]="{'visibility': switchValue ? 'visible' : 'hidden', 'color': item.selected? '#03DAC4' : '' }">BL</span>
+                  <span style="flex: 1;">
+                <i class="icon-cancel_24px" (click)="deleteItem(i)"
+                   style="font-size: 18px; float: right; color: darkred;cursor: pointer; margin-right: 1px;"></i>
                 </span>
+                </div>
+                <div class="card-header-detail">
+                  <span style="font-weight: bold; font-size:15px;">{{item.title}}</span><br>
+                  <span>{{item.subtitle}}</span><br>
+                  <span style="font-size: 10px;">{{item.tableHeader}}</span>
+                </div>
               </div>
-              <div class="card-header-detail">
-                <span style="font-weight: bold; font-size:15px;">{{item.title}}</span><br>
-                <span>{{item.subtitle}}</span><br>
-                <span style="font-size: 10px;">{{item.tableHeader}}</span>
-              </div>
-            </div>
-            <div class="card-table">
-              <table>
-                <thead>
-                <tr>
-                  <th>OEP</th>
-                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                    <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>OEP</div>
-                  </th>
-                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                    OEP %
-                  </th>
-                  <ng-container *ngFor="let th of listOfSelectedValues">
-                    <th >
-                      {{th}}
+              <div class="card-table">
+                <table>
+                  <thead>
+                  <tr>
+                    <th>OEP</th>
+                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
+                      <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>OEP</div>
                     </th>
                     <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                      <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>{{th}}</div>
+                      OEP %
                     </th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                      {{th}} %
-                    </th>
-                  </ng-container>
+                    <ng-container *ngFor="let th of listOfSelectedValues">
+                      <th>
+                        {{th}}
+                      </th>
+                      <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
+                        <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>{{th}}
+                        </div>
+                      </th>
+                      <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
+                        {{th}} %
+                      </th>
+                    </ng-container>
 
 
-                </tr>
-                </thead>
-                <tbody>
-                <tr *ngFor="let row of item.table">
-                  <th>{{row[0]}}</th>
-                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
-                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
-                  <ng-container *ngFor="let tab of listOfSelectedValues">
-                  <th>{{row[0]}}</th>
-                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
-                  <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
-                  </ng-container>
-                </tr>
-                <tr>
-                  <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
-                                                                   name="new-field" style="width: 100%; margin: 0px;"
-                                                                   type="text"></th>
-                  <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
-                                                                   name="new-field" style="width: 100%; margin: 0px;"
-                                                                   type="text"></th>
-                  <ng-container *ngFor="let th of listOfSelectedValues">
-                  <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field"></th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                  <tr *ngFor="let row of item.table">
+                    <th>{{row[0]}}</th>
+                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
+                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
+                    <ng-container *ngFor="let tab of listOfSelectedValues">
+                      <th>{{row[0]}}</th>
+                      <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
+                      <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
+                    </ng-container>
+                  </tr>
+                  <tr>
+                    <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field">
+                    </th>
                     <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
                                                                      name="new-field" style="width: 100%; margin: 0px;"
                                                                      type="text"></th>
                     <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
                                                                      name="new-field" style="width: 100%; margin: 0px;"
                                                                      type="text"></th>
-                  </ng-container></tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="card-footer-detail">
-              <div class="card-table-row">
-                <table style="width: 95px;">
-                  <tr style="border-bottom: 0px #ffffff;"><div *ngFor="let row of item.result">{{row[0]}}</div></tr>
+                    <ng-container *ngFor="let th of listOfSelectedValues">
+                      <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text"
+                                 name="new-field"></th>
+                      <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
+                                                                       name="new-field"
+                                                                       style="width: 100%; margin: 0px;"
+                                                                       type="text"></th>
+                      <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
+                                                                       name="new-field"
+                                                                       style="width: 100%; margin: 0px;"
+                                                                       type="text"></th>
+                    </ng-container>
+                  </tr>
+                  </tbody>
                 </table>
-
               </div>
-              <!--<div *ngIf="switchValue && !item.selected" class="card-table-row">-->
+              <div class="card-footer-detail">
+                <div class="card-table-row">
+                  <table style="width: 95px;">
+                    <tr style="border-bottom: 0px #ffffff;">
+                      <div *ngFor="let row of item.result">{{row[0]}}</div>
+                    </tr>
+                  </table>
+
+                </div>
+                <!--<div *ngIf="switchValue && !item.selected" class="card-table-row">-->
                 <!--<div *ngFor="let row of item.result">{{row[1]}}</div>-->
-              <!--</div>-->
+                <!--</div>-->
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <ng-template #template>
+        <ul nz-menu nzInDropDown (nzClick)="close($event)">
+          <li nz-menu-item>View details</li>
+        </ul>
+      </ng-template>
     </div>
-    <ng-template #template>
-      <ul nz-menu nzInDropDown (nzClick)="close($event)">
-        <li nz-menu-item>View details</li>
-      </ul>
-    </ng-template>
+    <div class="footer-comparer">
+      <div class="footer-title">EP Curves</div>
+      <div class="card-header-detail">
+        <span class="body-1">{{getPlt()?.title}}</span>
+        <span class="body-2">{{getPlt()?.subtitle}}</span>
+      </div>
+      <div>
+        <img style="width: 100%" src="../../../../assets/images/Capture.PNG"/>
+      </div>
+    </div>
   </div>
-  <div class="footer-comparer">
-    <div class="footer-title">EP Curves</div>
-    <div class="card-header-detail">
-      <span class="body-1">{{getPlt()?.title}}</span>
-      <span class="body-2">{{getPlt()?.subtitle}}</span>
-    </div>
-    <div>
-      <img style="width: 100%" src="../../../../assets/images/Capture.PNG"/>
-    </div>
-  </div>
-</div>

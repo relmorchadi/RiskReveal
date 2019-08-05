@@ -32,20 +32,20 @@ export class RenewalContractScopeComponent implements OnInit {
   editName = false;
 
   cols = [
-    {field: 'country', header: 'Country', width: '50px', display: true, sorted: false, type: 'text'},
-    {field: 'cedant', header: 'Cedant', width: '100px', display: true, sorted: false, type: 'text'},
-    {field: 'PROGRAMNAME', header: 'Program', width: '110px', display: true, sorted: false, type: 'text'},
-    {field: 'PROGRAMID', header: 'program Code', width: '60px', display: true, sorted: false, type: 'text'},
-    {field: 'UWYEAR', header: 'Uw Year', width: '40px', display: true, sorted: false, type: 'text'},
-    {field: 'newOrRenewal', header: 'New / Renewal', width: '80px', display: true, sorted: false, type: 'text'},
-    {field: 'omegaEntry', header: 'Omega Entry', width: '50px', display: true, sorted: false, type: 'text'},
-    {field: 'EXPIRYDATE', header: 'Due Date', width: '50px', display: true, sorted: false, type: 'text'},
-    {field: 'pricingVersion', header: 'Pricing Version', width: '50px', display: true, sorted: false, type: 'text'},
-    {field: 'assignedTo', header: 'Assigned To', width: '70px', display: true, sorted: false, type: 'text'},
-    {field: 'exposures', header: 'Exposures', width: '50px', display: true, sorted: false, type: 'text'},
-    {field: 'UNDERWRITINGUNITNAMELL', header: 'Uw Unit', width: '50px', display: true, sorted: false, type: 'text'},
-    {field: 'lastModifiedBy', header: 'Last Modified By', width: '80px', display: true, sorted: false, type: 'text'},
-    {field: 'lastModifiedDate', header: 'Last Modified Date', width: '80px', display: true, sorted: false, type: 'date'},
+    {field: 'country', header: 'Country', width: '50px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'cedant', header: 'Cedant', width: '100px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'PROGRAMNAME', header: 'Program', width: '110px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'PROGRAMID', header: 'program Code', width: '60px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'UWYEAR', header: 'Uw Year', width: '40px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'newOrRenewal', header: 'New / Renewal', width: '80px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'omegaEntry', header: 'Omega Entry', width: '50px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'EXPIRYDATE', header: 'Due Date', width: '50px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'pricingVersion', header: 'Pricing Version', width: '50px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'assignedTo', header: 'Assigned To', width: '70px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'exposures', header: 'Exposures', width: '50px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'UNDERWRITINGUNITNAMELL', header: 'Uw Unit', width: '50px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'lastModifiedBy', header: 'Last Modified By', width: '80px', display: true, sorted: true,filtered:true, type: 'text'},
+    {field: 'lastModifiedDate', header: 'Last Modified Date', width: '80px', display: true, sorted: true,filtered:true, type: 'date'},
     /*{field: 'rrStatus', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
     {field: 'plt', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
     {field: 'publishedToPricing', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
@@ -4692,7 +4692,7 @@ export class RenewalContractScopeComponent implements OnInit {
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-    
+
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest',{country: '', uwUnit: ''})).subscribe(coi => {
       this.defaultCountry= coi.defaultCountry;
       this.defaultUwUnit= coi.defaultUwUnit;

@@ -46,11 +46,11 @@ public class SearchResource {
         return searchService.globalSearchWorkspaces(filter, offset, size);
     }
 
-    @PostMapping("workspace")
+//    @PostMapping("workspace")
 //    Page<ContractSearchResult> searchWorkspace(@RequestBody WorkspaceFilter filter, int size){
-    Page<WorkspaceProjection> searchWorkspace(@RequestBody NewWorkspaceFilter filter, int offset, int size){
-        return searchService.getWorkspaces(filter, offset,size);
-    }
+//    Page<WorkspaceProjection> searchWorkspace(@RequestBody NewWorkspaceFilter filter, int offset, int size){
+//        return searchService.getWorkspaces(filter, offset,size);
+//    }
 
     @GetMapping("searchcount")
     Page<?> countInWorkspace(@RequestParam TableNames table, @RequestParam String keyword, @RequestParam(defaultValue = "5") int size ){

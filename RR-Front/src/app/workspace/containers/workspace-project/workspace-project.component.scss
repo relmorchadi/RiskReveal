@@ -13,9 +13,25 @@
   }
 }
 
+.project-filter{
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'Project Filter';
+      width: fit-content;
+    }
+  }
+}
+
+
 .title-project-wrapper {
   display: flex;
   flex-direction: column;
+
+  nz-dropdown{
+    margin-left: 120px;
+    position: absolute;
+  }
+
 }
 
 .workspace-main-content {

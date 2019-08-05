@@ -113,22 +113,6 @@ export class RiskLinkStateService {
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.results.data[id].unitMultiplier = value;
         }));
-    } else if (target === 'regionPeril') {
-      if (scope === 'Single') {
-        ctx.patchState(
-          produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].riskLink.results.data[id].regionPeril = value;
-          }));
-      } else {
-        ctx.patchState(
-          produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].riskLink.results.data = Object.assign({},
-              ..._.toArray(draft.content[wsIdentifier].riskLink.results.data).map(dt => {
-                return ({[dt.id]: {...dt, regionPeril: value}});
-              })
-            );
-          }));
-      }
     } else if (target === 'targetCurrency') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
@@ -150,6 +134,15 @@ export class RiskLinkStateService {
             );
           }));
       }
+    } else if (target === 'regionPeril') {
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.results.data = Object.assign({},
+            ..._.toArray(draft.content[wsIdentifier].riskLink.results.data).map(dt => {
+            return ({[dt.id]: {...dt, regionPeril: dt.override}});
+          }));
+        })
+      );
     }
   }
 
@@ -520,7 +513,7 @@ export class RiskLinkStateService {
         ctx.patchState(
           produce(ctx.getState(), draft => {
             draft.content[wsIdentifier].riskLink.financialPerspective.analysis.data = Object.assign({},
-              ..._.toArray(draft.content[wsIdentifier].riskLink.financialPerspective.analysis.analysis.data).map(item => {
+              ..._.toArray(draft.content[wsIdentifier].riskLink.financialPerspective.analysis.data).map(item => {
                 return ({
                   [item.id]: {
                     ...item,
@@ -1106,6 +1099,7 @@ export class RiskLinkStateService {
       )
     );
     ctx.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+    ctx.dispatch(new fromWs.LoadPortfolioForLinkingAction(_.filter(listDataToArray, et => et.type === 'edm' && et.selected)[0]));
     ctx.dispatch(new fromWs.LoadRiskLinkAnalysisDataAction(_.filter(listDataToArray, rt => rt.type === 'rdm' && rt.selected)));
     ctx.dispatch(new fromWs.LoadRiskLinkPortfolioDataAction(_.filter(listDataToArray, et => et.type === 'edm' && et.selected)));
     /*    }*/

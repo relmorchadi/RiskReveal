@@ -1,6 +1,7 @@
 <div (click)="redirectWorkspace()"
      class="pointer">{{!!selectedWorkspace ? selectedWorkspace?.name : 'My Workspaces'}}</div>
-<div (click)="togglePopup()" class="dropdown-icon" nz-popover [(nzVisible)]="visible" [nzContent]="workspacePopoverContent" nzTrigger="click">
+<div (click)="togglePopup()" class="dropdown-icon" nz-popover [(nzVisible)]="visible"
+     [nzContent]="workspacePopoverContent" nzTrigger="click">
   <i nz-icon type="down" theme="outline" style="float: right; margin-top: 8px"></i>
 </div>
 <ng-template #workspacePopoverContent>
@@ -9,12 +10,12 @@
     <nz-tabset class="a-tab-minitab">
       <nz-tab [nzTitle]="RecentHeaderContent">
         <div class="popup-tab-content popover-menu">
-          <nz-alert
-            nzType="info"
-            nzCloseable
-            nzShowIcon
-            nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"
-          ></nz-alert>
+          <!--          <nz-alert-->
+          <!--            nzType="info"-->
+          <!--            nzCloseable-->
+          <!--            nzShowIcon-->
+          <!--            nzMessage="Select multiple workspaces to display them on new pages or pop out, or just click to open them in current window"-->
+          <!--          ></nz-alert>-->
           <div class="tab-search-input">
             <i class="icon-search_24px"></i>
             <input class="input-search" (input)="searchNewWorkspace($event)"/>
@@ -42,13 +43,28 @@
               </li>
             </ng-container>
           </ul>
+          <!--          <div class="footer-workspace-menu mt-2">-->
+          <!--            <nz-select  [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="a-dropdown-label last-label"-->
+          <!--                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">-->
+          <!--              <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>-->
+          <!--              <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>-->
+          <!--              <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>-->
+          <!--              <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>-->
+          <!--            </nz-select>-->
+
+          <!--            <div class="float-right">-->
+          <!--              <button class="a-button-text" nz-button nzType="default">POP OUT</button>-->
+          <!--              <button class="a-button-text" nz-button nzType="default">OPEN</button>-->
+          <!--            </div>-->
+          <!--          </div>-->
           <div class="mt-2">
-            <!--            <nz-select [(ngModel)]="lastOnes" (ngModelChange)="searchWorkspace($event)" [nzAllowClear]="false"
-                                   class="float-left a-dropdown-small" style="width: 120px;" nzAllowClear
-                                   nzPlaceHolder="Choose">
-                          <nz-option *ngFor="let label of state.workspacePagination.paginationList ; let i = index"
-                                     [nzValue]="label?.id" [nzLabel]="label?.value"></nz-option>
-                        </nz-select>-->
+            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="a-dropdown-label last-label"
+                       style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
+              <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
+              <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
+              <nz-option [nzValue]="100" nzLabel="Last 100"></nz-option>
+              <nz-option [nzValue]="150" nzLabel="Last 150"></nz-option>
+            </nz-select>
             <div class="float-right">
               <button (click)="popOutWorkspaces()" class="a-button-text">POP OUT</button>
               <button (click)="openWorkspaces()" class="a-button-text">OPEN</button>
@@ -84,8 +100,8 @@
               </li>
             </ng-container>
           </ul>
-          <div class="footer-workspace-menu mt-2">
-            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="float-left a-dropdown-small"
+          <div class="mt-2">
+            <nz-select [(ngModel)]="favoriteSize" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
@@ -115,8 +131,8 @@
                  [ngClass]="{'icon-check_24px': workspace.selected, 'icon-radio_button_unchecked_24px': !workspace.selected}"></i>
             </li>
           </ul>
-          <div class="footer-workspace-menu mt-2">
-            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="float-left a-dropdown-small"
+          <div class="mt-2">
+            <nz-select [(ngModel)]="lastOnes" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="0" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="1" nzLabel="Last 50"></nz-option>
@@ -159,8 +175,8 @@
               </li>
             </ng-container>
           </ul>
-          <div class="footer-workspace-menu mt-2">
-            <nz-select [(ngModel)]="pingedSize" [nzAllowClear]="false" class="float-left a-dropdown-small"
+          <div class="mt-2">
+            <nz-select [(ngModel)]="pingedSize" [nzAllowClear]="false" class="a-dropdown-label last-label"
                        style="width: 120px;" nzAllowClear nzPlaceHolder="Choose">
               <nz-option [nzValue]="10" nzLabel="Last 10"></nz-option>
               <nz-option [nzValue]="50" nzLabel="Last 50"></nz-option>
