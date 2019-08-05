@@ -37,6 +37,10 @@
       margin-right: 10px;
     }
 
+    .right > div, .center > div, .left > div {
+      box-shadow: none;
+    }
+
     .right {
       margin: 0;
     }
