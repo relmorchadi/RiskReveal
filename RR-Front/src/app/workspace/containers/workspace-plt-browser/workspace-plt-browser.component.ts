@@ -6,7 +6,6 @@ import * as fromWorkspaceStore from '../../store';
 import {WorkspaceState} from '../../store';
 import {switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Table} from 'primeng/table';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
@@ -17,6 +16,7 @@ import {PreviousNavigationService} from '../../services/previous-navigation.serv
 import {BaseContainer} from '../../../shared/base';
 import {SystemTagsService} from '../../../shared/services/system-tags.service';
 import {StateSubscriber} from '../../model/state-subscriber';
+import {ExcelService} from '../../../shared/services/excel.service';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -31,8 +31,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   private dropdown: NzDropdownContextComponent;
   searchAddress: string;
   activeCheckboxSort: boolean;
-  @ViewChild('dt')
-  private table: Table;
   workspaceId: string;
   uwy: number;
   projects: any[];
@@ -434,6 +432,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     private route$: ActivatedRoute,
     private prn: PreviousNavigationService,
     private systemTagService: SystemTagsService,
+    private excel: ExcelService,
     _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -471,6 +470,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       mode: "default"
     };
     this.tableInputs = {
+      scrollHeight: 'calc(100vh - 480px)',
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: [
@@ -1239,5 +1239,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + "-" + this.uwy
     }));
     this.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`])
+  }
+
+  exportTable() {
+    this.excel.exportAsExcelFile(this.tableInputs.listOfPltsData.map(e => _.omit(e, 'userTags')), 'sample')
   }
 }

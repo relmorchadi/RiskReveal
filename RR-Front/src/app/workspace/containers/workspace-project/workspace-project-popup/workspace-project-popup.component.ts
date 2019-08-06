@@ -128,6 +128,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   browesing: boolean;
 
   Inputs: {
+    scrollHeight: string | number,
     contextMenuItems: any,
     filterInput: string;
     pltColumns: any[];
@@ -165,7 +166,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     selectedItemForMenu: any;
   };
 
-  tableInputs = ['dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
+  tableInputs = ['scrollHeight','dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
@@ -190,6 +191,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
+      scrollHeight: null,
       filterInput: '',
       pltColumns: [
         {
@@ -235,7 +237,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '80%',
+          width: '100%',
           icon: null,
           type: 'field',
           active: true

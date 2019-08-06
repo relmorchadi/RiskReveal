@@ -3,6 +3,7 @@ import {ChangeDetectorRef} from "@angular/core";
 import {Store} from "@ngxs/store";
 import {MonoTypeOperatorFunction, Observable, Subject} from "rxjs";
 import {takeUntil} from "rxjs/operators";
+import {Navigate} from '@ngxs/router-plugin';
 
 
 export abstract class BaseContainer {
@@ -20,7 +21,7 @@ export abstract class BaseContainer {
 
 
   protected navigate(commands: any[]) {
-    this._baseRouter.navigate(commands);
+    this.dispatch(new Navigate(commands));
   }
 
   protected detectChanges() {
