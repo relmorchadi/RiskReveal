@@ -140,9 +140,9 @@ const regionPerilDataTable = [
   {field: 'analysisId', header: 'ID', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'analysisName', header: 'Analysis Name', width: '90px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
   {field: 'regionPeril', header: 'Region Peril', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'override', header: 'Override', width: '300px', type: 'override', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'override', header: 'Override', width: '250px', type: 'override', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'copy', header: 'Copy', width: '50px', type: 'function', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'reason', header: 'Reason', width: '150px', type: 'comment', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'reason', header: 'Reason', width: '170px', type: 'comment', sorted: false, filtered: false, highlight: false, visible: true},
 ];
 
 export const DataTables = {

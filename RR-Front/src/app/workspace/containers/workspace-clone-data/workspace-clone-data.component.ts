@@ -564,6 +564,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
     this.clone();
 
+    console.log(this.projectsForm)
+
     if(this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
   }
 }

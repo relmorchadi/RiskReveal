@@ -4,15 +4,109 @@
   display: flex;
   min-height: 100vh;
   background-color: #F4F6FC;
+
+  @media screen and (max-width: 1700px) {
+    width: 94%;
+  }
 }
 
+/*
+=======================================================================================
+COMPONENT STYLE
+=======================================================================================
+*/
+
 .app-body{
-  display: flex;
-  height:500px;
+  display: block;
+
+  .menu-left-header {
+    padding: 6px 10px 0;
+    display: flex;
+    width: 55%;
+    font-weight: bold;
+    color: #000000;
+  }
 
   .menu-left-wrapper {
+    float: left;
     background-color: #FFFFFF;
-    width: 25%;
+    width: 20%;
+
+    ::ng-deep {
+      .ui-tree.ui-widget.ui-widget-content.ui-corner-all.ui-tree-selectable {
+        border: none;
+        padding: 0;
+      }
+
+      ul.ui-tree-container {
+        height: 215px;
+      }
+    }
+
+    .menu-left-header {
+      padding: 6px 10px 0;
+      display: flex;
+      width: 55%;
+    }
+
+    .search-document-wrap {
+      width: 94%;
+      margin: 3px auto 10px;
+    }
+
+    .tree-menu-wrapper {
+      width: fit-content;
+      margin: 10px auto;
+    }
+
+    .files-selection-wrap {
+      width: 250px;
+      margin: 0 auto 10px;
+
+      ul {
+        height: 210px;
+
+        li {
+          height: 30px;
+          align-items: center;
+        }
+      }
+
+      ::ng-deep {
+        label.ant-checkbox-wrapper {
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+      }
+    }
+
+    .empty-data-wrap {
+      margin: 11px 15px;
+      padding: 10px;
+      background: #F4F6FC;
+    }
+  }
+
+  .menu-right-wrapper {
+    float: right;
+    background: #FFFFFF;
+    width: 79%;
+
+    .menu-left-header {
+      border-top: 4px solid #0700CF;
+      display: flex;
+      font-weight: bold;
+      color: #000000;
+      padding: 12px 25px 0;
+      width: 33%;
+    }
+
+    ::ng-deep {
+      .ui-table-scrollable-wrapper.ng-star-inserted > div {
+        width: 100% !important;
+      }
+    }
   }
 }
 
@@ -208,6 +302,12 @@ TABLE STYLE
       overflow: auto;
       width: 100%;
     }
+  }
+}
+
+.table-width {
+  p-table {
+    width: 98%;
   }
 }
 

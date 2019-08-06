@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 7px;
+    padding: 7px 5px;
     flex-wrap: nowrap;
     color: var(--primary-7);
 
@@ -19,13 +19,13 @@
     }
 
     .link-separator {
-      margin-left: 14px;
+      margin-left: 10px;
       font-weight: 400;
     }
   }
 
   .active-link {
-    font-weight: 700;
+    font-weight: 400;
     color: var(--primary-1);
 
     .link-separator {
