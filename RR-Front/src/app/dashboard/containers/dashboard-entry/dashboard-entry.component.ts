@@ -194,7 +194,6 @@ export class DashboardEntryComponent implements OnInit {
       //minItemRows:4,
       maxCols: 3,
     };
-
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
     this.updateDashboardMockData();
     this.idSelected = this.dashboardsMockData[0].id;
