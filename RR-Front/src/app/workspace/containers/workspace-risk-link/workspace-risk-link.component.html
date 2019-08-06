@@ -296,6 +296,7 @@
               </div>
               <div class="show-table">
                 <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
+                         [resizableColumns]="true" columnResizeMode="expand"
                          [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                   <ng-template pTemplate="colgroup" let-columns>
                     <colgroup>
@@ -304,8 +305,23 @@
                   </ng-template>
                   <ng-template pTemplate="header" let-columns>
                     <tr>
-                      <th *ngFor="let col of columns">
-                        <div *ngIf="col.header !== 'selected'">{{col.header}}</div>
+                      <th *ngFor="let col of columns" pResizableColumn>
+                        <ng-container *ngIf="col.header === 'selected'">
+                          <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
+                                 style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis"
+                                 (ngModelChange)="updateAllChecked($event, 'analysis')"
+                                 [nzIndeterminate]="indeterminateAnalysis"></label>
+                          <label *ngIf="state.selectedEDMOrRDM === 'edm'"
+                                 style="margin-top:20px" nz-checkbox [ngModel]="allCheckedPortolfios"
+                                 (ngModelChange)="updateAllChecked($event, 'portfolio')"
+                                 [nzIndeterminate]="indeterminatePortfolio"></label>
+                          <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                        </ng-container>
+                        <div *ngIf="col.header !== 'selected'">
+                          {{col.header}}
+                          <p-sortIcon style="position: absolute; float: right;"
+                            [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                        </div>
                         <div class="search-bar-table"
                              *ngIf="col.header !== 'selected' && col.header !== 'id'">
                           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>

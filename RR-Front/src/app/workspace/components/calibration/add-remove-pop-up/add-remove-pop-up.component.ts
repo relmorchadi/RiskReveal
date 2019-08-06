@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {combineLatest, Observable, of, Subject, Subscription} from "rxjs";
-import {Actions, ofActionDispatched, Select, Store} from "@ngxs/store";
+import {Actions, ofActionDispatched, Store} from "@ngxs/store";
 import * as rightMenuStore from "../../../../shared/components/plt/plt-right-menu/store";
 import {Actions as rightMenuActions} from "../../../../shared/components/plt/plt-right-menu/store";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
@@ -9,6 +9,7 @@ import {NotificationService} from "../../../../shared/notification.service";
 import {SearchService} from "../../../../core/service";
 import {WorkspaceState} from "../../../store/states";
 import * as fromWorkspaceStore from "../../../store";
+import {toCalibratePlts} from "../../../store";
 import * as _ from "lodash";
 import {mergeMap} from "rxjs/operators";
 import {Debounce} from "../../../../shared/decorators";
@@ -30,6 +31,8 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
   @Output('onSelectItems') onSelectItems: EventEmitter<any> = new EventEmitter();
   @Output('onSelectWorkspace') onSelectWorkspace: EventEmitter<any> = new EventEmitter();
+  @Output('onSave') onSaveEmitter: EventEmitter<any> = new EventEmitter();
+
   @Input() isVisible;
   @Input('selectionStep') selectionStep: string;
   @Input() multiSteps: boolean;
@@ -300,7 +303,7 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
 
   getBrowesingItemsDirectly() {
     this.browesing = true;
-    this.data$ = this.store$.select(WorkspaceState.getPltsForCalibration(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+    this.data$ = this.store$.select(WorkspaceState.getPltsForCalibrationPopUp(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
     this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPltsForCalibration(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
 
     this.pltTableSubscription = combineLatest(
@@ -628,6 +631,31 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       pathTab: true,
       selectedItemForMenu: null
     };
+  }
+
+  onSave() {
+    // this.onSaveEmitter.emit(this.Inputs.selectedListOfPlts);
+    /* _.forEach(plts, pltId => {
+      this.listOfPltsData[pltId].toCalibrate = false;
+    });
+     console.log(this.listOfPltsData);
+     this.store$.dispatch(new toCalibratePlts( {
+       plts:this.listOfPltsData,
+       wsIdentifier:this.workspaceId + "-" + this.uwy
+     }))*/
+    const result: any = {};
+    _.forEach(this.Inputs.listOfPltsData, (plt: any) => {
+      plt.toCalibrate = false;
+      result[plt.pltId] = plt;
+    })
+    _.forEach(this.Inputs.selectedListOfPlts, pltId => {
+      result[pltId].toCalibrate = true;
+    })
+    this.store$.dispatch(new toCalibratePlts({
+      plts: result,
+      wsIdentifier: this.stepConfig.wsId + "-" + this.stepConfig.uwYear
+    }))
+    this.onHide();
   }
 
   onRowSelect(event) {

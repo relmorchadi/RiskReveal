@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 import {Select, Store} from '@ngxs/store';
 import {HeaderState, WorkspaceMainState} from '../../../store/states';
 import {Observable} from 'rxjs';
-import {WorkspaceMain} from '../../../model/workspace-main';
+/*import {WorkspaceMain} from '../../../model/workspace-main';*/
 import {HelperService} from '../../../../shared/helper.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {ConfirmationService} from 'primeng/api';
@@ -29,9 +29,9 @@ export class TasksMenuItemComponent implements OnInit {
 
   wsId: any;
 
-  @Select(WorkspaceMainState)
+/*  @Select(WorkspaceMainState)
   state$: Observable<WorkspaceMain>;
-  state: WorkspaceMain = null;
+  state: WorkspaceMain = null;*/
 
   @Select(HeaderState.getJobs) jobs$;
   jobs: any;
@@ -50,7 +50,6 @@ export class TasksMenuItemComponent implements OnInit {
       this.savedTasksLocal = [..._.sortBy(_.filter(this.jobs, (dt) => !dt.pending), (dt) => dt.isPaused),
         ..._.filter(this.jobs, (dt) => dt.pending)];
     });
-    this.state$.subscribe(value => this.state = _.merge({}, value));
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
     this.store.select(WorkspaceState.getCurrentWS).subscribe((ws) => {
       this.wsId = _.get(ws, 'workSpaceId', null);

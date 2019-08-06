@@ -40,6 +40,13 @@ export class calibrateSelectPlts {
   }
 }
 
+export class toCalibratePlts {
+  static readonly type = '[Calibration] Save PLTs to calibrate';
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class setUserTagsFiltersFromCalibration {
   static readonly type = '[Calibration] set Filter Plts'
 

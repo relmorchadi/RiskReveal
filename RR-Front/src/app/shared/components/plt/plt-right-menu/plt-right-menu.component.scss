@@ -79,6 +79,7 @@
 
   .left,.right {
     display: flex;
+    box-shadow: none !important;
   }
   .left {
     flex-wrap: wrap;
@@ -446,5 +447,14 @@
   }
 
 }
+
+.plt-detail-tr:hover {
+  .icon-trash-alt {
+    display: block !important;
+    color: var(--scor-peril-1);
+    font-size: 16px;
+  }
+}
+
 
 

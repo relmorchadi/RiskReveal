@@ -34,8 +34,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('extend') extendEmitter: EventEmitter<any> = new EventEmitter();
   @Output('clickButtonPlus') clickButtonPlusEmitter: EventEmitter<any> = new EventEmitter();
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('closeReturnPeriods') closeReturnPeriodsEmitter: EventEmitter<any> = new EventEmitter();
+
   @Input('extended') extended: boolean;
-  @Input('cm') cm: any;
+  // @Input('cm') cm: any;
   @Input('tableType') tableType: any;
   //columns
   @Input('pltColumns') pltColumns: any;
@@ -50,22 +52,22 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('adjutmentApplication') adjutmentApplication: any;
   @Input('systemTagsCount') systemTagsCount: any;
   //PLTS
-  @Input('listOfPlts') listOfPlts: any;
   @Input('listOfPltsData') listOfPltsData: any;
   @Input('listOfDeletedPlts') listOfDeletedPlts: any;
   @Input('listOfDeletedPltsData') listOfDeletedPltsData: any;
   @Input('showDeleted') showDeleted: any;
+  @Input('selectedListOfPlts') selectedListOfPlts: any;
   @Input('deletedPlts') deletedPlts: any;
   @Input('selectedAdjustment') selectedAdjustment: any;
   @Input('selectedEPM') selectedEPM: any;
 
   @Input('EPMDisplay') EPMDisplay: any;
   @Input('randomMetaData') randomMetaData: any;
+  @Input('someItemsAreSelected') someItemsAreSelected: any;
+  @Input('selectAll') selectAll: any;
+  @Input('manageReturnPeriods') manageReturnPeriods: boolean;
 
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
-  someItemsAreSelected = false;
-  selectAll = false;
-  selectedListOfPlts = [];
   lastSelectedId = null;
   params = {};
   loading = true;
@@ -84,7 +86,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     tagColor: '#0700e4'
   }
   searchAddress: string;
-  listOfPltsCache: any[];
+  listOfPltsDataCache: any[];
   shownDropDown: any;
   inProgressCheckbox: boolean = true;
   newCheckbox: boolean = true;
@@ -119,22 +121,92 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   selectedListOfDeletedPlts: any;
   contextMenuItems = [
     {
-      label: 'View Detail', command: (event) => {
+      label: 'Regenerate', command: (event) => {
         this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
     {
-      label: 'Delete', command: (event) => {
-        this.dispatch(new fromWorkspaceStore.deletePlt({
-          wsIdentifier: this.workspaceId + '-' + this.uwy,
-          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
-        }));
+      label: 'Add New Adjustment', command: (event) => {
+        this.clickButtonPlus(false, event)
       }
     },
     {
-      label: 'Clone To',
+      label: 'Create', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      },
+      items: [
+        {
+          label: 'New Default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+        {
+          label: 'New Non-default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+      ]
+    },
+    {
+      label: 'Clone',
       command: (event) => {
         this.router$.navigateByUrl(`workspace/${this.workspaceId}/${this.uwy}/CloneData`, {state: {from: 'pltManager'}})
+      },
+      items: [
+        {
+          label: 'New Default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+        {
+          label: 'New Non-default Thread', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+      ]
+    },
+    {separator: true},
+    {
+      label: 'Publish to Pricing', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Publish to Accumulation', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Inuring', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      },
+      items: [
+        {
+          label: 'Add to New Inuring Package', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+        {
+          label: 'Add to Existing Inuring Package', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt.pltId)
+          }
+        },
+      ]
+    },
+    {
+      label: 'Add ro Comparer', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {
+      label: 'Export', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
+      }
+    },
+    {separator: true},
+    {
+      label: 'View Detail', command: (event) => {
+        this.openPltInDrawer(this.selectedPlt.pltId)
       }
     },
     {
@@ -152,14 +224,19 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       }
     },
     {
-      label: 'Restore',
-      command: () => {
-        this.dispatch(new fromWorkspaceStore.restorePlt({
+      label: 'Remove', command: (event) => {
+        this.dispatch(new fromWorkspaceStore.deletePlt({
           wsIdentifier: this.workspaceId + '-' + this.uwy,
-          pltIds: this.selectedListOfDeletedPlts.length > 0 ? this.selectedListOfDeletedPlts : [this.selectedItemForMenu]
-        }))
-        this.showDeleted = !(this.listOfDeletedPlts.length === 0) ? this.showDeleted : false;
-        this.generateContextMenu(this.showDeleted);
+          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
+        }));
+      }
+    },
+    {
+      label: 'Delete', command: (event) => {
+        this.dispatch(new fromWorkspaceStore.deletePlt({
+          wsIdentifier: this.workspaceId + '-' + this.uwy,
+          pltIds: this.selectedListOfPlts.length > 0 ? this.selectedListOfPlts : [this.selectedItemForMenu]
+        }));
       }
     }
   ];
@@ -180,8 +257,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private dropdown: NzDropdownContextComponent;
   private lastClick: string;
   returnPeriodInput: any;
-  hoveredRow: any;
-  isVisible: boolean;
+  clickedDropdown: any;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -266,8 +342,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   checkAll($event) {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-        _.range(!this.showDeleted ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
+        _.map(this.listOfPltsData, plt => plt.pltId),
+        _.range(this.listOfPltsData.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
       )
     );
   }
@@ -283,8 +359,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   unCheckAll() {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
-        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({selected: false}))
+        _.map(this.listOfPltsData, plt => plt.pltId),
+        _.range(this.listOfPltsData.length).map(el => ({selected: false}))
       )
     );
   }
@@ -298,8 +374,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       this.lastSelectedId = i;
       this.toggleSelectPlts(
         _.zipObject(
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => ({selected: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(this.listOfPltsData, plt => plt.pltId),
+          _.map(this.listOfPltsData, plt => ({selected: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
@@ -322,7 +398,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
         return !o.selected;
       }]);
     } else {
-      this.listOfPltsData = this.listOfPltsCache;
+      this.listOfPltsData = this.listOfPltsDataCache;
     }
   }
 
@@ -480,6 +556,36 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     return random;
   }
 
+  numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  }
+
+
+  hide() {
+    this.closeReturnPeriodsEmitter.emit()
+  }
+
+  addToReturnPeriods() {
+    if (this.returnPeriodInput != null && this.returnPeriodInput != undefined) {
+      this.returnPeriods.push(this.returnPeriodInput)
+      this.returnPeriodInput = null;
+    }
+    this.returnPeriods.sort((a, b) => b - a)
+  }
+
+  removeReturnPeriod(rowData) {
+    let index = _.findIndex(this.returnPeriods, row => row == rowData);
+    this.returnPeriods.splice(index, 1);
+  }
+
+  changeDropdownDisplay($event: boolean, pltId: any) {
+    if ($event) {
+      this.clickedDropdown = pltId;
+    } else {
+      this.clickedDropdown = null;
+    }
+  }
+
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
     if ($event.ctrlKey) {
       this.selectSinglePLT(pltId, isSelected);
@@ -494,8 +600,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
         const min = _.min([i, this.lastSelectedId]);
         this.toggleSelectPlts(
           _.zipObject(
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({selected: i <= max && i >= min})),
+            _.map(this.listOfPltsData, plt => plt.pltId),
+            _.map(this.listOfPltsData, (plt, i) => ({selected: i <= max && i >= min})),
           )
         );
       } else {
@@ -503,26 +609,5 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       }
       return;
     }
-  }
-
-  openMetricModal() {
-    this.isVisible = true;
-  }
-
-  hide() {
-    this.isVisible = false;
-  }
-
-  addToReturnPeriods() {
-    if (this.returnPeriodInput != null && this.returnPeriodInput != undefined) {
-      this.returnPeriods.push(this.returnPeriodInput)
-      this.returnPeriodInput = null;
-    }
-
-  }
-
-  removeReturnPeriod(rowData) {
-    let index = _.findIndex(this.returnPeriods, row => row == rowData);
-    this.returnPeriods.splice(index, 1);
   }
 }

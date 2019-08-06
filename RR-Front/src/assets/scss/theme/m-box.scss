@@ -1,6 +1,5 @@
 .m-box-d {
-  width: 500px;
-  max-width: 100%;
+  min-width: 241px;
   border: solid 1px #ccc;
   min-height: 60px;
   display: block;
@@ -9,8 +8,9 @@
   overflow: hidden;
   flex: 1 1 auto;
 }
+
 .m-box-drag {
-  padding: 5px 10px;
+  padding: 2px 7px;
   border-bottom: solid 1px #ccc;
   color: rgba(0, 0, 0, 0.87);
   display: flex;
@@ -88,6 +88,7 @@
 
 .cdk-drag-placeholder {
   background-color: var(--surface-5);
+
   .m-box-overlay {
     visibility: hidden;
   }

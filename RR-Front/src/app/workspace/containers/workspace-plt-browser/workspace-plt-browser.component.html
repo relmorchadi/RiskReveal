@@ -56,18 +56,20 @@
             PLTs
           </span>
           <div class="right">
-            <div style="display: flex;align-items: center;">
-              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length ? tableInputs['selectedListOfPlts']?.length + ' PLTs are selected' : ''}}</p>
-              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+            <div *ngIf="tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
+              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ' PLTs are selected'}}</p>
+              <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
                 <a style="max-height: 28px;display: flex;" nz-dropdown>
                   <i class="icon-menu_24px"></i>
                 </a>
                 <ul nz-menu style="font-size: 12px">
-                  <li nz-menu-item (click)="cloneFrom()">Clone From</li>
+                  <li nz-menu-item (click)="deletePlt()">Delete</li>
+                  <li nz-menu-item (click)="cloneTo()">Clone To</li>
+                  <li nz-menu-item >Calibrate</li>
                 </ul>
               </nz-dropdown>
             </div>
-            <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'" >
+            <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" >
               <a style="max-height: 28px;display: flex;" nz-dropdown>
                 <i class="icon-settings_24px"></i>
               </a>
@@ -87,6 +89,16 @@
               </ul>
             </nz-dropdown>
           </div>
+          <span style="    font-size: 14px;
+    font-weight: bold;
+    color: #0700e4;
+    cursor: pointer;
+    position: absolute;
+    border: 0;
+    left: 48px;
+    bottom: -7px;
+    z-index: 10;
+    padding: 0;" (click)="cloneFrom()">Clone from</span>
         </div>
         <div class="PLTs-content">
           <app-plt-main-table
@@ -107,7 +119,7 @@
 <p-dialog
   [visible]="managePopUp"
   [closable]="false"
-  styleClass="m-dialog-modal-lg-h"
+  styleClass="m-dialog-modal"
   appendTo="body"
   [modal]="true"
   [autoZIndex]="false"
@@ -117,7 +129,7 @@
   <p-header>
     <div class="header">
       <h4>
-        Columns Manager
+        Manage Columns
       </h4>
       <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
     </div>
@@ -140,8 +152,6 @@
             <div class="m-box-overlay">
               <div class="left">
                 <div class="burger" cdkDragHandle>
-                  <div class="line"></div>
-                  <div class="line"></div>
                   <div class="line"></div>
                   <div class="line"></div>
                   <div class="line"></div>
@@ -224,8 +234,8 @@
 
   <p-footer>
     <div class="footer">
-      <button (click)="toggleColumnsManager()" nz-button class="a-button-text">cancel</button>
-      <button class="a-buttons-contained" (click)="saveColumns()" nz-button>
+      <button (click)="toggleColumnsManager()" class="a-button-text-cancel">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns()">
         Save
       </button>
     </div>
