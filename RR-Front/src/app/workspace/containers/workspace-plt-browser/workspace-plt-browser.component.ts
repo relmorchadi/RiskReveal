@@ -555,7 +555,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '30%',
+          width: '22%',
           icon: null,
           type: 'field',
           textAlign: 'center',
