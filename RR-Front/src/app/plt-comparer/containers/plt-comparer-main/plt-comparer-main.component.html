@@ -1,11 +1,10 @@
 <div class="layout-comparer">
-  <div class="header container-fluid">
     <div class="header-comparer-wrapper">
       <div class="header-left">
 <!--        <div class="title-section-comparer">-->
           <h4>PLT Comparer &nbsp;</h4>
           <i class="icon-plus-circle icon-generic" (click)="showModal()"
-           style="font-size: 25px; cursor: pointer;margin-bottom: 8px;"></i>
+           style="font-size: 25px; cursor: pointer;"></i>
           <nz-modal
           [(nzVisible)]="isVisible"
           nzFooter=" "
@@ -114,10 +113,11 @@
 <!--        </div>-->
       </div>
       <div class="header-center">
-        <div class="Deltas" style="position: unset;">Deltas &nbsp;
+        <div class="Deltas" style="position: unset;">
+          <span>Deltas &nbsp;</span>
           <div class="button-toggle">
             <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch>
-            <div style="width: 200px; margin-left: 10px">
+            <div>
               <nz-select *ngIf="switchValue"
                          class="delta-context a-dropdown-label"
                          [(ngModel)]="defaultImport" style="width: 150px;"
@@ -198,12 +198,6 @@
             </button>
           </div>
         </div>
-    </div>
-    <div>
-
-
-
-
     </div>
     <div class="body">
       <div class="lefter">
@@ -411,4 +405,4 @@
         <img style="width: 100%" src="../../../../assets/images/Capture.PNG"/>
       </div>
     </div>
-  </div>
+</div>

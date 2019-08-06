@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {Actions, ofActionDispatched} from '@ngxs/store';
-import {Navigate} from '@ngxs/router-plugin';
+import {Navigate, RouterNavigation} from '@ngxs/router-plugin';
 
 @Injectable()
 export class PreviousNavigationService {
@@ -11,11 +11,17 @@ export class PreviousNavigationService {
   constructor(private actions: Actions) {
 
     this.actions.pipe(
-      ofActionDispatched(Navigate)
+      ofActionDispatched([Navigate, RouterNavigation])
     ).subscribe(e => {
-      this.previousUrl = this.currentUrl;
-      const t = e.path[0].split('/');
-      this.currentUrl = t[t.length - 1];
+      if(e.routerState) {
+        this.previousUrl = this.currentUrl;
+        this.currentUrl = e.params.route;
+      }
+      if(e.path){
+        this.previousUrl = this.currentUrl;
+        const t = e.path[0].split('/');
+        this.currentUrl = t[t.length - 1];
+      }
     });
   }
 

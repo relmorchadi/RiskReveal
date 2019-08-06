@@ -945,6 +945,13 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           this.setInputs('userTags', userTags || {});
           this.detectChanges();
         })
+
+        this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
+          this.setInputs('pltDetail', openedPlt);
+          this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
+          this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
+          this.detectChanges();
+        });
       } else {
         this.onVisibleChange.emit(false);
       }
@@ -1075,10 +1082,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     // this.messageService.clear();
   }
 
-  closePltInDrawer(pltId) {
+  closePltInDrawer() {
     this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
       wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
-      pltId
     }));
     this.updateMenuKey('pltDetail', null);
     this.setRightMenuSelectedTab('basket');
@@ -1086,7 +1092,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   openPltInDrawer(plt) {
     if(this.getRightMenuKey('pltDetail')) {
-      this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId)
+      this.closePltInDrawer();
     }
     this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
       wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
@@ -1101,11 +1107,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     console.log(action);
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        console.log('closing');
-        /*if(this.getRightMenuKey('pltDetail')) {
-          this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
-        }*/
         this.updateMenuKey('visible', false);
+        this.closePltInDrawer();
         break;
       case rightMenuStore.openDrawer:
         this.updateMenuKey('visible', true);

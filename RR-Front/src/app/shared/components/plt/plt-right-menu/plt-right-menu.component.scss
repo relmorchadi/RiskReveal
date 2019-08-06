@@ -79,6 +79,7 @@
 
   .left,.right {
     display: flex;
+    box-shadow: none !important;
   }
   .left {
     flex-wrap: wrap;
