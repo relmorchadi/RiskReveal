@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -61,6 +62,7 @@ public class DefaultAdjustmentService {
     @Autowired
     DefaultRetPerBandingParamsRepository defaultRetPerBandingParamsRepository;
 
+    @Transactional
     public List<AdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltEntity(Integer scorPltHeaderId) {
         if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
             ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
@@ -128,7 +130,7 @@ public class DefaultAdjustmentService {
                             adjustmentThreadEntity.setLocked(true);
                             adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
                             adjustmentThreadEntity.setCreatedBy("HAMZA");
-                            adjustmentThreadRepository.save(adjustmentThreadEntity);
+                            adjustmentThreadEntity = adjustmentThreadRepository.save(adjustmentThreadEntity);
                             for(DefaultAdjustmentNodeEntity defaultAdjustmentNodeEntity : defaultAdjustmentNodeEntities) {
                                 AdjustmentNodeEntity adjustmentNodeEntityDefaultRef = new AdjustmentNodeEntity(defaultAdjustmentNodeEntity.getSequence(),defaultAdjustmentNodeEntity.getCappedMaxExposure(),adjustmentThreadEntity,defaultAdjustmentNodeEntity.getAdjustmentBasis(),defaultAdjustmentNodeEntity.getAdjustmentType(),adjustmentStateRepository.getAdjustmentStateEntityByCodeValid());
                                 adjustmentNodeEntityDefaultRef = adjustmentnodeRepository.save(adjustmentNodeEntityDefaultRef);
@@ -155,7 +157,7 @@ public class DefaultAdjustmentService {
                                         e.printStackTrace();
                                     }
                                 }
-                                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf(),paramsEntity.getRpmf(),peatData,purePlt.getScorPltHeaderId(),adjustmentNodeEntityDefaultRef.getIdAdjustmentNode(),returnPeriodBendings));
+                                AdjustmentNodeProcessingEntity adjustmentNodeProcessingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(paramsEntity.getLmf()!= null ?paramsEntity.getLmf() : 0,paramsEntity.getRpmf()!= null ? paramsEntity.getRpmf() : 0,peatData,purePlt.getScorPltHeaderId(),adjustmentNodeEntityDefaultRef.getIdAdjustmentNode(),returnPeriodBendings));
                                 purePlt = adjustmentNodeProcessingEntity.getScorPltHeaderByIdAdjustedPlt();
                             }
                             adjustmentThreadEntity.setScorPltHeaderByIdThreadPlt(purePlt);

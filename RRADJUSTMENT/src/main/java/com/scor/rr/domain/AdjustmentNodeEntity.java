@@ -48,6 +48,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "id_adjustment_node", nullable = false)
     public int getIdAdjustmentNode() {
         return idAdjustmentNode;

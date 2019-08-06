@@ -115,12 +115,12 @@ public class AdjustmentNodeProcessingService {
     }
 
     private BinFileEntity savePLTFile(List<PLTLossData> pltLossData,ScorPltHeaderEntity scorPltHeaderEntity) {
-        File file = new File(scorPltHeaderEntity.getBinFile().getFileName());
+        File file = new File("C:\\Users\\u008208\\Desktop\\plt.csv");
         File fileWrite = null;
         if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
             try {
-                fileWrite = new File(pathcsv);
+                fileWrite = new File("C:\\Users\\u008208\\Desktop\\plt.csv");
                 csvpltFileWriter.write(pltLossData,fileWrite);
             } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
                 e.printStackTrace();
@@ -146,7 +146,7 @@ public class AdjustmentNodeProcessingService {
     private List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) {
         if(scorPltHeaderEntity != null) {
             if(scorPltHeaderEntity.getBinFile() != null) {
-                File file = new File(scorPltHeaderEntity.getBinFile().getFileName());
+                File file = new File("C:\\Users\\u008208\\Desktop\\"+scorPltHeaderEntity.getBinFile().getFileName());
                 if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
                     CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
                     try {
