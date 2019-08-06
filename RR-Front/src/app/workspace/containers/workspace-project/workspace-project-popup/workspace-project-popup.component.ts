@@ -609,7 +609,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.selectedWorkspace = null;
     this._filter = {};
     this.browesing = false;
-    this.onVisibleChange.emit(false);
+    this.onVisibleChange.emit(this.browesing);
     this.Inputs= {
       ...this.Inputs,
       filterInput: '',
@@ -966,7 +966,11 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }else {
       this.searchWorkspace = false;
       this.newProject = true;
-      this.onSelectProjectNext.emit(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
+      this.onSelectProjectNext.emit( _.merge(
+        _.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']),
+        {workspaceName: _.get(this.selectedWorkspace, 'workspaceName')}
+
+      ) );
     }
   }
 
@@ -987,7 +991,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         this._loadData();
       });
 
-    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
+    if (this.stepConfig && this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();

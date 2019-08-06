@@ -155,9 +155,9 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     console.log(project);
   }
 
-  cancelCreateExistingProjectPopup() {
+  cancelCreateExistingProjectPopup(param) {
+    console.log('Cancel', param);
     this.searchWorkspace = false;
-    this.selectedProject = null;
   }
 
   onCancelCreateProject() {
