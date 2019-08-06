@@ -19,3 +19,24 @@
   height: 800px !important;
   width: 450px !important;
 }*/
+.favoredStar {
+  color: #f1c215;
+}
+
+.favoredStar:hover {
+  color: #d8880f;
+}
+
+.unfavoredStar {
+  color: #f1c215;
+}
+
+.unfavoredStar:hover {
+  color: #d8880f;
+}
+
+::ng-deep.ant-select-dropdown-menu-item-group-title {
+  border-top: 1px solid;
+  font-size: 15px;
+  font-weight: 700;
+}

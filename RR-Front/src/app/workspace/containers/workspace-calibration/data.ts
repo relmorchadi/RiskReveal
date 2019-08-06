@@ -614,7 +614,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 13,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 1
+    "idAdjustementType": 1,
+    "favored": false
   },
   {
     "id": 2,
@@ -626,7 +627,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 7,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 2
+    "idAdjustementType": 2,
+    "favored": false
   },
   {
     "id": 4,
@@ -638,7 +640,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 1,
     "isExposureGrowth": true,
     "value": "2,1",
-    "idAdjustementType": 4
+    "idAdjustementType": 4,
+    "favored": false
   },
   {
     "id": 5,
@@ -650,7 +653,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 2,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 5
+    "idAdjustementType": 5,
+    "favored": false
   },
   {
     "id": 6,
@@ -662,7 +666,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 11,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 6
+    "idAdjustementType": 6,
+    "favored": false
   },
   {
     "id": 7,
@@ -674,7 +679,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 15,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 7
+    "idAdjustementType": 7,
+    "favored": false
   },
   {
     "id": 8,
@@ -686,7 +692,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 17,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 8
+    "idAdjustementType": 8,
+    "favored": false
   },
   {
     "id": 9,
@@ -698,7 +705,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 16,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 9
+    "idAdjustementType": 9,
+    "favored": false
   },
   {
     "id": 10,
@@ -710,7 +718,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 12,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 10
+    "idAdjustementType": 10,
+    "favored": false
   },
   {
     "id": 14,
@@ -722,7 +731,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 3,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 14
+    "idAdjustementType": 14,
+    "favored": false
   },
   {
     "id": 15,
@@ -734,7 +744,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 21,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 15
+    "idAdjustementType": 15,
+    "favored": false
   },
   {
     "id": 16,
@@ -746,7 +757,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 23,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 16
+    "idAdjustementType": 16,
+    "favored": false
   },
   {
     "id": 17,
@@ -758,7 +770,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 14,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 17
+    "idAdjustementType": 17,
+    "favored": false
   },
   {
     "id": 18,
@@ -770,7 +783,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 8,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 18
+    "idAdjustementType": 18,
+    "favored": false
   },
   {
     "id": 19,
@@ -782,7 +796,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 9,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 19
+    "idAdjustementType": 19,
+    "favored": false
   },
   {
     "id": 20,
@@ -794,7 +809,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 4,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 20
+    "idAdjustementType": 20,
+    "favored": false
   },
   {
     "id": 21,
@@ -806,7 +822,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 5,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 21
+    "idAdjustementType": 21,
+    "favored": false
   },
   {
     "id": 24,
@@ -818,7 +835,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 24,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 24
+    "idAdjustementType": 24,
+    "favored": false
   },
   {
     "id": 25,
@@ -830,7 +848,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 22,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 25
+    "idAdjustementType": 25,
+    "favored": false
   },
   {
     "id": 26,
@@ -842,7 +861,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 27,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 26
+    "idAdjustementType": 26,
+    "favored": false
   }
 ].map(item => ({...item, linear: false, hover: false}));
 export const PLT_COLUMNS = [
@@ -914,7 +934,7 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -928,7 +948,7 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -942,7 +962,7 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -956,7 +976,7 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -970,7 +990,7 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -984,7 +1004,7 @@ export const PLT_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -1168,7 +1188,7 @@ export const EPM_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -1182,7 +1202,7 @@ export const EPM_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -1196,7 +1216,7 @@ export const EPM_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -1210,7 +1230,7 @@ export const EPM_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -1224,7 +1244,7 @@ export const EPM_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,
@@ -1238,7 +1258,7 @@ export const EPM_COLUMNS = [
     type: 'field',
     style: 'border: none !important',
     extended: false,
-    frozen: false
+    frozen: true
   },
   {
     sortDir: 1,

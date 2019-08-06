@@ -34,6 +34,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('extend') extendEmitter: EventEmitter<any> = new EventEmitter();
   @Output('clickButtonPlus') clickButtonPlusEmitter: EventEmitter<any> = new EventEmitter();
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('closeReturnPeriods') closeReturnPeriodsEmitter: EventEmitter<any> = new EventEmitter();
+
   @Input('extended') extended: boolean;
   // @Input('cm') cm: any;
   @Input('tableType') tableType: any;
@@ -63,6 +65,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('randomMetaData') randomMetaData: any;
   @Input('someItemsAreSelected') someItemsAreSelected: any;
   @Input('selectAll') selectAll: any;
+  @Input('manageReturnPeriods') manageReturnPeriods: boolean;
 
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;
@@ -254,7 +257,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private dropdown: NzDropdownContextComponent;
   private lastClick: string;
   returnPeriodInput: any;
-  isVisible: boolean;
   clickedDropdown: any;
 
   constructor(
@@ -558,12 +560,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  openMetricModal() {
-    this.isVisible = true;
-  }
 
   hide() {
-    this.isVisible = false;
+    this.closeReturnPeriodsEmitter.emit()
   }
 
   addToReturnPeriods() {

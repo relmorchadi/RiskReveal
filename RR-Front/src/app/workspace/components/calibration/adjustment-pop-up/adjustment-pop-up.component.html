@@ -16,20 +16,32 @@
   </p-header>
   <div class="content" style="display: unset;">
     <div class="ui-g">
-      <div class="ui-g-4">
-        <label> Basis </label>
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Basis </label>
       </div>
-      <div class="ui-g-8">
+      <div class="ui-g-9">
         <div class="body-wrap-dropDowns-calibration">
           <nz-select
             (ngModelChange)="emitSelectCategory($event)"
             [(ngModel)]="categorySelectedFromAdjustement"
             class="a-dropdown-small input-wrapper"
-            nzPlaceHolder="Select Occurence Basis"
+            nzPlaceHolder="Select Adjustment Basis"
             nzShowSearch
-            style="padding: 10px 0; width: 250px"
+            style="padding: 10px 0; width: 300px"
           >
-            <nz-option *ngFor="let option of allAdjsArray" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+            <nz-option-group nzLabel="Favored">
+              <nz-option *ngFor="let option of favoredBasis" [nzLabel]="option.name" [nzValue]="option"
+                         nzCustomContent>{{option.name}}<i (click)="unfavorise(option)"
+                                                           class="icon-star_24px favoredStar"
+                                                           style="font-size: 22px;"></i></nz-option>
+            </nz-option-group>
+            <nz-option-group nzLabel="Normal">
+              <nz-option *ngFor="let option of unFavoredBasis" [nzLabel]="option.name" [nzValue]="option"
+                         nzCustomContent>{{option.name}}<i (click)="favorise(option)"
+                                                           class="icon-star_border_24px unfavoredStar"
+                                                           style="font-size: 22px;"></i></nz-option>
+            </nz-option-group>
+
           </nz-select>
         </div>
       </div>
@@ -45,26 +57,26 @@
       </div>
     </div>
     <div class="ui-g">
-      <div class="ui-g-4">
+      <div class="ui-g-3">
         <label> Category </label>
       </div>
-      <div class="ui-g-8">
+      <div class="ui-g-9">
         <b>{{categorySelected}}</b>
       </div>
     </div>
     <div class="ui-g">
-      <div class="ui-g-4">
+      <div class="ui-g-3">
         <label> Narrative </label>
       </div>
-      <div class="ui-g-8">
-        <textarea [(ngModel)]="inputValue" nz-input rows="4" style="margin-left: 10px; width: 250px"></textarea>
+      <div class="ui-g-9">
+        <textarea [(ngModel)]="inputValue" nz-input rows="4" style="margin-left: 10px; width: 300px"></textarea>
       </div>
     </div>
     <div class="ui-g">
-      <div class="ui-g-4">
-        <label> Type </label>
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Type </label>
       </div>
-      <div class="ui-g-8">
+      <div class="ui-g-9">
         <div class="body-wrap-dropDowns-calibration">
           <nz-select
             (ngModelChange)="selectBasis($event)"
@@ -72,17 +84,17 @@
             class="a-dropdown-small input-wrapper"
             nzPlaceHolder="Select a type"
             nzShowSearch
-            style="padding: 10px 0; width: 250px">
+            style="padding: 10px 0; width: 300px">
             <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
           </nz-select>
         </div>
       </div>
     </div>
     <div *ngIf="categorySelectedFromAdjustement" class="ui-g">
-      <div class="ui-g-4">
+      <div class="ui-g-3">
         <label> Capped </label>
       </div>
-      <div class="ui-g-8">
+      <div class="ui-g-9">
         <nz-switch [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'"
                    [nzDisabled]="true"
                    nzSize="small">
@@ -91,11 +103,12 @@
       </div>
     </div>
     <div *ngIf="linear" class="ui-g">
-      <div class="ui-g-4">
+      <div class="ui-g-3">
         <label> Loss Modification Factor (LMF) </label>
       </div>
-      <div class="ui-g-8">
-        <input [(ngModel)]="columnPosition" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip/>
+      <div class="ui-g-9">
+        <input [(ngModel)]="columnPosition" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip
+               style="width: 300px; !important;"/>
       </div>
     </div>
   </div>

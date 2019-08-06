@@ -2,7 +2,6 @@ import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angula
 import {Router} from '@angular/router';
 import {BaseContainer} from "../../../shared/base";
 import {Store} from "@ngxs/store";
-import { WorkspaceState } from '../../store/states/workspace.state';
 
 
 @Component({
@@ -31,11 +30,11 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   }
 
   ngOnInit() {
-    this._store.select(WorkspaceState.getCurrentTab).subscribe( ({wsIdentifier}): any => {
+    /*this._store.select(WorkspaceState.getCurrentTab).subscribe( ({wsIdentifier}): any => {
       this.wsId= wsIdentifier.split('-')[0];
       this.uwYear= wsIdentifier.split('-')[1];
       console.log(wsIdentifier);
-    })
+    })*/
     // this.state$.subscribe(value => this.state = _.merge({}, value));
   }
 

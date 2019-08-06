@@ -125,7 +125,12 @@
               <div class=" radio-container"
                    style="height: 46px;margin-top: 42px;justify-content: space-between;display: flex;">
                 <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
-                <i class="icon-history-alt regenerate-all" nz-tooltip="Regenerate All"></i>
+                <div style="margin-top: 23px;">
+                  <i class="icon-history-alt regenerate-all" nz-tooltip="Regenerate All"></i>
+                  <i (click)="manageColumn = true" class="icon-settings_24px" nz-tooltip="Manage columns"
+                     style="margin-right: 6px; font-size: 20px; cursor: pointer;"></i>
+                </div>
+
               </div>
             </div>
             <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
@@ -215,10 +220,16 @@
                 </div>
               </div>
               <div class="pull-right radio-container">
-                <div class="Deltas" style="position: unset;">Impact on EP Metrics &nbsp;
-                  <div class="button-toggle">
-                    <nz-switch class="switch-input" (ngModelChange)="onTableTypeChange($event)"
-                               [(ngModel)]="EPMetricsTable"></nz-switch>
+                <div class="Deltas" style="position: unset;">
+                  <div>
+                    <div class="button-toggle" style="width: 212px; float: left;">
+                      Impact on EP Metrics &nbsp;
+                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
+                                 class="switch-input"></nz-switch>
+                    </div>
+                    <i (click)="manageAdjColumn = true" class="icon-settings_24px"
+                       nz-tooltip="Manage  adjustment columns"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
                   </div>
                 </div>
               </div>
@@ -297,11 +308,17 @@
                     <label nz-radio nzValue="percentage" style="color:  #0700e4">Delta by % Basis</label>
                     <label nz-radio nzValue="amount" style="color:  #0700e4">Delta by amount</label>
                   </nz-radio-group>
-                  <div class="button-toggle">
-                    Impact on EP Metrics &nbsp;
-                    <nz-switch class="switch-input" (ngModelChange)="onTableTypeChange($event)"
-                               [(ngModel)]="EPMetricsTable"></nz-switch>
+                  <div>
+                    <div class="button-toggle" style="width: 212px; float: left;">
+                      Impact on EP Metrics &nbsp;
+                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
+                                 class="switch-input"></nz-switch>
+                    </div>
+                    <i (click)="manageReturnPeriods = true" class="icon-settings_24px"
+                       nz-tooltip="Manage return periods"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
                   </div>
+
                 </div>
               </div>
             </div>
@@ -325,7 +342,8 @@
 
               [pltColumns]="pltColumns"
               [tableType]="tableType"
-
+              (closeReturnPeriods)="manageReturnPeriods = false"
+              [manageReturnPeriods]="manageReturnPeriods"
               [selectedAdjustment]="selectedAdjustment"
               [deletedPlts]="deletedPlts"
               [listOfDeletedPltsData]="listOfDeletedPltsData"
@@ -348,7 +366,6 @@
 </div>
 <app-adjustment-pop-up
   [isVisible]="isVisible"
-  [allAdjsArray]="allAdjsArray"
   [AdjustementType]="AdjustementType"
   [modalTitle]="modalTitle"
   [singleValue]="singleValue"
@@ -370,3 +387,253 @@
     plts: listOfPltsData}"
   (onVisibleChange)="addRemoveModal= $event">
 </app-add-remove-pop-up>
+<p-dialog
+  [visible]="manageColumn"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Manage Columns
+      </h4>
+      <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div class="content">
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfColumns]"
+        [cdkDropListData]="extraFrozenColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of extraFrozenColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfColumns]"
+        [cdkDropListData]="frozenColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of frozenColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="toggleColumnsManager()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="manageAdjColumn"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Manage Columns
+      </h4>
+      <i style="cursor: pointer" (click)="toggleColumnsManager(false)" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div class="content">
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfAdjColumns]"
+        [cdkDropListData]="extraDataColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of extraDataColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfAdjColumns]"
+        [cdkDropListData]="dataColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of dataColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="toggleColumnsManager(false)" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns(false)" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>

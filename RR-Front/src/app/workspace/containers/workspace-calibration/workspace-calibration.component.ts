@@ -28,8 +28,9 @@ import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {BaseContainer} from "../../../shared/base";
-import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, SYSTEM_TAGS_MAPPING, UNITS} from "./data";
+import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, UNITS} from "./data";
 import {SystemTagsService} from "../../../shared/services/system-tags.service";
+import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 
 
 @Component({
@@ -63,30 +64,30 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     tagName: '',
     tagColor: '#0700e4'
   }
-
   searchAddress: string;
   listOfPltsCache: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
-  frozenWidth: any = '463px';
+  frozenColumnsCache: any[] = [];
+  extraFrozenColumns: any[] = [];
+  extraFrozenColumnsCache: any[] = [];
+  frozenWidth: any = '463';
   headerWidth: any = '403px';
   genericWidth: any = ['409px', '33px', '157px'];
   selectedAdjustment: any;
   shownDropDown: any;
   lastModifiedAdj;
   dataColumns = [];
+  dataColumnsCache = [];
+  extraDataColumnsCache = [];
+  extraDataColumns = [];
   extended: boolean = false;
   tableType = 'adjustments';
   EPMetricsTable = false;
   EPMS = EPMS;
   selectedEPM = "AEP";
-
-  normalDisplay = true;
-  deltaBasisDisplay = true;
-  deltaActualDisplay = true;
-
   EPMDisplay = 'percentage';
-
+  manageColumn = false;
   collapsedTags: boolean = false;
   filterInput: string = "";
   addRemoveModal: boolean = false;
@@ -124,16 +125,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   userTags: any;
   units = UNITS;
   dependencies = DEPENDENCIES;
-  data$;
-  deletedPlts$;
   deletedPlts: any;
-  systemTagsMapping = SYSTEM_TAGS_MAPPING;
   selectedPlt: any;
   inputValue: any;
   selectedItemForMenu: string;
   oldSelectedTags: any;
   private dropdown: NzDropdownContextComponent;
-  private Subscriptions: any[] = [];
   listOfDeletedPltsData: any;
   listOfDeletedPltsCache: any;
   selectedListOfDeletedPlts: any;
@@ -253,6 +250,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     data: CURRENCIES,
     selected: {id: '1', name: 'Euro', label: 'EUR'}
   };
+  manageReturnPeriods = false;
+  manageAdjColumn = false;
 
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
@@ -293,7 +292,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   ngOnInit() {
     this.initDataColumns();
-
+    this.initFrozenWidth();
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
     ).subscribe(() => {
@@ -320,152 +319,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsData.length && this.selectedListOfPlts.length > 0;
       this.detectChanges();
     });
-
-    /*this.Subscriptions.push(
-      this.route$.params.pipe(
-        switchMap(({wsId, year}) => {
-          this.workspaceId = wsId;
-          this.uwy = year;
-          this.loading = true;
-          this.data$ = this.select(WorkspaceState.getPlts(this.workspaceId + '-' + this.uwy));
-          this.deletedPlts$ = this.select(WorkspaceState.getDeletedPlts(this.workspaceId + '-' + this.uwy));
-          this.dispatch(new fromWorkspaceStore.loadAllPltsFromCalibration({
-            params: {
-              workspaceId: wsId, uwy: year
-            }
-          }));
-          return combineLatest(
-            this.data$,
-            this.deletedPlts$
-          )
-        }),
-        this.unsubscribeOnDestroy
-      ).subscribe(([data, deletedData]: any) => {
-        let d1 = [];
-        let dd1 = [];
-        let d2 = [];
-        let dd2 = [];
-        this.loading = false;
-        this.systemTagsCount = {};
-        if (data) {
-          if (_.keys(this.systemTagsCount).length == 0) {
-            _.forEach(data, (v, k) => {
-              //Init Tags Counters
-
-              //Grouped Sys Tags
-              _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                const tag = _.toString(v[section]);
-                if (tag) {
-                  this.systemTagsCount[sectionName][tag] = {selected: false, count: 0, max: 0}
-                }
-              });
-
-              //NONE grouped Sys Tags
-              _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-                this.systemTagsCount[sectionName] = this.systemTagsCount[sectionName] || {};
-                this.systemTagsCount[sectionName][section] = {selected: false, count: 0};
-                this.systemTagsCount[sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-              })
-
-            })
-          }
-
-          _.forEach(data, (v, k) => {
-            d1.push({...v, pltId: k});
-            d2.push(k);
-
-            /!*if (v.visible) {*!/
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              const tag = _.toString(v[section]);
-              if (tag) {
-                if (this.systemTagsCount[sectionName][tag] || this.systemTagsCount[sectionName][tag].count === 0) {
-                  const {
-                    count,
-                    max
-                  } = this.systemTagsCount[sectionName][tag];
-
-                  this.systemTagsCount[sectionName][tag] = {
-                    ...this.systemTagsCount[sectionName][tag],
-                    count: v.visible ? count + 1 : count,
-                    max: max + 1
-                  };
-                }
-              }
-            })
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              const tag = v[section];
-              if (this.systemTagsCount[sectionName][section] || this.systemTagsCount[sectionName][section] == 0) {
-                const {
-                  max,
-                  count
-                } = this.systemTagsCount[sectionName][section];
-                this.systemTagsCount[sectionName][section] = {
-                  ...this.systemTagsCount[sectionName][section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-              if (this.systemTagsCount[sectionName]['non-' + section] || this.systemTagsCount[sectionName]['non-' + section].count == 0) {
-                const {
-                  count,
-                  max
-                } = this.systemTagsCount[sectionName]['non-' + section];
-                this.systemTagsCount[sectionName]['non-' + section] = {
-                  ...this.systemTagsCount[sectionName]['non-' + section],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-            })
-            /!*}*!/
-
-          });
-
-          this.listOfPlts = d2;
-          this.listOfPltsData = this.listOfPltsCache = d1;
-          this.selectedListOfPlts = _.filter(d2, k => data[k].selected);
-          _.forEach(data, (v, k) => {
-            if (v.opened) {
-              this.sumnaryPltDetailsPltId = k;
-            }
-          });
-        }
-
-        if (deletedData) {
-          _.forEach(deletedData, (v, k) => {
-            dd1.push({...v, pltId: k});
-            dd2.push(k);
-          });
-
-          this.listOfDeletedPlts = dd2;
-          this.listOfDeletedPltsData = this.listOfDeletedPltsCache = dd1;
-          this.selectedListOfDeletedPlts = _.filter(dd2, k => deletedData[k].selected);
-        }
-
-        this.selectAll =
-          !this.showDeleted
-            ?
-            (this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPlts.length)) && this.listOfPltsData.length > 0
-            :
-            (this.selectedListOfDeletedPlts.length > 0 || (this.selectedListOfDeletedPlts.length == this.listOfDeletedPlts.length)) && this.listOfDeletedPltsData.length > 0
-
-        this.someItemsAreSelected =
-          !this.showDeleted ?
-            this.selectedListOfPlts.length < this.listOfPlts.length && this.selectedListOfPlts.length > 0
-            :
-            this.selectedListOfDeletedPlts.length < this.listOfDeletedPlts.length && this.selectedListOfDeletedPlts.length > 0;
-        this.detectChanges();
-      }),
-      this.select(WorkspaceState.getProjects).subscribe((projects: any) => {
-        this.projects = projects;
-        this.detectChanges();
-      }),
-    );*/
-    this.initRandomMetaData()
+    console.log(this.randomMetaData);
   }
 
   initRandomMetaData() {
@@ -490,29 +344,37 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         }
       })
     })
-    console.log(this.randomMetaData)
-    this.initDataList();
   }
 
   patchState(state: any): void {
     const path = state.data.calibration;
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
     this.adjutmentApplication = _.merge({}, path.adjustmentApplication);
-    this.allAdjsArray = _.merge([], path.allAdjsArray);
+    this.allAdjsArray = _.merge([], path.allAdjsArray).sort(this.dynamicSort("name"));
     this.AdjustementType = _.merge([], path.adjustementType);
     this.adjsArray = _.merge([], path.adjustments);
     this.userTags = _.merge({}, path.userTags);
     this.detectChanges();
   }
 
-  initDataList() {
-    console.log('DATA INIIIIT')
-    this.listOfPltsData = _.filter(this.listOfPltsData, value => value.calibrate)
+  dynamicSort(property) {
+    let sortOrder = 1;
+    if (property[0] === "-") {
+      sortOrder = -1;
+      property = property.substr(1);
+    }
+    return function (a, b) {
+      /* next line works with strings and numbers,
+       * and you may want to customize it to your needs
+       */
+      let result = (a[property] < b[property]) ? -1 : (a[property] > b[property]) ? 1 : 0;
+      return result * sortOrder;
+    }
   }
-
   initDataColumns() {
     this.dataColumns = [];
     this.frozenColumns = [];
+    this.extraFrozenColumns = [];
     if (this.extended) {
       if (this.tableType == 'adjustments') {
         _.forEach(this.pltColumns, (value, key) => {
@@ -537,6 +399,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
           if (value.extended && value.frozen) {
             this.frozenColumns.push(value);
           }
+          if (!value.extended && value.frozen) {
+            this.extraFrozenColumns.push(value)
+          }
         });
       } else {
         _.forEach(this.EPMColumns, (value, key) => {
@@ -546,11 +411,21 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
           if (value.extended && value.frozen) {
             this.frozenColumns.push(value);
           }
+          if (!value.extended && value.frozen) {
+            this.extraFrozenColumns.push(value)
+          }
         });
       }
     }
+    this.frozenColumnsCache = _.merge([], this.frozenColumns);
+    this.extraFrozenColumnsCache = _.merge([], this.extraFrozenColumns);
+    this.dataColumnsCache = _.merge([], this.dataColumns);
+    this.extraDataColumns = _.merge([], this.extraDataColumnsCache);
+    this.initRandomMetaData();
+    console.log('dataColumns ==> ', this.dataColumns);
+    console.log('frozenColumns ==> ', this.frozenColumns);
+    console.log('extraFrozenColumns ==> ', this.extraFrozenColumns);
   }
-
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.sortData = _.merge({}, this.sortData, {
@@ -658,11 +533,11 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.extended = !this.extended;
     if (this.extended) {
       this.headerWidth = '1013px'
-      this.frozenWidth = '0px'
+      this.frozenWidth = '0'
       this.genericWidth = ['1019px', '33px', '157px'];
     } else {
       this.headerWidth = '403px';
-      this.tableType == 'adjustments' ? this.frozenWidth = '463px' : this.frozenWidth = '403px';
+      this.tableType == 'adjustments' ? this.frozenWidth = '463' : this.frozenWidth = '403';
       this.genericWidth = ['409px', '33px', '157px '];
     }
     this.adjustExention();
@@ -1048,7 +923,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.tableType = $event ? 'EP Metrics' : 'adjustments';
     this.initDataColumns();
     this.headerWidth = '403px';
-    this.tableType == 'adjustments' ? this.frozenWidth = '463px' : this.frozenWidth = '403px';
+    this.tableType == 'adjustments' ? this.frozenWidth = '463' : this.frozenWidth = '403';
   }
 
   changeEPM(epm) {
@@ -1072,5 +947,72 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       plts:this.listOfPltsData,
       wsIdentifier:this.workspaceId + "-" + this.uwy
     }))*/
+  }
+
+  toggleColumnsManager(adj = true) {
+    if (adj) {
+      this.manageColumn = false;
+    } else {
+      this.manageAdjColumn = false;
+    }
+  }
+
+  dropColumn(event: CdkDragDrop<any>) {
+    console.log(event);
+    const {
+      previousContainer,
+      container
+    } = event;
+
+    if (previousContainer === container) {
+      if (container.id == "usedListOfColumns") {
+        moveItemInArray(
+          this.frozenColumns,
+          event.previousIndex + 1,
+          event.currentIndex + 1
+        );
+        console.log(container.id, this.frozenColumns);
+      }
+    } else {
+      if (this.extraFrozenColumnsCache.length > 0) {
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex,
+          event.currentIndex
+        );
+      } else {
+        transferArrayItem(
+          event.previousContainer.data,
+          event.container.data,
+          event.previousIndex + 1,
+          event.currentIndex + 1
+        );
+      }
+    }
+  }
+
+  initFrozenWidth() {
+    let resultWidth = 0;
+    _.forEach(this.frozenColumns, value => {
+      resultWidth += +value.width
+    })
+    console.log(resultWidth);
+    this.frozenWidth = resultWidth;
+    this.headerWidth = this.tableType == 'adjustments' ? resultWidth - 60 + 'px' : resultWidth + 'px';
+  }
+
+  saveColumns(adj = true) {
+    if (adj) {
+      this.frozenColumns = this.frozenColumnsCache;
+      this.extraFrozenColumns = this.extraFrozenColumnsCache;
+      this.initFrozenWidth();
+      this.manageColumn = false;
+    } else {
+      this.dataColumns = this.dataColumnsCache;
+      this.extraDataColumns = this.extraDataColumnsCache;
+      this.manageAdjColumn = false;
+    }
+
   }
 }
