@@ -8,6 +8,14 @@
       justify-content: flex-start;
     }
   }
+
+  .project-link{
+    &:hover {
+      cursor: pointer;
+      text-decoration: underline !important;
+      color: black !important;
+    }
+  }
 }
 
 .card-holder-wrap {
