@@ -520,7 +520,7 @@ export class RiskLinkStateService {
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const fP = state.content[wsIdentifier].riskLink.financialPerspective;
     if (payload === 'replace') {
-      const fpApplied = _.filter(_.toArray(fP.standard), dt => dt.selected).map(dt => dt.code);
+      const fpApplied = _.filter(_.toArray(fP.standard.data), dt => dt.selected).map(dt => dt.code);
       if (fP.target === 'currentSelection') {
         const selectedAnalysis = _.filter(_.toArray(fP.analysis.data), dt => dt.selected);
         const modif = Object.assign({}, ...selectedAnalysis.map(item => {
@@ -543,7 +543,7 @@ export class RiskLinkStateService {
         );
       }
     } else {
-      const fpApplied: any = _.filter(_.toArray(fP.standard), dt => dt.selected).map(dt => dt.code);
+      const fpApplied: any = _.filter(_.toArray(fP.standard.data), dt => dt.selected).map(dt => dt.code);
       if (fP.target === 'currentSelection') {
         const selectedAnalysis = _.filter(_.toArray(fP.analysis.data), dt => dt.selected);
         const modif = Object.assign({}, ...selectedAnalysis.map(item => {

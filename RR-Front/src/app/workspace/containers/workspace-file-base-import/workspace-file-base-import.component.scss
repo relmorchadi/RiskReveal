@@ -4,6 +4,10 @@
   display: flex;
   min-height: 100vh;
   background-color: #F4F6FC;
+
+  @media screen and (max-width: 1700px) {
+    width: 94%;
+  }
 }
 
 /*
@@ -14,7 +18,14 @@ COMPONENT STYLE
 
 .app-body{
   display: block;
-  height:500px;
+
+  .menu-left-header {
+    padding: 6px 10px 0;
+    display: flex;
+    width: 55%;
+    font-weight: bold;
+    color: #000000;
+  }
 
   .menu-left-wrapper {
     float: left;
@@ -291,6 +302,12 @@ TABLE STYLE
       overflow: auto;
       width: 100%;
     }
+  }
+}
+
+.table-width {
+  p-table {
+    width: 98%;
   }
 }
 

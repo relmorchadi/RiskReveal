@@ -2,25 +2,56 @@ const directoryTree = {
   data:
     [
       {
+        label: 'RAMADANI Feta (U000886)',
+        data: 'Movies Folder',
+        expandedIcon: 'fa fa-folder-open',
+        collapsedIcon: 'fa fa-folder',
+        children: [{
+          label: 'Test_Folder',
+          data: 'Pacino Movies',
+          children: [{label: '1',
+            children: [
+              {label: '1', icon: 'fa fa-folder', data: 'Scarface Movie'},
+              {label: '2', icon: 'fa fa-folder', data: 'Serpico Movie'},
+              {label: '3', icon: 'fa fa-folder', data: 'Serpico Movie'},
+            ],
+            expandedIcon: 'fa fa-folder-open', collapsedIcon: 'fa fa-folder',
+            data: 'Scarface Movie'},
+            {label: '2', icon: 'fa fa-folder', data: 'Serpico Movie'},
+            {label: '3', icon: 'fa fa-folder', data: 'Serpico Movie'},
+            ]
+        }]
+      },
+      {
         label: 'Parry Huw (U000886)',
         data: 'Documents Folder',
         expandedIcon: 'fa fa-folder-open',
         collapsedIcon: 'fa fa-folder',
         children: [{
-          label: 'Work',
-          data: 'Work Folder',
-          expandedIcon: 'fa fa-folder-open',
-          collapsedIcon: 'fa fa-folder',
-          children: [{label: 'Expenses.doc', icon: 'fa fa-file-word-o', data: 'Expenses Document'},
-            {label: 'Resume.doc', icon: 'fa fa-file-word-o', data: 'Resume Document'}]
-        },
+          label: 'EdgeCaseTestPLTs',
+          icon: 'fa fa-folder',
+          data: 'Work Folder'
+          },
           {
-            label: 'Home',
+            label: 'Inuring EdgeCase Tests',
+            data: 'Home Folder',
+            icon: 'fa fa-folder'
+          },
+          {
+            label: 'SampleCatrader',
             data: 'Home Folder',
             expandedIcon: 'fa fa-folder-open',
             collapsedIcon: 'fa fa-folder',
-            children: [{label: 'Invoices.txt', icon: 'fa fa-file-word-o', data: 'Invoices for this month'}]
-          }]
+            children: [{label: 'Amended Model Name', icon: 'fa fa-folder', data: 'Invoices for this month'}]
+          },
+          {
+            label: 'SampleElements',
+            data: 'Home Folder',
+            expandedIcon: 'fa fa-folder-open',
+            collapsedIcon: 'fa fa-folder',
+            children: [{label: 'Amended Files', icon: 'fa fa-folder', data: 'Invoices for this month'}]
+          }
+        ]
       },
       {
         label: 'CHOY CHI (U001141)',
@@ -28,9 +59,10 @@ const directoryTree = {
         expandedIcon: 'fa fa-folder-open',
         collapsedIcon: 'fa fa-folder',
         children: [
-          {label: 'barcelona.jpg', icon: 'fa fa-file-image-o', data: 'Barcelona Photo'},
-          {label: 'logo.jpg', icon: 'fa fa-file-image-o', data: 'PrimeFaces Logo'},
-          {label: 'primeui.png', icon: 'fa fa-file-image-o', data: 'PrimeUI Logo'}]
+          {label: 'Elements_v10.0.0.0_PRD', icon: 'fa fa-folder', data: 'Barcelona Photo'},
+          {label: 'RMS_HDA_v17.0_TST', icon: 'fa fa-folder', data: 'PrimeFaces Logo'},
+          {label: 'THFL', icon: 'fa fa-folder', data: 'PrimeUI Logo'},
+          {label: 'UAT Test Files', icon: 'fa fa-folder', data: 'PrimeUI Logo'}]
       },
       {
         label: 'BORDOY Roger (U001372)',
@@ -38,107 +70,48 @@ const directoryTree = {
         expandedIcon: 'fa fa-folder-open',
         collapsedIcon: 'fa fa-folder',
         children: [{
-          label: 'Al Pacino',
-          data: 'Pacino Movies',
-          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
-            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
-        },
+            label: 'Czech',
+            data: 'Pacino Movies',
+            icon: 'fa fa-folder'
+          },
           {
-            label: 'Robert De Niro',
+            label: 'For Testing',
             data: 'De Niro Movies',
-            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
-              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
+            expandedIcon: 'fa fa-folder-open',
+            collapsedIcon: 'fa fa-folder',
+            children: [
+              {label: 'Cyprus', icon: 'fa fa-folder', data: 'Barcelona Photo'},
+              {label: 'Czech', icon: 'fa fa-folder', data: 'Barcelona Photo'},
+              {label: 'Hungary', icon: 'fa fa-folder', data: 'Barcelona Photo'},
+              {label: 'Poland', icon: 'fa fa-folder', data: 'Barcelona Photo'},
+              {label: 'Slovakia', icon: 'fa fa-folder', data: 'Barcelona Photo'},
+              ]
           }]
       },
       {
         label: 'NGUYEN Viet Thanh Trung (U004602)',
         data: 'Movies Folder',
-        expandedIcon: 'fa fa-folder-open',
-        collapsedIcon: 'fa fa-folder',
-        children: [{
-          label: 'Al Pacino',
-          data: 'Pacino Movies',
-          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
-            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
-        },
-          {
-            label: 'Robert De Niro',
-            data: 'De Niro Movies',
-            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
-              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
-          }]
+        icon: 'fa fa-folder'
       },
       {
         label: 'MACK Soon Ling (U005384)',
         data: 'Movies Folder',
-        expandedIcon: 'fa fa-folder-open',
-        collapsedIcon: 'fa fa-folder',
-        children: [{
-          label: 'Al Pacino',
-          data: 'Pacino Movies',
-          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
-            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
-        },
-          {
-            label: 'Robert De Niro',
-            data: 'De Niro Movies',
-            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
-              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
-          }]
+        icon: 'fa fa-folder'
       },
       {
         label: 'DANG Hong Phuc (U006930)',
         data: 'Movies Folder',
-        expandedIcon: 'fa fa-folder-open',
-        collapsedIcon: 'fa fa-folder',
-        children: [{
-          label: 'Al Pacino',
-          data: 'Pacino Movies',
-          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
-            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
-        },
-          {
-            label: 'Robert De Niro',
-            data: 'De Niro Movies',
-            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
-              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
-          }]
+        icon: 'fa fa-folder'
       },
       {
         label: 'Reveal Risk (USYS)',
         data: 'Movies Folder',
-        expandedIcon: 'fa fa-folder-open',
-        collapsedIcon: 'fa fa-folder',
-        children: [{
-          label: 'Al Pacino',
-          data: 'Pacino Movies',
-          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
-            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
-        },
-          {
-            label: 'Robert De Niro',
-            data: 'De Niro Movies',
-            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
-              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
-          }]
+        icon: 'fa fa-folder'
       },
       {
         label: 'Unknown User (Y422)',
         data: 'Movies Folder',
-        expandedIcon: 'fa fa-folder-open',
-        collapsedIcon: 'fa fa-folder',
-        children: [{
-          label: 'Al Pacino',
-          data: 'Pacino Movies',
-          children: [{label: 'Scarface', icon: 'fa fa-file-video-o', data: 'Scarface Movie'},
-            {label: 'Serpico', icon: 'fa fa-file-video-o', data: 'Serpico Movie'}]
-        },
-          {
-            label: 'Robert De Niro',
-            data: 'De Niro Movies',
-            children: [{label: 'Goodfellas', icon: 'fa fa-file-video-o', data: 'Goodfellas Movie'},
-              {label: 'Untouchables', icon: 'fa fa-file-video-o', data: 'Untouchables Movie'}]
-          }]
+        icon: 'fa fa-folder'
       }
     ]
 };
@@ -179,8 +152,26 @@ const PltDataTables = [
   {field: 'years', header: 'Years', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
 ];
 
+const importedFiles = [
+  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'scanned', header: 'Status', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'resultsName', header: 'Results Name', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'regionPeril', header: 'Region Peril', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'currency', header: 'Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'targetCurrencyBasis', header: 'Target Currency Basis', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'financialPerspective', header: 'FIN PERSP', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'proportion', header: 'Proportion', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'dataSource', header: 'Data Source [FILENAME]', width: '180px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'importId', header: 'Import ID', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'dateImport', header: 'Date Import', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'user', header: 'User', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+];
+
 export const DataTables = {
   directoryTree,
   textFilesData,
-  PltDataTables
+  PltDataTables,
+  importedFiles
 };
