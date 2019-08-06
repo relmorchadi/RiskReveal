@@ -1015,4 +1015,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }
 
   }
+
+  dropAll(param){
+    throw new Error('To be implemented !');
+  }
 }
