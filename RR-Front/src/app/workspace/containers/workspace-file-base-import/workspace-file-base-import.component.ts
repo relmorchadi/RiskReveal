@@ -17,6 +17,9 @@ import * as _ from 'lodash';
   styleUrls: ['./workspace-file-base-import.component.scss']
 })
 export class WorkspaceFileBaseImportComponent extends BaseContainer implements OnInit, StateSubscriber {
+  collapseImportedFiles = false;
+  collapseImportedPLTs = false;
+
   managePopUp = false;
   columnsForConfig;
   targetConfig;
@@ -67,7 +70,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     } else if (this.targetConfig === 'pltImported') {
       this.importedFiles = [...this.columnsForConfig];
     }
-
   }
 
   drop(event: CdkDragDrop<string[]>) {
