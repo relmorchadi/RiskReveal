@@ -8,6 +8,7 @@ import java.io.*;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
 @Component
@@ -16,15 +17,15 @@ public class FileBaseImportService {
     @Value("${filebaseimport.sandbox.unc}")
     private String fileUnc;
 
-    public Set<String> listFilesFromSandbox() {
-        return Stream.of(new File(this.fileUnc).listFiles())
+    public Set<String> listFilesFromSandbox(String path) {
+        return Stream.of(new File(this.fileUnc.concat(ofNullable(path).orElse(""))).listFiles())
                 .filter(file -> !file.isDirectory())
                 .map(File::getName)
                 .collect(toSet());
     }
 
-    public Set<String> listFoldersFromSandbox() {
-        return Stream.of(new File(this.fileUnc).listFiles())
+    public Set<String> listFoldersFromSandbox(String path) {
+        return Stream.of(new File(this.fileUnc.concat(ofNullable(path).orElse(""))).listFiles())
                 .filter(file -> file.isDirectory())
                 .map(File::getName)
                 .collect(toSet());
@@ -32,7 +33,7 @@ public class FileBaseImportService {
 
     public String readFile(String fileName) throws IOException {
         return this.readFromInputStream(
-                new FileInputStream(new File(this.fileUnc.concat("\\").concat( fileName)))
+                new FileInputStream(new File(this.fileUnc.concat("\\").concat(fileName)))
         );
 
     }

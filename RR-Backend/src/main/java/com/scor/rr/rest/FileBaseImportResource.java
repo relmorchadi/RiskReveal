@@ -5,6 +5,7 @@ import com.scor.rr.service.FileBaseImportService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
@@ -21,16 +22,16 @@ public class FileBaseImportResource {
 
 
     @GetMapping("files-list")
-    ResponseEntity<?> getFilesList(){
+    ResponseEntity<?> getFilesList(@RequestParam String path){
         return ResponseEntity.ok(
-                this.fileBaseImportService.listFilesFromSandbox()
+                this.fileBaseImportService.listFilesFromSandbox(path)
         ) ;
     }
 
     @GetMapping("folders-list")
-    ResponseEntity<?> getFoldersList(){
+    ResponseEntity<?> getFoldersList(@RequestParam String path){
         return ResponseEntity.ok(
-                this.fileBaseImportService.listFoldersFromSandbox()
+                this.fileBaseImportService.listFoldersFromSandbox(path)
         ) ;
     }
 
