@@ -405,6 +405,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   sortChange(field: any, sortCol: any) {
+    console.log(field, sortCol);
     if (!sortCol) {
       this.sortData[field] = 'asc';
     } else if (sortCol === 'asc') {

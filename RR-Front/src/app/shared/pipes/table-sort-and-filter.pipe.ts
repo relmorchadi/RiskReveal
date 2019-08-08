@@ -13,7 +13,7 @@ export class TableSortAndFilterPipe implements PipeTransform {
     const filterDataKeys = _.keys(filterData)
     let res=data;
 
-    
+
     if(filterDataKeys.length > 0 ) {
 
       res = _.filter(data, row =>
