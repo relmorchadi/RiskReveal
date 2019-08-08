@@ -1,13 +1,102 @@
 <div class="a-app-wrapper">
-  <div class="a-app-header">
-    <h4>Inuring</h4>
+  <div class="a-app-header ">
+    <div class="title-container">
+      <h4>Inuring Package</h4>
+      <button (click)="addPackageVisibility=true" class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7">
+        <i class="icon-plus"></i>
+        Add Package
+      </button>
+    </div>
     <app-pin
       (pinWs)="pinWorkspace()"
       (unpinWs)="unPinWorkspace()"
-      [active]="!workspaceInfo?.isPinned"
+      [active]="!workspace?.isPinned"
     >
     </app-pin>
   </div>
-  <div class="app-body">
+  <div class="app-body app-body--tansparent">
+
+    <nz-tabset [(nzSelectedIndex)]="currentTabIndex" class="dashboard-content" style="width: 100%; height: fit-content">
+      <nz-tab [nzTitle]="'All Packages'">
+        <div class="all-packages-tab-content">
+
+          <div class="table-container">
+            <app-table [tableColumn]="columns" [sortable]="true" [totalRecords]="paginationOption?.total"
+                       [listOfData]="packages" [virtualScroll]="false" (dbClickItem)="openInuringPackage($event)"
+                       [tableWidth]="'700px'" (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                       [tableHeight]="'500px'" [activateContextMenu]="false" [loading]="false">
+            </app-table>
+          </div>
+        </div>
+      </nz-tab>
+      <ng-container *ngFor="let id of workspace?.inuring?.content |keys; let i=index">
+        <ng-template #titleTemplate>
+          <ng-container
+            [ngTemplateOutlet]="tabTitle"
+            [ngTemplateOutletContext]="{
+              packageId: id
+            }"
+          ></ng-container>
+        </ng-template>
+        <nz-tab [nzTitle]="titleTemplate">
+          <inuring-package-details [data]="workspace?.inuring?.content[id]"></inuring-package-details>
+        </nz-tab>
+
+      </ng-container>
+    </nz-tabset>
+
+
   </div>
 </div>
+
+<ng-template
+  #tabTitle
+  let-packageId='packageId'>
+  <div>
+    {{packageId}}
+    <i (click)="close(packageId)" class="icon-clear_24px"></i>
+  </div>
+</ng-template>
+
+<p-dialog
+  [visible]="addPackageVisibility"
+  [closable]="false"
+  styleClass="m-dialog-modal-sm-f"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h4>Add new Inuring Package</h4>
+      <i style="cursor: pointer" (click)="addPackageVisibility=false" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="input-group-modal" style="min-height: 300px">
+<!--    <div class="row-input"><span class="label-input">Inuring ID</span>-->
+<!--      <input [placeholder]="' ID'" class="a-textfield-mini input-wrapper"></div>-->
+<!--    <div class="radio-wrapper default-radio">-->
+<!--      <span>AGG/DET</span>-->
+<!--      <nz-radio-group [(ngModel)]="radioValue">-->
+<!--        <label nz-radio nzValue="all">All</label>-->
+<!--        <label nz-radio nzValue="agg">AGG</label>-->
+<!--        <label nz-radio nzValue="det">DET</label>-->
+<!--      </nz-radio-group>-->
+<!--    </div>-->
+<!--    <div class="row-input"><span class="label-input">Number</span><input placeholder="Number"-->
+<!--                                                                         class="a-textfield-mini input-wrapper">-->
+<!--    </div>-->
+<!--    <div class="row-input"><span class="label-input">Name</span><input placeholder="Name"-->
+<!--                                                                       class="a-textfield-mini input-wrapper">-->
+<!--    </div>-->
+<!--    <div class="row-input"><span class="label-input">Description</span><input-->
+<!--      placeholder="Description" class="a-textfield-mini input-wrapper"></div>-->
+  </div>
+  <p-footer>
+    <div class="modal-footer-wrapper">
+      <button (click)="addPackageVisibility=false" class="a-button-text-cancel">CANCEL</button>
+      <button class="a-buttons-contained-disabled">APPLY</button>
+    </div>
+  </p-footer>
+</p-dialog>

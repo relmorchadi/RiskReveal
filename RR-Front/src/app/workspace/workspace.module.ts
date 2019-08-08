@@ -25,6 +25,8 @@ import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk
 import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
+import { InuringDatatableComponent } from './components/inuring/inuring-datatable/inuring-datatable.component';
+import { InuringPackageDetailsComponent } from './components/inuring/inuring-package-details/inuring-package-details.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS],

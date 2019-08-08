@@ -1,24 +1,16 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
+import * as fromPlt from "../actions/plt_main.actions";
+import * as fromInuring from '../actions/inuring.actions';
 import {PatchCalibrationStateAction} from '../actions';
 import {WorkspaceMain} from "../../../core/model";
 import {CalibrationService} from "../../services/calibration.service";
 import {WorkspaceService} from "../../services/workspace.service";
 import {WorkspaceModel} from '../../model';
-import * as fromPlt from "../actions/plt_main.actions";
 import {PltStateService} from "../../services/plt-state.service";
 import {RiskLinkStateService} from "../../services/riskLink-action.service";
-import {
-  AddNewProject,
-  AddNewProjectFail,
-  AddNewProjectSuccess,
-  DeleteProject,
-  DeleteProjectFail, DeleteProjectSuccess
-} from "../../../core/store/actions";
-import {catchError} from "rxjs/operators";
-import {EMPTY} from "rxjs";
-import produce from "immer";
+import {InuringService} from "../../services/inuring.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -41,7 +33,8 @@ export class WorkspaceState {
   constructor(private wsService: WorkspaceService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
-              private riskLinkFacade: RiskLinkStateService
+              private riskLinkFacade: RiskLinkStateService,
+              private inuringService: InuringService
   ) {
   }
 
@@ -249,6 +242,14 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
   }
+
+  /***********************************
+   *
+   * Inuring Selectors
+   *
+   ***********************************/
+
+  //TBD
 
 
   /***********************************
@@ -803,4 +804,21 @@ export class WorkspaceState {
   loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
+
+  /***********************************
+   *
+   * Inuring Actions
+   *
+   ***********************************/
+
+  @Action(fromInuring.OpenInuringPackage)
+  openInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.OpenInuringPackage) {
+    return this.inuringService.openInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.CloseInuringPackage)
+  closeInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.CloseInuringPackage) {
+    return this.inuringService.closeInuringPackage(ctx, payload);
+  }
+
 }

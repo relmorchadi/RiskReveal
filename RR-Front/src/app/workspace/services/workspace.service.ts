@@ -12,6 +12,7 @@ import {HeaderState} from "../../core/store/states/header.state";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
 import {EMPTY} from "rxjs";
 import {WsProjectService} from "./ws-project.service";
+import {defaultInuringState} from "./inuring.service";
 
 @Injectable({
   providedIn: 'root'
@@ -145,7 +146,8 @@ export class WorkspaceService {
             summaries: null,
             selectedEDMOrRDM: null,
             activeAddBasket: false
-          }
+          },
+          inuring: defaultInuringState
         }
       });
       draft.loading = false;
