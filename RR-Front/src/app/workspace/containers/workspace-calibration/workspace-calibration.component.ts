@@ -308,7 +308,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
-      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected);
+      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected).map(e => e.pltId);
 
       this.detectChanges();
     });

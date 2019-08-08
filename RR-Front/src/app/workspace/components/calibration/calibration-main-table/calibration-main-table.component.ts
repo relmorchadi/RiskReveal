@@ -35,6 +35,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('clickButtonPlus') clickButtonPlusEmitter: EventEmitter<any> = new EventEmitter();
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
   @Output('closeReturnPeriods') closeReturnPeriodsEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('sortChange') sortChangeEmitter: EventEmitter<any> = new EventEmitter();
 
   @Input('extended') extended: boolean;
   // @Input('cm') cm: any;
@@ -258,15 +259,16 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private lastClick: string;
   returnPeriodInput: any;
   clickedDropdown: any;
+  private userTagsLength: number = 10000;
 
   constructor(
     private nzDropdownService: NzDropdownService,
     private store$: Store,
     private zone: NgZone,
-    private cdRef: ChangeDetectorRef,
+    private changeRef: ChangeDetectorRef,
     private router$: Router,
     private route$: ActivatedRoute) {
-    super(router$, cdRef, store$);
+    super(router$, changeRef, store$);
 
   }
 
@@ -336,7 +338,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       plts,
       forDeleted: this.showDeleted
     });
-    this.cdRef.detectChanges();
+    this.changeRef.detectChanges();
   }
 
   checkAll($event) {
@@ -388,7 +390,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
 
   onSort($event: any) {
     const {} = $event;
-
+    console.log('test')
   }
 
   checkBoxsort() {
@@ -609,5 +611,24 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       }
       return;
     }
+  }
+
+  onColResize(event: any) {
+    const {
+      innerText,
+      scrollWidth
+    } = event.element;
+    console.log(event)
+
+    if (innerText == "User Tags") {
+      console.log(_.floor(scrollWidth / 18));
+      this.userTagsLength = _.floor(scrollWidth / 18);
+      this.detectChanges();
+    }
+  }
+
+  protected detectChanges() {
+    if (!this.changeRef['destroyed'])
+      this.changeRef.detectChanges();
   }
 }
