@@ -40,7 +40,7 @@ export class PltStateService {
           ctx.patchState(produce(ctx.getState(), draft => {
             const deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {};
             //draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt}})));
-            draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt, userTags: []}})));
+            draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: plt})));
             draft.content[wsIdentifier].pltManager = {
               ...draft.content[wsIdentifier].pltManager,
               filters: {systemTag: [], userTag: []},
@@ -49,8 +49,7 @@ export class PltStateService {
           }));
           return ctx.dispatch(new fromPlt.loadAllPltsSuccess({
             wsIdentifier: wsIdentifier,
-            //userTags: data.userTags
-            userTags: []
+            userTags: data.userTags
           }));
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
@@ -573,7 +572,6 @@ export class PltStateService {
   private _appendPltMetaData(data,plt, deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {}) {
     return ({
       ...plt,
-      userTags: [],
       selected: data[plt.pltId] ? data[plt.pltId].selected : undefined,
       visible: true,
       tagFilterActive: false,

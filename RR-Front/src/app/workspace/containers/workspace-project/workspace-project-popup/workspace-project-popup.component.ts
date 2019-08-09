@@ -30,10 +30,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
-  subscriptions: Subscription;
   @Select(WorkspaceMainState.getData) selectWsData$;
   @Select(WorkspaceMainState.getProjects) projects$;
-  unSubscribe$: Subject<void>;
   private pltProjectSubscription: Subscription;
   private pltUserTagsSubscription: Subscription;
 
@@ -406,7 +404,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       pathTab: true,
       selectedItemForMenu: null
   };
-    this.unSubscribe$ = new Subject<void>();
     this.keywordFormGroup = new FormGroup({
       keyword: new FormControl(null)
     });
@@ -548,8 +545,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   ngOnDestroy(): void {
-    this.unSubscribe$.next();
-    this.unSubscribe$.complete();
     this.destroy();
   }
 
@@ -600,8 +595,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   onHide() {
-    this.onVisibleChange.emit(false);
-    this.destroy();
     this.Inputs= {
       contextMenuItems: [
         {
@@ -825,11 +818,11 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       pathTab: true,
       selectedItemForMenu: null
     };
-    this.subscriptions && this.subscriptions.unsubscribe();
     this.searchWorkspace = false;
     this.selectedWorkspace = null;
+    this.onVisibleChange.emit(false);
+    this.destroy();
     this._filter = {};
-    this.browesing = false;
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
@@ -984,9 +977,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   onShow() {
     this.browesing=false;
-    this.subscriptions = this.keywordFormGroup.get('keyword')
+    this.keywordFormGroup.get('keyword')
       .valueChanges
       .pipe(debounceTime(400))
+      .pipe(this.unsubscribeOnDestroy)
       .subscribe((value) => {
         this.loading = true;
         this._loadData();
