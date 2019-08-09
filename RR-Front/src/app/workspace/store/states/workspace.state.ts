@@ -261,6 +261,11 @@ export class WorkspaceState {
    *
    ***********************************/
 
+  @Selector()
+  static getFileBasedData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].fileBaseImport;
+  }
 
   /***********************************
    *
@@ -830,5 +835,15 @@ export class WorkspaceState {
   @Action(fromWS.LoadFileBasedFilesAction)
   loadFileBasedFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
     return this.fileBasedFacade.loadFilesList(ctx, payload);
+  }
+
+  @Action(fromWS.ToggleFilesAction)
+  toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
+    this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.AddFileForImportAction)
+  addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
+    return this.fileBasedFacade.addToImport(ctx, payload);
   }
 }

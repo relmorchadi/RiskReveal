@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
@@ -10,6 +10,7 @@ import {Navigate} from '@ngxs/router-plugin';
 import {DataTables} from './data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as _ from 'lodash';
+import {WorkspaceState} from '../../store/states';
 
 @Component({
   selector: 'app-workspace-file-base-import',
@@ -43,7 +44,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   textFilesData: any;
   importedFiles: any;
 
-  emptyData = false;
+  nodePath;
+
+  @Select(WorkspaceState.getFileBasedData) fileBase$;
+  fileBase: any;
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -57,9 +61,16 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       };
     });
 
+    this.dispatch(new fromWs.LoadFileBasedFoldersAction());
+    this.fileBase$.subscribe(value => {
+      this.fileBase = _.merge({}, value);
+      this.detectChanges();
+    });
+    console.log(DataTables.directoryTree, this.fileBase.folders);
+
     this.textFilesData = DataTables.textFilesData;
     this.pltColumns = DataTables.PltDataTables;
-    this.directoryTree = DataTables.directoryTree;
+    this.directoryTree = _.merge({}, DataTables.directoryTree, this.fileBase.folders);
     this.importedFiles = DataTables.importedFiles;
   }
 
@@ -143,9 +154,20 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   }
 
   nodeSelect(event) {
+    this.nodePath = '/' + event.node.label;
+    this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
   }
 
   nodeUnselect(event) {
+    this.nodePath =  null;
+  }
+
+  selectToImport(value, index) {
+    this.dispatch(new fromWs.ToggleFilesAction({selection: value, index}));
+  }
+
+  addForImport() {
+    this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
   }
 
   protected detectChanges() {

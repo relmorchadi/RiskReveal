@@ -31,6 +31,7 @@ COMPONENT STYLE
     float: left;
     background-color: #FFFFFF;
     width: 20%;
+    height: 655px;
 
     ::ng-deep {
       .ui-tree.ui-widget.ui-widget-content.ui-corner-all.ui-tree-selectable {
@@ -48,6 +49,14 @@ COMPONENT STYLE
       padding: 6px 10px 0;
       display: flex;
       width: 55%;
+      white-space: nowrap;
+    }
+
+    .menu-left-footer {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      padding: 0 10px 10px;
     }
 
     .search-document-wrap {
@@ -57,6 +66,7 @@ COMPONENT STYLE
 
     .tree-menu-wrapper {
       width: fit-content;
+      max-width: 98%;
       margin: 10px auto;
     }
 
@@ -85,8 +95,11 @@ COMPONENT STYLE
 
     .empty-data-wrap {
       margin: 11px 15px;
-      padding: 10px;
       background: #F4F6FC;
+      height: 210px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
@@ -94,6 +107,7 @@ COMPONENT STYLE
     float: right;
     background: #FFFFFF;
     width: 79%;
+    height: 655px;
 
     .menu-left-header {
       border-top: 4px solid #0700CF;
@@ -364,9 +378,16 @@ TABLE STYLE
 
   .empty-notif-wrapper {
     background-color: #f4f6fc;
-    margin: 4px 2px;
+    margin: 4px 2px 0;
     padding: 7px;
     display: flex;
     justify-content: center;
+    align-items: center;
+  }
+}
+
+.fixed-table-height {
+  .empty-notif-wrapper {
+    height: 445px;
   }
 }

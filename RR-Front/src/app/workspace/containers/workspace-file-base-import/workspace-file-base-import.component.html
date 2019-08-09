@@ -19,7 +19,7 @@
         Find Directory
       </span>
       <div class="tree-menu-wrapper">
-        <p-tree [value]="directoryTree.data" selectionMode="single" [(selection)]="selectedFile"
+        <p-tree [value]="directoryTree?.data" selectionMode="single" [(selection)]="selectedFile"
                 (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
       </div>
 
@@ -32,27 +32,31 @@
         <input class="input-search" />
       </div>
 
-
       <span class="subtitle-1 subtitle-2 menu-left-header">
         Text Files Available
       </span>
-      <div *ngIf="!emptyData" class="popover-menu files-selection-wrap">
+      <div *ngIf="fileBase?.files.length > 0" class="popover-menu files-selection-wrap">
         <ul>
-          <li *ngFor="let items of textFilesData">
-            <label nz-checkbox>
-              <span  [nzTitle]="items.name" nzPlacement="top" nz-tooltip>{{items.name}}</span>
+          <li *ngFor="let items of fileBase?.files; let i = index">
+            <label nz-checkbox [nzChecked]="items.selected" (nzCheckedChange)="selectToImport($event, i)">
+              <span [nzTitle]="items.label" nzPlacement="top" nz-tooltip>{{items.label}}</span>
             </label>
           </li>
         </ul>
       </div>
 
-      <div *ngIf="emptyData" class="empty-data-wrap">
+      <div *ngIf="fileBase?.files.length === 0" class="empty-data-wrap">
         <nz-empty></nz-empty>
+      </div>
+
+      <div class="menu-left-footer">
+        <button *ngIf="fileBase?.files.length > 0" (click)="addForImport()"  class="a-buttons-contained">ADD TO PROJECT</button>
+        <button *ngIf="fileBase?.files.length === 0" class="a-buttons-contained-disabled">ADD TO PROJECT</button>
       </div>
 
     </div>
     <div class="menu-right-wrapper">
-      <div>
+      <div style="display: flex; justify-content: space-between;">
         <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
           Selected PLT To Import
         </span>
@@ -65,7 +69,7 @@
         </div>
       </div>
 
-      <div class="summary-info table-width empty-table">
+      <div class="summary-info table-width empty-table fixed-table-height">
         <p-table #iTable [columns]="pltColumns" [scrollable]="true"
                  *ngIf="!collapseImportedFiles"
                  [resizableColumns]="true" columnResizeMode="expand"
@@ -161,9 +165,9 @@
   </div>
   <div class="app-body">
     <div style="margin-top: 20px; background-color: #FFFFFF;">
-      <div>
+      <div  style="display: flex; justify-content: space-between;">
         <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
-          Imported PLTs
+          Analysis Result
         </span>
         <div class="body-wrapper-header-right">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->

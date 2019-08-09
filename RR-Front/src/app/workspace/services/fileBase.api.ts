@@ -12,15 +12,15 @@ export class FileBaseApi {
   constructor(private http: HttpClient) {
   }
 
-  searchFilesList(): Observable<any> {
-    return this.http.get(`${this.URL}files-list`);
+  searchFilesList(paths): Observable<any> {
+    return this.http.get(`${this.URL}files-list`, {params: {path: paths}});
   }
 
-  searchFoldersList() {
-    return this.http.get(`${this.URL}folders-list`);
+  searchFoldersList(paths = '/') {
+    return this.http.get(`${this.URL}folders-list`, {params: {path: paths}});
   }
 
   searchReadFiles(fileNames): Observable<any> {
-    return this.http.get(`${this.URL}read-file`, {params: {fileName: fileNames}});
+    return this.http.get(`${this.URL}read-file`, {params: {fileName: fileNames}, responseType: 'text'});
   }
 }
