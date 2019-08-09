@@ -27,12 +27,13 @@ import {CalibrationMainTableComponent} from './components/calibration/calibratio
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 import { InuringDatatableComponent } from './components/inuring/inuring-datatable/inuring-datatable.component';
 import { InuringPackageDetailsComponent } from './components/inuring/inuring-package-details/inuring-package-details.component';
+import { InuringCanvasTabComponent } from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent
   ],
   imports: [
     GridsterModule,

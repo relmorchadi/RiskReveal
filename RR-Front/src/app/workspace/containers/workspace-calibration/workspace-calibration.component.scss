@@ -658,6 +658,7 @@
 
 ::ng-deep {
   .ep-metric-tabset {
+
     .ant-tabs-ink-bar {
       display: none;
       transform: translate3d(0px, 0px, 0px);
@@ -692,6 +693,7 @@
     display: block;
     overflow: auto;
     padding-bottom: 4px;
+    width: 100%;
 
     th {
       font-weight: bold;
