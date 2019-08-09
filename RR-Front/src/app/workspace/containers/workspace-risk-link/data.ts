@@ -46,16 +46,17 @@ const frozenColsPortfolio = [
 ];
 
 const scrollableColsSummary = [
-  {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'analysisCurrency', header: 'Source Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'edmName', header: 'EDM', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  // {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'analysisCurrency', header: 'Source Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
+  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'edmName', header: 'EDM', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
 const frozenColsSummary = [
+  {field: 'selected', header: '', width: '25px', type: 'selection', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true},
   {field: 'dataSourceId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true},
@@ -64,23 +65,31 @@ const frozenColsSummary = [
 ];
 
 const scrollableColsResults = [
-  {field: 'peril', header: 'Region Peril', width: '70px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'analysisCurrency', header: 'Source Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'financialPerspective', header: 'ELT FIN PERSP', width: '70px', type: 'multiple', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '90px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true},
-  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true},
-  // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'peqt', header: 'PEQT', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'regionPeril', header: 'Region Peril', width: '80px', type: 'Rp', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
+  {field: 'analysisCurrency', header: 'Source Currency', width: '90px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
+  {field: 'financialPerspective', header: 'ELT FIN PERSP', width: '80px', type: 'multiple', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
+  {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '100px', type: 'Ob', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
+  {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorted: false, filtered: true, highlight: true, visible: true, edit: true},
+  // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'peqt', header: 'PEQT', width: '80px', type: 'Peqt', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'rdmName', header: 'RDM', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'importId', header: 'Import ID', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'dateImport', header: 'Date Import', width: '70px', type: 'date', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'user', header: 'User', width: '70px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'publishAcc', header: 'Publish For Accumulation', width: '30px', type: 'check', icon: 'icon-focus-add', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'publishPri', header: 'Publish For Pricing', width: '30px', type: 'check', icon: 'icon-note', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorted: false, filtered: false, highlight: false},*/
 ];
 
 const frozenColsResults = [
-  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true},
-  {field: 'analysisName', header: 'Name', width: '140px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
-  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'selected', header: '', width: '25px', type: 'selection', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'scan', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'status', header: 'Status', width: '40px', type: 'progress', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'analysisId', header: 'ID', width: '40px', type: 'text', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  {field: 'analysisName', header: 'Name', width: '170px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'description', header: 'Description', width: '200px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
 ];
 
 const scrollableColsLinking = [
@@ -127,6 +136,15 @@ const financialStandarContent = [
   {id: '8', selected: false, code: 'RL', financialPerspective: 'Net Loss Pre Cat', ccy: 'USD', aal: '55,837,813', stdDev: '158,455,991', firstTarget: '2,84', secondTarget: '2,84', thirdTarget: '2,84'},
 ];
 
+const regionPerilDataTable = [
+  {field: 'analysisId', header: 'ID', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'analysisName', header: 'Analysis Name', width: '90px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'regionPeril', header: 'Region Peril', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+  {field: 'override', header: 'Override', width: '250px', type: 'override', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'copy', header: 'Copy', width: '50px', type: 'function', sorted: false, filtered: false, highlight: false, visible: true},
+  {field: 'reason', header: 'Reason', width: '170px', type: 'comment', sorted: false, filtered: false, highlight: false, visible: true},
+];
+
 export const DataTables = {
   scrollableColsAnalysis,
   scrollableColsPortfolio,
@@ -139,5 +157,6 @@ export const DataTables = {
   frozenColsResults,
   colsFinancialAnalysis,
   colsFinancialStandard,
-  financialStandarContent
+  financialStandarContent,
+  regionPerilDataTable
 };

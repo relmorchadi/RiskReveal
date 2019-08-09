@@ -11,6 +11,15 @@
   }
 }
 
+.last-label {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'List Limit';
+      width: fit-content;
+    }
+  }
+}
+
 .dropdown-icon {
   color: rgba(0, 0, 0, 0.6);
   cursor: pointer;
@@ -86,7 +95,7 @@ nz-alert {
   margin: 5px 20px;
 
   ul {
-    height: 180px;
+    height: 260px;
 
     li {
       padding: 0 7px;
@@ -168,6 +177,7 @@ nz-alert {
   display: flex;
   justify-content: space-between;
   flex: 1;
+  padding-top: 80px;
   align-items: flex-end;
   padding-left: 25px;
 }

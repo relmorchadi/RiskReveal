@@ -1,6 +1,6 @@
 <p-dialog [(visible)]="isVisible"
           [closable]="false"
-          [styleClass]="'m-dialog-modal-lg' + (browesing ? ' borderless' : '')"
+          [styleClass]="'m-dialog-modal-lg project-clone-pop-up' + (browesing ? ' borderless' : '')"
           appendTo="body"
           [modal]="true"
           [responsive]="true"
@@ -17,7 +17,7 @@
               <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
             </button>
             <h4>
-              {{ selectionStep =='plt' ? 'Select PLTs' : 'Search For Project' }}
+              {{ selectionStep == 'plt' ? 'Select PLTs to Clone' : 'Search For Project' }}
             </h4>
           </div>
       </ng-container>
@@ -70,42 +70,49 @@
     </div>
   </ng-container>
   <ng-container *ngIf="browesing && selectionStep == 'project'">
-    <projects-list [projects]="selectedWorkspaceProjects" (select)="selectThisProject($event)"></projects-list>
+    <div style="overflow: scroll; height: -webkit-fill-available;">
+      <projects-list [projects]="selectedWorkspaceProjects" (select)="selectThisProject($event)"></projects-list>
+    </div>
   </ng-container>
 
   <ng-container *ngIf="browesing && selectionStep == 'plt'">
-    <div class="content">
-      <div class="left">
-        <app-plt-left-menu
-          [menuInputs]="Inputs | pickKeys : menuInputs"
-          (onSetSelectedUserTags)="setUserTags($event)"
-          (onSetFilters)="setFilters($event)"
-          (emitFilters)="emitFilters($event)"
-          (onProjectFilter)="filterPlts($event)"
-          (onWsHeaderSelection)="setWsHeaderSelect($event)"
-          (onSelectProjects)="setSelectedProjects($event)"
-          (unCkeckAllPlts)="unCheckAll()"
-        >
+      <div class="content">
+        <div class="left">
+          <app-plt-left-menu
+            [menuInputs]="Inputs | pickKeys : menuInputs"
+            (onSetSelectedUserTags)="setUserTags($event)"
+            (onSetFilters)="setFilters($event)"
+            (emitFilters)="emitFilters($event)"
+            (onProjectFilter)="filterPlts($event)"
+            (onWsHeaderSelection)="setWsHeaderSelect($event)"
+            (onSelectProjects)="setSelectedProjects($event)"
+            (unCkeckAllPlts)="unCheckAll()"
+          >
 
-        </app-plt-left-menu>
-      </div>
-      <div class="right">
-        <div class="title-as-tab">
+          </app-plt-left-menu>
+        </div>
+        <div
+          [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
+          class="center">
+          <div class="title-as-tab">
           <span>
             PLTs
           </span>
+          </div>
+          <div class="PLTs-content">
+            <app-plt-main-table
+              [tableInputs]="Inputs | pickKeys : tableInputs"
+              (actionDispatcher)="tableActionDispatcher($event)"
+            ></app-plt-main-table>
+          </div>
         </div>
-        <div class="PLTs-content">
-          <app-plt-main-table
-            [tableInputs]="Inputs | pickKeys : tableInputs"
-            (onCheckAll)="checkAll($event)"
-            (onFilter)="filterPlts($event)"
-            (onPltClick)="toggleSelectPlts($event)"
-            (onSelectSinglePlt)="selectSinglePLT($event)"
-          ></app-plt-main-table>
+        <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
+          <app-plt-right-menu
+            (actionDispatcher)="rightMenuActionDispatcher($event)"
+            [Inputs]="rightMenuInputs"
+          ></app-plt-right-menu>
         </div>
       </div>
-    </div>
   </ng-container>
 
   <p-footer>

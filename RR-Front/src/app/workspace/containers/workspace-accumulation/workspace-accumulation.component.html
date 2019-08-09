@@ -1,13 +1,12 @@
-<app-left-menu></app-left-menu>
 <div class="a-app-wrapper">
   <div class="a-app-header">
     <h4>Accumulation</h4>
-    <button class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-            nz-button nzType="primary" nzSize="default" nzShape="circle">
-      <i style="color: #16617a;" nz-icon theme="outline">
-        <i class="icon-map-pin-alt"></i>
-      </i>
-    </button>
+    <app-pin
+      (pinWs)="pinWorkspace()"
+      (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
+    >
+    </app-pin>
   </div>
   <div class="app-body">
 

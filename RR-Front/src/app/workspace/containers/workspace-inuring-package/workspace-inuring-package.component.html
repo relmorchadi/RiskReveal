@@ -200,9 +200,10 @@
                       <ng-container *ngFor="let data of fixedTable.data;let pureIndex=index">
                         <ng-container *ngFor="let dataTable1 of data.thread;let threadIndex=index">
                           <tr
-                            [ngStyle]="{'background':setBackgroud(dataTable1.checked)}" >
+                            [ngStyle]="{'background':setBackgroud(dataTable1.checked)}">
                             <td class="checkboxInput"><input
-                              type="checkbox"  [checked]="dataTable1.checked" (click)="changeBackgroundCheckBox($event,dataTable1)"></td>
+                              (click)="changeBackgroundCheckBox($event,dataTable1)" [checked]="dataTable1.checked"
+                              type="checkbox"></td>
                             <td (click)="changeBackgroud($event,dataTable1)">{{ dataTable1.id }}</td>
                             <td (click)="changeBackgroud($event,dataTable1)">{{ dataTable1.threadName }}</td>
                             <td><i [class]="dataTable1.icon" style="font-size: 20px"></i></td>
@@ -281,7 +282,8 @@
                                             <span
                                               class="spanStyle">{{adj.name}}</span>
                                           <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
-                                            <i class="icon-menu_24px" nz-dropdown style="font-size: 18px;float: right"></i>
+                                            <i class="icon-menu_24px" nz-dropdown
+                                               style="font-size: 18px;float: right"></i>
                                             <ul nz-menu>
                                               <li nz-menu-item>
                                                 <a (click)="addAdjustmenet(adj)">add adjustement</a>
@@ -341,9 +343,10 @@
                                                class="divInTd"
                                                dndEffectAllowed="move">
                                               <span
-                                                class="spanStyle" >{{adj.name}}</span>
+                                                class="spanStyle">{{adj.name}}</span>
                                             <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
-                                              <i class="icon-menu_24px" nz-dropdown style="font-size: 18px;float: right"></i>
+                                              <i class="icon-menu_24px" nz-dropdown
+                                                 style="font-size: 18px;float: right"></i>
                                               <ul nz-menu>
                                                 <li nz-menu-item>
                                                   <a (click)="addAdjustmenet(adj)">add adjustement</a>
@@ -370,7 +373,7 @@
                                       <div
                                         class="divInTd">
                                           <span
-                                            class="spanStyle" ></span>
+                                            class="spanStyle"></span>
                                         <nz-dropdown [nzPlacement]="'bottomLeft'" class="dropD">
                                           <i [id]="threadIndex" class="icon-menu_24px" nz-dropdown
                                              style="font-size: 18px;float: right"></i>

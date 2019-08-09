@@ -85,8 +85,8 @@
 
     .body-wrap-header-text {
       display: flex;
-      flex-direction: column;
-      width: 45%;
+      align-items: baseline;
+      flex-flow: column;
 
       .body-wrap-header-text-title {
         color: rgba(0, 0, 0, 0.6);
@@ -345,7 +345,7 @@
               font-size: 11px;
               border: 1px solid transparent;
               border-radius: 20px;
-              width: 35px;
+              min-width: 35px;
               background-color: rgba(0, 0, 0, 0.05);
               text-align: center;
               padding: 1px 3px 1px 1px;
@@ -629,215 +629,23 @@
   }
 }
 
-.modal-linking-wrapper {
-  border-top: 3px solid #0700CF;
-  margin: 0 5px;
-
-  .modal-linking-head {
-    display: flex;
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-top: none;
-    margin-bottom: 15px;
-    min-width: 660px;
-
-    .modal-l-h-body-fill {
-      flex: 1;
-      width: 50%;
-      flex-direction: column;
-      padding-top: 5px;
-
-      .radio-wrapper {
-        display: flex;
-        flex-direction: column;
-        height: 195px;
-        overflow: auto;
-      }
-
-      .subtitle-2 {
-        margin: 10px 15px;
-        color: rgba(0, 0, 0, 0.87);
-        font-weight: bold;
-        display: flex;
-      }
-
-      .radio-control {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-      }
-
-      .suggestion-card {
-        background-color: #F4F6FC;
-        margin: 15px;
-        padding: 15px;
-
-        .suggestion-card-header {
-          display: flex;
-          justify-content: space-between;
-          width: 100%;
-          padding-bottom: 15px;
-
-          .icon-trash-alt {
-            font-size: 20px;
-            cursor: pointer;
-            color: rgba(0, 0, 0, 0.5);
-          }
-        }
-
-        .suggestion-card-body {
-          display: flex;
-
-          .suggestion-card-left {
-            width: 50%;
-          }
-
-          .suggestion-card-right {
-            width: 50%
-          }
-
-          .suggestion-card-item {
-            background-color: #FFFFFF;
-            margin-bottom: 5px;
-          }
-        }
-      }
-    }
-
-    .modal-l-h-body-right {
-      width: 50%;
-
-      ul {
-        margin: 41px 5px 15px 5px;
-        padding: 0 !important;
-        list-style: none;
-        padding-left: 24px;
-        max-height: 160px;
-        overflow-y: auto;
-      }
-    }
-
-    .modal-l-h-body {
-      display: flex;
-      width: 1200px;
-      padding: 30px 20px;
-      justify-content: space-around;
-
-    }
-
-    .modal-l-h-button {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      padding: 15px;
-    }
-  }
-
-  .modal-linking-body {
-    background-color: #F4F6FC;
-
-    .modal-l-b-header {
-      display: flex;
-      width: 70%;
-      justify-content: center;
-      margin: auto;
-    }
-
-    .modal-l-b-body {
-      display: flex;
-      justify-content: space-between;
-
-      .modal-l-b-left {
-        display: flex;
-        flex-direction: column;
-        width: 49%;
-      }
-
-      .modal-l-b-right {
-        display: flex;
-        width: 49%;
-      }
-
-      .modal-l-b-card {
-        background-color: #FFFFFF;
-        padding: 5px 9px;
-        margin: 5px;
-      }
-    }
-  }
-
-  .popover-menu-item {
-    padding: 3px 5px;
-    margin: 1px 0 0 12px;
-    cursor: pointer;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
-    user-select: none;
-    background-color: #FFFFFF;
-
-    ::ng-deep {
-      label.ui-radiobutton-label:before {
-        content: 'E';
-        background: #0700CF;
-        margin: 0 8px 0 2px;
-        color: #FFFFFF;
-        padding: 2px 5px 2px 4px;
-        font-family: Rubik;
-        font-size: 12px;
-        font-weight: bold;
-        letter-spacing: 0.17px;
-        line-height: 24px;
-        text-align: center;
-      }
-
-      label.ui-radiobutton-label.ng-star-inserted {
-        width: 80%;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-    }
-
-    span {
-      font-size: 12px;
-    }
-
-    .logo {
-      color: #FFFFFF;
-      padding: 2px 5px 2px 4px;
-      font-family: Rubik;
-      font-size: 12px;
-      font-weight: bold;
-      letter-spacing: 0.17px;
-      line-height: 24px;
-      text-align: center;
-      margin-right: 7px;
-    }
-
-    .icon-check_24px {
-      border: 1px solid transparent;
-      border-radius: 100px;
-      background-color: #03DAC4;
-      color: #fff;
-    }
-  }
-
-  .item-popover {
-    width: 40%;
-  }
-
-  .popover-menu-item-active {
-    background-color: #FCF9D6;
-  }
-}
-
 .input-group-modal {
   display: flex;
   flex-direction: column;
-  width: 500px;
-  margin: 0 55px;
+  width: 580px;
+  margin: 0 auto;
 
   .row-input {
     display: flex;
     align-items: center;
+  }
+
+  .row-list {
+    display: flex;
+
+    .popover-menu {
+      width: 50%;
+    }
   }
 
   .label-input {
@@ -1046,6 +854,48 @@ SELECT EDM AND RDM DROPDOWN STYLE
         }
       }
 
+      .icon-check_box_outline_blank_24px{
+        color: rgba(0,0,0,0.36);
+      }
+
+
+      .no-check{
+        display: inline-block;
+        margin: 0px 5px;
+        vertical-align: middle;
+        width: 16px;
+        height: 16px;
+        background-color: #fff;
+        border: 1px solid #d9d9d9;
+        border-radius: 2px;
+        border-collapse: separate;
+        transition: all 0.3s;
+
+        &:hover {
+          border: 1.1px solid #0700CF;
+        }
+      }
+
+      .check {
+        width: 16px;
+        height: 16px;
+        background-color: #0700CF;
+        color: #FFFFFF;
+        font-size: 14px !important;
+        display: inline-block;
+        border-radius: 2px;
+        margin: 0 5px;
+        vertical-align: middle;
+        text-align: center;
+
+        i {
+          font-weight: bold;
+          margin-left: 1px;
+          margin-top: 1px;
+          display: flex;
+        }
+      }
+
       .loading-text {
         height: 20px;
         margin: auto;
@@ -1195,6 +1045,10 @@ TABLE STYLE
       }
     }
 
+    .ui-table .ui-editable-column input:focus {
+      outline: 0;
+    }
+
     .ui-table-tbody {
       .icon-trash-alt {
         font-size: 20px;
@@ -1219,23 +1073,24 @@ TABLE STYLE
         user-select: none;
       }
 
-      ::ng-deep {
-        .ant-progress-text {
-          display: block;
-          color: #03DAC4;
-        }
+      tr.ui-contextmenu-selected {
+        background-color: #f4f6fc !important;
+      }
 
-        .ant-progress-circle-path {
-          stroke: #03DAC4;
-          stroke-width: 8px;
-        }
+      .ant-progress-text {
+        display: block;
+        color: #03DAC4;
+      }
+
+      .ant-progress-circle-path {
+        stroke: #03DAC4;
+        stroke-width: 8px;
       }
 
       .hidden-text {
-        ::ng-deep {
-          .ant-progress-text {
-            display: none;
-          }
+
+        .ant-progress-text {
+          display: none;
         }
       }
 
@@ -1310,68 +1165,6 @@ TABLE STYLE
     table {
       overflow: auto;
       width: 100%;
-    }
-  }
-}
-
-/*
-=======================================================================================
-FINANCIAL PERSPECTIVE POPUP STYLE
-=======================================================================================
-*/
-
-.fp-options-wrapper {
-  padding: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
-  margin-bottom: 5px;
-
-  .context-wrapper {
-    button {
-      margin: 0 5px;
-    }
-  }
-
-  .subtitle-override {
-    padding-bottom: 10px;
-    display: flex;
-  }
-
-  ::ng-deep {
-    label.ui-radiobutton-label {
-      color: rgba(0, 0, 0, 0.87);
-      font-family: Rubik;
-      font-size: 14.22px;
-      letter-spacing: 0.25px;
-      line-height: 20px;
-    }
-
-    p-radiobutton {
-      margin-right: 15px;
-    }
-  }
-}
-
-.summary-info-override {
-  padding: 0;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-
-  .fp-analysis {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .fp-header {
-    .subtitle-2 {
-      margin-right: 30px;
-      display: inline-flex;
-    }
-
-    .icon-filter {
-      color: rgba(0, 0, 0, 0.5);
-      font-size: 21px;
     }
   }
 }

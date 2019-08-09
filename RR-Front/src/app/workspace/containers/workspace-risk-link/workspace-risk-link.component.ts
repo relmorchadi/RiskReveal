@@ -1,71 +1,66 @@
-import {
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
-  Component,
-  ElementRef,
-  OnDestroy,
-  OnInit,
-  ViewChild
-} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {HelperService} from '../../../shared/helper.service';
 import * as _ from 'lodash';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
-import {combineLatest, Observable} from 'rxjs';
-import {RiskLinkState} from '../../store/states';
-import {RiskLinkModel} from '../../model/risk_link.model';
+import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import {
-  AddToBasketAction, ApplyFinancialPerspectiveAction,
-  DeleteFromBasketAction,
-  LoadAnalysisForLinkingAction,
-  LoadFinancialPerspectiveAction,
-  LoadPortfolioForLinkingAction,
-  PatchAddToBasketStateAction, PatchTargetFPAction, RemoveFinancialPerspectiveAction, SaveFinancialPerspectiveAction,
-  SearchRiskLinkEDMAndRDMAction,
-  ToggleAnalysisForLinkingAction,
-  ToggleRiskLinkAnalysisAction,
-  ToggleRiskLinkEDMAndRDMSelectedAction, ToggleRiskLinkFPAnalysisAction, ToggleRiskLinkFPStandardAction,
-  ToggleRiskLinkPortfolioAction, ToggleRiskLinkResultAction, ToggleRiskLinkSummaryAction
-} from '../../store/actions/risk_link.actions';
-import {
-  LoadRiskLinkDataAction,
-  PatchRiskLinkCollapseAction,
-  PatchRiskLinkDisplayAction,
-  PatchRiskLinkFinancialPerspectiveAction,
-  SelectRiskLinkEDMAndRDMAction,
-  ToggleRiskLinkEDMAndRDMAction
-} from '../../store/actions';
-import { DataTables } from './data';
+import * as fromWs from '../../store/actions';
+import {UpdateWsRouting} from '../../store/actions';
+import {DataTables} from './data';
+import {BaseContainer} from '../../../shared/base';
+import {StateSubscriber} from '../../model/state-subscriber';
+import * as fromHeader from '../../../core/store/actions/header.action';
+import {Navigate} from '@ngxs/router-plugin';
 
 @Component({
   selector: 'app-workspace-risk-link',
   templateUrl: './workspace-risk-link.component.html',
   styleUrls: ['./workspace-risk-link.component.scss'],
 })
-export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
+export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit, StateSubscriber {
+
+  regionPeril;
+  hyperLinks: string[] = ['Risk link', 'File-based'];
+  hyperLinksRoutes: any = {
+    'Risk link': '/RiskLink',
+    'File-based': '/FileBasedImport'
+  };
+  hyperLinksConfig: {
+    wsId: string,
+    uwYear: string
+  };
+
+  wsIdentifier;
+  workspaceInfo: any;
+
+  tree = [];
 
   lastSelectedIndex = null;
-  lastSelectedIndexResult = null;
-  lastSelectedIndexSummary = null;
-  lastSelectedIndexFPstandard = null;
-  lastSelectedIndexFPAnalysis = null;
+
   filterModalVisibility = false;
   linkingModalVisibility = false;
+
+  managePopUp = false;
+
   radioValue = 'all';
-  radioValueFinancialP = 'CurrentSelection';
   columnsForConfig;
   targetConfig;
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
+  @ViewChild('obRes')
+  dropDownFPOb: any;
+  @ViewChild('rpRes')
+  dropDownFP: any;
+  scopeForChanges = 'currentSelection';
 
   displayDropdownRDMEDM = false;
   displayListRDMEDM = false;
 
   serviceSubscription: any;
 
-  listEdmRdm: any = [];
+  occurrenceBasis;
 
   tableLeftAnalysis: any;
   tableAnalysisLinking: any;
@@ -79,50 +74,80 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   frozenColsPortfolio: any;
 
   scrollableColsSummary: any;
-  frozenColsSummary: any;
 
   scrollableColsResult: any;
-  frozenColsResult: any;
 
   colsFinancialStandard: any;
   financialStandardContent: any;
   workingFSC: any;
   colsFinancialAnalysis: any;
 
-  manual = false;
-  suggested = false;
-  managePopUp = false;
-  financialP = false;
   selectedEDM = null;
   scrollableColslinking: any;
 
-  @Select(RiskLinkState)
-  state$: Observable<RiskLinkModel>;
-  state: RiskLinkModel = null;
+  contextSelectedItem: any;
 
-  constructor(private _helper: HelperService, private route: ActivatedRoute, private store: Store, private cdRef: ChangeDetectorRef) {
+  @Select(WorkspaceState.getRiskLinkState) state$;
+  state: any;
+
+  @Select(WorkspaceState.getListEdmRdm) listEdmRdm$;
+  listEdmRdm: any;
+
+  @Select(WorkspaceState.getAnalysis) analysis$;
+  analysis: any;
+  allCheckedAnalysis: boolean;
+  indeterminateAnalysis: boolean;
+
+  @Select(WorkspaceState.getPortfolios) portfolios$;
+  portfolios: any;
+  allCheckedPortolfios: boolean;
+  indeterminatePortfolio: boolean;
+
+  constructor(
+    private _helper: HelperService,
+    private route: ActivatedRoute,
+    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
+  ) {
+    super(_baseRouter, _baseCdr, _baseStore);
   }
 
   ngOnInit() {
-    this.store.dispatch(new LoadRiskLinkDataAction());
-    combineLatest(
-      this.store.select(RiskLinkState.getFinancialPerspective)
-    ).subscribe(
-      ([fp]: any) => {
-        this.workingFSC = fp;
-      }
-    );
+    /*    combineLatest(
+          this.select(WorkspaceState.getFinancialPerspective)
+        ).pipe(this.unsubscribeOnDestroy).subscribe(
+          ([fp]: any) => {
+            this.workingFSC = fp;
+          }
+        );*/
     this.serviceSubscription = [
-      this.state$.subscribe(value => this.state = _.merge({}, value)),
-      this.store.select(st => st.RiskLinkModel.analysis).subscribe(dt => {
-        this.tableLeftAnalysis = dt;
+      this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.state = _.merge({}, value);
         this.detectChanges();
       }),
-      this.store.select(st => st.RiskLinkModel.portfolios).subscribe(dt => {
-        this.tableLeftPortfolio = dt;
+      this.listEdmRdm$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.listEdmRdm = _.merge({}, value);
         this.detectChanges();
       }),
-      this.store.select(st => st.RiskLinkModel.listEdmRdm).subscribe(dt => {
+      this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.analysis = _.merge({}, value);
+        console.log(this.analysis);
+        this.allCheckedAnalysis = this.analysis.allChecked;
+        this.indeterminateAnalysis = this.analysis.indeterminate;
+        this.detectChanges();
+      }),
+      this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.portfolios = _.merge({}, value);
+        console.log(this.portfolios);
+        this.allCheckedPortolfios = this.portfolios.allChecked;
+        this.indeterminatePortfolio = this.portfolios.indeterminate;
+        this.detectChanges();
+      }),
+      this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
+        this.hyperLinksConfig = {
+          wsId,
+          uwYear: year
+        };
+        this.dispatch(new fromWs.LoadRiskLinkDataAction());
         this.detectChanges();
       })
     ];
@@ -131,23 +156,40 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
     this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
     this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
-    this.scrollableColsSummary = DataTables.scrollableColsSummary;
-    this.frozenColsSummary = DataTables.frozenColsSummary;
-    this.scrollableColsResult = DataTables.scrollableColsResults;
-    this.frozenColsResult = DataTables.frozenColsResults;
     this.scrollableColslinking = DataTables.scrollableColsLinking;
     this.colsFinancialStandard = DataTables.colsFinancialStandard;
     this.colsFinancialAnalysis = DataTables.colsFinancialAnalysis;
     this.financialStandardContent = DataTables.financialStandarContent;
   }
 
-  ngOnDestroy() {
-    if (this.serviceSubscription)
-      this.serviceSubscription.forEach(sub => sub.unsubscribe());
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
+    this.wsIdentifier = wsIdentifier;
+  }
+
+  pinWorkspace() {
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
+    this.dispatch([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
+
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.dispatch([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ]);
   }
 
   changeFinancialPTarget(target) {
   }
+
   /** Manage Columns Method's */
   toggleColumnsManager(target) {
     this.managePopUp = !this.managePopUp;
@@ -179,36 +221,14 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.columnsForConfig = _.merge(
       [],
       this.columnsForConfig,
-      { [i]: {...this.columnsForConfig[i], visible: !this.columnsForConfig[i].visible} }
+      {[i]: {...this.columnsForConfig[i], visible: !this.columnsForConfig[i].visible}}
     );
   }
+
   /** */
   focusInput() {
     this.displayDropdownRDMEDM = !this.displayDropdownRDMEDM;
     this.searchInput.nativeElement.focus();
-  }
-
-  getChecked(item) {
-    if (this.selectedEDM !== null) {
-      if (item === null) {
-        return false;
-      } else {
-        return item.name === this.selectedEDM;
-      }
-    }
-  }
-
-  getSelectedRDM() {
-    return _.filter(_.toArray(this.state.linking.rdm), dt => dt.selected);
-  }
-
-  selectLinkedRDM(item) {
-    console.log(item);
-    this.store.dispatch(new LoadAnalysisForLinkingAction(item));
-  }
-
-  resetToMain() {
-    this.manual = this.suggested = false;
   }
 
   dataList(data, filter = null) {
@@ -221,22 +241,24 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   toggleItemsListRDM(RDM) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMSelectedAction(RDM));
+    this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction(RDM));
+    this.detectChanges();
   }
+
   /** Select EDM & RDM DropDown Method's */
   toggleItems(RDM, event, source) {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
+    this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMAction({RDM, action: 'selectOne', source}));
     if (event !== null) {
       event.stopPropagation();
     }
   }
 
   selectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'selectAll', source: 'solo'}));
+    this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMAction({action: 'selectAll', source: 'solo'}));
   }
 
   unselectAll() {
-    this.store.dispatch(new ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll', source: 'solo'}));
+    this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll', source: 'solo'}));
   }
 
   refreshAll() {
@@ -246,9 +268,10 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   closeDropdown() {
     this.displayDropdownRDMEDM = false;
   }
+
   /** */
   fillLists() {
-    this.store.dispatch(new SelectRiskLinkEDMAndRDMAction());
+    this.dispatch(new fromWs.SelectRiskLinkEDMAndRDMAction());
   }
 
   selectedItem() {
@@ -266,23 +289,8 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
   }
 
   displayImported() {
-    this.store.dispatch(new PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
-    this.store.dispatch(new AddToBasketAction());
-  }
-
-  deleteFromBasket(id, target) {
-    this.store.dispatch(new DeleteFromBasketAction({id: id, scope: target}));
-  }
-
-  toggleForLinkingEDM() {
-    const item = _.filter(this.dataList(this.state.linking.edm), dt => dt.name === this.selectedEDM)[0];
-    this.detectChanges();
-    console.log(item, this.selectedEDM);
-    this.store.dispatch(new LoadPortfolioForLinkingAction(item));
-  }
-
-  toggleForLinkingRDM(items) {
-    this.store.dispatch(new ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
+    this.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayImport', value: true}));
+    this.dispatch(new fromWs.AddToBasketAction());
   }
 
   getScrollableCols() {
@@ -301,32 +309,11 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
   }
 
-  getLinkingPortfolio() {
-    if (this.state.linking.portfolio === null) {
-      return null;
-    } else {
-      return _.toArray(this.state.linking.portfolio.data);
-    }
-  }
-
-  getLinkingAnalysis() {
-    if (this.state.linking.analysis === null) {
-      return null;
-    } else {
-      return _.toArray(this.state.linking.analysis.data);
-    }
-  }
-
   getTableData() {
-    let dataTable;
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM.rdm, (dt) => dt.selected === true)[0];
-      dataTable = _.get(this.tableLeftAnalysis, `${id}.data`, this.tableLeftAnalysis);
-      return _.toArray(dataTable);
+      return _.toArray(this.analysis.data);
     } else {
-      const {id} = _.filter(this.state.listEdmRdm.selectedListEDMAndRDM.edm, (dt) => dt.selected === true)[0];
-      dataTable = _.get(this.tableLeftPortfolio, `${id}.data`, this.tableLeftPortfolio);
-      return _.toArray(dataTable);
+      return _.toArray(this.portfolios.data);
     }
   }
 
@@ -334,9 +321,13 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     return this.state.selectedEDMOrRDM === 'rdm' ? 'Analysis' : 'Portfolio';
   }
 
+  clearSelection(item, target) {
+    this.dispatch(new fromWs.DeleteEdmRdmAction({id: item.id, target: target}));
+  }
+
   getNumberElement(item, source) {
     if (source === 'portfolio') {
-      if (this.state.portfolios ===  null ) {
+      if (this.state.portfolios === null) {
         return 0;
       } else {
         if (typeof this.state.portfolios[item.id] !== 'undefined') {
@@ -346,7 +337,7 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         }
       }
     } else if (source === 'analysis') {
-      if (this.state.analysis ===  null) {
+      if (this.state.analysis === null) {
         return 0;
       } else {
         if (typeof this.state.analysis[item.id] !== 'undefined') {
@@ -360,13 +351,13 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   getNumberOfSelected(item, source) {
     if (source === 'portfolio') {
-      if (this.state.portfolios ===  null ) {
+      if (this.state.portfolios === null) {
         return 0;
       } else {
         return _.filter(_.toArray(this.state.portfolios[item.id].data), dt => dt.selected).length;
       }
     } else if (source === 'analysis') {
-      if (this.state.analysis ===  null) {
+      if (this.state.analysis === null) {
         return 0;
       } else {
         return _.filter(_.toArray(this.state.analysis[item.id].data), dt => dt.selected).length;
@@ -376,9 +367,9 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   onInputSearch(event) {
     if (event.target.value.length > 2) {
-      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
+      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({keyword: event.target.value, size: '20'}));
     } else {
-      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({keyword: '', size: '20'}));
+      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({keyword: '', size: '20'}));
     }
     this.detectChanges();
   }
@@ -392,9 +383,9 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     }
     if (this.state.listEdmRdm.numberOfElement < event.first + event.rows) {
       console.log('you called for :' + sizePage);
-      this.store.dispatch(new SearchRiskLinkEDMAndRDMAction({
+      this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
         keyword: this.state.listEdmRdm.searchValue,
-        size: sizePage
+        size: sizePage,
       }));
     }
 
@@ -402,19 +393,28 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
 
   selectOne(row) {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
-      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+    }
+  }
+
+  updateAllChecked(value, scope) {
+    const selection = value ? 'selectAll' : 'unselectAll';
+    if (scope === 'analysis') {
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: selection}));
+    } else if (scope === 'portfolio') {
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: selection}));
     }
   }
 
   selectWithUnselect(row) {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
-      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
-      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
-      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
     }
   }
 
@@ -435,166 +435,34 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
         this.selectWithUnselect(row);
         this.lastSelectedIndex = index;
       }
-      this.store.dispatch(new PatchAddToBasketStateAction());
-    } else if (target === 'R') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexResult = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexResult || this.lastSelectedIndexResult === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexResult), Math.max(index, this.lastSelectedIndexResult), 'R');
-        } else {
-          this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexResult = index;
-        }
-      } else {
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexResult = index;
-      }
-    } else if (target === 'S') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexSummary = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexSummary || this.lastSelectedIndexSummary === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexSummary), Math.max(index, this.lastSelectedIndexSummary), 'S');
-        } else {
-          this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexSummary = index;
-        }
-      } else {
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexSummary = index;
-      }
-    }  else if (target === 'fpS') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPstandard = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexFPstandard || this.lastSelectedIndexFPstandard === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexFPstandard), Math.max(index, this.lastSelectedIndexFPstandard), 'fpS');
-        } else {
-          this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexFPstandard = index;
-        }
-      } else {
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPstandard = index;
-      }
-    }  else if (target === 'fpA') {
-      if ((window as any).event.ctrlKey) {
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPAnalysis = index;
-      } else if ((window as any).event.shiftKey) {
-        event.preventDefault();
-        if (this.lastSelectedIndexFPAnalysis || this.lastSelectedIndexFPAnalysis === 0) {
-          this.selectSection(Math.min(index, this.lastSelectedIndexFPAnalysis), Math.max(index, this.lastSelectedIndexFPAnalysis), 'fpA');
-        } else {
-          this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
-          this.lastSelectedIndexFPAnalysis = index;
-        }
-      } else {
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: row}));
-        this.lastSelectedIndexFPAnalysis = index;
-      }
+      this.dispatch(new fromWs.PatchAddToBasketStateAction());
     }
   }
 
-  private selectSection(from, to, target) {
+  checkRow(event, rowData, target) {
     if (target === 'A&P') {
-      if (this.state.selectedEDMOrRDM === 'rdm') {
-        this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+      if (this.state.selectedEDMOrRDM === 'edm') {
+        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
       } else {
-        this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
-      }
-      if (from === to) {
-        if (this.state.selectedEDMOrRDM === 'rdm') {
-          this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: this.getTableData()[from]}));
-        } else {
-          this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: this.getTableData()[from]}));
-        }
-      } else {
-        for (let i = from; i <= to; i++) {
-          if (this.state.selectedEDMOrRDM === 'rdm') {
-            this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: this.getTableData()[i]}));
-          } else {
-            this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: this.getTableData()[i]}));
-          }
-        }
-      }
-    } else if (target === 'R') {
-      this.store.dispatch(new ToggleRiskLinkResultAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: this.dataList(this.state.results.data)[from]}));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkResultAction({action: 'selectOne', value: true, item: this.dataList(this.state.results.data)[i]}));
-        }
-      }
-    } else if (target === 'S') {
-      this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: this.dataList(this.state.summaries.data)[from]}));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkSummaryAction({action: 'selectOne', value: true, item: this.dataList(this.state.summaries.data)[i]}));
-        }
-      }
-    } else if (target === 'fpS') {
-      this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.standard)[from]}));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkFPStandardAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.standard)[i]}));
-        }
-      }
-    }  else if (target === 'fpA') {
-      this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
-      if (from === to) {
-        this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.analysis.data)[from]}));
-      } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new ToggleRiskLinkFPAnalysisAction({action: 'selectOne', value: true, item: this.dataList(this.workingFSC.analysis.data)[i]}));
-        }
+        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
       }
     }
-
-  }
-
-  checkRow(event, rowData) {
-    if (this.state.selectedEDMOrRDM === 'edm') {
-      this.store.dispatch(new ToggleRiskLinkPortfolioAction({action: 'selectOne', value: event, item: rowData}));
-    } else {
-      this.store.dispatch(new ToggleRiskLinkAnalysisAction({action: 'selectOne', value: event, item: rowData}));
-    }
-    console.log(event);
   }
 
   changeCollapse(value) {
-    this.store.dispatch(new PatchRiskLinkCollapseAction({key: value}));
+    this.dispatch(new fromWs.PatchRiskLinkCollapseAction({key: value}));
   }
 
   changeFinancialValidator(value, item) {
-    this.store.dispatch(new PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
+    this.dispatch(new fromWs.PatchRiskLinkFinancialPerspectiveAction({key: value, value: item}));
   }
 
-  openFinancialP() {
-    this.financialP = true;
-    this.store.dispatch(new LoadFinancialPerspectiveAction(this.financialStandardContent));
-    this.lastSelectedIndexFPstandard = null;
-    this.lastSelectedIndexFPAnalysis = null;
-  }
-
-  changeTargetFP(event) {
-    this.store.dispatch(new PatchTargetFPAction(event));
+  navigateFromHyperLink({route}) {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
   }
 
   handleCancel() {
@@ -602,27 +470,53 @@ export class WorkspaceRiskLinkComponent implements OnInit, OnDestroy {
     this.linkingModalVisibility = false;
   }
 
-  replaceFinancialP() {
-    this.store.dispatch(new ApplyFinancialPerspectiveAction('replace'));
+  rowTrackBy = (index, item) => {
+    return item.id;
   }
 
-  saveFinancialP() {
-    this.store.dispatch(new SaveFinancialPerspectiveAction());
-    this.financialP = false;
+  ngOnDestroy(): void {
+    this.destroy();
   }
 
-  addFinancialP() {
-    this.store.dispatch(new ApplyFinancialPerspectiveAction('add'));
-  }
-
-  removeFP(item, fp) {
-    console.log(item, fp);
-    this.store.dispatch(new RemoveFinancialPerspectiveAction({item, fp}));
-  }
-
-  detectChanges() {
-    if (!this.cdRef['destroyed']) {
-      this.cdRef.detectChanges();
+  private selectSection(from, to, target) {
+    if (target === 'A&P') {
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+      } else {
+        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
+      }
+      if (from === to) {
+        if (this.state.selectedEDMOrRDM === 'rdm') {
+          this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+            action: 'selectOne',
+            value: true,
+            item: this.getTableData()[from]
+          }));
+        } else {
+          this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+            action: 'selectOne',
+            value: true,
+            item: this.getTableData()[from]
+          }));
+        }
+      } else {
+        for (let i = from; i <= to; i++) {
+          if (this.state.selectedEDMOrRDM === 'rdm') {
+            this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({
+              action: 'selectOne',
+              value: true,
+              item: this.getTableData()[i]
+            }));
+          } else {
+            this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({
+              action: 'selectOne',
+              value: true,
+              item: this.getTableData()[i]
+            }));
+          }
+        }
+      }
     }
   }
+
 }

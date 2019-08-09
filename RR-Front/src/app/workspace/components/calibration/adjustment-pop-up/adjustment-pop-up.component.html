@@ -1,105 +1,130 @@
-<!--<p-dialog-->
-<!--  (cancel)="handleCancel()"-->
-<!--  [closable]="false"-->
-<!--  [modal]="true"-->
-<!--  [responsive]="true"-->
-<!--  [visible]="isVisible"-->
-<!--  appendTo="body"-->
-<!--  styleClass="m-dialog-modal-m"-->
-<!--&gt;-->
-<!--  <p-header>-->
-<!--    <h3>-->
-<!--      {{modalTitle}}-->
-<!--    </h3>-->
-<!--    <i (click)="handleCancel()" class="icon-close_24px" style="cursor: pointer"></i>-->
-<!--  </p-header>-->
-<!--  <div nz-row>-->
-<!--    <div nz-col nzSpan="8" style="margin-top: 10px">-->
-<!--      <b>Basis</b>-->
-<!--    </div>-->
-<!--    <div nz-col nzSpan="16">-->
-<!--      &lt;!&ndash; (ngModelChange)="selectCategory(categorySelectedFromBasis)"&ndash;&gt;-->
-<!--      <nz-select (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"-->
-<!--                 [(ngModel)]="categorySelectedFromAdjustement"-->
-<!--                 [nzPlaceHolder]="'Select Adjustment'"-->
-<!--                 [nzSize]="size" style="width: 260px;">-->
-<!--        <ng-container *ngFor="let option of allAdjsArray">-->
-<!--          <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"-->
-<!--                     [nzValue]="option"></nz-option>-->
-<!--        </ng-container>-->
-<!--      </nz-select>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div nz-row>-->
-<!--    <div nz-col nzSpan="24">-->
-<!--      <nz-collapse *ngIf="categorySelectedFromAdjustement?.description" [nzBordered]="false">-->
-<!--        <nz-collapse-panel [nzActive]="true" [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis">-->
-<!--          <p>{{categorySelectedFromAdjustement?.description}}</p>-->
-<!--        </nz-collapse-panel>-->
-<!--      </nz-collapse>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div nz-row>-->
-<!--    <div nz-col nzSpan="8">-->
-<!--      <b>Category</b>-->
-<!--    </div>-->
-<!--    <div nz-col nzSpan="16" style="line-height: 2.2rem;">-->
-<!--      &lt;!&ndash; (ngModelChange)="selectCategory(categorySelectedFromBasis)"&ndash;&gt;-->
-<!--      <b style="margin-left: 10px;">{{categorySelected}}</b>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div nz-row>-->
-<!--    <div nz-col nzSpan="24">-->
-<!--      &nbsp;-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div nz-row>-->
-<!--    <div nz-col nzSpan="8" style="margin-top: 10px">-->
-<!--      <b>Narrative</b>-->
-<!--    </div>-->
-<!--    <div nz-col nzSpan="16">-->
-<!--      <textarea [(ngModel)]="inputValue" nz-input rows="4" style="margin-left: 10px; width: 95%"></textarea>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div nz-row>-->
-<!--    <div nz-col nzSpan="24">-->
-<!--      &nbsp;-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div nz-row>-->
-<!--    <div nz-col nzSpan="8" style="margin-top: 10px">-->
-<!--      <b>Type</b>-->
-<!--    </div>-->
-<!--    <div nz-col nzSpan="16">-->
-<!--      <nz-select (ngModelChange)="selectBasis(singleValue)" [(ngModel)]="singleValue"-->
-<!--                 [nzPlaceHolder]="'choose Type'"-->
-<!--                 [nzSize]="size" style="width: 260px;">-->
-<!--        <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>-->
-<!--      </nz-select>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <div *ngIf="categorySelectedFromAdjustement" nz-row style="margin-top: 20px;">-->
-<!--    <div nz-col nzSpan="8" style="margin: 5px;">-->
-<!--      Capped-->
-<!--    </div>-->
-<!--    <div nz-col nzSpan="16" style="line-height: 2.2rem;">-->
-<!--      <nz-switch [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" [nzDisabled]="true" nzSize="small"-->
-<!--                 style="margin-left: 15px;"></nz-switch>-->
-<!--    </div>-->
-<!--  </div>-->
-<!--  <p-footer>-->
-<!--    <button (click)="handleCancel()"-->
-<!--            class="ant-btn"-->
-<!--            style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL-->
-<!--    </button>-->
+<p-dialog
+  [autoZIndex]="false"
+  [baseZIndex]="1"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [styleClass]="'m-dialog-modal-m-74 adjustment-modal'"
+  [visible]="isVisible">
+  <p-header>
+    <div class="header">
+      <h4>
+        {{modalTitle}}
+      </h4>
+      <i (click)="hide()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Basis </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-select
+            (ngModelChange)="emitSelectCategory($event)"
+            [(ngModel)]="categorySelectedFromAdjustement"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select Adjustment Basis"
+            nzShowSearch
+            style="padding: 10px 0; width: 300px"
+          >
+            <nz-option-group nzLabel="Favored">
+              <nz-option *ngFor="let option of favoredBasis" [nzLabel]="option.name" [nzValue]="option"
+                         nzCustomContent>{{option.name}}<i (click)="unfavorise(option)"
+                                                           class="icon-star_24px favoredStar"
+                                                           style="font-size: 22px;"></i></nz-option>
+            </nz-option-group>
+            <nz-option-group nzLabel="Normal">
+              <nz-option *ngFor="let option of unFavoredBasis" [nzLabel]="option.name" [nzValue]="option"
+                         nzCustomContent>{{option.name}}<i (click)="favorise(option)"
+                                                           class="icon-star_border_24px unfavoredStar"
+                                                           style="font-size: 22px;"></i></nz-option>
+            </nz-option-group>
 
-<!--    <button (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)" *ngIf="!modifyModal"-->
-<!--            class="ant-btn ant-btn-default"-->
-<!--            style="width: 130px; height: 30px; ">SAVE-->
-<!--    </button>-->
-<!--    <button (click)="saveAdjModification(categorySelectedFromAdjustement)" *ngIf="modifyModal"-->
-<!--            class="ant-btn ant-btn-default"-->
-<!--            style="width: 130px; height: 30px; ">SAVE-->
-<!--    </button>-->
-<!--  </p-footer>-->
-<!--</p-dialog>-->
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div *ngIf="categorySelectedFromAdjustement?.description" class="ui-g-12"
+           style="border-bottom: 1px solid #c7c7c7a6;">
+        <nz-collapse [nzBordered]="false">
+          <nz-collapse-panel [nzActive]="true" [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis">
+            <p>{{categorySelectedFromAdjustement?.description}}</p>
+          </nz-collapse-panel>
+        </nz-collapse>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Category </label>
+      </div>
+      <div class="ui-g-9">
+        <b>{{categorySelected}}</b>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Narrative </label>
+      </div>
+      <div class="ui-g-9">
+        <textarea [(ngModel)]="inputValue" nz-input rows="4" style="margin-left: 10px; width: 300px"></textarea>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label style="margin-top: 15px;"> Type </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
+          <nz-select
+            (ngModelChange)="selectBasis($event)"
+            [(ngModel)]="singleValue"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a type"
+            nzShowSearch
+            style="padding: 10px 0; width: 300px">
+            <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div *ngIf="categorySelectedFromAdjustement" class="ui-g">
+      <div class="ui-g-3">
+        <label> Capped </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-switch [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'"
+                   [nzDisabled]="true"
+                   nzSize="small">
+
+        </nz-switch>
+      </div>
+    </div>
+    <div *ngIf="linear" class="ui-g">
+      <div class="ui-g-3">
+        <label> Loss Modification Factor (LMF) </label>
+      </div>
+      <div class="ui-g-9">
+        <input [(ngModel)]="columnPosition" class="a-textfield-mini add-adjustment-input" nz-input nz-tooltip
+               style="width: 300px; !important;"/>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="hide()" class="a-button-text">Close</button>
+      <button
+        (click)="emitAddAdjustmentFromPlusIcon(global ? true : false,singleValue,categorySelectedFromAdjustement,columnPosition)"
+        *ngIf="!modifyModal" class="a-buttons-contained">
+        Save
+      </button>
+      <button (click)="emitSaveAdjModification(categorySelectedFromAdjustement,singleValue,columnPosition)"
+              *ngIf="modifyModal"
+              class="a-buttons-contained">
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>

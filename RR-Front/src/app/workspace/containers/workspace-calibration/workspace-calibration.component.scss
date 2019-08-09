@@ -1,4 +1,6 @@
-
+::ng-deep * {
+  transition: none !important;
+}
 .AdjustmentCanvas {
   ::ng-deep {
     .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
@@ -141,9 +143,8 @@
 
 :host {
   width: 100%;
-  height: max-content;
+  height: calc(100vh - 200px);
   display: flex;
-  min-height: 100vh;
   background-color: #F4F6FC;
 
   ::ng-deep.plt-browser-wrapper {
@@ -942,7 +943,7 @@
 }
 
 :host .PLTs-content {
-  background: #fff;
+  //background: #fff;
 
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
@@ -1194,8 +1195,8 @@
 :host {
   ::ng-deep {
     nz-collapse {
-      max-height: 48%;
-      overflow: auto;
+      /*max-height: 48%;
+      overflow: auto;*/
     }
 
     .Tags-content {
@@ -1215,7 +1216,7 @@
     }
 
     .ant-collapse-content > .ant-collapse-content-box {
-      max-width: 190px;
+      //max-width: 190px;
       padding: 0;
     }
 
@@ -1438,14 +1439,25 @@ body .ui-table .ui-table-thead > tr > th {
 }
 
 .addRemove {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: #0700e4;
-  padding-top: 15px;
-  padding-left: 10px;
+  margin-top: 20px;
+  margin-left: 15px;
   cursor: pointer;
 }
 
+.regenerate-all {
+  font-size: 17px;
+  margin-top: 20px;
+  margin-right: 5px;
+  color: #0700e4;
+  cursor: pointer;
+}
+
+.regenerate-all:hover {
+  color: #1890ff;
+}
 .addRemove:hover {
   color: #1890ff;
 }
@@ -1470,9 +1482,9 @@ body .ui-table .ui-table-thead > tr > th {
 }
 
 .content {
-  .right, .left {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
-    margin-right: 10px;
+  .right, .center, .left {
+    /*box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    margin-right: 10px;*/
   }
 
   .PLTs-content {
@@ -1527,8 +1539,8 @@ body .ui-table .ui-table-thead > tr > th {
 
 @media (min-width: 1100px) {
   .radio-container {
-    margin-top: 25px;
-    margin-right: 5px;
+    margin-top: 0px;
+
   }
   .title-as-tab {
     display: flex;
@@ -1548,43 +1560,84 @@ body .ui-table .ui-table-thead > tr > th {
 }
 
 .table-header1 {
-  height: 80px !important;
+  height: 88px !important;
   border-right: 5px solid #f4f6fc;
 }
 
 .table-header2 {
-  height: 80px !important;
+  height: 88px !important;
 }
 
-.EPM0 {
-  text-align: end;
-  font-weight: bold;
-  margin-right: 3px;
+.threeValues {
+  .EPM0 {
+    text-align: end;
+    font-weight: bold;
+    margin-right: 3px;
+  }
+
+  .EPM1 {
+    width: 50%;
+    float: left;
+    font-size: 12px;
+    margin-left: 3px;
+    color: #acacac;
+  }
+
+  .EPM2B {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    color: #06b9ff;
+  }
+
+  .EPM2R {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    color: #cf1912;
+  }
 }
 
-.EPM1 {
-  width: 50%;
-  float: left;
-  font-size: 12px;
-  margin-left: 3px;
-  color: #acacac;
+.twoValues {
+  .EPM0 {
+    font-weight: bold;
+    width: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    float: left;
+  }
+
+  .EPM2B {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #06b9ff;
+  }
+
+  .EPM2R {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #cf1912;
+  }
 }
 
-.EPM2B {
-  width: 47%;
-  margin-left: 50%;
-  text-align: end;
-  font-size: 12px;
-  color: #06b9ff;
+.oneValue {
+  .EPM0 {
+    font-weight: bold;
+    margin: 10px 25px 10px 25px;
+  }
 }
 
-.EPM2R {
-  width: 47%;
-  margin-left: 50%;
-  text-align: end;
-  font-size: 12px;
-  color: #cf1912;
-}
+
 
 ::ng-deep.ui-radiobutton-label {
   color: #0700cf !important;
@@ -1601,4 +1654,104 @@ body .ui-table .ui-table-thead > tr > th {
     font-weight: bold;
     border-top: 3px solid #0700e4;
   }
+}
+
+.body-wrap-dropDowns-calibration {
+  display: flex;
+
+  .dropdown-wrap-calibration {
+    display: flex;
+    width: 108px;
+    padding-right: 13px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title-calibration {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title-calibration {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected-calibration {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100px;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}
+
+
+.Deltas {
+  display: flex;
+  color: rgba(0, 0, 0, 0.6);
+  font-family: Rubik;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  line-height: 60px;
+  margin-right: 10px;
+}
+
+.generic-thread-container::-webkit-scrollbar {
+  height: 3px !important;
+}
+
+.generic-thread-container:hover::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+::ng-deep.ant-switch::after {
+  height: 15px !important;
+}
+
+::ng-deep.ant-switch {
+  height: 19px !important;
+}
+
+::ng-deep.ui-dropdown {
+  background: #ffffff;
+  border: 1px solid #a6a6a6;
+  width: 95%;
+  margin-left: 10px;
+}
+
+.add-adjustment-input {
+  width: 200px;
+  height: 40px;
+  background: #f9f9f9;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid black;
+  color: #0700CF;
+}
+
+.menu-bottom-separator {
+  border-bottom: 1px solid #d1d1d1;
+}
+
+.toolkit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
 }

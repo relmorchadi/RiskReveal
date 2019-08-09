@@ -267,11 +267,11 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   updateDashboardMockData() {
-    this.dashboardsMockData = _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
+    this.dashboardsMockData = this.dashboards // _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
+    console.log('here 2');
   }
 
   changeItemPosition() {
-    console.log('here');
     let rowEmpty = true;
     this.selectedDashboard.items.forEach(ds => {
       if (ds.selected && ds.position.y === 0 ) {
@@ -318,7 +318,7 @@ export class DashboardEntryComponent implements OnInit {
     }
   }
 
-  delete(dashboardId: any, itemId: any) {
+  deleteItem(dashboardId: any, itemId: any) {
     /*   this.dashboards[id].items = _.filter(this.dashboards[id].items, (e: any) => e.id != item.id);
        this.dashboards[id].items = _.map(this.dashboards[id].items, (e, id) => ({...e, id}));*/
     const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
@@ -342,7 +342,6 @@ export class DashboardEntryComponent implements OnInit {
       dashboard.items.push(copy);
       newItem[0].selected = false;
     } else {
-      console.log(_.findIndex(dashboard.items, {id: itemId}));
       let index = _.findIndex(dashboard.items, {id: itemId});
       dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
     }
@@ -352,7 +351,6 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   duplicate(dashboardId: any, itemName: any) {
-    console.log({dashboardId, itemName});
     const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
     const duplicatedItem: any = dashboard.items.filter(ds => ds.name === itemName);
     const copy = Object.assign({}, duplicatedItem[0], {
@@ -361,6 +359,7 @@ export class DashboardEntryComponent implements OnInit {
     });
     dashboard.items = [...dashboard.items, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    console.log('here');
     this.updateDashboardMockData();
   }
 

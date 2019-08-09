@@ -1,9 +1,16 @@
-
-:host {
-  display: flex;
-  height: 100%;
-
+body {
+  overflow: hidden !important;
 }
+
+.delta-context {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'Delta Context';
+      width: fit-content;
+    }
+  }
+}
+
 
 /*::ng-deep  {
   .ant-modal-mask {
@@ -54,12 +61,12 @@
 
 .layout-comparer {
   background-color: #F4F6FC;
-  width: 100%;
-  height: 100%;
+  height: calc(100vh - 59px);
+  width: 100vw;
 }
 
 .button-toggle {
-  margin-right: 10px;
+  display: flex;
 }
 
 /* Drop Drown of the Risk Link Page  */
@@ -126,30 +133,55 @@ div.blank-space {
   height: 350px;
 }
 
+.header-comparer-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  padding: 25px;
+  align-items: center;
+
+  .header-left {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .header-right {
+    display: flex;
+    flex: 0 0 55%;
+    justify-content: space-between;
+
+    .header-right-wrap {
+      display: flex;
+    }
+  }
+
+  ::ng-deep {
+    .ant-select-search--inline {
+      position: unset;
+    }
+  }
+
+  .multiple-selection {
+    ::ng-deep {
+      .ant-select-selection__placeholder {
+        top: 30%;
+        display: block !important;
+      }
+
+      .ant-select-selection__choice {
+        display: none;
+      }
+    }
+  }
+}
+
 .header {
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
   width: 99%;
   padding: 0;
-  margin: 28px auto 0;
   height: 60px;
-  ::ng-deep{
-    .ant-select-search--inline{
-      position: unset;
-    }
-  }
-  .multiple-selection{
-    ::ng-deep{
-      .ant-select-selection__placeholder {
-        top: 30%;
-        display:block !important;
-      }
-      .ant-select-selection__choice{
-        display: none;
-      }
-    }
-  }
 }
 
 .content {
@@ -166,7 +198,6 @@ div.blank-space {
   line-height: 41px;
   height: 50px;
   align-items: center;
-
 
 
   h3 {
@@ -271,7 +302,7 @@ div.blank-space {
 
       span {
         color: #E5E9FA;
-        font-size:14px ;
+        font-size: 14px;
         line-height: 15px;
       }
     }
@@ -420,7 +451,7 @@ div.blank-space {
   background-color: #FFFFFF;
   height: 700px;
   box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15), -3px 0px 5px rgba(0, 0, 0, 0.15);
-  margin: 10px 20px 40px 10px;
+  margin: 10px;
 
   .card-header-detail {
     display: flex;
@@ -484,7 +515,7 @@ div.blank-space {
 
       span {
         color: #E5E9FA;
-        font-size:14px ;
+        font-size: 14px;
         line-height: 15px;
       }
     }

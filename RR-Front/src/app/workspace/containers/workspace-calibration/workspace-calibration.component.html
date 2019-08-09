@@ -1,11 +1,9 @@
-<app-left-menu></app-left-menu>
 <div class="plt-browser-wrapper">
   <div class="a-app-wrapper">
     <div class="a-app-header">
       <h4>Calibration Editor</h4>
     </div>
-
-    <div class="my-tabs" style="margin-bottom: 10px;">
+    <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;width: 175px;">
         <div class="col-10" style="padding:unset; position: absolute;min-width: 175px">
           <app-plt-left-menu
@@ -57,25 +55,26 @@
              style="font-size: 25px; cursor: pointer"></i>
         </div>
       </div>
-      <div *ngIf="collapsedTags" class="noMargin row" style="position: relative;width: 37px;height:44px">
-        <div class="collapseTags col-2" style="padding:10px 0px 0px 5px; position: absolute;">
+      <div *ngIf="collapsedTags" class="noMargin row a-closed-sidebar" style="position: relative;width: 37px">
+        <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
           <i (click)="collapseTags()" class="icon-chevron_right_24px"
-             style="font-size: 25px; cursor: pointer"></i>
+             style="font-size: 20px; cursor: pointer"></i>
         </div>
       </div>
-      <div class="tabset-right" style="flex: 1;background: #fff;">
+      <div class="tabset-right" style="flex: 1;background-color: #ffffff;">
         <div>
           <div class="PLTs-content">
-            <p-contextMenu #cm appendTo="body" [model]="contextMenuItems"></p-contextMenu>
+
             <div *ngIf="!extended" class="table-header1" [ngStyle]="{'width': headerWidth}"
                  style="float: left;background-color: #fff">
-              <div class="title-as-tab">
-                <span class="title">
-                  PLTs
-                  <nz-dropdown [nzPlacement]="'bottomLeft'"
-                               style=" left: 100px; margin-top: 20px;">
+              <div class="title-as-tab" style="height: 42px; width: 100% !important;justify-content: space-between;">
+                  <span class="title">
+                    PLTs
+                   <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
+                                [nzPlacement]="'bottomLeft'" nzTrigger="click"
+                                style=" left: 100px; margin-top: 20px;">
                     <i class="icon-menu_24px" nz-dropdown
-                       style="font-size: 25px; float: right; margin-left: 7px"></i>
+                       style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>
                     <ul nz-menu>
                       <li nz-submenu>
                         <span title>Create</span>
@@ -91,16 +90,13 @@
                           <li nz-menu-item>New Non-default Thread</li>
                         </ul>
                       </li>
-                      <li nz-submenu>
+                      <li class="menu-bottom-separator" nz-submenu>
                         <span title>Regenerate</span>
                         <ul nz-menu>
-                          <li nz-menu-item *ngIf="selectedListOfPlts.length > 1">Selected Threads Only</li>
+                          <li nz-menu-item>Selected Threads Only</li>
                           <li nz-menu-item>All Threads</li>
                         </ul>
                       </li>
-                      <li nz-menu-item>Remove</li>
-                      <li nz-menu-item>Manage Tags</li>
-                      <li nz-menu-item>Edit PLT Name</li>
                       <li nz-menu-item>Publish to Princing</li>
                       <li nz-menu-item>Publish to Accumulation</li>
                       <li nz-submenu>
@@ -111,64 +107,64 @@
                         </ul>
                       </li>
                       <li nz-menu-item>Add to Comparer</li>
-                      <li nz-menu-item>Export</li>
+                      <li class="menu-bottom-separator" nz-menu-item>Export</li>
+                      <li nz-menu-item>Edit PLT Name</li>
+                      <li nz-menu-item>Manage Tags</li>
+                      <li nz-menu-item>Remove</li>
                       <li nz-menu-item>Delete</li>
                     </ul>
                   </nz-dropdown>
-                </span>
-                <div style="left: -1px;top: 32px; position:absolute; margin-right: 3px;">
-                  <label
-                    class="addRemove" (click)="addRemoveModal=true">Add/Remove</label>
+                  </span>
+                <div class="pull-right" style="margin-top: 8px; margin-right: 3px;">
+                  <i (click)="extend()" *ngIf="!extended && tableType=='adjustments'" class="icon-chevron_right_24px"
+                     style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
+                  <i (click)="extend()" *ngIf="extended && tableType=='adjustments'" class="icon-chevron_left_24px"
+                     style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
                 </div>
               </div>
-              <div class="pull-right" style="margin-top: 8px; margin-right: 3px;">
-                <i *ngIf="!extended && tableType=='adjustments'" (click)="extend()" class="icon-chevron_right_24px"
-                   style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
-                <i *ngIf="extended && tableType=='adjustments'" (click)="extend()" class="icon-chevron_left_24px"
-                   style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
+              <div class=" radio-container"
+                   style="height: 46px;margin-top: 42px;justify-content: space-between;display: flex;">
+                <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
+                <div style="margin-top: 23px;">
+                  <i class="icon-history-alt regenerate-all" nz-tooltip="Regenerate All"></i>
+                  <i (click)="manageColumn = true" class="icon-settings_24px" nz-tooltip="Manage columns"
+                     style="margin-right: 6px; font-size: 20px; cursor: pointer;"></i>
+                </div>
+
               </div>
             </div>
-            <div *ngIf="!extended" class="table-header2" [ngStyle]="{'margin-left': headerWidth}"
+            <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
+                 [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
-              <div class="title-as-tab">
+              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
                   <span class="title">
                     Generic Thread
-                     <nz-dropdown [nzPlacement]="'bottomLeft'"
+                     <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
                                   style=" left: 100px; margin-top: 20px;">
                        <i class="icon-menu_24px" nz-dropdown
-                          style="font-size: 25px; float: right; margin-left: 7px"></i>
+                          style="font-size: 25px; float: right; margin-left: 7px; margin-top: 3px;"></i>
                             <ul nz-menu>
                               <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                              <li nz-menu-item>Add from Template</li>
-                              <li nz-menu-item>Reset/Clear</li>
+                              <li class="menu-bottom-separator" nz-menu-item>Add from Template</li>
+                                <li nz-submenu>
+                                  <span title>Apply To All </span>
+                                  <ul nz-menu>
+                                    <li nz-menu-item>Add to Existing Threads</li>
+                                    <li nz-menu-item>Replace Existing Threads</li>
+                                    <li nz-menu-item>New Alternate Threads</li>
+                                  </ul>
+                              </li>
+                              <li class="menu-bottom-separator" nz-submenu>
+                                  <span title>Apply To Selected</span>
+                                  <ul nz-menu>
+                                    <li nz-menu-item>Add to Existing Threads</li>
+                                    <li nz-menu-item>Replace Existing Threads</li>
+                                    <li nz-menu-item>New Alternate Threads</li>
+                                  </ul>
+                              </li>
                               <li nz-menu-item>Save</li>
                               <li nz-menu-item>Save As</li>
-                              <li nz-submenu>
-                                <span title>Apply</span>
-                                <ul nz-menu>
-                                  <li nz-submenu>
-                                    <span title>Add to Existing Threads</span>
-                                    <ul nz-menu>
-                                      <li nz-menu-item>For Selected Threads only</li>
-                                      <li nz-menu-item>For All Threads</li>
-                                    </ul>
-                                  </li>
-                                  <li nz-submenu>
-                                    <span title>Create New Alternate Threads</span>
-                                    <ul nz-menu>
-                                      <li nz-menu-item>For Selected Threads only</li>
-                                      <li nz-menu-item>For All Threads</li>
-                                    </ul>
-                                  </li>
-                                  <li nz-submenu>
-                                    <span title>Replace Existing Threads</span>
-                                    <ul nz-menu>
-                                      <li nz-menu-item>For Selected Threads only</li>
-                                      <li nz-menu-item>For All Threads</li>
-                                    </ul>
-                                  </li>
-                                </ul>
-                              </li>
+                              <li nz-menu-item>Reset/Clear</li>
                             </ul>
                     </nz-dropdown>
                   </span>
@@ -176,9 +172,10 @@
                   *ngIf="adjsArray.length > 0"
                   class="generic-thread-container"
                   dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                  style="margin-top: 8px; margin-left: 10px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                  style="margin-top: 10px; margin-left: 25px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
                   <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                    <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
+                    <div class="adjustDiv"
+                         style="margin: 8px!important;"
                          (mouseover)="shownDropDown = adj.id"
                          (mouseleave)="onLeaveAdjustment(adj.id)"
                          dnd-sortable
@@ -191,37 +188,26 @@
                               style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
                       <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
                                    (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                                   nzTrigger="click"
                                    [nzPlacement]="'bottomLeft'" class="dropD">
                         <i class="icon-menu_24px" nz-dropdown
                            style="font-size: 14px;float: right;margin-right: 2px;"></i>
                         <ul nz-menu>
                           <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                          <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
+                          <li (click)="DeleteAdjustement(adj)" class="menu-bottom-separator" nz-menu-item>Delete</li>
                           <li nz-submenu>
-                            <span title>Apply</span>
+                            <span title>Apply For All Threads</span>
                             <ul nz-menu>
-                              <li nz-submenu>
-                                <span title>Add to Existing Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                                  <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Create New Alternate Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>For Selected Threads only</li>
-                                  <li nz-menu-item>For All Threads</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Replace Existing Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                                  </li>
-                                  <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                                </ul>
-                              </li>
+                              <li (click)="applyToAll(adj)" nz-menu-item>Add to Existing Threads</li>
+                              <li nz-menu-item>New Alternate Threads</li>
+                              <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>Replace Existing Threads</li>
+                            </ul>
+                          <li nz-submenu>
+                            <span title>Apply For Selected Threads only</span>
+                            <ul nz-menu>
+                              <li (click)="applyToSelected(adj)" nz-menu-item>Add to Existing Threads</li>
+                              <li nz-menu-item>New Alternate Threads</li>
+                              <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>Replace Existing Threads</li>
                             </ul>
                           </li>
                         </ul>
@@ -234,1298 +220,143 @@
                 </div>
               </div>
               <div class="pull-right radio-container">
-                <p-radioButton name="tableType" value="adjustments" label="Adjustments"
-                               [ngStyle]="{'padding-right':'5px'}" (onClick)="onTableTypeChange()"
-                               [(ngModel)]="tableType"></p-radioButton>
-                <p-radioButton name="tableType" value="EP Metrics" label="EP Metrics"
-                               [ngStyle]="{'padding-right':'3px'}" (onClick)="onTableTypeChange()"
-                               [(ngModel)]="tableType"></p-radioButton>
+                <div class="Deltas" style="position: unset;">
+                  <div>
+                    <div class="button-toggle" style="width: 212px; float: left;">
+                      Impact on EP Metrics &nbsp;
+                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
+                                 class="switch-input"></nz-switch>
+                    </div>
+                    <i (click)="manageAdjColumn = true" class="icon-settings_24px"
+                       nz-tooltip="Manage  adjustment columns"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+                  </div>
+                </div>
               </div>
             </div>
-            <p-table
-              *ngIf="tableType =='adjustments'"
-              [columns]="dataColumns"
+            <div *ngIf="!extended && tableType=='EP Metrics'" class="table-header2"
+                 [ngStyle]="{'margin-left': headerWidth}"
+                 style="background-color: #fff">
+              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
+                  <span class="title">
+                    Thread Level EP Metrics
+                  </span>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Change Display</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{selectedEPM}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li nz-menu-item *ngFor="let epm of EPMS" (click)="changeEPM(epm)">{{epm}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Financial Unit</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{financialUnits.selected.label}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li (click)="changeFinancialUnit(financialUnit)"
+                          *ngFor="let financialUnit of financialUnits.data" nz-menu-item>
+                        {{financialUnit.label}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+                <div class="body-wrap-dropDowns-calibration">
+                  <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                    <div class="dropdown-wrap-calibration" nz-dropdown>
+                      <div class="dropdown-wrap-title-calibration">
+                        <span class="dropdown-title-calibration">Change Currency</span>
+                        <span class="dropdown-item-selected-calibration">
+                        {{currencies.selected.label}}
+                      </span>
+                      </div>
+                      <div class="dropdown-icon">
+                        <i nz-icon type="down"></i>
+                      </div>
+                    </div>
+                    <ul nz-menu>
+                      <li (click)="changeCurrency(currency)" *ngFor="let currency of currencies.data" nz-menu-item>
+                        {{currency.label}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+              </div>
+              <div class="pull-right radio-container" style="width: 100% !important;">
+                <div class="Deltas" style="position: unset; justify-content: space-between">
+                  <nz-radio-group [(ngModel)]="EPMDisplay" class="default-radio" style="margin-left: 25px;">
+                    <label nz-radio nzValue="percentage" style="color:  #0700e4">Delta by % Basis</label>
+                    <label nz-radio nzValue="amount" style="color:  #0700e4">Delta by amount</label>
+                  </nz-radio-group>
+                  <div>
+                    <div class="button-toggle" style="width: 212px; float: left;">
+                      Impact on EP Metrics &nbsp;
+                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
+                                 class="switch-input"></nz-switch>
+                    </div>
+                    <i (click)="manageReturnPeriods = true" class="icon-settings_24px"
+                       nz-tooltip="Manage return periods"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <app-calibration-main-table
+              (clickButtonPlus)="clickButtonPlus($event.bool,$event.data)"
+              (extend)="extend()"
+              (toggleSelectPlts)="toggleSelectPlts($event)"
+              [adjutmentApplication]="adjutmentApplication"
+
+              [EPMColumns]="EPMColumns"
+
               [frozenColumns]="frozenColumns"
+              [dataColumns]="dataColumns"
+              [extended]="extended"
+
+              [headerWidth]="headerWidth"
               [frozenWidth]="frozenWidth"
-              [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]"
-              [resizableColumns]="true"
-              [contextMenu]="cm"
-              [scrollHeight]="'600px'"
-              [scrollable]="true"
-              [totalRecords]="listOfPltsData.length"
-              (onSort)="onSort($event)"
-              [responsive]="true"
+
+              [EPMDisplay]="EPMDisplay"
+              [randomMetaData]="randomMetaData"
+
+              [pltColumns]="pltColumns"
+              [tableType]="tableType"
+              (closeReturnPeriods)="manageReturnPeriods = false"
+              [manageReturnPeriods]="manageReturnPeriods"
+              [selectedAdjustment]="selectedAdjustment"
+              [deletedPlts]="deletedPlts"
+              [listOfDeletedPltsData]="listOfDeletedPltsData"
+              [listOfDeletedPlts]="listOfDeletedPlts"
+              [listOfPltsData]="listOfPltsData"
+              [showDeleted]="showDeleted"
+              [systemTagsCount]="systemTagsCount"
+              [selectAll]="selectAll"
+              [selectedEPM]="selectedEPM"
+              [selectedListOfPlts]="selectedListOfPlts"
+              [someItemsAreSelected]="someItemsAreSelected"
             >
-              <ng-template pTemplate="colgroup" let-columns>
-                <colgroup>
-                  <ng-container *ngFor="let col of columns">
-                    <col *ngIf="col.frozen" [ngStyle]="{'width': col.width+'px'}">
-                    <col *ngIf="col.fields ==='default'" [ngStyle]="{'width': '122px'}">
-                    <col *ngIf="col.fields ==='inuring'" [ngStyle]="{'width': '122px'}">
-                    <col *ngIf="!col.frozen && col.fields !=='default'&& col.fields !=='inuring'"
-                         [ngStyle]="{'width':  col.width+'px'}">
-                  </ng-container>
-                </colgroup>
-              </ng-template>
-              <ng-template pTemplate="header" let-columns>
-                <tr *ngIf="extended" style="background-color: #ffffff !important;">
-                  <ng-container *ngFor="let col of columns;">
-                    <th *ngIf="col?.fields === 'checkbox'" [ngStyle]="{'overflow':'visible'}"
-                        class="checkBoxHead"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
-                      <div
-                        style="width: 102px;position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;">
-                        <span
-                          style="width: 90px; font-size: 1.3em; font-weight: bold;     color: rgba(0, 0, 0, 0.65);top: 16px;left: 33px;position: absolute;">PLTs</span>
-                      </div>
-                      <div style="left: -1px;top: 32px; position:absolute; margin-right: 3px;">
-                        <span
-                          class="addRemove" (click)="addRemoveModal=true">Add/Remove</span>
-                      </div>
-                      <nz-dropdown [nzPlacement]="'bottomLeft'"
-                                   style="position: absolute; left: 77px; top: 20px;">
-                        <i class="icon-menu_24px" nz-dropdown
-                           style="font-size: 25px; float: right; margin-right: 7px"></i>
-                        <ul nz-menu>
-                          <li nz-submenu>
-                            <span title>Create</span>
-                            <ul nz-menu>
-                              <li nz-menu-item>New Default Thread</li>
-                              <li nz-menu-item>New Non-default Thread</li>
-                            </ul>
-                          </li>
-                          <li nz-submenu>
-                            <span title>Clone</span>
-                            <ul nz-menu>
-                              <li nz-menu-item>New Default Thread</li>
-                              <li nz-menu-item>New Non-default Thread</li>
-                            </ul>
-                          </li>
-                          <li nz-submenu>
-                            <span title>Regenerate</span>
-                            <ul nz-menu>
-                              <li nz-menu-item *ngIf="selectedListOfPlts.length > 1">Selected Threads Only</li>
-                              <li nz-menu-item>All Threads</li>
-                            </ul>
-                          </li>
-                          <li nz-menu-item>Remove</li>
-                          <li nz-menu-item>Manage Tags</li>
-                          <li nz-menu-item>Edit PLT Name</li>
-                          <li nz-menu-item>Publish to Princing</li>
-                          <li nz-menu-item>Publish to Accumulation</li>
-                          <li nz-submenu>
-                            <span title>Inuring</span>
-                            <ul nz-menu>
-                              <li nz-menu-item>Add to New Inuring Package</li>
-                              <li nz-menu-item>Add to Existing Inuring Package</li>
-                            </ul>
-                          </li>
-                          <li nz-menu-item>Add to Comparer</li>
-                          <li nz-menu-item>Export</li>
-                          <li nz-menu-item>Delete</li>
-                        </ul>
-                      </nz-dropdown>
-                    </th>
-                    <th *ngIf="col?.fields === 'userTags'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="col?.fields === 'pltId'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="col?.fields === 'pltName'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="extended &&
-                    (col.fields === 'rap' ||
-                    col.fields === 'vendorSystem'||
-                    col.fields === 'grain'||
-                     col.fields === 'regionPerilName'||
-                     col.fields === 'regionPerilCode'||
-                     col.fields === 'peril')"
-                        style="background-color: #ffffff !important;">
-
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-focus-add'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
-                        style="background-color: #ffffff !important;height: 70px!important;padding: 10px 0 0 0;position:relative">
-                      <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
-                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
-                      <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
-                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
-                    </th>
-                    <th *ngIf="col.fields == 'overallLMF' && !extended"
-                        [ngStyle]="{'width': '43px','overflow':'visible'}"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
-                      <div
-                        style="width: 180px;position: absolute;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;    z-index: 100;"
-                        [ngStyle]="{'left': genericWidth[0]}">
-
-                        <span
-                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: rgba(0, 0, 0, 0.65);top: 16px;position: absolute;overflow: hidden;white-space: nowrap;"
-                          [ngStyle]="{'left': genericWidth[1]}">Generic Thread</span>
-                        <nz-dropdown [nzPlacement]="'bottomLeft'"
-                                     style="position: absolute; top: 20px;z-index: 100;"
-                                     [ngStyle]="{'left': genericWidth[2]}">
-                          <i class="icon-menu_24px" nz-dropdown
-                             style="font-size: 25px; float: right; margin-right: 7px"></i>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                            <li nz-menu-item>Add from Template</li>
-                            <li nz-menu-item>Reset/Clear</li>
-                            <li nz-menu-item>Save</li>
-                            <li nz-menu-item>Save As</li>
-                            <li nz-submenu>
-                              <span title>Apply</span>
-                              <ul nz-menu>
-                                <li nz-submenu>
-                                  <span title>Add to Existing Threads</span>
-                                  <ul nz-menu>
-                                    <li nz-menu-item>For Selected Threads only</li>
-                                    <li nz-menu-item>For All Threads</li>
-                                  </ul>
-                                </li>
-                                <li nz-submenu>
-                                  <span title>Create New Alternate Threads</span>
-                                  <ul nz-menu>
-                                    <li nz-menu-item>For Selected Threads only</li>
-                                    <li nz-menu-item>For All Threads</li>
-                                  </ul>
-                                </li>
-                                <li nz-submenu>
-                                  <span title>Replace Existing Threads</span>
-                                  <ul nz-menu>
-                                    <li nz-menu-item>For Selected Threads only</li>
-                                    <li nz-menu-item>For All Threads</li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </li>
-                          </ul>
-                        </nz-dropdown>
-                      </div>
-
-                      <div
-                        *ngIf="adjsArray.length > 0"
-                        class="generic-thread-container"
-                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                        style="position: absolute; left: 604px; width: calc(100% - 614px);z-index: 100; top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-                        <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                          <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
-                               (mouseover)="shownDropDown = adj.id"
-                               (mouseleave)="onLeaveAdjustment(adj.id)"
-                               dnd-sortable
-                               [sortableIndex]="adjIndex"
-                               [dragEnabled]="true"
-                               (click)="selectedAdjust(adj.id)"
-                               [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                               [dragData]="adj" (onDropSuccess)="dropThreadAdjustment()">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                            <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                                         (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                                         [nzPlacement]="'bottomLeft'" class="dropD">
-                              <i class="icon-menu_24px" nz-dropdown
-                                 style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                              <ul nz-menu>
-                                <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                                <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
-                                <li nz-submenu>
-                                  <span title>Apply</span>
-                                  <ul nz-menu>
-                                    <li nz-submenu>
-                                      <span title>Add to Existing Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                                        <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                    <li nz-submenu>
-                                      <span title>Create New Alternate Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item>For Selected Threads only</li>
-                                        <li nz-menu-item>For All Threads</li>
-                                      </ul>
-                                    </li>
-                                    <li nz-submenu>
-                                      <span title>Replace Existing Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                                        </li>
-                                        <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </nz-dropdown>
-                            <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                                   class="templateInput"
-                            >
-                          </div>
-                        </ng-container>
-                      </div>
-                    </th>
-                    <th *ngIf="col?.dragable && !extended
-                                && col.fields !== 'overallLMF'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="col.fields == 'overallLMF' && extended"
-                        style="background-color: #ffffff !important; height: 70px!important;  position: relative; padding: 0;"
-                        colspan="6">
-                      <div
-                        style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 191px;">
-                        <span
-                          style="width: 110px;white-space: nowrap; font-size: 1.3em; font-weight: bold; color: #000;top: 16px;left: 33px; position: absolute">Generic Thread</span>
-                      </div>
-                      <nz-dropdown [nzPlacement]="'bottomLeft'"
-                                   style="font-size: 20px; cursor: pointer;position: absolute;left: 166px;top: 20px;">
-                        <i class="icon-menu_24px" nz-dropdown
-                           style="font-size: 25px; float: right; margin-right: 7px"></i>
-                        <ul nz-menu>
-                          <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                          <li nz-menu-item>Add from Template</li>
-                          <li nz-menu-item>Reset/Clear</li>
-                          <li nz-menu-item>Save</li>
-                          <li nz-menu-item>Save As</li>
-                          <li nz-submenu>
-                            <span title>Apply</span>
-                            <ul nz-menu>
-                              <li nz-submenu>
-                                <span title>Create New Alternate Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>For Selected Threads only</li>
-                                  <li nz-menu-item>For All Threads</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Replace Existing Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>For Selected Threads only</li>
-                                  <li nz-menu-item>For All Threads</li>
-                                </ul>
-                              </li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </nz-dropdown>
-                      <div
-                        *ngIf="adjsArray.length > 0"
-                        class="generic-thread-container"
-                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                        style="position: absolute;left: 221px; max-width: calc(100% - 233px); margin-top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-                        <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                          <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
-                               (mouseenter)="shownDropDown = adj.id"
-                               (mouseleave)="onLeaveAdjustment(adj.id)"
-                               dnd-sortable
-                               [sortableIndex]="adjIndex"
-                               [dragEnabled]="true"
-                               (click)="selectedAdjust(adj.id)"
-                               [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                               [dragData]="adj" (onDropSuccess)="dropThreadAdjustment()">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                            <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                                         (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                                         [nzPlacement]="'bottomLeft'" class="dropD">
-                              <i class="icon-menu_24px" nz-dropdown
-                                 style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                              <ul nz-menu>
-                                <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                                <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
-                                <li nz-submenu>
-                                  <span title>Apply</span>
-                                  <ul nz-menu>
-                                    <li nz-submenu>
-                                      <span title>Create New Alternate Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                                        <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                    <li nz-submenu>
-                                      <span title>Replace Existing Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                                        </li>
-                                        <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </nz-dropdown>
-                            <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                                   class="templateInput"
-                            >
-                          </div>
-                        </ng-container>
-                      </div>
-
-                    </th>
-                  </ng-container>
-                </tr>
-                <tr>
-                  <ng-container *ngFor="let col of columns; let i = index">
-                    <th *ngIf="col?.fields === 'checkbox'" class="checkBoxHead"
-                        style="padding: 0 !important;">
-                      <label nz-checkbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)"
-                             [nzIndeterminate]="someItemsAreSelected"></label>
-                      <i (click)="checkBoxsort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
-                    </th>
-                    <th *ngIf="col?.fields === 'userTags'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;font-weight: bold">
-                        {{col.header}}
-                      </span>
-                    </th>
-                    <th *ngIf="col?.fields === 'pltId'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;">
-                        {{col?.header}}
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-
-                    <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;">
-                        {{col?.header}}
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-focus-add'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;">
-                        <nz-dropdown *ngIf="col.icon === 'icon-focus-add'" [nzPlacement]="'bottomLeft'">
-                        <i [ngClass]="col.icon" nz-dropdown style="font-size: 15px;"></i>
-                        <ul nz-menu>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="inProgressCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-history-alt iconYellow"></i> In Progress
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="checkedCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-check-circle iconGreen"></i> Valid
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="lockedCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-lock-alt iconRed"></i> Locked
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="requiresRegenerationCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="failedCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-error_24px iconRed2"></i> Failed
-                              </label>
-                            </div>
-                          </li>
-                        </ul>
-                      </nz-dropdown>
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-note'" style="padding: 0 !important;" class="separator-right">
-                      <i [ngClass]="col.icon"></i>
-                      <span style="display:flex;justify-content: space-between;">
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-                    <th *ngIf="col?.fields === 'overallLMF'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;">
-                        {{col?.header}}
-                      </span>
-                    </th>
-                    <th *ngIf="!col.frozen" style="padding: 0 !important;"
-                        [ngClass]="{ 'inuring-header':col.fields=='inuring','draggable': col?.dragable}">
-                      <span style="display:flex;justify-content: space-between;">
-                        {{col?.header}}
-                      </span>
-                    </th>
-                  </ng-container>
-                </tr>
-                <tr>
-                  <ng-container *ngFor="let col of columns;">
-                    <th *ngIf="col?.fields === 'checkbox'">
-                    </th>
-                    <th *ngIf="col?.fields === 'userTags'">
-                    </th>
-                    <th *ngIf="col?.filtred && col.extended">
-                      <div class="filter-input">
-                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                        <input *ngIf="col.header.length > 0" pInputText type="text"
-                               (input)="filter(col?.fields, $event.target.value)">
-                      </div>
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-focus-add'"></th>
-                    <th *ngIf="col?.icon === 'icon-note'" style="border-right: 8px solid #F4F6FC !important;">
-                    </th>
-                    <th *ngIf="col?.fields === 'overallLMF'"></th>
-                    <th *ngIf="col?.fields === 'base'"></th>
-                    <th *ngIf="col?.fields === 'default'"></th>
-                    <th *ngIf="col?.fields === 'client'"></th>
-                    <th *ngIf="col?.fields === 'inuring'" style="background-color: #FAEBD7 !important;"></th>
-                    <th *ngIf="col?.fields === 'postInuring'"></th>
-                  </ng-container>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
-                <tr (contextmenu)="selectedItemForMenu=rowData.pltId" [pContextMenuRow]="rowData"
-                    [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
-                    *ngIf="(filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive) &&  statusFilterActive(rowData.status)">
-                  <td *ngFor="let col of columns; let i = index"
-                      dnd-droppable
-                      dnd-sortable-container
-                      [sortableData]="adjutmentApplication[rowData.pltId]"
-                      [dropZones]="['widget-dropZone']"
-                      [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-                      (drop)="onDrop(col,rowData.pltId)"
-                      [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}"
-                      (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
-
-                    <ng-container *ngIf="col.fields === 'checkbox'">
-                      <label nz-checkbox [nzChecked]="rowData.selected"
-                             (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
-                    </ng-container>
-                    <ng-container *ngIf="col.fields === 'userTags'">
-                      <div class="td-wrapper-tags">
-                        <ng-container *ngFor="let tag of rowData.userTags;let it= index;">
-                          <span class="tag-el" *ngIf="it < 2"
-                                [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
-                          <span class="tag-ellipsis" *ngIf="it == 2" style="background-color: #E0E0E0"><i
-                            class="icon-ellipsis-h"></i></span>
-                        </ng-container>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="col.fields === 'pltId'">
-                      <div *ngIf="rowData.status !== 'requires regeneration' || !rowData.newPlt" class="text-elipsice"
-                           style="font-weight: bold">{{rowData.pltId | textLength}}</div>
-                      <div *ngIf="rowData.status == 'requires regeneration' && rowData.newPlt" class="newTag">NEW</div>
-                    </ng-container>
-                    <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
-                      <div class="text-elipsice"
-                           [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
-                    </ng-container>
-                    <ng-container *ngIf="col?.type == 'icon'">
-                      <div class="td-wrapper-check">
-                        <div *ngIf="col.icon=='icon-focus-add'">
-                          <i class="tooltipMsg"
-                             [nz-tooltip]="rowData.status[0].toUpperCase() + rowData.status.slice(1)"
-                             [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
-                                         'icon-check-circle iconGreen': rowData?.status=='valid' ,
-                                         'icon-lock-alt iconRed': rowData?.status=='locked',
-                                         'icon-error_24px iconRed2': rowData?.status=='failed',
-                                         'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }">
-                          </i>
-                        </div>
-                        <div *ngIf="col.icon=='icon-note' && !selectedListOfPlts.includes(rowData.pltId)">
-                          <nz-dropdown [nzPlacement]="'bottomLeft'">
-                            <i class="icon-menu_24px" nz-dropdown
-                               style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
-                               (click)="clickButtonPlus(false,rowData)"></i>
-                            <ul nz-menu>
-                              <li nz-menu-item (click)="clickButtonPlus(false,rowData)">Add New Adjustment</li>
-                              <li nz-submenu>
-                                <span title>Create</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>New Default Thread</li>
-                                  <li nz-menu-item>New Non-default Thread</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Clone</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>New Default Thread</li>
-                                  <li nz-menu-item>New Non-default Thread</li>
-                                </ul>
-                              </li>
-                              <li nz-menu-item>Regenerate</li>
-                              <li nz-menu-item>Remove</li>
-                              <li nz-menu-item>View PLT Details</li>
-                              <li nz-menu-item>Manage Tags</li>
-                              <li nz-menu-item>Edit PLT Name</li>
-                              <li nz-menu-item>Publish to Princing</li>
-                              <li nz-menu-item>Publish to Accumulation</li>
-                              <li nz-submenu>
-                                <span title>Inuring</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>Add to New Inuring Package</li>
-                                  <li nz-menu-item>Add to Existing Inuring Package</li>
-                                </ul>
-                              </li>
-                              <li nz-menu-item>Add to Comparer</li>
-                              <li nz-menu-item>Export</li>
-                              <li nz-menu-item>Delete</li>
-                            </ul>
-                          </nz-dropdown>
-                        </div>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="col?.dragable">
-                      <div
-                        dnd-sortable-container
-                        [sortableData]="adjutmentApplication[rowData.pltId]"
-                        [dropZones]="['widget-dropZone']"
-                        [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-                        (drop)="onDrop(col,rowData.pltId)"
-
-                        style="display: flex;"
-                        class="text-elipsice border-dragable"
-                        [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">
-
-                        <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
-                          <div
-                            class="adjustDiv"
-                            style=" background: #f3f3f3;">
-                                          <span
-                                            class="spanStyle">Model Calib</span>
-                            <input class="templateInput" disabled
-                                   style=" background: #f3f3f3;" value="2.1">
-                          </div>
-                        </div>
-
-                        <ng-container *ngFor="let adjs of adjutmentApplication[rowData.pltId]; let i=index">
-                          <ng-container
-                            *ngIf="col.fields== adjs.category.toLowerCase()"
-                            style="display: flex;height: max-content;">
-                            <div dnd-sortable [sortableIndex]="i" [dragEnabled]="true"
-                                 [dragData]="adjs" (onDragStart)="draggedAdjs = adjs"
-                                 (drop)="onDrop(col,rowData.pltId)"
-                                 [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
-                                 class="adjustDiv"
-                                 (mouseover)="shownDropDown = adjs.id+rowData.pltId"
-                                 (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
-                            >
-                              <span class="spanStyle"
-                                    style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
-                              <nz-dropdown *ngIf="shownDropDown ===  adjs.id+rowData.pltId"
-                                           [(nzVisible)]="dropdownVisible"
-                                           (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                                           [nzPlacement]="'bottomLeft'"
-                                           class="dropD">
-                                <i [id]="i" class="icon-menu_24px" nz-dropdown
-                                   style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                                <ul nz-menu>
-                                  <li nz-menu-item>Edit</li>
-                                  <li nz-menu-item>Branch new Thread</li>
-                                  <li nz-menu-item>Copy</li>
-                                  <li nz-submenu>
-                                    <span title>Paste</span>
-                                    <ul nz-menu>
-                                      <li nz-menu-item>To the Left</li>
-                                      <li nz-menu-item>To the Right</li>
-                                    </ul>
-                                  </li>
-                                  <li nz-menu-item>Delete</li>
-                                  <li nz-menu-item>View EP Metrics</li>
-                                  <li nz-menu-item>Pin to Chart</li>
-                                  <li nz-menu-item>Add to Comparer</li>
-                                  <li nz-menu-item>Export</li>
-                                </ul>
-                              </nz-dropdown>
-                              <input class="templateInput" [value]="adjs?.value">
-                            </div>
-                          </ng-container>
-                        </ng-container>
-
-                        <div *ngIf="col.fields=='inuring'" class="adjustDiv"
-                             (mouseenter)="shownDropDown = rowData.pltId"
-                             (mouseleave)="onLeaveAdjustment(rowData.pltId)">
-                          <span class="spanStyle"
-                                style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px; overflow: hidden;display:inline-block;"></span>
-                          <nz-dropdown *ngIf="shownDropDown === rowData.pltId"
-                                       [(nzVisible)]="dropdownVisible"
-                                       (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                                       [nzPlacement]="'bottomLeft'"
-                                       class="dropD">
-                            <i [id]="i" class="icon-menu_24px" nz-dropdown
-                               style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                            <ul nz-menu>
-                              <li nz-menu-item>Edit</li>
-                              <li nz-menu-item>Branch new Thread</li>
-                              <li nz-menu-item>Copy</li>
-                              <li nz-submenu>
-                                <span title>Paste</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>To the Left</li>
-                                  <li nz-menu-item>To the Right</li>
-                                </ul>
-                              </li>
-                              <li nz-menu-item>Delete</li>
-                              <li nz-menu-item>View EP Metrics</li>
-                              <li nz-menu-item>Pin to Chart</li>
-                              <li nz-menu-item>Add to Comparer</li>
-                              <li nz-menu-item>Export</li>
-                            </ul>
-                          </nz-dropdown>
-                          <input class="templateInput" disabled
-                                 value="P00002">
-                        </div>
-                        <div *ngIf="dragPlaceHolderId == rowData.pltId && dragPlaceHolderCol == col?.fields"
-                             class="dndPlaceholder"></div>
-                      </div>
-                    </ng-container>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
-            <p-table
-              *ngIf="tableType == 'EP Metrics'"
-              [columns]="dataColumns"
-              [frozenColumns]="frozenColumns"
-              [frozenWidth]="frozenWidth"
-              [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]"
-              [resizableColumns]="true"
-              [contextMenu]="cm"
-              [scrollHeight]="'600px'"
-              [scrollable]="true"
-              [totalRecords]="listOfPltsData.length"
-              (onSort)="onSort($event)"
-              [responsive]="true"
-            >
-              <ng-template pTemplate="colgroup" let-columns>
-                <colgroup>
-                  <ng-container *ngFor="let col of columns">
-                    <col [ngStyle]="{'width': col.width+'px'}">
-                  </ng-container>
-                </colgroup>
-              </ng-template>
-              <ng-template pTemplate="header" let-columns>
-                <tr *ngIf="extended" style="background-color: #ffffff !important;">
-                  <ng-container *ngFor="let col of columns;">
-                    <th *ngIf="col?.fields === 'checkbox'" [ngStyle]="{'overflow':'visible'}"
-                        class="checkBoxHead"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
-                      <div
-                        style="width: 102px;position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;">
-                        <span
-                          style="width: 90px; font-size: 1.3em; font-weight: bold;     color: rgba(0, 0, 0, 0.65);top: 16px;left: 33px;position: absolute;">PLTs</span>
-                      </div>
-                      <div style="left: -1px;top: 32px; position:absolute; margin-right: 3px;">
-                        <span
-                          class="addRemove" (click)="addRemoveModal=true">Add/Remove</span>
-                      </div>
-                      <nz-dropdown [nzPlacement]="'bottomLeft'"
-                                   style="position: absolute; left: 77px; top: 20px;">
-                        <i class="icon-menu_24px" nz-dropdown
-                           style="font-size: 25px; float: right; margin-right: 7px"></i>
-                        <ul nz-menu>
-                          <li nz-submenu>
-                            <span title>Create</span>
-                            <ul nz-menu>
-                              <li nz-menu-item>New Default Thread</li>
-                              <li nz-menu-item>New Non-default Thread</li>
-                            </ul>
-                          </li>
-                          <li nz-submenu>
-                            <span title>Clone</span>
-                            <ul nz-menu>
-                              <li nz-menu-item>New Default Thread</li>
-                              <li nz-menu-item>New Non-default Thread</li>
-                            </ul>
-                          </li>
-                          <li nz-submenu>
-                            <span title>Regenerate</span>
-                            <ul nz-menu>
-                              <li nz-menu-item *ngIf="selectedListOfPlts.length > 1">Selected Threads Only</li>
-                              <li nz-menu-item>All Threads</li>
-                            </ul>
-                          </li>
-                          <li nz-menu-item>Remove</li>
-                          <li nz-menu-item>Manage Tags</li>
-                          <li nz-menu-item>Edit PLT Name</li>
-                          <li nz-menu-item>Publish to Princing</li>
-                          <li nz-menu-item>Publish to Accumulation</li>
-                          <li nz-submenu>
-                            <span title>Inuring</span>
-                            <ul nz-menu>
-                              <li nz-menu-item>Add to New Inuring Package</li>
-                              <li nz-menu-item>Add to Existing Inuring Package</li>
-                            </ul>
-                          </li>
-                          <li nz-menu-item>Add to Comparer</li>
-                          <li nz-menu-item>Export</li>
-                          <li nz-menu-item>Delete</li>
-                        </ul>
-                      </nz-dropdown>
-                    </th>
-                    <th *ngIf="col?.fields === 'userTags'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="col?.fields === 'pltId'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="col?.fields === 'pltName'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="extended &&
-                    (col.fields === 'rap' ||
-                    col.fields === 'vendorSystem'||
-                    col.fields === 'grain'||
-                     col.fields === 'regionPerilName'||
-                     col.fields === 'regionPerilCode'||
-                     col.fields === 'peril')"
-                        style="background-color: #ffffff !important;">
-
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-focus-add'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
-                        style="background-color: #ffffff !important;height: 70px!important;padding: 10px 0 0 0;position:relative">
-                      <i *ngIf="!extended" (click)="extend()" class="icon-chevron_right_24px"
-                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
-                      <i *ngIf="extended" (click)="extend()" class="icon-chevron_left_24px"
-                         style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
-                    </th>
-                    <th *ngIf="col.fields == 'overallLMF' && !extended"
-                        [ngStyle]="{'width': '43px','overflow':'visible'}"
-                        style="background-color: #ffffff !important;height: 70px!important; padding: 0;">
-                      <div
-                        style="width: 180px;position: absolute;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;    z-index: 100;"
-                        [ngStyle]="{'left': genericWidth[0]}">
-
-                        <span
-                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: rgba(0, 0, 0, 0.65);top: 16px;position: absolute;overflow: hidden;white-space: nowrap;"
-                          [ngStyle]="{'left': genericWidth[1]}">Generic Thread</span>
-                        <nz-dropdown [nzPlacement]="'bottomLeft'"
-                                     style="position: absolute; top: 20px;z-index: 100;"
-                                     [ngStyle]="{'left': genericWidth[2]}">
-                          <i class="icon-menu_24px" nz-dropdown
-                             style="font-size: 25px; float: right; margin-right: 7px"></i>
-                          <ul nz-menu>
-                            <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                            <li nz-menu-item>Add from Template</li>
-                            <li nz-menu-item>Reset/Clear</li>
-                            <li nz-menu-item>Save</li>
-                            <li nz-menu-item>Save As</li>
-                            <li nz-submenu>
-                              <span title>Apply</span>
-                              <ul nz-menu>
-                                <li nz-submenu>
-                                  <span title>Add to Existing Threads</span>
-                                  <ul nz-menu>
-                                    <li nz-menu-item>For Selected Threads only</li>
-                                    <li nz-menu-item>For All Threads</li>
-                                  </ul>
-                                </li>
-                                <li nz-submenu>
-                                  <span title>Create New Alternate Threads</span>
-                                  <ul nz-menu>
-                                    <li nz-menu-item>For Selected Threads only</li>
-                                    <li nz-menu-item>For All Threads</li>
-                                  </ul>
-                                </li>
-                                <li nz-submenu>
-                                  <span title>Replace Existing Threads</span>
-                                  <ul nz-menu>
-                                    <li nz-menu-item>For Selected Threads only</li>
-                                    <li nz-menu-item>For All Threads</li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </li>
-                          </ul>
-                        </nz-dropdown>
-                      </div>
-
-                      <div
-                        *ngIf="adjsArray.length > 0"
-                        class="generic-thread-container"
-                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                        style="position: absolute; left: 604px; width: calc(100% - 614px);z-index: 100; top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-                        <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                          <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
-                               (mouseover)="shownDropDown = adj.id"
-                               (mouseleave)="onLeaveAdjustment(adj.id)"
-                               dnd-sortable
-                               [sortableIndex]="adjIndex"
-                               [dragEnabled]="true"
-                               (click)="selectedAdjust(adj.id)"
-                               [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                               [dragData]="adj" (onDropSuccess)="dropThreadAdjustment()">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                            <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                                         (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                                         [nzPlacement]="'bottomLeft'" class="dropD">
-                              <i class="icon-menu_24px" nz-dropdown
-                                 style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                              <ul nz-menu>
-                                <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                                <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
-                                <li nz-submenu>
-                                  <span title>Apply</span>
-                                  <ul nz-menu>
-                                    <li nz-submenu>
-                                      <span title>Add to Existing Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                                        <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                    <li nz-submenu>
-                                      <span title>Create New Alternate Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item>For Selected Threads only</li>
-                                        <li nz-menu-item>For All Threads</li>
-                                      </ul>
-                                    </li>
-                                    <li nz-submenu>
-                                      <span title>Replace Existing Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                                        </li>
-                                        <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </nz-dropdown>
-                            <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                                   class="templateInput"
-                            >
-                          </div>
-                        </ng-container>
-                      </div>
-                    </th>
-                    <th *ngIf="col?.dragable && !extended
-                                && col.fields !== 'overallLMF'
-                                && col.fields !== 'postInuring'
-                                && col.fields !== 'inuring'"
-                        style="background-color: #ffffff !important;height: 70px!important;">
-                    </th>
-                    <th *ngIf=" col.fields == 'inuring'"
-                        style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
-                    </th>
-                    <th *ngIf=" col.fields == 'postInuring'"
-                        style="background-color: #ffffff !important;height: 70px!important; vertical-align: middle;">
-                    </th>
-                    <th *ngIf="col.fields == 'overallLMF' && extended"
-                        style="background-color: #ffffff !important; height: 70px!important;  position: relative; padding: 0;"
-                        colspan="6">
-                      <div
-                        style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 180px;">
-                        <span
-                          style="width: 110px; font-size: 1.3em; font-weight: bold; color: #000;top: 16px;left: 33px; position: absolute">Generic Thread</span>
-                      </div>
-                      <nz-dropdown [nzPlacement]="'bottomLeft'"
-                                   style="font-size: 20px; cursor: pointer;position: absolute;left: 156px;top: 20px;">
-                        <i class="icon-menu_24px" nz-dropdown
-                           style="font-size: 25px; float: right; margin-right: 7px"></i>
-                        <ul nz-menu>
-                          <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                          <li nz-menu-item>Add from Template</li>
-                          <li nz-menu-item>Reset/Clear</li>
-                          <li nz-menu-item>Save</li>
-                          <li nz-menu-item>Save As</li>
-                          <li nz-submenu>
-                            <span title>Apply</span>
-                            <ul nz-menu>
-                              <li nz-submenu>
-                                <span title>Create New Alternate Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>For Selected Threads only</li>
-                                  <li nz-menu-item>For All Threads</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Replace Existing Threads</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>For Selected Threads only</li>
-                                  <li nz-menu-item>For All Threads</li>
-                                </ul>
-                              </li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </nz-dropdown>
-                      <div
-                        *ngIf="adjsArray.length > 0"
-                        class="generic-thread-container"
-                        dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                        style="position: absolute;left: 221px; width: calc(100% - 233px); margin-top: 14px;border: 1px solid #dddddd; height: 44px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-                        <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                          <div class="adjustDiv" [ngStyle]="{'margin-left' :'5px'}"
-                               (mouseenter)="shownDropDown = adj.id"
-                               (mouseleave)="onLeaveAdjustment(adj.id)"
-                               dnd-sortable
-                               [sortableIndex]="adjIndex"
-                               [dragEnabled]="true"
-                               (click)="selectedAdjust(adj.id)"
-                               [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                               [dragData]="adj" (onDropSuccess)="dropThreadAdjustment()">
-                            <span
-                              style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                            <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                                         (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                                         [nzPlacement]="'bottomLeft'" class="dropD">
-                              <i class="icon-menu_24px" nz-dropdown
-                                 style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                              <ul nz-menu>
-                                <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                                <li nz-menu-item (click)="DeleteAdjustement(adj)">Delete</li>
-                                <li nz-submenu>
-                                  <span title>Apply</span>
-                                  <ul nz-menu>
-                                    <li nz-submenu>
-                                      <span title>Create New Alternate Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="applyToSelected(adj)">For Selected Threads only</li>
-                                        <li nz-menu-item (click)="applyToAll(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                    <li nz-submenu>
-                                      <span title>Replace Existing Threads</span>
-                                      <ul nz-menu>
-                                        <li nz-menu-item (click)="replaceToSelectedPlt(adj)">For Selected Threads only
-                                        </li>
-                                        <li nz-menu-item (click)="replaceToAllAdjustement(adj)">For All Threads</li>
-                                      </ul>
-                                    </li>
-                                  </ul>
-                                </li>
-                              </ul>
-                            </nz-dropdown>
-                            <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                                   class="templateInput"
-                            >
-                          </div>
-                        </ng-container>
-                      </div>
-
-                    </th>
-                  </ng-container>
-                </tr>
-                <tr>
-                  <ng-container *ngFor="let col of columns; let i = index">
-                    <th *ngIf="col?.fields === 'checkbox'" class="checkBoxHead"
-                        style="padding: 0 !important;">
-                      <label nz-checkbox [nzChecked]="selectAll" (nzCheckedChange)="checkAll($event)"
-                             [nzIndeterminate]="someItemsAreSelected"></label>
-                      <i (click)="checkBoxsort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
-                    </th>
-                    <th *ngIf="col?.fields === 'userTags'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;font-weight: bold">
-                        {{col.header}}
-                      </span>
-                    </th>
-                    <th *ngIf="col?.fields === 'pltId'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;">
-                        {{col?.header}}
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-
-                    <th *ngIf="col?.fields === 'pltName'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;">
-                        {{col?.header}}
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-focus-add'" style="padding: 0 !important;">
-                      <span style="display:flex;justify-content: space-between;">
-                        <nz-dropdown *ngIf="col.icon === 'icon-focus-add'" [nzPlacement]="'bottomLeft'">
-                        <i [ngClass]="col.icon" nz-dropdown style="font-size: 15px;"></i>
-                        <ul nz-menu>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="inProgressCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-history-alt iconYellow"></i> In Progress
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="checkedCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-check-circle iconGreen"></i> Valid
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="lockedCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-lock-alt iconRed"></i> Locked
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="requiresRegenerationCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-report_problem_24px iconYellow2"></i> Requires regeneration
-                              </label>
-                            </div>
-                          </li>
-                          <li nz-menu-item>
-                            <div class="checkboxInput">
-                              <label [(ngModel)]="failedCheckbox"
-                                     nzChecked
-                                     nz-checkbox
-                                     style="margin-right: 12px;">
-                                <i class="icon-error_24px iconRed2"></i> Failed
-                              </label>
-                            </div>
-                          </li>
-                        </ul>
-                      </nz-dropdown>
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-note'" style="padding: 0 !important;" class="separator-right">
-                      <i [ngClass]="col.icon"></i>
-                      <span style="display:flex;justify-content: space-between;">
-                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
-                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                          <i *ngSwitchDefault class="icon-direction"
-                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
-                        </ng-container>
-                      </span>
-                    </th>
-                    <th *ngIf="!col.frozen" style="padding: 0 !important; border-bottom: none !important;">
-                      <span style="display:flex;justify-content: space-between; float: right;margin-right: 4px;">
-
-                      </span>
-                    </th>
-                  </ng-container>
-                </tr>
-                <tr>
-                  <ng-container *ngFor="let col of columns;">
-                    <th *ngIf="col?.fields === 'checkbox'">
-                    </th>
-                    <th *ngIf="col?.fields === 'userTags'">
-                    </th>
-                    <th *ngIf="col?.filtred && col.extended">
-                      <div class="filter-input">
-                        <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                        <input *ngIf="col.header.length > 0" pInputText type="text"
-                               (input)="filter(col?.fields, $event.target.value)">
-                      </div>
-                    </th>
-                    <th *ngIf="col?.icon === 'icon-focus-add'"></th>
-                    <th *ngIf="col?.icon === 'icon-note'" style="border-right: 8px solid #F4F6FC !important;">
-                    </th>
-                    <th *ngIf="!col.frozen" style="padding: 0 !important; border-right: 1px solid  #7f7f7f4a">
-                      <span style="display:flex;justify-content: space-between; float: right;margin-right: 4px;">
-                        {{col?.header}}
-                      </span>
-                    </th>
-                  </ng-container>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
-                <tr (contextmenu)="selectedItemForMenu=rowData.pltId" [pContextMenuRow]="rowData"
-                    [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }"
-                    *ngIf="(filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive) &&  statusFilterActive(rowData.status)">
-                  <td *ngFor="let col of columns; let i = index"
-                      dnd-droppable
-                      dnd-sortable-container
-                      [sortableData]="adjutmentApplication[rowData.pltId]"
-                      [dropZones]="['widget-dropZone']"
-                      [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-                      (drop)="onDrop(col,rowData.pltId)"
-                      [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}"
-                      (click)="handlePLTClick(rowData.pltId,rowIndex,$event)">
-
-                    <ng-container *ngIf="col.fields === 'checkbox'">
-                      <label nz-checkbox [nzChecked]="rowData.selected"
-                             (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
-                    </ng-container>
-                    <ng-container *ngIf="col.fields === 'userTags'">
-                      <div class="td-wrapper-tags">
-                        <ng-container *ngFor="let tag of rowData.userTags;let it= index;">
-                          <span class="tag-el" *ngIf="it < 2"
-                                [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
-                          <span class="tag-ellipsis" *ngIf="it == 2" style="background-color: #E0E0E0"><i
-                            class="icon-ellipsis-h"></i></span>
-                        </ng-container>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="col.fields === 'pltId'">
-                      <div *ngIf="rowData.status !== 'requires regeneration' || !rowData.newPlt" class="text-elipsice"
-                           style="font-weight: bold">{{rowData.pltId | textLength}}</div>
-                      <div *ngIf="rowData.status == 'requires regeneration' && rowData.newPlt" class="newTag">NEW</div>
-                    </ng-container>
-                    <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
-                      <div class="text-elipsice"
-                           [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
-                    </ng-container>
-                    <ng-container *ngIf="col?.type == 'icon'">
-                      <div class="td-wrapper-check">
-                        <div *ngIf="col.icon=='icon-focus-add'">
-                          <i class="tooltipMsg"
-                             [nz-tooltip]="rowData.status[0].toUpperCase() + rowData.status.slice(1)"
-                             [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
-                                         'icon-check-circle iconGreen': rowData?.status=='valid' ,
-                                         'icon-lock-alt iconRed': rowData?.status=='locked',
-                                         'icon-error_24px iconRed2': rowData?.status=='failed',
-                                         'icon-report_problem_24px iconYellow2': rowData?.status=='requires regeneration' }">
-                          </i>
-                        </div>
-                        <div *ngIf="col.icon=='icon-note' && !selectedListOfPlts.includes(rowData.pltId)">
-                          <nz-dropdown [nzPlacement]="'bottomLeft'">
-                            <i class="icon-menu_24px" nz-dropdown
-                               style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
-                               (click)="clickButtonPlus(false,rowData)"></i>
-                            <ul nz-menu>
-                              <li nz-menu-item (click)="clickButtonPlus(false,rowData)">Add New Adjustment</li>
-                              <li nz-submenu>
-                                <span title>Create</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>New Default Thread</li>
-                                  <li nz-menu-item>New Non-default Thread</li>
-                                </ul>
-                              </li>
-                              <li nz-submenu>
-                                <span title>Clone</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>New Default Thread</li>
-                                  <li nz-menu-item>New Non-default Thread</li>
-                                </ul>
-                              </li>
-                              <li nz-menu-item>Regenerate</li>
-                              <li nz-menu-item>Remove</li>
-                              <li nz-menu-item>View PLT Details</li>
-                              <li nz-menu-item>Manage Tags</li>
-                              <li nz-menu-item>Edit PLT Name</li>
-                              <li nz-menu-item>Publish to Princing</li>
-                              <li nz-menu-item>Publish to Accumulation</li>
-                              <li nz-submenu>
-                                <span title>Inuring</span>
-                                <ul nz-menu>
-                                  <li nz-menu-item>Add to New Inuring Package</li>
-                                  <li nz-menu-item>Add to Existing Inuring Package</li>
-                                </ul>
-                              </li>
-                              <li nz-menu-item>Add to Comparer</li>
-                              <li nz-menu-item>Export</li>
-                              <li nz-menu-item>Delete</li>
-                            </ul>
-                          </nz-dropdown>
-                        </div>
-                      </div>
-                    </ng-container>
-                    <ng-container *ngIf="col?.dragable">
-                      <div
-                        class="text-elipsice border-dragable">
-                        <div class="EPM0">
-                          {{ rowData.EPM[0] }}
-                        </div>
-                        <div class="EPM1">
-                          {{ rowData.EPM[1] }}
-                        </div>
-                        <div *ngIf="col.fields == 'EPM2' ||
-                                      col.fields == 'EPM5' ||
-                                      col.fields == 'EPM10' ||
-                                      col.fields == 'EPM25' ||
-                                      col.fields == 'EPM50' ||
-                                      col.fields == 'EPM100'"
-                             class="EPM2B">
-                          {{ rowData.EPM[2] }}
-                        </div>
-                        <div *ngIf="col.fields == 'EPM250' ||
-                                      col.fields == 'EPM500'"
-                             class="EPM2R">
-                          {{ rowData.EPM[2] }}
-                        </div>
-                      </div>
-                    </ng-container>
-                  </td>
-                </tr>
-              </ng-template>
-            </p-table>
+            </app-calibration-main-table>
           </div>
         </div>
       </div>
@@ -1533,334 +364,276 @@
     </div>
   </div>
 </div>
-
-<nz-modal [(nzVisible)]="isVisible" [nzFooter]="modalFooter" class="modelAdjustment"
-          (nzOnCancel)="handleCancel()"
-          [nzTitle]="modalTitle">
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Basis</b>
-    </div>
-    <div nz-col nzSpan="16">
-      <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
-      <nz-select [(ngModel)]="categorySelectedFromAdjustement"
-                 (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
-                 [nzPlaceHolder]="'Select Adjustment'"
-                 [nzSize]="size" style="width: 260px;">
-        <ng-container *ngFor="let option of allAdjsArray">
-          <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
-                     [nzValue]="option"></nz-option>
-        </ng-container>
-      </nz-select>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col nzSpan="24">
-      <nz-collapse *ngIf="categorySelectedFromAdjustement?.description" [nzBordered]="false">
-        <nz-collapse-panel [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis" [nzActive]="true">
-          <p>{{categorySelectedFromAdjustement?.description}}</p>
-        </nz-collapse-panel>
-      </nz-collapse>
-    </div>
-  </div>
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8">
-      <b>Category</b>
-    </div>
-    <div nz-col nzSpan="16" style="line-height: 2.2rem;">
-      <!-- (ngModelChange)="selectCategory(categorySelectedFromBasis)"-->
-      <b style="margin-left: 10px;">{{categorySelected}}</b>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col nzSpan="24">
-      &nbsp;
-    </div>
-  </div>
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Narrative</b>
-    </div>
-    <div nz-col nzSpan="16">
-      <textarea style="margin-left: 10px; width: 95%" rows="4" nz-input [(ngModel)]="inputValue"></textarea>
-    </div>
-  </div>
-  <div nz-row>
-    <div nz-col nzSpan="24">
-      &nbsp;
-    </div>
-  </div>
-  <div nz-row>
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin-top: 10px">
-      <b>Type</b>
-    </div>
-    <div nz-col nzSpan="16">
-      <nz-select [(ngModel)]="singleValue" (ngModelChange)="selectBasis(singleValue)"
-                 [nzPlaceHolder]="'choose Type'"
-                 [nzSize]="size" style="width: 260px;">
-        <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
-      </nz-select>
-    </div>
-  </div>
-  <div nz-row style="margin-top: 20px;" *ngIf="categorySelectedFromAdjustement">
-    <div class="modal-left-item" nz-col nzSpan="8" style="margin: 5px;">
-      Capped
-    </div>
-    <div nzSpan="16" style="line-height: 2.2rem;">
-      <nz-switch [nzDisabled]="true" [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" nzSize="small"
-                 style="margin-left: 15px;"></nz-switch>
-    </div>
-  </div>
-
-  <ng-container *ngIf="linear">
-    <div nz-row>
-      <div nz-col nzSpan="24" style="margin: 5px;">
-        <hr>
-      </div>
-    </div>
-    <div nz-row>
-      <div nz-col nzSpan="24" style="margin: 5px;">
-        <b>Parameter</b>
-      </div>
-    </div>
-    <div nz-row>
-      <div nz-col nzSpan="2">
-        &nbsp;
-      </div>
-      <div nz-col nzSpan="11">
-        Loss Modification Factor (LMF)
-      </div>
-      <div nz-col nzSpan="9">
-        <input
-          #inputElement
-          [(ngModel)]="columnPosition"
-          nz-input
-          nz-tooltip
-          style="width: 200px;
-        height: 40px;
-        background: #f9f9f9;
-        border-radius: 0;
-        border:0;
-        border-bottom: 1px solid black;
-        color:#0700CF"
-        />
-      </div>
-    </div>
-  </ng-container>
-  <ng-template #modalFooter>
-    <button (click)="handleCancel()"
-            class="ant-btn"
-            style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
-    </button>
-
-    <button *ngIf="!modifyModal" (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)"
-            class="ant-btn ant-btn-default"
-            style="width: 130px; height: 30px; ">SAVE
-    </button>
-    <button *ngIf="modifyModal" (click)="saveAdjModification(categorySelectedFromAdjustement)"
-            class="ant-btn ant-btn-default"
-            style="width: 130px; height: 30px; ">SAVE
-    </button>
-  </ng-template>
-</nz-modal>
-
+<app-adjustment-pop-up
+  [isVisible]="isVisible"
+  [AdjustementType]="AdjustementType"
+  [modalTitle]="modalTitle"
+  [singleValue]="singleValue"
+  [modifyModal]="modifyModal"
+  [global]="global"
+  [categorySelected]="categorySelected"
+  [categorySelectedFromAdjustement]="categorySelectedFromAdjustement"
+  (selectCategory)="selectCategory($event)"
+  (handleCancel)="handleCancel()"
+  (addAdjustmentFromPlusIcon)="addAdjustment($event)"
+  (saveAdjModification)="saveAdjModification($event)">
+</app-adjustment-pop-up>
+<app-add-remove-pop-up
+  [isVisible]="addRemoveModal"
+  [selectionStep]="'plt'"
+  (onSave)="addRemoveOnSave($event)"
+  [stepConfig]=" {wsId: workspaceId,
+    uwYear: uwy,
+    plts: listOfPltsData}"
+  (onVisibleChange)="addRemoveModal= $event">
+</app-add-remove-pop-up>
 <p-dialog
+  [visible]="manageColumn"
   [closable]="false"
-  [styleClass]="'m-dialog-modal-lg borderless'"
+  styleClass="m-dialog-modal"
   appendTo="body"
   [modal]="true"
-  [responsive]="true"
-  [visible]="addRemoveModal"
-  [baseZIndex]="1"
   [autoZIndex]="false"
+  [responsive]="true"
 >
 
   <p-header>
     <div class="header">
       <h4>
-        Select PLTs to Calibrate
+        Manage Columns
       </h4>
-      <i (click)="addRemoveModal=false" style="cursor: pointer" class="icon-close_24px"></i>
+      <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <div class="content">
-    <div class="left">
-      <app-plt-left-menu
-        [menuInputs]="{
-            tagContextMenu: tagContextMenu,
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
-            addTagModalIndex: tagModalIndex,
-            fromPlts: fromPlts,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
-            userTags: userTags,
-            systemTags: systemTags,
-            selectedListOfPlts: selectedListOfPlts,
-            systemTagsCount: systemTagsCount,
-            _tagModalVisible: tagModalVisible,
-            _editingTag: editingTag,
-            _modalSelect: modalSelect,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:true
-          }"
-      >
 
-      </app-plt-left-menu>
-    </div>
-    <div class="right">
-      <div class="title-as-tab-bis">
-          <span>
-            PLTs
-          </span>
+  <div class="content">
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfColumns]"
+        [cdkDropListData]="extraFrozenColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of extraFrozenColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
       </div>
-      <div class="PLTs-content">
-        <app-plt-main-table
-          [tableInputs]="{
-                  contextMenuItems: contextMenuItems,
-                  filterInput: filterInput,
-                  pltColumns: popUpPltColumns,
-                  listOfPltsData: listOfPltsData,
-                  listOfDeletedPltsData: listOfDeletedPltsData,
-                  listOfPltsCache: listOfPltsCache,
-                  listOfDeletedPltsCache: listOfDeletedPltsCache,
-                  listOfPlts: listOfPlts,
-                  listOfDeletedPlts: listOfDeletedPlts,
-                  selectedListOfPlts: selectedListOfPlts,
-                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
-                  selectAll: selectAll,
-                  someItemsAreSelected: someItemsAreSelected,
-                  showDeleted: showDeleted,
-                  filterData: filterData,
-                  filters: filters,
-                  sortData: sortData
-                }"
-          (onCheckAll)="checkAll($event)"
-          (onFilter)="filter($event)"
-          (onPltClick)="toggleSelectPlts($event)"
-          (onSelectSinglePlt)="selectSinglePLT($event)"
-        ></app-plt-main-table>
+    </div>
+
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfColumns]"
+        [cdkDropListData]="frozenColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of frozenColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
       </div>
     </div>
   </div>
 
   <p-footer>
     <div class="footer">
-      <button (click)="addRemoveModal=false" class="a-button-text">cancel</button>
-      <button (click)="addRemoveModal=false" class="a-buttons-contained">
-        ADD
+      <button (click)="toggleColumnsManager()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns()" nz-button>
+        Save
       </button>
     </div>
   </p-footer>
-
 </p-dialog>
-
-<!--<p-dialog
-  (cancel)="handleCancel()"
+<p-dialog
+  [visible]="manageAdjColumn"
   [closable]="false"
-  [modal]="true"
-  [responsive]="true"
-  [visible]="true"
+  styleClass="m-dialog-modal"
   appendTo="body"
-  styleClass="m-dialog-modal-m-74">
-<p-header>
-  <h3>
-    {{modalTitle}}
-  </h3>
-  <i (click)="handleCancel()" class="icon-close_24px" style="cursor: pointer"></i>
-</p-header>
-<div nz-row>
-  <div nz-col nzSpan="8" style="margin-top: 10px">
-    <b>Basis</b>
-  </div>
-  <div nz-col nzSpan="16">
-    &lt;!&ndash; (ngModelChange)="selectCategory(categorySelectedFromBasis)"&ndash;&gt;
-    <nz-select (ngModelChange)="selectCategory(categorySelectedFromAdjustement)"
-               [(ngModel)]="categorySelectedFromAdjustement"
-               [nzPlaceHolder]="'Select Adjustment'"
-               [nzSize]="size" style="width: 260px;">
-      <ng-container *ngFor="let option of allAdjsArray">
-        <nz-option *ngIf="option.name!='Default'" [nzLabel]="option.name"
-                   [nzValue]="option"></nz-option>
-      </ng-container>
-    </nz-select>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="24">
-    <nz-collapse *ngIf="categorySelectedFromAdjustement?.description" [nzBordered]="false">
-      <nz-collapse-panel [nzActive]="true" [nzHeader]="categorySelectedFromAdjustement?.adjustmentBasis">
-        <p>{{categorySelectedFromAdjustement?.description}}</p>
-      </nz-collapse-panel>
-    </nz-collapse>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="8">
-    <b>Category</b>
-  </div>
-  <div nz-col nzSpan="16" style="line-height: 2.2rem;">
-    &lt;!&ndash; (ngModelChange)="selectCategory(categorySelectedFromBasis)"&ndash;&gt;
-    <b style="margin-left: 10px;">{{categorySelected}}</b>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="24">
-    &nbsp;
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="8" style="margin-top: 10px">
-    <b>Narrative</b>
-  </div>
-  <div nz-col nzSpan="16">
-    <textarea [(ngModel)]="inputValue" nz-input rows="4" style="margin-left: 10px; width: 95%"></textarea>
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="24">
-    &nbsp;
-  </div>
-</div>
-<div nz-row>
-  <div nz-col nzSpan="8" style="margin-top: 10px">
-    <b>Type</b>
-  </div>
-  <div nz-col nzSpan="16">
-    <nz-select (ngModelChange)="selectBasis(singleValue)" [(ngModel)]="singleValue"
-               [nzPlaceHolder]="'choose Type'"
-               [nzSize]="size" style="width: 260px;">
-      <nz-option *ngFor="let option of AdjustementType" [nzLabel]="option.name" [nzValue]="option"></nz-option>
-    </nz-select>
-  </div>
-</div>
-<div *ngIf="categorySelectedFromAdjustement" nz-row style="margin-top: 20px;">
-  <div nz-col nzSpan="8" style="margin: 5px;">
-    Capped
-  </div>
-  <div nz-col nzSpan="16" style="line-height: 2.2rem;">
-    <nz-switch [ngModel]="categorySelectedFromAdjustement?.exposureFlag == 'CAP'" [nzDisabled]="true" nzSize="small"
-               style="margin-left: 15px;"></nz-switch>
-  </div>
-</div>
-<p-footer>
-  <button (click)="handleCancel()"
-          class="a-button-text-cancel a-buttons-contained"
-          style="color: rgba(82,89,95,0.68); margin-right: 20px; border: none; width: 100px;height: 30px; "> CANCEL
-  </button>
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
 
-  <button (click)="addAdjustmentFromPlusIcon(true,singleValue,categorySelectedFromAdjustement)" *ngIf="!modifyModal"
-          class="a-buttons-contained"
-          style="width: 130px; height: 30px; ">SAVE
-  </button>
-  <button (click)="saveAdjModification(categorySelectedFromAdjustement)" *ngIf="modifyModal"
-          class="a-buttons-contained"
-          style="width: 130px; height: 30px; ">SAVE
-  </button>
-</p-footer>
-</p-dialog>-->
+  <p-header>
+    <div class="header">
+      <h4>
+        Manage Columns
+      </h4>
+      <i style="cursor: pointer" (click)="toggleColumnsManager(false)" class="icon-close_24px"></i>
+    </div>
+  </p-header>
 
+  <div class="content">
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Available columns:</h6>
+      <div
+        cdkDropList
+        [id]="'availableListOfColumns'"
+        #availbleListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[usedListOfAdjColumns]"
+        [cdkDropListData]="extraDataColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of extraDataColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+
+    <div class="toolkit">
+      <div class="toolkit-cnt">
+        <div class="all right">
+          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
+        </div>
+        <span>
+          All
+        </span>
+        <div class="all left">
+          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex;flex-direction: column;">
+      <h6>Show these columns in order:</h6>
+      <div
+        cdkDropList
+        [id]="'usedListOfColumns'"
+        #usedListOfAdjColumns="cdkDropList"
+        [cdkDropListConnectedTo]="[availbleListOfAdjColumns]"
+        [cdkDropListData]="dataColumnsCache"
+        class="m-box-d"
+        (cdkDropListDropped)="dropColumn($event)">
+        <ng-container *ngFor="let col of dataColumnsCache;let i=index">
+          <div class="m-box-drag" *ngIf="col.header && col.fields !== 'overallLMF'" cdkDrag>
+            <div class="m-box-overlay">
+              <div class="left">
+                <div class="burger" cdkDragHandle>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                  <div class="line"></div>
+                </div>
+                <span class="subtitle-2">
+              {{col.header}}
+              </span>
+              </div>
+              <!--
+              <div class="right">
+                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
+                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
+              </div>
+              -->
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="toggleColumnsManager(false)" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveColumns(false)" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>

@@ -1,3 +1,65 @@
+export class loadAllPltsFromCalibration {
+  static readonly type = '[Calibration] Load All Plts Data'
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class loadAllPltsFromCalibrationSuccess {
+  static readonly type = '[Calibration] Load All Plts Success'
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class loadAllPltsFromCalibrationFail {
+  static readonly type = '[Calibration] Load All Plts Fail'
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class constructUserTagsFromCalibration {
+  static readonly type = '[Calibration] Construct User Tags'
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class ToggleSelectPltsFromCalibration {
+  static readonly type = '[Calibration] Toggle Select Plts';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class calibrateSelectPlts {
+  static readonly type = '[Calibration] Toggle calibrate Plts';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class toCalibratePlts {
+  static readonly type = '[Calibration] Save PLTs to calibrate';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class setUserTagsFiltersFromCalibration {
+  static readonly type = '[Calibration] set Filter Plts'
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class FilterPltsByUserTagsFromCalibration {
+  static readonly type = '[Calibration] Filter Plts By UserTags'
+
+  constructor(public payload?: any) {
+  }
+}
 export class setFilterCalibration {
   static readonly type = '[Calibration] set filter';
 

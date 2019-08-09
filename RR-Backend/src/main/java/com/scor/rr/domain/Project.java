@@ -53,5 +53,9 @@ public class Project {
   private Date receptionDate;
   private Double regionPerilSum;
   private Double xactSum;
+  private String sourceProjectId;
+  private String sourceProjectName;
+  private String sourceWsId;
+  private String sourceWsName;
 
 }

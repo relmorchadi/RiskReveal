@@ -2,12 +2,13 @@ import {Observable} from 'rxjs';
 import {environment} from '../../../environments/environment';
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
+import {backendUrl} from "../../shared/api";
 
 @Injectable({
   providedIn: 'root'
 })
 export class RiskApi {
-  protected URL = `${environment.API_URI}risk-link/`;
+  protected URL = `${backendUrl()}risk-link/`;
 
   constructor(private http: HttpClient) {
   }
@@ -21,10 +22,12 @@ export class RiskApi {
     this.http.get(`${this.URL}analysis?rdmId=${paramId}&rdmName=${paramName}&size=20`).subscribe(
       (dt: any) => console.log(dt.content)
     );*/
+    console.log(paramId, paramName);
     return this.http.get(`${this.URL}analysis?size=20`);
   }
 
   searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
+    console.log('hey')
     return this.http.get(`${this.URL}portfolio?size=20`, {params: {edmId: paramId, edmName: paramName}});
   }
 }

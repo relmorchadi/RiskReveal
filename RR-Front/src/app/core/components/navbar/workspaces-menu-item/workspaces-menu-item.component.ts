@@ -1,20 +1,23 @@
 import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
-import {HelperService} from '../../../../shared/helper.service';
 import {Router} from '@angular/router';
 import {SearchService} from '../../../service/search.service';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as _ from 'lodash';
-import {Observable} from 'rxjs';
 import {Select, Store} from '@ngxs/store';
-import {WorkspaceMain} from '../../../model/workspace-main';
-import {WorkspaceMainState} from '../../../store/states/workspace-main.state';
-import {NotificationService} from '../../../../shared/notification.service';
 import {
-  LoadWorkspacesAction,
+  HeaderState,
   OpenNewWorkspacesAction,
   PatchWorkspace,
   PatchWorkspaceMainStateAction
-} from '../../../store/actions/workspace-main.action';
+} from '../../../store/index';
+import * as fromHeader from '../../../store/actions/header.action';
+import {HelperService} from '../../../../shared/helper.service';
+import * as workspaceActions from '../../../../workspace/store/actions/workspace.actions';
+import {UpdateWsRouting} from '../../../../workspace/store/actions/workspace.actions';
+import {NotificationService} from "../../../../shared/notification.service";
+import {Navigate} from "@ngxs/router-plugin";
+import {WorkspaceState} from "../../../../workspace/store/states";
+import {take} from "rxjs/operators";
 
 @Component({
   selector: 'workspaces-menu-item',
@@ -35,9 +38,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
   labels: any = [];
   lastSelectedIndex = null;
 
-  @Select(WorkspaceMainState)
-  state$: Observable<WorkspaceMain>;
-  state: WorkspaceMain = null;
+  recent = null;
   favorites: any;
   pinged: any;
 
@@ -48,16 +49,27 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this.pingedSize = 10;
   }
 
-  @Select(WorkspaceMainState.getFavorite) favorites$;
-  @Select(WorkspaceMainState.getPinged) pinged$;
+  @Select(HeaderState.getFavorite) favorites$;
+  @Select(HeaderState.getPinned) pinged$;
+  @Select(HeaderState.getRecent) recentWs$;
+  @Select(WorkspaceState.getLastWorkspace) lastWorkspace$;
   favoriteSize: any;
   pingedSize: any;
   favoriteSearch: any;
   pingedSearch: any;
 
+
+  paginationParams: [
+    { id: 0, shownElement: 10, label: 'Last 10' },
+    { id: 1, shownElement: 50, label: 'Last 50' },
+    { id: 2, shownElement: 100, label: 'Last 100' },
+    { id: 3, shownElement: 150, label: 'Last 150' }];
+
+  recentPagination = 0;
+
   ngOnInit() {
-    this.store.dispatch(new LoadWorkspacesAction());
-    this.state$.subscribe(value => this.state = _.merge({}, value));
+    // this.recent$.subscribe(value => this.recent = _.merge({}, value));
+    this.recentWs$.subscribe(value => this.recent = _.merge([], value));
     this._searchService.infodropdown.subscribe(dt => this.visible = this._searchService.getvisibleDropdown());
     this.favorites$.subscribe(fv => {
       this.favorites = _.orderBy(fv, ['lastFModified'], ['desc']);
@@ -101,71 +113,78 @@ export class WorkspacesMenuItemComponent implements OnInit {
     this.contractFilterFormGroup.patchValue({cedant: search.target.value});
   }
 
-  toggleWorkspace(workspace, index) {
+  toggleWorkspace(context: string, workspace, index) {
     if ((window as any).event.ctrlKey) {
-      workspace.selected = !workspace.selected;
+      this.store.dispatch(new fromHeader.ToggleWsSelection({context, index}));
+      // workspace.selected = !workspace.selected;
       this.lastSelectedIndex = index;
     } else if ((window as any).event.shiftKey) {
       event.preventDefault();
       if (this.lastSelectedIndex || this.lastSelectedIndex === 0) {
-        this.selectSection(Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex));
-        // this.lastSelectedIndex = null;
+        const [from, to] = [Math.min(index, this.lastSelectedIndex), Math.max(index, this.lastSelectedIndex)];
+        this.store.dispatch(new fromHeader.SelectRange({context, from, to}));
       } else {
         this.lastSelectedIndex = index;
-        workspace.selected = true;
+        this.store.dispatch(new fromHeader.ChangeWsSelection({context, index, value: true}));
+        // workspace.selected = true;
       }
     } else {
-      this.state.recentWs.forEach(res => res.selected = false);
+      // this.recent.recentWs.forEach(res => res.selected = false);
       this.lastSelectedIndex = index;
-      workspace.selected = !workspace.selected;
+      this.store.dispatch(new fromHeader.ApplySelectionToAll({context, value: false}));
+      this.store.dispatch(new fromHeader.ToggleWsSelection({context, index}));
+      // workspace.selected = !workspace.selected;
     }
   }
 
-  private selectSection(from, to) {
-    this.state.recentWs.forEach(dt => dt.selected = false);
-    if (from === to) {
-      this.state.recentWs[from].selected = true;
-    } else {
-      for (let i = from; i <= to; i++) {
-        this.state.recentWs[i].selected = true;
-      }
-    }
+  selectCheckboxChange(context, workspace, index) {
+    event.preventDefault();
   }
 
   popOutWorkspaces() {
     this.visible = false;
-    this.state.recentWs.filter(ws => ws.selected).forEach(ws => {
-      window.open(`/workspace/${ws.workSpaceId}/${ws.uwYear}/PopOut`);
+    this.recent.filter(ws => ws.selected).forEach(ws => {
+      window.open(`/workspace/${ws.wsId}/${ws.uwYear}/projects`);
     });
   }
 
-  async openWorkspaces() {
-    const selectedItems = [...this.state.recentWs.filter(ws => ws.selected)];
+  openWorkspaces() {
+    const selectedItems = this.recent.filter(ws => ws.selected);
+
     let workspaces = [];
     selectedItems.forEach(
-      (SI) => {
-        this.searchData(SI.workSpaceId, SI.uwYear).subscribe(
+      (ws) => {
+        this.searchData(ws.wsId, ws.uwYear).subscribe(
           (dt: any) => {
             const workspace = {
-              workSpaceId: SI.workSpaceId,
-              uwYear: SI.uwYear,
+              workSpaceId: ws.workSpaceId,
+              uwYear: ws.uwYear,
               selected: false,
               ...dt
             };
+            this.store.dispatch(new workspaceActions.openWS({wsId: ws.wsId, uwYear: ws.uwYear, route: 'projects'}));
             workspaces = [workspace, ...workspaces];
             if (workspaces.length === selectedItems.length) {
-              this.store.dispatch(new OpenNewWorkspacesAction(workspaces));
-              this._helperService.updateWorkspaceItems();
-              this._helperService.updateRecentWorkspaces();
-              this.router.navigate([`/workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
               this.visible = false;
-              this.workspaces.forEach(ws => ws.selected = false);
+              this.workspaces.forEach(wss => wss.selected = false);
             }
+            this.detectChanges();
           }
         );
       }
     );
   }
+
+  // private selectSection(from, to) {
+  //   // this.state.recentWs.forEach(dt => dt.selected = false);
+  //   if (from === to) {
+  //     this.state[from].selected = true;
+  //   } else {
+  //     for (let i = from; i <= to; i++) {
+  //       this.state[i].selected = true;
+  //     }
+  //   }
+  // }
 
   async openSingleWorkspaces(ws) {
     this.searchData(ws.workSpaceId, ws.uwYear).subscribe(
@@ -178,11 +197,9 @@ export class WorkspacesMenuItemComponent implements OnInit {
         };
 
         this.store.dispatch(new OpenNewWorkspacesAction([workspace]));
-        this._helperService.updateWorkspaceItems();
-        this._helperService.updateRecentWorkspaces();
         this.visible = false;
         this.workspaces.forEach(wcs => wcs.selected = false);
-        this.router.navigate([`/workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
+        this.router.navigate([`/workspace/${this.recent.openedWs.workSpaceId}/${this.recent.openedWs.uwYear}`]);
       }
     );
   }
@@ -196,18 +213,27 @@ export class WorkspacesMenuItemComponent implements OnInit {
   }
 
   redirectWorkspace() {
-    if (this.state.openedTabs.data.length > 0) {
-      this.navigateToTab(this.state.openedTabs.data[0]);
-      this.store.dispatch(new PatchWorkspaceMainStateAction({key: 'openedWs', value: this.state.openedTabs.data[0]}));
-    } else {
-      this.notificationService.createNotification('Information',
-        'There is no Opened Workspaces please try searching for some before!',
-        'error', 'bottomRight', 4000);
-    }
+    this.lastWorkspace$
+      .pipe(take(1))
+      .subscribe(data => {
+        if (data) {
+          const {wsId, uwYear, route} = data;
+          return this.store.dispatch(
+            [new UpdateWsRouting(wsId.concat('-', uwYear), route),
+              new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+          );
+        } else {
+          return this.notificationService.createNotification('Information',
+            'There is no Opened Workspaces please try searching for some before!',
+            'error', 'bottomRight', 4000);
+        }
+      });
+
   }
 
   searchWorkspace(value) {
-    const paginationOption = this.state.workspacePagination.paginationList.filter(page => page.id === value);
+    this.togglePopup();
+    const paginationOption = this.recent.workspacePagination.paginationList.filter(page => page.id === value);
     this.store.dispatch(new PatchWorkspaceMainStateAction({
       key: 'appliedFilter',
       value: {shownElement: paginationOption[0].shownElement}

@@ -56,11 +56,14 @@
   font-weight: bold;
   letter-spacing: 1.25px;
   text-align: center;
-  padding: 7px 11px 5px;
+  padding: 4px 11px 5px;
   cursor: pointer;
   background-position: center;
   transition: background 1s;
   text-transform: uppercase;
+  i{
+    font-weight: bold;
+  }
 
   &:hover {
     background: transparent radial-gradient(circle, transparent 1%, #FFFFFF 1%) center/15000%;
@@ -167,4 +170,20 @@
 
 .button-icon-disabled {
 
+}
+
+.pine-btn {
+  box-sizing: border-box;
+  height: 57px;
+  width: 57px;
+  background: transparent;
+  border: 1px solid #E5E9FA;
+
+  .active {
+    color: rgb(91, 139, 159);
+  }
+
+  .inactive {
+    color: #fff;
+  }
 }

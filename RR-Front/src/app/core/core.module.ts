@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {ErrorHandler, NgModule} from '@angular/core';
 
 import {NgxsModule, StateContext} from '@ngxs/store';
 import {environment} from '../../environments/environment';
@@ -16,13 +16,20 @@ import {PIPES} from './pipes';
 import {DIRECTIVES} from './directives';
 import {RouterModule} from '@angular/router';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {NgxsStoragePluginModule, STORAGE_ENGINE, StorageEngine} from '@ngxs/storage-plugin';
 import {SharedModule} from '../shared/shared.module';
 import {StoreModule} from './store';
+import {GlobalErrorHandler, MyStorageEngine} from "./config";
+
 
 registerLocaleData(en);
 
 @NgModule({
   declarations: [...COMPONENTS, ...CONTAINERS, ...DIRECTIVES, ...PIPES],
+  providers: [
+    {provide: STORAGE_ENGINE, useClass: MyStorageEngine},
+    {provide: ErrorHandler, useClass: GlobalErrorHandler}
+  ],
   imports: [
     NgZorroAntdModule,
     RouterModule,
@@ -31,6 +38,7 @@ registerLocaleData(en);
     NgxsRouterPluginModule.forRoot(),
     ReactiveFormsModule,
     NgxsFormPluginModule.forRoot(),
+    NgxsStoragePluginModule.forRoot(),
     StoreModule,
     ...environment.production ? [] : [NgxsReduxDevtoolsPluginModule.forRoot({name: 'Risk Reveal DevTools'})]
   ],
@@ -45,7 +53,7 @@ export class CoreModule implements NgxsHmrLifeCycle<Snapshot> {
     return {
       ngModule: CoreModule,
       providers: [{provide: RouterStateSerializer, useClass: CustomRouterStateSerializer},
-        {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, { provide: NZ_I18N, useValue: en_US }],
+        {provide: RouterStateSerializer, useClass: CustomRouterStateSerializer}, {provide: NZ_I18N, useValue: en_US}],
     };
   }
 

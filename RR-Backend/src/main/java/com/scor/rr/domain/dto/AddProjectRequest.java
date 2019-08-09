@@ -14,7 +14,7 @@ import java.util.List;
 public class AddProjectRequest {
 
     public Project project;
-    public String workspaceId;
+    public String wsId;
     public String id;
     public Integer uwYear;
 }

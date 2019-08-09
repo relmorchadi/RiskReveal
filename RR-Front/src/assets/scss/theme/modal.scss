@@ -27,9 +27,11 @@ $modal-sizes: (
   "sm": ( "height": 35vh, "width": 40vw ),
   "sm-h": ( "height": 35vh, "width": auto ),
   "sm-f": ("height": auto, "width": 30vw, "minWidth": 450px),
+  "sm-l": ( "height": auto, "width": 45vw, "minWidth": 450px ),
   "m": ( "height": 50vh, "width": 60vw ),
+  "m-60": ( "height": auto, "width": 70vw ),
   "m-h": ( "height": 70vh, "width": auto ),
-  "m-74": ("height": 70vh, "width": 40vw),
+  "m-74": ("height": auto, "width": 450px),
   "m-f": ( "height": auto, "width": 55vw, "minWidth": 750px ),
   "spec-def": ( "height": 80vh, "width": 1200px ),
   "lg": ( "height": 90vh, "width": 90vw ),
@@ -66,7 +68,6 @@ body {
             .previous-container {
               display: flex;
               align-items: center;
-              margin: 25px;
 
               button,h4 {
                 margin: 0 12px;
@@ -106,7 +107,7 @@ body {
 
     .borderless {
       .ui-dialog-content {
-        height: calc(#{map_get($size, "height")} - 150px);
+        height: calc(#{map_get($size, "height")} - 100px);
         border: none;
 
         .content {

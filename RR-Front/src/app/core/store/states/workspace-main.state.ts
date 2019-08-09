@@ -2,9 +2,14 @@ import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
 import produce from 'immer';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {
-  AddNewProject, AddNewProjectFail, AddNewProjectSuccess,
+  AddNewProject,
+  AddNewProjectFail,
+  AddNewProjectSuccess,
   AppendNewWorkspaceMainAction,
-  CloseWorkspaceMainAction, DeleteProject, DeleteProjectFail, DeleteProjectSuccess,
+  CloseWorkspaceMainAction,
+  DeleteProject,
+  DeleteProjectFail,
+  DeleteProjectSuccess,
   LoadWorkspacesAction,
   OpenNewWorkspacesAction,
   PatchWorkspace,
@@ -14,9 +19,8 @@ import {
   SetWsRoutingAction,
 } from '../actions/workspace-main.action';
 import * as _ from 'lodash';
-import {WorkspaceMainService} from '../../service/workspace-main.service';
-import {catchError, tap} from "rxjs/operators";
-import {EMPTY, Observable} from "rxjs";
+import {catchError} from "rxjs/operators";
+import {EMPTY} from "rxjs";
 
 const initiaState: WorkspaceMain = {
   leftNavbarIsCollapsed: false,
@@ -37,7 +41,7 @@ const initiaState: WorkspaceMain = {
 export class WorkspaceMainState implements NgxsOnInit {
   ctx = null;
 
-  constructor(private workspaceMainService: WorkspaceMainService) {
+  constructor() {
   }
 
   ngxsOnInit(ctx?: StateContext<WorkspaceMainState>): void | any {
@@ -50,11 +54,6 @@ export class WorkspaceMainState implements NgxsOnInit {
   @Selector()
   static getWorkspaceMainState(state: WorkspaceMain) {
     return state;
-  }
-
-  @Selector()
-  static getLeftNavbarIsCollapsed(state: WorkspaceMain) {
-    return state.leftNavbarIsCollapsed;
   }
 
   @Selector()
@@ -77,10 +76,10 @@ export class WorkspaceMainState implements NgxsOnInit {
     return state.loading;
   }
 
-  @Selector()
+  /*@Selector()
   static getCurrentWS(state: WorkspaceMain) {
     return state.openedWs;
-  }
+  }*/
 
   @Selector()
   static getProjects(state: WorkspaceMain) {
@@ -258,7 +257,6 @@ export class WorkspaceMainState implements NgxsOnInit {
       openedTabs
     } = ctx.getState()
 
-    console.log(ws);
 
     let attrs = {};
 
@@ -267,7 +265,6 @@ export class WorkspaceMainState implements NgxsOnInit {
     })
 
     const index = k ? k : _.findIndex(openedTabs.data, wS => wS.workSpaceId == ws.workSpaceId && wS.uwYear == ws.uwYear);
-    console.log(index);
 
     ctx.patchState({
       openedTabs: {
@@ -309,47 +306,47 @@ export class WorkspaceMainState implements NgxsOnInit {
     });
   }
 
-  @Action(AddNewProject)
-  addNewProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
-    return this.workspaceMainService.addNewProject(payload.project, payload.workspaceId, payload.uwYear, payload.id)
-      .pipe(catchError(err => {
-        ctx.dispatch(new AddNewProjectFail({}));
-        return EMPTY;
-      }))
-      .subscribe((result) => {
-        const state = ctx.getState();
-        if (result) {
-          const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
-          ctx.setState(
-            produce((draft) => {
-              draft.openedTabs.data[i].projects.push(result);
-              draft.openedWs.projects.push(result);
-            }));
-        }
-        ctx.dispatch(new AddNewProjectSuccess(result));
-      });
-  }
+  // @Action(AddNewProject)
+  // addNewProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
+  //   return this.workspaceMainService.addNewProject(payload.project, payload.wsId, payload.uwYear, payload.id)
+  //     .pipe(catchError(err => {
+  //       ctx.dispatch(new AddNewProjectFail({}));
+  //       return EMPTY;
+  //     }))
+  //     .subscribe((result) => {
+  //       const state = ctx.getState();
+  //       if (result) {
+  //         const i = _.findIndex(state.openedTabs.data, {'wsId': payload.wsId, 'uwYear': payload.uwYear});
+  //         ctx.setState(
+  //           produce((draft) => {
+  //             draft.openedTabs.data[i].projects.push(result);
+  //             draft.openedWs.projects.push(result);
+  //           }));
+  //       }
+  //       ctx.dispatch(new AddNewProjectSuccess(result));
+  //     });
+  // }
 
-  @Action(DeleteProject)
-  deleteProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
-    return this.workspaceMainService.deleteProject(payload.project, payload.workspaceId, payload.uwYear)
-      .pipe(catchError(err => {
-        ctx.dispatch(new DeleteProjectFail({}));
-        return EMPTY;
-      }))
-      .subscribe((result) => {
-        const state = ctx.getState();
-        if (result) {
-          const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
-          ctx.setState(
-            produce((draft) => {
-              draft.openedTabs.data[i].projects = _.filter(draft.openedTabs.data[i].projects, e => e.projectId !== result.projectId);
-              draft.openedWs.projects = _.filter(draft.openedWs.projects, e => e.projectId !== result.projectId);
-            }));
-        }
-        ctx.dispatch(new DeleteProjectSuccess(result));
-      });
-  }
+  // @Action(DeleteProject)
+  // deleteProject(ctx: StateContext<WorkspaceMain>, {payload}: any) {
+  //   return this.workspaceMainService.deleteProject(payload.project, payload.workspaceId, payload.uwYear)
+  //     .pipe(catchError(err => {
+  //       ctx.dispatch(new DeleteProjectFail({}));
+  //       return EMPTY;
+  //     }))
+  //     .subscribe((result) => {
+  //       const state = ctx.getState();
+  //       if (result) {
+  //         const i = _.findIndex(state.openedTabs.data, {'workSpaceId': payload.workspaceId, 'uwYear': payload.uwYear});
+  //         ctx.setState(
+  //           produce((draft) => {
+  //             draft.openedTabs.data[i].projects = _.filter(draft.openedTabs.data[i].projects, e => e.projectId !== result.projectId);
+  //             draft.openedWs.projects = _.filter(draft.openedWs.projects, e => e.projectId !== result.projectId);
+  //           }));
+  //       }
+  //       ctx.dispatch(new DeleteProjectSuccess(result));
+  //     });
+  // }
 
   private makePagination(recentlyOpenedWs) {
     const paginationList = [];

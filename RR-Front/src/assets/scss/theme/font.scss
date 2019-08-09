@@ -114,3 +114,9 @@
   font-weight: bold;
   letter-spacing: 0.1px;
 }
+
+.elipsis-text {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}

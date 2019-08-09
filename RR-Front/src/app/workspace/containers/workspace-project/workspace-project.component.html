@@ -1,47 +1,45 @@
-<app-left-menu></app-left-menu>
 <div class="workspace-main-content">
   <div class="a-app-wrapper">
     <div class="a-app-header">
       <div class="title-project-wrapper">
-        <h4>Projects</h4>
-        <nz-dropdown [nzTrigger]="'hover'">
-          <i nz-dropdown style="padding-left: 6px; padding-top: 6px; cursor: pointer; font-size: 27px"
-             class="icon-menu_24px float-right mr-1 mt1"></i>
-          <ul nz-menu nzSelectable>
-            <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> New Project</li>
-            <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> New Linked Project</li>
-          </ul>
-        </nz-dropdown>
+        <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Projects'" [links]="hyperLinks"
+                         [routes]="hyperLinksRoutes"
+        ></app-hyper-links>
+        <div style="display: flex ">
+          <h4>Projects</h4>
+          <nz-dropdown nzTrigger="click">
+            <button  class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7"
+                     nz-button nzGhost nz-dropdown >
+              <i class="icon-plus"></i>
+              Add New
+            </button>
+            <ul nz-menu nzSelectable>
+              <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> Project</li>
+              <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> Linked Project</li>
+            </ul>
+          </nz-dropdown>
+        </div>
       </div>
       <div style="display: flex">
-        <nz-select class="float-right mt-2 a-dropdown-small" style="width: 150px; margin-right: 70px;" nzShowSearch
+        <nz-select class="project-filter a-dropdown-label" style="width: 150px; margin-right: 70px;" nzShowSearch
                    [(ngModel)]="selectedPrStatus">
           <nz-option nzLabel="Active Projects" nzValue="1"></nz-option>
         </nz-select>
-        <button *ngIf="!workspace.pinged" (click)="pinWorkspace()"
-                class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-                nz-button nzType="primary" nzSize="default" nzShape="circle">
-          <i style="color: #9592E6" nz-icon theme="outline">
-            <i class="icon-map-pin-alt"></i>
-          </i>
-        </button>
-        <button *ngIf="workspace.pinged" (click)="pinWorkspace()" style="background-color: rgb(91, 139, 159);"
-                class="mx-4 pine-btn  d-flex justify-content-center align-items-center"
-                nz-button nzType="primary" nzSize="default" nzShape="circle">
-            <span style="color: #FFFFFF">
-              <i class="icon-map-pin-alt"></i>
-              <i style="position: absolute;margin-left: -17px" class="icon-line-alt"></i>
-            </span>
-        </button>
+        <app-pin
+          [active]="!workspace?.isPinned"
+          (pinWs)="pinWorkspace()"
+          (unpinWs)="unPinWorkspace()"
+        >
+        </app-pin>
       </div>
     </div>
-    <div style="height: 60vw">
-      <projects-list [projects]="projects$ | async" (select)="selectProject($event)"
+    <div>
+      <projects-list (select)="selectProject($event)" [projects]="workspace?.projects"
                      (delete)="delete($event)"></projects-list>
     </div>
 
     <app-workspace-project-popup [isVisible]="searchWorkspace"
-                                 (onVisibleChange)="cancelCreateExistingProjectPopup()"
+                                 (onVisibleChange)="cancelCreateExistingProjectPopup($event)"
                                  [selectionStep]="'project'"
                                  (onSelectProjectNext)="selectProjectNext($event)">
     </app-workspace-project-popup>
@@ -56,3 +54,4 @@
 
 </div>
 
+<!--<p-toast></p-toast>-->

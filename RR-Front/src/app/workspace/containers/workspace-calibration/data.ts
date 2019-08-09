@@ -1,10 +1,10 @@
 export const ADJUSTMENT_TYPE = [
-  {id: 1, name: "Linear", abv: false},
+  {id: 6, name: "CAT XL", abv: "CAT XL"},
   {id: 2, name: "Event Driven", abv: "Event Driven"},
+  {id: 5, name: "Frequency (EEF)", abv: "Freq (EEF)"},
+  {id: 1, name: "Linear", abv: false},
   {id: 3, name: "Return Period Banding Severity (EEF)", abv: "RP (EEF)"},
   {id: 4, name: "Return Period Banding Severity (OEP)", abv: "RP (OEP)"},
-  {id: 5, name: "Frequency (EEF)", abv: "Freq (EEF)"},
-  {id: 6, name: "CAT XL", abv: "CAT XL"},
   {id: 7, name: "Quota Share", abv: "QS"}
 ];
 export const PURE = {
@@ -299,44 +299,6 @@ export const ALL_ADJUSTMENTS = [
     hover: false,
     idAdjustementType: 8
   }
-];
-export const PLT_COLUMNS = [
-  {fields: 'check', header: '', width: '1%', sorted: false, filtred: false, icon: null, extended: true},
-  {fields: '', header: 'User Tags', width: '10%', sorted: false, filtred: false, icon: null, extended: true},
-  {fields: 'pltId', header: 'PLT ID', width: '12%', sorted: true, filtred: true, icon: null, extended: true},
-  {fields: 'pltName', header: 'PLT Name', width: '14%', sorted: true, filtred: true, icon: null, extended: true},
-  {fields: 'peril', header: 'Peril', width: '7%', sorted: true, filtred: true, icon: null, extended: false},
-  {
-    fields: 'regionPerilCode',
-    header: 'Region Peril Code',
-    width: '13%',
-    sorted: true,
-    filtred: true,
-    icon: null,
-    extended: false
-  },
-  {
-    fields: 'regionPerilName',
-    header: 'Region Peril Name',
-    width: '13%',
-    sorted: true,
-    filtred: true,
-    icon: null,
-    extended: false
-  },
-  {fields: 'grain', header: 'Grain', width: '9%', sorted: true, filtred: true, icon: null, extended: false},
-  {
-    fields: 'vendorSystem',
-    header: 'Vendor System',
-    width: '11%',
-    sorted: true,
-    filtred: true,
-    icon: null,
-    extended: false
-  },
-  {fields: 'rap', header: 'RAP', width: '9%', sorted: true, filtred: true, icon: null, extended: false},
-  {fields: 'action', header: '', width: '3%', sorted: false, filtred: false, icon: "icon-focus-add", extended: true},
-  {fields: 'action', header: '', width: '3%', sorted: false, filtred: false, icon: "icon-note", extended: true}
 ];
 export const LIST_OF_PLTS: Array<{
   pltId: number;
@@ -652,7 +614,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 13,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 1
+    "idAdjustementType": 1,
+    "favored": false
   },
   {
     "id": 2,
@@ -664,7 +627,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 7,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 2
+    "idAdjustementType": 2,
+    "favored": false
   },
   {
     "id": 4,
@@ -676,7 +640,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 1,
     "isExposureGrowth": true,
     "value": "2,1",
-    "idAdjustementType": 4
+    "idAdjustementType": 4,
+    "favored": false
   },
   {
     "id": 5,
@@ -688,7 +653,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 2,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 5
+    "idAdjustementType": 5,
+    "favored": false
   },
   {
     "id": 6,
@@ -700,7 +666,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 11,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 6
+    "idAdjustementType": 6,
+    "favored": false
   },
   {
     "id": 7,
@@ -712,7 +679,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 15,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 7
+    "idAdjustementType": 7,
+    "favored": false
   },
   {
     "id": 8,
@@ -724,7 +692,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 17,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 8
+    "idAdjustementType": 8,
+    "favored": false
   },
   {
     "id": 9,
@@ -736,7 +705,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 16,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 9
+    "idAdjustementType": 9,
+    "favored": false
   },
   {
     "id": 10,
@@ -748,7 +718,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 12,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 10
+    "idAdjustementType": 10,
+    "favored": false
   },
   {
     "id": 14,
@@ -760,7 +731,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 3,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 14
+    "idAdjustementType": 14,
+    "favored": false
   },
   {
     "id": 15,
@@ -772,7 +744,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 21,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 15
+    "idAdjustementType": 15,
+    "favored": false
   },
   {
     "id": 16,
@@ -784,7 +757,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 23,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 16
+    "idAdjustementType": 16,
+    "favored": false
   },
   {
     "id": 17,
@@ -796,7 +770,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 14,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 17
+    "idAdjustementType": 17,
+    "favored": false
   },
   {
     "id": 18,
@@ -808,7 +783,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 8,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 18
+    "idAdjustementType": 18,
+    "favored": false
   },
   {
     "id": 19,
@@ -820,7 +796,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 9,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 19
+    "idAdjustementType": 19,
+    "favored": false
   },
   {
     "id": 20,
@@ -832,7 +809,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 4,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 20
+    "idAdjustementType": 20,
+    "favored": false
   },
   {
     "id": 21,
@@ -844,7 +822,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 5,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 21
+    "idAdjustementType": 21,
+    "favored": false
   },
   {
     "id": 24,
@@ -856,7 +835,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 24,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 24
+    "idAdjustementType": 24,
+    "favored": false
   },
   {
     "id": 25,
@@ -868,7 +848,8 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 22,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 25
+    "idAdjustementType": 25,
+    "favored": false
   },
   {
     "id": 26,
@@ -880,6 +861,637 @@ export const ADJUSTMENTS_ARRAY = [
     "sequence": 27,
     "isExposureGrowth": false,
     "value": "2,1",
-    "idAdjustementType": 26
+    "idAdjustementType": 26,
+    "favored": false
   }
 ].map(item => ({...item, linear: false, hover: false}));
+export const PLT_COLUMNS = [
+  {
+    sortDir: 1,
+    fields: 'checkbox',
+    header: '',
+    width: '43',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'checkbox',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true,
+  },
+  {
+    sortDir: 1,
+    fields: 'userTags',
+    header: 'User Tags',
+    width: '80',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'checkbox',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true,
+  },
+  {
+    sortDir: 1,
+    fields: 'pltId',
+    header: 'PLT ID',
+    width: '80',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true,
+  },
+  {
+    sortDir: 1,
+    fields: 'pltName',
+    header: 'PLT Name',
+    width: '150',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'peril',
+    header: 'Peril',
+    width: '80',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'regionPerilCode',
+    header: 'Region Peril Code',
+    width: '80',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'regionPerilName',
+    header: 'Region Peril Name',
+    width: '130',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'grain',
+    header: 'Grain',
+    width: '160',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'vendorSystem',
+    header: 'Vendor System',
+    width: '90',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'rap',
+    header: 'RAP',
+    width: '70',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'action',
+    header: '',
+    width: '25',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: 'icon-focus-add',
+    type: 'icon',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'action',
+    header: '',
+    width: '25',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: 'icon-note',
+    type: 'icon',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'overallLMF',
+    header: 'Overall LMF',
+    width: '60',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'base',
+    header: 'Base',
+    width: '220',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'default',
+    header: 'Default',
+    width: '118',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'client',
+    header: 'Client',
+    width: '220',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'inuring',
+    header: 'Inuring',
+    width: '118',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'postInuring',
+    header: 'Post-Inuring',
+    width: '220',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+];
+export const EPM_COLUMNS = [
+  {
+    sortDir: 1,
+    fields: 'checkbox',
+    header: '',
+    width: '43',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'checkbox',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true,
+  },
+  {
+    sortDir: 1,
+    fields: 'userTags',
+    header: 'User Tags',
+    width: '80',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'checkbox',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true,
+  },
+  {
+    sortDir: 1,
+    fields: 'pltId',
+    header: 'PLT ID',
+    width: '80',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true,
+  },
+  {
+    sortDir: 1,
+    fields: 'pltName',
+    header: 'PLT Name',
+    width: '150',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'peril',
+    header: 'Peril',
+    width: '80',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'regionPerilCode',
+    header: 'Region Peril Code',
+    width: '80',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'regionPerilName',
+    header: 'Region Peril Name',
+    width: '130',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'grain',
+    header: 'Grain',
+    width: '160',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'vendorSystem',
+    header: 'Vendor System',
+    width: '90',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'rap',
+    header: 'RAP',
+    width: '70',
+    dragable: false,
+    sorted: true,
+    filtred: true,
+    icon: null,
+    type: 'field',
+    style: 'border: none !important',
+    extended: false,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'action',
+    header: '',
+    width: '25',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: 'icon-focus-add',
+    type: 'icon',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'action',
+    header: '',
+    width: '25',
+    dragable: false,
+    sorted: false,
+    filtred: false,
+    icon: 'icon-note',
+    type: 'icon',
+    style: 'border: none !important',
+    extended: true,
+    frozen: true
+  },
+  {
+    sortDir: 1,
+    fields: 'AAL',
+    header: 'AAL',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM2',
+    header: '2',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM5',
+    header: '5',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM10',
+    header: '10',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM25',
+    header: '25',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM50',
+    header: '50',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM100',
+    header: '100',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM250',
+    header: '250',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM500',
+    header: '500',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM1000',
+    header: '1000',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM5000',
+    header: '5000',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+  {
+    sortDir: 1,
+    fields: 'EPM10000',
+    header: '10000',
+    width: '80',
+    dragable: true,
+    sorted: false,
+    filtred: false,
+    icon: null,
+    type: 'field',
+    style: 'border: 1px solid rgba(0, 0, 0, 0.075) !important',
+    extended: true,
+    frozen: false
+  },
+];
+export const EPMS = ["AEP", "AEP-TVAR", "OEP", "OEP-TVAR"];
+export const UNITS = [
+  {id: '3', label: 'Billion'},
+  {id: '1', label: 'Thousands'},
+  {id: '2', label: 'Million'},
+  {id: '4', label: 'Unit'}
+];
+export const DEPENDENCIES = [
+  {id: 1, title: 'ETL', content: 'RDM: CC_IT1607_XYZ_Surplus_R', chip: 'Analysis ID: 149'},
+  {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
+  {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
+  {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
+];
+export const SYSTEM_TAGS_MAPPING = {
+  grouped: {
+    regionPerilCode: 'Region Peril',
+    currency: 'Currency',
+    sourceModellingVendor: 'Modelling Vendor',
+    sourceModellingSystem: 'Model System',
+    targetRapCode: 'Target RAP',
+    userOccurrenceBasis: 'User Occurence Basis',
+    pltType: 'Loss Asset Type',
+  },
+  nonGrouped: {}
+};
+export const CURRENCIES = [
+  {id: '1', name: 'Euro', label: 'EUR'},
+  {id: '2', name: 'Us Dollar', label: 'USD'},
+  {id: '3', name: 'Britsh Pound', label: 'GBP'},
+  {id: '4', name: 'Canadian Dollar', label: 'CAD'},
+  {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
+  {id: '5', name: 'Swiss Franc', label: 'CHF'},
+  {id: '5', name: 'Saudi Riyal', label: 'SAR'},
+  {id: '6', name: 'Bitcoin', label: 'XBT'},
+  {id: '7', name: 'Hungarian forint', label: 'HUF'},
+  {id: '8', name: 'Singapore Dollars', label: 'SGD'}
+];
+

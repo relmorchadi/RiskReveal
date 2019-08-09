@@ -1,13 +1,14 @@
-<nz-badge (click)="togglePopup()" style="cursor: pointer" [nzCount]="5" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent"
-          nzPlacement="bottomRight" nzTrigger="click">
-  <!-- <a href="#"
-      class="icon-help_outline_24px icon-size"></a>-->
-  <nz-progress class="circular-progress-bar" [nzPercent]="60"
-               [nzFormat]="formatter"
-               [nzStrokeWidth]="8"
-               nzType="circle" [nzWidth]="26">
-  </nz-progress>
-</nz-badge>
+<div (click)="togglePopup()" >
+  <nz-badge style="cursor: pointer" [nzCount]="5" nz-popover [(nzVisible)]="visible" [nzContent]="tasksPopoverContent"
+            nzPlacement="bottomRight" nzTrigger="click">
+    <nz-progress class="circular-progress-bar" [nzPercent]="60"
+                 [nzFormat]="formatter"
+                 [nzStrokeWidth]="8"
+                 nzType="circle" [nzWidth]="26">
+    </nz-progress>
+  </nz-badge>
+</div>
+
 <ng-template #tasksPopoverContent>
   <div class="tabs-popover-content" style="width: 565px">
     <nz-tabset class="a-tab-minitab">
