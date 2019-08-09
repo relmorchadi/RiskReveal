@@ -17,7 +17,7 @@ public class QueryHelper {
     public String generateSqlQuery(NewWorkspaceFilter filter, int offset, int size){
 
         String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter);
-        return sqlWithoutOffset + " order by c.WorkSpaceId OFFSET "+ offset +" ROWS FETCH NEXT "+ size+" ROWS ONLY";
+        return sqlWithoutOffset + " order by c.WorkSpaceId, c.UwYear desc OFFSET "+ offset +" ROWS FETCH NEXT "+ size+" ROWS ONLY";
     }
 
     public String generateCountQuery(NewWorkspaceFilter filter){
@@ -131,7 +131,7 @@ public class QueryHelper {
 
     public String generateSqlQuery(List<ExpertModeFilter> filter,String keyword, int offset, int size){
         String sqlWithoutOffset = generateSqlQueryWithoutOffset(filter,keyword);
-        return sqlWithoutOffset + " order by c.WorkSpaceId OFFSET "+ offset +" ROWS FETCH NEXT "+ size+" ROWS ONLY";
+        return sqlWithoutOffset + " order by c.WorkSpaceId, c.UwYear desc OFFSET "+ offset +" ROWS FETCH NEXT "+ size+" ROWS ONLY";
 
     }
 

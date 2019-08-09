@@ -41,7 +41,7 @@ public class PltBrowserService {
     public PltTagResponse searchPltTable(PltFilter pltFilter) {
 
         PltTagResponse pltTagResponse = new PltTagResponse();
-        List<PltManagerView> plts = pltManagerViewRepository.findAll(pltTableSpecification.getFilter(pltFilter));
+        List<PltManagerView> plts = pltManagerViewRepository.findAll(pltTableSpecification.getFilter(pltFilter)).stream().distinct().collect(Collectors.toList());
         List<UserTag> userTags = userTagRepository.findByWorkspace(
                 workspaceRepository.findWorkspaceByWorkspaceId(
                         new Workspace.WorkspaceId(pltFilter.getWorkspaceId(), pltFilter.getUwy())

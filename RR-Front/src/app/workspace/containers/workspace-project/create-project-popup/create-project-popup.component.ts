@@ -16,11 +16,11 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   unSubscribe$: Subject<void>;
   @Output('onCancelCreateProject')
   onCancelCreateProject: EventEmitter<any> = new EventEmitter();
-  @Input()
+  @Input('workspace')
   workspace: any;
-  @Input()
+  @Input('isVisible')
   isVisible;
-  @Input()
+  @Input('newProject')
   newProject: any;
   newProjectForm: FormGroup;
 
@@ -39,10 +39,13 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
 
   createUpdateProject() {
     let project = {...this.newProjectForm.value, projectId: null};
+    console.log('This is data', this);
     if (this.newProjectForm.controls.projectId.value) {
       project = {...project, linkFlag: true,
         sourceProjectId: this.newProjectForm.value.projectId,
-        sourceProjectName: this.newProjectForm.value.name
+        sourceProjectName: this.newProjectForm.value.name,
+        sourceWsId: _.get(this.newProject, 'workspaceId', null),
+        sourceWsName: _.get(this.newProject,'workspaceName', null)
       };
     }
     console.log(project);

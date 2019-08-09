@@ -5,7 +5,7 @@
   [columns]="dataColumns"
   [contextMenu]="cm"
   [frozenColumns]="frozenColumns"
-  [frozenWidth]="frozenWidth"
+  [frozenWidth]="frozenWidth+'px'"
   [resizableColumns]="true"
   [columnResizeMode]="'fit'"
   [responsive]="true"
@@ -13,7 +13,7 @@
   scrollHeight="calc(100vh - 480px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
-  [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
+  [value]="(showDeleted ? deletedPlts : listOfPltsData)  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
   <ng-template let-columns pTemplate="colgroup">
     <colgroup>
       <ng-container *ngFor="let col of columns">
@@ -29,12 +29,11 @@
             style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
           <div
             style="width: 102px;position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;">
-                        <span
-                          style="width: 90px; font-size: 1.3em; font-weight: bold;     color: rgba(0, 0, 0, 0.65);top: 16px;left: 33px;position: absolute;">PLTs</span>
+            <span
+              style="width: 90px; font-size: 1.3em; font-weight: bold;     color: rgba(0, 0, 0, 0.65);top: 16px;left: 33px;position: absolute;">PLTs</span>
           </div>
           <div style="left: -1px;top: 32px; position:absolute; margin-right: 3px;">
-                        <span
-                          (click)="addRemoveModal=true" class="addRemove">Add/Remove</span>
+            <span (click)="addRemoveModal=true" class="addRemove">Add/Remove</span>
           </div>
           <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
                        [nzPlacement]="'bottomLeft'" nzTrigger="click"
@@ -239,7 +238,6 @@
                         </ng-container>
                       </span>
         </th>
-
         <th *ngIf="col?.fields === 'pltName'" pResizableColumn
             style="padding: 0 !important;text-align: center !important;">
                       <span style="justify-content: space-between;">
@@ -333,7 +331,6 @@
         </th>
         <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
             style="padding: 0 !important;text-align: center !important;">
-          <i [ngClass]="col.icon"></i>
           <span style="justify-content: space-between;">
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
                           <i (click)="sortChange(col?.fields,sortData[col.fields])" *ngSwitchCase="'asc'"
@@ -348,6 +345,24 @@
         <th *ngIf="col?.fields === 'overallLMF'" style="padding: 0 !important;text-align: center !important;">
                       <span style="justify-content: space-between;">
                         {{col?.header}}
+                      </span>
+        </th>
+        <th *ngIf="col?.fields === 'peril' ||
+                   col?.fields === 'regionPerilCode' ||
+                   col?.fields === 'regionPerilName' ||
+                   col?.fields === 'grain' ||
+                   col?.fields === 'vendorSystem' ||
+                   col?.fields === 'rap' ">
+                      <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                        {{col?.header}}
+                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchDefault class="icon-direction"
+                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                        </ng-container>
                       </span>
         </th>
         <th *ngIf="!col.frozen" [ngClass]="{ 'inuring-header':col.fields=='inuring','draggable': col?.dragable}"
@@ -372,9 +387,15 @@
           </div>
         </th>
         <th *ngIf="col?.icon === 'icon-focus-add'"></th>
-        <th *ngIf="col?.icon === 'icon-note'" style="border-right: 8px solid #F4F6FC !important;">
+        <th *ngIf="col?.icon === 'icon-note'" class="separator-right">
         </th>
         <th *ngIf="col?.fields === 'overallLMF'"></th>
+        <th *ngIf="col?.fields === 'peril'"></th>
+        <th *ngIf="col?.fields === 'regionPerilCode'"></th>
+        <th *ngIf="col?.fields === 'regionPerilName'"></th>
+        <th *ngIf="col?.fields === 'grain'"></th>
+        <th *ngIf="col?.fields === 'vendorSystem'"></th>
+        <th *ngIf="col?.fields === 'rap'"></th>
         <th *ngIf="col?.fields === 'base'"></th>
         <th *ngIf="col?.fields === 'default'"></th>
         <th *ngIf="col?.fields === 'client'"></th>
@@ -429,7 +450,9 @@
             </div>
             <div
               *ngIf="col.icon=='icon-note' && (selectedListOfPlts.length <= 1 ||  !selectedListOfPlts.includes(rowData.pltId))">
-              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click" class="plt-dropdown">
+              <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click" class="plt-dropdown"
+                           [ngClass]=" {'display-dropdown':clickedDropdown == rowData.pltId,'undisplay-dropdown':!clickedDropdown == rowData.pltId }"
+                           (nzVisibleChange)="changeDropdownDisplay($event,rowData.pltId)">
                 <i class="icon-menu_24px"
                    nz-dropdown
                    style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
@@ -585,7 +608,7 @@
   *ngIf="tableType == 'EP Metrics'"
   [columns]="dataColumns"
   [frozenColumns]="frozenColumns"
-  [frozenWidth]="frozenWidth"
+  [frozenWidth]="frozenWidth+'px'"
   [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag] "
   [resizableColumns]="true"
   [columnResizeMode]="'fit'"
@@ -878,12 +901,29 @@
                         </ng-container>
                       </span>
         </th>
+        <th *ngIf="col?.fields === 'peril' ||
+                   col?.fields === 'regionPerilCode' ||
+                   col?.fields === 'regionPerilName' ||
+                   col?.fields === 'grain' ||
+                   col?.fields === 'vendorSystem' ||
+                   col?.fields === 'rap' ">
+                      <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
+                        {{col?.header}}
+                        <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
+                          <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                          <i *ngSwitchDefault class="icon-direction"
+                             (click)="sortChange(col?.fields,sortData[col.fields])" style="font-size: 1.4em;"></i>
+                        </ng-container>
+                      </span>
+        </th>
+
         <th *ngIf="!col.frozen"
             style="padding: 0 !important;text-align: center !important; border-bottom: none !important;">
                       <span style="justify-content: space-between; float: right;margin-right: 4px;">
-                            <i *ngIf="col.fields ==='EPM10000'" class="icon-settings_24px" nz-dropdown
-                               style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"
-                               (click)="openMetricModal()"></i>
+
                       </span>
         </th>
       </ng-container>
@@ -904,6 +944,12 @@
         <th *ngIf="col?.icon === 'icon-focus-add'"></th>
         <th *ngIf="col?.icon === 'icon-note'" style="border-right: 8px solid #F4F6FC !important;">
         </th>
+        <th *ngIf="col?.fields === 'peril'"></th>
+        <th *ngIf="col?.fields === 'regionPerilCode'"></th>
+        <th *ngIf="col?.fields === 'regionPerilName'"></th>
+        <th *ngIf="col?.fields === 'grain'"></th>
+        <th *ngIf="col?.fields === 'vendorSystem'"></th>
+        <th *ngIf="col?.fields === 'rap'"></th>
         <th *ngIf="!col.frozen"
             style="padding: 0 !important;text-align: center !important; border-right: 1px solid  #7f7f7f4a">
                       <span style="justify-content: space-between; float: right;margin-right: 4px;">
@@ -1006,23 +1052,23 @@
         <ng-container *ngIf="col?.dragable">
           <div class="text-elipsice border-dragable threeValues">
             <div class="EPM0">
-              {{  randomMetaData[rowData.pltId][col.fields][0] }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][0])}}
             </div>
             <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1] > 0"
                  class="EPM2B">
-              {{ randomMetaData[rowData.pltId][col.fields][1]  }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][1])  }}
             </div>
             <div *ngIf="EPMDisplay == 'amount' && randomMetaData[rowData.pltId][col.fields][1]  < 0"
                  class="EPM2R">
-              {{ randomMetaData[rowData.pltId][col.fields][1]  }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][1])  }}
             </div>
             <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  > 0"
                  class="EPM2B">
-              {{ randomMetaData[rowData.pltId][col.fields][2] + '%' }}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][2]) + '%' }}
             </div>
             <div *ngIf="EPMDisplay == 'percentage' && randomMetaData[rowData.pltId][col.fields][2]  < 0"
                  class="EPM2R">
-              {{ randomMetaData[rowData.pltId][col.fields][2] + '%'}}
+              {{ numberWithCommas(randomMetaData[rowData.pltId][col.fields][2]) + '%'}}
             </div>
           </div>
         </ng-container>
@@ -1038,7 +1084,7 @@
   [modal]="true"
   [responsive]="true"
   [styleClass]="'m-dialog-modal returned-periods'"
-  [visible]="isVisible"
+  [visible]="manageReturnPeriods"
   appendTo="body">
   <p-header>
     <div class="header">
@@ -1056,7 +1102,9 @@
       <ng-template pTemplate="body" let-rowData>
         <tr>
           <td pEditableColumn style="background-color: #ffffff" class="on-hover-pop-up">
-            <p-cellEditor>
+            <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-right"
+               style="margin-left: 10px;cursor: pointer;color: red; visibility: hidden;"></i>
+            <p-cellEditor class="pull-right">
               <ng-template pTemplate="input">
                 <label>
                   <input class="a-textfield-mini" pInputText type="text" style="font-size: 14px;margin-left: 5px"
@@ -1067,8 +1115,6 @@
                 {{rowData}}
               </ng-template>
             </p-cellEditor>
-            <i (click)="removeReturnPeriod(rowData)" class="icon-trash-alt pull-right"
-               style="cursor: pointer;color: red; display: none;"></i>
           </td>
         </tr>
       </ng-template>

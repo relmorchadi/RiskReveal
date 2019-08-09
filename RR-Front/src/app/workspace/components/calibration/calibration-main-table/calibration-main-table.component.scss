@@ -1311,11 +1311,11 @@
 }
 
 .separator-right {
-  border-right: 8px solid #F4F6FC !important;
+  border-right: 5px solid #F4F6FC !important;
 }
 
 .separator-left {
-  border-left: 8px solid #F4F6FC !important;
+  border-left: 5px solid #F4F6FC !important;
 }
 
 .data-separator-left {
@@ -1785,9 +1785,6 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.returned-periods {
   height: 453px !important;
-}
-
-::ng-deep.m-dialog-modal {
   width: 417px !important;
 }
 
@@ -1811,7 +1808,7 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.on-hover-pop-up:hover {
   .icon-trash-alt {
-    display: block !important;
+    visibility: visible !important;
   }
 }
 

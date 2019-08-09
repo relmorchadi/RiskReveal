@@ -34,6 +34,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('extend') extendEmitter: EventEmitter<any> = new EventEmitter();
   @Output('clickButtonPlus') clickButtonPlusEmitter: EventEmitter<any> = new EventEmitter();
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('closeReturnPeriods') closeReturnPeriodsEmitter: EventEmitter<any> = new EventEmitter();
+
   @Input('extended') extended: boolean;
   // @Input('cm') cm: any;
   @Input('tableType') tableType: any;
@@ -50,7 +52,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('adjutmentApplication') adjutmentApplication: any;
   @Input('systemTagsCount') systemTagsCount: any;
   //PLTS
-  @Input('listOfPlts') listOfPlts: any;
   @Input('listOfPltsData') listOfPltsData: any;
   @Input('listOfDeletedPlts') listOfDeletedPlts: any;
   @Input('listOfDeletedPltsData') listOfDeletedPltsData: any;
@@ -64,6 +65,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('randomMetaData') randomMetaData: any;
   @Input('someItemsAreSelected') someItemsAreSelected: any;
   @Input('selectAll') selectAll: any;
+  @Input('manageReturnPeriods') manageReturnPeriods: boolean;
 
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;
@@ -84,7 +86,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     tagColor: '#0700e4'
   }
   searchAddress: string;
-  listOfPltsCache: any[];
+  listOfPltsDataCache: any[];
   shownDropDown: any;
   inProgressCheckbox: boolean = true;
   newCheckbox: boolean = true;
@@ -255,7 +257,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private dropdown: NzDropdownContextComponent;
   private lastClick: string;
   returnPeriodInput: any;
-  isVisible: boolean;
   clickedDropdown: any;
 
   constructor(
@@ -341,8 +342,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   checkAll($event) {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-        _.range(!this.showDeleted ? this.listOfPlts.length : this.listOfDeletedPlts.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
+        _.map(this.listOfPltsData, plt => plt.pltId),
+        _.range(this.listOfPltsData.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
       )
     );
   }
@@ -358,8 +359,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   unCheckAll() {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map([...this.listOfPlts, ...this.listOfDeletedPlts], plt => plt),
-        _.range(this.listOfPlts.length + this.listOfDeletedPlts.length).map(el => ({selected: false}))
+        _.map(this.listOfPltsData, plt => plt.pltId),
+        _.range(this.listOfPltsData.length).map(el => ({selected: false}))
       )
     );
   }
@@ -373,8 +374,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       this.lastSelectedId = i;
       this.toggleSelectPlts(
         _.zipObject(
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-          _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => ({selected: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(this.listOfPltsData, plt => plt.pltId),
+          _.map(this.listOfPltsData, plt => ({selected: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
@@ -397,7 +398,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
         return !o.selected;
       }]);
     } else {
-      this.listOfPltsData = this.listOfPltsCache;
+      this.listOfPltsData = this.listOfPltsDataCache;
     }
   }
 
@@ -555,37 +556,13 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     return random;
   }
 
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, plt => plt),
-            _.map(!this.showDeleted ? this.listOfPlts : this.listOfDeletedPlts, (plt, i) => ({selected: i <= max && i >= min})),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
+  numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  openMetricModal() {
-    this.isVisible = true;
-  }
 
   hide() {
-    this.isVisible = false;
+    this.closeReturnPeriodsEmitter.emit()
   }
 
   addToReturnPeriods() {
@@ -606,6 +583,31 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       this.clickedDropdown = pltId;
     } else {
       this.clickedDropdown = null;
+    }
+  }
+
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(this.listOfPltsData, plt => plt.pltId),
+            _.map(this.listOfPltsData, (plt, i) => ({selected: i <= max && i >= min})),
+          )
+        );
+      } else {
+        this.lastSelectedId = i;
+      }
+      return;
     }
   }
 }
