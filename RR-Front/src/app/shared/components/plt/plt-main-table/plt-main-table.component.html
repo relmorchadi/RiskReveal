@@ -86,7 +86,7 @@
             <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
               <div class="filter-input">
                 <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterInput">
+                <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterData[col?.fields]">
               </div>
             </th>
           </ng-container>

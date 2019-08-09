@@ -1,71 +1,52 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import * as _ from 'lodash';
-import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, of, Subject, Subscription} from 'rxjs';
-import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
-import {WorkspaceMainState} from '../../../../core/store/states';
-import {LazyLoadEvent} from 'primeng/api';
-import {SearchService} from '../../../../core/service';
-import {Debounce} from '../../../../shared/decorators';
-import {NotificationService} from '../../../../shared/notification.service';
-import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {debounceTime, mergeMap, switchMap, tap} from 'rxjs/operators';
-import * as fromWorkspaceStore from '../../../store';
-import {WorkspaceState} from '../../../store';
-import {Message} from '../../../../shared/message';
-import * as rightMenuStore from '../../../../shared/components/plt/plt-right-menu/store/';
-import {Actions as rightMenuActions} from '../../../../shared/components/plt/plt-right-menu/store/actionTypes';
-import * as tableStore from '../../../../shared/components/plt/plt-main-table/store';
-import {Actions as tableActions} from '../../../../shared/components/plt/plt-main-table/store';
-import {BaseContainer} from '../../../../shared/base';
-import {StateSubscriber} from '../../../model/state-subscriber';
-import {SystemTagsService} from '../../../../shared/services/system-tags.service';
+import {BaseContainer} from "../../../base";
+import {Actions, ofActionDispatched, Store} from "@ngxs/store";
+import {Router} from "@angular/router";
+import * as fromWorkspaceStore from "../../../../workspace/store";
+import * as _ from "lodash";
+import {Actions as rightMenuActions} from "../plt-right-menu/store";
+import * as rightMenuStore from "../plt-right-menu/store";
+import {debounceTime, mergeMap} from "rxjs/operators";
+import {of} from "rxjs";
+import {FormControl, FormGroup} from "@angular/forms";
+import {SystemTagsService} from "../../../services/system-tags.service";
+import {SearchService} from "../../../../core/service";
+import {WorkspaceState} from "../../../../workspace/store";
+import {Debounce} from "../../../decorators";
+import {LazyLoadEvent} from "primeng/api";
+import {Actions as tableActions} from "../plt-main-table/store";
+import {Message} from "../../../message";
+import * as tableStore from "../plt-main-table/store";
 
 @Component({
-  selector: 'app-workspace-project-popup',
-  templateUrl: './workspace-project-popup.component.html',
-  styleUrls: ['./workspace-project-popup.component.scss'],
+  selector: 'app-plt-selection-pop-up',
+  templateUrl: './plt-selection-pop-up.component.html',
+  styleUrls: ['./plt-selection-pop-up.component.scss']
 })
-export class WorkspaceProjectPopupComponent extends BaseContainer implements OnInit, StateSubscriber {
+export class PltSelectionPopUpComponent extends BaseContainer implements OnInit {
 
-  data$: Observable<any>;
-  deletedPlts$: Observable<any>;
-  subscriptions: Subscription;
-  @Select(WorkspaceMainState.getData) selectWsData$;
-  @Select(WorkspaceMainState.getProjects) projects$;
-  unSubscribe$: Subject<void>;
-  private pltProjectSubscription: Subscription;
-  private pltUserTagsSubscription: Subscription;
-
-  @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
-  @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
-  @Output('onSelectItems') onSelectItems: EventEmitter<any> = new EventEmitter();
-  @Output('onSelectWorkspace') onSelectWorkspace: EventEmitter<any> = new EventEmitter();
   @Input() isVisible;
-  @Input('selectionStep') selectionStep: string;
-  @Input() multiSteps: boolean;
   @Input() stepConfig: {
     wsId: string,
     uwYear: string,
     plts: any[]
   };
+  @Input() multiSteps: boolean;
 
-  rightMenuInputs: rightMenuStore.Input;
+  @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
+  @Output('onSelectWorkspace') onSelectWorkspace: EventEmitter<any> = new EventEmitter();
+  @Output('onSelectItems') onSelectItems: EventEmitter<any> = new EventEmitter();
 
-  workspace: any;
-  index: any;
-  newProject = false;
-  existingProject = false;
-  mgaProject = false;
+  keywordFormGroup: FormGroup;
+  browesing: boolean;
+  selectedPlt: string;
   searchWorkspace = false;
   selectedWorkspace: any = null;
-  selectedWorkspaceProjects: any = null;
-  selectExistingProject = false;
-  selectedProject: any = null;
-  selectedWs: any;
-  globalSearchItem = '';
-  private _filter = {};
-  keywordFormGroup: FormGroup;
+  _filter = {};
+  loading;
+  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
+  contracts = [];
+
   selectWsTable = [
     {
       field: 'countryName',
@@ -122,10 +103,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       filterParam: 'workspaceId'
     }
   ];
-  paginationOption = {currentPage: 0, page: 0, size: 40, total: '-'};
-  contracts = [];
-  loading;
-  browesing: boolean;
+
+
+  d: any;
 
   Inputs: {
     scrollHeight: string | number,
@@ -170,18 +150,13 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
-  private d: Subscription;
-  private selectedPlt: string;
+  rightMenuInputs: rightMenuStore.Input;
 
-  constructor(
-    private route: ActivatedRoute,
-    private actions$: Actions,
-    private notificationService: NotificationService,
-    private searchService: SearchService,
-    private fb: FormBuilder,
-    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
-    private systemTagService: SystemTagsService,
-  ) {
+  constructor(_baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+              private systemTagService: SystemTagsService,
+              private searchService: SearchService,
+              private actions$: Actions,
+              ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.Inputs= {
       contextMenuItems: [
@@ -405,12 +380,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       wsHeaderSelected: true,
       pathTab: true,
       selectedItemForMenu: null
-  };
-    this.unSubscribe$ = new Subject<void>();
-    this.keywordFormGroup = new FormGroup({
-      keyword: new FormControl(null)
-    });
-    this.browesing= false;
+    };
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
@@ -422,26 +392,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       visible: false,
       mode: "pop-up"
     };
-    this.setRightMenuSelectedTab('basket');
-  }
-
-  ngOnInit() {
-
-  }
-
-  observeRouteParams() {
-    return this.route.params.pipe(tap(({wsId, year}) => {
-      this.setInputs('wsId', wsId);
-      this.setInputs('uwYear', year);
-    }))
-  }
-
-  observeRouteParamsWithSelector(operator) {
-    return this.observeRouteParams()
-      .pipe(
-        switchMap(() => operator()),
-        this.unsubscribeOnDestroy
-      );
   }
 
   getPlts() {
@@ -452,6 +402,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     return this.select(WorkspaceState.getDeletedPltsForPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
   }
 
+  getUserTags() {
+    return this.select(WorkspaceState.getUserTagsPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
+  }
+
   getProjects() {
     return this.select(WorkspaceState.getProjectsPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
   }
@@ -460,143 +414,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     return this.select(WorkspaceState.getOpenedPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
   }
 
-  getUserTags() {
-    return this.select(WorkspaceState.getUserTagsPlt(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-  }
-
-  getBrowesingItemsDirectly() {
-    this.browesing= true;
-
-    this.dispatch(new fromWorkspaceStore.loadAllPlts({
-      params: {
-        workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
-      },
-      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear')
-    }));
-
-    this.getPlts().subscribe((data) => {
-      this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
-
-      this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
-      this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
-      this.updateMenuKey('basket', []);
-      this.setInputs('selectedListOfPlts', []);
-
-      _.forEach(data, (v, k) => {
-        if (v.selected) {
-          this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'), v.pltId));
-          this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
-            pltId: v.pltId,
-            ...v
-          }));
-        }
-      })
-
-      this.detectChanges();
+  ngOnInit() {
+    this.keywordFormGroup = new FormGroup({
+      keyword: new FormControl(null)
     });
-
-    this.getDeletedPlts()
-      .subscribe((deletedData) => {
-        this.setInputs('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
-        this.setInputs('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
-        this.setInputs('selectedListOfDeletedPlts', _.filter(deletedData, (v, k) => v.selected));
-
-        this.detectChanges();
-      });
-
-    this.getPlts().subscribe(data => {
-      this.setInputs('selectAll',
-        (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
-        &&
-        this.getTableInputKey('listOfPltsData').length > 0);
-
-      this.setInputs("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
-      this.detectChanges();
-    });
-
-    this.getDeletedPlts().subscribe(deletedPlts => {
-      this.setInputs('selectAllDeletedPlts',
-        (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length))
-        &&
-        this.getTableInputKey('listOfDeletedPltsData').length > 0);
-
-      this.setInputs("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0);
-      this.detectChanges();
-    });
-
-    this.d = this.actions$.pipe(
-      ofActionDispatched(fromWorkspaceStore.loadAllPltsSuccess),
-      mergeMap( () => {
-        console.log(this.stepConfig, this.getInputs('listOfPltsData'));
-        this.toggleSelectPlts(_.zipObject(
-          _.map(_.map(this.stepConfig.plts, id => _.find(this.getInputs('listOfPltsData'), plt => id == plt.pltId)), plt => plt.pltId),
-          _.map(this.stepConfig.plts, plt =>   ({type: true }))
-        ));
-        return of(null);
-      })
-    ).subscribe( () => this.d.unsubscribe());
-
-    this.getProjects().subscribe((projects: any) => {
-      this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
-      this.detectChanges();
-    });
-
-    this.getUserTags().subscribe(userTags => {
-      this.setInputs('userTags', userTags || {});
-      this.detectChanges();
-    })
-  }
-
-  ngOnDestroy(): void {
-    this.unSubscribe$.next();
-    this.unSubscribe$.complete();
-    this.destroy();
-  }
-
-  openWorkspaceInSlider(event?) { console.log(event); }
-  @Debounce(500)
-  filterData($event, target) {
-    this._filter = {...this._filter, [target]: $event || null};
-    this._loadData();
-  }
-
-  loadMore(event: LazyLoadEvent) {
-    this.paginationOption.currentPage = event.first;
-    this._loadData(String(event.first));
-  }
-
-  private _loadData(offset = '0', size = '100') {
-    this.loading = true;
-    const keyword = this.keywordFormGroup.get('keyword').value === '' ? null : this.keywordFormGroup.get('keyword').value
-    const params = {
-      keyword,
-      filter: this.filter,
-      offset,
-      size
-    };
-    this.searchService.expertModeSearch(params)
-      .subscribe((data: any) => {
-        this.contracts = data.content.map(item => ({...item, selected: false}));
-        this.loading = false;
-        this.paginationOption = {
-          ...this.paginationOption,
-          page: data.number,
-          size: data.numberOfElements,
-          total: data.totalElements
-        };
-        this.detectChanges();
-      });
-  }
-
-  get filter() {
-    // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
-    const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
-    // return _.concat(tags ,  tableFilter).filter(({value}) => value).map((item: any) => ({
-    return tableFilter.filter(({value}) => value).map((item: any) => ({
-      ...item,
-      field: _.camelCase(item.key),
-      operator: item.operator || 'LIKE'
-    }));
   }
 
   onHide() {
@@ -825,7 +646,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       pathTab: true,
       selectedItemForMenu: null
     };
-    this.subscriptions && this.subscriptions.unsubscribe();
     this.searchWorkspace = false;
     this.selectedWorkspace = null;
     this._filter = {};
@@ -841,6 +661,168 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       visible: false,
       mode: "pop-up"
     };
+  }
+
+  onShow() {
+    this.browesing=false;
+    this.keywordFormGroup.get('keyword')
+      .valueChanges
+      .pipe(debounceTime(400))
+      .pipe(this.unsubscribeOnDestroy)
+      .subscribe((value) => {
+        this.loading = true;
+        this._loadData();
+      });
+
+    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
+      this.setInputs('wsId', this.stepConfig.wsId);
+      this.setInputs('uwYear', this.stepConfig.uwYear);
+      this.getBrowesingItemsDirectly();
+    }
+
+  }
+
+  getBrowesingItemsDirectly() {
+    this.browesing= true;
+
+    this.dispatch(new fromWorkspaceStore.loadAllPlts({
+      params: {
+        workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
+      },
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear')
+    }));
+
+    this.getPlts().subscribe((data) => {
+      this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+
+      this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
+      this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
+      this.updateMenuKey('basket', []);
+      this.setInputs('selectedListOfPlts', []);
+
+      _.forEach(data, (v, k) => {
+        if (v.selected) {
+          this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'), v.pltId));
+          this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
+            pltId: v.pltId,
+            ...v
+          }));
+        }
+      })
+
+      this.detectChanges();
+    });
+
+    this.getDeletedPlts()
+      .subscribe((deletedData) => {
+        this.setInputs('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
+        this.setInputs('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
+        this.setInputs('selectedListOfDeletedPlts', _.filter(deletedData, (v, k) => v.selected));
+
+        this.detectChanges();
+      });
+
+    this.getPlts().subscribe(data => {
+      this.setInputs('selectAll',
+        (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
+        &&
+        this.getTableInputKey('listOfPltsData').length > 0);
+
+      this.setInputs("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
+      this.detectChanges();
+    });
+
+    this.getDeletedPlts().subscribe(deletedPlts => {
+      this.setInputs('selectAllDeletedPlts',
+        (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length))
+        &&
+        this.getTableInputKey('listOfDeletedPltsData').length > 0);
+
+      this.setInputs("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0);
+      this.detectChanges();
+    });
+
+    this.d = this.actions$.pipe(
+      ofActionDispatched(fromWorkspaceStore.loadAllPltsSuccess),
+      mergeMap( () => {
+        console.log(this.stepConfig, this.getInputs('listOfPltsData'));
+        this.toggleSelectPlts(_.zipObject(
+          _.map(_.map(this.stepConfig.plts, id => _.find(this.getInputs('listOfPltsData'), plt => id == plt.pltId)), plt => plt.pltId),
+          _.map(this.stepConfig.plts, plt =>   ({type: true }))
+        ));
+        return of(null);
+      })
+    ).subscribe( () => this.d.unsubscribe());
+
+    this.getProjects().subscribe((projects: any) => {
+      this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.detectChanges();
+    });
+
+    this.getUserTags().subscribe(userTags => {
+      this.setInputs('userTags', userTags || {});
+      this.detectChanges();
+    })
+  }
+
+  get filter() {
+    // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
+    const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
+    // return _.concat(tags ,  tableFilter).filter(({value}) => value).map((item: any) => ({
+    return tableFilter.filter(({value}) => value).map((item: any) => ({
+      ...item,
+      field: _.camelCase(item.key),
+      operator: item.operator || 'LIKE'
+    }));
+  }
+
+  _loadData(offset = '0', size = '100') {
+    this.loading = true;
+    const keyword = this.keywordFormGroup.get('keyword').value === '' ? null : this.keywordFormGroup.get('keyword').value
+    const params = {
+      keyword,
+      filter: this.filter,
+      offset,
+      size
+    };
+    this.searchService.expertModeSearch(params)
+      .subscribe((data: any) => {
+        this.contracts = data.content.map(item => ({...item, selected: false}));
+        this.loading = false;
+        this.paginationOption = {
+          ...this.paginationOption,
+          page: data.number,
+          size: data.numberOfElements,
+          total: data.totalElements
+        };
+        this.detectChanges();
+      });
+  }
+
+  goToSearchWorkspace() {
+    this._filter = {};
+    this._loadData();
+    this.browesing= false;
+  }
+
+  onEnter() { this._loadData(); }
+  search() { this._loadData(); }
+
+  clearSearchValue() {
+    this.keywordFormGroup.get('keyword').setValue(null);
+    this._loadData();
+  }
+
+  openWorkspaceInSlider(event?) { console.log(event); }
+  @Debounce(500)
+  filterData($event, target) {
+    this._filter = {...this._filter, [target]: $event || null};
+    this._loadData();
+  }
+
+  loadMore(event: LazyLoadEvent) {
+    this.paginationOption.currentPage = event.first;
+    this._loadData(String(event.first));
   }
 
   onRowSelect(event) {
@@ -859,21 +841,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     console.log(this.getInputs('wsId'),this.getInputs('uwYear'))
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
-    if (this.selectionStep == 'project') {
-      this.searchService.searchWorkspace(workspace.workSpaceId, workspace.uwYear).subscribe((data: any) => {
-          this.selectedWorkspaceProjects = _.map(data.projects, (item) => ({...item, selected: false}));
-          if (!data.projects.length) {
-            this.browesing = false;
-            alert('This workspace contains no project');
-          }else {
-            this.browesing=true;
-          }
-          this.detectChanges();
-        }
-      );
-    }
 
-    if(this.selectionStep == 'plt') {
       if(this.multiSteps) {
         this.browesing = true;
 
@@ -955,68 +923,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       } else {
         this.onVisibleChange.emit(false);
       }
-    }
   }
 
   setBrowesingItems() {
-    if(this.selectionStep == 'plt') {
       this.onSelectWorkspace.emit(this.selectedWorkspace);
       this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
       this.onVisibleChange.emit(false);
-    }else {
-      this.searchWorkspace = false;
-      this.newProject = true;
-      this.onSelectProjectNext.emit(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
-    }
-  }
-
-  selectThisProject(project) {
-    const {projectIndex} = project;
-    let selectedProject = _.find(this.selectedWorkspaceProjects, item => item.selected);
-    selectedProject ? selectedProject.selected = false : null;
-    this.selectedProject = this.selectedWorkspaceProjects[projectIndex];
-    this.selectedProject.selected = true;
-  }
-
-  onShow() {
-    this.browesing=false;
-    this.subscriptions = this.keywordFormGroup.get('keyword')
-      .valueChanges
-      .pipe(debounceTime(400))
-      .subscribe((value) => {
-        this.loading = true;
-        this._loadData();
-      });
-
-    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
-      this.setInputs('wsId', this.stepConfig.wsId);
-      this.setInputs('uwYear', this.stepConfig.uwYear);
-      console.log(this.stepConfig)
-      this.getBrowesingItemsDirectly();
-    }
-
-  }
-
-  onEnter() { this._loadData(); }
-  search() { this._loadData(); }
-  clearSearchValue() {
-    this.keywordFormGroup.get('keyword').setValue(null);
-    this._loadData();
-  }
-
-  goToSearchWorkspace() {
-    this._filter = {};
-    this._loadData();
-    this.browesing= false;
-  }
-
-  checkAll($event) {
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map(!$event ? this.getInputs('listOfPlts') : this.getInputs('listOfDeletedPlts'), plt => plt),
-        _.range(!$event ? this.getInputs('listOfPlts').length : this.getInputs('listOfDeletedPlts').length).map(el => ({type: !this.getInputs('selectAll') && !this.getInputs('someItemsAreSelected')}))
-      )
-    );
   }
 
   toggleSelectPlts(plts: any) {
@@ -1025,71 +937,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       plts,
       forDeleted: this.getInputs('showDeleted')
     }));
-  }
-
-  selectSinglePLT($event) {
-    this.toggleSelectPlts($event);
-  }
-
-  filterPlts(filterData) {
-    console.log(filterData);
-    this.setInputs('filterData', filterData);
-  }
-
-  getInputs(key){
-    return this.Inputs[key];
-  }
-
-  setInputs(key, value) {
-    this.Inputs= {...this.Inputs, [key]: value };
-  }
-
-  setFilters($event) {
-    console.log($event);
-    this.setInputs('filters', $event)
-  }
-
-  setUserTags($event) {
-    console.log($event)
-    this.setInputs('userTags', $event)
-  }
-
-  emitFilters(filters: any) {
-    console.log(filters);
-    this.dispatch(new fromWorkspaceStore.setUserTagsFilters({
-      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
-      filters: filters
-    }))
-  }
-
-  setWsHeaderSelect($event: any) {
-    this.setInputs('wsHeaderSelected', $event);
-  }
-
-  unCheckAll() {
-    console.log('uncheck');
-    this.toggleSelectPlts(
-      _.zipObject(
-        _.map([...this.getInputs('listOfPlts'), ...this.getInputs('listOfDeletedPlts')], plt => plt),
-        _.range(this.getInputs('listOfPlts').length + this.getInputs('listOfDeletedPlts').length).map(el => ({type: false}))
-      )
-    );
-  }
-
-  setSelectedProjects($event) {
-    this.setInputs('projects', $event);
-  }
-
-  clear() {
-    // this.messageService.clear();
-  }
-
-  closePltInDrawer() {
-    this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
-      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
-    }));
-    this.updateMenuKey('pltDetail', null);
-    this.setRightMenuSelectedTab('basket');
   }
 
   openPltInDrawer(plt) {
@@ -1103,6 +950,78 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.updateMenuKey('pltDetail', _.find(this.getInputs('listOfPltsData'), e => e.pltId == plt))
     this.updateMenuKey('visible', true);
     this.setRightMenuSelectedTab('pltDetail');
+  }
+
+  closePltInDrawer() {
+    this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+    }));
+    this.updateMenuKey('pltDetail', null);
+    this.setRightMenuSelectedTab('basket');
+  }
+
+  setFilters($event) {
+    this.setInputs('filters', $event)
+  }
+
+  setUserTags($event) {
+    this.setInputs('userTags', $event)
+  }
+
+  emitFilters(filters: any) {
+    this.dispatch(new fromWorkspaceStore.setUserTagsFilters({
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
+      filters: filters
+    }))
+  }
+
+  setWsHeaderSelect($event: any) {
+    this.setInputs('wsHeaderSelected', $event);
+  }
+
+  unCheckAll() {
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map([...this.getInputs('listOfPlts'), ...this.getInputs('listOfDeletedPlts')], plt => plt),
+        _.range(this.getInputs('listOfPlts').length + this.getInputs('listOfDeletedPlts').length).map(el => ({type: false}))
+      )
+    );
+  }
+
+  setSelectedProjects($event) {
+    this.setInputs('projects', $event);
+  }
+
+  filterPlts(filterData) {
+    this.setInputs('filterData', filterData);
+  }
+
+  getInputs(key){
+    return this.Inputs[key];
+  }
+
+  setInputs(key, value) {
+    this.Inputs= {...this.Inputs, [key]: value };
+  }
+
+  setRightMenuSelectedTab(tab) {
+    this.rightMenuInputs = rightMenuActions.setSelectedTab.handler(this.rightMenuInputs, tab)
+  }
+
+  getRightMenuKey(key) {
+    return _.get(this.rightMenuInputs, key);
+  }
+
+  updateMenuKey(key: string, value: any) {
+    this.rightMenuInputs = rightMenuActions.updateKey.handler(this.rightMenuInputs, key, value);
+  }
+
+  updateTable(key: string, value: any) {
+    this.Inputs = tableActions.updateKey.handler(this.Inputs, key, value);
+  }
+
+  getTableInputKey(key) {
+    return _.get(this.Inputs, key);
   }
 
   rightMenuActionDispatcher(action: Message) {
@@ -1131,32 +1050,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }
   }
 
-  setRightMenuSelectedTab(tab) {
-    this.rightMenuInputs = rightMenuActions.setSelectedTab.handler(this.rightMenuInputs, tab)
-  }
-
-  getRightMenuKey(key) {
-    return _.get(this.rightMenuInputs, key);
-  }
-
-  updateMenuKey(key: string, value: any) {
-    this.rightMenuInputs = rightMenuActions.updateKey.handler(this.rightMenuInputs, key, value);
-  }
-
-  setSelectedPlt($event: any) {
-    this.selectedPlt= $event;
-  }
-
   setSelectedPltByIndex(index: any) {
     this.rightMenuInputs = rightMenuActions.setSelectedTabByIndex.handler(this.rightMenuInputs, index);
-  }
-
-  onSortChange($event: any) {
-    this.setInputs('sortData', $event);
-  }
-
-  onCheckBoxSort($event: any) {
-    this.setInputs('listOfPltsData', $event);
   }
 
   tableActionDispatcher(action: Message) {
@@ -1194,14 +1089,4 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }
   }
 
-  updateTable(key: string, value: any) {
-    this.Inputs = tableActions.updateKey.handler(this.Inputs, key, value);
-  }
-
-  getTableInputKey(key) {
-    return _.get(this.Inputs, key);
-  }
-
-  patchState(state: any): void {
-  }
 }

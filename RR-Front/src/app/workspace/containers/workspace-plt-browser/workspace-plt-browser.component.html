@@ -5,7 +5,7 @@
     </div>
     <div class="my-tabs">
       <app-plt-left-menu
-        [menuInputs]="{
+        [inputs]="{
             tagContextMenu: tagContextMenu,
             wsId: workspaceId,
             uwYear: uwy,
@@ -56,8 +56,21 @@
             PLTs
           </span>
           <div class="right">
-            <div *ngIf="tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
-              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ' PLTs are selected'}}</p>
+            <div *ngIf="!tableInputs['showDeleted'] && tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
+              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ( tableInputs['selectedListOfPlts']?.length  > 1 ?  ' PLTs are selected'  : ' PLT is selected')}}</p>
+              <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
+                <a style="max-height: 28px;display: flex;" nz-dropdown>
+                  <i class="icon-menu_24px"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item (click)="deletePlt()">Delete</li>
+                  <li nz-menu-item (click)="cloneTo()">Clone To</li>
+                  <li nz-menu-item >Calibrate</li>
+                </ul>
+              </nz-dropdown>
+            </div>
+            <div *ngIf="tableInputs['showDeleted'] && tableInputs['selectedListOfDeletedPlts']?.length" style="display: flex;align-items: center;">
+              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfDeletedPlts']?.length + ( tableInputs['selectedListOfDeletedPlts']?.length  > 1 ?  ' Deleted PLTs are selected'  : ' Deleted PLT is selected')}}</p>
               <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
                 <a style="max-height: 28px;display: flex;" nz-dropdown>
                   <i class="icon-menu_24px"></i>
@@ -126,6 +139,7 @@
   [modal]="true"
   [autoZIndex]="false"
   [responsive]="true"
+  (onHide)="resetColumns()"
 >
 
   <p-header>
@@ -133,7 +147,7 @@
       <h4>
         Manage Columns
       </h4>
-      <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
+      <i style="cursor: pointer" (click)="resetColumns()" class="icon-close_24px"></i>
     </div>
   </p-header>
 
@@ -236,7 +250,7 @@
 
   <p-footer>
     <div class="footer">
-      <button (click)="toggleColumnsManager()" class="a-button-text-cancel">cancel</button>
+      <button (click)="resetColumns()" class="a-button-text-cancel">cancel</button>
       <button class="a-buttons-contained" (click)="saveColumns()">
         Save
       </button>

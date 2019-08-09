@@ -425,6 +425,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   ];
 
   generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
+  listOfAvailbleColumnsCache: any[]= [];
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -872,7 +873,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     };
     this.fromPlts = true;
     this.editingTag = false;
-    console.log(this.selectedItemForMenu);
     let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
     this.modalSelect = _.intersectionBy(...d, 'tagId');
     this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
@@ -1060,6 +1060,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   toggleColumnsManager() {
     this.managePopUp= !this.managePopUp;
+    this.listOfAvailbleColumnsCache= [...this.listOfAvailbleColumns];
     if (this.managePopUp) this.listOfUsedColumns = [...this.getTableInputKey('pltColumns')];
   }
 
@@ -1088,8 +1089,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
-        event.previousIndex + 1,
-        event.currentIndex + 1
+        event.previousContainer.id == "usedListOfColumns" ? event.previousIndex + 1 : event.previousIndex,
+        event.container.id == "availableListOfColumns" ? event.currentIndex : event.currentIndex + 1
       );
     }
   }
@@ -1242,6 +1243,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   exportTable() {
-    this.excel.exportAsExcelFile(this.tableInputs.listOfPltsData.map(e => _.omit(e, 'userTags')), 'sample')
+    this.excel.exportAsExcelFile(this.tableInputs.listOfPltsData.map(e => _.omit(e, ['userTags','selected', 'visible', 'tagFilterActive', 'opened', 'deleted'])), 'sample')
+  }
+
+  resetColumns() {
+    this.managePopUp= false;
+    this.listOfUsedColumns= [...this.getTableInputKey('pltColumns')];
+    this.listOfAvailbleColumns= [...this.listOfAvailbleColumnsCache];
   }
 }

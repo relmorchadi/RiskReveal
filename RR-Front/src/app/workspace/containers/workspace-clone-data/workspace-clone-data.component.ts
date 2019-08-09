@@ -85,6 +85,12 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       country: "Belgium"
     },];
     this.browesing= false;
+    this.multiSteps= true;
+    this.stepConfig= {
+      wsId: '',
+      uwYear: '',
+      plts: []
+    }
     this.cloneConfig= {
       currentSourceOfItems: 'to',
       summary: {
@@ -110,12 +116,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         }
       }
     };
-    this.multiSteps= true;
-    this.stepConfig= {
-      wsId: '',
-      uwYear: '',
-      plts: []
-    }
     this.initProjectForm();
     this.listOfProjects= [];
   }
@@ -241,6 +241,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       ).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
         this.workspaceId = wsId;
         this.uwy = year;
+        console.log(this.prn.getPreviousUrl())
         if(_.get(navigationPayload, 'from', null) == 'pltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
           if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {
             this.patchProjectForm('from', {
@@ -294,7 +295,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           });
         }
 
-        console.log(this.multiSteps, navigationPayload, this.stepConfig)
         if (this.getFormValueByKey('from').plts.length > 0) {
           this.cloneConfig = {
             ...this.cloneConfig,

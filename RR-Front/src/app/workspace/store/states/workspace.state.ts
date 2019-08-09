@@ -356,6 +356,11 @@ export class WorkspaceState {
     return this.pltStateService.LoadAllPlts(ctx, payload);
   }
 
+  @Action(fromWS.loadWorkSpaceAndPlts)
+  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts){
+    return this.pltStateService.loadWorkSpaceAndPlts(ctx, payload);
+  }
+
   @Action(fromPlt.loadAllPltsSuccess)
   LoadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPltsSuccess) {
     return this.pltStateService.loadAllPltsSuccess(ctx, payload);

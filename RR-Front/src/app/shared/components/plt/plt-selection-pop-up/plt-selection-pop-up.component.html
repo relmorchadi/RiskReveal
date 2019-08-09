@@ -1,6 +1,6 @@
 <p-dialog [(visible)]="isVisible"
           [closable]="false"
-          [styleClass]="'m-dialog-modal-lg project-clone-pop-up' + (browesing ? ' borderless' : '')"
+          [styleClass]="'m-dialog-modal-lg plt-selection-pop-up' + (browesing ? ' borderless' : '')"
           appendTo="body"
           [modal]="true"
           [responsive]="true"
@@ -12,14 +12,14 @@
   <p-header>
     <div class="header">
       <ng-container *ngIf="browesing">
-          <div class="previous-container">
-            <button class="a-buttons-contained override">
-              <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
-            </button>
-            <h4>
-              {{ selectionStep == 'plt' ? 'Select PLTs to Clone' : 'Search For Project' }}
-            </h4>
-          </div>
+        <div class="previous-container">
+          <button class="a-buttons-contained override">
+            <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
+          </button>
+          <h4>
+            Select PLTs
+          </h4>
+        </div>
       </ng-container>
 
       <ng-container *ngIf="!browesing">
@@ -69,50 +69,44 @@
 
     </div>
   </ng-container>
-  <ng-container *ngIf="browesing && selectionStep == 'project'">
-    <div style="overflow: scroll; height: -webkit-fill-available;">
-      <projects-list [projects]="selectedWorkspaceProjects" (select)="selectThisProject($event)"></projects-list>
-    </div>
-  </ng-container>
 
-  <ng-container *ngIf="browesing && selectionStep == 'plt'">
-      <div class="content">
-        <div class="left">
-          <app-plt-left-menu
-            [inputs]="Inputs | pickKeys : menuInputs"
-            (onSetSelectedUserTags)="setUserTags($event)"
-            (onSetFilters)="setFilters($event)"
-            (emitFilters)="emitFilters($event)"
-            (onProjectFilter)="filterPlts($event)"
-            (onWsHeaderSelection)="setWsHeaderSelect($event)"
-            (onSelectProjects)="setSelectedProjects($event)"
-            (unCkeckAllPlts)="unCheckAll()"
-          >
-
-          </app-plt-left-menu>
-        </div>
-        <div
-          [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
-          class="center">
-          <div class="title-as-tab">
+  <ng-container *ngIf="browesing">
+    <div class="content">
+      <div class="left">
+        <app-plt-left-menu
+          [inputs]="Inputs | pickKeys : menuInputs"
+          (onSetSelectedUserTags)="setUserTags($event)"
+          (onSetFilters)="setFilters($event)"
+          (emitFilters)="emitFilters($event)"
+          (onProjectFilter)="filterPlts($event)"
+          (onWsHeaderSelection)="setWsHeaderSelect($event)"
+          (onSelectProjects)="setSelectedProjects($event)"
+          (unCkeckAllPlts)="unCheckAll()"
+        >
+        </app-plt-left-menu>
+      </div>
+      <div
+        [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
+        class="center">
+        <div class="title-as-tab">
           <span>
             PLTs
           </span>
-          </div>
-          <div class="PLTs-content">
-            <app-plt-main-table
-              [tableInputs]="Inputs | pickKeys : tableInputs"
-              (actionDispatcher)="tableActionDispatcher($event)"
-            ></app-plt-main-table>
-          </div>
         </div>
-        <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
-          <app-plt-right-menu
-            (actionDispatcher)="rightMenuActionDispatcher($event)"
-            [Inputs]="rightMenuInputs"
-          ></app-plt-right-menu>
+        <div class="PLTs-content">
+          <app-plt-main-table
+            [tableInputs]="Inputs | pickKeys : tableInputs"
+            (actionDispatcher)="tableActionDispatcher($event)"
+          ></app-plt-main-table>
         </div>
       </div>
+      <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
+        <app-plt-right-menu
+          (actionDispatcher)="rightMenuActionDispatcher($event)"
+          [Inputs]="rightMenuInputs"
+        ></app-plt-right-menu>
+      </div>
+    </div>
   </ng-container>
 
   <p-footer>
@@ -123,8 +117,8 @@
                 [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">{{ multiSteps ? 'NEXT' : 'SELECT'}}</button>
       </ng-container>
       <ng-container *ngIf="browesing">
-        <button [ngClass]="{'a-buttons-contained-disabled' : selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length == 0 : !selectedProject, 'a-buttons-contained': selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length > 0 : selectedProject}"
-                [disabled]="selectionStep == 'plt' ? Inputs['selectedListOfPlts'].length == 0 : !selectedProject" (click)="setBrowesingItems()">SELECT</button>
+        <button [ngClass]="{'a-buttons-contained-disabled' : Inputs['selectedListOfPlts'].length == 0, 'a-buttons-contained': Inputs['selectedListOfPlts'].length > 0 }"
+                [disabled]="Inputs['selectedListOfPlts'].length == 0" (click)="setBrowesingItems()">SELECT</button>
       </ng-container>
     </div>
   </p-footer>

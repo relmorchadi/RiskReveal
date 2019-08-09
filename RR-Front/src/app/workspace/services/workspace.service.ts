@@ -51,7 +51,8 @@ export class WorkspaceService {
       draft.content = _.merge(draft.content, {
         [wsIdentifier]: {
           wsId,
-          uwYear, ...ws,
+          uwYear,
+          ...ws,
           projects,
           collapseWorkspaceDetail: true,
           route,

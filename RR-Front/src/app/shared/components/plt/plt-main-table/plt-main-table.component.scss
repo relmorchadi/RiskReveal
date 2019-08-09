@@ -26,9 +26,7 @@
     .ui-table-thead {
 
       .checkBoxHead div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        margin-left: 9px;
 
         .ant-checkbox-indeterminate .ant-checkbox-inner::after {
           background-color: #fff;

@@ -36,6 +36,7 @@ import {DIRECTIVES} from "./directives";
     TableModule,
     ReactiveFormsModule,
     FormsModule,
+    DialogModule,
     DragDropModule,
     ...COMPONENTS,
     ...PIPES

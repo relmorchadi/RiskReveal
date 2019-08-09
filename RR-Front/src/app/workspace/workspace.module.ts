@@ -26,6 +26,7 @@ import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 
+
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
@@ -37,7 +38,6 @@ import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
     SharedModule,
     FormsModule,
     TreeModule,
-    DialogModule,
     CalendarModule,
     VirtualScrollerModule,
     ReactiveFormsModule,

@@ -1,5 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
+import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import * as leftMenuStore from './store';
+import {Message} from "../../../message";
 
 @Component({
   selector: 'app-plt-left-menu',
@@ -8,31 +11,7 @@ import * as _ from 'lodash';
 })
 export class PltLeftMenuComponent implements OnInit {
 
-  @Input() menuInputs: {
-    tagContextMenu: any;
-    _tagModalVisible: boolean;
-    _modalSelect: [];
-    tagForMenu: any,
-    _editingTag: boolean;
-    wsId: string;
-    uwYear: string;
-    projects: any[];
-    showDeleted: boolean;
-    filterData: any;
-    filters: {
-      systemTag: any,
-      userTag: any[]
-    };
-    addTagModalIndex: number;
-    fromPlts: boolean;
-    deletedPltsLength: number;
-    userTags: any[];
-    selectedListOfPlts: any[];
-    systemTagsCount: any;
-    wsHeaderSelected: boolean;
-    pathTab: boolean;
-    selectedItemForMenu: any;
-  }
+  @Input() inputs: leftMenuStore.Input;
 
   @Output() onResetPath= new EventEmitter();
   @Output() onToggleDeletedPlts= new EventEmitter();
@@ -55,6 +34,8 @@ export class PltLeftMenuComponent implements OnInit {
   @Output() onModalSelect= new EventEmitter();
   @Output() emitModalInputValue= new EventEmitter();
 
+  @Output() actionDispatcher= new EventEmitter<Message>();
+
   _modalInput: string;
   colorPickerIsVisible: boolean;
 
@@ -66,11 +47,45 @@ export class PltLeftMenuComponent implements OnInit {
   }
   presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
-  constructor() {
+  allAssigned = [];
+
+  subsetsAssigned= [];
+
+  userFavorite= [];
+
+  usedInWs= [];
+
+  previouslyUsed= [];
+
+  tagForm: FormGroup;
+
+  constructor(private _fb: FormBuilder) {
 
   }
 
   ngOnInit() {
+    this.initTagForm();
+  }
+
+  initTagForm(){
+    this.tagForm= this._fb.group({
+      tagArray: this._fb.array([])
+    })
+  }
+
+  get tagArray() {
+    return this.tagForm.get('tagArray') as FormArray;
+  }
+
+  addNewTag(){
+    if(this.tagArray.length < 3 ) {
+      this.tagArray.push(
+        this._fb.group({
+          title: ['', Validators.required],
+          color: ['#ae1675'],
+          visible: [false]
+        }));
+    }
   }
 
   toDate(d) {
@@ -78,23 +93,30 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   resetPath(){
-    this.onResetPath.emit(false);
+    this.actionDispatcher.emit({
+      type: leftMenuStore.resetPath,
+      payload: false
+    })
+    this.actionDispatcher.emit({
+      type: leftMenuStore.headerSelection,
+      payload: false
+    })
     this.onWsHeaderSelection.emit(true)
-    this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, ['project']))
+    this.onProjectFilter.emit(_.omit(this.inputs.filterData, ['project']))
     this.onToggleDeletedPlts.emit(false);
   }
 
   filter(key, filterData, value){
     if (key == 'project') {
       this.unCkeckAllPlts.emit();
-      if (this.menuInputs.filterData['project'] && this.menuInputs.filterData['project'] != '' && value == this.menuInputs.filterData['project']) {
+      if (this.inputs.filterData['project'] && this.inputs.filterData['project'] != '' && value == this.inputs.filterData['project']) {
         this.onWsHeaderSelection.emit(true);
-        this.onProjectFilter.emit(_.omit(this.menuInputs.filterData, [key]))
+        this.onProjectFilter.emit(_.omit(this.inputs.filterData, [key]))
       } else {
         this.onWsHeaderSelection.emit(false);
-        this.onProjectFilter.emit(_.merge({}, this.menuInputs.filterData, {[key]: value}))
+        this.onProjectFilter.emit(_.merge({}, this.inputs.filterData, {[key]: value}))
       }
-      this.onSelectProjects.emit(_.map(this.menuInputs.projects, t => {
+      this.onSelectProjects.emit(_.map(this.inputs.projects, t => {
         if(t.projectId == value){
           return ({...t,selected: !t.selected})
         }else if(t.selected) {
@@ -105,12 +127,12 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   toggleDeletedPlts() {
-    this.onToggleDeletedPlts.emit(!this.menuInputs.showDeleted);
+    this.onToggleDeletedPlts.emit(!this.inputs.showDeleted);
   }
 
   toggleModal(){
     this.tagModal( false);
-    if(!this.menuInputs._tagModalVisible){
+    if(!this.inputs._tagModalVisible){
       this.modalInput(null);
       this.modalSelect(null);
       this.renamingTag(false);
@@ -139,13 +161,10 @@ export class PltLeftMenuComponent implements OnInit {
     this.emitTagValues('tagColor','#fe45cd')
   }
 
-  toggleColorPicker(from?: string){
-    if(from == 'color') {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-    this.colorPickerIsVisible=!this.colorPickerIsVisible;
-    if(!this.colorPickerIsVisible) this.emitTagValues('tagColor','#fe45cd');
+  toggleColorPicker(i: number){
+    event.stopPropagation();
+    event.preventDefault();
+    (this.tagArray.controls[i] as FormGroup).controls.visible.patchValue(!(this.tagArray.controls[i] as FormGroup).controls.visible.value);
   }
 
   handlePopUpCancel() {
@@ -156,25 +175,25 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   handlePopUpConfirm() {
-    if(this.menuInputs._editingTag) {
+    if(this.inputs._editingTag) {
         this.onEditTag.emit()
     }else {
 
-      if(this.menuInputs.addTagModalIndex === 1 ){
+      if(this.inputs.addTagModalIndex === 1 ){
         this.onAssignPltsToTag.emit({
-          plts: _.map(this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu], plt => plt.pltId),
-          wsId: this.menuInputs.wsId,
-          uwYear: this.menuInputs.uwYear,
-          selectedTags: this.menuInputs._modalSelect
+          plts: _.map(this.inputs.selectedListOfPlts.length > 0 ? this.inputs.selectedListOfPlts : [this.inputs.selectedItemForMenu], plt => plt.pltId),
+          wsId: this.inputs.wsId,
+          uwYear: this.inputs.uwYear,
+          selectedTags: this.inputs._modalSelect
         })
       }
 
-      if(this.menuInputs.addTagModalIndex === 0) {
+      if(this.inputs.addTagModalIndex === 0) {
         this.onCreateTag.emit({
-          plts: this.menuInputs.fromPlts ? _.map((this.menuInputs.selectedListOfPlts.length > 0 ? this.menuInputs.selectedListOfPlts : [this.menuInputs.selectedItemForMenu]), plt => plt.pltId) : [],
-          wsId: this.menuInputs.wsId,
-          uwYear: this.menuInputs.uwYear,
-          tag: _.omit(this.menuInputs.tagForMenu, 'tagId')
+          plts: this.inputs.fromPlts ? _.map((this.inputs.selectedListOfPlts.length > 0 ? this.inputs.selectedListOfPlts : [this.inputs.selectedItemForMenu]), plt => plt.pltId) : [],
+          wsId: this.inputs.wsId,
+          uwYear: this.inputs.uwYear,
+          tag: _.omit(this.inputs.tagForMenu, 'tagId')
         });
       }
 
@@ -196,43 +215,43 @@ export class PltLeftMenuComponent implements OnInit {
       systemTag: [],
       userTag: []
     });
-    this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => ({...t, selected: false})));
+    this.onSetSelectedUserTags.emit(_.map(this.inputs.userTags, t => ({...t, selected: false})));
   }
 
   setFilter(filter: string, tag,section) {
     if(filter === 'userTag'){
-      const filters = _.findIndex(this.menuInputs.filters[filter], e => e == tag.tagId) < 0 ?
-        _.merge({}, this.menuInputs.filters, { [filter]: _.merge([], this.menuInputs.filters[filter], {[this.menuInputs.filters[filter].length] : tag.tagId} ) }) :
-        _.assign({}, this.menuInputs.filters, {[filter]: _.filter(this.menuInputs.filters[filter], e => e != tag.tagId)});
+      const filters = _.findIndex(this.inputs.filters[filter], e => e == tag.tagId) < 0 ?
+        _.merge({}, this.inputs.filters, { [filter]: _.merge([], this.inputs.filters[filter], {[this.inputs.filters[filter].length] : tag.tagId} ) }) :
+        _.assign({}, this.inputs.filters, {[filter]: _.filter(this.inputs.filters[filter], e => e != tag.tagId)});
 
       this.onSetFilters.emit(filters);
 
-      this.onSetSelectedUserTags.emit(_.map(this.menuInputs.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t))
+      this.onSetSelectedUserTags.emit(_.map(this.inputs.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t))
 
       this.emitFilters.emit(filters);
     }else{
       const {
         systemTag
-      } = this.menuInputs.filters;
+      } = this.inputs.filters;
 
       this.onSetFilters.emit(
         !systemTag[section] ?
-          _.merge({}, this.menuInputs.filters, {
+          _.merge({}, this.inputs.filters, {
             systemTag: _.merge({},systemTag, { [section]: [tag]})
           })
           :
           _.findIndex(systemTag[section], sysTagValue =>  sysTagValue == tag) < 0 ?
-            _.merge({}, this.menuInputs.filters, {
+            _.merge({}, this.inputs.filters, {
               systemTag: _.merge({},systemTag, { [section]: this.toggleArrayItem(tag, systemTag[section], (a,b) => a == b) })
             })
             :
             (
               systemTag[section].length == 1 ?
-                _.assign({}, this.menuInputs.filters, {
+                _.assign({}, this.inputs.filters, {
                   systemTag: _.omit(systemTag, `${section}`)
                 })
                 :
-                _.assign({}, this.menuInputs.filters, {
+                _.assign({}, this.inputs.filters, {
                   systemTag: _.assign({},systemTag, { [section]: this.toggleArrayItem(tag, systemTag[section], (a,b) => a == b) })
                 })
             )
@@ -268,8 +287,20 @@ export class PltLeftMenuComponent implements OnInit {
 
   emitTagValues(key, value) {
     this.onSetTagForMenu.emit({
-      ...this.menuInputs.tagForMenu,
+      ...this.inputs.tagForMenu,
       [key]: value
     })
+  }
+
+  onEnter(i: number, event: KeyboardEvent) {
+    if (event.key === "Enter" && (this.tagArray.controls[i] as FormGroup).controls.title.valid) {
+      this.usedInWs.push({
+        tagName: (this.tagArray.controls[i] as FormGroup).controls.title.value,
+        tagColor: (this.tagArray.controls[i] as FormGroup).controls.color.value,
+        count: 0,
+        selected: false
+      });
+      this.tagArray.removeAt(i);
+    }
   }
 }
