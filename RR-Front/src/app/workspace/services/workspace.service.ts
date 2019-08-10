@@ -146,6 +146,9 @@ export class WorkspaceService {
             selectedEDMOrRDM: null,
             activeAddBasket: false
           },
+          scopeOfCompletence: {
+            data: {},
+          },
           fileBaseImport: {}
         }
       });

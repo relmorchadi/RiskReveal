@@ -16,6 +16,7 @@ import {
   DeleteProject,
   DeleteProjectFail, DeleteProjectSuccess
 } from "../../../core/store/actions";
+import {ScopeCompletenessService} from "../../services/scop-completeness.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -38,7 +39,8 @@ export class WorkspaceState {
   constructor(private wsService: WorkspaceService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
-              private riskLinkFacade: RiskLinkStateService
+              private riskLinkFacade: RiskLinkStateService,
+              private scopService: ScopeCompletenessService,
   ) {
   }
 
@@ -259,6 +261,19 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
   }
+
+  /***********************************
+   *
+   * Scope And Completeness Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getScopeCompletenessData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompletence.data;
+  }
+
 
 
   /***********************************
@@ -818,4 +833,15 @@ export class WorkspaceState {
   loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
+
+  /***********************************
+   *
+   * Scope And Completeness Actions
+   *
+   ***********************************/
+  @Action(fromWS.LoadScopeCompletenessDataSuccess)
+  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
+    return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
 }

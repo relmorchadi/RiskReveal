@@ -25,12 +25,13 @@ import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk
 import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
+import { AttachPltPopUpComponent } from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, AttachPltPopUpComponent
   ],
   imports: [
     GridsterModule,
