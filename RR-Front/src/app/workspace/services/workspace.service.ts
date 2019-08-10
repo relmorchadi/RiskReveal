@@ -149,7 +149,12 @@ export class WorkspaceService {
           scopeOfCompletence: {
             data: {},
           },
-          fileBaseImport: {}
+          fileBaseImport: {
+            folders: null,
+            files: null,
+            selectedFiles: null,
+            importedPLTs: null
+          }
         }
       });
       draft.loading = false;

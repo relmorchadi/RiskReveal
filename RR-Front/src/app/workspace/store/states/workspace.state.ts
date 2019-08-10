@@ -2,20 +2,14 @@ import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
 import {PatchCalibrationStateAction} from '../actions';
-import {WorkspaceMain} from "../../../core/model";
-import {CalibrationService} from "../../services/calibration.service";
-import {WorkspaceService} from "../../services/workspace.service";
+import {WorkspaceMain} from '../../../core/model';
+import {CalibrationService} from '../../services/calibration.service';
+import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
-import * as fromPlt from "../actions/plt_main.actions";
-import {PltStateService} from "../../services/plt-state.service";
-import {RiskLinkStateService} from "../../services/riskLink-action.service";
-import {
-  AddNewProject,
-  AddNewProjectFail,
-  AddNewProjectSuccess,
-  DeleteProject,
-  DeleteProjectFail, DeleteProjectSuccess
-} from "../../../core/store/actions";
+import * as fromPlt from '../actions/plt_main.actions';
+import {PltStateService} from '../../services/plt-state.service';
+import {RiskLinkStateService} from '../../services/riskLink-action.service';
+import {FileBasedService} from '../../services/file-based.service';
 import {ScopeCompletenessService} from "../../services/scop-completeness.service";
 
 const initialState: WorkspaceModel = {
@@ -40,6 +34,7 @@ export class WorkspaceState {
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
               private riskLinkFacade: RiskLinkStateService,
+              private fileBasedFacade: FileBasedService,
               private scopService: ScopeCompletenessService,
   ) {
   }
@@ -169,13 +164,13 @@ export class WorkspaceState {
 
   @Selector()
   static getAdjustmentApplication(state: WorkspaceModel) {
-    return _.get(state.content.wsIdentifier.Calibration, "adjustmentApplication")
+    return _.get(state.content.wsIdentifier.Calibration, 'adjustmentApplication');
   }
 
   static getPlts(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => {
       return _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => !e.deleted), 'pltId')
-    })
+    });
   }
 
   static getDeletedPlts(wsIdentifier: string) {
@@ -260,6 +255,18 @@ export class WorkspaceState {
   static getFinancialPerspective(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
+  }
+
+  /***********************************
+   *
+   * File Based Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getFileBasedData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].fileBaseImport;
   }
 
   /***********************************
@@ -844,4 +851,30 @@ export class WorkspaceState {
     return this.scopService.loadScopeCompletenessData(ctx, payload);
   }
 
+
+  /***********************************
+   *
+   * File Based Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadFileBasedFoldersAction)
+  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>) {
+    return this.fileBasedFacade.loadFolderList(ctx);
+  }
+
+  @Action(fromWS.LoadFileBasedFilesAction)
+  loadFileBasedFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
+    return this.fileBasedFacade.loadFilesList(ctx, payload);
+  }
+
+  @Action(fromWS.ToggleFilesAction)
+  toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
+    this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.AddFileForImportAction)
+  addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
+    return this.fileBasedFacade.addToImport(ctx, payload);
+  }
 }
