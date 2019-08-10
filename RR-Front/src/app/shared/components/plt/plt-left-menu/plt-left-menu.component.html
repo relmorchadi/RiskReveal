@@ -139,12 +139,25 @@
       <i (click)="tagModal(false)" class="icon-close_24px" style="cursor: pointer"></i>
     </div>
   </p-header>
-  <div class="content">
-    <div class="assigned-tags">
-      <div class="section">
-        <div class="body-3">Assigned Tags</div>
-        <div class="tag-container">
-          <div class="all">
+  <div class="content" style="position: relative;">
+    <div class="content-wrapper">
+      <i style="
+      cursor: pointer;
+      position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;" class="icon-arrow_back_ios_24px" *ngIf="!drawer" (click)="openDrawer()"></i>
+      <div class="assigned-tags">
+        <div class="section">
+          <h6>Assigned Tags</h6>
+          <div class="tag-container" style="flex-direction: row;">
+            <div style="margin: 0 25px;">
+              <span class="body-3">All</span>
+              <div class="all">
                   <span
                     *ngFor="let tag of allAssigned"
                     [ngClass]="{'active-tag':tag?.selected}"
@@ -156,8 +169,11 @@
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                   </span>
-          </div>
-          <div class="subsets">
+              </div>
+            </div>
+            <div style="margin: 0 25px;">
+              <span class="body-3">Subsets</span>
+              <div class="subsets">
                   <span
                     *ngFor="let tag of subsetsAssigned"
                     [ngClass]="{'active-tag':tag?.selected}"
@@ -169,107 +185,138 @@
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                   </span>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
 
-    </div>
-    <div class="unassigned-tags">
-      <nz-collapse>
-        <nz-collapse-panel
-          [nzHeader]="'Unassigned'"
-          [nzActive]="false"
-          [nzShowArrow]="true"
-        >
-          <div class="unassigned-lists">
-            <div class="section" *ngIf="usedInWs.length">
-              <div class="body-3">Used in Workspace</div>
-              <div class="tag-container">
+      </div>
+      <div class="unassigned-tags">
+        <nz-collapse>
+          <nz-collapse-panel
+            [nzHeader]="unassigned"
+            [nzActive]="false"
+            [nzShowArrow]="true"
+          >
+            <ng-template  #unassigned>
+              <h6>Unassigned</h6>
+            </ng-template>
+            <div class="unassigned-lists">
+              <div class="section" *ngIf="usedInWs.length">
+                <div class="body-3">Used in Workspace</div>
+                <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
                 <span
                   *ngFor="let tag of usedInWs"
                   [ngClass]="{'active-tag':tag?.selected}"
                   class="a-chips-input-mini"
-                  [ngStyle]="{'background-color': tag?.tagColor}">
+                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
                       <span class="chips-content">{{tag?.tagName}}</span>
-                      <span class="chips-counter">
+                      <span *ngIf="tag?.count" class="chips-counter">
                         {{tag?.count}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                 </span>
+                </div>
               </div>
-            </div>
-            <div class="section" *ngIf="userFavorite.length">
-              <div class="body-3">User Favorites</div>
-              <div class="tag-container">
+              <div class="section" *ngIf="userFavorite.length">
+                <div class="body-3">User Favorites</div>
+                <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
                 <span
                   *ngFor="let tag of userFavorite"
                   [ngClass]="{'active-tag':tag?.selected}"
                   class="a-chips-input-mini"
-                  [ngStyle]="{'background-color': tag?.tagColor}">
+                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
                       <span class="chips-content">{{tag?.tagName}}</span>
-                      <span class="chips-counter">
+                      <span *ngIf="tag?.count" class="chips-counter">
                         {{tag?.count}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
               </span>
+                </div>
               </div>
-            </div>
-            <div class="section" *ngIf="previouslyUsed.length">
-              <div class="body-3">Previously Used</div>
-              <div class="tag-container">
+              <div class="section" *ngIf="previouslyUsed.length">
+                <div class="body-3">Previously Used</div>
+                <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
                 <span
                   *ngFor="let tag of previouslyUsed"
                   [ngClass]="{'active-tag':tag?.selected}"
                   class="a-chips-input-mini"
-                  [ngStyle]="{'background-color': tag?.tagColor}">
+                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
                       <span class="chips-content">{{tag?.tagName}}</span>
-                      <span class="chips-counter">
+                      <span *ngIf="tag?.count" class="chips-counter">
                         {{tag?.count}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
               </span>
+                </div>
               </div>
             </div>
-            <div class="section">
-              <button (click)="addNewTag()" class="a-buttons-outlined">
-                <span>
-                  <i class="icon-pricetag-alt"></i>
-                  New Tag
-                </span>
-              </button>
-              <form [formGroup]="tagForm" class="tag-container" style="flex-wrap: wrap;justify-content: space-between;">
-                <div formArrayName="tagArray" *ngFor="let item of tagForm.get('tagArray').controls; let i = index;">
-                  <div [formGroupName]="i" class="a-form-control" style="flex-direction: row; margin: 0 7px;">
-                    <div class="a-form-input-wrapper">
-                      <label class="label-input">Tag title</label>
-                      <input class="a-textfield-standard a-textfield-label" (keydown)="onEnter(i,$event)" formControlName="title" placeholder="Title" style="margin-bottom:15px;">
-                      <div class="msg-err" *ngIf="item.controls.title.errors?.required && item.controls.title.touched">
-                        Title is required *
-                      </div>
-                    </div>
-                    <div class="color-container">
-                      <div class="color" [ngStyle]="{'background-color': item.controls.color.value}"
-                           (click)="toggleColorPicker(i)">
-                        <color-sketch
-                          (clickOutside)="item.controls.visible.setValue(false)"
-                          (onChange)="item.controls.color.setValue($event.color.hex)"
-                          [presetColors]="presetColors"
-                          *ngIf="item.controls.visible.value"
-                        >
-                        </color-sketch>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </form>
+          </nz-collapse-panel>
+        </nz-collapse>
+        <ng-template #extraTpl>
+          <i class=""></i>
+        </ng-template>
+      </div>
+    </div>
+
+    <div *ngIf="drawer" class="drawer">
+      <i style="cursor: pointer;
+      position: absolute;
+    right: 10px;
+    top: 10px;
+    width: 25px;
+    height: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;" class="icon-arrow_forward_ios_24px" *ngIf="drawer" (click)="closeDrawer()"></i>
+      <div>
+        <span class="body-2">Create/Edit Tag</span>
+        <form [formGroup]="tagForm" class="tag-container">
+          <div class="a-form-control" style="flex-direction: row; margin: 0 7px;">
+            <div class="a-form-input-wrapper">
+              <label class="label-input">Tag title</label>
+              <input class="a-textfield-standard a-textfield-label" (keydown)="onEnter(i,$event)" formControlName="title" placeholder="Title" style="margin-bottom:15px;">
+              <div class="msg-err" *ngIf="title.errors?.required && title.touched">
+                Title is required *
+              </div>
+            </div>
+            <div class="color-container">
+              <div class="color" [ngStyle]="{'background-color': color.value}"
+                   (click)="toggleColorPicker()">
+              </div>
             </div>
           </div>
-        </nz-collapse-panel>
-      </nz-collapse>
-      <ng-template #extraTpl>
-        <i class=""></i>
-      </ng-template>
+          <color-sketch
+            (onChange)="color.setValue($event.color.hex)"
+            [presetColors]="presetColors"
+            *ngIf="visible.value"
+          >
+          </color-sketch>
+          <div class="footer-btn">
+            <button class="a-buttons-contained" >
+              ADD
+            </button>
+          </div>
+        </form>
+      </div>
+      <div>
+        <span class="body-2">Delete Tag</span>
+        <div>
+          <div class="confirm-msg">
+            Are you sure to Delete TagName ?
+          </div>
+          <div class="footer-btn">
+            <button class="a-button-text-cancel" >
+              Cancel
+            </button>
+            <button class="a-buttons-contained" >
+              Submit
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+
   </div>
   <p-footer>
     <div class="footer">
@@ -280,3 +327,5 @@
     </div>
   </p-footer>
 </p-dialog>
+
+

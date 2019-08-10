@@ -47,20 +47,72 @@ export class PltLeftMenuComponent implements OnInit {
   }
   presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
-  allAssigned = [];
+  allAssigned = [
+    {
+      tagName: 'pricingV1',
+      tagColor: this.presetColors[0],
+      count: 5
+    },
+    {
+      tagName: 'pricingV2',
+      tagColor: this.presetColors[1],
+      count: 5,
+    }
+  ];
 
-  subsetsAssigned= [];
+  subsetsAssigned= [
+    {
+      tagName: 'EU',
+      tagColor: this.presetColors[2],
+      count: 3
+    },
+    {
+      tagName: 'DE',
+      tagColor: this.presetColors[3],
+      count: 2,
+    }
+  ];
 
-  userFavorite= [];
+  userFavorite= [
+    {
+      tagName: 'myTag1',
+      tagColor: this.presetColors[4],
+    },
+    {
+      tagName: 'myTag2',
+      tagColor: this.presetColors[4],
+    }
+  ];
 
-  usedInWs= [];
+  usedInWs= [
+    {
+      tagName: 'EU',
+      tagColor: this.presetColors[2],
+      count: 3
+    },
+    {
+      tagName: 'DE',
+      tagColor: this.presetColors[3],
+      count: 2,
+    }
+  ];
 
-  previouslyUsed= [];
+  previouslyUsed= [
+    {
+      tagName: 'v7',
+      tagColor: this.presetColors[5],
+    },
+    {
+      tagName: 'v6',
+      tagColor: this.presetColors[6],
+    }
+  ];
 
   tagForm: FormGroup;
+  drawer: boolean;
 
   constructor(private _fb: FormBuilder) {
-
+    this.drawer= false;
   }
 
   ngOnInit() {
@@ -69,23 +121,22 @@ export class PltLeftMenuComponent implements OnInit {
 
   initTagForm(){
     this.tagForm= this._fb.group({
-      tagArray: this._fb.array([])
+      title: ['', Validators.required],
+      color: ['#ae1675'],
+      visible: [false]
     })
   }
 
-  get tagArray() {
-    return this.tagForm.get('tagArray') as FormArray;
+  get title() {
+    return this.tagForm.get('title');
   }
 
-  addNewTag(){
-    if(this.tagArray.length < 3 ) {
-      this.tagArray.push(
-        this._fb.group({
-          title: ['', Validators.required],
-          color: ['#ae1675'],
-          visible: [false]
-        }));
-    }
+  get color() {
+    return this.tagForm.get('color');
+  }
+
+  get visible() {
+    return this.tagForm.get('visible');
   }
 
   toDate(d) {
@@ -164,7 +215,7 @@ export class PltLeftMenuComponent implements OnInit {
   toggleColorPicker(i: number){
     event.stopPropagation();
     event.preventDefault();
-    (this.tagArray.controls[i] as FormGroup).controls.visible.patchValue(!(this.tagArray.controls[i] as FormGroup).controls.visible.value);
+    this.tagForm.patchValue({ visible: !this.visible.value})
   }
 
   handlePopUpCancel() {
@@ -292,7 +343,7 @@ export class PltLeftMenuComponent implements OnInit {
     })
   }
 
-  onEnter(i: number, event: KeyboardEvent) {
+  /*onEnter(i: number, event: KeyboardEvent) {
     if (event.key === "Enter" && (this.tagArray.controls[i] as FormGroup).controls.title.valid) {
       this.usedInWs.push({
         tagName: (this.tagArray.controls[i] as FormGroup).controls.title.value,
@@ -302,5 +353,12 @@ export class PltLeftMenuComponent implements OnInit {
       });
       this.tagArray.removeAt(i);
     }
+  }*/
+  closeDrawer() {
+    this.drawer= false;
+  }
+
+  openDrawer() {
+    this.drawer= true;
   }
 }
