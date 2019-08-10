@@ -11,11 +11,11 @@
             <button  class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7"
                      nz-button nzGhost nz-dropdown >
               <i class="icon-plus"></i>
-              Add Project
+              Add New
             </button>
             <ul nz-menu nzSelectable>
-              <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> New Project</li>
-              <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> New Linked Project</li>
+              <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> Project</li>
+              <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> Linked Project</li>
             </ul>
           </nz-dropdown>
         </div>
@@ -39,7 +39,7 @@
     </div>
 
     <app-workspace-project-popup [isVisible]="searchWorkspace"
-                                 (onVisibleChange)="cancelCreateExistingProjectPopup()"
+                                 (onVisibleChange)="cancelCreateExistingProjectPopup($event)"
                                  [selectionStep]="'project'"
                                  (onSelectProjectNext)="selectProjectNext($event)">
     </app-workspace-project-popup>

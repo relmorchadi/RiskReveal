@@ -11,6 +11,7 @@ import {UpdateWsRouting} from "../../store/actions";
 import {MessageService} from 'primeng/api';
 import {BaseContainer} from "../../../shared/base";
 import {Navigate} from "@ngxs/router-plugin";
+import {debounceTime} from "rxjs/operators";
 
 @Component({
   selector: 'workspace-project',
@@ -74,12 +75,14 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
 
   ngOnInit() {
 
-    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
+    this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectSuccess))
+      .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
+      .subscribe(() => {
         this.newProject = false;
+        this.detectChanges()
         this.notificationService.createNotification('Project added successfully', '',
           'success', 'topRight', 4000);
-        this.newProject= false;
-        this.detectChanges()
+        // this.detectChanges()
       }
     );
     this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectFail, fromWs.DeleteProjectFails)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
@@ -88,7 +91,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     })
 
     this.actions$.pipe(this.unsubscribeOnDestroy).pipe(ofActionSuccessful(fromWs.DeleteProjectSuccess)).subscribe(() => {
-        this.notificationService.createNotification('Project deleted successfully', '',
+      this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);
       }
     );
@@ -149,11 +152,12 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     this.searchWorkspace = false;
     this.newProject = true;
     this.selectedProject = project;
+    console.log(project);
   }
 
-  cancelCreateExistingProjectPopup() {
+  cancelCreateExistingProjectPopup(param) {
+    console.log('Cancel', param);
     this.searchWorkspace = false;
-    this.selectedProject = null;
   }
 
   onCancelCreateProject() {

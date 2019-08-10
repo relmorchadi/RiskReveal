@@ -19,4 +19,5 @@ export interface Input {
   filters: any;
   sortData: any;
   status: any;
+  scrollHeight: string | number;
 }

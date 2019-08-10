@@ -4,13 +4,18 @@ import * as fromWS from '../actions';
 import * as fromPlt from "../actions/plt_main.actions";
 import * as fromInuring from '../actions/inuring.actions';
 import {PatchCalibrationStateAction} from '../actions';
-import {WorkspaceMain} from "../../../core/model";
-import {CalibrationService} from "../../services/calibration.service";
-import {WorkspaceService} from "../../services/workspace.service";
+import {WorkspaceMain} from '../../../core/model';
+import {CalibrationService} from '../../services/calibration.service';
+import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
 import {PltStateService} from "../../services/plt-state.service";
 import {RiskLinkStateService} from "../../services/riskLink-action.service";
 import {InuringService} from "../../services/inuring.service";
+import * as fromPlt from '../actions/plt_main.actions';
+import {PltStateService} from '../../services/plt-state.service';
+import {RiskLinkStateService} from '../../services/riskLink-action.service';
+import {FileBasedService} from '../../services/file-based.service';
+import {ScopeCompletenessService} from "../../services/scop-completeness.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -34,7 +39,9 @@ export class WorkspaceState {
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
               private riskLinkFacade: RiskLinkStateService,
-              private inuringService: InuringService
+              private inuringService: InuringService,
+              private fileBasedFacade: FileBasedService,
+              private scopService: ScopeCompletenessService,
   ) {
   }
 
@@ -60,6 +67,11 @@ export class WorkspaceState {
   }
 
   static getPltsForCalibration(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.toCalibrate), 'pltId'))
+  }
+
+  static getPltsForCalibrationPopUp(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => !e.deleted), 'pltId'))
   }
@@ -158,13 +170,13 @@ export class WorkspaceState {
 
   @Selector()
   static getAdjustmentApplication(state: WorkspaceModel) {
-    return _.get(state.content.wsIdentifier.Calibration, "adjustmentApplication")
+    return _.get(state.content.wsIdentifier.Calibration, 'adjustmentApplication');
   }
 
   static getPlts(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => {
       return _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => !e.deleted), 'pltId')
-    })
+    });
   }
 
   static getDeletedPlts(wsIdentifier: string) {
@@ -219,7 +231,11 @@ export class WorkspaceState {
     let selectedAnalysis: any = _.toArray(_.get(state.content[wsIdentifier],
       `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
     selectedAnalysis = _.filter(selectedAnalysis, analysis => analysis.selected === true)[0] || null;
-    return state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data;
+    return {
+      data: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data,
+      allChecked: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked,
+      indeterminate: state.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate
+    };
   }
 
   @Selector()
@@ -228,7 +244,11 @@ export class WorkspaceState {
     let selectedPortfolio: any = _.toArray(_.get(state.content[wsIdentifier],
       `riskLink.listEdmRdm.selectedListEDMAndRDM.${state.content[wsIdentifier].riskLink.selectedEDMOrRDM}`, []));
     selectedPortfolio = _.filter(selectedPortfolio, portfolio => portfolio.selected === true)[0] || null;
-    return state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data;
+    return {
+      data: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data,
+      allChecked: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked,
+      indeterminate: state.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate
+    };
   }
 
   @Selector()
@@ -250,6 +270,31 @@ export class WorkspaceState {
    ***********************************/
 
   //TBD
+
+  /***********************************
+   *
+   * File Based Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getFileBasedData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].fileBaseImport;
+  }
+
+  /***********************************
+   *
+   * Scope And Completeness Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getScopeCompletenessData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompletence.data;
+  }
+
 
 
   /***********************************
@@ -474,119 +519,124 @@ export class WorkspaceState {
 
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
-    return this.calibrationService.loadAllPltsFromCalibration(ctx, payload)
+    return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
   }
 
   @Action(fromWS.loadAllPltsFromCalibrationSuccess)
   loadAllPltsFromCalibrationSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibrationSuccess) {
-    this.calibrationService.loadAllPltsFromCalibrationSuccess(ctx, payload)
+    this.calibrationService.loadAllPltsFromCalibrationSuccess(ctx, payload);
   }
 
   @Action(fromWS.constructUserTagsFromCalibration)
   constructUserTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.constructUserTagsFromCalibration) {
-    this.calibrationService.constructUserTags(ctx, payload)
+    this.calibrationService.constructUserTags(ctx, payload);
   }
 
   @Action(fromWS.setUserTagsFiltersFromCalibration)
   setFilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setUserTagsFiltersFromCalibration) {
-    this.calibrationService.setFilterPlts(ctx, payload)
+    this.calibrationService.setFilterPlts(ctx, payload);
   }
 
   @Action(fromWS.FilterPltsByUserTagsFromCalibration)
   FilterPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.FilterPltsByUserTagsFromCalibration) {
-    this.calibrationService.FilterPlts(ctx, payload)
+    this.calibrationService.FilterPlts(ctx, payload);
   }
 
   @Action(fromWS.ToggleSelectPltsFromCalibration)
   SelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleSelectPltsFromCalibration) {
-    this.calibrationService.SelectPlts(ctx, payload)
+    this.calibrationService.SelectPlts(ctx, payload);
   }
 
   @Action(fromWS.calibrateSelectPlts)
   calibrateSelectPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.calibrateSelectPlts) {
-    this.calibrationService.calibrateSelectPlts(ctx, payload)
+    this.calibrationService.calibrateSelectPlts(ctx, payload);
+  }
+
+  @Action(fromWS.toCalibratePlts)
+  toCalibratePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.toCalibratePlts) {
+    this.calibrationService.toCalibratePlts(ctx, payload)
   }
 
   @Action(fromWS.initCalibrationData)
   initCalibrationData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.initCalibrationData) {
-    this.calibrationService.initCalibrationData(ctx, payload)
+    this.calibrationService.initCalibrationData(ctx, payload);
   }
 
   @Action(fromWS.setFilterCalibration)
   setFilterCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.setFilterCalibration) {
-    this.calibrationService.setFilterCalibration(ctx, payload)
+    this.calibrationService.setFilterCalibration(ctx, payload);
   }
 
   @Action(fromWS.extendPltSection)
   expandPltSection(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.extendPltSection) {
-    this.calibrationService.expandPltSection(ctx, payload)
+    this.calibrationService.expandPltSection(ctx, payload);
   }
 
   @Action(fromWS.collapseTags)
   collapseTags(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.collapseTags) {
-    this.calibrationService.collapseTags(ctx, payload)
+    this.calibrationService.collapseTags(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustment)
   saveAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustment) {
-    this.calibrationService.saveAdjustment(ctx, payload)
+    this.calibrationService.saveAdjustment(ctx, payload);
   }
 
   @Action(fromWS.dropThreadAdjustment)
   dropThreadAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.dropThreadAdjustment) {
-    this.calibrationService.dropThreadAdjustment(ctx, payload)
+    this.calibrationService.dropThreadAdjustment(ctx, payload);
 
   }
 
   @Action(fromWS.saveAdjModification)
   saveAdjModification(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjModification) {
-    this.calibrationService.saveAdjModification(ctx, payload)
+    this.calibrationService.saveAdjModification(ctx, payload);
   }
 
   @Action(fromWS.replaceAdjustement)
   replaceAdjustement(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.replaceAdjustement) {
-    this.calibrationService.replaceAdjustement(ctx, payload)
+    this.calibrationService.replaceAdjustement(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustmentInPlt)
   saveAdjustmentInPlt(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustmentInPlt) {
-    this.calibrationService.saveAdjustmentInPlt(ctx, payload)
+    this.calibrationService.saveAdjustmentInPlt(ctx, payload);
   }
 
 
   @Action(fromWS.applyAdjustment)
   applyAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.applyAdjustment) {
-    this.calibrationService.applyAdjustment(ctx, payload)
+    this.calibrationService.applyAdjustment(ctx, payload);
   }
 
   @Action(fromWS.dropAdjustment)
   dropAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.dropAdjustment) {
-    this.calibrationService.dropAdjustment(ctx, payload)
+    this.calibrationService.dropAdjustment(ctx, payload);
   }
 
   @Action(fromWS.deleteAdjsApplication)
   deleteAdjsApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.deleteAdjsApplication) {
-    this.calibrationService.deleteAdjsApplication(ctx, payload)
+    this.calibrationService.deleteAdjsApplication(ctx, payload);
   }
 
   @Action(fromWS.deleteAdjustment)
   deleteAdjustment(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.deleteAdjustment) {
-    this.calibrationService.deleteAdjustment(ctx, payload)
+    this.calibrationService.deleteAdjustment(ctx, payload);
   }
 
   @Action(fromWS.saveSelectedPlts)
   saveSelectedPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveSelectedPlts) {
-    this.calibrationService.saveSelectedPlts(ctx, payload)
+    this.calibrationService.saveSelectedPlts(ctx, payload);
   }
 
   @Action(fromWS.saveAdjustmentApplication)
   saveAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjustmentApplication) {
-    this.calibrationService.saveAdjustmentApplication(ctx, payload)
+    this.calibrationService.saveAdjustmentApplication(ctx, payload);
   }
 
   @Action(PatchCalibrationStateAction)
   patchSearchState(ctx: StateContext<WorkspaceState>, {payload}: PatchCalibrationStateAction) {
-    this.calibrationService.patchSearchState(ctx, payload)
+    this.calibrationService.patchSearchState(ctx, payload);
   }
 
 
@@ -717,8 +767,8 @@ export class WorkspaceState {
   }
 
   @Action(fromWS.CreateLinkingAction)
-  createLinking(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.createLinking(ctx);
+  createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
+    this.riskLinkFacade.createLinking(ctx, payload);
   }
 
   @Action(fromWS.UpdateStatusLinkAction)
@@ -803,6 +853,43 @@ export class WorkspaceState {
   @Action(fromWS.LoadRiskLinkDataAction)
   loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
+  }
+
+  /***********************************
+   *
+   * Scope And Completeness Actions
+   *
+   ***********************************/
+  @Action(fromWS.LoadScopeCompletenessDataSuccess)
+  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
+    return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
+
+  /***********************************
+   *
+   * File Based Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadFileBasedFoldersAction)
+  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>) {
+    return this.fileBasedFacade.loadFolderList(ctx);
+  }
+
+  @Action(fromWS.LoadFileBasedFilesAction)
+  loadFileBasedFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
+    return this.fileBasedFacade.loadFilesList(ctx, payload);
+  }
+
+  @Action(fromWS.ToggleFilesAction)
+  toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
+    this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.AddFileForImportAction)
+  addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
+    return this.fileBasedFacade.addToImport(ctx, payload);
   }
 
   /***********************************

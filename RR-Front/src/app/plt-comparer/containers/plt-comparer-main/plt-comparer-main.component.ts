@@ -8,7 +8,6 @@ import * as _ from 'lodash';
 import {Table} from "primeng/table";
 import {map, switchMap} from 'rxjs/operators';
 import {combineLatest, Observable} from 'rxjs';
-import {WorkspaceMainState} from "../../../core/store/states";
 import {WorkspaceMain} from "../../../core/model";
 import {FormBuilder, FormGroup} from '@angular/forms';
 

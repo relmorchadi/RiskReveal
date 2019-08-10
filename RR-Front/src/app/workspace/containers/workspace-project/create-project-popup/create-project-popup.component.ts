@@ -16,11 +16,11 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   unSubscribe$: Subject<void>;
   @Output('onCancelCreateProject')
   onCancelCreateProject: EventEmitter<any> = new EventEmitter();
-  @Input()
+  @Input('workspace')
   workspace: any;
-  @Input()
+  @Input('isVisible')
   isVisible;
-  @Input()
+  @Input('newProject')
   newProject: any;
   newProjectForm: FormGroup;
 
@@ -38,10 +38,17 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
   }
 
   createUpdateProject() {
-    let project = {...this.newProjectForm.value, projectId: null}
+    let project = {...this.newProjectForm.value, projectId: null};
+    console.log('This is data', this);
     if (this.newProjectForm.controls.projectId.value) {
-      project = {...project, linkFlag: true};
+      project = {...project, linkFlag: true,
+        sourceProjectId: this.newProjectForm.value.projectId,
+        sourceProjectName: this.newProjectForm.value.name,
+        sourceWsId: _.get(this.newProject, 'workspaceId', null),
+        sourceWsName: _.get(this.newProject,'workspaceName', null)
+      };
     }
+    console.log(project);
     this.store.dispatch(new fromWS.AddNewProject({
       id: _.get(this.workspace, 'id', null),
       wsId: this.workspace.wsId,
@@ -76,6 +83,10 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
       regionPerilSum: new FormControl(0),
       xactSum: new FormControl(0),
       locking: new FormControl(null),
+      sourceProjectId: new FormControl(null),
+      sourceProjectName: new FormControl(null),
+      sourceWsId: new FormControl(null),
+      sourceWsName: new FormControl(null)
     });
   }
 }

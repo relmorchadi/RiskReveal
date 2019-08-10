@@ -128,6 +128,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   browesing: boolean;
 
   Inputs: {
+    scrollHeight: string | number,
     contextMenuItems: any,
     filterInput: string;
     pltColumns: any[];
@@ -165,26 +166,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     selectedItemForMenu: any;
   };
 
-  tableInputs = ['dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
+  tableInputs = ['scrollHeight','dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
-  systemTagsMapping = {
-    grouped: {
-      peril: 'Peril',
-      regionDesc: 'Region',
-      currency: 'Currency',
-      sourceModellingVendor: 'Modelling Vendor',
-      sourceModellingSystem: 'Modelling System',
-      targetRapCode: 'Target RAP',
-      userOccurrenceBasis: 'User Occurence Basis',
-      xActAvailable: 'Published To Pricing',
-      xActUsed: 'Priced',
-      accumulated: 'Accumulated',
-      financial: 'Financial Perspectives'
-    },
-    nonGrouped: {}
-  };
   private d: Subscription;
   private selectedPlt: string;
 
@@ -206,85 +191,187 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
+      scrollHeight: null,
       filterInput: '',
       pltColumns: [
         {
-          width: '60',
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
           filtred: false,
+          resizable: false,
+          width: '25%',
           icon: null,
-          type: 'checkbox',active: true
+          type: 'checkbox',
+          active: true
         },
-        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
-        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id',active: true},
         {
+          sortDir: 1,
+          fields: '',
+          header: 'User Tags',
+          sorted: false,
+          filtred: false,
+          resizable: false,
+          width: '24%',
+          icon: null,
+          type: 'tags',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'pltId',
+          header: 'PLT ID',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          width: '28%',
+          type: 'id',
+          active: true
+        },
+        {
+          sortDir: 1,
           fields: 'pltName',
           header: 'PLT Name',
-          width: '160',
           sorted: true,
           filtred: true,
-          icon: null,
-          type: 'field',active: true
-        },
-        {
-          fields: 'peril',
-          header: 'Peril',
-          width: '40',
-          sorted: true,
-          filtred: true,
+          resizable: true,
+          width: '100%',
           icon: null,
           type: 'field',
-          textAlign: 'center',active: true
+          active: true
         },
         {
+          sortDir: 1,
+          fields: 'peril',
+          header: 'Peril',
+          sorted: true,
+          filtred: true,
+          resizable: false,
+          width: '22%',
+          icon: null,
+          type: 'field',
+          textAlign: 'center',
+          active: true
+        },
+        {
+          sortDir: 1,
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
-          width: '70',
           sorted: true,
           filtred: true,
+          resizable: true,
+          width: '35%',
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          active: true
         },
         {
+          sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
-          width: '160',
           sorted: true,
           filtred: true,
+          resizable: true,
+          width: '60%',
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          active: true
         },
         {
           sortDir: 1,
           fields: 'grain',
           header: 'Grain',
-          width: '90',
           sorted: true,
           filtred: true,
+          resizable: true,
+          width: '70%',
           icon: null,
           type: 'field',
           active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedBy',
+          forDelete: true,
+          header: 'Deleted By',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field', active: false
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedAt',
+          forDelete: true,
+          header: 'Deleted On',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'date', active: false
         },
         {
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
-          width: '90',
           sorted: true,
           filtred: true,
+          resizable: true,
+          width: '25%',
           icon: null,
-          type: 'field',active: true
+          type: 'field', active: true
         },
         {
           sortDir: 1,
           fields: 'rap',
           header: 'RAP',
-          width: '52',
           sorted: true,
           filtred: true,
+          resizable: true,
+          width: '25%',
           icon: null,
           type: 'field',
           active: true
-        }
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          width: '25px',
+          icon: 'icon-note',
+          type: 'icon',
+          active: true,
+          tooltip: "Published for Pricing"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          width: '25px',
+          icon: 'icon-dollar-alt',
+          type: 'icon',
+          active: true,
+          tooltip: "Priced"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          width: '25px',
+          icon: 'icon-focus-add',
+          type: 'icon',
+          active: true,
+          tooltip: "Published for Accumulation"
+        },
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -524,68 +611,189 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.selectedWorkspace = null;
     this._filter = {};
     this.browesing = false;
-    this.onVisibleChange.emit(false);
+    this.onVisibleChange.emit(this.browesing);
     this.Inputs= {
       ...this.Inputs,
       filterInput: '',
       pltColumns: [
         {
-          width: '60',
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
           filtred: false,
+          resizable: false,
+          width: '25%',
           icon: null,
-          type: 'checkbox',active: true
+          type: 'checkbox',
+          active: true
         },
-        {fields: '', header: 'User Tags', width: '60', sorted: false, filtred: false, icon: null, type: 'tags',active: true},
-        {fields: 'pltId', header: 'PLT ID', width: '80', sorted: true, filtred: true, icon: null, type: 'id',active: true},
         {
-          fields: 'pltName',
-          header: 'PLT Name',
-          width: '160',
+          sortDir: 1,
+          fields: '',
+          header: 'User Tags',
+          sorted: false,
+          filtred: false,
+          resizable: false,
+          width: '24%',
+          icon: null,
+          type: 'tags',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'pltId',
+          header: 'PLT ID',
           sorted: true,
           filtred: true,
+          resizable: true,
           icon: null,
-          type: 'field',active: true
+          width: '28%',
+          type: 'id',
+          active: true
         },
         {
-          fields: 'peril',
-          header: 'Peril',
-          width: '40',
+          sortDir: 1,
+          fields: 'pltName',
+          header: 'PLT Name',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
+          width: '100%',
           icon: null,
           type: 'field',
-          textAlign: 'center',active: true
+          active: true
         },
         {
+          sortDir: 1,
+          fields: 'peril',
+          header: 'Peril',
+          sorted: true,
+          filtred: true,
+          resizable: false,
+          width: '22%',
+          icon: null,
+          type: 'field',
+          textAlign: 'center',
+          active: true
+        },
+        {
+          sortDir: 1,
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
-          width: '70',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
+          width: '35%',
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          active: true
         },
         {
+          sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
-          width: '160',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
+          width: '60%',
           icon: null,
-          type: 'field',active: true
+          type: 'field',
+          active: true
         },
-        {sortDir: 1, fields: 'grain', header: 'Grain', width: '90', sorted: true, filtred: false, icon: null, type: 'field',active: true},
+        {
+          sortDir: 1,
+          fields: 'grain',
+          header: 'Grain',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70%',
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedBy',
+          forDelete: true,
+          header: 'Deleted By',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'field', active: false
+        },
+        {
+          sortDir: 1,
+          fields: 'deletedAt',
+          forDelete: true,
+          header: 'Deleted On',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          icon: null,
+          type: 'date', active: false
+        },
         {
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
-          width: '90',
           sorted: true,
-          filtred: false,
+          filtred: true,
+          resizable: true,
+          width: '25%',
           icon: null,
-          type: 'field',active: true
+          type: 'field', active: true
         },
-        {sortDir: 1, fields: 'rap', header: 'RAP', width: '52', sorted: true, filtred: false, icon: null, type: 'field',active: true}
+        {
+          sortDir: 1,
+          fields: 'rap',
+          header: 'RAP',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '25%',
+          icon: null,
+          type: 'field',
+          active: true
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          width: '25px',
+          icon: 'icon-note',
+          type: 'icon',
+          active: true,
+          tooltip: "Published for Pricing"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          width: '25px',
+          icon: 'icon-dollar-alt',
+          type: 'icon',
+          active: true,
+          tooltip: "Priced"
+        },
+        {
+          sortDir: 1,
+          fields: '',
+          header: '',
+          sorted: false,
+          filtred: false,
+          width: '25px',
+          icon: 'icon-focus-add',
+          type: 'icon',
+          active: true,
+          tooltip: "Published for Accumulation"
+        },
       ],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
@@ -737,6 +945,13 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           this.setInputs('userTags', userTags || {});
           this.detectChanges();
         })
+
+        this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
+          this.setInputs('pltDetail', openedPlt);
+          this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
+          this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
+          this.detectChanges();
+        });
       } else {
         this.onVisibleChange.emit(false);
       }
@@ -745,14 +960,17 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   setBrowesingItems() {
     if(this.selectionStep == 'plt') {
-      console.log(this.selectedWorkspace);
       this.onSelectWorkspace.emit(this.selectedWorkspace);
       this.onSelectItems.emit(this.getInputs('selectedListOfPlts'));
       this.onVisibleChange.emit(false);
     }else {
       this.searchWorkspace = false;
       this.newProject = true;
-      this.onSelectProjectNext.emit(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
+      this.onSelectProjectNext.emit( _.merge(
+        _.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']),
+        {workspaceName: _.get(this.selectedWorkspace, 'workspaceName')}
+
+      ) );
     }
   }
 
@@ -773,7 +991,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         this._loadData();
       });
 
-    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
+    if (this.stepConfig && this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();
@@ -868,10 +1086,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     // this.messageService.clear();
   }
 
-  closePltInDrawer(pltId) {
+  closePltInDrawer() {
     this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({
       wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
-      pltId
     }));
     this.updateMenuKey('pltDetail', null);
     this.setRightMenuSelectedTab('basket');
@@ -879,7 +1096,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   openPltInDrawer(plt) {
     if(this.getRightMenuKey('pltDetail')) {
-      this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId)
+      this.closePltInDrawer();
     }
     this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
       wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
@@ -894,11 +1111,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     console.log(action);
     switch (action.type) {
       case rightMenuStore.closeDrawer:
-        console.log('closing');
-        /*if(this.getRightMenuKey('pltDetail')) {
-          this.closePltInDrawer(this.getRightMenuKey('pltDetail').pltId);
-        }*/
         this.updateMenuKey('visible', false);
+        this.closePltInDrawer();
         break;
       case rightMenuStore.openDrawer:
         this.updateMenuKey('visible', true);

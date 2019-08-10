@@ -76,7 +76,7 @@
 
             .icon-holder {
               display: flex;
-              justify-content: space-between;
+              justify-content: center;
               padding: 7px 0;
 
               i {
@@ -117,7 +117,7 @@
         .ui-table-tbody {
           .icon-holder {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             padding: 7px;
 
             i {
@@ -130,6 +130,9 @@
             display: flex;
             height: 45px;
             align-items: center;
+          }
+          .inner-line > div {
+            width: 100%;
           }
 
           .peril-indicator {
@@ -186,22 +189,34 @@
           }
 
           .info-rp {
+            padding-top: 4px;
+            display: flex;
+            width: 80%;
             .icon-map-marker-alt {
               background-color: #0700CF;
               color: #FFFFFF;
               padding: 2px;
               font-size: 12px;
-              margin: 10px;
+              margin: 2px 15px 8px 5px;
+            }
+            .icon-map_24px {
+              background-color: #30CEBA;
+              color: #FFFFFF;
+              padding: 2px;
+              font-size: 12px;
+              margin: 2px 15px 8px 5px;
             }
 
             .code-rp {
-              margin-right: 15px;
+              margin-right: 5px;
+              width: 42%;
             }
           }
 
           .grain-info-wrapper {
             display: flex;
             align-items: center;
+            width: 130%;
 
             .icon-map_24px {
               background-color: #30CEBA;
@@ -210,10 +225,18 @@
               font-size: 12px;
               margin: 10px;
             }
+            .icon-map-marker-alt {
+              background-color: #0700CF;
+              color: #FFFFFF;
+              padding: 2px;
+              font-size: 12px;
+              margin: 2px 15px 8px 5px;
+            }
 
             .grain-info {
               display: flex;
               flex-direction: column;
+
             }
           }
 
@@ -291,4 +314,16 @@
       }
     }
   }
+}
+
+.AttachPlts-button{
+  padding-left: 7px;
+  padding-right: 7px;
+  border: 2px solid #5796AC;
+  border-radius: initial;
+  font-size: 13px;
+  color: #5796AC;
+  font-weight: bold;
+  height: 26px;
+  margin-top: 12px;
 }

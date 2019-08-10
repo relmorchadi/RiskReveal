@@ -147,6 +147,16 @@ export class WorkspaceService {
             selectedEDMOrRDM: null,
             activeAddBasket: false
           },
+          scopeOfCompletence: {
+            data: {},
+          },
+          fileBaseImport: {
+            folders: null,
+            files: null,
+            selectedFiles: null,
+            importedPLTs: null
+          }
+          },
           inuring: defaultInuringState
         }
       });

@@ -1,5 +1,5 @@
 import {
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -38,9 +38,11 @@ export class PltMainTableComponent implements OnInit {
   private activeCheckboxSort: boolean;
   private lastSelectedId: number;
   private lastClick: string;
+  private userTagsLength: number;
 
-  constructor() {
+  constructor(private _baseCdr: ChangeDetectorRef) {
     this.activeCheckboxSort = false;
+    this.userTagsLength= 10000;
   }
 
   ngOnInit() {
@@ -67,21 +69,21 @@ export class PltMainTableComponent implements OnInit {
   }
 
   sortChange(field: any, sortCol: any) {
-    if(!sortCol){
+    if (!sortCol) {
       this.actionDispatcher.emit({
         type: tableStore.sortChange,
         payload: _.merge({}, this.tableInputs.sortData, {[field]: 'asc'})
-      })
-    }else if(sortCol === 'asc'){
+      });
+    } else if (sortCol === 'asc') {
       this.actionDispatcher.emit({
         type: tableStore.sortChange,
         payload: _.merge({}, this.tableInputs.sortData, {[field]: 'desc'})
-      })
-    } else if(sortCol === 'desc') {
+      });
+    } else if (sortCol === 'desc') {
       this.actionDispatcher.emit({
         type: tableStore.sortChange,
         payload: _.omit(this.tableInputs.sortData, `${field}`)
-      })
+      });
     }
   }
 
@@ -174,5 +176,24 @@ export class PltMainTableComponent implements OnInit {
       type: tableStore.filterByStatus,
       payload: statue
     })
+  }
+
+  onColResize(event: any) {
+    const {
+      innerText,
+      scrollWidth
+    } = event.element;
+    console.log(event)
+
+    if( innerText == "User Tags" ) {
+      console.log(_.floor(scrollWidth/18));
+      this.userTagsLength= _.floor(scrollWidth/18);
+      this.detectChanges();
+    }
+  }
+
+  protected detectChanges() {
+    if (!this._baseCdr['destroyed'])
+      this._baseCdr.detectChanges();
   }
 }

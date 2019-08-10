@@ -95,9 +95,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   @Select(WorkspaceState.getAnalysis) analysis$;
   analysis: any;
+  allCheckedAnalysis: boolean;
+  indeterminateAnalysis: boolean;
 
   @Select(WorkspaceState.getPortfolios) portfolios$;
   portfolios: any;
+  allCheckedPortolfios: boolean;
+  indeterminatePortfolio: boolean;
 
   constructor(
     private _helper: HelperService,
@@ -126,10 +130,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       }),
       this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.analysis = _.merge({}, value);
+        this.allCheckedAnalysis = this.analysis.allChecked;
+        this.indeterminateAnalysis = this.analysis.indeterminate;
         this.detectChanges();
       }),
       this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.portfolios = _.merge({}, value);
+        this.allCheckedPortolfios = this.portfolios.allChecked;
+        this.indeterminatePortfolio = this.portfolios.indeterminate;
         this.detectChanges();
       }),
       this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
@@ -232,6 +240,7 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   toggleItemsListRDM(RDM) {
     this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMSelectedAction(RDM));
+    this.detectChanges();
   }
 
   /** Select EDM & RDM DropDown Method's */
@@ -300,9 +309,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   getTableData() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      return _.toArray(this.analysis);
+      return _.toArray(this.analysis.data);
     } else {
-      return _.toArray(this.portfolios);
+      return _.toArray(this.portfolios.data);
     }
   }
 
@@ -371,7 +380,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       sizePage = event.first === 0 ? '20' : (event.first + event.rows).toString();
     }
     if (this.state.listEdmRdm.numberOfElement < event.first + event.rows) {
-      console.log('you called for :' + sizePage);
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
         keyword: this.state.listEdmRdm.searchValue,
         size: sizePage,
@@ -385,6 +393,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
       this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+    }
+  }
+
+  updateAllChecked(value, scope) {
+    const selection = value ? 'selectAll' : 'unselectAll';
+    if (scope === 'analysis') {
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: selection}));
+    } else if (scope === 'portfolio') {
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: selection}));
     }
   }
 
