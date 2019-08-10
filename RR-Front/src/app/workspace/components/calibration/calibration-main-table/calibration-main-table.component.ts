@@ -12,7 +12,7 @@ import {
   ViewChild
 } from '@angular/core';
 import * as _ from "lodash";
-import {DEPENDENCIES, UNITS} from "../../../containers/workspace-calibration/data";
+import {DEPENDENCIES, PURE, UNITS} from "../../../containers/workspace-calibration/data";
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as fromWorkspaceStore from "../../../store";
 import {dropThreadAdjustment, WorkspaceState} from "../../../store";
@@ -54,6 +54,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('systemTagsCount') systemTagsCount: any;
   //PLTS
   @Input('listOfPltsData') listOfPltsData: any;
+  @Input('listOfPltsThread') listOfPltsThread: any;
   @Input('listOfDeletedPlts') listOfDeletedPlts: any;
   @Input('listOfDeletedPltsData') listOfDeletedPltsData: any;
   @Input('showDeleted') showDeleted: any;
@@ -67,6 +68,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('someItemsAreSelected') someItemsAreSelected: any;
   @Input('selectAll') selectAll: any;
   @Input('manageReturnPeriods') manageReturnPeriods: boolean;
+  @Input('rowGroupMetadata') rowGroupMetadata: any;
 
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;
@@ -219,7 +221,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
         };
         this.fromPlts = true;
         this.editingTag = false;
-        let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsData, e => e.pltId == k).userTags);
+        let d = _.map(this.selectedListOfPlts, k => _.find(this.listOfPltsThread, e => e.pltId == k).userTags);
         this.modalSelect = _.intersectionBy(...d, 'tagId');
         this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
       }
@@ -250,6 +252,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   randomPercentage: any;
   randomAmount: number;
   AALNumber: number = null;
+  pure = PURE
 
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
@@ -344,8 +347,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   checkAll($event) {
     this.toggleSelectPlts(
       _.zipObject(
-        _.map(this.listOfPltsData, plt => plt.pltId),
-        _.range(this.listOfPltsData.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
+        _.map(this.listOfPltsThread, plt => plt.pltId),
+        _.range(this.listOfPltsThread.length).map(el => ({selected: !this.selectAll && !this.someItemsAreSelected}))
       )
     );
   }
@@ -368,7 +371,19 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(!this.showDeleted ? this.selectedListOfPlts : this.listOfDeletedPlts, el => el == pltId) >= 0;
+    let index = -1;
+    let isSelected;
+    _.forEach(this.listOfPltsThread, (plt, i) => {
+      if (plt.pltId == pltId) {
+        console.log('opla')
+        isSelected = plt.selected
+      }
+    });
+    console.log('isSelected', isSelected)
+    console.log(this.listOfPltsThread)
+    // this.selectSinglePLT(pltId,!_.find(this.listOfPltsThread, plt => plt.pltId == pltId).selected);
+
+    console.log(this.selectedListOfPlts);
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
@@ -376,8 +391,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       this.lastSelectedId = i;
       this.toggleSelectPlts(
         _.zipObject(
-          _.map(this.listOfPltsData, plt => plt.pltId),
-          _.map(this.listOfPltsData, plt => ({selected: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(this.listOfPltsThread, plt => plt.pltId),
+          _.map(this.listOfPltsThread, plt => ({selected: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
@@ -396,11 +411,11 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   checkBoxsort() {
     this.activeCheckboxSort = !this.activeCheckboxSort;
     if (this.activeCheckboxSort) {
-      this.listOfPltsData = _.sortBy(this.listOfPltsData, [(o) => {
+      this.listOfPltsThread = _.sortBy(this.listOfPltsThread, [(o) => {
         return !o.selected;
       }]);
     } else {
-      this.listOfPltsData = this.listOfPltsDataCache;
+      this.listOfPltsThread = this.listOfPltsDataCache;
     }
   }
 
@@ -603,8 +618,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
         const min = _.min([i, this.lastSelectedId]);
         this.toggleSelectPlts(
           _.zipObject(
-            _.map(this.listOfPltsData, plt => plt.pltId),
-            _.map(this.listOfPltsData, (plt, i) => ({selected: i <= max && i >= min})),
+            _.map(this.listOfPltsThread, plt => plt.pltId),
+            _.map(this.listOfPltsThread, (plt, i) => ({selected: i <= max && i >= min})),
           )
         );
       } else {
