@@ -25,16 +25,21 @@ import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk
 import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
-import { InuringDatatableComponent } from './components/inuring/inuring-datatable/inuring-datatable.component';
-import { InuringPackageDetailsComponent } from './components/inuring/inuring-package-details/inuring-package-details.component';
 import { InuringCanvasTabComponent } from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
 import { AttachPltPopUpComponent } from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
+import { NodeCreationPopupComponent } from './components/inuring/node-creation-popup/node-creation-popup.component';
+import { InuringGraphComponent } from './components/inuring/inuring-graph/inuring-graph.component';
+import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
+import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
+import { SimpleNodeComponent } from './components/inuring/simple-node/simple-node.component';
+// import {Dialogs} from 'jsplumbtoolkit';
+
 
 @NgModule({
-  entryComponents: [...COMPONENTS, ...CONTAINERS],
+  entryComponents: [...COMPONENTS, ...CONTAINERS, SimpleNodeComponent],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, NodeCreationPopupComponent, InuringGraphComponent, SimpleNodeComponent
   ],
   imports: [
     GridsterModule,
@@ -54,7 +59,8 @@ import { AttachPltPopUpComponent } from './components/scopeCompleteness/attachPl
     RouterModule.forChild(workspaceRoutes),
     ToastModule,
     ScrollingModule,
-    DropdownModule
+    DropdownModule,
+    jsPlumbToolkitModule, jsPlumbToolkitDragDropModule
   ],
   exports: [
     RouterModule

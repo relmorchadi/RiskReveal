@@ -2,7 +2,8 @@
   <div class="a-app-header ">
     <div class="title-container">
       <h4>Inuring Package</h4>
-      <button (click)="addPackageVisibility=true" class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7">
+      <button (click)="addPackageVisibility=true" class="a-buttons-outlined"
+              style="color: #332ed7 ;border-color: #332ed7">
         <i class="icon-plus"></i>
         Add Package
       </button>
@@ -39,7 +40,11 @@
           ></ng-container>
         </ng-template>
         <nz-tab [nzTitle]="titleTemplate">
-          <inuring-package-details [data]="workspace?.inuring?.content[id]"></inuring-package-details>
+          <inuring-package-details [data]="{
+            wsId: workspace?.wsId,
+            year: workspace?.year,
+            details: workspace?.inuring?.content[id]
+          }"></inuring-package-details>
         </nz-tab>
 
       </ng-container>
@@ -69,29 +74,12 @@
 >
   <p-header>
     <div class="header">
-      <h4>Add new Inuring Package</h4>
+      <h4>Add New Inuring Package</h4>
       <i style="cursor: pointer" (click)="addPackageVisibility=false" class="icon-close_24px"></i>
     </div>
   </p-header>
   <div class="input-group-modal" style="min-height: 300px">
-<!--    <div class="row-input"><span class="label-input">Inuring ID</span>-->
-<!--      <input [placeholder]="' ID'" class="a-textfield-mini input-wrapper"></div>-->
-<!--    <div class="radio-wrapper default-radio">-->
-<!--      <span>AGG/DET</span>-->
-<!--      <nz-radio-group [(ngModel)]="radioValue">-->
-<!--        <label nz-radio nzValue="all">All</label>-->
-<!--        <label nz-radio nzValue="agg">AGG</label>-->
-<!--        <label nz-radio nzValue="det">DET</label>-->
-<!--      </nz-radio-group>-->
-<!--    </div>-->
-<!--    <div class="row-input"><span class="label-input">Number</span><input placeholder="Number"-->
-<!--                                                                         class="a-textfield-mini input-wrapper">-->
-<!--    </div>-->
-<!--    <div class="row-input"><span class="label-input">Name</span><input placeholder="Name"-->
-<!--                                                                       class="a-textfield-mini input-wrapper">-->
-<!--    </div>-->
-<!--    <div class="row-input"><span class="label-input">Description</span><input-->
-<!--      placeholder="Description" class="a-textfield-mini input-wrapper"></div>-->
+
   </div>
   <p-footer>
     <div class="modal-footer-wrapper">

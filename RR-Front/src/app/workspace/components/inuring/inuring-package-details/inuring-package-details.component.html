@@ -2,14 +2,16 @@
   <div nz-row [nzGutter]="8">
 
     <div nz-col [nzSpan]="5">
-      <inuring-canvas-tab></inuring-canvas-tab>
+      <inuring-canvas-tab
+        [wsConfig]="{wsId: data?.wsId,year: data?.year}"
+      ></inuring-canvas-tab>
     </div>
 
     <div nz-col [nzSpan]="19">
       <div class="col-content">
         <nz-tabset class="a-tab-large">
           <nz-tab [nzTitle]="'IP0000055 Structure graph'">
-
+<!--            <inuring-graph></inuring-graph>-->
           </nz-tab>
 
         </nz-tabset>

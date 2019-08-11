@@ -46,7 +46,7 @@ export class WorkspaceService {
     const {workspaceName, programName, cedantName, projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
     console.log('this are projects', projects);
-    (projects || []).length > 0 ? ws.projects= this._selectProject(projects, 0) : null;
+    (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
     ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
@@ -155,7 +155,6 @@ export class WorkspaceService {
             files: null,
             selectedFiles: null,
             importedPLTs: null
-          }
           },
           inuring: defaultInuringState
         }
@@ -167,6 +166,7 @@ export class WorkspaceService {
       }));
     }));
   }
+
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.openWS) {
     const {wsId, uwYear, route} = payload;

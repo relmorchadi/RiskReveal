@@ -13,6 +13,7 @@ export class InuringPackageDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('this is details', this.data);
   }
 
 

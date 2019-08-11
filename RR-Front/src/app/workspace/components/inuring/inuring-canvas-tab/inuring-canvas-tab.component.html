@@ -4,7 +4,7 @@
       <div class="create-tab-content">
         <div class="simple-panel">
           <h6>Input Node Creation</h6>
-          <div class="menu-item add-item">
+          <div class="menu-item add-item" (click)="showCreationPopup=true">
             Create Node
             <i class="icon-add_circle_24px"></i>
           </div>
@@ -314,3 +314,15 @@
     </nz-tab>
   </nz-tabset>
 </div>
+
+
+<node-creation-popup
+  [isVisible]="showCreationPopup"
+  [selectionStep]="'plt'"
+  (onSave)="handleSave($event)"
+  [stepConfig]=" {wsId: wsConfig.wsId,
+    uwYear: wsConfig.year,
+    plts: []}"
+  (onVisibleChange)="showCreationPopup= $event"
+
+></node-creation-popup>

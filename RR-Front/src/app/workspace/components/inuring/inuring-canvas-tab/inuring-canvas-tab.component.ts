@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 
 @Component({
   selector: 'inuring-canvas-tab',
@@ -20,6 +20,8 @@ export class InuringCanvasTabComponent implements OnInit {
     {label: 'Franchise Groundup'},
     {label: 'Franchise Excess'},
   ];
+
+  showCreationPopup=false;
 
   collapses = {
     contractDetails: true,
@@ -141,6 +143,9 @@ export class InuringCanvasTabComponent implements OnInit {
     }
   ];
 
+  @Input('wsConfig')
+  wsConfig: {wsId:string, year:number};
+
   constructor() {
   }
 
@@ -149,6 +154,10 @@ export class InuringCanvasTabComponent implements OnInit {
 
   onContractDrop($event) {
     console.log('[Inuring Details] Contact dop evt', $event);
+  }
+
+  handleSave($event){
+
   }
 
 
