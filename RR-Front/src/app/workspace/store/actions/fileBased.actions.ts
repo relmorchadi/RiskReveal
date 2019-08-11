@@ -13,8 +13,8 @@ export class LoadFileContentAction {
   constructor(public payload: any) {}
 }
 
-export class RemoveFileSelectionAction {
-  static readonly type = '[File Based] Remove File Selection';
+export class RemoveFileFromImportAction {
+  static readonly type = '[File Based] Remove File From Import';
   constructor(public payload: any) {}
 }
 

@@ -26,14 +26,13 @@ import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 import { InuringCanvasTabComponent } from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
-import { AttachPltPopUpComponent } from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
+import {AttachPltPopUpComponent} from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
 import { NodeCreationPopupComponent } from './components/inuring/node-creation-popup/node-creation-popup.component';
 import { InuringGraphComponent } from './components/inuring/inuring-graph/inuring-graph.component';
 import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
 import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import { SimpleNodeComponent } from './components/inuring/simple-node/simple-node.component';
 // import {Dialogs} from 'jsplumbtoolkit';
-
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, SimpleNodeComponent],

@@ -18,7 +18,7 @@ export class PreviousNavigationService {
     ).subscribe(e => {
       console.log("RouterNavigation");
         this.previousUrl = this.currentUrl;
-        this.currentUrl = e.routerState.params.route;
+      this.currentUrl = e.routerState.params.route;
     });
 
     this.actions.pipe(

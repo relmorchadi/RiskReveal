@@ -5,7 +5,7 @@ import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
-import {UpdateWsRouting} from '../../store/actions';
+import {RemoveFileFromImportAction, UpdateWsRouting} from '../../store/actions';
 import {Navigate} from '@ngxs/router-plugin';
 import {DataTables} from './data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
@@ -45,6 +45,23 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   importedFiles: any;
 
   nodePath;
+  peril = [
+    {color: '#E70010', content: 'EQ'},
+    {color: '#008694', content: 'FL'},
+    {color: '#7BBE31', content: 'WS'}
+  ];
+
+  items = [
+    {
+      label: 'View Detail', icon: 'pi pi-eye', command: (event) => {}
+    },
+    {
+      label: 'Select item',
+      icon: 'pi pi-check',
+      command: () => {}
+    }
+  ];
+  contextSelectedItem;
 
   @Select(WorkspaceState.getFileBasedData) fileBase$;
   fileBase: any;
@@ -150,7 +167,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   selectRows(row, index) {
   }
 
-  deleteRow(id) {
+  deleteRow(row) {
+    this.dispatch(new fromWs.RemoveFileFromImportAction(row));
   }
 
   nodeSelect(event) {
@@ -159,7 +177,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   }
 
   nodeUnselect(event) {
-    this.nodePath =  null;
+    this.nodePath = null;
   }
 
   selectToImport(value, index) {
@@ -168,6 +186,19 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   addForImport() {
     this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
+  }
+
+  getColor(RP) {
+    return  _.filter(this.peril, item => item.content === RP)[0].color;
+  }
+
+  getLength() {
+    const path = _.get(this.fileBase, 'selectedFiles', null);
+    if (path === null) {
+      return true;
+    } else {
+      return this.fileBase.selectedFiles.length === 0;
+    }
   }
 
   protected detectChanges() {

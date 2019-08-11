@@ -45,6 +45,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   selectAll = false;
   listOfPlts = [];
   listOfPltsData = [];
+  listOfPltsThread = [];
   selectedListOfPlts = [];
   drawerIndex = 0;
   params = {};
@@ -252,6 +253,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   };
   manageReturnPeriods = false;
   manageAdjColumn = false;
+  rowGroupMetadata = {
+    'SPLTH-000735433': [],
+    'SPLTH-000735434': [],
+    'SPLTH-000735435': []
+  };
+
 
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
@@ -308,9 +315,14 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
-      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected);
-
+      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected).map(e => e.pltId);
+      if (this.listOfPltsData) {
+        _.forEach(this.listOfPltsData, pure => {
+          this.listOfPltsThread.push(...pure.threads);
+        })
+      }
       this.detectChanges();
+      console.log(data);
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
@@ -319,7 +331,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsData.length && this.selectedListOfPlts.length > 0;
       this.detectChanges();
     });
-    console.log(this.randomMetaData);
+    this.listOfPltsData.sort(this.dynamicSort("pureId"));
+    this.updateRowGroupMetaData();
   }
 
   initRandomMetaData() {
@@ -371,6 +384,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       return result * sortOrder;
     }
   }
+
   initDataColumns() {
     this.dataColumns = [];
     this.frozenColumns = [];
@@ -426,6 +440,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     console.log('frozenColumns ==> ', this.frozenColumns);
     console.log('extraFrozenColumns ==> ', this.extraFrozenColumns);
   }
+
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.sortData = _.merge({}, this.sortData, {
@@ -1016,7 +1031,21 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   }
 
-  dropAll(param){
-    throw new Error('To be implemented !');
+  updateRowGroupMetaData() {
+    this.rowGroupMetadata = {
+      'SPLTH-000735433': [],
+      'SPLTH-000735434': [],
+      'SPLTH-000735435': []
+    };
+    if (this.listOfPltsData) {
+      _.forEach(this.listOfPltsData, (value, i) => {
+        if (!this.rowGroupMetadata[value.pureId]) {
+          this.rowGroupMetadata[value.pureId] = [i]
+        }
+        this.rowGroupMetadata[value.pureId].push(value.pltId)
+
+      })
+      console.log(this.rowGroupMetadata);
+    }
   }
 }

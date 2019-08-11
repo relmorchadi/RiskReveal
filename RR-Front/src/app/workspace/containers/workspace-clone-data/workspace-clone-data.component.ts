@@ -10,7 +10,7 @@ import {PreviousNavigationService} from '../../services/previous-navigation.serv
 import {take} from 'rxjs/operators';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {WsApi} from "../../services/workspace.api";
 
 interface SourceData {
@@ -241,7 +241,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       ).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
         this.workspaceId = wsId;
         this.uwy = year;
-        if(_.get(navigationPayload, 'from', null) == 'pltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
+        if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
           if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {
             this.patchProjectForm('from', {
               wsId: '',

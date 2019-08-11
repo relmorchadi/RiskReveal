@@ -1,6 +1,7 @@
 <p-contextMenu #cm [model]="contextMenuItems" appendTo="body"></p-contextMenu>
 <p-table
   (onSort)="onSort($event)"
+  dataKey="pltId"
   *ngIf="tableType =='adjustments'"
   [columns]="dataColumns"
   [contextMenu]="cm"
@@ -10,6 +11,7 @@
   [columnResizeMode]="'fit'"
   [responsive]="true"
   [scrollable]="true"
+  (onColResize)="onColResize($event)"
   scrollHeight="calc(100vh - 480px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
@@ -99,7 +101,7 @@
             style="background-color: #ffffff !important;">
 
         </th>
-        <th *ngIf="col?.icon === 'icon-focus-add'"
+        <th *ngIf="col?.icon === 'icon-ballot_24px'"
             style="background-color: #ffffff !important;height: 88px!important;">
         </th>
         <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
@@ -220,12 +222,14 @@
                  nz-checkbox></label>
           <i (click)="checkBoxsort()" nz-icon nzTheme="outline" nzType="down" style="cursor: pointer;"></i>
         </th>
-        <th *ngIf="col?.fields === 'userTags'" style="padding: 0 !important;text-align: center !important;">
+        <th *ngIf="col?.fields === 'userTags'" style="padding: 0 !important;text-align: center !important;"
+            pResizableColumn>
                       <span style="justify-content: space-between;font-weight: bold">
                         {{col.header}}
                       </span>
         </th>
-        <th *ngIf="col?.fields === 'pltId'" style="padding: 0 !important;text-align: center !important;">
+        <th *ngIf="col?.fields === 'pltId'" style="padding: 0 !important;text-align: center !important;"
+            pResizableColumn>
                       <span style="justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -252,9 +256,9 @@
                         </ng-container>
                       </span>
         </th>
-        <th *ngIf="col?.icon === 'icon-focus-add'" style="padding: 0 !important;text-align: center !important;">
+        <th *ngIf="col?.icon === 'icon-ballot_24px'" style="padding: 0 !important;text-align: center !important;">
                       <span style="justify-content: space-between;">
-                        <nz-dropdown *ngIf="col.icon === 'icon-focus-add'" [nzPlacement]="'bottomLeft'">
+                        <nz-dropdown *ngIf="col.icon === 'icon-ballot_24px'" [nzPlacement]="'bottomLeft'">
                         <i [ngClass]="col.icon" nz-dropdown style="font-size: 15px;"></i>
                         <ul nz-menu>
                           <li nz-menu-item>
@@ -352,7 +356,7 @@
                    col?.fields === 'regionPerilName' ||
                    col?.fields === 'grain' ||
                    col?.fields === 'vendorSystem' ||
-                   col?.fields === 'rap' ">
+                   col?.fields === 'rap' " pResizableColumn>
                       <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -379,23 +383,17 @@
         </th>
         <th *ngIf="col?.fields === 'userTags'">
         </th>
-        <th *ngIf="col?.filtred && col.extended">
+        <th *ngIf="col?.filtred">
           <div class="filter-input">
             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
             <input (input)="filter(col?.fields, $event.target.value)" *ngIf="col.header.length > 0" pInputText
                    type="text">
           </div>
         </th>
-        <th *ngIf="col?.icon === 'icon-focus-add'"></th>
+        <th *ngIf="col?.icon === 'icon-ballot_24px'"></th>
         <th *ngIf="col?.icon === 'icon-note'" class="separator-right">
         </th>
         <th *ngIf="col?.fields === 'overallLMF'"></th>
-        <th *ngIf="col?.fields === 'peril'"></th>
-        <th *ngIf="col?.fields === 'regionPerilCode'"></th>
-        <th *ngIf="col?.fields === 'regionPerilName'"></th>
-        <th *ngIf="col?.fields === 'grain'"></th>
-        <th *ngIf="col?.fields === 'vendorSystem'"></th>
-        <th *ngIf="col?.fields === 'rap'"></th>
         <th *ngIf="col?.fields === 'base'"></th>
         <th *ngIf="col?.fields === 'default'"></th>
         <th *ngIf="col?.fields === 'client'"></th>
@@ -404,28 +402,24 @@
       </ng-container>
     </tr>
   </ng-template>
-  <ng-template let-columns="columns" let-rowData let-rowIndex="rowIndex" pTemplate="body">
-    <tr (contextmenu)="selectedItemForMenu=rowData.pltId" [pContextMenuRow]="rowData"
-        class="on-hover"
-        *ngIf="(filters.systemTag.length == 0 ? rowData?.visible :  rowData?.visible && rowData?.tagFilterActive) &&  statusFilterActive(rowData.status)"
-        [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }">
-      <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
-          *ngFor="let col of columns; let i = index"
-          [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}">
-
+  <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
+    <tr class="ui-widget-header" style="background-color: #ecf1f7 !important;">
+      <td *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col.fields === 'checkbox'">
-          <label (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)" [nzChecked]="rowData.selected"
-                 nz-checkbox></label>
+          <a [pRowToggler]="rowData">
+            <i [ngClass]="expanded ? 'icon-keyboard_arrow_down_24px' : 'icon-keyboard_arrow_right_24px'"
+               style="font-size: 30px;"></i>
+          </a>
         </ng-container>
         <ng-container *ngIf="col.fields === 'userTags'">
-          <div class="td-wrapper-tags">
-            <ng-container *ngFor="let tag of rowData.userTags;let it= index;">
-                          <span *ngIf="it < 2" [ngStyle]="{ 'background-color': tag.tagColor}"
-                                class="tag-el">&nbsp;</span>
-              <span *ngIf="it == 2" class="tag-ellipsis" style="background-color: #E0E0E0"><i
-                class="icon-ellipsis-h"></i></span>
+          <!--<div class="td-wrapper-tags">
+            <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
+              <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength"
+                    [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
+              <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (rowData.userTags.length - 1)"
+                    style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
             </ng-container>
-          </div>
+          </div>-->
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
           <div class="text-elipsice"
@@ -435,9 +429,9 @@
           <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
                class="text-elipsice">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
         </ng-container>
-        <ng-container *ngIf="col?.type == 'icon'">
+        <!--<ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
-            <div *ngIf="col.icon=='icon-focus-add'">
+            <div *ngIf="col.icon=='icon-ballot_24px'">
               <i [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',
                                          'icon-check-circle iconGreen': rowData?.status=='valid' ,
                                          'icon-lock-alt iconRed': rowData?.status=='locked',
@@ -493,7 +487,7 @@
               </nz-dropdown>
             </div>
           </div>
-        </ng-container>
+        </ng-container>-->
         <ng-container *ngIf="col?.dragable">
           <div
             (drop)="onDrop(col,rowData.pltId)"
@@ -507,14 +501,14 @@
             style="display: flex;">
 
             <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
-              <div
+              <!--<div
                 class="adjustDiv"
                 style=" background: #f3f3f3;">
                                           <span
                                             class="spanStyle">Model Calib</span>
                 <input class="templateInput" disabled
                        style=" background: #f3f3f3;" value="2.1">
-              </div>
+              </div>-->
             </div>
 
             <ng-container *ngFor="let adjs of adjutmentApplication[rowData.pltId]; let i=index">
@@ -529,40 +523,40 @@
                      [sortableIndex]="i"
                      class="adjustDiv"
                      dnd-sortable>
-                              <span class="spanStyle"
-                                    style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
-                  <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                               *ngIf="shownDropDown ===  adjs.id+rowData.pltId"
-                               [(nzVisible)]="dropdownVisible"
-                               [nzPlacement]="'bottomLeft'"
-                               nzTrigger="click"
-                               class="dropD">
-                    <i [id]="i" class="icon-menu_24px" nz-dropdown
-                       style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                    <ul nz-menu>
-                      <li nz-menu-item>Edit</li>
-                      <li nz-menu-item>Branch new Thread</li>
-                      <li nz-menu-item>Copy</li>
-                      <li nz-submenu>
-                        <span title>Paste</span>
-                        <ul nz-menu>
-                          <li nz-menu-item>To the Left</li>
-                          <li nz-menu-item>To the Right</li>
-                        </ul>
-                      </li>
-                      <li nz-menu-item class="menu-bottom-separator">Delete</li>
-                      <li nz-menu-item>View EP Metrics</li>
-                      <li nz-menu-item>Pin to Chart</li>
-                      <li nz-menu-item>Add to Comparer</li>
-                      <li nz-menu-item>Export</li>
-                    </ul>
-                  </nz-dropdown>
-                  <input [value]="adjs?.value" class="templateInput">
+                  <!--<span class="spanStyle"
+                        style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
+      <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                   *ngIf="shownDropDown ===  adjs.id+rowData.pltId"
+                   [(nzVisible)]="dropdownVisible"
+                   [nzPlacement]="'bottomLeft'"
+                   nzTrigger="click"
+                   class="dropD">
+        <i [id]="i" class="icon-menu_24px" nz-dropdown
+           style="font-size: 14px;float: right;margin-right: 2px;"></i>
+        <ul nz-menu>
+          <li nz-menu-item>Edit</li>
+          <li nz-menu-item>Branch new Thread</li>
+          <li nz-menu-item>Copy</li>
+          <li nz-submenu>
+            <span title>Paste</span>
+            <ul nz-menu>
+              <li nz-menu-item>To the Left</li>
+              <li nz-menu-item>To the Right</li>
+            </ul>
+          </li>
+          <li nz-menu-item class="menu-bottom-separator">Delete</li>
+          <li nz-menu-item>View EP Metrics</li>
+          <li nz-menu-item>Pin to Chart</li>
+          <li nz-menu-item>Add to Comparer</li>
+          <li nz-menu-item>Export</li>
+        </ul>
+      </nz-dropdown>
+      <input [value]="adjs?.value" class="templateInput">-->
                 </div>
               </ng-container>
             </ng-container>
 
-            <div (mouseenter)="shownDropDown = rowData.pltId" (mouseleave)="onLeaveAdjustment(rowData.pltId)"
+            <!--<div (mouseenter)="shownDropDown = rowData.pltId" (mouseleave)="onLeaveAdjustment(rowData.pltId)"
                  *ngIf="col.fields=='inuring'"
                  class="adjustDiv">
                           <span class="spanStyle"
@@ -595,13 +589,214 @@
               </nz-dropdown>
               <input class="templateInput" disabled
                      value="P00002">
-            </div>
+            </div>-->
             <div *ngIf="dragPlaceHolderId == rowData.pltId && dragPlaceHolderCol == col?.fields"
                  class="dndPlaceholder"></div>
           </div>
         </ng-container>
       </td>
     </tr>
+  </ng-template>
+  <ng-template let-columns="columns" let-rowData let-rowIndex="rowIndex" pTemplate="rowexpansion">
+    <ng-container *ngFor="let thread of rowData.threads">
+      <tr (contextmenu)="selectedItemForMenu=thread.pltId" [pContextMenuRow]="thread"
+          class="on-hover"
+          *ngIf="(filters.systemTag.length == 0 ? thread?.visible :  thread?.visible && thread?.tagFilterActive) &&  statusFilterActive(thread.status)"
+          [ngClass]="{'active_plt_item': thread.selected && !thread.opened, 'opened_plt_item': thread.opened }">
+        <td (click)="handlePLTClick(thread.pltId,rowIndex,$event)"
+            *ngFor="let col of columns; let i = index"
+            [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}">
+
+          <ng-container *ngIf="col.fields === 'checkbox'">
+            <label (nzCheckedChange)="selectSinglePLT(thread.pltId,$event)" [nzChecked]="thread.selected"
+                   nz-checkbox></label>
+          </ng-container>
+          <ng-container *ngIf="col.fields === 'userTags'">
+            <div class="td-wrapper-tags">
+              <ng-container *ngFor="let tag of thread.userTags;let i= index;">
+              <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength"
+                    [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
+                <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (thread.userTags.length - 1)"
+                      style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
+              </ng-container>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="col.fields === 'pltId'">
+            <div class="text-elipsice"
+                 style="font-weight: bold">{{thread.pltId | textLength}}</div>
+          </ng-container>
+          <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
+            <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
+                 class="text-elipsice">{{ i == 2 ? (thread[col.fields]) : thread[col.fields]}}</div>
+          </ng-container>
+          <ng-container *ngIf="col?.type == 'icon'">
+            <div class="td-wrapper-check">
+              <div *ngIf="col.icon=='icon-ballot_24px'">
+                <i [ngClass]="{ 'icon-history-alt iconYellow': thread?.status=='in progress',
+                                         'icon-check-circle iconGreen': thread?.status=='valid' ,
+                                         'icon-lock-alt iconRed': thread?.status=='locked',
+                                         'icon-error_24px iconRed2': thread?.status=='failed',
+                                         'icon-star iconBlue': thread?.status=='new',
+                                         'icon-report_problem_24px iconYellow2': thread?.status=='requires regeneration' }"
+                   [nz-tooltip]="thread.status[0].toUpperCase() + thread.status.slice(1)"
+                   class="tooltipMsg">
+                </i>
+              </div>
+              <div
+                *ngIf="col.icon=='icon-note' && (selectedListOfPlts.length <= 1 ||  !selectedListOfPlts.includes(thread.pltId))">
+                <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click" class="plt-dropdown"
+                             [ngClass]=" {'display-dropdown':clickedDropdown == thread.pltId,'undisplay-dropdown':!clickedDropdown == thread.pltId }"
+                             (nzVisibleChange)="changeDropdownDisplay($event,thread.pltId)">
+                  <i class="icon-menu_24px"
+                     nz-dropdown
+                     style="cursor: pointer; font-size: 25px; float: right; margin-right: 7px"></i>
+
+                  <ul nz-menu>
+                    <li (click)="clickButtonPlus(false,thread)" nz-menu-item>Add New Adjustment</li>
+                    <li nz-menu-item>Regenerate</li>
+                    <li nz-submenu>
+                      <span title>Create</span>
+                      <ul nz-menu>
+                        <li nz-menu-item>New Default Thread</li>
+                        <li nz-menu-item>New Non-default Thread</li>
+                      </ul>
+                    </li>
+                    <li nz-submenu class="menu-bottom-separator">
+                      <span title>Clone</span>
+                      <ul nz-menu>
+                        <li nz-menu-item>New Default Thread</li>
+                        <li nz-menu-item>New Non-default Thread</li>
+                      </ul>
+                    </li>
+                    <li nz-menu-item>Publish to Princing</li>
+                    <li nz-menu-item>Publish to Accumulation</li>
+                    <li nz-submenu>
+                      <span title>Inuring</span>
+                      <ul nz-menu>
+                        <li nz-menu-item>Add to New Inuring Package</li>
+                        <li nz-menu-item>Add to Existing Inuring Package</li>
+                      </ul>
+                    </li>
+                    <li nz-menu-item>Add to Comparer</li>
+                    <li nz-menu-item class="menu-bottom-separator">Export</li>
+                    <li nz-menu-item>View PLT Details</li>
+                    <li nz-menu-item>Manage Tags</li>
+                    <li nz-menu-item>Remove</li>
+                    <li nz-menu-item>Delete</li>
+                  </ul>
+                </nz-dropdown>
+              </div>
+            </div>
+          </ng-container>
+          <ng-container *ngIf="col?.dragable">
+            <div
+              (drop)="onDrop(col,thread.pltId)"
+              [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
+              [dropZones]="['widget-dropZone']"
+              [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
+              [sortableData]="adjutmentApplication[thread.pltId]"
+
+              class="text-elipsice border-dragable"
+              dnd-sortable-container
+              style="display: flex;">
+
+              <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
+                <div
+                  class="adjustDiv"
+                  style=" background: #f3f3f3;">
+                                          <span
+                                            class="spanStyle">Model Calib</span>
+                  <input class="templateInput" disabled
+                         style=" background: #f3f3f3;" value="2.1">
+                </div>
+              </div>
+
+              <ng-container *ngFor="let adjs of adjutmentApplication[thread.pltId]; let i=index">
+                <ng-container
+                  *ngIf="col.fields== adjs.category.toLowerCase()"
+                  style="display: flex;height: max-content;">
+                  <div (drop)="onDrop(col,thread.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id+thread.pltId)"
+                       (mouseover)="shownDropDown = adjs.id+thread.pltId"
+                       (onDragStart)="draggedAdjs = adjs" [dragData]="adjs"
+                       [dragEnabled]="true"
+                       [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
+                       [sortableIndex]="i"
+                       class="adjustDiv"
+                       dnd-sortable>
+                              <span class="spanStyle"
+                                    style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
+                    <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                                 *ngIf="shownDropDown ===  adjs.id+thread.pltId"
+                                 [(nzVisible)]="dropdownVisible"
+                                 [nzPlacement]="'bottomLeft'"
+                                 nzTrigger="click"
+                                 class="dropD">
+                      <i [id]="i" class="icon-menu_24px" nz-dropdown
+                         style="font-size: 14px;float: right;margin-right: 2px;"></i>
+                      <ul nz-menu>
+                        <li nz-menu-item>Edit</li>
+                        <li nz-menu-item>Branch new Thread</li>
+                        <li nz-menu-item>Copy</li>
+                        <li nz-submenu>
+                          <span title>Paste</span>
+                          <ul nz-menu>
+                            <li nz-menu-item>To the Left</li>
+                            <li nz-menu-item>To the Right</li>
+                          </ul>
+                        </li>
+                        <li nz-menu-item class="menu-bottom-separator">Delete</li>
+                        <li nz-menu-item>View EP Metrics</li>
+                        <li nz-menu-item>Pin to Chart</li>
+                        <li nz-menu-item>Add to Comparer</li>
+                        <li nz-menu-item>Export</li>
+                      </ul>
+                    </nz-dropdown>
+                    <input [value]="adjs?.value" class="templateInput">
+                  </div>
+                </ng-container>
+              </ng-container>
+
+              <div (mouseenter)="shownDropDown = thread.pltId" (mouseleave)="onLeaveAdjustment(thread.pltId)"
+                   *ngIf="col.fields=='inuring'"
+                   class="adjustDiv">
+                          <span class="spanStyle"
+                                style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px; overflow: hidden;display:inline-block;"></span>
+                <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                             *ngIf="shownDropDown === thread.pltId"
+                             [(nzVisible)]="dropdownVisible"
+                             [nzPlacement]="'bottomLeft'"
+                             nzTrigger="click"
+                             class="dropD">
+                  <i [id]="i" class="icon-menu_24px" nz-dropdown
+                     style="font-size: 14px;float: right;margin-right: 2px;"></i>
+                  <ul nz-menu>
+                    <li nz-menu-item>Edit</li>
+                    <li nz-menu-item>Branch new Thread</li>
+                    <li nz-menu-item>Copy</li>
+                    <li nz-submenu>
+                      <span title>Paste</span>
+                      <ul nz-menu>
+                        <li nz-menu-item>To the Left</li>
+                        <li nz-menu-item>To the Right</li>
+                      </ul>
+                    </li>
+                    <li nz-menu-item class="menu-bottom-separator">Delete</li>
+                    <li nz-menu-item>View EP Metrics</li>
+                    <li nz-menu-item>Pin to Chart</li>
+                    <li nz-menu-item>Add to Comparer</li>
+                    <li nz-menu-item>Export</li>
+                  </ul>
+                </nz-dropdown>
+                <input class="templateInput" disabled
+                       value="P00002">
+              </div>
+              <div *ngIf="dragPlaceHolderId == thread.pltId && dragPlaceHolderCol == col?.fields"
+                   class="dndPlaceholder"></div>
+            </div>
+          </ng-container>
+        </td>
+      </tr>
+    </ng-container>
   </ng-template>
 </p-table>
 <p-table
@@ -613,6 +808,7 @@
   [resizableColumns]="true"
   [columnResizeMode]="'fit'"
   [contextMenu]="cm"
+  (onColResize)="onColResize($event)"
   scrollHeight="calc(100vh - 480px)"
   [scrollable]="true"
   [totalRecords]="listOfPltsData.length"
@@ -697,15 +893,15 @@
         </th>
         <th *ngIf="extended &&
                     (col.fields === 'rap' ||
-                    col.fields === 'vendorSystem'||
-                    col.fields === 'grain'||
+                     col.fields === 'vendorSystem'||
+                     col.fields === 'grain'||
                      col.fields === 'regionPerilName'||
                      col.fields === 'regionPerilCode'||
                      col.fields === 'peril')"
             style="background-color: #ffffff !important;">
 
         </th>
-        <th *ngIf="col?.icon === 'icon-focus-add'"
+        <th *ngIf="col?.icon === 'icon-ballot_24px'"
             style="background-color: #ffffff !important;height: 88px!important;">
         </th>
         <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
@@ -777,12 +973,14 @@
                  [nzIndeterminate]="someItemsAreSelected"></label>
           <i (click)="checkBoxsort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
         </th>
-        <th *ngIf="col?.fields === 'userTags'" style="padding: 0 !important;text-align: center !important;">
+        <th *ngIf="col?.fields === 'userTags'" style="padding: 0 !important;text-align: center !important;"
+            pResizableColumn>
                       <span style="justify-content: space-between;font-weight: bold">
                         {{col.header}}
                       </span>
         </th>
-        <th *ngIf="col?.fields === 'pltId'" style="padding: 0 !important;text-align: center !important;">
+        <th *ngIf="col?.fields === 'pltId'" style="padding: 0 !important;text-align: center !important;"
+            pResizableColumn>
                       <span style="justify-content: space-between;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -810,9 +1008,9 @@
                         </ng-container>
                       </span>
         </th>
-        <th *ngIf="col?.icon === 'icon-focus-add'" style="padding: 0 !important;text-align: center !important;">
+        <th *ngIf="col?.icon === 'icon-ballot_24px'" style="padding: 0 !important;text-align: center !important;">
                       <span style="justify-content: space-between;">
-                        <nz-dropdown *ngIf="col.icon === 'icon-focus-add'" [nzPlacement]="'bottomLeft'">
+                        <nz-dropdown *ngIf="col.icon === 'icon-ballot_24px'" [nzPlacement]="'bottomLeft'">
                         <i [ngClass]="col.icon" nz-dropdown style="font-size: 15px;"></i>
                         <ul nz-menu>
                           <li nz-menu-item>
@@ -906,7 +1104,7 @@
                    col?.fields === 'regionPerilName' ||
                    col?.fields === 'grain' ||
                    col?.fields === 'vendorSystem' ||
-                   col?.fields === 'rap' ">
+                   col?.fields === 'rap' " pResizableColumn>
                       <span style="white-space: nowrap;overflow: hidden;text-overflow: ellipsis;">
                         {{col?.header}}
                         <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.fields]">
@@ -941,7 +1139,7 @@
                    (input)="filter(col?.fields, $event.target.value)">
           </div>
         </th>
-        <th *ngIf="col?.icon === 'icon-focus-add'"></th>
+        <th *ngIf="col?.icon === 'icon-ballot_24px'"></th>
         <th *ngIf="col?.icon === 'icon-note'" style="border-right: 8px solid #F4F6FC !important;">
         </th>
         <th *ngIf="col?.fields === 'peril'"></th>
@@ -974,11 +1172,11 @@
         </ng-container>
         <ng-container *ngIf="col.fields === 'userTags'">
           <div class="td-wrapper-tags">
-            <ng-container *ngFor="let tag of rowData.userTags;let it= index;">
-                          <span class="tag-el" *ngIf="it < 2"
-                                [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
-              <span class="tag-ellipsis" *ngIf="it == 2" style="background-color: #E0E0E0"><i
-                class="icon-ellipsis-h"></i></span>
+            <ng-container *ngFor="let tag of rowData.userTags;let i= index;">
+              <span class="tag-el" *ngIf="i <= ( userTagsLength - 1 ) && userTagsLength"
+                    [ngStyle]="{ 'background-color': tag.tagColor}">&nbsp;</span>
+              <span class="tag-ellipsis" *ngIf="i > ( userTagsLength - 1 ) && i == (rowData.userTags.length - 1)"
+                    style="background-color: #E0E0E0"><i class="icon-ellipsis-h"></i></span>
             </ng-container>
           </div>
         </ng-container>
@@ -992,7 +1190,7 @@
         </ng-container>
         <ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
-            <div *ngIf="col.icon=='icon-focus-add'">
+            <div *ngIf="col.icon=='icon-ballot_24px'">
               <i class="tooltipMsg"
                  [nz-tooltip]="rowData.status[0].toUpperCase() + rowData.status.slice(1)"
                  [ngClass]="{ 'icon-history-alt iconYellow': rowData?.status=='in progress',

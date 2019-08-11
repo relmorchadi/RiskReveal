@@ -1,14 +1,12 @@
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DataTables} from '../data';
 import * as fromWs from '../../../store/actions';
+import {ApplyRegionPerilAction, SaveEditAnalysisAction} from '../../../store/actions';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Select, Store} from '@ngxs/store';
 import * as _ from 'lodash';
-import {RiskLinkState, WorkspaceState} from '../../../store/states';
-import {combineLatest, Observable} from 'rxjs';
-import {RiskLinkModel} from '../../../model/risk_link.model';
-import {ApplyRegionPerilAction, SaveEditAnalysisAction} from '../../../store/actions';
-import * as tableStore from "../../../../shared/components/plt/plt-main-table/store";
+import {WorkspaceState} from '../../../store/states';
+import {combineLatest} from 'rxjs';
 
 @Component({
   selector: 'app-risk-link-res-summary',

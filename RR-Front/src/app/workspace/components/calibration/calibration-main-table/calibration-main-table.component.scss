@@ -343,7 +343,6 @@
     th {
       padding: 3px;
       padding-right: 0 !important;
-      vertical-align: top;
       line-height: 17px !important;
       color: rgba(0, 0, 0, 0.38);
       font-size: 11px;
@@ -1009,7 +1008,6 @@
       }
 
       th {
-        vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
         background-color: #F3F3F3;
         outline-color: #fff;
@@ -1017,6 +1015,7 @@
         height: 45px;
         border: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
         text-align: center !important;
 
         .filter-input {
@@ -1584,7 +1583,7 @@ body .ui-table .ui-table-thead > tr > th {
 
   .EPM2B {
     width: 47%;
-    margin-left: 50%;
+    margin-left: 40%;
     text-align: end;
     font-size: 12px;
     color: #1ad21f;
@@ -1592,7 +1591,7 @@ body .ui-table .ui-table-thead > tr > th {
 
   .EPM2R {
     width: 47%;
-    margin-left: 50%;
+    margin-left: 40%;
     text-align: end;
     font-size: 12px;
     color: #cf1912;

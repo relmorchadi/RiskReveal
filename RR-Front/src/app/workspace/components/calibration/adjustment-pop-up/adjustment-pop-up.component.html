@@ -29,13 +29,13 @@
             nzShowSearch
             style="padding: 10px 0; width: 300px"
           >
-            <nz-option-group nzLabel="Favored">
+            <nz-option-group *ngIf="favoredBasis.length">
               <nz-option *ngFor="let option of favoredBasis" [nzLabel]="option.name" [nzValue]="option"
                          nzCustomContent>{{option.name}}<i (click)="unfavorise(option)"
                                                            class="icon-star_24px favoredStar"
                                                            style="font-size: 22px;"></i></nz-option>
             </nz-option-group>
-            <nz-option-group nzLabel="Normal">
+            <nz-option-group>
               <nz-option *ngFor="let option of unFavoredBasis" [nzLabel]="option.name" [nzValue]="option"
                          nzCustomContent>{{option.name}}<i (click)="favorise(option)"
                                                            class="icon-star_border_24px unfavoredStar"

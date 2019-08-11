@@ -22,24 +22,24 @@ public class FileBaseImportResource {
 
 
     @GetMapping("files-list")
-    ResponseEntity<?> getFilesList(@RequestParam String path){
+    ResponseEntity<?> getFilesList(@RequestParam String path) {
         return ResponseEntity.ok(
                 this.fileBaseImportService.listFilesFromSandbox(path)
-        ) ;
+        );
     }
 
     @GetMapping("folders-list")
-    ResponseEntity<?> getFoldersList(@RequestParam String path){
+    ResponseEntity<?> getFoldersList(@RequestParam String path) {
         return ResponseEntity.ok(
                 this.fileBaseImportService.listFoldersFromSandbox(path)
-        ) ;
+        );
     }
 
     @GetMapping("read-file")
     ResponseEntity<?> readFile(String fileName) throws IOException {
         return ResponseEntity.ok(
                 this.fileBaseImportService.readFile(fileName)
-        ) ;
+        );
     }
 
 

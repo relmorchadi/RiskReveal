@@ -551,7 +551,7 @@ export class WorkspaceState {
 
   @Action(fromWS.toCalibratePlts)
   toCalibratePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.toCalibratePlts) {
-    this.calibrationService.toCalibratePlts(ctx, payload)
+    this.calibrationService.toCalibratePlts(ctx, payload);
   }
 
   @Action(fromWS.initCalibrationData)
@@ -877,6 +877,11 @@ export class WorkspaceState {
   @Action(fromWS.LoadFileBasedFilesAction)
   loadFileBasedFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
     return this.fileBasedFacade.loadFilesList(ctx, payload);
+  }
+
+  @Action(fromWS.RemoveFileFromImportAction)
+  removeFileFromImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFileFromImportAction) {
+    this.fileBasedFacade.removeFileFromImport(ctx, payload);
   }
 
   @Action(fromWS.ToggleFilesAction)

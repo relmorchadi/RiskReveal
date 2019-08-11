@@ -3,7 +3,7 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
-import {dataTable,dataTable2, trestySections} from './data';
+import {dataTable, dataTable2, trestySections} from './data';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
@@ -63,7 +63,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = value;
-      this.listOfPltsData = _.map(this.getSortedPlts(this.state), (e,k) => ({[k]: e}));
+      this.listOfPltsData = _.map(this.getSortedPlts(this.state), (e, k) => ({[k]: e}));
       // this.dataSource = this.dataSource.map((dt, k) => dt = {...dt, id: k});
       this.dataSource = dataTable;
       this.treatySections = _.toArray(trestySections);
@@ -170,23 +170,24 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   checkExpected(item, rowData) {
     let checked = false;
-    if(this.selectedSortBy == 'Minimum Grain / RAP'){
-    item.regionPerils.forEach(reg => {
-        if (reg.id == rowData.id) {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      item.regionPerils.forEach(reg => {
+          if (reg.id == rowData.id) {
 
-          reg.targetRaps.forEach(res => {
-            rowData.child.forEach(des => {
-              if (des.id == res.id) {
-                checked = true;
-              }
+            reg.targetRaps.forEach(res => {
+              rowData.child.forEach(des => {
+                if (des.id == res.id) {
+                  checked = true;
+                }
+              })
+
             })
 
-          })
-
+          }
         }
-      }
-    )}
-    if(this.selectedSortBy == 'RAP / Minimum Grain'){
+      )
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
       item.targetRaps.forEach(reg => {
           if (reg.id == rowData.id) {
 
@@ -205,32 +206,38 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
     return checked;
   }
-  checkExpectedTwo(item,grain, rowData){
+
+  checkExpectedTwo(item, grain, rowData) {
     let checked = false;
 
-    if(this.selectedSortBy == 'Minimum Grain / RAP'){
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
         if (reg.id == rowData.id) {
-    item.regionPerils.forEach( res => {
-      res.targetRaps.forEach( des => {
-        if(des.id == grain.id){
-          checked = true;
+          item.regionPerils.forEach(res => {
+            res.targetRaps.forEach(des => {
+              if (des.id == grain.id) {
+                checked = true;
+              }
+            })
+
+          })
         }
       })
-
-    })}})}
-    if(this.selectedSortBy == 'RAP / Minimum Grain'){
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
       item.targetRaps.forEach(reg => {
         if (reg.id == rowData.id) {
-      item.targetRaps.forEach( res => {
-        res.regionPerils.forEach( des => {
-          if(des.id == grain.id){
-            checked = true;
-          }
-        })
+          item.targetRaps.forEach(res => {
+            res.regionPerils.forEach(des => {
+              if (des.id == grain.id) {
+                checked = true;
+              }
+            })
 
+          })
+        }
       })
-    }})}
+    }
 
 
     return checked;

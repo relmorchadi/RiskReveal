@@ -45,7 +45,7 @@ export class CreateProjectPopupComponent implements OnInit, OnDestroy {
         sourceProjectId: this.newProjectForm.value.projectId,
         sourceProjectName: this.newProjectForm.value.name,
         sourceWsId: _.get(this.newProject, 'workspaceId', null),
-        sourceWsName: _.get(this.newProject,'workspaceName', null)
+        sourceWsName: _.get(this.newProject, 'workspaceName', null)
       };
     }
     console.log(project);
