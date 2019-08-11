@@ -128,6 +128,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   browesing: boolean;
 
   Inputs: {
+    scrollHeight: string | number,
     contextMenuItems: any,
     filterInput: string;
     pltColumns: any[];
@@ -165,7 +166,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     selectedItemForMenu: any;
   };
 
-  tableInputs = ['dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
+  tableInputs = ['scrollHeight', 'dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
@@ -190,6 +191,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
+      scrollHeight: null,
       filterInput: '',
       pltColumns: [
         {
@@ -235,7 +237,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '80%',
+          width: '100%',
           icon: null,
           type: 'field',
           active: true
@@ -247,7 +249,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '30%',
+          width: '22%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -609,7 +611,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     this.selectedWorkspace = null;
     this._filter = {};
     this.browesing = false;
-    this.onVisibleChange.emit(false);
+    this.onVisibleChange.emit(this.browesing);
     this.Inputs= {
       ...this.Inputs,
       filterInput: '',
@@ -618,10 +620,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: '',
           header: '',
-          width: '60',
           sorted: false,
           filtred: false,
           resizable: false,
+          width: '25%',
           icon: null,
           type: 'checkbox',
           active: true
@@ -630,10 +632,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: '',
           header: 'User Tags',
-          width: '60',
           sorted: false,
           filtred: false,
           resizable: false,
+          width: '24%',
           icon: null,
           type: 'tags',
           active: true
@@ -642,11 +644,11 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'pltId',
           header: 'PLT ID',
-          width: '80',
           sorted: true,
           filtred: true,
           resizable: true,
           icon: null,
+          width: '28%',
           type: 'id',
           active: true
         },
@@ -654,10 +656,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'pltName',
           header: 'PLT Name',
-          width: '60',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '100%',
           icon: null,
           type: 'field',
           active: true
@@ -666,10 +668,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'peril',
           header: 'Peril',
-          width: '80',
           sorted: true,
           filtred: true,
-          resizable: true,
+          resizable: false,
+          width: '22%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -679,10 +681,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
-          width: '130',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '35%',
           icon: null,
           type: 'field',
           active: true
@@ -691,10 +693,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
-          width: '160',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '60%',
           icon: null,
           type: 'field',
           active: true
@@ -703,10 +705,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'grain',
           header: 'Grain',
-          width: '90',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '70%',
           icon: null,
           type: 'field',
           active: true
@@ -716,7 +718,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           fields: 'deletedBy',
           forDelete: true,
           header: 'Deleted By',
-          width: '50',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -728,7 +729,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           fields: 'deletedAt',
           forDelete: true,
           header: 'Deleted On',
-          width: '50',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -739,10 +739,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
-          width: '90',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '25%',
           icon: null,
           type: 'field', active: true
         },
@@ -750,10 +750,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'rap',
           header: 'RAP',
-          width: '52',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '25%',
           icon: null,
           type: 'field',
           active: true
@@ -764,9 +764,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           header: '',
           sorted: false,
           filtred: false,
+          width: '25px',
           icon: 'icon-note',
           type: 'icon',
-          width: '50',
           active: true,
           tooltip: "Published for Pricing"
         },
@@ -776,9 +776,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           header: '',
           sorted: false,
           filtred: false,
+          width: '25px',
           icon: 'icon-dollar-alt',
           type: 'icon',
-          width: '50',
           active: true,
           tooltip: "Priced"
         },
@@ -788,9 +788,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           header: '',
           sorted: false,
           filtred: false,
+          width: '25px',
           icon: 'icon-focus-add',
           type: 'icon',
-          width: '50',
           active: true,
           tooltip: "Published for Accumulation"
         },
@@ -966,7 +966,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }else {
       this.searchWorkspace = false;
       this.newProject = true;
-      this.onSelectProjectNext.emit(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
+      this.onSelectProjectNext.emit(_.merge(
+        _.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']),
+        {workspaceName: _.get(this.selectedWorkspace, 'workspaceName')}
+      ));
     }
   }
 
@@ -987,7 +990,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         this._loadData();
       });
 
-    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
+    if (this.stepConfig && this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();

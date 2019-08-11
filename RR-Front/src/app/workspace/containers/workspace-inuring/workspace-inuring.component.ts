@@ -2,7 +2,6 @@ import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Select, Store} from '@ngxs/store';
 import {combineLatest} from 'rxjs';
-import {dataTable} from '../workspace-scope-completence/data';
 import * as _ from 'lodash';
 import {WorkspaceState} from '../../store/states';
 import {BaseContainer} from '../../../shared/base';
@@ -33,7 +32,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.dataSource = dataTable.dataSource;
+    // this.dataSource = dataTable.dataSource;
     combineLatest(
       this.route.params
     ).pipe(this.unsubscribeOnDestroy)

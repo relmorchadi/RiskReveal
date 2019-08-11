@@ -10,7 +10,7 @@
   [columnResizeMode]="'expand'"
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
-  [scrollHeight]="'calc(100vh - 480px)'"
+  [scrollHeight]="tableInputs.scrollHeight"
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
@@ -39,8 +39,7 @@
           <ng-container *ngIf="col?.resizable">
             <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' ) " [ngStyle]="{'width': col?.width }" pResizableColumn>
           <span style="display:flex;justify-content: space-between;">
-
-                        {{col?.header}}
+            {{col?.header}}
             <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
               <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
               <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>

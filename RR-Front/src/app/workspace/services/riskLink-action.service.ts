@@ -1,16 +1,13 @@
 import {StateContext} from '@ngxs/store';
 import * as fromWs from '../store/actions';
+import {PatchRiskLinkDisplayAction} from '../store/actions';
 import * as _ from 'lodash';
-import {
-  PatchRiskLinkDisplayAction, ToggleAnalysisForLinkingAction,
-} from '../store/actions';
 import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
 import {RiskApi} from './risk.api';
 import {forkJoin} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {RiskLinkState} from '../store/states';
-import {tap} from "rxjs/internal/operators/tap";
 import {WorkspaceModel} from '../model';
 import produce from 'immer';
 

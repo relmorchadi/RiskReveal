@@ -81,6 +81,7 @@
                 <li nz-menu-divider></li>
 
                 <li nz-menu-item (click)="toggleColumnsManager()" >Manage Columns</li>
+                <li (click)="exportTable()" nz-menu-item>Export</li>
 
                 <li nz-menu-divider></li>
 
@@ -102,6 +103,7 @@
         </div>
         <div class="PLTs-content">
           <app-plt-main-table
+            #dtt
             [tableInputs]="tableInputs"
             (actionDispatcher)="tableActionDispatcher($event)"
           ></app-plt-main-table>

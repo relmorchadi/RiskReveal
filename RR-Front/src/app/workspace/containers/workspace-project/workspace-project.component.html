@@ -39,7 +39,7 @@
     </div>
 
     <app-workspace-project-popup [isVisible]="searchWorkspace"
-                                 (onVisibleChange)="cancelCreateExistingProjectPopup()"
+                                 (onVisibleChange)="cancelCreateExistingProjectPopup($event)"
                                  [selectionStep]="'project'"
                                  (onSelectProjectNext)="selectProjectNext($event)">
     </app-workspace-project-popup>

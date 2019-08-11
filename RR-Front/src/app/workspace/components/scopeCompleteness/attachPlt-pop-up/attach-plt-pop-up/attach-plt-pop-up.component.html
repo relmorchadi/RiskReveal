@@ -1,0 +1,54 @@
+<p-dialog
+  (onShow)="onShow()"
+  [autoZIndex]="false"
+  [baseZIndex]="1"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [styleClass]="'m-dialog-modal-lg borderless'"
+  [visible]="isVisible"
+  appendTo="body"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Attach PLTs
+      </h4>
+      <i (click)="onHide()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content">
+    <div class="left">
+      <app-plt-left-menu
+        (emitFilters)="emitFilters($event)"
+        (onProjectFilter)="filterPlts($event)"
+        (onSelectProjects)="setSelectedProjects($event)"
+        (onSetFilters)="setFilters($event)"
+        (onSetSelectedUserTags)="setUserTags($event)"
+        (onWsHeaderSelection)="setWsHeaderSelect($event)"
+        (unCkeckAllPlts)="unCheckAll()"
+        [menuInputs]="Inputs | pickKeys : menuInputs"
+      >
+
+      </app-plt-left-menu>
+    </div>
+    <div class="center">
+      <div class="title-as-tab">
+          <span>
+            PLTs
+          </span>
+      </div>
+      <div class="PLTs-content">
+        <app-pop-up-plt-table
+          (onCheckAll)="checkAll($event)"
+          (onFilter)="filterPlts($event)"
+          (onItemSelectForMenu)="setSelectedPlt($event)"
+          (onPltClick)="calibrateSelectPlts($event)"
+          (onSelectSinglePlt)="selectSinglePLT($event)"
+          [tableInputs]="Inputs | pickKeys : tableInputs"
+        ></app-pop-up-plt-table>
+      </div>
+    </div>
+  </div>
+</p-dialog>

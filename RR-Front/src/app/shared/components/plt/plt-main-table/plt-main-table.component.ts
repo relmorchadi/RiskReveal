@@ -1,5 +1,6 @@
 import {
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   EventEmitter,
   Input,
@@ -69,21 +70,21 @@ export class PltMainTableComponent implements OnInit {
   }
 
   sortChange(field: any, sortCol: any) {
-    if(!sortCol){
+    if (!sortCol) {
       this.actionDispatcher.emit({
         type: tableStore.sortChange,
         payload: _.merge({}, this.tableInputs.sortData, {[field]: 'asc'})
-      })
-    }else if(sortCol === 'asc'){
+      });
+    } else if (sortCol === 'asc') {
       this.actionDispatcher.emit({
         type: tableStore.sortChange,
         payload: _.merge({}, this.tableInputs.sortData, {[field]: 'desc'})
-      })
-    } else if(sortCol === 'desc') {
+      });
+    } else if (sortCol === 'desc') {
       this.actionDispatcher.emit({
         type: tableStore.sortChange,
         payload: _.omit(this.tableInputs.sortData, `${field}`)
-      })
+      });
     }
   }
 

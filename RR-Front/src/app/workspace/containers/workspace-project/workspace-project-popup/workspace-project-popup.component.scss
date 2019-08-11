@@ -56,12 +56,11 @@
     }
 
     ::ng-deep .ui-table-scrollable-body {
-      height: 47vh;
+      height: calc(100vh - 400px);
       max-height: none;
     }
 
     .PLTs-content {
-      padding: 0 21px 0 16px !important;
       position: relative;
       flex: 1 1 auto;
     }
