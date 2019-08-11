@@ -33,7 +33,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-    this.dataSource = dataTable.dataSource;
+    // this.dataSource = dataTable.dataSource;
     combineLatest(
       this.route.params
     ).pipe(this.unsubscribeOnDestroy)

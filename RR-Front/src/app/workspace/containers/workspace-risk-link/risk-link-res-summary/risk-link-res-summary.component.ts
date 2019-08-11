@@ -8,6 +8,7 @@ import {RiskLinkState, WorkspaceState} from '../../../store/states';
 import {combineLatest, Observable} from 'rxjs';
 import {RiskLinkModel} from '../../../model/risk_link.model';
 import {ApplyRegionPerilAction, SaveEditAnalysisAction} from '../../../store/actions';
+import * as tableStore from "../../../../shared/components/plt/plt-main-table/store";
 
 @Component({
   selector: 'app-risk-link-res-summary',
@@ -98,6 +99,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
   collapseDataSources = false;
   collapseFPDataTable = false;
 
+  analysisResults;
+  resultsSummary;
+
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
 
@@ -112,6 +116,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.serviceSubscription = [
       this.state$.subscribe(value => {
         this.state = _.merge({}, value);
+        if (this.state.summaries !== null && this.state.results !== null) {
+          this.resultsSummary = _.toArray(this.state.summaries.data);
+          this.analysisResults = _.toArray(this.state.results.data);
+        }
         this.detectChanges();
       }),
       this.linking$.pipe().subscribe(value => {
@@ -285,7 +293,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   selectRows(row: any, index: number, target, source = null) {
-    console.log(source);
     if (target === 'R') {
       const action = (payload) => new fromWs.ToggleRiskLinkResultAction(payload);
       this._selectRowsProvider(row, index, this.lastSelectedIndexResult, action, 'R');
@@ -380,6 +387,19 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.store.dispatch(new fromWs.PatchRiskLinkCollapseAction({key: value}));
   }
 
+  sortChange(field: any, sortCol: any, scope) {
+    console.log(field, sortCol);
+    if (scope === 'Analysis') {
+      if (sortCol === '') {
+        this.analysisResults.sort();
+      } else if (sortCol === 'asc') {
+
+      } else if (sortCol === 'desc') {
+
+      }
+    }
+  }
+
   dataList(data, filter = null) {
     const array = _.toArray(data);
     if (filter === null) {
@@ -427,7 +447,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   removeFP(item, fp) {
-    console.log(item, fp);
     this.store.dispatch(new fromWs.RemoveFinancialPerspectiveAction({item, fp}));
   }
 
@@ -526,7 +545,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   changeInnerPeqt(parent, child, target, selected) {
     const data = _.filter(parent.children, dt => _.filter(dt.selectedItems, kt => kt.title === target)[0].selected === true);
-    console.log(data.length === parent.children.length, selected);
     if (data.length === parent.children.length - 1 && selected === false) {
       _.forEach(parent.selectedItems, dt => {
         if (dt.title === target) {

@@ -14,6 +14,7 @@ export class PltApi {
   }
 
   public getAllPlts(params?): Observable<any> {
+    console.log(params)
     return this.http.get(`${this.URL}/`, {params: params});
   }
 
