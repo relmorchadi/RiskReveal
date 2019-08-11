@@ -275,7 +275,7 @@
           <div class="a-form-control" style="flex-direction: row; margin: 0 7px;">
             <div class="a-form-input-wrapper">
               <label class="label-input">Tag title</label>
-              <input class="a-textfield-standard a-textfield-label" (keydown)="onEnter(i,$event)" formControlName="title" placeholder="Title" style="margin-bottom:15px;">
+              <input class="a-textfield-standard a-textfield-label" (keydown)="onEnter(i,$event)" formControlName="tagName" placeholder="Title" style="margin-bottom:15px;">
               <div class="msg-err" *ngIf="title.errors?.required && title.touched">
                 Title is required *
               </div>

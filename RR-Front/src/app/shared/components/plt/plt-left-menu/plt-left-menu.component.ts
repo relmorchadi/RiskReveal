@@ -64,7 +64,7 @@ export class PltLeftMenuComponent implements OnInit {
       tagId: [null],
       tagName: ['', Validators.required],
       tagColor: ['#ae1675'],
-      userId: ['', Validators.required],
+      userId: [ 17, Validators.required],
       editorId: [''],
       visible: [false]
     })
@@ -286,8 +286,8 @@ export class PltLeftMenuComponent implements OnInit {
     })
   }
 
-  /*onEnter(i: number, event: KeyboardEvent) {
-    if (event.key === "Enter" && (this.tagArray.controls[i] as FormGroup).controls.title.valid) {
+  onEnter(i: number, event: KeyboardEvent) {
+    /*if (event.key === "Enter" && (this.tagArray.controls[i] as FormGroup).controls.title.valid) {
       this.usedInWs.push({
         tagName: (this.tagArray.controls[i] as FormGroup).controls.title.value,
         tagColor: (this.tagArray.controls[i] as FormGroup).controls.color.value,
@@ -295,8 +295,9 @@ export class PltLeftMenuComponent implements OnInit {
         selected: false
       });
       this.tagArray.removeAt(i);
-    }
-  }*/
+    }*/
+  }
+
   closeDrawer() {
     this.drawer= false;
   }
@@ -306,6 +307,7 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   addNewTag() {
+    console.log(this.tagForm)
     if(this.tagForm.valid) this.actionDispatcher.emit({
       type: leftMenuStore.addNewTag,
       payload: _.omit(this.tagForm.value, ['visible', 'editorId', 'tagId'])
