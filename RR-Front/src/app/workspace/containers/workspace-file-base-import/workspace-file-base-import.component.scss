@@ -1,12 +1,14 @@
 :host {
-  width: 100%;
+  width: 80%;
+  flex: 1;
   height: max-content;
   display: flex;
   min-height: 100vh;
   background-color: #F4F6FC;
 
   @media screen and (max-width: 1700px) {
-    width: 94%;
+    width: 60%;
+    flex: 1;
   }
 }
 
@@ -20,7 +22,7 @@ COMPONENT STYLE
   display: block;
 
   .menu-left-header {
-    padding: 6px 10px 0;
+    padding: 6px 25px 0;
     display: flex;
     width: 55%;
     font-weight: bold;
@@ -31,7 +33,8 @@ COMPONENT STYLE
     float: left;
     background-color: #FFFFFF;
     width: 20%;
-    height: 655px;
+    height: 595px;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.15);
 
     ::ng-deep {
       .ui-tree.ui-widget.ui-widget-content.ui-corner-all.ui-tree-selectable {
@@ -72,11 +75,11 @@ COMPONENT STYLE
 
     .files-selection-wrap {
       width: 91%;
-      margin: 10px auto 20px;
-      height: 210px;
+      margin: 10px auto 0;
+      height: 150px;
 
       ul {
-        height: 210px;
+        height: 140px;
 
         li {
           height: 30px;
@@ -96,7 +99,7 @@ COMPONENT STYLE
     .empty-data-wrap {
       margin: 11px 15px;
       background: #F4F6FC;
-      height: 210px;
+      height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -107,7 +110,8 @@ COMPONENT STYLE
     float: right;
     background: #FFFFFF;
     width: 79%;
-    height: 655px;
+    height: 595px;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.15);
 
     .menu-left-header {
       border-top: 4px solid #0700CF;

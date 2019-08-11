@@ -112,4 +112,16 @@ export class FileBasedService {
       ));
   }
 
+  removeFileFromImport(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        draft.content[wsIdentifier].fileBaseImport.selectedFiles =
+          _.filter(draft.content[wsIdentifier].fileBaseImport.selectedFiles
+            , item => item.FileName !== payload.FileName);
+      }
+    ));
+  }
+
 }
