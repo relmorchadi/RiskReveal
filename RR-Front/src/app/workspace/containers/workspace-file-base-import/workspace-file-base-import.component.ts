@@ -45,6 +45,11 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   importedFiles: any;
 
   nodePath;
+  peril = [
+    {color: '#E70010', content: 'EQ'},
+    {color: '#008694', content: 'FL'},
+    {color: '#7BBE31', content: 'WS'}
+  ];
 
   @Select(WorkspaceState.getFileBasedData) fileBase$;
   fileBase: any;
@@ -168,6 +173,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   addForImport() {
     this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
+  }
+
+  getColor(RP) {
+    return  _.filter(this.peril, item => item.content === RP)[0].color;
   }
 
   protected detectChanges() {

@@ -69,11 +69,11 @@
         </div>
       </div>
 
-      <div class="summary-info table-width empty-table fixed-table-height">
+      <div class="summary-info table-width fixed-table-height" [ngClass]="{'empty-table': fileBase?.selectedFiles.length === 0}">
         <p-table #iTable [columns]="pltColumns" [scrollable]="true"
                  *ngIf="!collapseImportedFiles"
                  [resizableColumns]="true" columnResizeMode="expand"
-                 [value]="" frozenWidth="485px">
+                 [value]="fileBase?.selectedFiles" frozenWidth="485px">
           <ng-template let-columns pTemplate="colgroup">
             <colgroup>
               <ng-container *ngFor="let col of columns">
@@ -123,6 +123,15 @@
                   <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'percentage'"
                        [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data">{{rowData[col.field]}}%
+                  </div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'perilIndicator'">
+                    <span class="perilIndicator" [ngStyle]="{'background-color': getColor(rowData[col.field])}">
+                      {{rowData[col.field]}}
+                    </span>
+                  </div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'info'"
+                       class="text-data">
+                    {{rowData.ModelSystem}}_{{rowData.ModelProvider}}_{{rowData.ModelSystemVersion}}_{{rowData.ModelSystemInstance}}
                   </div>
                   <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
                        [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"

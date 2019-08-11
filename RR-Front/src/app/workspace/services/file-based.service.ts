@@ -7,7 +7,7 @@ import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 import {StateContext} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import {forkJoin, of} from 'rxjs';
-import {switchMap} from "rxjs/operators";
+import {switchMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -83,28 +83,30 @@ export class FileBasedService {
   addToImport(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const files = _.filter(state.content[wsIdentifier].fileBaseImport.files, item => item.selected);
+    const files: any = _.filter(state.content[wsIdentifier].fileBaseImport.files, item => item.selected);
     return forkJoin(
       files.map((dt: any) => this.fileBaseApi.searchReadFiles(payload + '/' + dt.label))
     ).pipe(
       switchMap(out => {
-        out.forEach(item => {
+        let dataTables = [];
+        out.forEach((item: string, key) => {
+          let parsedData = '';
           const text = item.split('\n');
           const tab = Array(62).fill('').map((v, i) => i);
-          let parsedData = '';
           tab.forEach(index => {
             if (index > 0) {
-              console.log(text[index]);
-              parsedData = parsedData + '"' + text[index].replace(/[^\S]+\s/g, '": "') + '",' + '\n';
+              const keyValue = text[index].replace(/\s+/, '\x01').split('\x01');
+              parsedData = parsedData + '"' + keyValue[0] + '": "' + keyValue[1] + '",' + '\n';
             }
           });
-          parsedData = '{\n' + parsedData + '\n}';
-          console.log({data: parsedData});
+          parsedData = '{\n' + parsedData +
+            ` "FileType": "PLT",\n "FileName": "${files[key].label}",\n "selected": false \n} `;
+          dataTables = [...dataTables, JSON.parse(parsedData)];
         });
-        const dataTables = {};
-        console.log(out);
+        console.log(dataTables);
         return of(
            ctx.patchState(produce(ctx.getState(), draft => {
+             draft.content[wsIdentifier].fileBaseImport.selectedFiles = dataTables;
            })));
         }
       ));

@@ -302,6 +302,16 @@ TABLE STYLE
           font-weight: 400;
         }
 
+        .perilIndicator {
+          color: #FFFFFF;
+          width: 25px;
+          height: 25px;
+          display: flex;
+          border-radius: 20px;
+          align-items: center;
+          justify-content: center;
+        }
+
         .branched-data {
           display: flex;
           flex-direction: column;
