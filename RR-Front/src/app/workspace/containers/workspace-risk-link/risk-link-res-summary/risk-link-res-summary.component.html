@@ -21,7 +21,7 @@
       <div *ngIf="state.collapse.collapseResult" class="summary-info">
         <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
                  [resizableColumns]="true" columnResizeMode="expand"
-                 [scrollable]="true" [value]="dataList(state.summaries.data)" frozenWidth="485px">
+                 [scrollable]="true" [value]="resultsSummary" frozenWidth="485px">
           <ng-template let-columns pTemplate="colgroup">
             <colgroup>
               <ng-container *ngFor="let col of columns">
@@ -44,7 +44,12 @@
                   <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
                     <ng-container [pSortableColumn]="col.field" >
                       {{col.header}}
-                      <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                      <ng-container [ngSwitch]="col?.sorting">
+                        <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.field, col?.sorting)" style="font-size: 1.4em;"></i>
+                        <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.field, col?.sorting)" style="font-size: 1.4em;"></i>
+                        <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field, col?.sorting)" style="font-size: 1.4em;"></i>
+                      </ng-container>
+<!--                      <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
                     </ng-container>
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -181,7 +186,7 @@
       <div class="summary-info" *ngIf="state.collapse.collapseAnalysis">
         <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
         <p-table [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult"
-                 [value]="dataList(state.results.data)"
+                 [value]="analysisResults"
                  [resizableColumns]="true" columnResizeMode="expand"
                  [(contextMenuSelection)]="contextSelectedItem"
                  [contextMenu]="cmR"
@@ -206,7 +211,11 @@
                   <div style="white-space: nowrap;"
                        *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
                     {{col.header}}
-                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                    <ng-container [ngSwitch]="col?.sorting">
+                      <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.field, col?.sorting, 'Analysis')" style="font-size: 1.4em;"></i>
+                      <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.field, col?.sorting, 'Analysis')" style="font-size: 1.4em;"></i>
+                      <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field, col?.sorting, 'Analysis')" style="font-size: 1.4em;"></i>
+                    </ng-container>
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                       <input pInputText type="text"
@@ -1067,7 +1076,7 @@
     <div>
       <div class="summary-info" *ngIf="editableRow.target === 'Rp'">
         <p-table [columns]="regionPerilDataTable"
-                 [scrollHeight]="'270px'"
+                 [scrollHeight]="'270px'" [resizableColumns]="true"
                  [value]="dataList(state.results.data)" #rpt [scrollable]="true">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -1079,11 +1088,18 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible">
-                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
+                <th *ngIf="col.visible" pResizableColumn>
+                  <ng-container *ngIf="col.type === 'select'">
+                    <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis" (ngModelChange)="updateAllChecked($event, 'linkingAnalysis')"
+                           [nzIndeterminate]="indeterminateAnalysis"></label>
+                    <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                  </ng-container>
+                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}
+                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                  </div>
                   <div style="white-space: nowrap;"
                        *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
-                    {{col.header}}
+                    {{col.header}} <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                       <input pInputText type="text"

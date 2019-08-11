@@ -130,14 +130,12 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       }),
       this.analysis$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.analysis = _.merge({}, value);
-        console.log(this.analysis);
         this.allCheckedAnalysis = this.analysis.allChecked;
         this.indeterminateAnalysis = this.analysis.indeterminate;
         this.detectChanges();
       }),
       this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.portfolios = _.merge({}, value);
-        console.log(this.portfolios);
         this.allCheckedPortolfios = this.portfolios.allChecked;
         this.indeterminatePortfolio = this.portfolios.indeterminate;
         this.detectChanges();
@@ -382,7 +380,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       sizePage = event.first === 0 ? '20' : (event.first + event.rows).toString();
     }
     if (this.state.listEdmRdm.numberOfElement < event.first + event.rows) {
-      console.log('you called for :' + sizePage);
       this.dispatch(new fromWs.SearchRiskLinkEDMAndRDMAction({
         keyword: this.state.listEdmRdm.searchValue,
         size: sizePage,

@@ -10,7 +10,7 @@ import {RiskApi} from './risk.api';
 import {forkJoin} from 'rxjs';
 import {Injectable} from '@angular/core';
 import {RiskLinkState} from '../store/states';
-import {tap} from "rxjs/internal/operators/tap";
+import {tap} from 'rxjs/internal/operators/tap';
 import {WorkspaceModel} from '../model';
 import produce from 'immer';
 

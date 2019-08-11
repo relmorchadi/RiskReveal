@@ -36,7 +36,7 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
   }
 
   ngOnInit() {
-    this.dataSource = dataTable.dataSource;
+  //   this.dataSource = dataTable.dataSource;
     combineLatest(
       this.wsData$,
       this.route.params
