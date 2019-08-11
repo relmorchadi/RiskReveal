@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {combineLatest, Observable, of, Subject, Subscription} from "rxjs";
-import {Actions, ofActionDispatched, Select, Store} from "@ngxs/store";
+import {Actions, ofActionDispatched, Store} from "@ngxs/store";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
 import {ActivatedRoute, Router} from "@angular/router";
 import {NotificationService} from "../../../../../shared/notification.service";
@@ -11,7 +11,6 @@ import * as _ from "lodash";
 import {mergeMap} from "rxjs/operators";
 import {Debounce} from "../../../../../shared/decorators";
 import {LazyLoadEvent} from "primeng/api";
-import {Message} from "../../../../../shared/message";
 
 @Component({
   selector: 'app-attach-plt-pop-up',
@@ -107,6 +106,8 @@ export class AttachPltPopUpComponent implements OnInit, OnDestroy {
   private pltUserTagsSubscription: Subscription;
   private d: Subscription;
   private selectedPlt: string;
+  private lastClick: string;
+  private lastSelectedId: number;
 
   constructor(
     private route: ActivatedRoute,
@@ -267,8 +268,6 @@ export class AttachPltPopUpComponent implements OnInit, OnDestroy {
   }
 
   private _filter = {};
-  private lastClick: string;
-  private lastSelectedId: number;
 
   get filter() {
     // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
@@ -736,6 +735,23 @@ export class AttachPltPopUpComponent implements OnInit, OnDestroy {
     this.selectedPlt = $event;
   }
 
+  handlePLTClick(pltId, i: number, $event: MouseEvent) {
+    const isSelected = _.findIndex(!this.Inputs.showDeleted ? this.Inputs.selectedListOfPlts : this.Inputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
+    if ($event.ctrlKey || $event.shiftKey) {
+      this.lastClick = "withKey";
+      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
+    } else {
+      this.lastSelectedId = i;
+      this.calibrateSelectPlts(
+        _.zipObject(
+          _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, plt => plt),
+          _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+        )
+      );
+      this.lastClick = null;
+    }
+  }
+
   private _loadData(offset = '0', size = '100') {
     this.loading = true;
     const keyword = this.keywordFormGroup.get('keyword').value === '' ? null : this.keywordFormGroup.get('keyword').value
@@ -757,23 +773,6 @@ export class AttachPltPopUpComponent implements OnInit, OnDestroy {
         };
         this.detectChanges();
       });
-  }
-
-  handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(!this.Inputs.showDeleted ? this.Inputs.selectedListOfPlts : this.Inputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
-    if ($event.ctrlKey || $event.shiftKey) {
-      this.lastClick = "withKey";
-      this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
-    } else {
-      this.lastSelectedId = i;
-      this.calibrateSelectPlts(
-        _.zipObject(
-          _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, plt => plt),
-          _.map(!this.Inputs.showDeleted ? this.Inputs.listOfPlts : this.Inputs.listOfDeletedPlts, plt => ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
-        )
-      );
-      this.lastClick = null;
-    }
   }
 
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {

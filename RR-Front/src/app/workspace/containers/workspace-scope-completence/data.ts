@@ -1,5 +1,5 @@
 import * as _ from 'lodash'
-import {map} from "rxjs/operators";
+
 const dataSource = [
   {
     id: 1,
@@ -880,13 +880,14 @@ const getData = (treatySections) => {
       let object = {
         id: regionPeril.id,
         description: regionPeril.description,
-        child: _.uniqBy([...(res[regionPeril.id] || []), regionPeril.targetRaps], targetRap => targetRap.id)[0]}
-        const index = _.findIndex(res, row => row.id == object.id)
-        if (index == -1) {
-          res.push(object)
-        }else {
-          // res[index].targetRap.push(object.targetRap)
-        }
+        child: _.uniqBy([...(res[regionPeril.id] || []), regionPeril.targetRaps], targetRap => targetRap.id)[0]
+      }
+      const index = _.findIndex(res, row => row.id == object.id)
+      if (index == -1) {
+        res.push(object)
+      } else {
+        // res[index].targetRap.push(object.targetRap)
+      }
 
     })
   });
@@ -902,11 +903,12 @@ const getData2 = (treatySections) => {
       let object = {
         id: targetRap.id,
         description: targetRap.description,
-        child: _.uniqBy([...(res[targetRap.id] || []), targetRap.regionPerils], regionPeril => regionPeril.id)[0]}
+        child: _.uniqBy([...(res[targetRap.id] || []), targetRap.regionPerils], regionPeril => regionPeril.id)[0]
+      }
       const index = _.findIndex(res, row => row.id == object.id)
       if (index == -1) {
         res.push(object)
-      }else {
+      } else {
         // res[index].targetRap.push(object.targetRap)
       }
 
@@ -1077,9 +1079,6 @@ const treatySections = [
       }]
   }
 ]
-
-
-
 
 
 const regionPeril = [{"regionPerilCode": "EUCS-DE", "regionPerilName": "Europe (Germany)"}, {

@@ -164,7 +164,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     selectedItemForMenu: any;
   };
 
-  tableInputs = ['scrollHeight','dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
+  tableInputs = ['scrollHeight', 'dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
@@ -959,11 +959,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }else {
       this.searchWorkspace = false;
       this.newProject = true;
-      this.onSelectProjectNext.emit( _.merge(
+      this.onSelectProjectNext.emit(_.merge(
         _.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']),
         {workspaceName: _.get(this.selectedWorkspace, 'workspaceName')}
-
-      ) );
+      ));
     }
   }
 

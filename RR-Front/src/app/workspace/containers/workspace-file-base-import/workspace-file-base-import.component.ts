@@ -177,7 +177,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   }
 
   nodeUnselect(event) {
-    this.nodePath =  null;
+    this.nodePath = null;
   }
 
   selectToImport(value, index) {

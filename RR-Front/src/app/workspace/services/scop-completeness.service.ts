@@ -1,7 +1,6 @@
 import {Injectable} from '@angular/core';
-import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
-import * as fromPlt from "../store/actions";
-import {catchError, map, mergeMap} from "rxjs/operators";
+import {StateContext, Store} from "@ngxs/store";
+import {mergeMap} from "rxjs/operators";
 import * as _ from "lodash";
 import {PltApi} from "./plt.api";
 import produce from "immer";
@@ -12,7 +11,7 @@ import {of} from "rxjs";
 @Injectable({
   providedIn: 'root'
 })
-export class ScopeCompletenessService  {
+export class ScopeCompletenessService {
 
   constructor(private store$: Store, private pltApi: PltApi, private route$: ActivatedRoute) {
 
@@ -22,7 +21,7 @@ export class ScopeCompletenessService  {
     const {
       currentTab: {
         wsIdentifier
-        }
+      }
     } = ctx.getState();
     return this.pltApi.getAllPlts(payload.params)
       .pipe(
@@ -33,7 +32,6 @@ export class ScopeCompletenessService  {
         })
       );
   }
-
 
 
 }

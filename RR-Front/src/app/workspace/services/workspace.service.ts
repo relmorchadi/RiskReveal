@@ -12,6 +12,7 @@ import {HeaderState} from "../../core/store/states/header.state";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
 import {EMPTY} from "rxjs";
 import {WsProjectService} from "./ws-project.service";
+import {defaultInuringState} from "./inuring.service";
 
 @Injectable({
   providedIn: 'root'
@@ -45,7 +46,7 @@ export class WorkspaceService {
     const {workspaceName, programName, cedantName, projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
     console.log('this are projects', projects);
-    (projects || []).length > 0 ? ws.projects= this._selectProject(projects, 0) : null;
+    (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
     ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
@@ -155,7 +156,8 @@ export class WorkspaceService {
             files: null,
             selectedFiles: null,
             importedPLTs: null
-          }
+          },
+          inuring: defaultInuringState
         }
       });
       draft.loading = false;
@@ -165,6 +167,7 @@ export class WorkspaceService {
       }));
     }));
   }
+
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.openWS) {
     const {wsId, uwYear, route} = payload;

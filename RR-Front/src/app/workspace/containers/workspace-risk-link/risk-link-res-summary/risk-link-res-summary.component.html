@@ -45,11 +45,14 @@
                     <ng-container [pSortableColumn]="col.field" >
                       {{col.header}}
                       <ng-container [ngSwitch]="col?.sorting">
-                        <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.field, col?.sorting)" style="font-size: 1.4em;"></i>
-                        <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.field, col?.sorting)" style="font-size: 1.4em;"></i>
-                        <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field, col?.sorting)" style="font-size: 1.4em;"></i>
+                        <i (click)="sortChange(col?.field, col?.sorting)" *ngSwitchCase="'asc'"
+                           class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
+                        <i (click)="sortChange(col?.field, col?.sorting)" *ngSwitchCase="'desc'"
+                           class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
+                        <i (click)="sortChange(col?.field, col?.sorting)" *ngSwitchDefault class="icon-direction"
+                           style="font-size: 1.4em;"></i>
                       </ng-container>
-<!--                      <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
+                      <!--                      <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
                     </ng-container>
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -212,9 +215,12 @@
                        *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
                     {{col.header}}
                     <ng-container [ngSwitch]="col?.sorting">
-                      <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.field, col?.sorting, 'Analysis')" style="font-size: 1.4em;"></i>
-                      <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.field, col?.sorting, 'Analysis')" style="font-size: 1.4em;"></i>
-                      <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field, col?.sorting, 'Analysis')" style="font-size: 1.4em;"></i>
+                      <i (click)="sortChange(col?.field, col?.sorting, 'Analysis')" *ngSwitchCase="'asc'"
+                         class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
+                      <i (click)="sortChange(col?.field, col?.sorting, 'Analysis')" *ngSwitchCase="'desc'"
+                         class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
+                      <i (click)="sortChange(col?.field, col?.sorting, 'Analysis')" *ngSwitchDefault
+                         class="icon-direction" style="font-size: 1.4em;"></i>
                     </ng-container>
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -1076,7 +1082,7 @@
     <div>
       <div class="summary-info" *ngIf="editableRow.target === 'Rp'">
         <p-table [columns]="regionPerilDataTable"
-                 [scrollHeight]="'270px'" [resizableColumns]="true"
+                 [resizableColumns]="true" [scrollHeight]="'270px'"
                  [value]="dataList(state.results.data)" #rpt [scrollable]="true">
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
@@ -1090,16 +1096,22 @@
               <ng-container *ngFor="let col of columns">
                 <th *ngIf="col.visible" pResizableColumn>
                   <ng-container *ngIf="col.type === 'select'">
-                    <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis" (ngModelChange)="updateAllChecked($event, 'linkingAnalysis')"
-                           [nzIndeterminate]="indeterminateAnalysis"></label>
+                    <label (ngModelChange)="updateAllChecked($event, 'linkingAnalysis')" [ngModel]="allCheckedAnalysis"
+                           [nzIndeterminate]="indeterminateAnalysis" nz-checkbox
+                           style="margin-top:20px"></label>
                     <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                   </ng-container>
-                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}
-                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                  <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}
+                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                                ariaLabelAsc="Activate to sort in ascending order"
+                                ariaLabelDesc="Activate to sort in descending order"></p-sortIcon>
                   </div>
                   <div style="white-space: nowrap;"
                        *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
-                    {{col.header}} <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                    {{col.header}}
+                    <p-sortIcon [field]="col.field" ariaLabel="Activate to sort"
+                                ariaLabelAsc="Activate to sort in ascending order"
+                                ariaLabelDesc="Activate to sort in descending order"></p-sortIcon>
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                       <input pInputText type="text"

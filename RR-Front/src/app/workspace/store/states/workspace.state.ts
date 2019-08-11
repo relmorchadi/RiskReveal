@@ -1,11 +1,13 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
+import * as fromInuring from '../actions/inuring.actions';
 import {PatchCalibrationStateAction} from '../actions';
 import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
+import {InuringService} from "../../services/inuring.service";
 import * as fromPlt from '../actions/plt_main.actions';
 import {PltStateService} from '../../services/plt-state.service';
 import {RiskLinkStateService} from '../../services/riskLink-action.service';
@@ -34,6 +36,7 @@ export class WorkspaceState {
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
               private riskLinkFacade: RiskLinkStateService,
+              private inuringService: InuringService,
               private fileBasedFacade: FileBasedService,
               private scopService: ScopeCompletenessService,
   ) {
@@ -256,6 +259,14 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
   }
+
+  /***********************************
+   *
+   * Inuring Selectors
+   *
+   ***********************************/
+
+  //TBD
 
   /***********************************
    *
@@ -897,4 +908,21 @@ export class WorkspaceState {
   addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
     return this.fileBasedFacade.addToImport(ctx, payload);
   }
+
+  /***********************************
+   *
+   * Inuring Actions
+   *
+   ***********************************/
+
+  @Action(fromInuring.OpenInuringPackage)
+  openInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.OpenInuringPackage) {
+    return this.inuringService.openInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.CloseInuringPackage)
+  closeInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.CloseInuringPackage) {
+    return this.inuringService.closeInuringPackage(ctx, payload);
+  }
+
 }
