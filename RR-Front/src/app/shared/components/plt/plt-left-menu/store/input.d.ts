@@ -22,4 +22,9 @@ export interface Input {
   wsHeaderSelected: boolean;
   pathTab: boolean;
   selectedItemForMenu: any;
+  previouslyUsed: any[];
+  usedInWs: any[];
+  userFavorite: any[];
+  subsetsAssigned: any[];
+  allAssigned: any[];
 }

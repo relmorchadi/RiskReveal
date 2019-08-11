@@ -621,4 +621,18 @@ export class PltStateService {
     }
 
   }
+
+  addNewTag(ctx: StateContext<WorkspaceModel>, payload: any) {
+    return this.pltApi.creatUserTag(payload)
+      .pipe(
+        mergeMap( userTag => of(userTag))
+      )
+  }
+
+  deleteTag(ctx: StateContext<WorkspaceModel>, payload: any) {
+    return this.pltApi.deleteUserTag(payload)
+      .pipe(
+        mergeMap( userTag => of(userTag))
+      )
+  }
 }

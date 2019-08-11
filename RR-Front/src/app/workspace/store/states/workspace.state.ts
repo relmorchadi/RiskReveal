@@ -478,6 +478,16 @@ export class WorkspaceState {
     this.pltStateService.filterPltsByStatus(ctx, payload);
   }
 
+  @Action(fromPlt.AddNewTag)
+  addNewTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AddNewTag) {
+    this.pltStateService.addNewTag(ctx, payload);
+  }
+
+  @Action(fromPlt.DeleteTag)
+  deleteTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.DeleteTag) {
+    this.pltStateService.deleteTag(ctx, payload);
+  }
+
   /***********************************
    *
    * Calibration Actions

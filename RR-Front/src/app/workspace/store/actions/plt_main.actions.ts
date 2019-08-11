@@ -154,3 +154,17 @@ export class setCloneConfig {
   constructor(public payload?: any) {
   }
 }
+
+export class AddNewTag {
+  static readonly type = '[PLT Main] Add New Tag';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class DeleteTag {
+  static readonly type = '[PLT Main] Delete Tag';
+
+  constructor(public payload?: any) {
+  }
+}

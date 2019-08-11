@@ -12,6 +12,7 @@ import {Message} from "../../../message";
 export class PltLeftMenuComponent implements OnInit {
 
   @Input() inputs: leftMenuStore.Input;
+  @Input() tagsInput: leftMenuStore.Input;
 
   @Output() onResetPath= new EventEmitter();
   @Output() onToggleDeletedPlts= new EventEmitter();
@@ -47,67 +48,6 @@ export class PltLeftMenuComponent implements OnInit {
   }
   presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
-  allAssigned = [
-    {
-      tagName: 'pricingV1',
-      tagColor: this.presetColors[0],
-      count: 5
-    },
-    {
-      tagName: 'pricingV2',
-      tagColor: this.presetColors[1],
-      count: 5,
-    }
-  ];
-
-  subsetsAssigned= [
-    {
-      tagName: 'EU',
-      tagColor: this.presetColors[2],
-      count: 3
-    },
-    {
-      tagName: 'DE',
-      tagColor: this.presetColors[3],
-      count: 2,
-    }
-  ];
-
-  userFavorite= [
-    {
-      tagName: 'myTag1',
-      tagColor: this.presetColors[4],
-    },
-    {
-      tagName: 'myTag2',
-      tagColor: this.presetColors[4],
-    }
-  ];
-
-  usedInWs= [
-    {
-      tagName: 'EU',
-      tagColor: this.presetColors[2],
-      count: 3
-    },
-    {
-      tagName: 'DE',
-      tagColor: this.presetColors[3],
-      count: 2,
-    }
-  ];
-
-  previouslyUsed= [
-    {
-      tagName: 'v7',
-      tagColor: this.presetColors[5],
-    },
-    {
-      tagName: 'v6',
-      tagColor: this.presetColors[6],
-    }
-  ];
-
   tagForm: FormGroup;
   drawer: boolean;
 
@@ -121,18 +61,21 @@ export class PltLeftMenuComponent implements OnInit {
 
   initTagForm(){
     this.tagForm= this._fb.group({
-      title: ['', Validators.required],
-      color: ['#ae1675'],
+      tagId: [null],
+      tagName: ['', Validators.required],
+      tagColor: ['#ae1675'],
+      userId: ['', Validators.required],
+      editorId: [''],
       visible: [false]
     })
   }
 
   get title() {
-    return this.tagForm.get('title');
+    return this.tagForm.get('tagName');
   }
 
   get color() {
-    return this.tagForm.get('color');
+    return this.tagForm.get('tagColor');
   }
 
   get visible() {
@@ -360,5 +303,19 @@ export class PltLeftMenuComponent implements OnInit {
 
   openDrawer() {
     this.drawer= true;
+  }
+
+  addNewTag() {
+    if(this.tagForm.valid) this.actionDispatcher.emit({
+      type: leftMenuStore.addNewTag,
+      payload: _.omit(this.tagForm.value, ['visible', 'editorId', 'tagId'])
+    })
+  }
+
+  deleteTag() {
+    if (this.tagForm.get('tagId')) this.actionDispatcher.emit({
+      type: leftMenuStore.deleteTag,
+      payload: _.omit(this.tagForm.value, ['tagName', 'tagColor', 'visible'])
+    })
   }
 }

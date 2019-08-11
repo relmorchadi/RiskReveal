@@ -28,6 +28,7 @@
             pathTab:true,
             selectedItemForMenu: selectedItemForMenu
           }"
+        [tagsInput]="tagsInput"
         (onAssignPltsToTag)="assignPltsToTag($event)"
         (onCreateTag)="createTag($event)"
         (onProjectFilter)="filter($event)"
@@ -47,6 +48,7 @@
         (unCkeckAllPlts)="unCheckAll()"
         (onWsHeaderSelection)="setWsHeaderSelect($event)"
         (onModalSelect)="setModalSelectedItems($event)"
+        (actionDispatcher)="leftMenuActionDispatcher($event)"
       >
 
       </app-plt-left-menu>
