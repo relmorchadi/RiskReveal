@@ -41,6 +41,8 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 })
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
+  dropAll = (param) => null;
+
   someItemsAreSelected = false;
   selectAll = false;
   listOfPlts = [];
