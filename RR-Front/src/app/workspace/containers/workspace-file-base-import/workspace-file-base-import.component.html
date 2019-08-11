@@ -45,13 +45,13 @@
         </ul>
       </div>
 
-      <div *ngIf="fileBase?.files.length === 0" class="empty-data-wrap">
+      <div *ngIf="fileBase?.files?.length === 0" class="empty-data-wrap">
         <nz-empty></nz-empty>
       </div>
 
       <div class="menu-left-footer">
-        <button *ngIf="fileBase?.files.length > 0" (click)="addForImport()"  class="a-buttons-contained">ADD TO PROJECT</button>
-        <button *ngIf="fileBase?.files.length === 0" class="a-buttons-contained-disabled">ADD TO PROJECT</button>
+        <button *ngIf="fileBase?.files?.length > 0" (click)="addForImport()"  class="a-buttons-contained">ADD TO PROJECT</button>
+        <button *ngIf="fileBase?.files?.length === 0" class="a-buttons-contained-disabled">ADD TO PROJECT</button>
       </div>
 
     </div>

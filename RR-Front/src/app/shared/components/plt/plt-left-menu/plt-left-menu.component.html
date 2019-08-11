@@ -159,7 +159,7 @@
               <span class="body-3">All</span>
               <div class="all">
                   <span
-                    *ngFor="let tag of tagsInput.allAssigned"
+                    *ngFor="let tag of tagsInput?.allAssigned"
                     [ngClass]="{'active-tag':tag?.selected}"
                     class="a-chips-input-mini"
                     [ngStyle]="{'background-color': tag?.tagColor}">
@@ -175,7 +175,7 @@
               <span class="body-3">Subsets</span>
               <div class="subsets">
                   <span
-                    *ngFor="let tag of tagsInput.subsetsAssigned"
+                    *ngFor="let tag of tagsInput?.subsetsAssigned"
                     [ngClass]="{'active-tag':tag?.selected}"
                     class="a-chips-input-mini"
                     [ngStyle]="{'background-color': tag?.tagColor}">
@@ -202,11 +202,11 @@
               <h6>Unassigned</h6>
             </ng-template>
             <div class="unassigned-lists">
-              <div class="section" *ngIf="tagsInput.usedInWs.length">
+              <div class="section" *ngIf="tagsInput?.usedInWs.length">
                 <div class="body-3">Used in Workspace</div>
                 <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
                 <span
-                  *ngFor="let tag of tagsInput.usedInWs"
+                  *ngFor="let tag of tagsInput?.usedInWs"
                   [ngClass]="{'active-tag':tag?.selected}"
                   class="a-chips-input-mini"
                   [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
@@ -218,11 +218,11 @@
                 </span>
                 </div>
               </div>
-              <div class="section" *ngIf="tagsInput.userFavorite.length">
+              <div class="section" *ngIf="tagsInput?.userFavorite.length">
                 <div class="body-3">User Favorites</div>
                 <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
                 <span
-                  *ngFor="let tag of tagsInput.userFavorite"
+                  *ngFor="let tag of tagsInput?.userFavorite"
                   [ngClass]="{'active-tag':tag?.selected}"
                   class="a-chips-input-mini"
                   [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
@@ -234,11 +234,11 @@
               </span>
                 </div>
               </div>
-              <div class="section" *ngIf="tagsInput.previouslyUsed.length">
+              <div class="section" *ngIf="tagsInput?.previouslyUsed.length">
                 <div class="body-3">Previously Used</div>
                 <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
                 <span
-                  *ngFor="let tag of tagsInput.previouslyUsed"
+                  *ngFor="let tag of tagsInput?.previouslyUsed"
                   [ngClass]="{'active-tag':tag?.selected}"
                   class="a-chips-input-mini"
                   [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
