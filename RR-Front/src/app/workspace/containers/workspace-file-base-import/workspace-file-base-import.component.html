@@ -14,16 +14,16 @@
   </div>
   <div class="app-body">
     <div class="menu-left-wrapper">
-      <span class="subtitle-1 subtitle-2 menu-left-header"
-            style="border-top: 4px solid #0700CF;">
+      <span class="body-1 menu-left-header"
+            style="border-top: 4px solid #0700CF; padding-top: 12px;">
         Find Directory
       </span>
       <div class="tree-menu-wrapper">
-        <p-tree [(selection)]="selectedFile" [value]="directoryTree?.data" selectionMode="single"
+        <p-tree [value]="directoryTree?.data" selectionMode="single" [(selection)]="selectedFile"
                 (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
       </div>
 
-      <span class="subtitle-1 subtitle-2 menu-left-header">
+      <span class="body-1 menu-left-header">
         Filter
       </span>
 
@@ -32,14 +32,14 @@
         <input class="input-search" />
       </div>
 
-      <span class="subtitle-1 subtitle-2 menu-left-header">
+      <span class="body-1 menu-left-header">
         Text Files Available
       </span>
-      <div *ngIf="fileBase?.files.length > 0" class="popover-menu files-selection-wrap">
+      <div *ngIf="fileBase?.files?.length > 0" class="popover-menu files-selection-wrap">
         <ul>
           <li *ngFor="let items of fileBase?.files; let i = index">
-            <label (nzCheckedChange)="selectToImport($event, i)" [nzChecked]="items.selected" nz-checkbox>
-              <span [nzTitle]="items.label" nz-tooltip nzPlacement="top">{{items.label}}</span>
+            <label nz-checkbox [nzChecked]="items.selected" (nzCheckedChange)="selectToImport($event, i)">
+              <span [nzTitle]="items.label" nzPlacement="topLeft" nz-tooltip>{{items.label}}</span>
             </label>
           </li>
         </ul>
@@ -50,8 +50,7 @@
       </div>
 
       <div class="menu-left-footer">
-        <button (click)="addForImport()" *ngIf="fileBase?.files.length > 0" class="a-buttons-contained">ADD TO PROJECT
-        </button>
+        <button *ngIf="fileBase?.files.length > 0" (click)="addForImport()"  class="a-buttons-contained">ADD TO PROJECT</button>
         <button *ngIf="fileBase?.files.length === 0" class="a-buttons-contained-disabled">ADD TO PROJECT</button>
       </div>
 
@@ -63,18 +62,20 @@
         </span>
         <div class="body-wrapper-header-right">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-          <i (click)="collapseImportedFiles = true" *ngIf="!collapseImportedFiles"
+          <i *ngIf="!collapseImportedFiles" (click)="collapseImportedFiles = true"
              class="icon-keyboard_arrow_up_24px"></i>
-          <i (click)="collapseImportedFiles = false" *ngIf="collapseImportedFiles"
+          <i *ngIf="collapseImportedFiles" (click)="collapseImportedFiles = false"
              class="icon-keyboard_arrow_down_24px"></i>
         </div>
       </div>
 
-      <div class="summary-info table-width empty-table fixed-table-height">
+      <div class="summary-info table-width fixed-table-height" [ngClass]="{'empty-table': getLength()}">
+        <p-contextMenu appendTo="body" #cm [model]="items"></p-contextMenu>
         <p-table #iTable [columns]="pltColumns" [scrollable]="true"
                  *ngIf="!collapseImportedFiles"
-                 [resizableColumns]="true" columnResizeMode="expand"
-                 [value]="" frozenWidth="485px">
+                 [(contextMenuSelection)]="contextSelectedItem"
+                 [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
+                 [value]="fileBase?.selectedFiles" frozenWidth="485px">
           <ng-template let-columns pTemplate="colgroup">
             <colgroup>
               <ng-container *ngFor="let col of columns">
@@ -103,10 +104,11 @@
             </tr>
           </ng-template>
           <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-            <tr>
+            <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
+                [ngClass]="{'active_contract_item': rowData?.selected}">
               <ng-container *ngFor="let col of columns">
                 <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                  <div *ngIf="col.type === 'selection'" class="">
+                  <div *ngIf="col.type === 'select'" class="">
                     <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
                            nz-checkbox></label>
                   </div>
@@ -116,8 +118,7 @@
                                  [nzWidth]="20" nzType="circle"></nz-progress>
                   </div>
                   <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
-                    <span *ngIf="rowData.exposedLocation" class="indicator-flag"
-                          style="background-color: #0700CF"></span>
+                        <span *ngIf="rowData.exposedLocation" class="indicator-flag" style="background-color: #0700CF"></span>
                   </div>
                   <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'number'"
                        [ngClass]="{'highlight-temp': rowData.highlight}"
@@ -126,13 +127,22 @@
                        [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data">{{rowData[col.field]}}%
                   </div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'perilIndicator'">
+                    <span class="perilIndicator" [ngStyle]="{'background-color': getColor(rowData[col.field])}">
+                      {{rowData[col.field]}}
+                    </span>
+                  </div>
+                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'info'"
+                       class="text-data">
+                    {{rowData.ModelSystem}}_{{rowData.ModelProvider}}_{{rowData.ModelSystemVersion}}_{{rowData.ModelSystemInstance}}
+                  </div>
                   <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
                        [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                        [ngClass]="{'highlight-temp': col.highlight}"
                        class="text-data">{{rowData[col.field]}}</div>
                   <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                  <div (click)="deleteRow(rowData.dataSourceId)" *ngIf="col.type === 'action'"
+                  <div (click)="deleteRow(rowData)" *ngIf="col.type === 'action'"
                        [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
                   </div>
@@ -140,14 +150,14 @@
               </ng-container>
             </tr>
           </ng-template>
-          <ng-template let-columns="columns" pTemplate="emptymessage">
+          <ng-template pTemplate="emptymessage" let-columns="columns">
             <div class="empty-notif-wrapper">
               <nz-empty></nz-empty>
             </div>
           </ng-template>
         </p-table>
         <div class="menu-icon-wrap">
-          <nz-dropdown *ngIf="!collapseImportedFiles" [nzPlacement]="'topRight'" [nzTrigger]="'hover'">
+          <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseImportedFiles" [nzPlacement]="'topRight'">
             <a style="max-height: 28px;display: flex;" nz-dropdown>
               <i class="icon-menu_24px"></i>
             </a>
@@ -166,23 +176,23 @@
     </div>
   </div>
   <div class="app-body">
-    <div style="margin-top: 20px; background-color: #FFFFFF;">
-      <div style="display: flex; justify-content: space-between;">
+    <div style="margin-top: 20px; background-color: #FFFFFF; box-shadow: 1px 2px 6px rgba(0,0,0,0.15);">
+      <div  style="display: flex; justify-content: space-between;">
         <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
           Analysis Result
         </span>
         <div class="body-wrapper-header-right">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-          <i (click)="collapseImportedPLTs = true" *ngIf="!collapseImportedPLTs"
+          <i *ngIf="!collapseImportedPLTs" (click)="collapseImportedPLTs = true"
              class="icon-keyboard_arrow_up_24px"></i>
-          <i (click)="collapseImportedPLTs = false" *ngIf="collapseImportedPLTs"
+          <i *ngIf="collapseImportedPLTs" (click)="collapseImportedPLTs = false"
              class="icon-keyboard_arrow_down_24px"></i>
         </div>
       </div>
       <div style="display: flex">
         <div class="summary-info empty-table">
-          <p-table #st *ngIf="!collapseImportedPLTs" [columns]="importedFiles" [resizableColumns]="true"
-                   [scrollable]="true" [value]="">
+          <p-table *ngIf="!collapseImportedPLTs" #st [columns]="importedFiles" [scrollable]="true"
+                   [resizableColumns]="true" [value]="">
             <ng-template let-columns pTemplate="colgroup">
               <colgroup>
                 <ng-container *ngFor="let col of columns">
@@ -235,8 +245,8 @@
                          class="text-data">{{rowData[col.field]}}%
                     </div>
                     <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
-                         [ngClass]="{'highlight-temp': col.highlight}"
                          [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                         [ngClass]="{'highlight-temp': col.highlight}"
                          class="text-data">{{rowData[col.field]}}</div>
                     <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
@@ -248,15 +258,14 @@
                 </ng-container>
               </tr>
             </ng-template>
-            <ng-template let-columns="columns" pTemplate="emptymessage">
+            <ng-template pTemplate="emptymessage" let-columns="columns">
               <div class="empty-notif-wrapper">
                 <nz-empty></nz-empty>
               </div>
             </ng-template>
           </p-table>
         </div>
-        <div *ngIf="!collapseImportedPLTs" class="menu-icon-wrap"
-             style="width: 2%; font-size: 24px; padding-top: 25px;">
+        <div class="menu-icon-wrap" *ngIf="!collapseImportedPLTs" style="width: 2%; font-size: 24px; padding-top: 25px;">
           <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'topRight'">
             <a style="max-height: 28px;display: flex;" nz-dropdown>
               <i class="icon-menu_24px"></i>
