@@ -12,9 +12,10 @@ public abstract class AdjustmentBasisEntity_ {
 	public static volatile SingularAttribute<AdjustmentBasisEntity, String> exposureFlag;
 	public static volatile SingularAttribute<AdjustmentBasisEntity, Integer> code;
 	public static volatile SingularAttribute<AdjustmentBasisEntity, Boolean> capped;
-	public static volatile SingularAttribute<AdjustmentBasisEntity, String> basisShortname;
+	public static volatile SingularAttribute<AdjustmentBasisEntity, AdjustmentCategoryEntity> adjustmentCategoryByIdCategory;
 	public static volatile SingularAttribute<AdjustmentBasisEntity, String> description;
 	public static volatile SingularAttribute<AdjustmentBasisEntity, Boolean> active;
+	public static volatile SingularAttribute<AdjustmentBasisEntity, String> basisShortName;
 	public static volatile SingularAttribute<AdjustmentBasisEntity, String> adjustmentBasisName;
 	public static volatile SingularAttribute<AdjustmentBasisEntity, Boolean> exposureGrowth;
 

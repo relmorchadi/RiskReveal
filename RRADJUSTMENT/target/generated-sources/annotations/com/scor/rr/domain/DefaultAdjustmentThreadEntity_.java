@@ -9,8 +9,7 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class DefaultAdjustmentThreadEntity_ {
 
 	public static volatile SingularAttribute<DefaultAdjustmentThreadEntity, DefaultAdjustmentVersionEntity> defaultAdjustmentVersionByIdDefaultAdjustmentVersion;
-	public static volatile SingularAttribute<DefaultAdjustmentThreadEntity, String> defaultVersionId;
-	public static volatile SingularAttribute<DefaultAdjustmentThreadEntity, Integer> id;
+	public static volatile SingularAttribute<DefaultAdjustmentThreadEntity, Integer> idDefaultAdjustmentThread;
 
 }
 

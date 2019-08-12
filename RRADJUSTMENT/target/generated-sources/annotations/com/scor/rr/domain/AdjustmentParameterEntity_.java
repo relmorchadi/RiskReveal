@@ -10,8 +10,8 @@ public abstract class AdjustmentParameterEntity_ {
 
 	public static volatile SingularAttribute<AdjustmentParameterEntity, String> paramField;
 	public static volatile SingularAttribute<AdjustmentParameterEntity, String> paramType;
-	public static volatile SingularAttribute<AdjustmentParameterEntity, AdjustmentNodeEntity> adjustmentNodeByAdjustmentNodeId;
-	public static volatile SingularAttribute<AdjustmentParameterEntity, Integer> adjustmentNodeId;
+	public static volatile SingularAttribute<AdjustmentParameterEntity, AdjustmentNodeEntity> adjustmentNodeByIdAdjustmentNode;
+	public static volatile SingularAttribute<AdjustmentParameterEntity, Integer> idAdjustmentNode;
 	public static volatile SingularAttribute<AdjustmentParameterEntity, String> paramValue;
 
 }

@@ -38,6 +38,14 @@ public class PLTLossData {
         this.maxExposure = lossData.maxExposure;
         this.loss = lossData.loss;
     }
+    public PLTLossData(PLTLossData lossData,Double loss) {
+        this.eventId = lossData.eventId;
+        this.eventDate = lossData.eventDate;
+        this.simPeriod = lossData.simPeriod;
+        this.seq = lossData.seq;
+        this.maxExposure = lossData.maxExposure;
+        this.loss = loss;
+    }
 
     public PLTLossData() {
 

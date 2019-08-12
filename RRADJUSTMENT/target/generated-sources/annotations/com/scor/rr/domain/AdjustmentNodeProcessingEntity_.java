@@ -8,10 +8,10 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(AdjustmentNodeProcessingEntity.class)
 public abstract class AdjustmentNodeProcessingEntity_ {
 
-	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, AdjustmentNodeEntity> adjustmentNodeByAdjustmentNodeId;
-	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, ScorPltHeaderEntity> scorPltHeaderByAdjustedPltId;
-	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, ScorPltHeaderEntity> scorPltHeaderByInputPltId;
-	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, Integer> id;
+	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, AdjustmentNodeEntity> adjustmentNodeByIdAdjustmentNode;
+	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, ScorPltHeaderEntity> scorPltHeaderByIdAdjustedPlt;
+	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, Integer> idNodeProcessing;
+	public static volatile SingularAttribute<AdjustmentNodeProcessingEntity, ScorPltHeaderEntity> scorPltHeaderByIdInputPlt;
 
 }
 

@@ -47,7 +47,6 @@ public class ScorPltHeaderEntity implements Serializable {
     private Integer previousNarrative;
     private Integer currentNarrative;
     private Date createdDate;
-    private String e;
     private Integer inuringPackageId;
     private String perilCode;
     private String pltLossDataFileName;
@@ -63,6 +62,9 @@ public class ScorPltHeaderEntity implements Serializable {
     private BinFileEntity binFile;
     private AdjustmentBasisEntity adjustmentBasisPrevious;
     private AdjustmentBasisEntity adjustmentBasisCurrent;
+
+    public ScorPltHeaderEntity() {
+    }
 
     @Id
     @Column(name = "scorPLTHeaderId", nullable = false)
@@ -385,16 +387,6 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "e", length = 255)
-    public String getE() {
-        return e;
-    }
-
-    public void setE(String e) {
-        this.e = e;
-    }
-
-    @Basic
     @Column(name = "inuringPackageId")
     public Integer getInuringPackageId() {
         return inuringPackageId;
@@ -447,7 +439,7 @@ public class ScorPltHeaderEntity implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(scorPltHeaderId, pltType, publishToPricing, pltSimulationPeriods, generatedFromDefaultAdjustement, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGenerated, basisChanged, narrativeChanged, previousNarrative, currentNarrative, createdDate, e, inuringPackageId, perilCode, pltLossDataFileName, pltLossDataFilePath, engineType, entity);
+        return Objects.hash(scorPltHeaderId, pltType, publishToPricing, pltSimulationPeriods, generatedFromDefaultAdjustement, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGenerated, basisChanged, narrativeChanged, previousNarrative, currentNarrative, createdDate, inuringPackageId, perilCode, pltLossDataFileName, pltLossDataFilePath, engineType, entity);
     }
 
     @ManyToOne
@@ -548,5 +540,49 @@ public class ScorPltHeaderEntity implements Serializable {
 
     public void setAdjustmentBasisCurrent(AdjustmentBasisEntity adjustmentBasisByCurrentBasis) {
         this.adjustmentBasisCurrent = adjustmentBasisByCurrentBasis;
+    }
+
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
+    public ScorPltHeaderEntity(ScorPltHeaderEntity scorPltHeaderEntity) {
+        this.pltType = scorPltHeaderEntity.pltType;
+        this.publishToPricing = scorPltHeaderEntity.publishToPricing;
+        this.pltSimulationPeriods = scorPltHeaderEntity.pltSimulationPeriods;
+        this.generatedFromDefaultAdjustement = scorPltHeaderEntity.generatedFromDefaultAdjustement;
+        this.ccyCode = scorPltHeaderEntity.ccyCode;
+        this.geoCode = scorPltHeaderEntity.geoCode;
+        this.geoDescription = scorPltHeaderEntity.geoDescription;
+        this.rmsSimulationSet = scorPltHeaderEntity.rmsSimulationSet;
+        this.importSequence = scorPltHeaderEntity.importSequence;
+        this.threadName = scorPltHeaderEntity.threadName;
+        this.udName = scorPltHeaderEntity.udName;
+        this.userOccurrenceBasis = scorPltHeaderEntity.userOccurrenceBasis;
+        this.defaultPltName = scorPltHeaderEntity.defaultPltName;
+        this.truncationThreshold = scorPltHeaderEntity.truncationThreshold;
+        this.truncationExchangeRate = scorPltHeaderEntity.truncationExchangeRate;
+        this.truncationCurrency = scorPltHeaderEntity.truncationCurrency;
+        this.sourceLossModelingBasis = scorPltHeaderEntity.sourceLossModelingBasis;
+        this.sourceLossEntityingBasis = scorPltHeaderEntity.sourceLossEntityingBasis;
+        this.basisChanged = scorPltHeaderEntity.basisChanged;
+        this.narrativeChanged = scorPltHeaderEntity.narrativeChanged;
+        this.previousNarrative = scorPltHeaderEntity.previousNarrative;
+        this.currentNarrative = scorPltHeaderEntity.currentNarrative;
+        this.inuringPackageId = scorPltHeaderEntity.inuringPackageId;
+        this.perilCode = scorPltHeaderEntity.perilCode;
+        this.pltLossDataFileName = scorPltHeaderEntity.pltLossDataFileName;
+        this.pltLossDataFilePath = scorPltHeaderEntity.pltLossDataFilePath;
+        this.engineType = scorPltHeaderEntity.engineType;
+        this.rrAnalysis = scorPltHeaderEntity.rrAnalysis;
+        this.targetRap = scorPltHeaderEntity.targetRap;
+        this.regionPeril = scorPltHeaderEntity.regionPeril;
+        this.projectByProjectId = scorPltHeaderEntity.projectByProjectId;
+        this.scorPltHeaderByCloningSourceId = scorPltHeaderEntity.scorPltHeaderByCloningSourceId;
+        this.entity = scorPltHeaderEntity.entity;
+        this.marketChannel = scorPltHeaderEntity.marketChannel;
+        this.adjustmentBasisPrevious = scorPltHeaderEntity.adjustmentBasisPrevious;
+        this.adjustmentBasisCurrent = scorPltHeaderEntity.adjustmentBasisCurrent;
     }
 }

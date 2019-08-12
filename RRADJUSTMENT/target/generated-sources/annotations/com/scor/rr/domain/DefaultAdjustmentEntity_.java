@@ -8,13 +8,11 @@ import javax.persistence.metamodel.StaticMetamodel;
 @StaticMetamodel(DefaultAdjustmentEntity.class)
 public abstract class DefaultAdjustmentEntity_ {
 
-	public static volatile SingularAttribute<DefaultAdjustmentEntity, Integer> sequence;
-	public static volatile SingularAttribute<DefaultAdjustmentEntity, TargetRapEntity> targetRapByTargetRapId;
-	public static volatile SingularAttribute<DefaultAdjustmentEntity, RegionPerilEntity> regionPerilByRegionPerilId;
-	public static volatile SingularAttribute<DefaultAdjustmentEntity, String> marketChannel;
+	public static volatile SingularAttribute<DefaultAdjustmentEntity, TargetRapEntity> targetRap;
+	public static volatile SingularAttribute<DefaultAdjustmentEntity, MarketChannelEntity> marketChannel;
 	public static volatile SingularAttribute<DefaultAdjustmentEntity, String> engineType;
-	public static volatile SingularAttribute<DefaultAdjustmentEntity, Integer> id;
-	public static volatile SingularAttribute<DefaultAdjustmentEntity, String> entity;
+	public static volatile SingularAttribute<DefaultAdjustmentEntity, Integer> idDefaultAdjustment;
+	public static volatile SingularAttribute<DefaultAdjustmentEntity, EntityEntity> entity;
 
 }
 

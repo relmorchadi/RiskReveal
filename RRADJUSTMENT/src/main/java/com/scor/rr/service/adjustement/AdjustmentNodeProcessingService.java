@@ -21,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -82,10 +84,12 @@ public class AdjustmentNodeProcessingService {
                 AdjustmentNodeProcessingEntity nodeProcessing = new AdjustmentNodeProcessingEntity();
                 List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(scorPltHeader);
                 pltLossData = calculateAdjustment(adjustmentNode,parameterRequest,pltLossData);
-                BinFileEntity binFileEntity = savePLTFile(pltLossData,scorPltHeader);
+                BinFileEntity binFileEntity = savePLTFile(pltLossData);
                 if(binFileEntity != null) {
-                    ScorPltHeaderEntity scorPltHeaderAdjusted = new ScorPltHeaderEntity();
+                    ScorPltHeaderEntity scorPltHeaderAdjusted = new ScorPltHeaderEntity(scorPltHeader);
                     scorPltHeaderAdjusted.setBinFile(binFileEntity);
+                    scorPltHeaderAdjusted.setCreatedOn(new Timestamp(new Date().getTime()));
+                    scorPltHeaderAdjusted.setCreatedBy("HAMZA");
                     scorpltheaderRepository.save(scorPltHeaderAdjusted);
                     nodeProcessing.setScorPltHeaderByIdAdjustedPlt(scorPltHeaderAdjusted);
                     nodeProcessing.setScorPltHeaderByIdInputPlt(scorPltHeader);
@@ -114,7 +118,7 @@ public class AdjustmentNodeProcessingService {
                 .orElseThrow(throwException(PLTNOTFOUNT, NOT_FOUND));
     }
 
-    private BinFileEntity savePLTFile(List<PLTLossData> pltLossData,ScorPltHeaderEntity scorPltHeaderEntity) {
+    private BinFileEntity savePLTFile(List<PLTLossData> pltLossData) {
         File file = new File("C:\\Users\\u008208\\Desktop\\plt.csv");
         File fileWrite = null;
         if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
@@ -208,6 +212,4 @@ public class AdjustmentNodeProcessingService {
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
         return () -> new RRException(codeName, httpStatus.value());
     }
-
-
 }

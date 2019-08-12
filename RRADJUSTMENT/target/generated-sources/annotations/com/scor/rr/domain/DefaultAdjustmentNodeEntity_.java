@@ -9,17 +9,11 @@ import javax.persistence.metamodel.StaticMetamodel;
 public abstract class DefaultAdjustmentNodeEntity_ {
 
 	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, Integer> sequence;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, AdjustmentStateEntity> adjustmentStateByIdState;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, Integer> adjustmentNodeId;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, AdjustmentCategoryEntity> adjustmentCategoryByIdCategory;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, AdjustmentTypeEntity> adjustmentTypeByAdjustmentType;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, String> adjustmentParamsSource;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, String> lossNetFlag;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, Boolean> hasNewParamsFile;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, DefaultAdjustmentThreadEntity> defaultAdjustmentThreadByIdAdjustmentThread;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, Boolean> inputChanged;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, AdjustmentBasisEntity> adjustmentBasisByFkAdjustmentBasis;
-	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, String> layer;
+	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, Integer> idDefaultAdjustmentNode;
+	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, DefaultAdjustmentThreadEntity> defaultAdjustmentThread;
+	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, AdjustmentBasisEntity> adjustmentBasis;
+	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, AdjustmentTypeEntity> adjustmentType;
+	public static volatile SingularAttribute<DefaultAdjustmentNodeEntity, Boolean> cappedMaxExposure;
 
 }
 

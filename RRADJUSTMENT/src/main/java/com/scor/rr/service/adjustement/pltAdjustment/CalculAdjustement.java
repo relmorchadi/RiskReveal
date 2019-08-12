@@ -1,5 +1,6 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
+import com.scor.rr.domain.dto.AEPMetric;
 import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 
@@ -16,6 +18,7 @@ public class CalculAdjustement implements ICalculAdjustment{
 
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustement.class);
     final double CONSTANTE =100000;
+
     public List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossData){
         if(pltLossData != null && !pltLossData.isEmpty()) {
             int[] finalI = new int[]{0};
@@ -23,6 +26,19 @@ public class CalculAdjustement implements ICalculAdjustment{
                 finalI[0]++;
                 return new OEPMetric(finalI[0] / CONSTANTE, CONSTANTE / finalI[0], pltLossDataVar.getLoss());
             }).collect(Collectors.toList());
+        } else {
+            log.info("plt empty");
+            return null;
+        }
+    }
+    public List<AEPMetric> getAEPMetric(List<PLTLossData> pltLossDatas){
+        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+            int[] finalI = new int[]{0};
+            return pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
+                    pltLossData ->
+                            new AEPMetric(finalI[0] / CONSTANTE,
+                                    CONSTANTE / finalI[0] ,
+                                    pltLossDatas.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss())).collect(Collectors.toList());
         } else {
             log.info("plt empty");
             return null;
@@ -288,4 +304,46 @@ public class CalculAdjustement implements ICalculAdjustment{
 
         }
     }
+    public List<PLTLossData> aepMetric(List<PLTLossData> pltLossDatas) {
+        List<PLTLossData> pltLossDataAepMetric = new ArrayList<>();
+         pltLossDatas.stream().map(pltLossData -> pltLossDataAepMetric.add(new PLTLossData(pltLossData,pltLossDatas.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss())));
+         return pltLossDataAepMetric;
+    }
+
+    public List<PLTLossData> CoefOfVariance(List<PLTLossData> pltLossDatas) {
+        return pltLossDatas;
+    }
+
+    public Double AEPTVaRMetrics(List<AEPMetric> aepMetrics) {
+        if(aepMetrics != null && !aepMetrics.isEmpty()) {
+            int s = 0;
+            double oep = 0;
+            return aepMetrics.stream().mapToDouble(oepMetric -> (oep + oepMetric.getLossAep()) / (s + 1)).sum();
+        } else {
+            log.info("PLT EMPTY");
+            return null;
+        }
+    }
+
+    public Double OEPTVaRMetrics(List<OEPMetric> oepMetrics) {
+        if(oepMetrics != null && !oepMetrics.isEmpty()) {
+            int s = 0;
+            double oep = 0;
+            return oepMetrics.stream().mapToDouble(oepMetric -> (oep + oepMetric.getLossOep()) / (s + 1)).sum();
+        } else {
+            log.info("PLT EMPTY");
+            return null;
+        }
+    }
+
+    public Double averageAnnualLoss(List<PLTLossData> pltLossDatas) {
+        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+            return pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/CONSTANTE;
+        } else {
+            log.info("PLT EMPTY");
+            return null;
+        }
+    }
+
+
 }

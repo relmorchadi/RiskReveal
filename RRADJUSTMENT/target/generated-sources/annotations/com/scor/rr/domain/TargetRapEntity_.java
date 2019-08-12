@@ -1,5 +1,6 @@
 package com.scor.rr.domain;
 
+import java.sql.Timestamp;
 import javax.annotation.Generated;
 import javax.persistence.metamodel.SingularAttribute;
 import javax.persistence.metamodel.StaticMetamodel;
@@ -13,10 +14,12 @@ public abstract class TargetRapEntity_ {
 	public static volatile SingularAttribute<TargetRapEntity, String> modellingSystem;
 	public static volatile SingularAttribute<TargetRapEntity, String> modellingSystemVersion;
 	public static volatile SingularAttribute<TargetRapEntity, Boolean> active;
+	public static volatile SingularAttribute<TargetRapEntity, Timestamp> auditUpdateDt;
 	public static volatile SingularAttribute<TargetRapEntity, String> sourceRapCode;
 	public static volatile SingularAttribute<TargetRapEntity, Integer> targetRapId;
 	public static volatile SingularAttribute<TargetRapEntity, String> targetRapDesc;
 	public static volatile SingularAttribute<TargetRapEntity, String> modellingVendor;
+	public static volatile SingularAttribute<TargetRapEntity, Timestamp> auditCreateDt;
 	public static volatile SingularAttribute<TargetRapEntity, Boolean> scorDefault;
 	public static volatile SingularAttribute<TargetRapEntity, String> entitylingSystem;
 	public static volatile SingularAttribute<TargetRapEntity, String> entitylingSystemVersion;
