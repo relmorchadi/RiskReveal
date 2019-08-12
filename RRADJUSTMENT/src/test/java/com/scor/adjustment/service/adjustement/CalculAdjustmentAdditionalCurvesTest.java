@@ -14,10 +14,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.*;
-
 public class CalculAdjustmentAdditionalCurvesTest {
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustmentAdditionalCurvesTest.class);
     private List<PLTLossData> pltLossDataList;
@@ -70,5 +66,14 @@ public class CalculAdjustmentAdditionalCurvesTest {
         log.info("Average Annual Loss with a plt file = {}",calculAdjustement.OEPTVaRMetrics(calculAdjustement.getOEPMetric(pltLossData)));
         log.info("Average Annual Loss with a plt null = {}",calculAdjustement.OEPTVaRMetrics(null));
         log.info("Average Annual Loss with empty plt = {}",calculAdjustement.OEPTVaRMetrics(new ArrayList<>()));
+    }
+    @Test
+    public void stdDevTest() throws RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for Average Annual Loss with a plt file ");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        log.info("Standard Deviation with a plt file = {}",calculAdjustement.stdDev(pltLossData));
+        log.info("Standard Deviation with a plt null = {}",calculAdjustement.stdDev(null));
+        log.info("Standard Deviation with empty plt = {}",calculAdjustement.stdDev(new ArrayList<>()));
     }
 }

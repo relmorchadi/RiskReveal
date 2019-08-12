@@ -314,6 +314,16 @@ public class CalculAdjustement implements ICalculAdjustment{
         return pltLossDatas;
     }
 
+    public Double stdDev(List<PLTLossData> pltLossDatas) {
+        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+        Double all = pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/CONSTANTE;
+            return  Math.sqrt(pltLossDatas.stream().mapToDouble(pltLossData ->Math.pow(pltLossData.getLoss()-all,2)).sum()/(CONSTANTE-1));
+        } else {
+            log.info("PLT EMPTY");
+            return null;
+        }
+    }
+
     public Double AEPTVaRMetrics(List<AEPMetric> aepMetrics) {
         if(aepMetrics != null && !aepMetrics.isEmpty()) {
             int s = 0;
