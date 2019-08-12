@@ -76,4 +76,14 @@ public class CalculAdjustmentAdditionalCurvesTest {
         log.info("Standard Deviation with a plt null = {}",calculAdjustement.stdDev(null));
         log.info("Standard Deviation with empty plt = {}",calculAdjustement.stdDev(new ArrayList<>()));
     }
+
+    @Test
+    public void CoefOfVarianceTest() throws RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for Average Annual Loss with a plt file ");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        log.info("Coefficient of Variance (CoV) with a plt file = {}",calculAdjustement.CoefOfVariance(pltLossData));
+        log.info("Coefficient of Variance (CoV) with a plt null = {}",calculAdjustement.CoefOfVariance(null));
+        log.info("Coefficient of Variance (CoV) with empty plt = {}",calculAdjustement.CoefOfVariance(new ArrayList<>()));
+    }
 }

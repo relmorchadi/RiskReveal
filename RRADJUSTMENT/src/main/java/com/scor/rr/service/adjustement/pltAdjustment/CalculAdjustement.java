@@ -310,14 +310,18 @@ public class CalculAdjustement implements ICalculAdjustment{
          return pltLossDataAepMetric;
     }
 
-    public List<PLTLossData> CoefOfVariance(List<PLTLossData> pltLossDatas) {
-        return pltLossDatas;
+    public Double CoefOfVariance(List<PLTLossData> pltLossDatas) {
+        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
+            return stdDev(pltLossDatas) / (averageAnnualLoss(pltLossDatas) + CONSTANTE);
+        } else {
+            log.info("PLT EMPTY");
+            return null;
+        }
     }
 
     public Double stdDev(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
-        Double all = pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/CONSTANTE;
-            return  Math.sqrt(pltLossDatas.stream().mapToDouble(pltLossData ->Math.pow(pltLossData.getLoss()-all,2)).sum()/(CONSTANTE-1));
+            return  Math.sqrt(pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/(CONSTANTE-1));
         } else {
             log.info("PLT EMPTY");
             return null;
