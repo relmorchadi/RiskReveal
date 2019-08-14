@@ -4,10 +4,13 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 
 public class PEATData {
 
-    private final int eventId;
-    private final int simPeriod; // shared properties among PLTLossData in one analysis!
-    private final int seq;
+    private  int eventId;
+    private  int simPeriod; // shared properties among PLTLossData in one analysis!
+    private  int seq;
     private double lmf;
+
+    public PEATData() {
+    }
 
     public PEATData(int eventId, int simPeriod, int seq, double lmf) {
         this.eventId = eventId;

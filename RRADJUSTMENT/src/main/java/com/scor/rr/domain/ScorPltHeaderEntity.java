@@ -67,7 +67,8 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Id
-    @Column(name = "scorPLTHeaderId", nullable = false)
+    @Column(name = "id_scorpltheader", nullable = false)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     public int getScorPltHeaderId() {
         return scorPltHeaderId;
     }
@@ -443,7 +444,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "cloningSourceId", referencedColumnName = "scorPLTHeaderId")
+    @JoinColumn(name = "cloningSourceId", referencedColumnName = "id_scorpltheader")
     public ScorPltHeaderEntity getScorPltHeaderByCloningSourceId() {
         return scorPltHeaderByCloningSourceId;
     }

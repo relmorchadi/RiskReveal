@@ -46,7 +46,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_input_plt", referencedColumnName = "scorPLTHeaderId")
+    @JoinColumn(name = "id_inputplt", referencedColumnName = "id_scorpltheader")
     public ScorPltHeaderEntity getScorPltHeaderByIdInputPlt() {
         return scorPltHeaderByIdInputPlt;
     }
@@ -56,7 +56,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjusted_plt", referencedColumnName = "scorPLTHeaderId")
+    @JoinColumn(name = "id_adjusted_plt", referencedColumnName = "id_scorpltheader")
     public ScorPltHeaderEntity getScorPltHeaderByIdAdjustedPlt() {
         return scorPltHeaderByIdAdjustedPlt;
     }

@@ -4,9 +4,10 @@ import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AdjustmentParameterRequest {
+public class AdjustmentParameterRequest implements Serializable {
 
     private double lmf;
     private double rpmf;
@@ -14,6 +15,9 @@ public class AdjustmentParameterRequest {
     private Integer scorPltHeaderInput;
     private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+
+    public AdjustmentParameterRequest() {
+    }
 
     public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
         this.lmf = lmf;

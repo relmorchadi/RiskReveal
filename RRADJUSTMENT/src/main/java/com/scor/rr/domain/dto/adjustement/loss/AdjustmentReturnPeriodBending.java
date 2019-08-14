@@ -2,8 +2,8 @@ package com.scor.rr.domain.dto.adjustement.loss;
 
 public class AdjustmentReturnPeriodBending {
 
-    double returnPeriod;
-    double lmf;
+    private double returnPeriod;
+    private double lmf;
 
     public AdjustmentReturnPeriodBending() {
     }

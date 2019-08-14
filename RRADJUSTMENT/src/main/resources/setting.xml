@@ -138,6 +138,9 @@
       <mapping class="com.scor.rr.EntityEntity"/>
       <mapping class="com.scor.rr.MarketChannelEntity"/>
       <mapping class="com.scor.rr.ScorPltHeaderEntity"/>
+      <mapping class="com.scor.rr.domain.AdjustmentEventBasedParameterEntity"/>
+      <mapping class="com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity"/>
+      <mapping class="com.scor.rr.domain.AdjustmentScalingParameterEntity"/>
       <!-- <property name="connection.username"/> -->
     <!-- <property name="connection.password"/> -->
 
