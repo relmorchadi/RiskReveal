@@ -9,6 +9,7 @@ import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
@@ -57,8 +58,6 @@ public class AdjustmentNodeProcessingService {
 
     @Autowired
     AdjustmentEventBasedParameterService eventBasedParameterService;
-
-    final static String pathcsv = "src/main/resources/file/plt.csv";
 
     final static String pathbin = "src/main/resources/file/plt.bin";
 
@@ -200,50 +199,44 @@ public class AdjustmentNodeProcessingService {
     private List<PLTLossData> calculateAdjustment(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData) {
         CalculAdjustement calculAdjustement = new CalculAdjustement();
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
-            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(),node));
-            return calculAdjustement.lineaireAdjustement(pltLossData, parameterRequest.getLmf(), node.getCapped());
+            AdjustmentScalingParameterEntity scalingParameterEntity = adjustmentScalingParameterService.getAdjustmentScalingParameterParameterByNode(node.getIdAdjustmentNode());
+            return calculAdjustement.lineaireAdjustement(pltLossData, scalingParameterEntity.getFactor(), node.getCapped());
         }
         if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
-            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(),node));
-            return calculAdjustement.eefFrequency(pltLossData, node.getCapped(), parameterRequest.getRpmf());
+            AdjustmentScalingParameterEntity scalingParameterEntity = adjustmentScalingParameterService.getAdjustmentScalingParameterParameterByNode(node.getIdAdjustmentNode());
+            return calculAdjustement.eefFrequency(pltLossData, node.getCapped(), scalingParameterEntity.getFactor());
         }
         if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
-            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
-            }
-            return calculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), parameterRequest.getAdjustmentReturnPeriodBendings());
+            List<AdjustmentReturnPeriodBandingParameterEntity>  parameterEntities = periodBandingParameterService.getAdjustmentReturnPeriodBandingParameterByNode(node.getIdAdjustmentNode());
+            return calculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), parameterEntities);
         }
         if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
-            savePeatDataFile(node, parameterRequest);
-            return calculAdjustement.nonLineaireEventDrivenAdjustment(pltLossData, node.getCapped(), parameterRequest.getPeatData());
+            AdjustmentEventBasedParameterEntity parameterEntity = eventBasedParameterService.getAdjustmentEventBasedParameterByNode(node.getIdAdjustmentNode());
+            CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+            try {
+                List<PEATData> peatData = csvpltFileReader.readPeatData(new File(parameterEntity.getInputFilePath()));
+                return calculAdjustement.nonLineaireEventDrivenAdjustment(pltLossData, node.getCapped(), peatData);
+            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                e.printStackTrace();
+            }
         }
         if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            savePeatDataFile(node, parameterRequest);
-            return calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), parameterRequest.getPeatData());
+            AdjustmentEventBasedParameterEntity parameterEntity = eventBasedParameterService.getAdjustmentEventBasedParameterByNode(node.getIdAdjustmentNode());
+            CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+            try {
+                List<PEATData> peatData = csvpltFileReader.readPeatData(new File(parameterEntity.getInputFilePath()));
+                return calculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData, node.getCapped(), peatData);
+            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                e.printStackTrace();
+            }
         }
         if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
-            }
-            return calculAdjustement.eefReturnPeriodBanding(pltLossData, node.getCapped(), parameterRequest.getAdjustmentReturnPeriodBendings());
+            List<AdjustmentReturnPeriodBandingParameterEntity>  parameterEntities = periodBandingParameterService.getAdjustmentReturnPeriodBandingParameterByNode(node.getIdAdjustmentNode());
+            return calculAdjustement.eefReturnPeriodBanding(pltLossData, node.getCapped(), parameterEntities);
         }
         throwException(TYPENOTFOUND, NOT_FOUND);
         return null;
-
     }
-
-    private void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
-        try {
-            File file = new File("src/main/resources/file/peatData"+node.getIdAdjustmentNode()+".csv");
-            FileUtils.touch(file);
-            CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-            csvpltFileWriter.writePeatData(parameterRequest.getPeatData(),file);
-            eventBasedParameterService.save(new AdjustmentEventBasedParameterEntity(file.getPath(),file.getName(),node));
-        } catch (IOException | com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
-            e.printStackTrace();
-        }
-    }
-
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
         return () -> new RRException(codeName, httpStatus.value());
     }
