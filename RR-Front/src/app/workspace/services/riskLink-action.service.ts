@@ -77,7 +77,7 @@ export class RiskLinkStateService {
     let portfolio = _.toArray(state.content[wsIdentifier].riskLink.portfolios);
     analysis = analysis.map(dt => _.toArray(dt.data));
     portfolio = portfolio.map(dt => _.toArray(dt.data));
-    const data = analysis.concat(portfolio);
+    const data = [...analysis, ...portfolio];
     let count = 0;
     data.forEach(dt => {
       count = count + _.filter(dt, ws => ws.selected).length;
@@ -211,6 +211,7 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked =
             (numSelectedItems === portfolios.length - 1 && value === true);
         }));
+      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -219,17 +220,15 @@ export class RiskLinkStateService {
             [dt.dataSourceId]: {
               ...dt,
               selected: selected
-            }
-          });
-        }
-      );
+            }});
+      });
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data = newData;
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate = false;
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked = selected;
-        })
-      );
+        }));
+      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     }
   }
 
@@ -260,10 +259,8 @@ export class RiskLinkStateService {
             [st.analysisId]: {
               ...st,
               selected: selected
-            }
-          });
-        }
-      );
+            }});
+        });
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data = newData;

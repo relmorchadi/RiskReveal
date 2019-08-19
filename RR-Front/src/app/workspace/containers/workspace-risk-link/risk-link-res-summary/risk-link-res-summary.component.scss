@@ -129,19 +129,16 @@ TABLE STYLE
         border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
         .text-data {
-          width: 100%;
-          height: 30px;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-          overflow: hidden;
-          padding-top: 4px;
-          font-weight: 400;
-        }
-
-        .branched-data {
           display: flex;
-          flex-direction: column;
-          height: 100%;
+          align-items: center;
+          width: 100%;
+          height: 27px;
+          font-weight: 400;
+          span {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+          }
         }
 
         .highlight-temp {
@@ -231,8 +228,17 @@ FINANCIAL PERSPECTIVE POPUP STYLE
 =======================================================================================
 */
 
+.fp-main-item-wrap {
+  display: flex;
+
+  .fp-options-wrapper {
+    margin-right: 5px;
+    width: 50%;
+  }
+}
+
 .fp-options-wrapper {
-  padding: 20px;
+  padding: 9px 10px;
   border: 1px solid rgba(0, 0, 0, 0.15);
   box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.15);
   margin-bottom: 5px;

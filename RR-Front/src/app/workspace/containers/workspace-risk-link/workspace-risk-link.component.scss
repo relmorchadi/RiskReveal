@@ -463,16 +463,15 @@
                 border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
                 div {
+                  display: flex;
+                  align-items: center;
                   width: 100%;
-                  height: 30px;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  padding-top: 4px;
-                }
-
-                .text-data {
-                  padding-top: 8px;
+                  height: 27px;
+                  span {
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                  }
                 }
               }
 

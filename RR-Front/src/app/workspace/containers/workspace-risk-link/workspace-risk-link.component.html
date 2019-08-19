@@ -15,7 +15,7 @@
       <div class="body-wrap-header">
         <div class="body-wrap-header-text">
           <!--          <span class="body-wrap-header-text-title">TREATY</span>-->
-          <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Risk link'"
+          <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'RiskLink'"
                            (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
@@ -341,9 +341,9 @@
                                  [ngModel]="rowData.selected"></label>
                         </div>
                         <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                             *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
+                             *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                         <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                             *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                             *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
                       </td>
                     </tr>
                   </ng-template>
