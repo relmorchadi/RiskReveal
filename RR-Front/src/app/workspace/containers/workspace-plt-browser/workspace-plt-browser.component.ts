@@ -6,7 +6,6 @@ import * as fromWorkspaceStore from '../../store';
 import {WorkspaceState} from '../../store';
 import {switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
 import * as leftMenuStore from '../../../shared/components/plt/plt-left-menu/store';
@@ -57,165 +56,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       }
     }
   ];
-  listOfUsedColumns: any[] = [
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      width: '60',
-      sorted: false,
-      filtred: false,
-      resizable: false,
-      icon: null,
-      type: 'checkbox',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: 'User Tags',
-      width: '60',
-      sorted: false,
-      filtred: false,
-      resizable: false,
-      icon: null,
-      type: 'tags',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'pltId',
-      header: 'PLT ID',
-      width: '80',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'id',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'pltName',
-      header: 'PLT Name',
-      width: '60',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'peril',
-      header: 'Peril',
-      width: '80',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      textAlign: 'center',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilCode',
-      header: 'Region Peril Code',
-      width: '130',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilName',
-      header: 'Region Peril Name',
-      width: '160',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'grain',
-      header: 'Grain',
-      width: '90',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'vendorSystem',
-      header: 'Vendor System',
-      width: '90',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field', active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'rap',
-      header: 'RAP',
-      width: '52',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-note',
-      type: 'icon',
-      width: '50',
-      active: true,
-      tooltip: "Published for Pricing"
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-dollar-alt',
-      type: 'icon',
-      width: '50',
-      active: true,
-      tooltip: "Priced"
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-focus-add',
-      type: 'icon',
-      width: '50',
-      active: true,
-      tooltip: "Published for Accumulation"
-    },
-  ];
-  listOfAvailbleColumns: any[] = [];
   pltColumnsCache: any[] = [
     {
       sortDir: 1,
@@ -428,7 +268,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   ];
 
   generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
-  listOfAvailbleColumnsCache: any[]= [];
 
   presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
@@ -1138,51 +977,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     }))
   }
 
-  toggleColumnsManager() {
-    this.managePopUp= !this.managePopUp;
-    this.listOfAvailbleColumnsCache= [...this.listOfAvailbleColumns];
-    if (this.managePopUp) this.listOfUsedColumns = [...this.getTableInputKey('pltColumns')];
-  }
-
-  saveColumns() {
-    this.toggleColumnsManager();
-    this.updateTable('pltColumns', [...this.listOfUsedColumns])
-  }
-
-  drop(event: CdkDragDrop<any>) {
-    console.log(event);
-    const {
-      previousContainer,
-      container
-    } = event;
-
-    if (previousContainer === container) {
-      if(container.id == "usedListOfColumns") {
-        moveItemInArray(
-          this.listOfUsedColumns,
-          event.previousIndex + 1,
-          event.currentIndex + 1
-        );
-        console.log(container.id, this.listOfUsedColumns);
-      }
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousContainer.id == "usedListOfColumns" ? event.previousIndex + 1 : event.previousIndex,
-        event.container.id == "availableListOfColumns" ? event.currentIndex : event.currentIndex + 1
-      );
-    }
-  }
-
-  toggleCol(i: number) {
-    this.listOfAvailbleColumns= _.merge(
-      [],
-      this.listOfAvailbleColumns,
-      { [i]: {...this.listOfAvailbleColumns[i], active: !this.listOfAvailbleColumns[i].active} }
-      )
-  }
-
   rightMenuActionDispatcher(action: Message) {
     switch (action.type) {
       case rightMenuStore.closeDrawer:
@@ -1297,16 +1091,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     super.detectChanges();
   }
 
-  dropAll(direction: string) {
-    if(direction == 'right') {
-      this.listOfAvailbleColumns= [];
-      this.listOfUsedColumns= [...this.pltColumnsCache];
-    } else {
-      this.listOfAvailbleColumns= [...this.pltColumnsCache];
-      this.listOfUsedColumns= [];
-    }
-  }
-
   cloneFrom() {
     this.dispatch(new fromWorkspaceStore.setCloneConfig({
       cloneConfig: {
@@ -1326,10 +1110,17 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.excel.exportAsExcelFile(this.tableInputs.listOfPltsData.map(e => _.omit(e, ['userTags','selected', 'visible', 'tagFilterActive', 'opened', 'deleted'])), 'sample')
   }
 
+  toggleColumnsManager() {
+    this.managePopUp= !this.managePopUp;
+  }
+
   resetColumns() {
     this.managePopUp= false;
-    this.listOfUsedColumns= [...this.getTableInputKey('pltColumns')];
-    this.listOfAvailbleColumns= [...this.listOfAvailbleColumnsCache];
+  }
+
+  saveColumns(listOfUsedColumns) {
+    this.toggleColumnsManager();
+    this.updateTable('pltColumns', [...listOfUsedColumns]);
   }
 
   leftMenuActionDispatcher(action: Message) {

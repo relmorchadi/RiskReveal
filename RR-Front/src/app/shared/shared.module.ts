@@ -12,6 +12,7 @@ import {ColorSketchModule} from 'ngx-color/sketch';
 import {DragDropModule} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
+import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 
 
 @NgModule({
@@ -27,7 +28,8 @@ import {SidebarModule} from 'primeng/sidebar';
     ColorChromeModule,
     ColorSketchModule,
     MultiSelectModule,
-    SidebarModule
+    SidebarModule,
+    DragDropModuleAngular
   ],
   providers: [],
   exports: [
@@ -40,6 +42,7 @@ import {SidebarModule} from 'primeng/sidebar';
     FormsModule,
     DialogModule,
     DragDropModule,
+    DragDropModuleAngular,
     SidebarModule,
     ...COMPONENTS,
     ...PIPES

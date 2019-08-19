@@ -5,6 +5,7 @@ import {PltMainTableComponent} from "./plt/plt-main-table/plt-main-table.compone
 import {PltLeftMenuComponent} from "./plt/plt-left-menu/plt-left-menu.component";
 import {HyperLinksComponent} from './hyper-links/hyper-links.component';
 import {PltSelectionPopUpComponent} from "./plt/plt-selection-pop-up/plt-selection-pop-up.component";
+import {ManageColumnsComponent} from "./manage-columns/manage-columns.component";
 
 export const COMPONENTS = [
   ChipTagComponent,
@@ -13,7 +14,8 @@ export const COMPONENTS = [
   PltMainTableComponent,
   PltLeftMenuComponent,
   HyperLinksComponent,
-  PltSelectionPopUpComponent
+  PltSelectionPopUpComponent,
+  ManageColumnsComponent
 ];
 
 export * from './table/table.component';

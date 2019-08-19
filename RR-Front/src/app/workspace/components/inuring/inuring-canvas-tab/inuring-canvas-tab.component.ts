@@ -143,8 +143,7 @@ export class InuringCanvasTabComponent implements OnInit {
     }
   ];
 
-  @Input('wsConfig')
-  wsConfig: {wsId:string, year:number};
+  @Input('wsConfig') wsConfig: {wsId:string, year:number};
 
   constructor() {
   }
