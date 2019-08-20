@@ -102,7 +102,7 @@
             <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px">
               <div>{{item.id}}</div>
               <div class="icon-holder">
-                <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+
               </div>
             </th>
             <th style="width: 130px; height: 74px;" class="divided-col">Completion</th>
@@ -146,7 +146,7 @@
                     <i class="icon-menu_24px" style="font-size: 25px;margin-top: 5px; color: cornflowerblue;"></i>
                   </a>
                   <ul nz-menu style="font-size: 12px">
-                    <li nz-menu-item>Override</li>
+                    <li nz-menu-item (click)="rowData.override = true">Override</li>
                     <li nz-menu-item>Generate Synthetic</li>
                   </ul>
                 </nz-dropdown>
@@ -159,7 +159,7 @@
                       <i class="icon-menu_24px" style="font-size: 25px; color: cornflowerblue;"></i>
                     </a>
                     <ul nz-menu style="font-size: 12px">
-                      <li nz-menu-item>Override</li>
+                      <li nz-menu-item (click)="rowData.override = true">Override</li>
                       <li nz-menu-item>Generate Synthetic</li>
                     </ul>
                   </nz-dropdown>
@@ -169,14 +169,41 @@
 
             </th>
             <th *ngFor="let item of treatySections[0]" class="divided-col">
-              <div *ngIf="checkExpected(item,rowData)" class="icon-holder">
+
+
+              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'checked'" class="icon-holder">
                 <div class="icon-holder">
                   <ng-container>
                     <i class="icon-add_24px" style="border: 1px solid;font-size: 20px;color: cornflowerblue;"></i>
                   </ng-container>
                 </div>
-
               </div>
+
+              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'overridden'" class="icon-holder">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'override'" class="icon-holder">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i (click)="overrideSelection(item,rowData)" class="icon-check_24px" style="border: 1px solid;font-size: 20px;color: darkgray;"></i>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'attached'" class="icon-holder">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                  </ng-container>
+                </div>
+              </div>
+
+
             </th>
             <th class="divided-col">
 
@@ -200,11 +227,31 @@
                 </div>
               </th>
               <th *ngFor="let item of treatySections[0]" class="divided-col">
-                <div *ngIf="checkExpectedTwo(item,grain,rowData)" class="icon-holder">
+
+                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'checked'" class="icon-holder">
                   <ng-container >
                     <i class="icon-add_24px" style="border: 1px solid;font-size: 20px;color: cornflowerblue;"></i>
                   </ng-container>
                 </div>
+
+                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'overridden'" class="icon-holder">
+                  <ng-container >
+                    <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                  </ng-container>
+                </div>
+
+                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'override'" class="icon-holder">
+                  <ng-container >
+                    <i (click)="overrideSelectionTwo(item,rowData,grain)" class="icon-check_24px" style="border: 1px solid;font-size: 20px;color: darkgray;"></i>
+                  </ng-container>
+                </div>
+
+                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'attached'" class="icon-holder">
+                  <ng-container >
+                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                  </ng-container>
+                </div>
+
               </th>
               <th class="divided-col"></th>
             </tr>
@@ -249,9 +296,5 @@
 
 <app-attach-plt-pop-up
   [isVisible]="addRemoveModal"
-  [selectionStep]="'plt'"
-  [stepConfig]=" {wsId: workspaceId,
-    uwYear: uwy,
-    plts: listOfPltsData}"
   (onVisibleChange)="addRemoveModal= $event">
 </app-attach-plt-pop-up>

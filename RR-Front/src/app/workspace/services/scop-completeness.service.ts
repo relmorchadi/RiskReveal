@@ -28,7 +28,7 @@ export class ScopeCompletenessService  {
       .pipe(
         mergeMap((data) => {
           return of(ctx.patchState(produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].scopeOfCompletence.data = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt}})));
+            draft.content[wsIdentifier].scopeOfCompletence.data = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt, visible: true}})));
           })));
         })
       );
