@@ -94,10 +94,9 @@ const frozenColsResults = [
 
 const scrollableColsLinking = [
   {field: 'selected', header: '', width: '25px', type: 'select', sorting: '', filtered: false, highlight: false, visible: true},
-  {field: 'icon', header: '', width: '25px', type: 'iconIndicator', sorting: '', filtered: false, highlight: false, visible: true},
-  {field: 'id', header: 'ID', width: '40px', type: 'text', sorting: '', filtered: false, highlight: false, visible: true},
-  {field: 'dataSourceName', header: 'Name', width: '100px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
-  {field: 'description', header: 'Description', width: '200px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
+  {field: 'id', header: 'ID', width: '30px', type: 'text', sorting: '', filtered: false, highlight: false, visible: true},
+  {field: 'dataSourceName', header: 'Name', width: '90px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
+  {field: 'description', header: 'Description', width: '150px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
   {field: 'engineVersion', header: 'Eng Version', width: '70px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
   {field: 'iconManager', header: '', width: '25px', type: 'icon', sorting: '', filtered: false, highlight: false, visible: true},
 ];
