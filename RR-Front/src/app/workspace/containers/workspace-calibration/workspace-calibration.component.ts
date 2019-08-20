@@ -317,19 +317,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
-
-      if (this.listOfPltsData) {
-        _.forEach(this.listOfPltsData, pure => {
-          _.forEach(pure.threads, thread => {
-            if (this.listOfPltsThread.filter(row => row.pltId == thread.pltId).length > 0) {
-              console.log('already exist');
-            } else {
-              this.listOfPltsThread.push(thread)
-            }
-          })
-        })
-        this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
-      }
+      this.initThreadsData();
       this.detectChanges();
       console.log(data);
     });
@@ -342,6 +330,22 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     });
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
+  }
+
+  initThreadsData() {
+    if (this.listOfPltsData) {
+      _.forEach(this.listOfPltsData, pure => {
+        _.forEach(pure.threads, thread => {
+          let index = this.listOfPltsThread.findIndex(row => row.pltId == thread.pltId);
+          if (this.listOfPltsThread.filter(row => row.pltId == thread.pltId).length > 0) {
+            this.listOfPltsThread[index] = _.merge(this.listOfPltsThread[index], thread)
+          } else {
+            this.listOfPltsThread.push(thread)
+          }
+        })
+      })
+      this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
+    }
   }
 
   initRandomMetaData() {
@@ -526,8 +530,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       plts: event.plts,
       forDeleted: this.showDeleted
     }));
-    console.log(this.listOfPltsData);
+    this.initThreadsData();
+    console.log(this.selectedListOfPlts);
     this.cdRef.detectChanges()
+
   }
 
 
@@ -633,7 +639,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         adjustementType: adjustementType,
         adjustement: adjustement,
         columnPosition: columnPosition,
-        pltId: [this.idPlt],
+        pltId: this.listOfPltsThread.filter(row => row.pltId == this.idPlt),
       }));
     } else {
       if (boolAdj) {
@@ -756,9 +762,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.selectedListOfPlts,
+      pltId: this.listOfPltsThread.filter(row => row.selected),
     }));
-    this.adjustColWidth(adj);
+    // this.adjustColWidth(adj);
   }
 
   ModifyAdjustement(adj) {
