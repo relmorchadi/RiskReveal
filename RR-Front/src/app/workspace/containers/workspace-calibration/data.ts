@@ -2764,7 +2764,7 @@ export const PLT_DATA =
           {
             workspaceId: '17P3398',
             uwy: 2016,
-            pltId: 'SPLTH-0007246',
+            pltId: 'SPLTH-0007236',
             pltName: 'EUCS-DE_GR_LMF1.03.T3',
             peril: 'CS',
             regionPerilCode: 'EUCS-DE',

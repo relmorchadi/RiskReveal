@@ -317,20 +317,27 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
-      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected).map(e => e.pltId);
+
       if (this.listOfPltsData) {
         _.forEach(this.listOfPltsData, pure => {
-          this.listOfPltsThread.push(...pure.threads);
+          _.forEach(pure.threads, thread => {
+            if (this.listOfPltsThread.filter(row => row.pltId == thread.pltId).length > 0) {
+              console.log('already exist');
+            } else {
+              this.listOfPltsThread.push(thread)
+            }
+          })
         })
+        this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
       }
       this.detectChanges();
       console.log(data);
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
-      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsData.length) && this.listOfPltsData.length > 0;
+      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0;
 
-      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsData.length && this.selectedListOfPlts.length > 0;
+      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsThread.length && this.selectedListOfPlts.length > 0;
       this.detectChanges();
     });
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
@@ -684,11 +691,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
+    console.log(this.listOfPltsThread);
     this.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.listOfPltsData,
+      pltId: this.listOfPltsThread.filter(row => row.status != 'locked'),
     }));
     this.adjustColWidth(adj);
     this.singleValue = null;

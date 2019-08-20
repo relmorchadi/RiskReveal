@@ -425,7 +425,7 @@ export class CalibrationService implements NgxsOnInit {
       adjustement.value = adjustementType.abv;
     }
     let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
-    console.log(adjustmentApplication);
+
     let newAdj = {...adjustement};
 
     _.forEach(pltId, (value) => {
@@ -435,6 +435,7 @@ export class CalibrationService implements NgxsOnInit {
         adjustmentApplication[value.pltId] = [newAdj]
       }
     })
+    console.log(adjustmentApplication);
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
     }));
