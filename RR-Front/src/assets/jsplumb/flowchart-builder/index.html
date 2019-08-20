@@ -1,0 +1,103 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+  <meta content="width=device-width" name="viewport">
+  <link href="/img/favicon.ico" rel="shortcut icon">
+  <title>jsPlumb Toolkit - Flowchart Builder</title>
+  <link href="//fonts.googleapis.com/css?family=Lato:400,700" rel="stylesheet">
+  <link href="node_modules/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+  <link href="../../css/main.css" rel="stylesheet">
+  <link href="src/assets/jsplumb/css/jsplumbtoolkit-defaults.css" rel="stylesheet">
+  <link href="src/assets/jsplumb/css/jsplumbtoolkit-demo.css" rel="stylesheet">
+  <link href="app.css" rel="stylesheet">
+
+</head>
+
+<body class="jtk-bootstrap jtk-bootstrap-wide">
+
+<div class="jtk-header">
+  <a class="jtk-logo" href="../../index.html"><img src="../../img/logo-medium-jsplumb.png"></a>
+
+  <div class="jtk-nav">
+    <li><a href="../../index.html#demos">DEMOS</a></li>
+    <li><a href="../../doc/home.html">DOCS</a></li>
+    <li><a href="../../apidocs/index.html">APIDOCS</a></li>
+
+  </div>
+
+</div>
+
+
+<div class="jtk-page-container">
+  <div class="jtk-container">
+
+
+    <!-- content -->
+    <script src="templates.html" type="text/x-jtk-templates"></script>
+
+    <div class="jtk-demo-main" id="jtk-demo-flowchart">
+
+      <div style="display:flex;">
+        <!-- the node palette -->
+        <div class="sidebar node-palette">
+          <div class="sidebar-item" data-node-type="question" title="Drag to add new">
+            <i class="icon-tablet"></i>Question
+          </div>
+          <div class="sidebar-item" data-node-type="action" title="Drag to add new">
+            <i class="icon-eye-open"></i>Action
+          </div>
+          <div class="sidebar-item" data-node-type="output" title="Drag to add new">
+            <i class="icon-eye-open"></i>Output
+          </div>
+        </div>
+
+        <!-- this is the main drawing area -->
+        <div class="jtk-demo-canvas">
+          <!-- controls -->
+          <div can-redo="false" can-undo="false" class="controls">
+            <i class="fa fa-arrows selected-mode" mode="pan" title="Pan Mode"></i>
+            <i class="fa fa-pencil" mode="select" title="Select Mode"></i>
+            <i class="fa fa-home" reset title="Zoom To Fit"></i>
+            <i class="fa fa-undo" title="Undo last action" undo></i>
+            <i class="fa fa-repeat" redo title="Redo last action"></i>
+          </div>
+          <!-- miniview -->
+          <div class="miniview"></div>
+        </div>
+      </div>
+
+      <div class="description">
+        <p>
+          This sample application is a builder for flowcharts. Questions, actions and outputs are supported.
+        </p>
+        <ul>
+          <li>Drag new nodes from the palette on the left onto the workspace to add nodes</li>
+          <li>Drag from the grey border of any node to any other node to establish a link, then provide a description
+            for the link's label
+          </li>
+          <li>Click a link to edit its label.</li>
+          <li>Click the 'Pencil' icon to enter 'select' mode, then select several nodes. Click the canvas to exit.</li>
+          <li>Click the 'Home' icon to zoom out and see all the nodes.</li>
+        </ul>
+      </div>
+
+      <!-- the current dataset -->
+      <div class="jtk-demo-dataset"></div>
+    </div>
+
+    <!-- /content -->
+    <script src="src/assets/jsplumb/js/jsplumbtoolkit.js"></script>
+    <script src="src/assets/jsplumb/js/syntax-highlighter.js"></script>
+    <script src="src/assets/jsplumb/js/jsplumbtoolkit-undo-redo.js"></script>
+    <script src="src/assets/jsplumb/js/jsplumbtoolkit-drop.js"></script><!-- demo -->
+    <script src="app.js"></script>
+    <!-- /demo -->
+
+  </div>
+</div>
+
+</body>
+
+</html>

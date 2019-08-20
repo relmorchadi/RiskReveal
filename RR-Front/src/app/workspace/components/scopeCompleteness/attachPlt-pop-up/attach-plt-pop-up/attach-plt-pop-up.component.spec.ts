@@ -1,6 +1,6 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import {async, ComponentFixture, TestBed} from '@angular/core/testing';
 
-import { AttachPltPopUpComponent } from './attach-plt-pop-up.component';
+import {AttachPltPopUpComponent} from './attach-plt-pop-up.component';
 
 describe('AttachPltPopUpComponent', () => {
   let component: AttachPltPopUpComponent;
@@ -8,9 +8,9 @@ describe('AttachPltPopUpComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ AttachPltPopUpComponent ]
+      declarations: [AttachPltPopUpComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

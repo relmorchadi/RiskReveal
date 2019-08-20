@@ -25,39 +25,71 @@ body {
   top: 30%;
 }
 
-.title-right {
-  background: #fff;
-  //max-width: calc(100vw - 190px - 80px - 221px);
-  width: 85%;
-  display: flex;
-  flex-flow: column;
-  align-items: stretch;
 
-  .title-as-tab {
-    display: flex;
-    flex: 0 1 auto;
+/*::ng-deep .plt-comparer-pop-up {
+  .ui-dialog-content {
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
 
-    span {
-      padding: 16px 43px;
-      font-size: 1.3em;
-      font-weight: bold;
-      border-top: 3px solid #0700e4;
+  .content {
+    flex: 1;
+    height: 100%;
+    flex-wrap: nowrap;
+    padding: 5px;
+
+    .title-as-tab {
+      display: flex;
+      flex: 0 1 auto;
+      justify-content: space-between;
+
+      span {
+        padding: 16px 43px;
+        font-size: 1.3em;
+        font-weight: bold;
+        border-top: 3px solid #0700e4;
+      }
+    }
+
+    .center {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .left .tabset-left{
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .center > div, .left > div {
+      box-shadow: none;
+    }
+
+    .left {
+      flex-flow: column;
+
+      form {
+        display: flex;
+        max-width: 210px !important;
+      }
+      .tabset-left .title-list {
+        max-width: 210px !important;
+      }
+
+      ::ng-deep .tabset-left .ant-tabs-content {
+        height: calc(90vh - 210px) !important;
+      }
+    }
+
+    ::ng-deep .ui-table-scrollable-body {
+      height: calc(100vh - 400px);
+      max-height: none;
+    }
+
+    .PLTs-content {
+      position: relative;
+      flex: 1 1 auto;
     }
   }
-}
-
-.my-modal {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-
-
-  nz-tabset {
-    height: 100%;
-  }
-}
+}*/
 
 .layout-comparer {
   background-color: #F4F6FC;
@@ -183,11 +215,6 @@ div.blank-space {
   padding: 0;
   height: 60px;
 }
-
-.content {
-  padding: 70px 200px;
-}
-
 
 .title-section-comparer {
   display: flex;

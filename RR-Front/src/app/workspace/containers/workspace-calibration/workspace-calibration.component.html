@@ -4,10 +4,10 @@
       <h4>Calibration Editor</h4>
     </div>
     <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
-      <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;width: 175px;">
-        <div class="col-10" style="padding:unset; position: absolute;min-width: 175px">
+      <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
+        <div style="padding:unset;">
           <app-plt-left-menu
-            [menuInputs]="{
+            [inputs]="{
             tagContextMenu: tagContextMenu,
             wsId: workspaceId,
             uwYear: uwy,
@@ -339,6 +339,8 @@
 
               [EPMDisplay]="EPMDisplay"
               [randomMetaData]="randomMetaData"
+              [listOfPltsThread]="listOfPltsThread"
+              [rowGroupMetadata]="rowGroupMetadata"
 
               [pltColumns]="pltColumns"
               [tableType]="tableType"

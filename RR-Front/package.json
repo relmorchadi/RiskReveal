@@ -22,6 +22,7 @@
     "@angular/platform-browser-dynamic": "7.2.7",
     "@angular/router": "7.2.7",
     "@ng-bootstrap/ng-bootstrap": "^4.1.0",
+    "@ngx-pwa/local-storage": "^6.2.5",
     "@ngxs-labs/dispatch-decorator": "1.1.0",
     "@ngxs-labs/immer-adapter": "1.1.2",
     "@ngxs/form-plugin": "3.4.1-dev.master-ab0a0cc",
@@ -53,7 +54,12 @@
     "rxjs": "6.3.3",
     "tslib": "1.9.0",
     "xlsx": "^0.15.0",
-    "zone.js": "0.8.26"
+    "zone.js": "0.8.26",
+    "jsplumbtoolkit": "file:src/assets/jsplumb/jsplumbtoolkit.tgz",
+    "jsplumbtoolkit-angular": "file:src/assets/jsplumb/jsplumbtoolkit-angular.tgz",
+    "jsplumbtoolkit-angular-drop": "file:src/assets/jsplumb/jsplumbtoolkit-angular-drop.tgz",
+    "jsplumbtoolkit-drop": "file:src/assets/jsplumb/jsplumbtoolkit-drop.tgz",
+    "jsplumbtoolkit-undo-redo": "file:src/assets/jsplumb/jsplumbtoolkit-undo-redo.tgz"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^0.13.8",

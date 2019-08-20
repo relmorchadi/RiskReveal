@@ -79,7 +79,7 @@
       <div class="content">
         <div class="left">
           <app-plt-left-menu
-            [menuInputs]="Inputs | pickKeys : menuInputs"
+            [inputs]="Inputs | pickKeys : menuInputs"
             (onSetSelectedUserTags)="setUserTags($event)"
             (onSetFilters)="setFilters($event)"
             (emitFilters)="emitFilters($event)"
