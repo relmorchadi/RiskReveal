@@ -19,6 +19,7 @@ import {WorkspaceState} from '../../store/states';
 })
 export class WorkspaceFileBaseImportComponent extends BaseContainer implements OnInit, StateSubscriber {
   collapseImportedFiles = false;
+  collapseSearchFiles = false;
   collapseImportedPLTs = false;
 
   managePopUp = false;
@@ -62,6 +63,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
   ];
   contextSelectedItem;
+  selectedPlt = null;
 
   @Select(WorkspaceState.getFileBasedData) fileBase$;
   fileBase: any;
@@ -186,6 +188,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   addForImport() {
     this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
+    this.selectedPlt = this.fileBase.selectedFiles[0];
   }
 
   getColor(RP) {
@@ -199,6 +202,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     } else {
       return this.fileBase.selectedFiles.length === 0;
     }
+  }
+
+  getKeys(object) {
+    return _.keys(object);
   }
 
   protected detectChanges() {

@@ -1,4 +1,4 @@
-.a-buttons-contained {
+.a-buttons-contained, .a-buttons-contained-mini {
   background-color: #0700CF;
   color: #FFFFFF;
   font-size: 16px;
@@ -29,7 +29,7 @@
   }
 }
 
-.a-buttons-contained-disabled {
+.a-buttons-contained-disabled, .a-buttons-contained-disabled-mini {
   background-color: #DFDFDF;
   color: #8A8A8A;
   font-family: Rubik;
@@ -44,6 +44,12 @@
   background-position: center;
   transition: background 0.8s;
   text-transform: uppercase;
+}
+
+.a-buttons-contained-mini, .a-buttons-contained-disabled-mini {
+  font-size: 13px;
+  line-height: 13px;
+  padding: 6px 17px 7px;
 }
 
 .a-buttons-outlined {
