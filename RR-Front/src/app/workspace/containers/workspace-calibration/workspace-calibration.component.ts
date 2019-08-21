@@ -44,6 +44,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   dropAll = (param) => null;
 
   someItemsAreSelected = false;
+  groupedByPure = true;
   selectAll = false;
   listOfPlts = [];
   listOfPltsData = [];
