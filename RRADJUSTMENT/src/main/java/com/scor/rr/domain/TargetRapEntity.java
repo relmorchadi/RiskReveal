@@ -22,36 +22,6 @@ public class TargetRapEntity {
     private Timestamp auditCreateDt;
     private Timestamp auditUpdateDt;
 
-    @Basic
-    @Column(name = "modellingVendor", length = 255,insertable = false ,updatable = false)
-    public String getModellingVendor() {
-        return modellingVendor;
-    }
-
-    public void setModellingVendor(String modellingVendor) {
-        this.modellingVendor = modellingVendor;
-    }
-
-    @Basic
-    @Column(name = "modellingSystem", length = 255,insertable = false ,updatable = false)
-    public String getModellingSystem() {
-        return modellingSystem;
-    }
-
-    public void setModellingSystem(String modellingSystem) {
-        this.modellingSystem = modellingSystem;
-    }
-
-    @Basic
-    @Column(name = "modellingSystemVersion", length = 255,insertable = false ,updatable = false)
-    public String getModellingSystemVersion() {
-        return modellingSystemVersion;
-    }
-
-    public void setModellingSystemVersion(String modellingSystemVersion) {
-        this.modellingSystemVersion = modellingSystemVersion;
-    }
-
     @Id
     @Column(name = "targetRapId", nullable = false)
     public int getTargetRapId() {
@@ -63,37 +33,37 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "modellingVendor", length = 255,insertable = false ,updatable = false)
-    public String getEntitylingVendor() {
+    @Column(name = "modellingVendor", nullable = true, length = 255)
+    public String getModellingVendor() {
         return modellingVendor;
     }
 
-    public void setEntitylingVendor(String modellingVendor) {
+    public void setModellingVendor(String modellingVendor) {
         this.modellingVendor = modellingVendor;
     }
 
     @Basic
-    @Column(name = "modellingSystem", length = 255,insertable = false ,updatable = false)
-    public String getEntitylingSystem() {
+    @Column(name = "modellingSystem", nullable = true, length = 255)
+    public String getModellingSystem() {
         return modellingSystem;
     }
 
-    public void setEntitylingSystem(String modellingSystem) {
+    public void setModellingSystem(String modellingSystem) {
         this.modellingSystem = modellingSystem;
     }
 
     @Basic
-    @Column(name = "modellingSystemVersion", length = 255,insertable = false ,updatable = false)
-    public String getEntitylingSystemVersion() {
+    @Column(name = "modellingSystemVersion", nullable = true, length = 255)
+    public String getModellingSystemVersion() {
         return modellingSystemVersion;
     }
 
-    public void setEntitylingSystemVersion(String modellingSystemVersion) {
+    public void setModellingSystemVersion(String modellingSystemVersion) {
         this.modellingSystemVersion = modellingSystemVersion;
     }
 
     @Basic
-    @Column(name = "targetRapCode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetRapCode", nullable = true, length = 255)
     public String getTargetRapCode() {
         return targetRapCode;
     }
@@ -103,7 +73,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "targetRapDesc", length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetRapDesc", nullable = true, length = 255)
     public String getTargetRapDesc() {
         return targetRapDesc;
     }
@@ -113,7 +83,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "petId")
+    @Column(name = "petId", nullable = true)
     public Integer getPetId() {
         return petId;
     }
@@ -123,7 +93,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "sourceRapCode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceRapCode", nullable = true, length = 255)
     public String getSourceRapCode() {
         return sourceRapCode;
     }
@@ -133,7 +103,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isScorGenerated")
+    @Column(name = "isScorGenerated", nullable = true)
     public Boolean getScorGenerated() {
         return isScorGenerated;
     }
@@ -143,7 +113,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isScorCurrent")
+    @Column(name = "isScorCurrent", nullable = true)
     public Boolean getScorCurrent() {
         return isScorCurrent;
     }
@@ -153,7 +123,7 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isScorDefault")
+    @Column(name = "isScorDefault", nullable = true)
     public Boolean getScorDefault() {
         return isScorDefault;
     }
@@ -163,13 +133,33 @@ public class TargetRapEntity {
     }
 
     @Basic
-    @Column(name = "isActive")
+    @Column(name = "isActive", nullable = true)
     public Boolean getActive() {
         return isActive;
     }
 
     public void setActive(Boolean active) {
         isActive = active;
+    }
+
+    @Basic
+    @Column(name = "auditCreateDt", nullable = true)
+    public Timestamp getAuditCreateDt() {
+        return auditCreateDt;
+    }
+
+    public void setAuditCreateDt(Timestamp auditCreateDt) {
+        this.auditCreateDt = auditCreateDt;
+    }
+
+    @Basic
+    @Column(name = "auditUpdateDt", nullable = true)
+    public Timestamp getAuditUpdateDt() {
+        return auditUpdateDt;
+    }
+
+    public void setAuditUpdateDt(Timestamp auditUpdateDt) {
+        this.auditUpdateDt = auditUpdateDt;
     }
 
     @Override
@@ -188,31 +178,13 @@ public class TargetRapEntity {
                 Objects.equals(isScorGenerated, that.isScorGenerated) &&
                 Objects.equals(isScorCurrent, that.isScorCurrent) &&
                 Objects.equals(isScorDefault, that.isScorDefault) &&
-                Objects.equals(isActive, that.isActive);
+                Objects.equals(isActive, that.isActive) &&
+                Objects.equals(auditCreateDt, that.auditCreateDt) &&
+                Objects.equals(auditUpdateDt, that.auditUpdateDt);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(targetRapId, modellingVendor, modellingSystem, modellingSystemVersion, targetRapCode, targetRapDesc, petId, sourceRapCode, isScorGenerated, isScorCurrent, isScorDefault, isActive);
-    }
-
-    @Basic
-    @Column(name = "auditCreateDt")
-    public Timestamp getAuditCreateDt() {
-        return auditCreateDt;
-    }
-
-    public void setAuditCreateDt(Timestamp auditCreateDt) {
-        this.auditCreateDt = auditCreateDt;
-    }
-
-    @Basic
-    @Column(name = "auditUpdateDt")
-    public Timestamp getAuditUpdateDt() {
-        return auditUpdateDt;
-    }
-
-    public void setAuditUpdateDt(Timestamp auditUpdateDt) {
-        this.auditUpdateDt = auditUpdateDt;
+        return Objects.hash(targetRapId, modellingVendor, modellingSystem, modellingSystemVersion, targetRapCode, targetRapDesc, petId, sourceRapCode, isScorGenerated, isScorCurrent, isScorDefault, isActive, auditCreateDt, auditUpdateDt);
     }
 }

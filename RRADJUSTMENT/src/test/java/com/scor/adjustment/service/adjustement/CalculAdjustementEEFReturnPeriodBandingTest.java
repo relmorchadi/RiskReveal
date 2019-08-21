@@ -3,6 +3,7 @@ package com.scor.adjustment.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
+import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.EventDateFormatException;
@@ -28,10 +29,9 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustementEEFReturnPeriodBandingTest.class);
 
     private List<PLTLossData> pltLossDataList;
-    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings;
     private double periodConstante;
     private boolean cap;
-    CalculAdjustement calculAdjustement;
     @Before
     public void setUp() {
         log.info("Launch test for EEF Return Period Banding Adjustment");
@@ -44,14 +44,13 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
         }};
         cap = true;
         periodConstante = 100000;
-        adjustmentReturnPeriodBendings = new ArrayList<AdjustmentReturnPeriodBending>(){{
-            add(new AdjustmentReturnPeriodBending(500,0.87));
-            add(new AdjustmentReturnPeriodBending(750,0.9));
-            add(new AdjustmentReturnPeriodBending(10000,0.93));
-            add(new AdjustmentReturnPeriodBending(20000,0.97));
+        adjustmentReturnPeriodBendings = new ArrayList<AdjustmentReturnPeriodBandingParameterEntity>(){{
+            add(new AdjustmentReturnPeriodBandingParameterEntity(500,0.87));
+            add(new AdjustmentReturnPeriodBandingParameterEntity(750,0.9));
+            add(new AdjustmentReturnPeriodBandingParameterEntity(10000,0.93));
+            add(new AdjustmentReturnPeriodBandingParameterEntity(20000,0.97));
 
         }};
-        calculAdjustement = new CalculAdjustement();
     }
     @After
     public void tearDown() {
@@ -61,7 +60,7 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     @Test
     public void testEEFReturnPeriodBandingNullAdjustmentReturnPeriodBending() {
         log.info("Launch test for EEF Return Period Banding Adjustment with parameter table [return period,lmf] null");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,null));
+        assertNull(CalculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,null));
 
 
 
@@ -69,19 +68,19 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     @Test
     public void testEEFReturnPeriodBandingEmptyAdjustmentReturnPeriodBending() {
         log.info("Launch test for EEF Return Period Banding Adjustment with parameter table [return period,lmf] empty");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>()));
+        assertNull(CalculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>()));
     }
 
     @Test
     public void testEEFReturnPeriodBandingNullPlt() {
         log.info("Launch test for EEF Return Period Banding Adjustment with PLT NULL");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings));
+        assertNull(CalculAdjustement.eefReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
     public void testEEFReturnPeriodBandingEmptyPlt() {
         log.info("Launch test for EEF Return Period Banding Adjustment with PLT empty");
-        assertNull(calculAdjustement.eefReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
+        assertNull(CalculAdjustement.eefReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
@@ -94,7 +93,7 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        pltLossDataList = CalculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -116,7 +115,7 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = calculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        pltLossDataList = CalculAdjustement.eefReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -132,7 +131,7 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Return Period Banding Adjustment for a file");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        pltLossData = calculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
+        pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltEEFReturnPeriodBanding.csv"));
         log.info("Launch test for EEF Return Period Banding Adjustment for a file");

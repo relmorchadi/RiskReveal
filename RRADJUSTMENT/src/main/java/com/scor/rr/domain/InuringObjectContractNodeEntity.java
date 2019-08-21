@@ -13,7 +13,7 @@ public class InuringObjectContractNodeEntity {
     private String subjectPremiumBasisId;
 
     @Id
-    @Column(name = "InuringObjectContractNode_Id", nullable = false, precision = 0)
+    @Column(name = "InuringObjectContractNodeId", nullable = false, precision = 0)
     public int getInuringObjectContractNodeId() {
         return inuringObjectContractNodeId;
     }
@@ -23,7 +23,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackage_Id", nullable = true, precision = 0)
+    @Column(name = "FKInuringPackageId", nullable = true, precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }
@@ -33,7 +33,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "ClaimsBasis_Id", nullable = true, precision = 0)
+    @Column(name = "FKClaimsBasisId", nullable = true, precision = 0)
     public Integer getClaimsBasisId() {
         return claimsBasisId;
     }
@@ -43,7 +43,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "Contract_Id", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKContractId", nullable = true, length = 255)
     public String getContractId() {
         return contractId;
     }
@@ -53,7 +53,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "SubjectPremiumBasis_Id", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKSubjectPremiumBasisId", nullable = true, length = 255)
     public String getSubjectPremiumBasisId() {
         return subjectPremiumBasisId;
     }

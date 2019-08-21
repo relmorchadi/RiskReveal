@@ -23,7 +23,7 @@ public class RrPltHeaderEntity {
 
     @Id
     @Basic
-    @Column(name = "_id", length = 255,insertable = false ,updatable = false)
+    @Column(name = "_id", nullable = true, length = 255)
     public String getId() {
         return id;
     }
@@ -33,7 +33,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "currencyCode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "currencyCode", nullable = true, length = 255)
     public String getCurrencyCode() {
         return currencyCode;
     }
@@ -43,7 +43,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "geoCode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "geoCode", nullable = true, length = 255)
     public String getGeoCode() {
         return geoCode;
     }
@@ -53,7 +53,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "perilCode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "perilCode", nullable = true, length = 255)
     public String getPerilCode() {
         return perilCode;
     }
@@ -63,7 +63,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "fileName", length = 255,insertable = false ,updatable = false)
+    @Column(name = "fileName", nullable = true, length = 255)
     public String getFileName() {
         return fileName;
     }
@@ -73,7 +73,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "pltType", length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltType", nullable = true, length = 255)
     public String getPltType() {
         return pltType;
     }
@@ -83,7 +83,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "project", length = 255,insertable = false ,updatable = false)
+    @Column(name = "project", nullable = true, length = 255)
     public String getProject() {
         return project;
     }
@@ -93,7 +93,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "publishToArc", length = 255,insertable = false ,updatable = false)
+    @Column(name = "publishToArc", nullable = true, length = 255)
     public String getPublishToArc() {
         return publishToArc;
     }
@@ -103,7 +103,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "regionPeril", length = 255,insertable = false ,updatable = false)
+    @Column(name = "regionPeril", nullable = true, length = 255)
     public String getRegionPeril() {
         return regionPeril;
     }
@@ -113,7 +113,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "rrAnalysisId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "rrAnalysisId", nullable = true, length = 255)
     public String getRrAnalysisId() {
         return rrAnalysisId;
     }
@@ -123,7 +123,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "targetRap", length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetRap", nullable = true, length = 255)
     public String getTargetRap() {
         return targetRap;
     }
@@ -133,7 +133,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "udName", length = 255,insertable = false ,updatable = false)
+    @Column(name = "udName", nullable = true, length = 255)
     public String getUdName() {
         return udName;
     }
@@ -143,7 +143,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "userSelectedGrain", length = 255,insertable = false ,updatable = false)
+    @Column(name = "userSelectedGrain", nullable = true, length = 255)
     public String getUserSelectedGrain() {
         return userSelectedGrain;
     }
@@ -153,7 +153,7 @@ public class RrPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "xActPublicationDate", length = 255,insertable = false ,updatable = false)
+    @Column(name = "xActPublicationDate", nullable = true, length = 255)
     public String getxActPublicationDate() {
         return xActPublicationDate;
     }

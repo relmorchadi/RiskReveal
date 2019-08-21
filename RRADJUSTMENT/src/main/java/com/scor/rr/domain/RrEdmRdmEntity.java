@@ -14,7 +14,7 @@ public class RrEdmRdmEntity {
 
     @Id
     @Basic
-    @Column(name = "db_id", precision = 0)
+    @Column(name = "db_id", nullable = true, precision = 0)
     public Double getDbId() {
         return dbId;
     }
@@ -24,7 +24,7 @@ public class RrEdmRdmEntity {
     }
 
     @Basic
-    @Column(name = "db_name", length = 255,insertable = false ,updatable = false)
+    @Column(name = "db_name", nullable = true, length = 255)
     public String getDbName() {
         return dbName;
     }
@@ -34,7 +34,7 @@ public class RrEdmRdmEntity {
     }
 
     @Basic
-    @Column(name = "create_dt", length = 255,insertable = false ,updatable = false)
+    @Column(name = "create_dt", nullable = true, length = 255)
     public String getCreateDt() {
         return createDt;
     }
@@ -44,7 +44,7 @@ public class RrEdmRdmEntity {
     }
 
     @Basic
-    @Column(name = "db_type", length = 255,insertable = false ,updatable = false)
+    @Column(name = "db_type", nullable = true, length = 255)
     public String getDbType() {
         return dbType;
     }
@@ -54,7 +54,7 @@ public class RrEdmRdmEntity {
     }
 
     @Basic
-    @Column(name = "version_num", precision = 0)
+    @Column(name = "version_num", nullable = true, precision = 0)
     public Double getVersionNum() {
         return versionNum;
     }

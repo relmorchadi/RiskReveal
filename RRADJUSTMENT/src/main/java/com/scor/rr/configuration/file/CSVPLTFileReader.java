@@ -34,12 +34,12 @@ public class CSVPLTFileReader implements PLTFileReader {
                 sc.nextLine();
             }
             while (sc.hasNext()) {
-                Integer periodIdx = Integer.valueOf(sc.next()); //Simulated Period ID
-                Integer eventId = Integer.valueOf(sc.next()); //Event ID
+                int periodIdx = Integer.parseInt(sc.next()); //Simulated Period ID
+                int eventId = Integer.parseInt(sc.next()); //Event ID
                 Date eventDate = Constant.getEventDateFormat().parse(sc.next());
-                int seq = Integer.valueOf(sc.next());
-                Double exp = Double.valueOf(sc.next()); //Loss
-                Double loss = Double.valueOf(sc.next()); //Loss
+                int seq = Integer.parseInt(sc.next());
+                double exp = Double.parseDouble(sc.next()); //Loss
+                double loss = Double.parseDouble(sc.next()); //Loss
 
                 pltLossDatas.add(new PLTLossData(eventId,
                         eventDate.getTime(),
@@ -72,10 +72,10 @@ public class CSVPLTFileReader implements PLTFileReader {
                 sc.nextLine();
             }
             while (sc.hasNext()) {
-                Integer eventId = Integer.valueOf(sc.next()); //Simulated Period ID
-                Integer simPeriod = Integer.valueOf(sc.next()); //Event ID
-                int seq = Integer.valueOf(sc.next());
-                Double lmf = Double.valueOf(sc.next()); //Lmf
+                int eventId = Integer.parseInt(sc.next()); //Simulated Period ID
+                int simPeriod = Integer.parseInt(sc.next()); //Event ID
+                int seq = Integer.parseInt(sc.next());
+                double lmf = Double.parseDouble(sc.next()); //Lmf
 
                 peatData.add(new PEATData(eventId,
                         simPeriod,
@@ -104,8 +104,8 @@ public class CSVPLTFileReader implements PLTFileReader {
                 sc.nextLine();
             }
             while (sc.hasNext()) {
-                Integer returnPeriod = Integer.valueOf(sc.next()); //Simulated Period ID
-                Double lmf = Double.valueOf(sc.next()); //Lmf
+                int returnPeriod = Integer.parseInt(sc.next()); //Simulated Period ID
+                double lmf = Double.parseDouble(sc.next()); //Lmf
 
                 returnPeriodBendings.add(new AdjustmentReturnPeriodBending(returnPeriod,
                         lmf));

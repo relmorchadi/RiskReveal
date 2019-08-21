@@ -121,10 +121,10 @@ public class Unmarshaller {
             else convertValue = convert(value, field.getType());
             setFieldData(instance, field, convertValue);
         }
-         if (field.getType().getTypeName() == String.class.getTypeName())
-            return cell.getCellTypeEnum().equals(CellType.NUMERIC) ? new CellError(valueOf(column), valueOf(value), " the value should be ".concat(field.getType().getSimpleName())) : null;
-        if (field.getType().getTypeName() == Date.class.getTypeName()) {
-            if (cell.getCellTypeEnum().equals(CellType.NUMERIC) )
+         if (field.getType().getTypeName().equals(String.class.getTypeName()))
+            return (cell != null && cell.getCellTypeEnum().equals(CellType.NUMERIC)) ? new CellError(valueOf(column), valueOf(value), " the value should be ".concat(field.getType().getSimpleName())) : null;
+        if (field.getType().getTypeName().equals(Date.class.getTypeName())) {
+            if (cell != null && cell.getCellTypeEnum().equals(CellType.NUMERIC))
                 if (DateUtil.isCellDateFormatted(cell)){
                     return null;
                 }

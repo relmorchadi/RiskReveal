@@ -6,22 +6,23 @@ import java.util.Objects;
 @Entity
 @Table(name = "MarketChannel", schema = "dbo", catalog = "RiskReveal")
 public class MarketChannelEntity {
-    private int idMarketChannel;
+    private int marketChannelId;
     private String marketChannelCode;
     private String marketChannelDescription;
+    private EntityEntity entityByPKentityId;
 
     @Id
-    @Column(name = "id_market_channel", nullable = false)
-    public int getIdMarketChannel() {
-        return idMarketChannel;
+    @Column(name = "MarketChannelID", nullable = false)
+    public int getMarketChannelId() {
+        return marketChannelId;
     }
 
-    public void setIdMarketChannel(int idMarketChannel) {
-        this.idMarketChannel = idMarketChannel;
+    public void setMarketChannelId(int marketChannelId) {
+        this.marketChannelId = marketChannelId;
     }
 
     @Basic
-    @Column(name = "market_channel_code", length = 50)
+    @Column(name = "MarketChannelCode", nullable = true, length = 50)
     public String getMarketChannelCode() {
         return marketChannelCode;
     }
@@ -31,7 +32,7 @@ public class MarketChannelEntity {
     }
 
     @Basic
-    @Column(name = "market_channel_description", length = 200)
+    @Column(name = "MarketChannelDescription", nullable = true, length = 200)
     public String getMarketChannelDescription() {
         return marketChannelDescription;
     }
@@ -45,13 +46,23 @@ public class MarketChannelEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MarketChannelEntity that = (MarketChannelEntity) o;
-        return idMarketChannel == that.idMarketChannel &&
+        return marketChannelId == that.marketChannelId &&
                 Objects.equals(marketChannelCode, that.marketChannelCode) &&
                 Objects.equals(marketChannelDescription, that.marketChannelDescription);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idMarketChannel, marketChannelCode, marketChannelDescription);
+        return Objects.hash(marketChannelId, marketChannelCode, marketChannelDescription);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "PKentityId", referencedColumnName = "EntityId")
+    public EntityEntity getEntityByPKentityId() {
+        return entityByPKentityId;
+    }
+
+    public void setEntityByPKentityId(EntityEntity entityByPKentityId) {
+        this.entityByPKentityId = entityByPKentityId;
     }
 }

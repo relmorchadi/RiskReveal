@@ -37,7 +37,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "stepName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "stepName", nullable = true, length = 255)
     public String getStepName() {
         return stepName;
     }
@@ -57,7 +57,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "stepParams", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "stepParams", nullable = true, length = 255)
     public String getStepParams() {
         return stepParams;
     }
@@ -67,7 +67,7 @@ public class StepEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "status", nullable = true, length = 255)
     public String getStatus() {
         return status;
     }

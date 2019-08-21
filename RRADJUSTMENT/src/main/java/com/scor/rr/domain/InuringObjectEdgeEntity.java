@@ -12,7 +12,7 @@ public class InuringObjectEdgeEntity {
     private Integer inuringPackageId;
 
     @Id
-    @Column(name = "Id_UI", nullable = false, precision = 0)
+    @Column(name = "InuringObjectEdgeId", nullable = false, precision = 0)
     public int getIdUi() {
         return idUi;
     }
@@ -22,7 +22,7 @@ public class InuringObjectEdgeEntity {
     }
 
     @Basic
-    @Column(name = "Target_InuringObjectNode_Id", precision = 0)
+    @Column(name = "FKTargetInuringObjectNodeId", nullable = true, precision = 0)
     public Integer getTargetInuringObjectNodeId() {
         return targetInuringObjectNodeId;
     }
@@ -32,7 +32,7 @@ public class InuringObjectEdgeEntity {
     }
 
     @Basic
-    @Column(name = "Source_InuringObjectNode_Id", precision = 0)
+    @Column(name = "FKSourceInuringObjectNodeId", nullable = true, precision = 0)
     public Integer getSourceInuringObjectNodeId() {
         return sourceInuringObjectNodeId;
     }
@@ -42,7 +42,7 @@ public class InuringObjectEdgeEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackage_Id", precision = 0)
+    @Column(name = "FKInuringPackageId", nullable = true, precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }

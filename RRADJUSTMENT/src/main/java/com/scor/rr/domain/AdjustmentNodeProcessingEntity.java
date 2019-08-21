@@ -6,20 +6,19 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentNodeProcessing", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentNodeProcessingEntity {
-    private int idNodeProcessing;
-    private AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode;
-    private ScorPltHeaderEntity scorPltHeaderByIdInputPlt;
-    private ScorPltHeaderEntity scorPltHeaderByIdAdjustedPlt;
+    private int adjustmentNodeProcessingId;
+    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNode;
+    private ScorPltHeaderEntity scorPltHeaderByFkAdjustedPlt;
+    private ScorPltHeaderEntity scorPltHeaderByFkInputPlt;
 
     @Id
-    @Column(name = "id_node_processing", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getIdNodeProcessing() {
-        return idNodeProcessing;
+    @Column(name = "AdjustmentNodeProcessingId", nullable = false)
+    public int getAdjustmentNodeProcessingId() {
+        return adjustmentNodeProcessingId;
     }
 
-    public void setIdNodeProcessing(int idNodeProcessing) {
-        this.idNodeProcessing = idNodeProcessing;
+    public void setAdjustmentNodeProcessingId(int adjustmentNodeProcessingId) {
+        this.adjustmentNodeProcessingId = adjustmentNodeProcessingId;
     }
 
     @Override
@@ -27,41 +26,41 @@ public class AdjustmentNodeProcessingEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentNodeProcessingEntity that = (AdjustmentNodeProcessingEntity) o;
-        return idNodeProcessing == that.idNodeProcessing;
+        return adjustmentNodeProcessingId == that.adjustmentNodeProcessingId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idNodeProcessing);
+        return Objects.hash(adjustmentNodeProcessingId);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_node", referencedColumnName = "id_adjustment_node")
-    public AdjustmentNodeEntity getAdjustmentNodeByIdAdjustmentNode() {
-        return adjustmentNodeByIdAdjustmentNode;
+    @JoinColumn(name = "FKAdjustmentNode", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNode() {
+        return adjustmentNodeByFkAdjustmentNode;
     }
 
-    public void setAdjustmentNodeByIdAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
-        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
-    }
-
-    @ManyToOne
-    @JoinColumn(name = "id_inputplt", referencedColumnName = "id_scorpltheader")
-    public ScorPltHeaderEntity getScorPltHeaderByIdInputPlt() {
-        return scorPltHeaderByIdInputPlt;
-    }
-
-    public void setScorPltHeaderByIdInputPlt(ScorPltHeaderEntity scorPltHeaderByIdInputPlt) {
-        this.scorPltHeaderByIdInputPlt = scorPltHeaderByIdInputPlt;
+    public void setAdjustmentNodeByFkAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNode) {
+        this.adjustmentNodeByFkAdjustmentNode = adjustmentNodeByFkAdjustmentNode;
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjusted_plt", referencedColumnName = "id_scorpltheader")
-    public ScorPltHeaderEntity getScorPltHeaderByIdAdjustedPlt() {
-        return scorPltHeaderByIdAdjustedPlt;
+    @JoinColumn(name = "FKAdjustedPlt", referencedColumnName = "PKScorPltHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByFkAdjustedPlt() {
+        return scorPltHeaderByFkAdjustedPlt;
     }
 
-    public void setScorPltHeaderByIdAdjustedPlt(ScorPltHeaderEntity scorPltHeaderByIdAdjustedPlt) {
-        this.scorPltHeaderByIdAdjustedPlt = scorPltHeaderByIdAdjustedPlt;
+    public void setScorPltHeaderByFkAdjustedPlt(ScorPltHeaderEntity scorPltHeaderByFkAdjustedPlt) {
+        this.scorPltHeaderByFkAdjustedPlt = scorPltHeaderByFkAdjustedPlt;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKInputPlt", referencedColumnName = "PKScorPltHeaderId")
+    public ScorPltHeaderEntity getScorPltHeaderByFkInputPlt() {
+        return scorPltHeaderByFkInputPlt;
+    }
+
+    public void setScorPltHeaderByFkInputPlt(ScorPltHeaderEntity scorPltHeaderByFkInputPlt) {
+        this.scorPltHeaderByFkInputPlt = scorPltHeaderByFkInputPlt;
     }
 }

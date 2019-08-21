@@ -11,7 +11,7 @@ public class ScorPltHeaderTagsEntity {
     private String tag;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "ScorPLTHeaderTagsId", nullable = false)
     public int getId() {
         return id;
     }
@@ -21,7 +21,7 @@ public class ScorPltHeaderTagsEntity {
     }
 
     @Basic
-    @Column(name = "scorPLTHeaderId")
+    @Column(name = "FKScorPLTHeaderId", nullable = true)
     public Integer getScorPltHeaderId() {
         return scorPltHeaderId;
     }
@@ -31,7 +31,7 @@ public class ScorPltHeaderTagsEntity {
     }
 
     @Basic
-    @Column(name = "tag", length = 255,insertable = false ,updatable = false)
+    @Column(name = "tag", nullable = true, length = 255)
     public String getTag() {
         return tag;
     }

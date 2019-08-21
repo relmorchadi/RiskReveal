@@ -10,7 +10,7 @@ public class AccumulationPackageStatusEntity {
     private String label;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "AccumulationPackageStatusId", nullable = false)
     public int getId() {
         return id;
     }
@@ -20,7 +20,7 @@ public class AccumulationPackageStatusEntity {
     }
 
     @Basic
-    @Column(name = "label", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "label", nullable = true, length = 255)
     public String getLabel() {
         return label;
     }

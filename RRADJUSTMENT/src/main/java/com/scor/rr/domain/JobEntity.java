@@ -27,7 +27,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "submittedByUser")
+    @Column(name = "FKSubmittedByUserId", nullable = true)
     public Integer getSubmittedByUser() {
         return submittedByUser;
     }
@@ -37,7 +37,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "submittedDate")
+    @Column(name = "submittedDate", nullable = true)
     public Timestamp getSubmittedDate() {
         return submittedDate;
     }
@@ -47,7 +47,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "jobType", length = 255,insertable = false ,updatable = false)
+    @Column(name = "jobType", nullable = true, length = 255)
     public String getJobType() {
         return jobType;
     }
@@ -57,7 +57,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "jobParams", length = 255,insertable = false ,updatable = false)
+    @Column(name = "jobParams", nullable = true, length = 255)
     public String getJobParams() {
         return jobParams;
     }
@@ -67,7 +67,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "status", length = 255,insertable = false ,updatable = false)
+    @Column(name = "status", nullable = true, length = 255)
     public String getStatus() {
         return status;
     }
@@ -77,7 +77,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "startedDate")
+    @Column(name = "startedDate", nullable = true)
     public Timestamp getStartedDate() {
         return startedDate;
     }
@@ -87,7 +87,7 @@ public class JobEntity {
     }
 
     @Basic
-    @Column(name = "finishedDate")
+    @Column(name = "finishedDate", nullable = true)
     public Timestamp getFinishedDate() {
         return finishedDate;
     }

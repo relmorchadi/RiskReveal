@@ -27,7 +27,7 @@ public class CountryperilEntity {
 
     @Id
     @Basic
-    @Column(name = "id", length = 255,insertable = false ,updatable = false)
+    @Column(name = "COUNTRYPERILID", nullable = true, length = 255)
     public String getId() {
         return id;
     }
@@ -37,7 +37,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE")
+    @Column(name = "ISACTIVE", nullable = true)
     public Boolean getIsactive() {
         return isactive;
     }
@@ -47,7 +47,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED")
+    @Column(name = "LASTSYNCHRONIZED", nullable = true)
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -57,7 +57,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "FKSECTION_ID", length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKSECTION_ID", nullable = true, length = 255)
     public String getFksectionId() {
         return fksectionId;
     }
@@ -67,7 +67,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", length = 255,insertable = false ,updatable = false)
+    @Column(name = "TREATYID", nullable = true, length = 255)
     public String getTreatyid() {
         return treatyid;
     }
@@ -77,7 +77,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "UWYEAR")
+    @Column(name = "UWYEAR", nullable = true)
     public Integer getUwyear() {
         return uwyear;
     }
@@ -87,7 +87,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "UWORDER")
+    @Column(name = "UWORDER", nullable = true)
     public Integer getUworder() {
         return uworder;
     }
@@ -97,7 +97,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "ENDORSMENTNUMBER")
+    @Column(name = "ENDORSMENTNUMBER", nullable = true)
     public Integer getEndorsmentnumber() {
         return endorsmentnumber;
     }
@@ -107,7 +107,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "SECTIONID")
+    @Column(name = "SECTIONID", nullable = true)
     public Integer getSectionid() {
         return sectionid;
     }
@@ -117,7 +117,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "INCLUSIONID", length = 255,insertable = false ,updatable = false)
+    @Column(name = "INCLUSIONID", nullable = true, length = 255)
     public String getInclusionid() {
         return inclusionid;
     }
@@ -127,7 +127,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYCODE_ID", length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKCOUNTRYCODE", nullable = true, length = 255)
     public String getCountrycodeId() {
         return countrycodeId;
     }
@@ -137,7 +137,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "PERILCODE_ID", length = 255,insertable = false ,updatable = false)
+    @Column(name = "PERILCODE_ID", nullable = true, length = 255)
     public String getPerilcodeId() {
         return perilcodeId;
     }
@@ -147,7 +147,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "UPDATE_TIME")
+    @Column(name = "UPDATE_TIME", nullable = true)
     public Timestamp getUpdateTime() {
         return updateTime;
     }
@@ -157,7 +157,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATEOMEGA")
+    @Column(name = "LASTUPDATEOMEGA", nullable = true)
     public Timestamp getLastupdateomega() {
         return lastupdateomega;
     }
@@ -167,7 +167,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "LASTEXTRACTOMEGA")
+    @Column(name = "LASTEXTRACTOMEGA", nullable = true)
     public Timestamp getLastextractomega() {
         return lastextractomega;
     }
@@ -177,7 +177,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATECATDOMAIN")
+    @Column(name = "LASTUPDATECATDOMAIN", nullable = true)
     public Timestamp getLastupdatecatdomain() {
         return lastupdatecatdomain;
     }
@@ -187,7 +187,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCRUNCATDOMAIN")
+    @Column(name = "LASTSYNCRUNCATDOMAIN", nullable = true)
     public Timestamp getLastsyncruncatdomain() {
         return lastsyncruncatdomain;
     }

@@ -7,34 +7,34 @@ import java.util.Objects;
 @Table(name = "DefaultAdjustmentRegionPeril", schema = "dbo", catalog = "RiskReveal")
 @IdClass(DefaultAdjustmentRegionPerilEntityPK.class)
 public class DefaultAdjustmentRegionPerilEntity {
-    private int idDefaultAdjustment;
-    private int idRegionPeril;
+    private int fkDefaultAdjustmentId;
+    private int fkRegionPerilId;
     private String includedExcluded;
-    private DefaultAdjustmentEntity defaultAdjustmentByIdDefaultAdjustment;
-    private RegionPerilEntity regionPerilByIdRegionPeril;
+    private DefaultAdjustmentEntity defaultAdjustment;
+    private RegionPerilEntity regionPeril;
 
     @Id
-    @Column(name = "id_default_adjustment", nullable = false)
-    public int getIdDefaultAdjustment() {
-        return idDefaultAdjustment;
+    @Column(name = "FKDefaultAdjustmentId", nullable = false)
+    public int getFkDefaultAdjustmentId() {
+        return fkDefaultAdjustmentId;
     }
 
-    public void setIdDefaultAdjustment(int idDefaultAdjustment) {
-        this.idDefaultAdjustment = idDefaultAdjustment;
+    public void setFkDefaultAdjustmentId(int fkDefaultAdjustmentId) {
+        this.fkDefaultAdjustmentId = fkDefaultAdjustmentId;
     }
 
     @Id
-    @Column(name = "id_region_peril", nullable = false)
-    public int getIdRegionPeril() {
-        return idRegionPeril;
+    @Column(name = "FKRegionPerilId", nullable = false)
+    public int getFkRegionPerilId() {
+        return fkRegionPerilId;
     }
 
-    public void setIdRegionPeril(int idRegionPeril) {
-        this.idRegionPeril = idRegionPeril;
+    public void setFkRegionPerilId(int fkRegionPerilId) {
+        this.fkRegionPerilId = fkRegionPerilId;
     }
 
     @Basic
-    @Column(name = "included_excluded", nullable = true, length = 1)
+    @Column(name = "IncludedExcluded", nullable = true, length = 1)
     public String getIncludedExcluded() {
         return includedExcluded;
     }
@@ -48,33 +48,33 @@ public class DefaultAdjustmentRegionPerilEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentRegionPerilEntity that = (DefaultAdjustmentRegionPerilEntity) o;
-        return idDefaultAdjustment == that.idDefaultAdjustment &&
-                idRegionPeril == that.idRegionPeril &&
+        return fkDefaultAdjustmentId == that.fkDefaultAdjustmentId &&
+                fkRegionPerilId == that.fkRegionPerilId &&
                 Objects.equals(includedExcluded, that.includedExcluded);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idDefaultAdjustment, idRegionPeril, includedExcluded);
+        return Objects.hash(fkDefaultAdjustmentId, fkRegionPerilId, includedExcluded);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_default_adjustment", referencedColumnName = "id_default_adjustment", nullable = false,insertable = false, updatable = false)
-    public DefaultAdjustmentEntity getDefaultAdjustmentByIdDefaultAdjustment() {
-        return defaultAdjustmentByIdDefaultAdjustment;
+    @JoinColumn(name = "FKDefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId", nullable = false)
+    public DefaultAdjustmentEntity getDefaultAdjustment() {
+        return defaultAdjustment;
     }
 
-    public void setDefaultAdjustmentByIdDefaultAdjustment(DefaultAdjustmentEntity defaultAdjustmentByIdDefaultAdjustment) {
-        this.defaultAdjustmentByIdDefaultAdjustment = defaultAdjustmentByIdDefaultAdjustment;
+    public void setDefaultAdjustment(DefaultAdjustmentEntity defaultAdjustment) {
+        this.defaultAdjustment = defaultAdjustment;
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_region_peril", referencedColumnName = "regionPerilId", nullable = false,insertable = false, updatable = false)
-    public RegionPerilEntity getRegionPerilByIdRegionPeril() {
-        return regionPerilByIdRegionPeril;
+    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId", nullable = false)
+    public RegionPerilEntity getRegionPeril() {
+        return regionPeril;
     }
 
-    public void setRegionPerilByIdRegionPeril(RegionPerilEntity regionPerilByIdRegionPeril) {
-        this.regionPerilByIdRegionPeril = regionPerilByIdRegionPeril;
+    public void setRegionPeril(RegionPerilEntity regionPeril) {
+        this.regionPeril = regionPeril;
     }
 }

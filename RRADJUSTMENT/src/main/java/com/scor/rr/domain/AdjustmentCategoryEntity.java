@@ -6,23 +6,23 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentCategory", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentCategoryEntity {
-    private int idCategory;
+    private int adjustmentCategoryId;
     private String code;
     private String categoryName;
     private String categoryDesc;
 
     @Id
-    @Column(name = "id_category", nullable = false)
-    public int getIdCategory() {
-        return idCategory;
+    @Column(name = "AdjustmentCategoryId", nullable = false)
+    public int getAdjustmentCategoryId() {
+        return adjustmentCategoryId;
     }
 
-    public void setIdCategory(int idCategory) {
-        this.idCategory = idCategory;
+    public void setAdjustmentCategoryId(int adjustmentCategoryId) {
+        this.adjustmentCategoryId = adjustmentCategoryId;
     }
 
     @Basic
-    @Column(name = "code", nullable = true, length = 200)
+    @Column(name = "Code", nullable = true, length = 200)
     public String getCode() {
         return code;
     }
@@ -32,7 +32,7 @@ public class AdjustmentCategoryEntity {
     }
 
     @Basic
-    @Column(name = "category_name", nullable = true, length = 200)
+    @Column(name = "CategoryName", nullable = true, length = 200)
     public String getCategoryName() {
         return categoryName;
     }
@@ -42,7 +42,7 @@ public class AdjustmentCategoryEntity {
     }
 
     @Basic
-    @Column(name = "category_desc", nullable = true, length = 800)
+    @Column(name = "CategoryDesc", nullable = true, length = 800)
     public String getCategoryDesc() {
         return categoryDesc;
     }
@@ -56,7 +56,7 @@ public class AdjustmentCategoryEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentCategoryEntity that = (AdjustmentCategoryEntity) o;
-        return idCategory == that.idCategory &&
+        return adjustmentCategoryId == that.adjustmentCategoryId &&
                 Objects.equals(code, that.code) &&
                 Objects.equals(categoryName, that.categoryName) &&
                 Objects.equals(categoryDesc, that.categoryDesc);
@@ -64,6 +64,6 @@ public class AdjustmentCategoryEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idCategory, code, categoryName, categoryDesc);
+        return Objects.hash(adjustmentCategoryId, code, categoryName, categoryDesc);
     }
 }

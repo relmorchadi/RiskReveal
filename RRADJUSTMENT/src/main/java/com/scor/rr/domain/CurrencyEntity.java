@@ -19,7 +19,7 @@ public class CurrencyEntity {
     private Integer reportingcurrencycodeId;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CURRENCYId", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -29,7 +29,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE")
+    @Column(name = "ISACTIVE", nullable = true)
     public Boolean getIsactive() {
         return isactive;
     }
@@ -39,7 +39,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED")
+    @Column(name = "LASTSYNCHRONIZED", nullable = true)
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -49,7 +49,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "CODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CODE", nullable = true, length = 255)
     public String getCode() {
         return code;
     }
@@ -59,7 +59,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", length = 255,insertable = false ,updatable = false)
+    @Column(name = "LABEL", nullable = true, length = 255)
     public String getLabel() {
         return label;
     }
@@ -69,7 +69,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "COUNTRYCODE_ID", length = 255,insertable = false ,updatable = false)
+    @Column(name = "COUNTRYCODEID", nullable = true, length = 255)
     public String getCountrycodeId() {
         return countrycodeId;
     }
@@ -79,7 +79,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "INCEPTIONDATE")
+    @Column(name = "INCEPTIONDATE", nullable = true)
     public Timestamp getInceptiondate() {
         return inceptiondate;
     }
@@ -89,7 +89,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "EXPIRYDATE")
+    @Column(name = "EXPIRYDATE", nullable = true)
     public Timestamp getExpirydate() {
         return expirydate;
     }
@@ -99,7 +99,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "ISREPORTINGCURRENCY")
+    @Column(name = "ISREPORTINGCURRENCY", nullable = true)
     public Boolean getIsreportingcurrency() {
         return isreportingcurrency;
     }
@@ -109,7 +109,7 @@ public class CurrencyEntity {
     }
 
     @Basic
-    @Column(name = "REPORTINGCURRENCYCODE_ID")
+    @Column(name = "REPORTINGCURRENCYCODE_ID", nullable = true)
     public Integer getReportingcurrencycodeId() {
         return reportingcurrencycodeId;
     }

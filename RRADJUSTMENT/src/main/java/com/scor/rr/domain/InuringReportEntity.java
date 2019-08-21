@@ -11,7 +11,7 @@ public class InuringReportEntity {
     private Integer inuringPackageId;
 
     @Id
-    @Column(name = "InuringReport_Id", nullable = false, precision = 0)
+    @Column(name = "InuringReportId", nullable = false, precision = 0)
     public int getInuringReportId() {
         return inuringReportId;
     }
@@ -21,7 +21,7 @@ public class InuringReportEntity {
     }
 
     @Basic
-    @Column(name = "BinFile_Id", precision = 0)
+    @Column(name = "FKBinFileId", nullable = true, precision = 0)
     public Integer getBinFileId() {
         return binFileId;
     }
@@ -31,7 +31,7 @@ public class InuringReportEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackage_Id", precision = 0)
+    @Column(name = "FKInuringPackageId", nullable = true, precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }

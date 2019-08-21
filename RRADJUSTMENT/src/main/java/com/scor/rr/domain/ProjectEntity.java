@@ -8,7 +8,6 @@ import java.util.Objects;
 @Table(name = "Project", schema = "dbo", catalog = "RiskReveal")
 public class ProjectEntity {
     private int projectId;
-    private String workspaceId;
     private String name;
     private String description;
     private Boolean masterFlag;
@@ -22,12 +21,13 @@ public class ProjectEntity {
     private Timestamp receptionDate;
     private Timestamp dueDate;
     private String createdBy;
-    private Integer linkedSourceProjectId;
-    private Integer cloneSourceProjectId;
+    private Integer fkLinkedSourceProjectId;
+    private Integer fkCloneSourceProjectId;
     private Boolean deleted;
     private Timestamp deletedOn;
     private String deletedDue;
     private String deletedBy;
+    private WorkspaceEntity workspaceByFkWorkspaceId;
 
     @Id
     @Column(name = "projectId", nullable = false)
@@ -40,17 +40,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "workspaceId", length = 255,insertable = false ,updatable = false)
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
-
-    public void setWorkspaceId(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
-
-    @Basic
-    @Column(name = "name", length = 255,insertable = false ,updatable = false)
+    @Column(name = "name", nullable = true, length = 255)
     public String getName() {
         return name;
     }
@@ -60,7 +50,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "description", length = 255,insertable = false ,updatable = false)
+    @Column(name = "description", nullable = true, length = 255)
     public String getDescription() {
         return description;
     }
@@ -70,7 +60,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "masterFlag")
+    @Column(name = "masterFlag", nullable = true)
     public Boolean getMasterFlag() {
         return masterFlag;
     }
@@ -80,7 +70,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "linkFlag")
+    @Column(name = "linkFlag", nullable = true)
     public Boolean getLinkFlag() {
         return linkFlag;
     }
@@ -90,7 +80,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "publishFlag")
+    @Column(name = "publishFlag", nullable = true)
     public Boolean getPublishFlag() {
         return publishFlag;
     }
@@ -100,7 +90,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "clonedFlag")
+    @Column(name = "clonedFlag", nullable = true)
     public Boolean getClonedFlag() {
         return clonedFlag;
     }
@@ -110,7 +100,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "postInuredFlag")
+    @Column(name = "postInuredFlag", nullable = true)
     public Boolean getPostInuredFlag() {
         return postInuredFlag;
     }
@@ -120,7 +110,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "mgaFlag")
+    @Column(name = "mgaFlag", nullable = true)
     public Boolean getMgaFlag() {
         return mgaFlag;
     }
@@ -130,7 +120,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", length = 255,insertable = false ,updatable = false)
+    @Column(name = "assignedTo", nullable = true, length = 255)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -140,7 +130,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "creationDate")
+    @Column(name = "creationDate", nullable = true)
     public Timestamp getCreationDate() {
         return creationDate;
     }
@@ -150,7 +140,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "receptionDate")
+    @Column(name = "receptionDate", nullable = true)
     public Timestamp getReceptionDate() {
         return receptionDate;
     }
@@ -160,7 +150,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "dueDate")
+    @Column(name = "dueDate", nullable = true)
     public Timestamp getDueDate() {
         return dueDate;
     }
@@ -170,7 +160,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "createdBy", length = 255,insertable = false ,updatable = false)
+    @Column(name = "createdBy", nullable = true, length = 255)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -180,27 +170,27 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "linkedSourceProjectId")
-    public Integer getLinkedSourceProjectId() {
-        return linkedSourceProjectId;
+    @Column(name = "FKLinkedSourceProjectId", nullable = true)
+    public Integer getFkLinkedSourceProjectId() {
+        return fkLinkedSourceProjectId;
     }
 
-    public void setLinkedSourceProjectId(Integer linkedSourceProjectId) {
-        this.linkedSourceProjectId = linkedSourceProjectId;
-    }
-
-    @Basic
-    @Column(name = "cloneSourceProjectId")
-    public Integer getCloneSourceProjectId() {
-        return cloneSourceProjectId;
-    }
-
-    public void setCloneSourceProjectId(Integer cloneSourceProjectId) {
-        this.cloneSourceProjectId = cloneSourceProjectId;
+    public void setFkLinkedSourceProjectId(Integer fkLinkedSourceProjectId) {
+        this.fkLinkedSourceProjectId = fkLinkedSourceProjectId;
     }
 
     @Basic
-    @Column(name = "deleted")
+    @Column(name = "FKCloneSourceProjectId", nullable = true)
+    public Integer getFkCloneSourceProjectId() {
+        return fkCloneSourceProjectId;
+    }
+
+    public void setFkCloneSourceProjectId(Integer fkCloneSourceProjectId) {
+        this.fkCloneSourceProjectId = fkCloneSourceProjectId;
+    }
+
+    @Basic
+    @Column(name = "deleted", nullable = true)
     public Boolean getDeleted() {
         return deleted;
     }
@@ -210,7 +200,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedOn")
+    @Column(name = "deletedOn", nullable = true)
     public Timestamp getDeletedOn() {
         return deletedOn;
     }
@@ -220,7 +210,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedDue", length = 255,insertable = false ,updatable = false)
+    @Column(name = "deletedDue", nullable = true, length = 255)
     public String getDeletedDue() {
         return deletedDue;
     }
@@ -230,7 +220,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "deletedBy", length = 255,insertable = false ,updatable = false)
+    @Column(name = "deletedBy", nullable = true, length = 255)
     public String getDeletedBy() {
         return deletedBy;
     }
@@ -245,7 +235,6 @@ public class ProjectEntity {
         if (o == null || getClass() != o.getClass()) return false;
         ProjectEntity that = (ProjectEntity) o;
         return projectId == that.projectId &&
-                Objects.equals(workspaceId, that.workspaceId) &&
                 Objects.equals(name, that.name) &&
                 Objects.equals(description, that.description) &&
                 Objects.equals(masterFlag, that.masterFlag) &&
@@ -259,8 +248,8 @@ public class ProjectEntity {
                 Objects.equals(receptionDate, that.receptionDate) &&
                 Objects.equals(dueDate, that.dueDate) &&
                 Objects.equals(createdBy, that.createdBy) &&
-                Objects.equals(linkedSourceProjectId, that.linkedSourceProjectId) &&
-                Objects.equals(cloneSourceProjectId, that.cloneSourceProjectId) &&
+                Objects.equals(fkLinkedSourceProjectId, that.fkLinkedSourceProjectId) &&
+                Objects.equals(fkCloneSourceProjectId, that.fkCloneSourceProjectId) &&
                 Objects.equals(deleted, that.deleted) &&
                 Objects.equals(deletedOn, that.deletedOn) &&
                 Objects.equals(deletedDue, that.deletedDue) &&
@@ -269,6 +258,16 @@ public class ProjectEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(projectId, workspaceId, name, description, masterFlag, linkFlag, publishFlag, clonedFlag, postInuredFlag, mgaFlag, assignedTo, creationDate, receptionDate, dueDate, createdBy, linkedSourceProjectId, cloneSourceProjectId, deleted, deletedOn, deletedDue, deletedBy);
+        return Objects.hash(projectId, name, description, masterFlag, linkFlag, publishFlag, clonedFlag, postInuredFlag, mgaFlag, assignedTo, creationDate, receptionDate, dueDate, createdBy, fkLinkedSourceProjectId, fkCloneSourceProjectId, deleted, deletedOn, deletedDue, deletedBy);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKWorkspaceId", referencedColumnName = "workspaceId")
+    public WorkspaceEntity getWorkspaceByFkWorkspaceId() {
+        return workspaceByFkWorkspaceId;
+    }
+
+    public void setWorkspaceByFkWorkspaceId(WorkspaceEntity workspaceByFkWorkspaceId) {
+        this.workspaceByFkWorkspaceId = workspaceByFkWorkspaceId;
     }
 }

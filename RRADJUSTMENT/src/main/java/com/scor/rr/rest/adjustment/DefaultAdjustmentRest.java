@@ -17,18 +17,9 @@ public class DefaultAdjustmentRest {
     @Autowired
     DefaultAdjustmentService defaultAdjustmentService;
 
-    @GetMapping("entity")
-    public List<AdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltEntity(Integer scorPltHeaderId) {
-      return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltEntity(scorPltHeaderId);
-    }
-
-    @GetMapping("marketchannel")
+    @GetMapping("lookupdefaultadjustment")
     public List<AdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltMarketChannel(Integer scorPltHeaderId) {
-        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltMarketChannel(scorPltHeaderId);
+        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(scorPltHeaderId);
     }
 
-    @GetMapping("rptret")
-    public List<AdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRPAndTRAndET(Integer scorPltHeaderId) {
-        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndET(scorPltHeaderId);
-    }
 }

@@ -19,13 +19,13 @@ public class AdjustmentParameterRequest implements Serializable {
     public AdjustmentParameterRequest() {
     }
 
-    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+    public AdjustmentParameterRequest(double lmf, double rpmf, List<PEATData> peatData, int pkScorPltHeaderId, int adjustmentNodeId, List<AdjustmentReturnPeriodBending> returnPeriodBendings) {
         this.lmf = lmf;
         this.rpmf = rpmf;
         this.peatData = peatData;
-        this.scorPltHeaderInput = scorPltHeaderInput;
-        this.nodeId = nodeId;
-        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+        this.scorPltHeaderInput = pkScorPltHeaderId;
+        this.nodeId = adjustmentNodeId;
+        this.adjustmentReturnPeriodBendings = returnPeriodBendings;
     }
 
     public double getLmf() {

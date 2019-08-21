@@ -17,7 +17,7 @@ import java.util.List;
 public class CalculAdjustmentAdditionalCurvesTest {
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustmentAdditionalCurvesTest.class);
     private List<PLTLossData> pltLossDataList;
-    CalculAdjustement calculAdjustement;
+
     @Before
     public void setUp() throws Exception {
         log.info("Launch test for EEF Frequency Adjustment");
@@ -28,7 +28,6 @@ public class CalculAdjustmentAdditionalCurvesTest {
             add(new PLTLossData(94,8440368,(double)41414,1,(double)292462560L, 112700.48));
             add(new PLTLossData(117,8309116,(double)41292,1,(double)116508000000L, 12625397800L));
         }};
-        calculAdjustement = new CalculAdjustement();
     }
 
     @After
@@ -36,15 +35,14 @@ public class CalculAdjustmentAdditionalCurvesTest {
         log.info("END test for EEF Frequency Adjustment");
     }
 
-
     @Test
     public void AverageAnnualLossTest() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        log.info("Average Annual Loss with a plt file = {}",calculAdjustement.averageAnnualLoss(pltLossData));
-        log.info("Average Annual Loss with a plt null = {}",calculAdjustement.averageAnnualLoss(null));
-        log.info("Average Annual Loss with empty plt = {}",calculAdjustement.averageAnnualLoss(new ArrayList<>()));
+        log.info("Average Annual Loss with a plt file = {}",CalculAdjustement.averageAnnualLoss(pltLossData));
+        log.info("Average Annual Loss with a plt null = {}",CalculAdjustement.averageAnnualLoss(null));
+        log.info("Average Annual Loss with empty plt = {}",CalculAdjustement.averageAnnualLoss(new ArrayList<>()));
 
     }
 
@@ -53,9 +51,9 @@ public class CalculAdjustmentAdditionalCurvesTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        log.info("OEP-TVaR with a plt file = {}",calculAdjustement.AEPTVaRMetrics(calculAdjustement.getAEPMetric(pltLossData)));
-        log.info("OEP-TVaR with a plt null = {}",calculAdjustement.AEPTVaRMetrics(null));
-        log.info("OEP-TVaR with empty plt = {}",calculAdjustement.AEPTVaRMetrics(new ArrayList<>()));
+        log.info("OEP-TVaR with a plt file = {}",CalculAdjustement.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData)));
+        log.info("OEP-TVaR with a plt null = {}",CalculAdjustement.AEPTVaRMetrics(null));
+        log.info("OEP-TVaR with empty plt = {}",CalculAdjustement.AEPTVaRMetrics(new ArrayList<>()));
     }
 
     @Test
@@ -63,18 +61,18 @@ public class CalculAdjustmentAdditionalCurvesTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        log.info("Average Annual Loss with a plt file = {}",calculAdjustement.OEPTVaRMetrics(calculAdjustement.getOEPMetric(pltLossData)));
-        log.info("Average Annual Loss with a plt null = {}",calculAdjustement.OEPTVaRMetrics(null));
-        log.info("Average Annual Loss with empty plt = {}",calculAdjustement.OEPTVaRMetrics(new ArrayList<>()));
+        log.info("Average Annual Loss with a plt file = {}",CalculAdjustement.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData)));
+        log.info("Average Annual Loss with a plt null = {}",CalculAdjustement.OEPTVaRMetrics(null));
+        log.info("Average Annual Loss with empty plt = {}",CalculAdjustement.OEPTVaRMetrics(new ArrayList<>()));
     }
     @Test
     public void stdDevTest() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        log.info("Standard Deviation with a plt file = {}",calculAdjustement.stdDev(pltLossData));
-        log.info("Standard Deviation with a plt null = {}",calculAdjustement.stdDev(null));
-        log.info("Standard Deviation with empty plt = {}",calculAdjustement.stdDev(new ArrayList<>()));
+        log.info("Standard Deviation with a plt file = {}",CalculAdjustement.stdDev(pltLossData));
+        log.info("Standard Deviation with a plt null = {}",CalculAdjustement.stdDev(null));
+        log.info("Standard Deviation with empty plt = {}",CalculAdjustement.stdDev(new ArrayList<>()));
     }
 
     @Test
@@ -82,8 +80,8 @@ public class CalculAdjustmentAdditionalCurvesTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Average Annual Loss with a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        log.info("Coefficient of Variance (CoV) with a plt file = {}",calculAdjustement.CoefOfVariance(pltLossData));
-        log.info("Coefficient of Variance (CoV) with a plt null = {}",calculAdjustement.CoefOfVariance(null));
-        log.info("Coefficient of Variance (CoV) with empty plt = {}",calculAdjustement.CoefOfVariance(new ArrayList<>()));
+        log.info("Coefficient of Variance (CoV) with a plt file = {}",CalculAdjustement.CoefOfVariance(pltLossData));
+        log.info("Coefficient of Variance (CoV) with a plt null = {}",CalculAdjustement.CoefOfVariance(null));
+        log.info("Coefficient of Variance (CoV) with empty plt = {}",CalculAdjustement.CoefOfVariance(new ArrayList<>()));
     }
 }

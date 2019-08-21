@@ -12,8 +12,7 @@ public class BinFileEntity {
     private String fqn;
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "binFile_Id", nullable = false)
+    @Column(name = "BinFileId", nullable = false)
     public int getBinFileId() {
         return binFileId;
     }
@@ -23,7 +22,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "fileName", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "fileName", nullable = false, length = 255)
     public String getFileName() {
         return fileName;
     }
@@ -33,7 +32,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "path", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "path", nullable = false, length = 255)
     public String getPath() {
         return path;
     }
@@ -43,7 +42,7 @@ public class BinFileEntity {
     }
 
     @Basic
-    @Column(name = "fqn", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "fqn", nullable = false, length = 255)
     public String getFqn() {
         return fqn;
     }

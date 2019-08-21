@@ -6,7 +6,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentBasis", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentBasisEntity {
-    private int code;
+    private int adjustmentBasisId;
     private String adjustmentBasisName;
     private String basisShortName;
     private String description;
@@ -15,20 +15,20 @@ public class AdjustmentBasisEntity {
     private Boolean isActive;
     private Boolean isExposureGrowth;
     private Integer sequence;
-    private AdjustmentCategoryEntity adjustmentCategoryByIdCategory;
+    private AdjustmentCategoryEntity adjustmentCategory;
 
     @Id
-    @Column(name = "code", nullable = false)
-    public int getCode() {
-        return code;
+    @Column(name = "AdjustmentBasisId", nullable = false)
+    public int getAdjustmentBasisId() {
+        return adjustmentBasisId;
     }
 
-    public void setCode(int code) {
-        this.code = code;
+    public void setAdjustmentBasisId(int adjustmentBasisId) {
+        this.adjustmentBasisId = adjustmentBasisId;
     }
 
     @Basic
-    @Column(name = "adjustment_basis_name", length = 255)
+    @Column(name = "AdjustmentBasisName", nullable = true, length = 255)
     public String getAdjustmentBasisName() {
         return adjustmentBasisName;
     }
@@ -38,7 +38,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "basis_short_name", length = 255)
+    @Column(name = "BasisShortName", nullable = true, length = 255)
     public String getBasisShortName() {
         return basisShortName;
     }
@@ -48,7 +48,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "description", length = 255)
+    @Column(name = "Description", nullable = true, length = 255)
     public String getDescription() {
         return description;
     }
@@ -58,7 +58,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "exposure_flag", length = 50)
+    @Column(name = "ExposureFlag", nullable = true, length = 50)
     public String getExposureFlag() {
         return exposureFlag;
     }
@@ -68,7 +68,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "capped")
+    @Column(name = "Capped", nullable = true)
     public Boolean getCapped() {
         return capped;
     }
@@ -78,7 +78,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "is_active")
+    @Column(name = "IsActive", nullable = true)
     public Boolean getActive() {
         return isActive;
     }
@@ -88,7 +88,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "is_exposure_growth")
+    @Column(name = "IsExposureGrowth", nullable = true)
     public Boolean getExposureGrowth() {
         return isExposureGrowth;
     }
@@ -98,7 +98,7 @@ public class AdjustmentBasisEntity {
     }
 
     @Basic
-    @Column(name = "sequence")
+    @Column(name = "Sequence", nullable = true)
     public Integer getSequence() {
         return sequence;
     }
@@ -112,7 +112,7 @@ public class AdjustmentBasisEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentBasisEntity that = (AdjustmentBasisEntity) o;
-        return code == that.code &&
+        return adjustmentBasisId == that.adjustmentBasisId &&
                 Objects.equals(adjustmentBasisName, that.adjustmentBasisName) &&
                 Objects.equals(basisShortName, that.basisShortName) &&
                 Objects.equals(description, that.description) &&
@@ -125,16 +125,16 @@ public class AdjustmentBasisEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(code, adjustmentBasisName, basisShortName, description, exposureFlag, capped, isActive, isExposureGrowth, sequence);
+        return Objects.hash(adjustmentBasisId, adjustmentBasisName, basisShortName, description, exposureFlag, capped, isActive, isExposureGrowth, sequence);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_category", referencedColumnName = "id_category")
-    public AdjustmentCategoryEntity getAdjustmentCategoryByIdCategory() {
-        return adjustmentCategoryByIdCategory;
+    @JoinColumn(name = "FkCategoryId", referencedColumnName = "AdjustmentCategoryId")
+    public AdjustmentCategoryEntity getAdjustmentCategoryByFkCategoryId() {
+        return adjustmentCategory;
     }
 
-    public void setAdjustmentCategoryByIdCategory(AdjustmentCategoryEntity adjustmentCategoryByIdCategory) {
-        this.adjustmentCategoryByIdCategory = adjustmentCategoryByIdCategory;
+    public void setAdjustmentCategoryByFkCategoryId(AdjustmentCategoryEntity adjustmentCategoryByFkCategoryId) {
+        this.adjustmentCategory = adjustmentCategoryByFkCategoryId;
     }
 }

@@ -15,7 +15,7 @@ public class ScopeofbusinessEntity {
     private String longname;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "SCOPEOFBUSINESSID", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -25,7 +25,7 @@ public class ScopeofbusinessEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE")
+    @Column(name = "ISACTIVE", nullable = true)
     public Boolean getIsactive() {
         return isactive;
     }
@@ -35,7 +35,7 @@ public class ScopeofbusinessEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED")
+    @Column(name = "LASTSYNCHRONIZED", nullable = true)
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -45,7 +45,7 @@ public class ScopeofbusinessEntity {
     }
 
     @Basic
-    @Column(name = "CODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CODE", nullable = true, length = 255)
     public String getCode() {
         return code;
     }
@@ -55,7 +55,7 @@ public class ScopeofbusinessEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", length = 255,insertable = false ,updatable = false)
+    @Column(name = "LABEL", nullable = true, length = 255)
     public String getLabel() {
         return label;
     }
@@ -65,7 +65,7 @@ public class ScopeofbusinessEntity {
     }
 
     @Basic
-    @Column(name = "LONGNAME", length = 255,insertable = false ,updatable = false)
+    @Column(name = "LONGNAME", nullable = true, length = 255)
     public String getLongname() {
         return longname;
     }

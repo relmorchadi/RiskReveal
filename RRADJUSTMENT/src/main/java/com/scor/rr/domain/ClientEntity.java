@@ -46,7 +46,7 @@ public class ClientEntity {
     private String name;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CLIENTId", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -56,7 +56,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE")
+    @Column(name = "ISACTIVE", nullable = true)
     public Boolean getIsactive() {
         return isactive;
     }
@@ -66,7 +66,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED")
+    @Column(name = "LASTSYNCHRONIZED", nullable = true)
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -76,7 +76,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTNUMBER", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CLIENTNUMBER", nullable = true, length = 255)
     public String getClientnumber() {
         return clientnumber;
     }
@@ -86,7 +86,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTHIERARCHICALLEVEL")
+    @Column(name = "CLIENTHIERARCHICALLEVEL", nullable = true)
     public Integer getClienthierarchicallevel() {
         return clienthierarchicallevel;
     }
@@ -96,7 +96,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTSHORTNAME", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CLIENTSHORTNAME", nullable = true, length = 255)
     public String getClientshortname() {
         return clientshortname;
     }
@@ -106,7 +106,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTSTATUS")
+    @Column(name = "CLIENTSTATUS", nullable = true)
     public Short getClientstatus() {
         return clientstatus;
     }
@@ -116,7 +116,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTMANAGEMENTTYPE")
+    @Column(name = "CLIENTMANAGEMENTTYPE", nullable = true)
     public Short getClientmanagementtype() {
         return clientmanagementtype;
     }
@@ -126,7 +126,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTTYPECODE")
+    @Column(name = "CLIENTTYPECODE", nullable = true)
     public Integer getClienttypecode() {
         return clienttypecode;
     }
@@ -136,7 +136,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HEADOFFICECITY", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HEADOFFICECITY", nullable = true, length = 255)
     public String getHeadofficecity() {
         return headofficecity;
     }
@@ -146,7 +146,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HEADOFFICECOUNTRYCODE_ID", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HEADOFFICECOUNTRYCODE_ID", nullable = true, length = 255)
     public String getHeadofficecountrycodeId() {
         return headofficecountrycodeId;
     }
@@ -156,7 +156,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HEADOFFICEPOSTALCODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HEADOFFICEPOSTALCODE", nullable = true, length = 255)
     public String getHeadofficepostalcode() {
         return headofficepostalcode;
     }
@@ -166,7 +166,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HEADOFFICESTATECODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HEADOFFICESTATECODE", nullable = true, length = 255)
     public String getHeadofficestatecode() {
         return headofficestatecode;
     }
@@ -176,7 +176,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HEADOFFICESTREET1", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HEADOFFICESTREET1", nullable = true, length = 255)
     public String getHeadofficestreet1() {
         return headofficestreet1;
     }
@@ -186,7 +186,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HEADOFFICESTREET2", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HEADOFFICESTREET2", nullable = true, length = 255)
     public String getHeadofficestreet2() {
         return headofficestreet2;
     }
@@ -196,7 +196,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTACTIVITYCODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CLIENTACTIVITYCODE", nullable = true, length = 255)
     public String getClientactivitycode() {
         return clientactivitycode;
     }
@@ -206,7 +206,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTLEGALSTATUS", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CLIENTLEGALSTATUS", nullable = true, length = 255)
     public String getClientlegalstatus() {
         return clientlegalstatus;
     }
@@ -216,7 +216,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "RESPONSIBLESUBSIDIARYCODE")
+    @Column(name = "RESPONSIBLESUBSIDIARYCODE", nullable = true)
     public Integer getResponsiblesubsidiarycode() {
         return responsiblesubsidiarycode;
     }
@@ -226,7 +226,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "RESPONSIBLEUNITCODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "RESPONSIBLEUNITCODE", nullable = true, length = 255)
     public String getResponsibleunitcode() {
         return responsibleunitcode;
     }
@@ -236,7 +236,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTINACTIVENATURECODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CLIENTINACTIVENATURECODE", nullable = true, length = 255)
     public String getClientinactivenaturecode() {
         return clientinactivenaturecode;
     }
@@ -246,7 +246,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTINACTIVEDATE")
+    @Column(name = "CLIENTINACTIVEDATE", nullable = true)
     public Timestamp getClientinactivedate() {
         return clientinactivedate;
     }
@@ -256,7 +256,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "REPLACINGCLIENTCODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "REPLACINGCLIENTCODE", nullable = true, length = 255)
     public String getReplacingclientcode() {
         return replacingclientcode;
     }
@@ -266,7 +266,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTCEDENT")
+    @Column(name = "CLIENTCEDENT", nullable = true)
     public Boolean getClientcedent() {
         return clientcedent;
     }
@@ -276,7 +276,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTPAYER")
+    @Column(name = "CLIENTPAYER", nullable = true)
     public Boolean getClientpayer() {
         return clientpayer;
     }
@@ -286,7 +286,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTACCEPTATION")
+    @Column(name = "CLIENTACCEPTATION", nullable = true)
     public Boolean getClientacceptation() {
         return clientacceptation;
     }
@@ -296,7 +296,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTRETROCESSION")
+    @Column(name = "CLIENTRETROCESSION", nullable = true)
     public Boolean getClientretrocession() {
         return clientretrocession;
     }
@@ -306,7 +306,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTSUPPRESSION")
+    @Column(name = "CLIENTSUPPRESSION", nullable = true)
     public Boolean getClientsuppression() {
         return clientsuppression;
     }
@@ -316,7 +316,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CREATIONUSERCODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CREATIONUSERCODE", nullable = true, length = 255)
     public String getCreationusercode() {
         return creationusercode;
     }
@@ -326,7 +326,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CREATIONDATE")
+    @Column(name = "CREATIONDATE", nullable = true)
     public Timestamp getCreationdate() {
         return creationdate;
     }
@@ -336,7 +336,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATEUSER", length = 255,insertable = false ,updatable = false)
+    @Column(name = "LASTUPDATEUSER", nullable = true, length = 255)
     public String getLastupdateuser() {
         return lastupdateuser;
     }
@@ -346,7 +346,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATEDATE")
+    @Column(name = "LASTUPDATEDATE", nullable = true)
     public Timestamp getLastupdatedate() {
         return lastupdatedate;
     }
@@ -356,7 +356,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "GROUPSEGMENT", length = 255,insertable = false ,updatable = false)
+    @Column(name = "GROUPSEGMENT", nullable = true, length = 255)
     public String getGroupsegment() {
         return groupsegment;
     }
@@ -366,7 +366,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "CLIENTSUBSIDIARYCODE", length = 255,insertable = false ,updatable = false)
+    @Column(name = "CLIENTSUBSIDIARYCODE", nullable = true, length = 255)
     public String getClientsubsidiarycode() {
         return clientsubsidiarycode;
     }
@@ -376,7 +376,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "EMBARGO")
+    @Column(name = "EMBARGO", nullable = true)
     public Short getEmbargo() {
         return embargo;
     }
@@ -386,7 +386,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HOLDINGNUMBER", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HOLDINGNUMBER", nullable = true, length = 255)
     public String getHoldingnumber() {
         return holdingnumber;
     }
@@ -396,7 +396,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "HOLDINGNAME", length = 255,insertable = false ,updatable = false)
+    @Column(name = "HOLDINGNAME", nullable = true, length = 255)
     public String getHoldingname() {
         return holdingname;
     }
@@ -406,7 +406,7 @@ public class ClientEntity {
     }
 
     @Basic
-    @Column(name = "NAME", length = 255,insertable = false ,updatable = false)
+    @Column(name = "NAME", nullable = true, length = 255)
     public String getName() {
         return name;
     }

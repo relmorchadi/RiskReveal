@@ -3,6 +3,7 @@ package com.scor.adjustment.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
+import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.EventDateFormatException;
@@ -25,10 +26,9 @@ import static org.junit.Assert.*;
 public class CalculAdjustementOEPReturnPeriodBandingTest {
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustementNonLinearEventDrivenAdjustmentTest.class);
     private List<PLTLossData> pltLossDataList;
-    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings;
     private double periodConstante;
     private boolean cap;
-    CalculAdjustement calculAdjustement;
     @Before
     public void setUp() {
         log.info("Launch test for OEP Return Period adjustment");
@@ -41,37 +41,36 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
         }};
         cap = true;
         periodConstante = 100000;
-        adjustmentReturnPeriodBendings = new ArrayList<AdjustmentReturnPeriodBending>(){{
-            add(new AdjustmentReturnPeriodBending(500,0.87));
-            add(new AdjustmentReturnPeriodBending(750,0.9));
-            add(new AdjustmentReturnPeriodBending(10000,0.93));
-            add(new AdjustmentReturnPeriodBending(20000,0.97));
+        adjustmentReturnPeriodBendings = new ArrayList<AdjustmentReturnPeriodBandingParameterEntity>(){{
+            add(new AdjustmentReturnPeriodBandingParameterEntity(500,0.87));
+            add(new AdjustmentReturnPeriodBandingParameterEntity(750,0.9));
+            add(new AdjustmentReturnPeriodBandingParameterEntity(10000,0.93));
+            add(new AdjustmentReturnPeriodBandingParameterEntity(20000,0.97));
 
         }};
-        calculAdjustement = new CalculAdjustement();
 
     }
     @Test
     public void oepReturnPeriodBandingNullParameterAdjustmentReturnPeriodBending() {
         log.info("Launch test for OEP Return Period adjustment with parameter Adjustment return Period Bending [return period,lmf] null");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,null));
+        assertNull(CalculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,null));
     }
     @Test
     public void oepReturnPeriodBandingEmptyParameterAdjustmentReturnPeriodBending() {
         log.info("Launch test for OEP Return Period adjustment with parameter Adjustment return Period Bending [return period,lmf] empty");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>()));
+        assertNull(CalculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,new ArrayList<>()));
     }
 
     @Test
     public void oepReturnPeriodBandingNullPlt() {
         log.info("Launch test for OEP Return Period adjustment with PLT null");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings));
+        assertNull(CalculAdjustement.oepReturnPeriodBanding(null,cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
     public void oepReturnPeriodBandingEmptyPlt() {
         log.info("Launch test for OEP Return Period adjustment with PLT empty");
-        assertNull(calculAdjustement.oepReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
+        assertNull(CalculAdjustement.oepReturnPeriodBanding(new ArrayList<>(),cap,adjustmentReturnPeriodBendings));
     }
 
     @Test
@@ -84,7 +83,7 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        pltLossDataList = CalculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -106,7 +105,7 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = calculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
+        pltLossDataList = CalculAdjustement.oepReturnPeriodBanding(pltLossDataList,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -122,7 +121,7 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for oep return period banding with a file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        pltLossData = calculAdjustement.oepReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
+        pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltoepReturnPeriodBanding.csv"));
         log.info("End test for oep return period banding with a file ");

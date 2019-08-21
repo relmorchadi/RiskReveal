@@ -9,16 +9,16 @@ import java.util.Objects;
 public class ProjectImportRunEntity {
     private int projectImportRunId;
     private Integer runId;
-    private Integer projectId;
     private String status;
     private Timestamp startDate;
     private Timestamp endDate;
     private Timestamp lossImportEndDate;
     private String importedBy;
     private String sourceConfigVendor;
+    private ProjectEntity projectByFkProjectId;
 
     @Id
-    @Column(name = "projectImportRunId", nullable = false)
+    @Column(name = "ProjectImportRunId", nullable = false)
     public int getProjectImportRunId() {
         return projectImportRunId;
     }
@@ -28,7 +28,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "runId")
+    @Column(name = "runId", nullable = true)
     public Integer getRunId() {
         return runId;
     }
@@ -38,17 +38,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "projectId")
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    @Basic
-    @Column(name = "status", length = 255,insertable = false ,updatable = false)
+    @Column(name = "status", nullable = true, length = 255)
     public String getStatus() {
         return status;
     }
@@ -58,7 +48,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "startDate")
+    @Column(name = "startDate", nullable = true)
     public Timestamp getStartDate() {
         return startDate;
     }
@@ -68,7 +58,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "endDate")
+    @Column(name = "endDate", nullable = true)
     public Timestamp getEndDate() {
         return endDate;
     }
@@ -78,7 +68,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "lossImportEndDate")
+    @Column(name = "lossImportEndDate", nullable = true)
     public Timestamp getLossImportEndDate() {
         return lossImportEndDate;
     }
@@ -88,7 +78,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "importedBy", length = 255,insertable = false ,updatable = false)
+    @Column(name = "importedBy", nullable = true, length = 255)
     public String getImportedBy() {
         return importedBy;
     }
@@ -98,7 +88,7 @@ public class ProjectImportRunEntity {
     }
 
     @Basic
-    @Column(name = "sourceConfigVendor", length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceConfigVendor", nullable = true, length = 255)
     public String getSourceConfigVendor() {
         return sourceConfigVendor;
     }
@@ -114,7 +104,6 @@ public class ProjectImportRunEntity {
         ProjectImportRunEntity that = (ProjectImportRunEntity) o;
         return projectImportRunId == that.projectImportRunId &&
                 Objects.equals(runId, that.runId) &&
-                Objects.equals(projectId, that.projectId) &&
                 Objects.equals(status, that.status) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate) &&
@@ -125,6 +114,16 @@ public class ProjectImportRunEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(projectImportRunId, runId, projectId, status, startDate, endDate, lossImportEndDate, importedBy, sourceConfigVendor);
+        return Objects.hash(projectImportRunId, runId, status, startDate, endDate, lossImportEndDate, importedBy, sourceConfigVendor);
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKProjectId", referencedColumnName = "projectId")
+    public ProjectEntity getProjectByFkProjectId() {
+        return projectByFkProjectId;
+    }
+
+    public void setProjectByFkProjectId(ProjectEntity projectByFkProjectId) {
+        this.projectByFkProjectId = projectByFkProjectId;
     }
 }

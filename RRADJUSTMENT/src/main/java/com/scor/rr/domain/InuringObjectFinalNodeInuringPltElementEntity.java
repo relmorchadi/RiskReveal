@@ -4,14 +4,14 @@ import javax.persistence.*;
 import java.util.Objects;
 
 @Entity
-@Table(name = "InuringObjectFinalNode_InuringPltElement", schema = "dbo", catalog = "RiskReveal")
+@Table(name = "InuringObjectFinalNodeInuringPltElement", schema = "dbo", catalog = "RiskReveal")
 public class InuringObjectFinalNodeInuringPltElementEntity {
     private int inuringObjectFinalNodeInuringObjectFinalNodeId;
     private Integer outputInuringPltElementsInuringPltElementId;
     private Integer inputInuringPltElementsInuringPltElementId;
 
     @Id
-    @Column(name = "InuringObjectFinalNode_InuringObjectFinalNode_Id", nullable = false, precision = 0)
+    @Column(name = "InuringObjectFinalNodeInuringObjectFinalNodeId", nullable = false, precision = 0)
     public int getInuringObjectFinalNodeInuringObjectFinalNodeId() {
         return inuringObjectFinalNodeInuringObjectFinalNodeId;
     }
@@ -21,7 +21,7 @@ public class InuringObjectFinalNodeInuringPltElementEntity {
     }
 
     @Basic
-    @Column(name = "outputInuringPltElements_InuringPltElementId", nullable = true, precision = 0)
+    @Column(name = "FKOutputInuringPltElementsId", nullable = true, precision = 0)
     public Integer getOutputInuringPltElementsInuringPltElementId() {
         return outputInuringPltElementsInuringPltElementId;
     }
@@ -31,7 +31,7 @@ public class InuringObjectFinalNodeInuringPltElementEntity {
     }
 
     @Basic
-    @Column(name = "inputInuringPltElements_InuringPltElementId", nullable = true, precision = 0)
+    @Column(name = "FKInputInuringPltElementsId", nullable = true, precision = 0)
     public Integer getInputInuringPltElementsInuringPltElementId() {
         return inputInuringPltElementsInuringPltElementId;
     }

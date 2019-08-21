@@ -6,22 +6,22 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentType", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentTypeEntity {
-    private int idType;
+    private int adjustmentTypeId;
     private String type;
     private String description;
 
     @Id
-    @Column(name = "id_type", nullable = false)
-    public int getIdType() {
-        return idType;
+    @Column(name = "AdjustmentTypeId", nullable = false)
+    public int getAdjustmentTypeId() {
+        return adjustmentTypeId;
     }
 
-    public void setIdType(int idType) {
-        this.idType = idType;
+    public void setAdjustmentTypeId(int adjustmentTypeId) {
+        this.adjustmentTypeId = adjustmentTypeId;
     }
 
     @Basic
-    @Column(name = "type", length = 200)
+    @Column(name = "Type", nullable = true, length = 200)
     public String getType() {
         return type;
     }
@@ -31,7 +31,7 @@ public class AdjustmentTypeEntity {
     }
 
     @Basic
-    @Column(name = "description", length = 200)
+    @Column(name = "Description", nullable = true, length = 200)
     public String getDescription() {
         return description;
     }
@@ -45,13 +45,13 @@ public class AdjustmentTypeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentTypeEntity that = (AdjustmentTypeEntity) o;
-        return idType == that.idType &&
+        return adjustmentTypeId == that.adjustmentTypeId &&
                 Objects.equals(type, that.type) &&
                 Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idType, type, description);
+        return Objects.hash(adjustmentTypeId, type, description);
     }
 }

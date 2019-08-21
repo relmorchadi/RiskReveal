@@ -33,7 +33,7 @@ public class AdjustmentNodeRest {
 
     @DeleteMapping
     public void deleteNode(Integer id){
-        adjustmentNodeService.delete(id);
+        //adjustmentNodeService.delete(id);
 
     }
 

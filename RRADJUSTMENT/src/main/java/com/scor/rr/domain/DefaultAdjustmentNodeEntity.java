@@ -7,7 +7,7 @@ import java.util.Objects;
 @Table(name = "DefaultAdjustmentNode", schema = "dbo", catalog = "RiskReveal")
 public class DefaultAdjustmentNodeEntity {
     private Integer sequence;
-    private int idDefaultAdjustmentNode;
+    private int defaultAdjustmentNodeId;
     private Boolean isCappedMaxExposure;
     private AdjustmentBasisEntity adjustmentBasis;
     private AdjustmentTypeEntity adjustmentType;
@@ -24,17 +24,17 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @Id
-    @Column(name = "id_default_adjustment_node", nullable = false)
-    public int getIdDefaultAdjustmentNode() {
-        return idDefaultAdjustmentNode;
+    @Column(name = "DefaultAdjustmentNodeId", nullable = false)
+    public int getDefaultAdjustmentNodeId() {
+        return defaultAdjustmentNodeId;
     }
 
-    public void setIdDefaultAdjustmentNode(int idDefaultAdjustmentNode) {
-        this.idDefaultAdjustmentNode = idDefaultAdjustmentNode;
+    public void setDefaultAdjustmentNodeId(int defaultAdjustmentNodeId) {
+        this.defaultAdjustmentNodeId = defaultAdjustmentNodeId;
     }
 
     @Basic
-    @Column(name = "is_capped_max_exposure", nullable = true)
+    @Column(name = "IsCappedMaxExposure", nullable = true)
     public Boolean getCappedMaxExposure() {
         return isCappedMaxExposure;
     }
@@ -48,18 +48,18 @@ public class DefaultAdjustmentNodeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentNodeEntity that = (DefaultAdjustmentNodeEntity) o;
-        return idDefaultAdjustmentNode == that.idDefaultAdjustmentNode &&
+        return defaultAdjustmentNodeId == that.defaultAdjustmentNodeId &&
                 Objects.equals(sequence, that.sequence) &&
                 Objects.equals(isCappedMaxExposure, that.isCappedMaxExposure);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sequence, idDefaultAdjustmentNode, isCappedMaxExposure);
+        return Objects.hash(sequence, defaultAdjustmentNodeId, isCappedMaxExposure);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_basis", referencedColumnName = "code")
+    @JoinColumn(name = "FKAdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
     public AdjustmentBasisEntity getAdjustmentBasis() {
         return adjustmentBasis;
     }
@@ -69,7 +69,7 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_type", referencedColumnName = "id_type")
+    @JoinColumn(name = "FKAdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
     public AdjustmentTypeEntity getAdjustmentType() {
         return adjustmentType;
     }
@@ -79,7 +79,7 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_thread", referencedColumnName = "id_default_adjustment_thread")
+    @JoinColumn(name = "FKAdjustmentThreadId", referencedColumnName = "DefaultAdjustmentThreadId")
     public DefaultAdjustmentThreadEntity getDefaultAdjustmentThread() {
         return defaultAdjustmentThread;
     }

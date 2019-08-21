@@ -17,7 +17,7 @@ public class PltPricingMinimumGrainEntity {
     private Timestamp lastUpdateRiskReveal;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "PLTPricingMinimumGrainId", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -27,7 +27,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "lastSynchronized")
+    @Column(name = "lastSynchronized", nullable = true)
     public Timestamp getLastSynchronized() {
         return lastSynchronized;
     }
@@ -37,7 +37,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "engineId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "engineId", nullable = true, length = 255)
     public String getEngineId() {
         return engineId;
     }
@@ -47,7 +47,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKPltPricingId", nullable = true, length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -57,7 +57,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingSectionId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKPltPricingSectionId", nullable = true, length = 255)
     public String getPltPricingSectionId() {
         return pltPricingSectionId;
     }
@@ -67,7 +67,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "code", length = 255,insertable = false ,updatable = false)
+    @Column(name = "code", nullable = true, length = 255)
     public String getCode() {
         return code;
     }
@@ -77,7 +77,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "expectedLoss", length = 255,insertable = false ,updatable = false)
+    @Column(name = "expectedLoss", nullable = true, length = 255)
     public String getExpectedLoss() {
         return expectedLoss;
     }
@@ -87,7 +87,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateRiskReveal")
+    @Column(name = "lastUpdateRiskReveal", nullable = true)
     public Timestamp getLastUpdateRiskReveal() {
         return lastUpdateRiskReveal;
     }

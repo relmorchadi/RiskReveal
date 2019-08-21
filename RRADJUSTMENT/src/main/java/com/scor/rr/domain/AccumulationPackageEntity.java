@@ -8,11 +8,10 @@ import java.util.Objects;
 public class AccumulationPackageEntity {
     private int id;
     private String fkworkspaceId;
-    private Integer fkaccumulationPackageid;
     private Integer idstatus;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "AccumulationPackageId", nullable = false)
     public int getId() {
         return id;
     }
@@ -22,7 +21,7 @@ public class AccumulationPackageEntity {
     }
 
     @Basic
-    @Column(name = "fkworkspace_id", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKWorkspaceID", nullable = true, length = 255)
     public String getFkworkspaceId() {
         return fkworkspaceId;
     }
@@ -31,18 +30,9 @@ public class AccumulationPackageEntity {
         this.fkworkspaceId = fkworkspaceId;
     }
 
-    @Basic
-    @Column(name = "fkaccumulationPackageid", nullable = true)
-    public Integer getFkaccumulationPackageid() {
-        return fkaccumulationPackageid;
-    }
-
-    public void setFkaccumulationPackageid(Integer fkaccumulationPackageid) {
-        this.fkaccumulationPackageid = fkaccumulationPackageid;
-    }
 
     @Basic
-    @Column(name = "idstatus", nullable = true)
+    @Column(name = "FKStatusId", nullable = true)
     public Integer getIdstatus() {
         return idstatus;
     }
@@ -58,12 +48,11 @@ public class AccumulationPackageEntity {
         AccumulationPackageEntity that = (AccumulationPackageEntity) o;
         return id == that.id &&
                 Objects.equals(fkworkspaceId, that.fkworkspaceId) &&
-                Objects.equals(fkaccumulationPackageid, that.fkaccumulationPackageid) &&
                 Objects.equals(idstatus, that.idstatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, fkworkspaceId, fkaccumulationPackageid, idstatus);
+        return Objects.hash(id, fkworkspaceId, idstatus);
     }
 }

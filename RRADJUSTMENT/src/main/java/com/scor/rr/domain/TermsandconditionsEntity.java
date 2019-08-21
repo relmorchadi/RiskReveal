@@ -39,7 +39,7 @@ public class TermsandconditionsEntity {
     private Timestamp lastsyncruncatdomain;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "id", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -69,7 +69,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "FKSECTION_ID", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKSECTION_ID", nullable = true, length = 255)
     public String getFksectionId() {
         return fksectionId;
     }
@@ -79,7 +79,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "TREATYID", nullable = true, length = 255)
     public String getTreatyid() {
         return treatyid;
     }
@@ -129,7 +129,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "OCCURENCEBASIS", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "OCCURENCEBASIS", nullable = true, length = 255)
     public String getOccurencebasis() {
         return occurencebasis;
     }
@@ -139,7 +139,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "SUBJECTPREMIUMCURRENCY_ID", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "SUBJECTPREMIUMCURRENCY_ID", nullable = true, length = 255)
     public String getSubjectpremiumcurrencyId() {
         return subjectpremiumcurrencyId;
     }
@@ -159,7 +159,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "SUBJECTPREMIUMBASIS_ID", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "SUBJECTPREMIUMBASIS_ID", nullable = true, length = 255)
     public String getSubjectpremiumbasisId() {
         return subjectpremiumbasisId;
     }
@@ -179,7 +179,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "CEDEDOR1PCTSHARE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CEDEDOR1PCTSHARE", nullable = true, length = 255)
     public String getCededor1Pctshare() {
         return cededor1Pctshare;
     }

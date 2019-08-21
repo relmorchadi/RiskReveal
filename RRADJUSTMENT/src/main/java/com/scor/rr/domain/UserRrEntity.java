@@ -22,7 +22,7 @@ public class UserRrEntity {
     }
 
     @Basic
-    @Column(name = "userFirstName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "userFirstName", nullable = true, length = 255)
     public String getUserFirstName() {
         return userFirstName;
     }
@@ -32,7 +32,7 @@ public class UserRrEntity {
     }
 
     @Basic
-    @Column(name = "userLastName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "userLastName", nullable = true, length = 255)
     public String getUserLastName() {
         return userLastName;
     }
@@ -42,7 +42,7 @@ public class UserRrEntity {
     }
 
     @Basic
-    @Column(name = "userRole", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "userRole", nullable = true, length = 255)
     public String getUserRole() {
         return userRole;
     }

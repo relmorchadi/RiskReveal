@@ -1,21 +1,13 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Objects;
 
 @Entity
 @Table(name = "ScorPLTHeader", schema = "dbo", catalog = "RiskReveal")
-@JsonIgnoreProperties(value = {"rrAnalysis","targetRap",
-        "regionPeril","projectByProjectId",
-        "scorPltHeaderByCloningSourceId","binFile",
-        "adjustmentBasisPrevious","adjustmentBasisCurrent"},ignoreUnknown = true)
-public class ScorPltHeaderEntity implements Serializable {
-    private int scorPltHeaderId;
+public class ScorPltHeaderEntity {
     private String pltType;
     private Boolean publishToPricing;
     private Integer pltSimulationPeriods;
@@ -52,33 +44,83 @@ public class ScorPltHeaderEntity implements Serializable {
     private String pltLossDataFileName;
     private String pltLossDataFilePath;
     private String engineType;
-    private RrAnalysisNewEntity rrAnalysis;
+    private Integer fkBinFileId;
+    private int pkScorPltHeaderId;
+    private Integer projectId;
+    private Integer regionPerilId;
+    private Integer rrAnalysisId;
+    private RrAnalysisNewEntity rrAnalysisNew;
     private TargetRapEntity targetRap;
     private RegionPerilEntity regionPeril;
-    private ProjectEntity projectByProjectId;
-    private ScorPltHeaderEntity scorPltHeaderByCloningSourceId;
+    private ProjectEntity projectByFkProjectId;
+    private AdjustmentBasisEntity adjustmentBasisByFkPreviousBasisId;
+    private AdjustmentBasisEntity adjustmentBasisByFkCurrentBasisId;
     private EntityEntity entity;
     private MarketChannelEntity marketChannel;
-    private BinFileEntity binFile;
-    private AdjustmentBasisEntity adjustmentBasisPrevious;
-    private AdjustmentBasisEntity adjustmentBasisCurrent;
+    private ScorPltHeaderEntity scorPltHeader;
+    private BinFileEntity binFileEntity;
+
+    public ScorPltHeaderEntity(ScorPltHeaderEntity other) {
+        this.pltType = other.pltType;
+        this.publishToPricing = other.publishToPricing;
+        this.pltSimulationPeriods = other.pltSimulationPeriods;
+        this.generatedFromDefaultAdjustement = other.generatedFromDefaultAdjustement;
+        this.ccyCode = other.ccyCode;
+        this.geoCode = other.geoCode;
+        this.geoDescription = other.geoDescription;
+        this.rmsSimulationSet = other.rmsSimulationSet;
+        this.importSequence = other.importSequence;
+        this.threadName = other.threadName;
+        this.udName = other.udName;
+        this.userOccurrenceBasis = other.userOccurrenceBasis;
+        this.defaultPltName = other.defaultPltName;
+        this.truncationThreshold = other.truncationThreshold;
+        this.truncationExchangeRate = other.truncationExchangeRate;
+        this.truncationCurrency = other.truncationCurrency;
+        this.sourceLossModelingBasis = other.sourceLossModelingBasis;
+        this.deletedOn = other.deletedOn;
+        this.deletedDue = other.deletedDue;
+        this.deletedBy = other.deletedBy;
+        this.sourceLossEntityingBasis = other.sourceLossEntityingBasis;
+        this.createdBy = other.createdBy;
+        this.createdOn = other.createdOn;
+        this.lastModifiedBy = other.lastModifiedBy;
+        this.lastModifiedOn = other.lastModifiedOn;
+        this.lastGenerated = other.lastGenerated;
+        this.basisChanged = other.basisChanged;
+        this.narrativeChanged = other.narrativeChanged;
+        this.previousNarrative = other.previousNarrative;
+        this.currentNarrative = other.currentNarrative;
+        this.createdDate = other.createdDate;
+        this.inuringPackageId = other.inuringPackageId;
+        this.perilCode = other.perilCode;
+        this.pltLossDataFileName = other.pltLossDataFileName;
+        this.pltLossDataFilePath = other.pltLossDataFilePath;
+        this.engineType = other.engineType;
+        this.fkBinFileId = other.fkBinFileId;
+        this.pkScorPltHeaderId = other.pkScorPltHeaderId;
+        this.projectId = other.projectId;
+        this.regionPerilId = other.regionPerilId;
+        this.rrAnalysisId = other.rrAnalysisId;
+        this.rrAnalysisNew = other.rrAnalysisNew;
+        this.targetRap = other.targetRap;
+        this.regionPeril = other.regionPeril;
+        this.projectByFkProjectId = other.projectByFkProjectId;
+        this.adjustmentBasisByFkPreviousBasisId = other.adjustmentBasisByFkPreviousBasisId;
+        this.adjustmentBasisByFkCurrentBasisId = other.adjustmentBasisByFkCurrentBasisId;
+        this.entity = other.entity;
+        this.marketChannel = other.marketChannel;
+        this.scorPltHeader = other.scorPltHeader;
+    }
 
     public ScorPltHeaderEntity() {
+
     }
 
-    @Id
-    @Column(name = "id_scorpltheader", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getScorPltHeaderId() {
-        return scorPltHeaderId;
-    }
 
-    public void setScorPltHeaderId(int scorPltHeaderId) {
-        this.scorPltHeaderId = scorPltHeaderId;
-    }
 
     @Basic
-    @Column(name = "pltType", length = 255)
+    @Column(name = "pltType", nullable = true, length = 255)
     public String getPltType() {
         return pltType;
     }
@@ -88,7 +130,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "publishToPricing")
+    @Column(name = "publishToPricing", nullable = true)
     public Boolean getPublishToPricing() {
         return publishToPricing;
     }
@@ -98,7 +140,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "pltSimulationPeriods")
+    @Column(name = "pltSimulationPeriods", nullable = true)
     public Integer getPltSimulationPeriods() {
         return pltSimulationPeriods;
     }
@@ -108,7 +150,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "generatedFromDefaultAdjustement")
+    @Column(name = "generatedFromDefaultAdjustement", nullable = true)
     public Boolean getGeneratedFromDefaultAdjustement() {
         return generatedFromDefaultAdjustement;
     }
@@ -118,7 +160,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "ccyCode", length = 255)
+    @Column(name = "ccyCode", nullable = true, length = 255)
     public String getCcyCode() {
         return ccyCode;
     }
@@ -128,7 +170,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "geoCode", length = 255)
+    @Column(name = "geoCode", nullable = true, length = 255)
     public String getGeoCode() {
         return geoCode;
     }
@@ -138,7 +180,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "geoDescription", length = 255)
+    @Column(name = "geoDescription", nullable = true, length = 255)
     public String getGeoDescription() {
         return geoDescription;
     }
@@ -148,7 +190,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "rmsSimulationSet")
+    @Column(name = "rmsSimulationSet", nullable = true)
     public Integer getRmsSimulationSet() {
         return rmsSimulationSet;
     }
@@ -158,7 +200,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "importSequence")
+    @Column(name = "importSequence", nullable = true)
     public Integer getImportSequence() {
         return importSequence;
     }
@@ -168,7 +210,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "threadName", length = 255)
+    @Column(name = "threadName", nullable = true, length = 255)
     public String getThreadName() {
         return threadName;
     }
@@ -178,7 +220,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "udName", length = 255)
+    @Column(name = "udName", nullable = true, length = 255)
     public String getUdName() {
         return udName;
     }
@@ -188,7 +230,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "userOccurrenceBasis", length = 255)
+    @Column(name = "userOccurrenceBasis", nullable = true, length = 255)
     public String getUserOccurrenceBasis() {
         return userOccurrenceBasis;
     }
@@ -198,7 +240,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "defaultPltName", length = 255)
+    @Column(name = "defaultPltName", nullable = true, length = 255)
     public String getDefaultPltName() {
         return defaultPltName;
     }
@@ -208,7 +250,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "truncationThreshold", length = 255)
+    @Column(name = "truncationThreshold", nullable = true, length = 255)
     public String getTruncationThreshold() {
         return truncationThreshold;
     }
@@ -218,7 +260,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "truncationExchangeRate", length = 255)
+    @Column(name = "truncationExchangeRate", nullable = true, length = 255)
     public String getTruncationExchangeRate() {
         return truncationExchangeRate;
     }
@@ -228,7 +270,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "truncationCurrency", length = 255)
+    @Column(name = "truncationCurrency", nullable = true, length = 255)
     public String getTruncationCurrency() {
         return truncationCurrency;
     }
@@ -238,7 +280,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "sourceLossModelingBasis", length = 255)
+    @Column(name = "sourceLossModelingBasis", nullable = true, length = 255)
     public String getSourceLossModelingBasis() {
         return sourceLossModelingBasis;
     }
@@ -248,7 +290,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "deletedOn")
+    @Column(name = "deletedOn", nullable = true)
     public Timestamp getDeletedOn() {
         return deletedOn;
     }
@@ -258,7 +300,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "deletedDue", length = 255)
+    @Column(name = "deletedDue", nullable = true, length = 255)
     public String getDeletedDue() {
         return deletedDue;
     }
@@ -268,7 +310,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "deletedBy", length = 255)
+    @Column(name = "deletedBy", nullable = true, length = 255)
     public String getDeletedBy() {
         return deletedBy;
     }
@@ -278,7 +320,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "sourceLossEntityingBasis", length = 255)
+    @Column(name = "sourceLossEntityingBasis", nullable = true, length = 255)
     public String getSourceLossEntityingBasis() {
         return sourceLossEntityingBasis;
     }
@@ -288,7 +330,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "created_by", length = 255)
+    @Column(name = "created_by", nullable = true, length = 255)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -298,7 +340,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "created_on")
+    @Column(name = "created_on", nullable = true)
     public Timestamp getCreatedOn() {
         return createdOn;
     }
@@ -308,7 +350,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "last_modified_by", length = 255)
+    @Column(name = "last_modified_by", nullable = true, length = 255)
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -318,7 +360,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "last_modified_on", length = 255)
+    @Column(name = "last_modified_on", nullable = true, length = 255)
     public String getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -328,7 +370,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "last_generated")
+    @Column(name = "last_generated", nullable = true)
     public Timestamp getLastGenerated() {
         return lastGenerated;
     }
@@ -338,7 +380,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "basis_changed")
+    @Column(name = "basis_changed", nullable = true)
     public Boolean getBasisChanged() {
         return basisChanged;
     }
@@ -348,7 +390,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "narrative_changed")
+    @Column(name = "narrative_changed", nullable = true)
     public Boolean getNarrativeChanged() {
         return narrativeChanged;
     }
@@ -358,7 +400,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "previous_narrative")
+    @Column(name = "previous_narrative", nullable = true)
     public Integer getPreviousNarrative() {
         return previousNarrative;
     }
@@ -368,7 +410,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "current_narrative")
+    @Column(name = "current_narrative", nullable = true)
     public Integer getCurrentNarrative() {
         return currentNarrative;
     }
@@ -378,7 +420,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "createdDate")
+    @Column(name = "createdDate", nullable = true)
     public Date getCreatedDate() {
         return createdDate;
     }
@@ -388,7 +430,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "inuringPackageId")
+    @Column(name = "inuringPackageId", nullable = true)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }
@@ -398,7 +440,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "perilCode", length = 255)
+    @Column(name = "perilCode", nullable = true, length = 255)
     public String getPerilCode() {
         return perilCode;
     }
@@ -408,7 +450,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "pltLossDataFileName", length = 255)
+    @Column(name = "pltLossDataFileName", nullable = true, length = 255)
     public String getPltLossDataFileName() {
         return pltLossDataFileName;
     }
@@ -418,7 +460,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "pltLossDataFilePath", length = 255)
+    @Column(name = "pltLossDataFilePath", nullable = true, length = 255)
     public String getPltLossDataFilePath() {
         return pltLossDataFilePath;
     }
@@ -428,7 +470,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @Basic
-    @Column(name = "engine_type", length = 255)
+    @Column(name = "engine_type", nullable = true, length = 255)
     public String getEngineType() {
         return engineType;
     }
@@ -436,25 +478,172 @@ public class ScorPltHeaderEntity implements Serializable {
     public void setEngineType(String engineType) {
         this.engineType = engineType;
     }
-    
+
+    @Basic
+    @Column(name = "FKBinFileId", nullable = true)
+    public Integer getFkBinFileId() {
+        return fkBinFileId;
+    }
+
+    public void setFkBinFileId(Integer fkBinFileId) {
+        this.fkBinFileId = fkBinFileId;
+    }
+
+    @Id
+    @Column(name = "PKScorPltHeaderId", nullable = false)
+    public int getPkScorPltHeaderId() {
+        return pkScorPltHeaderId;
+    }
+
+    public void setPkScorPltHeaderId(int pkScorPltHeaderId) {
+        this.pkScorPltHeaderId = pkScorPltHeaderId;
+    }
+
+    @Basic
+    @Column(name = "projectId", nullable = true)
+    public Integer getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
+    @Basic
+    @Column(name = "regionPerilId", nullable = true)
+    public Integer getRegionPerilId() {
+        return regionPerilId;
+    }
+
+    public void setRegionPerilId(Integer regionPerilId) {
+        this.regionPerilId = regionPerilId;
+    }
+
+    @Basic
+    @Column(name = "rrAnalysisId", nullable = true)
+    public Integer getRrAnalysisId() {
+        return rrAnalysisId;
+    }
+
+    public void setRrAnalysisId(Integer rrAnalysisId) {
+        this.rrAnalysisId = rrAnalysisId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ScorPltHeaderEntity that = (ScorPltHeaderEntity) o;
+        return pkScorPltHeaderId == that.pkScorPltHeaderId &&
+                Objects.equals(pltType, that.pltType) &&
+                Objects.equals(publishToPricing, that.publishToPricing) &&
+                Objects.equals(pltSimulationPeriods, that.pltSimulationPeriods) &&
+                Objects.equals(generatedFromDefaultAdjustement, that.generatedFromDefaultAdjustement) &&
+                Objects.equals(ccyCode, that.ccyCode) &&
+                Objects.equals(geoCode, that.geoCode) &&
+                Objects.equals(geoDescription, that.geoDescription) &&
+                Objects.equals(rmsSimulationSet, that.rmsSimulationSet) &&
+                Objects.equals(importSequence, that.importSequence) &&
+                Objects.equals(threadName, that.threadName) &&
+                Objects.equals(udName, that.udName) &&
+                Objects.equals(userOccurrenceBasis, that.userOccurrenceBasis) &&
+                Objects.equals(defaultPltName, that.defaultPltName) &&
+                Objects.equals(truncationThreshold, that.truncationThreshold) &&
+                Objects.equals(truncationExchangeRate, that.truncationExchangeRate) &&
+                Objects.equals(truncationCurrency, that.truncationCurrency) &&
+                Objects.equals(sourceLossModelingBasis, that.sourceLossModelingBasis) &&
+                Objects.equals(deletedOn, that.deletedOn) &&
+                Objects.equals(deletedDue, that.deletedDue) &&
+                Objects.equals(deletedBy, that.deletedBy) &&
+                Objects.equals(sourceLossEntityingBasis, that.sourceLossEntityingBasis) &&
+                Objects.equals(createdBy, that.createdBy) &&
+                Objects.equals(createdOn, that.createdOn) &&
+                Objects.equals(lastModifiedBy, that.lastModifiedBy) &&
+                Objects.equals(lastModifiedOn, that.lastModifiedOn) &&
+                Objects.equals(lastGenerated, that.lastGenerated) &&
+                Objects.equals(basisChanged, that.basisChanged) &&
+                Objects.equals(narrativeChanged, that.narrativeChanged) &&
+                Objects.equals(previousNarrative, that.previousNarrative) &&
+                Objects.equals(currentNarrative, that.currentNarrative) &&
+                Objects.equals(createdDate, that.createdDate) &&
+                Objects.equals(inuringPackageId, that.inuringPackageId) &&
+                Objects.equals(perilCode, that.perilCode) &&
+                Objects.equals(pltLossDataFileName, that.pltLossDataFileName) &&
+                Objects.equals(pltLossDataFilePath, that.pltLossDataFilePath) &&
+                Objects.equals(engineType, that.engineType) &&
+                Objects.equals(fkBinFileId, that.fkBinFileId) &&
+                Objects.equals(projectId, that.projectId) &&
+                Objects.equals(regionPerilId, that.regionPerilId) &&
+                Objects.equals(rrAnalysisId, that.rrAnalysisId);
+    }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scorPltHeaderId, pltType, publishToPricing, pltSimulationPeriods, generatedFromDefaultAdjustement, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGenerated, basisChanged, narrativeChanged, previousNarrative, currentNarrative, createdDate, inuringPackageId, perilCode, pltLossDataFileName, pltLossDataFilePath, engineType, entity);
+        return Objects.hash(pltType, publishToPricing, pltSimulationPeriods, generatedFromDefaultAdjustement, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGenerated, basisChanged, narrativeChanged, previousNarrative, currentNarrative, createdDate, inuringPackageId, perilCode, pltLossDataFileName, pltLossDataFilePath, engineType, fkBinFileId, pkScorPltHeaderId, projectId, regionPerilId, rrAnalysisId);
     }
 
     @ManyToOne
-    @JoinColumn(name = "cloningSourceId", referencedColumnName = "id_scorpltheader")
-    public ScorPltHeaderEntity getScorPltHeaderByCloningSourceId() {
-        return scorPltHeaderByCloningSourceId;
+    @JoinColumn(name = "FKRRAnalysisId", referencedColumnName = "rrAnalysisId")
+    public RrAnalysisNewEntity getRrAnalysisNew() {
+        return rrAnalysisNew;
     }
 
-    public void setScorPltHeaderByCloningSourceId(ScorPltHeaderEntity scorPltHeaderByCloningSourceId) {
-        this.scorPltHeaderByCloningSourceId = scorPltHeaderByCloningSourceId;
+    public void setRrAnalysisNew(RrAnalysisNewEntity rrAnalysisNew) {
+        this.rrAnalysisNew = rrAnalysisNew;
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_entity", referencedColumnName = "id_entity")
+    @JoinColumn(name = "FKTargetRapId", referencedColumnName = "targetRapId")
+    public TargetRapEntity getTargetRap() {
+        return targetRap;
+    }
+
+    public void setTargetRap(TargetRapEntity targetRap) {
+        this.targetRap = targetRap;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId")
+    public RegionPerilEntity getRegionPeril() {
+        return regionPeril;
+    }
+
+    public void setRegionPeril(RegionPerilEntity regionPeril) {
+        this.regionPeril = regionPeril;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKProjectId", referencedColumnName = "projectId")
+    public ProjectEntity getProjectByFkProjectId() {
+        return projectByFkProjectId;
+    }
+
+    public void setProjectByFkProjectId(ProjectEntity projectByFkProjectId) {
+        this.projectByFkProjectId = projectByFkProjectId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKPreviousBasisId", referencedColumnName = "AdjustmentBasisId")
+    public AdjustmentBasisEntity getAdjustmentBasisByFkPreviousBasisId() {
+        return adjustmentBasisByFkPreviousBasisId;
+    }
+
+    public void setAdjustmentBasisByFkPreviousBasisId(AdjustmentBasisEntity adjustmentBasisByFkPreviousBasisId) {
+        this.adjustmentBasisByFkPreviousBasisId = adjustmentBasisByFkPreviousBasisId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKCurrentBasisId", referencedColumnName = "AdjustmentBasisId")
+    public AdjustmentBasisEntity getAdjustmentBasisByFkCurrentBasisId() {
+        return adjustmentBasisByFkCurrentBasisId;
+    }
+
+    public void setAdjustmentBasisByFkCurrentBasisId(AdjustmentBasisEntity adjustmentBasisByFkCurrentBasisId) {
+        this.adjustmentBasisByFkCurrentBasisId = adjustmentBasisByFkCurrentBasisId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKEntityId", referencedColumnName = "EntityId")
     public EntityEntity getEntity() {
         return entity;
     }
@@ -464,7 +653,7 @@ public class ScorPltHeaderEntity implements Serializable {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_market_channel", referencedColumnName = "id_market_channel",insertable = false, updatable = false)
+    @JoinColumn(name = "FKMarketChannelId", referencedColumnName = "MarketChannelID")
     public MarketChannelEntity getMarketChannel() {
         return marketChannel;
     }
@@ -473,117 +662,22 @@ public class ScorPltHeaderEntity implements Serializable {
         this.marketChannel = marketChannel;
     }
 
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "id_bin_file", referencedColumnName = "binFile_Id", table = "")
-    public BinFileEntity getBinFile() {
-        return binFile;
+    @ManyToOne
+    @JoinColumn(name = "FKCloningSourceId", referencedColumnName = "PKScorPltHeaderId")
+    public ScorPltHeaderEntity getScorPltHeader() {
+        return scorPltHeader;
     }
 
-    public void setBinFile(BinFileEntity binFile) {
-        this.binFile = binFile;
+    public void setScorPltHeader(ScorPltHeaderEntity scorPltHeader) {
+        this.scorPltHeader = scorPltHeader;
+    }
+    @ManyToOne
+    @JoinColumn(name = "FKBinFileId", referencedColumnName = "BinFileId")
+    public BinFileEntity getBinFileEntity() {
+        return binFileEntity;
     }
 
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "rrAnalysisId", referencedColumnName = "rrAnalysisId", table = "")
-    public RrAnalysisNewEntity getRrAnalysis() {
-        return rrAnalysis;
-    }
-
-    public void setRrAnalysis(RrAnalysisNewEntity rrAnalysisNewByRrAnalysisId) {
-        this.rrAnalysis = rrAnalysisNewByRrAnalysisId;
-    }
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "id_target_rap", referencedColumnName = "targetRapId", table = "")
-    public TargetRapEntity getTargetRap() {
-        return targetRap;
-    }
-
-    public void setTargetRap(TargetRapEntity targetRap) {
-        this.targetRap = targetRap;
-    }
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "regionPerilId", referencedColumnName = "regionPerilId", table = "")
-    public RegionPerilEntity getRegionPeril() {
-        return regionPeril;
-    }
-
-    public void setRegionPeril(RegionPerilEntity regionPeril) {
-        this.regionPeril = regionPeril;
-    }
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "projectId", referencedColumnName = "projectId", table = "")
-    public ProjectEntity getProject() {
-        return projectByProjectId;
-    }
-
-    public void setProject(ProjectEntity projectByProjectId) {
-        this.projectByProjectId = projectByProjectId;
-    }
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "previous_basis", referencedColumnName = "code", table = "")
-    public AdjustmentBasisEntity getAdjustmentBasisPrevious() {
-        return adjustmentBasisPrevious;
-    }
-
-    public void setAdjustmentBasisPrevious(AdjustmentBasisEntity adjustmentBasisByPreviousBasis) {
-        this.adjustmentBasisPrevious = adjustmentBasisByPreviousBasis;
-    }
-
-    @ManyToOne(cascade = {})
-    @JoinColumn(name = "current_basis", referencedColumnName = "code", table = "")
-    public AdjustmentBasisEntity getAdjustmentBasisCurrent() {
-        return adjustmentBasisCurrent;
-    }
-
-    public void setAdjustmentBasisCurrent(AdjustmentBasisEntity adjustmentBasisByCurrentBasis) {
-        this.adjustmentBasisCurrent = adjustmentBasisByCurrentBasis;
-    }
-
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
-
-    public ScorPltHeaderEntity(ScorPltHeaderEntity scorPltHeaderEntity) {
-        this.pltType = scorPltHeaderEntity.pltType;
-        this.publishToPricing = scorPltHeaderEntity.publishToPricing;
-        this.pltSimulationPeriods = scorPltHeaderEntity.pltSimulationPeriods;
-        this.generatedFromDefaultAdjustement = scorPltHeaderEntity.generatedFromDefaultAdjustement;
-        this.ccyCode = scorPltHeaderEntity.ccyCode;
-        this.geoCode = scorPltHeaderEntity.geoCode;
-        this.geoDescription = scorPltHeaderEntity.geoDescription;
-        this.rmsSimulationSet = scorPltHeaderEntity.rmsSimulationSet;
-        this.importSequence = scorPltHeaderEntity.importSequence;
-        this.threadName = scorPltHeaderEntity.threadName;
-        this.udName = scorPltHeaderEntity.udName;
-        this.userOccurrenceBasis = scorPltHeaderEntity.userOccurrenceBasis;
-        this.defaultPltName = scorPltHeaderEntity.defaultPltName;
-        this.truncationThreshold = scorPltHeaderEntity.truncationThreshold;
-        this.truncationExchangeRate = scorPltHeaderEntity.truncationExchangeRate;
-        this.truncationCurrency = scorPltHeaderEntity.truncationCurrency;
-        this.sourceLossModelingBasis = scorPltHeaderEntity.sourceLossModelingBasis;
-        this.sourceLossEntityingBasis = scorPltHeaderEntity.sourceLossEntityingBasis;
-        this.basisChanged = scorPltHeaderEntity.basisChanged;
-        this.narrativeChanged = scorPltHeaderEntity.narrativeChanged;
-        this.previousNarrative = scorPltHeaderEntity.previousNarrative;
-        this.currentNarrative = scorPltHeaderEntity.currentNarrative;
-        this.inuringPackageId = scorPltHeaderEntity.inuringPackageId;
-        this.perilCode = scorPltHeaderEntity.perilCode;
-        this.pltLossDataFileName = scorPltHeaderEntity.pltLossDataFileName;
-        this.pltLossDataFilePath = scorPltHeaderEntity.pltLossDataFilePath;
-        this.engineType = scorPltHeaderEntity.engineType;
-        this.rrAnalysis = scorPltHeaderEntity.rrAnalysis;
-        this.targetRap = scorPltHeaderEntity.targetRap;
-        this.regionPeril = scorPltHeaderEntity.regionPeril;
-        this.projectByProjectId = scorPltHeaderEntity.projectByProjectId;
-        this.scorPltHeaderByCloningSourceId = scorPltHeaderEntity.scorPltHeaderByCloningSourceId;
-        this.entity = scorPltHeaderEntity.entity;
-        this.marketChannel = scorPltHeaderEntity.marketChannel;
-        this.adjustmentBasisPrevious = scorPltHeaderEntity.adjustmentBasisPrevious;
-        this.adjustmentBasisCurrent = scorPltHeaderEntity.adjustmentBasisCurrent;
+    public void setBinFileEntity(BinFileEntity binFileEntity) {
+        this.binFileEntity = binFileEntity;
     }
 }

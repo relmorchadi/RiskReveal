@@ -51,7 +51,7 @@ public class RrAnalysisEntity {
 
     @Id
     @Basic
-    @Column(name = "_id", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "_id", nullable = true, length = 255)
     public String getId() {
         return id;
     }
@@ -71,7 +71,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "analysisLevel", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "analysisLevel", nullable = true, length = 255)
     public String getAnalysisLevel() {
         return analysisLevel;
     }
@@ -81,7 +81,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "analysisName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "analysisName", nullable = true, length = 255)
     public String getAnalysisName() {
         return analysisName;
     }
@@ -91,7 +91,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "creationDate", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "creationDate", nullable = true, length = 255)
     public String getCreationDate() {
         return creationDate;
     }
@@ -111,7 +111,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "dataSourceName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "dataSourceName", nullable = true, length = 255)
     public String getDataSourceName() {
         return dataSourceName;
     }
@@ -121,7 +121,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "defaultOccurrenceBasis", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "defaultOccurrenceBasis", nullable = true, length = 255)
     public String getDefaultOccurrenceBasis() {
         return defaultOccurrenceBasis;
     }
@@ -131,7 +131,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "description", nullable = true, length = 255)
     public String getDescription() {
         return description;
     }
@@ -141,7 +141,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "exchangeRate", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "exchangeRate", nullable = true, length = 255)
     public String getExchangeRate() {
         return exchangeRate;
     }
@@ -151,7 +151,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "financialPerspective", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "financialPerspective", nullable = true, length = 255)
     public String getFinancialPerspective() {
         return financialPerspective;
     }
@@ -161,7 +161,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "geoCode", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "geoCode", nullable = true, length = 255)
     public String getGeoCode() {
         return geoCode;
     }
@@ -171,7 +171,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "grain", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "grain", nullable = true, length = 255)
     public String getGrain() {
         return grain;
     }
@@ -181,7 +181,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "grouped", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "grouped", nullable = true, length = 255)
     public String getGrouped() {
         return grouped;
     }
@@ -191,7 +191,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "importStatus", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "importStatus", nullable = true, length = 255)
     public String getImportStatus() {
         return importStatus;
     }
@@ -201,7 +201,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "importedDate", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "importedDate", nullable = true, length = 255)
     public String getImportedDate() {
         return importedDate;
     }
@@ -221,7 +221,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "lossAmplification", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "lossAmplification", nullable = true, length = 255)
     public String getLossAmplification() {
         return lossAmplification;
     }
@@ -231,7 +231,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "model", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "model", nullable = true, length = 255)
     public String getModel() {
         return model;
     }
@@ -241,7 +241,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "modelingResultDataSourceId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "modelingResultDataSourceId", nullable = true, length = 255)
     public String getEntityingResultDataSourceId() {
         return modelingResultDataSourceId;
     }
@@ -251,7 +251,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "overrideReasonText", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "overrideReasonText", nullable = true, length = 255)
     public String getOverrideReasonText() {
         return overrideReasonText;
     }
@@ -261,7 +261,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "peril", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "peril", nullable = true, length = 255)
     public String getPeril() {
         return peril;
     }
@@ -271,7 +271,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "profileKey", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "profileKey", nullable = true, length = 255)
     public String getProfileKey() {
         return profileKey;
     }
@@ -281,7 +281,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "profileName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "profileName", nullable = true, length = 255)
     public String getProfileName() {
         return profileName;
     }
@@ -291,7 +291,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "projectId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "projectId", nullable = true, length = 255)
     public String getProjectId() {
         return projectId;
     }
@@ -301,7 +301,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "projectImportRunId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "projectImportRunId", nullable = true, length = 255)
     public String getProjectImportRunId() {
         return projectImportRunId;
     }
@@ -311,7 +311,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "proportion", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "proportion", nullable = true, length = 255)
     public String getProportion() {
         return proportion;
     }
@@ -321,7 +321,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "region", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "region", nullable = true, length = 255)
     public String getRegion() {
         return region;
     }
@@ -331,7 +331,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "regionPeril", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "regionPeril", nullable = true, length = 255)
     public String getRegionPeril() {
         return regionPeril;
     }
@@ -341,7 +341,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "runDate", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "runDate", nullable = true, length = 255)
     public String getRunDate() {
         return runDate;
     }
@@ -351,7 +351,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "sourceCurrency", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceCurrency", nullable = true, length = 255)
     public String getSourceCurrency() {
         return sourceCurrency;
     }
@@ -361,7 +361,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "sourceEntitylingSystem", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceEntitylingSystem", nullable = true, length = 255)
     public String getSourceEntitylingSystem() {
         return sourceEntitylingSystem;
     }
@@ -371,7 +371,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "sourceEntitylingSystemInstance", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceEntitylingSystemInstance", nullable = true, length = 255)
     public String getSourceEntitylingSystemInstance() {
         return sourceEntitylingSystemInstance;
     }
@@ -391,7 +391,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "sourceEntitylingVendor", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceEntitylingVendor", nullable = true, length = 255)
     public String getSourceEntitylingVendor() {
         return sourceEntitylingVendor;
     }
@@ -401,7 +401,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "subPeril", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "subPeril", nullable = true, length = 255)
     public String getSubPeril() {
         return subPeril;
     }
@@ -411,7 +411,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "tags", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "tags", nullable = true, length = 255)
     public String getTags() {
         return tags;
     }
@@ -421,7 +421,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "targetCurrency", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetCurrency", nullable = true, length = 255)
     public String getTargetCurrency() {
         return targetCurrency;
     }
@@ -431,7 +431,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "targetCurrencyBasis", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetCurrencyBasis", nullable = true, length = 255)
     public String getTargetCurrencyBasis() {
         return targetCurrencyBasis;
     }
@@ -441,7 +441,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "unitMultiplier", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "unitMultiplier", nullable = true, length = 255)
     public String getUnitMultiplier() {
         return unitMultiplier;
     }
@@ -451,7 +451,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "userNotes", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "userNotes", nullable = true, length = 255)
     public String getUserNotes() {
         return userNotes;
     }
@@ -461,7 +461,7 @@ public class RrAnalysisEntity {
     }
 
     @Basic
-    @Column(name = "userOccurrenceBasis", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "userOccurrenceBasis", nullable = true, length = 255)
     public String getUserOccurrenceBasis() {
         return userOccurrenceBasis;
     }

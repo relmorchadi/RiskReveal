@@ -28,7 +28,7 @@ public class RmsEntityDataSourceEntity {
     }
 
     @Basic
-    @Column(name = "source", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "source", nullable = true, length = 255)
     public String getSource() {
         return source;
     }
@@ -38,7 +38,7 @@ public class RmsEntityDataSourceEntity {
     }
 
     @Basic
-    @Column(name = "rmsId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "rmsId", nullable = true, length = 255)
     public String getRmsId() {
         return rmsId;
     }
@@ -48,7 +48,7 @@ public class RmsEntityDataSourceEntity {
     }
 
     @Basic
-    @Column(name = "instanceName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "instanceName", nullable = true, length = 255)
     public String getInstanceName() {
         return instanceName;
     }
@@ -58,7 +58,7 @@ public class RmsEntityDataSourceEntity {
     }
 
     @Basic
-    @Column(name = "instanceId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "instanceId", nullable = true, length = 255)
     public String getInstanceId() {
         return instanceId;
     }
@@ -68,7 +68,7 @@ public class RmsEntityDataSourceEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "name", nullable = true, length = 255)
     public String getName() {
         return name;
     }
@@ -78,7 +78,7 @@ public class RmsEntityDataSourceEntity {
     }
 
     @Basic
-    @Column(name = "type", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "type", nullable = true, length = 255)
     public String getType() {
         return type;
     }

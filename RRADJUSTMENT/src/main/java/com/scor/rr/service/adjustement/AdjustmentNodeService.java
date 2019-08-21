@@ -3,18 +3,16 @@ package com.scor.rr.service.adjustement;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
-import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
-import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
-import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
@@ -69,10 +67,10 @@ public class AdjustmentNodeService {
 
     public List<AdjustmentNodeEntity> findByThread(Integer threadId){
         return adjustmentnodeRepository.findAll().stream().filter(adjustmentNodeEntity ->
-                adjustmentNodeEntity.getAdjustmentThread().getIdAdjustmentThread() == threadId)
+                adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId() == threadId)
                 .collect(Collectors.toList());
     }
-
+    @Transactional
     public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest){
         AdjustmentNodeEntity adjustmentNodeEntity = new AdjustmentNodeEntity();
         if(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).isPresent()) {
@@ -105,13 +103,13 @@ public class AdjustmentNodeService {
         }
     }
 
-    public void delete(Integer id) {
-        this.adjustmentnodeRepository.delete(
-                this.adjustmentnodeRepository.
-                        findById(id)
-                        .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
-        );
-    }
+//    public void delete(Integer id) {
+//        this.adjustmentnodeRepository.delete(
+//                this.adjustmentnodeRepository.
+//                        findById(id)
+//                        .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
+//        );
+//    }
     private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentNodeRequest parameterRequest) {
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
             adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(),node));
@@ -141,7 +139,7 @@ public class AdjustmentNodeService {
 
     private void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentNodeRequest parameterRequest) {
         try {
-            File file = new File("src/main/resources/file/peatData"+node.getIdAdjustmentNode()+".csv");
+            File file = new File("src/main/resources/file/peatData"+node.getAdjustmentNodeId()+".csv");
             FileUtils.touch(file);
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
             csvpltFileWriter.writePeatData(parameterRequest.getPeatData(),file);

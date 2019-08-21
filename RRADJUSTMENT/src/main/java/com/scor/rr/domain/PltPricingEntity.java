@@ -19,7 +19,7 @@ public class PltPricingEntity {
     private Timestamp lastUpdateRiskReveal;
 
     @Id
-    @Column(name = "pltPricingId", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltPricingId", nullable = false, length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -49,7 +49,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "countryIsoCode", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "countryIsoCode", nullable = true, length = 255)
     public String getCountryIsoCode() {
         return countryIsoCode;
     }
@@ -59,7 +59,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "importedOmegaId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "importedOmegaId", nullable = true, length = 255)
     public String getImportedOmegaId() {
         return importedOmegaId;
     }
@@ -69,7 +69,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "name", nullable = true, length = 255)
     public String getName() {
         return name;
     }
@@ -79,7 +79,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "pricingStructure", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "pricingStructure", nullable = true, length = 255)
     public String getPricingStructure() {
         return pricingStructure;
     }
@@ -89,7 +89,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "status", nullable = true, length = 255)
     public String getStatus() {
         return status;
     }

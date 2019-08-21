@@ -6,25 +6,25 @@ import java.util.Objects;
 @Entity
 @Table(name = "DefaultRetPerBandingParams", schema = "dbo", catalog = "RiskReveal")
 public class DefaultRetPerBandingParamsEntity {
-    private int idParam;
+    private int defaultRetPerBandingParamsId;
     private Double lmf;
     private Double rpmf;
     private String peatDataPath;
     private String adjustmentReturnPeriodPath;
-    private DefaultAdjustmentNodeEntity defaultAdjustmentNodeByIdDefaultNode;
+    private DefaultAdjustmentNodeEntity defaultAdjustmentNodeByFkDefaultNode;
 
     @Id
-    @Column(name = "id_param", nullable = false)
-    public int getIdParam() {
-        return idParam;
+    @Column(name = "DefaultRetPerBandingParamsId", nullable = false)
+    public int getDefaultRetPerBandingParamsId() {
+        return defaultRetPerBandingParamsId;
     }
 
-    public void setIdParam(int idParam) {
-        this.idParam = idParam;
+    public void setDefaultRetPerBandingParamsId(int defaultRetPerBandingParamsId) {
+        this.defaultRetPerBandingParamsId = defaultRetPerBandingParamsId;
     }
 
     @Basic
-    @Column(name = "lmf", precision = 7)
+    @Column(name = "lmf", nullable = true, precision = 7)
     public Double getLmf() {
         return lmf;
     }
@@ -34,7 +34,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "rpmf", precision = 7)
+    @Column(name = "rpmf", nullable = true, precision = 7)
     public Double getRpmf() {
         return rpmf;
     }
@@ -44,7 +44,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "peat_data_path", length = 200)
+    @Column(name = "PeatDataPath", nullable = true, length = 200)
     public String getPeatDataPath() {
         return peatDataPath;
     }
@@ -54,7 +54,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "adjustment_return_period_path", length = 200)
+    @Column(name = "AdjustmentReturnPeriodPath", nullable = true, length = 200)
     public String getAdjustmentReturnPeriodPath() {
         return adjustmentReturnPeriodPath;
     }
@@ -68,7 +68,7 @@ public class DefaultRetPerBandingParamsEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultRetPerBandingParamsEntity that = (DefaultRetPerBandingParamsEntity) o;
-        return idParam == that.idParam &&
+        return defaultRetPerBandingParamsId == that.defaultRetPerBandingParamsId &&
                 Objects.equals(lmf, that.lmf) &&
                 Objects.equals(rpmf, that.rpmf) &&
                 Objects.equals(peatDataPath, that.peatDataPath) &&
@@ -77,16 +77,16 @@ public class DefaultRetPerBandingParamsEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(idParam, lmf, rpmf, peatDataPath, adjustmentReturnPeriodPath);
+        return Objects.hash(defaultRetPerBandingParamsId, lmf, rpmf, peatDataPath, adjustmentReturnPeriodPath);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_default_node", referencedColumnName = "id_default_adjustment_node")
-    public DefaultAdjustmentNodeEntity getDefaultAdjustmentNodeByIdDefaultNode() {
-        return defaultAdjustmentNodeByIdDefaultNode;
+    @JoinColumn(name = "FKDefaultNode", referencedColumnName = "DefaultAdjustmentNodeId")
+    public DefaultAdjustmentNodeEntity getDefaultAdjustmentNodeByFkDefaultNode() {
+        return defaultAdjustmentNodeByFkDefaultNode;
     }
 
-    public void setDefaultAdjustmentNodeByIdDefaultNode(DefaultAdjustmentNodeEntity defaultAdjustmentNodeByIdDefaultNode) {
-        this.defaultAdjustmentNodeByIdDefaultNode = defaultAdjustmentNodeByIdDefaultNode;
+    public void setDefaultAdjustmentNodeByFkDefaultNode(DefaultAdjustmentNodeEntity defaultAdjustmentNodeByFkDefaultNode) {
+        this.defaultAdjustmentNodeByFkDefaultNode = defaultAdjustmentNodeByFkDefaultNode;
     }
 }

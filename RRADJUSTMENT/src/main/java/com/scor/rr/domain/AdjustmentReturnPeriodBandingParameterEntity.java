@@ -6,33 +6,38 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentReturnPeriodBandingParameter", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentReturnPeriodBandingParameterEntity {
-    private int idAdjustmentParameter;
+    private int adjustmentReturnPeriodBandingParameterId;
     private double returnPeriod;
     private double factor;
-    private AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode;
+    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId;
 
-    public AdjustmentReturnPeriodBandingParameterEntity() {
-    }
-
-    public AdjustmentReturnPeriodBandingParameterEntity(double returnPeriod, double factor, AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
+    public AdjustmentReturnPeriodBandingParameterEntity(double returnPeriod, double factor, AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
         this.returnPeriod = returnPeriod;
         this.factor = factor;
-        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
+        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
+    }
+
+    public AdjustmentReturnPeriodBandingParameterEntity() {
+
+    }
+
+    public AdjustmentReturnPeriodBandingParameterEntity(double returnPeriod, double factor) {
+        this.returnPeriod = returnPeriod;
+        this.factor = factor;
     }
 
     @Id
-    @Column(name = "id_adjustment_parameter", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getIdAdjustmentParameter() {
-        return idAdjustmentParameter;
+    @Column(name = "AdjustmentReturnPeriodBandingParameterId", nullable = false)
+    public int getAdjustmentReturnPeriodBandingParameterId() {
+        return adjustmentReturnPeriodBandingParameterId;
     }
 
-    public void setIdAdjustmentParameter(int idAdjustmentParameter) {
-        this.idAdjustmentParameter = idAdjustmentParameter;
+    public void setAdjustmentReturnPeriodBandingParameterId(int adjustmentReturnPeriodBandingParameterId) {
+        this.adjustmentReturnPeriodBandingParameterId = adjustmentReturnPeriodBandingParameterId;
     }
 
     @Basic
-    @Column(name = "return_period", nullable = true, precision = 7)
+    @Column(name = "ReturnPeriod", nullable = true, precision = 7)
     public double getReturnPeriod() {
         return returnPeriod;
     }
@@ -42,7 +47,7 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
     }
 
     @Basic
-    @Column(name = "factor", nullable = true, precision = 7)
+    @Column(name = "Factor", nullable = true, precision = 7)
     public double getFactor() {
         return factor;
     }
@@ -56,23 +61,23 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentReturnPeriodBandingParameterEntity that = (AdjustmentReturnPeriodBandingParameterEntity) o;
-        return idAdjustmentParameter == that.idAdjustmentParameter &&
+        return adjustmentReturnPeriodBandingParameterId == that.adjustmentReturnPeriodBandingParameterId &&
                 Objects.equals(returnPeriod, that.returnPeriod) &&
                 Objects.equals(factor, that.factor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idAdjustmentParameter, returnPeriod, factor);
+        return Objects.hash(adjustmentReturnPeriodBandingParameterId, returnPeriod, factor);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_node", referencedColumnName = "id_adjustment_node")
-    public AdjustmentNodeEntity getAdjustmentNodeByIdAdjustmentNode() {
-        return adjustmentNodeByIdAdjustmentNode;
+    @JoinColumn(name = "FKAdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeId() {
+        return adjustmentNodeByFkAdjustmentNodeId;
     }
 
-    public void setAdjustmentNodeByIdAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
-        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
+    public void setAdjustmentNodeByFkAdjustmentNodeId(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
+        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
     }
 }

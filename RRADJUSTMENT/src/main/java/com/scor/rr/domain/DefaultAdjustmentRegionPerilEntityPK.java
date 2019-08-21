@@ -6,27 +6,27 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class DefaultAdjustmentRegionPerilEntityPK implements Serializable {
-    private int idDefaultAdjustment;
-    private int idRegionPeril;
+    private int fkDefaultAdjustmentId;
+    private int fkRegionPerilId;
 
-    @Column(name = "id_default_adjustment", nullable = false)
+    @Column(name = "FKDefaultAdjustmentId", nullable = false)
     @Id
-    public int getIdDefaultAdjustment() {
-        return idDefaultAdjustment;
+    public int getFkDefaultAdjustmentId() {
+        return fkDefaultAdjustmentId;
     }
 
-    public void setIdDefaultAdjustment(int idDefaultAdjustment) {
-        this.idDefaultAdjustment = idDefaultAdjustment;
+    public void setFkDefaultAdjustmentId(int fkDefaultAdjustmentId) {
+        this.fkDefaultAdjustmentId = fkDefaultAdjustmentId;
     }
 
-    @Column(name = "id_region_peril", nullable = false)
+    @Column(name = "FKRegionPerilId", nullable = false)
     @Id
-    public int getIdRegionPeril() {
-        return idRegionPeril;
+    public int getFkRegionPerilId() {
+        return fkRegionPerilId;
     }
 
-    public void setIdRegionPeril(int idRegionPeril) {
-        this.idRegionPeril = idRegionPeril;
+    public void setFkRegionPerilId(int fkRegionPerilId) {
+        this.fkRegionPerilId = fkRegionPerilId;
     }
 
     @Override
@@ -34,12 +34,12 @@ public class DefaultAdjustmentRegionPerilEntityPK implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentRegionPerilEntityPK that = (DefaultAdjustmentRegionPerilEntityPK) o;
-        return idDefaultAdjustment == that.idDefaultAdjustment &&
-                idRegionPeril == that.idRegionPeril;
+        return fkDefaultAdjustmentId == that.fkDefaultAdjustmentId &&
+                fkRegionPerilId == that.fkRegionPerilId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idDefaultAdjustment, idRegionPeril);
+        return Objects.hash(fkDefaultAdjustmentId, fkRegionPerilId);
     }
 }

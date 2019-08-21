@@ -14,10 +14,10 @@ public class RrAnalysisNewEntity {
     private Timestamp creationDate;
     private Timestamp runDate;
     private String importStatus;
-    private String sourceEntitylingSystemInstance;
-    private String sourceEntitylingVendor;
-    private String sourceEntitylingSystem;
-    private String sourceEntitylingSystemVersion;
+    private String sourceModellingSystemInstance;
+    private String sourceModellingVendor;
+    private String sourceModellingSystem;
+    private String sourceModellingSystemVersion;
     private Long dataSourceId;
     private String dataSourceName;
     private String fileName;
@@ -51,7 +51,7 @@ public class RrAnalysisNewEntity {
     private String useres;
     private String overrideReasonText;
     private String resultName;
-    private String sourceLossEntitylingBasis;
+    private String sourceLossModellingBasis;
     private String sourceLossTableType;
     private String eventSet;
     private String modelModule;
@@ -62,34 +62,15 @@ public class RrAnalysisNewEntity {
     private String occurrenceBasisOverrideReason;
     private String occurenceBasisOverridenBy;
     private String metadata;
-    private String sourceModellingSystemInstance;
-    private String sourceModellingVendor;
-    private String sourceModellingSystem;
-    private String sourceModellingSystemVersion;
-    private String sourceLossModellingBasis;
-
-    @Basic
-    @Column(name = "model", length = 255,insertable = false ,updatable = false)
-    public String getModel() {
-        return model;
-    }
-
-    public void setModel(String model) {
-        this.model = model;
-    }
-
-    @Basic
-    @Column(name = "modelModule", length = 255,insertable = false ,updatable = false)
-    public String getModelModule() {
-        return modelModule;
-    }
-
-    public void setModelModule(String modelModule) {
-        this.modelModule = modelModule;
-    }
+    private String sourceEntitylingSystem;
+    private String sourceEntitylingSystemInstance;
+    private String sourceEntitylingSystemVersion;
+    private String sourceEntitylingVendor;
+    private String sourceLossEntitylingBasis;
+    private ProjectImportRunEntity projectImportRunByProjectImportRunId;
 
     @Id
-    @Column(name = "rrAnalysisId", nullable = false,insertable = false ,updatable = false)
+    @Column(name = "rrAnalysisId", nullable = false)
     public int getRrAnalysisId() {
         return rrAnalysisId;
     }
@@ -99,7 +80,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "projectId",insertable = false ,updatable = false)
+    @Column(name = "projectId", nullable = true)
     public Integer getProjectId() {
         return projectId;
     }
@@ -109,7 +90,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "importedDate",insertable = false ,updatable = false)
+    @Column(name = "importedDate", nullable = true)
     public Timestamp getImportedDate() {
         return importedDate;
     }
@@ -119,7 +100,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "creationDate",insertable = false ,updatable = false)
+    @Column(name = "creationDate", nullable = true)
     public Timestamp getCreationDate() {
         return creationDate;
     }
@@ -129,7 +110,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "runDate",insertable = false ,updatable = false)
+    @Column(name = "runDate", nullable = true)
     public Timestamp getRunDate() {
         return runDate;
     }
@@ -139,7 +120,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "importStatus", length = 255,insertable = false ,updatable = false)
+    @Column(name = "importStatus", nullable = true, length = 255)
     public String getImportStatus() {
         return importStatus;
     }
@@ -149,47 +130,47 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "sourceEntitylingSystemInstance", length = 255,insertable = false ,updatable = false)
-    public String getSourceEntitylingSystemInstance() {
-        return sourceEntitylingSystemInstance;
+    @Column(name = "sourceModellingSystemInstance", nullable = true, length = 255)
+    public String getSourceModellingSystemInstance() {
+        return sourceModellingSystemInstance;
     }
 
-    public void setSourceEntitylingSystemInstance(String sourceEntitylingSystemInstance) {
-        this.sourceEntitylingSystemInstance = sourceEntitylingSystemInstance;
-    }
-
-    @Basic
-    @Column(name = "sourceEntitylingVendor", length = 255,insertable = false ,updatable = false)
-    public String getSourceEntitylingVendor() {
-        return sourceEntitylingVendor;
-    }
-
-    public void setSourceEntitylingVendor(String sourceEntitylingVendor) {
-        this.sourceEntitylingVendor = sourceEntitylingVendor;
+    public void setSourceModellingSystemInstance(String sourceModellingSystemInstance) {
+        this.sourceModellingSystemInstance = sourceModellingSystemInstance;
     }
 
     @Basic
-    @Column(name = "sourceEntitylingSystem", length = 255,insertable = false ,updatable = false)
-    public String getSourceEntitylingSystem() {
-        return sourceEntitylingSystem;
+    @Column(name = "sourceModellingVendor", nullable = true, length = 255)
+    public String getSourceModellingVendor() {
+        return sourceModellingVendor;
     }
 
-    public void setSourceEntitylingSystem(String sourceEntitylingSystem) {
-        this.sourceEntitylingSystem = sourceEntitylingSystem;
-    }
-
-    @Basic
-    @Column(name = "sourceEntitylingSystemVersion", length = 255,insertable = false ,updatable = false)
-    public String getSourceEntitylingSystemVersion() {
-        return sourceEntitylingSystemVersion;
-    }
-
-    public void setSourceEntitylingSystemVersion(String sourceEntitylingSystemVersion) {
-        this.sourceEntitylingSystemVersion = sourceEntitylingSystemVersion;
+    public void setSourceModellingVendor(String sourceModellingVendor) {
+        this.sourceModellingVendor = sourceModellingVendor;
     }
 
     @Basic
-    @Column(name = "dataSourceId",insertable = false ,updatable = false)
+    @Column(name = "sourceModellingSystem", nullable = true, length = 255)
+    public String getSourceModellingSystem() {
+        return sourceModellingSystem;
+    }
+
+    public void setSourceModellingSystem(String sourceModellingSystem) {
+        this.sourceModellingSystem = sourceModellingSystem;
+    }
+
+    @Basic
+    @Column(name = "sourceModellingSystemVersion", nullable = true, length = 255)
+    public String getSourceModellingSystemVersion() {
+        return sourceModellingSystemVersion;
+    }
+
+    public void setSourceModellingSystemVersion(String sourceModellingSystemVersion) {
+        this.sourceModellingSystemVersion = sourceModellingSystemVersion;
+    }
+
+    @Basic
+    @Column(name = "dataSourceId", nullable = true)
     public Long getDataSourceId() {
         return dataSourceId;
     }
@@ -199,7 +180,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "dataSourceName", length = 255,insertable = false ,updatable = false)
+    @Column(name = "dataSourceName", nullable = true, length = 255)
     public String getDataSourceName() {
         return dataSourceName;
     }
@@ -209,7 +190,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "fileName", length = 255,insertable = false ,updatable = false)
+    @Column(name = "fileName", nullable = true, length = 255)
     public String getFileName() {
         return fileName;
     }
@@ -219,7 +200,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "analysisId",insertable = false ,updatable = false)
+    @Column(name = "analysisId", nullable = true)
     public Integer getAnalysisId() {
         return analysisId;
     }
@@ -229,7 +210,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "analysisName", length = 255,insertable = false ,updatable = false)
+    @Column(name = "analysisName", nullable = true, length = 255)
     public String getAnalysisName() {
         return analysisName;
     }
@@ -239,7 +220,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "grain", length = 255,insertable = false ,updatable = false)
+    @Column(name = "grain", nullable = true, length = 255)
     public String getGrain() {
         return grain;
     }
@@ -249,7 +230,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "financialPerspective", length = 255,insertable = false ,updatable = false)
+    @Column(name = "financialPerspective", nullable = true, length = 255)
     public String getFinancialPerspective() {
         return financialPerspective;
     }
@@ -259,7 +240,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "treatyLabel", length = 255,insertable = false ,updatable = false)
+    @Column(name = "treatyLabel", nullable = true, length = 255)
     public String getTreatyLabel() {
         return treatyLabel;
     }
@@ -269,7 +250,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "treatyTag", length = 255,insertable = false ,updatable = false)
+    @Column(name = "treatyTag", nullable = true, length = 255)
     public String getTreatyTag() {
         return treatyTag;
     }
@@ -279,7 +260,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "peril", length = 255,insertable = false ,updatable = false)
+    @Column(name = "peril", nullable = true, length = 255)
     public String getPeril() {
         return peril;
     }
@@ -289,7 +270,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "geoCode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "geoCode", nullable = true, length = 255)
     public String getGeoCode() {
         return geoCode;
     }
@@ -299,7 +280,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "regionPeril", length = 255,insertable = false ,updatable = false)
+    @Column(name = "regionPeril", nullable = true, length = 255)
     public String getRegionPeril() {
         return regionPeril;
     }
@@ -309,7 +290,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "sourceCurrency", length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceCurrency", nullable = true, length = 255)
     public String getSourceCurrency() {
         return sourceCurrency;
     }
@@ -319,7 +300,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "targetCurrency", length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetCurrency", nullable = true, length = 255)
     public String getTargetCurrency() {
         return targetCurrency;
     }
@@ -329,7 +310,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "targetCurrencyBasis", length = 255,insertable = false ,updatable = false)
+    @Column(name = "targetCurrencyBasis", nullable = true, length = 255)
     public String getTargetCurrencyBasis() {
         return targetCurrencyBasis;
     }
@@ -339,7 +320,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "exchangeRate", precision = 7,insertable = false ,updatable = false)
+    @Column(name = "exchangeRate", nullable = true, precision = 7)
     public BigDecimal getExchangeRate() {
         return exchangeRate;
     }
@@ -349,7 +330,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "defaultOccurrenceBasis", length = 255,insertable = false ,updatable = false)
+    @Column(name = "defaultOccurrenceBasis", nullable = true, length = 255)
     public String getDefaultOccurrenceBasis() {
         return defaultOccurrenceBasis;
     }
@@ -359,7 +340,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "userOccurrenceBasis", length = 255,insertable = false ,updatable = false)
+    @Column(name = "userOccurrenceBasis", nullable = true, length = 255)
     public String getUserOccurrenceBasis() {
         return userOccurrenceBasis;
     }
@@ -369,7 +350,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "proportion", precision = 7,insertable = false ,updatable = false)
+    @Column(name = "proportion", nullable = true, precision = 7)
     public BigDecimal getProportion() {
         return proportion;
     }
@@ -379,7 +360,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "proxyScalingBasis", length = 255,insertable = false ,updatable = false)
+    @Column(name = "proxyScalingBasis", nullable = true, length = 255)
     public String getProxyScalingBasis() {
         return proxyScalingBasis;
     }
@@ -389,7 +370,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "proxyScalingNarrative", length = 255,insertable = false ,updatable = false)
+    @Column(name = "proxyScalingNarrative", nullable = true, length = 255)
     public String getProxyScalingNarrative() {
         return proxyScalingNarrative;
     }
@@ -399,7 +380,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "unitMultiplier", precision = 7,insertable = false ,updatable = false)
+    @Column(name = "unitMultiplier", nullable = true, precision = 7)
     public BigDecimal getUnitMultiplier() {
         return unitMultiplier;
     }
@@ -409,7 +390,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "multiplierBasis", length = 255,insertable = false ,updatable = false)
+    @Column(name = "multiplierBasis", nullable = true, length = 255)
     public String getMultiplierBasis() {
         return multiplierBasis;
     }
@@ -419,7 +400,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "multiplierNarrative", length = 255,insertable = false ,updatable = false)
+    @Column(name = "multiplierNarrative", nullable = true, length = 255)
     public String getMultiplierNarrative() {
         return multiplierNarrative;
     }
@@ -429,7 +410,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "profileKey", length = 255,insertable = false ,updatable = false)
+    @Column(name = "profileKey", nullable = true, length = 255)
     public String getProfileKey() {
         return profileKey;
     }
@@ -439,7 +420,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "description", length = 255,insertable = false ,updatable = false)
+    @Column(name = "description", nullable = true, length = 255)
     public String getDescription() {
         return description;
     }
@@ -449,7 +430,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "analysisLevel", length = 255,insertable = false ,updatable = false)
+    @Column(name = "analysisLevel", nullable = true, length = 255)
     public String getAnalysisLevel() {
         return analysisLevel;
     }
@@ -459,7 +440,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "lossAmplification", length = 255,insertable = false ,updatable = false)
+    @Column(name = "lossAmplification", nullable = true, length = 255)
     public String getLossAmplification() {
         return lossAmplification;
     }
@@ -469,17 +450,17 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "model", length = 255,insertable = false ,updatable = false)
-    public String getEntity() {
+    @Column(name = "model", nullable = true, length = 255)
+    public String getModel() {
         return model;
     }
 
-    public void setEntity(String model) {
+    public void setModel(String model) {
         this.model = model;
     }
 
     @Basic
-    @Column(name = "tags", length = 255,insertable = false ,updatable = false)
+    @Column(name = "tags", nullable = true, length = 255)
     public String getTags() {
         return tags;
     }
@@ -489,7 +470,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "useres", length = 255,insertable = false ,updatable = false)
+    @Column(name = "useres", nullable = true, length = 255)
     public String getUseres() {
         return useres;
     }
@@ -499,7 +480,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "overrideReasonText", length = 255,insertable = false ,updatable = false)
+    @Column(name = "overrideReasonText", nullable = true, length = 255)
     public String getOverrideReasonText() {
         return overrideReasonText;
     }
@@ -509,7 +490,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "resultName", length = 255,insertable = false ,updatable = false)
+    @Column(name = "resultName", nullable = true, length = 255)
     public String getResultName() {
         return resultName;
     }
@@ -519,17 +500,17 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "sourceLossEntitylingBasis", length = 255,insertable = false ,updatable = false)
-    public String getSourceLossEntitylingBasis() {
-        return sourceLossEntitylingBasis;
+    @Column(name = "sourceLossModellingBasis", nullable = true, length = 255)
+    public String getSourceLossModellingBasis() {
+        return sourceLossModellingBasis;
     }
 
-    public void setSourceLossEntitylingBasis(String sourceLossEntitylingBasis) {
-        this.sourceLossEntitylingBasis = sourceLossEntitylingBasis;
+    public void setSourceLossModellingBasis(String sourceLossModellingBasis) {
+        this.sourceLossModellingBasis = sourceLossModellingBasis;
     }
 
     @Basic
-    @Column(name = "sourceLossTableType", length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceLossTableType", nullable = true, length = 255)
     public String getSourceLossTableType() {
         return sourceLossTableType;
     }
@@ -539,7 +520,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "eventSet", length = 255,insertable = false ,updatable = false)
+    @Column(name = "eventSet", nullable = true, length = 255)
     public String getEventSet() {
         return eventSet;
     }
@@ -549,17 +530,17 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "modelModule", length = 255,insertable = false ,updatable = false)
-    public String getEntityModule() {
+    @Column(name = "modelModule", nullable = true, length = 255)
+    public String getModelModule() {
         return modelModule;
     }
 
-    public void setEntityModule(String modelModule) {
+    public void setModelModule(String modelModule) {
         this.modelModule = modelModule;
     }
 
     @Basic
-    @Column(name = "sourceResultsReference", length = 255,insertable = false ,updatable = false)
+    @Column(name = "sourceResultsReference", nullable = true, length = 255)
     public String getSourceResultsReference() {
         return sourceResultsReference;
     }
@@ -569,7 +550,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "subPeril", length = 255,insertable = false ,updatable = false)
+    @Column(name = "subPeril", nullable = true, length = 255)
     public String getSubPeril() {
         return subPeril;
     }
@@ -579,7 +560,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "region", length = 255,insertable = false ,updatable = false)
+    @Column(name = "region", nullable = true, length = 255)
     public String getRegion() {
         return region;
     }
@@ -589,7 +570,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "profileName", length = 255,insertable = false ,updatable = false)
+    @Column(name = "profileName", nullable = true, length = 255)
     public String getProfileName() {
         return profileName;
     }
@@ -599,7 +580,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "occurrenceBasisOverrideReason", length = 255,insertable = false ,updatable = false)
+    @Column(name = "occurrenceBasisOverrideReason", nullable = true, length = 255)
     public String getOccurrenceBasisOverrideReason() {
         return occurrenceBasisOverrideReason;
     }
@@ -609,7 +590,7 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "occurenceBasisOverridenBy", length = 255,insertable = false ,updatable = false)
+    @Column(name = "occurenceBasisOverridenBy", nullable = true, length = 255)
     public String getOccurenceBasisOverridenBy() {
         return occurenceBasisOverridenBy;
     }
@@ -619,13 +600,63 @@ public class RrAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "metadata", length = -1,insertable = false ,updatable = false)
+    @Column(name = "metadata", nullable = true, length = -1)
     public String getMetadata() {
         return metadata;
     }
 
     public void setMetadata(String metadata) {
         this.metadata = metadata;
+    }
+
+    @Basic
+    @Column(name = "sourceEntitylingSystem", nullable = true, length = 255)
+    public String getSourceEntitylingSystem() {
+        return sourceEntitylingSystem;
+    }
+
+    public void setSourceEntitylingSystem(String sourceEntitylingSystem) {
+        this.sourceEntitylingSystem = sourceEntitylingSystem;
+    }
+
+    @Basic
+    @Column(name = "sourceEntitylingSystemInstance", nullable = true, length = 255)
+    public String getSourceEntitylingSystemInstance() {
+        return sourceEntitylingSystemInstance;
+    }
+
+    public void setSourceEntitylingSystemInstance(String sourceEntitylingSystemInstance) {
+        this.sourceEntitylingSystemInstance = sourceEntitylingSystemInstance;
+    }
+
+    @Basic
+    @Column(name = "sourceEntitylingSystemVersion", nullable = true, length = 255)
+    public String getSourceEntitylingSystemVersion() {
+        return sourceEntitylingSystemVersion;
+    }
+
+    public void setSourceEntitylingSystemVersion(String sourceEntitylingSystemVersion) {
+        this.sourceEntitylingSystemVersion = sourceEntitylingSystemVersion;
+    }
+
+    @Basic
+    @Column(name = "sourceEntitylingVendor", nullable = true, length = 255)
+    public String getSourceEntitylingVendor() {
+        return sourceEntitylingVendor;
+    }
+
+    public void setSourceEntitylingVendor(String sourceEntitylingVendor) {
+        this.sourceEntitylingVendor = sourceEntitylingVendor;
+    }
+
+    @Basic
+    @Column(name = "sourceLossEntitylingBasis", nullable = true, length = 255)
+    public String getSourceLossEntitylingBasis() {
+        return sourceLossEntitylingBasis;
+    }
+
+    public void setSourceLossEntitylingBasis(String sourceLossEntitylingBasis) {
+        this.sourceLossEntitylingBasis = sourceLossEntitylingBasis;
     }
 
     @Override
@@ -639,10 +670,10 @@ public class RrAnalysisNewEntity {
                 Objects.equals(creationDate, that.creationDate) &&
                 Objects.equals(runDate, that.runDate) &&
                 Objects.equals(importStatus, that.importStatus) &&
-                Objects.equals(sourceEntitylingSystemInstance, that.sourceEntitylingSystemInstance) &&
-                Objects.equals(sourceEntitylingVendor, that.sourceEntitylingVendor) &&
-                Objects.equals(sourceEntitylingSystem, that.sourceEntitylingSystem) &&
-                Objects.equals(sourceEntitylingSystemVersion, that.sourceEntitylingSystemVersion) &&
+                Objects.equals(sourceModellingSystemInstance, that.sourceModellingSystemInstance) &&
+                Objects.equals(sourceModellingVendor, that.sourceModellingVendor) &&
+                Objects.equals(sourceModellingSystem, that.sourceModellingSystem) &&
+                Objects.equals(sourceModellingSystemVersion, that.sourceModellingSystemVersion) &&
                 Objects.equals(dataSourceId, that.dataSourceId) &&
                 Objects.equals(dataSourceName, that.dataSourceName) &&
                 Objects.equals(fileName, that.fileName) &&
@@ -676,7 +707,7 @@ public class RrAnalysisNewEntity {
                 Objects.equals(useres, that.useres) &&
                 Objects.equals(overrideReasonText, that.overrideReasonText) &&
                 Objects.equals(resultName, that.resultName) &&
-                Objects.equals(sourceLossEntitylingBasis, that.sourceLossEntitylingBasis) &&
+                Objects.equals(sourceLossModellingBasis, that.sourceLossModellingBasis) &&
                 Objects.equals(sourceLossTableType, that.sourceLossTableType) &&
                 Objects.equals(eventSet, that.eventSet) &&
                 Objects.equals(modelModule, that.modelModule) &&
@@ -686,61 +717,26 @@ public class RrAnalysisNewEntity {
                 Objects.equals(profileName, that.profileName) &&
                 Objects.equals(occurrenceBasisOverrideReason, that.occurrenceBasisOverrideReason) &&
                 Objects.equals(occurenceBasisOverridenBy, that.occurenceBasisOverridenBy) &&
-                Objects.equals(metadata, that.metadata);
+                Objects.equals(metadata, that.metadata) &&
+                Objects.equals(sourceEntitylingSystem, that.sourceEntitylingSystem) &&
+                Objects.equals(sourceEntitylingSystemInstance, that.sourceEntitylingSystemInstance) &&
+                Objects.equals(sourceEntitylingSystemVersion, that.sourceEntitylingSystemVersion) &&
+                Objects.equals(sourceEntitylingVendor, that.sourceEntitylingVendor) &&
+                Objects.equals(sourceLossEntitylingBasis, that.sourceLossEntitylingBasis);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(rrAnalysisId, projectId, importedDate, creationDate, runDate, importStatus, sourceEntitylingSystemInstance, sourceEntitylingVendor, sourceEntitylingSystem, sourceEntitylingSystemVersion, dataSourceId, dataSourceName, fileName, analysisId, analysisName, grain, financialPerspective, treatyLabel, treatyTag, peril, geoCode, regionPeril, sourceCurrency, targetCurrency, targetCurrencyBasis, exchangeRate, defaultOccurrenceBasis, userOccurrenceBasis, proportion, proxyScalingBasis, proxyScalingNarrative, unitMultiplier, multiplierBasis, multiplierNarrative, profileKey, description, analysisLevel, lossAmplification, model, tags, useres, overrideReasonText, resultName, sourceLossEntitylingBasis, sourceLossTableType, eventSet, modelModule, sourceResultsReference, subPeril, region, profileName, occurrenceBasisOverrideReason, occurenceBasisOverridenBy, metadata);
+        return Objects.hash(rrAnalysisId, projectId, importedDate, creationDate, runDate, importStatus, sourceModellingSystemInstance, sourceModellingVendor, sourceModellingSystem, sourceModellingSystemVersion, dataSourceId, dataSourceName, fileName, analysisId, analysisName, grain, financialPerspective, treatyLabel, treatyTag, peril, geoCode, regionPeril, sourceCurrency, targetCurrency, targetCurrencyBasis, exchangeRate, defaultOccurrenceBasis, userOccurrenceBasis, proportion, proxyScalingBasis, proxyScalingNarrative, unitMultiplier, multiplierBasis, multiplierNarrative, profileKey, description, analysisLevel, lossAmplification, model, tags, useres, overrideReasonText, resultName, sourceLossModellingBasis, sourceLossTableType, eventSet, modelModule, sourceResultsReference, subPeril, region, profileName, occurrenceBasisOverrideReason, occurenceBasisOverridenBy, metadata, sourceEntitylingSystem, sourceEntitylingSystemInstance, sourceEntitylingSystemVersion, sourceEntitylingVendor, sourceLossEntitylingBasis);
     }
 
-    @Basic
-    @Column(name = "sourceModellingSystemInstance", length = 255,insertable = false ,updatable = false)
-    public String getSourceModellingSystemInstance() {
-        return sourceModellingSystemInstance;
+    @ManyToOne
+    @JoinColumn(name = "projectImportRunId", referencedColumnName = "ProjectImportRunId")
+    public ProjectImportRunEntity getProjectImportRunByProjectImportRunId() {
+        return projectImportRunByProjectImportRunId;
     }
 
-    public void setSourceModellingSystemInstance(String sourceModellingSystemInstance) {
-        this.sourceModellingSystemInstance = sourceModellingSystemInstance;
-    }
-
-    @Basic
-    @Column(name = "sourceModellingVendor", length = 255,insertable = false ,updatable = false)
-    public String getSourceModellingVendor() {
-        return sourceModellingVendor;
-    }
-
-    public void setSourceModellingVendor(String sourceModellingVendor) {
-        this.sourceModellingVendor = sourceModellingVendor;
-    }
-
-    @Basic
-    @Column(name = "sourceModellingSystem", length = 255,insertable = false ,updatable = false)
-    public String getSourceModellingSystem() {
-        return sourceModellingSystem;
-    }
-
-    public void setSourceModellingSystem(String sourceModellingSystem) {
-        this.sourceModellingSystem = sourceModellingSystem;
-    }
-
-    @Basic
-    @Column(name = "sourceModellingSystemVersion", length = 255,insertable = false ,updatable = false)
-    public String getSourceModellingSystemVersion() {
-        return sourceModellingSystemVersion;
-    }
-
-    public void setSourceModellingSystemVersion(String sourceModellingSystemVersion) {
-        this.sourceModellingSystemVersion = sourceModellingSystemVersion;
-    }
-
-    @Basic
-    @Column(name = "sourceLossModellingBasis", length = 255,insertable = false ,updatable = false)
-    public String getSourceLossModellingBasis() {
-        return sourceLossModellingBasis;
-    }
-
-    public void setSourceLossModellingBasis(String sourceLossModellingBasis) {
-        this.sourceLossModellingBasis = sourceLossModellingBasis;
+    public void setProjectImportRunByProjectImportRunId(ProjectImportRunEntity projectImportRunByProjectImportRunId) {
+        this.projectImportRunByProjectImportRunId = projectImportRunByProjectImportRunId;
     }
 }

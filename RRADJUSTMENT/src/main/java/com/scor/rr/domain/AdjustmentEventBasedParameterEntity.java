@@ -6,33 +6,32 @@ import java.util.Objects;
 @Entity
 @Table(name = "AdjustmentEventBasedParameter", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentEventBasedParameterEntity {
-    private int idAdjustmentParameter;
+    private int adjustmentEventBasedParameterId;
     private String inputFilePath;
     private String inputFileName;
-    private AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode;
+    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId;
 
     public AdjustmentEventBasedParameterEntity() {
     }
 
-    public AdjustmentEventBasedParameterEntity(String inputFilePath, String inputFileName, AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
+    public AdjustmentEventBasedParameterEntity(String inputFilePath, String inputFileName, AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
         this.inputFilePath = inputFilePath;
         this.inputFileName = inputFileName;
-        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
+        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
     }
 
     @Id
-    @Column(name = "id_adjustment_parameter", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getIdAdjustmentParameter() {
-        return idAdjustmentParameter;
+    @Column(name = "AdjustmentEventBasedParameterId", nullable = false)
+    public int getAdjustmentEventBasedParameterId() {
+        return adjustmentEventBasedParameterId;
     }
 
-    public void setIdAdjustmentParameter(int idAdjustmentParameter) {
-        this.idAdjustmentParameter = idAdjustmentParameter;
+    public void setAdjustmentEventBasedParameterId(int adjustmentEventBasedParameterId) {
+        this.adjustmentEventBasedParameterId = adjustmentEventBasedParameterId;
     }
 
     @Basic
-    @Column(name = "input_file_path", nullable = true, length = 500)
+    @Column(name = "InputFilePath", nullable = true, length = 500)
     public String getInputFilePath() {
         return inputFilePath;
     }
@@ -42,7 +41,7 @@ public class AdjustmentEventBasedParameterEntity {
     }
 
     @Basic
-    @Column(name = "input_file_name", nullable = true, length = 500)
+    @Column(name = "InputFileName", nullable = true, length = 500)
     public String getInputFileName() {
         return inputFileName;
     }
@@ -56,23 +55,23 @@ public class AdjustmentEventBasedParameterEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentEventBasedParameterEntity that = (AdjustmentEventBasedParameterEntity) o;
-        return idAdjustmentParameter == that.idAdjustmentParameter &&
+        return adjustmentEventBasedParameterId == that.adjustmentEventBasedParameterId &&
                 Objects.equals(inputFilePath, that.inputFilePath) &&
                 Objects.equals(inputFileName, that.inputFileName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idAdjustmentParameter, inputFilePath, inputFileName);
+        return Objects.hash(adjustmentEventBasedParameterId, inputFilePath, inputFileName);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_node", referencedColumnName = "id_adjustment_node")
-    public AdjustmentNodeEntity getAdjustmentNodeByIdAdjustmentNode() {
-        return adjustmentNodeByIdAdjustmentNode;
+    @JoinColumn(name = "FKAdjustmentNodeId", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeId() {
+        return adjustmentNodeByFkAdjustmentNodeId;
     }
 
-    public void setAdjustmentNodeByIdAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
-        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
+    public void setAdjustmentNodeByFkAdjustmentNodeId(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeId) {
+        this.adjustmentNodeByFkAdjustmentNodeId = adjustmentNodeByFkAdjustmentNodeId;
     }
 }

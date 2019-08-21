@@ -23,7 +23,7 @@ public class PltPricingLossEngineEntity {
     private Timestamp lastUpdateRiskReveal;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "PLTPricingLossEngineId", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -33,7 +33,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "lastSynchronized")
+    @Column(name = "lastSynchronized", nullable = true)
     public Timestamp getLastSynchronized() {
         return lastSynchronized;
     }
@@ -43,7 +43,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "engineId")
+    @Column(name = "engineId", nullable = true)
     public Integer getEngineId() {
         return engineId;
     }
@@ -53,7 +53,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltPricingId", nullable = true, length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -63,7 +63,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingSectionId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltPricingSectionId", nullable = true, length = 255)
     public String getPltPricingSectionId() {
         return pltPricingSectionId;
     }
@@ -73,7 +73,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "name", length = 255,insertable = false ,updatable = false)
+    @Column(name = "name", nullable = true, length = 255)
     public String getName() {
         return name;
     }
@@ -83,7 +83,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "nonNatCatLoss")
+    @Column(name = "nonNatCatLoss", nullable = true)
     public Long getNonNatCatLoss() {
         return nonNatCatLoss;
     }
@@ -93,7 +93,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "type", length = 255,insertable = false ,updatable = false)
+    @Column(name = "type", nullable = true, length = 255)
     public String getType() {
         return type;
     }
@@ -103,7 +103,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltsFxRate", precision = 0)
+    @Column(name = "pltsFxRate", nullable = true, precision = 0)
     public Double getPltsFxRate() {
         return pltsFxRate;
     }
@@ -113,7 +113,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltsRiskRevealId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltsRiskRevealId", nullable = true, length = 255)
     public String getPltsRiskRevealId() {
         return pltsRiskRevealId;
     }
@@ -123,7 +123,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "franchiseDeductibleType", length = 255,insertable = false ,updatable = false)
+    @Column(name = "franchiseDeductibleType", nullable = true, length = 255)
     public String getFranchiseDeductibleType() {
         return franchiseDeductibleType;
     }
@@ -133,7 +133,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "franchiseDeductibleAmount", precision = 0)
+    @Column(name = "franchiseDeductibleAmount", nullable = true, precision = 0)
     public Integer getFranchiseDeductibleAmount() {
         return franchiseDeductibleAmount;
     }
@@ -143,7 +143,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "capLossesAmount", precision = 0)
+    @Column(name = "capLossesAmount", nullable = true, precision = 0)
     public Integer getCapLossesAmount() {
         return capLossesAmount;
     }
@@ -153,7 +153,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateRiskReveal")
+    @Column(name = "lastUpdateRiskReveal", nullable = true)
     public Timestamp getLastUpdateRiskReveal() {
         return lastUpdateRiskReveal;
     }

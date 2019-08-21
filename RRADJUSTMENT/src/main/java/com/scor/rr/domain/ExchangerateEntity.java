@@ -24,7 +24,7 @@ public class ExchangerateEntity {
     private Timestamp updateddate;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "EXCHANGERATEID", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -54,7 +54,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "CURRENCYCODE_ID", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKCURRENCYCODE", nullable = true, length = 255)
     public String getCurrencycodeId() {
         return currencycodeId;
     }
@@ -64,7 +64,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "TYPE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "TYPE", nullable = true, length = 255)
     public String getType() {
         return type;
     }
@@ -74,7 +74,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "USD", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "USD", nullable = true, length = 255)
     public String getUsd() {
         return usd;
     }
@@ -84,7 +84,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "EUR", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "EUR", nullable = true, length = 255)
     public String getEur() {
         return eur;
     }
@@ -94,7 +94,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "GBP", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "GBP", nullable = true, length = 255)
     public String getGbp() {
         return gbp;
     }
@@ -104,7 +104,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "SGD", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "SGD", nullable = true, length = 255)
     public String getSgd() {
         return sgd;
     }
@@ -114,7 +114,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "CAD", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CAD", nullable = true, length = 255)
     public String getCad() {
         return cad;
     }
@@ -134,7 +134,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "CREATEDBY", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CREATEDBY", nullable = true, length = 255)
     public String getCreatedby() {
         return createdby;
     }
@@ -154,7 +154,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "UPDATEDBY", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "UPDATEDBY", nullable = true, length = 255)
     public String getUpdatedby() {
         return updatedby;
     }

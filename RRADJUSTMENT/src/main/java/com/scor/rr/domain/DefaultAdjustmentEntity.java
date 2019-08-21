@@ -7,13 +7,13 @@ import java.util.Objects;
 @Table(name = "DefaultAdjustment", schema = "dbo", catalog = "RiskReveal")
 public class DefaultAdjustmentEntity {
     private String engineType;
-    private int idDefaultAdjustment;
+    private int defaultAdjustmentId;
     private MarketChannelEntity marketChannel;
     private TargetRapEntity targetRap;
     private EntityEntity entity;
 
     @Basic
-    @Column(name = "engine_type", length = 200)
+    @Column(name = "EngineType", nullable = true, length = 200)
     public String getEngineType() {
         return engineType;
     }
@@ -23,13 +23,13 @@ public class DefaultAdjustmentEntity {
     }
 
     @Id
-    @Column(name = "id_default_adjustment", nullable = false)
-    public int getIdDefaultAdjustment() {
-        return idDefaultAdjustment;
+    @Column(name = "DefaultAdjustmentId", nullable = false)
+    public int getDefaultAdjustmentId() {
+        return defaultAdjustmentId;
     }
 
-    public void setIdDefaultAdjustment(int idDefaultAdjustment) {
-        this.idDefaultAdjustment = idDefaultAdjustment;
+    public void setDefaultAdjustmentId(int defaultAdjustmentId) {
+        this.defaultAdjustmentId = defaultAdjustmentId;
     }
 
     @Override
@@ -37,17 +37,17 @@ public class DefaultAdjustmentEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentEntity that = (DefaultAdjustmentEntity) o;
-        return idDefaultAdjustment == that.idDefaultAdjustment &&
+        return defaultAdjustmentId == that.defaultAdjustmentId &&
                 Objects.equals(engineType, that.engineType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(engineType, idDefaultAdjustment);
+        return Objects.hash(engineType, defaultAdjustmentId);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_market_channel", referencedColumnName = "id_market_channel")
+    @JoinColumn(name = "FKMarketChannelId", referencedColumnName = "MarketChannelID")
     public MarketChannelEntity getMarketChannel() {
         return marketChannel;
     }
@@ -57,7 +57,7 @@ public class DefaultAdjustmentEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_target_rap", referencedColumnName = "targetRapId")
+    @JoinColumn(name = "FKTargetRapId", referencedColumnName = "targetRapId")
     public TargetRapEntity getTargetRap() {
         return targetRap;
     }
@@ -67,7 +67,7 @@ public class DefaultAdjustmentEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_entity", referencedColumnName = "id_entity")
+    @JoinColumn(name = "FKEntityId", referencedColumnName = "EntityId")
     public EntityEntity getEntity() {
         return entity;
     }

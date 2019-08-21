@@ -26,7 +26,7 @@ public class CalculAdjustementEEFFrequencyTest {
     private List<PLTLossData> pltLossDataList;
     private double rpmf;
     private boolean cap;
-    CalculAdjustement calculAdjustement;
+
     @Before
     public void setUp() throws Exception {
         log.info("Launch test for EEF Frequency Adjustment");
@@ -39,7 +39,6 @@ public class CalculAdjustementEEFFrequencyTest {
         }};
         cap = true;
         rpmf =0.4;
-        calculAdjustement = new CalculAdjustement();
     }
 
     @After
@@ -49,17 +48,17 @@ public class CalculAdjustementEEFFrequencyTest {
     @Test
     public void eefFrequencyNegativeRpmf() {
         log.info("Launch test for EEF Frequency Adjustment for negative rpmf = {}",rpmf);
-        assertNull(calculAdjustement.eefFrequency(pltLossDataList,cap,-2));
+        assertNull(CalculAdjustement.eefFrequency(pltLossDataList,cap,-2));
     }
     @Test
     public void eefFrequencyNullPlt() {
         log.info("Launch test for EEF Frequency Adjustment for null plt ");
-        assertNull(calculAdjustement.eefFrequency(null,cap,rpmf));
+        assertNull(CalculAdjustement.eefFrequency(null,cap,rpmf));
     }
     @Test
     public void eefFrequencyEmptyPlt() {
         log.info("Launch test for EEF Frequency Adjustment for an empty plt ");
-        assertNull(calculAdjustement.eefFrequency(new ArrayList<>(),cap,rpmf));
+        assertNull(CalculAdjustement.eefFrequency(new ArrayList<>(),cap,rpmf));
     }
 
     @Test
@@ -72,7 +71,7 @@ public class CalculAdjustementEEFFrequencyTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = calculAdjustement.eefFrequency(pltLossDataList,cap,rpmf);
+        pltLossDataList = CalculAdjustement.eefFrequency(pltLossDataList,cap,rpmf);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -94,7 +93,7 @@ public class CalculAdjustementEEFFrequencyTest {
         } catch (Exception anotherException) {
             fail();
         }
-        pltLossDataList = calculAdjustement.eefFrequency(pltLossDataList,cap,rpmf);
+        pltLossDataList = CalculAdjustement.eefFrequency(pltLossDataList,cap,rpmf);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         try {
             csvpltFileWriter.write(pltLossDataList,new File("src/main/resources/file/pltEEFFrequency.csv"));
@@ -111,7 +110,7 @@ public class CalculAdjustementEEFFrequencyTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        pltLossData = calculAdjustement.eefFrequency(pltLossData,cap,rpmf);
+        pltLossData = CalculAdjustement.eefFrequency(pltLossData,cap,rpmf);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltEEFFrequency.csv"));
     }
@@ -121,7 +120,7 @@ public class CalculAdjustementEEFFrequencyTest {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for a plt file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
-        pltLossData = calculAdjustement.eefFrequency(pltLossData,false,2);
+        pltLossData = CalculAdjustement.eefFrequency(pltLossData,false,2);
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/eef frequency.csv"));
         for(int i=0;i<pltLossData.size();i++) {
             assertEquals(pltLossData.get(i),pltLossDataResult.get(i));

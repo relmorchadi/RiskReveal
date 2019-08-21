@@ -33,7 +33,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "lossDataType", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "lossDataType", nullable = true, length = 255)
     public String getLossDataType() {
         return lossDataType;
     }
@@ -43,7 +43,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "financialPerspective", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "financialPerspective", nullable = true, length = 255)
     public String getFinancialPerspective() {
         return financialPerspective;
     }
@@ -83,7 +83,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "epsFilePath", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "epsFilePath", nullable = true, length = 255)
     public String getEpsFilePath() {
         return epsFilePath;
     }
@@ -93,7 +93,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "epsFileName", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "epsFileName", nullable = true, length = 255)
     public String getEpsFileName() {
         return epsFileName;
     }

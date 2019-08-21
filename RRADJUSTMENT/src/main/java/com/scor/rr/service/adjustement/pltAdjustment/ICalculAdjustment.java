@@ -10,12 +10,32 @@ import java.util.List;
 
 public interface ICalculAdjustment {
 
-    List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings);
-    List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings);
-    List<PLTLossData> eefFrequency(List<PLTLossData> pltLossDatas, boolean cap, double rpmf);
-    List<PLTLossData> nonLineaireEventDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas);
-    List<PLTLossData> nonLineaireEventPeriodDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas);
-    List<PLTLossData> lineaireAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap);
-    List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossData);
+    static List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings) {
+        return null;
+    }
+
+    static List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings) {
+        return null;
+    }
+
+    static List<PLTLossData> eefFrequency(List<PLTLossData> pltLossDatas, boolean cap, double rpmf) {
+        return null;
+    }
+
+    static List<PLTLossData> nonLineaireEventDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
+        return null;
+    }
+
+    static List<PLTLossData> nonLineaireEventPeriodDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
+        return null;
+    }
+
+    static List<PLTLossData> lineaireAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
+        return null;
+    }
+
+    static List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossData) {
+        return null;
+    }
 
 }

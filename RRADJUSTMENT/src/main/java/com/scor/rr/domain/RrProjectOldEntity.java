@@ -32,7 +32,7 @@ public class RrProjectOldEntity {
     private Integer xactSum;
 
     @Id
-    @Column(name = "_id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "_id", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -42,7 +42,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", length = 255,insertable = false ,updatable = false)
+    @Column(name = "assignedTo", nullable = true, length = 255)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -52,7 +52,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "clonedFlag")
+    @Column(name = "clonedFlag", nullable = true)
     public Boolean getClonedFlag() {
         return clonedFlag;
     }
@@ -62,7 +62,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "createdBy", length = 255,insertable = false ,updatable = false)
+    @Column(name = "createdBy", nullable = true, length = 255)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -72,7 +72,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "creationDate")
+    @Column(name = "creationDate", nullable = true)
     public Timestamp getCreationDate() {
         return creationDate;
     }
@@ -82,7 +82,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "description", length = 255,insertable = false ,updatable = false)
+    @Column(name = "description", nullable = true, length = 255)
     public String getDescription() {
         return description;
     }
@@ -92,7 +92,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "dueDate")
+    @Column(name = "dueDate", nullable = true)
     public Timestamp getDueDate() {
         return dueDate;
     }
@@ -102,7 +102,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "isLocking")
+    @Column(name = "isLocking", nullable = true)
     public Boolean getLocking() {
         return isLocking;
     }
@@ -112,7 +112,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "linkFlag")
+    @Column(name = "linkFlag", nullable = true)
     public Boolean getLinkFlag() {
         return linkFlag;
     }
@@ -122,7 +122,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "masterFlag")
+    @Column(name = "masterFlag", nullable = true)
     public Boolean getMasterFlag() {
         return masterFlag;
     }
@@ -132,7 +132,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgaexpectedFrequencycode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "mgaexpectedFrequencycode", nullable = true, length = 255)
     public String getMgaexpectedFrequencycode() {
         return mgaexpectedFrequencycode;
     }
@@ -142,7 +142,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgafinancialBasiscode", length = 255,insertable = false ,updatable = false)
+    @Column(name = "mgafinancialBasiscode", nullable = true, length = 255)
     public String getMgafinancialBasiscode() {
         return mgafinancialBasiscode;
     }
@@ -152,7 +152,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgasectionId")
+    @Column(name = "mgasectionId", nullable = true)
     public Integer getMgasectionId() {
         return mgasectionId;
     }
@@ -162,7 +162,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgasubmissionPeriod", length = 255,insertable = false ,updatable = false)
+    @Column(name = "mgasubmissionPeriod", nullable = true, length = 255)
     public String getMgasubmissionPeriod() {
         return mgasubmissionPeriod;
     }
@@ -172,7 +172,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "mgatreatyId", length = 255,insertable = false ,updatable = false)
+    @Column(name = "mgatreatyId", nullable = true, length = 255)
     public String getMgatreatyId() {
         return mgatreatyId;
     }
@@ -182,7 +182,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "name", length = 255,insertable = false ,updatable = false)
+    @Column(name = "name", nullable = true, length = 255)
     public String getName() {
         return name;
     }
@@ -192,7 +192,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "pltSum")
+    @Column(name = "pltSum", nullable = true)
     public Integer getPltSum() {
         return pltSum;
     }
@@ -202,7 +202,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "pltThreadSum")
+    @Column(name = "pltThreadSum", nullable = true)
     public Integer getPltThreadSum() {
         return pltThreadSum;
     }
@@ -212,7 +212,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "postInuredFlag")
+    @Column(name = "postInuredFlag", nullable = true)
     public Boolean getPostInuredFlag() {
         return postInuredFlag;
     }
@@ -222,7 +222,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "publishFlag")
+    @Column(name = "publishFlag", nullable = true)
     public Boolean getPublishFlag() {
         return publishFlag;
     }
@@ -232,7 +232,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "receptionDate")
+    @Column(name = "receptionDate", nullable = true)
     public Timestamp getReceptionDate() {
         return receptionDate;
     }
@@ -242,7 +242,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilSum")
+    @Column(name = "regionPerilSum", nullable = true)
     public Integer getRegionPerilSum() {
         return regionPerilSum;
     }
@@ -252,7 +252,7 @@ public class RrProjectOldEntity {
     }
 
     @Basic
-    @Column(name = "xactSum")
+    @Column(name = "xactSum", nullable = true)
     public Integer getXactSum() {
         return xactSum;
     }

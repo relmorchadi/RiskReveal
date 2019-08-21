@@ -12,7 +12,7 @@ public class ClaimsBasisEntity {
     private int claimsBasisId;
 
     @Id
-    @Column(name = "ClaimsBasis_Id", nullable = false, precision = 0)
+    @Column(name = "ClaimsBasisId", nullable = false, precision = 0)
     public int getClaimsBasisId() {
         return claimsBasisId;
     }

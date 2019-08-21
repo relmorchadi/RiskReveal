@@ -12,7 +12,7 @@ public class AlmfUserEntity {
     private int userId;
 
     @Id
-    @Column(name = "User_Id", nullable = false, precision = 0)
+    @Column(name = "UserId", nullable = false, precision = 0)
     public int getUserId() {
         return userId;
     }

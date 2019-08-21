@@ -58,7 +58,7 @@ public class RrDboContractSearchResultEntity {
 
     @Id
     @Basic
-    @Column(name = "Column 0", length = 50)
+    @Column(name = "Column 0", nullable = true, length = 50)
     public String getColumn0() {
         return column0;
     }
@@ -68,7 +68,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 1", length = 50)
+    @Column(name = "Column 1", nullable = true, length = 50)
     public String getColumn1() {
         return column1;
     }
@@ -78,7 +78,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 2", length = 50)
+    @Column(name = "Column 2", nullable = true, length = 50)
     public String getColumn2() {
         return column2;
     }
@@ -88,7 +88,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 3", length = 50)
+    @Column(name = "Column 3", nullable = true, length = 50)
     public String getColumn3() {
         return column3;
     }
@@ -98,7 +98,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 4", length = 50)
+    @Column(name = "Column 4", nullable = true, length = 50)
     public String getColumn4() {
         return column4;
     }
@@ -108,7 +108,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 5", length = 50)
+    @Column(name = "Column 5", nullable = true, length = 50)
     public String getColumn5() {
         return column5;
     }
@@ -118,7 +118,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 6", length = 50)
+    @Column(name = "Column 6", nullable = true, length = 50)
     public String getColumn6() {
         return column6;
     }
@@ -128,7 +128,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 7", length = 50)
+    @Column(name = "Column 7", nullable = true, length = 50)
     public String getColumn7() {
         return column7;
     }
@@ -138,7 +138,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 8", length = 50)
+    @Column(name = "Column 8", nullable = true, length = 50)
     public String getColumn8() {
         return column8;
     }
@@ -148,7 +148,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 9", length = 50)
+    @Column(name = "Column 9", nullable = true, length = 50)
     public String getColumn9() {
         return column9;
     }
@@ -158,7 +158,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 10", length = 50)
+    @Column(name = "Column 10", nullable = true, length = 50)
     public String getColumn10() {
         return column10;
     }
@@ -168,7 +168,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 11", length = 50)
+    @Column(name = "Column 11", nullable = true, length = 50)
     public String getColumn11() {
         return column11;
     }
@@ -178,7 +178,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 12", length = 50)
+    @Column(name = "Column 12", nullable = true, length = 50)
     public String getColumn12() {
         return column12;
     }
@@ -188,7 +188,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 13", length = 50)
+    @Column(name = "Column 13", nullable = true, length = 50)
     public String getColumn13() {
         return column13;
     }
@@ -198,7 +198,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 14", length = 50)
+    @Column(name = "Column 14", nullable = true, length = 50)
     public String getColumn14() {
         return column14;
     }
@@ -208,7 +208,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 15", length = 50)
+    @Column(name = "Column 15", nullable = true, length = 50)
     public String getColumn15() {
         return column15;
     }
@@ -218,7 +218,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 16", length = 50)
+    @Column(name = "Column 16", nullable = true, length = 50)
     public String getColumn16() {
         return column16;
     }
@@ -228,7 +228,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 17", length = 50)
+    @Column(name = "Column 17", nullable = true, length = 50)
     public String getColumn17() {
         return column17;
     }
@@ -238,7 +238,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 18", length = 50)
+    @Column(name = "Column 18", nullable = true, length = 50)
     public String getColumn18() {
         return column18;
     }
@@ -248,7 +248,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 19", length = 50)
+    @Column(name = "Column 19", nullable = true, length = 50)
     public String getColumn19() {
         return column19;
     }
@@ -258,7 +258,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 20", length = 50)
+    @Column(name = "Column 20", nullable = true, length = 50)
     public String getColumn20() {
         return column20;
     }
@@ -268,7 +268,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 21", length = 50)
+    @Column(name = "Column 21", nullable = true, length = 50)
     public String getColumn21() {
         return column21;
     }
@@ -278,7 +278,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 22", length = 50)
+    @Column(name = "Column 22", nullable = true, length = 50)
     public String getColumn22() {
         return column22;
     }
@@ -288,7 +288,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 23", length = 50)
+    @Column(name = "Column 23", nullable = true, length = 50)
     public String getColumn23() {
         return column23;
     }
@@ -298,7 +298,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 24", length = 50)
+    @Column(name = "Column 24", nullable = true, length = 50)
     public String getColumn24() {
         return column24;
     }
@@ -308,7 +308,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 25", length = 50)
+    @Column(name = "Column 25", nullable = true, length = 50)
     public String getColumn25() {
         return column25;
     }
@@ -318,7 +318,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 26", length = 50)
+    @Column(name = "Column 26", nullable = true, length = 50)
     public String getColumn26() {
         return column26;
     }
@@ -328,7 +328,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 27", length = 50)
+    @Column(name = "Column 27", nullable = true, length = 50)
     public String getColumn27() {
         return column27;
     }
@@ -338,7 +338,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 28", length = 50)
+    @Column(name = "Column 28", nullable = true, length = 50)
     public String getColumn28() {
         return column28;
     }
@@ -348,7 +348,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 29", length = 50)
+    @Column(name = "Column 29", nullable = true, length = 50)
     public String getColumn29() {
         return column29;
     }
@@ -358,7 +358,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 30", length = 50)
+    @Column(name = "Column 30", nullable = true, length = 50)
     public String getColumn30() {
         return column30;
     }
@@ -368,7 +368,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 31", length = 50)
+    @Column(name = "Column 31", nullable = true, length = 50)
     public String getColumn31() {
         return column31;
     }
@@ -378,7 +378,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 32", length = 50)
+    @Column(name = "Column 32", nullable = true, length = 50)
     public String getColumn32() {
         return column32;
     }
@@ -388,7 +388,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 33", length = 50)
+    @Column(name = "Column 33", nullable = true, length = 50)
     public String getColumn33() {
         return column33;
     }
@@ -398,7 +398,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 34", length = 50)
+    @Column(name = "Column 34", nullable = true, length = 50)
     public String getColumn34() {
         return column34;
     }
@@ -408,7 +408,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 35", length = 50)
+    @Column(name = "Column 35", nullable = true, length = 50)
     public String getColumn35() {
         return column35;
     }
@@ -418,7 +418,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 36", length = 50)
+    @Column(name = "Column 36", nullable = true, length = 50)
     public String getColumn36() {
         return column36;
     }
@@ -428,7 +428,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 37", length = 50)
+    @Column(name = "Column 37", nullable = true, length = 50)
     public String getColumn37() {
         return column37;
     }
@@ -438,7 +438,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 38", length = 50)
+    @Column(name = "Column 38", nullable = true, length = 50)
     public String getColumn38() {
         return column38;
     }
@@ -448,7 +448,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 39", length = 50)
+    @Column(name = "Column 39", nullable = true, length = 50)
     public String getColumn39() {
         return column39;
     }
@@ -458,7 +458,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 40", length = 50)
+    @Column(name = "Column 40", nullable = true, length = 50)
     public String getColumn40() {
         return column40;
     }
@@ -468,7 +468,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 41", length = 50)
+    @Column(name = "Column 41", nullable = true, length = 50)
     public String getColumn41() {
         return column41;
     }
@@ -478,7 +478,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 42", length = 50)
+    @Column(name = "Column 42", nullable = true, length = 50)
     public String getColumn42() {
         return column42;
     }
@@ -488,7 +488,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 43", length = 50)
+    @Column(name = "Column 43", nullable = true, length = 50)
     public String getColumn43() {
         return column43;
     }
@@ -498,7 +498,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 44", length = 50)
+    @Column(name = "Column 44", nullable = true, length = 50)
     public String getColumn44() {
         return column44;
     }
@@ -508,7 +508,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 45", length = 50)
+    @Column(name = "Column 45", nullable = true, length = 50)
     public String getColumn45() {
         return column45;
     }
@@ -518,7 +518,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 46", length = 50)
+    @Column(name = "Column 46", nullable = true, length = 50)
     public String getColumn46() {
         return column46;
     }
@@ -528,7 +528,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 47", length = 50)
+    @Column(name = "Column 47", nullable = true, length = 50)
     public String getColumn47() {
         return column47;
     }
@@ -538,7 +538,7 @@ public class RrDboContractSearchResultEntity {
     }
 
     @Basic
-    @Column(name = "Column 48", length = 50)
+    @Column(name = "Column 48", nullable = true, length = 50)
     public String getColumn48() {
         return column48;
     }

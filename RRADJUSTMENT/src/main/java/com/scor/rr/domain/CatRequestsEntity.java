@@ -28,7 +28,7 @@ public class CatRequestsEntity {
     private Timestamp assignDate2;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255)
+    @Column(name = "CatRequestsId", nullable = false, length = 255)
     public String getId() {
         return id;
     }

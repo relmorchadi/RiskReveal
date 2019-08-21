@@ -14,7 +14,7 @@ public class LineofbusinessEntity {
     private String label;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "LINEOFBUSINESSID", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -44,7 +44,7 @@ public class LineofbusinessEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "CODE", nullable = true, length = 255)
     public String getCode() {
         return code;
     }
@@ -54,7 +54,7 @@ public class LineofbusinessEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "LABEL", nullable = true, length = 255)
     public String getLabel() {
         return label;
     }

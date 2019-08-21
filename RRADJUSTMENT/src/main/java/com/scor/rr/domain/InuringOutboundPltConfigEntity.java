@@ -10,7 +10,7 @@ public class InuringOutboundPltConfigEntity {
     private String contractId;
 
     @Id
-    @Column(name = "InuringOutboundPltConfig_Id", nullable = false, precision = 0)
+    @Column(name = "InuringOutboundPltConfigId", nullable = false, precision = 0)
     public int getInuringOutboundPltConfigId() {
         return inuringOutboundPltConfigId;
     }
@@ -20,7 +20,7 @@ public class InuringOutboundPltConfigEntity {
     }
 
     @Basic
-    @Column(name = "Contract_Id", length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKContractId", nullable = true, length = 255)
     public String getContractId() {
         return contractId;
     }

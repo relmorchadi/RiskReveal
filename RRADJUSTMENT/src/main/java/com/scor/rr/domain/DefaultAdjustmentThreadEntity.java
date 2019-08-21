@@ -6,17 +6,17 @@ import java.util.Objects;
 @Entity
 @Table(name = "DefaultAdjustmentThread", schema = "dbo", catalog = "RiskReveal")
 public class DefaultAdjustmentThreadEntity {
-    private int idDefaultAdjustmentThread;
-    private DefaultAdjustmentVersionEntity defaultAdjustmentVersionByIdDefaultAdjustmentVersion;
+    private int defaultAdjustmentThreadId;
+    private DefaultAdjustmentVersionEntity defaultAdjustmentVersion;
 
     @Id
-    @Column(name = "id_default_adjustment_thread", nullable = false)
-    public int getIdDefaultAdjustmentThread() {
-        return idDefaultAdjustmentThread;
+    @Column(name = "DefaultAdjustmentThreadId", nullable = false)
+    public int getDefaultAdjustmentThreadId() {
+        return defaultAdjustmentThreadId;
     }
 
-    public void setIdDefaultAdjustmentThread(int idDefaultAdjustmentThread) {
-        this.idDefaultAdjustmentThread = idDefaultAdjustmentThread;
+    public void setDefaultAdjustmentThreadId(int defaultAdjustmentThreadId) {
+        this.defaultAdjustmentThreadId = defaultAdjustmentThreadId;
     }
 
     @Override
@@ -24,21 +24,21 @@ public class DefaultAdjustmentThreadEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentThreadEntity that = (DefaultAdjustmentThreadEntity) o;
-        return idDefaultAdjustmentThread == that.idDefaultAdjustmentThread;
+        return defaultAdjustmentThreadId == that.defaultAdjustmentThreadId;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idDefaultAdjustmentThread);
+        return Objects.hash(defaultAdjustmentThreadId);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_default_adjustment_version", referencedColumnName = "id_default_adjustment_version")
-    public DefaultAdjustmentVersionEntity getDefaultAdjustmentVersionByIdDefaultAdjustmentVersion() {
-        return defaultAdjustmentVersionByIdDefaultAdjustmentVersion;
+    @JoinColumn(name = "FKDefaultAdjustmentVersion", referencedColumnName = "DefaultAdjustmentVersionId")
+    public DefaultAdjustmentVersionEntity getDefaultAdjustmentVersion() {
+        return defaultAdjustmentVersion;
     }
 
-    public void setDefaultAdjustmentVersionByIdDefaultAdjustmentVersion(DefaultAdjustmentVersionEntity defaultAdjustmentVersionByIdDefaultAdjustmentVersion) {
-        this.defaultAdjustmentVersionByIdDefaultAdjustmentVersion = defaultAdjustmentVersionByIdDefaultAdjustmentVersion;
+    public void setDefaultAdjustmentVersion(DefaultAdjustmentVersionEntity defaultAdjustmentVersion) {
+        this.defaultAdjustmentVersion = defaultAdjustmentVersion;
     }
 }

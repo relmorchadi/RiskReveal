@@ -10,7 +10,7 @@ public class InuringObjectInputNodeEntity {
     private Integer inuringPackageId;
 
     @Id
-    @Column(name = "InuringObjectInputNode_Id", nullable = false, precision = 0)
+    @Column(name = "InuringObjectInputNodeId", nullable = false, precision = 0)
     public int getInuringObjectInputNodeId() {
         return inuringObjectInputNodeId;
     }
@@ -20,7 +20,7 @@ public class InuringObjectInputNodeEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackage_Id", precision = 0)
+    @Column(name = "FKInuringPackageId", nullable = true, precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }

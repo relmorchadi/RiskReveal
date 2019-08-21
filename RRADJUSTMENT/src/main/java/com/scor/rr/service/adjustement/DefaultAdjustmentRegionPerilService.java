@@ -19,6 +19,6 @@ public class DefaultAdjustmentRegionPerilService {
     }
 
     public boolean regionPerilDefaultAdjustmentExist(Integer idDefaultAdjustment,Integer regionPeril) {
-        return regionPerilRepository.findAll().stream().noneMatch(defaultAdjustmentRegionPerilEntity -> defaultAdjustmentRegionPerilEntity.getIdDefaultAdjustment() == idDefaultAdjustment && defaultAdjustmentRegionPerilEntity.getIdRegionPeril() == regionPeril && defaultAdjustmentRegionPerilEntity.getIncludedExcluded().equals("I"));
+        return regionPerilRepository.findAll().stream().noneMatch(defaultAdjustmentRegionPerilEntity -> defaultAdjustmentRegionPerilEntity.getFkDefaultAdjustmentId() == idDefaultAdjustment && defaultAdjustmentRegionPerilEntity.getRegionPeril().equals(regionPeril) && defaultAdjustmentRegionPerilEntity.getIncludedExcluded().equals("I"));
     }
 }

@@ -11,7 +11,7 @@ public class ApMinimumGrainOverrideBasisEntity {
     private String fksectionid;
 
     @Id
-    @Column(name = "id", nullable = false)
+    @Column(name = "APMinimumGrainOverrideBasisId", nullable = false)
     public int getId() {
         return id;
     }

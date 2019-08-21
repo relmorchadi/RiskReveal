@@ -12,7 +12,7 @@ public class InuringPackageOperationEntity {
     private Integer userId;
 
     @Id
-    @Column(name = "InuringPackageOperation_Id", nullable = false, precision = 0)
+    @Column(name = "InuringPackageOperationId", nullable = false, precision = 0)
     public int getInuringPackageOperationId() {
         return inuringPackageOperationId;
     }
@@ -22,7 +22,7 @@ public class InuringPackageOperationEntity {
     }
 
     @Basic
-    @Column(name = "ExchangeRate_Id", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKExchangeRateId", nullable = true, length = 255)
     public String getExchangeRateId() {
         return exchangeRateId;
     }
@@ -32,7 +32,7 @@ public class InuringPackageOperationEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackage_Id", nullable = true, precision = 0)
+    @Column(name = "FKInuringPackageId", nullable = true, precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }
@@ -42,7 +42,7 @@ public class InuringPackageOperationEntity {
     }
 
     @Basic
-    @Column(name = "User_Id", nullable = true, precision = 0)
+    @Column(name = "FKUserId", nullable = true, precision = 0)
     public Integer getUserId() {
         return userId;
     }

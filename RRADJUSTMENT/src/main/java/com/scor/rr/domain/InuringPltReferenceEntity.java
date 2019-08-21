@@ -10,7 +10,7 @@ public class InuringPltReferenceEntity {
     private Integer inuringPackageOperationId;
 
     @Id
-    @Column(name = "InuringPltReference_Id", nullable = false, precision = 0)
+    @Column(name = "InuringPltReferenceId", nullable = false, precision = 0)
     public int getInuringPltReferenceId() {
         return inuringPltReferenceId;
     }
@@ -20,7 +20,7 @@ public class InuringPltReferenceEntity {
     }
 
     @Basic
-    @Column(name = "InuringPackageOperation_Id", precision = 0)
+    @Column(name = "InuringPackageOperationId", nullable = true, precision = 0)
     public Integer getInuringPackageOperationId() {
         return inuringPackageOperationId;
     }

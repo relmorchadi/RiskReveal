@@ -18,9 +18,9 @@ import java.util.stream.Collectors;
 public class CalculAdjustement implements ICalculAdjustment{
 
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustement.class);
-    final double CONSTANTE =100000;
+    static final double CONSTANTE =100000;
 
-    public List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossData){
+    public static List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossData){
         if(pltLossData != null && !pltLossData.isEmpty()) {
             int[] finalI = new int[]{0};
             return pltLossData.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
@@ -32,7 +32,7 @@ public class CalculAdjustement implements ICalculAdjustment{
             return null;
         }
     }
-    public List<AEPMetric> getAEPMetric(List<PLTLossData> pltLossDatas){
+    public static List<AEPMetric> getAEPMetric(List<PLTLossData> pltLossDatas){
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
             return pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
@@ -50,7 +50,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         return yMin+((yMax-yMin)*((x-xMin)/(xMax-xMin)));
     }
 
-    private List<PLTLossData> oepAndEEFReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings, double periodConstante, String oepEEF) {
+    private static List<PLTLossData> oepAndEEFReturnBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings, double periodConstante, String oepEEF) {
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] i = {0};
             int[] finalI = i;
@@ -141,7 +141,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    private PLTLossData getPltLossData(boolean cap, String oepEEF, AdjustmentReturnPeriodBandingParameterEntity maxReturnPeriodBanding, List<PLTLossData> finalPltLossDatas, PLTLossData pltLossData) {
+    private static PLTLossData getPltLossData(boolean cap, String oepEEF, AdjustmentReturnPeriodBandingParameterEntity maxReturnPeriodBanding, List<PLTLossData> finalPltLossDatas, PLTLossData pltLossData) {
         if (oepEEF.equals("OEP")) {
             double loss = finalPltLossDatas.stream().filter(pltLossDatafilter -> pltLossDatafilter.getSimPeriod() == pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss();
             return new PLTLossData(pltLossData.getEventId(),
@@ -160,15 +160,15 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    public List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings) {
-        return this.oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBendings, CONSTANTE, "OEP");
+    public static List<PLTLossData> oepReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings) {
+        return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBendings, CONSTANTE, "OEP");
     }
 
-    public List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings) {
-        return this.oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBendings, CONSTANTE, "EEF");
+    public static List<PLTLossData> eefReturnPeriodBanding(List<PLTLossData> pltLossDatas, boolean cap, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings) {
+        return oepAndEEFReturnBanding(pltLossDatas, cap, adjustmentReturnPeriodBendings, CONSTANTE, "EEF");
     }
 
-    public List<PLTLossData> eefFrequency(List<PLTLossData> pltLossDatas, boolean cap, double rpmf) {
+    public static List<PLTLossData> eefFrequency(List<PLTLossData> pltLossDatas, boolean cap, double rpmf) {
         if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
             if (rpmf > 0) {
                 int[] i = {0};
@@ -247,7 +247,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    private List<PLTLossData> nonLineaireEventDrivenAdjustmentOrEventPeriodAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas, boolean periodNoPeriod) {
+    private static List<PLTLossData> nonLineaireEventDrivenAdjustmentOrEventPeriodAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas, boolean periodNoPeriod) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             if(peatDatas != null && !peatDatas.isEmpty()) {
                 return pltLossDatas.stream().map(pltLossData -> {
@@ -277,15 +277,15 @@ public class CalculAdjustement implements ICalculAdjustment{
 
     }
 
-    public List<PLTLossData> nonLineaireEventDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
+    public static List<PLTLossData> nonLineaireEventDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
         return nonLineaireEventDrivenAdjustmentOrEventPeriodAdjustment(pltLossDatas, cap, peatDatas, false);
     }
 
-    public List<PLTLossData> nonLineaireEventPeriodDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
+    public static List<PLTLossData> nonLineaireEventPeriodDrivenAdjustment(List<PLTLossData> pltLossDatas, boolean cap, List<PEATData> peatDatas) {
         return nonLineaireEventDrivenAdjustmentOrEventPeriodAdjustment(pltLossDatas, cap, peatDatas, true);
     }
 
-    public List<PLTLossData> lineaireAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
+    public static List<PLTLossData> lineaireAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
         if (lmf > 0) {
             if (pltLossDatas != null && !pltLossDatas.isEmpty()) {
                 return pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getEventId(),
@@ -311,7 +311,7 @@ public class CalculAdjustement implements ICalculAdjustment{
          return pltLossDataAepMetric;
     }
 
-    public Double CoefOfVariance(List<PLTLossData> pltLossDatas) {
+    public static Double CoefOfVariance(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             return stdDev(pltLossDatas) / (averageAnnualLoss(pltLossDatas) + CONSTANTE);
         } else {
@@ -320,7 +320,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    public Double stdDev(List<PLTLossData> pltLossDatas) {
+    public static Double stdDev(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             return  Math.sqrt(pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/(CONSTANTE-1));
         } else {
@@ -329,7 +329,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    public Double AEPTVaRMetrics(List<AEPMetric> aepMetrics) {
+    public static Double AEPTVaRMetrics(List<AEPMetric> aepMetrics) {
         if(aepMetrics != null && !aepMetrics.isEmpty()) {
             int s = 0;
             double oep = 0;
@@ -340,7 +340,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    public Double OEPTVaRMetrics(List<OEPMetric> oepMetrics) {
+    public static Double OEPTVaRMetrics(List<OEPMetric> oepMetrics) {
         if(oepMetrics != null && !oepMetrics.isEmpty()) {
             int s = 0;
             double oep = 0;
@@ -351,7 +351,7 @@ public class CalculAdjustement implements ICalculAdjustment{
         }
     }
 
-    public Double averageAnnualLoss(List<PLTLossData> pltLossDatas) {
+    public static Double averageAnnualLoss(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             return pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/CONSTANTE;
         } else {

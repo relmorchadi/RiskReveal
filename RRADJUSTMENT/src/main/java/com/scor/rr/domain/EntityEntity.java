@@ -6,22 +6,22 @@ import java.util.Objects;
 @Entity
 @Table(name = "ENTITY", schema = "dbo", catalog = "RiskReveal")
 public class EntityEntity {
-    private int idEntity;
+    private int entityId;
     private String entityCode;
     private String entityDescription;
 
     @Id
-    @Column(name = "id_entity", nullable = false)
-    public int getIdEntity() {
-        return idEntity;
+    @Column(name = "EntityId", nullable = false)
+    public int getEntityId() {
+        return entityId;
     }
 
-    public void setIdEntity(int idEntity) {
-        this.idEntity = idEntity;
+    public void setEntityId(int entityId) {
+        this.entityId = entityId;
     }
 
     @Basic
-    @Column(name = "entity_code", length = 50)
+    @Column(name = "EntityCode", nullable = true, length = 50)
     public String getEntityCode() {
         return entityCode;
     }
@@ -31,7 +31,7 @@ public class EntityEntity {
     }
 
     @Basic
-    @Column(name = "entity_description", length = 200)
+    @Column(name = "EntityDescription", nullable = true, length = 200)
     public String getEntityDescription() {
         return entityDescription;
     }
@@ -45,13 +45,13 @@ public class EntityEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         EntityEntity that = (EntityEntity) o;
-        return idEntity == that.idEntity &&
+        return entityId == that.entityId &&
                 Objects.equals(entityCode, that.entityCode) &&
                 Objects.equals(entityDescription, that.entityDescription);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idEntity, entityCode, entityDescription);
+        return Objects.hash(entityId, entityCode, entityDescription);
     }
 }

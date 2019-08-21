@@ -8,23 +8,25 @@ import java.util.Objects;
 public class AdjustmentNodeEntity {
     private Integer sequence;
     private Boolean capped;
-    private int idAdjustmentNode;
+    private int adjustmentNodeId;
     private AdjustmentThreadEntity adjustmentThread;
     private AdjustmentBasisEntity adjustmentBasis;
-    private AdjustmentNodeEntity adjustmentNodeById;
+    private AdjustmentNodeEntity adjustmentNode;
     private AdjustmentTypeEntity adjustmentType;
     private AdjustmentStateEntity adjustmentState;
+    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning;
 
-    public AdjustmentNodeEntity(Integer sequence, Boolean capped, AdjustmentThreadEntity adjustmentThread, AdjustmentBasisEntity adjustmentBasis, AdjustmentTypeEntity adjustmentType, AdjustmentStateEntity adjustmentState) {
+    public AdjustmentNodeEntity(Integer sequence, Boolean cappedMaxExposure, AdjustmentThreadEntity adjustmentThreadEntity, AdjustmentBasisEntity adjustmentBasis, AdjustmentTypeEntity adjustmentType, AdjustmentStateEntity adjustmentStateEntityByCodeValid) {
         this.sequence = sequence;
-        this.capped = capped;
-        this.adjustmentThread = adjustmentThread;
+        this.capped = cappedMaxExposure;
+        this.adjustmentThread = adjustmentThreadEntity;
         this.adjustmentBasis = adjustmentBasis;
         this.adjustmentType = adjustmentType;
-        this.adjustmentState = adjustmentState;
+        this.adjustmentState = adjustmentStateEntityByCodeValid;
     }
 
     public AdjustmentNodeEntity() {
+
     }
 
     @Basic
@@ -38,7 +40,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "capped", nullable = true)
+    @Column(name = "Capped", nullable = true)
     public Boolean getCapped() {
         return capped;
     }
@@ -48,14 +50,13 @@ public class AdjustmentNodeEntity {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name = "id_adjustment_node", nullable = false)
-    public int getIdAdjustmentNode() {
-        return idAdjustmentNode;
+    @Column(name = "AdjustmentNodeId", nullable = false)
+    public int getAdjustmentNodeId() {
+        return adjustmentNodeId;
     }
 
-    public void setIdAdjustmentNode(int idAdjustmentNode) {
-        this.idAdjustmentNode = idAdjustmentNode;
+    public void setAdjustmentNodeId(int adjustmentNodeId) {
+        this.adjustmentNodeId = adjustmentNodeId;
     }
 
     @Override
@@ -63,18 +64,18 @@ public class AdjustmentNodeEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentNodeEntity that = (AdjustmentNodeEntity) o;
-        return idAdjustmentNode == that.idAdjustmentNode &&
+        return adjustmentNodeId == that.adjustmentNodeId &&
                 Objects.equals(sequence, that.sequence) &&
                 Objects.equals(capped, that.capped);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(sequence, capped, idAdjustmentNode);
+        return Objects.hash(sequence, capped, adjustmentNodeId);
     }
 
     @ManyToOne
-    @JoinColumn(name = "adjustmentThreadId", referencedColumnName = "id_adjustment_thread")
+    @JoinColumn(name = "FKAdjustmentThreadId", referencedColumnName = "AdjustmentThreadId")
     public AdjustmentThreadEntity getAdjustmentThread() {
         return adjustmentThread;
     }
@@ -84,7 +85,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_basis", referencedColumnName = "code")
+    @JoinColumn(name = "FKAdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
     public AdjustmentBasisEntity getAdjustmentBasis() {
         return adjustmentBasis;
     }
@@ -94,17 +95,17 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustmentNodeEntityCloning", referencedColumnName = "id_adjustment_node")
-    public AdjustmentNodeEntity getAdjustmentNodeById() {
-        return adjustmentNodeById;
+    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNodeEntity getAdjustmentNode() {
+        return adjustmentNode;
     }
 
-    public void setAdjustmentNodeById(AdjustmentNodeEntity adjustmentNodeById) {
-        this.adjustmentNodeById = adjustmentNodeById;
+    public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
+        this.adjustmentNode = adjustmentNode;
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_type", referencedColumnName = "id_type")
+    @JoinColumn(name = "FKAdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
     public AdjustmentTypeEntity getAdjustmentType() {
         return adjustmentType;
     }
@@ -114,12 +115,22 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_state", referencedColumnName = "id_state")
+    @JoinColumn(name = "FKAdjustmentStateId", referencedColumnName = "AdjustmentStateId")
     public AdjustmentStateEntity getAdjustmentState() {
         return adjustmentState;
     }
 
     public void setAdjustmentState(AdjustmentStateEntity adjustmentState) {
         this.adjustmentState = adjustmentState;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeIdCloning() {
+        return adjustmentNodeByFkAdjustmentNodeIdCloning;
+    }
+
+    public void setAdjustmentNodeByFkAdjustmentNodeIdCloning(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning) {
+        this.adjustmentNodeByFkAdjustmentNodeIdCloning = adjustmentNodeByFkAdjustmentNodeIdCloning;
     }
 }

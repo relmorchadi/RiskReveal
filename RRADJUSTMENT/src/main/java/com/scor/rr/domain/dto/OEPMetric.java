@@ -2,9 +2,9 @@ package com.scor.rr.domain.dto;
 
 public class OEPMetric {
 
-    double frequency;
-    double returnPeriod;
-    double lossOep;
+    private double frequency;
+    private double returnPeriod;
+    private double lossOep;
 
     public OEPMetric(double frequency, double returnPeriod, double lossOep) {
         this.frequency = frequency;

@@ -10,15 +10,15 @@ public class DefaultAdjustmentVersionEntity {
     private Integer versionSequence;
     private Timestamp effectiveTo;
     private Timestamp effectiveFrom;
-    private int idDefaultAdjustmentVersion;
-    private Boolean isactive;
+    private int defaultAdjustmentVersionId;
+    private Boolean isActive;
     private Timestamp deletedDt;
     private String deletedBy;
     private String notes;
     private DefaultAdjustmentEntity defaultAdjustment;
 
     @Basic
-    @Column(name = "version_sequence", nullable = true)
+    @Column(name = "VersionSequence", nullable = true)
     public Integer getVersionSequence() {
         return versionSequence;
     }
@@ -28,7 +28,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "effective_to", nullable = true)
+    @Column(name = "EffectiveTo", nullable = true)
     public Timestamp getEffectiveTo() {
         return effectiveTo;
     }
@@ -38,7 +38,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "effective_from", nullable = true)
+    @Column(name = "EffectiveFrom", nullable = true)
     public Timestamp getEffectiveFrom() {
         return effectiveFrom;
     }
@@ -48,27 +48,27 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Id
-    @Column(name = "id_default_adjustment_version", nullable = false)
-    public int getIdDefaultAdjustmentVersion() {
-        return idDefaultAdjustmentVersion;
+    @Column(name = "DefaultAdjustmentVersionId", nullable = false)
+    public int getDefaultAdjustmentVersionId() {
+        return defaultAdjustmentVersionId;
     }
 
-    public void setIdDefaultAdjustmentVersion(int idDefaultAdjustmentVersion) {
-        this.idDefaultAdjustmentVersion = idDefaultAdjustmentVersion;
-    }
-
-    @Basic
-    @Column(name = "isactive", nullable = true)
-    public Boolean getIsactive() {
-        return isactive;
-    }
-
-    public void setIsactive(Boolean isactive) {
-        this.isactive = isactive;
+    public void setDefaultAdjustmentVersionId(int defaultAdjustmentVersionId) {
+        this.defaultAdjustmentVersionId = defaultAdjustmentVersionId;
     }
 
     @Basic
-    @Column(name = "deleted_dt", nullable = true)
+    @Column(name = "IsActive", nullable = true)
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    @Basic
+    @Column(name = "DeletedDt", nullable = true)
     public Timestamp getDeletedDt() {
         return deletedDt;
     }
@@ -78,7 +78,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "deleted_by", nullable = true, length = 50)
+    @Column(name = "DeletedBy", nullable = true, length = 50)
     public String getDeletedBy() {
         return deletedBy;
     }
@@ -88,7 +88,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "notes", nullable = true, length = 200)
+    @Column(name = "Notes", nullable = true, length = 200)
     public String getNotes() {
         return notes;
     }
@@ -102,11 +102,11 @@ public class DefaultAdjustmentVersionEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         DefaultAdjustmentVersionEntity that = (DefaultAdjustmentVersionEntity) o;
-        return idDefaultAdjustmentVersion == that.idDefaultAdjustmentVersion &&
+        return defaultAdjustmentVersionId == that.defaultAdjustmentVersionId &&
                 Objects.equals(versionSequence, that.versionSequence) &&
                 Objects.equals(effectiveTo, that.effectiveTo) &&
                 Objects.equals(effectiveFrom, that.effectiveFrom) &&
-                Objects.equals(isactive, that.isactive) &&
+                Objects.equals(isActive, that.isActive) &&
                 Objects.equals(deletedDt, that.deletedDt) &&
                 Objects.equals(deletedBy, that.deletedBy) &&
                 Objects.equals(notes, that.notes);
@@ -114,11 +114,11 @@ public class DefaultAdjustmentVersionEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(versionSequence, effectiveTo, effectiveFrom, idDefaultAdjustmentVersion, isactive, deletedDt, deletedBy, notes);
+        return Objects.hash(versionSequence, effectiveTo, effectiveFrom, defaultAdjustmentVersionId, isActive, deletedDt, deletedBy, notes);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_default_adjustment", referencedColumnName = "id_default_adjustment")
+    @JoinColumn(name = "FKDefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId")
     public DefaultAdjustmentEntity getDefaultAdjustment() {
         return defaultAdjustment;
     }

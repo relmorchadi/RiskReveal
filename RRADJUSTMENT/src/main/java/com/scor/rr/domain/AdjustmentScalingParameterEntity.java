@@ -1,33 +1,32 @@
 package com.scor.rr.domain;
 
 import javax.persistence.*;
-import java.math.BigDecimal;
 import java.util.Objects;
 
 @Entity
 @Table(name = "AdjustmentScalingParameter", schema = "dbo", catalog = "RiskReveal")
 public class AdjustmentScalingParameterEntity {
-    private int idAdjustmentParameter;
+    private int adjustmentScalingParameterId;
     private double factor;
-    private AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode;
+    private AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeScaling;
 
-    public AdjustmentScalingParameterEntity() {
+    public AdjustmentScalingParameterEntity(double factor, AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeScaling) {
+        this.factor = factor;
+        this.adjustmentNodeByFkAdjustmentNodeScaling = adjustmentNodeByFkAdjustmentNodeScaling;
     }
 
-    public AdjustmentScalingParameterEntity(double factor, AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
-        this.factor = factor;
-        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
+    public AdjustmentScalingParameterEntity() {
+
     }
 
     @Id
-    @Column(name = "id_adjustment_parameter", nullable = false)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    public int getIdAdjustmentParameter() {
-        return idAdjustmentParameter;
+    @Column(name = "AdjustmentScalingParameterId", nullable = false)
+    public int getAdjustmentScalingParameterId() {
+        return adjustmentScalingParameterId;
     }
 
-    public void setIdAdjustmentParameter(int idAdjustmentParameter) {
-        this.idAdjustmentParameter = idAdjustmentParameter;
+    public void setAdjustmentScalingParameterId(int adjustmentScalingParameterId) {
+        this.adjustmentScalingParameterId = adjustmentScalingParameterId;
     }
 
     @Basic
@@ -45,22 +44,22 @@ public class AdjustmentScalingParameterEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AdjustmentScalingParameterEntity that = (AdjustmentScalingParameterEntity) o;
-        return idAdjustmentParameter == that.idAdjustmentParameter &&
+        return adjustmentScalingParameterId == that.adjustmentScalingParameterId &&
                 Objects.equals(factor, that.factor);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(idAdjustmentParameter, factor);
+        return Objects.hash(adjustmentScalingParameterId, factor);
     }
 
     @ManyToOne
-    @JoinColumn(name = "id_adjustment_node", referencedColumnName = "id_adjustment_node")
-    public AdjustmentNodeEntity getAdjustmentNodeByIdAdjustmentNode() {
-        return adjustmentNodeByIdAdjustmentNode;
+    @JoinColumn(name = "FKAdjustmentNodeScaling", referencedColumnName = "AdjustmentNodeId")
+    public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeScaling() {
+        return adjustmentNodeByFkAdjustmentNodeScaling;
     }
 
-    public void setAdjustmentNodeByIdAdjustmentNode(AdjustmentNodeEntity adjustmentNodeByIdAdjustmentNode) {
-        this.adjustmentNodeByIdAdjustmentNode = adjustmentNodeByIdAdjustmentNode;
+    public void setAdjustmentNodeByFkAdjustmentNodeScaling(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeScaling) {
+        this.adjustmentNodeByFkAdjustmentNodeScaling = adjustmentNodeByFkAdjustmentNodeScaling;
     }
 }

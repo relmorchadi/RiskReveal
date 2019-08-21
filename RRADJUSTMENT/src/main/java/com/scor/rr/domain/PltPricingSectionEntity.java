@@ -18,7 +18,7 @@ public class PltPricingSectionEntity {
     private Timestamp lastUpdateRiskReveal;
 
     @Id
-    @Column(name = "id", nullable = false, length = 255,insertable = false ,updatable = false)
+    @Column(name = "PLTPricingSectionId", nullable = false, length = 255)
     public String getId() {
         return id;
     }
@@ -38,7 +38,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingSectionId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "pltPricingSectionId", nullable = true, length = 255)
     public String getPltPricingSectionId() {
         return pltPricingSectionId;
     }
@@ -48,7 +48,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingId", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "FKPltPricingId", nullable = true, length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -58,7 +58,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "currency", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "currency", nullable = true, length = 255)
     public String getCurrency() {
         return currency;
     }
@@ -68,7 +68,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "name", nullable = true, length = 255)
     public String getName() {
         return name;
     }
@@ -78,7 +78,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "omegaTreatyNo", nullable = true, length = 255,insertable = false ,updatable = false)
+    @Column(name = "omegaTreatyNo", nullable = true, length = 255)
     public String getOmegaTreatyNo() {
         return omegaTreatyNo;
     }
