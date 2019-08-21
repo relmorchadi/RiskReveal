@@ -28,10 +28,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   wsIdentifier;
   workspaceInfo: any;
 
-  hyperLinks: string[] = ['Risk link', 'File-based'];
+  hyperLinks: string[] = ['RiskLink', 'File-Based'];
   hyperLinksRoutes: any = {
-    'Risk link': '/RiskLink',
-    'File-based': '/FileBasedImport'
+    'RiskLink': '/RiskLink',
+    'File-Based': '/FileBasedImport'
   };
   hyperLinksConfig: {
     wsId: string,

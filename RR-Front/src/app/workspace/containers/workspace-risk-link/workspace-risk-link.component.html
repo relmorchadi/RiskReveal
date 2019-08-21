@@ -15,7 +15,7 @@
       <div class="body-wrap-header">
         <div class="body-wrap-header-text">
           <!--          <span class="body-wrap-header-text-title">TREATY</span>-->
-          <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'Risk link'"
+          <app-hyper-links [routes]="hyperLinksRoutes" [links]="hyperLinks" [activeItem]="'RiskLink'"
                            (navigate)="navigateFromHyperLink($event)"></app-hyper-links>
           <span class="body-wrap-header-text-subtitle">RiskLink Import</span>
         </div>
@@ -140,7 +140,7 @@
                                            [totalRecords]="listEdmRdm.totalNumberElement">
                           <ng-template let-item pTemplate="item">
                             <div class="poover-menu-item"
-                                 (click)="$event.stopPropagation();toggleItems(item, $event, 'link')"
+                                 (click)="$event.stopPropagation(); toggleItems(item, $event, 'link')"
                                  [ngClass]="{'poover-menu-item-active': item?.selected}">
 
                               <span *ngIf="!item.selected; else selected" class="no-check"></span>
@@ -294,60 +294,78 @@
                   <i class="icon-filter" (click)="filterModalVisibility = true"></i>
                 </div>
               </div>
-              <div class="show-table">
-                <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                         [resizableColumns]="true" columnResizeMode="expand"
-                         [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
-                  <ng-template pTemplate="colgroup" let-columns>
-                    <colgroup>
-                      <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
-                    </colgroup>
-                  </ng-template>
-                  <ng-template pTemplate="header" let-columns>
-                    <tr>
-                      <th *ngFor="let col of columns" pResizableColumn>
-                        <ng-container *ngIf="col.header === 'selected'">
-                          <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
-                                 style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis"
-                                 (ngModelChange)="updateAllChecked($event, 'analysis')"
-                                 [nzIndeterminate]="indeterminateAnalysis"></label>
-                          <label *ngIf="state.selectedEDMOrRDM === 'edm'"
-                                 style="margin-top:20px" nz-checkbox [ngModel]="allCheckedPortolfios"
-                                 (ngModelChange)="updateAllChecked($event, 'portfolio')"
-                                 [nzIndeterminate]="indeterminatePortfolio"></label>
-                          <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
-                        </ng-container>
-                        <div *ngIf="col.header !== 'selected'">
-                          {{col.header}}
-                          <p-sortIcon style="position: absolute; float: right;"
-                            [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
-                        </div>
-                        <div class="search-bar-table"
-                             *ngIf="col.header !== 'selected' && col.header !== 'id'">
-                          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                          <input pInputText type="text"
-                                 (input)="kt.filter($event.target.value, col.field, col.filterMatchMode)">
-                        </div>
-                      </th>
-                    </tr>
-                  </ng-template>
-                  <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-                    <tr>
-                      <td *ngFor="let col of columns"
-                          [ngClass]="{'selected-item': rowData?.selected}"
-                          [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
-                        <div style=" display: flex;" *ngIf="col.type === 'select'">
-                          <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
-                                 [ngModel]="rowData.selected"></label>
-                        </div>
-                        <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                             *ngIf="col.type === 'text'">{{rowData[col.field]}}</div>
-                        <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                             *ngIf="col.type === 'date'">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                      </td>
-                    </tr>
-                  </ng-template>
-                </p-table>
+              <div style="display: flex;">
+                <div class="show-table">
+                  <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
+                           [resizableColumns]="true" columnResizeMode="expand"
+                           [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
+                    <ng-template pTemplate="colgroup" let-columns>
+                      <colgroup>
+                        <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
+                      </colgroup>
+                    </ng-template>
+                    <ng-template pTemplate="header" let-columns>
+                      <tr>
+                        <th *ngFor="let col of columns" pResizableColumn>
+                          <ng-container *ngIf="col.header === 'selected'">
+                            <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
+                                   style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis"
+                                   (ngModelChange)="updateAllChecked($event, 'analysis')"
+                                   [nzIndeterminate]="indeterminateAnalysis"></label>
+                            <label *ngIf="state.selectedEDMOrRDM === 'edm'"
+                                   style="margin-top:20px" nz-checkbox [ngModel]="allCheckedPortolfios"
+                                   (ngModelChange)="updateAllChecked($event, 'portfolio')"
+                                   [nzIndeterminate]="indeterminatePortfolio"></label>
+                            <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
+                          </ng-container>
+                          <div *ngIf="col.header !== 'selected'">
+                            {{col.header}}
+                            <p-sortIcon style="position: absolute; float: right;"
+                                        [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
+                          </div>
+                          <div class="search-bar-table"
+                               *ngIf="col.header !== 'selected' && col.header !== 'id'">
+                            <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                            <input pInputText type="text"
+                                   (input)="kt.filter($event.target.value, col.field, col.filterMatchMode)">
+                          </div>
+                        </th>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
+                      <tr>
+                        <td *ngFor="let col of columns"
+                            [ngClass]="{'selected-item': rowData?.selected}"
+                            [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                          <div style=" display: flex;" *ngIf="col.type === 'select'">
+                            <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
+                                   [ngModel]="rowData.selected"></label>
+                          </div>
+                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                               *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
+                          <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
+                               *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                  </p-table>
+                </div>
+                <div class="menu-icon-wrap">
+                  <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                    <a style="max-height: 28px;display: flex;" nz-dropdown>
+                      <i class="icon-settings_24px"></i>
+                    </a>
+                    <ul nz-menu style="font-size: 12px">
+                      <li nz-menu-item>Reset Sort</li>
+                      <li nz-menu-item>Reset Filters</li>
+                      <li nz-menu-item>Reset Sort/Filters</li>
+                      <li nz-menu-divider></li>
+                      <li nz-menu-item (click)="toggleColumnsManager('')">Manage Columns</li>
+                      <li nz-menu-divider></li>
+                      <li nz-menu-item>Unselect All</li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
               </div>
               <div class="import-button">
                 <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained">ADD FOR IMPORT

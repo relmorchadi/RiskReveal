@@ -38,7 +38,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   lastSelectedIndexFPstandard = null;
   lastSelectedIndexFPAnalysis = null;
   lastSelectedIndexLinkAnalysis = null;
-  lastSelectedIndexLinkPortfolio = null;
 
   workingFSC: any;
   serviceSubscription: any;
@@ -91,9 +90,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   allCheckedAnalysis: boolean;
   indeterminateAnalysis: boolean;
 
-  allCheckedPortfolio: boolean;
-  indeterminatePortfolio: boolean;
-
   collapseDataSources = false;
   collapseFPDataTable = false;
 
@@ -132,8 +128,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
         if (this.linking.portfolio !== null) {
           if (_.get(this.linking, 'portfolio', null) !== null) {
             this.portfolio = _.toArray(this.linking.portfolio.data);
-            this.allCheckedPortfolio = this.linking.portfolio.allChecked;
-            this.indeterminatePortfolio = this.linking.portfolio.indeterminate;
           }
         }
         if (this.linking.portfolio === null && this.linking.analysis === null ) {
@@ -252,8 +246,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
     } else if (scope === 'linkingAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
       this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: selection, wrapper: wrapperEDM}));
-    } else if (scope === 'linkingPortfolio') {
-      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: selection}));
     }
   }
 
@@ -270,6 +262,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       const wrapperEDM = this.linking.rdm.selected;
       this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne', wrapper: wrapperEDM, value: event, item: rowData}));
     } else if (target === 'linkPortfolio') {
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
       this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: event, item: rowData}));
     }
   }
@@ -327,9 +320,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
       this.lastSelectedIndexLinkAnalysis = index;
     } else if (target === 'linkPortfolio') {
-      const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
-      this._selectRowsProvider(row, index, this.lastSelectedIndexLinkPortfolio, action, 'linkPortfolio');
-      this.lastSelectedIndexLinkPortfolio = index;
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: true, item: row}));
     }
   }
 
@@ -375,9 +367,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
           }));
         }
       }
-    } else if (target === 'linkPortfolio') {
-      const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
-      this._selectSectionProvider(from, to, action, this.linking.portfolio.data);
     }
   }
 
