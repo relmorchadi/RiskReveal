@@ -14,11 +14,9 @@ export abstract class BaseContainer {
     this.unSubscriton$ = new Subject<void>();
   }
 
-
   get unsubscribeOnDestroy(): MonoTypeOperatorFunction<any> {
     return takeUntil(this.unSubscriton$);
   }
-
 
   protected navigate(commands: any[]) {
     this.dispatch(new Navigate(commands));
