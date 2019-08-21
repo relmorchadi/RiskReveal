@@ -1,4 +1,4 @@
-.a-buttons-contained {
+.a-buttons-contained, .a-buttons-contained-micro {
   background-color: #0700CF;
   color: #FFFFFF;
   font-size: 16px;
@@ -27,6 +27,12 @@
   &:focus {
     outline: 0 !important;
   }
+}
+
+.a-buttons-contained-micro {
+  font-size: 11px;
+  line-height: 12px;
+  padding: 6px 15px 6px;
 }
 
 .a-buttons-contained-disabled {
@@ -185,5 +191,17 @@
 
   .inactive {
     color: #fff;
+  }
+}
+
+.a-buttons-linked {
+  background-color: transparent;
+  border: none;
+  color: rgba(0,0,0,0.6);
+  line-height: 28px;
+  text-decoration: underline;
+
+  &:focus {
+    outline: 0;
   }
 }
