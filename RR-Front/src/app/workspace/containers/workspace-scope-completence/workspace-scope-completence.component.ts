@@ -3,13 +3,16 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
-import {dataTable, dataTable2, trestySections} from './data';
+import {dataTable,dataTable2, trestySections} from './data';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
 import {tap} from "rxjs/operators";
+import {Message} from "../../../shared/message";
+import * as tableStore from "../../../shared/components/plt/plt-main-table/store";
+import * as fromWorkspaceStore from "../../store";
 
 @Component({
   selector: 'app-workspace-scope-completence',
@@ -25,6 +28,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   wsIdentifier;
   addRemoveModal: boolean = false;
   listOfPltsData = [];
+  selectionForOverride = [];
 
   dataSource: any;
   workspaceId: any;
@@ -63,7 +67,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = value;
-      this.listOfPltsData = _.map(this.getSortedPlts(this.state), (e, k) => ({[k]: e}));
+      this.listOfPltsData = _.map(this.getSortedPlts(this.state), (e,k) => ({[k]: e}));
       // this.dataSource = this.dataSource.map((dt, k) => dt = {...dt, id: k});
       this.dataSource = dataTable;
       this.treatySections = _.toArray(trestySections);
@@ -91,6 +95,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.workspaceInfo = data;
     this.wsIdentifier = wsIdentifier;
   }
+
+
 
   pinWorkspace() {
     const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
@@ -169,33 +175,57 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   }
 
   checkExpected(item, rowData) {
-    let checked = false;
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      item.regionPerils.forEach(reg => {
-          if (reg.id == rowData.id) {
+    let checked = 'not';
+    let holder = [];
+    if(this.selectedSortBy == 'Minimum Grain / RAP'){
+    item.regionPerils.forEach(reg => {
+        if (reg.id == rowData.id) {
 
-            reg.targetRaps.forEach(res => {
-              rowData.child.forEach(des => {
-                if (des.id == res.id) {
-                  checked = true;
+          reg.targetRaps.forEach(res => {
+            rowData.child.forEach(des => {
+              if (des.id == res.id) {
+                if(des.attached){
+                  holder.push('attached');
                 }
-              })
-
+                if(des.overridden){
+                  holder.push('overridden')
+                }
+                if(!des.attached && !des.overridden){
+                  holder.push('checked')
+                }
+              }
             })
 
-          }
+          })
+
         }
-      )
+      }
+    )
+    if(_.includes(holder,'checked')){
+      checked = 'checked';
+    }else if(_.includes(holder, 'attached')){
+      checked = 'attached';}
+      else if(_.includes(holder,  'overridden')){
+        checked = 'overridden';
     }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    }
+    if(this.selectedSortBy == 'RAP / Minimum Grain'){
       item.targetRaps.forEach(reg => {
           if (reg.id == rowData.id) {
 
             reg.regionPerils.forEach(res => {
               rowData.child.forEach(des => {
                 if (des.id == res.id) {
-                  checked = true;
-                }
+                  if(des.attached){
+                    holder.push('attached');
+                  }
+                  if(des.overridden){
+                    holder.push('overridden')
+                  }
+                  if(!des.attached && !des.overridden){
+                    holder.push('checked')
+                  }
+                  }
               })
 
             })
@@ -204,42 +234,75 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         }
       )
     }
+    if(_.includes(holder,'checked')){
+      checked = 'checked';
+    }else if(_.includes(holder, 'attached')){
+      checked = 'attached';}
+    else if(_.includes(holder,  'overridden')){
+      checked = 'overridden';
+    }
+    if(rowData.override){
+      if(checked == 'checked'){
+        checked = 'override'
+      }
+    }
+    return checked;
+  }
+  checkExpectedTwo(item,grain, rowData){
+    let checked = 'not';
+
+    if(this.selectedSortBy == 'Minimum Grain / RAP'){
+      item.regionPerils.forEach(reg => {
+        if (reg.id == rowData.id) {
+      reg.targetRaps.forEach( des => {
+        if(des.id == grain.id){
+          if(grain.attached){
+            checked = 'attached';
+          }
+          if(grain.overridden){
+            checked = 'overridden';
+          }
+          if(!grain.attached && !grain.overridden){
+            checked = 'checked'
+          }
+          }
+      })
+
+    }})}
+    if(this.selectedSortBy == 'RAP / Minimum Grain'){
+      item.targetRaps.forEach(reg => {
+        if (reg.id == rowData.id) {
+        reg.regionPerils.forEach( des => {
+          if(des.id == grain.id){
+            if(grain.attached){
+              checked = 'attached';
+            }
+            if(grain.overridden){
+              checked = 'overridden';
+            }
+            if(!grain.attached && !grain.overridden){
+              checked = 'checked'
+            }
+          }
+        })
+    }})}
+
+  if(rowData.override){
+    if(checked == 'checked'){
+      checked = 'override'
+    }
+  }
     return checked;
   }
 
-  checkExpectedTwo(item, grain, rowData) {
-    let checked = false;
+  overrideSelectionTwo(item,rowData,grain){
+ let holder = [item.id, rowData.id, grain.id];
+  this.selectionForOverride.push(holder);
+  // console.log('this is the selectionForOverride', this.selectionForOverride);
+  }
 
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      item.regionPerils.forEach(reg => {
-        if (reg.id == rowData.id) {
-          item.regionPerils.forEach(res => {
-            res.targetRaps.forEach(des => {
-              if (des.id == grain.id) {
-                checked = true;
-              }
-            })
-
-          })
-        }
-      })
-    }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      item.targetRaps.forEach(reg => {
-        if (reg.id == rowData.id) {
-          item.targetRaps.forEach(res => {
-            res.regionPerils.forEach(des => {
-              if (des.id == grain.id) {
-                checked = true;
-              }
-            })
-
-          })
-        }
-      })
-    }
+  overrideSelection(item,rowData){
 
 
-    return checked;
   }
 }
