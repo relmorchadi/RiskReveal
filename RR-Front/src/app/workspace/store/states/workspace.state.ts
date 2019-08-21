@@ -292,6 +292,11 @@ export class WorkspaceState {
     return state.content[wsIdentifier].scopeOfCompletence.data;
   }
 
+  static getPltsForScopeCompleteness(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+  }
+
 
 
   /***********************************
