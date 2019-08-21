@@ -69,6 +69,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('selectAll') selectAll: any;
   @Input('manageReturnPeriods') manageReturnPeriods: boolean;
   @Input('rowGroupMetadata') rowGroupMetadata: any;
+  @Input('groupedByPure') groupedByPure: any;
 
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;

@@ -1624,7 +1624,6 @@ export const ONE_PLT =
 
 export const PLT_DATA =
   {
-    '17P3398-2016': {
       'SPLTH-000735484': {
         workspaceId: '17P3398',
         uwy: 2016,
@@ -3690,7 +3689,6 @@ export const PLT_DATA =
           }
         ]
       }
-    }
   }
 export const API_RESPONSE = {
   "plts": [{

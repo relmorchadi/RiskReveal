@@ -56,7 +56,7 @@ export class CalibrationService implements NgxsOnInit {
     this.ctx = ctx;
     this.prefix = params.workspaceId + '-' + params.uwy;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data = PLT_DATA;
+      draft.content[this.prefix].calibration.data[this.prefix] = PLT_DATA;
       draft.content[this.prefix].calibration.filters = {
         systemTag: [],
         userTag: []
