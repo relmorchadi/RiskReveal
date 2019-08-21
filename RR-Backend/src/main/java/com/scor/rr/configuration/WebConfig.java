@@ -1,5 +1,6 @@
 package com.scor.rr.configuration;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.cors.CorsConfiguration;
@@ -54,5 +55,10 @@ public class WebConfig implements WebMvcConfigurer {
             registry.addResourceHandler("/**","index.html").addResourceLocations(
                     CLASSPATH_RESOURCE_LOCATIONS);
         }
+    }
+
+    @Bean
+    public ModelMapper getModelMapper(){
+        return new ModelMapper();
     }
 }

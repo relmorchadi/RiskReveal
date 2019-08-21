@@ -71,12 +71,8 @@ public class PltManagerView {
     @Column(name = "userOccurrenceBasis")
     private String userOccurrenceBasis;
 
-    @ManyToMany
-    @JoinTable(
-            name = "user_tag_plt",
-            joinColumns = @JoinColumn(name = "_id"),
-            inverseJoinColumns = @JoinColumn(name = "tagId"))
-    Set<UserTag> userTags;
+    @OneToMany(mappedBy = "tag")
+    Set<UserTagPlt> userTags;
 
     public PltManagerView() {
     }

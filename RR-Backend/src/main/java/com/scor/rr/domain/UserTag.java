@@ -22,18 +22,15 @@ public class UserTag {
     private String tagName;
     private String tagColor;
 
-    @ManyToMany(
-    cascade = {CascadeType.PERSIST, CascadeType.REFRESH,CascadeType.MERGE,CascadeType.DETACH})
-    @JoinTable(
-            schema = "poc",
-            name = "[user_tag_plt]",
-            joinColumns = @JoinColumn(name = "tagId"),
-            inverseJoinColumns = @JoinColumn(name = "_id"))
-    Set<PltHeader> pltHeaders;
+    @OneToMany(mappedBy = "plt")
+    Set<UserTagPlt> pltHeaders;
 
     @ManyToOne
     @JsonIgnore
     Workspace workspace;
+
+    @ManyToOne
+    private User user;
 
     public UserTag(String tagName) {
         this.tagName = tagName;

@@ -37,8 +37,8 @@ public class PltHeader {
   private String xActPublicationDate;
 
 
-  @ManyToMany(mappedBy = "pltHeaders")
-  Set<UserTag> userTags;
+  @OneToMany(mappedBy = "tag")
+  Set<UserTagPlt> userTags;
 
   @Override
   public boolean equals(Object o) {
