@@ -317,24 +317,35 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
-      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected).map(e => e.pltId);
-      if (this.listOfPltsData) {
-        _.forEach(this.listOfPltsData, pure => {
-          this.listOfPltsThread.push(...pure.threads);
-        })
-      }
+      this.initThreadsData();
       this.detectChanges();
       console.log(data);
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
-      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsData.length) && this.listOfPltsData.length > 0;
+      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0;
 
-      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsData.length && this.selectedListOfPlts.length > 0;
+      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsThread.length && this.selectedListOfPlts.length > 0;
       this.detectChanges();
     });
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
+  }
+
+  initThreadsData() {
+    if (this.listOfPltsData) {
+      _.forEach(this.listOfPltsData, pure => {
+        _.forEach(pure.threads, thread => {
+          let index = this.listOfPltsThread.findIndex(row => row.pltId == thread.pltId);
+          if (this.listOfPltsThread.filter(row => row.pltId == thread.pltId).length > 0) {
+            this.listOfPltsThread[index] = _.merge(this.listOfPltsThread[index], thread)
+          } else {
+            this.listOfPltsThread.push(thread)
+          }
+        })
+      })
+      this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
+    }
   }
 
   initRandomMetaData() {
@@ -519,8 +530,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       plts: event.plts,
       forDeleted: this.showDeleted
     }));
-    console.log(this.listOfPltsData);
+    this.initThreadsData();
+    console.log(this.selectedListOfPlts);
     this.cdRef.detectChanges()
+
   }
 
 
@@ -626,7 +639,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         adjustementType: adjustementType,
         adjustement: adjustement,
         columnPosition: columnPosition,
-        pltId: [this.idPlt],
+        pltId: this.listOfPltsThread.filter(row => row.pltId == this.idPlt),
       }));
     } else {
       if (boolAdj) {
@@ -684,11 +697,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
+    console.log(this.listOfPltsThread);
     this.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.listOfPltsData,
+      pltId: this.listOfPltsThread.filter(row => row.status != 'locked'),
     }));
     this.adjustColWidth(adj);
     this.singleValue = null;
@@ -748,9 +762,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.selectedListOfPlts,
+      pltId: this.listOfPltsThread.filter(row => row.selected),
     }));
-    this.adjustColWidth(adj);
+    // this.adjustColWidth(adj);
   }
 
   ModifyAdjustement(adj) {
