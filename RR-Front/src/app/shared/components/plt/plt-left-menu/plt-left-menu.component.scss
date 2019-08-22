@@ -58,20 +58,6 @@
         }
       }
 
-      .color-container {
-        display: flex;
-        justify-content: center;
-        margin: 0;
-        .color {
-          margin: 0 5px;
-          display: block;
-          width: 40px;
-          height: 40px;
-          cursor: pointer;
-          position: relative;
-        }
-      }
-
 
       ::ng-deep {
         .ant-collapse {
@@ -120,8 +106,35 @@
         }
       }
     }
+  }
 
+  .ui-dialog-footer .footer {
+    display: flex;
+    justify-content: space-between;
 
+    .footer-left {
+      display: flex;
+      align-items: center;
+
+      .color-container {
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        .color {
+          margin: 0 5px;
+          display: block;
+          width: 40px;
+          height: 40px;
+          cursor: pointer;
+          position: relative;
+        }
+      }
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+    }
   }
 }
 

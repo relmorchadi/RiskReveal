@@ -123,7 +123,7 @@
 </nz-tabset>
 
 <p-dialog
-  [visible]="inputs._tagModalVisible"
+  [visible]="true"
   [closable]="false"
   styleClass="m-dialog-modal-m-w  tag-manager-pop-up"
   [modal]="true"
@@ -141,52 +141,21 @@
   </p-header>
   <div class="content" style="position: relative;">
     <div class="content-wrapper">
-      <i style="
-      cursor: pointer;
-      position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;" class="icon-arrow_back_ios_24px" *ngIf="!drawer" (click)="openDrawer()"></i>
       <div class="assigned-tags">
         <div class="section">
           <h6>Assigned Tags</h6>
-          <div class="tag-container" style="flex-direction: row;">
-            <div style="margin: 0 25px;">
-              <span class="body-3">All</span>
-              <div class="all">
-                  <span
-                    *ngFor="let tag of tagsInput?.allAssigned"
-                    [ngClass]="{'active-tag':tag?.selected}"
-                    class="a-chips-input-mini"
-                    [ngStyle]="{'background-color': tag?.tagColor}">
+          <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
+            <span
+              *ngFor="let tag of tagsInput?.assignedTags"
+              [ngClass]="{'active-tag':tag?.selected}"
+              class="a-chips-input-mini"
+              [ngStyle]="{'background-color': tag?.tagColor}">
                       <span class="chips-content">{{tag?.tagName}}</span>
                       <span class="chips-counter">
                         {{tag?.count}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                   </span>
-              </div>
-            </div>
-            <div style="margin: 0 25px;">
-              <span class="body-3">Subsets</span>
-              <div class="subsets">
-                  <span
-                    *ngFor="let tag of tagsInput?.subsetsAssigned"
-                    [ngClass]="{'active-tag':tag?.selected}"
-                    class="a-chips-input-mini"
-                    [ngStyle]="{'background-color': tag?.tagColor}">
-                      <span class="chips-content">{{tag?.tagName}}</span>
-                      <span class="chips-counter">
-                        {{tag?.count}}
-                        <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
-                      </span>
-                  </span>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -218,11 +187,11 @@
                 </span>
                 </div>
               </div>
-              <div class="section" *ngIf="tagsInput?.userFavorite.length">
+              <div class="section" *ngIf="tagsInput?.suggested.length">
                 <div class="body-3">User Favorites</div>
                 <div class="tag-container" style="flex-direction: row;justify-content: flex-start;">
                 <span
-                  *ngFor="let tag of tagsInput?.userFavorite"
+                  *ngFor="let tag of tagsInput?.suggested"
                   [ngClass]="{'active-tag':tag?.selected}"
                   class="a-chips-input-mini"
                   [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
@@ -259,71 +228,38 @@
       </div>
     </div>
 
-    <div *ngIf="drawer" class="drawer">
-      <i style="cursor: pointer;
-      position: absolute;
-    right: 10px;
-    top: 10px;
-    width: 25px;
-    height: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;" class="icon-arrow_forward_ios_24px" *ngIf="drawer" (click)="closeDrawer()"></i>
-      <div>
-        <span class="body-2">Create/Edit Tag</span>
-        <form [formGroup]="tagForm" class="tag-container">
-          <div class="a-form-control" style="flex-direction: row; margin: 0 7px;">
-            <div class="a-form-input-wrapper">
-              <label class="label-input">Tag title</label>
-              <input class="a-textfield-standard a-textfield-label" (keydown)="onEnter(i,$event)" formControlName="tagName" placeholder="Title" style="margin-bottom:15px;">
-              <div class="msg-err" *ngIf="title.errors?.required && title.touched">
-                Title is required *
-              </div>
-            </div>
-            <div class="color-container">
-              <div class="color" [ngStyle]="{'background-color': color.value}"
-                   (click)="toggleColorPicker()">
-              </div>
-            </div>
-          </div>
-          <color-sketch
-            (onChange)="color.setValue($event.color.hex)"
-            [presetColors]="presetColors"
-            *ngIf="visible.value"
-          >
-          </color-sketch>
-          <div class="footer-btn">
-            <button class="a-buttons-contained" (click)="addNewTag()" >
-              ADD
-            </button>
-          </div>
-        </form>
-      </div>
-      <div>
-        <span class="body-2">Delete Tag</span>
-        <div>
-          <div class="confirm-msg">
-            Are you sure to Delete TagName ?
-          </div>
-          <div class="footer-btn">
-            <button class="a-button-text-cancel" >
-              Cancel
-            </button>
-            <button class="a-buttons-contained" (click)="deleteTag()">
-              Submit
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
   </div>
   <p-footer>
     <div class="footer">
-      <button (click)="handlePopUpCancel()" class="a-button-text-cancel">cancel</button>
-      <button class="a-buttons-contained" >
-        Save
-      </button>
+      <form [formGroup]="tagForm" class="tag-container footer-left">
+        <div class="a-form-control" style="flex-direction: row; margin: 0 7px;">
+          <div class="color-container">
+            <div class="color" [ngStyle]="{'background-color': color.value}"
+                 (click)="toggleColorPicker()">
+            </div>
+          </div>
+          <div class="a-form-input-wrapper">
+            <label class="label-input">Tag title</label>
+            <input class="a-textfield-standard a-textfield-label" (keydown)="onEnter(i,$event)" formControlName="tagName" placeholder="Title" style="margin-bottom:15px;">
+            <div class="msg-err" *ngIf="title.errors?.required && title.touched">
+              Title is required *
+            </div>
+          </div>
+        </div>
+        <color-sketch
+          (onChange)="color.setValue($event.color.hex)"
+          [presetColors]="presetColors"
+          *ngIf="visible.value"
+        >
+        </color-sketch>
+        <button class="a-buttons-contained" (click)="addNewTag()" >
+          ADD
+        </button>
+      </form>
+      <div class="footer-right">
+        <button (click)="handlePopUpCancel()" class="a-button-text-cancel">cancel</button>
+        <button class="a-buttons-contained" >Save</button>
+      </div>
     </div>
   </p-footer>
 </p-dialog>

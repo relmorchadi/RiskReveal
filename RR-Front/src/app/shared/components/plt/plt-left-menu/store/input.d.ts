@@ -24,7 +24,6 @@ export interface Input {
   selectedItemForMenu: any;
   previouslyUsed: any[];
   usedInWs: any[];
-  userFavorite: any[];
-  subsetsAssigned: any[];
-  allAssigned: any[];
+  suggested: any[];
+  assignedTags: any[];
 }

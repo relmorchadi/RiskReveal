@@ -567,7 +567,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           tagColor: this.presetColors[6],
         }
       ],
-      allAssigned : [
+      assignedTags : [
         {
           tagName: 'pricingV1',
           tagColor: this.presetColors[0],
@@ -579,19 +579,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           count: 5,
         }
       ],
-      subsetsAssigned: [
-        {
-          tagName: 'EU',
-          tagColor: this.presetColors[2],
-          count: 3
-        },
-        {
-          tagName: 'DE',
-          tagColor: this.presetColors[3],
-          count: 2,
-        }
-      ],
-      userFavorite: [
+      suggested: [
         {
           tagName: 'myTag1',
           tagColor: this.presetColors[4],
@@ -601,7 +589,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           tagColor: this.presetColors[4],
         }
       ]
-    }
+    };
     this.setRightMenuSelectedTab('pltDetail');
   }
 
