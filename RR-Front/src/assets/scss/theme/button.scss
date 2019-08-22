@@ -58,7 +58,7 @@
   padding: 6px 15px 6px;
 }
 
-.a-buttons-outlined {
+.a-buttons-outlined, .a-buttons-outlined-mini {
   border: 1px solid #0700CF;
   border-radius: 18px;
   background-color: rgba(98, 2, 238, 0);
@@ -68,11 +68,12 @@
   font-weight: bold;
   letter-spacing: 1.25px;
   text-align: center;
-  padding: 4px 11px 5px;
+  padding: 6px 11px;
   cursor: pointer;
   background-position: center;
   transition: background 1s;
   text-transform: uppercase;
+
   i{
     font-weight: bold;
   }
@@ -92,7 +93,12 @@
   }
 }
 
-.a-button-text, .a-button-text-warning, .a-button-text-cancel {
+.a-buttons-outlined-mini {
+  font-size: 12px;
+  line-height: 12px;
+}
+
+.a-button-text, .a-button-text-warning, .a-button-text-cancel, .a-button-text-cancel-mini {
   border: none;
   background-color: #FFFFFF;
   color: #0700CF;
@@ -125,12 +131,18 @@
 
 }
 
-.a-button-text-cancel {
+.a-button-text-cancel, .a-button-text-cancel-mini {
   color: #A8A8A8;
 }
 
 .a-button-text-warning {
   color: #D0021B;
+}
+
+.a-button-text-cancel-mini {
+  font-size: 13px;
+  line-height: 13px;
+  padding: 6px 17px 7px;
 }
 
 .button-outlined-disabled {

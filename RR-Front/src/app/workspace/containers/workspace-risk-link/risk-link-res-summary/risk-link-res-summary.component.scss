@@ -5,11 +5,11 @@ TABLE STYLE
 */
 
 .summary-info {
-  padding: 20px 0;
   margin: auto;
   width: 97%;
   overflow: hidden;
   display: flex;
+  padding: 5px 1px;
 
   .menu-icon-wrap {
     display: flex;
@@ -197,10 +197,6 @@ TABLE STYLE
       flex-direction: column;
     }
 
-    .ui-table-tbody {
-      diaply: flex;
-    }
-
   }
 
   .empty-notif-wrapper {
@@ -209,6 +205,14 @@ TABLE STYLE
     padding: 7px;
     display: flex;
     justify-content: center;
+  }
+}
+
+.resize-table {
+  display: flex;
+
+  p-table {
+    width: 96%;
   }
 }
 
@@ -372,7 +376,7 @@ COMPONENT STYLE
   display: flex;
   flex-direction: column;
   background-color: #FFFFFF;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 
   .body-wrapper {
     background-color: #FFFFFF;
@@ -761,7 +765,7 @@ LINKING MODAL STYLE
     display: flex;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-top: none;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 
     .modal-l-h-body-fill {
       flex: 1;
@@ -804,7 +808,7 @@ LINKING MODAL STYLE
       .suggestion-card {
         background-color: #F4F6FC;
         border: 1px solid transparent;
-        margin: 0 0 6px 15px;
+        margin: 6px 15px;
         padding: 15px;
 
         .suggestion-card-header {
