@@ -1004,7 +1004,6 @@
 
       .checkBoxHead div {
         display: flex;
-        align-items: center;
       }
 
       th {
@@ -1511,7 +1510,7 @@ body .ui-table .ui-table-thead > tr > th {
 
 }
 
-@media (max-width: 1100px) {
+/*@media (max-width: 1100px) {
   .radio-container {
     margin-top: 0px;
     margin-right: 0px;
@@ -1554,7 +1553,7 @@ body .ui-table .ui-table-thead > tr > th {
     }
   }
 
-}
+}*/
 
 .table-header1 {
   height: 88px !important;
@@ -1813,4 +1812,49 @@ body .ui-table .ui-table-thead > tr > th {
 
 .menu-bottom-separator {
   border-bottom: 1px solid #d1d1d1;
+}
+
+@media (max-width: 1100px) {
+  .radio-container {
+    margin-top: 0px;
+    margin-right: 0px;
+  }
+  .title-as-tab {
+    display: flex;
+    flex: 0 1 auto;
+    width: calc(100% - 28px);
+    float: left;
+    color: #585858;
+    height: 53px;
+
+    span.title {
+      padding: 16px 0px 42px 12px;
+      font-size: 15px;
+      font-weight: bold;
+      border-top: 3px solid #0700e4;
+    }
+  }
+
+}
+
+@media (min-width: 1100px) {
+  .radio-container {
+    margin-top: 0px;
+
+  }
+  .title-as-tab {
+    display: flex;
+    flex: 0 1 auto;
+    width: calc(100% - 230px);
+    float: left;
+    color: #585858;
+
+    span.title {
+      padding: 16px 0px 42px 23px;
+      font-size: 15px;
+      font-weight: bold;
+      border-top: 3px solid #0700e4;
+    }
+  }
+
 }

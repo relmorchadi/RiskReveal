@@ -36,6 +36,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
   @Output('closeReturnPeriods') closeReturnPeriodsEmitter: EventEmitter<any> = new EventEmitter();
   @Output('sortChange') sortChangeEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('expandAll') expandEmitter: EventEmitter<any> = new EventEmitter();
 
   @Input('extended') extended: boolean;
   // @Input('cm') cm: any;
@@ -70,7 +71,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('manageReturnPeriods') manageReturnPeriods: boolean;
   @Input('rowGroupMetadata') rowGroupMetadata: any;
   @Input('groupedByPure') groupedByPure: any;
-
+  @Input('rowKeys') rowKeys: any;
+  @Input('allRowsExpanded') allRowsExpanded: any;
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;
   params = {};
@@ -253,8 +255,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   randomPercentage: any;
   randomAmount: number;
   AALNumber: number = null;
-  pure = PURE
-
+  pure = PURE;
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
   @ViewChild('dt')
@@ -264,6 +265,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   returnPeriodInput: any;
   clickedDropdown: any;
   private userTagsLength: number = 10000;
+
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -372,6 +374,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
+    i = _.findIndex(this.listOfPltsThread, (row: any) => row.pltId == pltId);
     let index = -1;
     let isSelected;
     _.forEach(this.listOfPltsThread, (plt, i) => {
@@ -605,29 +608,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     }
   }
 
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(this.listOfPltsThread, plt => plt.pltId),
-            _.map(this.listOfPltsThread, (plt, i) => ({selected: i <= max && i >= min})),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
+  expandAll(expand: boolean) {
+    this.expandEmitter.emit(expand);
   }
 
   onColResize(event: any) {
@@ -647,5 +629,32 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   protected detectChanges() {
     if (!this.changeRef['destroyed'])
       this.changeRef.detectChanges();
+  }
+
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        console.log('min-max ==> ', min, max);
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(this.listOfPltsThread, plt => plt.pltId),
+            _.map(this.listOfPltsThread, (plt, i) => ({selected: i <= max && i >= min})),
+          )
+        );
+      } else {
+        this.lastSelectedId = i;
+      }
+      console.log(this.lastSelectedId);
+      return;
+    }
   }
 }

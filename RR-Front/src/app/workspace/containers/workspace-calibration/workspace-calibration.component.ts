@@ -45,6 +45,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   someItemsAreSelected = false;
   groupedByPure = true;
+  allRowsExpanded = true;
   selectAll = false;
   listOfPlts = [];
   listOfPltsData = [];
@@ -80,6 +81,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   genericWidth: any = ['409px', '33px', '157px'];
   selectedAdjustment: any;
   shownDropDown: any;
+  rowKeys: any = [];
   lastModifiedAdj;
   dataColumns = [];
   dataColumnsCache = [];
@@ -319,8 +321,14 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
       this.initThreadsData();
+      // console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
       this.detectChanges();
       console.log(data);
+      _.forEach(this.listOfPltsData, row => {
+        this.rowKeys[row.pltId] = true;
+      })
+      // this.rowKeys = this.listOfPltsData.map(e => e.pltId)
+      console.log('rowKey ===> ', this.rowKeys);
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
@@ -335,26 +343,17 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   initThreadsData() {
     if (this.listOfPltsData) {
-      _.forEach(this.listOfPltsData, pure => {
-        _.forEach(pure.threads, thread => {
-          let index = this.listOfPltsThread.findIndex(row => row.pltId == thread.pltId);
-          if (this.listOfPltsThread.filter(row => row.pltId == thread.pltId).length > 0) {
-            this.listOfPltsThread[index] = _.merge(this.listOfPltsThread[index], thread)
-          } else {
-            this.listOfPltsThread.push(thread)
-          }
-        })
-      })
+      this.listOfPltsThread = Array.prototype.concat.apply([], this.listOfPltsData.map(row => row.threads));
       this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
     }
   }
 
   initRandomMetaData() {
     const cols: any[] = ['AAL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
-    _.forEach(this.listOfPltsData, value => {
+    _.forEach(this.listOfPltsThread, value => {
       this.randomMetaData[value.pltId] = {}
     })
-    _.forEach(this.listOfPltsData, value => {
+    _.forEach(this.listOfPltsThread, value => {
       _.forEach(cols, col => {
         if (col == 'AAL') {
           this.randomMetaData[value.pltId][col] = [
@@ -1063,6 +1062,20 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
       })
       console.log(this.rowGroupMetadata);
+    }
+  }
+
+  expandAll(expand) {
+    if (expand) {
+      _.forEach(this.listOfPltsData, row => {
+        this.rowKeys[row.pltId] = true;
+      })
+      this.allRowsExpanded = true;
+    } else {
+      _.forEach(this.listOfPltsData, row => {
+        this.rowKeys[row.pltId] = false;
+      })
+      this.allRowsExpanded = false;
     }
   }
 }
