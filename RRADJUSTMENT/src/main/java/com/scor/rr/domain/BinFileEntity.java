@@ -13,6 +13,7 @@ public class BinFileEntity {
 
     @Id
     @Column(name = "BinFileId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getBinFileId() {
         return binFileId;
     }

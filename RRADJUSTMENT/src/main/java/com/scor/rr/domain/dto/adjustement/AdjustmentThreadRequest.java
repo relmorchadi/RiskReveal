@@ -18,12 +18,34 @@ public class AdjustmentThreadRequest {
     private Timestamp lastGeneratedOn;
     private Timestamp generatedOn;
 
-    public int getAdjustmentThreadId() {
-        return adjustmentThreadId;
+    public AdjustmentThreadRequest(int adjustmentThreadId, Integer pltFinalId, String lastModifiedBy, Timestamp lastModifiedOn) {
+        this.adjustmentThreadId = adjustmentThreadId;
+        this.pltFinalId = pltFinalId;
+        this.lastModifiedBy = lastModifiedBy;
+        this.lastModifiedOn = lastModifiedOn;
+    }
+
+    public AdjustmentThreadRequest(String threadType, Boolean locked, Integer pltPureId, Integer pltFinalId, String createdBy, Timestamp createdOn, String accessBy, Timestamp accessOn, String lastModifiedBy, Timestamp lastModifiedOn, Timestamp lastGeneratedOn, Timestamp generatedOn) {
+        this.threadType = threadType;
+        this.locked = locked;
+        this.pltPureId = pltPureId;
+        this.pltFinalId = pltFinalId;
+        this.createdBy = createdBy;
+        this.createdOn = createdOn;
+        this.accessBy = accessBy;
+        this.accessOn = accessOn;
+        this.lastModifiedBy = lastModifiedBy;
+        this.lastModifiedOn = lastModifiedOn;
+        this.lastGeneratedOn = lastGeneratedOn;
+        this.generatedOn = generatedOn;
     }
 
     public void setAdjustmentThreadId(int adjustmentThreadId) {
         this.adjustmentThreadId = adjustmentThreadId;
+    }
+
+    public int getAdjustmentThreadId() {
+        return adjustmentThreadId;
     }
 
     public String getThreadType() {

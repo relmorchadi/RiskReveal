@@ -1,0 +1,70 @@
+package com.scor.adjustment.service.adjustement;
+
+import com.scor.rr.RiskRevealApplication;
+import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
+import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
+import com.scor.rr.domain.dto.adjustement.loss.PEATData;
+import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {RiskRevealApplication.class})
+@SpringBootTest
+@Transactional
+public class AdjustmentNodeProcessingTest {
+
+    @Autowired
+    AdjustmentNodeProcessingService adjustmentNodeProcessingService;
+    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBandings;
+    private List<PEATData> adjustmentReturnPeriod;
+    private double lmf;
+    private double rpmf;
+
+    @Before
+    public void setUp() throws Exception {
+        adjustmentReturnPeriod = new ArrayList<PEATData>(){{
+            add(new PEATData(36,8443694,1,1.4));
+            add(new PEATData(68,8441785,1,2.2));
+            add(new PEATData(74,8440073,1,0.7));
+            add(new PEATData(94,8443621,1,1.5));
+        }};
+
+        adjustmentReturnPeriodBandings = new ArrayList<AdjustmentReturnPeriodBending>(){{
+            add(new AdjustmentReturnPeriodBending(500,0.87));
+            add(new AdjustmentReturnPeriodBending(750,0.9));
+            add(new AdjustmentReturnPeriodBending(10000,0.93));
+            add(new AdjustmentReturnPeriodBending(20000,0.97));
+
+        }};
+
+        lmf = 1.7;
+        rpmf = 2;
+    }
+
+    @After
+    public void tearDown() {
+
+    }
+
+    @Test
+    public void processNodeByInput() {
+        adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(983,1));
+    }
+    @Test
+    public void processNodeByAdjusted() {
+        adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(lmf,rpmf,adjustmentReturnPeriod,983,1,adjustmentReturnPeriodBandings));
+    }
+}

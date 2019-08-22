@@ -118,7 +118,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKDefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId")
+    @JoinColumn(name = "FKDefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId",insertable = false,updatable = false)
     public DefaultAdjustmentEntity getDefaultAdjustment() {
         return defaultAdjustment;
     }

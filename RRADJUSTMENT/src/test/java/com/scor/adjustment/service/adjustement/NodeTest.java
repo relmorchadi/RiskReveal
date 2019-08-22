@@ -1,6 +1,8 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
+import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
+import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.DefaultAdjustmentService;
 import org.junit.After;
 import org.junit.Before;
@@ -16,11 +18,9 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = {RiskRevealApplication.class})
 @SpringBootTest
 @Transactional
-public class DefaultAdjustmentLookupTest {
-
+public class NodeTest {
     @Autowired
-    DefaultAdjustmentService defaultAdjustmentService;
-    int scorPltHeaderInput;
+    AdjustmentNodeService adjustmentNodeService;
 
     @Before
     public void setUp() throws Exception {
@@ -34,9 +34,12 @@ public class DefaultAdjustmentLookupTest {
     }
 
     @Test
-    public void lookupForDefaultAdjustmentWithInputPLT() {
-        defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(983);
-        defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(1);
+    public void createNode() {
+        AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("",1,
+                false,"",
+                false,1,
+                4,1,41,1.7,1.1,null,983,0,null);
+        adjustmentNodeService.save(adjustmentNodeRequest);
     }
 
 }

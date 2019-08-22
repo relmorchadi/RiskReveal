@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface AdjustmentEventBasedParameterRepository  extends JpaRepository<AdjustmentEventBasedParameterEntity,Integer> {
-    @Query("select p from AdjustmentEventBasedParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNodeByIdAdjustmentNode = n and n.idAdjustmentNode = :id")
+    @Query("select p from AdjustmentEventBasedParameterEntity p inner join AdjustmentNodeEntity n where p.adjustmentNodeByFkAdjustmentNodeId = n and n.adjustmentNodeId = :id")
     AdjustmentEventBasedParameterEntity findAdjustmentEventBasedParameterByAdjustmentNode(@Param("id") int idAdjustmentNode);
 }

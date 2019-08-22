@@ -603,7 +603,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId")
+    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId" ,insertable = false,updatable = false)
     public RegionPerilEntity getRegionPeril() {
         return regionPeril;
     }
@@ -643,7 +643,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKEntityId", referencedColumnName = "EntityId")
+    @JoinColumn(name = "FKEntityId", referencedColumnName = "EntityId",insertable = false,updatable = false)
     public EntityEntity getEntity() {
         return entity;
     }
@@ -653,7 +653,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKMarketChannelId", referencedColumnName = "MarketChannelID")
+    @JoinColumn(name = "FKMarketChannelId", referencedColumnName = "MarketChannelID",insertable = false,updatable = false)
     public MarketChannelEntity getMarketChannel() {
         return marketChannel;
     }
@@ -663,7 +663,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKCloningSourceId", referencedColumnName = "PKScorPltHeaderId")
+    @JoinColumn(name = "FKCloningSourceId", referencedColumnName = "PKScorPltHeaderId",insertable = false,updatable = false)
     public ScorPltHeaderEntity getScorPltHeader() {
         return scorPltHeader;
     }
@@ -672,7 +672,7 @@ public class ScorPltHeaderEntity {
         this.scorPltHeader = scorPltHeader;
     }
     @ManyToOne
-    @JoinColumn(name = "FKBinFileId", referencedColumnName = "BinFileId")
+    @JoinColumn(name = "FKBinFileId", referencedColumnName = "BinFileId",insertable = false,updatable = false)
     public BinFileEntity getBinFileEntity() {
         return binFileEntity;
     }

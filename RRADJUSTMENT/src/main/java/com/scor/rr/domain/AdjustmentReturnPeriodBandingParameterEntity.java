@@ -28,6 +28,7 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
 
     @Id
     @Column(name = "AdjustmentReturnPeriodBandingParameterId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentReturnPeriodBandingParameterId() {
         return adjustmentReturnPeriodBandingParameterId;
     }

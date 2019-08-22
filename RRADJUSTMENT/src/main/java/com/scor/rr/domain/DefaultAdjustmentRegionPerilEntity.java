@@ -59,7 +59,7 @@ public class DefaultAdjustmentRegionPerilEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKDefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId", nullable = false)
+    @JoinColumn(name = "FKDefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId", nullable = false,insertable = false,updatable = false)
     public DefaultAdjustmentEntity getDefaultAdjustment() {
         return defaultAdjustment;
     }
@@ -69,7 +69,7 @@ public class DefaultAdjustmentRegionPerilEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId", nullable = false)
+    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId", nullable = false,insertable = false,updatable = false)
     public RegionPerilEntity getRegionPeril() {
         return regionPeril;
     }

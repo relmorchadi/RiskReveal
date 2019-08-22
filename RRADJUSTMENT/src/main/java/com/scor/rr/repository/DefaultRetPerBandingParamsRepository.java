@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface DefaultRetPerBandingParamsRepository  extends JpaRepository<DefaultRetPerBandingParamsEntity,Integer> {
 
-    @Query("select m from DefaultRetPerBandingParamsEntity m where m.defaultAdjustmentNodeByIdDefaultNode.idDefaultAdjustmentNode = :param")
+    @Query("select m from DefaultRetPerBandingParamsEntity m where m.defaultAdjustmentNodeByFkDefaultNode.defaultAdjustmentNodeId = :param")
     DefaultRetPerBandingParamsEntity getByDefaultAdjustmentNodeByIdDefaultNode(@Param("param") Integer defaultAdjustmentNodeEntityId);
 }

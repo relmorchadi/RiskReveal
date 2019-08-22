@@ -22,6 +22,7 @@ public class AdjustmentEventBasedParameterEntity {
 
     @Id
     @Column(name = "AdjustmentEventBasedParameterId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentEventBasedParameterId() {
         return adjustmentEventBasedParameterId;
     }

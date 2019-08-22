@@ -51,6 +51,7 @@ public class AdjustmentNodeEntity {
 
     @Id
     @Column(name = "AdjustmentNodeId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentNodeId() {
         return adjustmentNodeId;
     }
@@ -125,7 +126,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId",insertable = false,updatable = false)
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeIdCloning() {
         return adjustmentNodeByFkAdjustmentNodeIdCloning;
     }

@@ -101,6 +101,7 @@ public class AdjustmentThreadEntity {
 
     @Id
     @Column(name = "AdjustmentThreadId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentThreadId() {
         return adjustmentThreadId;
     }

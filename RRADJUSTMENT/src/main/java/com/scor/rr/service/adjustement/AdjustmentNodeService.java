@@ -1,13 +1,17 @@
 package com.scor.rr.service.adjustement;
 
+import com.scor.rr.configuration.UtilsMethode;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
+import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,11 +30,11 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class AdjustmentNodeService {
-    @Autowired
-    AdjustmentnodeRepository adjustmentnodeRepository;
+
+    private static final Logger log = LoggerFactory.getLogger(AdjustmentNodeService.class);
 
     @Autowired
-    AdjustmentnodeprocessingRepository adjustmentnodeprocessingRepository;
+    AdjustmentnodeRepository adjustmentnodeRepository;
 
     @Autowired
     AdjustmentBasisRepository adjustmentBasisRepository;
@@ -40,9 +44,6 @@ public class AdjustmentNodeService {
 
     @Autowired
     AdjustmentStateRepository adjustmentStateRepository;
-
-    @Autowired
-    AdjustmentCategoryRepository adjustmentCategoryRepository;
 
     @Autowired
     AdjustmentTypeRepository adjustmentTypeRepository;
@@ -72,18 +73,24 @@ public class AdjustmentNodeService {
     }
     @Transactional
     public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest){
+        log.info(" -----  Creating Node ----------");
         AdjustmentNodeEntity adjustmentNodeEntity = new AdjustmentNodeEntity();
         if(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).isPresent()) {
             adjustmentNodeEntity.setAdjustmentType(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).get());
+            log.info("Type : {}",adjustmentNodeEntity.getAdjustmentType().getType());
             if(adjustmentBasisRepository.findById(adjustmentNodeRequest.getAdjustmentBasis()).isPresent()) {
                 adjustmentNodeEntity.setAdjustmentBasis(adjustmentBasisRepository.findById(adjustmentNodeRequest.getAdjustmentBasis()).get());
+                log.info("Basis : {}",adjustmentNodeEntity.getAdjustmentBasis().getAdjustmentBasisName());
                 if(adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).isPresent()) {
                     adjustmentNodeEntity.setAdjustmentState(adjustmentStateRepository.findById(adjustmentNodeRequest.getAdjustmentState()).get());
+                    log.info("State : {}",adjustmentNodeEntity.getAdjustmentState().getCode());
                     if(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).isPresent()) {
                         adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
+                        log.info("Thread getting successfull : {}",adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
                         adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
                         adjustmentNodeEntity = adjustmentnodeRepository.save(adjustmentNodeEntity);
-                        saveParameterNode(adjustmentNodeEntity,adjustmentNodeRequest);
+                        log.info(" -----  Saving Parameter for Node ----------");
+                        saveParameterNode(adjustmentNodeEntity,new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0, adjustmentNodeRequest.getRpmf() != null ? adjustmentNodeRequest.getRpmf() : 0, adjustmentNodeRequest.getPeatData(), 0, 0,adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()));
                         return adjustmentNodeEntity;
                     } else {
                         throwException(THREADNOTFOUND, NOT_FOUND);
@@ -103,47 +110,55 @@ public class AdjustmentNodeService {
         }
     }
 
-//    public void delete(Integer id) {
-//        this.adjustmentnodeRepository.delete(
-//                this.adjustmentnodeRepository.
-//                        findById(id)
-//                        .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
-//        );
-//    }
-    private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentNodeRequest parameterRequest) {
+    private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
+            log.info("Linear adjustment");
             adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(),node));
+            log.info(" ----- success  Saving Parameter for Node ----------");
         }
-
         else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
+            log.info("{}",EEFFrequency.getValue());
             adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(),node));
+            log.info(" ----- success  Saving Parameter for Node ----------");
         }
         else if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
-            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
-            }
+            log.info("{}",NONLINEAROEP.getValue());
+            if(parameterRequest.getAdjustmentReturnPeriodBendings()!=null) {
+                for (AdjustmentReturnPeriodBending periodBanding : parameterRequest.getAdjustmentReturnPeriodBendings()) {
+                    periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
+                }
+                log.info(" ----- success  Saving Parameter for Node ----------");
+            } else throwException(PARAMETERNOTFOUND, NOT_FOUND);
         }
         else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
+            log.info("{}",NonLinearEventDriven.getValue());
             savePeatDataFile(node, parameterRequest);
+            log.info(" ----- success  Saving Parameter for Node ----------");
         }
         else if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            log.info("{}",NONLINEAIRERETURNPERIOD.getValue());
             savePeatDataFile(node, parameterRequest);
+            log.info(" ----- success  Saving Parameter for Node ----------");
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            log.info("{}",NONLINEARRETURNEVENTPERIOD.getValue());
             for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
                 periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
             }
+            log.info(" ----- success  Saving Parameter for Node ----------");
         }
         else throwException(TYPENOTFOUND, NOT_FOUND);
     }
 
-    private void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentNodeRequest parameterRequest) {
+    protected void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
         try {
+            log.info("------ Saving PEAT DATA FILE ------");
             File file = new File("src/main/resources/file/peatData"+node.getAdjustmentNodeId()+".csv");
             FileUtils.touch(file);
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
             csvpltFileWriter.writePeatData(parameterRequest.getPeatData(),file);
             eventBasedParameterService.save(new AdjustmentEventBasedParameterEntity(file.getPath(),file.getName(),node));
+            log.info("------ Success save file ------");
         } catch (IOException | com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
             e.printStackTrace();
         }

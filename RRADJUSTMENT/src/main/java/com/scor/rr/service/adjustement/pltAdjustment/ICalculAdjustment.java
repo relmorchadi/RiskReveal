@@ -30,7 +30,7 @@ public interface ICalculAdjustment {
         return null;
     }
 
-    static List<PLTLossData> lineaireAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
+    static List<PLTLossData> linearAdjustement(List<PLTLossData> pltLossDatas, double lmf, boolean cap) {
         return null;
     }
 

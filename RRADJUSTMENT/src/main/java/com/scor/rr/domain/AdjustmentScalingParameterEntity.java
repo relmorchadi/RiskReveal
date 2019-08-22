@@ -21,6 +21,7 @@ public class AdjustmentScalingParameterEntity {
 
     @Id
     @Column(name = "AdjustmentScalingParameterId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentScalingParameterId() {
         return adjustmentScalingParameterId;
     }

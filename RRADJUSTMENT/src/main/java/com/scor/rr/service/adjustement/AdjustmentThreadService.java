@@ -50,10 +50,15 @@ public class AdjustmentThreadService {
     }
 
     public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest){
-        AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
-        adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
-        adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
-        return adjustmentthreadRepository.save(adjustmentThreadEntity);
+        AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(adjustmentThreadRequest.getAdjustmentThreadId());
+        if(adjustmentThreadEntity != null) {
+            adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
+            adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
+            return adjustmentthreadRepository.save(adjustmentThreadEntity);
+        } else {
+            throwException(THREADNOTFOUND, NOT_FOUND);
+            return null;
+        }
     }
 
     public void delete(Integer id) {

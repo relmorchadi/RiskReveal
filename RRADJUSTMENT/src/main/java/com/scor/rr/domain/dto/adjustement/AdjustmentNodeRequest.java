@@ -1,5 +1,7 @@
 package com.scor.rr.domain.dto.adjustement;
 
+import com.scor.rr.domain.DefaultAdjustmentEntity;
+import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
@@ -11,21 +13,36 @@ public class AdjustmentNodeRequest {
     private String layer;
     private Integer sequence;
     private Boolean isInputChanged;
-    private String adjustmentParamsSource;
     private String lossNetFlag;
     private Boolean hasNewParamsFile;
     private Integer adjustmentBasis;
     private Integer adjustmentType;
-    private Integer adjustmentCategory;
     private Integer adjustmentState;
     private Integer adjustmentThreadId;
-    private double lmf;
-    private double rpmf;
+    private Double lmf;
+    private Double rpmf;
     private List<PEATData> peatData;
     private Integer scorPltHeaderInput;
     private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
 
+    public AdjustmentNodeRequest(String layer, Integer sequence, Boolean isInputChanged, String lossNetFlag, Boolean hasNewParamsFile, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+        this.layer = layer;
+        this.sequence = sequence;
+        this.isInputChanged = isInputChanged;
+        this.lossNetFlag = lossNetFlag;
+        this.hasNewParamsFile = hasNewParamsFile;
+        this.adjustmentBasis = adjustmentBasis;
+        this.adjustmentType = adjustmentType;
+        this.adjustmentState = adjustmentState;
+        this.adjustmentThreadId = adjustmentThreadId;
+        this.lmf = lmf;
+        this.rpmf = rpmf;
+        this.peatData = peatData;
+        this.scorPltHeaderInput = scorPltHeaderInput;
+        this.nodeId = nodeId;
+        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    }
 
     public int getAdjustmentNodeId() {
         return adjustmentNodeId;
@@ -57,14 +74,6 @@ public class AdjustmentNodeRequest {
 
     public void setInputChanged(Boolean inputChanged) {
         isInputChanged = inputChanged;
-    }
-
-    public String getAdjustmentParamsSource() {
-        return adjustmentParamsSource;
-    }
-
-    public void setAdjustmentParamsSource(String adjustmentParamsSource) {
-        this.adjustmentParamsSource = adjustmentParamsSource;
     }
 
     public String getLossNetFlag() {
@@ -99,14 +108,6 @@ public class AdjustmentNodeRequest {
         this.adjustmentType = adjustmentType;
     }
 
-    public Integer getAdjustmentCategory() {
-        return adjustmentCategory;
-    }
-
-    public void setAdjustmentCategory(Integer adjustmentCategory) {
-        this.adjustmentCategory = adjustmentCategory;
-    }
-
     public Integer getAdjustmentState() {
         return adjustmentState;
     }
@@ -123,19 +124,19 @@ public class AdjustmentNodeRequest {
         this.adjustmentThreadId = adjustmentThreadId;
     }
 
-    public double getLmf() {
+    public Double getLmf() {
         return lmf;
     }
 
-    public void setLmf(double lmf) {
+    public void setLmf(Double lmf) {
         this.lmf = lmf;
     }
 
-    public double getRpmf() {
+    public Double getRpmf() {
         return rpmf;
     }
 
-    public void setRpmf(double rpmf) {
+    public void setRpmf(Double rpmf) {
         this.rpmf = rpmf;
     }
 

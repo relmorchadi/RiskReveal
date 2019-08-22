@@ -24,14 +24,14 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 @Service
 public class ScorPltHeaderService {
 
-    private static final String PATH = "C:\\Users\\u008208\\Desktop\\RR 4.0\\Risk_Reveal\\RRADJUSTMENT\\src\\main\\resources\\file\\";
+    private static final String PATH = "RRADJUSTMENT\\src\\main\\resources\\file\\";
 
     public void persistScorPltHeaderFromPath(String path, AdjustmentManuelleParameterProcess parameterProcess) throws RRException {
         try {
             File file = new File(PATH+new Date().getTime()+".csv");
             FileUtils.touch(file);
             BinaryPLTFileWriter fileWriter = new BinaryPLTFileWriter();
-            fileWriter.write(getPltLossDataFromFile(path),file);
+            fileWriter.write(calculateAdjustment(parameterProcess,getPltLossDataFromFile(path)),file);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -59,7 +59,7 @@ public class ScorPltHeaderService {
 
     private List<PLTLossData> calculateAdjustment(AdjustmentManuelleParameterProcess parameterProcess, List<PLTLossData> pltLossData) {
         if (Linear.getValue().equals(parameterProcess.getType())) {
-            return CalculAdjustement.lineaireAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());
+            return CalculAdjustement.linearAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());
         }
         if (EEFFrequency.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.eefFrequency(pltLossData, parameterProcess.isCapped(), parameterProcess.getRpmf());

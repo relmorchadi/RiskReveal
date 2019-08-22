@@ -13,6 +13,7 @@ public class AdjustmentNodeProcessingEntity {
 
     @Id
     @Column(name = "AdjustmentNodeProcessingId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentNodeProcessingId() {
         return adjustmentNodeProcessingId;
     }
