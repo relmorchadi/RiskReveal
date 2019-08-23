@@ -927,28 +927,112 @@ const treatySections = [
     attached: false,
     regionPerils: [{
       id: 'EUCS-DE',
-      description: 'Germany Flood',
+      description: 'Europe (Germany)',
       selected: false,
       targetRaps: [{
-        id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+        id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         overridden: false,
         selected: false,
-        attached: false,
-        pltsAttached: []
+        reason: null,
+        attached: true,
+        pltsAttached: [{
+            "workspaceId": "17P3398",
+            "uwy": 2016,
+            "pltId": "SPLTH-000735484",
+            "pltName": "EUCS-DE_GR_LMF1.03.T2",
+            "peril": "CS",
+            "regionPerilCode": "EUCS-DE",
+            "regionPerilName": "Europe (Germany)",
+            "grain": "AXA-3rdCov_05PA753_Hail_ALL_Client",
+            "vendorSystem": "RMS RL",
+            "targetRapCode": null,
+            "isScorCurrent": "true",
+            "isScorDefault": "true",
+            "isScorGenerated": "true",
+            "project": "P-000007071",
+            "pltType": "Thread",
+            "projectName": "TEST",
+            "creationDate": "11/02/2019",
+            "year": 2019,
+            "fileName": "T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-175309_RMS-RiskLink_RL17_EUCS-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-435_N-100_P-T-2_ID-SPLTH-000735484_Job-1.bin",
+            "sourceModellingVendor": "RMS",
+            "sourceModellingSystem": "RiskLink",
+            "dataSourceName": "CG1901_DEU_EQportfolio_R",
+            "analysisId": "59",
+            "currency": null,
+            "userOccurrenceBasis": null,
+            "userTags": [{
+              "tagId": 60059,
+              "tagName": "tag1",
+              "tagColor": "#d81b60",
+              "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}]
+            }, {
+              "tagId": 60060,
+              "tagName": "tag2",
+              "tagColor": "#64ffda",
+              "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}, {"id": "SPLTH-000735501"}, {"id": "SPLTH-000735505"}]
+            }],
+            "xactPublicationDate": null,
+            "visible": true,
+            "tagFilterActive": false,
+            "opened": false
+          }]
       }]
     }],
     targetRaps: [{
-      id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+      id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
       selected: false,
       regionPerils: [{
         id: 'EUCS-DE',
-        description: 'Germany Flood',
+        description: 'Europe (Germany)',
         overridden: false,
         selected: false,
-        attached: false,
-        pltsAttached: []
+        reason: null,
+        attached: true,
+        pltsAttached: [{
+            "workspaceId": "17P3398",
+            "uwy": 2016,
+            "pltId": "SPLTH-000735484",
+            "pltName": "EUCS-DE_GR_LMF1.03.T2",
+            "peril": "CS",
+            "regionPerilCode": "EUCS-DE",
+            "regionPerilName": "Europe (Germany)",
+            "grain": "AXA-3rdCov_05PA753_Hail_ALL_Client",
+            "vendorSystem": "RMS RL",
+            "targetRapCode": null,
+            "isScorCurrent": "true",
+            "isScorDefault": "true",
+            "isScorGenerated": "true",
+            "project": "P-000007071",
+            "pltType": "Thread",
+            "projectName": "TEST",
+            "creationDate": "11/02/2019",
+            "year": 2019,
+            "fileName": "T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-175309_RMS-RiskLink_RL17_EUCS-DE_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-435_N-100_P-T-2_ID-SPLTH-000735484_Job-1.bin",
+            "sourceModellingVendor": "RMS",
+            "sourceModellingSystem": "RiskLink",
+            "dataSourceName": "CG1901_DEU_EQportfolio_R",
+            "analysisId": "59",
+            "currency": null,
+            "userOccurrenceBasis": null,
+            "userTags": [{
+              "tagId": 60059,
+              "tagName": "tag1",
+              "tagColor": "#d81b60",
+              "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}]
+            }, {
+              "tagId": 60060,
+              "tagName": "tag2",
+              "tagColor": "#64ffda",
+              "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}, {"id": "SPLTH-000735501"}, {"id": "SPLTH-000735505"}]
+            }],
+            "xactPublicationDate": null,
+            "visible": true,
+            "tagFilterActive": false,
+            "opened": false
+          }]
       }]
     }]
   },
@@ -965,6 +1049,7 @@ const treatySections = [
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
+          reason: null,
           attached: false,
           pltsAttached: []
         },
@@ -973,8 +1058,50 @@ const treatySections = [
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
-          attached: false,
-          pltsAttached: []
+          reason: null,
+          attached: true,
+          pltsAttached: [{
+            "workspaceId": "17P3398",
+            "uwy": 2016,
+            "pltId": "SPLTH-000735487",
+            "pltName": "DEFL_GR_DefAdj_LMF0.52.T3",
+            "peril": "FL",
+            "regionPerilCode": "DEFL",
+            "regionPerilName": "Germany",
+            "grain": "AXA-3rdCov_05PA753_FL_ENG_Client",
+            "vendorSystem": "RMS RL",
+            "targetRapCode": null,
+            "isScorCurrent": "true",
+            "isScorDefault": "true",
+            "isScorGenerated": "true",
+            "project": "P-000007071",
+            "pltType": "Thread",
+            "projectName": "TEST",
+            "creationDate": "11/02/2019",
+            "year": 2019,
+            "fileName": "T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-175313_RMS-RiskLink_RL17_DEFL_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-438_N-100_P-T-3_ID-SPLTH-000735487_Job-1.bin",
+            "sourceModellingVendor": "RMS",
+            "sourceModellingSystem": "RiskLink",
+            "dataSourceName": "CG1901_DEU_EQportfolio_R",
+            "analysisId": "59",
+            "currency": null,
+            "userOccurrenceBasis": null,
+            "userTags": [{
+              "tagId": 60059,
+              "tagName": "tag1",
+              "tagColor": "#d81b60",
+              "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}]
+            }, {
+              "tagId": 60060,
+              "tagName": "tag2",
+              "tagColor": "#64ffda",
+              "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}, {"id": "SPLTH-000735501"}, {"id": "SPLTH-000735505"}]
+            }],
+            "xactPublicationDate": null,
+            "visible": true,
+            "tagFilterActive": false,
+            "opened": false
+          }]
         }]
     }],
     targetRaps: [{
@@ -986,8 +1113,50 @@ const treatySections = [
         description: 'Europe',
         overridden: false,
         selected: false,
-        attached: false,
-        pltsAttached: []
+        reason: null,
+        attached: true,
+        pltsAttached: [{
+          "workspaceId": "17P3398",
+          "uwy": 2016,
+          "pltId": "SPLTH-000735487",
+          "pltName": "DEFL_GR_DefAdj_LMF0.52.T3",
+          "peril": "FL",
+          "regionPerilCode": "DEFL",
+          "regionPerilName": "Germany",
+          "grain": "AXA-3rdCov_05PA753_FL_ENG_Client",
+          "vendorSystem": "RMS RL",
+          "targetRapCode": null,
+          "isScorCurrent": "true",
+          "isScorDefault": "true",
+          "isScorGenerated": "true",
+          "project": "P-000007071",
+          "pltType": "Thread",
+          "projectName": "TEST",
+          "creationDate": "11/02/2019",
+          "year": 2019,
+          "fileName": "T_P_AXA-GLOBAL-RE_05PA753_01_2019-01_PLT_20181018-175313_RMS-RiskLink_RL17_DEFL_UF_EUR_P-000007071_FT_INTERNAL_DAT_T_RAP-438_N-100_P-T-3_ID-SPLTH-000735487_Job-1.bin",
+          "sourceModellingVendor": "RMS",
+          "sourceModellingSystem": "RiskLink",
+          "dataSourceName": "CG1901_DEU_EQportfolio_R",
+          "analysisId": "59",
+          "currency": null,
+          "userOccurrenceBasis": null,
+          "userTags": [{
+            "tagId": 60059,
+            "tagName": "tag1",
+            "tagColor": "#d81b60",
+            "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}]
+          }, {
+            "tagId": 60060,
+            "tagName": "tag2",
+            "tagColor": "#64ffda",
+            "pltHeaders": [{"id": "SPLTH-000735487"}, {"id": "SPLTH-000735484"}, {"id": "SPLTH-000735494"}, {"id": "SPLTH-000735501"}, {"id": "SPLTH-000735505"}]
+          }],
+          "xactPublicationDate": null,
+          "visible": true,
+          "tagFilterActive": false,
+          "opened": false
+        }]
       }]
     },
       {
@@ -1000,6 +1169,7 @@ const treatySections = [
           overridden: false,
           selected: false,
           attached: false,
+          reason: null,
           pltsAttached: []
         }]
       }]
@@ -1013,18 +1183,20 @@ const treatySections = [
       selected: false,
       targetRaps: [
         {
-          id: 'AxA-3rdCov_05PA753_FL_ENG_Client',
+          id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
           attached: false,
+          reason: null,
           pltsAttached: []
         },
         {
-          id: 'AxA-3rdCov_05PA753_FL_NonEng_Client',
+          id: 'AXA-3rdCov_05PA753_FL_NonEng_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
+          reason: null,
           attached: false,
           pltsAttached: []
         }
@@ -1032,19 +1204,20 @@ const treatySections = [
     },
       {
         id: 'EUCS-DE',
-        description: 'Germany Flood',
+        description: 'Europe (Germany)',
         selected: false,
         targetRaps: [{
-          id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+          id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
           attached: false,
+          reason: null,
           pltsAttached: []
         }]
       }],
     targetRaps: [{
-      id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+      id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
       selected: false,
       regionPerils: [{
@@ -1052,12 +1225,13 @@ const treatySections = [
         description: 'Germany Flood',
         overridden: false,
         selected: false,
+        reason: null,
         attached: false,
         pltsAttached: []
       }]
     },
       {
-        id: 'AxA-3rdCov_05PA753_FL_NonEng_Client',
+        id: 'AXA-3rdCov_05PA753_FL_NonEng_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         selected: false,
         regionPerils: [{
@@ -1065,12 +1239,13 @@ const treatySections = [
           description: 'Germany Flood',
           overridden: false,
           selected: false,
+          reason: null,
           attached: false,
           pltsAttached: []
         }]
       },
       {
-        id: 'AxA-3rdCov_05PA753_FL_Eng_Client',
+        id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         selected: false,
         regionPerils: [{
@@ -1078,6 +1253,7 @@ const treatySections = [
           description: 'Germany Flood',
           overridden: false,
           selected: false,
+          reason: null,
           attached: false,
           pltsAttached: []
         }]

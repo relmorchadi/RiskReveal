@@ -18,14 +18,16 @@ import {tap} from "rxjs/operators";
 })
 export class WorkspaceScopeCompletenceComponent extends BaseContainer implements OnInit, StateSubscriber {
   check = true;
-  @Select(WorkspaceState.getPlts) data$;
 
   @ViewChild('pTable') pTable: any;
 
   wsIdentifier;
   addRemoveModal: boolean = false;
-  listOfPltsData = [];
+  showOverrideModal: boolean = false;
+  listOfPltsData = {};
   selectionForOverride = [];
+  overrideReason: string;
+  overrideReasonExplained: string = '';
 
   dataSource: any;
   workspaceId: any;
@@ -64,11 +66,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = value;
-      this.listOfPltsData = _.map(this.getSortedPlts(this.state), (e, k) => ({[k]: e}));
+        this.listOfPltsData = this.getSortedPlts(this.state)
+
+
       // this.dataSource = this.dataSource.map((dt, k) => dt = {...dt, id: k});
       this.dataSource = dataTable;
       this.treatySections = _.toArray(trestySections);
-      console.log(this.treatySections);
       this.detectChanges();
     });
 
@@ -138,6 +141,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     if (peril === 'FL') {
       return {peril: 'FL', color: '#008694'};
     }
+    if (peril === 'CS') {
+      return {peril: 'CS', color: '#62ec07'};
+    }
   }
 
   ngOnDestroy(): void {
@@ -177,6 +183,44 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   }
 
+  getReasonOverride(item, grain, rowData) {
+    let rr = '';
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      item.regionPerils.forEach(reg => {
+          if (reg.id == rowData.id) {
+            reg.targetRaps.forEach(des => {
+              if (des.id == grain.id) {
+                if (des.overridden) {
+                  rr = des.reason;
+                }
+
+              }
+            })
+          }
+        }
+      )
+    }
+
+
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      item.targetRaps.forEach(reg => {
+        if (reg.id == rowData.id) {
+          reg.regionPerils.forEach(des => {
+              if (des.id == grain.id) {
+                if (des.overridden) {
+                  rr = des.reason;
+                }
+              }
+            }
+          )
+        }
+
+      })
+    }
+
+    return rr;
+  }
+
   checkExpected(item, rowData) {
     let checked = 'not';
     let holder = [];
@@ -194,7 +238,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
-                    holder.push('checked')
+                    if (this.listOfPltsData[rowData.id][des.id]) {
+                      if (this.listOfPltsData[rowData.id][des.id].length) {
+                        holder.push('dispoWs');
+                      }
+
+                    } else {
+                      holder.push('checked');
+                    }
                   }
                 }
               })
@@ -204,7 +255,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           }
         }
       )
-      if (_.includes(holder, 'checked')) {
+      if (_.includes(holder, 'dispoWs')) {
+        checked = 'dispoWs';
+      } else if (_.includes(holder, 'checked')) {
         checked = 'checked';
       } else if (_.includes(holder, 'attached')) {
         checked = 'attached';
@@ -226,7 +279,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
-                    holder.push('checked')
+                    if (this.listOfPltsData[des.id][rowData.id]) {
+                      if (this.listOfPltsData[des.id][rowData.id].length) {
+                        holder.push('dispoWs');
+                      }
+
+                    } else {
+                      holder.push('checked');
+                    }
                   }
                 }
               })
@@ -237,7 +297,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         }
       )
     }
-    if (_.includes(holder, 'checked')) {
+    if (_.includes(holder, 'dispoWs')) {
+      checked = 'dispoWs';
+    } else if (_.includes(holder, 'checked')) {
       checked = 'checked';
     } else if (_.includes(holder, 'attached')) {
       checked = 'attached';
@@ -245,7 +307,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       checked = 'overridden';
     }
     if (rowData.override) {
-      if (checked == 'checked') {
+      if (checked == 'checked' || checked == 'dispoWs') {
         checked = 'override'
       }
     }
@@ -267,7 +329,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 checked = 'overridden';
               }
               if (!des.attached && !des.overridden) {
-                checked = 'checked'
+                if (this.listOfPltsData[rowData.id][grain.id]) {
+                  if (this.listOfPltsData[rowData.id][grain.id].length) {
+                    checked = 'dispoWs';
+                  }
+
+                } else {
+                  checked = 'checked'
+                }
               }
             }
           })
@@ -287,7 +356,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 checked = 'overridden';
               }
               if (!des.attached && !des.overridden) {
-                checked = 'checked'
+                if (this.listOfPltsData[grain.id][rowData.id]) {
+                  if (this.listOfPltsData[grain.id][rowData.id].length) {
+
+                    checked = 'dispoWs';
+                  }
+
+                } else {
+                  checked = 'checked'
+                }
               }
             }
           })
@@ -296,48 +373,108 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
 
     if (rowData.override) {
-      if (checked == 'checked') {
+      if (checked == 'checked' || checked == 'dispoWs') {
         checked = 'override'
       }
     }
     return checked;
   }
 
+  checkAttached(item, rowData, grain, plt) {
+    let checked = 'not';
+
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      item.regionPerils.forEach(reg => {
+        if (reg.id == rowData.id) {
+          reg.targetRaps.forEach(des => {
+            if (des.id == grain.id) {
+              if (des.attached) {
+                des.pltsAttached.forEach(plts => {
+                  if (plts.id == plt.id) {
+                    checked = "attached";
+                  }
+                })
+
+              }
+            }
+          })
+
+        }
+      })
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      item.targetRaps.forEach(reg => {
+        if (reg.id == rowData.id) {
+          reg.regionPerils.forEach(des => {
+            if (des.id == grain.id) {
+              if (des.attached) {
+                des.pltsAttached.forEach(plts => {
+                  if (plts.id == plt.id) {
+                    checked = "attached";
+                  }
+                })
+
+              }
+
+            }
+          })
+        }
+      })
+    }
+    return checked;
+  }
+
   overrideSelectionTwo(item, rowData, grain) {
+
+    if(this.selectedSortBy == 'Minimum Grain / RAP'){
     let holder = {
       "treatySection": item.id,
       "parent": rowData.id,
       "child": grain.id
     };
 
-    console.log(holder);
 
     if (_.findIndex(this.selectionForOverride, holder) == -1) {
-
       this.selectionForOverride.push(holder);
     } else {
 
-      console.log(this.selectionForOverride)
-      this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder),1);
+      this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
+
+    }}
+  if(this.selectedSortBy == 'RAP / Minimum Grain'){
+    let holder = {
+      "treatySection": item.id,
+      "parent": grain.id,
+      "child": rowData.id
+    };
+
+
+    if (_.findIndex(this.selectionForOverride, holder) == -1) {
+      this.selectionForOverride.push(holder);
+    } else {
+
+      this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
 
     }
-    console.log(this.selectionForOverride);
+
+  }
+
   }
 
   overrideSelection(item, rowData) {
-    const count = _.filter(this.selectionForOverride, res => res.parent == rowData.id &&  res.treatySection == item.id).length;
+    const count = _.filter(this.selectionForOverride, res => res.parent == rowData.id && res.treatySection == item.id).length;
     if (count == rowData.child.length) {
       // this.selectionForOverride = _.pullAllBy([...this.selectionForOverride], [{
       //   "treatySection": item.id,
       //   "parent": rowData.id
       // }],  'treatySection' && 'parent' );
-      rowData.child.forEach( res =>{
+      rowData.child.forEach(res => {
         let holder = {
           "treatySection": item.id,
           "parent": rowData.id,
           "child": res.id
         };
-        this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder),1);
+        this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
 
       })
 
@@ -355,11 +492,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
   }
 
-  checkParent(rowData, item){
+  checkParent(rowData, item) {
     const count = _.filter(this.selectionForOverride, res => res.parent === rowData.id && res.treatySection === item.id).length;
     return count === rowData.child.length;
   }
-  checkChild(rowData, item, grain){
+
+  checkChild(rowData, item, grain) {
     let Holder = {
       "treatySection": item.id,
       "parent": rowData.id,
@@ -375,55 +513,67 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     })
   }
 
-  overrideBack(){
-    this.selectionForOverride.forEach( ove =>{
-      this.treatySections[0].forEach( section => {
+  overrideBack() {
+    this.selectionForOverride.forEach(ove => {
+      this.treatySections[0].forEach(section => {
 
-       if(ove.treatySection == section.id){
-         section.regionPerils.forEach( rp =>{
-           if(rp.id == ove.parent){
-               rp.targetRaps.forEach( tr => {
-                 if(tr.id == ove.child){
-                   tr.overridden = true;
+        if (ove.treatySection == section.id) {
+          section.regionPerils.forEach(rp => {
+            if (rp.id == ove.parent) {
+              rp.targetRaps.forEach(tr => {
+                if (tr.id == ove.child) {
+                  tr.overridden = true;
+                  tr.reason = this.overrideReason + ' ' + this.overrideReasonExplained;
 
-                 }
-               })
-           }
-         })
-         section.targetRaps.forEach( tr =>{
-           if(tr.id == ove.child){
-             tr.regionPerils.forEach( rp => {
-               if(rp.id == ove.parent){
-                 rp.overridden = true;
+                }
+              })
+            }
+          })
+          section.targetRaps.forEach(tr => {
+            if (tr.id == ove.child) {
+              tr.regionPerils.forEach(rp => {
+                if (rp.id == ove.parent) {
+                  rp.overridden = true;
+                  rp.reason = this.overrideReason + ' ' + this.overrideReasonExplained;
 
-               }
-             })
-           }
+                }
+              })
+            }
 
-         })
-       }
+          })
+        }
       })
     })
-    console.log(this.treatySections)
 
     this.dataSource.forEach(res => {
       res.override = false;
     })
 
+    this.onHide();
+    this.selectionForOverride = [];
+
   }
-  cancelOverride(){
+
+  cancelOverride() {
     this.selectionForOverride = [];
     this.dataSource.forEach(res => {
       res.override = false;
     })
   }
-  showOverrideButton(){
+
+  showOverrideButton() {
     let checked = false;
     this.dataSource.forEach(res => {
-      if(res.override == true){
+      if (res.override == true) {
         checked = true;
       }
     })
     return checked;
+  }
+
+  onHide() {
+    this.showOverrideModal = false;
+    this.overrideReasonExplained = '';
+    this.overrideReason = null;
   }
 }
