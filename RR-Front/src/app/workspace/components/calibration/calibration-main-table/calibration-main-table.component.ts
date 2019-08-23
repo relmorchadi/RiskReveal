@@ -73,6 +73,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('groupedByPure') groupedByPure: any;
   @Input('rowKeys') rowKeys: any;
   @Input('allRowsExpanded') allRowsExpanded: any;
+  @Input('sortData') sortData: any;
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;
   params = {};
@@ -82,7 +83,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     userTag: []
   }
   filterData = {};
-  sortData = {};
   activeCheckboxSort = false;
   addTagModalIndex = 0;
   fromPlts = false;
@@ -264,7 +264,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private lastClick: string;
   returnPeriodInput: any;
   clickedDropdown: any;
-  private userTagsLength: number = 10000;
+  userTagsLength: number = 10000;
 
 
   constructor(
@@ -279,15 +279,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   ngOnInit() {
-  }
-  sort(sort: { key: string, value: string }): void {
-    if (sort.value) {
-      this.sortData = _.merge({}, this.sortData, {
-        [sort.key]: sort.value === 'descend' ? 'desc' : 'asc'
-      });
-    } else {
-      this.sortData = _.omit(this.sortData, [sort.key]);
-    }
   }
 
   filter(key: string, value?: any) {
@@ -424,13 +415,13 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   sortChange(field: any, sortCol: any) {
-    console.log(field, sortCol);
+
     if (!sortCol) {
-      this.sortData[field] = 'asc';
+      this.sortChangeEmitter.emit({...this.sortData, [field]: 'asc'})
     } else if (sortCol === 'asc') {
-      this.sortData[field] = 'desc';
+      this.sortChangeEmitter.emit({...this.sortData, [field]: 'desc'})
     } else if (sortCol === 'desc') {
-      this.sortData[field] = null
+      this.sortChangeEmitter.emit({...this.sortData, [field]: null})
     }
   }
 
