@@ -11,6 +11,7 @@
   [columnResizeMode]="'fit'"
   [responsive]="true"
   [scrollable]="true"
+  [expandedRowKeys]="rowKeys"
   (onColResize)="onColResize($event)"
   scrollHeight="calc(100vh - 480px)"
   [totalRecords]="listOfPltsData.length"
@@ -27,69 +28,73 @@
     <tr *ngIf="extended" style="background-color: #ffffff !important;">
       <ng-container *ngFor="let col of columns;">
         <th *ngIf="col?.fields === 'checkbox'" [ngStyle]="{'overflow':'visible'}"
-            class="checkBoxHead"
-            style="background-color: #ffffff !important;height: 88px!important; padding: 0;">
-          <div
-            style="width: 102px;position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;">
-            <span
-              style="width: 90px; font-size: 1.3em; font-weight: bold;     color: rgba(0, 0, 0, 0.65);top: 16px;left: 33px;position: absolute;">PLTs</span>
+            class="checkBoxHead separator-right"
+            colspan="12"
+            style="background-color: #ffffff !important;height: 88px!important; padding: 0;border-top:0 !important;">
+          <div class="title-as-tab" style=" width: 100% !important;justify-content: space-between;">
+                  <span class="title">
+                    PLTs
+                   <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
+                                [nzPlacement]="'bottomLeft'" nzTrigger="click"
+                                style=" left: 100px; margin-top: 20px;">
+                    <i class="icon-menu_24px" nz-dropdown
+                       style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>
+                    <ul nz-menu>
+                      <li nz-submenu>
+                        <span title>Create</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>New Default Thread</li>
+                          <li nz-menu-item>New Non-default Thread</li>
+                        </ul>
+                      </li>
+                      <li nz-submenu>
+                        <span title>Clone</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>New Default Thread</li>
+                          <li nz-menu-item>New Non-default Thread</li>
+                        </ul>
+                      </li>
+                      <li class="menu-bottom-separator" nz-submenu>
+                        <span title>Regenerate</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>Selected Threads Only</li>
+                          <li nz-menu-item>All Threads</li>
+                        </ul>
+                      </li>
+                      <li nz-menu-item>Publish to Princing</li>
+                      <li nz-menu-item>Publish to Accumulation</li>
+                      <li nz-submenu>
+                        <span title>Inuring</span>
+                        <ul nz-menu>
+                          <li nz-menu-item>Add to New Inuring Package</li>
+                          <li nz-menu-item>Add to Existing Inuring Package</li>
+                        </ul>
+                      </li>
+                      <li nz-menu-item>Add to Comparer</li>
+                      <li class="menu-bottom-separator" nz-menu-item>Export</li>
+                      <li nz-menu-item>Edit PLT Name</li>
+                      <li nz-menu-item>Manage Tags</li>
+                      <li nz-menu-item>Remove</li>
+                      <li nz-menu-item>Delete</li>
+                    </ul>
+                  </nz-dropdown>
+                  </span>
+            <div class="pull-right" style="margin-top: 8px; margin-right: 3px;">
+              <i (click)="extend()" *ngIf="!extended && tableType=='adjustments'" class="icon-chevron_right_24px"
+                 style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
+              <i (click)="extend()" *ngIf="extended && tableType=='adjustments'" class="icon-chevron_left_24px"
+                 style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
+            </div>
           </div>
-          <div style="left: -1px;top: 32px; position:absolute; margin-right: 3px;">
-            <span (click)="addRemoveModal=true" class="addRemove">Add/Remove</span>
-          </div>
-          <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
-                       [nzPlacement]="'bottomLeft'" nzTrigger="click"
-                       style=" left: 100px; margin-top: 20px;">
-            <i class="icon-menu_24px" nz-dropdown
-               style="font-size: 25px; float: right; margin-left: 7px;margin-top: 3px;"></i>
-            <ul nz-menu>
-              <li nz-submenu>
-                <span title>Create</span>
-                <ul nz-menu>
-                  <li nz-menu-item>New Default Thread</li>
-                  <li nz-menu-item>New Non-default Thread</li>
-                </ul>
-              </li>
-              <li nz-submenu>
-                <span title>Clone</span>
-                <ul nz-menu>
-                  <li nz-menu-item>New Default Thread</li>
-                  <li nz-menu-item>New Non-default Thread</li>
-                </ul>
-              </li>
-              <li nz-submenu class="menu-bottom-separator">
-                <span title>Regenerate</span>
-                <ul nz-menu>
-                  <li nz-menu-item>Selected Threads Only</li>
-                  <li nz-menu-item>All Threads</li>
-                </ul>
-              </li>
-              <li nz-menu-item>Publish to Princing</li>
-              <li nz-menu-item>Publish to Accumulation</li>
-              <li nz-submenu>
-                <span title>Inuring</span>
-                <ul nz-menu>
-                  <li nz-menu-item>Add to New Inuring Package</li>
-                  <li nz-menu-item>Add to Existing Inuring Package</li>
-                </ul>
-              </li>
-              <li nz-menu-item>Add to Comparer</li>
-              <li nz-menu-item class="menu-bottom-separator">Export</li>
-              <li nz-menu-item>Edit PLT Name</li>
-              <li nz-menu-item>Manage Tags</li>
-              <li nz-menu-item>Remove</li>
-              <li nz-menu-item>Delete</li>
-            </ul>
-          </nz-dropdown>
         </th>
-        <th *ngIf="col?.fields === 'userTags'"
-            style="background-color: #ffffff !important;height: 88px!important;">
+        <!--<th *ngIf="col?.fields === 'userTags'"
+            style="background-color: #ffffff !important;height: 88px!important;border-top:0 !important;">
         </th>
         <th *ngIf="col?.fields === 'pltId'"
-            style="background-color: #ffffff !important;height: 88px!important;">
+            style="background-color: #ffffff !important;height: 88px!important;border-top:0 !important;">
         </th>
         <th *ngIf="col?.fields === 'pltName'"
-            style="background-color: #ffffff !important;height: 88px!important;">
+            style="background-color: #ffffff !important;height: 88px!important;border-top:0 !important;">
         </th>
         <th *ngIf="extended &&
                     (col.fields === 'rap' ||
@@ -98,14 +103,14 @@
                      col.fields === 'regionPerilName'||
                      col.fields === 'regionPerilCode'||
                      col.fields === 'peril')"
-            style="background-color: #ffffff !important;">
+            style="background-color: #ffffff !important;border-top:0 !important;">
 
         </th>
         <th *ngIf="col?.icon === 'icon-ballot_24px'"
-            style="background-color: #ffffff !important;height: 88px!important;">
+            style="background-color: #ffffff !important;height: 88px!important;border-top:0 !important;">
         </th>
         <th *ngIf="col?.icon === 'icon-note'" class="separator-right"
-            style="background-color: #ffffff !important;height: 88px!important;padding: 10px 0 0 0;position:relative">
+            style="background-color: #ffffff !important;height: 88px!important;padding: 10px 0 0 0;position:relative;border-top:0 !important;">
           <i (click)="extend()" *ngIf="!extended" class="icon-chevron_right_24px"
              style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);position: absolute;right: 3px;"></i>
           <i (click)="extend()" *ngIf="extended" class="icon-chevron_left_24px"
@@ -113,11 +118,11 @@
         </th>
         <th *ngIf="col?.dragable && !extended
                                 && col.fields !== 'overallLMF'"
-            style="background-color: #ffffff !important;height: 88px!important;">
-        </th>
+            style="background-color: #ffffff !important;height: 88px!important;border-top:0 !important;">
+        </th>-->
         <th *ngIf="col.fields == 'overallLMF' && extended"
             colspan="6"
-            style="background-color: #ffffff !important; height: 88px!important;  position: relative; padding: 0;">
+            style="background-color: #ffffff !important; height: 88px!important;  position: relative; padding: 0;border-top:0 !important;">
           <div
             style="position: absolute;left: -1px;top: 2px;margin-right: 3px; border-top: 3px solid #0700e4;width: 191px;">
                         <span
@@ -379,7 +384,11 @@
     </tr>
     <tr>
       <ng-container *ngFor="let col of columns;">
-        <th *ngIf="col?.fields === 'checkbox'">
+        <th *ngIf="col?.fields === 'checkbox'" style="padding: 0;">
+          <i *ngIf="allRowsExpanded" class="icon-keyboard_arrow_down_24px"
+             style="font-size: 24px;cursor: pointer" (click)="expandAll(false)" nz-tooltip="Collapse All"></i>
+          <i *ngIf="!allRowsExpanded" class="icon-keyboard_arrow_right_24px"
+             style="font-size: 24px;cursor: pointer" (click)="expandAll(true)" nz-tooltip="Expand All"></i>
         </th>
         <th *ngIf="col?.fields === 'userTags'">
         </th>
@@ -804,7 +813,7 @@
   [columns]="dataColumns"
   [frozenColumns]="frozenColumns"
   [frozenWidth]="frozenWidth+'px'"
-  [value]="(showDeleted ? deletedPlts : listOfPltsData) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag] "
+  [value]="(showDeleted ? deletedPlts : listOfPltsThread) | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag] "
   [resizableColumns]="true"
   [columnResizeMode]="'fit'"
   [contextMenu]="cm"

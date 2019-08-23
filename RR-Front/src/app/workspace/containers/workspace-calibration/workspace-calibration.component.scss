@@ -1003,7 +1003,6 @@
 
       .checkBoxHead div {
         display: flex;
-        align-items: center;
       }
 
       th {
@@ -1530,9 +1529,10 @@ body .ui-table .ui-table-thead > tr > th {
 
     span.title {
       padding: 16px 0px 16px 12px;
-      font-size: 1.3em;
+      font-size: 15px;
       font-weight: bold;
       border-top: 3px solid #0700e4;
+      font-family: Rubik;
     }
   }
 
@@ -1552,9 +1552,10 @@ body .ui-table .ui-table-thead > tr > th {
 
     span.title {
       padding: 16px 0px 16px 23px;
-      font-size: 1.3em;
+      font-size: 15px;
       font-weight: bold;
       border-top: 3px solid #0700e4;
+      font-family: Rubik;
     }
   }
 

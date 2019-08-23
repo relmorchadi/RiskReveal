@@ -5,7 +5,7 @@
     </div>
     <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
-        <div style="padding:unset;">
+        <div style="padding:unset;width: 193px;">
           <app-plt-left-menu
             [inputs]="{
             tagContextMenu: tagContextMenu,
@@ -50,10 +50,8 @@
             (onModalSelect)="setModalSelectedItems($event)"
           ></app-plt-left-menu>
         </div>
-        <div class="collapseTags col-2" style="padding:10px 0px 0px 145px; position: absolute;width: 16.6666%">
-          <i *ngIf="!collapsedTags" (click)="collapseTags()" class="icon-chevron_left_24px"
-             style="font-size: 25px; cursor: pointer"></i>
-        </div>
+        <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
+           style="font-size: 25px; cursor: pointer; margin-top: 10px; margin-right: 3px"></i>
       </div>
       <div *ngIf="collapsedTags" class="noMargin row a-closed-sidebar" style="position: relative;width: 37px">
         <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
@@ -126,8 +124,10 @@
                    style="height: 46px;margin-top: 42px;justify-content: space-between;display: flex;">
                 <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
                 <div style="margin-top: 23px;">
-                  <!--<i *ngIf="!groupedByPure" (click)="groupedByPure = true" class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
-                  <i *ngIf="groupedByPure" (click)="groupedByPure = false" class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>-->
+                  <i (click)="groupedByPure = true" *ngIf="tableType == 'adjustments' && !groupedByPure"
+                     class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
+                  <i (click)="groupedByPure = false" *ngIf="tableType == 'adjustments' && groupedByPure"
+                     class="icon-format_list_bulleted_24px regenerate-all" nz-tooltip="List all Plts"></i>
                   <i class="icon-history-alt regenerate-all" nz-tooltip="Regenerate All"></i>
                   <i (click)="manageColumn = true" class="icon-settings_24px" nz-tooltip="Manage columns"
                      style="margin-right: 6px; font-size: 20px; cursor: pointer;"></i>
@@ -329,6 +329,7 @@
               (extend)="extend()"
               (toggleSelectPlts)="toggleSelectPlts($event)"
               [adjutmentApplication]="adjutmentApplication"
+              (expandAll)="expandAll($event)"
 
               [EPMColumns]="EPMColumns"
 
@@ -338,12 +339,14 @@
 
               [headerWidth]="headerWidth"
               [frozenWidth]="frozenWidth"
+              [allRowsExpanded]="allRowsExpanded"
 
               [EPMDisplay]="EPMDisplay"
               [randomMetaData]="randomMetaData"
               [listOfPltsThread]="listOfPltsThread"
               [rowGroupMetadata]="rowGroupMetadata"
               [groupedByPure]="groupedByPure"
+              [rowKeys]="rowKeys"
 
               [pltColumns]="pltColumns"
               [tableType]="tableType"
