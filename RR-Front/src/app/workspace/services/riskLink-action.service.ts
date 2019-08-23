@@ -576,13 +576,21 @@ export class RiskLinkStateService {
   applyRegionPeril(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const {regionPeril, override} = payload;
-    ctx.patchState(produce(ctx.getState(), draft => {
-      const matchingPeril =
-        _.filter(_.toArray(draft.content[wsIdentifier].riskLink.results.data), item => item.regionPeril === regionPeril);
-      draft.content[wsIdentifier].riskLink.results.data = _.merge(draft.content[wsIdentifier].riskLink.results.data,
-        ...matchingPeril.map(item => ({[item.id]: {...item, override: override}})));
-    }));
+    const {regionPeril, override, id} = payload.row;
+    const {scope, value} = payload;
+    console.log(scope, value, id, override);
+    if (scope === 'all') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        const matchingPeril =
+          _.filter(_.toArray(draft.content[wsIdentifier].riskLink.results.data), item => item.regionPeril === regionPeril);
+        draft.content[wsIdentifier].riskLink.results.data = _.merge(draft.content[wsIdentifier].riskLink.results.data,
+          ...matchingPeril.map(item => ({[item.id]: {...item, override: override}})));
+      }));
+    } else if (scope === 'single') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].riskLink.results.data[id].override = value;
+      }));
+    }
   }
 
   saveFinancialPerspective(ctx: StateContext<WorkspaceModel>) {

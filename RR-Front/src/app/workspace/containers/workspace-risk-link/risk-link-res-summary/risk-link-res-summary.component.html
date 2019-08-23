@@ -476,7 +476,10 @@
             <div class="modal-linking-wrapper" style="border-color: #C38FFF; width: 49%; margin-right: 9px;">
               <div class="modal-linking-head">
                 <div class="modal-l-h-body-fill summary-info" [ngClass]="{'empty-table': portfolio.length === 0}">
-                  <span class="subtitle-2">EDM Portfolio</span>
+                  <div style="display: flex; align-items: center">
+                    <span class="subtitle-2">EDM Portfolio</span>
+                    <span class="selected-Item-text">{{selectedEDM}}</span>
+                  </div>
                   <div style="display: flex;">
                     <p-table #lt [columns]="scrollableColslinking" [value]="portfolio"
                              [resizableColumns]="true" columnResizeMode="expand"
@@ -556,6 +559,9 @@
                 <div class="modal-l-h-body-fill summary-info" [ngClass]="{'empty-table': analysis.length === 0}">
                   <div style="display: flex; justify-content: space-between;">
                     <span class="subtitle-2">RDM Analysis</span>
+<!--                    <span class="selected-Item-text" *ngIf="linking?.rdm?.selected !== null">
+                      {{linking?.rdm?.selected?.name}}
+                    </span>-->
                     <nz-dropdown *ngIf="linking?.rdm?.selected !== null" [nzTrigger]="'click'">
                       <div class="dropdown-wrap" nz-dropdown>
                         <div class="dropdown-wrap-title">
@@ -1021,7 +1027,7 @@
         <!--      <p-radioButton value="currentSelection" label="Current Selection" [(ngModel)]="radioValueFinancialP"></p-radioButton>
               <p-radioButton value="currentRDM" label="Current RDM" [(ngModel)]="radioValueFinancialP"></p-radioButton>
               <p-radioButton value="all" label="All RDM's" [(ngModel)]="radioValueFinancialP"></p-radioButton>-->
-        <button (click)="addFinancialP()" style="margin-left: 150px" class="a-buttons-outlined-mini">ADD</button>
+        <button (click)="addFinancialP()" style="margin-left: 70px" class="a-buttons-outlined-mini">ADD</button>
         <button (click)="replaceFinancialP()" class="a-buttons-outlined-mini">REPLACE</button>
       </div>
     </div>
@@ -1185,6 +1191,7 @@
                   <div *ngIf="col.type === 'override'">
                     <nz-select
                       style="padding: 10px 0; width: 90%"
+                      (ngModelChange)="updateFpOverride($event, rowData)"
                       [(ngModel)]="rowData.override"
                       nzShowSearch
                       class="a-dropdown-small input-wrapper"

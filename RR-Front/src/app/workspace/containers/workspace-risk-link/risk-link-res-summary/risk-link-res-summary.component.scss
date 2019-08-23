@@ -773,6 +773,11 @@ LINKING MODAL STYLE
       flex-direction: column;
       padding-top: 5px;
 
+      .selected-Item-text {
+        font-size: 10px;
+        color: #B2B2B2;
+      }
+
       p-table {
         width: 93%;
       }
