@@ -46,6 +46,7 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   rightMenuInputs: rightMenuStore.Input;
   workspace: any;
   index: any;
+  listOfPltsThread: any;
   searchWorkspace = false;
   selectedWorkspace: any = null;
   keywordFormGroup: FormGroup;
@@ -466,8 +467,17 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       console.log(this.getInputs('userTags'))
       this.detectChanges();
     });
+    this.initThreadsData();
+    console.log(this.listOfPltsThread)
   }
 
+  initThreadsData() {
+    if (this.Inputs.listOfPltsData) {
+      this.listOfPltsThread = Array.prototype.concat.apply([], this.Inputs.listOfPltsData.map((row: any) => row.threads));
+      this.Inputs.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
+      this.setInputs('listOfPltsData', this.listOfPltsThread);
+    }
+  }
   ngOnDestroy(): void {
     this.unSubscribe$.next();
     this.unSubscribe$.complete();
