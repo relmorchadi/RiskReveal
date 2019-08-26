@@ -19,6 +19,22 @@
         </div>
       </div>
       <div *ngIf="state.collapse.collapseResult" class="summary-info">
+        <div class="menu-icon-wrap">
+          <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
+            <a nz-dropdown style="max-height: 28px;display: flex;">
+              <i class="icon-settings_24px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+              <li nz-menu-item>Reset Sort</li>
+              <li nz-menu-item>Reset Filters</li>
+              <li nz-menu-item>Reset Sort/Filters</li>
+              <li nz-menu-divider></li>
+              <li (click)="toggleColumnsManager('summaries')" nz-menu-item>Manage Columns</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item>Unselect All</li>
+            </ul>
+          </nz-dropdown>
+        </div>
         <p-table #st [columns]="scrollableColsSummary" [frozenColumns]="frozenColsSummary"
                  [resizableColumns]="true" columnResizeMode="expand"
                  [scrollable]="true" [value]="resultsSummary" frozenWidth="485px">
@@ -45,11 +61,11 @@
                     <ng-container [pSortableColumn]="col.field" >
                       {{col.header}}
                       <ng-container [ngSwitch]="col?.sorting">
-                        <i (click)="sortChange(col?.field, col?.sorting)" *ngSwitchCase="'asc'"
+                        <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'asc'"
                            class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                        <i (click)="sortChange(col?.field, col?.sorting)" *ngSwitchCase="'desc'"
+                        <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'desc'"
                            class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                        <i (click)="sortChange(col?.field, col?.sorting)" *ngSwitchDefault class="icon-direction"
+                        <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchDefault class="icon-direction"
                            style="font-size: 1.4em;"></i>
                       </ng-container>
                       <!--                      <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>-->
@@ -116,7 +132,6 @@
                           nzPlaceHolder="TAG CURRENCY"
                         >
                           <nz-option nzLabel="Main Liablity Currency (MLC)" nzValue="USD"></nz-option>
-                          <nz-option nzLabel="User Defined Currency (UDC)" nzValue="EUW"></nz-option>
                           <nz-option nzLabel="Underlying Exposure Currency (UEC)" nzValue="UEC"></nz-option>
                           <nz-option nzLabel="AED" nzValue="AED"></nz-option>
                           <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
@@ -141,22 +156,6 @@
             </tr>
           </ng-template>
         </p-table>
-        <div class="menu-icon-wrap">
-          <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'hover'">
-            <a nz-dropdown style="max-height: 28px;display: flex;">
-              <i class="icon-settings_24px"></i>
-            </a>
-            <ul nz-menu style="font-size: 12px">
-              <li nz-menu-item>Reset Sort</li>
-              <li nz-menu-item>Reset Filters</li>
-              <li nz-menu-item>Reset Sort/Filters</li>
-              <li nz-menu-divider></li>
-              <li (click)="toggleColumnsManager('summaries')" nz-menu-item>Manage Columns</li>
-              <li nz-menu-divider></li>
-              <li nz-menu-item>Unselect All</li>
-            </ul>
-          </nz-dropdown>
-        </div>
       </div>
     </div>
   </div>
@@ -188,6 +187,22 @@
       </div>
       <div class="summary-info" *ngIf="state.collapse.collapseAnalysis">
         <p-contextMenu appendTo="body" #cmR [model]="itemCm"></p-contextMenu>
+        <div class="menu-icon-wrap">
+          <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+            <a style="max-height: 28px;display: flex;" nz-dropdown>
+              <i class="icon-settings_24px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+              <li nz-menu-item>Reset Sort</li>
+              <li nz-menu-item>Reset Filters</li>
+              <li nz-menu-item>Reset Sort/Filters</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item>Unselect All</li>
+            </ul>
+          </nz-dropdown>
+        </div>
         <p-table [columns]="scrollableColsResult" [frozenColumns]="frozenColsResult"
                  [value]="analysisResults"
                  [resizableColumns]="true" columnResizeMode="expand"
@@ -287,27 +302,15 @@
                     <span *ngIf="col.type !== 'Peqt'">
                     {{rowData[col.field]}}
                   </span>
-
                   </div>
                   <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                        *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
+                  <div class="text-data" *ngIf="col.field === 'number'">{{rowData[col.field] | number: '1.2-2'}}</div>
                   <div style="padding-left: 10px;" *ngIf="col.type === 'check'">
                     <label nz-checkbox [(ngModel)]="rowData[col.field]"></label>
                   </div>
                 </th>
                 <ng-container *ngIf="col.edit">
-                  <th pEditableColumn *ngIf="col.field === 'unitMultiplier'"
-                      [ngClass]="{'selected-item': rowData?.selected}">
-                    <p-cellEditor>
-                      <ng-template pTemplate="input">
-                        <input pInputText type="text" style="width: 95%" class="a-textfield-mini"
-                               [(ngModel)]="rowData.unitMultiplier">
-                      </ng-template>
-                      <ng-template pTemplate="output">
-                        <div class="text-data highlight-temp"><span>{{rowData.unitMultiplier | number: '1.2-2'}}</span></div>
-                      </ng-template>
-                    </p-cellEditor>
-                  </th>
                   <th pEditableColumn *ngIf="col.field === 'targetCurrency'"
                       [ngClass]="{'selected-item': rowData?.selected}">
                     <p-cellEditor>
@@ -321,7 +324,6 @@
                           nzPlaceHolder="TAG CURRENCY"
                         >
                           <nz-option nzLabel="Main Liablity Currency (MLC)" nzValue="USD"></nz-option>
-                          <nz-option nzLabel="User Defined Currency (UDC)" nzValue="EUW"></nz-option>
                           <nz-option nzLabel="Underlying Analysis Currency (UAC)" nzValue="UAC"></nz-option>
                           <nz-option nzLabel="AED" nzValue="AED"></nz-option>
                           <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
@@ -346,23 +348,6 @@
             </tr>
           </ng-template>
         </p-table>
-        <div class="menu-icon-wrap">
-          <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-            <a style="max-height: 28px;display: flex;" nz-dropdown>
-              <i class="icon-settings_24px"></i>
-            </a>
-            <ul nz-menu style="font-size: 12px">
-              <li nz-menu-item>Reset Sort</li>
-              <li nz-menu-item>Reset Filters</li>
-              <li nz-menu-item>Reset Sort/Filters</li>
-              <li nz-menu-divider></li>
-              <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
-              <li nz-menu-divider></li>
-              <li nz-menu-item>Unselect All</li>
-            </ul>
-          </nz-dropdown>
-        </div>
-
       </div>
     </div>
   </div>
@@ -480,7 +465,23 @@
                     <span class="subtitle-2">EDM Portfolio</span>
                     <span class="selected-Item-text">{{selectedEDM}}</span>
                   </div>
-                  <div style="display: flex;">
+                  <div class="resize-table">
+                    <div class="menu-icon-wrap">
+                      <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                        <a style="max-height: 28px;display: flex;" nz-dropdown>
+                          <i class="icon-settings_24px"></i>
+                        </a>
+                        <ul nz-menu style="font-size: 12px">
+                          <li nz-menu-item>Reset Sort</li>
+                          <li nz-menu-item>Reset Filters</li>
+                          <li nz-menu-item>Reset Sort/Filters</li>
+                          <li nz-menu-divider></li>
+                          <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                          <li nz-menu-divider></li>
+                          <li nz-menu-item>Unselect All</li>
+                        </ul>
+                      </nz-dropdown>
+                    </div>
                     <p-table #lt [columns]="scrollableColslinking" [value]="portfolio"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
@@ -534,22 +535,6 @@
                         </div>
                       </ng-template>
                     </p-table>
-                    <div class="menu-icon-wrap">
-                      <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-                        <a style="max-height: 28px;display: flex;" nz-dropdown>
-                          <i class="icon-settings_24px"></i>
-                        </a>
-                        <ul nz-menu style="font-size: 12px">
-                          <li nz-menu-item>Reset Sort</li>
-                          <li nz-menu-item>Reset Filters</li>
-                          <li nz-menu-item>Reset Sort/Filters</li>
-                          <li nz-menu-divider></li>
-                          <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
-                          <li nz-menu-divider></li>
-                          <li nz-menu-item>Unselect All</li>
-                        </ul>
-                      </nz-dropdown>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -580,8 +565,25 @@
                       </ul>
                     </nz-dropdown>
                   </div>
-                  <div style="display: flex;">
-                    <p-table #lt [columns]="scrollableColslinking" [value]="analysis" [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
+                  <div class="resize-table">
+                    <div class="menu-icon-wrap">
+                      <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                        <a style="max-height: 28px;display: flex;" nz-dropdown>
+                          <i class="icon-settings_24px"></i>
+                        </a>
+                        <ul nz-menu style="font-size: 12px">
+                          <li nz-menu-item>Reset Sort</li>
+                          <li nz-menu-item>Reset Filters</li>
+                          <li nz-menu-item>Reset Sort/Filters</li>
+                          <li nz-menu-divider></li>
+                          <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                          <li nz-menu-divider></li>
+                          <li nz-menu-item>Unselect All</li>
+                        </ul>
+                      </nz-dropdown>
+                    </div>
+                    <p-table #lt [columns]="scrollableColslinking" [value]="analysis"
+                             [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [scrollable]="true" scrollHeight="147px">
                       <ng-template pTemplate="colgroup" let-columns>
@@ -658,22 +660,6 @@
                         </div>
                       </ng-template>
                     </p-table>
-                    <div class="menu-icon-wrap">
-                      <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-                        <a style="max-height: 28px;display: flex;" nz-dropdown>
-                          <i class="icon-settings_24px"></i>
-                        </a>
-                        <ul nz-menu style="font-size: 12px">
-                          <li nz-menu-item>Reset Sort</li>
-                          <li nz-menu-item>Reset Filters</li>
-                          <li nz-menu-item>Reset Sort/Filters</li>
-                          <li nz-menu-divider></li>
-                          <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
-                          <li nz-menu-divider></li>
-                          <li nz-menu-item>Unselect All</li>
-                        </ul>
-                      </nz-dropdown>
-                    </div>
                   </div>
                 </div>
               </div>
@@ -860,6 +846,22 @@
             </div>
           </div>
           <div class="resize-table">
+            <div class="menu-icon-wrap">
+              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                <a style="max-height: 28px;display: flex;" nz-dropdown>
+                  <i class="icon-settings_24px"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item>Reset Sort</li>
+                  <li nz-menu-item>Reset Filters</li>
+                  <li nz-menu-item>Reset Sort/Filters</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                  <li nz-menu-divider></li>
+                  <li nz-menu-item>Unselect All</li>
+                </ul>
+              </nz-dropdown>
+            </div>
             <p-table #fat [columns]="colsFinancialAnalysis" [value]="dataList(workingFSC.analysis?.data)"
                      [resizableColumns]="true" columnResizeMode="expand" *ngIf="!collapseFPDataTable"
                      [scrollable]="true" scrollHeight="232px">
@@ -914,22 +916,6 @@
                 </tr>
               </ng-template>
             </p-table>
-            <div class="menu-icon-wrap">
-              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-                <a style="max-height: 28px;display: flex;" nz-dropdown>
-                  <i class="icon-settings_24px"></i>
-                </a>
-                <ul nz-menu style="font-size: 12px">
-                  <li nz-menu-item>Reset Sort</li>
-                  <li nz-menu-item>Reset Filters</li>
-                  <li nz-menu-item>Reset Sort/Filters</li>
-                  <li nz-menu-divider></li>
-                  <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
-                  <li nz-menu-divider></li>
-                  <li nz-menu-item>Unselect All</li>
-                </ul>
-              </nz-dropdown>
-            </div>
           </div>
         </div>
       </div>
@@ -937,6 +923,22 @@
         <nz-tabset class="tabs-standard-top">
           <nz-tab nzTitle="Standard">
             <div style="padding-top:0" class="summary-info resize-table">
+              <div class="menu-icon-wrap">
+                <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                  <a style="max-height: 28px;display: flex;" nz-dropdown>
+                    <i class="icon-settings_24px"></i>
+                  </a>
+                  <ul nz-menu style="font-size: 12px">
+                    <li nz-menu-item>Reset Sort</li>
+                    <li nz-menu-item>Reset Filters</li>
+                    <li nz-menu-item>Reset Sort/Filters</li>
+                    <li nz-menu-divider></li>
+                    <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                    <li nz-menu-divider></li>
+                    <li nz-menu-item>Unselect All</li>
+                  </ul>
+                </nz-dropdown>
+              </div>
               <p-table #fpt [columns]="colsFinancialStandard" [value]="dataList(workingFSC.standard?.data)"
                        [resizableColumns]="true" columnResizeMode="expand"
                        [scrollable]="true" scrollHeight="232px">
@@ -992,22 +994,6 @@
                   </tr>
                 </ng-template>
               </p-table>
-              <div class="menu-icon-wrap">
-                <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-                  <a style="max-height: 28px;display: flex;" nz-dropdown>
-                    <i class="icon-settings_24px"></i>
-                  </a>
-                  <ul nz-menu style="font-size: 12px">
-                    <li nz-menu-item>Reset Sort</li>
-                    <li nz-menu-item>Reset Filters</li>
-                    <li nz-menu-item>Reset Sort/Filters</li>
-                    <li nz-menu-divider></li>
-                    <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
-                    <li nz-menu-divider></li>
-                    <li nz-menu-item>Unselect All</li>
-                  </ul>
-                </nz-dropdown>
-              </div>
             </div>
           </nz-tab>
           <nz-tab nzTitle="Treaty" nzDisabled>
@@ -1129,6 +1115,22 @@
 
     <div>
       <div class="summary-info" *ngIf="editableRow.target === 'Rp'">
+        <div class="menu-icon-wrap">
+          <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+            <a style="max-height: 28px;display: flex;" nz-dropdown>
+              <i class="icon-settings_24px"></i>
+            </a>
+            <ul nz-menu style="font-size: 12px">
+              <li nz-menu-item>Reset Sort</li>
+              <li nz-menu-item>Reset Filters</li>
+              <li nz-menu-item>Reset Sort/Filters</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+              <li nz-menu-divider></li>
+              <li nz-menu-item>Unselect All</li>
+            </ul>
+          </nz-dropdown>
+        </div>
         <p-table [columns]="regionPerilDataTable"
                  [resizableColumns]="true" [scrollHeight]="'270px'"
                  [value]="dataList(state.results.data)" #rpt [scrollable]="true">

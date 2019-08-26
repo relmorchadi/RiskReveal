@@ -9,12 +9,12 @@ TABLE STYLE
   width: 97%;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
   padding: 5px 1px;
 
   .menu-icon-wrap {
     display: flex;
     justify-content: flex-end;
-    margin-top: 15px;
     font-size: 20px;
   }
 
@@ -210,10 +210,7 @@ TABLE STYLE
 
 .resize-table {
   display: flex;
-
-  p-table {
-    width: 96%;
-  }
+  flex-direction: column;
 }
 
 ::ng-deep {
@@ -776,10 +773,6 @@ LINKING MODAL STYLE
       .selected-Item-text {
         font-size: 10px;
         color: #B2B2B2;
-      }
-
-      p-table {
-        width: 93%;
       }
 
       .radio-wrapper {
