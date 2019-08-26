@@ -8,6 +8,7 @@ export class TableSortAndFilterPipe implements PipeTransform {
 
   transform(data: any, args?: any): any {
     const sortData= args[0];
+    console.log(args);
     const sortDataKeys =_.keys(sortData);
     const filterData= args[1];
     const filterDataKeys = _.keys(filterData)
