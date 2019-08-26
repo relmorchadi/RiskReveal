@@ -63,6 +63,9 @@ public class AdjustmentNodeService {
     @Autowired
     AdjustmentNodeOrderService adjustmentNodeOrderService;
 
+
+    //TODO: implementation for updating node
+
     public AdjustmentNodeEntity findOne(Integer id){
         return adjustmentnodeRepository.findById(id).orElseThrow(throwException(NODENOTFOUND,NOT_FOUND));
     }

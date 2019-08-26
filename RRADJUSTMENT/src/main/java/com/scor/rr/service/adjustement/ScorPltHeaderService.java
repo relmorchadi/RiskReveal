@@ -57,6 +57,8 @@ public class ScorPltHeaderService {
         return CalculAdjustement.stdDev(getPltLossDataFromFile(path));
     }
 
+    //NOTE: this service should be open and as a part of API
+
     private List<PLTLossData> calculateAdjustment(AdjustmentManuelleParameterProcess parameterProcess, List<PLTLossData> pltLossData) {
         if (Linear.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.linearAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());

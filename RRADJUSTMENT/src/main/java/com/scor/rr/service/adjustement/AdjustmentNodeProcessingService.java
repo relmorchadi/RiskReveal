@@ -67,6 +67,9 @@ public class AdjustmentNodeProcessingService {
         return adjustmentnodeprocessingRepository.findAll();
     }
 
+    //NOTE: please add the comments to explain what will be done by these methods saveBy... and how they could be called.
+    //Perhaps a refactor need to be done
+
     public AdjustmentNodeProcessingEntity saveByInputPlt(AdjustmentNodeProcessingRequest adjustmentNodeProcessingRequest) {
         if (scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).isPresent()) {
             ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).get();
@@ -88,6 +91,11 @@ public class AdjustmentNodeProcessingService {
             return null;
         }
     }
+
+    //NOTE: should have the separated functions:
+    //  - Save Adjustment Node, adjustment parameters and adjustment processing into DB
+    //  - Trigger adjustment processing (i.e call CalculAdjustement methods), return PLT Loss Data list and status
+    //  - Persist PLT to DB
 
     public AdjustmentNodeProcessingEntity saveByAdjustedPlt(AdjustmentParameterRequest parameterRequest) {
         if (scorpltheaderRepository.findById(parameterRequest.getScorPltHeaderInput()).isPresent()) {
@@ -204,6 +212,8 @@ public class AdjustmentNodeProcessingService {
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
     }
+
+    //NOTE: should separate two functions: save parameter and processing
 
     private List<PLTLossData> saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData) {
         List<AdjustmentReturnPeriodBandingParameterEntity> parameterEntities = new ArrayList<>();

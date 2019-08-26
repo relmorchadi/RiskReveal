@@ -34,6 +34,9 @@ public class AdjustmentThreadService {
         return adjustmentthreadRepository.findAll();
     }
 
+    //NOTE: thread is used to group a list of in-order nodes. How the implementation is done for persisting a thread with these nodes ?
+    //Refactor need to be done (methods name does not refer to what they are doing)
+
     public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest){
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());

@@ -311,6 +311,8 @@ public class CalculAdjustement implements ICalculAdjustment{
          return pltLossDataAepMetric;
     }
 
+
+    //TODO: all statistics methods must be migrated to another service implementation (StatisticService for exxample)
     public static Double CoefOfVariance(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             return stdDev(pltLossDatas) / (averageAnnualLoss(pltLossDatas) + CONSTANTE);

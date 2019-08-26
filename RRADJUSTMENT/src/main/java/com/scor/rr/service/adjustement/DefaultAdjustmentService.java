@@ -67,6 +67,11 @@ public class DefaultAdjustmentService {
     @Autowired
     AdjustmentNodeService adjustmentNodeService;
 
+    //NOTE: I think we should have two functions:
+    // - one takes PLT ID as input and return a list of DefaultAdjustmentNodeEntity required by this PLT
+    // - one take DefaultAdjustmentNodeEntity as input and return a Adjustment Node
+    // We could have a global function that calls these two methods to take as input Pure PLT ID and return a Default Adjustment Thread / Nodes for it if any
+
     public List<AdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(Integer scorPltHeaderId) {
         if (scorpltheaderRepository.findById(scorPltHeaderId).isPresent()) {
             ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(scorPltHeaderId).get();
