@@ -36,6 +36,10 @@ public class AdjustmentReturnPeriodBandingParameterService {
         );
     }
 
+    public void deleteByNodeId(Integer nodeId) {
+        parameterRepository.deleteByAdjustmentNodeByFkAdjustmentNodeId_AdjustmentNodeId(nodeId);
+    }
+
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
         return () -> new RRException(codeName, httpStatus.value());
     }

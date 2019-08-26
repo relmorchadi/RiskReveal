@@ -13,7 +13,6 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -74,6 +73,9 @@ public class AdjustmentNodeProcessingService {
             if (adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).isPresent()) {
                 AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).get();
                 AdjustmentNodeProcessingEntity nodeProcessing = new AdjustmentNodeProcessingEntity();
+                if(adjustmentNodeProcessingRequest.getAdjustmentNodeProcessingId()!= 0) {
+                    nodeProcessing.setAdjustmentNodeProcessingId(adjustmentNodeProcessingRequest.getAdjustmentNodeProcessingId());
+                }
                 nodeProcessing.setScorPltHeaderByFkInputPlt(scorPltHeader);
                 nodeProcessing.setAdjustmentNodeByFkAdjustmentNode(adjustmentNode);
                 return adjustmentnodeprocessingRepository.save(nodeProcessing);
@@ -131,6 +133,10 @@ public class AdjustmentNodeProcessingService {
                         .getPkScorPltHeaderId() == nodeId)
                 .findAny()
                 .orElseThrow(throwException(PLTNOTFOUNT, NOT_FOUND));
+    }
+
+    public void deleteProcessingByNode(Integer nodeId){
+        adjustmentnodeprocessingRepository.delete(getProcessingByNode(nodeId));
     }
 
     private BinFileEntity savePLTFile(List<PLTLossData> pltLossData) {
@@ -198,6 +204,7 @@ public class AdjustmentNodeProcessingService {
                         .orElseThrow(throwException(UNKNOWN, NOT_FOUND))
         );
     }
+
     private List<PLTLossData> saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData) {
         List<AdjustmentReturnPeriodBandingParameterEntity> parameterEntities = new ArrayList<>();
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {

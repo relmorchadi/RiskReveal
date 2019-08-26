@@ -57,6 +57,11 @@ public class AdjustmentNodeService {
     @Autowired
     AdjustmentEventBasedParameterService eventBasedParameterService;
 
+    @Autowired
+    AdjustmentNodeProcessingService processingService;
+
+    @Autowired
+    AdjustmentNodeOrderService adjustmentNodeOrderService;
 
     public AdjustmentNodeEntity findOne(Integer id){
         return adjustmentnodeRepository.findById(id).orElseThrow(throwException(NODENOTFOUND,NOT_FOUND));
@@ -88,9 +93,13 @@ public class AdjustmentNodeService {
                         adjustmentNodeEntity.setAdjustmentThread(adjustmentThread.findById(adjustmentNodeRequest.getAdjustmentThreadId()).get());
                         log.info("Thread getting successfull : {}",adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
                         adjustmentNodeEntity.setSequence(adjustmentNodeRequest.getSequence());
+                        if(adjustmentNodeRequest.getAdjustmentNodeId() != 0) {
+                            adjustmentNodeEntity.setAdjustmentNodeId(adjustmentNodeRequest.getAdjustmentNodeId());
+                            deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
+                        }
                         adjustmentNodeEntity = adjustmentnodeRepository.save(adjustmentNodeEntity);
                         log.info(" -----  Saving Parameter for Node ----------");
-                        saveParameterNode(adjustmentNodeEntity,new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0, adjustmentNodeRequest.getRpmf() != null ? adjustmentNodeRequest.getRpmf() : 0, adjustmentNodeRequest.getPeatData(), 0, 0,adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()));
+                        saveParameterNode(adjustmentNodeEntity, new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0, adjustmentNodeRequest.getRpmf() != null ? adjustmentNodeRequest.getRpmf() : 0, adjustmentNodeRequest.getPeatData(), 0, 0, adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()));
                         return adjustmentNodeEntity;
                     } else {
                         throwException(THREADNOTFOUND, NOT_FOUND);
@@ -108,6 +117,17 @@ public class AdjustmentNodeService {
             throwException(TYPENOTFOUND, NOT_FOUND);
             return null;
         }
+    }
+
+    private void deleteParameterNode(Integer nodeId) {
+        adjustmentScalingParameterService.deleteByNodeId(nodeId);
+        periodBandingParameterService.deleteByNodeId(nodeId);
+        eventBasedParameterService.deleteByNodeId(nodeId);
+        processingService.delete(nodeId);
+    }
+
+    public AdjustmentNodeEntity getAdjustmentNode(Integer nodeId) {
+        return adjustmentnodeRepository.getOne(nodeId);
     }
 
     private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
@@ -150,7 +170,7 @@ public class AdjustmentNodeService {
         else throwException(TYPENOTFOUND, NOT_FOUND);
     }
 
-    protected void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
+    void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
         try {
             log.info("------ Saving PEAT DATA FILE ------");
             File file = new File("src/main/resources/file/peatData"+node.getAdjustmentNodeId()+".csv");
