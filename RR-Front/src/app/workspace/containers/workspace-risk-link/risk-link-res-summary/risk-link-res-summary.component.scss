@@ -5,16 +5,16 @@ TABLE STYLE
 */
 
 .summary-info {
-  padding: 20px 0;
   margin: auto;
   width: 97%;
   overflow: hidden;
   display: flex;
+  flex-direction: column;
+  padding: 5px 1px;
 
   .menu-icon-wrap {
     display: flex;
     justify-content: flex-end;
-    margin-top: 15px;
     font-size: 20px;
   }
 
@@ -197,10 +197,6 @@ TABLE STYLE
       flex-direction: column;
     }
 
-    .ui-table-tbody {
-      diaply: flex;
-    }
-
   }
 
   .empty-notif-wrapper {
@@ -210,6 +206,11 @@ TABLE STYLE
     display: flex;
     justify-content: center;
   }
+}
+
+.resize-table {
+  display: flex;
+  flex-direction: column;
 }
 
 ::ng-deep {
@@ -372,7 +373,7 @@ COMPONENT STYLE
   display: flex;
   flex-direction: column;
   background-color: #FFFFFF;
-  margin-bottom: 25px;
+  margin-bottom: 15px;
 
   .body-wrapper {
     background-color: #FFFFFF;
@@ -761,7 +762,7 @@ LINKING MODAL STYLE
     display: flex;
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-top: none;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 
     .modal-l-h-body-fill {
       flex: 1;
@@ -769,8 +770,9 @@ LINKING MODAL STYLE
       flex-direction: column;
       padding-top: 5px;
 
-      p-table {
-        width: 93%;
+      .selected-Item-text {
+        font-size: 10px;
+        color: #B2B2B2;
       }
 
       .radio-wrapper {
@@ -804,7 +806,7 @@ LINKING MODAL STYLE
       .suggestion-card {
         background-color: #F4F6FC;
         border: 1px solid transparent;
-        margin: 0 0 6px 15px;
+        margin: 6px 15px;
         padding: 15px;
 
         .suggestion-card-header {

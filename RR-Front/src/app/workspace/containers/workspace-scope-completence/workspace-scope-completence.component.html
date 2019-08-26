@@ -67,13 +67,20 @@
           </ul>
         </nz-dropdown>
       </div>
+      <div style="display: flex; flex-direction: column" *ngIf="showOverrideButton()">
+        <button class="a-buttons-contained-micro" (click)="overrideBack()">Override Selected</button>
+        <button class="a-buttons-linked" (click)="cancelOverride()">Cancel Override Action</button>
+      </div>
+      <div style="width:30%;">
+
+      </div>
       <div class="divider-right">
         <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
           <a nz-dropdown>
             <i class="icon-menu_24px" style="font-size: 25px;"></i>
           </a>
           <ul nz-menu style="font-size: 12px">
-            <li nz-menu-item>Override</li>
+            <li nz-menu-item (click)="overrideAll()">Override</li>
             <li nz-menu-item>Generate Synthetic</li>
             <li nz-menu-item>Export Data</li>
             <li nz-menu-item>Manage Columns</li>
@@ -171,7 +178,7 @@
             <th *ngFor="let item of treatySections[0]" class="divided-col">
 
 
-              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'checked'" class="icon-holder">
+              <div *ngIf="checkExpected(item,rowData)  == 'checked'" class="icon-holder">
                 <div class="icon-holder">
                   <ng-container>
                     <i class="icon-add_24px" style="border: 1px solid;font-size: 20px;color: cornflowerblue;"></i>
@@ -179,7 +186,7 @@
                 </div>
               </div>
 
-              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'overridden'" class="icon-holder">
+              <div *ngIf="checkExpected(item,rowData) == 'overridden'" class="icon-holder">
                 <div class="icon-holder">
                   <ng-container>
                     <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
@@ -187,15 +194,16 @@
                 </div>
               </div>
 
-              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'override'" class="icon-holder">
+              <div *ngIf="checkExpected(item,rowData) == 'override'" class="icon-holder">
                 <div class="icon-holder">
                   <ng-container>
-                    <i (click)="overrideSelection(item,rowData)" class="icon-check_24px" style="border: 1px solid;font-size: 20px;color: darkgray;"></i>
+                    <i (click)="overrideSelection(item,rowData)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': checkParent(rowData,item)}"></i>
                   </ng-container>
                 </div>
               </div>
 
-              <div *ngIf="(checkExpected(item,rowData) | lowercase) == 'attached'" class="icon-holder">
+              <div *ngIf="checkExpected(item,rowData)== 'attached'" class="icon-holder">
                 <div class="icon-holder">
                   <ng-container>
                     <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
@@ -228,25 +236,26 @@
               </th>
               <th *ngFor="let item of treatySections[0]" class="divided-col">
 
-                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'checked'" class="icon-holder">
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'checked'" class="icon-holder">
                   <ng-container >
                     <i class="icon-add_24px" style="border: 1px solid;font-size: 20px;color: cornflowerblue;"></i>
                   </ng-container>
                 </div>
 
-                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'overridden'" class="icon-holder">
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'overridden'" class="icon-holder">
                   <ng-container >
                     <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
                   </ng-container>
                 </div>
 
-                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'override'" class="icon-holder">
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'override'" class="icon-holder">
                   <ng-container >
-                    <i (click)="overrideSelectionTwo(item,rowData,grain)" class="icon-check_24px" style="border: 1px solid;font-size: 20px;color: darkgray;"></i>
+                    <i (click)="overrideSelectionTwo(item,rowData,grain)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': checkChild(rowData, item, grain)}"></i>
                   </ng-container>
                 </div>
 
-                <div *ngIf="(checkExpectedTwo(item,grain,rowData) | lowercase) == 'attached'" class="icon-holder">
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'attached'" class="icon-holder">
                   <ng-container >
                     <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
                   </ng-container>

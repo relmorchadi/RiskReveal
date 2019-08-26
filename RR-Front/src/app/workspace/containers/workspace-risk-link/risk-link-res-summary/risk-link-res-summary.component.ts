@@ -415,6 +415,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
   changeFinancialPTarget(target) {
   }
 
+  updateFpOverride(value, row) {
+    this.store.dispatch(new fromWs.ApplyRegionPerilAction({row: row, scope: 'single', value: value}));
+  }
+
   handleCancel() {
     this.filterModalVisibility = false;
     this.linkingModalVisibility = false;
@@ -476,7 +480,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   applyRpToAll(row) {
-    this.store.dispatch(new ApplyRegionPerilAction(row));
+    this.store.dispatch(new ApplyRegionPerilAction({row: row, scope: 'all'}));
   }
 
   getTreeApp() {
