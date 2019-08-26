@@ -33,6 +33,7 @@ public class NodeTest {
 
     }
 
+    //TODO: expected result ? exception if creation failed (wrong parameter for example)
     @Test
     public void createNode() {
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("",1,

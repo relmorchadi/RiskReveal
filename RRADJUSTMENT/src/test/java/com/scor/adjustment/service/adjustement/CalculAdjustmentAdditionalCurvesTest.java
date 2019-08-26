@@ -35,6 +35,8 @@ public class CalculAdjustmentAdditionalCurvesTest {
         log.info("END test for EEF Frequency Adjustment");
     }
 
+    //TODO: expected results for ALL tests
+
     @Test
     public void AverageAnnualLossTest() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();

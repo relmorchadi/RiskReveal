@@ -127,4 +127,6 @@ public class CalculAdjustementNonLinearEventDrivenAdjustmentTest {
         log.info("End test for non linear event  driven adjustment with a File ");
     }
 
+    //TODO: test for Uncapped
+
 }

@@ -136,4 +136,6 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
         csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltEEFReturnPeriodBanding.csv"));
         log.info("Launch test for EEF Return Period Banding Adjustment for a file");
     }
+
+    //TODO: test for Uncapped
 }

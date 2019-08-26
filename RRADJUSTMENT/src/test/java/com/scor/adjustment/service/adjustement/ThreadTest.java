@@ -37,6 +37,8 @@ public class ThreadTest {
 
     }
 
+    //NOTE: only tests for empty threads (i.e no nodes) ?
+
     @Test
     public void createPurePltThread() {
         adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",true,

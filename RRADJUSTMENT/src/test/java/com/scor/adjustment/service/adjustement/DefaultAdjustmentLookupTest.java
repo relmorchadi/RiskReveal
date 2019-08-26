@@ -33,6 +33,8 @@ public class DefaultAdjustmentLookupTest {
 
     }
 
+    //TODO: expected results
+
     @Test
     public void lookupForDefaultAdjustmentWithInputPLT() {
         defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(983);

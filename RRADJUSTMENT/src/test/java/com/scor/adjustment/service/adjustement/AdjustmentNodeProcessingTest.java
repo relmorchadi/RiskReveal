@@ -59,6 +59,9 @@ public class AdjustmentNodeProcessingTest {
 
     }
 
+    //TODO: test edge cases: Node not found, PLT not found, PLT could not be read, calculation failed ...
+    //TODO: define expected results
+
     @Test
     public void processNodeByInput() {
         adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(983,1));
