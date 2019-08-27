@@ -179,7 +179,7 @@
          [resizableColumns]="true"
          [columnResizeMode]="'expand'"
          [scrollable]="true"
-         [scrollHeight]="tableHeight"
+         [scrollHeight]="'calc(100vh - 216px)'"
          [responsive]="true"
          class="table-ngPrime"
 >
@@ -222,7 +222,9 @@
             <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
-        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
+        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " class="ui-resizable-column"
+            (dblclick)="doubleClickRow(rowData)"
+            (click)="selectRow(rowData, i)" >
           <div style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
