@@ -39,8 +39,7 @@
           <ng-container *ngIf="col?.resizable">
             <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' ) " [ngStyle]="{'width': col?.width }" pResizableColumn>
           <span style="display:flex;justify-content: space-between;">
-
-                        {{col?.header}}
+            {{col?.header}}
             <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
               <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
               <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
@@ -80,19 +79,19 @@
       </ng-container>
     </tr>
     <tr>
-    <ng-container *ngFor="let col of columns;let i=index;">
-      <ng-container *ngIf="col?.active">
-        <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
-          <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
-            <div class="filter-input">
-              <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-              <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterInput">
-            </div>
-          </th>
+      <ng-container *ngFor="let col of columns;let i=index;">
+        <ng-container *ngIf="col?.active">
+          <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
+            <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
+              <div class="filter-input">
+                <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterData[col?.fields]">
+              </div>
+            </th>
+          </ng-container>
         </ng-container>
       </ng-container>
-    </ng-container>
-  </tr>
+    </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
     <tr

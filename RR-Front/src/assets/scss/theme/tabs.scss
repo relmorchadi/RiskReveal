@@ -71,3 +71,16 @@
     height: 3px
   }
 }
+
+
+.a-tab-large {
+  .ant-tabs-ink-bar {
+    display: none !important;
+  }
+
+  .ant-tabs-tab-active {
+    border-top: 3px solid #332ed7;
+    color: black;
+    font-weight: bold;
+  }
+}

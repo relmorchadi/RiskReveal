@@ -1,22 +1,24 @@
-import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
-import {Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
 import * as fromWorkspaceStore from '../../store';
 import {WorkspaceState} from '../../store';
 import {switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Table} from 'primeng/table';
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
+import * as leftMenuStore from '../../../shared/components/plt/plt-left-menu/store';
 import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
 import {Actions as tableActions} from '../../../shared/components/plt/plt-main-table/store/actionTypes';
+import {Actions as leftMenuActions} from '../../../shared/components/plt/plt-left-menu/store/actionTypes';
 import * as tableStore from '../../../shared/components/plt/plt-main-table/store';
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
 import {BaseContainer} from '../../../shared/base';
 import {SystemTagsService} from '../../../shared/services/system-tags.service';
 import {StateSubscriber} from '../../model/state-subscriber';
+import {ExcelService} from '../../../shared/services/excel.service';
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -27,12 +29,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   rightMenuInputs: rightMenuStore.Input;
   tableInputs: tableStore.Input;
+  tagsInput: any;
 
   private dropdown: NzDropdownContextComponent;
   searchAddress: string;
   activeCheckboxSort: boolean;
-  @ViewChild('dt')
-  private table: Table;
   workspaceId: string;
   uwy: number;
   projects: any[];
@@ -427,6 +428,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   ];
 
   generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
+  listOfAvailbleColumnsCache: any[]= [];
+
+  presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -434,7 +438,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     private route$: ActivatedRoute,
     private prn: PreviousNavigationService,
     private systemTagService: SystemTagsService,
-    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
+    private excel: ExcelService,
+    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef,
+    private actions$: Actions
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.lastSelectedId = null;
@@ -471,6 +477,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       mode: "default"
     };
     this.tableInputs = {
+      scrollHeight: 'calc(100vh - 480px)',
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: [
@@ -555,7 +562,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '30%',
+          width: '22%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -698,6 +705,64 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         },
       }
     };
+    this.tagsInput= {
+      usedInWs: [
+        {
+          tagName: 'EU',
+          tagColor: this.presetColors[2],
+          count: 3
+        },
+        {
+          tagName: 'DE',
+          tagColor: this.presetColors[3],
+          count: 2,
+        }
+      ],
+      previouslyUsed: [
+        {
+          tagName: 'v7',
+          tagColor: this.presetColors[5],
+        },
+        {
+          tagName: 'v6',
+          tagColor: this.presetColors[6],
+        }
+      ],
+      allAssigned : [
+        {
+          tagName: 'pricingV1',
+          tagColor: this.presetColors[0],
+          count: 5
+        },
+        {
+          tagName: 'pricingV2',
+          tagColor: this.presetColors[1],
+          count: 5,
+        }
+      ],
+      subsetsAssigned: [
+        {
+          tagName: 'EU',
+          tagColor: this.presetColors[2],
+          count: 3
+        },
+        {
+          tagName: 'DE',
+          tagColor: this.presetColors[3],
+          count: 2,
+        }
+      ],
+      userFavorite: [
+        {
+          tagName: 'myTag1',
+          tagColor: this.presetColors[4],
+        },
+        {
+          tagName: 'myTag2',
+          tagColor: this.presetColors[4],
+        }
+      ]
+    }
     this.setRightMenuSelectedTab('pltDetail');
   }
 
@@ -810,6 +875,22 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.userTags = userTags;
       this.detectChanges();
     })
+
+    this.actions$
+      .pipe(
+        ofActionSuccessful(fromWorkspaceStore.AddNewTag)
+      ).subscribe( (userTag) => {
+        console.log(userTag);
+        this.detectChanges();
+    })
+
+    this.actions$
+      .pipe(
+        ofActionSuccessful(fromWorkspaceStore.DeleteTag)
+      ).subscribe( userTag => {
+        console.log(userTag);
+        this.detectChanges();
+    })
   }
 
   sort(sort: { key: string, value: string }): void {
@@ -872,7 +953,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     };
     this.fromPlts = true;
     this.editingTag = false;
-    console.log(this.selectedItemForMenu);
     let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
     this.modalSelect = _.intersectionBy(...d, 'tagId');
     this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
@@ -1060,6 +1140,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   toggleColumnsManager() {
     this.managePopUp= !this.managePopUp;
+    this.listOfAvailbleColumnsCache= [...this.listOfAvailbleColumns];
     if (this.managePopUp) this.listOfUsedColumns = [...this.getTableInputKey('pltColumns')];
   }
 
@@ -1088,8 +1169,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
-        event.previousIndex + 1,
-        event.currentIndex + 1
+        event.previousContainer.id == "usedListOfColumns" ? event.previousIndex + 1 : event.previousIndex,
+        event.container.id == "availableListOfColumns" ? event.currentIndex : event.currentIndex + 1
       );
     }
   }
@@ -1239,5 +1320,22 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + "-" + this.uwy
     }));
     this.navigate([`workspace/${this.workspaceId}/${this.uwy}/CloneData`])
+  }
+
+  exportTable() {
+    this.excel.exportAsExcelFile(this.tableInputs.listOfPltsData.map(e => _.omit(e, ['userTags','selected', 'visible', 'tagFilterActive', 'opened', 'deleted'])), 'sample')
+  }
+
+  resetColumns() {
+    this.managePopUp= false;
+    this.listOfUsedColumns= [...this.getTableInputKey('pltColumns')];
+    this.listOfAvailbleColumns= [...this.listOfAvailbleColumnsCache];
+  }
+
+  leftMenuActionDispatcher(action: Message) {
+    switch (action.type) {
+      case leftMenuStore.addNewTag:
+        this.dispatch(new fromWorkspaceStore.AddNewTag(action.payload))
+    }
   }
 }

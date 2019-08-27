@@ -30,10 +30,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
-  subscriptions: Subscription;
   @Select(WorkspaceMainState.getData) selectWsData$;
   @Select(WorkspaceMainState.getProjects) projects$;
-  unSubscribe$: Subject<void>;
   private pltProjectSubscription: Subscription;
   private pltUserTagsSubscription: Subscription;
 
@@ -128,6 +126,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   browesing: boolean;
 
   Inputs: {
+    scrollHeight: string | number,
     contextMenuItems: any,
     filterInput: string;
     pltColumns: any[];
@@ -165,7 +164,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     selectedItemForMenu: any;
   };
 
-  tableInputs = ['dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
+  tableInputs = ['scrollHeight', 'dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
@@ -190,6 +189,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
+      scrollHeight: null,
       filterInput: '',
       pltColumns: [
         {
@@ -235,7 +235,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '80%',
+          width: '100%',
           icon: null,
           type: 'field',
           active: true
@@ -247,7 +247,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '30%',
+          width: '22%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -404,7 +404,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       pathTab: true,
       selectedItemForMenu: null
   };
-    this.unSubscribe$ = new Subject<void>();
     this.keywordFormGroup = new FormGroup({
       keyword: new FormControl(null)
     });
@@ -465,19 +464,14 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   getBrowesingItemsDirectly() {
     this.browesing= true;
 
-    this.observeRouteParams().pipe(
-      this.unsubscribeOnDestroy
-    ).subscribe(() => {
-      console.log("LOADING PLTS")
-      this.dispatch(new fromWorkspaceStore.loadAllPlts({
-        params: {
-          workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
-        },
-        wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear')
-      }));
-    })
+    this.dispatch(new fromWorkspaceStore.loadAllPlts({
+      params: {
+        workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
+      },
+      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear')
+    }));
 
-    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
+    this.getPlts().subscribe((data) => {
       this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
@@ -498,7 +492,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       this.detectChanges();
     });
 
-    this.observeRouteParamsWithSelector(() => this.getDeletedPlts())
+    this.getDeletedPlts()
       .subscribe((deletedData) => {
         this.setInputs('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
         this.setInputs('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
@@ -507,7 +501,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         this.detectChanges();
       });
 
-    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
+    this.getPlts().subscribe(data => {
       this.setInputs('selectAll',
         (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
         &&
@@ -517,7 +511,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       this.detectChanges();
     });
 
-    this.observeRouteParamsWithSelector(() => this.getDeletedPlts()).subscribe(deletedPlts => {
+    this.getDeletedPlts().subscribe(deletedPlts => {
       this.setInputs('selectAllDeletedPlts',
         (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length))
         &&
@@ -539,20 +533,18 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       })
     ).subscribe( () => this.d.unsubscribe());
 
-    this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
+    this.getProjects().subscribe((projects: any) => {
       this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
-    this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
+    this.getUserTags().subscribe(userTags => {
       this.setInputs('userTags', userTags || {});
       this.detectChanges();
     })
   }
 
   ngOnDestroy(): void {
-    this.unSubscribe$.next();
-    this.unSubscribe$.complete();
     this.destroy();
   }
 
@@ -561,6 +553,11 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   filterData($event, target) {
     this._filter = {...this._filter, [target]: $event || null};
     this._loadData();
+  }
+
+  loadMore(event: LazyLoadEvent) {
+    this.paginationOption.currentPage = event.first;
+    this._loadData(String(event.first));
   }
 
   private _loadData(offset = '0', size = '100') {
@@ -586,11 +583,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       });
   }
 
-  loadMore(event: LazyLoadEvent) {
-    this.paginationOption.currentPage = event.first;
-    this._loadData(String(event.first));
-  }
-
   get filter() {
     // let tags = _.isString(this.searchContent) ? [] : (this.searchContent || []);
     const tableFilter = _.map(this._filter, (value, key) => ({key, value}));
@@ -603,25 +595,25 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   onHide() {
-    this.destroy();
-    this.subscriptions && this.subscriptions.unsubscribe();
-    this.searchWorkspace = false;
-    this.selectedWorkspace = null;
-    this._filter = {};
-    this.browesing = false;
-    this.onVisibleChange.emit(false);
     this.Inputs= {
-      ...this.Inputs,
+      contextMenuItems: [
+        {
+          label: 'View Detail', command: (event) => {
+            this.openPltInDrawer(this.selectedPlt);
+          }
+        },
+      ],
+      scrollHeight: null,
       filterInput: '',
       pltColumns: [
         {
           sortDir: 1,
           fields: '',
           header: '',
-          width: '60',
           sorted: false,
           filtred: false,
           resizable: false,
+          width: '25%',
           icon: null,
           type: 'checkbox',
           active: true
@@ -630,10 +622,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: '',
           header: 'User Tags',
-          width: '60',
           sorted: false,
           filtred: false,
           resizable: false,
+          width: '24%',
           icon: null,
           type: 'tags',
           active: true
@@ -642,11 +634,11 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'pltId',
           header: 'PLT ID',
-          width: '80',
           sorted: true,
           filtred: true,
           resizable: true,
           icon: null,
+          width: '28%',
           type: 'id',
           active: true
         },
@@ -654,10 +646,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'pltName',
           header: 'PLT Name',
-          width: '60',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '100%',
           icon: null,
           type: 'field',
           active: true
@@ -666,10 +658,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'peril',
           header: 'Peril',
-          width: '80',
           sorted: true,
           filtred: true,
-          resizable: true,
+          resizable: false,
+          width: '22%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -679,10 +671,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'regionPerilCode',
           header: 'Region Peril Code',
-          width: '130',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '35%',
           icon: null,
           type: 'field',
           active: true
@@ -691,10 +683,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'regionPerilName',
           header: 'Region Peril Name',
-          width: '160',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '60%',
           icon: null,
           type: 'field',
           active: true
@@ -703,10 +695,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'grain',
           header: 'Grain',
-          width: '90',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '70%',
           icon: null,
           type: 'field',
           active: true
@@ -716,7 +708,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           fields: 'deletedBy',
           forDelete: true,
           header: 'Deleted By',
-          width: '50',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -728,7 +719,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           fields: 'deletedAt',
           forDelete: true,
           header: 'Deleted On',
-          width: '50',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -739,10 +729,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'vendorSystem',
           header: 'Vendor System',
-          width: '90',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '25%',
           icon: null,
           type: 'field', active: true
         },
@@ -750,10 +740,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sortDir: 1,
           fields: 'rap',
           header: 'RAP',
-          width: '52',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '25%',
           icon: null,
           type: 'field',
           active: true
@@ -764,9 +754,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           header: '',
           sorted: false,
           filtred: false,
+          width: '25px',
           icon: 'icon-note',
           type: 'icon',
-          width: '50',
           active: true,
           tooltip: "Published for Pricing"
         },
@@ -776,9 +766,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           header: '',
           sorted: false,
           filtred: false,
+          width: '25px',
           icon: 'icon-dollar-alt',
           type: 'icon',
-          width: '50',
           active: true,
           tooltip: "Priced"
         },
@@ -788,9 +778,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           header: '',
           sorted: false,
           filtred: false,
+          width: '25px',
           icon: 'icon-focus-add',
           type: 'icon',
-          width: '50',
           active: true,
           tooltip: "Published for Accumulation"
         },
@@ -828,6 +818,11 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       pathTab: true,
       selectedItemForMenu: null
     };
+    this.searchWorkspace = false;
+    this.selectedWorkspace = null;
+    this.onVisibleChange.emit(false);
+    this.destroy();
+    this._filter = {};
     this.rightMenuInputs = {
       basket: [],
       pltDetail: null,
@@ -842,8 +837,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   onRowSelect(event) {
-      this.selectedWorkspace = event;
+    this.selectedWorkspace = event;
     this.setInputs('wsId', event.workSpaceId);
+    this.setInputs('uwYear', event.uwYear);
   }
 
   onRowUnselect(event) {
@@ -851,9 +847,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   getBrowesingItems(workspace) {
-    this.setInputs('wsId', workspace.workSpaceId);
-    this.setInputs('uwYear', workspace.uwYear);
     console.log(workspace);
+    console.log(this.Inputs);
+    console.log(this.getInputs('wsId'),this.getInputs('uwYear'))
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
     if (this.selectionStep == 'project') {
@@ -874,19 +870,16 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       if(this.multiSteps) {
         this.browesing = true;
 
-        this.observeRouteParams().pipe(
-          this.unsubscribeOnDestroy
-        ).subscribe(() => {
-          console.log("LOADING PLTS")
-          this.dispatch(new fromWorkspaceStore.loadAllPlts({
-            params: {
-              workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
-            },
-            wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear')
-          }));
-        })
+        console.log(this.getInputs('wsId') + '-' +this.getInputs('uwYear'))
 
-        this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
+        this.dispatch(new fromWorkspaceStore.loadWorkSpaceAndPlts({
+          params: {
+            workspaceId: this.getInputs('wsId'), uwy: this.getInputs('uwYear')
+          },
+          wsIdentifier: this.getInputs('wsId') + '-' +this.getInputs('uwYear')
+        }));
+
+        this.getPlts().subscribe((data) => {
           this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
           this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
@@ -907,7 +900,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           this.detectChanges();
         });
 
-        this.observeRouteParamsWithSelector(() => this.getDeletedPlts())
+        this.getDeletedPlts()
           .subscribe((deletedData) => {
             this.setInputs('listOfDeletedPltsCache', _.map(deletedData, (v, k) => ({...v, pltId: k})));
             this.setInputs('listOfDeletedPltsData', [...this.getTableInputKey('listOfDeletedPltsCache')]);
@@ -916,7 +909,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
             this.detectChanges();
           });
 
-        this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
+        this.getPlts().subscribe(data => {
           this.setInputs('selectAll',
             (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
             &&
@@ -926,7 +919,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           this.detectChanges();
         });
 
-        this.observeRouteParamsWithSelector(() => this.getDeletedPlts()).subscribe(deletedPlts => {
+        this.getDeletedPlts().subscribe(deletedPlts => {
           this.setInputs('selectAllDeletedPlts',
             (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length))
             &&
@@ -936,17 +929,17 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           this.detectChanges();
         });
 
-        this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
+        this.getProjects().subscribe((projects: any) => {
           this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
           this.detectChanges();
         });
 
-        this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
+        this.getUserTags().subscribe(userTags => {
           this.setInputs('userTags', userTags || {});
           this.detectChanges();
         })
 
-        this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
+        this.getOpenedPlt().subscribe(openedPlt => {
           this.setInputs('pltDetail', openedPlt);
           this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
           this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
@@ -966,7 +959,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }else {
       this.searchWorkspace = false;
       this.newProject = true;
-      this.onSelectProjectNext.emit(_.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']));
+      this.onSelectProjectNext.emit(_.merge(
+        _.omit(this.selectedProject, ['receptionDate', 'dueDate', 'createdBy']),
+        {workspaceName: _.get(this.selectedWorkspace, 'workspaceName')}
+      ));
     }
   }
 
@@ -979,17 +975,20 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   onShow() {
-    this.subscriptions = this.keywordFormGroup.get('keyword')
+    this.browesing=false;
+    this.keywordFormGroup.get('keyword')
       .valueChanges
       .pipe(debounceTime(400))
+      .pipe(this.unsubscribeOnDestroy)
       .subscribe((value) => {
         this.loading = true;
         this._loadData();
       });
 
-    if (this.stepConfig.uwYear && this.stepConfig.wsId) {
+    if (this.stepConfig && this.stepConfig.uwYear && this.stepConfig.wsId) {
       this.setInputs('wsId', this.stepConfig.wsId);
       this.setInputs('uwYear', this.stepConfig.uwYear);
+      console.log(this.stepConfig)
       this.getBrowesingItemsDirectly();
     }
 

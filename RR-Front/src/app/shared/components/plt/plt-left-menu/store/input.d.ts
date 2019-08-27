@@ -1,11 +1,30 @@
 export interface Input {
-  visible: boolean;
-  mode: string;
-  selectedTab: {
-    index: number,
-    title: string,
+  tagContextMenu: any;
+  _tagModalVisible: boolean;
+  _modalSelect: [];
+  tagForMenu: any,
+  _editingTag: boolean;
+  wsId: string;
+  uwYear: string;
+  projects: any[];
+  showDeleted: boolean;
+  filterData: any;
+  filters: {
+    systemTag: any,
+    userTag: any[]
   };
-  tabs: { [key: string]: any };
-  pltDetail: any;
-  basket: any[];
+  addTagModalIndex: number;
+  fromPlts: boolean;
+  deletedPltsLength: number;
+  userTags: any[];
+  selectedListOfPlts: any[];
+  systemTagsCount: any;
+  wsHeaderSelected: boolean;
+  pathTab: boolean;
+  selectedItemForMenu: any;
+  previouslyUsed: any[];
+  usedInWs: any[];
+  userFavorite: any[];
+  subsetsAssigned: any[];
+  allAssigned: any[];
 }

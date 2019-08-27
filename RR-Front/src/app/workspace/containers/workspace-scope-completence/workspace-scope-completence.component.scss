@@ -76,11 +76,30 @@
 
             .icon-holder {
               display: flex;
-              justify-content: space-between;
+              justify-content: center;
               padding: 7px 0;
 
               i {
                 font-size: 16px;
+              }
+
+              .icon-reorder_24px {
+                font-size: 23px;
+                color: #5874A5;
+              }
+
+              .icon-plus {
+                margin-left: -8px;
+                margin-top: 13px;
+                font-size: 9px;
+                background-color: #FFFFFF;
+                border: 1px solid #5874A5;
+                color: #5874A5;
+                height: 10px;
+                width: 10px;
+                border-radius: 20px;
+                display: flex;
+                justify-content: center;
               }
 
               .icon-check_24px {
@@ -117,11 +136,29 @@
         .ui-table-tbody {
           .icon-holder {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             padding: 7px;
 
             i {
               font-size: 16px;
+            }
+
+            .icon-reorder_24px {
+              font-size: 23px;
+              color: #5874A5;
+            }
+            .icon-plus {
+              margin-left: -8px;
+              margin-top: 13px;
+              font-size: 9px;
+              background-color: #FFFFFF;
+              border: 1px solid #5874A5;
+              color: #5874A5;
+              height: 10px;
+              width: 10px;
+              border-radius: 20px;
+              display: flex;
+              justify-content: center;
             }
           }
 
@@ -130,6 +167,10 @@
             display: flex;
             height: 45px;
             align-items: center;
+          }
+
+          .inner-line > div {
+            width: 100%;
           }
 
           .peril-indicator {
@@ -186,22 +227,36 @@
           }
 
           .info-rp {
+            padding-top: 4px;
+            display: flex;
+            width: 80%;
+
             .icon-map-marker-alt {
               background-color: #0700CF;
               color: #FFFFFF;
               padding: 2px;
               font-size: 12px;
-              margin: 10px;
+              margin: 2px 15px 8px 5px;
+            }
+
+            .icon-map_24px {
+              background-color: #30CEBA;
+              color: #FFFFFF;
+              padding: 2px;
+              font-size: 12px;
+              margin: 2px 15px 8px 5px;
             }
 
             .code-rp {
-              margin-right: 15px;
+              margin-right: 5px;
+              width: 42%;
             }
           }
 
           .grain-info-wrapper {
             display: flex;
             align-items: center;
+            width: 130%;
 
             .icon-map_24px {
               background-color: #30CEBA;
@@ -211,9 +266,18 @@
               margin: 10px;
             }
 
+            .icon-map-marker-alt {
+              background-color: #0700CF;
+              color: #FFFFFF;
+              padding: 2px;
+              font-size: 12px;
+              margin: 2px 15px 8px 5px;
+            }
+
             .grain-info {
               display: flex;
               flex-direction: column;
+
             }
           }
 
@@ -292,3 +356,61 @@
     }
   }
 }
+
+.AttachPlts-button {
+  padding-left: 7px;
+  padding-right: 7px;
+  border: 2px solid #5796AC;
+  border-radius: initial;
+  font-size: 13px;
+  color: #5796AC;
+  font-weight: bold;
+  height: 26px;
+  margin-top: 12px;
+}
+
+.unCheckedBoxTab {
+  border: 1px solid;
+  font-size: 20px !important;
+  color: darkgray;
+}
+
+.checkedBoxTab {
+  background-color: #0700CF;
+}
+
+.header-override {
+  width: 500px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.body-override {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label-override {
+  margin: 5px;
+
+}
+
+.body-body {
+  display: block;
+}
+
+.textarea-override {
+  width: 60%;
+}
+
+::ng-deep {
+  .ng-tns-c10-24 {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+::ng-deep.m-dialog-modal-auto {
+  z-index: 1002 !important;
+}
+
+

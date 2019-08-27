@@ -31,11 +31,13 @@ $modal-sizes: (
   "m": ( "height": 50vh, "width": 60vw ),
   "m-60": ( "height": auto, "width": 70vw ),
   "m-h": ( "height": 70vh, "width": auto ),
+  "m-w": ( "height": auto, "width": 60vw ),
   "m-74": ("height": auto, "width": 450px),
   "m-f": ( "height": auto, "width": 55vw, "minWidth": 750px ),
   "spec-def": ( "height": 80vh, "width": 1200px ),
   "lg": ( "height": 90vh, "width": 90vw ),
   "lg-h": ( "height": 90vh, "width": auto ),
+  "lg-auto": ( "height": auto, "width": 90vw ),
 );
 
 body {
@@ -55,7 +57,8 @@ body {
 
       .ui-dialog-titlebar {
         border: none;
-        background-color: white;
+        background-color: #FFFFFF;
+        height: 45px;
 
         p-header {
 

@@ -1,15 +1,16 @@
 import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import * as fromWs from '../../store/actions';
-import {UpdateWsRouting} from '../../store/actions';
+import {RemoveFileFromImportAction, UpdateWsRouting} from '../../store/actions';
 import {Navigate} from '@ngxs/router-plugin';
 import {DataTables} from './data';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as _ from 'lodash';
+import {WorkspaceState} from '../../store/states';
 
 @Component({
   selector: 'app-workspace-file-base-import',
@@ -17,6 +18,10 @@ import * as _ from 'lodash';
   styleUrls: ['./workspace-file-base-import.component.scss']
 })
 export class WorkspaceFileBaseImportComponent extends BaseContainer implements OnInit, StateSubscriber {
+  collapseImportedFiles = false;
+  collapseSearchFiles = false;
+  collapseImportedPLTs = false;
+
   managePopUp = false;
   columnsForConfig;
   targetConfig;
@@ -24,10 +29,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   wsIdentifier;
   workspaceInfo: any;
 
-  hyperLinks: string[] = ['Risk link', 'File-based'];
+  hyperLinks: string[] = ['RiskLink', 'File-Based'];
   hyperLinksRoutes: any = {
-    'Risk link': '/RiskLink',
-    'File-based': '/FileBasedImport'
+    'RiskLink': '/RiskLink',
+    'File-Based': '/FileBasedImport'
   };
   hyperLinksConfig: {
     wsId: string,
@@ -40,7 +45,28 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   textFilesData: any;
   importedFiles: any;
 
-  emptyData = false;
+  nodePath;
+  peril = [
+    {color: '#E70010', content: 'EQ'},
+    {color: '#008694', content: 'FL'},
+    {color: '#7BBE31', content: 'WS'}
+  ];
+
+  items = [
+    {
+      label: 'View Detail', icon: 'pi pi-eye', command: (event) => {}
+    },
+    {
+      label: 'Select item',
+      icon: 'pi pi-check',
+      command: () => {}
+    }
+  ];
+  contextSelectedItem;
+  selectedPlt = null;
+
+  @Select(WorkspaceState.getFileBasedData) fileBase$;
+  fileBase: any;
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -54,9 +80,16 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       };
     });
 
+    this.dispatch(new fromWs.LoadFileBasedFoldersAction());
+    this.fileBase$.subscribe(value => {
+      this.fileBase = _.merge({}, value);
+      this.detectChanges();
+    });
+    console.log(DataTables.directoryTree, this.fileBase.folders);
+
     this.textFilesData = DataTables.textFilesData;
     this.pltColumns = DataTables.PltDataTables;
-    this.directoryTree = DataTables.directoryTree;
+    this.directoryTree = _.merge({}, DataTables.directoryTree, this.fileBase.folders);
     this.importedFiles = DataTables.importedFiles;
   }
 
@@ -67,7 +100,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     } else if (this.targetConfig === 'pltImported') {
       this.importedFiles = [...this.columnsForConfig];
     }
-
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -137,13 +169,43 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   selectRows(row, index) {
   }
 
-  deleteRow(id) {
+  deleteRow(row) {
+    this.dispatch(new fromWs.RemoveFileFromImportAction(row));
   }
 
   nodeSelect(event) {
+    this.nodePath = '/' + event.node.label;
+    this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
   }
 
   nodeUnselect(event) {
+    this.nodePath = null;
+  }
+
+  selectToImport(value, index) {
+    this.dispatch(new fromWs.ToggleFilesAction({selection: value, index}));
+  }
+
+  addForImport() {
+    this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
+    this.selectedPlt = this.fileBase.selectedFiles[0];
+  }
+
+  getColor(RP) {
+    return  _.filter(this.peril, item => item.content === RP)[0].color;
+  }
+
+  getLength() {
+    const path = _.get(this.fileBase, 'selectedFiles', null);
+    if (path === null) {
+      return true;
+    } else {
+      return this.fileBase.selectedFiles.length === 0;
+    }
+  }
+
+  getKeys(object) {
+    return _.keys(object);
   }
 
   protected detectChanges() {

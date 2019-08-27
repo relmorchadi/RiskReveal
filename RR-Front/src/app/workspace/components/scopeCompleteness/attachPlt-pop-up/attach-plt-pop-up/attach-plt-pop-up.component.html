@@ -1,0 +1,83 @@
+<p-dialog
+  (onShow)="onShow()"
+  [autoZIndex]="false"
+  [baseZIndex]="1"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [styleClass]="'m-dialog-modal-lg borderless'"
+  [visible]="isVisible"
+  appendTo="body"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Attach PLTs
+      </h4>
+      <i (click)="onHide()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content">
+    <div class="left">
+      <app-plt-left-menu
+        [inputs]="{
+            tagContextMenu: tagContextMenu,
+            wsId: workspaceId,
+            uwYear: uwy,
+            projects: projects,
+            showDeleted: tableInputs['showDeleted'],
+            filterData: tableInputs['filterData'],
+            filters: tableInputs['filters'],
+            addTagModalIndex: tagModalIndex,
+            fromPlts: fromPlts,
+            deletedPltsLength: (tableInputs['listOfDeletedPltsData'] | keys).length,
+            userTags: userTags,
+            systemTags: systemTags,
+            selectedListOfPlts: tableInputs['selectedListOfPlts'],
+            systemTagsCount: systemTagsCount,
+            _tagModalVisible: tagModalVisible,
+            _editingTag: editingTag,
+            _modalSelect: modalSelect,
+            tagForMenu: tagForMenu,
+            wsHeaderSelected: wsHeaderSelected,
+            pathTab:true,
+            selectedItemForMenu: selectedItemForMenu
+          }"
+        (onAssignPltsToTag)="assignPltsToTag($event)"
+        (onCreateTag)="createTag($event)"
+        (onProjectFilter)="filter($event)"
+        (onEditTag)="editTag()"
+        (onResetPath)="resetPath()"
+        (onSelectProjects)="setSelectedProjects($event)"
+        (onSelectSysTagCount)="selectSystemTag($event)"
+        (onSetFilters)="setFilters($event)"
+        (onSetFromPlts)="setFromPlts($event)"
+        (onSetSelectedUserTags)="setUserTags($event)"
+        (setTagModalIndex)="setModalIndex($event)"
+        (setTagModalVisibility)="setTagModal($event)"
+        (onSetTagForMenu)="setTagForMenu($event)"
+        (onSetRenameTag)="setRenameTag($event)"
+        (emitFilters)="emitFilters($event)"
+        (unCkeckAllPlts)="unCheckAll()"
+        (onWsHeaderSelection)="setWsHeaderSelect($event)"
+        (onModalSelect)="setModalSelectedItems($event)"
+      >
+
+      </app-plt-left-menu>
+    </div>
+    <div class="center">
+      <div class="title-as-tab">
+          <span>
+            PLTs
+          </span>
+      </div>
+      <div class="PLTs-content">
+        <app-plt-main-table
+          [tableInputs]="tableInputs"
+          (actionDispatcher)="tableActionDispatcher($event)"
+        ></app-plt-main-table>
+      </div>
+    </div>
+  </div>
+</p-dialog>

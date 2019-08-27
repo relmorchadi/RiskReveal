@@ -1,13 +1,12 @@
 import {ChangeDetectorRef, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {DataTables} from '../data';
 import * as fromWs from '../../../store/actions';
+import {ApplyRegionPerilAction, SaveEditAnalysisAction} from '../../../store/actions';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import {Select, Store} from '@ngxs/store';
 import * as _ from 'lodash';
-import {RiskLinkState, WorkspaceState} from '../../../store/states';
-import {combineLatest, Observable} from 'rxjs';
-import {RiskLinkModel} from '../../../model/risk_link.model';
-import {ApplyRegionPerilAction, SaveEditAnalysisAction} from '../../../store/actions';
+import {WorkspaceState} from '../../../store/states';
+import {combineLatest} from 'rxjs';
 
 @Component({
   selector: 'app-risk-link-res-summary',
@@ -39,7 +38,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   lastSelectedIndexFPstandard = null;
   lastSelectedIndexFPAnalysis = null;
   lastSelectedIndexLinkAnalysis = null;
-  lastSelectedIndexLinkPortfolio = null;
 
   workingFSC: any;
   serviceSubscription: any;
@@ -92,11 +90,11 @@ export class RiskLinkResSummaryComponent implements OnInit {
   allCheckedAnalysis: boolean;
   indeterminateAnalysis: boolean;
 
-  allCheckedPortfolio: boolean;
-  indeterminatePortfolio: boolean;
-
   collapseDataSources = false;
   collapseFPDataTable = false;
+
+  analysisResults;
+  resultsSummary;
 
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
@@ -112,6 +110,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.serviceSubscription = [
       this.state$.subscribe(value => {
         this.state = _.merge({}, value);
+        if (this.state.summaries !== null && this.state.results !== null) {
+          this.resultsSummary = _.toArray(this.state.summaries.data);
+          this.analysisResults = _.toArray(this.state.results.data);
+        }
         this.detectChanges();
       }),
       this.linking$.pipe().subscribe(value => {
@@ -126,8 +128,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
         if (this.linking.portfolio !== null) {
           if (_.get(this.linking, 'portfolio', null) !== null) {
             this.portfolio = _.toArray(this.linking.portfolio.data);
-            this.allCheckedPortfolio = this.linking.portfolio.allChecked;
-            this.indeterminatePortfolio = this.linking.portfolio.indeterminate;
           }
         }
         if (this.linking.portfolio === null && this.linking.analysis === null ) {
@@ -246,8 +246,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
     } else if (scope === 'linkingAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
       this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: selection, wrapper: wrapperEDM}));
-    } else if (scope === 'linkingPortfolio') {
-      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: selection}));
     }
   }
 
@@ -264,6 +262,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       const wrapperEDM = this.linking.rdm.selected;
       this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne', wrapper: wrapperEDM, value: event, item: rowData}));
     } else if (target === 'linkPortfolio') {
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
       this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: event, item: rowData}));
     }
   }
@@ -285,7 +284,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   selectRows(row: any, index: number, target, source = null) {
-    console.log(source);
     if (target === 'R') {
       const action = (payload) => new fromWs.ToggleRiskLinkResultAction(payload);
       this._selectRowsProvider(row, index, this.lastSelectedIndexResult, action, 'R');
@@ -322,9 +320,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
       this.lastSelectedIndexLinkAnalysis = index;
     } else if (target === 'linkPortfolio') {
-      const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
-      this._selectRowsProvider(row, index, this.lastSelectedIndexLinkPortfolio, action, 'linkPortfolio');
-      this.lastSelectedIndexLinkPortfolio = index;
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: true, item: row}));
     }
   }
 
@@ -370,14 +367,24 @@ export class RiskLinkResSummaryComponent implements OnInit {
           }));
         }
       }
-    } else if (target === 'linkPortfolio') {
-      const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
-      this._selectSectionProvider(from, to, action, this.linking.portfolio.data);
     }
   }
 
   changeCollapse(value) {
     this.store.dispatch(new fromWs.PatchRiskLinkCollapseAction({key: value}));
+  }
+
+  sortChange(field: any, sortCol: any, scope) {
+    console.log(field, sortCol);
+    if (scope === 'Analysis') {
+      if (sortCol === '') {
+        this.analysisResults.sort();
+      } else if (sortCol === 'asc') {
+
+      } else if (sortCol === 'desc') {
+
+      }
+    }
   }
 
   dataList(data, filter = null) {
@@ -408,6 +415,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
   changeFinancialPTarget(target) {
   }
 
+  updateFpOverride(value, row) {
+    this.store.dispatch(new fromWs.ApplyRegionPerilAction({row: row, scope: 'single', value: value}));
+  }
+
   handleCancel() {
     this.filterModalVisibility = false;
     this.linkingModalVisibility = false;
@@ -427,7 +438,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   removeFP(item, fp) {
-    console.log(item, fp);
     this.store.dispatch(new fromWs.RemoveFinancialPerspectiveAction({item, fp}));
   }
 
@@ -470,7 +480,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   applyRpToAll(row) {
-    this.store.dispatch(new ApplyRegionPerilAction(row));
+    this.store.dispatch(new ApplyRegionPerilAction({row: row, scope: 'all'}));
   }
 
   getTreeApp() {
@@ -526,7 +536,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   changeInnerPeqt(parent, child, target, selected) {
     const data = _.filter(parent.children, dt => _.filter(dt.selectedItems, kt => kt.title === target)[0].selected === true);
-    console.log(data.length === parent.children.length, selected);
     if (data.length === parent.children.length - 1 && selected === false) {
       _.forEach(parent.selectedItems, dt => {
         if (dt.title === target) {

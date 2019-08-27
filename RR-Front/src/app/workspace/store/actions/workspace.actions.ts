@@ -5,6 +5,13 @@ export class loadWSFromLocalStorage {
   }
 }
 
+export class loadWorkSpaceAndPlts {
+  static readonly type = '[Workspace] Load Workspace And Plts';
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class LoadWS {
   static readonly type = '[Workspace] Load WS';
 

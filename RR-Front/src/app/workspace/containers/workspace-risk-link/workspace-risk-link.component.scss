@@ -75,8 +75,7 @@
 .body-wrap {
   display: flex;
   flex-direction: column;
-  width: 87%;
-  margin: auto;
+  margin: 20px 15px;
   /* Title of the app  */
   .body-wrap-header {
     display: flex;
@@ -175,7 +174,7 @@
     flex-direction: column;
     width: 100%;
     background-color: #fff;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
 
     .body-wrapper {
       background-color: #fff;
@@ -183,9 +182,7 @@
       border: 2px solid transparent;
       flex-direction: column;
       width: 100%;
-      /*      &:hover{
-              border: 2px solid #06B8FF;
-            }*/
+
       .body-wrapper-header {
         display: flex;
         width: 100%;
@@ -283,6 +280,14 @@
         background-color: #f4f6fc;
         padding: 25px 0;
       }
+
+      .menu-icon-wrap {
+        font-size: 20px;
+        margin-top: 22px;
+        width: 30px;
+        justify-content: center;
+        display: flex;
+      }
     }
 
     .body-main-wrapper {
@@ -315,10 +320,9 @@
           }
 
           ul {
-            padding-top: 5px;
             list-style: none;
             padding-left: 24px;
-            max-height: 180px;
+            max-height: 171px;
             overflow-y: auto;
           }
 
@@ -331,7 +335,6 @@
             width: 100%;
 
             .text {
-              padding-top: 3px;
               font-size: 13px;
               color: rgb(0, 0, 0);
               overflow: hidden;
@@ -463,16 +466,15 @@
                 border-bottom: 1px solid rgba(0, 0, 0, 0.15);
 
                 div {
+                  display: flex;
+                  align-items: center;
                   width: 100%;
-                  height: 30px;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                  overflow: hidden;
-                  padding-top: 4px;
-                }
-
-                .text-data {
-                  padding-top: 8px;
+                  height: 27px;
+                  span {
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                  }
                 }
               }
 
@@ -540,23 +542,6 @@
           }
         }
       }
-
-      .body-wrap-footer-right {
-        button {
-          color: #FFFFFF;
-          font-family: Rubik;
-          font-size: 14.22px;
-          font-weight: 500;
-          letter-spacing: 1.25px;
-          line-height: 16px;
-          text-align: center;
-          height: 36px;
-          width: 157px;
-          background-color: #0700CF;
-          border-radius: 18px;
-          box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-        }
-      }
     }
   }
 
@@ -564,13 +549,11 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin-bottom: 50px;
 
     .body-wrap-footer {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      margin-bottom: 20px;
 
       .body-wrap-footer-left {
         display: flex;
@@ -595,22 +578,6 @@
         }
       }
 
-      .body-wrap-footer-right {
-        button {
-          color: #FFFFFF;
-          font-family: Rubik;
-          font-size: 14.22px;
-          font-weight: 500;
-          letter-spacing: 1.25px;
-          line-height: 16px;
-          text-align: center;
-          height: 36px;
-          width: 157px;
-          background-color: #0700CF;
-          border-radius: 18px;
-          box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.14), 0 2px 1px -1px rgba(0, 0, 0, 0.12), 0 1px 3px 0 rgba(0, 0, 0, 0.2);
-        }
-      }
     }
   }
 
@@ -981,18 +948,10 @@ TABLE STYLE
 */
 
 .summary-info {
-  padding: 20px 0;
   margin: auto;
   width: 97%;
   overflow: hidden;
   display: flex;
-
-  .menu-icon-wrap {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 15px;
-    font-size: 20px;
-  }
 
   p-table {
     display: block;

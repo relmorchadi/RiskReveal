@@ -85,6 +85,12 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       country: "Belgium"
     },];
     this.browesing= false;
+    this.multiSteps= true;
+    this.stepConfig= {
+      wsId: '',
+      uwYear: '',
+      plts: []
+    }
     this.cloneConfig= {
       currentSourceOfItems: 'to',
       summary: {
@@ -110,12 +116,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         }
       }
     };
-    this.multiSteps= true;
-    this.stepConfig= {
-      wsId: '',
-      uwYear: '',
-      plts: []
-    }
     this.initProjectForm();
     this.listOfProjects= [];
   }
@@ -239,10 +239,10 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         this.route$.params,
         this.select(WorkspaceState.getCurrentWS).pipe(take(2))
       ).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
-        const url = this.prn.getPreviousUrl();
         this.workspaceId = wsId;
         this.uwy = year;
-        if(url == 'PltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
+        console.log(this.prn.getPreviousUrl())
+        if(_.get(navigationPayload, 'from', null) == 'pltBrowser' && _.get(navigationPayload, 'payload.wsId', null) && _.get(navigationPayload, 'payload.uwYear', null)) {
           if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {
             this.patchProjectForm('from', {
               wsId: '',
@@ -273,10 +273,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
             this.multiSteps = false;
           }
 
-          console.log(this.projectsForm);
-
-
-
           this.stepConfig = {
             wsId: '',
             uwYear: '',
@@ -299,7 +295,6 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           });
         }
 
-        console.log(this.multiSteps, navigationPayload, this.stepConfig)
         if (this.getFormValueByKey('from').plts.length > 0) {
           this.cloneConfig = {
             ...this.cloneConfig,

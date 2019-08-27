@@ -1,21 +1,18 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
+import * as fromInuring from '../actions/inuring.actions';
 import {PatchCalibrationStateAction} from '../actions';
-import {WorkspaceMain} from "../../../core/model";
-import {CalibrationService} from "../../services/calibration.service";
-import {WorkspaceService} from "../../services/workspace.service";
+import {WorkspaceMain} from '../../../core/model';
+import {CalibrationService} from '../../services/calibration.service';
+import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
-import * as fromPlt from "../actions/plt_main.actions";
-import {PltStateService} from "../../services/plt-state.service";
-import {RiskLinkStateService} from "../../services/riskLink-action.service";
-import {
-  AddNewProject,
-  AddNewProjectFail,
-  AddNewProjectSuccess,
-  DeleteProject,
-  DeleteProjectFail, DeleteProjectSuccess
-} from "../../../core/store/actions";
+import {InuringService} from "../../services/inuring.service";
+import * as fromPlt from '../actions/plt_main.actions';
+import {PltStateService} from '../../services/plt-state.service';
+import {RiskLinkStateService} from '../../services/riskLink-action.service';
+import {FileBasedService} from '../../services/file-based.service';
+import {ScopeCompletenessService} from "../../services/scop-completeness.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -38,7 +35,10 @@ export class WorkspaceState {
   constructor(private wsService: WorkspaceService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
-              private riskLinkFacade: RiskLinkStateService
+              private riskLinkFacade: RiskLinkStateService,
+              private inuringService: InuringService,
+              private fileBasedFacade: FileBasedService,
+              private scopService: ScopeCompletenessService,
   ) {
   }
 
@@ -167,13 +167,13 @@ export class WorkspaceState {
 
   @Selector()
   static getAdjustmentApplication(state: WorkspaceModel) {
-    return _.get(state.content.wsIdentifier.Calibration, "adjustmentApplication")
+    return _.get(state.content.wsIdentifier.Calibration, 'adjustmentApplication');
   }
 
   static getPlts(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => {
       return _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => !e.deleted), 'pltId')
-    })
+    });
   }
 
   static getDeletedPlts(wsIdentifier: string) {
@@ -259,6 +259,44 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
   }
+
+  /***********************************
+   *
+   * Inuring Selectors
+   *
+   ***********************************/
+
+  //TBD
+
+  /***********************************
+   *
+   * File Based Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getFileBasedData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].fileBaseImport;
+  }
+
+  /***********************************
+   *
+   * Scope And Completeness Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getScopeCompletenessData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompletence.data;
+  }
+
+  static getPltsForScopeCompleteness(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+  }
+
 
 
   /***********************************
@@ -364,6 +402,11 @@ export class WorkspaceState {
   @Action(fromPlt.loadAllPlts)
   LoadAllPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPlts) {
     return this.pltStateService.LoadAllPlts(ctx, payload);
+  }
+
+  @Action(fromWS.loadWorkSpaceAndPlts)
+  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts){
+    return this.pltStateService.loadWorkSpaceAndPlts(ctx, payload);
   }
 
   @Action(fromPlt.loadAllPltsSuccess)
@@ -473,6 +516,16 @@ export class WorkspaceState {
     this.pltStateService.filterPltsByStatus(ctx, payload);
   }
 
+  @Action(fromPlt.AddNewTag)
+  addNewTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AddNewTag) {
+    this.pltStateService.addNewTag(ctx, payload);
+  }
+
+  @Action(fromPlt.DeleteTag)
+  deleteTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.DeleteTag) {
+    this.pltStateService.deleteTag(ctx, payload);
+  }
+
   /***********************************
    *
    * Calibration Actions
@@ -518,7 +571,7 @@ export class WorkspaceState {
 
   @Action(fromWS.toCalibratePlts)
   toCalibratePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.toCalibratePlts) {
-    this.calibrationService.toCalibratePlts(ctx, payload)
+    this.calibrationService.toCalibratePlts(ctx, payload);
   }
 
   @Action(fromWS.initCalibrationData)
@@ -818,4 +871,63 @@ export class WorkspaceState {
   loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
+
+  /***********************************
+   *
+   * Scope And Completeness Actions
+   *
+   ***********************************/
+  @Action(fromWS.LoadScopeCompletenessDataSuccess)
+  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
+    return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
+
+  /***********************************
+   *
+   * File Based Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadFileBasedFoldersAction)
+  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>) {
+    return this.fileBasedFacade.loadFolderList(ctx);
+  }
+
+  @Action(fromWS.LoadFileBasedFilesAction)
+  loadFileBasedFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
+    return this.fileBasedFacade.loadFilesList(ctx, payload);
+  }
+
+  @Action(fromWS.RemoveFileFromImportAction)
+  removeFileFromImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFileFromImportAction) {
+    this.fileBasedFacade.removeFileFromImport(ctx, payload);
+  }
+
+  @Action(fromWS.ToggleFilesAction)
+  toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
+    this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.AddFileForImportAction)
+  addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
+    return this.fileBasedFacade.addToImport(ctx, payload);
+  }
+
+  /***********************************
+   *
+   * Inuring Actions
+   *
+   ***********************************/
+
+  @Action(fromInuring.OpenInuringPackage)
+  openInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.OpenInuringPackage) {
+    return this.inuringService.openInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.CloseInuringPackage)
+  closeInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.CloseInuringPackage) {
+    return this.inuringService.closeInuringPackage(ctx, payload);
+  }
+
 }

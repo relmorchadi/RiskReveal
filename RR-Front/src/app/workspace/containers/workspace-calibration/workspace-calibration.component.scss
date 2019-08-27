@@ -340,7 +340,6 @@
     th {
       padding: 3px;
       padding-right: 0 !important;
-      vertical-align: top;
       line-height: 17px !important;
       color: rgba(0, 0, 0, 0.38);
       font-size: 11px;
@@ -657,6 +656,7 @@
 
 ::ng-deep {
   .ep-metric-tabset {
+
     .ant-tabs-ink-bar {
       display: none;
       transform: translate3d(0px, 0px, 0px);
@@ -691,6 +691,7 @@
     display: block;
     overflow: auto;
     padding-bottom: 4px;
+    width: 100%;
 
     th {
       font-weight: bold;
@@ -1002,11 +1003,9 @@
 
       .checkBoxHead div {
         display: flex;
-        align-items: center;
       }
 
       th {
-        vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
         background-color: #F3F3F3;
         outline-color: #fff;
@@ -1014,6 +1013,7 @@
         height: 45px;
         border: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
 
         .filter-input {
           width: 100%;
@@ -1529,9 +1529,10 @@ body .ui-table .ui-table-thead > tr > th {
 
     span.title {
       padding: 16px 0px 16px 12px;
-      font-size: 1.3em;
+      font-size: 15px;
       font-weight: bold;
       border-top: 3px solid #0700e4;
+      font-family: Rubik;
     }
   }
 
@@ -1551,9 +1552,10 @@ body .ui-table .ui-table-thead > tr > th {
 
     span.title {
       padding: 16px 0px 16px 23px;
-      font-size: 1.3em;
+      font-size: 15px;
       font-weight: bold;
       border-top: 3px solid #0700e4;
+      font-family: Rubik;
     }
   }
 
