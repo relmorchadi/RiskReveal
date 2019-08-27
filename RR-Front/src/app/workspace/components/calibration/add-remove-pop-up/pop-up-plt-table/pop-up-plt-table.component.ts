@@ -65,10 +65,13 @@ export class PopUpPltTableComponent implements OnInit {
   @Output() onSelectSinglePlt = new EventEmitter();
   @Output() onPltClick = new EventEmitter();
   @Output() setTagModalVisibility = new EventEmitter();
+  @Input('listOfPltsThread') listOfPltsThread: any;
 
   private activeCheckboxSort: boolean;
   private lastSelectedId: number;
   private lastClick: string;
+  private selectAll: any;
+  private someItemsAreSelected: any;
 
   constructor() {
   }
@@ -76,8 +79,16 @@ export class PopUpPltTableComponent implements OnInit {
   ngOnInit() {
   }
 
+  toggleSelectPlts(plts: any) {
+    this.onPltClick.emit(plts);
+  }
   checkAll($event) {
-    this.onCheckAll.emit(this.tableInputs.showDeleted);
+    this.toggleSelectPlts(
+      _.zipObject(
+        _.map(this.listOfPltsThread, plt => plt.pltId),
+        _.range(this.listOfPltsThread.length).map(plt => ({calibrate: !this.selectAll && !this.someItemsAreSelected}))
+      )
+    );
   }
 
   checkBoxSort() {
@@ -111,11 +122,11 @@ export class PopUpPltTableComponent implements OnInit {
   }
 
   selectSinglePLT(pltId: number, $event: boolean) {
-    this.onSelectSinglePlt.emit({
+    this.toggleSelectPlts({
       [pltId]: {
         calibrate: $event
       }
-    })
+    });
   }
 
   generateContextMenu(toRestore) {
@@ -123,16 +134,24 @@ export class PopUpPltTableComponent implements OnInit {
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
+    i = _.findIndex(this.listOfPltsThread, (row: any) => row.pltId == pltId);
+    let index = -1;
+    let isSelected;
+    _.forEach(this.listOfPltsThread, (plt, i) => {
+      if (plt.pltId == pltId) {
+        isSelected = plt.selected
+      }
+    });
+
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
     } else {
       this.lastSelectedId = i;
-      this.onPltClick.emit(
+      this.toggleSelectPlts(
         _.zipObject(
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => ({calibrate: plt == pltId && (this.lastClick == 'withKey' || !isSelected)}))
+          _.map(this.listOfPltsThread, plt => plt.pltId),
+          _.map(this.listOfPltsThread, plt => ({calibrate: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       );
       this.lastClick = null;
@@ -151,15 +170,17 @@ export class PopUpPltTableComponent implements OnInit {
       if (this.lastSelectedId || this.lastSelectedId == 0) {
         const max = _.max([i, this.lastSelectedId]);
         const min = _.min([i, this.lastSelectedId]);
-        this.onPltClick.emit(
+        console.log('min-max ==> ', min, max);
+        this.toggleSelectPlts(
           _.zipObject(
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, (plt, i) => ({calibrate: i <= max && i >= min})),
+            _.map(this.listOfPltsThread, plt => plt.pltId),
+            _.map(this.listOfPltsThread, (plt, i: number) => ({calibrate: i <= max && i >= min})),
           )
-        )
+        );
       } else {
         this.lastSelectedId = i;
       }
+      console.log(this.lastSelectedId);
       return;
     }
   }

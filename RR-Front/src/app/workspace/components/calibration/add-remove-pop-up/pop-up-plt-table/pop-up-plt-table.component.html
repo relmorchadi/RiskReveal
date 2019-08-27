@@ -3,7 +3,7 @@
 </ng-container>
 <p-table
   [columns]="tableInputs.pltColumns"
-  [value]="(tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
+  [value]="listOfPltsThread| tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag]"
   [contextMenu]="cm"
   [scrollable]="true"
   [resizableColumns]="true"

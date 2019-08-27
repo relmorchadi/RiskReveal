@@ -370,15 +370,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     let isSelected;
     _.forEach(this.listOfPltsThread, (plt, i) => {
       if (plt.pltId == pltId) {
-        console.log('opla')
         isSelected = plt.selected
       }
     });
-    console.log('isSelected', isSelected)
-    console.log(this.listOfPltsThread)
-    // this.selectSinglePLT(pltId,!_.find(this.listOfPltsThread, plt => plt.pltId == pltId).selected);
 
-    console.log(this.selectedListOfPlts);
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);

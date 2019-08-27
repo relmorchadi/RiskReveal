@@ -389,6 +389,8 @@
 <app-add-remove-pop-up
   [isVisible]="addRemoveModal"
   [selectionStep]="'plt'"
+  [userTags]="userTags"
+  [projects]="projects"
   (onSave)="addRemoveOnSave($event)"
   [stepConfig]=" {wsId: workspaceId,
     uwYear: uwy,
