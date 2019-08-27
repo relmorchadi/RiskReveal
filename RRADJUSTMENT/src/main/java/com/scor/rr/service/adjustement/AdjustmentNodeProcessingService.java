@@ -11,15 +11,18 @@ import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
-import com.scor.rr.repository.*;
+import com.scor.rr.repository.AdjustmentnodeRepository;
+import com.scor.rr.repository.AdjustmentnodeprocessingRepository;
+import com.scor.rr.repository.BinfileRepository;
+import com.scor.rr.repository.ScorpltheaderRepository;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
+import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,6 +59,9 @@ public class AdjustmentNodeProcessingService {
 
     @Autowired
     AdjustmentNodeService adjustmentNodeService;
+
+    @Autowired
+    CloningScorPltHeader cloningScorPltHeader;
 
     final static String pathbin = "src/main/resources/file/plt.bin";
 
@@ -104,8 +110,9 @@ public class AdjustmentNodeProcessingService {
                 AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.findById(parameterRequest.getNodeId()).get();
                 AdjustmentNodeProcessingEntity nodeProcessing = adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntity(parameterRequest.getNodeId());
                 if(nodeProcessing != null) {
+                    saveParameterNode(adjustmentNode, parameterRequest);
                     List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(scorPltHeader);
-                    pltLossData = saveParameterNode(adjustmentNode, parameterRequest, pltLossData);
+                    pltLossData = calculateProcessing(adjustmentNode, parameterRequest, pltLossData);
                     BinFileEntity binFileEntity = savePLTFile(pltLossData);
                     if (binFileEntity != null) {
                         ScorPltHeaderEntity scorPltHeaderAdjusted = new ScorPltHeaderEntity(scorPltHeader);
@@ -214,44 +221,62 @@ public class AdjustmentNodeProcessingService {
     }
 
     //NOTE: should separate two functions: save parameter and processing
+    //Done
 
-    private List<PLTLossData> saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData) {
+    private List<PLTLossData> calculateProcessing(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData){
         List<AdjustmentReturnPeriodBandingParameterEntity> parameterEntities = new ArrayList<>();
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
-            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(),node));
             return CalculAdjustement.linearAdjustement(pltLossData, parameterRequest.getLmf(), node.getCapped());
         }
         else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
-            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(),node));
             return CalculAdjustement.eefFrequency(pltLossData, node.getCapped(), parameterRequest.getRpmf());
         }
         else if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
             for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
                 parameterEntities.add(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
             }
             return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), parameterEntities);
         }
         else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
-            adjustmentNodeService.savePeatDataFile(node, parameterRequest);
             return CalculAdjustement.nonLineaireEventDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
-
-
-        }
+         }
         else if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            adjustmentNodeService.savePeatDataFile(node, parameterRequest);
             return CalculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
-
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
             for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
                 parameterEntities.add(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
             }
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData,node.getCapped(),parameterEntities);
         }
         else throwException(TYPENOTFOUND, NOT_FOUND);
         return null;
+    }
+
+    private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
+        if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
+            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(),node));
+        }
+        else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
+            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(),node));
+        }
+        else if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
+            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
+                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
+            }
+        }
+        else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
+            adjustmentNodeService.savePeatDataFile(node, parameterRequest);
+        }
+        else if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            adjustmentNodeService.savePeatDataFile(node, parameterRequest);
+        }
+        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
+                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
+            }
+        }
+        else throwException(TYPENOTFOUND, NOT_FOUND);
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

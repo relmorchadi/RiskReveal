@@ -3,6 +3,7 @@ package com.scor.adjustment.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
+import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
@@ -122,9 +123,22 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
         log.info("Launch test for oep return period banding with a file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
         pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
-        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-        csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltoepReturnPeriodBanding.csv"));
-        log.info("End test for oep return period banding with a file ");
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/pltoepReturnPeriodBanding.csv"));
+        assertEquals(pltLossDataList,pltLossData);
+        log.info("End test for oep return period banding with a file");
+    }
+
+    @Test
+    public void testoepReturnPeriodBandingAdjustmentUncappedFile() throws RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for oep return period banding with a file ");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData,false,adjustmentReturnPeriodBendings);
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/pltoepReturnPeriodBandingUnCapped.csv"));
+        assertEquals(pltLossDataList,pltLossData);
+        log.info("End test for oep return period banding with a file");
     }
 
     //TODO: test for Uncapped

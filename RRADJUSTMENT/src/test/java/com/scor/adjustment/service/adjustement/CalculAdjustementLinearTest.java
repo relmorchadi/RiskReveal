@@ -142,7 +142,4 @@ public class CalculAdjustementLinearTest {
             assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
         }
     }
-
-
-
 }

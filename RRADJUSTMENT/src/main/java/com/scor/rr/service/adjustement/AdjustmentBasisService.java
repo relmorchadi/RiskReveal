@@ -1,7 +1,6 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentBasisEntity;
-import com.scor.rr.domain.AdjustmentCategoryEntity;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentBasisRepository;

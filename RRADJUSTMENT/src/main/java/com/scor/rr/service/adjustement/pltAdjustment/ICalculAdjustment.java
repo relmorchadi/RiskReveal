@@ -2,7 +2,6 @@ package com.scor.rr.service.adjustement.pltAdjustment;
 
 import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.OEPMetric;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 

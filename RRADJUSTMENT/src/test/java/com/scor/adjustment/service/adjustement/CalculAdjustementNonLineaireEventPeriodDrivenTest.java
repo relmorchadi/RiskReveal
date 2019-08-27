@@ -3,6 +3,7 @@ package com.scor.adjustment.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
+import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.EventDateFormatException;
@@ -112,13 +113,26 @@ public class CalculAdjustementNonLineaireEventPeriodDrivenTest {
     }
 
     @Test
-    public void testNonLineaireEventPeriodDrivenAdjustment() throws RRException {
+    public void testNonLineaireEventPeriodDrivenAdjustmentCapped() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for non linear event period driven  Adjustment with a file ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
         pltLossData = CalculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData,cap,adjustmentReturnPeriodBendings);
-        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-        csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltEEFReturnPeriodBanding.csv"));
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLinearEventPeriodDrivenCapped.csv"));
+        assertEquals(pltLossDataList,pltLossData);
+        log.info("END test for non linear event period driven  Adjustment with a file ");
+    }
+
+    @Test
+    public void testNonLineaireEventPeriodDrivenAdjustmentUnCapped() throws RRException {
+        CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
+        log.info("Launch test for non linear event period driven  Adjustment with a file ");
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        pltLossData = CalculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData,false,adjustmentReturnPeriodBendings);
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLinearEventPeriodDrivenUnCapped.csv"));
+        assertEquals(pltLossDataList,pltLossData);
         log.info("END test for non linear event period driven  Adjustment with a file ");
     }
 
