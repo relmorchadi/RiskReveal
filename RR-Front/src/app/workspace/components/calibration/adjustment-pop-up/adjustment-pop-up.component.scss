@@ -6,25 +6,37 @@
 }
 
 .add-adjustment-input {
-  width: 200px;
-  height: 40px;
+  width: 250px;
+  /*height: 40px;
   background: #f9f9f9;
   border-radius: 0;
   border: 0;
   border-bottom: 1px solid black;
-  color: #0700CF;
+  color: #0700CF !important;*/
 }
 
-::ng-deep.ui-dropdown {
-  display: flex !important;
-  width: 100% !important;
-  height: 35px !important;
-  justify-content: space-between !important;
-  background-color: #fff !important;
-  border: 1px solid #1FCBB4 !important;
-  cursor: pointer !important;
-}
-
-/*::ng-deep.m-dialog-modal-sm {
-  height: 50vh !important;
+/*::ng-deep.adjustment-modal{
+  height: 800px !important;
+  width: 450px !important;
 }*/
+.favoredStar {
+  color: #f1c215;
+}
+
+.favoredStar:hover {
+  color: #d8880f;
+}
+
+.unfavoredStar {
+  color: #f1c215;
+}
+
+.unfavoredStar:hover {
+  color: #d8880f;
+}
+
+::ng-deep.ant-select-dropdown-menu-item-group-title {
+  border-top: 1px solid;
+  font-size: 15px;
+  font-weight: 700;
+}

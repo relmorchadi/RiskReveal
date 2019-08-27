@@ -1017,6 +1017,7 @@
         height: 45px;
         border: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+        text-align: center !important;
 
         .filter-input {
           width: 100%;
@@ -1310,11 +1311,11 @@
 }
 
 .separator-right {
-  border-right: 8px solid #F4F6FC !important;
+  border-right: 5px solid #F4F6FC !important;
 }
 
 .separator-left {
-  border-left: 8px solid #F4F6FC !important;
+  border-left: 5px solid #F4F6FC !important;
 }
 
 .data-separator-left {
@@ -1784,9 +1785,33 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.returned-periods {
   height: 453px !important;
-}
-
-::ng-deep.m-dialog-modal {
   width: 417px !important;
 }
 
+:host::ng-deep.on-hover:hover {
+  .plt-dropdown {
+    display: block !important;
+  }
+}
+
+::ng-deep.plt-dropdown {
+  display: none;
+}
+
+::ng-deep.undisplay-dropdown {
+  display: none;
+}
+
+::ng-deep.display-dropdown {
+  display: block !important;
+}
+
+::ng-deep.on-hover-pop-up:hover {
+  .icon-trash-alt {
+    visibility: visible !important;
+  }
+}
+
+.menu-bottom-separator {
+  border-bottom: 1px solid #d1d1d1;
+}

@@ -143,9 +143,8 @@
 
 :host {
   width: 100%;
-  height: max-content;
+  height: calc(100vh - 200px);
   display: flex;
-  min-height: 100vh;
   background-color: #F4F6FC;
 
   ::ng-deep.plt-browser-wrapper {
@@ -944,7 +943,7 @@
 }
 
 :host .PLTs-content {
-  background: #fff;
+  //background: #fff;
 
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
@@ -1196,8 +1195,8 @@
 :host {
   ::ng-deep {
     nz-collapse {
-      max-height: 48%;
-      overflow: auto;
+      /*max-height: 48%;
+      overflow: auto;*/
     }
 
     .Tags-content {
@@ -1217,7 +1216,7 @@
     }
 
     .ant-collapse-content > .ant-collapse-content-box {
-      max-width: 190px;
+      //max-width: 190px;
       padding: 0;
     }
 
@@ -1451,7 +1450,7 @@ body .ui-table .ui-table-thead > tr > th {
 .regenerate-all {
   font-size: 17px;
   margin-top: 20px;
-  margin-right: 25px;
+  margin-right: 5px;
   color: #0700e4;
   cursor: pointer;
 }
@@ -1484,8 +1483,8 @@ body .ui-table .ui-table-thead > tr > th {
 
 .content {
   .right, .center, .left {
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
-    margin-right: 10px;
+    /*box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    margin-right: 10px;*/
   }
 
   .PLTs-content {
@@ -1541,7 +1540,6 @@ body .ui-table .ui-table-thead > tr > th {
 @media (min-width: 1100px) {
   .radio-container {
     margin-top: 0px;
-    margin-right: 5px;
 
   }
   .title-as-tab {
@@ -1749,4 +1747,11 @@ body .ui-table .ui-table-thead > tr > th {
 
 .menu-bottom-separator {
   border-bottom: 1px solid #d1d1d1;
+}
+
+.toolkit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
 }

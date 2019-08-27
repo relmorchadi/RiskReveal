@@ -165,7 +165,7 @@ export class SaveEditAnalysisAction {
 
 export class CreateLinkingAction {
   static readonly type = '[Risk Link] Create Linking';
-  constructor() {}
+  constructor(public payload: any) {}
 }
 
 export class LoadAnalysisForLinkingAction {
