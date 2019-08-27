@@ -40,15 +40,10 @@ public class ScorPltHeaderEntity {
     private Integer currentNarrative;
     private Date createdDate;
     private Integer inuringPackageId;
-    private String perilCode;
     private String pltLossDataFileName;
     private String pltLossDataFilePath;
     private String engineType;
-    private Integer fkBinFileId;
     private int pkScorPltHeaderId;
-    private Integer projectId;
-    private Integer regionPerilId;
-    private Integer rrAnalysisId;
     private RrAnalysisNewEntity rrAnalysisNew;
     private TargetRapEntity targetRap;
     private RegionPerilEntity regionPeril;
@@ -78,30 +73,13 @@ public class ScorPltHeaderEntity {
         this.truncationExchangeRate = other.truncationExchangeRate;
         this.truncationCurrency = other.truncationCurrency;
         this.sourceLossModelingBasis = other.sourceLossModelingBasis;
-        this.deletedOn = other.deletedOn;
-        this.deletedDue = other.deletedDue;
-        this.deletedBy = other.deletedBy;
         this.sourceLossEntityingBasis = other.sourceLossEntityingBasis;
-        this.createdBy = other.createdBy;
-        this.createdOn = other.createdOn;
-        this.lastModifiedBy = other.lastModifiedBy;
-        this.lastModifiedOn = other.lastModifiedOn;
-        this.lastGenerated = other.lastGenerated;
         this.basisChanged = other.basisChanged;
-        this.narrativeChanged = other.narrativeChanged;
-        this.previousNarrative = other.previousNarrative;
-        this.currentNarrative = other.currentNarrative;
-        this.createdDate = other.createdDate;
         this.inuringPackageId = other.inuringPackageId;
-        this.perilCode = other.perilCode;
         this.pltLossDataFileName = other.pltLossDataFileName;
         this.pltLossDataFilePath = other.pltLossDataFilePath;
         this.engineType = other.engineType;
-        this.fkBinFileId = other.fkBinFileId;
         this.pkScorPltHeaderId = other.pkScorPltHeaderId;
-        this.projectId = other.projectId;
-        this.regionPerilId = other.regionPerilId;
-        this.rrAnalysisId = other.rrAnalysisId;
         this.rrAnalysisNew = other.rrAnalysisNew;
         this.targetRap = other.targetRap;
         this.regionPeril = other.regionPeril;
@@ -440,16 +418,6 @@ public class ScorPltHeaderEntity {
     }
 
     @Basic
-    @Column(name = "perilCode", nullable = true, length = 255)
-    public String getPerilCode() {
-        return perilCode;
-    }
-
-    public void setPerilCode(String perilCode) {
-        this.perilCode = perilCode;
-    }
-
-    @Basic
     @Column(name = "pltLossDataFileName", nullable = true, length = 255)
     public String getPltLossDataFileName() {
         return pltLossDataFileName;
@@ -479,16 +447,6 @@ public class ScorPltHeaderEntity {
         this.engineType = engineType;
     }
 
-    @Basic
-    @Column(name = "FKBinFileId", nullable = true)
-    public Integer getFkBinFileId() {
-        return fkBinFileId;
-    }
-
-    public void setFkBinFileId(Integer fkBinFileId) {
-        this.fkBinFileId = fkBinFileId;
-    }
-
     @Id
     @Column(name = "PKScorPltHeaderId", nullable = false)
     public int getPkScorPltHeaderId() {
@@ -497,36 +455,6 @@ public class ScorPltHeaderEntity {
 
     public void setPkScorPltHeaderId(int pkScorPltHeaderId) {
         this.pkScorPltHeaderId = pkScorPltHeaderId;
-    }
-
-    @Basic
-    @Column(name = "projectId", nullable = true)
-    public Integer getProjectId() {
-        return projectId;
-    }
-
-    public void setProjectId(Integer projectId) {
-        this.projectId = projectId;
-    }
-
-    @Basic
-    @Column(name = "regionPerilId", nullable = true)
-    public Integer getRegionPerilId() {
-        return regionPerilId;
-    }
-
-    public void setRegionPerilId(Integer regionPerilId) {
-        this.regionPerilId = regionPerilId;
-    }
-
-    @Basic
-    @Column(name = "rrAnalysisId", nullable = true)
-    public Integer getRrAnalysisId() {
-        return rrAnalysisId;
-    }
-
-    public void setRrAnalysisId(Integer rrAnalysisId) {
-        this.rrAnalysisId = rrAnalysisId;
     }
 
     @Override
@@ -567,19 +495,14 @@ public class ScorPltHeaderEntity {
                 Objects.equals(currentNarrative, that.currentNarrative) &&
                 Objects.equals(createdDate, that.createdDate) &&
                 Objects.equals(inuringPackageId, that.inuringPackageId) &&
-                Objects.equals(perilCode, that.perilCode) &&
                 Objects.equals(pltLossDataFileName, that.pltLossDataFileName) &&
                 Objects.equals(pltLossDataFilePath, that.pltLossDataFilePath) &&
-                Objects.equals(engineType, that.engineType) &&
-                Objects.equals(fkBinFileId, that.fkBinFileId) &&
-                Objects.equals(projectId, that.projectId) &&
-                Objects.equals(regionPerilId, that.regionPerilId) &&
-                Objects.equals(rrAnalysisId, that.rrAnalysisId);
+                Objects.equals(engineType, that.engineType);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(pltType, publishToPricing, pltSimulationPeriods, generatedFromDefaultAdjustement, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGenerated, basisChanged, narrativeChanged, previousNarrative, currentNarrative, createdDate, inuringPackageId, perilCode, pltLossDataFileName, pltLossDataFilePath, engineType, fkBinFileId, pkScorPltHeaderId, projectId, regionPerilId, rrAnalysisId);
+        return Objects.hash(pltType, publishToPricing, pltSimulationPeriods, generatedFromDefaultAdjustement, ccyCode, geoCode, geoDescription, rmsSimulationSet, importSequence, threadName, udName, userOccurrenceBasis, defaultPltName, truncationThreshold, truncationExchangeRate, truncationCurrency, sourceLossModelingBasis, deletedOn, deletedDue, deletedBy, sourceLossEntityingBasis, createdBy, createdOn, lastModifiedBy, lastModifiedOn, lastGenerated, basisChanged, narrativeChanged, previousNarrative, currentNarrative, createdDate, inuringPackageId, pltLossDataFileName, pltLossDataFilePath, engineType, pkScorPltHeaderId);
     }
 
     @ManyToOne

@@ -22,7 +22,7 @@ public class ProjectEntity {
     private Timestamp dueDate;
     private String createdBy;
     private Integer fkLinkedSourceProjectId;
-    private Integer fkCloneSourceProjectId;
+    private ProjectEntity fkCloneSourceProjectId;
     private Boolean deleted;
     private Timestamp deletedOn;
     private String deletedDue;
@@ -180,16 +180,6 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "FKCloneSourceProjectId", nullable = true)
-    public Integer getFkCloneSourceProjectId() {
-        return fkCloneSourceProjectId;
-    }
-
-    public void setFkCloneSourceProjectId(Integer fkCloneSourceProjectId) {
-        this.fkCloneSourceProjectId = fkCloneSourceProjectId;
-    }
-
-    @Basic
     @Column(name = "deleted", nullable = true)
     public Boolean getDeleted() {
         return deleted;
@@ -269,5 +259,15 @@ public class ProjectEntity {
 
     public void setWorkspaceByFkWorkspaceId(WorkspaceEntity workspaceByFkWorkspaceId) {
         this.workspaceByFkWorkspaceId = workspaceByFkWorkspaceId;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "FKCloneSourceProjectId", referencedColumnName = "projectId")
+    public ProjectEntity getFkCloneSourceProjectId() {
+        return fkCloneSourceProjectId;
+    }
+
+    public void setFkCloneSourceProjectId(ProjectEntity fkCloneSourceProjectId) {
+        this.fkCloneSourceProjectId = fkCloneSourceProjectId;
     }
 }

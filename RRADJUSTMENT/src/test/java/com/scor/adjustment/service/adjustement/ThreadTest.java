@@ -2,7 +2,6 @@ package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
-import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.AdjustmentThreadService;
 import org.junit.After;
 import org.junit.Before;
@@ -10,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +21,7 @@ import java.util.Date;
 @ContextConfiguration(classes = {RiskRevealApplication.class})
 @SpringBootTest
 @Transactional
+@PropertySource({"classpath:application.properties"})
 public class ThreadTest {
 
     @Autowired

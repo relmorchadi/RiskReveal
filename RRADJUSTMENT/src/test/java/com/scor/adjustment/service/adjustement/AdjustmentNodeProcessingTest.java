@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import java.util.List;
 @ContextConfiguration(classes = {RiskRevealApplication.class})
 @SpringBootTest
 @Transactional
+@PropertySource({"classpath:application.properties"})
 public class AdjustmentNodeProcessingTest {
 
     @Autowired
@@ -64,10 +66,10 @@ public class AdjustmentNodeProcessingTest {
 
     @Test
     public void processNodeByInput() {
-        adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(983,1));
+        adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(983,2));
     }
     @Test
     public void processNodeByAdjusted() {
-        adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(lmf,rpmf,adjustmentReturnPeriod,983,1,adjustmentReturnPeriodBandings));
+        adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(lmf,rpmf,adjustmentReturnPeriod,983,2,adjustmentReturnPeriodBandings));
     }
 }

@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 @ContextConfiguration(classes = {RiskRevealApplication.class})
 @SpringBootTest
 @Transactional
+@PropertySource({"classpath:application.properties"})
 public class NodeTest {
     @Autowired
     AdjustmentNodeService adjustmentNodeService;
@@ -39,7 +41,7 @@ public class NodeTest {
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("",1,
                 false,"",
                 false,1,
-                4,1,41,1.7,1.1,null,983,0,null);
+                4,1,41,1.7,1.1,null,983,2,null);
         adjustmentNodeService.save(adjustmentNodeRequest);
     }
 
