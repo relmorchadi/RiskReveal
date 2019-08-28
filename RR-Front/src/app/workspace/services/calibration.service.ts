@@ -242,8 +242,15 @@ export class CalibrationService implements NgxsOnInit {
       plts,
       wsIdentifier
     } = payload;
+    const result = state.content[this.prefix].calibration.data[this.prefix];
+    _.forEach(result, plt => {
+      _.forEach(plt.threads, thread => {
+        if (plts[thread.pltId])
+          thread.toCalibrate = plts[thread.pltId].toCalibrate;
+      })
+    })
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data = _.merge({}, state.content[this.prefix].calibration.data, {[wsIdentifier]: plts})
+      draft.content[this.prefix].calibration.data[this.prefix] = _.merge({}, state.content[this.prefix].calibration.data[this.prefix], result)
     }));
   }
 

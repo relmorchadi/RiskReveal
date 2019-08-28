@@ -9,6 +9,7 @@ import {NotificationService} from "../../../../shared/notification.service";
 import {SearchService} from "../../../../core/service";
 import {WorkspaceState} from "../../../store/states";
 import * as fromWorkspaceStore from "../../../store";
+import {toCalibratePlts} from "../../../store";
 import * as _ from "lodash";
 import {switchMap, tap} from "rxjs/operators";
 import {Debounce} from "../../../../shared/decorators";
@@ -318,6 +319,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.setInputs('listOfPltsData', [...this.Inputs.listOfPltsCache]);
       this.initThreadsData();
+      this.updateMenuKey('basket', _.filter(this.listOfPltsThread, row => row.calibrate));
       this.detectChanges();
     });
 
@@ -534,10 +536,10 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       result[pltId].toCalibrate = true;
     })
     console.log(result);
-    /*this.store$.dispatch(new toCalibratePlts({
+    this.store$.dispatch(new toCalibratePlts({
       plts: result,
       wsIdentifier: this.stepConfig.wsId + "-" + this.stepConfig.uwYear
-    }))*/
+    }))
     this.onHide();
   }
 

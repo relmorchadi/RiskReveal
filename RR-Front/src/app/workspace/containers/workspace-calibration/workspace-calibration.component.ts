@@ -320,6 +320,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
+      this.listOfPltsData = _.filter(this.listOfPltsData, pure => _.some(pure.threads, thread => thread.toCalibrate));
       this.initThreadsData();
       // console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
       this.detectChanges();
@@ -344,6 +345,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   initThreadsData() {
     if (this.listOfPltsData) {
       this.listOfPltsThread = Array.prototype.concat.apply([], this.listOfPltsData.map(row => row.threads));
+      this.listOfPltsThread = _.filter(this.listOfPltsThread, row => row.toCalibrate);
       this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
     }
   }

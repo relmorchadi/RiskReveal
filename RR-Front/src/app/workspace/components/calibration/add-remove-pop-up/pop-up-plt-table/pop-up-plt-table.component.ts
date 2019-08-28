@@ -86,7 +86,7 @@ export class PopUpPltTableComponent implements OnInit {
     this.toggleSelectPlts(
       _.zipObject(
         _.map(this.listOfPltsThread, plt => plt.pltId),
-        _.range(this.listOfPltsThread.length).map(plt => ({calibrate: !this.selectAll && !this.someItemsAreSelected}))
+        _.range(this.listOfPltsThread.length).map(plt => ({calibrate: $event}))
       )
     );
   }
@@ -185,5 +185,7 @@ export class PopUpPltTableComponent implements OnInit {
     }
   }
 
-
+  trackBy(row, index) {
+    return row.pltId;
+  }
 }

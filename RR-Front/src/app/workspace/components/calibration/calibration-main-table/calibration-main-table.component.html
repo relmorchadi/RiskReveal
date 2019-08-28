@@ -610,7 +610,7 @@
     <ng-container *ngFor="let thread of rowData.threads">
       <tr (contextmenu)="selectedItemForMenu=thread.pltId" [pContextMenuRow]="thread"
           class="on-hover"
-          *ngIf="(filters.systemTag.length == 0 ? thread?.visible :  thread?.visible && thread?.tagFilterActive) &&  statusFilterActive(thread.status)"
+          *ngIf="(filters.systemTag.length == 0 ? thread?.visible :  thread?.visible && thread?.tagFilterActive) &&  statusFilterActive(thread.status) && thread.toCalibrate"
           [ngClass]="{'active_plt_item': thread.selected && !thread.opened, 'opened_plt_item': thread.opened }">
         <td (click)="handlePLTClick(thread.pltId,rowIndex,$event)"
             *ngFor="let col of columns; let i = index"
