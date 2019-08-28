@@ -233,6 +233,7 @@ export class TableComponent implements OnInit {
   }
 
   filter(key: string, value) {
+    console.log('key', key)
     if(value) {
       this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
     }
