@@ -204,7 +204,7 @@
                         </ul>
                       </div>
                       <div class="search-bar-result-button">
-                        <button (click)="selectedItem()" class="a-buttons-contained">ADD</button>
+                        <button (click)="selectedItem()" class="a-buttons-contained-mini">ADD</button>
                       </div>
                     </nz-tab>
                   </nz-tabset>
@@ -368,9 +368,9 @@
                 </div>
               </div>
               <div class="import-button">
-                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained">ADD FOR IMPORT
+                <button *ngIf="state?.activeAddBasket" (click)="displayImported()" class="a-buttons-contained-mini">ADD FOR IMPORT
                 </button>
-                <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled" disabled>ADD FOR IMPORT
+                <button *ngIf="!state?.activeAddBasket" class="a-buttons-contained-disabled-mini" disabled>ADD FOR IMPORT
                 </button>
               </div>
             </div>
@@ -391,7 +391,7 @@
             <label nz-checkbox [ngModel]="state.checked.checkedPricing">Publish For Pricing</label>-->
           </div>
           <div class="body-wrap-footer-right">
-            <button class="a-buttons-contained">IMPORT</button>
+            <button style="padding: 6px 20px 7px" class="a-buttons-contained-mini">IMPORT</button>
           </div>
         </div>
       </div>
@@ -420,7 +420,7 @@
 
   <p-header>
     <div class="header">
-      <h4>Columns Manager</h4>
+      <h6>Columns Manager</h6>
       <i style="cursor: pointer" (click)="toggleColumnsManager(targetConfig)" class="icon-close_24px"></i>
     </div>
   </p-header>
@@ -473,7 +473,7 @@
 >
   <p-header>
     <div class="header">
-      <h4>{{getTitle()}} Filter Criteria</h4>
+      <h6>{{getTitle()}} Filter Criteria</h6>
       <i style="cursor: pointer" (click)="handleCancel()" class="icon-close_24px"></i>
     </div>
   </p-header>

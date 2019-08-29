@@ -13,186 +13,74 @@
     </app-pin>
   </div>
   <div class="app-body">
-    <div class="menu-left-wrapper">
-      <span class="body-1 menu-left-header"
-            style="border-top: 4px solid #0700CF; padding-top: 12px;">
-        Find Directory
-      </span>
-      <div class="tree-menu-wrapper">
-        <p-tree [value]="directoryTree?.data" selectionMode="single" [(selection)]="selectedFile"
-                (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
+    <div [ngClass]="{'menu-left-wrapper': selectedPlt != null}">
+      <div class="menu-searchPlt-wrapper">
+        <div style="width: 30%">
+        <span class="body-1 menu-left-header"
+              style="border-top: 4px solid #0700CF; padding-top: 4px;">
+          Find Directory
+        </span>
+          <div class="tree-menu-wrapper" *ngIf="!collapseSearchFiles">
+            <p-tree [value]="directoryTree?.data" selectionMode="single" [(selection)]="selectedFile"
+                    (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
+          </div>
+        </div>
+        <div style="width: 70%">
+        <span class="body-1 menu-left-header" style="width: 100%" >
+          <ng-container *ngIf="!collapseSearchFiles">Text Files Available</ng-container>
+          <div class="body-wrapper-header-right" style="flex: 1">
+          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
+            <i *ngIf="!collapseSearchFiles" (click)="collapseSearchFiles = true"
+               class="icon-keyboard_arrow_up_24px"></i>
+            <i *ngIf="collapseSearchFiles" (click)="collapseSearchFiles = false"
+               class="icon-keyboard_arrow_down_24px"></i>
+        </div>
+        </span>
+          <div class="tab-search-input search-document-wrap" *ngIf="!collapseSearchFiles">
+            <i class="icon-search_24px"></i>
+            <input class="input-search"/>
+          </div>
+          <div *ngIf="fileBase?.files?.length > 0 && !collapseSearchFiles" class="popover-menu files-selection-wrap">
+            <ul>
+              <li *ngFor="let items of fileBase?.files; let i = index">
+                <label nz-checkbox [nzChecked]="items.selected" (nzCheckedChange)="selectToImport($event, i)">
+                  <span [nzTitle]="items.label" nzPlacement="topLeft" nz-tooltip>{{items.label}}</span>
+                </label>
+              </li>
+            </ul>
+          </div>
+          <div *ngIf="fileBase?.files?.length === 0 && !collapseSearchFiles" class="empty-data-wrap">
+            <nz-empty></nz-empty>
+          </div>
+          <div class="menu-left-footer" *ngIf="!collapseSearchFiles">
+            <button *ngIf="fileBase?.files?.length > 0" (click)="addForImport()" class="a-buttons-contained-mini">
+              ADD TO PROJECT
+            </button>
+            <button *ngIf="fileBase?.files?.length === 0" class="a-buttons-contained-disabled-mini">ADD TO PROJECT</button>
+          </div>
+        </div>
       </div>
 
-      <span class="body-1 menu-left-header">
-        Filter
-      </span>
-
-      <div class="tab-search-input search-document-wrap">
-        <i class="icon-search_24px"></i>
-        <input class="input-search" />
-      </div>
-
-      <span class="body-1 menu-left-header">
-        Text Files Available
-      </span>
-      <div *ngIf="fileBase?.files?.length > 0" class="popover-menu files-selection-wrap">
-        <ul>
-          <li *ngFor="let items of fileBase?.files; let i = index">
-            <label nz-checkbox [nzChecked]="items.selected" (nzCheckedChange)="selectToImport($event, i)">
-              <span [nzTitle]="items.label" nzPlacement="topLeft" nz-tooltip>{{items.label}}</span>
-            </label>
-          </li>
-        </ul>
-      </div>
-
-      <div *ngIf="fileBase?.files?.length === 0" class="empty-data-wrap">
-        <nz-empty></nz-empty>
-      </div>
-
-      <div class="menu-left-footer">
-        <button *ngIf="fileBase?.files?.length > 0" (click)="addForImport()"  class="a-buttons-contained">ADD TO PROJECT</button>
-        <button *ngIf="fileBase?.files?.length === 0" class="a-buttons-contained-disabled">ADD TO PROJECT</button>
-      </div>
-
-    </div>
-    <div class="menu-right-wrapper">
-      <div style="display: flex; justify-content: space-between;">
+      <div class="menu-data-wrapper">
+        <div style="display: flex; justify-content: space-between;">
         <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
           Selected PLT To Import
         </span>
-        <div class="body-wrapper-header-right">
-          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-          <i *ngIf="!collapseImportedFiles" (click)="collapseImportedFiles = true"
-             class="icon-keyboard_arrow_up_24px"></i>
-          <i *ngIf="collapseImportedFiles" (click)="collapseImportedFiles = false"
-             class="icon-keyboard_arrow_down_24px"></i>
+<!--          <div class="body-wrapper-header-right">
+            &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
+            <i *ngIf="!collapseImportedFiles" (click)="collapseImportedFiles = true"
+               class="icon-keyboard_arrow_up_24px"></i>
+            <i *ngIf="collapseImportedFiles" (click)="collapseImportedFiles = false"
+               class="icon-keyboard_arrow_down_24px"></i>
+          </div>-->
         </div>
-      </div>
 
-      <div class="summary-info table-width fixed-table-height" [ngClass]="{'empty-table': getLength()}">
-        <p-contextMenu appendTo="body" #cm [model]="items"></p-contextMenu>
-        <p-table #iTable [columns]="pltColumns" [scrollable]="true"
-                 *ngIf="!collapseImportedFiles"
-                 [(contextMenuSelection)]="contextSelectedItem"
-                 [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
-                 [value]="fileBase?.selectedFiles" frozenWidth="485px">
-          <ng-template let-columns pTemplate="colgroup">
-            <colgroup>
-              <ng-container *ngFor="let col of columns">
-                <col [ngStyle]="{'width': col.width}">
-              </ng-container>
-            </colgroup>
-          </ng-template>
-          <ng-template let-columns pTemplate="header">
-            <tr>
-              <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible" pResizableColumn>
-                  <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
-                  <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
-                    {{col.header}}
-                    <div class="search-bar-table">
-                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                      <input (input)="iTable.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
-                             type="text">
-                    </div>
-                  </div>
-                  <div *ngIf="col.type === 'icon'">
-                    <i class="icon-menu_24px"></i>
-                  </div>
-                </th>
-              </ng-container>
-            </tr>
-          </ng-template>
-          <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-            <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
-                [ngClass]="{'active_contract_item': rowData?.selected}">
-              <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                  <div *ngIf="col.type === 'select'" class="">
-                    <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
-                           nz-checkbox></label>
-                  </div>
-                  <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                  <div *ngIf="col.type === 'progress'">
-                    <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
-                                 [nzWidth]="20" nzType="circle"></nz-progress>
-                  </div>
-                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
-                        <span *ngIf="rowData.exposedLocation" class="indicator-flag" style="background-color: #0700CF"></span>
-                  </div>
-                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'number'"
-                       [ngClass]="{'highlight-temp': rowData.highlight}"
-                       class="text-data">{{rowData[col.field]}}</div>
-                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'percentage'"
-                       [ngClass]="{'highlight-temp': rowData.highlight}"
-                       class="text-data">{{rowData[col.field]}}%
-                  </div>
-                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'perilIndicator'">
-                    <span class="perilIndicator" [ngStyle]="{'background-color': getColor(rowData[col.field])}">
-                      {{rowData[col.field]}}
-                    </span>
-                  </div>
-                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'info'"
-                       class="text-data">
-                    {{rowData.ModelSystem}}_{{rowData.ModelProvider}}_{{rowData.ModelSystemVersion}}_{{rowData.ModelSystemInstance}}
-                  </div>
-                  <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
-                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                       [ngClass]="{'highlight-temp': col.highlight}"
-                       class="text-data">{{rowData[col.field]}}</div>
-                  <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
-                       class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                  <div (click)="deleteRow(rowData)" *ngIf="col.type === 'action'"
-                       [ngClass]="{'highlight-temp': rowData.highlight}"
-                       class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
-                  </div>
-                </th>
-              </ng-container>
-            </tr>
-          </ng-template>
-          <ng-template pTemplate="emptymessage" let-columns="columns">
-            <div class="empty-notif-wrapper">
-              <nz-empty></nz-empty>
-            </div>
-          </ng-template>
-        </p-table>
-        <div class="menu-icon-wrap">
-          <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseImportedFiles" [nzPlacement]="'topRight'">
-            <a style="max-height: 28px;display: flex;" nz-dropdown>
-              <i class="icon-menu_24px"></i>
-            </a>
-            <ul nz-menu style="font-size: 12px">
-              <li nz-menu-item>Reset Sort</li>
-              <li nz-menu-item>Reset Filters</li>
-              <li nz-menu-item>Reset Sort/Filters</li>
-              <li nz-menu-divider></li>
-              <li nz-menu-item (click)="toggleColumnsManager('pltToImport')">Manage Columns</li>
-              <li nz-menu-divider></li>
-              <li nz-menu-item>Unselect All</li>
-            </ul>
-          </nz-dropdown>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="app-body">
-    <div style="margin-top: 20px; background-color: #FFFFFF; box-shadow: 1px 2px 6px rgba(0,0,0,0.15);">
-      <div  style="display: flex; justify-content: space-between;">
-        <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
-          Analysis Result
-        </span>
-        <div class="body-wrapper-header-right">
-          <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
-          <i *ngIf="!collapseImportedPLTs" (click)="collapseImportedPLTs = true"
-             class="icon-keyboard_arrow_up_24px"></i>
-          <i *ngIf="collapseImportedPLTs" (click)="collapseImportedPLTs = false"
-             class="icon-keyboard_arrow_down_24px"></i>
-        </div>
-      </div>
-      <div style="display: flex">
-        <div class="summary-info empty-table">
-          <p-table *ngIf="!collapseImportedPLTs" #st [columns]="importedFiles" [scrollable]="true"
-                   [resizableColumns]="true" [value]="">
+        <div class="summary-info table-width fixed-table-height" [ngClass]="{'empty-table': getLength()}">
+          <p-contextMenu appendTo="body" #cm [model]="items"></p-contextMenu>
+          <p-table #iTable [columns]="pltColumns" [scrollable]="true" scrollHeight="226px"
+                   [(contextMenuSelection)]="contextSelectedItem"
+                   [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
+                   [value]="fileBase?.selectedFiles" frozenWidth="485px">
             <ng-template let-columns pTemplate="colgroup">
               <colgroup>
                 <ng-container *ngFor="let col of columns">
@@ -209,7 +97,7 @@
                       {{col.header}}
                       <div class="search-bar-table">
                         <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                        <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                        <input (input)="iTable.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
                                type="text">
                       </div>
                     </div>
@@ -221,10 +109,11 @@
               </tr>
             </ng-template>
             <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-              <tr>
+              <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
+                  [ngClass]="{'active_contract_item': rowData?.selected}" (dblclick)="selectedPlt = rowData">
                 <ng-container *ngFor="let col of columns">
                   <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                    <div *ngIf="col.type === 'selection'" class="">
+                    <div *ngIf="col.type === 'select'" class="">
                       <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
                              nz-checkbox></label>
                     </div>
@@ -234,8 +123,8 @@
                                    [nzWidth]="20" nzType="circle"></nz-progress>
                     </div>
                     <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
-                        <span *ngIf="rowData.exposedLocation" class="indicator-flag"
-                              style="background-color: #0700CF"></span>
+                    <span *ngIf="rowData.exposedLocation" class="indicator-flag"
+                          style="background-color: #0700CF"></span>
                     </div>
                     <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'number'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
@@ -244,13 +133,23 @@
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field]}}%
                     </div>
+                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'perilIndicator'">
+                    <span class="perilIndicator" [ngStyle]="{'background-color': getColor(rowData[col.field])}">
+                      {{rowData[col.field]}}
+                    </span>
+                    </div>
+                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'info'"
+                         class="text-data">
+                      {{rowData.ModelSystem}}_{{rowData.ModelProvider}}_{{rowData.ModelSystemVersion}}
+                      _{{rowData.ModelSystemInstance}}
+                    </div>
                     <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
                          [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                          [ngClass]="{'highlight-temp': col.highlight}"
                          class="text-data">{{rowData[col.field]}}</div>
                     <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                    <div (click)="deleteRow(rowData.dataSourceId)" *ngIf="col.type === 'action'"
+                    <div (click)="deleteRow(rowData)" *ngIf="col.type === 'action'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
                     </div>
@@ -264,26 +163,250 @@
               </div>
             </ng-template>
           </p-table>
-        </div>
-        <div class="menu-icon-wrap" *ngIf="!collapseImportedPLTs" style="width: 2%; font-size: 24px; padding-top: 25px;">
-          <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'topRight'">
-            <a style="max-height: 28px;display: flex;" nz-dropdown>
-              <i class="icon-menu_24px"></i>
-            </a>
-            <ul nz-menu style="font-size: 12px">
-              <li nz-menu-item>Reset Sort</li>
-              <li nz-menu-item>Reset Filters</li>
-              <li nz-menu-item>Reset Sort/Filters</li>
-              <li nz-menu-divider></li>
-              <li nz-menu-item (click)="toggleColumnsManager('pltImported')">Manage Columns</li>
-              <li nz-menu-divider></li>
-              <li nz-menu-item>Unselect All</li>
-            </ul>
-          </nz-dropdown>
+          <div class="menu-icon-wrap">
+            <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseImportedFiles" [nzPlacement]="'topRight'">
+              <a style="max-height: 28px;display: flex;" nz-dropdown>
+                <i class="icon-settings_24px"></i>
+              </a>
+              <ul nz-menu style="font-size: 12px">
+                <li nz-menu-item>Reset Sort</li>
+                <li nz-menu-item>Reset Filters</li>
+                <li nz-menu-item>Reset Sort/Filters</li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item (click)="toggleColumnsManager('pltToImport')">Manage Columns</li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item>Unselect All</li>
+              </ul>
+            </nz-dropdown>
+          </div>
         </div>
       </div>
     </div>
+
+    <div class="menu-detail-wrapper" *ngIf="selectedPlt != null">
+      <span class="body-1 menu-left-header"
+            style="border-top: 4px solid #0700CF; padding-top: 4px; width: 75%;">
+          Attributes Of Selected PLT
+      </span>
+      <div>
+        <ul>
+          <li style="align-items: baseline;">
+            <span class="list-key subtitle-2">File Name :</span>
+            <span class="list-value">{{selectedPlt.FileName}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">File Path :</span>
+            <span class="list-value">{{selectedPlt.User}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Last Updated :</span>
+            <span class="list-value"></span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">File Version :</span>
+            <span class="list-value">{{selectedPlt.File_Version}}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <span class="list-key subtitle-2">Header Format :</span>
+            <span class="list-value">{{selectedPlt.LossTableHeaderFormat}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Header Producer :</span>
+            <span class="list-value">{{selectedPlt.LossTableHeaderProducer}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">LossTable Type :</span>
+            <span class="list-value">{{selectedPlt.LossTableType}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">LossTable Basis :</span>
+            <span class="list-value">{{selectedPlt.LossTableBasis}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Create Date :</span>
+            <span class="list-value">{{selectedPlt.CreateDate}}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <span class="list-key subtitle-2">Modal Vendor :</span>
+            <span class="list-value">{{selectedPlt.ModelProvider}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Modal System :</span>
+            <span class="list-value">{{selectedPlt.ModelSystem}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Modal System Version :</span>
+            <span class="list-value">{{selectedPlt.ModelSystemVersion}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Modal System Instance :</span>
+            <span class="list-value">{{selectedPlt.ModelSystemInstance}}</span>
+          </li>
+        </ul>
+        <ul>
+          <li>
+            <span class="list-key subtitle-2">Model :</span>
+            <span class="list-value">{{selectedPlt.Model}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Model Version :</span>
+            <span class="list-value">{{selectedPlt.Model_Version}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Model Module :</span>
+            <span class="list-value">{{selectedPlt.ModelModule}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Results Database Name :</span>
+            <span class="list-value">{{selectedPlt.ResultsDatabaseName}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Results ID :</span>
+            <span class="list-value">{{selectedPlt.SourceResultsReference}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Results Name :</span>
+            <span class="list-value">{{selectedPlt.ResultsName}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Results Description :</span>
+            <span class="list-value">{{selectedPlt.ResultsDescription}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Run Date :</span>
+            <span class="list-value">{{selectedPlt.Run_Date}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">User ID :</span>
+            <span class="list-value">{{selectedPlt.User}}</span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">User Name :</span>
+            <span class="list-value"></span>
+          </li>
+          <li>
+            <span class="list-key subtitle-2">Currency :</span>
+            <span class="list-value">{{selectedPlt.Currency}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
   </div>
+  <!--  <div class="app-body">
+      <div style="margin-top: 20px; background-color: #FFFFFF; box-shadow: 1px 2px 6px rgba(0,0,0,0.15);">
+        <div style="display: flex; justify-content: space-between;">
+          <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
+            Analysis Result
+          </span>
+          <div class="body-wrapper-header-right">
+            &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
+            <i *ngIf="!collapseImportedPLTs" (click)="collapseImportedPLTs = true"
+               class="icon-keyboard_arrow_up_24px"></i>
+            <i *ngIf="collapseImportedPLTs" (click)="collapseImportedPLTs = false"
+               class="icon-keyboard_arrow_down_24px"></i>
+          </div>
+        </div>
+        <div style="display: flex">
+          <div class="summary-info empty-table">
+            <p-table *ngIf="!collapseImportedPLTs" #st [columns]="importedFiles" [scrollable]="true"
+                     [resizableColumns]="true" [value]="">
+              <ng-template let-columns pTemplate="colgroup">
+                <colgroup>
+                  <ng-container *ngFor="let col of columns">
+                    <col [ngStyle]="{'width': col.width}">
+                  </ng-container>
+                </colgroup>
+              </ng-template>
+              <ng-template let-columns pTemplate="header">
+                <tr>
+                  <ng-container *ngFor="let col of columns">
+                    <th *ngIf="col.visible" pResizableColumn>
+                      <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                      <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                        {{col.header}}
+                        <div class="search-bar-table">
+                          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                          <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                                 type="text">
+                        </div>
+                      </div>
+                      <div *ngIf="col.type === 'icon'">
+                        <i class="icon-menu_24px"></i>
+                      </div>
+                    </th>
+                  </ng-container>
+                </tr>
+              </ng-template>
+              <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+                <tr>
+                  <ng-container *ngFor="let col of columns">
+                    <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                      <div *ngIf="col.type === 'selection'" class="">
+                        <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
+                               nz-checkbox></label>
+                      </div>
+                      <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                      <div *ngIf="col.type === 'progress'">
+                        <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
+                                     [nzWidth]="20" nzType="circle"></nz-progress>
+                      </div>
+                      <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
+                          <span *ngIf="rowData.exposedLocation" class="indicator-flag"
+                                style="background-color: #0700CF"></span>
+                      </div>
+                      <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'number'"
+                           [ngClass]="{'highlight-temp': rowData.highlight}"
+                           class="text-data">{{rowData[col.field]}}</div>
+                      <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'percentage'"
+                           [ngClass]="{'highlight-temp': rowData.highlight}"
+                           class="text-data">{{rowData[col.field]}}%
+                      </div>
+                      <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
+                           [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
+                           [ngClass]="{'highlight-temp': col.highlight}"
+                           class="text-data">{{rowData[col.field]}}</div>
+                      <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                           class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
+                      <div (click)="deleteRow(rowData.dataSourceId)" *ngIf="col.type === 'action'"
+                           [ngClass]="{'highlight-temp': rowData.highlight}"
+                           class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
+                      </div>
+                    </th>
+                  </ng-container>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage" let-columns="columns">
+                <div class="empty-notif-wrapper">
+                  <nz-empty></nz-empty>
+                </div>
+              </ng-template>
+            </p-table>
+          </div>
+          <div class="menu-icon-wrap" *ngIf="!collapseImportedPLTs"
+               style="width: 2%; font-size: 24px; padding-top: 25px;">
+            <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'topRight'">
+              <a style="max-height: 28px;display: flex;" nz-dropdown>
+                <i class="icon-menu_24px"></i>
+              </a>
+              <ul nz-menu style="font-size: 12px">
+                <li nz-menu-item>Reset Sort</li>
+                <li nz-menu-item>Reset Filters</li>
+                <li nz-menu-item>Reset Sort/Filters</li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item (click)="toggleColumnsManager('pltImported')">Manage Columns</li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item>Unselect All</li>
+              </ul>
+            </nz-dropdown>
+          </div>
+        </div>
+      </div>
+    </div>-->
 </div>
 
 <p-dialog

@@ -16,7 +16,7 @@
   scrollHeight="calc(100vh - 480px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
-  [value]="(showDeleted ? deletedPlts : listOfPltsData)  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
+  [value]="listOfPltsData  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
   <ng-template let-columns pTemplate="colgroup">
     <colgroup>
       <ng-container *ngFor="let col of columns">
