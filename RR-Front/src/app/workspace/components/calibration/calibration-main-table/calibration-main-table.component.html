@@ -225,7 +225,7 @@
             style="padding: 0 !important;text-align: center !important;">
           <label (nzCheckedChange)="checkAll($event)" [nzChecked]="selectAll" [nzIndeterminate]="someItemsAreSelected"
                  nz-checkbox></label>
-          <i (click)="checkBoxsort()" nz-icon nzTheme="outline" nzType="down" style="cursor: pointer;"></i>
+          <!-- <i (click)="checkBoxsort()" nz-icon nzTheme="outline" nzType="down" style="cursor: pointer;"></i>-->
         </th>
         <th *ngIf="col?.fields === 'userTags'" style="padding: 0 !important;text-align: center !important;"
             pResizableColumn>
@@ -526,7 +526,7 @@
                 style="display: flex;height: max-content;">
                 <div (drop)="onDrop(col,rowData.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
                      (mouseover)="shownDropDown = adjs.id+rowData.pltId"
-                     (onDragStart)="draggedAdjs = adjs" [dragData]="adjs"
+                     (onDragStart)="onDragStart(adjs,rowData.pltId)" [dragData]="adjs"
                      [dragEnabled]="true"
                      [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
                      [sortableIndex]="i"
@@ -726,7 +726,7 @@
                   style="display: flex;height: max-content;">
                   <div (drop)="onDrop(col,thread.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id+thread.pltId)"
                        (mouseover)="shownDropDown = adjs.id+thread.pltId"
-                       (onDragStart)="draggedAdjs = adjs" [dragData]="adjs"
+                       (onDragStart)="onDragStart(adjs,thread.pltId)" [dragData]="adjs"
                        [dragEnabled]="true"
                        [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
                        [sortableIndex]="i"
@@ -1804,7 +1804,7 @@
                 style="display: flex;height: max-content;">
                 <div (drop)="onDrop(col,rowData.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
                      (mouseover)="shownDropDown = adjs.id+rowData.pltId"
-                     (onDragStart)="draggedAdjs = adjs" [dragData]="adjs"
+                     (onDragStart)="onDragStart(adjs,rowData.pltId)" [dragData]="adjs"
                      [dragEnabled]="true"
                      [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
                      [sortableIndex]="i"

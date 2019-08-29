@@ -14,6 +14,7 @@ import {
   applyAdjustment,
   deleteAdjsApplication,
   deleteAdjustment,
+  dropAdjustment,
   dropThreadAdjustment,
   extendPltSection,
   replaceAdjustement,
@@ -71,6 +72,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
   searchAddress: string;
   listOfPltsCache: any[];
+  listOfPltsThreadCache: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
   frozenColumnsCache: any[] = [];
@@ -271,6 +273,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
+  activeCheckboxSort: boolean = false;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -345,7 +348,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   initThreadsData() {
     if (this.listOfPltsData) {
       this.listOfPltsThread = Array.prototype.concat.apply([], this.listOfPltsData.map(row => row.threads));
-      this.listOfPltsThread = _.filter(this.listOfPltsThread, row => row.toCalibrate);
+      this.listOfPltsThreadCache = _.filter(this.listOfPltsThread, row => row.toCalibrate);
+      this.listOfPltsThread = [...this.listOfPltsThreadCache];
       this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
     }
   }
@@ -810,12 +814,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
 
-  onDrop(col, pltId) {
-    /* this.dispatch(new dropAdjustment({
+  onDrop(col, pltId, draggedAdjs, lastpltId) {
+    this.dispatch(new dropAdjustment({
        pltId: pltId,
-       adjustement: this.draggedAdjs
-     }))*/
-    this.adjustColWidth(this.draggedAdjs);
+      adjustement: draggedAdjs,
+      lastpltId: lastpltId
+    }))
+    this.adjustColWidth(draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
   }
@@ -1075,4 +1080,15 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.allRowsExpanded = false;
     }
   }
+
+  checkBoxsort() {
+    this.activeCheckboxSort = !this.activeCheckboxSort;
+    console.log('checked', this.activeCheckboxSort)
+    if (this.activeCheckboxSort) {
+      this.listOfPltsThread = _.sortBy(this.listOfPltsThread, [(o) => !o.selected]);
+    } else {
+      this.listOfPltsThread = this.listOfPltsThreadCache;
+    }
+  }
+
 }

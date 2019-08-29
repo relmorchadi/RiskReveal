@@ -49,6 +49,7 @@ export class CalibrationService implements NgxsOnInit {
     let random = Math.floor(Math.random() * 199) - 99;
     return random;
   }
+
   /*Load Plts*/
   loadAllPltsFromCalibration(ctx: StateContext<any>, payload: any) {
 
@@ -438,12 +439,12 @@ export class CalibrationService implements NgxsOnInit {
     let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
 
     let newAdj = {...adjustement};
-
     _.forEach(pltId, (value) => {
+      newAdj['id'] = value.pltId + '-' + adjustement['id'];
       if (adjustmentApplication[value.pltId] !== undefined) {
-        adjustmentApplication[value.pltId].push(newAdj);
+        adjustmentApplication[value.pltId].push({...newAdj});
       } else {
-        adjustmentApplication[value.pltId] = [newAdj]
+        adjustmentApplication[value.pltId] = [{...newAdj}]
       }
     })
     console.log(adjustmentApplication);
@@ -457,12 +458,13 @@ export class CalibrationService implements NgxsOnInit {
 
     let pltId = payload.pltId;
     let newAdj = {...payload.adjustement};
+    let lastpltId = payload.lastpltId;
+    const addtoAdj = [...state.content[this.prefix].calibration.adjustmentApplication[pltId], newAdj];
+    const removefrom = [..._.filter(state.content[this.prefix].calibration.adjustmentApplication[lastpltId], row => row.id != newAdj.id)];
 
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.adjustmentApplication = [...state.content[this.prefix].calibration.adjustmentApplication, {
-        pltId: pltId,
-        adj: newAdj
-      }]
+      draft.content[this.prefix].calibration.adjustmentApplication[pltId] = addtoAdj;
+      draft.content[this.prefix].calibration.adjustmentApplication[lastpltId] = removefrom;
     }));
   }
 

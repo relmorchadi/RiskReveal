@@ -283,7 +283,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
         title: 'basket',
       },
       tabs: {'basket': true, 'pltDetail': true},
-      visible: true,
+      visible: false,
       mode: "pop-up"
     };
     this.setRightMenuSelectedTab('basket');
