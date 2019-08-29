@@ -68,7 +68,8 @@
         </nz-dropdown>
       </div>
       <div style="display: flex; flex-direction: column" *ngIf="showOverrideButton()">
-        <button class="a-buttons-contained-micro" (click)="showOverrideModal = true">Override Selected</button>
+        <button class="a-buttons-contained-disabled"  *ngIf="selectionForOverride.length == 0">Override Selected</button>
+        <button class="a-buttons-contained-micro" (click)="showOverrideModal = true" *ngIf="selectionForOverride.length != 0">Override Selected</button>
         <button class="a-buttons-linked" (click)="cancelOverride()">Cancel Override Action</button>
       </div>
       <div style="width:30%;">
@@ -254,10 +255,16 @@
                 </div>
 
                 <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'overridden'" class="icon-holder">
-                  <span nz-tooltip [nzTitle]="getReasonOverride(item,grain, rowData)">
+                  <span nz-tooltip [nzTitle]="reason">
                     <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
                   </span>
                 </div>
+
+                <ng-template #reason>
+                 Basis: {{getReasonOverride(item,grain, rowData).rr}}
+                  <br/>
+                 Narrative: {{getReasonOverride(item,grain, rowData).rd}}
+                </ng-template>
 
                 <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'override'" class="icon-holder">
                   <ng-container>
@@ -295,7 +302,7 @@
                       </ng-container>
                     </div>
                     <span class="plt-info">{{plt.pltId | textLength}}</span>
-                    <span class="plt-info" style="width: 26%;">{{plt.pltName}}</span>
+                    <span class="plt-info text-ellipsis" style="width: 26%;">{{plt.pltName }}</span>
                     <!--<label nz-checkbox></label>-->
                     <div class="plt-info peril-indicator"
                          [ngStyle]="{'background-color': perilZone(plt.peril)?.color}">{{perilZone(plt.peril)?.peril}}</div>
@@ -323,7 +330,8 @@
 
 <app-attach-plt-pop-up
   [isVisible]="addRemoveModal"
-  (onVisibleChange)="addRemoveModal= $event">
+  (onVisibleChange)="addRemoveModal= $event"
+(attachArray)="applyAttachChanges($event)">
 </app-attach-plt-pop-up>
 
 <p-dialog
