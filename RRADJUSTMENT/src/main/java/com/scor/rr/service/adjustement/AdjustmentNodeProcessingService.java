@@ -265,10 +265,10 @@ public class AdjustmentNodeProcessingService {
             return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), parameterEntities);
         }
         else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
-            return CalculAdjustement.nonLineaireEventDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
+            return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
          }
-        else if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            return CalculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
+        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
             for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
@@ -295,7 +295,7 @@ public class AdjustmentNodeProcessingService {
         else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
             adjustmentNodeService.savePeatDataFile(node, parameterRequest);
         }
-        else if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
             adjustmentNodeService.savePeatDataFile(node, parameterRequest);
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {

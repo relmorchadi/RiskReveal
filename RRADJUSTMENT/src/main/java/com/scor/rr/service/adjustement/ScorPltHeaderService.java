@@ -71,10 +71,10 @@ public class ScorPltHeaderService {
             return CalculAdjustement.oepReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBendings());
         }
         if (NonLinearEventDriven.getValue().equals(parameterProcess.getType())) {
-            return CalculAdjustement.nonLineaireEventDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
+            return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
-        if (NONLINEAIRERETURNPERIOD.getValue().equals(parameterProcess.getType())) {
-            return CalculAdjustement.nonLineaireEventPeriodDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
+        if (NONLINEARRETURNPERIOD.getValue().equals(parameterProcess.getType())) {
+            return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData, parameterProcess.isCapped(), parameterProcess.getPeatData());
         }
         if (NONLINEARRETURNEVENTPERIOD.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBendings());

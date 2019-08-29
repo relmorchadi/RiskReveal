@@ -5,7 +5,6 @@ import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.EventDateFormatException;
 import com.scor.rr.exceptions.fileExceptionPlt.PLTDataNullException;
@@ -25,7 +24,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.*;
 
 public class CalculAdjustementOEPReturnPeriodBandingTest {
-    private static final Logger log = LoggerFactory.getLogger(CalculAdjustementNonLinearEventDrivenAdjustmentTest.class);
+    private static final Logger log = LoggerFactory.getLogger(CalcAdjustmentsNonLinearEventDrivenAdjustmentTest.class);
     private List<PLTLossData> pltLossDataList;
     private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings;
     private double periodConstante;

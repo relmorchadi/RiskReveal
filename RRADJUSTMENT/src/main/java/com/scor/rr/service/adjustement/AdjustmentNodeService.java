@@ -172,8 +172,8 @@ public class AdjustmentNodeService {
             savePeatDataFile(node, parameterRequest);
             log.info(" ----- success  Saving Parameter for Node ----------");
         }
-        else if (NONLINEAIRERETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            log.info("{}",NONLINEAIRERETURNPERIOD.getValue());
+        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            log.info("{}",NONLINEARRETURNPERIOD.getValue());
             savePeatDataFile(node, parameterRequest);
             log.info(" ----- success  Saving Parameter for Node ----------");
         }

@@ -22,7 +22,6 @@ public class DefaultAdjustmentLookupTest {
 
     @Autowired
     DefaultAdjustmentService defaultAdjustmentService;
-    int scorPltHeaderInput;
 
     @Before
     public void setUp() throws Exception {
