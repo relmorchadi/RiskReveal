@@ -294,7 +294,23 @@
                   <i class="icon-filter" (click)="filterModalVisibility = true"></i>
                 </div>
               </div>
-              <div style="display: flex;">
+              <div style="display: flex; flex-direction: column">
+                <div class="menu-icon-wrap">
+                  <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                    <a style="max-height: 28px;display: flex;" nz-dropdown>
+                      <i class="icon-settings_24px"></i>
+                    </a>
+                    <ul nz-menu style="font-size: 12px">
+                      <li nz-menu-item>Reset Sort</li>
+                      <li nz-menu-item>Reset Filters</li>
+                      <li nz-menu-item>Reset Sort/Filters</li>
+                      <li nz-menu-divider></li>
+                      <li nz-menu-item (click)="toggleColumnsManager('')">Manage Columns</li>
+                      <li nz-menu-divider></li>
+                      <li nz-menu-item>Unselect All</li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
                            [resizableColumns]="true" columnResizeMode="expand"
@@ -349,22 +365,6 @@
                       </tr>
                     </ng-template>
                   </p-table>
-                </div>
-                <div class="menu-icon-wrap">
-                  <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-                    <a style="max-height: 28px;display: flex;" nz-dropdown>
-                      <i class="icon-settings_24px"></i>
-                    </a>
-                    <ul nz-menu style="font-size: 12px">
-                      <li nz-menu-item>Reset Sort</li>
-                      <li nz-menu-item>Reset Filters</li>
-                      <li nz-menu-item>Reset Sort/Filters</li>
-                      <li nz-menu-divider></li>
-                      <li nz-menu-item (click)="toggleColumnsManager('')">Manage Columns</li>
-                      <li nz-menu-divider></li>
-                      <li nz-menu-item>Unselect All</li>
-                    </ul>
-                  </nz-dropdown>
                 </div>
               </div>
               <div class="import-button">

@@ -485,7 +485,7 @@
                     <p-table #lt [columns]="scrollableColslinking" [value]="portfolio"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
-                             [scrollable]="true" scrollHeight="147px">
+                             [scrollable]="true" [scrollHeight]="getTableHeight()">
                       <ng-template pTemplate="colgroup" let-columns>
                         <colgroup>
                           <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -585,7 +585,7 @@
                     <p-table #lt [columns]="scrollableColslinking" [value]="analysis"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [resizableColumns]="true" columnResizeMode="expand"
-                             [scrollable]="true" scrollHeight="147px">
+                             [scrollable]="true" [scrollHeight]="getTableHeight()">
                       <ng-template pTemplate="colgroup" let-columns>
                         <colgroup>
                           <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -732,10 +732,10 @@
           </div>
         </div>
         <div style="display: flex; justify-content: flex-end;">
-          <button *ngIf="!linking?.autoMode && !collapseDataSources" (click)="patchLinkingMode()"
+          <button *ngIf="!linking?.autoMode" (click)="patchLinkingMode()"
                   style="margin-right: 5px" class="a-buttons-outlined-mini">LINK SUGGESTIONS
           </button>
-          <button *ngIf="linking?.autoMode && !collapseDataSources" (click)="patchLinkingMode()"
+          <button *ngIf="linking?.autoMode" (click)="patchLinkingMode()"
                   style="margin-right: 5px" class="a-buttons-outlined-mini">MANUAL LINKING</button>
           <button *ngIf="!updateMode" (click)="createLinking()" style="padding: 5px 33px;" class="a-buttons-outlined-mini">LINK</button>
           <ng-container *ngIf="updateMode">
