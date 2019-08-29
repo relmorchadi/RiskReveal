@@ -5,6 +5,12 @@ public class AdjustmentNodeOrderRequest {
     private int adjustmentThreadId;
     private int order;
 
+    public AdjustmentNodeOrderRequest(int adjustmentNodeId, int adjustmentThreadId, int order) {
+        this.adjustmentNodeId = adjustmentNodeId;
+        this.adjustmentThreadId = adjustmentThreadId;
+        this.order = order;
+    }
+
     public int getAdjustmentNodeId() {
         return adjustmentNodeId;
     }

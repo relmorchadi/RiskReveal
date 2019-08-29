@@ -2,12 +2,14 @@ package com.scor.rr.service.adjustement;
 
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.*;
+import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +25,6 @@ import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
-import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.NONLINEARRETURNEVENTPERIOD;
 import static com.scor.rr.exceptions.ExceptionCodename.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -62,6 +63,11 @@ public class AdjustmentNodeService {
     @Autowired
     AdjustmentNodeOrderService adjustmentNodeOrderService;
 
+    @Autowired
+    AdjustmentNodeOrderService nodeOrderService;
+
+    @Autowired
+    CloningScorPltHeader cloningScorPltHeader;
 
     //TODO: implementation for updating node
 
@@ -98,10 +104,18 @@ public class AdjustmentNodeService {
                         if(adjustmentNodeRequest.getAdjustmentNodeId() != 0) {
                             adjustmentNodeEntity.setAdjustmentNodeId(adjustmentNodeRequest.getAdjustmentNodeId());
                             deleteParameterNode(adjustmentNodeRequest.getAdjustmentNodeId());
+                            adjustmentNodeOrderService.updateOrder(adjustmentNodeRequest.getAdjustmentNodeId(),adjustmentNodeRequest.getSequence(),adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
                         }
                         adjustmentNodeEntity = adjustmentnodeRepository.save(adjustmentNodeEntity);
                         log.info(" -----  Saving Parameter for Node ----------");
-                        saveParameterNode(adjustmentNodeEntity, new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0, adjustmentNodeRequest.getRpmf() != null ? adjustmentNodeRequest.getRpmf() : 0, adjustmentNodeRequest.getPeatData(), 0, 0, adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()));
+                        nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(),adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(),adjustmentNodeRequest.getSequence()));
+                        saveParameterNode(adjustmentNodeEntity,
+                                new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0,
+                                        adjustmentNodeRequest.getRpmf() != null ? adjustmentNodeRequest.getRpmf() : 0,
+                                        adjustmentNodeRequest.getPeatData(),
+                                        0,
+                                        0,
+                                        adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()));
                         return adjustmentNodeEntity;
                     } else {
                         throwException(THREADNOTFOUND, NOT_FOUND);
@@ -126,6 +140,7 @@ public class AdjustmentNodeService {
         periodBandingParameterService.deleteByNodeId(nodeId);
         eventBasedParameterService.deleteByNodeId(nodeId);
         processingService.delete(nodeId);
+        nodeOrderService.deleteByNodeId(nodeId);
     }
 
     public AdjustmentNodeEntity getAdjustmentNode(Integer nodeId) {
@@ -185,6 +200,20 @@ public class AdjustmentNodeService {
             e.printStackTrace();
         }
     }
+
+    void cloneNode(AdjustmentThreadEntity threadParent, AdjustmentThreadEntity threadClone) {
+        List<AdjustmentNodeEntity> nodeEntities = adjustmentnodeRepository.getAdjustmentNodeEntitiesByAdjustmentThread(threadParent);
+        ScorPltHeaderEntity cloningPlt = threadClone.getScorPltHeaderByFkScorPltHeaderThreadId();
+        for(AdjustmentNodeEntity nodeParent : nodeEntities) {
+            AdjustmentNodeEntity nodeCloned = new AdjustmentNodeEntity(nodeParent);
+            nodeCloned.setAdjustmentNodeByFkAdjustmentNodeIdCloning(nodeParent);
+            nodeCloned.setAdjustmentThread(threadClone);
+            nodeCloned = adjustmentnodeRepository.save(nodeCloned);
+            cloningPlt = processingService.cloneAdjustmentNodeProcessing(nodeParent,nodeCloned,cloningPlt).getScorPltHeaderByFkAdjustedPlt();
+            adjustmentNodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(nodeCloned.getAdjustmentNodeId(),threadClone.getAdjustmentThreadId(),adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadParent.getAdjustmentThreadId(),nodeParent.getAdjustmentNodeId()).getOrderNode()));
+        }
+    }
+
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {
         return () -> new RRException(codeName, httpStatus.value());
     }

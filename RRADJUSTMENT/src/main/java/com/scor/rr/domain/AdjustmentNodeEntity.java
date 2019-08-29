@@ -29,6 +29,16 @@ public class AdjustmentNodeEntity {
 
     }
 
+    public AdjustmentNodeEntity(AdjustmentNodeEntity other) {
+        this.sequence = other.sequence;
+        this.capped = other.capped;
+        this.adjustmentThread = other.adjustmentThread;
+        this.adjustmentBasis = other.adjustmentBasis;
+        this.adjustmentNode = other.adjustmentNode;
+        this.adjustmentType = other.adjustmentType;
+        this.adjustmentState = other.adjustmentState;
+    }
+
     @Basic
     @Column(name = "sequence", nullable = true)
     public Integer getSequence() {

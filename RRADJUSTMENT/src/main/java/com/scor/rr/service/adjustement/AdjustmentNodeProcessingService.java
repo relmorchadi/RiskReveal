@@ -18,6 +18,8 @@ import com.scor.rr.repository.ScorpltheaderRepository;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.apache.commons.io.FilenameUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -35,6 +37,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
 public class AdjustmentNodeProcessingService {
+
+    private static final Logger log = LoggerFactory.getLogger(AdjustmentNodeProcessingService.class);
 
     @Autowired
     AdjustmentnodeprocessingRepository adjustmentnodeprocessingRepository;
@@ -63,7 +67,7 @@ public class AdjustmentNodeProcessingService {
     @Autowired
     CloningScorPltHeader cloningScorPltHeader;
 
-    final static String pathbin = "src/main/resources/file/plt.bin";
+    private final static String pathbin = "src/main/resources/file/plt.bin";
 
     public AdjustmentNodeProcessingEntity findOne(Integer id) {
         return adjustmentnodeprocessingRepository.getOne(id);
@@ -77,16 +81,25 @@ public class AdjustmentNodeProcessingService {
     //Perhaps a refactor need to be done
 
     public AdjustmentNodeProcessingEntity saveByInputPlt(AdjustmentNodeProcessingRequest adjustmentNodeProcessingRequest) {
+        log.info("------ input PLT processing ------");
+        log.info(" getting the input PLT");
         if (scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).isPresent()) {
+            log.info("success getting the input PLT");
             ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.findById(adjustmentNodeProcessingRequest.getScorPltHeaderIdPure()).get();
+            log.info(" getting Node");
             if (adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).isPresent()) {
+                log.info("success getting Node");
                 AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.findById(adjustmentNodeProcessingRequest.getAdjustmentNodeId()).get();
                 AdjustmentNodeProcessingEntity nodeProcessing = new AdjustmentNodeProcessingEntity();
                 if(adjustmentNodeProcessingRequest.getAdjustmentNodeProcessingId()!= 0) {
+                    log.info("updating node processing");
                     nodeProcessing.setAdjustmentNodeProcessingId(adjustmentNodeProcessingRequest.getAdjustmentNodeProcessingId());
+                } else {
+                    log.info("Creating node processing");
                 }
                 nodeProcessing.setScorPltHeaderByFkInputPlt(scorPltHeader);
                 nodeProcessing.setAdjustmentNodeByFkAdjustmentNode(adjustmentNode);
+                log.info("------End saving input PLT processing ------");
                 return adjustmentnodeprocessingRepository.save(nodeProcessing);
             } else {
                 throwException(NODENOTFOUND, NOT_FOUND);
@@ -104,24 +117,38 @@ public class AdjustmentNodeProcessingService {
     //  - Persist PLT to DB
 
     public AdjustmentNodeProcessingEntity saveByAdjustedPlt(AdjustmentParameterRequest parameterRequest) {
+        log.info("------Begin adjusted PLT processing ------");
+        log.info(" getting the input PLT");
         if (scorpltheaderRepository.findById(parameterRequest.getScorPltHeaderInput()).isPresent()) {
+            log.info("success getting the input PLT");
             ScorPltHeaderEntity scorPltHeader = scorpltheaderRepository.findById(parameterRequest.getScorPltHeaderInput()).get();
+            log.info(" getting Node");
             if (adjustmentnodeRepository.findById(parameterRequest.getNodeId()).isPresent()) {
+                log.info("success getting Node");
                 AdjustmentNodeEntity adjustmentNode = adjustmentnodeRepository.findById(parameterRequest.getNodeId()).get();
+                log.info("getting Node Processing");
                 AdjustmentNodeProcessingEntity nodeProcessing = adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntity(parameterRequest.getNodeId());
+                log.info("success getting Node Processing");
                 if(nodeProcessing != null) {
+                    log.info("saving Parametre Node Processing");
                     saveParameterNode(adjustmentNode, parameterRequest);
+                    log.info("success saving Parametre Node Processing");
                     List<PLTLossData> pltLossData = getLossFromPltInputAdjustment(scorPltHeader);
                     pltLossData = calculateProcessing(adjustmentNode, parameterRequest, pltLossData);
+                    log.info("saving file LOSS for adjusted PLT");
                     BinFileEntity binFileEntity = savePLTFile(pltLossData);
                     if (binFileEntity != null) {
+                        log.info("success saving file LOSS for adjusted PLT");
+                        log.info("saving PLT");
                         ScorPltHeaderEntity scorPltHeaderAdjusted = new ScorPltHeaderEntity(scorPltHeader);
                         scorPltHeaderAdjusted.setBinFileEntity(binFileEntity);
                         scorPltHeaderAdjusted.setCreatedOn(new Timestamp(new Date().getTime()));
                         scorPltHeaderAdjusted.setCreatedBy("HAMZA");
                         scorPltHeaderAdjusted = scorpltheaderRepository.save(scorPltHeaderAdjusted);
+                        log.info("success saving PLT");
                         nodeProcessing.setScorPltHeaderByFkAdjustedPlt(scorPltHeaderAdjusted);
                         nodeProcessing.setAdjustmentNodeByFkAdjustmentNode(adjustmentNode);
+                        log.info("------END adjusted PLT processing ------");
                         return adjustmentnodeprocessingRepository.save(nodeProcessing);
                     } else {
                         throwException(BINFILEEXCEPTION, NOT_FOUND);
@@ -277,6 +304,15 @@ public class AdjustmentNodeProcessingService {
             }
         }
         else throwException(TYPENOTFOUND, NOT_FOUND);
+    }
+
+    public AdjustmentNodeProcessingEntity cloneAdjustmentNodeProcessing(AdjustmentNodeEntity nodePure,AdjustmentNodeEntity nodeCloned,ScorPltHeaderEntity pltHeaderPure) {
+        AdjustmentNodeProcessingEntity processingEntitypure =  adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntitiesByAdjustmentNodeByFkAdjustmentNode(nodePure);
+        AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
+        processingEntityCloned.setAdjustmentNodeByFkAdjustmentNode(nodeCloned);
+        processingEntityCloned.setScorPltHeaderByFkInputPlt(pltHeaderPure);
+        processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt()));
+        return processingEntityCloned;
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

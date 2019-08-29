@@ -1,12 +1,12 @@
 package com.scor.rr.service.adjustement;
 
 import com.scor.rr.domain.AdjustmentThreadEntity;
+import com.scor.rr.domain.ScorPltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentThreadRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
-import org.dozer.DozerBeanMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.exceptions.ExceptionCodename.*;
+import static com.scor.rr.exceptions.ExceptionCodename.PLTNOTFOUNT;
+import static com.scor.rr.exceptions.ExceptionCodename.THREADNOTFOUND;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -22,6 +23,9 @@ public class AdjustmentThreadService {
 
     @Autowired
     AdjustmentThreadRepository adjustmentthreadRepository;
+
+    @Autowired
+    AdjustmentNodeService nodeService;
 
     @Autowired
     ScorpltheaderRepository scorpltheaderRepository;
@@ -36,6 +40,7 @@ public class AdjustmentThreadService {
 
     //NOTE: thread is used to group a list of in-order nodes. How the implementation is done for persisting a thread with these nodes ?
     //Refactor need to be done (methods name does not refer to what they are doing)
+    //Done
 
     public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest){
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
@@ -62,6 +67,18 @@ public class AdjustmentThreadService {
             throwException(THREADNOTFOUND, NOT_FOUND);
             return null;
         }
+    }
+
+    public void cloneThread(ScorPltHeaderEntity purePlt) {
+       List<AdjustmentThreadEntity> threads =  adjustmentthreadRepository.getAdjustmentThreadEntitiesByScorPltHeaderByFkScorPltHeaderThreadId(purePlt);
+       for(AdjustmentThreadEntity threadParent:threads) {
+           AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
+           threadClone.setThreadType(threadParent.getThreadType());
+           threadClone.setLocked(threadParent.getLocked());
+           threadClone.setScorPltHeaderByFkScorPltHeaderThreadId(purePlt);
+           threadClone = adjustmentthreadRepository.save(threadClone);
+           nodeService.cloneNode(threadParent,threadClone);
+       }
     }
 
     public void delete(Integer id) {

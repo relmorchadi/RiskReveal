@@ -8,6 +8,7 @@ import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.RRException;
 import com.scor.rr.repository.BinfileRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.service.adjustement.AdjustmentThreadService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,14 +27,18 @@ public class CloningScorPltHeader {
     @Autowired
     BinfileRepository binfileRepository;
 
+    @Autowired
+    AdjustmentThreadService threadService;
+
     public ScorPltHeaderEntity cloneScorPltHeader(ScorPltHeaderEntity pltHeaderEntityInitial){
         ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity();
         scorPltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
         scorPltHeaderEntityClone.setTargetRap(pltHeaderEntityInitial.getTargetRap());
         scorPltHeaderEntityClone.setMarketChannel(pltHeaderEntityInitial.getMarketChannel());
         scorPltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
-        return scorpltheaderRepository.save(scorPltHeaderEntityClone);
-
+        scorPltHeaderEntityClone = scorpltheaderRepository.save(scorPltHeaderEntityClone);
+        threadService.cloneThread(scorPltHeaderEntityClone);
+        return scorPltHeaderEntityClone;
     }
 
     private BinFileEntity cloneBinFile(BinFileEntity binFileEntity) {

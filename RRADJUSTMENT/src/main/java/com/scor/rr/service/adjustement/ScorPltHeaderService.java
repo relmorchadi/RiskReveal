@@ -1,11 +1,13 @@
 package com.scor.rr.service.adjustement;
 
-import com.scor.rr.configuration.file.*;
+import com.scor.rr.configuration.file.BinaryPLTFileWriter;
+import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.dto.adjustement.AdjustmentManuelleParameterProcess;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.fileExceptionPlt.RRException;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
+import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.apache.commons.io.FileUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,7 +19,6 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
-import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.NONLINEARRETURNEVENTPERIOD;
 import static com.scor.rr.exceptions.ExceptionCodename.TYPENOTFOUND;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -38,23 +39,23 @@ public class ScorPltHeaderService {
     }
 
     public Double CoefOfVariance(String path) throws RRException {
-        return CalculAdjustement.CoefOfVariance(getPltLossDataFromFile(path));
+        return StatisticAdjustment.CoefOfVariance(getPltLossDataFromFile(path));
     }
 
     public Double AEPTVaRMetrics(String path) throws RRException {
-        return CalculAdjustement.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(getPltLossDataFromFile(path)));
+        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(getPltLossDataFromFile(path)));
     }
 
     public Double OEPTVaRMetrics(String path) throws RRException {
-        return CalculAdjustement.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(getPltLossDataFromFile(path)));
+        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(getPltLossDataFromFile(path)));
     }
 
     public Double averageAnnualLoss(String path) throws RRException {
-        return CalculAdjustement.averageAnnualLoss(getPltLossDataFromFile(path));
+        return StatisticAdjustment.averageAnnualLoss(getPltLossDataFromFile(path));
     }
 
     public Double stdDev(String path) throws RRException {
-        return CalculAdjustement.stdDev(getPltLossDataFromFile(path));
+        return StatisticAdjustment.stdDev(getPltLossDataFromFile(path));
     }
 
     //NOTE: this service should be open and as a part of API
