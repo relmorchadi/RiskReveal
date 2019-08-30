@@ -331,6 +331,8 @@
               [adjutmentApplication]="adjutmentApplication"
               (expandAll)="expandAll($event)"
               (sortChange)="sortChange($event)"
+              (checkboxSort)="checkBoxsort()"
+              (onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId)"
               [EPMColumns]="EPMColumns"
               [sortData]="sortData"
               [frozenColumns]="frozenColumns"
@@ -389,6 +391,8 @@
 <app-add-remove-pop-up
   [isVisible]="addRemoveModal"
   [selectionStep]="'plt'"
+  [userTags]="userTags"
+  [projects]="projects"
   (onSave)="addRemoveOnSave($event)"
   [stepConfig]=" {wsId: workspaceId,
     uwYear: uwy,

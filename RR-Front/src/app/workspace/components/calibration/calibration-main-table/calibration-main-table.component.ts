@@ -36,7 +36,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
   @Output('closeReturnPeriods') closeReturnPeriodsEmitter: EventEmitter<any> = new EventEmitter();
   @Output('sortChange') sortChangeEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('checkboxSort') checkboxSortEmitter: EventEmitter<any> = new EventEmitter();
   @Output('expandAll') expandEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('onDrop') onDropEmitter: EventEmitter<any> = new EventEmitter();
 
   @Input('extended') extended: boolean;
   // @Input('cm') cm: any;
@@ -103,6 +105,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   filterInput: string = "";
   singleValue: any;
   global: any;
+  lastDragPltId: any;
   dragPlaceHolderId: any;
   dragPlaceHolderCol: any;
   draggedAdjs: any;
@@ -370,15 +373,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     let isSelected;
     _.forEach(this.listOfPltsThread, (plt, i) => {
       if (plt.pltId == pltId) {
-        console.log('opla')
         isSelected = plt.selected
       }
     });
-    console.log('isSelected', isSelected)
-    console.log(this.listOfPltsThread)
-    // this.selectSinglePLT(pltId,!_.find(this.listOfPltsThread, plt => plt.pltId == pltId).selected);
 
-    console.log(this.selectedListOfPlts);
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
@@ -404,14 +402,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   checkBoxsort() {
-    this.activeCheckboxSort = !this.activeCheckboxSort;
-    if (this.activeCheckboxSort) {
-      this.listOfPltsThread = _.sortBy(this.listOfPltsThread, [(o) => {
-        return !o.selected;
-      }]);
-    } else {
-      this.listOfPltsThread = this.listOfPltsDataCache;
-    }
+    this.checkboxSortEmitter.emit();
   }
 
   sortChange(field: any, sortCol: any) {
@@ -476,8 +467,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
        adjustement: this.draggedAdjs
      }))*/
     this.adjustColWidth(this.draggedAdjs);
+    console.log(this.draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
+    this.onDropEmitter.emit({col: col, pltId: pltId, draggedAdjs: this.draggedAdjs, lastpltId: this.lastDragPltId});
   }
 
   emitFilters(filters: any) {
@@ -647,5 +640,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       console.log(this.lastSelectedId);
       return;
     }
+  }
+
+  onDragStart(adj, pltId) {
+    this.draggedAdjs = adj;
+    this.lastDragPltId = pltId;
   }
 }
