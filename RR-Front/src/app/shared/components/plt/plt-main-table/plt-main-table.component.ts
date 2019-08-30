@@ -32,6 +32,8 @@ export class PltMainTableComponent implements OnInit {
 
   @Input() tableInputs: tableStore.Input;
 
+
+
   @Output() setTagModalVisibility = new EventEmitter();
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();

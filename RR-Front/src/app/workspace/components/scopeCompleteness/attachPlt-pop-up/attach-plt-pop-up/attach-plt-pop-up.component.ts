@@ -55,7 +55,10 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
 
   @Select(WorkspaceState.getScopeCompletenessData) state$;
 
+
   @Input() isVisible;
+  @Input('rowData') rowData:any;
+
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
 
   tagContextMenu = [
@@ -458,6 +461,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
       }
     };
     this.onVisibleChange.emit(false);
+    this.rowData = null;
     this.destroy();
   }
 
@@ -643,6 +647,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
     };
     this.attachPltsContainer= [];
 
+
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
     ).subscribe(() => {
@@ -750,6 +755,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   }
 
   getPlts() {
+    if(this.rowData == null){
     return this.state$
       .pipe(
         this.unsubscribeOnDestroy,
@@ -762,8 +768,45 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
             }
           }
         )))
-      )
+      )}
+    else{
+      return this.state$
+        .pipe(
+          this.unsubscribeOnDestroy,
+          mergeMap(plts => of(_.map(_.filter(plts, (pt:any) => {
+            if(this.rowData.sort == "1"){
+              if(pt.regionPerilCode == this.rowData.rowData){
+                if(_.includes(this.rowData.child, pt.grain)){
+                  return true
+                }else{
+                  return false;
+                }
+              }
+              else{ return false;}
+            }
+            if(this.rowData.sort == "2"){
+              if(pt.grain == this.rowData.rowData){
+                if(_.includes(this.rowData.child, pt.regionPerilCode)){
+                  return true
+                }else{
+                  return false;
+                }
+              }else{
+                return false;
+              }
 
+            }
+            }), (plt: any) => {
+              return {
+                ..._.pick(plt, ['userTags', 'pltName', 'peril', 'regionPerilCode', 'regionPerilName', 'grain']),
+                pltId: plt.pltId,
+                visible: true,
+                treatySectionsState: this.getTreatyStateForPlts(plt)
+              }
+            }
+          )))
+        )
+    }
   }
 
   getTreatyStateForPlts(plt) {

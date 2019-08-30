@@ -937,7 +937,7 @@ const treatySections = [
     regionPerils: [{
       id: 'EUCS-DE',
       description: 'Europe (Germany)',
-      selected: false,
+      attached: false,
       targetRaps: [{
         id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
@@ -952,7 +952,7 @@ const treatySections = [
     targetRaps: [{
       id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
-      selected: false,
+      attached: false,
       regionPerils: [{
         id: 'EUCS-DE',
         description: 'Europe (Germany)',
@@ -971,7 +971,7 @@ const treatySections = [
     regionPerils: [{
       id: 'EUET',
       description: 'Europe',
-      selected: false,
+      attached: false,
       targetRaps: [
         {
           id: 'AXA-3rdCov_05PA753_WS_Eng_Client',
@@ -997,7 +997,7 @@ const treatySections = [
     targetRaps: [{
       id: 'AXA-3rdCov_05PA753_WS_NonEng_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
-      selected: false,
+      attached: false,
       regionPerils: [{
         id: 'EUET',
         description: 'Europe',
@@ -1012,7 +1012,7 @@ const treatySections = [
       {
         id: 'AXA-3rdCov_05PA753_WS_Eng_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
-        selected: false,
+        attached: false,
         regionPerils: [{
           id: 'EUET',
           description: 'Europe',
@@ -1031,7 +1031,7 @@ const treatySections = [
     regionPerils: [{
       id: 'DEFL',
       description: 'Germany',
-      selected: false,
+      attached: false,
       targetRaps: [
         {
           id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
@@ -1058,7 +1058,7 @@ const treatySections = [
       {
         id: 'EUCS-DE',
         description: 'Europe (Germany)',
-        selected: false,
+        attached: false,
         targetRaps: [{
           id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
@@ -1074,7 +1074,7 @@ const treatySections = [
     targetRaps: [{
       id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
-      selected: false,
+      attached: false,
       regionPerils: [{
         id: 'EUCS-DE',
         description: 'Germany Flood',
@@ -1089,7 +1089,7 @@ const treatySections = [
       {
         id: 'AXA-3rdCov_05PA753_FL_NonEng_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
-        selected: false,
+        attached: false,
         regionPerils: [{
           id: 'DEFL',
           description: 'Germany Flood',
@@ -1104,7 +1104,7 @@ const treatySections = [
       {
         id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
-        selected: false,
+        attached: false,
         regionPerils: [{
           id: 'DEFL',
           description: 'Germany Flood',

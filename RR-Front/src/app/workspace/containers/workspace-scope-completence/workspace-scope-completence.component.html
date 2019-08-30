@@ -110,8 +110,10 @@
 
             <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px">
               <div>{{item.id}}</div>
-              <div class="icon-holder">
-
+              <div *ngIf="checkTreatySectionAttached(item)" class="icon-holder">
+                <ng-container>
+                  <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                </ng-container>
               </div>
             </th>
             <th style="width: 130px; height: 74px;" class="divided-col">Completion</th>
@@ -124,6 +126,13 @@
                 <div class="info-rp" (click)="toggleParentExpand(rowData)" [pRowToggler]="rowData">
 
                   <ng-container *ngIf="selectedSortBy == 'Minimum Grain / RAP'">
+                    <div style="width: 20px;">
+                      <div *ngIf="checkRowAttached(rowData)">
+                        <ng-container>
+                          <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                        </ng-container>
+                      </div>
+                    </div>
                     <i *ngIf="!regionCodes[rowData.id]" style="margin-top: 5px;"
                        class="icon-keyboard_arrow_down_24px"></i>
                     <i *ngIf="regionCodes[rowData.id]" style="margin-top: 5px;" class="icon-keyboard_arrow_up_24px"></i>
@@ -134,6 +143,13 @@
                   </ng-container>
 
                   <ng-container *ngIf="selectedSortBy == 'RAP / Minimum Grain'">
+                    <div style="width: 20px;margin-top: 5px;">
+                      <div *ngIf="checkRowAttached(rowData)">
+                        <ng-container>
+                          <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                        </ng-container>
+                      </div>
+                    </div>
                     <i *ngIf="!regionCodes[rowData.id]" style="margin-top: 13px;"
                        class="icon-keyboard_arrow_down_24px"></i>
                     <i *ngIf="regionCodes[rowData.id]" style="margin-top: 13px;"
@@ -160,6 +176,7 @@
                     <ul nz-menu style="font-size: 12px">
                       <li nz-menu-item (click)="rowData.override = true">Override</li>
                       <li nz-menu-item>Generate Synthetic</li>
+                      <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>
                     </ul>
                   </nz-dropdown>
 
@@ -173,6 +190,7 @@
                     <ul nz-menu style="font-size: 12px">
                       <li nz-menu-item (click)="rowData.override = true">Override</li>
                       <li nz-menu-item>Generate Synthetic</li>
+                      <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>
                     </ul>
                   </nz-dropdown>
 
@@ -236,6 +254,13 @@
             <tr [ngClass]="{'expanded-inner-row': grains[grain.id]}">
               <th class="inner-line">
                 <div class="grain-info-wrapper" (click)="toggleExpanded(grain)">
+                  <div style="width: 20px;">
+                    <div *ngIf="checkRowChildAttached(rowData,grain)">
+                      <ng-container>
+                        <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                      </ng-container>
+                    </div>
+                  </div>
                   <i *ngIf="!grains[grain.id]" class="icon-keyboard_arrow_down_24px"></i>
                   <i *ngIf="grains[grain.id]" class="icon-keyboard_arrow_up_24px"></i>
                   <i *ngIf="selectedSortBy == 'RAP / Minimum Grain'" class="icon-map-marker-alt"></i>
@@ -331,6 +356,7 @@
 <app-attach-plt-pop-up
   [isVisible]="addRemoveModal"
   (onVisibleChange)="addRemoveModal= $event"
+  [rowData]="rowInformation"
 (attachArray)="applyAttachChanges($event)">
 </app-attach-plt-pop-up>
 
