@@ -32,14 +32,22 @@
           </ng-template>
           <div style="height:100%;width:100%">
             <gridster  [options]="options" style="background-color: transparent" >
-              <ng-container *ngFor="let item of dashboard.items">
+              <ng-container *ngFor="let item of loopOverDashboard(dashboard)">
                 <gridster-item *ngIf="item.selected" [item]="item?.position ">
-                  <renewal-contract-scope [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent'"
+                    [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="deleteItem(dashboard.id, $event)"
                                           (changeName)="changeName(dashboard.id, $event)"
                                           (duplicate)="duplicate(dashboard.id, $event)"
                                           class="no-drag">
                   </renewal-contract-scope>
+                  <app-fac-widget *ngIf="item.componentName === 'facWidgetComponent'"
+                    [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                    (delete)="deleteItem(dashboard.id, $event)"
+                    (changeName)="changeName(dashboard.id, $event)"
+                    (duplicate)="duplicate(dashboard.id, $event)"
+                  class="no-drag">
+                  </app-fac-widget>
                 </gridster-item>
               </ng-container>
             </gridster>
@@ -125,7 +133,7 @@
         <ul class="widgets-list">
           <ng-container *ngFor="let treaty of selectedDashboard.items; let i = index">
             <li *ngIf="i < 5" class="widget-item"
-                (click)="addRemoveItem(treaty) "
+                (click)="addRemoveItem(treaty, selectedDashboard)"
                 [ngClass]="{'active-widget-item': treaty?.selected}">
               <!--<i [ngClass]="treaty.icon"></i> -->
               {{treaty?.name}}
@@ -138,8 +146,9 @@
           <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
         </div>
         <ul class="widgets-list" style="height: 50px;">
-          <li *ngFor="let fac of widgetsMockData.fac" class="widget-item" (click)="fac.selected = !fac.selected  "
-              [ngClass]="{'active-widget-item': fac.selected}">
+          <li *ngFor="let fac of selectedDashboard.fac"
+              (click)="addRemoveItemFac(fac, selectedDashboard)"
+              class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">
             <i [ngClass]="fac.icon"></i>
             {{fac.title}}
             <i class="float-right mr-1 mt-1"

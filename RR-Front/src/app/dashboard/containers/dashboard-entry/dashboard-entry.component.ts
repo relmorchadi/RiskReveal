@@ -66,8 +66,9 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-          componentName: 'RenewalContractScopeComponent', selected: false
+          id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
     },
@@ -119,8 +120,9 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-          componentName: 'RenewalContractScopeComponent', selected: false
+          id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
     },
@@ -158,8 +160,8 @@ export class DashboardEntryComponent implements OnInit {
     ],
     fac: [
       {
-        id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-        componentName: 'RenewalContractScopeComponent', selected: false
+        id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
+        componentName: 'facWidgetComponent', selected: false
       }
     ]
   };
@@ -270,7 +272,7 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   updateDashboardMockData() {
-    this.dashboardsMockData = this.dashboards // _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
+    this.dashboardsMockData = this.dashboards; // _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
     console.log('here 2');
   }
 
@@ -386,8 +388,34 @@ export class DashboardEntryComponent implements OnInit {
     this.selectedDashboard = filterData[0];
   }
 
-  addRemoveItem(item) {
-    item.selected = !item.selected;
+  addRemoveItem(item, dashboard) {
+    dashboard.items.forEach(ds => {
+      if (ds.id === item.id) {
+        ds.selected = !ds.selected;
+      }
+    });
+    _.forEach(this.dashboards , ds => {
+      if (ds.id === dashboard.id) {
+        ds = dashboard;
+      }
+    });
+    this.updateDashboardMockData();
+  }
+
+  addRemoveItemFac(item, dashboard) {
+    dashboard.fac.forEach(ds => {
+      console.log(ds, item);
+      if (ds.id === item.id) {
+        ds.selected = !ds.selected;
+      }
+    });
+    console.log(dashboard.fac);
+    _.forEach(this.dashboards , ds => {
+      if (ds.id === dashboard.id) {
+        ds = dashboard;
+      }
+    });
+    this.updateDashboardMockData();
   }
 
   onEnterAdd(keyEvent) {
@@ -396,4 +424,8 @@ export class DashboardEntryComponent implements OnInit {
     }
   }
 
+  loopOverDashboard(dashboard: any) {
+    console.log(_.concat(dashboard.items, dashboard.fac));
+    return _.concat(dashboard.items, dashboard.fac) ;
+  }
 }

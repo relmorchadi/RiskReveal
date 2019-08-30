@@ -46,6 +46,23 @@ export class SubmissionPageComponent implements OnInit {
   data: any;
   metaData: any;
 
+  coverageTemplate = [
+    {field: 'divisionNo', header: 'Division No', width: '40px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+    {field: 'principal', header: 'Principal', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+    {field: 'lob', header: 'LOB', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+    {field: 'coverage', header: 'Coverage', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true},
+    {field: 'action', header: 'Action', width: '40px', type: 'action', sorted: false, filtered: false, highlight: false, visible: true},
+  ];
+
+  dataCoverage = [
+    {
+      divisionNo: 1,
+      principal: true,
+      lob: 'Property',
+      coverage: 'PD, BI'
+    }
+  ]
+
   constructor() { }
 
   ngOnInit() {
