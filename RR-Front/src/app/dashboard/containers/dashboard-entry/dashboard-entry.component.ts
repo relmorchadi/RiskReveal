@@ -4,6 +4,7 @@ import {RenewalContractScopeComponent} from '../../components/renewal-contract-s
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
 import {NotificationService} from "../../../shared/notification.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -166,7 +167,8 @@ export class DashboardEntryComponent implements OnInit {
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
 
-  constructor(private nzMessageService: NzMessageService, private notificationService: NotificationService) {
+  constructor(private nzMessageService: NzMessageService, private notificationService: NotificationService,
+              private router: Router) {
   }
 
   ngOnInit() {
@@ -270,6 +272,10 @@ export class DashboardEntryComponent implements OnInit {
   updateDashboardMockData() {
     this.dashboardsMockData = this.dashboards // _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
     console.log('here 2');
+  }
+
+  routerNavigate() {
+    this.router.navigate(['/CreateNewFile']);
   }
 
   changeItemPosition() {

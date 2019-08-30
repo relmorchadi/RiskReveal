@@ -3,7 +3,7 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {combineLatest} from 'rxjs';
 import * as _ from 'lodash';
-import {dataTable, dataTable2, trestySections} from './data';
+import {trestySections} from './data';
 import {ActivatedRoute, Router} from '@angular/router';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
@@ -21,6 +21,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   @ViewChild('pTable') pTable: any;
 
+
   wsIdentifier;
   addRemoveModal: boolean = false;
   showOverrideModal: boolean = false;
@@ -29,6 +30,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   selectionForOverride = [];
   overrideReason: string;
   overrideReasonExplained: string = '';
+  attachArray: any;
 
   dataSource: any;
   workspaceId: any;
@@ -67,13 +69,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = value;
-      this.listOfPltsData = this.getSortedPlts(this.state)
-      console.log(this.state);
-
-
-      // this.dataSource = this.dataSource.map((dt, k) => dt = {...dt, id: k});
-      this.dataSource = dataTable;
+      this.listOfPltsData = this.getSortedPlts(this.state);
       this.treatySections = _.toArray(trestySections);
+      this.dataSource = this.getData(this.treatySections[0]);
+      console.log("onInit", this.treatySections[0]);
       this.detectChanges();
     });
 
@@ -123,6 +122,134 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     ]);
   }
 
+  // getData(treatySections) {
+  //   let res = [];
+  //   const treatySectionss = [...treatySections]
+  //   console.log('11111111');
+  //   _.forEach(treatySectionss, treatySection => {
+  //     _.forEach(treatySection.regionPerils, regionPeril => {
+  //       let object = {
+  //         id: regionPeril.id,
+  //         description: regionPeril.description,
+  //         override: false,
+  //         selected: false,
+  //         child: _.merge([], [...(_.find(res, item => item.id == regionPeril.id) || { child: []}).child , ...regionPeril.targetRaps])
+  //       };
+  //       const index = _.findIndex(res, row => row.id == object.id);
+  //       if (index == -1) {
+  //         res.push( _.merge({},object))
+  //       } else {
+  //
+  //         _.forEach(_.merge([],object.child) ,tr => {
+  //           tr.pltsAttached.forEach(plt => {
+  //             res[index].child.forEach(trr => {
+  //               if (tr == trr) {
+  //                 const index2 = _.findIndex(trr.pltsAttached, (pplt: any) => pplt.pltId == plt.pltId)
+  //                 if (index2 == -1) {
+  //                   trr.pltsAttached = _.merge([], [...trr.pltsAttached, plt])
+  //
+  //                 }
+  //               }
+  //             })
+  //             /*res[index] = {...res[index], child: _.map(res[index].child, trr => {
+  //                 if (tr == trr) {
+  //                   const index2 = _.findIndex(trr.pltsAttached, (pplt: any) => pplt.pltId == plt.pltId)
+  //                   if (index2 == -1) {
+  //                     return {
+  //                       ...trr,
+  //                       pltsAttached : [...trr.pltsAttached, plt]
+  //                     }
+  //                   }
+  //                 } else return trr;
+  //             })}*/
+  //           })
+  //         })
+  //
+  //       }
+  //
+  //     })
+  //   });
+  //   console.log("this has been executed");
+  //   return res;
+  // };
+
+  getData(treatySections) {
+    let res = [];
+    let treatySectionsClone = _.cloneDeep(treatySections);
+
+    _.forEach(treatySectionsClone, treatySection => {
+      _.forEach(treatySection.regionPerils, regionPeril => {
+        let object = {
+          id: regionPeril.id,
+          description: regionPeril.description,
+          override: false,
+          selected: false,
+          child:  this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || { child: []}).child, regionPeril.targetRaps )
+        };
+        const index = _.findIndex(res, row => row.id == object.id);
+        if (index == -1) {
+          res.push(object)
+        } else {
+          res[index] = object;
+        }
+      })
+    });
+    return _.cloneDeep(res);
+  }
+
+  getDataTwo(treatySections){
+    let res = [];
+    let treatySectionsClone = _.cloneDeep(treatySections);
+
+    _.forEach(treatySectionsClone, treatySection => {
+      _.forEach(treatySection.targetRaps, targetRap => {
+        let object = {
+          id: targetRap.id,
+          description: targetRap.description,
+          override: false,
+          selected: false,
+          child:  this._mergeFunctionTwo((_.find(res, item => item.id == targetRap.id) || { child: []}).child, targetRap.regionPerils )
+        };
+        const index = _.findIndex(res, row => row.id == object.id);
+        if (index == -1) {
+          res.push(object)
+        } else {
+          res[index] = object;
+        }
+      })
+    });
+    return _.cloneDeep(res);
+
+  }
+
+  private _mergeFunction(source, target) {
+    let newData = [...source];
+
+    target.forEach(tr => {
+      const index = _.findIndex(newData, item => item.id == tr.id);
+      if (index != -1) {
+        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+      } else {
+        newData = [...newData, tr];
+      }
+    });
+    return newData;
+  }
+
+  private _mergeFunctionTwo(source, target) {
+    let newData = [...source];
+
+    target.forEach(tr => {
+      const index = _.findIndex(newData, item => item.id == tr.id);
+      if (index != -1) {
+        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+      } else {
+        newData = [...newData, tr];
+      }
+    });
+    return newData;
+  }
+
   /** Get The plts Sorted by the hierarchy chosen**/
   getSortedPlts(data, type = 'grain') {
     let SortConfig = {
@@ -168,13 +295,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.grains = {};
     this.regionCodes = {};
     if (item == 'Minimum Grain / RAP') {
-      this.dataSource = dataTable
+      this.dataSource = this.getData(this.treatySections[0]);
       this.dataSource.forEach(res => {
         res.override = false;
       })
     }
     if (item == 'RAP / Minimum Grain') {
-      this.dataSource = dataTable2;
+      this.dataSource = this.getDataTwo(this.treatySections[0]);
       this.dataSource.forEach(res => {
         res.override = false;
       })
@@ -187,6 +314,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   /** stocking the override reason for a that's gonna be shown later on hovering the override icon**/
   getReasonOverride(item, grain, rowData) {
     let rr = '';
+    let rd = '';
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
           if (reg.id == rowData.id) {
@@ -194,6 +322,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               if (des.id == grain.id) {
                 if (des.overridden) {
                   rr = des.reason;
+                  rd = des.resonDescribed
                 }
 
               }
@@ -211,6 +340,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               if (des.id == grain.id) {
                 if (des.overridden) {
                   rr = des.reason;
+                  rd = des.resonDescribed
                 }
               }
             }
@@ -220,7 +350,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       })
     }
 
-    return rr;
+    return {rr,rd};
   }
 
   /** get which icon to be shown in the parent depending on the children's icons **/
@@ -381,6 +511,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         checked = 'override'
       }
     }
+
     return checked;
   }
 
@@ -388,6 +519,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   checkAttached(item, rowData, grain, plt) {
     let checked = 'not';
 
+    console.log("this is the item",{
+      item, rowData, grain, plt
+    })
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
         if (reg.id == rowData.id) {
@@ -395,7 +529,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
             if (des.id == grain.id) {
               if (des.attached) {
                 des.pltsAttached.forEach(plts => {
-                  if (plts.id == plt.id) {
+                  if (plts.pltId == plt.pltId) {
                     checked = "attached";
                   }
                 })
@@ -414,7 +548,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
             if (des.id == grain.id) {
               if (des.attached) {
                 des.pltsAttached.forEach(plts => {
-                  if (plts.id == plt.id) {
+                  if (plts.pltId == plt.pltId) {
                     checked = "attached";
                   }
                 })
@@ -687,7 +821,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               rp.targetRaps.forEach(tr => {
                 if (tr.id == ove.child) {
                   tr.overridden = true;
-                  tr.reason = this.overrideReason + ' ' + this.overrideReasonExplained;
+                  tr.reason = this.overrideReason ;
+                  tr.resonDescribed = this.overrideReasonExplained;
 
                 }
               })
@@ -698,7 +833,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               tr.regionPerils.forEach(rp => {
                 if (rp.id == ove.parent) {
                   rp.overridden = true;
-                  rp.reason = this.overrideReason + ' ' + this.overrideReasonExplained;
+                  rp.reason = this.overrideReason ;
+                  rp.resonDescribed = this.overrideReasonExplained;
 
                 }
               })
@@ -744,49 +880,89 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.overrideReason = null;
   }
 
-  /** passing the plts data to the popup in the wanted form**/
-  restructurePlts() {
-    _.forEach(this.state, plt => {
-      this.listOfPltsForPopUp = [...this.listOfPltsForPopUp, {
-        ..._.pick(plt, ['userTags', 'pltId', 'pltName', 'peril', 'regionPerilCode', 'regionPerilName']),
-        treatySectionsState: this.getTreatyStateForPlts(plt)
-      }];
-    })
-    console.log(this.listOfPltsForPopUp);
-
-
-  }
-
-  getTreatyStateForPlts(plt) {
-    let treatySectionsField = [];
-    this.treatySections[0].forEach(treatySection => {
-
-      const Rp = treatySection.regionPerils.map(item => item.id);
-      const exist = _.includes(Rp, plt.regionPerilCode);
-      if (exist) {
-        const index =_.findIndex(treatySection.regionPerils, (res: any) => res.id == plt.regionPerilCode)
-        const Tr = treatySection.regionPerils[index].targetRaps.map(item => item.id);
-        const exist2 = _.includes(Tr, plt.grain);
-        if (exist2) {
-          const index2 =_.findIndex(treatySection.regionPerils[index].targetRaps, (res: any) => res.id == plt.grain)
-          const item = treatySection.regionPerils[index].targetRaps[index2];
-            if (item.attached) {
-              item.pltsAttached.forEach(pltA => {
-                if (pltA.id == plt.id) {
-                  treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'attached'}
-                }
-              })
-            } else {
-              treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'expected'}
-            }
-          } else {
-          treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
+  /** applying the attach changes from the attachplt popup**/
+  applyAttachChanges(event) {
+    this.attachArray = event;
+    _.forEach(this.attachArray, att => {
+      if (att.state == 'expected') {
+        _.forEach(this.treatySections[0], ts => {
+          if (ts.id == att.treatySectionId) {
+            _.forEach(ts.regionPerils, rg => {
+              if (rg.id == att.regionPeril) {
+                _.forEach(rg.targetRaps, tr => {
+                  if (tr.id == att.targetRap) {
+                    tr.attached = true;
+                    tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+                  }
+                })
+              }
+            })
           }
-        } else {
-        treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
+        })
       }
-    });
-    return treatySectionsField;
+      if (att.state == 'attached') {
+        _.forEach(this.treatySections[0], ts => {
+          if (ts.id == att.treatySectionId) {
+            _.forEach(ts.regionPerils, rg => {
+              if (rg.id == att.regionPeril) {
+                _.forEach(rg.targetRaps, tr => {
+                  if (tr.id == att.targetRap) {
+                    tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
+                    if (tr.pltsAttached.length == 0) {
+                      tr.attached = false;
+                    }
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+    _.forEach(this.attachArray, att => {
+      if (att.state == 'expected') {
+        _.forEach(this.treatySections[0], ts => {
+          if (ts.id == att.treatySectionId) {
+            _.forEach(ts.targetRaps, rg => {
+              if (rg.id == att.targetRap) {
+                _.forEach(rg.regionPerils, tr => {
+                  if (tr.id == att.regionPeril) {
+                    tr.attached = true;
+                    tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+      if (att.state == 'attached') {
+        _.forEach(this.treatySections[0], ts => {
+          if (ts.id == att.treatySectionId) {
+            _.forEach(ts.targetRaps, rg => {
+              if (rg.id == att.targetRap) {
+                _.forEach(rg.regionPerils, tr => {
+                  if (tr.id == att.regionPeril) {
+                    tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
+                    if (tr.pltsAttached.length == 0) {
+                      tr.attached = false;
+                    }
+                  }
+                })
+              }
+            })
+          }
+        })
+      }
+    })
+    if(this.selectedSortBy == 'RAP / Minimum Grain'){
+      this.dataSource = this.getDataTwo(this.treatySections[0]);
+    }
+    if(this.selectedSortBy == 'Minimum Grain / RAP') {
+      this.dataSource = this.getData(this.treatySections[0]);
+    }
+
+
   }
 
 }

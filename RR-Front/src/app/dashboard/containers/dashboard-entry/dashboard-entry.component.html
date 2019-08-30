@@ -135,7 +135,7 @@
           </ng-container>
         </ul>
         <div class="highlight" style="margin-top: 10px">
-          <span class="title">FAC</span>
+          <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
         </div>
         <ul class="widgets-list" style="height: 50px;">
           <li *ngFor="let fac of widgetsMockData.fac" class="widget-item" (click)="fac.selected = !fac.selected  "

@@ -187,6 +187,13 @@
           .plt-info {
             margin: 15px;
           }
+          .text-ellipsis{
+              width: 100%;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+
+          }
 
           .td-wrapper-tags {
             width: 40px;

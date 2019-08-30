@@ -29,7 +29,7 @@
   }
 }
 
-.a-buttons-contained-disabled, .a-buttons-contained-disabled-mini {
+.a-buttons-contained-disabled, .a-buttons-contained-disabled-mini, .a-buttons-contained-disabled-micro {
   background-color: #DFDFDF;
   color: #8A8A8A;
   font-family: Rubik;
@@ -44,6 +44,10 @@
   background-position: center;
   transition: background 0.8s;
   text-transform: uppercase;
+
+  &:focus {
+    outline: 0;
+  }
 }
 
 .a-buttons-contained-mini, .a-buttons-contained-disabled-mini {
@@ -52,7 +56,7 @@
   padding: 6px 17px 7px;
 }
 
-.a-buttons-contained-micro {
+.a-buttons-contained-micro .a-buttons-contained-disabled-micro {
   font-size: 11px;
   line-height: 12px;
   padding: 6px 15px 6px;

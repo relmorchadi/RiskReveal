@@ -14,10 +14,12 @@ import * as _ from "lodash";
 import * as fromWorkspaceStore from "../../../../store";
 import {WorkspaceState} from "../../../../store";
 import {BaseContainer} from "../../../../../shared/base";
-import {Store} from "@ngxs/store";
+import {Select, Store} from "@ngxs/store";
 import {ActivatedRoute, Router} from "@angular/router";
-import {switchMap, tap} from "rxjs/operators";
+import {mergeMap, switchMap, tap} from "rxjs/operators";
 import {SystemTagsService} from "../../../../../shared/services/system-tags.service";
+import {trestySections} from '../../../../containers/workspace-scope-completence/data';
+import {of} from "rxjs";
 
 @Component({
   selector: 'app-attach-plt-pop-up',
@@ -34,6 +36,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   projects: any[];
   selectedItemForMenu: string;
   selectedPlt: any;
+  attachPltsContainer = [];
   tagForMenu: any;
   fromPlts: any;
   editingTag: boolean;
@@ -44,6 +47,13 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   modalSelect: any;
   wsHeaderSelected: boolean;
   oldSelectedTags: any;
+  treatySections: any;
+  listOfPltsForPopUp = [];
+  state: any;
+
+  @Output('attachArray') attachArray: EventEmitter<any> = new EventEmitter();
+
+  @Select(WorkspaceState.getScopeCompletenessData) state$;
 
   @Input() isVisible;
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
@@ -67,28 +77,14 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   ];
   contextMenuItemsCache = null;
 
-
-  manageTags() {
-    this.tagModalVisible = true;
-    this.tagForMenu = {
-      ...this.tagForMenu,
-      tagName: ''
-    };
-    this.fromPlts = true;
-    this.editingTag = false;
-    console.log(this.selectedItemForMenu);
-    let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
-    this.modalSelect = _.intersectionBy(...d, 'tagId');
-    this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
-  }
-
   constructor(private route$: ActivatedRoute,
               private systemTagService: SystemTagsService,
-    _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
+              _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.tagModalVisible = false;
     this.tagModalIndex = 0;
+    this.treatySections = _.toArray(trestySections)
     this.systemTagsCount = {};
     this.fromPlts = false;
     this.editingTag = false;
@@ -214,85 +210,41 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'deletedBy',
-          forDelete: true,
-          header: 'Deleted By',
+          fields: 'Program B 17T008583/ 1',
+          header: 'Treaty Section',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '70%',
           icon: null,
-          type: 'field', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'deletedAt',
-          forDelete: true,
-          header: 'Deleted On',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          icon: null,
-          type: 'date', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'vendorSystem',
-          header: 'Vendor System',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25%',
-          icon: null,
-          type: 'field', active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'rap',
-          header: 'RAP',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25%',
-          icon: null,
-          type: 'field',
+          type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-note',
-          type: 'icon',
-          active: true,
-          tooltip: "Published for Pricing"
+          fields: 'Program B 17T008583/ 2',
+          header: 'Program B 17T008583/ 2',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70%',
+          icon: null,
+          type: 'checkbox-col',
+          active: true
         },
         {
           sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-dollar-alt',
-          type: 'icon',
-          active: true,
-          tooltip: "Priced"
-        },
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-focus-add',
-          type: 'icon',
-          active: true,
-          tooltip: "Published for Accumulation"
-        },
+          fields: 'Program B 17T008583/ 3',
+          header: 'Program B 17T008583/ 3',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70%',
+          icon: null,
+          type: 'checkbox-col',
+          active: true
+        }
+
       ],
       filterInput: '',
       listOfDeletedPltsCache: [],
@@ -315,6 +267,18 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
     };
   }
 
+  manageTags() {
+    this.tagModalVisible = true;
+    this.tagForMenu = {
+      ...this.tagForMenu,
+      tagName: ''
+    };
+    this.fromPlts = true;
+    this.editingTag = false;
+    let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
+    this.modalSelect = _.intersectionBy(...d, 'tagId');
+    this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
+  }
 
   ngOnInit() {
 
@@ -437,85 +401,42 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'deletedBy',
-          forDelete: true,
-          header: 'Deleted By',
+          fields: 'Program B 17T008583/ 1',
+          header: 'Program B 17T008583/ 1',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '70%',
           icon: null,
-          type: 'field', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'deletedAt',
-          forDelete: true,
-          header: 'Deleted On',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          icon: null,
-          type: 'date', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'vendorSystem',
-          header: 'Vendor System',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25%',
-          icon: null,
-          type: 'field', active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'rap',
-          header: 'RAP',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25%',
-          icon: null,
-          type: 'field',
+          type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-note',
-          type: 'icon',
-          active: true,
-          tooltip: "Published for Pricing"
+          fields: 'Program B 17T008583/ 2',
+          header: 'Program B 17T008583/ 2',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70%',
+          icon: null,
+          type: 'checkbox-col',
+          active: true
         },
         {
           sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-dollar-alt',
-          type: 'icon',
-          active: true,
-          tooltip: "Priced"
-        },
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-focus-add',
-          type: 'icon',
-          active: true,
-          tooltip: "Published for Accumulation"
-        },
+          fields: 'Program B 17T008583/ 3',
+          header: 'Program B 17T008583/ 3',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70%',
+          icon: null,
+          type: 'checkbox-col',
+          active: true
+        }
+
+
       ],
       filterInput: '',
       listOfDeletedPltsCache: [],
@@ -549,7 +470,6 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
 
 
   onShow() {
-
     this.tableInputs = {
       scrollHeight: 'calc(100vh - 480px)',
       dataKey: "pltId",
@@ -666,85 +586,41 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'deletedBy',
-          forDelete: true,
-          header: 'Deleted By',
+          fields: 'Program B 17T008583/ 1',
+          header: 'Program B 17T008583/ 1',
           sorted: true,
           filtred: true,
           resizable: true,
+          width: '70%',
           icon: null,
-          type: 'field', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'deletedAt',
-          forDelete: true,
-          header: 'Deleted On',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          icon: null,
-          type: 'date', active: false
-        },
-        {
-          sortDir: 1,
-          fields: 'vendorSystem',
-          header: 'Vendor System',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25%',
-          icon: null,
-          type: 'field', active: true
-        },
-        {
-          sortDir: 1,
-          fields: 'rap',
-          header: 'RAP',
-          sorted: true,
-          filtred: true,
-          resizable: true,
-          width: '25%',
-          icon: null,
-          type: 'field',
+          type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-note',
-          type: 'icon',
-          active: true,
-          tooltip: "Published for Pricing"
+          fields: 'Program B 17T008583/ 2',
+          header: 'Program B 17T008583/ 2',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70%',
+          icon: null,
+          type: 'checkbox-col',
+          active: true
         },
         {
           sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-dollar-alt',
-          type: 'icon',
-          active: true,
-          tooltip: "Priced"
-        },
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          width: '25px',
-          icon: 'icon-focus-add',
-          type: 'icon',
-          active: true,
-          tooltip: "Published for Accumulation"
-        },
+          fields: 'Program B 17T008583/ 3',
+          header: 'Program B 17T008583/ 3',
+          sorted: true,
+          filtred: true,
+          resizable: true,
+          width: '70%',
+          icon: null,
+          type: 'checkbox-col',
+          active: true
+        }
+
       ],
       filterInput: '',
       listOfDeletedPltsCache: [],
@@ -765,6 +641,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
       }
     };
+    this.attachPltsContainer= [];
 
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
@@ -779,23 +656,22 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
-      this.updateTable('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
+      this.updateTable('listOfPltsCache', data);
       this.updateTable('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
       this.updateTable('selectedListOfPlts', _.filter(data, (v, k) => v.selected));
 
-      console.log(this.tableInputs);
       this.detectChanges();
     });
 
-    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
-      this.updateTable('selectAll',
-        (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
-        &&
-        this.getTableInputKey('listOfPltsData').length > 0);
-
-      this.updateTable("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
-      this.detectChanges();
-    });
+    // this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
+    //   this.updateTable('selectAll',
+    //     (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
+    //     &&
+    //     this.getTableInputKey('listOfPltsData').length > 0);
+    //
+    //   this.updateTable("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
+    //   this.detectChanges();
+    // });
 
     this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
       this.userTags = userTags;
@@ -835,13 +711,16 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         this.selectedPlt = action.payload;
         break;
 
+      case tableStore.attachPlt:
+        this.handleContainer(action.payload);
+        break;
+
       case tableStore.toggleSelectedPlts:
-        console.log(action.payload);
         this.toggleSelectPlts(action.payload);
         break;
 
       case tableStore.filterByStatus:
-        const status= this.getTableInputKey('status');
+        const status = this.getTableInputKey('status');
 
         this.updateTable('status', {
           ...status,
@@ -850,12 +729,11 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
           }
         });
         this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
-          wsIdentifier: this.workspaceId+"-"+this.uwy,
+          wsIdentifier: this.workspaceId + "-" + this.uwy,
           status: this.getTableInputKey('status')
         }));
         break;
       default:
-        console.log('table action dispatcher')
     }
   }
 
@@ -872,7 +750,54 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   }
 
   getPlts() {
-    return this.select(WorkspaceState.getPltsForScopeCompleteness(this.workspaceId + '-' + this.uwy));
+    return this.state$
+      .pipe(
+        this.unsubscribeOnDestroy,
+        mergeMap(plts => of(_.map(plts, (plt: any) => {
+            return {
+              ..._.pick(plt, ['userTags', 'pltName', 'peril', 'regionPerilCode', 'regionPerilName', 'grain']),
+              pltId: plt.pltId,
+              visible: true,
+              treatySectionsState: this.getTreatyStateForPlts(plt)
+            }
+          }
+        )))
+      )
+
+  }
+
+  getTreatyStateForPlts(plt) {
+    let treatySectionsField = {};
+    this.treatySections[0].forEach(treatySection => {
+      const Rp = treatySection.regionPerils.map(item => item.id);
+      const exist = _.includes(Rp, plt.regionPerilCode);
+      if (exist) {
+        const index = _.findIndex(treatySection.regionPerils, (res: any) => res.id == plt.regionPerilCode)
+        const Tr = treatySection.regionPerils[index].targetRaps.map(item => item.id);
+        const exist2 = _.includes(Tr, plt.grain);
+        if (exist2  ) {
+          const index2 = _.findIndex(treatySection.regionPerils[index].targetRaps, (res: any) => res.id == plt.grain)
+          const item = treatySection.regionPerils[index].targetRaps[index2];
+          if(item.overridden){
+            treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
+          }else{if (item.attached) {
+            if(_.includes(_.map(item.pltsAttached, pltss => pltss.pltId), plt.pltId)){
+              treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'attached'}
+            }else{
+              treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'expected'}
+            }
+          } else {
+            treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'expected'}
+          }}
+
+        } else {
+          treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
+        }
+      } else {
+        treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
+      }
+    });
+    return treatySectionsField;
   }
 
   getTableInputKey(key) {
@@ -885,6 +810,17 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
 
   getProjects() {
     return this.select(WorkspaceState.getProjectsPlt(this.workspaceId + '-' + this.uwy));
+  }
+
+  handleContainer(content){
+    if (_.findIndex(this.attachPltsContainer, content) == -1) {
+      this.attachPltsContainer.push(content);
+    } else {
+
+      this.attachPltsContainer.splice(_.findIndex(this.attachPltsContainer, content), 1);
+
+    }
+
   }
 
   toggleSelectPlts(plts: any) {
@@ -901,7 +837,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
     const {
       selectedTags
     } = $event;
-    this.dispatch( new fromWorkspaceStore.createOrAssignTags({
+    this.dispatch(new fromWorkspaceStore.createOrAssignTags({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       ...$event,
       selectedTags: _.map(selectedTags, (el: any) => el.tagId),
@@ -952,6 +888,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
 
   }
 
+
   setFilters(filters) {
     this.updateTable('filters', filters);
   }
@@ -999,10 +936,14 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   setWsHeaderSelect($event: any) {
     this.wsHeaderSelected = $event;
   }
+
   setModalSelectedItems($event: any) {
     this.modalSelect = $event;
   }
 
 
-
+  dispatchAttachTable(){
+    this.attachArray.emit(this.attachPltsContainer);
+    this.onHide();
+  }
 }

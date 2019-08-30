@@ -1704,7 +1704,6 @@ export const PLT_DATA =
         ],
         calibrate: true,
         toCalibrate: true,
-        pureId: 'SPLTH-000735434',
         threads: [
           {
             workspaceId: '17P3398',
