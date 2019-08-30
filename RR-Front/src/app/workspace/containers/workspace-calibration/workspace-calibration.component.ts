@@ -45,13 +45,15 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   dropAll = (param) => null;
 
   someItemsAreSelected = false;
-  groupedByPure = true;
+  groupedByPure = false;
   allRowsExpanded = true;
   selectAll = false;
   listOfPlts = [];
   listOfPltsData = [];
   listOfPltsThread = [];
   selectedListOfPlts = [];
+  template = {id: 0, type: '', name: 'none', description: '', adjs: []};
+  templateList = [this.template];
   drawerIndex = 0;
   params = {};
   loading = true;
@@ -72,6 +74,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
   searchAddress: string;
   listOfPltsCache: any[];
+  saveTemplate = false;
+  templateName: string;
+  templateType: string = 'local';
+  templateDesc: string;
   listOfPltsThreadCache: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
@@ -274,6 +280,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   activeCheckboxSort: boolean = false;
+  descriptionDropDown: any = false;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -816,7 +823,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   onDrop(col, pltId, draggedAdjs, lastpltId) {
     this.dispatch(new dropAdjustment({
-       pltId: pltId,
+      pltId: pltId,
       adjustement: draggedAdjs,
       lastpltId: lastpltId
     }))
@@ -1091,4 +1098,37 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }
   }
 
+  closeSaveTemplate() {
+    this.saveTemplate = false;
+    this.templateName = null;
+    this.templateType = null;
+  }
+
+  openSaveTemplate(save: boolean) {
+    if (save) {
+      if (this.template.id == 0) {
+        this.saveTemplate = true;
+      } else {
+        // Save adjustment into current here
+        this.template.adjs = this.adjsArray;
+      }
+    } else {
+      this.saveTemplate = true;
+    }
+  }
+
+  saveCurrentTemplate() {
+    let today = new Date();
+    let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    const currentTemplate = {
+      id: numberAdjs,
+      type: this.templateType,
+      name: this.templateName,
+      description: this.templateDesc,
+      adjs: this.adjsArray
+    };
+    this.template = currentTemplate
+    this.templateList.push(currentTemplate);
+    this.closeSaveTemplate();
+  }
 }
