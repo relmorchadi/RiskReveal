@@ -107,6 +107,16 @@
                      (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
             </div>
           </td>
+          <td  *ngIf="col?.type == 'checkbox-col' && rowData.treatySectionsState[col?.header].state != 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div class="checkbox-off">
+              <label nz-checkbox [nzChecked]="rowData.treatySectionsState[col?.header].state == 'attached'" (nzCheckedChange)="selectPltForAttach(rowData,rowData.treatySectionsState[col?.header])"></label>
+            </div>
+          </td>
+          <td  *ngIf="col?.type == 'checkbox-col' && rowData.treatySectionsState[col?.header].state == 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div style="padding-left: 9px;">
+              <label nz-checkbox nzDisabled ></label>
+            </div>
+          </td>
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
             <div class="td-wrapper-tags">
               <ng-container *ngFor="let tag of rowData.userTags;let i= index;">

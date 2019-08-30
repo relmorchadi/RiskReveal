@@ -872,54 +872,63 @@ const plts = {
   }
 }
 
-const getData = (treatySections) => {
-  let res = [];
-
-  _.forEach(treatySections, treatySection => {
-    _.forEach(treatySection.regionPerils, regionPeril => {
-      let object = {
-        id: regionPeril.id,
-        description: regionPeril.description,
-        override: false,
-        selected: false,
-        child: _.uniqBy([...(res[regionPeril.id] || []), regionPeril.targetRaps], targetRap => targetRap.id)[0]}
-        const index = _.findIndex(res, row => row.id == object.id)
-        if (index == -1) {
-          res.push(object)
-        }else {
-          // res[index].targetRap.push(object.targetRap)
-        }
-
-    })
-  });
- console.log("this is the first red = ", res)
-  return res;
-};
-
-const getData2 = (treatySections) => {
-  let res = [];
-
-  _.forEach(treatySections, treatySection => {
-    _.forEach(treatySection.targetRaps, targetRap => {
-      let object = {
-        id: targetRap.id,
-        description: targetRap.description,
-        override: false,
-        selected: false,
-        child: _.uniqBy([...(res[targetRap.id] || []), targetRap.regionPerils], regionPeril => regionPeril.id)[0]}
-      const index = _.findIndex(res, row => row.id == object.id)
-      if (index == -1) {
-        res.push(object)
-      }else {
-        // res[index].targetRap.push(object.targetRap)
-      }
-
-    })
-  });
-  console.log("this is the res =", res);
-
-  return res;
-};
+// const getData = (treatySections) => {
+//   let res = [];
+//
+//   _.forEach(treatySections, treatySection => {
+//     _.forEach(treatySection.regionPerils, regionPeril => {
+//       let object = {
+//         id: regionPeril.id,
+//         description: regionPeril.description,
+//         override: false,
+//         selected: false,
+//         child: [...(res[regionPeril.id] || []), regionPeril.targetRaps][0]}
+//         const index = _.findIndex(res, row => row.id == object.id)
+//         if (index == -1) {
+//           res.push(object)
+//         }else {
+//            object.child.forEach( tr =>{
+//              tr.pltsAttached.forEach( plt => {
+//                res[index].child.forEach( trr =>{
+//                     if(!_.includes(trr.pltsAttached, plt)){
+//
+//                       trr.pltsAttached = [...trr.pltsAttached,plt]
+//                     }
+//
+//                  })
+//                })
+//              })
+//
+//         }
+//
+//     })
+//   });
+//   return res;
+// };
+//
+// const getData2 = (treatySections) => {
+//   let res = [];
+//
+//   _.forEach(treatySections, treatySection => {
+//     _.forEach(treatySection.targetRaps, targetRap => {
+//       let object = {
+//         id: targetRap.id,
+//         description: targetRap.description,
+//         override: false,
+//         selected: false,
+//         child: _.uniqBy([...(res[targetRap.id] || []), targetRap.regionPerils], regionPeril => regionPeril.id)[0]}
+//       const index = _.findIndex(res, row => row.id == object.id)
+//       if (index == -1) {
+//         res.push(object)
+//       }else {
+//         // res[index].targetRap.push(object.targetRap)
+//       }
+//
+//     })
+//   });
+//
+//   return res;
+// };
 
 const treatySections = [
   {
@@ -927,26 +936,30 @@ const treatySections = [
     attached: false,
     regionPerils: [{
       id: 'EUCS-DE',
-      description: 'Germany Flood',
+      description: 'Europe (Germany)',
       selected: false,
       targetRaps: [{
-        id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+        id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         overridden: false,
         selected: false,
+        reason: null,
+        resonDescribed: null,
         attached: false,
         pltsAttached: []
       }]
     }],
     targetRaps: [{
-      id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+      id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
       selected: false,
       regionPerils: [{
         id: 'EUCS-DE',
-        description: 'Germany Flood',
+        description: 'Europe (Germany)',
         overridden: false,
         selected: false,
+        reason: null,
+        resonDescribed: null,
         attached: false,
         pltsAttached: []
       }]
@@ -965,6 +978,8 @@ const treatySections = [
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
+          reason: null,
+          resonDescribed: null,
           attached: false,
           pltsAttached: []
         },
@@ -973,6 +988,8 @@ const treatySections = [
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
+          reason: null,
+          resonDescribed: null,
           attached: false,
           pltsAttached: []
         }]
@@ -986,6 +1003,8 @@ const treatySections = [
         description: 'Europe',
         overridden: false,
         selected: false,
+        reason: null,
+        resonDescribed: null,
         attached: false,
         pltsAttached: []
       }]
@@ -1000,6 +1019,8 @@ const treatySections = [
           overridden: false,
           selected: false,
           attached: false,
+          reason: null,
+          resonDescribed: null,
           pltsAttached: []
         }]
       }]
@@ -1013,18 +1034,22 @@ const treatySections = [
       selected: false,
       targetRaps: [
         {
-          id: 'AxA-3rdCov_05PA753_FL_ENG_Client',
+          id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
           attached: false,
+          reason: null,
+          resonDescribed: null,
           pltsAttached: []
         },
         {
-          id: 'AxA-3rdCov_05PA753_FL_NonEng_Client',
+          id: 'AXA-3rdCov_05PA753_FL_NonEng_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
+          reason: null,
+          resonDescribed: null,
           attached: false,
           pltsAttached: []
         }
@@ -1032,19 +1057,22 @@ const treatySections = [
     },
       {
         id: 'EUCS-DE',
-        description: 'Germany Flood',
+        description: 'Europe (Germany)',
         selected: false,
         targetRaps: [{
-          id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+          id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
           overridden: false,
           selected: false,
           attached: false,
+          reason: null,
+          resonDescribed: null,
           pltsAttached: []
+
         }]
       }],
     targetRaps: [{
-      id: 'AxA-3rdCov_05PA753_Hail_All_Client',
+      id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
       selected: false,
       regionPerils: [{
@@ -1052,12 +1080,14 @@ const treatySections = [
         description: 'Germany Flood',
         overridden: false,
         selected: false,
+        reason: null,
+        resonDescribed: null,
         attached: false,
         pltsAttached: []
       }]
     },
       {
-        id: 'AxA-3rdCov_05PA753_FL_NonEng_Client',
+        id: 'AXA-3rdCov_05PA753_FL_NonEng_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         selected: false,
         regionPerils: [{
@@ -1065,12 +1095,14 @@ const treatySections = [
           description: 'Germany Flood',
           overridden: false,
           selected: false,
+          reason: null,
+          resonDescribed: null,
           attached: false,
           pltsAttached: []
         }]
       },
       {
-        id: 'AxA-3rdCov_05PA753_FL_Eng_Client',
+        id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         selected: false,
         regionPerils: [{
@@ -1078,6 +1110,8 @@ const treatySections = [
           description: 'Germany Flood',
           overridden: false,
           selected: false,
+          reason: null,
+          resonDescribed: null,
           attached: false,
           pltsAttached: []
         }]
@@ -1104,7 +1138,6 @@ const regionPeril = [{"regionPerilCode": "EUCS-DE", "regionPerilName": "Europe (
 }, {"regionPerilCode": "EUET", "regionPerilName": "Europe"}]
 
 
-export const dataTable = getData(treatySections);
-export const dataTable2 = getData2(treatySections);
+
 
 export const trestySections = {treatySections};

@@ -1258,6 +1258,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           status: this.getTableInputKey('status')
         }));
         break;
+
+
+
       default:
         console.log('table action dispatcher')
     }
@@ -1270,6 +1273,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   updateTable(key: string, value: any) {
     this.tableInputs = tableActions.updateKey.handler(this.tableInputs, key, value);
+    console.log('data',this.tableInputs);
   }
 
   getTableInputKey(key) {

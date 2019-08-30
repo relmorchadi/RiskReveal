@@ -83,6 +83,25 @@
                 font-size: 16px;
               }
 
+              .icon-reorder_24px {
+                font-size: 23px;
+                color: #5874A5;
+              }
+
+              .icon-plus {
+                margin-left: -8px;
+                margin-top: 13px;
+                font-size: 9px;
+                background-color: #FFFFFF;
+                border: 1px solid #5874A5;
+                color: #5874A5;
+                height: 10px;
+                width: 10px;
+                border-radius: 20px;
+                display: flex;
+                justify-content: center;
+              }
+
               .icon-check_24px {
                 background-color: #7ED321;
                 border-radius: 20px;
@@ -123,6 +142,24 @@
             i {
               font-size: 16px;
             }
+
+            .icon-reorder_24px {
+              font-size: 23px;
+              color: #5874A5;
+            }
+            .icon-plus {
+              margin-left: -8px;
+              margin-top: 13px;
+              font-size: 9px;
+              background-color: #FFFFFF;
+              border: 1px solid #5874A5;
+              color: #5874A5;
+              height: 10px;
+              width: 10px;
+              border-radius: 20px;
+              display: flex;
+              justify-content: center;
+            }
           }
 
           .inner-line {
@@ -149,6 +186,13 @@
 
           .plt-info {
             margin: 15px;
+          }
+          .text-ellipsis{
+              width: 100%;
+              text-overflow: ellipsis;
+              white-space: nowrap;
+              overflow: hidden;
+
           }
 
           .td-wrapper-tags {
@@ -193,6 +237,7 @@
             padding-top: 4px;
             display: flex;
             width: 80%;
+
             .icon-map-marker-alt {
               background-color: #0700CF;
               color: #FFFFFF;
@@ -331,11 +376,48 @@
   margin-top: 12px;
 }
 
-.unCheckedBoxTab{
-  border: 1px solid;font-size: 20px !important;
+.unCheckedBoxTab {
+  border: 1px solid;
+  font-size: 20px !important;
   color: darkgray;
 }
 
-.checkedBoxTab{
+.checkedBoxTab {
   background-color: #0700CF;
 }
+
+.header-override {
+  width: 500px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.body-override {
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.label-override {
+  margin: 5px;
+
+}
+
+.body-body {
+  display: block;
+}
+
+.textarea-override {
+  width: 60%;
+}
+
+::ng-deep {
+  .ng-tns-c10-24 {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+}
+::ng-deep.m-dialog-modal-auto {
+  z-index: 1002 !important;
+}
+
+

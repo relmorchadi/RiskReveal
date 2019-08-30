@@ -32,7 +32,7 @@ export class PltMainTableComponent implements OnInit {
 
   @Input() tableInputs: tableStore.Input;
 
-  @Output() setTagModalVisibility= new EventEmitter();
+  @Output() setTagModalVisibility = new EventEmitter();
 
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
@@ -43,13 +43,13 @@ export class PltMainTableComponent implements OnInit {
 
   constructor(private _baseCdr: ChangeDetectorRef) {
     this.activeCheckboxSort = false;
-    this.userTagsLength= 10000;
+    this.userTagsLength = 10000;
   }
 
   ngOnInit() {
   }
 
-  checkAll($event){
+  checkAll($event) {
     this.actionDispatcher.emit({
       type: tableStore.onCheckAll,
       payload: this.tableInputs.showDeleted
@@ -89,7 +89,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   filter(key: string, value) {
-    if(value) {
+    if (value) {
       this.actionDispatcher.emit({
         type: tableStore.filterData,
         payload: _.merge({}, this.tableInputs.filterData, {[key]: value})
@@ -109,6 +109,20 @@ export class PltMainTableComponent implements OnInit {
     })
   }
 
+  selectPltForAttach(plt: any, treatySectionId: any) {
+    this.actionDispatcher.emit({
+      type: tableStore.attachPlt,
+      payload: {
+        pltId: plt.pltId,
+        regionPeril: plt.regionPerilCode,
+        targetRap: plt.grain,
+        treatySectionId: treatySectionId.tsId,
+        state: treatySectionId.state
+      }
+    })
+  }
+
+
   selectSinglePLT(pltId: number, $event: boolean) {
     this.actionDispatcher.emit({
       type: tableStore.toggleSelectedPlts,
@@ -121,7 +135,7 @@ export class PltMainTableComponent implements OnInit {
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex( !this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
+    const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
@@ -134,7 +148,7 @@ export class PltMainTableComponent implements OnInit {
           _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => ({type: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
       })
-      this.lastClick= null;
+      this.lastClick = null;
     }
   }
 
@@ -144,32 +158,6 @@ export class PltMainTableComponent implements OnInit {
 
   tmp(param: any) {
     console.log(param);
-  }
-
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if($event.shiftKey) {
-      if(!this.lastSelectedId) this.lastSelectedId = 0;
-      if(this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.actionDispatcher.emit({
-          type: tableStore.toggleSelectedPlts,
-          payload: _.zipObject(
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, (plt, i) => ({type: i <= max && i >= min})),
-          )
-        })
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
   }
 
   filterByStatus(statue: string) {
@@ -186,9 +174,9 @@ export class PltMainTableComponent implements OnInit {
     } = event.element;
     console.log(event)
 
-    if( innerText == "User Tags" ) {
-      console.log(_.floor(scrollWidth/18));
-      this.userTagsLength= _.floor(scrollWidth/18);
+    if (innerText == "User Tags") {
+      console.log(_.floor(scrollWidth / 18));
+      this.userTagsLength = _.floor(scrollWidth / 18);
       this.detectChanges();
     }
   }
@@ -196,5 +184,31 @@ export class PltMainTableComponent implements OnInit {
   protected detectChanges() {
     if (!this._baseCdr['destroyed'])
       this._baseCdr.detectChanges();
+  }
+
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        this.actionDispatcher.emit({
+          type: tableStore.toggleSelectedPlts,
+          payload: _.zipObject(
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, (plt, i) => ({type: i <= max && i >= min})),
+          )
+        })
+      } else {
+        this.lastSelectedId = i;
+      }
+      return;
+    }
   }
 }

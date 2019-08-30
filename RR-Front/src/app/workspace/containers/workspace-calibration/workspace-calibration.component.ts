@@ -549,14 +549,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     })
   }
 
-  sortChange(field: any, sortCol: any) {
-    if (!sortCol) {
-      this.sortData[field] = 'asc';
-    } else if (sortCol === 'asc') {
-      this.sortData[field] = 'desc';
-    } else if (sortCol === 'desc') {
-      this.sortData[field] = null
-    }
+  sortChange(sortData) {
+    this.sortData = sortData;
+    console.log(this.sortData);
   }
 
   extend() {

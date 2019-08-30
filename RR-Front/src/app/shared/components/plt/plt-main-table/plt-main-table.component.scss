@@ -192,4 +192,13 @@
     }
 
   }
+  .checkbox-off{
+    padding-left: 9px;
+    ::ng-deep{
+      .ant-checkbox{
+        border: 2px solid blue;
+        border-radius: 25%;
+      }
+    }
+  }
 }
