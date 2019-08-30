@@ -69,7 +69,7 @@
 
 <div class="form-control-wrap show-table">
   <h6>Division Section</h6>
-  <p-table #kt [columns]="coverageTemplate" [value]=""
+  <p-table #kt [columns]="coverageTemplate" [value]="dataCoverage"
            [resizableColumns]="true" columnResizeMode="expand"
            [scrollable]="true" scrollHeight="340px" >
     <ng-template pTemplate="colgroup" let-columns>
