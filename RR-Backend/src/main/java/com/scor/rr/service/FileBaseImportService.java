@@ -14,8 +14,8 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class FileBaseImportService {
 
-    @Value("${filebaseimport.sandbox.unc}")
-    private String fileUnc;
+    //@Value("${filebaseimport.sandbox.unc}")
+    private String fileUnc="UNKNOWN";
 
     public Set<String> listFilesFromSandbox(String path) {
         return Stream.of(new File(this.fileUnc.concat(ofNullable(path).orElse(""))).listFiles())
