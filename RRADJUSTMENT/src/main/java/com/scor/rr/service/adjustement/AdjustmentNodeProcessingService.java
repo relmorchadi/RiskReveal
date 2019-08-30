@@ -311,7 +311,7 @@ public class AdjustmentNodeProcessingService {
         AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
         processingEntityCloned.setAdjustmentNodeByFkAdjustmentNode(nodeCloned);
         processingEntityCloned.setScorPltHeaderByFkInputPlt(pltHeaderPure);
-        processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt()));
+        processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId()));
         return processingEntityCloned;
     }
 

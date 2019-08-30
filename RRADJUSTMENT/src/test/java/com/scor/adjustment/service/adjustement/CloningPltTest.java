@@ -1,9 +1,9 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.domain.AdjustmentNodeEntity;
-import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
-import com.scor.rr.service.adjustement.AdjustmentNodeService;
+import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -21,9 +21,13 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 @Transactional
 @PropertySource({"classpath:application.properties"})
-public class NodeTest {
+public class CloningPltTest {
+
     @Autowired
-    AdjustmentNodeService adjustmentNodeService;
+    CloningScorPltHeader cloningScorPltHeader;
+
+    @Autowired
+    ScorpltheaderRepository scorpltheaderRepository;
 
     @Before
     public void setUp() throws Exception {
@@ -36,15 +40,11 @@ public class NodeTest {
 
     }
 
-    //TODO: expected result ? exception if creation failed (wrong parameter for example)
-    @Test
-    public void createNode() {
-        AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("",1,
-                false,"",
-                false,1,
-                4,1,41,1.7,1.1,null,983,2,null);
-        AdjustmentNodeEntity adjustmentNodeEntity = adjustmentNodeService.save(adjustmentNodeRequest);
-        Assert.assertEquals(adjustmentNodeEntity,adjustmentNodeService.findOne(adjustmentNodeEntity.getAdjustmentNodeId()));
-    }
+    //TODO: expected results
 
+    @Test
+    public void lookupForDefaultAdjustmentWithInputPLT() {
+        ScorPltHeaderEntity scorPltHeaderEntity = cloningScorPltHeader.cloneScorPltHeader(983);
+        Assert.assertEquals(scorPltHeaderEntity,scorpltheaderRepository.getOne(scorPltHeaderEntity.getPkScorPltHeaderId()));
+    }
 }

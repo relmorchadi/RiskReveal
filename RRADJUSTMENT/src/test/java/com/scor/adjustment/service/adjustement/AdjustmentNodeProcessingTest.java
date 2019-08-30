@@ -1,13 +1,14 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.AdjustmentNodeProcessingEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -66,10 +67,12 @@ public class AdjustmentNodeProcessingTest {
 
     @Test
     public void processNodeByInput() {
-        adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(983,2));
+        AdjustmentNodeProcessingEntity processingEntity = adjustmentNodeProcessingService.saveByInputPlt(new AdjustmentNodeProcessingRequest(983,2));
+        Assert.assertEquals(processingEntity,adjustmentNodeProcessingService.findOne(processingEntity.getAdjustmentNodeProcessingId()));
     }
     @Test
     public void processNodeByAdjusted() {
-        adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(lmf,rpmf,adjustmentReturnPeriod,983,2,adjustmentReturnPeriodBandings));
+        AdjustmentNodeProcessingEntity processingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(lmf,rpmf,adjustmentReturnPeriod,983,2,adjustmentReturnPeriodBandings));
+        Assert.assertEquals(processingEntity,adjustmentNodeProcessingService.findOne(processingEntity.getAdjustmentNodeProcessingId()));
     }
 }

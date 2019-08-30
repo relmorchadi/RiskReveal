@@ -30,12 +30,13 @@ public class CloningScorPltHeader {
     @Autowired
     AdjustmentThreadService threadService;
 
-    public ScorPltHeaderEntity cloneScorPltHeader(ScorPltHeaderEntity pltHeaderEntityInitial){
+    public ScorPltHeaderEntity cloneScorPltHeader(int pltHeaderId){
+        ScorPltHeaderEntity scorPltHeaderEntityInitial = scorpltheaderRepository.getOne(pltHeaderId);
         ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity();
         scorPltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
-        scorPltHeaderEntityClone.setTargetRap(pltHeaderEntityInitial.getTargetRap());
-        scorPltHeaderEntityClone.setMarketChannel(pltHeaderEntityInitial.getMarketChannel());
-        scorPltHeaderEntityClone.setBinFileEntity(cloneBinFile(pltHeaderEntityInitial.getBinFileEntity()));
+        scorPltHeaderEntityClone.setTargetRap(scorPltHeaderEntityInitial.getTargetRap());
+        scorPltHeaderEntityClone.setMarketChannel(scorPltHeaderEntityInitial.getMarketChannel());
+        scorPltHeaderEntityClone.setBinFileEntity(cloneBinFile(scorPltHeaderEntityInitial.getBinFileEntity()));
         scorPltHeaderEntityClone = scorpltheaderRepository.save(scorPltHeaderEntityClone);
         threadService.cloneThread(scorPltHeaderEntityClone);
         return scorPltHeaderEntityClone;
