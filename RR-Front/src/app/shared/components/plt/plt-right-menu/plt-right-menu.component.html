@@ -62,7 +62,8 @@
                         <td>{{plt?.pltId | textLength}}</td>
                         <td class="elipsis-text" style="max-width: 200px;">{{plt?.pltName}}</td>
                         <td class="elipsis-text" style="max-width: 58px;">{{plt?.regionPerilCode}}</td>
-                        <td><i style="display:none;cursor: pointer;" class="icon-trash-alt" (click)="unselectPlt(plt?.pltId)"></i></td>
+                        <td><i (click)="unselectPlt(plt?.pltId)" class="icon-trash-alt"
+                               style="visibility:hidden;cursor: pointer;"></i></td>
                       </tr>
                       </tbody>
                     </table>

@@ -21,10 +21,10 @@ import {Navigate} from '@ngxs/router-plugin';
 export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit, StateSubscriber {
 
   regionPeril;
-  hyperLinks: string[] = ['Risk link', 'File-based'];
+  hyperLinks: string[] = ['RiskLink', 'File-Based'];
   hyperLinksRoutes: any = {
-    'Risk link': '/RiskLink',
-    'File-based': '/FileBasedImport'
+    'RiskLink': '/RiskLink',
+    'File-Based': '/FileBasedImport'
   };
   hyperLinksConfig: {
     wsId: string,

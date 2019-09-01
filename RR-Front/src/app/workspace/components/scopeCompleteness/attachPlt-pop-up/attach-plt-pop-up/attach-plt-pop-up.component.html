@@ -12,23 +12,59 @@
 
   <p-header>
     <div class="header">
+      <div style="display: flex;">
       <h4>
         Attach PLTs
       </h4>
+      <button style="height: 29px;margin: 0px 0px 25px 150px;font-size: 16px" (click)="dispatchAttachTable()" class="a-buttons-contained">ADD</button>
+      </div>
       <i (click)="onHide()" class="icon-close_24px" style="cursor: pointer"></i>
     </div>
   </p-header>
   <div class="content">
     <div class="left">
       <app-plt-left-menu
-        (emitFilters)="emitFilters($event)"
-        (onProjectFilter)="filterPlts($event)"
+        [inputs]="{
+            tagContextMenu: tagContextMenu,
+            wsId: workspaceId,
+            uwYear: uwy,
+            projects: projects,
+            showDeleted: tableInputs['showDeleted'],
+            filterData: tableInputs['filterData'],
+            filters: tableInputs['filters'],
+            addTagModalIndex: tagModalIndex,
+            fromPlts: fromPlts,
+            deletedPltsLength: (tableInputs['listOfDeletedPltsData'] | keys).length,
+            userTags: userTags,
+            systemTags: systemTags,
+            selectedListOfPlts: tableInputs['selectedListOfPlts'],
+            systemTagsCount: systemTagsCount,
+            _tagModalVisible: tagModalVisible,
+            _editingTag: editingTag,
+            _modalSelect: modalSelect,
+            tagForMenu: tagForMenu,
+            wsHeaderSelected: wsHeaderSelected,
+            pathTab:true,
+            selectedItemForMenu: selectedItemForMenu
+          }"
+        (onAssignPltsToTag)="assignPltsToTag($event)"
+        (onCreateTag)="createTag($event)"
+        (onProjectFilter)="filter($event)"
+        (onEditTag)="editTag()"
+        (onResetPath)="resetPath()"
         (onSelectProjects)="setSelectedProjects($event)"
+        (onSelectSysTagCount)="selectSystemTag($event)"
         (onSetFilters)="setFilters($event)"
+        (onSetFromPlts)="setFromPlts($event)"
         (onSetSelectedUserTags)="setUserTags($event)"
-        (onWsHeaderSelection)="setWsHeaderSelect($event)"
+        (setTagModalIndex)="setModalIndex($event)"
+        (setTagModalVisibility)="setTagModal($event)"
+        (onSetTagForMenu)="setTagForMenu($event)"
+        (onSetRenameTag)="setRenameTag($event)"
+        (emitFilters)="emitFilters($event)"
         (unCkeckAllPlts)="unCheckAll()"
-        [menuInputs]="Inputs | pickKeys : menuInputs"
+        (onWsHeaderSelection)="setWsHeaderSelect($event)"
+        (onModalSelect)="setModalSelectedItems($event)"
       >
 
       </app-plt-left-menu>
@@ -40,14 +76,10 @@
           </span>
       </div>
       <div class="PLTs-content">
-        <app-pop-up-plt-table
-          (onCheckAll)="checkAll($event)"
-          (onFilter)="filterPlts($event)"
-          (onItemSelectForMenu)="setSelectedPlt($event)"
-          (onPltClick)="calibrateSelectPlts($event)"
-          (onSelectSinglePlt)="selectSinglePLT($event)"
-          [tableInputs]="Inputs | pickKeys : tableInputs"
-        ></app-pop-up-plt-table>
+        <app-plt-main-table
+          [tableInputs]="tableInputs"
+          (actionDispatcher)="tableActionDispatcher($event)"
+        ></app-plt-main-table>
       </div>
     </div>
   </div>

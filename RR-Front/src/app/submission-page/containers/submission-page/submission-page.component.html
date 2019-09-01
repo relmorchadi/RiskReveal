@@ -1,0 +1,87 @@
+<div class="form-title">
+  <h4>CAR Submission Page</h4>
+</div>
+<div class="form-control-wrap">
+  <div class="form-wrapper">
+    <div class="form-left">
+      <div class="form-controller"><span class="subtitle-2">UW Analysis <span style="color: red">*</span></span>
+        <div class="input-form-wrap"><input [(ngModel)]="uwAnalysis" class="a-textfield-mini"></div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">UW Year <span style="color: red">*</span></span>
+        <div class="input-form-wrap"><input [(ngModel)]="uwYear" class="a-textfield-mini"></div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">Contract Label</span>
+        <div class="input-form-wrap"><input [(ngModel)]="contractLabel" class="a-textfield-mini"></div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">Business Type <span style="color: red">*</span></span>
+        <div class="input-form-wrap">
+          <nz-select style="width: 100%"
+                     [(ngModel)]="businessType.value" nzShowSearch
+                     class="a-dropdown-small"
+                     nzPlaceHolder="TAG CURRENCY">
+            <nz-option *ngFor="let item of businessType.option" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">Sector</span>
+        <div class="input-form-wrap"><input [(ngModel)]="sector" class="a-textfield-mini"></div>
+      </div>
+    </div>
+    <div class="form-center">
+      <div class="form-controller"><span class="subtitle-2">Contract ID <span style="color: red">*</span></span>
+        <div class="input-form-wrap"><input [(ngModel)]="contractId" class="a-textfield-mini"></div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">Insured <span style="color: red">*</span></span>
+        <div class="input-form-wrap"><input [(ngModel)]="insured" class="a-textfield-mini"></div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">Subsidiary <span style="color: red">*</span></span>
+        <div class="input-form-wrap">
+          <nz-select style="width: 100%"
+                     [(ngModel)]="subsidiary.value" nzShowSearch
+                     class="a-dropdown-small"
+                     nzPlaceHolder="TAG CURRENCY"
+          >
+            <nz-option *ngFor="let item of subsidiary.option" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">LOB  <span style="color: red">*</span></span>
+        <div class="input-form-wrap">
+          <nz-select style="width: 100%" [(ngModel)]="lob.value" nzShowSearch
+                     class="a-dropdown-small"
+                     nzPlaceHolder="TAG CURRENCY">
+            <nz-option *ngFor="let item of lob.option" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+      <div class="form-controller"><span class="subtitle-2">Raised By <span style="color: red">*</span></span>
+        <div class="input-form-wrap">
+          <nz-select style="width: 100%" [(ngModel)]="raisedBy.value" nzShowSearch
+                     class="a-dropdown-small"
+                     nzPlaceHolder="TAG CURRENCY">
+            <nz-option *ngFor="let item of raisedBy.option" [nzLabel]="item" [nzValue]="item"></nz-option>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="form-control-wrap">
+  <h6>Coverage Section</h6>
+  <div class="form-controller new-wrap"><span class="subtitle-2">Region Peril</span>
+    <div class="input-form-wrap">
+      <nz-select style="width: 100%" [(ngModel)]="metaData" nzShowSearch
+                 nzMode="multiple"
+                 class="a-dropdown-small"
+                 nzPlaceHolder="TAG CURRENCY">
+        <nz-option *ngFor="let item of data" [nzLabel]="item?.regionPerilDesc" [nzValue]="item?.regionPerilCode"></nz-option>
+      </nz-select>
+    </div>
+  </div>
+</div>
+
+<div class="form-footer">
+  <button class="a-buttons-contained-mini">SUBMIT</button>
+</div>

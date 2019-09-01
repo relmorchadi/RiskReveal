@@ -1624,7 +1624,6 @@ export const ONE_PLT =
 
 export const PLT_DATA =
   {
-    '17P3398-2016': {
       'SPLTH-000735484': {
         workspaceId: '17P3398',
         uwy: 2016,
@@ -1705,7 +1704,6 @@ export const PLT_DATA =
         ],
         calibrate: true,
         toCalibrate: true,
-        pureId: 'SPLTH-000735434',
         threads: [
           {
             workspaceId: '17P3398',
@@ -2764,7 +2762,7 @@ export const PLT_DATA =
           {
             workspaceId: '17P3398',
             uwy: 2016,
-            pltId: 'SPLTH-0007246',
+            pltId: 'SPLTH-0007236',
             pltName: 'EUCS-DE_GR_LMF1.03.T3',
             peril: 'CS',
             regionPerilCode: 'EUCS-DE',
@@ -3690,7 +3688,6 @@ export const PLT_DATA =
           }
         ]
       }
-    }
   }
 export const API_RESPONSE = {
   "plts": [{

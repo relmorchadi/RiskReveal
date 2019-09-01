@@ -49,6 +49,7 @@ export class CalibrationService implements NgxsOnInit {
     let random = Math.floor(Math.random() * 199) - 99;
     return random;
   }
+
   /*Load Plts*/
   loadAllPltsFromCalibration(ctx: StateContext<any>, payload: any) {
 
@@ -56,7 +57,7 @@ export class CalibrationService implements NgxsOnInit {
     this.ctx = ctx;
     this.prefix = params.workspaceId + '-' + params.uwy;
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data = PLT_DATA;
+      draft.content[this.prefix].calibration.data[this.prefix] = PLT_DATA;
       draft.content[this.prefix].calibration.filters = {
         systemTag: [],
         userTag: []
@@ -222,13 +223,17 @@ export class CalibrationService implements NgxsOnInit {
 
   calibrateSelectPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
-    const {
-      plts,
-      wsIdentifier
-    } = payload;
-
+    const plts = payload.plts;
+    console.log(plts)
+    const result = state.content[this.prefix].calibration.data[this.prefix];
+    _.forEach(result, plt => {
+      _.forEach(plt.threads, thread => {
+        if (plts[thread.pltId])
+          thread.calibrate = plts[thread.pltId].calibrate;
+      })
+    })
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data = _.merge({}, state.content[this.prefix].calibration.data, {[wsIdentifier]: plts})
+      draft.content[this.prefix].calibration.data[this.prefix] = _.merge({}, state.content[this.prefix].calibration.data[this.prefix], result)
     }));
   }
 
@@ -238,8 +243,15 @@ export class CalibrationService implements NgxsOnInit {
       plts,
       wsIdentifier
     } = payload;
+    const result = state.content[this.prefix].calibration.data[this.prefix];
+    _.forEach(result, plt => {
+      _.forEach(plt.threads, thread => {
+        if (plts[thread.pltId])
+          thread.toCalibrate = plts[thread.pltId].toCalibrate;
+      })
+    })
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data = _.merge({}, state.content[this.prefix].calibration.data, {[wsIdentifier]: plts})
+      draft.content[this.prefix].calibration.data[this.prefix] = _.merge({}, state.content[this.prefix].calibration.data[this.prefix], result)
     }));
   }
 
@@ -425,16 +437,17 @@ export class CalibrationService implements NgxsOnInit {
       adjustement.value = adjustementType.abv;
     }
     let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
-    console.log(adjustmentApplication);
-    let newAdj = {...adjustement};
 
+    let newAdj = {...adjustement};
     _.forEach(pltId, (value) => {
+      newAdj['id'] = value.pltId + '-' + adjustement['id'];
       if (adjustmentApplication[value.pltId] !== undefined) {
-        adjustmentApplication[value.pltId].push(newAdj);
+        adjustmentApplication[value.pltId].push({...newAdj});
       } else {
-        adjustmentApplication[value.pltId] = [newAdj]
+        adjustmentApplication[value.pltId] = [{...newAdj}]
       }
     })
+    console.log(adjustmentApplication);
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
     }));
@@ -445,12 +458,13 @@ export class CalibrationService implements NgxsOnInit {
 
     let pltId = payload.pltId;
     let newAdj = {...payload.adjustement};
+    let lastpltId = payload.lastpltId;
+    const addtoAdj = [...state.content[this.prefix].calibration.adjustmentApplication[pltId], newAdj];
+    const removefrom = [..._.filter(state.content[this.prefix].calibration.adjustmentApplication[lastpltId], row => row.id != newAdj.id)];
 
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.adjustmentApplication = [...state.content[this.prefix].calibration.adjustmentApplication, {
-        pltId: pltId,
-        adj: newAdj
-      }]
+      draft.content[this.prefix].calibration.adjustmentApplication[pltId] = addtoAdj;
+      draft.content[this.prefix].calibration.adjustmentApplication[lastpltId] = removefrom;
     }));
   }
 

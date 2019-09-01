@@ -36,6 +36,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('initAdjutmentApplication') initAdjutmentApplicationEmitter: EventEmitter<any> = new EventEmitter();
   @Output('closeReturnPeriods') closeReturnPeriodsEmitter: EventEmitter<any> = new EventEmitter();
   @Output('sortChange') sortChangeEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('checkboxSort') checkboxSortEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('expandAll') expandEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('onDrop') onDropEmitter: EventEmitter<any> = new EventEmitter();
 
   @Input('extended') extended: boolean;
   // @Input('cm') cm: any;
@@ -69,7 +72,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Input('selectAll') selectAll: any;
   @Input('manageReturnPeriods') manageReturnPeriods: boolean;
   @Input('rowGroupMetadata') rowGroupMetadata: any;
-
+  @Input('groupedByPure') groupedByPure: any;
+  @Input('rowKeys') rowKeys: any;
+  @Input('allRowsExpanded') allRowsExpanded: any;
+  @Input('sortData') sortData: any;
   returnPeriods = [10000, 5000, 1000, 500, 100, 50, 25, 10, 5, 2];
   lastSelectedId = null;
   params = {};
@@ -79,7 +85,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     userTag: []
   }
   filterData = {};
-  sortData = {};
   activeCheckboxSort = false;
   addTagModalIndex = 0;
   fromPlts = false;
@@ -100,6 +105,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   filterInput: string = "";
   singleValue: any;
   global: any;
+  lastDragPltId: any;
   dragPlaceHolderId: any;
   dragPlaceHolderCol: any;
   draggedAdjs: any;
@@ -252,8 +258,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   randomPercentage: any;
   randomAmount: number;
   AALNumber: number = null;
-  pure = PURE
-
+  pure = PURE;
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
   @ViewChild('dt')
@@ -262,7 +267,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   private lastClick: string;
   returnPeriodInput: any;
   clickedDropdown: any;
-  private userTagsLength: number = 10000;
+  userTagsLength: number = 10000;
+
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -276,15 +282,6 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   ngOnInit() {
-  }
-  sort(sort: { key: string, value: string }): void {
-    if (sort.value) {
-      this.sortData = _.merge({}, this.sortData, {
-        [sort.key]: sort.value === 'descend' ? 'desc' : 'asc'
-      });
-    } else {
-      this.sortData = _.omit(this.sortData, [sort.key]);
-    }
   }
 
   filter(key: string, value?: any) {
@@ -371,19 +368,15 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
+    i = _.findIndex(this.listOfPltsThread, (row: any) => row.pltId == pltId);
     let index = -1;
     let isSelected;
     _.forEach(this.listOfPltsThread, (plt, i) => {
       if (plt.pltId == pltId) {
-        console.log('opla')
         isSelected = plt.selected
       }
     });
-    console.log('isSelected', isSelected)
-    console.log(this.listOfPltsThread)
-    // this.selectSinglePLT(pltId,!_.find(this.listOfPltsThread, plt => plt.pltId == pltId).selected);
 
-    console.log(this.selectedListOfPlts);
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
@@ -409,24 +402,17 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   checkBoxsort() {
-    this.activeCheckboxSort = !this.activeCheckboxSort;
-    if (this.activeCheckboxSort) {
-      this.listOfPltsThread = _.sortBy(this.listOfPltsThread, [(o) => {
-        return !o.selected;
-      }]);
-    } else {
-      this.listOfPltsThread = this.listOfPltsDataCache;
-    }
+    this.checkboxSortEmitter.emit();
   }
 
   sortChange(field: any, sortCol: any) {
-    console.log(field, sortCol);
+
     if (!sortCol) {
-      this.sortData[field] = 'asc';
+      this.sortChangeEmitter.emit({...this.sortData, [field]: 'asc'})
     } else if (sortCol === 'asc') {
-      this.sortData[field] = 'desc';
+      this.sortChangeEmitter.emit({...this.sortData, [field]: 'desc'})
     } else if (sortCol === 'desc') {
-      this.sortData[field] = null
+      this.sortChangeEmitter.emit({...this.sortData, [field]: null})
     }
   }
 
@@ -481,8 +467,10 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
        adjustement: this.draggedAdjs
      }))*/
     this.adjustColWidth(this.draggedAdjs);
+    console.log(this.draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
+    this.onDropEmitter.emit({col: col, pltId: pltId, draggedAdjs: this.draggedAdjs, lastpltId: this.lastDragPltId});
   }
 
   emitFilters(filters: any) {
@@ -604,29 +592,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     }
   }
 
-  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
-    if ($event.ctrlKey) {
-      this.selectSinglePLT(pltId, isSelected);
-      this.lastSelectedId = i;
-      return;
-    }
-
-    if ($event.shiftKey) {
-      if (!this.lastSelectedId) this.lastSelectedId = 0;
-      if (this.lastSelectedId || this.lastSelectedId == 0) {
-        const max = _.max([i, this.lastSelectedId]);
-        const min = _.min([i, this.lastSelectedId]);
-        this.toggleSelectPlts(
-          _.zipObject(
-            _.map(this.listOfPltsThread, plt => plt.pltId),
-            _.map(this.listOfPltsThread, (plt, i) => ({selected: i <= max && i >= min})),
-          )
-        );
-      } else {
-        this.lastSelectedId = i;
-      }
-      return;
-    }
+  expandAll(expand: boolean) {
+    this.expandEmitter.emit(expand);
   }
 
   onColResize(event: any) {
@@ -646,5 +613,37 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   protected detectChanges() {
     if (!this.changeRef['destroyed'])
       this.changeRef.detectChanges();
+  }
+
+  private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
+    if ($event.ctrlKey) {
+      this.selectSinglePLT(pltId, isSelected);
+      this.lastSelectedId = i;
+      return;
+    }
+
+    if ($event.shiftKey) {
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
+        const max = _.max([i, this.lastSelectedId]);
+        const min = _.min([i, this.lastSelectedId]);
+        console.log('min-max ==> ', min, max);
+        this.toggleSelectPlts(
+          _.zipObject(
+            _.map(this.listOfPltsThread, plt => plt.pltId),
+            _.map(this.listOfPltsThread, (plt, i) => ({selected: i <= max && i >= min})),
+          )
+        );
+      } else {
+        this.lastSelectedId = i;
+      }
+      console.log(this.lastSelectedId);
+      return;
+    }
+  }
+
+  onDragStart(adj, pltId) {
+    this.draggedAdjs = adj;
+    this.lastDragPltId = pltId;
   }
 }

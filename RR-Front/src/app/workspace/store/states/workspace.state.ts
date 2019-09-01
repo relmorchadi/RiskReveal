@@ -292,6 +292,11 @@ export class WorkspaceState {
     return state.content[wsIdentifier].scopeOfCompletence.data;
   }
 
+  static getPltsForScopeCompleteness(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+  }
+
 
 
   /***********************************
@@ -399,6 +404,11 @@ export class WorkspaceState {
     return this.pltStateService.LoadAllPlts(ctx, payload);
   }
 
+  @Action(fromWS.loadWorkSpaceAndPlts)
+  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts){
+    return this.pltStateService.loadWorkSpaceAndPlts(ctx, payload);
+  }
+
   @Action(fromPlt.loadAllPltsSuccess)
   LoadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPltsSuccess) {
     return this.pltStateService.loadAllPltsSuccess(ctx, payload);
@@ -504,6 +514,16 @@ export class WorkspaceState {
   @Action(fromPlt.FilterPltsByStatus)
   filterPltsByStatus(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.FilterPltsByStatus) {
     this.pltStateService.filterPltsByStatus(ctx, payload);
+  }
+
+  @Action(fromPlt.AddNewTag)
+  addNewTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AddNewTag) {
+    this.pltStateService.addNewTag(ctx, payload);
+  }
+
+  @Action(fromPlt.DeleteTag)
+  deleteTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.DeleteTag) {
+    this.pltStateService.deleteTag(ctx, payload);
   }
 
   /***********************************

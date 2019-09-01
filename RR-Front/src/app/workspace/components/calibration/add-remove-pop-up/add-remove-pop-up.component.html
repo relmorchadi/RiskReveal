@@ -28,7 +28,7 @@
         (onSetSelectedUserTags)="setUserTags($event)"
         (onWsHeaderSelection)="setWsHeaderSelect($event)"
         (unCkeckAllPlts)="unCheckAll()"
-        [menuInputs]="Inputs | pickKeys : menuInputs"
+        [inputs]="Inputs | pickKeys : menuInputs"
       >
 
       </app-plt-left-menu>
@@ -48,6 +48,7 @@
           (onSelectSinglePlt)="selectSinglePLT($event)"
           (openPltInDrawer)="openPltInDrawer($event)"
           [tableInputs]="Inputs | pickKeys : tableInputs"
+          [listOfPltsThread]="listOfPltsThread"
         ></app-pop-up-plt-table>
       </div>
     </div>

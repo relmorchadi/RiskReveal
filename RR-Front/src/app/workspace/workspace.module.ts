@@ -32,6 +32,7 @@ import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import {Dialogs} from 'jsplumbtoolkit';
 import {INURING_NODES} from "./components/inuring/nodes";
 
+
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
@@ -43,7 +44,6 @@ import {INURING_NODES} from "./components/inuring/nodes";
     SharedModule,
     FormsModule,
     TreeModule,
-    DialogModule,
     CalendarModule,
     VirtualScrollerModule,
     ReactiveFormsModule,

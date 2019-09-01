@@ -1,20 +1,24 @@
 import {Injectable} from '@angular/core';
 import {StateContext} from '@ngxs/store';
 import * as fromPlt from '../store/actions/plt_main.actions';
-import {catchError, mergeMap} from 'rxjs/operators';
+import {catchError, mergeMap, tap} from 'rxjs/operators';
 import * as _ from 'lodash';
 import {PltApi} from './plt.api';
 import {WorkspaceModel} from '../model';
 import {of} from 'rxjs';
 import * as moment from 'moment';
 import produce from "immer";
+import {WsApi} from "./workspace.api";
+import * as fromWS from "../store/actions";
+import * as fromHeader from "../../core/store/actions/header.action";
+import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
 
 @Injectable({
   providedIn: 'root'
 })
 export class PltStateService {
 
-  constructor(private pltApi: PltApi) {
+  constructor(private pltApi: PltApi,private wsApi: WsApi) {
   }
 
   status = ['in progress', 'valid', 'locked', 'requires regeneration', 'failed'];
@@ -24,19 +28,18 @@ export class PltStateService {
       wsIdentifier,
       params
     } = payload;
-    const {
-      data
-    } = ctx.getState().content[wsIdentifier].pltManager;
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.loading = true;
     }));
+    console.log(payload);
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
           ctx.patchState(produce(ctx.getState(), draft => {
             const deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {};
-            draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt}})));
+            //draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt}})));
+            draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: plt})));
             draft.content[wsIdentifier].pltManager = {
               ...draft.content[wsIdentifier].pltManager,
               filters: {systemTag: [], userTag: []},
@@ -50,6 +53,138 @@ export class PltStateService {
         }),
         catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFail()))
       );
+  }
+
+  private _selectProject(projects: any, projectIndex: number): Array<any> {
+    if (!_.isArray(projects))
+      return [];
+    _.filter(projects, p => p.selected === true).forEach(p => p.selected = false);
+    projects[projectIndex].selected = true;
+    return projects;
+  }
+
+  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, payload) {
+    const {
+      params
+    } = payload;
+
+    return this.wsApi.searchWorkspace(params.workspaceId,params.uwy)
+      .pipe(
+        mergeMap((ws: any) => {
+
+          const {workspaceId, uwy } = params;
+          const {workspaceName, programName, cedantName, projects} = ws;
+          const wsIdentifier = `${workspaceId}-${uwy}`;
+          (projects || []).length > 0 ? ws.projects= this._selectProject(projects, 0) : null;
+          ctx.patchState(produce(ctx.getState(), draft => {
+            draft.content = _.merge(draft.content, {
+              [wsIdentifier]: {
+                wsId: workspaceId,
+                uwYear: uwy,
+                ...ws,
+                projects,
+                collapseWorkspaceDetail: true,
+                route: 'CloneData',
+                leftNavbarCollapsed: false,
+                isFavorite: false,
+                plts: {},
+                pltManager: {
+                  data: {},
+                  filters: {
+                    systemTag: [], userTag: []
+                  },
+                  openedPlt: {},
+                  userTags: {},
+                  cloneConfig: {},
+                  loading: false
+                },
+                calibration: {
+                  data: {},
+                  loading: false,
+                  filters: {
+                    systemTag: [],
+                    userTag: []
+                  },
+                  userTags: {},
+                  selectedPLT: [],
+                  extendPltSection: false,
+                  collapseTags: true,
+                  lastCheckedBool: false,
+                  firstChecked: '',
+                  adjustments: [],
+                  adjustmentApplication: {},
+                  adjustementType: _.assign({}, ADJUSTMENT_TYPE),
+                  allAdjsArray: _.assign({}, ADJUSTMENTS_ARRAY),
+                },
+                riskLink: {
+                  listEdmRdm: {
+                    data: null,
+                    dataSelected: [],
+                    selectedListEDMAndRDM: {edm: null, rdm: null},
+                    totalNumberElement: 0,
+                    searchValue: '',
+                    numberOfElement: 0
+                  },
+                  linking: {
+                    edm: null,
+                    rdm: {data: null, selected: null},
+                    autoLinks: null,
+                    linked: [],
+                    analysis: null,
+                    portfolio: null,
+                    autoMode: false
+                  },
+                  display: {
+                    displayTable: false,
+                    displayImport: false,
+                  },
+                  collapse: {
+                    collapseHead: true,
+                    collapseAnalysis: true,
+                    collapseResult: true,
+                  },
+                  checked: {
+                    checkedARC: false,
+                    checkedPricing: false,
+                  },
+                  financialValidator: {
+                    rmsInstance: {
+                      data: ['AZU-P-RL17-SQL14', 'AZU-U-RL17-SQL14', 'AZU-U2-RL181-SQL16'],
+                      selected: 'AZU-P-RL17-SQL14'
+                    },
+                    financialPerspectiveELT: {
+                      data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
+                      selected: 'Net Loss Pre Cat (RL)'
+                    },
+                    targetCurrency: {
+                      data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
+                      selected: 'Main Liability Currency (MLC)'
+                    },
+                    calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
+                  },
+                  financialPerspective: {
+                    rdm: {data: null, selected: null},
+                    analysis: null,
+                    treaty: null,
+                    standard: null,
+                    target: 'currentSelection'
+                  },
+                  analysis: null,
+                  portfolios: null,
+                  results: null,
+                  summaries: null,
+                  selectedEDMOrRDM: null,
+                  activeAddBasket: false
+                },
+                fileBaseImport: {}
+              }
+            });
+            draft.loading = false;
+          }))
+          return of(null);
+        }),
+        tap( () => ctx.dispatch( new fromPlt.loadAllPlts(payload)))
+      )
   }
 
   setCloneConfig(ctx: StateContext<WorkspaceModel>, payload: any
@@ -483,5 +618,19 @@ export class PltStateService {
       }));
     }
 
+  }
+
+  addNewTag(ctx: StateContext<WorkspaceModel>, payload: any) {
+    return this.pltApi.creatUserTag(payload)
+      .pipe(
+        mergeMap( userTag => of(userTag))
+      )
+  }
+
+  deleteTag(ctx: StateContext<WorkspaceModel>, payload: any) {
+    return this.pltApi.deleteUserTag(payload)
+      .pipe(
+        mergeMap( userTag => of(userTag))
+      )
   }
 }

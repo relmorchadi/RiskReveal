@@ -5,27 +5,54 @@
           <h4>PLT Comparer &nbsp;</h4>
           <i class="icon-plus-circle icon-generic" (click)="showModal()"
            style="font-size: 25px; cursor: pointer;"></i>
-          <nz-modal
-          [(nzVisible)]="isVisible"
-          nzFooter=" "
-          nzTitle="Browse For Comparer"
-          (nzOnCancel)="handleCancel()">
-          <form [formGroup]="form">
-            <nz-select
-              formControlName="defaultImport"
-              nzShowSearch
-              nzAllowClear
-              class="a-dropdown-small"
-              style="width: 200px; margin-bottom: 5px;"
-              nzPlaceHolder="Select Workspace"
-            >
-              <nz-option nzCustomContent *ngFor="let item of listOfWs.data" [nzLabel]="item.workSpaceId"
-                         [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
-            </nz-select>
-          </form>
-          <div class="my-modal">
-            <app-plt-left-menu
-              [menuInputs]="{
+
+        <app-plt-selection-pop-up
+          [isVisible]="isVisible"
+          [multiSteps]="multiSteps"
+          [stepConfig]="stepConfig"
+          (onVisibleChange)="isVisible= $event"
+          (onSelectWorkspace)="setSelectedWs($event)"
+          (onSelectItems)="setSelectedPlts($event)"
+        >
+
+        </app-plt-selection-pop-up>
+        <!--
+        <p-dialog
+          [visible]="isVisible"
+          [closable]="false"
+          styleClass="m-dialog-modal-lg plt-comparer-pop-up"
+          [modal]="true"
+          [autoZIndex]="false"
+          [responsive]="true"
+          (onHide)="handleCancel()"
+        >
+
+          <p-header>
+            <div class="header">
+              <h4>
+                Browse For Comparer
+              </h4>
+              <i style="cursor: pointer" (click)="handleCancel()" class="icon-close_24px"></i>
+            </div>
+          </p-header>
+
+          <div class="content">
+              <div class="left">
+                <form [formGroup]="form">
+                  <nz-select
+                    formControlName="defaultImport"
+                    nzShowSearch
+                    nzAllowClear
+                    class="a-dropdown-small"
+                    style="margin-bottom: 5px;"
+                    nzPlaceHolder="Select Workspace"
+                  >
+                    <nz-option nzCustomContent *ngFor="let item of listOfWs" [nzLabel]="item.workSpaceId"
+                               [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
+                  </nz-select>
+                </form>
+                <app-plt-left-menu
+                  [inputs]="{
             tagContextMenu: tagContextMenu,
             wsId: workspaceId,
             uwYear: uwy,
@@ -46,70 +73,47 @@
             tagForMenu: tagFormenu,
             wsHeaderSelected: wsHeaderSelected
           }"
-              (onAssignPltsToTag)="assignPltsToTag($event)"
-              (onProjectFilter)="filter($event)"
-              (onEditTag)="renameTag($event)"
-              (onResetPath)="resetPath()"
-              (onSelectProjects)="setSelectedProjects($event)"
-              (onSelectSysTagCount)="selectSystemTag($event)"
-              (onSetFilters)="setFilters($event)"
-              (onSetFromPlts)="setFromPlts($event)"
-              (onSetSelectedUserTags)="setUserTags($event)"
-              (onToggleDeletedPlts)="toggleDeletePlts()"
-              (setTagModalIndex)="setModalIndex($event)"
-              (setTagModalVisibility)="setTagModal($event)"
-              (onSetTagForMenu)="setTagForMenu($event)"
-              (onSetRenameTag)="setRenameTag($event)"
-              (emitFilters)="emitFilters($event)"
-              (unCkeckAllPlts)="unCheckAll()"
-              (onWsHeaderSelection)="setWsHeaderSelect($event)"
-              (onModalSelect)="setModalSelectedItems($event)"
-            >
+                  (onAssignPltsToTag)="assignPltsToTag($event)"
+                  (onProjectFilter)="filter($event)"
+                  (onEditTag)="renameTag($event)"
+                  (onResetPath)="resetPath()"
+                  (onSelectProjects)="setSelectedProjects($event)"
+                  (onSelectSysTagCount)="selectSystemTag($event)"
+                  (onSetFilters)="setFilters($event)"
+                  (onSetFromPlts)="setFromPlts($event)"
+                  (onSetSelectedUserTags)="setUserTags($event)"
+                  (onToggleDeletedPlts)="toggleDeletePlts()"
+                  (setTagModalIndex)="setModalIndex($event)"
+                  (setTagModalVisibility)="setTagModal($event)"
+                  (onSetTagForMenu)="setTagForMenu($event)"
+                  (onSetRenameTag)="setRenameTag($event)"
+                  (emitFilters)="emitFilters($event)"
+                  (unCkeckAllPlts)="unCheckAll()"
+                  (onWsHeaderSelection)="setWsHeaderSelect($event)"
+                  (onModalSelect)="setModalSelectedItems($event)"
+                >
 
-            </app-plt-left-menu>
-            <div class="title-right">
-              <div class="title-as-tab">
+                </app-plt-left-menu>
+              </div>
+              <div
+                class="center">
+                <div class="title-as-tab">
           <span>
             PLTs
           </span>
+                </div>
+                <div class="PLTs-content">
+                  <app-plt-main-table
+                    [tableInputs]="tableInputs"
+                    (actionDispatcher)="tableActionDispatcher($event)"
+                  ></app-plt-main-table>
+                </div>
               </div>
-              <div class="PLTs-content">
-                <!--<i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;font-size: 15px;"></i>-->
-                <app-plt-main-table
-                  [tableInputs]="{
-                  pltColumns: pltColumns,
-                  listOfPltsData: listOfPltsData,
-                  listOfDeletedPltsData: listOfDeletedPltsData,
-                  listOfPltsCache: listOfPltsCache,
-                  listOfDeletedPltsCache: listOfDeletedPltsCache,
-                  listOfPlts: listOfPlts,
-                  listOfDeletedPlts: listOfDeletedPlts,
-                  selectedListOfPlts: selectedListOfPlts,
-                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
-                  selectAll: selectAll,
-                  someItemsAreSelected: someItemsAreSelected,
-                  showDeleted: showDeleted,
-                  filterData: filterData,
-                  filters: filters,
-                  sortData: sortData
-                }"
-
-                  (deletePlt)="deletePlt()"
-                  (openPltInDrawer)="openPltInDrawer($event)"
-                  (editTags)="editTags()"
-                  (restore)="restore()"
-                  (onCheckAll)="checkAll()"
-                  (onCheckBoxSort)="checkBoxSort($event)"
-                  (onFilter)="filter($event)"
-                  (onItemSelectForMenu)="setSelectedMenuItem($event)"
-                  (onPltClick)="toggleSelectPlts($event)"
-                  (onSelectSinglePlt)="selectSinglePLT($event)"
-                  (onSortChange)="sortChange($event)"
-                ></app-plt-main-table>
-              </div>
-            </div>
           </div>
-        </nz-modal>
+
+        </p-dialog>
+
+        -->
 <!--        </div>-->
       </div>
       <div class="header-center">
