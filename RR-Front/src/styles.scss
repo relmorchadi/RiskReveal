@@ -1,11 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 @import "assets/fonts/Rubik/rubik.css";
 @import "assets/scss/styles";
-@import "assets/jsplumb/css/jsplumbtoolkit-defaults.css";
+// JSPlumb St
+@import "../node_modules/jsplumbtoolkit/dist/css/syntax-highlighter.css";
+@import "../node_modules/jsplumbtoolkit/dist/css/jsplumbtoolkit-defaults.css";
+@import "../node_modules/jsplumbtoolkit/dist/css/jsplumbtoolkit-demo.css";
+@import "../src/assets/jsplumb/flowchart-builder/app.css";
 
 
 body {
   overflow: auto;
+}
+
+.jtk-surface{
+  height: -webkit-fill-available;
 }
 
 .ant-avatar {
