@@ -11,3 +11,12 @@ export class CloseInuringPackage {
   constructor(public payload: any) {}
 }
 
+export class AddInputNode {
+  static readonly type = `[${namespace}] Add Input Node`;
+  constructor(public payload: any) {}
+}
+
+export class AddJoinNode {
+  static readonly type = `[${namespace}] Add Join Node`;
+  constructor(public payload: any) {}
+}

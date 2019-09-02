@@ -122,57 +122,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     ]);
   }
 
-  // getData(treatySections) {
-  //   let res = [];
-  //   const treatySectionss = [...treatySections]
-  //   console.log('11111111');
-  //   _.forEach(treatySectionss, treatySection => {
-  //     _.forEach(treatySection.regionPerils, regionPeril => {
-  //       let object = {
-  //         id: regionPeril.id,
-  //         description: regionPeril.description,
-  //         override: false,
-  //         selected: false,
-  //         child: _.merge([], [...(_.find(res, item => item.id == regionPeril.id) || { child: []}).child , ...regionPeril.targetRaps])
-  //       };
-  //       const index = _.findIndex(res, row => row.id == object.id);
-  //       if (index == -1) {
-  //         res.push( _.merge({},object))
-  //       } else {
-  //
-  //         _.forEach(_.merge([],object.child) ,tr => {
-  //           tr.pltsAttached.forEach(plt => {
-  //             res[index].child.forEach(trr => {
-  //               if (tr == trr) {
-  //                 const index2 = _.findIndex(trr.pltsAttached, (pplt: any) => pplt.pltId == plt.pltId)
-  //                 if (index2 == -1) {
-  //                   trr.pltsAttached = _.merge([], [...trr.pltsAttached, plt])
-  //
-  //                 }
-  //               }
-  //             })
-  //             /*res[index] = {...res[index], child: _.map(res[index].child, trr => {
-  //                 if (tr == trr) {
-  //                   const index2 = _.findIndex(trr.pltsAttached, (pplt: any) => pplt.pltId == plt.pltId)
-  //                   if (index2 == -1) {
-  //                     return {
-  //                       ...trr,
-  //                       pltsAttached : [...trr.pltsAttached, plt]
-  //                     }
-  //                   }
-  //                 } else return trr;
-  //             })}*/
-  //           })
-  //         })
-  //
-  //       }
-  //
-  //     })
-  //   });
-  //   console.log("this has been executed");
-  //   return res;
-  // };
-
   getData(treatySections) {
     let res = [];
     let treatySectionsClone = _.cloneDeep(treatySections);
@@ -371,14 +320,18 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
-                    if (this.listOfPltsData[rowData.id][des.id]) {
+                    const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
+                    if (check != null) {
+                      if (this.listOfPltsData[rowData.id][des.id] ) {
                       if (this.listOfPltsData[rowData.id][des.id].length) {
                         holder.push('dispoWs');
                       }
 
-                    } else {
+                    }}
+                  else {
                       holder.push('checked');
                     }
+
                   }
                 }
               })
@@ -412,12 +365,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
+                    const check = _.get(this.listOfPltsData, `${des.id}.${rowData.id}`, null);
+                    if (check != null) {
                     if (this.listOfPltsData[des.id][rowData.id]) {
                       if (this.listOfPltsData[des.id][rowData.id].length) {
                         holder.push('dispoWs');
                       }
 
-                    } else {
+                    }} else {
                       holder.push('checked');
                     }
                   }
@@ -463,12 +418,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 checked = 'overridden';
               }
               if (!des.attached && !des.overridden) {
+                const check = _.get(this.listOfPltsData, `${rowData.id}.${grain.id}`, null);
+                if (check != null) {
                 if (this.listOfPltsData[rowData.id][grain.id]) {
                   if (this.listOfPltsData[rowData.id][grain.id].length) {
                     checked = 'dispoWs';
                   }
 
-                } else {
+                }} else {
                   checked = 'checked'
                 }
               }
@@ -490,13 +447,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                 checked = 'overridden';
               }
               if (!des.attached && !des.overridden) {
+                const check = _.get(this.listOfPltsData, `${grain.id}.${rowData.id}`, null);
+                if (check != null) {
                 if (this.listOfPltsData[grain.id][rowData.id]) {
                   if (this.listOfPltsData[grain.id][rowData.id].length) {
 
                     checked = 'dispoWs';
                   }
 
-                } else {
+                }} else {
                   checked = 'checked'
                 }
               }
