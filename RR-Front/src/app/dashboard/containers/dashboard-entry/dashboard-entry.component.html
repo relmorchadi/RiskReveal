@@ -150,7 +150,7 @@
               (click)="addRemoveItemFac(fac, selectedDashboard)"
               class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">
             <i [ngClass]="fac.icon"></i>
-            {{fac.title}}
+            {{fac?.name}}
             <i class="float-right mr-1 mt-1"
                [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
           </li>

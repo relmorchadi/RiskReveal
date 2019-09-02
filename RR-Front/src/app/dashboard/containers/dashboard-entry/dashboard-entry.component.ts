@@ -66,7 +66,7 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          id: 99, icon: 'icon-camera-focus', name: 'Car Status Widget',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
@@ -120,7 +120,7 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
+          id: 99, icon: 'icon-camera-focus', name: 'Car Status Widget',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
@@ -183,7 +183,7 @@ export class DashboardEntryComponent implements OnInit {
       swap: true,
       pushDirections: {north: true, east: true, south: true, west: true},
       resizable: {enabled: true},
-      //itemChangeCallback: this.changeItemPosition.bind(this),
+      // itemChangeCallback: this.changeItemPosition.bind(this),
       draggable: {
         enabled: true,
         ignoreContent: true,
@@ -194,7 +194,7 @@ export class DashboardEntryComponent implements OnInit {
       displayGrid: 'always',
       minCols: 3,
       minRows: 10,
-      maxItemRows:3,
+      maxItemRows: 3,
       //minItemRows:4,
       maxCols: 3,
     };
@@ -368,7 +368,6 @@ export class DashboardEntryComponent implements OnInit {
     });
     dashboard.items = [...dashboard.items, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    console.log('here');
     this.updateDashboardMockData();
   }
 
@@ -404,7 +403,6 @@ export class DashboardEntryComponent implements OnInit {
 
   addRemoveItemFac(item, dashboard) {
     dashboard.fac.forEach(ds => {
-      console.log(ds, item);
       if (ds.id === item.id) {
         ds.selected = !ds.selected;
       }
@@ -425,7 +423,6 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   loopOverDashboard(dashboard: any) {
-    console.log(_.concat(dashboard.items, dashboard.fac));
     return _.concat(dashboard.items, dashboard.fac) ;
   }
 }

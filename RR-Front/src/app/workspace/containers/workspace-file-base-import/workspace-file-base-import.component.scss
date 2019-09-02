@@ -157,6 +157,8 @@ COMPONENT STYLE
         }
 
         .list-value {
+          text-overflow: ellipsis;
+          overflow: hidden;
           font-size: 12.22px;
         }
 

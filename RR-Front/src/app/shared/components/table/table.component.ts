@@ -20,7 +20,7 @@ export class TableComponent implements OnInit {
   @ViewChild('cm') contextMenu;
 
   contextSelectedItem: any;
-  FilterData:any = {};
+  FilterData: any = {};
   sortData: any = {};
   filterInput: any;
 
@@ -208,7 +208,9 @@ export class TableComponent implements OnInit {
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
-    this.contextMenu.hide();
+    if (this.contextMenu !== undefined) {
+      this.contextMenu.hide();
+    }
   }
 
   rowSelect($event) {
