@@ -32,7 +32,7 @@ public class DefaultAdjustmentLookupTest {
     AdjustmentNodeService adjustmentNodeService;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
 
     }
@@ -50,7 +50,6 @@ public class DefaultAdjustmentLookupTest {
         if(nodeEntities != null) {
             for (AdjustmentNodeEntity nodeEntity : nodeEntities) {
                 Assert.assertEquals(nodeEntity, adjustmentNodeService.findOne(nodeEntity.getAdjustmentNodeId()));
-
             }
         }
         List<AdjustmentNodeEntity> nodeEntitie =defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(1);

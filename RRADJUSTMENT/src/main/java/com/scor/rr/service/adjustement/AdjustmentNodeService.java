@@ -84,6 +84,14 @@ public class AdjustmentNodeService {
                 adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId() == threadId)
                 .collect(Collectors.toList());
     }
+
+    public void deleteNode(Integer nodeId) {
+        AdjustmentNodeEntity adjustmentNodeEntity = findOne(nodeId);
+        deleteParameterNode(nodeId);
+        nodeOrderService.deleteByNodeId(adjustmentNodeEntity.getAdjustmentNodeId(),adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId());
+        adjustmentnodeRepository.delete(adjustmentNodeEntity);
+    }
+
     @Transactional
     public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest){
         log.info(" -----  Creating Node ----------");
@@ -108,7 +116,9 @@ public class AdjustmentNodeService {
                         }
                         adjustmentNodeEntity = adjustmentnodeRepository.save(adjustmentNodeEntity);
                         log.info(" -----  Saving Parameter for Node ----------");
-                        nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(),adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(),adjustmentNodeRequest.getSequence()));
+                        if(adjustmentNodeRequest.getAdjustmentNodeId() == 0) {
+                            nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
+                        }
                         saveParameterNode(adjustmentNodeEntity,
                                 new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0,
                                         adjustmentNodeRequest.getRpmf() != null ? adjustmentNodeRequest.getRpmf() : 0,
@@ -139,8 +149,9 @@ public class AdjustmentNodeService {
         adjustmentScalingParameterService.deleteByNodeId(nodeId);
         periodBandingParameterService.deleteByNodeId(nodeId);
         eventBasedParameterService.deleteByNodeId(nodeId);
-        processingService.delete(nodeId);
-        nodeOrderService.deleteByNodeId(nodeId);
+        if(processingService.findByNode(nodeId) != null) {
+            processingService.deleteProcessingByNode(nodeId);
+        }
     }
 
     public AdjustmentNodeEntity getAdjustmentNode(Integer nodeId) {

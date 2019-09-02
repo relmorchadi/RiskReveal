@@ -1,7 +1,5 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.DefaultAdjustmentEntity;
-import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
@@ -25,6 +23,25 @@ public class AdjustmentNodeRequest {
     private Integer scorPltHeaderInput;
     private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
+
+    public AdjustmentNodeRequest(int adjustmentNodeId,String layer, Integer sequence, Boolean isInputChanged, String lossNetFlag, Boolean hasNewParamsFile, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+        this.adjustmentNodeId = adjustmentNodeId;
+        this.layer = layer;
+        this.sequence = sequence;
+        this.isInputChanged = isInputChanged;
+        this.lossNetFlag = lossNetFlag;
+        this.hasNewParamsFile = hasNewParamsFile;
+        this.adjustmentBasis = adjustmentBasis;
+        this.adjustmentType = adjustmentType;
+        this.adjustmentState = adjustmentState;
+        this.adjustmentThreadId = adjustmentThreadId;
+        this.lmf = lmf;
+        this.rpmf = rpmf;
+        this.peatData = peatData;
+        this.scorPltHeaderInput = scorPltHeaderInput;
+        this.nodeId = nodeId;
+        this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
+    }
 
     public AdjustmentNodeRequest(String layer, Integer sequence, Boolean isInputChanged, String lossNetFlag, Boolean hasNewParamsFile, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
         this.layer = layer;

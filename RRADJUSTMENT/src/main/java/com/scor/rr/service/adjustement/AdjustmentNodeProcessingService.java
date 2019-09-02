@@ -77,6 +77,10 @@ public class AdjustmentNodeProcessingService {
         return adjustmentnodeprocessingRepository.findAll();
     }
 
+    public AdjustmentNodeProcessingEntity findByNode(int nodeId) {
+        return adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntity(nodeId);
+    }
+
     //NOTE: please add the comments to explain what will be done by these methods saveBy... and how they could be called.
     //Perhaps a refactor need to be done
 
@@ -171,8 +175,7 @@ public class AdjustmentNodeProcessingService {
     public AdjustmentNodeProcessingEntity getProcessingByNode(Integer nodeId) {
         return adjustmentnodeprocessingRepository.findAll()
                 .stream()
-                .filter(ape -> ape.getScorPltHeaderByFkInputPlt()
-                        .getPkScorPltHeaderId() == nodeId)
+                .filter(ape -> ape.getAdjustmentNodeByFkAdjustmentNode().getAdjustmentNodeId()== nodeId)
                 .findAny()
                 .orElseThrow(throwException(PLTNOTFOUNT, NOT_FOUND));
     }

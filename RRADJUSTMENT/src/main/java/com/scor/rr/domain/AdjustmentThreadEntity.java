@@ -150,4 +150,11 @@ public class AdjustmentThreadEntity {
     public void setScorPltHeaderByFkScorPltHeaderThreadPureId(ScorPltHeaderEntity scorPltHeaderByFkScorPltHeaderThreadPureId) {
         this.scorPltHeaderByFkScorPltHeaderThreadPureId = scorPltHeaderByFkScorPltHeaderThreadPureId;
     }
+
+    @Override
+    public String toString() {
+        return "AdjustmentThreadEntity{" +
+                " adjustmentThreadId=" + adjustmentThreadId +
+                '}';
+    }
 }

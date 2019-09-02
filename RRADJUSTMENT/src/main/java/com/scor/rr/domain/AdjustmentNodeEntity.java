@@ -144,4 +144,12 @@ public class AdjustmentNodeEntity {
     public void setAdjustmentNodeByFkAdjustmentNodeIdCloning(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning) {
         this.adjustmentNodeByFkAdjustmentNodeIdCloning = adjustmentNodeByFkAdjustmentNodeIdCloning;
     }
+
+    @Override
+    public String toString() {
+        return "AdjustmentNodeEntity{" +
+                ", adjustmentNodeId=" + adjustmentNodeId +
+                ", adjustmentThread=" + adjustmentThread +
+                '}';
+    }
 }

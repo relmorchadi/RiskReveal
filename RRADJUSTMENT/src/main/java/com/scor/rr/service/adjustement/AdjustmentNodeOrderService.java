@@ -29,13 +29,17 @@ public class AdjustmentNodeOrderService {
     @Autowired
     AdjustmentThreadService threadService;
 
+    public List<AdjustmentNodeOrderEntity> findAll() {
+        return adjustmentNodeOrderRepository.findAll();
+    }
+
     public AdjustmentNodeOrderEntity getAdjustmentOrderByThreadIdAndNodeId(Integer threadId,Integer nodeId){
         return adjustmentNodeOrderRepository.getAdjustmentOrderByThreadIdAndNodeId(threadId,nodeId);
     }
 
     void saveNodeOrder(AdjustmentNodeOrderRequest orderRequest) {
         AdjustmentNodeOrderEntity orderEntity = new AdjustmentNodeOrderEntity();
-        if(adjustmentNodeOrderRepository.getAdjustmentNodeOrderEntitiesByAdjustmentThread_AdjustmentThreadIdAndOrderNode(orderRequest.getAdjustmentThreadId(),orderRequest.getOrder()) == null) {
+        if(adjustmentNodeOrderRepository.getAdjustmentOrderByThreadIdAndNodeId(orderRequest.getAdjustmentThreadId(),orderRequest.getOrder()) == null) {
             orderEntity.setAdjustmentNode(nodeService.getAdjustmentNode(orderRequest.getAdjustmentNodeId()));
             orderEntity.setAdjustmentThread(threadService.findOne(orderRequest.getAdjustmentThreadId()));
             orderEntity.setOrderNode(orderRequest.getOrder());
@@ -47,27 +51,37 @@ public class AdjustmentNodeOrderService {
 
     public AdjustmentNodeOrderEntity updateOrder(Integer nodeId,Integer sequence,Integer threadId) {
         AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.getAdjustmentNodeOrderEntityByAdjustmentNode_AdjustmentNodeId(nodeId);
-        List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentNodeOrderEntitiesByAdjustmentThread_AdjustmentThreadId(threadId);
+        List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentOrderByThread(threadId);
         orderEntities = orderEntities.stream().sorted(Comparator.comparing(AdjustmentNodeOrderEntity::getOrderNode)).filter(adjustmentNodeOrderEntity -> adjustmentNodeOrderEntity.getOrderNode()>=sequence).collect(Collectors.toList());
-        if(orderEntities.isEmpty()) {
+        if(!orderEntities.isEmpty()) {
             if(orderEntities.size() != 1) {
-                for (AdjustmentNodeOrderEntity nodeOrderEntity : orderEntities) {
-                    if(!nodeOrderEntity.getOrderNode().equals(orderEntity.getOrderNode())) {
-                        nodeOrderEntity.setOrderNode(nodeOrderEntity.getOrderNode()+1);
-                        adjustmentNodeOrderRepository.save(nodeOrderEntity);
+                if (sequence < orderEntity.getOrderNode()) {
+                    for (int i = sequence-1; i < orderEntity.getOrderNode()-1 ; i++) {
+                        orderEntities.get(i).setOrderNode(orderEntities.get(i).getOrderNode() + 1);
+                        adjustmentNodeOrderRepository.save(orderEntities.get(i));
+                    }
+                } else {
+                    for(int i=orderEntity.getOrderNode();i<sequence;i++) {
+                            orderEntities.get(i).setOrderNode(orderEntities.get(i).getOrderNode()- 1);
+                            adjustmentNodeOrderRepository.save(orderEntities.get(i));
                     }
                 }
+            }
                 orderEntity.setOrderNode(sequence);
                 return adjustmentNodeOrderRepository.save(orderEntity);
             } else {
                 orderEntity.setOrderNode(sequence);
                 return adjustmentNodeOrderRepository.save(orderEntity);
             }
-        }
-        return null;
     }
 
-    void deleteByNodeId(Integer nodeId) {
+    void deleteByNodeId(Integer nodeId,Integer threadId) {
+        AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.getAdjustmentNodeOrderEntityByAdjustmentNode_AdjustmentNodeId(nodeId);
+        List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentOrderByThread(threadId);
+        for(int i=orderEntity.getOrderNode();i<orderEntities.size();i++){
+            orderEntities.get(i).setOrderNode(orderEntities.get(i).getOrderNode()- 1);
+            adjustmentNodeOrderRepository.save(orderEntities.get(i));
+        }
         adjustmentNodeOrderRepository.deleteByAdjustmentNode_AdjustmentNodeId(nodeId);
     }
 

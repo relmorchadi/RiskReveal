@@ -30,7 +30,7 @@ public class CloningPltTest {
     ScorpltheaderRepository scorpltheaderRepository;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
 
 
     }
