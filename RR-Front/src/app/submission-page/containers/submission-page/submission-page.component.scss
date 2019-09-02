@@ -49,6 +49,17 @@
   input {
     width: 100%;
   }
+  
+  ::ng-deep {
+    .ant-select-selection--multiple {
+      height: max-content;
+    }
+
+    .ant-select-selection--multiple .ant-select-selection__rendered {
+      display: block;
+      height: max-content;
+    }
+  }
 }
 
 .new-wrap {
@@ -119,7 +130,6 @@
 
     .ui-table-tbody {
       tr {
-        background-color: #fff;
         user-select: none;
       }
 
