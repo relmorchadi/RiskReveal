@@ -57,4 +57,8 @@ public class ThreadTest {
         AdjustmentThreadEntity threadEntity = adjustmentThreadService.saveAdjustedPlt(new AdjustmentThreadRequest(1,982,"HAMZA",new Timestamp(new Date().getTime())));
         Assert.assertEquals(threadEntity,adjustmentThreadService.findOne(threadEntity.getAdjustmentThreadId()));
     }
+
+    //TODO:
+    // 1. Test creating a thread with adjustment node(s): verify that the thread and nodes are created correctly, the thread contains and only contains the given nodes
+    // 2. Test adding / removing the nodes below / above one node. NOTR: need to check the status of node also
 }

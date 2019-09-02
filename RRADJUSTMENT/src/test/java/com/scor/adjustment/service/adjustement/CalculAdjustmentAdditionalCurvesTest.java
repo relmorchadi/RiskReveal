@@ -36,7 +36,7 @@ public class CalculAdjustmentAdditionalCurvesTest {
         log.info("END test for EEF Frequency Adjustment");
     }
 
-    //TODO: expected results for ALL tests
+    //TODO: expected results for ALL tests. You could liaise with BA for the manual calculation or asking the result from RR 3.x
 
     @Test
     public void AverageAnnualLossTest() throws RRException {

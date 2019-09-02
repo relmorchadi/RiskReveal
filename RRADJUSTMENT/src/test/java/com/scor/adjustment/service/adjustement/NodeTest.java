@@ -46,7 +46,6 @@ public class NodeTest {
 
     }
 
-    //TODO: expected result ? exception if creation failed (wrong parameter for example)
     @Test
     public void createNode() {
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("",1,
@@ -83,6 +82,10 @@ public class NodeTest {
         adjustmentNodeService.save(adjustmentNodeRequest23);
         log.info("adjustment order 1,2,3,4 -> 1,3,2,4 {}",adjustmentNodeOrderService.findAll());
     }
+
+    //TODO: check the consistency between adjustment type and adjustment parameters
+    // - if mandatory parameter for given adjustment type is missing --> error
+    // - if there are another parameters along with the mandatory parameter for a given adjustment type --> ignore the redundant ones, a warning is needed
 
     @Test
     public void deleteNode() {

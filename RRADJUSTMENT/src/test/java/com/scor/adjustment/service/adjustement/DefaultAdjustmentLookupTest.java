@@ -42,7 +42,9 @@ public class DefaultAdjustmentLookupTest {
 
     }
 
-    //TODO: expected results
+    //TODO: test case for two processes
+    // 1. Given a pure PLT, perform a look up and return a list of required default adjustment that matched all criteria. Note: be careful for testing the edge cases for versioning
+    // 2. Given a Default Adjustment, create correctly the default adjustment nodes.
 
     @Test
     public void lookupForDefaultAdjustmentWithInputPLT() {
