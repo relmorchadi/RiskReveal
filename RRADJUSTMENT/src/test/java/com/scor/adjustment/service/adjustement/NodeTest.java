@@ -36,7 +36,6 @@ public class NodeTest {
 
     }
 
-    //TODO: expected result ? exception if creation failed (wrong parameter for example)
     @Test
     public void createNode() {
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("",1,
@@ -46,5 +45,9 @@ public class NodeTest {
         AdjustmentNodeEntity adjustmentNodeEntity = adjustmentNodeService.save(adjustmentNodeRequest);
         Assert.assertEquals(adjustmentNodeEntity,adjustmentNodeService.findOne(adjustmentNodeEntity.getAdjustmentNodeId()));
     }
+
+    //TODO: check the consistency between adjustment type and adjustment parameters
+    // - if mandatory parameter for given adjustment type is missing --> error
+    // - if there are another parameters along with the mandatory parameter for a given adjustment type --> ignore the redundant ones, a warning is needed
 
 }
