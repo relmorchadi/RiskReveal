@@ -1,14 +1,18 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {BaseContainer} from "../../../../shared/base";
+import {Router} from "@angular/router";
+import {Store} from "@ngxs/store";
+import {AddInputNode} from "../../../store/actions";
 
 @Component({
   selector: 'inuring-canvas-tab',
   templateUrl: './inuring-canvas-tab.component.html',
   styleUrls: ['./inuring-canvas-tab.component.scss']
 })
-export class InuringCanvasTabComponent implements OnInit {
+export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
 
   readonly contractTypes: Array<any> = [
-    {label: 'XoL Event'},
+    // {label: 'XoL Event'},
     {label: 'Pro-Rata Quota Share'},
     {label: 'XoL Annual Aggregate'},
     {label: 'XoL Stop Loss'},
@@ -21,7 +25,7 @@ export class InuringCanvasTabComponent implements OnInit {
     {label: 'Franchise Excess'},
   ];
 
-  showCreationPopup=false;
+  showCreationPopup = false;
 
   collapses = {
     contractDetails: true,
@@ -144,9 +148,10 @@ export class InuringCanvasTabComponent implements OnInit {
   ];
 
   @Input('wsConfig')
-  wsConfig: {wsId:string, year:number};
+  wsConfig: { wsId: string, year: number };
 
-  constructor() {
+  constructor(private _router: Router, private _cdRef: ChangeDetectorRef, private _store: Store) {
+    super(_router, _cdRef, _store)
   }
 
   ngOnInit() {
@@ -156,9 +161,13 @@ export class InuringCanvasTabComponent implements OnInit {
     console.log('[Inuring Details] Contact dop evt', $event);
   }
 
-  handleSave($event){
-
+  handleSave($event) {
+    this._store.dispatch(new AddInputNode($event));
   }
 
+  createNode() {
+    console.log('Dispatch node creation action');
+    this._store.dispatch(new AddInputNode(null));
+  }
 
 }

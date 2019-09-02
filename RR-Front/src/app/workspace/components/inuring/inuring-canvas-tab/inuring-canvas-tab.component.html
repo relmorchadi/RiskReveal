@@ -4,7 +4,7 @@
       <div class="create-tab-content">
         <div class="simple-panel">
           <h6>Input Node Creation</h6>
-          <div class="menu-item add-item" (click)="showCreationPopup=true">
+          <div class="menu-item add-item" (click)="createNode()">
             Create Node
             <i class="icon-add_circle_24px"></i>
           </div>
@@ -21,10 +21,14 @@
           <!-- TMP -->
           <div cdkDropList class="m-box-d" style="border: none !important;"
                (cdkDropListDropped)="onContractDrop($event)">
+            <div class="m-box-drag m-box-overlay menu-item draggable-item" pDraggable="inuring-contract">
+              <span class="no-wrap">XoL Event</span>
+              <i class="icon-drag_handle_24px"></i>
+            </div>
             <ng-container *ngFor="let item of contractTypes; let i=index">
-              <div class="m-box-drag m-box-overlay menu-item draggable-item" cdkDrag>
+              <div class="m-box-drag m-box-overlay menu-item draggable-item draggable-disabled-item" cdkDrag [cdkDragDisabled]="true">
                 <span class="no-wrap">{{item.label}}</span>
-                <i class="icon-drag_handle_24px"></i>
+<!--                <i class="icon-drag_handle_24px"></i>-->
               </div>
             </ng-container>
           </div>
