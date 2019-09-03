@@ -85,7 +85,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       this.fileBase = _.merge({}, value);
       this.detectChanges();
     });
-    console.log(DataTables.directoryTree, this.fileBase.folders);
 
     this.textFilesData = DataTables.textFilesData;
     this.pltColumns = DataTables.PltDataTables;
@@ -201,6 +200,15 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       return true;
     } else {
       return this.fileBase.selectedFiles.length === 0;
+    }
+  }
+
+  getFileLength() {
+    const path = _.get(this.fileBase, 'files', null);
+    if (path === null) {
+      return true;
+    } else {
+      return this.fileBase.files.length === 0;
     }
   }
 

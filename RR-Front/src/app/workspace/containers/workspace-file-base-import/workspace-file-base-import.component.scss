@@ -33,7 +33,6 @@ COMPONENT STYLE
     display: flex;
     background-color: #FFFFFF;
     width: 100%;
-    height: 250px;
     margin-bottom: 10px;
     box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15);
 
@@ -79,7 +78,7 @@ COMPONENT STYLE
     }
 
     .files-selection-wrap {
-      width: 91%;
+      width: 95%;
       margin: 10px auto 0;
       height: 140px;
 
@@ -89,6 +88,13 @@ COMPONENT STYLE
         li {
           height: 30px;
           align-items: center;
+
+          ::ng-deep {
+            .ant-checkbox-wrapper {
+              font-size: 12px
+            }
+          }
+
         }
       }
 
@@ -309,6 +315,10 @@ TABLE STYLE
         background-color: #f4f6fc !important;
       }
 
+      tr:hover {
+        background-color: #F7F8FD;
+      }
+
       .ant-progress-text {
         display: block;
         color: #03DAC4;
@@ -339,10 +349,11 @@ TABLE STYLE
         .text-data {
           width: 100%;
           height: 30px;
+          display: flex;
+          align-items: center;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          padding-top: 4px;
           font-weight: 400;
         }
 
@@ -387,6 +398,10 @@ TABLE STYLE
         background-color: #FDFBDF !important;
       }
 
+      .selected_contract_item {
+        background-color: #E1E1E1 !important;
+      }
+
       .icon-check_circle_24px {
         color: #F0F2FC;
         font-size: 17px;
@@ -408,12 +423,6 @@ TABLE STYLE
       overflow: auto;
       width: 100%;
     }
-  }
-}
-
-.table-width {
-  p-table {
-    width: 98%;
   }
 }
 
@@ -444,4 +453,8 @@ TABLE STYLE
   .empty-notif-wrapper {
     height: 222px;
   }
+}
+
+.body-1 {
+  font-size: 14.22px;
 }

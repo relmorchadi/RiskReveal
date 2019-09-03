@@ -101,6 +101,10 @@ TABLE STYLE
         background-color: #f4f6fc !important;
       }
 
+      tr:hover {
+        background-color: #F7F8FD;
+      }
+
       .ant-progress-text {
         display: block;
         color: #03DAC4;
@@ -562,8 +566,12 @@ COMPONENT STYLE
 
         .ui-table-tbody {
           tr {
-            background-color: #fff;
+            background-color: #FFFFFF;
             user-select: none;
+
+            &:hover {
+              background-color: #F7F8FD;
+            }
           }
 
           ::ng-deep {

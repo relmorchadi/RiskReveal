@@ -17,7 +17,7 @@
       <div class="menu-searchPlt-wrapper">
         <div style="width: 30%">
         <span class="body-1 menu-left-header"
-              style="border-top: 4px solid #0700CF; padding-top: 4px;">
+              style="border-top: 4px solid #0700CF; padding-top: 4px; padding-bottom: 10px">
           Find Directory
         </span>
           <div class="tree-menu-wrapper" *ngIf="!collapseSearchFiles">
@@ -26,7 +26,7 @@
           </div>
         </div>
         <div style="width: 70%">
-        <span class="body-1 menu-left-header" style="width: 100%" >
+        <span class="body-1 menu-left-header" style="width: 100%">
           <ng-container *ngIf="!collapseSearchFiles">Text Files Available</ng-container>
           <div class="body-wrapper-header-right" style="flex: 1">
           <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
@@ -36,11 +36,64 @@
                class="icon-keyboard_arrow_down_24px"></i>
         </div>
         </span>
-          <div class="tab-search-input search-document-wrap" *ngIf="!collapseSearchFiles">
+<!--          <div class="tab-search-input search-document-wrap" *ngIf="!collapseSearchFiles">
             <i class="icon-search_24px"></i>
             <input class="input-search"/>
+          </div>-->
+          <div class="summary-info" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
+            <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="226px"
+                     [resizableColumns]="true" [value]="fileBase.files">
+              <ng-template let-columns pTemplate="colgroup">
+                <colgroup>
+                  <ng-container *ngFor="let col of columns">
+                    <col [ngStyle]="{'width': col.width}">
+                  </ng-container>
+                </colgroup>
+              </ng-template>
+              <ng-template let-columns pTemplate="header">
+                <tr>
+                  <ng-container *ngFor="let col of columns">
+                    <th *ngIf="col.visible" pResizableColumn>
+                      <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
+                      <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                        {{col.header}}
+                        <div class="search-bar-table">
+                          <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                          <input (input)="iTable.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
+                                 type="text">
+                        </div>
+                      </div>
+                      <div *ngIf="col.type === 'icon'">
+                        <i class="icon-menu_24px"></i>
+                      </div>
+                    </th>
+                  </ng-container>
+                </tr>
+              </ng-template>
+              <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
+                <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
+                    [ngClass]="{'active_contract_item': rowData?.selected}" (dblclick)="selectedPlt = rowData">
+                  <ng-container *ngFor="let col of columns">
+                    <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                      <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
+                        <label (ngModelChange)="selectToImport($event, i)" [ngModel]="rowData.selected"
+                               nz-checkbox></label>
+                      </div>
+                      <div *ngIf="col.type === 'text'" (click)="selectToImport(!rowData.selected, i)" class="text-data">
+                        {{rowData[col.field]}}
+                      </div>
+                    </th>
+                  </ng-container>
+                </tr>
+              </ng-template>
+              <ng-template pTemplate="emptymessage" let-columns="columns">
+                <div class="empty-notif-wrapper">
+                  <nz-empty></nz-empty>
+                </div>
+              </ng-template>
+            </p-table>
           </div>
-          <div *ngIf="fileBase?.files?.length > 0 && !collapseSearchFiles" class="popover-menu files-selection-wrap">
+<!--          <div *ngIf="fileBase?.files?.length > 0 && !collapseSearchFiles" class="popover-menu files-selection-wrap">
             <ul>
               <li *ngFor="let items of fileBase?.files; let i = index">
                 <label nz-checkbox [nzChecked]="items.selected" (nzCheckedChange)="selectToImport($event, i)">
@@ -48,15 +101,16 @@
                 </label>
               </li>
             </ul>
-          </div>
-          <div *ngIf="fileBase?.files?.length === 0 && !collapseSearchFiles" class="empty-data-wrap">
+          </div>-->
+<!--          <div *ngIf="fileBase?.files?.length === 0 && !collapseSearchFiles" class="empty-data-wrap">
             <nz-empty></nz-empty>
-          </div>
+          </div>-->
           <div class="menu-left-footer" *ngIf="!collapseSearchFiles">
-            <button *ngIf="fileBase?.files?.length > 0" (click)="addForImport()" class="a-buttons-contained-mini">
+            <button *ngIf="fileBase?.files?.length > 0" (click)="addForImport()" class="a-buttons-contained-micro">
               ADD TO PROJECT
             </button>
-            <button *ngIf="fileBase?.files?.length === 0" class="a-buttons-contained-disabled-mini">ADD TO PROJECT</button>
+            <button *ngIf="fileBase?.files?.length === 0" class="a-buttons-contained-disabled-micro">ADD TO PROJECT
+            </button>
           </div>
         </div>
       </div>
@@ -66,16 +120,32 @@
         <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
           Selected PLT To Import
         </span>
-<!--          <div class="body-wrapper-header-right">
-            &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
-            <i *ngIf="!collapseImportedFiles" (click)="collapseImportedFiles = true"
-               class="icon-keyboard_arrow_up_24px"></i>
-            <i *ngIf="collapseImportedFiles" (click)="collapseImportedFiles = false"
-               class="icon-keyboard_arrow_down_24px"></i>
-          </div>-->
+          <div class="menu-icon-wrap" style="font-size: 22px; padding: 12px 20px 0;">
+            <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseImportedFiles" [nzPlacement]="'topRight'">
+              <a style="max-height: 28px;display: flex;" nz-dropdown>
+                <i class="icon-settings_24px"></i>
+              </a>
+              <ul nz-menu style="font-size: 12px">
+                <li nz-menu-item>Reset Sort</li>
+                <li nz-menu-item>Reset Filters</li>
+                <li nz-menu-item>Reset Sort/Filters</li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item (click)="toggleColumnsManager('pltToImport')">Manage Columns</li>
+                <li nz-menu-divider></li>
+                <li nz-menu-item>Unselect All</li>
+              </ul>
+            </nz-dropdown>
+          </div>
+          <!--          <div class="body-wrapper-header-right">
+                      &lt;!&ndash;              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>&ndash;&gt;
+                      <i *ngIf="!collapseImportedFiles" (click)="collapseImportedFiles = true"
+                         class="icon-keyboard_arrow_up_24px"></i>
+                      <i *ngIf="collapseImportedFiles" (click)="collapseImportedFiles = false"
+                         class="icon-keyboard_arrow_down_24px"></i>
+                    </div>-->
         </div>
 
-        <div class="summary-info table-width fixed-table-height" [ngClass]="{'empty-table': getLength()}">
+        <div class="summary-info fixed-table-height" [ngClass]="{'empty-table': getLength()}">
           <p-contextMenu appendTo="body" #cm [model]="items"></p-contextMenu>
           <p-table #iTable [columns]="pltColumns" [scrollable]="true" scrollHeight="226px"
                    [(contextMenuSelection)]="contextSelectedItem"
@@ -110,10 +180,12 @@
             </ng-template>
             <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
               <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
-                  [ngClass]="{'active_contract_item': rowData?.selected}" (dblclick)="selectedPlt = rowData">
+                  [ngClass]="{'active_contract_item': rowData?.selected,
+                  'selected_contract_item': rowData?.FileName === selectedPlt?.FileName
+                  }" (dblclick)="selectedPlt = rowData">
                 <ng-container *ngFor="let col of columns">
                   <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
-                    <div *ngIf="col.type === 'select'" class="">
+                    <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
                       <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
                              nz-checkbox></label>
                     </div>
@@ -163,23 +235,13 @@
               </div>
             </ng-template>
           </p-table>
-          <div class="menu-icon-wrap">
-            <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseImportedFiles" [nzPlacement]="'topRight'">
-              <a style="max-height: 28px;display: flex;" nz-dropdown>
-                <i class="icon-settings_24px"></i>
-              </a>
-              <ul nz-menu style="font-size: 12px">
-                <li nz-menu-item>Reset Sort</li>
-                <li nz-menu-item>Reset Filters</li>
-                <li nz-menu-item>Reset Sort/Filters</li>
-                <li nz-menu-divider></li>
-                <li nz-menu-item (click)="toggleColumnsManager('pltToImport')">Manage Columns</li>
-                <li nz-menu-divider></li>
-                <li nz-menu-item>Unselect All</li>
-              </ul>
-            </nz-dropdown>
-          </div>
         </div>
+      </div>
+
+      <div style="padding: 10px; display: flex; justify-content: flex-end;">
+        <button *ngIf="fileBase?.files?.length > 0" class="a-buttons-contained-micro">
+          IMPORT
+        </button>
       </div>
     </div>
 
