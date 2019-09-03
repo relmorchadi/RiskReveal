@@ -1,18 +1,18 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
-import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
+import {GeneralConfigState} from "../../../core/store/states";
+import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from "ng-zorro-antd";
 import * as _ from 'lodash';
-import {GeneralConfigState} from '../../../core/store/states';
 import {Store} from '@ngxs/store';
 import {Data} from '../../../core/model/data';
 import * as moment from 'moment';
 import {dashData} from '../../../shared/data/dashboard-data';
 
 @Component({
-  selector: 'renewal-contract-scope',
-  templateUrl: './renewal-contract-scope.component.html',
-  styleUrls: ['./renewal-contract-scope.component.scss']
+  selector: 'app-fac-widget',
+  templateUrl: './fac-widget.component.html',
+  styleUrls: ['./fac-widget.component.scss']
 })
-export class RenewalContractScopeComponent implements OnInit {
+export class FacWidgetComponent implements OnInit {
   @Output('delete') delete: any = new EventEmitter<any>();
   @Output('duplicate') duplicate: any = new EventEmitter<any>();
   @Output('changeName') changeName: any = new EventEmitter<any>();
@@ -24,7 +24,7 @@ export class RenewalContractScopeComponent implements OnInit {
   cedants = Data.cedant;
 
   @Input()
-  itemName = 'Renewal Contract Scope';
+  itemName = 'Car Widget';
   @Input()
   dashboard: any;
   @Input()
@@ -33,20 +33,20 @@ export class RenewalContractScopeComponent implements OnInit {
   editName = false;
 
   cols = [
-    {field: 'country', header: 'Country', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'cedant', header: 'Cedant', width: '100px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'PROGRAMNAME', header: 'Program', width: '110px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'PROGRAMID', header: 'program Code', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'UWYEAR', header: 'Uw Year', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'newOrRenewal', header: 'New / Renewal', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'omegaEntry', header: 'Omega Entry', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'EXPIRYDATE', header: 'Due Date', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'pricingVersion', header: 'Pricing Version', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'assignedTo', header: 'Assigned To', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'exposures', header: 'Exposures', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'UNDERWRITINGUNITNAMELL', header: 'Uw Unit', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'lastModifiedBy', header: 'Last Modified By', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'lastModifiedDate', header: 'Last Modified Date', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
+    {field: 'carId', header: 'CAR ID', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'projectId', header: 'PROJECT ID', width: '100px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'Insured', header: 'Insured', width: '110px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwYear', header: 'UW Year', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'contractId', header: 'Contract ID', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwAnalysis', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'contractName', header: 'Contract Name', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'subsidiary', header: 'Subsidiary', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'sector', header: 'Sector', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'businessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'AssignedAnalyst', header: 'Assigned Analyst', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'carStatus', header: 'CAR Status', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'createdAt', header: 'Created At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
+    {field: 'UpdatedAt', header: 'Updated At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
     /*{field: 'rrStatus', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
     {field: 'plt', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
     {field: 'publishedToPricing', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
@@ -159,6 +159,6 @@ export class RenewalContractScopeComponent implements OnInit {
   }
 
   setFilter(col: string, $event: {}) {
-    this.mockData = _.filter(this.mockDataCache, (e) => $event ? e[col] === $event : true)
+    this.mockData = _.filter(this.mockDataCache, (e) => $event ? e[col] === $event : true);
   }
 }

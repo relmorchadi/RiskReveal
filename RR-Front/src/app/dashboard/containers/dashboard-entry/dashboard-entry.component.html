@@ -30,25 +30,36 @@
               <i nz-icon type="close" style="visibility: hidden" (click)="closeTab(dashboard)" class="ant-tabs-close-x"></i>
             </div>
           </ng-template>
-          <div style="height: 1000px;width: 100%">
-            <gridster [options]="options" style="background-color: transparent;">
-              <ng-container *ngFor="let item of dashboard.items">
+          <div style="height:100%;width:100%">
+            <gridster  [options]="options" style="background-color: transparent" >
+              <ng-container *ngFor="let item of loopOverDashboard(dashboard)">
                 <gridster-item *ngIf="item.selected" [item]="item?.position ">
-                  <renewal-contract-scope [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                  <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent'"
+                    [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="deleteItem(dashboard.id, $event)"
                                           (changeName)="changeName(dashboard.id, $event)"
                                           (duplicate)="duplicate(dashboard.id, $event)"
-                                          class="no-drag"></renewal-contract-scope>
+                                          class="no-drag">
+                  </renewal-contract-scope>
+                  <app-fac-widget *ngIf="item.componentName === 'facWidgetComponent'"
+                    [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
+                    (delete)="deleteItem(dashboard.id, $event)"
+                    (changeName)="changeName(dashboard.id, $event)"
+                    (duplicate)="duplicate(dashboard.id, $event)"
+                  class="no-drag">
+                  </app-fac-widget>
                 </gridster-item>
               </ng-container>
             </gridster>
           </div>
         </nz-tab>
       </ng-container>
+      .
+
     </nz-tabset>
 
   </nz-content>
-  <div class="PLT-slider closed-slider">
+  <div class="PLT-slider closed-slider"  >
     <div *ngIf="!rightSliderCollapsed" class="collapsed-setting-icon">
       <i class="clickable-item icon-settings_24px" style="font-size: 24px"
          (click)="rightSliderCollapsed= !rightSliderCollapsed"></i>
@@ -90,11 +101,11 @@
         <div class="edit-dashboard-section">
           <input style="width: 80%" class="hover-input" placeholder=""
                  (change)="changeDashboardName($event.target.value)" [ngModel]="selectedDashboard.name">
-          <i nz-popconfirm nzPlacement="top" [nzTitle]="delete"
+          <i nz-popconfirm nzPlacement="top" [nzTitle]="deleted"
              (nzOnConfirm)="deleteDashboard()" style="cursor: pointer" class="icon-trash-alt delete-icon"
             nzOkText="DELETE" nzCancelText="CANCEL" [nzOkType]="'danger'"
           ></i>
-          <ng-template #delete>
+          <ng-template #deleted>
             <span class="body-1">Delete {{selectedDashboard.name}}</span>
             <p class="body-2">Are you sure you want to delete {{selectedDashboard.name}}?</p>
           </ng-template>
@@ -122,7 +133,7 @@
         <ul class="widgets-list">
           <ng-container *ngFor="let treaty of selectedDashboard.items; let i = index">
             <li *ngIf="i < 5" class="widget-item"
-                (click)="addRemoveItem(treaty) "
+                (click)="addRemoveItem(treaty, selectedDashboard)"
                 [ngClass]="{'active-widget-item': treaty?.selected}">
               <!--<i [ngClass]="treaty.icon"></i> -->
               {{treaty?.name}}
@@ -135,10 +146,11 @@
           <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
         </div>
         <ul class="widgets-list" style="height: 50px;">
-          <li *ngFor="let fac of widgetsMockData.fac" class="widget-item" (click)="fac.selected = !fac.selected "
-              [ngClass]="{'active-widget-item': fac.selected}">
+          <li *ngFor="let fac of selectedDashboard.fac"
+              (click)="addRemoveItemFac(fac, selectedDashboard)"
+              class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">
             <i [ngClass]="fac.icon"></i>
-            {{fac.title}}
+            {{fac?.name}}
             <i class="float-right mr-1 mt-1"
                [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
           </li>

@@ -10,7 +10,7 @@
   [columnResizeMode]="'expand'"
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
-  [scrollHeight]="tableInputs.scrollHeight"
+  [scrollHeight]="'calc(100vh - 480px)'"
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
