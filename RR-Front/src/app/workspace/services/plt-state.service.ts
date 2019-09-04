@@ -32,7 +32,6 @@ export class PltStateService {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.loading = true;
     }));
-    console.log(payload);
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
