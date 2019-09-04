@@ -1,12 +1,12 @@
 package com.scor.rr.domain;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -16,25 +16,30 @@ import java.util.Objects;
 @NoArgsConstructor
 @Data
 class UserTagPltKey implements Serializable {
+    private static final long serialVersionUID = 1L;
 
+    @ManyToOne
+    @JoinColumn(name = "fk_tag", insertable = false, updatable = false)
+    UserTag tag;
 
-    @Column(name = "tagId")
-    Integer tagId;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "fk_plt", insertable = false, updatable = false)
+    PltHeader plt;
 
-    @Column(name = "pltId")
-    String pltId;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (!(o instanceof UserTagPltKey)) return false;
         UserTagPltKey that = (UserTagPltKey) o;
-        return getTagId().equals(that.getTagId()) &&
-                getPltId().equals(that.getPltId());
+        return tag.equals(that.tag) &&
+                plt.equals(that.plt);
     }
+
 
     @Override
     public int hashCode() {
-        return Objects.hash(getTagId(), getPltId());
+        return Objects.hash(tag, plt);
     }
 }

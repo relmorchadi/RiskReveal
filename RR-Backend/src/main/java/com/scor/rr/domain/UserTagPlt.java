@@ -4,33 +4,57 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserTagPlt {
+@Table(
+        name = "user_tag_plt"
+)
+public class UserTagPlt implements Serializable {
 
-    @EmbeddedId
-    UserTagPltKey id;
+    @Id
+    UserTagPltKey userTagPltPk;
 
-    @ManyToOne
-    @MapsId("tagId")
-    @JoinColumn(name = "tagId")
-    UserTag tag;
-
-    @ManyToOne
-    @MapsId("pltId")
-    @JoinColumn(name = "pltId")
-    PltManagerView plt;
-
+    @NotNull
     @ManyToOne
     @JoinColumn(name = "AssignedBy")
     User assigner;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
-    private Date AssignedAt;
+    private Date assignedAt;
+
+    private Integer uwYear;
+
+    private String workSpaceId;
+
+    public UserTagPlt(UserTag tag, PltHeader plt) {
+        super();
+        this.userTagPltPk = new UserTagPltKey(tag,plt);
+    }
+
+    public UserTag getTag() {
+        return this.userTagPltPk.getTag();
+    }
+
+    public PltHeader getPlt() {
+        return this.userTagPltPk.getPlt();
+    }
+
+    public void setTag(UserTag tag) {
+        this.userTagPltPk.setTag(tag);
+    }
+
+    public void setPlt(PltHeader plt) {
+        this.userTagPltPk.setPlt(plt);
+    }
+
+
 }

@@ -1,15 +1,12 @@
 package com.scor.rr.rest;
 
-import com.scor.rr.domain.dto.UserResponse;
+import com.scor.rr.domain.UserTag;
+import com.scor.rr.domain.*;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.service.TagService;
-import com.scor.rr.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -19,6 +16,22 @@ public class TagResource {
     @Autowired
     TagService tagService;
 
+    @PostMapping("/getSelection")
+    TagManagerResponse getTagsByPltSelection(@RequestBody TagManagerRequest request) {
+        return this.tagService.getTagsByPltSelection(request);
+    }
+
+
+    @PostMapping
+    UserTag createUserTag(@RequestBody UserTagRequest request) {
+        return this.tagService.createUserTag(request);
+    }
+
+
+    @PostMapping("/assign")
+    List<UserTag> assignTagPlt(@RequestBody AssignTagPltRequest request) {
+        return this.tagService.assignTagPlt(request);
+    }
 
 
 }

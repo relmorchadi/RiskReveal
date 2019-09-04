@@ -1,5 +1,6 @@
 package com.scor.rr.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -71,8 +72,15 @@ public class PltManagerView {
     @Column(name = "userOccurrenceBasis")
     private String userOccurrenceBasis;
 
-    @OneToMany(mappedBy = "tag")
-    Set<UserTagPlt> userTags;
+//    @OneToMany(mappedBy = "userTagPltPk.tag")
+//    Set<UserTagPlt> userTags;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_tag_plt",
+            joinColumns = @JoinColumn(name = "fk_plt"),
+            inverseJoinColumns = @JoinColumn(name = "fk_tag"))
+    Set<UserTag> userTags;
 
     public PltManagerView() {
     }
