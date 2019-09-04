@@ -30,6 +30,9 @@ public class CloningScorPltHeader {
     @Autowired
     AdjustmentThreadService threadService;
 
+    //TODO: we need to clone ALL properties from source PLT EXCEPT the following ones:
+    // - createdDate, inuringPackageId, pltLossDataFileName, pltLossDataFilePath, projectByFkProjectId, binFileEntity: refer to target context
+    // - publishToPricing: reset to FALSE
     public ScorPltHeaderEntity cloneScorPltHeader(int pltHeaderId){
         ScorPltHeaderEntity scorPltHeaderEntityInitial = scorpltheaderRepository.getOne(pltHeaderId);
         ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity();
