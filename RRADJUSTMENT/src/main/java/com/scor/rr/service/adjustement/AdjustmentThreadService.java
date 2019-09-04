@@ -7,6 +7,7 @@ import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.AdjustmentThreadRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class AdjustmentThreadService {
 
     @Autowired
     ScorpltheaderRepository scorpltheaderRepository;
+
+    @Autowired
+    CloningScorPltHeader cloningScorPltHeader;
 
     public AdjustmentThreadEntity findOne(Integer id){
         return adjustmentthreadRepository.findById(id).orElseThrow(throwException(THREADNOTFOUND,NOT_FOUND));
@@ -57,6 +61,10 @@ public class AdjustmentThreadService {
         }
     }
 
+    public AdjustmentThreadEntity getByScorPltHeader(int scorPltHeaderId){
+        return adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(scorPltHeaderId));
+    }
+
     public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest){
         AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(adjustmentThreadRequest.getAdjustmentThreadId());
         if(adjustmentThreadEntity != null) {
@@ -69,16 +77,18 @@ public class AdjustmentThreadService {
         }
     }
 
-    public void cloneThread(ScorPltHeaderEntity purePlt) {
-       List<AdjustmentThreadEntity> threads =  adjustmentthreadRepository.getAdjustmentThreadEntitiesByScorPltHeaderByFkScorPltHeaderThreadId(purePlt);
-       for(AdjustmentThreadEntity threadParent:threads) {
+    public AdjustmentThreadEntity cloneThread(ScorPltHeaderEntity initialPlt,ScorPltHeaderEntity clonedPlt) {
+       AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId(initialPlt);
+       if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
-           threadClone.setThreadType(threadParent.getThreadType());
-           threadClone.setLocked(threadParent.getLocked());
-           threadClone.setScorPltHeaderByFkScorPltHeaderThreadId(purePlt);
-           threadClone = adjustmentthreadRepository.save(threadClone);
-           nodeService.cloneNode(threadParent,threadClone);
+           threadClone.setThreadType(thread.getThreadType());
+           threadClone.setLocked(thread.getLocked());
+           threadClone.setScorPltHeaderByFkScorPltHeaderThreadId(clonedPlt);
+           threadClone.setScorPltHeaderByFkScorPltHeaderThreadPureId(cloningScorPltHeader.cloneScorPltHeader(thread.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPkScorPltHeaderId()));
+           return adjustmentthreadRepository.save(threadClone);
+
        }
+       return null;
     }
 
     public void delete(Integer id) {

@@ -68,11 +68,6 @@ public class AdjustmentNodeOrderEntity {
 
     @Override
     public String toString() {
-        return "AdjustmentNodeOrderEntity{" +
-                "adjustmentNodeOrderId=" + adjustmentNodeOrderId +
-                ", orderNode=" + orderNode +
-                ", adjustmentThread=" + adjustmentThread +
-                ", adjustmentNode=" + adjustmentNode +
-                '}';
+        return "nodeId= {"+ adjustmentNode.getAdjustmentNodeId()+"} orderNode= {" + orderNode+"}";
     }
 }

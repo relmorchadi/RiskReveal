@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -119,13 +120,15 @@ public class AdjustmentNodeService {
                         if(adjustmentNodeRequest.getAdjustmentNodeId() == 0) {
                             nodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeEntity.getAdjustmentNodeId(), adjustmentNodeEntity.getAdjustmentThread().getAdjustmentThreadId(), adjustmentNodeRequest.getSequence()));
                         }
-                        saveParameterNode(adjustmentNodeEntity,
-                                new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0,
+                        if(saveParameterNode(adjustmentNodeEntity, new AdjustmentParameterRequest(adjustmentNodeRequest.getLmf() != null ? adjustmentNodeRequest.getLmf() : 0,
                                         adjustmentNodeRequest.getRpmf() != null ? adjustmentNodeRequest.getRpmf() : 0,
                                         adjustmentNodeRequest.getPeatData(),
                                         0,
                                         0,
-                                        adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()));
+                                        adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()))==null) {
+                            throwException(PARAMETERNOTFOUND, NOT_FOUND);
+                            return null;
+                        }
                         return adjustmentNodeEntity;
                     } else {
                         throwException(THREADNOTFOUND, NOT_FOUND);
@@ -158,44 +161,79 @@ public class AdjustmentNodeService {
         return adjustmentnodeRepository.getOne(nodeId);
     }
 
-    private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
+    private Supplier saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("Linear adjustment");
-            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(),node));
-            log.info(" ----- success  Saving Parameter for Node ----------");
+            if(parameterRequest.getLmf()!=0) {
+                if(parameterRequest.getRpmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                    log.info("Warning : Parameter redundant");
+                }
+                adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(), node));
+                log.info(" ----- success  Saving Parameter for Node ----------");
+                return null;
+            } else {
+                log.info("Exception Parameter : LMF not found");
+                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+            }
         }
         else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
             log.info("{}",EEFFrequency.getValue());
-            adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(),node));
-            log.info(" ----- success  Saving Parameter for Node ----------");
+            if(parameterRequest.getRpmf() != 0) {
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getPeatData() != null || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                    log.info("Warning : Parameter redundant");
+                }
+                adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getRpmf(), node));
+                log.info(" ----- success  Saving Parameter for Node ----------");
+                return null;
+            } else {
+                log.info("Exception Parameter : RPMF not found");
+                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+            }
+        } else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
+            if(parameterRequest.getPeatData() != null) {
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                    log.info("Warning : Parameter redundant");
+                }
+                log.info("{}", NonLinearEventDriven.getValue());
+                savePeatDataFile(node, parameterRequest);
+                log.info(" ----- success  Saving Parameter for Node ----------");
+                return null;
+            } else {
+                log.info("Exception Parameter : Peat data not found");
+                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+            }
         }
-        else if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
-            log.info("{}",NONLINEAROEP.getValue());
-            if(parameterRequest.getAdjustmentReturnPeriodBendings()!=null) {
+        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
+            if(parameterRequest.getPeatData() != null) {
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                    log.info("Warning : Parameter redundant");
+                }
+                log.info("{}",NONLINEARRETURNPERIOD.getValue());
+                savePeatDataFile(node, parameterRequest);
+                log.info(" ----- success  Saving Parameter for Node ----------");
+                return null;
+            } else {
+                log.info("Exception Parameter : Peat data not found");
+                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+            }
+        }
+        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType()) || NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
+            log.info("{}",NONLINEARRETURNEVENTPERIOD.getValue());
+            if(parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
                 for (AdjustmentReturnPeriodBending periodBanding : parameterRequest.getAdjustmentReturnPeriodBendings()) {
                     periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
                 }
+                if(parameterRequest.getLmf() != 0 || parameterRequest.getRpmf() != 0 || parameterRequest.getAdjustmentReturnPeriodBendings() != null) {
+                    log.info("Warning : Parameter redundant");
+                }
                 log.info(" ----- success  Saving Parameter for Node ----------");
-            } else throwException(PARAMETERNOTFOUND, NOT_FOUND);
-        }
-        else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
-            log.info("{}",NonLinearEventDriven.getValue());
-            savePeatDataFile(node, parameterRequest);
-            log.info(" ----- success  Saving Parameter for Node ----------");
-        }
-        else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            log.info("{}",NONLINEARRETURNPERIOD.getValue());
-            savePeatDataFile(node, parameterRequest);
-            log.info(" ----- success  Saving Parameter for Node ----------");
-        }
-        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            log.info("{}",NONLINEARRETURNEVENTPERIOD.getValue());
-            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
+                return null;
+            } else {
+                log.info("Exception Parameter : Return period banding not found");
+                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
             }
-            log.info(" ----- success  Saving Parameter for Node ----------");
         }
-        else throwException(TYPENOTFOUND, NOT_FOUND);
+        else return throwException(TYPENOTFOUND, NOT_FOUND);
     }
 
     void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
@@ -212,17 +250,19 @@ public class AdjustmentNodeService {
         }
     }
 
-    void cloneNode(AdjustmentThreadEntity threadParent, AdjustmentThreadEntity threadClone) {
+    public List<AdjustmentNodeEntity> cloneNode(AdjustmentThreadEntity threadClone, AdjustmentThreadEntity threadParent) {
         List<AdjustmentNodeEntity> nodeEntities = adjustmentnodeRepository.getAdjustmentNodeEntitiesByAdjustmentThread(threadParent);
-        ScorPltHeaderEntity cloningPlt = threadClone.getScorPltHeaderByFkScorPltHeaderThreadId();
-        for(AdjustmentNodeEntity nodeParent : nodeEntities) {
-            AdjustmentNodeEntity nodeCloned = new AdjustmentNodeEntity(nodeParent);
-            nodeCloned.setAdjustmentNodeByFkAdjustmentNodeIdCloning(nodeParent);
-            nodeCloned.setAdjustmentThread(threadClone);
-            nodeCloned = adjustmentnodeRepository.save(nodeCloned);
-            cloningPlt = processingService.cloneAdjustmentNodeProcessing(nodeParent,nodeCloned,cloningPlt).getScorPltHeaderByFkAdjustedPlt();
-            adjustmentNodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(nodeCloned.getAdjustmentNodeId(),threadClone.getAdjustmentThreadId(),adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadParent.getAdjustmentThreadId(),nodeParent.getAdjustmentNodeId()).getOrderNode()));
+        if(nodeEntities != null) {
+            List<AdjustmentNodeEntity> nodeEntitiesCloned = new ArrayList<>();
+            for (AdjustmentNodeEntity nodeParent : nodeEntities) {
+                AdjustmentNodeEntity nodeCloned = new AdjustmentNodeEntity(nodeParent);
+                nodeCloned.setAdjustmentNodeByFkAdjustmentNodeIdCloning(nodeParent);
+                nodeCloned.setAdjustmentThread(threadClone);
+                nodeEntitiesCloned.add(adjustmentnodeRepository.save(nodeCloned));
+            }
+            return nodeEntitiesCloned;
         }
+        return null;
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

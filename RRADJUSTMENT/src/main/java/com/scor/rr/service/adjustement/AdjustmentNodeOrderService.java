@@ -37,7 +37,7 @@ public class AdjustmentNodeOrderService {
         return adjustmentNodeOrderRepository.getAdjustmentOrderByThreadIdAndNodeId(threadId,nodeId);
     }
 
-    void saveNodeOrder(AdjustmentNodeOrderRequest orderRequest) {
+    public void saveNodeOrder(AdjustmentNodeOrderRequest orderRequest) {
         AdjustmentNodeOrderEntity orderEntity = new AdjustmentNodeOrderEntity();
         if(adjustmentNodeOrderRepository.getAdjustmentOrderByThreadIdAndNodeId(orderRequest.getAdjustmentThreadId(),orderRequest.getOrder()) == null) {
             orderEntity.setAdjustmentNode(nodeService.getAdjustmentNode(orderRequest.getAdjustmentNodeId()));
@@ -52,7 +52,7 @@ public class AdjustmentNodeOrderService {
     public AdjustmentNodeOrderEntity updateOrder(Integer nodeId,Integer sequence,Integer threadId) {
         AdjustmentNodeOrderEntity orderEntity = adjustmentNodeOrderRepository.getAdjustmentNodeOrderEntityByAdjustmentNode_AdjustmentNodeId(nodeId);
         List<AdjustmentNodeOrderEntity> orderEntities = adjustmentNodeOrderRepository.getAdjustmentOrderByThread(threadId);
-        orderEntities = orderEntities.stream().sorted(Comparator.comparing(AdjustmentNodeOrderEntity::getOrderNode)).filter(adjustmentNodeOrderEntity -> adjustmentNodeOrderEntity.getOrderNode()>=sequence).collect(Collectors.toList());
+        orderEntities = orderEntities.stream().sorted(Comparator.comparing(AdjustmentNodeOrderEntity::getOrderNode)).collect(Collectors.toList());
         if(!orderEntities.isEmpty()) {
             if(orderEntities.size() != 1) {
                 if (sequence < orderEntity.getOrderNode()) {
@@ -67,8 +67,8 @@ public class AdjustmentNodeOrderService {
                     }
                 }
             }
-                orderEntity.setOrderNode(sequence);
-                return adjustmentNodeOrderRepository.save(orderEntity);
+            orderEntity.setOrderNode(sequence);
+            return adjustmentNodeOrderRepository.save(orderEntity);
             } else {
                 orderEntity.setOrderNode(sequence);
                 return adjustmentNodeOrderRepository.save(orderEntity);

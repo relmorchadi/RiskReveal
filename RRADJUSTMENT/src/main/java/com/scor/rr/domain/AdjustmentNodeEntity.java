@@ -30,7 +30,6 @@ public class AdjustmentNodeEntity {
     }
 
     public AdjustmentNodeEntity(AdjustmentNodeEntity other) {
-        this.sequence = other.sequence;
         this.capped = other.capped;
         this.adjustmentThread = other.adjustmentThread;
         this.adjustmentBasis = other.adjustmentBasis;
