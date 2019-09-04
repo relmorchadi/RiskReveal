@@ -54,7 +54,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   items = [
     {
-      label: 'View Detail', icon: 'pi pi-eye', command: (event) => {}
+      label: 'View Detail', icon: 'pi pi-eye', command: (event) => {this.selectedPlt = this.contextSelectedItem}
     },
     {
       label: 'Select item',
@@ -64,6 +64,15 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   ];
   contextSelectedItem;
   selectedPlt = null;
+
+  allCheckedImportedFiles =  false;
+  allCheckedImportedPlts = false;
+
+  indeterminateImportedFiles = false;
+  indeterminateImportedPlts = false;
+
+  indexImportFiles = null;
+  indexImportPlts = null;
 
   @Select(WorkspaceState.getFileBasedData) fileBase$;
   fileBase: any;
@@ -162,14 +171,113 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     );
   }
 
-  checkRow(event, row, scope) {
+  checkRow(event, index, scope) {
+    if (scope === 'files') {
+      this.dispatch(new fromWs.ToggleFilesAction({index, selection: event, scope: 'single'}));
+      this.checkIndeterminateFile();
+    } else if (scope === 'plt') {
+      this.dispatch(new fromWs.TogglePltsAction({index, selection: event, scope: 'single'}));
+      this.checkIndeterminatePlt();
+    }
   }
 
-  selectRows(row, index) {
+  checkIndeterminateFile() {
+    const filtredFiles =  _.filter(this.fileBase.files, item => item.selected).length;
+    if (filtredFiles === this.fileBase.files.length) {
+      this.indeterminateImportedFiles = false;
+      this.allCheckedImportedFiles = true;
+    } else if (filtredFiles > 0) {
+      this.indeterminateImportedFiles = true;
+      this.allCheckedImportedFiles = false;
+    } else {
+      this.indeterminateImportedFiles = false;
+      this.allCheckedImportedFiles = false;
+    }
+  }
+
+   checkIndeterminatePlt() {
+     const filtred =  _.filter(this.fileBase.selectedFiles, item => item.selected).length;
+     if (filtred === this.fileBase.selectedFiles.length) {
+       this.indeterminateImportedPlts = false;
+       this.allCheckedImportedPlts = true;
+     } else if (filtred > 0) {
+       this.indeterminateImportedPlts = true;
+       this.allCheckedImportedPlts = false;
+     } else {
+       this.indeterminateImportedPlts = false;
+       this.allCheckedImportedPlts = false;
+     }
+   }
+
+  selectToImport(value, index) {
+    if ((window as any).event.ctrlKey) {
+      this.dispatch(new fromWs.ToggleFilesAction({index, selection: true, scope: 'single'}));
+      this.indexImportFiles = index;
+    } else if ((window as any).event.shiftKey) {
+      event.preventDefault();
+      if (this.indexImportFiles || this.indexImportFiles === 0) {
+        this._selectSection(Math.min(index, this.indexImportFiles), Math.max(index, this.indexImportFiles), 'files');
+      } else {
+        this.dispatch(new fromWs.ToggleFilesAction({index, selection: true, scope: 'single'}));
+      }
+    } else {
+      this.dispatch(new fromWs.ToggleFilesAction({selection: false, scope: 'all'}));
+      this.dispatch(new fromWs.ToggleFilesAction({index, selection: true, scope: 'single'}));
+      this.indexImportFiles = index;
+    }
+    this.checkIndeterminateFile();
+  }
+
+  selectRows(index) {
+    if ((window as any).event.ctrlKey) {
+      this.dispatch(new fromWs.TogglePltsAction({index, selection: true, scope: 'single'}));
+      this.indexImportPlts = index;
+    } else if ((window as any).event.shiftKey) {
+      event.preventDefault();
+      if (this.indexImportPlts || this.indexImportPlts === 0) {
+        this._selectSection(Math.min(index, this.indexImportPlts), Math.max(index, this.indexImportPlts), 'plt');
+      } else {
+        this.dispatch(new fromWs.TogglePltsAction({index, selection: true, scope: 'single'}));
+      }
+    } else {
+      this.dispatch(new fromWs.TogglePltsAction({selection: false, scope: 'all'}));
+      this.dispatch(new fromWs.TogglePltsAction({index, selection: true, scope: 'single'}));
+      this.indexImportPlts = index;
+    }
+    this.checkIndeterminatePlt();
+  }
+
+  private _selectSection(from, to, scope) {
+    if (scope === 'plt') {
+      this.dispatch(new fromWs.TogglePltsAction({selection: false, scope: 'all'}));
+      if (from === to) {
+        this.dispatch(new fromWs.TogglePltsAction({index: from, selection: true, scope: 'single'}));
+      } else {
+        this.dispatch(new fromWs.TogglePltsAction({from, to, selection: true, scope: 'chunk'}));
+      }
+    } else if (scope === 'files') {
+      this.dispatch(new fromWs.ToggleFilesAction({selection: false, scope: 'all'}));
+      if (from === to) {
+        this.dispatch(new fromWs.ToggleFilesAction({index: from, selection: true, scope: 'single'}));
+      } else {
+        this.dispatch(new fromWs.ToggleFilesAction({from, to, selection: true, scope: 'chunk'}));
+      }
+    }
   }
 
   deleteRow(row) {
     this.dispatch(new fromWs.RemoveFileFromImportAction(row));
+    this.checkIndeterminatePlt();
+  }
+
+  updateAllChecked(value, scope) {
+    if (scope === 'ImportedFiles') {
+      this.dispatch(new fromWs.ToggleFilesAction({selection: value, scope: 'all'}));
+      this.checkIndeterminateFile();
+    } else if (scope === 'ImportedPlts') {
+      this.dispatch(new fromWs.TogglePltsAction({selection: value, scope: 'all'}));
+      this.checkIndeterminatePlt();
+    }
   }
 
   nodeSelect(event) {
@@ -179,10 +287,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   nodeUnselect(event) {
     this.nodePath = null;
-  }
-
-  selectToImport(value, index) {
-    this.dispatch(new fromWs.ToggleFilesAction({selection: value, index}));
   }
 
   addForImport() {
@@ -214,6 +318,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   getKeys(object) {
     return _.keys(object);
+  }
+
+  rowTrackBy = (index, item) => {
+    return item.FileName;
   }
 
   protected detectChanges() {

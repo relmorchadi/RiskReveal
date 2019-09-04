@@ -185,7 +185,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   /** */
 
   getTableHeight() {
-    return this.collapseDataSources ? '201px' : '147px';
+    return this.collapseDataSources ? '252px' : '147px';
   }
 
   getChecked(item) {

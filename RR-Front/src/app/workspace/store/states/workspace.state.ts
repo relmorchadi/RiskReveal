@@ -909,6 +909,11 @@ export class WorkspaceState {
     this.fileBasedFacade.toggleFile(ctx, payload);
   }
 
+  @Action(fromWS.TogglePltsAction)
+  togglePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePltsAction) {
+    this.fileBasedFacade.togglePlts(ctx, payload);
+  }
+
   @Action(fromWS.AddFileForImportAction)
   addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
     return this.fileBasedFacade.addToImport(ctx, payload);

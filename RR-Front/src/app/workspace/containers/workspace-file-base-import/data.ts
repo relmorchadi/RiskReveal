@@ -137,7 +137,7 @@ const PltDataTables = [
   {field: 'FileName', header: 'File Name', width: '130px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'User', header: 'File Path', width: '80px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'TargetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
-  {field: 'FinPerspective', header: 'FP', width: '50px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
+  {field: 'FinPerspective', header: 'FP', width: '50px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'RegionPeril', header: 'Region Peril', width: '90px', type: 'text', sorted: false, filtered: true, highlight: true, visible: true, edit: false},
   {field: 'modelSystemInfo', header: 'Model System Information', width: '200px', type: 'info', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
   {field: 'ResultsName', header: 'Result Name', width: '170px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},

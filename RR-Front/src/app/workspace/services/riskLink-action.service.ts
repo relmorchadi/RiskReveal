@@ -212,6 +212,8 @@ export class RiskLinkStateService {
             (numSelectedItems === portfolios.length - 1 && value === true);
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -252,6 +254,8 @@ export class RiskLinkStateService {
             (numSelectedItems === analysis.length - 1 && value === true);
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -288,6 +292,8 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.results.allChecked =
             (numSelectedItems === result.length - 1 && value === true);
         }));
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -316,6 +322,8 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.summaries.allChecked =
             (numSelectedItems === summaries.length - 1 && value === true);
         }));
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -344,6 +352,8 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.financialPerspective.standard.allChecked =
             (numSelectedItems === fpStandard.length - 1 && value === true);
         }));
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -373,6 +383,8 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.financialPerspective.analysis.allChecked =
             (numSelectedItems === fpAnalysis.length - 1 && value === true);
         }));
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -402,6 +414,8 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].allChecked =
             (numSelectedItems === linkAnalysis.length - 1 && value === true);
         }));
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
@@ -430,6 +444,8 @@ export class RiskLinkStateService {
           draft.content[wsIdentifier].riskLink.linking.portfolio.allChecked =
             (numSelectedItems === linkPortfolio.length - 1 && value === true);
         }));
+    } else if (action === 'chunk') {
+
     } else {
       let selected: boolean;
       action === 'selectAll' ? selected = true : selected = false;
