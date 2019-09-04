@@ -11,3 +11,5 @@
 .project
 /RR-IO/target/
 /RRADJUSTMENT/target/
+*/*.iml
+*/target
