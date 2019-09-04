@@ -79,7 +79,6 @@ public class ScorPltHeaderEntity {
         this.pltLossDataFileName = other.pltLossDataFileName;
         this.pltLossDataFilePath = other.pltLossDataFilePath;
         this.engineType = other.engineType;
-        this.pkScorPltHeaderId = other.pkScorPltHeaderId;
         this.rrAnalysisNew = other.rrAnalysisNew;
         this.targetRap = other.targetRap;
         this.regionPeril = other.regionPeril;
@@ -88,7 +87,6 @@ public class ScorPltHeaderEntity {
         this.adjustmentBasisByFkCurrentBasisId = other.adjustmentBasisByFkCurrentBasisId;
         this.entity = other.entity;
         this.marketChannel = other.marketChannel;
-        this.scorPltHeader = other.scorPltHeader;
     }
 
     public ScorPltHeaderEntity() {
