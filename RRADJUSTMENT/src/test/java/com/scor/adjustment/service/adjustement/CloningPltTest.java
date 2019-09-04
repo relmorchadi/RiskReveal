@@ -4,12 +4,7 @@ import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.domain.AdjustmentNodeEntity;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.ScorPltHeaderEntity;
-import com.scor.rr.repository.AdjustmentThreadRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
-import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
-import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
-import com.scor.rr.service.adjustement.AdjustmentNodeService;
-import com.scor.rr.service.adjustement.AdjustmentThreadService;
+import com.scor.rr.service.adjustement.*;
 import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.junit.After;
 import org.junit.Assert;
@@ -36,16 +31,13 @@ public class CloningPltTest {
     CloningScorPltHeader cloningScorPltHeader;
 
     @Autowired
-    ScorpltheaderRepository scorpltheaderRepository;
+    ScorPltHeaderService scorPltHeaderService;
 
     @Autowired
     AdjustmentThreadService threadService;
 
     @Autowired
     AdjustmentNodeService nodeService;
-
-    @Autowired
-    AdjustmentThreadRepository adjustmentthreadRepository;
 
     @Autowired
     AdjustmentNodeOrderService adjustmentNodeOrderService;
@@ -66,8 +58,12 @@ public class CloningPltTest {
 
     @Test
     public void lookupForDefaultAdjustmentWithInputPLT() {
-        ScorPltHeaderEntity scorPltHeaderCloned = cloningScorPltHeader.clonePltWithAdjustment(scorpltheaderRepository.getOne(435));
+        ScorPltHeaderEntity scorPltHeaderCloned = cloningScorPltHeader.clonePltWithAdjustment(scorPltHeaderService.findOne(435));
         Assert.assertEquals(scorPltHeaderCloned.getScorPltHeader().getPkScorPltHeaderId(),435);
+        Assert.assertEquals(scorPltHeaderCloned.getTargetRap(),scorPltHeaderCloned.getScorPltHeader().getTargetRap());
+        Assert.assertEquals(scorPltHeaderCloned.getEngineType(),scorPltHeaderCloned.getScorPltHeader().getEngineType());
+        Assert.assertNotEquals(scorPltHeaderCloned.getBinFileEntity().getPath(),null);
+        Assert.assertNotEquals(scorPltHeaderCloned.getBinFileEntity().getFqn(),null);
         AdjustmentThreadEntity threadInitial = threadService.getByScorPltHeader(435);
         AdjustmentThreadEntity threadCloned = threadService.getByScorPltHeader(scorPltHeaderCloned.getPkScorPltHeaderId());
         if(threadInitial != null) {

@@ -318,7 +318,7 @@ public class AdjustmentNodeProcessingService {
                 AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
                 processingEntityCloned.setAdjustmentNodeByFkAdjustmentNode(nodeCloned);
                 processingEntityCloned.setScorPltHeaderByFkInputPlt(inputPlt);
-                processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId() == threadInitial.getScorPltHeaderByFkScorPltHeaderThreadId().getPkScorPltHeaderId() ? threadCloned.getScorPltHeaderByFkScorPltHeaderThreadId() : cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId()));
+                processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId() == threadInitial.getScorPltHeaderByFkScorPltHeaderThreadId().getPkScorPltHeaderId() ? threadCloned.getScorPltHeaderByFkScorPltHeaderThreadId() : cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt()));
                 inputPlt = processingEntityCloned.getScorPltHeaderByFkAdjustedPlt();
                 processingEntities.add(processingEntityCloned);
             }

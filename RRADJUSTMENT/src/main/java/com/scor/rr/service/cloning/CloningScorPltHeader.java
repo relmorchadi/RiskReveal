@@ -18,6 +18,7 @@ import com.scor.rr.service.adjustement.AdjustmentThreadService;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,6 +26,7 @@ import java.sql.Date;
 import java.util.List;
 
 @Service
+@Transactional
 public class CloningScorPltHeader {
 
     @Autowired
@@ -48,12 +50,10 @@ public class CloningScorPltHeader {
     @Autowired
     AdjustmentNodeProcessingService processingService;
 
-    public ScorPltHeaderEntity cloneScorPltHeader(int pltHeaderId){
-        ScorPltHeaderEntity scorPltHeaderEntityInitial = scorpltheaderRepository.getOne(pltHeaderId);
-        ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity();
+    public ScorPltHeaderEntity cloneScorPltHeader(ScorPltHeaderEntity scorPltHeaderEntityInitial){
+        ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity(scorPltHeaderEntityInitial);
         scorPltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
-        scorPltHeaderEntityClone.setTargetRap(scorPltHeaderEntityInitial.getTargetRap());
-        scorPltHeaderEntityClone.setMarketChannel(scorPltHeaderEntityInitial.getMarketChannel());
+        scorPltHeaderEntityClone.setPublishToPricing(false);
         scorPltHeaderEntityClone.setBinFileEntity(cloneBinFile(scorPltHeaderEntityInitial.getBinFileEntity()));
         scorPltHeaderEntityClone.setScorPltHeader(scorPltHeaderEntityInitial);
         return scorpltheaderRepository.save(scorPltHeaderEntityClone);
@@ -70,8 +70,8 @@ public class CloningScorPltHeader {
             csvpltFileWriter.write(pltFileReaders,fileClone);
             BinFileEntity fileBinClone = new BinFileEntity();
             fileBinClone.setFileName(fileClone.getName());
-            fileBinClone.setFqn(fileBinClone.getFqn());
-            fileBinClone.setPath(fileBinClone.getPath());
+            fileBinClone.setFqn(fileClone.getAbsolutePath());
+            fileBinClone.setPath(fileClone.getPath());
             return binfileRepository.save(fileBinClone);
         } catch (RRException | IOException e) {
             e.printStackTrace();
@@ -80,7 +80,7 @@ public class CloningScorPltHeader {
     }
 
     public ScorPltHeaderEntity clonePltWithAdjustment(ScorPltHeaderEntity pltHeaderEntityInitial) {
-        ScorPltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitial.getPkScorPltHeaderId());
+        ScorPltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitial);
         AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitial,scorPltHeaderCloned);
         if(threadCloned!=null) {
             AdjustmentThreadEntity threadParent = threadService.getByScorPltHeader(435);
