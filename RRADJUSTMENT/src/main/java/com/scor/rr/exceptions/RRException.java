@@ -14,7 +14,7 @@ public class RRException extends RuntimeException {
         );
     }
 
-    public ExceptionPayload getPayload() {
+    ExceptionPayload getPayload() {
         return payload;
     }
 }

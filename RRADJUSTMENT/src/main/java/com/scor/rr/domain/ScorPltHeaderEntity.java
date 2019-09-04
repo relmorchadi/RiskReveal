@@ -449,6 +449,7 @@ public class ScorPltHeaderEntity {
 
     @Id
     @Column(name = "PKScorPltHeaderId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getPkScorPltHeaderId() {
         return pkScorPltHeaderId;
     }

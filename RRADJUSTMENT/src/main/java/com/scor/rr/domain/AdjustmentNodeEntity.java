@@ -30,7 +30,6 @@ public class AdjustmentNodeEntity {
     }
 
     public AdjustmentNodeEntity(AdjustmentNodeEntity other) {
-        this.sequence = other.sequence;
         this.capped = other.capped;
         this.adjustmentThread = other.adjustmentThread;
         this.adjustmentBasis = other.adjustmentBasis;
@@ -143,5 +142,13 @@ public class AdjustmentNodeEntity {
 
     public void setAdjustmentNodeByFkAdjustmentNodeIdCloning(AdjustmentNodeEntity adjustmentNodeByFkAdjustmentNodeIdCloning) {
         this.adjustmentNodeByFkAdjustmentNodeIdCloning = adjustmentNodeByFkAdjustmentNodeIdCloning;
+    }
+
+    @Override
+    public String toString() {
+        return "AdjustmentNodeEntity{" +
+                ", adjustmentNodeId=" + adjustmentNodeId +
+                ", adjustmentThread=" + adjustmentThread +
+                '}';
     }
 }

@@ -37,7 +37,7 @@ public class AdjustmentNodeProcessingTest {
     private double rpmf;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         adjustmentReturnPeriod = new ArrayList<PEATData>(){{
             add(new PEATData(36,8443694,1,1.4));
             add(new PEATData(68,8441785,1,2.2));

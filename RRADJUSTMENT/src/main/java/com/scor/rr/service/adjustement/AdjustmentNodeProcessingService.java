@@ -77,6 +77,10 @@ public class AdjustmentNodeProcessingService {
         return adjustmentnodeprocessingRepository.findAll();
     }
 
+    public AdjustmentNodeProcessingEntity findByNode(int nodeId) {
+        return adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntity(nodeId);
+    }
+
     //NOTE: please add the comments to explain what will be done by these methods saveBy... and how they could be called.
     //Perhaps a refactor need to be done
 
@@ -171,8 +175,7 @@ public class AdjustmentNodeProcessingService {
     public AdjustmentNodeProcessingEntity getProcessingByNode(Integer nodeId) {
         return adjustmentnodeprocessingRepository.findAll()
                 .stream()
-                .filter(ape -> ape.getScorPltHeaderByFkInputPlt()
-                        .getPkScorPltHeaderId() == nodeId)
+                .filter(ape -> ape.getAdjustmentNodeByFkAdjustmentNode().getAdjustmentNodeId()== nodeId)
                 .findAny()
                 .orElseThrow(throwException(PLTNOTFOUNT, NOT_FOUND));
     }
@@ -306,13 +309,22 @@ public class AdjustmentNodeProcessingService {
         else throwException(TYPENOTFOUND, NOT_FOUND);
     }
 
-    public AdjustmentNodeProcessingEntity cloneAdjustmentNodeProcessing(AdjustmentNodeEntity nodePure,AdjustmentNodeEntity nodeCloned,ScorPltHeaderEntity pltHeaderPure) {
-        AdjustmentNodeProcessingEntity processingEntitypure =  adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntitiesByAdjustmentNodeByFkAdjustmentNode(nodePure);
-        AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
-        processingEntityCloned.setAdjustmentNodeByFkAdjustmentNode(nodeCloned);
-        processingEntityCloned.setScorPltHeaderByFkInputPlt(pltHeaderPure);
-        processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId()));
-        return processingEntityCloned;
+    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNodeEntity> nodeClones,AdjustmentThreadEntity threadInitial,AdjustmentThreadEntity threadCloned) {
+        if(nodeClones != null) {
+            ScorPltHeaderEntity inputPlt = threadCloned.getScorPltHeaderByFkScorPltHeaderThreadPureId();
+            List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();
+            for (AdjustmentNodeEntity nodeCloned : nodeClones) {
+                AdjustmentNodeProcessingEntity processingEntitypure = adjustmentnodeprocessingRepository.getAdjustmentNodeProcessingEntitiesByAdjustmentNodeByFkAdjustmentNode(nodeCloned.getAdjustmentNodeByFkAdjustmentNodeIdCloning());
+                AdjustmentNodeProcessingEntity processingEntityCloned = new AdjustmentNodeProcessingEntity();
+                processingEntityCloned.setAdjustmentNodeByFkAdjustmentNode(nodeCloned);
+                processingEntityCloned.setScorPltHeaderByFkInputPlt(inputPlt);
+                processingEntityCloned.setScorPltHeaderByFkAdjustedPlt(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId() == threadInitial.getScorPltHeaderByFkScorPltHeaderThreadId().getPkScorPltHeaderId() ? threadCloned.getScorPltHeaderByFkScorPltHeaderThreadId() : cloningScorPltHeader.cloneScorPltHeader(processingEntitypure.getScorPltHeaderByFkAdjustedPlt().getPkScorPltHeaderId()));
+                inputPlt = processingEntityCloned.getScorPltHeaderByFkAdjustedPlt();
+                processingEntities.add(processingEntityCloned);
+            }
+            return processingEntities;
+        }
+        return null;
     }
 
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

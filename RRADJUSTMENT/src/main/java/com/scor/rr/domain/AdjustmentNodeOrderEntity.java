@@ -13,6 +13,7 @@ public class AdjustmentNodeOrderEntity {
 
     @Id
     @Column(name = "adjustmentNodeOrderId", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getAdjustmentNodeOrderId() {
         return adjustmentNodeOrderId;
     }
@@ -63,5 +64,10 @@ public class AdjustmentNodeOrderEntity {
 
     public void setAdjustmentNode(AdjustmentNodeEntity adjustmentNode) {
         this.adjustmentNode = adjustmentNode;
+    }
+
+    @Override
+    public String toString() {
+        return "nodeId= {"+ adjustmentNode.getAdjustmentNodeId()+"} orderNode= {" + orderNode+"}";
     }
 }
