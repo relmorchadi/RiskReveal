@@ -116,12 +116,29 @@
         -->
 <!--        </div>-->
       </div>
-      <div class="header-center">
-        <div class="Deltas" style="position: unset;">
-          <span>Deltas &nbsp;</span>
-          <div class="button-toggle">
-            <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch>
-            <div>
+      <div class="header-center" style="width: 290px">
+        <div class="Deltas" style="height: 35px; justify-content: space-between">
+          <span>Deltas &nbsp;
+            <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch></span>
+          <div class="button-toggle body-wrap-dropDowns-comparer">
+            <nz-dropdown *ngIf="switchValue" [nzTrigger]="'click'">
+              <div class="dropdown-wrap-comparer" nz-dropdown>
+                <div class="dropdown-wrap-title-comparer">
+                  <span class="dropdown-title-comparer">Delta Context</span>
+                  <span class="dropdown-item-selected-comparer">
+                    {{defaultImport}}
+                  </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
+              </div>
+              <ul nz-menu>
+                <li nz-menu-item (click)="defaultImport = 'Baseline'">Baseline</li>
+                <li nz-menu-item (click)="defaultImport = 'Year-On-Year'">Year-On-Year</li>
+              </ul>
+            </nz-dropdown>
+<!--            <div>
               <nz-select *ngIf="switchValue"
                          class="delta-context a-dropdown-label"
                          [(ngModel)]="defaultImport" style="width: 150px;"
@@ -129,7 +146,7 @@
                 <nz-option nzLabel="Baseline" nzValue="Baseline"></nz-option>
                 <nz-option nzLabel="Year-On-Year" nzValue="Year-On-Year"></nz-option>
               </nz-select>
-            </div>
+            </div>-->
           </div>
         </div>
       </div>

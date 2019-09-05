@@ -336,6 +336,10 @@ FINANCIAL PERSPECTIVE POPUP STYLE
   }
 
   .fp-header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+
     .subtitle-2 {
       margin-right: 30px;
       display: inline-flex;

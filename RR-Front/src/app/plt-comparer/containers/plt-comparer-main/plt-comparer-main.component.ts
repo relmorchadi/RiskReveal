@@ -77,7 +77,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
 
 
 
-  defaultImport;
+  defaultImport = 'Baseline';
 
   tagContextMenu = [
     { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))},
