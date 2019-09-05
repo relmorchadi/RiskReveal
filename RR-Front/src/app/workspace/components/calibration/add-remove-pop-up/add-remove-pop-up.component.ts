@@ -40,8 +40,8 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   @Input('userTags') userTags: string;
   @Input('projects') projects: string;
   @Input() multiSteps: boolean;
-  @Input() workspaceId: any;
-  @Input() uwy: any;
+  workspaceId: any;
+  uwy: any;
   @Input() stepConfig: {
     wsId: string,
     uwYear: string,
@@ -329,6 +329,12 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       this.setInputs('someItemsAreSelected', this.Inputs.selectedListOfPlts.length < this.listOfPltsThread.length && this.Inputs.selectedListOfPlts.length > 0);
       this.detectChanges();
     });
+    const pltToCalibrate = [];
+    _.forEach(this.listOfPltsThread, row => {
+      pltToCalibrate[row.pltId] = {calibrate: row.toCalibrate};
+    })
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&', pltToCalibrate);
+    this.calibrateSelectPlts(pltToCalibrate);
 
   }
 
@@ -594,7 +600,10 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
 
   calibrateSelectPlts(plts: any) {
     console.log('selected   ************************==> ', this.Inputs.selectedListOfPlts);
-    this.store$.dispatch(new fromWorkspaceStore.calibrateSelectPlts({plts: plts}));
+    this.store$.dispatch(new fromWorkspaceStore.calibrateSelectPlts({
+      plts: plts,
+      ws: this.workspaceId + "-" + this.uwy
+    }));
   }
 
   selectSinglePLT($event) {

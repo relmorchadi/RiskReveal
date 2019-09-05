@@ -1101,7 +1101,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   closeSaveTemplate() {
     this.saveTemplate = false;
     this.templateName = null;
-    this.templateType = null;
+    this.templateType = "local";
+    this.templateDesc = null;
   }
 
   openSaveTemplate(save: boolean) {

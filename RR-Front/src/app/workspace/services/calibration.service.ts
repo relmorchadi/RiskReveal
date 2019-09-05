@@ -224,8 +224,10 @@ export class CalibrationService implements NgxsOnInit {
   calibrateSelectPlts(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     const plts = payload.plts;
-    console.log(plts)
-    const result = state.content[this.prefix].calibration.data[this.prefix];
+    const workspace = payload.ws;
+    console.log(plts);
+    console.log(workspace);
+    const result = state.content[workspace].calibration.data[workspace];
     _.forEach(result, plt => {
       _.forEach(plt.threads, thread => {
         if (plts[thread.pltId])
@@ -233,7 +235,7 @@ export class CalibrationService implements NgxsOnInit {
       })
     })
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.data[this.prefix] = _.merge({}, state.content[this.prefix].calibration.data[this.prefix], result)
+      draft.content[workspace].calibration.data[workspace] = _.merge({}, state.content[workspace].calibration.data[workspace], result)
     }));
   }
 
