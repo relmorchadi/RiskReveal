@@ -120,7 +120,7 @@ public class AdjustmentNodeProcessingService {
     //  - Trigger adjustment processing (i.e call CalculAdjustement methods), return PLT Loss Data list and status
     //  - Persist PLT to DB
 
-    public AdjustmentNodeProcessingEntity saveByAdjustedPlt(AdjustmentParameterRequest parameterRequest) {
+    public AdjustmentNodeProcessingEntity saveByAdjustedPlt(AdjustmentParameterRequest parameterRequest) throws RRException {
         log.info("------Begin adjusted PLT processing ------");
         log.info(" getting the input PLT");
         if (scorpltheaderRepository.findById(parameterRequest.getScorPltHeaderInput()).isPresent()) {
@@ -155,20 +155,16 @@ public class AdjustmentNodeProcessingService {
                         log.info("------END adjusted PLT processing ------");
                         return adjustmentnodeprocessingRepository.save(nodeProcessing);
                     } else {
-                        throwException(BINFILEEXCEPTION, NOT_FOUND);
-                        return null;
+                        throw new com.scor.rr.exceptions.RRException(BINFILEEXCEPTION,1);
                     }
                 } else {
-                    throwException(NODEPROCESSINGNOTFOUND, NOT_FOUND);
-                    return null;
+                    throw new com.scor.rr.exceptions.RRException(NODEPROCESSINGNOTFOUND,1);
                 }
             } else {
-                throwException(NODENOTFOUND, NOT_FOUND);
-                return null;
+                throw new com.scor.rr.exceptions.RRException(NODENOTFOUND,1);
             }
         } else {
-            throwException(PLTNOTFOUNT, NOT_FOUND);
-            return null;
+            throw new com.scor.rr.exceptions.RRException(PLTNOTFOUNT,1);
         }
     }
 
@@ -213,7 +209,7 @@ public class AdjustmentNodeProcessingService {
     }
 
 
-    private List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) {
+    private List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) throws RRException {
         if(scorPltHeaderEntity != null) {
             if(scorPltHeaderEntity.getBinFileEntity() != null) {
                 File file = new File("C:\\Users\\u008208\\Desktop\\plt.csv");
@@ -233,11 +229,10 @@ public class AdjustmentNodeProcessingService {
                     }
                 }
             } else {
-                throwException(BINFILEEXCEPTION,NOT_FOUND);
+                throw new com.scor.rr.exceptions.RRException(BINFILEEXCEPTION,1);
             }
         } else {
-            throwException(PLTNOTFOUNT,NOT_FOUND);
-            return null;
+            throw new com.scor.rr.exceptions.RRException(PLTNOTFOUNT,1);
         }
         return null;
     }
@@ -253,7 +248,7 @@ public class AdjustmentNodeProcessingService {
     //NOTE: should separate two functions: save parameter and processing
     //Done
 
-    private List<PLTLossData> calculateProcessing(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData){
+    private List<PLTLossData> calculateProcessing(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest, List<PLTLossData> pltLossData) throws RRException {
         List<AdjustmentReturnPeriodBandingParameterEntity> parameterEntities = new ArrayList<>();
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
             return CalculAdjustement.linearAdjustement(pltLossData, parameterRequest.getLmf(), node.getCapped());
@@ -279,11 +274,10 @@ public class AdjustmentNodeProcessingService {
             }
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData,node.getCapped(),parameterEntities);
         }
-        else throwException(TYPENOTFOUND, NOT_FOUND);
-        return null;
+        else throw new com.scor.rr.exceptions.RRException(TYPENOTFOUND,1);
     }
 
-    private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
+    private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) throws RRException {
         if (Linear.getValue().equals(node.getAdjustmentType().getType())) {
             adjustmentScalingParameterService.save(new AdjustmentScalingParameterEntity(parameterRequest.getLmf(),node));
         }
@@ -306,10 +300,10 @@ public class AdjustmentNodeProcessingService {
                 periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
             }
         }
-        else throwException(TYPENOTFOUND, NOT_FOUND);
+        else throw new com.scor.rr.exceptions.RRException(TYPENOTFOUND,1);
     }
 
-    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNodeEntity> nodeClones,AdjustmentThreadEntity threadInitial,AdjustmentThreadEntity threadCloned) {
+    public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNodeEntity> nodeClones,AdjustmentThreadEntity threadInitial,AdjustmentThreadEntity threadCloned) throws RRException {
         if(nodeClones != null) {
             ScorPltHeaderEntity inputPlt = threadCloned.getScorPltHeaderByFkScorPltHeaderThreadPureId();
             List<AdjustmentNodeProcessingEntity> processingEntities = new ArrayList<>();

@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.exceptions.ExceptionCodename.PLTNOTFOUNT;
 import static com.scor.rr.exceptions.ExceptionCodename.THREADNOTFOUND;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -46,7 +45,7 @@ public class AdjustmentThreadService {
     //Refactor need to be done (methods name does not refer to what they are doing)
     //Done
 
-    public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest){
+    public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
         adjustmentThreadEntity.setCreatedOn(adjustmentThreadRequest.getCreatedOn());
@@ -56,29 +55,27 @@ public class AdjustmentThreadService {
             adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
             return adjustmentthreadRepository.save(adjustmentThreadEntity);
         } else {
-            throwException(PLTNOTFOUNT, NOT_FOUND);
-            return null;
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT,1);
         }
     }
 
     public AdjustmentThreadEntity getByScorPltHeader(int scorPltHeaderId){
-        return adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(scorPltHeaderId));
+        return adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId_PkScorPltHeaderId(scorPltHeaderId);
     }
 
-    public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest){
+    public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(adjustmentThreadRequest.getAdjustmentThreadId());
         if(adjustmentThreadEntity != null) {
             adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
             adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
             return adjustmentthreadRepository.save(adjustmentThreadEntity);
         } else {
-            throwException(THREADNOTFOUND, NOT_FOUND);
-            return null;
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND,1);
         }
     }
 
-    public AdjustmentThreadEntity cloneThread(ScorPltHeaderEntity initialPlt,ScorPltHeaderEntity clonedPlt) {
-       AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId(initialPlt);
+    public AdjustmentThreadEntity cloneThread(Integer initialPlt,ScorPltHeaderEntity clonedPlt) throws RRException {
+       AdjustmentThreadEntity thread =  adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId_PkScorPltHeaderId(initialPlt);
        if(thread!=null) {
            AdjustmentThreadEntity threadClone = new AdjustmentThreadEntity();
            threadClone.setThreadType(thread.getThreadType());
@@ -87,8 +84,9 @@ public class AdjustmentThreadService {
            threadClone.setScorPltHeaderByFkScorPltHeaderThreadPureId(cloningScorPltHeader.cloneScorPltHeader(thread.getScorPltHeaderByFkScorPltHeaderThreadPureId()));
            return adjustmentthreadRepository.save(threadClone);
 
+       } else {
+           throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND,1);
        }
-       return null;
     }
 
     public void delete(Integer id) {

@@ -8,6 +8,7 @@ import com.scor.rr.domain.BinFileEntity;
 import com.scor.rr.domain.ScorPltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
+import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.fileExceptionPlt.RRException;
 import com.scor.rr.repository.BinfileRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
@@ -50,13 +51,18 @@ public class CloningScorPltHeader {
     @Autowired
     AdjustmentNodeProcessingService processingService;
 
-    public ScorPltHeaderEntity cloneScorPltHeader(ScorPltHeaderEntity scorPltHeaderEntityInitial){
-        ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity(scorPltHeaderEntityInitial);
-        scorPltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
-        scorPltHeaderEntityClone.setPublishToPricing(false);
-        scorPltHeaderEntityClone.setBinFileEntity(cloneBinFile(scorPltHeaderEntityInitial.getBinFileEntity()));
-        scorPltHeaderEntityClone.setScorPltHeader(scorPltHeaderEntityInitial);
-        return scorpltheaderRepository.save(scorPltHeaderEntityClone);
+    public ScorPltHeaderEntity cloneScorPltHeader(int scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
+        ScorPltHeaderEntity scorPltHeaderEntityInitial = scorpltheaderRepository.findByPkScorPltHeaderId(scorPltHeaderEntityInitialId);
+        if(scorPltHeaderEntityInitial != null) {
+            ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity(scorPltHeaderEntityInitial);
+            scorPltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
+            scorPltHeaderEntityClone.setPublishToPricing(false);
+            scorPltHeaderEntityClone.setBinFileEntity(cloneBinFile(scorPltHeaderEntityInitial.getBinFileEntity()));
+            scorPltHeaderEntityClone.setScorPltHeader(scorPltHeaderEntityInitial);
+            return scorpltheaderRepository.save(scorPltHeaderEntityClone);
+        } else {
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT,1);
+        }
     }
 
     private BinFileEntity cloneBinFile(BinFileEntity binFileEntity) {
@@ -79,9 +85,9 @@ public class CloningScorPltHeader {
         return null;
     }
 
-    public ScorPltHeaderEntity clonePltWithAdjustment(ScorPltHeaderEntity pltHeaderEntityInitial) {
-        ScorPltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitial);
-        AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitial,scorPltHeaderCloned);
+    public ScorPltHeaderEntity clonePltWithAdjustment(int pltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
+        ScorPltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitialId);
+        AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitialId,scorPltHeaderCloned);
         if(threadCloned!=null) {
             AdjustmentThreadEntity threadParent = threadService.getByScorPltHeader(435);
             List<AdjustmentNodeEntity> nodeEntities = nodeService.cloneNode(threadCloned, threadParent);
@@ -90,9 +96,13 @@ public class CloningScorPltHeader {
                     adjustmentNodeOrderService.saveNodeOrder(new AdjustmentNodeOrderRequest(adjustmentNodeCloned.getAdjustmentNodeId(), threadCloned.getAdjustmentThreadId(), adjustmentNodeOrderService.getAdjustmentOrderByThreadIdAndNodeId(threadParent.getAdjustmentThreadId(), adjustmentNodeCloned.getAdjustmentNodeByFkAdjustmentNodeIdCloning().getAdjustmentNodeId()).getOrderNode()));
                 }
                 processingService.cloneAdjustmentNodeProcessing(nodeEntities, threadParent, threadCloned);
+                return scorPltHeaderCloned;
+            } else {
+                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.NODENOTFOUND,1);
             }
+        } else {
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND,1);
         }
-        return scorPltHeaderCloned;
     }
 
 }

@@ -94,7 +94,7 @@ public class AdjustmentNodeService {
     }
 
     @Transactional
-    public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest){
+    public AdjustmentNodeEntity save(AdjustmentNodeRequest adjustmentNodeRequest) throws RRException {
         log.info(" -----  Creating Node ----------");
         AdjustmentNodeEntity adjustmentNodeEntity = new AdjustmentNodeEntity();
         if(adjustmentTypeRepository.findById(adjustmentNodeRequest.getAdjustmentType()).isPresent()) {
@@ -126,25 +126,20 @@ public class AdjustmentNodeService {
                                         0,
                                         0,
                                         adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()))==null) {
-                            throwException(PARAMETERNOTFOUND, NOT_FOUND);
-                            return null;
+                            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PARAMETERNOTFOUND,1);
                         }
                         return adjustmentNodeEntity;
                     } else {
-                        throwException(THREADNOTFOUND, NOT_FOUND);
-                        return null;
+                        throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND,1);
                     }
                 } else {
-                    throwException(STATENOTFOUND, NOT_FOUND);
-                    return null;
+                    throw new com.scor.rr.exceptions.RRException(ExceptionCodename.STATENOTFOUND,1);
                 }
             } else {
-                throwException(BASISNOTFOUND, NOT_FOUND);
-                return null;
+                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.BASISNOTFOUND,1);
             }
         } else {
-            throwException(TYPENOTFOUND, NOT_FOUND);
-            return null;
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.TYPENOTFOUND,1);
         }
     }
 

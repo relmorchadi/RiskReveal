@@ -1,6 +1,6 @@
 package com.scor.rr.exceptions;
 
-public class RRException extends RuntimeException {
+public class RRException extends Exception {
     private final ExceptionPayload payload;
 
     public RRException(final ExceptionPayload payload) {
