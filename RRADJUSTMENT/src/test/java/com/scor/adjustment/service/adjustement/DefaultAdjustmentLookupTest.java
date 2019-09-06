@@ -2,6 +2,7 @@ package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.domain.AdjustmentNodeEntity;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.DefaultAdjustmentService;
 import org.junit.After;
@@ -43,11 +44,16 @@ public class DefaultAdjustmentLookupTest {
     }
 
     @Test
-    public void lookupForDefaultAdjustmentWithInputPLT() {
+    public void lookupForDefaultAdjustmentWithInputPLT() throws RRException {
         List<AdjustmentNodeEntity> nodeEntities = defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(983);
         if(nodeEntities != null) {
             for (AdjustmentNodeEntity nodeEntity : nodeEntities) {
                 Assert.assertEquals(nodeEntity, adjustmentNodeService.findOne(nodeEntity.getAdjustmentNodeId()));
+                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadId(),null);
+                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadPureId(),null);
+                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadPureId().getBinFileEntity(),null);
+                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadId().getBinFileEntity(),null);
+                //Assert.assertEquals(nodeEntity.getAdjustmentNode().getAdjustmentBasis().getAdjustmentCategoryByFkCategoryId(),1);
             }
         }
         List<AdjustmentNodeEntity> nodeEntitie =defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(1);

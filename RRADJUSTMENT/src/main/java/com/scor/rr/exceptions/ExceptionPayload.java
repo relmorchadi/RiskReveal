@@ -6,10 +6,6 @@ public class ExceptionPayload implements Serializable {
     private ExceptionCodename code;
     private Integer status;
 
-    ExceptionPayload() {
-
-    }
-
     ExceptionPayload(final ExceptionCodename codename, final Integer status) {
         this.code = codename;
         this.status = status;

@@ -305,9 +305,4 @@ public class CalculAdjustement implements ICalculAdjustment{
 
         }
     }
-    public List<PLTLossData> aepMetric(List<PLTLossData> pltLossDatas) {
-        List<PLTLossData> pltLossDataAepMetric = new ArrayList<>();
-         pltLossDatas.stream().map(pltLossData -> pltLossDataAepMetric.add(new PLTLossData(pltLossData,pltLossDatas.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss())));
-         return pltLossDataAepMetric;
-    }
 }

@@ -6,6 +6,7 @@ import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import org.junit.After;
 import org.junit.Assert;
@@ -71,7 +72,7 @@ public class AdjustmentNodeProcessingTest {
         Assert.assertEquals(processingEntity,adjustmentNodeProcessingService.findOne(processingEntity.getAdjustmentNodeProcessingId()));
     }
     @Test
-    public void processNodeByAdjusted() {
+    public void processNodeByAdjusted() throws RRException {
         AdjustmentNodeProcessingEntity processingEntity = adjustmentNodeProcessingService.saveByAdjustedPlt(new AdjustmentParameterRequest(lmf,rpmf,adjustmentReturnPeriod,983,2,adjustmentReturnPeriodBandings));
         Assert.assertEquals(processingEntity,adjustmentNodeProcessingService.findOne(processingEntity.getAdjustmentNodeProcessingId()));
     }

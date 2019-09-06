@@ -6,6 +6,7 @@ import com.scor.rr.domain.AdjustmentNodeOrderEntity;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.AdjustmentThreadService;
@@ -62,7 +63,7 @@ public class NodeTest {
 
 
     @Before
-    public void setUp() {
+    public void setUp() throws RRException {
         threadTest = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",true,
                 983,0,
                 "",new Timestamp(new Date().getTime()),
@@ -116,7 +117,7 @@ public class NodeTest {
     // DONE Please Check
 
     @Test
-    public void missingParam(){
+    public void missingParam() throws RRException {
         //Linear with lmf null
         AdjustmentNodeRequest adjustmentNodeRequestLinear = new AdjustmentNodeRequest("",1,
                 false,"",
@@ -132,7 +133,7 @@ public class NodeTest {
     }
 
     @Test
-    public void createNode() {
+    public void createNode() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest = new AdjustmentNodeRequest("",1,
                 false,"",
                 false,1,
@@ -142,7 +143,7 @@ public class NodeTest {
     }
 
     @Test
-    public void updateOrderNode14() {
+    public void updateOrderNode14() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest14 = new AdjustmentNodeRequest(nodeEntity1.getAdjustmentNodeId(), "", 4,
                 false, "",
                 false, 1,
@@ -158,7 +159,7 @@ public class NodeTest {
         Assert.assertTrue(orderentity4.getOrderNode()==3);
     }
     @Test
-    public void updateOrderNode41() {
+    public void updateOrderNode41() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest41 = new AdjustmentNodeRequest(nodeEntity4.getAdjustmentNodeId(), "", 1,
                 false, "",
                 false, 1,
@@ -175,7 +176,7 @@ public class NodeTest {
         Assert.assertTrue(orderentity4.getOrderNode()==1);
         }
     @Test
-    public void updateOrderNode32() {
+    public void updateOrderNode32() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest32 = new AdjustmentNodeRequest(nodeEntity3.getAdjustmentNodeId(), "", 2,
                 false, "",
                 false, 1,
@@ -192,7 +193,7 @@ public class NodeTest {
         Assert.assertTrue(orderentity4.getOrderNode()==4);
     }
     @Test
-    public void updateOrderNode23() {
+    public void updateOrderNode23() throws RRException {
         AdjustmentNodeRequest adjustmentNodeRequest23 = new AdjustmentNodeRequest(nodeEntity2.getAdjustmentNodeId(),"",3,
                 false,"",
                 false,1,
