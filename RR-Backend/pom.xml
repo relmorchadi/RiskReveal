@@ -14,6 +14,9 @@
     <name>Risk Reveal Backend</name>
     <description>Risk Reveal Project by Scor</description>
     <packaging>war</packaging>
+    <properties>
+        <tobedeployed>false</tobedeployed>
+    </properties>
 
     <properties>
         <java.version>1.8</java.version>
