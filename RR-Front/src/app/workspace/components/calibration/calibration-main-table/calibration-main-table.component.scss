@@ -1860,15 +1860,15 @@ body .ui-table .ui-table-thead > tr > th {
 }
 
 .impactAnalysisDiv {
-  margin: 4px !important;
+  margin: 3px !important;
   border: solid 1px #cccccc;
-  padding: 1px;
+  padding: 0px 4px 0px 4px;
   font-size: 8px;
   background: white;
   display: flex;
   flex-direction: column;
   color: black;
-  max-height: 33px;
+  max-height: 35px;
   max-width: 109px !important;
   min-width: 109px !important;
 
