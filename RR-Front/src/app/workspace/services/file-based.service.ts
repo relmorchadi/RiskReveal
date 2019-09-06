@@ -32,6 +32,7 @@ export class FileBasedService {
               ctx.getState(), draft => {
                 draft.content[wsIdentifier].fileBaseImport.folders = data;
                 draft.content[wsIdentifier].fileBaseImport.files = [];
+                draft.content[wsIdentifier].fileBaseImport.selectedFiles = [];
               }
             )
           ));

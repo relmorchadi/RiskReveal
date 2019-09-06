@@ -348,8 +348,7 @@
                     <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
                       <tr>
                         <td *ngFor="let col of columns"
-                            [ngClass]="{'selected-item': rowData?.selected}"
-                            [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
+                            [ngClass]="{'selected-item': rowData?.selected}">
                           <div style=" display: flex;" *ngIf="col.type === 'select'">
                             <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'A&P')"
                                    [ngModel]="rowData.selected"></label>

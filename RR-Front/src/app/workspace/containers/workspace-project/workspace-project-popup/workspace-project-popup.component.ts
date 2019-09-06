@@ -820,8 +820,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     };
     this.searchWorkspace = false;
     this.selectedWorkspace = null;
-    this.onVisibleChange.emit(false);
-    this.destroy();
     this._filter = {};
     this.rightMenuInputs = {
       basket: [],
@@ -834,6 +832,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       visible: false,
       mode: "pop-up"
     };
+    this.onVisibleChange.emit(false);
+    this.destroy();
   }
 
   onRowSelect(event) {

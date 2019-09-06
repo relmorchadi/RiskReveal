@@ -451,8 +451,12 @@
 
             .ui-table-tbody {
               tr {
-                background-color: #fff;
+                background-color: #FFFFFF;
                 user-select: none;
+
+                &:hover {
+                  background-color: #F7F8FD;
+                }
               }
 
               td {
