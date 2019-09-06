@@ -4,6 +4,7 @@ import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.domain.AdjustmentNodeEntity;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.*;
 import com.scor.rr.service.cloning.CloningScorPltHeader;
 import org.junit.After;
@@ -57,8 +58,8 @@ public class CloningPltTest {
     }
 
     @Test
-    public void lookupForDefaultAdjustmentWithInputPLT() {
-        ScorPltHeaderEntity scorPltHeaderCloned = cloningScorPltHeader.clonePltWithAdjustment(scorPltHeaderService.findOne(435));
+    public void clonePltWithAdjustment() throws RRException {
+        ScorPltHeaderEntity scorPltHeaderCloned = cloningScorPltHeader.clonePltWithAdjustment(435);
         Assert.assertEquals(scorPltHeaderCloned.getScorPltHeader().getPkScorPltHeaderId(),435);
         Assert.assertEquals(scorPltHeaderCloned.getTargetRap(),scorPltHeaderCloned.getScorPltHeader().getTargetRap());
         Assert.assertEquals(scorPltHeaderCloned.getEngineType(),scorPltHeaderCloned.getScorPltHeader().getEngineType());

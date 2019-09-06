@@ -2,6 +2,7 @@ package com.scor.rr.rest.adjustment;
 
 import com.scor.rr.domain.AdjustmentNodeEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +23,7 @@ public class AdjustmentNodeRest {
     }
 
     @PostMapping
-    public AdjustmentNodeEntity save(@RequestBody AdjustmentNodeRequest request){
+    public AdjustmentNodeEntity save(@RequestBody AdjustmentNodeRequest request) throws RRException {
         return adjustmentNodeService.save(request);
     }
 

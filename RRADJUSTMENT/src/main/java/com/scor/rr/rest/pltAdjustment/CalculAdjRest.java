@@ -1,0 +1,97 @@
+package com.scor.rr.rest.pltAdjustment;
+
+import com.scor.rr.configuration.file.CSVPLTFileWriter;
+import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
+import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.dto.AEPMetric;
+import com.scor.rr.domain.dto.OEPMetric;
+import com.scor.rr.domain.dto.StaticType;
+import com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum;
+import com.scor.rr.domain.dto.adjustement.loss.PEATData;
+import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
+import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
+import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
+import org.apache.commons.io.FileUtils;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+
+import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
+
+@RestController
+@RequestMapping("api/calc")
+public class CalculAdjRest {
+
+    @GetMapping
+    public List<PLTLossData> CalcAdjustement(String pathToFile, AdjustmentTypeEnum type, double lmf, double rpmf, boolean cap, List<PEATData> peatDatas, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings, String newFilePath) throws RRException, IOException {
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
+        if (Linear.getValue().equals(type) ){
+            pltLossData = CalculAdjustement.linearAdjustement(pltLossData, lmf, cap);
+        }
+        else if (EEFFrequency.getValue().equals(type)) {
+            pltLossData = CalculAdjustement.eefFrequency(pltLossData, cap,rpmf);
+        }
+        else if (NONLINEAROEP.getValue().equals(type)) {
+            pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData, cap, adjustmentReturnPeriodBendings);
+        }
+        else if (NonLinearEventDriven.getValue().equals(type)) {
+            pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,cap,peatDatas);
+        }
+        else if (NONLINEARRETURNPERIOD.getValue().equals(type)) {
+            pltLossData = CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,cap,peatDatas);
+        }
+        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(type)) {
+            pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
+        }
+        File f = new File(newFilePath);
+        if(!f.exists()) {
+            FileUtils.touch(f);
+        }
+        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
+        csvpltFileWriter.write(pltLossData,f);
+        return pltLossData;
+    }
+
+
+    @GetMapping("aepMetric")
+    public List<AEPMetric> aepMetric(String pathToFile) throws RRException {
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
+        return CalculAdjustement.getAEPMetric(pltLossData);
+    }
+    @GetMapping("oepMetric")
+    public List<OEPMetric> oepMetric(String pathToFile) throws RRException {
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
+        return CalculAdjustement.getOEPMetric(pltLossData);
+    }
+
+    @GetMapping("statistic")
+    public double CoefOfVariance(String pathToFile,StaticType type) throws RRException {
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
+        if(StaticType.CoefOfVariance.getValue().equals(type)) {
+            return StatisticAdjustment.CoefOfVariance(pltLossData);
+        }
+        if(StaticType.stdDev.getValue().equals(type)) {
+            return StatisticAdjustment.stdDev(pltLossData);
+        }
+        if(StaticType.AEPTVaRMetrics.getValue().equals(type)) {
+            return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData));
+        }
+        if(StaticType.OEPTVaRMetrics.getValue().equals(type)) {
+            return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData));
+        }
+        if(StaticType.averageAnnualLoss.getValue().equals(type)) {
+            return StatisticAdjustment.averageAnnualLoss(pltLossData);
+        }
+        return 0;
+    }
+
+}

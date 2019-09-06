@@ -5,6 +5,7 @@ import com.scor.rr.domain.AdjustmentNodeEntity;
 import com.scor.rr.domain.AdjustmentThreadEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentThreadRequest;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.AdjustmentThreadService;
 import org.junit.After;
@@ -50,7 +51,7 @@ public class ThreadTest {
     //NOTE: only tests for empty threads (i.e no nodes) ?
 
     @Test
-    public void createPurePltThread() {
+    public void createPurePltThread() throws RRException {
         AdjustmentThreadEntity threadEntity = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",true,
                 983,0,
                 "",new Timestamp(new Date().getTime()),

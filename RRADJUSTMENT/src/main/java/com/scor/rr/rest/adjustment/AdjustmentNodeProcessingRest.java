@@ -3,6 +3,7 @@ package com.scor.rr.rest.adjustment;
 import com.scor.rr.domain.AdjustmentNodeProcessingEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeProcessingRequest;
 import com.scor.rr.domain.dto.adjustement.AdjustmentParameterRequest;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class AdjustmentNodeProcessingRest {
     }
 
     @PostMapping("adjusted")
-    public AdjustmentNodeProcessingEntity saveByAdjustedPlt(@RequestBody AdjustmentParameterRequest parameterRequest){
+    public AdjustmentNodeProcessingEntity saveByAdjustedPlt(@RequestBody AdjustmentParameterRequest parameterRequest) throws RRException {
         return adjustmentNodeProcessingService.saveByAdjustedPlt(parameterRequest);
     }
 }

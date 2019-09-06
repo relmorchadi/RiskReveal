@@ -4,7 +4,7 @@ public enum  AdjustmentTypeEnum {
     Linear("Linear"),
     NONLINEARRETURNPERIOD("Non-LINEAR EEF Return Period Banding"),
     NONLINEARRETURNEVENTPERIOD("Non-LINEAR Event & Period Driven"),
-    NONLINEAROEP("Non-LINEAR OEP Return Period Banding"),
+    NONLINEAROEP("Non-Linear OEP Return Period Banding"),
     EEFFrequency("EEF Frequency"),
     NonLinearEventDriven("Non-Linear Event Driven");
 
