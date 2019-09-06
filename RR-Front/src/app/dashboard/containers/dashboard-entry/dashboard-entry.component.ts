@@ -4,6 +4,7 @@ import {RenewalContractScopeComponent} from '../../components/renewal-contract-s
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
 import {NotificationService} from "../../../shared/notification.service";
+import {Router} from "@angular/router";
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -12,7 +13,7 @@ import {NotificationService} from "../../../shared/notification.service";
 })
 export class DashboardEntryComponent implements OnInit {
   protected options: GridsterConfig;
-  protected item: any = {x: 0, y: 0, cols: 3, rows: 5};
+  protected item: any = {x: 0, y: 0, cols: 3, rows: 2};
   newDashboardTitle: any;
   selectedDashboard: any;
   searchMode = 'Treaty';
@@ -28,7 +29,7 @@ export class DashboardEntryComponent implements OnInit {
           selected: true,
           icon: 'icon-window-section',
           componentName: 'RenewalContractScopeComponent',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
           id: 2,
@@ -36,7 +37,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-sliders-v-alt',
           selected: false,
           componentName: 'Priced PLTs Changed',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
           id: 3,
@@ -44,7 +45,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-adjust-circle',
           selected: false,
           componentName: 'Contract Scope Changed',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
           id: 4,
@@ -52,21 +53,22 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-window-grid',
           selected: false,
           componentName: 'Latest Published PLTs',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 5,
+          id: 4,
           name: 'Renewal Tracker',
           icon: 'icon-history-alt',
           selected: false,
           componentName: 'Renewal Tracker',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ],
       fac: [
         {
-          id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-          componentName: 'RenewalContractScopeComponent', selected: false
+          id: 99, icon: 'icon-camera-focus', name: 'Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
     },
@@ -81,7 +83,7 @@ export class DashboardEntryComponent implements OnInit {
           selected: true,
           icon: 'icon-window-section',
           componentName: 'RenewalContractScopeComponent',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
           id: 2,
@@ -89,7 +91,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-sliders-v-alt',
           selected: false,
           componentName: 'Priced PLTs Changed',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
           id: 3,
@@ -97,7 +99,7 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-adjust-circle',
           selected: false,
           componentName: 'Contract Scope Changed',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
           id: 4,
@@ -105,21 +107,22 @@ export class DashboardEntryComponent implements OnInit {
           icon: 'icon-window-grid',
           selected: false,
           componentName: 'Latest Published PLTs',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 5,
+          id: 4,
           name: 'Renewal Tracker',
           icon: 'icon-history-alt',
           selected: false,
           componentName: 'Renewal Tracker',
-          position: {cols: 3, rows: 5, col: 0, row: 0}
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ],
       fac: [
         {
-          id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-          componentName: 'RenewalContractScopeComponent', selected: false
+          id: 99, icon: 'icon-camera-focus', name: 'Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
     },
@@ -157,8 +160,8 @@ export class DashboardEntryComponent implements OnInit {
     ],
     fac: [
       {
-        id: 1, icon: 'icon-camera-focus', title: 'Car Status Widget',
-        componentName: 'RenewalContractScopeComponent', selected: false
+        id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
+        componentName: 'facWidgetComponent', selected: false
       }
     ]
   };
@@ -166,12 +169,13 @@ export class DashboardEntryComponent implements OnInit {
   dashboardComparator = (a, b) => (a && b) ? a.id == b.id : false;
 
 
-  constructor(private nzMessageService: NzMessageService, private notificationService: NotificationService) {
+  constructor(private nzMessageService: NzMessageService, private notificationService: NotificationService,
+              private router: Router) {
   }
 
   ngOnInit() {
     this.options = {
-      gridType: GridType.Fit,
+      gridType: GridType.VerticalFixed,
       enableEmptyCellDrop: true,
       emptyCellDropCallback: () => {
       },
@@ -179,7 +183,7 @@ export class DashboardEntryComponent implements OnInit {
       swap: true,
       pushDirections: {north: true, east: true, south: true, west: true},
       resizable: {enabled: true},
-      itemChangeCallback: this.changeItemPosition.bind(this),
+      // itemChangeCallback: this.changeItemPosition.bind(this),
       draggable: {
         enabled: true,
         ignoreContent: true,
@@ -190,9 +194,10 @@ export class DashboardEntryComponent implements OnInit {
       displayGrid: 'always',
       minCols: 3,
       minRows: 10,
+      maxItemRows: 3,
+      //minItemRows:4,
       maxCols: 3,
     };
-
     this.dashboards = JSON.parse(localStorage.getItem('dashboard')) || this.dashboards;
     this.updateDashboardMockData();
     this.idSelected = this.dashboardsMockData[0].id;
@@ -214,7 +219,7 @@ export class DashboardEntryComponent implements OnInit {
           name: title,
           icon: icon,
           selected: false,
-          position: {rows: 5, cols: 3}
+          position: {rows: 4, cols: 3}
         })),
         _.map(selectedFacComponent,
           ({componentName, title, icon}: any, key) => ({
@@ -223,7 +228,7 @@ export class DashboardEntryComponent implements OnInit {
             name: title,
             icon: icon,
             selected: false,
-            position: {rows: 5, cols: 3}
+            position: {rows: 2, cols: 3}
           }))
       )
     };
@@ -267,8 +272,12 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   updateDashboardMockData() {
-    this.dashboardsMockData = this.dashboards // _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
+    this.dashboardsMockData = this.dashboards; // _.map(this.dashboards, (e) => _.pick(e, 'id', 'name', 'visible', 'items'));
     console.log('here 2');
+  }
+
+  routerNavigate() {
+    this.router.navigate(['/CreateNewFile']);
   }
 
   changeItemPosition() {
@@ -359,7 +368,6 @@ export class DashboardEntryComponent implements OnInit {
     });
     dashboard.items = [...dashboard.items, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
-    console.log('here');
     this.updateDashboardMockData();
   }
 
@@ -379,8 +387,33 @@ export class DashboardEntryComponent implements OnInit {
     this.selectedDashboard = filterData[0];
   }
 
-  addRemoveItem(item) {
-    item.selected = !item.selected;
+  addRemoveItem(item, dashboard) {
+    dashboard.items.forEach(ds => {
+      if (ds.id === item.id) {
+        ds.selected = !ds.selected;
+      }
+    });
+    _.forEach(this.dashboards , ds => {
+      if (ds.id === dashboard.id) {
+        ds = dashboard;
+      }
+    });
+    this.updateDashboardMockData();
+  }
+
+  addRemoveItemFac(item, dashboard) {
+    dashboard.fac.forEach(ds => {
+      if (ds.id === item.id) {
+        ds.selected = !ds.selected;
+      }
+    });
+    console.log(dashboard.fac);
+    _.forEach(this.dashboards , ds => {
+      if (ds.id === dashboard.id) {
+        ds = dashboard;
+      }
+    });
+    this.updateDashboardMockData();
   }
 
   onEnterAdd(keyEvent) {
@@ -389,4 +422,7 @@ export class DashboardEntryComponent implements OnInit {
     }
   }
 
+  loopOverDashboard(dashboard: any) {
+    return _.concat(dashboard.items, dashboard.fac) ;
+  }
 }

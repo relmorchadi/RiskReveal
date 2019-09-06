@@ -32,6 +32,7 @@ export class FileBasedService {
               ctx.getState(), draft => {
                 draft.content[wsIdentifier].fileBaseImport.folders = data;
                 draft.content[wsIdentifier].fileBaseImport.files = [];
+                draft.content[wsIdentifier].fileBaseImport.selectedFiles = [];
               }
             )
           ));
@@ -111,9 +112,13 @@ export class FileBasedService {
         ResultsName: 'SAGI_XOL_2019 - SAGI_XOL_2019',
         ResultsDescription: 'NA',
         Run_Date: '2018-11-21',
+        RegionPeril: 'ZAEQ',
         Currency: 'THB',
+        TargetCurrency: 'THB',
         FinPerspective: 'GR',
         FinPerspectiveDesc: 'Gross',
+        UnitMultiplier: 1,
+        Proportion: 100,
         Years: '100000',
         SimulationPeriodBasis: '1',
         occurrenceBasis: 'PerEvent',

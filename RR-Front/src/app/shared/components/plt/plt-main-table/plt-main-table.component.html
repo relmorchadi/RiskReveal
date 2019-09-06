@@ -10,7 +10,7 @@
   [columnResizeMode]="'expand'"
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
-  [scrollHeight]="tableInputs.scrollHeight"
+  [scrollHeight]="'calc(100vh - 480px)'"
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
@@ -105,6 +105,16 @@
             <div style="padding-left: 9px;">
               <label nz-checkbox [nzChecked]="rowData.selected"
                      (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+            </div>
+          </td>
+          <td  *ngIf="col?.type == 'checkbox-col' && rowData.treatySectionsState[col?.header].state != 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div class="checkbox-off">
+              <label nz-checkbox [nzChecked]="rowData.treatySectionsState[col?.header].state == 'attached'" (nzCheckedChange)="selectPltForAttach(rowData,rowData.treatySectionsState[col?.header])"></label>
+            </div>
+          </td>
+          <td  *ngIf="col?.type == 'checkbox-col' && rowData.treatySectionsState[col?.header].state == 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div style="padding-left: 9px;">
+              <label nz-checkbox nzDisabled ></label>
             </div>
           </td>
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">

@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import {COMPONENTS} from './components';
 import {CONTAINERS} from './containers';
 import {DIRECTIVES} from './directives';
@@ -25,21 +25,19 @@ import {RiskLinkResSummaryComponent} from './containers/workspace-risk-link/risk
 import {PopUpPltTableComponent} from "./components/calibration/add-remove-pop-up/pop-up-plt-table/pop-up-plt-table.component";
 import {CalibrationMainTableComponent} from './components/calibration/calibration-main-table/calibration-main-table.component';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
-import { InuringCanvasTabComponent } from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
+import {InuringCanvasTabComponent} from './components/inuring/inuring-canvas-tab/inuring-canvas-tab.component';
 import {AttachPltPopUpComponent} from './components/scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component';
-import { NodeCreationPopupComponent } from './components/inuring/node-creation-popup/node-creation-popup.component';
-import { InuringGraphComponent } from './components/inuring/inuring-graph/inuring-graph.component';
 import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
 import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
-import { SimpleNodeComponent } from './components/inuring/simple-node/simple-node.component';
-// import {Dialogs} from 'jsplumbtoolkit';
+import {Dialogs} from 'jsplumbtoolkit';
+import {INURING_NODES} from "./components/inuring/nodes";
 
 
 @NgModule({
-  entryComponents: [...COMPONENTS, ...CONTAINERS, SimpleNodeComponent],
+  entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, NodeCreationPopupComponent, InuringGraphComponent, SimpleNodeComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent
   ],
   imports: [
     GridsterModule,
@@ -66,7 +64,13 @@ import { SimpleNodeComponent } from './components/inuring/simple-node/simple-nod
   ],
   providers: [
     ...SERVICE,
-  ]
+  ],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class WorkspaceModule {
+  constructor() {
+    Dialogs.initialize({
+      selector: '.dlg'
+    });
+  }
 }

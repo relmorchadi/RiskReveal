@@ -19,6 +19,7 @@ import {WorkspaceState} from '../../store/states';
 })
 export class WorkspaceFileBaseImportComponent extends BaseContainer implements OnInit, StateSubscriber {
   collapseImportedFiles = false;
+  collapseSearchFiles = false;
   collapseImportedPLTs = false;
 
   managePopUp = false;
@@ -28,10 +29,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   wsIdentifier;
   workspaceInfo: any;
 
-  hyperLinks: string[] = ['Risk link', 'File-based'];
+  hyperLinks: string[] = ['RiskLink', 'File-Based'];
   hyperLinksRoutes: any = {
-    'Risk link': '/RiskLink',
-    'File-based': '/FileBasedImport'
+    'RiskLink': '/RiskLink',
+    'File-Based': '/FileBasedImport'
   };
   hyperLinksConfig: {
     wsId: string,
@@ -62,6 +63,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
   ];
   contextSelectedItem;
+  selectedPlt = null;
 
   @Select(WorkspaceState.getFileBasedData) fileBase$;
   fileBase: any;
@@ -83,7 +85,6 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
       this.fileBase = _.merge({}, value);
       this.detectChanges();
     });
-    console.log(DataTables.directoryTree, this.fileBase.folders);
 
     this.textFilesData = DataTables.textFilesData;
     this.pltColumns = DataTables.PltDataTables;
@@ -186,6 +187,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   addForImport() {
     this.dispatch(new fromWs.AddFileForImportAction(this.nodePath));
+    this.selectedPlt = this.fileBase.selectedFiles[0];
   }
 
   getColor(RP) {
@@ -199,6 +201,19 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     } else {
       return this.fileBase.selectedFiles.length === 0;
     }
+  }
+
+  getFileLength() {
+    const path = _.get(this.fileBase, 'files', null);
+    if (path === null) {
+      return true;
+    } else {
+      return this.fileBase.files.length === 0;
+    }
+  }
+
+  getKeys(object) {
+    return _.keys(object);
   }
 
   protected detectChanges() {
