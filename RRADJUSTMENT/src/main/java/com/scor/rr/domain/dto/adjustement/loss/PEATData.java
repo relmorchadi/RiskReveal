@@ -2,7 +2,9 @@ package com.scor.rr.domain.dto.adjustement.loss;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 
-public class PEATData {
+import java.io.Serializable;
+
+public class PEATData implements Serializable {
 
     private  int eventId;
     private  int simPeriod; // shared properties among PLTLossData in one analysis!

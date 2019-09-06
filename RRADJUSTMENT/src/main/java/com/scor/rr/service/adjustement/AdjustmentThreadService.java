@@ -52,8 +52,13 @@ public class AdjustmentThreadService {
         adjustmentThreadEntity.setCreatedBy(adjustmentThreadRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(adjustmentThreadRequest.getLocked());
         if(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).isPresent()) {
-            adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
-            return adjustmentthreadRepository.save(adjustmentThreadEntity);
+            ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get();
+            if(scorPltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
+                adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
+                return adjustmentthreadRepository.save(adjustmentThreadEntity);
+            } else {
+                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTTYPENOTCORRECT,1);
+            }
         } else {
             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT,1);
         }

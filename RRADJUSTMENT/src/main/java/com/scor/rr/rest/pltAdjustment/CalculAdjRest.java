@@ -2,11 +2,11 @@ package com.scor.rr.rest.pltAdjustment;
 
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
 import com.scor.rr.domain.dto.AEPMetric;
 import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.StaticType;
 import com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum;
+import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.RRException;
@@ -14,6 +14,7 @@ import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.apache.commons.io.FileUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,26 +28,26 @@ import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
 @RequestMapping("api/calc")
 public class CalculAdjRest {
 
-    @GetMapping
-    public List<PLTLossData> CalcAdjustement(String pathToFile, AdjustmentTypeEnum type, double lmf, double rpmf, boolean cap, List<PEATData> peatDatas, List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings, String newFilePath) throws RRException, IOException {
+    @PostMapping
+    public List<PLTLossData> CalcAdjustement(String pathToFile, AdjustmentTypeEnum type, double lmf, double rpmf, boolean cap, List<PEATData> peatDatas, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings, String newFilePath) throws RRException, IOException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
-        if (Linear.getValue().equals(type) ){
+        if (Linear.equals(type) ){
             pltLossData = CalculAdjustement.linearAdjustement(pltLossData, lmf, cap);
         }
-        else if (EEFFrequency.getValue().equals(type)) {
+        else if (EEFFrequency.equals(type)) {
             pltLossData = CalculAdjustement.eefFrequency(pltLossData, cap,rpmf);
         }
-        else if (NONLINEAROEP.getValue().equals(type)) {
+        else if (NONLINEAROEP.equals(type)) {
             pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData, cap, adjustmentReturnPeriodBendings);
         }
-        else if (NonLinearEventDriven.getValue().equals(type)) {
+        else if (NonLinearEventDriven.equals(type)) {
             pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,cap,peatDatas);
         }
-        else if (NONLINEARRETURNPERIOD.getValue().equals(type)) {
+        else if (NONLINEARRETURNPERIOD.equals(type)) {
             pltLossData = CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,cap,peatDatas);
         }
-        else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(type)) {
+        else if (NONLINEARRETURNEVENTPERIOD.equals(type)) {
             pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
         }
         File f = new File(newFilePath);

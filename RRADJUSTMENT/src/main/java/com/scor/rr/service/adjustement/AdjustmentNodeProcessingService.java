@@ -148,6 +148,7 @@ public class AdjustmentNodeProcessingService {
                         scorPltHeaderAdjusted.setBinFileEntity(binFileEntity);
                         scorPltHeaderAdjusted.setCreatedOn(new Timestamp(new Date().getTime()));
                         scorPltHeaderAdjusted.setCreatedBy("HAMZA");
+                        scorPltHeaderAdjusted.setPltType("interm");
                         scorPltHeaderAdjusted = scorpltheaderRepository.save(scorPltHeaderAdjusted);
                         log.info("success saving PLT");
                         nodeProcessing.setScorPltHeaderByFkAdjustedPlt(scorPltHeaderAdjusted);
@@ -181,12 +182,12 @@ public class AdjustmentNodeProcessingService {
     }
 
     private BinFileEntity savePLTFile(List<PLTLossData> pltLossData) {
-        File file = new File("C:\\Users\\u008208\\Desktop\\plt.csv");
+        File file = new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv");
         File fileWrite = null;
         if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
             try {
-                fileWrite = new File("C:\\Users\\u008208\\Desktop\\plt.csv");
+                fileWrite = new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv");
                 csvpltFileWriter.write(pltLossData,fileWrite);
             } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
                 e.printStackTrace();
@@ -212,7 +213,7 @@ public class AdjustmentNodeProcessingService {
     private List<PLTLossData> getLossFromPltInputAdjustment(ScorPltHeaderEntity scorPltHeaderEntity) throws RRException {
         if(scorPltHeaderEntity != null) {
             if(scorPltHeaderEntity.getBinFileEntity() != null) {
-                File file = new File("C:\\Users\\u008208\\Desktop\\plt.csv");
+                File file = new File(scorPltHeaderEntity.getBinFileEntity().getPath());
                 if ("csv".equalsIgnoreCase(FilenameUtils.getExtension(file.getName()))) {
                     CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
                     try {
@@ -257,10 +258,7 @@ public class AdjustmentNodeProcessingService {
             return CalculAdjustement.eefFrequency(pltLossData, node.getCapped(), parameterRequest.getRpmf());
         }
         else if (NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
-            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                parameterEntities.add(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
-            }
-            return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), parameterEntities);
+            return CalculAdjustement.oepReturnPeriodBanding(pltLossData, node.getCapped(), parameterRequest.getAdjustmentReturnPeriodBendings());
         }
         else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
             return CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
@@ -269,10 +267,7 @@ public class AdjustmentNodeProcessingService {
             return CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,node.getCapped(),parameterRequest.getPeatData());
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
-            for(AdjustmentReturnPeriodBending periodBanding:parameterRequest.getAdjustmentReturnPeriodBendings()) {
-                parameterEntities.add(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(),periodBanding.getLmf(),node));
-            }
-            return CalculAdjustement.eefReturnPeriodBanding(pltLossData,node.getCapped(),parameterEntities);
+            return CalculAdjustement.eefReturnPeriodBanding(pltLossData,node.getCapped(),parameterRequest.getAdjustmentReturnPeriodBendings());
         }
         else throw new com.scor.rr.exceptions.RRException(TYPENOTFOUND,1);
     }

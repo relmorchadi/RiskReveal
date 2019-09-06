@@ -1,6 +1,6 @@
 package com.scor.rr.domain.dto.adjustement;
 
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 
 import java.util.List;
@@ -10,7 +10,7 @@ public class AdjustmentManuelleParameterProcess {
     private double rpmf;
     private List<PEATData> peatData;
     private boolean capped;
-    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings;
+    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
     private String type;
 
     public double getLmf() {
@@ -45,11 +45,11 @@ public class AdjustmentManuelleParameterProcess {
         this.capped = capped;
     }
 
-    public List<AdjustmentReturnPeriodBandingParameterEntity> getAdjustmentReturnPeriodBendings() {
+    public List<AdjustmentReturnPeriodBending> getAdjustmentReturnPeriodBendings() {
         return adjustmentReturnPeriodBendings;
     }
 
-    public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings) {
+    public void setAdjustmentReturnPeriodBendings(List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
         this.adjustmentReturnPeriodBendings = adjustmentReturnPeriodBendings;
     }
 

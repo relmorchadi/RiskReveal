@@ -4,7 +4,7 @@ import com.scor.rr.configuration.file.BinaryPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.AdjustmentReturnPeriodBandingParameterEntity;
+import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.EventDateFormatException;
 import com.scor.rr.exceptions.fileExceptionPlt.PLTDataNullException;
@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 public class CalculAdjustementOEPReturnPeriodBandingTest {
     private static final Logger log = LoggerFactory.getLogger(CalcAdjustmentsNonLinearEventDrivenAdjustmentTest.class);
     private List<PLTLossData> pltLossDataList;
-    private List<AdjustmentReturnPeriodBandingParameterEntity> adjustmentReturnPeriodBendings;
+    private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
     private double periodConstante;
     private boolean cap;
     @Before
@@ -41,11 +41,11 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
         }};
         cap = true;
         periodConstante = 100000;
-        adjustmentReturnPeriodBendings = new ArrayList<AdjustmentReturnPeriodBandingParameterEntity>(){{
-            add(new AdjustmentReturnPeriodBandingParameterEntity(500,0.87));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(750,0.9));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(10000,0.93));
-            add(new AdjustmentReturnPeriodBandingParameterEntity(20000,0.97));
+        adjustmentReturnPeriodBendings = new ArrayList<AdjustmentReturnPeriodBending>(){{
+            add(new AdjustmentReturnPeriodBending(500,0.87));
+            add(new AdjustmentReturnPeriodBending(750,0.9));
+            add(new AdjustmentReturnPeriodBending(10000,0.93));
+            add(new AdjustmentReturnPeriodBending(20000,0.97));
 
         }};
 
