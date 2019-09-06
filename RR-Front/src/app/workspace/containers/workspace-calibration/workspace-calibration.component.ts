@@ -324,6 +324,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
       }));
+      /*this.dispatch(new fromWorkspaceStore.loadAllAdjustmentApplication({
+        params: {
+          workspaceId: this.workspaceId, uwy: this.uwy
+        },
+        wsIdentifier: this.workspaceId + '-' + this.uwy
+      }));*/
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
@@ -687,10 +693,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         clientLengthArray.push(countClient);
       });
     });
-    let baseWidth = 120 * Math.max(...baseLengthArray);
-    let clientWidth = 120 * Math.max(...clientLengthArray);
-    clientWidth == 0 ? clientWidth = 120 : null;
-    baseWidth == 0 ? baseWidth = 120 : null;
+    let baseWidth = 130 * Math.max(...baseLengthArray);
+    let clientWidth = 130 * Math.max(...clientLengthArray);
+    clientWidth < 260 ? clientWidth = 260 : null;
+    baseWidth < 260 ? baseWidth = 260 : null;
     let indexBase = _.findIndex(this.dataColumns, col => col.fields == 'base');
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();

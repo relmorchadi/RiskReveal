@@ -5,6 +5,7 @@ import {map} from "rxjs/operators";
 import * as _ from "lodash";
 import {PltApi} from "./plt.api";
 import {
+  ADJUSTMENT_APPLICATION,
   ADJUSTMENT_TYPE,
   ADJUSTMENTS_ARRAY,
   API_RESPONSE,
@@ -125,6 +126,16 @@ export class CalibrationService implements NgxsOnInit {
          }),
          catchError(err => ctx.dispatch(new fromPlt.loadAllPltsFromCalibrationFail()))
        );*/
+  }
+
+  /*Load Plts*/
+  loadAllAdjustmentApplication(ctx: StateContext<any>, payload: any) {
+    const {params} = payload;
+    this.ctx = ctx;
+    this.prefix = params.workspaceId + '-' + params.uwy;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustmentApplication = ADJUSTMENT_APPLICATION;
+    }));
   }
 
   loadAllPltsFromCalibrationSuccess(ctx: StateContext<any>, payload: any) {
