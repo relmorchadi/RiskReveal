@@ -81,7 +81,7 @@ public class AdjustmentThreadService {
            threadClone.setThreadType(thread.getThreadType());
            threadClone.setLocked(thread.getLocked());
            threadClone.setScorPltHeaderByFkScorPltHeaderThreadId(clonedPlt);
-           threadClone.setScorPltHeaderByFkScorPltHeaderThreadPureId(cloningScorPltHeader.cloneScorPltHeader(thread.getScorPltHeaderByFkScorPltHeaderThreadPureId()));
+           threadClone.setScorPltHeaderByFkScorPltHeaderThreadPureId(cloningScorPltHeader.cloneScorPltHeader(thread.getScorPltHeaderByFkScorPltHeaderThreadPureId().getPkScorPltHeaderId()));
            return adjustmentthreadRepository.save(threadClone);
 
        } else {
