@@ -32,7 +32,10 @@ export class PltMainTableComponent implements OnInit {
 
   @Input() tableInputs: tableStore.Input;
 
+  @Input() containerPlts: any;
 
+
+  initContainer: [];
 
   @Output() setTagModalVisibility = new EventEmitter();
 
@@ -46,6 +49,7 @@ export class PltMainTableComponent implements OnInit {
   constructor(private _baseCdr: ChangeDetectorRef) {
     this.activeCheckboxSort = false;
     this.userTagsLength = 10000;
+
   }
 
   ngOnInit() {
@@ -56,6 +60,49 @@ export class PltMainTableComponent implements OnInit {
       type: tableStore.onCheckAll,
       payload: this.tableInputs.showDeleted
     })
+  }
+
+  isPltAttached(plt, tsId) {
+    let check = '';
+
+    if (_.findIndex(this.containerPlts, {
+      pltId: plt.pltId,
+      regionPeril: plt.regionPerilCode,
+      targetRap: plt.grain,
+      tsId: tsId
+    }) != -1) {
+      check = "attached";
+    } else {
+      check = 'notAttached';
+    }
+    return check;
+  }
+
+  deselectThePlt(pltId, event) {
+    if (!event) this.actionDispatcher.emit({
+      type: tableStore.deselectPlt,
+      payload:
+      pltId
+      })
+
+  }
+
+  isPltDisabled(plts, tsId) {
+    let check = '';
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      if (plt.pltId == plts.pltId) {
+        plt.treatySectionsState.forEach(state => {
+          if (state.tsId == tsId) {
+            if (state.state == 'disabled') {
+              check = "disabled";
+            } else {
+              check = "notDisabled";
+            }
+          }
+        })
+      }
+    })
+    return check;
   }
 
   checkBoxSort() {
@@ -118,8 +165,7 @@ export class PltMainTableComponent implements OnInit {
         pltId: plt.pltId,
         regionPeril: plt.regionPerilCode,
         targetRap: plt.grain,
-        treatySectionId: treatySectionId.tsId,
-        state: treatySectionId.state
+        tsId: treatySectionId
       }
     })
   }

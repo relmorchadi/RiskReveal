@@ -31,7 +31,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   overrideReason: string;
   overrideReasonExplained: string = '';
   attachArray: any;
+  deleteArray: any;
 
+  selectedDropDown: any;
   dataSource: any;
   workspaceId: any;
   uwy: any;
@@ -73,7 +75,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       this.listOfPltsData = this.getSortedPlts(this.state);
       this.treatySections = _.toArray(trestySections);
       this.dataSource = this.getData(this.treatySections[0]);
-      console.log("onInit", this.treatySections[0]);
       this.detectChanges();
     });
 
@@ -364,16 +365,16 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         checked = 'override'
       }
     }
-    if(checked == 'attached'){
-      this.treatySections[0].forEach(ts =>{
-        if(ts.id == item.id){
-          ts.regionPerils.forEach(rg =>{
-            if(rg.id == rowData.id){
+    if (checked == 'attached') {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
               rg.attached = true;
             }
           })
-          ts.targetRaps.forEach(tr =>{
-            if(tr.id == rowData.id){
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
               tr.attached = true;
             }
           })
@@ -381,21 +382,56 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       })
 
 
-    }else{
-      this.treatySections[0].forEach(ts =>{
-      if(ts.id == item.id){
-        ts.regionPerils.forEach(rg =>{
-          if(rg.id == rowData.id){
-            rg.attached = false;
-          }
-        })
-        ts.targetRaps.forEach(tr =>{
-          if(tr.id == rowData.id){
-            tr.attached = false;
-          }
-        })
-      }
-    })}
+    } else {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
+              rg.attached = false;
+            }
+          })
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.attached = false;
+            }
+          })
+        }
+      })
+    }
+
+    if (checked == 'overridden') {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
+              rg.overridden = true;
+            }
+          })
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.overridden = true;
+            }
+          })
+        }
+      })
+
+
+    } else {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
+              rg.overridden = false;
+            }
+          })
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.overridden = false;
+            }
+          })
+        }
+      })
+    }
 
     return checked;
   }
@@ -477,10 +513,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   /** get the plt's icon depending on the treatysections**/
   checkAttached(item, rowData, grain, plt) {
     let checked = 'not';
-
-    console.log("this is the item", {
-      item, rowData, grain, plt
-    })
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
         if (reg.id == rowData.id) {
@@ -839,228 +871,259 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.overrideReason = null;
   }
 
-  /** applying the attach changes from the attachplt popup**/
-  applyAttachChanges(event) {
-    this.attachArray = event;
-    _.forEach(this.attachArray, att => {
-      if (att.state == 'expected') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.regionPerils, rg => {
-              if (rg.id == att.regionPeril) {
-                _.forEach(rg.targetRaps, tr => {
-                  if (tr.id == att.targetRap) {
-                    tr.attached = true;
-                    tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+  applyAttachChangesTwo(event) {
+    this.deleteArray = event;
+    console.log("this is the deleteArray",this.deleteArray)
+    _.forEach(this.deleteArray, att => {
+      _.forEach(this.treatySections[0], ts => {
+        if (ts.id == att.tsId) {
+
+
+
+          _.forEach(ts.regionPerils, rg => {
+            if (rg.id == att.regionPeril) {
+              _.forEach(rg.targetRaps, tr => {
+                if (tr.id == att.targetRap) {
+                  tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
+                  if (tr.pltsAttached.length == 0) {
+                    tr.attached = false;
                   }
-                })
+                }
+              })
+            }
+          })
+        }
+
+
+        _.forEach(ts.targetRaps, rg => {
+          if (rg.id == att.targetRap) {
+            _.forEach(rg.regionPerils, tr => {
+              if (tr.id == att.regionPeril) {
+                tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
+                if (tr.pltsAttached.length == 0) {
+                  tr.attached = false;
+                }
               }
             })
           }
         })
-      }
-      if (att.state == 'attached') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.regionPerils, rg => {
-              if (rg.id == att.regionPeril) {
-                _.forEach(rg.targetRaps, tr => {
-                  if (tr.id == att.targetRap) {
-                    tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
-                    if (tr.pltsAttached.length == 0) {
-                      tr.attached = false;
-                    }
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
+
     })
-    _.forEach(this.attachArray, att => {
-      if (att.state == 'expected') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.targetRaps, rg => {
-              if (rg.id == att.targetRap) {
-                _.forEach(rg.regionPerils, tr => {
-                  if (tr.id == att.regionPeril) {
-                    tr.attached = true;
-                    tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
-      if (att.state == 'attached') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.targetRaps, rg => {
-              if (rg.id == att.targetRap) {
-                _.forEach(rg.regionPerils, tr => {
-                  if (tr.id == att.regionPeril) {
-                    tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
-                    if (tr.pltsAttached.length == 0) {
-                      tr.attached = false;
-                    }
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
-    })
+  }
+
+)
+
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       this.dataSource = this.getDataTwo(this.treatySections[0]);
     }
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       this.dataSource = this.getData(this.treatySections[0]);
     }
+}
+
+/** applying the attach changes from the attachplt popup**/
+applyAttachChanges(event)
+{
+  this.attachArray = [];
+  this.attachArray = _.merge([],event);
+  console.log("this is the attachArray",this.attachArray)
+  _.forEach(this.attachArray, att => {
+    _.forEach(this.treatySections[0], ts => {
+      if (ts.id == att.tsId) {
 
 
-  }
-
-  /**getting the row information to send it to the attach plt popup**/
-  getRowInformation(rowData) {
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      const targetRaps = [];
-      rowData.child.forEach(tr => {
-        targetRaps.push(tr.id)
-      })
-      this.rowInformation = {
-        "sort": "1",
-        "rowData": rowData.id,
-        "child": targetRaps
-      };
-    }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      const targetRaps = [];
-      rowData.child.forEach(tr => {
-        targetRaps.push(tr.id)
-      })
-      this.rowInformation = {
-        "sort": "2",
-        "rowData": rowData.id,
-        "child": targetRaps
-      };
-
-    }
-    this.addRemoveModal = true;
-  }
-
-  /**checking if the treaty section needs to show the attached icon**/
-  checkTreatySectionAttached(treatySection){
-   let checked = true;
-    this.treatySections[0].forEach(ts =>{
-      if(ts.id == treatySection.id){
-        if(this.selectedSortBy == 'Minimum Grain / RAP'){
-        ts.regionPerils.forEach(rg =>{
-          if(!rg.attached){
-            checked = false;
+        _.forEach(ts.regionPerils, rg => {
+          if (rg.id == att.regionPeril) {
+            _.forEach(rg.targetRaps, tr => {
+              if (tr.id == att.targetRap) {
+                tr.attached = true;
+                tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+              }
+            })
           }
-        })}
-        if(this.selectedSortBy == 'RAP / Minimum Grain'){
-        ts.targetRaps.forEach(tr =>{
-          if(!tr.attached){
+        })
+
+        _.forEach(ts.targetRaps, rg => {
+          if (rg.id == att.targetRap) {
+            _.forEach(rg.regionPerils, tr => {
+              if (tr.id == att.regionPeril) {
+                tr.attached = true;
+                tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+              }
+            })
+          }
+        })
+      }
+    })
+
+  })
+  if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    this.dataSource = this.getDataTwo(this.treatySections[0]);
+  }
+  if (this.selectedSortBy == 'Minimum Grain / RAP') {
+    this.dataSource = this.getData(this.treatySections[0]);
+  }
+
+
+
+}
+
+/**getting the row information to send it to the attach plt popup**/
+getRowInformation(rowData)
+{
+  if (this.selectedSortBy == 'Minimum Grain / RAP') {
+    const targetRaps = [];
+    rowData.child.forEach(tr => {
+      targetRaps.push(tr.id)
+    })
+    this.rowInformation = {
+      "sort": "1",
+      "rowData": rowData.id,
+      "child": targetRaps
+    };
+  }
+  if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    const targetRaps = [];
+    rowData.child.forEach(tr => {
+      targetRaps.push(tr.id)
+    })
+    this.rowInformation = {
+      "sort": "2",
+      "rowData": rowData.id,
+      "child": targetRaps
+    };
+
+  }
+  this.addRemoveModal = true;
+}
+
+/**checking if the treaty section needs to show the attached icon**/
+checkTreatySectionAttached(treatySection)
+{
+  let checked = true;
+  this.treatySections[0].forEach(ts => {
+    if (ts.id == treatySection.id) {
+      if (this.selectedSortBy == 'Minimum Grain / RAP') {
+        ts.regionPerils.forEach(rg => {
+          if (!rg.attached && !rg.overridden) {
             checked = false;
           }
         })
-      }}
-    })
-    return checked;
-  }
-
-  checkRowAttached(row){
-    let checked = true;
-    this.treatySections[0].forEach( ts => {
-      if(this.selectedSortBy == 'Minimum Grain / RAP'){
-      ts.regionPerils.forEach( rp =>{
-        if(rp.id == row.id){
-          if(!rp.attached){
+      }
+      if (this.selectedSortBy == 'RAP / Minimum Grain') {
+        ts.targetRaps.forEach(tr => {
+          if (!tr.attached && !tr.overridden) {
             checked = false;
           }
-        }
-        }
-      )}
-      if(this.selectedSortBy == 'RAP / Minimum Grain'){
-        ts.targetRaps.forEach( tr =>{
-            if(tr.id == row.id){
-              if(!tr.attached){
-                checked = false;
-              }
+        })
+      }
+    }
+  })
+  return checked;
+}
+
+checkRowAttached(row)
+{
+  let checked = true;
+  this.treatySections[0].forEach(ts => {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      ts.regionPerils.forEach(rp => {
+          if (rp.id == row.id) {
+            if (!rp.attached && !rp.overridden) {
+              checked = false;
             }
           }
-        )
-      }
-
-    })
-    return checked;
-  }
-
-  checkRowChildAttached(rowData, child){
-    let checked = true;
-    this.treatySections[0].forEach( ts => {
-      if(this.selectedSortBy == 'Minimum Grain / RAP'){
-        ts.regionPerils.forEach( rp =>{
-            if(rp.id == rowData.id){
-             rp.targetRaps.forEach( tr =>{
-               if(tr.id == child.id){
-                 if(!tr.attached){
-                   checked = false;
-                 }
-               }
-             } )
+        }
+      )
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      ts.targetRaps.forEach(tr => {
+          if (tr.id == row.id) {
+            if (!tr.attached && !tr.overridden) {
+              checked = false;
             }
           }
-        )}
-      if(this.selectedSortBy == 'RAP / Minimum Grain'){
-          ts.targetRaps.forEach( tr =>{
-              if(tr.id == rowData.id){
-                tr.regionPerils.forEach( rp =>{
-                  if(rp.id == child.id){
-                    if(!rp.attached){
-                      checked = false;
-                    }
-                  }
-                } )
+        }
+      )
+    }
+
+  })
+  return checked;
+}
+
+checkRowChildAttached(rowData, child)
+{
+  let checked = true;
+  this.treatySections[0].forEach(ts => {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      ts.regionPerils.forEach(rp => {
+          if (rp.id == rowData.id) {
+            rp.targetRaps.forEach(tr => {
+              if (tr.id == child.id) {
+                if (!tr.attached && !tr.overridden) {
+                  checked = false;
+                }
               }
-            }
-          )
-      }
+            })
+          }
+        }
+      )
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      ts.targetRaps.forEach(tr => {
+          if (tr.id == rowData.id) {
+            tr.regionPerils.forEach(rp => {
+              if (rp.id == child.id) {
+                if (!rp.attached && !rp.overridden) {
+                  checked = false;
+                }
+              }
+            })
+          }
+        }
+      )
+    }
 
-    })
-    return checked;
+  })
+  return checked;
+}
+
+  selectDropDown(event:boolean,rowId){
+  console.log("this is the event and the rowdata id:",event, rowId)
+  if(event){
+    this.selectedDropDown = rowId;
+  }else{
+    this.selectedDropDown = null;
   }
+}
 
-  private _mergeFunction(source, target) {
-    let newData = [...source];
+private _mergeFunction(source, target)
+{
+  let newData = [...source];
 
-    target.forEach(tr => {
-      const index = _.findIndex(newData, item => item.id == tr.id);
-      if (index != -1) {
-        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
-      } else {
-        newData = [...newData, tr];
-      }
-    });
-    return newData;
-  }
+  target.forEach(tr => {
+    const index = _.findIndex(newData, item => item.id == tr.id);
+    if (index != -1) {
+      newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+    } else {
+      newData = [...newData, tr];
+    }
+  });
+  return newData;
+}
 
-  private _mergeFunctionTwo(source, target) {
-    let newData = [...source];
+private _mergeFunctionTwo(source, target)
+{
+  let newData = [...source];
 
-    target.forEach(tr => {
-      const index = _.findIndex(newData, item => item.id == tr.id);
-      if (index != -1) {
-        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
-      } else {
-        newData = [...newData, tr];
-      }
-    });
-    return newData;
-  }
+  target.forEach(tr => {
+    const index = _.findIndex(newData, item => item.id == tr.id);
+    if (index != -1) {
+      newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+    } else {
+      newData = [...newData, tr];
+    }
+  });
+  return newData;
+}
 }

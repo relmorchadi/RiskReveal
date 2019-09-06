@@ -1,5 +1,3 @@
-import * as _ from 'lodash'
-import {map} from "rxjs/operators";
 const dataSource = [
   {
     id: 1,
@@ -938,6 +936,7 @@ const treatySections = [
       id: 'EUCS-DE',
       description: 'Europe (Germany)',
       attached: false,
+      overridden: false,
       targetRaps: [{
         id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
@@ -953,6 +952,7 @@ const treatySections = [
       id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
       attached: false,
+      overridden: false,
       regionPerils: [{
         id: 'EUCS-DE',
         description: 'Europe (Germany)',
@@ -972,6 +972,7 @@ const treatySections = [
       id: 'EUET',
       description: 'Europe',
       attached: false,
+      overridden: false,
       targetRaps: [
         {
           id: 'AXA-3rdCov_05PA753_WS_Eng_Client',
@@ -998,6 +999,7 @@ const treatySections = [
       id: 'AXA-3rdCov_05PA753_WS_NonEng_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
       attached: false,
+      overridden: false,
       regionPerils: [{
         id: 'EUET',
         description: 'Europe',
@@ -1013,6 +1015,7 @@ const treatySections = [
         id: 'AXA-3rdCov_05PA753_WS_Eng_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         attached: false,
+        overridden: false,
         regionPerils: [{
           id: 'EUET',
           description: 'Europe',
@@ -1032,6 +1035,7 @@ const treatySections = [
       id: 'DEFL',
       description: 'Germany',
       attached: false,
+      overridden: false,
       targetRaps: [
         {
           id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
@@ -1059,6 +1063,7 @@ const treatySections = [
         id: 'EUCS-DE',
         description: 'Europe (Germany)',
         attached: false,
+        overridden: false,
         targetRaps: [{
           id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
           description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
@@ -1075,6 +1080,7 @@ const treatySections = [
       id: 'AXA-3rdCov_05PA753_Hail_ALL_Client',
       description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
       attached: false,
+      overridden: false,
       regionPerils: [{
         id: 'EUCS-DE',
         description: 'Germany Flood',
@@ -1090,6 +1096,7 @@ const treatySections = [
         id: 'AXA-3rdCov_05PA753_FL_NonEng_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         attached: false,
+        overridden: false,
         regionPerils: [{
           id: 'DEFL',
           description: 'Germany Flood',
@@ -1105,6 +1112,7 @@ const treatySections = [
         id: 'AXA-3rdCov_05PA753_FL_ENG_Client',
         description: 'Risk Link North Atlantic Huricaine, 20**17 Historical Event Rates',
         attached: false,
+        overridden: false,
         regionPerils: [{
           id: 'DEFL',
           description: 'Germany Flood',
@@ -1119,7 +1127,679 @@ const treatySections = [
   }
 ]
 
-
+const treatySections2 = [
+  {
+    id: "17T008583/ 1",
+    name: "1st Cat XL",
+    attached: false,
+    regionPerils: [{
+      id: 'EUEQ-DE',
+      description: 'Europe (Germany) Earthquake',
+      attached: false,
+      overridden: false,
+      targetRaps: [{
+        id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+        description: 'European Earthquake, Risklink v11.0',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    },
+      {
+        id: 'EUEQ-AD',
+        description: 'Europe (Andorra) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+          description: 'Australia Earthquake, Risklink 7.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        },
+          {
+            id: 'RL_AUEQ_Mv18.0_S-104-LTR)',
+            description: 'Australia Earthquake, Risklink 18.0',
+            overridden: false,
+            selected: false,
+            reason: null,
+            resonDescribed: null,
+            attached: false,
+            pltsAttached: []
+          }]
+      }],
+    targetRaps: [{
+      id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+      description: 'European Earthquake, Risklink v11.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUEQ-DE',
+        description: 'Europe (Germany) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-AD',
+        description: 'Europe (Andorra) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+      description: 'Australia Earthquake, Risklink 7.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_AUEQ_Mv18.0_S-104-LTR',
+      description: 'Australia Earthquake, Risklink 18.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+      description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }]
+  },
+  {
+    id: "17T008583/ 2",
+    name: "1st Cat XL",
+    attached: false,
+    regionPerils: [{
+      id: 'EUEQ-DE',
+      description: 'Europe (Germany) Earthquake',
+      attached: false,
+      overridden: false,
+      targetRaps: [{
+        id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+        description: 'European Earthquake, Risklink v11.0',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    },
+      {
+        id: 'EUEQ-AD',
+        description: 'Europe (Andorra) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+          description: 'Australia Earthquake, Risklink 7.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        },
+          {
+            id: 'RL_AUEQ_Mv18.0_S-104-LTR)',
+            description: 'Australia Earthquake, Risklink 18.0',
+            overridden: false,
+            selected: false,
+            reason: null,
+            resonDescribed: null,
+            attached: false,
+            pltsAttached: []
+          }]
+      }],
+    targetRaps: [{
+      id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+      description: 'European Earthquake, Risklink v11.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUEQ-DE',
+        description: 'Europe (Germany) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-AD',
+        description: 'Europe (Andorra) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+      description: 'Australia Earthquake, Risklink 7.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_AUEQ_Mv18.0_S-104-LTR',
+      description: 'Australia Earthquake, Risklink 18.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+      description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }]
+  },
+  {
+    id: "17T008583/ 3",
+    name: "1st Cat XL",
+    attached: false,
+    regionPerils: [{
+      id: 'EUEQ-DE',
+      description: 'Europe (Germany) Earthquake',
+      attached: false,
+      overridden: false,
+      targetRaps: [{
+        id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+        description: 'European Earthquake, Risklink v11.0',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    },
+      {
+        id: 'EUEQ-AD',
+        description: 'Europe (Andorra) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+          description: 'European Earthquake, Risklink v11.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+          description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        }]
+      },
+      {
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        attached: false,
+        overridden: false,
+        targetRaps: [{
+          id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+          description: 'Australia Earthquake, Risklink 7.0',
+          overridden: false,
+          selected: false,
+          reason: null,
+          resonDescribed: null,
+          attached: false,
+          pltsAttached: []
+        },
+          {
+            id: 'RL_AUEQ_Mv18.0_S-104-LTR)',
+            description: 'Australia Earthquake, Risklink 18.0',
+            overridden: false,
+            selected: false,
+            reason: null,
+            resonDescribed: null,
+            attached: false,
+            pltsAttached: []
+          }]
+      }],
+    targetRaps: [{
+      id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
+      description: 'European Earthquake, Risklink v11.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUEQ-DE',
+        description: 'Europe (Germany) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-AD',
+        description: 'Europe (Andorra) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-AT',
+        description: 'Europe (Austria) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-CH',
+        description: 'Europe (Switzerland) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }, {
+        id: 'EUEQ-GR',
+        description: 'Europe (Greece) Earthquake',
+        overridden: false,
+        selected: false,
+        reason: null,
+        resonDescribed: null,
+        attached: false,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
+      description: 'Australia Earthquake, Risklink 7.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_AUEQ_Mv18.0_S-104-LTR',
+      description: 'Australia Earthquake, Risklink 18.0',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'AUEQ',
+        description: 'Australia Earthquake',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }, {
+      id: 'RL_EUWS_Mv15.0_S-1004-LTR-Scor25c75u (Default)',
+      description: 'Europe Windstorm, Risklink 15.0 (LTR - SCOR Blend 25/75 - Clus/UnClus)',
+      attached: false,
+      overridden: false,
+      regionPerils: [{
+        id: 'EUET',
+        description: 'Europe Extra Tropical Cyclone',
+        overridden: false,
+        selected: false,
+        attached: false,
+        reason: null,
+        resonDescribed: null,
+        pltsAttached: []
+      }]
+    }]
+  }]
 
 
 
@@ -1138,6 +1818,4 @@ const regionPeril = [{"regionPerilCode": "EUCS-DE", "regionPerilName": "Europe (
 }, {"regionPerilCode": "EUET", "regionPerilName": "Europe"}]
 
 
-
-
-export const trestySections = {treatySections};
+export const trestySections = {treatySections2};
