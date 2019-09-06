@@ -54,12 +54,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   items = [
     {
-      label: 'View Detail', icon: 'pi pi-eye', command: (event) => {this.selectedPlt = this.contextSelectedItem}
-    },
-    {
-      label: 'Select item',
-      icon: 'pi pi-check',
-      command: () => {}
+      label: 'View Detail', icon: 'pi pi-eye', command: (event) => {this.selectedPlt = this.contextSelectedItem; }
     }
   ];
   contextSelectedItem;
@@ -265,7 +260,14 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     }
   }
 
-  deleteRow(row) {
+  deleteRow(row, index) {
+    if (row.FileName === this.selectedPlt.FileName) {
+      if (index === this.fileBase.selectedFiles.length - 1) {
+        this.selectedPlt = this.fileBase.selectedFiles[index - 1];
+      } else {
+        this.selectedPlt = this.fileBase.selectedFiles[index + 1];
+      }
+    }
     this.dispatch(new fromWs.RemoveFileFromImportAction(row));
     this.checkIndeterminatePlt();
   }

@@ -219,7 +219,7 @@
                          class="text-data">{{rowData[col.field]}}</div>
                     <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                    <div (click)="deleteRow(rowData)" *ngIf="col.type === 'action'"
+                    <div (click)="deleteRow(rowData, i)" *ngIf="col.type === 'action'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
                     </div>
