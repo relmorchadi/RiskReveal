@@ -174,7 +174,8 @@
                   <div style="margin-left: 8px;margin-top: 5px;  display: flex; align-items: center;">
                     Template: <span *ngIf="template.id !== 0"
                                     class="template-type"> {{template.type}} </span> {{template.name}}
-                    <i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px" nz-tooltip nzPlacement="right"
+                    <i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px info-desc" nz-tooltip
+                       nzPlacement="right"
                        nzTrigger="click" style="margin-left: 5px;font-size: 17px;cursor: pointer; color: #0000a0"></i>
                     <ng-template #tool>
                       <div class="description-tooltip">
@@ -395,6 +396,7 @@
   [AdjustementType]="AdjustementType"
   [modalTitle]="modalTitle"
   [singleValue]="singleValue"
+  [columnPosition]="columnPosition"
   [modifyModal]="modifyModal"
   [global]="global"
   [categorySelected]="categorySelected"
@@ -708,8 +710,8 @@
       </div>
       <div class="ui-g-9">
         <nz-radio-group [(ngModel)]="templateType" class="default-radio" style="margin-left: 25px;">
-          <label nz-radio nzValue="local" style="color:  #0700e4">Local</label>
-          <label nz-radio nzValue="global" style="color:  #0700e4">Global</label>
+          <label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>
+          <label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>
         </nz-radio-group>
       </div>
     </div>

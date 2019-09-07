@@ -76,7 +76,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   listOfPltsCache: any[];
   saveTemplate = false;
   templateName: string;
-  templateType: string = 'local';
+  templateType: string = 'Local';
   templateDesc: string;
   listOfPltsThreadCache: any[];
   listOfDeletedPlts: any[] = [];
@@ -624,6 +624,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.categorySelectedFromAdjustement = null;
     this.inputValue = '';
     this.singleValue = null;
+    this.columnPosition = null;
+
     if (!bool) {
       this.idPlt = data.pltId;
       this.addAdjustement = true;
@@ -631,12 +633,14 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.addAdjustement = false;
     }
     this.isVisible = true;
+    this.cdRef.detectChanges();
   }
 
   handleCancel(): void {
     this.singleValue = null;
     this.columnPosition = null;
     this.isVisible = false;
+    this.cdRef.detectChanges();
   }
 
   addAdjustment($event) {
@@ -793,6 +797,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.columnPosition = adj.value;
     }
     this.isVisible = true;
+    console.log(this.categorySelectedFromAdjustement)
   }
 
   DeleteAdjustement(adj) {
@@ -1107,7 +1112,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   closeSaveTemplate() {
     this.saveTemplate = false;
     this.templateName = null;
-    this.templateType = "local";
+    this.templateType = "Local";
     this.templateDesc = null;
   }
 
