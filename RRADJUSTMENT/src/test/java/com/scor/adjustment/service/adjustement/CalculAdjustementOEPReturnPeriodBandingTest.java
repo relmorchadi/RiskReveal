@@ -120,11 +120,11 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
     public void testoepReturnPeriodBandingAdjustmentFile() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for oep return period banding with a file ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/pltoepReturnPeriodBanding.csv"));
-//        assertEquals(pltLossDataList,pltLossData);
+        assertEquals(pltLossDataList,pltLossData);
         log.info("End test for oep return period banding with a file");
     }
 
@@ -132,11 +132,11 @@ public class CalculAdjustementOEPReturnPeriodBandingTest {
     public void testoepReturnPeriodBandingAdjustmentUncappedFile() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for oep return period banding with a file ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData,false,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/pltoepReturnPeriodBandingUnCapped.csv"));
-//        assertEquals(pltLossDataList,pltLossData);
+        assertEquals(pltLossDataList,pltLossData);
         log.info("End test for oep return period banding with a file");
     }
 

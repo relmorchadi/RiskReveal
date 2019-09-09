@@ -122,11 +122,11 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
     public void testNonLineaireEventDrivenAdjustment() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for File ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,cap,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLineaireEventPeriodDrivenAdjustment.csv"));
-        //assertEquals(pltLossDataList,pltLossData);
+        assertEquals(pltLossDataList,pltLossData);
         log.info("End test for non linear event capped  driven adjustment with a File ");
     }
 
@@ -134,11 +134,11 @@ public class CalcAdjustmentsNonLinearEventDrivenAdjustmentTest {
     public void testNonLineaireEventDrivenAdjustmentUncapped() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for File ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,false,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLineaireEventPeriodDrivenAdjustmentUncapped.csv"));
-        //assertEquals(pltLossDataList,pltLossData);
+        assertEquals(pltLossDataList,pltLossData);
         log.info("End test for non linear event uncapped driven adjustment with a File ");
     }
 }

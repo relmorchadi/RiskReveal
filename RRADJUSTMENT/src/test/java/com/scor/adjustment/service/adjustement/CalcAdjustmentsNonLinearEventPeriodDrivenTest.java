@@ -116,11 +116,11 @@ public class CalcAdjustmentsNonLinearEventPeriodDrivenTest {
     public void testNonLinearEventPeriodDrivenAdjustmentCapped() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for non linear event period driven  Adjustment with a file ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,cap,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLinearEventPeriodDrivenCapped.csv"));
-//        assertEquals(pltLossDataList,pltLossData);
+        assertEquals(pltLossDataList,pltLossData);
         log.info("END test for non linear event period driven  Adjustment with a file ");
     }
 
@@ -128,11 +128,11 @@ public class CalcAdjustmentsNonLinearEventPeriodDrivenTest {
     public void testNonLinearEventPeriodDrivenAdjustmentUnCapped() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for non linear event period driven  Adjustment with a file ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,false,adjustmentReturnPeriodBendings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/nonLinearEventPeriodDrivenUnCapped.csv"));
-//        assertEquals(pltLossDataList,pltLossData);
+        assertEquals(pltLossDataList,pltLossData);
         log.info("END test for non linear event period driven  Adjustment with a file ");
     }
 
