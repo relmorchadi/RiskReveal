@@ -3,20 +3,15 @@ package com.scor.rr.rest.pltAdjustment;
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.dto.AEPMetric;
+import com.scor.rr.domain.dto.CalculAdjustmentDto;
 import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.StaticType;
-import com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum;
-import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
-import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.fileExceptionPlt.RRException;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.apache.commons.io.FileUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,28 +24,28 @@ import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
 public class CalculAdjRest {
 
     @PostMapping
-    public List<PLTLossData> CalcAdjustement(String pathToFile, AdjustmentTypeEnum type, double lmf, double rpmf, boolean cap, List<PEATData> peatDatas, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings, String newFilePath) throws RRException, IOException {
+    public List<PLTLossData> CalcAdjustement(@RequestBody CalculAdjustmentDto calculAdjustmentDto) throws RRException, IOException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
-        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
-        if (Linear.equals(type) ){
-            pltLossData = CalculAdjustement.linearAdjustement(pltLossData, lmf, cap);
+        List<PLTLossData> pltLossData = readPltFile.read(new File(calculAdjustmentDto.getPathToFile()));
+        if (Linear.equals(calculAdjustmentDto.getType()) ){
+            pltLossData = CalculAdjustement.linearAdjustement(pltLossData, calculAdjustmentDto.getLmf(), calculAdjustmentDto.isCap());
         }
-        else if (EEFFrequency.equals(type)) {
-            pltLossData = CalculAdjustement.eefFrequency(pltLossData, cap,rpmf);
+        else if (EEFFrequency.equals(calculAdjustmentDto.getType())) {
+            pltLossData = CalculAdjustement.eefFrequency(pltLossData, calculAdjustmentDto.isCap(),calculAdjustmentDto.getRpmf());
         }
-        else if (NONLINEAROEP.equals(type)) {
-            pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData, cap, adjustmentReturnPeriodBendings);
+        else if (NONLINEAROEP.equals(calculAdjustmentDto.getType())) {
+            pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData, calculAdjustmentDto.isCap(), calculAdjustmentDto.getAdjustmentReturnPeriodBendings());
         }
-        else if (NonLinearEventDriven.equals(type)) {
-            pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,cap,peatDatas);
+        else if (NonLinearEventDriven.equals(calculAdjustmentDto.getType())) {
+            pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getPeatDatas());
         }
-        else if (NONLINEARRETURNPERIOD.equals(type)) {
-            pltLossData = CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,cap,peatDatas);
+        else if (NONLINEARRETURNPERIOD.equals(calculAdjustmentDto.getType())) {
+            pltLossData = CalculAdjustement.nonLinearEventPeriodDrivenAdjustment(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getPeatDatas());
         }
-        else if (NONLINEARRETURNEVENTPERIOD.equals(type)) {
-            pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBendings);
+        else if (NONLINEARRETURNEVENTPERIOD.equals(calculAdjustmentDto.getType())) {
+            pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getAdjustmentReturnPeriodBendings());
         }
-        File f = new File(newFilePath);
+        File f = new File(calculAdjustmentDto.getNewFilePath());
         if(!f.exists()) {
             FileUtils.touch(f);
         }
