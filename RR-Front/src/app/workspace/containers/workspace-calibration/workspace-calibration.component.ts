@@ -45,13 +45,15 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   dropAll = (param) => null;
 
   someItemsAreSelected = false;
-  groupedByPure = true;
+  groupedByPure = false;
   allRowsExpanded = true;
   selectAll = false;
   listOfPlts = [];
   listOfPltsData = [];
   listOfPltsThread = [];
   selectedListOfPlts = [];
+  template = {id: 0, type: '', name: 'none', description: '', adjs: []};
+  templateList = [this.template];
   drawerIndex = 0;
   params = {};
   loading = true;
@@ -72,6 +74,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
   searchAddress: string;
   listOfPltsCache: any[];
+  saveTemplate = false;
+  templateName: string;
+  templateType: string = 'Local';
+  templateDesc: string;
   listOfPltsThreadCache: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
@@ -274,6 +280,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
   activeCheckboxSort: boolean = false;
+  descriptionDropDown: any = false;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -317,6 +324,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
       }));
+      /*this.dispatch(new fromWorkspaceStore.loadAllAdjustmentApplication({
+        params: {
+          workspaceId: this.workspaceId, uwy: this.uwy
+        },
+        wsIdentifier: this.workspaceId + '-' + this.uwy
+      }));*/
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
@@ -611,6 +624,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.categorySelectedFromAdjustement = null;
     this.inputValue = '';
     this.singleValue = null;
+    this.columnPosition = null;
+
     if (!bool) {
       this.idPlt = data.pltId;
       this.addAdjustement = true;
@@ -618,12 +633,14 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.addAdjustement = false;
     }
     this.isVisible = true;
+    this.cdRef.detectChanges();
   }
 
   handleCancel(): void {
     this.singleValue = null;
     this.columnPosition = null;
     this.isVisible = false;
+    this.cdRef.detectChanges();
   }
 
   addAdjustment($event) {
@@ -680,10 +697,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         clientLengthArray.push(countClient);
       });
     });
-    let baseWidth = 120 * Math.max(...baseLengthArray);
-    let clientWidth = 120 * Math.max(...clientLengthArray);
-    clientWidth == 0 ? clientWidth = 120 : null;
-    baseWidth == 0 ? baseWidth = 120 : null;
+    let baseWidth = 130 * Math.max(...baseLengthArray);
+    let clientWidth = 130 * Math.max(...clientLengthArray);
+    clientWidth < 260 ? clientWidth = 260 : null;
+    baseWidth < 260 ? baseWidth = 260 : null;
     let indexBase = _.findIndex(this.dataColumns, col => col.fields == 'base');
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();
@@ -780,6 +797,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.columnPosition = adj.value;
     }
     this.isVisible = true;
+    console.log(this.categorySelectedFromAdjustement)
   }
 
   DeleteAdjustement(adj) {
@@ -816,7 +834,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   onDrop(col, pltId, draggedAdjs, lastpltId) {
     this.dispatch(new dropAdjustment({
-       pltId: pltId,
+      pltId: pltId,
       adjustement: draggedAdjs,
       lastpltId: lastpltId
     }))
@@ -1091,4 +1109,38 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }
   }
 
+  closeSaveTemplate() {
+    this.saveTemplate = false;
+    this.templateName = null;
+    this.templateType = "Local";
+    this.templateDesc = null;
+  }
+
+  openSaveTemplate(save: boolean) {
+    if (save) {
+      if (this.template.id == 0) {
+        this.saveTemplate = true;
+      } else {
+        // Save adjustment into current here
+        this.template.adjs = this.adjsArray;
+      }
+    } else {
+      this.saveTemplate = true;
+    }
+  }
+
+  saveCurrentTemplate() {
+    let today = new Date();
+    let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    const currentTemplate = {
+      id: numberAdjs,
+      type: this.templateType,
+      name: this.templateName,
+      description: this.templateDesc,
+      adjs: this.adjsArray
+    };
+    this.template = currentTemplate
+    this.templateList.push(currentTemplate);
+    this.closeSaveTemplate();
+  }
 }
