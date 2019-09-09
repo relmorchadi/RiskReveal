@@ -110,21 +110,25 @@ public class CalculAdjustementEEFFrequencyTest {
     public void eefFrequencyFile() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for a plt file ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.eefFrequency(pltLossData,cap,rpmf);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-        csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltEEFFrequency.csv"));
+        csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/eef frequency.csv"));
+        List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/eef frequency.csv"));
+        for(int i=0;i<pltLossData.size();i++) {
+            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
+        }
     }
 
     @Test
     public void eefFrequencyRPMF2Uncapped() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Frequency Adjustment for a plt file ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.eefFrequency(pltLossData,false,2);
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/eef frequency.csv"));
         for(int i=0;i<pltLossData.size();i++) {
-//            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
+            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
         }
     }
 }

@@ -130,10 +130,8 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     public void testEEFReturnPeriodBandingFile() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Return Period Banding Adjustment for a file");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBandings);
-        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-        csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltEEFReturnPeriodBanding.csv"));
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/pltEEFReturnPeriodBanding.csv"));
         assertEquals(pltLossDataList,pltLossData);
@@ -144,11 +142,11 @@ public class CalculAdjustementEEFReturnPeriodBandingTest {
     public void testEEFReturnPeriodBandingUncappedFile() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for EEF Return Period Banding Adjustment for a file");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.eefReturnPeriodBanding(pltLossData,cap,adjustmentReturnPeriodBandings);
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossDataList = readPltFile.read(new File("src/main/resources/file/pltEEFReturnPeriodBandingUncapped.csv"));
-//        assertEquals(pltLossDataList,pltLossData);
+        assertEquals(pltLossDataList,pltLossData);
         log.info("Launch test for EEF Return Period Banding Adjustment for a file");
     }
 }

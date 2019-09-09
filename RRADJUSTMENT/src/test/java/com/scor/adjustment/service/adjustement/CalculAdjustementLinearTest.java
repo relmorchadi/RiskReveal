@@ -110,7 +110,7 @@ public class CalculAdjustementLinearTest {
     public void testLinearFile() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.linearAdjustement(pltLossData,lmf,cap);
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
         csvpltFileWriter.write(pltLossData,new File("src/main/resources/file/pltLinear.csv"));
@@ -121,12 +121,12 @@ public class CalculAdjustementLinearTest {
     public void testLinearFileLmf2Cap() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.linearAdjustement(pltLossData,2,true);
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 2 cap.csv"));
         assert pltLossData != null;
         for(int i = 0; i<pltLossData.size(); i++) {
-//            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
+            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
         }
     }
 
@@ -134,12 +134,12 @@ public class CalculAdjustementLinearTest {
     public void testLinearFileLmf250Uncap() throws RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
-        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv"));
+        List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
         pltLossData = CalculAdjustement.linearAdjustement(pltLossData,250,false);
         List<PLTLossData> pltLossDataResult = csvpltFileReader.read(new File("src/main/resources/file/Lineaire Adjustment with lmf 250  uncap.csv"));
         assert pltLossData != null;
         for(int i = 0; i<pltLossData.size(); i++) {
-//            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
+            assertEquals(pltLossData.get(i),pltLossDataResult.get(i));
         }
     }
 }
