@@ -47,10 +47,10 @@ public class AdjustmentNodeProcessingTest {
         }};
 
         adjustmentReturnPeriodBandings = new ArrayList<AdjustmentReturnPeriodBending>(){{
-            add(new AdjustmentReturnPeriodBending(500,0.87));
-            add(new AdjustmentReturnPeriodBending(750,0.9));
-            add(new AdjustmentReturnPeriodBending(10000,0.93));
-            add(new AdjustmentReturnPeriodBending(20000,0.97));
+            add(new AdjustmentReturnPeriodBending(500d,0.87));
+            add(new AdjustmentReturnPeriodBending(750d,0.9));
+            add(new AdjustmentReturnPeriodBending(10000d,0.93));
+            add(new AdjustmentReturnPeriodBending(20000d,0.97));
 
         }};
 

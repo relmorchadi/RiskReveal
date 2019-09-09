@@ -2,30 +2,30 @@ package com.scor.rr.domain.dto.adjustement.loss;
 
 public class AdjustmentReturnPeriodBending {
 
-    private double returnPeriod;
-    private double lmf;
+    private Double returnPeriod;
+    private Double lmf;
 
     public AdjustmentReturnPeriodBending() {
     }
 
-    public AdjustmentReturnPeriodBending(double returnPeriod, double lmf) {
+    public AdjustmentReturnPeriodBending(Double returnPeriod, Double lmf) {
         this.returnPeriod = returnPeriod;
         this.lmf = lmf;
     }
 
-    public double getReturnPeriod() {
+    public Double getReturnPeriod() {
         return returnPeriod;
     }
 
-    public void setReturnPeriod(double returnPeriod) {
+    public void setReturnPeriod(Double returnPeriod) {
         this.returnPeriod = returnPeriod;
     }
 
-    public double getLmf() {
+    public Double getLmf() {
         return lmf;
     }
 
-    public void setLmf(double lmf) {
+    public void setLmf(Double lmf) {
         this.lmf = lmf;
     }
 }

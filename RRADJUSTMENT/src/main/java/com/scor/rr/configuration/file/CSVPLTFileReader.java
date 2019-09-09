@@ -104,8 +104,8 @@ public class CSVPLTFileReader implements PLTFileReader {
                 sc.nextLine();
             }
             while (sc.hasNext()) {
-                int returnPeriod = Integer.parseInt(sc.next()); //Simulated Period ID
-                double lmf = Double.parseDouble(sc.next()); //Lmf
+                Double returnPeriod = Double.parseDouble(sc.next()); //Simulated Period ID
+                Double lmf = Double.parseDouble(sc.next()); //Lmf
 
                 returnPeriodBendings.add(new AdjustmentReturnPeriodBending(returnPeriod,
                         lmf));
