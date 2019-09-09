@@ -16,7 +16,6 @@
       <h4>
         Attach PLTs
       </h4>
-      <button style="height: 29px;margin: 0px 0px 25px 150px;font-size: 16px" (click)="dispatchAttachTable()" class="a-buttons-contained">ADD</button>
       </div>
       <i (click)="onHide()" class="icon-close_24px" style="cursor: pointer"></i>
     </div>
@@ -79,8 +78,17 @@
         <app-plt-main-table
           [tableInputs]="tableInputs"
           (actionDispatcher)="tableActionDispatcher($event)"
+          [containerPlts]="pltContainer"
         ></app-plt-main-table>
       </div>
     </div>
   </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="onHide()" class="a-button-text">CANCEL</button>
+      <button (click)="dispatchAttachTable()" class="a-buttons-contained">
+        ADD
+      </button>
+    </div>
+  </p-footer>
 </p-dialog>

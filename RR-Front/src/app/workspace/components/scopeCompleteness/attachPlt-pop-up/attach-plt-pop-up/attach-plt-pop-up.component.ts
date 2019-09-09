@@ -4,6 +4,7 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnDestroy,
   OnInit,
   Output
 } from '@angular/core';
@@ -27,7 +28,7 @@ import {of} from "rxjs";
   styleUrls: ['./attach-plt-pop-up.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
+export class AttachPltPopUpComponent extends BaseContainer implements OnInit, OnDestroy {
 
   tableInputs: tableStore.Input;
   workspaceId: string;
@@ -48,14 +49,20 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   wsHeaderSelected: boolean;
   oldSelectedTags: any;
   treatySections: any;
-  listOfPltsForPopUp = [];
+  pltContainer = [];
+  pltContainerDelete = [];
+  pltContainerTwo = [];
   state: any;
 
   @Output('attachArray') attachArray: EventEmitter<any> = new EventEmitter();
+  @Output('deleteArray') deleteArray: EventEmitter<any> = new EventEmitter();
 
   @Select(WorkspaceState.getScopeCompletenessData) state$;
 
+
   @Input() isVisible;
+  @Input('rowData') rowData: any;
+
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
 
   tagContextMenu = [
@@ -120,7 +127,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
           resizable: false,
           width: '25%',
           icon: null,
-          type: 'checkbox',
+          type: 'checkbox-scope',
           active: true
         },
         {
@@ -210,8 +217,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 1',
-          header: 'Treaty Section',
+          fields: '17T008583/ 1',
+          header: '17T008583/ 1',
+          subHeader: '1st Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -222,8 +230,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 2',
-          header: 'Program B 17T008583/ 2',
+          fields: '17T008583/ 2',
+          header: '17T008583/ 2',
+          subHeader: '2nd Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -234,8 +243,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 3',
-          header: 'Program B 17T008583/ 3',
+          fields: '17T008583/ 3',
+          header: '17T008583/ 3',
+          subHeader: '3rd Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -265,6 +275,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
       }
     };
+
   }
 
   manageTags() {
@@ -281,7 +292,6 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   }
 
   ngOnInit() {
-
   }
 
   onHide() {
@@ -311,7 +321,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
           resizable: false,
           width: '25%',
           icon: null,
-          type: 'checkbox',
+          type: 'checkbox-scope',
           active: true
         },
         {
@@ -401,8 +411,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 1',
-          header: 'Program B 17T008583/ 1',
+          fields: '17T008583/ 1',
+          header: '17T008583/ 1',
+          subHeader: '1st Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -413,8 +424,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 2',
-          header: 'Program B 17T008583/ 2',
+          fields: '17T008583/ 2',
+          header: '17T008583/ 2',
+          subHeader: '2nd Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -425,8 +437,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 3',
-          header: 'Program B 17T008583/ 3',
+          fields: '17T008583/ 3',
+          header: '17T008583/ 3',
+          subHeader: '3rd Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -435,7 +448,6 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
           type: 'checkbox-col',
           active: true
         }
-
 
       ],
       filterInput: '',
@@ -458,6 +470,11 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
       }
     };
     this.onVisibleChange.emit(false);
+    this.rowData = null;
+    this.ngOnDestroy();
+  }
+
+  ngOnDestroy() {
     this.destroy();
   }
 
@@ -470,6 +487,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
 
 
   onShow() {
+    this.pltContainerTwo = [];
+    this.pltContainer = [];
     this.tableInputs = {
       scrollHeight: 'calc(100vh - 480px)',
       dataKey: "pltId",
@@ -496,7 +515,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
           resizable: false,
           width: '25%',
           icon: null,
-          type: 'checkbox',
+          type: 'checkbox-scope',
           active: true
         },
         {
@@ -586,8 +605,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 1',
-          header: 'Program B 17T008583/ 1',
+          fields: '17T008583/ 1',
+          header: '17T008583/ 1',
+          subHeader: '1st Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -598,8 +618,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 2',
-          header: 'Program B 17T008583/ 2',
+          fields: '17T008583/ 2',
+          header: '17T008583/ 2',
+          subHeader: '2nd Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -610,8 +631,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
         {
           sortDir: 1,
-          fields: 'Program B 17T008583/ 3',
-          header: 'Program B 17T008583/ 3',
+          fields: '17T008583/ 3',
+          header: '17T008583/ 3',
+          subHeader: '3rd Cat XL',
           sorted: true,
           filtred: true,
           resizable: true,
@@ -641,7 +663,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         },
       }
     };
-    this.attachPltsContainer= [];
+    this.attachPltsContainer = [];
+
 
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
@@ -660,18 +683,12 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
       this.updateTable('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
       this.updateTable('selectedListOfPlts', _.filter(data, (v, k) => v.selected));
 
+      this.initialiseContainer(this.tableInputs);
+
+      this.updatePltsSelection();
+
       this.detectChanges();
     });
-
-    // this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
-    //   this.updateTable('selectAll',
-    //     (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
-    //     &&
-    //     this.getTableInputKey('listOfPltsData').length > 0);
-    //
-    //   this.updateTable("someItemsAreSelected", this.getTableInputKey('selectedListOfPlts').length < this.getTableInputKey('listOfPltsData').length && this.getTableInputKey('selectedListOfPlts').length > 0);
-    //   this.detectChanges();
-    // });
 
     this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
       this.userTags = userTags;
@@ -715,6 +732,10 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         this.handleContainer(action.payload);
         break;
 
+      case tableStore.deselectPlt:
+        this.deselectThePlt(action.payload);
+        break;
+
       case tableStore.toggleSelectedPlts:
         this.toggleSelectPlts(action.payload);
         break;
@@ -750,24 +771,84 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   }
 
   getPlts() {
-    return this.state$
-      .pipe(
-        this.unsubscribeOnDestroy,
-        mergeMap(plts => of(_.map(plts, (plt: any) => {
-            return {
-              ..._.pick(plt, ['userTags', 'pltName', 'peril', 'regionPerilCode', 'regionPerilName', 'grain']),
-              pltId: plt.pltId,
-              visible: true,
-              treatySectionsState: this.getTreatyStateForPlts(plt)
+    if (this.rowData == null) {
+      return this.state$
+        .pipe(
+          this.unsubscribeOnDestroy,
+          mergeMap(plts => of(_.map(plts, (plt: any) => {
+              return {
+                ..._.pick(plt, ['userTags', 'pltName', 'peril', 'regionPerilCode', 'regionPerilName', 'grain']),
+                pltId: plt.pltId,
+                visible: true,
+                selected: false,
+                treatySectionsState: this.getTreatyStateForPlts(plt)
+              }
             }
-          }
-        )))
-      )
+          )))
+        )
+    } else {
+      return this.state$
+        .pipe(
+          this.unsubscribeOnDestroy,
+          mergeMap(plts => of(_.map(_.filter(plts, (pt: any) => {
+              if (this.rowData.sort == "1") {
+                if (pt.regionPerilCode == this.rowData.rowData) {
+                  if (_.includes(this.rowData.child, pt.grain)) {
+                    return true
+                  } else {
+                    return false;
+                  }
+                } else {
+                  return false;
+                }
+              }
+              if (this.rowData.sort == "2") {
+                if (pt.grain == this.rowData.rowData) {
+                  if (_.includes(this.rowData.child, pt.regionPerilCode)) {
+                    return true
+                  } else {
+                    return false;
+                  }
+                } else {
+                  return false;
+                }
+
+              }
+            }), (plt: any) => {
+              return {
+                ..._.pick(plt, ['userTags', 'pltName', 'peril', 'regionPerilCode', 'regionPerilName', 'grain']),
+                pltId: plt.pltId,
+                visible: true,
+                selected: false,
+                treatySectionsState: this.getTreatyStateForPlts(plt)
+              }
+            }
+          )))
+        )
+    }
+  }
+
+  initialiseContainer(tableInputs) {
+
+    tableInputs.listOfPltsData.forEach(plt => {
+      plt.treatySectionsState.forEach(tsState => {
+        if (tsState.state == 'attached') {
+          this.pltContainer.push({
+            pltId: plt.pltId,
+            regionPeril: plt.regionPerilCode,
+            targetRap: plt.grain,
+            tsId: tsState.tsId
+          })
+        }
+      })
+    })
+    this.pltContainerTwo = _.merge([], this.pltContainer);
+    console.log("pltContainerTwo",this.pltContainerTwo);
 
   }
 
   getTreatyStateForPlts(plt) {
-    let treatySectionsField = {};
+    let treatySectionsField = [];
     this.treatySections[0].forEach(treatySection => {
       const Rp = treatySection.regionPerils.map(item => item.id);
       const exist = _.includes(Rp, plt.regionPerilCode);
@@ -775,26 +856,28 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
         const index = _.findIndex(treatySection.regionPerils, (res: any) => res.id == plt.regionPerilCode)
         const Tr = treatySection.regionPerils[index].targetRaps.map(item => item.id);
         const exist2 = _.includes(Tr, plt.grain);
-        if (exist2  ) {
+        if (exist2) {
           const index2 = _.findIndex(treatySection.regionPerils[index].targetRaps, (res: any) => res.id == plt.grain)
           const item = treatySection.regionPerils[index].targetRaps[index2];
-          if(item.overridden){
-            treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
-          }else{if (item.attached) {
-            if(_.includes(_.map(item.pltsAttached, pltss => pltss.pltId), plt.pltId)){
-              treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'attached'}
-            }else{
-              treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'expected'}
-            }
+          if (item.overridden) {
+            treatySectionsField.push({'tsId': treatySection.id, 'state': 'disabled'})
           } else {
-            treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'expected'}
-          }}
+            if (item.attached) {
+              if (_.includes(_.map(item.pltsAttached, pltss => pltss.pltId), plt.pltId)) {
+                treatySectionsField.push({'tsId': treatySection.id, 'state': 'attached'})
+              } else {
+                treatySectionsField.push({'tsId': treatySection.id, 'state': 'expected'})
+              }
+            } else {
+              treatySectionsField.push({'tsId': treatySection.id, 'state': 'expected'})
+            }
+          }
 
         } else {
-          treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
+          treatySectionsField.push({'tsId': treatySection.id, 'state': 'disabled'})
         }
       } else {
-        treatySectionsField[treatySection.id] = {'tsId': treatySection.id, 'state': 'disabled'}
+        treatySectionsField.push({'tsId': treatySection.id, 'state': 'disabled'})
       }
     });
     return treatySectionsField;
@@ -812,17 +895,42 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
     return this.select(WorkspaceState.getProjectsPlt(this.workspaceId + '-' + this.uwy));
   }
 
-  handleContainer(content){
-    if (_.findIndex(this.attachPltsContainer, content) == -1) {
-      this.attachPltsContainer.push(content);
+  handleContainer(content) {
+    if (_.findIndex(this.pltContainer, content) == -1) {
+      this.pltContainer.push(content);
     } else {
-
-      this.attachPltsContainer.splice(_.findIndex(this.attachPltsContainer, content), 1);
-
+      this.pltContainer.splice(_.findIndex(this.pltContainer, content), 1);
     }
+
+    this.updatePltSingleSelection(content.pltId);
+
+    this.detectChanges();
+  }
+
+  updatePltsSelection(){
+    this.updateTable("listOfPltsData", _.map(this.getTableInputKey('listOfPltsData'), plt => ({
+      ...plt,
+      selected: this.checkSelection(plt.pltId)
+    })))
+  }
+
+  updatePltSingleSelection(pltId){
+    let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
+
+    this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: this.checkSelection(pltId)}}))
 
   }
 
+
+  checkSelection(pltId){
+    return _.filter(this.pltContainer, item => item.pltId == pltId).length > 0;
+  }
+
+  deselectThePlt(pltId){
+    let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
+    this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: false}}))
+    this.pltContainer = _.filter(this.pltContainer, plt => plt.pltId != pltId);
+  }
   toggleSelectPlts(plts: any) {
     this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
@@ -942,8 +1050,24 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit {
   }
 
 
-  dispatchAttachTable(){
-    this.attachArray.emit(this.attachPltsContainer);
+  getDifference(containerTwo,container){
+    let deleteArray = [];
+    containerTwo.forEach( plt =>{
+      if(_.findIndex(container, plt) != -1){
+          container.splice(_.findIndex(container, plt), 1);
+        }else{
+          deleteArray.push(plt);
+        }
+
+    })
+    return deleteArray;
+  }
+  dispatchAttachTable() {
+    console.log(this.pltContainer, this.pltContainerTwo);
+    this.pltContainerDelete = this.getDifference(this.pltContainerTwo,this.pltContainer);
+    console.log(this.pltContainer, this.pltContainerTwo);
+    this.attachArray.emit(this.pltContainer);
+    this.deleteArray.emit(this.pltContainerDelete);
     this.onHide();
   }
 }

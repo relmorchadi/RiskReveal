@@ -107,8 +107,8 @@ body .ui-radiobutton .ui-radiobutton-box {
 
   span.ant-checkbox.ant-checkbox-checked {
     .ant-checkbox-inner::after {
-      top: 0;
-      left: 0;
+      top: -2px;
+      left: -2px;
       border-right: 0;
       border-bottom: 0;
       display: table;

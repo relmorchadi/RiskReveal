@@ -31,7 +31,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   overrideReason: string;
   overrideReasonExplained: string = '';
   attachArray: any;
+  deleteArray: any;
 
+  selectedDropDown: any;
   dataSource: any;
   workspaceId: any;
   uwy: any;
@@ -49,6 +51,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   workspace: any;
   index: any;
   workspaceUrl: any;
+  rowInformation: any;
 
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -72,7 +75,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       this.listOfPltsData = this.getSortedPlts(this.state);
       this.treatySections = _.toArray(trestySections);
       this.dataSource = this.getData(this.treatySections[0]);
-      console.log("onInit", this.treatySections[0]);
       this.detectChanges();
     });
 
@@ -133,7 +135,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           description: regionPeril.description,
           override: false,
           selected: false,
-          child:  this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || { child: []}).child, regionPeril.targetRaps )
+          child: this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || {child: []}).child, regionPeril.targetRaps)
         };
         const index = _.findIndex(res, row => row.id == object.id);
         if (index == -1) {
@@ -146,7 +148,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     return _.cloneDeep(res);
   }
 
-  getDataTwo(treatySections){
+  getDataTwo(treatySections) {
     let res = [];
     let treatySectionsClone = _.cloneDeep(treatySections);
 
@@ -157,7 +159,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           description: targetRap.description,
           override: false,
           selected: false,
-          child:  this._mergeFunctionTwo((_.find(res, item => item.id == targetRap.id) || { child: []}).child, targetRap.regionPerils )
+          child: this._mergeFunctionTwo((_.find(res, item => item.id == targetRap.id) || {child: []}).child, targetRap.regionPerils)
         };
         const index = _.findIndex(res, row => row.id == object.id);
         if (index == -1) {
@@ -169,34 +171,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     });
     return _.cloneDeep(res);
 
-  }
-
-  private _mergeFunction(source, target) {
-    let newData = [...source];
-
-    target.forEach(tr => {
-      const index = _.findIndex(newData, item => item.id == tr.id);
-      if (index != -1) {
-        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
-      } else {
-        newData = [...newData, tr];
-      }
-    });
-    return newData;
-  }
-
-  private _mergeFunctionTwo(source, target) {
-    let newData = [...source];
-
-    target.forEach(tr => {
-      const index = _.findIndex(newData, item => item.id == tr.id);
-      if (index != -1) {
-        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
-      } else {
-        newData = [...newData, tr];
-      }
-    });
-    return newData;
   }
 
   /** Get The plts Sorted by the hierarchy chosen**/
@@ -299,7 +273,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       })
     }
 
-    return {rr,rd};
+    return {rr, rd};
   }
 
   /** get which icon to be shown in the parent depending on the children's icons **/
@@ -322,13 +296,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   if (!res.attached && !res.overridden) {
                     const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
                     if (check != null) {
-                      if (this.listOfPltsData[rowData.id][des.id] ) {
-                      if (this.listOfPltsData[rowData.id][des.id].length) {
-                        holder.push('dispoWs');
-                      }
+                      if (this.listOfPltsData[rowData.id][des.id]) {
+                        if (this.listOfPltsData[rowData.id][des.id].length) {
+                          holder.push('dispoWs');
+                        }
 
-                    }}
-                  else {
+                      }
+                    } else {
                       holder.push('checked');
                     }
 
@@ -341,15 +315,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           }
         }
       )
-      if (_.includes(holder, 'dispoWs')) {
-        checked = 'dispoWs';
-      } else if (_.includes(holder, 'checked')) {
-        checked = 'checked';
-      } else if (_.includes(holder, 'attached')) {
-        checked = 'attached';
-      } else if (_.includes(holder, 'overridden')) {
-        checked = 'overridden';
-      }
     }
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       item.targetRaps.forEach(reg => {
@@ -367,12 +332,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                   if (!res.attached && !res.overridden) {
                     const check = _.get(this.listOfPltsData, `${des.id}.${rowData.id}`, null);
                     if (check != null) {
-                    if (this.listOfPltsData[des.id][rowData.id]) {
-                      if (this.listOfPltsData[des.id][rowData.id].length) {
-                        holder.push('dispoWs');
-                      }
+                      if (this.listOfPltsData[des.id][rowData.id]) {
+                        if (this.listOfPltsData[des.id][rowData.id].length) {
+                          holder.push('dispoWs');
+                        }
 
-                    }} else {
+                      }
+                    } else {
                       holder.push('checked');
                     }
                   }
@@ -399,6 +365,74 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         checked = 'override'
       }
     }
+    if (checked == 'attached') {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
+              rg.attached = true;
+            }
+          })
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.attached = true;
+            }
+          })
+        }
+      })
+
+
+    } else {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
+              rg.attached = false;
+            }
+          })
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.attached = false;
+            }
+          })
+        }
+      })
+    }
+
+    if (checked == 'overridden') {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
+              rg.overridden = true;
+            }
+          })
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.overridden = true;
+            }
+          })
+        }
+      })
+
+
+    } else {
+      this.treatySections[0].forEach(ts => {
+        if (ts.id == item.id) {
+          ts.regionPerils.forEach(rg => {
+            if (rg.id == rowData.id) {
+              rg.overridden = false;
+            }
+          })
+          ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.overridden = false;
+            }
+          })
+        }
+      })
+    }
+
     return checked;
   }
 
@@ -420,12 +454,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               if (!des.attached && !des.overridden) {
                 const check = _.get(this.listOfPltsData, `${rowData.id}.${grain.id}`, null);
                 if (check != null) {
-                if (this.listOfPltsData[rowData.id][grain.id]) {
-                  if (this.listOfPltsData[rowData.id][grain.id].length) {
-                    checked = 'dispoWs';
-                  }
+                  if (this.listOfPltsData[rowData.id][grain.id]) {
+                    if (this.listOfPltsData[rowData.id][grain.id].length) {
+                      checked = 'dispoWs';
+                    }
 
-                }} else {
+                  }
+                } else {
                   checked = 'checked'
                 }
               }
@@ -449,13 +484,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               if (!des.attached && !des.overridden) {
                 const check = _.get(this.listOfPltsData, `${grain.id}.${rowData.id}`, null);
                 if (check != null) {
-                if (this.listOfPltsData[grain.id][rowData.id]) {
-                  if (this.listOfPltsData[grain.id][rowData.id].length) {
+                  if (this.listOfPltsData[grain.id][rowData.id]) {
+                    if (this.listOfPltsData[grain.id][rowData.id].length) {
 
-                    checked = 'dispoWs';
+                      checked = 'dispoWs';
+                    }
+
                   }
-
-                }} else {
+                } else {
                   checked = 'checked'
                 }
               }
@@ -477,10 +513,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   /** get the plt's icon depending on the treatysections**/
   checkAttached(item, rowData, grain, plt) {
     let checked = 'not';
-
-    console.log("this is the item",{
-      item, rowData, grain, plt
-    })
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
         if (reg.id == rowData.id) {
@@ -780,7 +812,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               rp.targetRaps.forEach(tr => {
                 if (tr.id == ove.child) {
                   tr.overridden = true;
-                  tr.reason = this.overrideReason ;
+                  tr.reason = this.overrideReason;
                   tr.resonDescribed = this.overrideReasonExplained;
 
                 }
@@ -792,7 +824,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               tr.regionPerils.forEach(rp => {
                 if (rp.id == ove.parent) {
                   rp.overridden = true;
-                  rp.reason = this.overrideReason ;
+                  rp.reason = this.overrideReason;
                   rp.resonDescribed = this.overrideReasonExplained;
 
                 }
@@ -839,89 +871,259 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.overrideReason = null;
   }
 
-  /** applying the attach changes from the attachplt popup**/
-  applyAttachChanges(event) {
-    this.attachArray = event;
-    _.forEach(this.attachArray, att => {
-      if (att.state == 'expected') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.regionPerils, rg => {
-              if (rg.id == att.regionPeril) {
-                _.forEach(rg.targetRaps, tr => {
-                  if (tr.id == att.targetRap) {
-                    tr.attached = true;
-                    tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
-      if (att.state == 'attached') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.regionPerils, rg => {
-              if (rg.id == att.regionPeril) {
-                _.forEach(rg.targetRaps, tr => {
-                  if (tr.id == att.targetRap) {
-                    tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
-                    if (tr.pltsAttached.length == 0) {
-                      tr.attached = false;
-                    }
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
-    })
-    _.forEach(this.attachArray, att => {
-      if (att.state == 'expected') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.targetRaps, rg => {
-              if (rg.id == att.targetRap) {
-                _.forEach(rg.regionPerils, tr => {
-                  if (tr.id == att.regionPeril) {
-                    tr.attached = true;
-                    tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
-      if (att.state == 'attached') {
-        _.forEach(this.treatySections[0], ts => {
-          if (ts.id == att.treatySectionId) {
-            _.forEach(ts.targetRaps, rg => {
-              if (rg.id == att.targetRap) {
-                _.forEach(rg.regionPerils, tr => {
-                  if (tr.id == att.regionPeril) {
-                    tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
-                    if (tr.pltsAttached.length == 0) {
-                      tr.attached = false;
-                    }
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
-    })
-    if(this.selectedSortBy == 'RAP / Minimum Grain'){
-      this.dataSource = this.getDataTwo(this.treatySections[0]);
-    }
-    if(this.selectedSortBy == 'Minimum Grain / RAP') {
-      this.dataSource = this.getData(this.treatySections[0]);
-    }
+  applyAttachChangesTwo(event) {
+    this.deleteArray = event;
+    console.log("this is the deleteArray",this.deleteArray)
+    _.forEach(this.deleteArray, att => {
+      _.forEach(this.treatySections[0], ts => {
+        if (ts.id == att.tsId) {
 
 
+
+          _.forEach(ts.regionPerils, rg => {
+            if (rg.id == att.regionPeril) {
+              _.forEach(rg.targetRaps, tr => {
+                if (tr.id == att.targetRap) {
+                  tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
+                  if (tr.pltsAttached.length == 0) {
+                    tr.attached = false;
+                  }
+                }
+              })
+            }
+          })
+        }
+
+
+        _.forEach(ts.targetRaps, rg => {
+          if (rg.id == att.targetRap) {
+            _.forEach(rg.regionPerils, tr => {
+              if (tr.id == att.regionPeril) {
+                tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
+                if (tr.pltsAttached.length == 0) {
+                  tr.attached = false;
+                }
+              }
+            })
+          }
+        })
+
+    })
   }
 
+)
+
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      this.dataSource = this.getDataTwo(this.treatySections[0]);
+    }
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      this.dataSource = this.getData(this.treatySections[0]);
+    }
+}
+
+/** applying the attach changes from the attachplt popup**/
+applyAttachChanges(event)
+{
+  this.attachArray = [];
+  this.attachArray = _.merge([],event);
+  console.log("this is the attachArray",this.attachArray)
+  _.forEach(this.attachArray, att => {
+    _.forEach(this.treatySections[0], ts => {
+      if (ts.id == att.tsId) {
+
+
+        _.forEach(ts.regionPerils, rg => {
+          if (rg.id == att.regionPeril) {
+            _.forEach(rg.targetRaps, tr => {
+              if (tr.id == att.targetRap) {
+                tr.attached = true;
+                tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+              }
+            })
+          }
+        })
+
+        _.forEach(ts.targetRaps, rg => {
+          if (rg.id == att.targetRap) {
+            _.forEach(rg.regionPerils, tr => {
+              if (tr.id == att.regionPeril) {
+                tr.attached = true;
+                tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+              }
+            })
+          }
+        })
+      }
+    })
+
+  })
+  if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    this.dataSource = this.getDataTwo(this.treatySections[0]);
+  }
+  if (this.selectedSortBy == 'Minimum Grain / RAP') {
+    this.dataSource = this.getData(this.treatySections[0]);
+  }
+
+
+
+}
+
+/**getting the row information to send it to the attach plt popup**/
+getRowInformation(rowData)
+{
+  if (this.selectedSortBy == 'Minimum Grain / RAP') {
+    const targetRaps = [];
+    rowData.child.forEach(tr => {
+      targetRaps.push(tr.id)
+    })
+    this.rowInformation = {
+      "sort": "1",
+      "rowData": rowData.id,
+      "child": targetRaps
+    };
+  }
+  if (this.selectedSortBy == 'RAP / Minimum Grain') {
+    const targetRaps = [];
+    rowData.child.forEach(tr => {
+      targetRaps.push(tr.id)
+    })
+    this.rowInformation = {
+      "sort": "2",
+      "rowData": rowData.id,
+      "child": targetRaps
+    };
+
+  }
+  this.addRemoveModal = true;
+}
+
+/**checking if the treaty section needs to show the attached icon**/
+checkTreatySectionAttached(treatySection)
+{
+  let checked = true;
+  this.treatySections[0].forEach(ts => {
+    if (ts.id == treatySection.id) {
+      if (this.selectedSortBy == 'Minimum Grain / RAP') {
+        ts.regionPerils.forEach(rg => {
+          if (!rg.attached && !rg.overridden) {
+            checked = false;
+          }
+        })
+      }
+      if (this.selectedSortBy == 'RAP / Minimum Grain') {
+        ts.targetRaps.forEach(tr => {
+          if (!tr.attached && !tr.overridden) {
+            checked = false;
+          }
+        })
+      }
+    }
+  })
+  return checked;
+}
+
+checkRowAttached(row)
+{
+  let checked = true;
+  this.treatySections[0].forEach(ts => {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      ts.regionPerils.forEach(rp => {
+          if (rp.id == row.id) {
+            if (!rp.attached && !rp.overridden) {
+              checked = false;
+            }
+          }
+        }
+      )
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      ts.targetRaps.forEach(tr => {
+          if (tr.id == row.id) {
+            if (!tr.attached && !tr.overridden) {
+              checked = false;
+            }
+          }
+        }
+      )
+    }
+
+  })
+  return checked;
+}
+
+checkRowChildAttached(rowData, child)
+{
+  let checked = true;
+  this.treatySections[0].forEach(ts => {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      ts.regionPerils.forEach(rp => {
+          if (rp.id == rowData.id) {
+            rp.targetRaps.forEach(tr => {
+              if (tr.id == child.id) {
+                if (!tr.attached && !tr.overridden) {
+                  checked = false;
+                }
+              }
+            })
+          }
+        }
+      )
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      ts.targetRaps.forEach(tr => {
+          if (tr.id == rowData.id) {
+            tr.regionPerils.forEach(rp => {
+              if (rp.id == child.id) {
+                if (!rp.attached && !rp.overridden) {
+                  checked = false;
+                }
+              }
+            })
+          }
+        }
+      )
+    }
+
+  })
+  return checked;
+}
+
+  selectDropDown(event:boolean,rowId){
+  console.log("this is the event and the rowdata id:",event, rowId)
+  if(event){
+    this.selectedDropDown = rowId;
+  }else{
+    this.selectedDropDown = null;
+  }
+}
+
+private _mergeFunction(source, target)
+{
+  let newData = [...source];
+
+  target.forEach(tr => {
+    const index = _.findIndex(newData, item => item.id == tr.id);
+    if (index != -1) {
+      newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+    } else {
+      newData = [...newData, tr];
+    }
+  });
+  return newData;
+}
+
+private _mergeFunctionTwo(source, target)
+{
+  let newData = [...source];
+
+  target.forEach(tr => {
+    const index = _.findIndex(newData, item => item.id == tr.id);
+    if (index != -1) {
+      newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+    } else {
+      newData = [...newData, tr];
+    }
+  });
+  return newData;
+}
 }

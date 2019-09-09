@@ -39,7 +39,7 @@
           <ng-container *ngIf="col?.resizable">
             <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' ) " [ngStyle]="{'width': col?.width }" pResizableColumn>
           <span style="display:flex;justify-content: space-between;">
-            {{col?.header}}
+            {{col?.header}} <br> {{col?.subHeader}}
             <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
               <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
               <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
@@ -107,13 +107,19 @@
                      (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
             </div>
           </td>
-          <td  *ngIf="col?.type == 'checkbox-col' && rowData.treatySectionsState[col?.header].state != 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
-            <div class="checkbox-off">
-              <label nz-checkbox [nzChecked]="rowData.treatySectionsState[col?.header].state == 'attached'" (nzCheckedChange)="selectPltForAttach(rowData,rowData.treatySectionsState[col?.header])"></label>
+          <td  *ngIf="col?.type == 'checkbox-scope'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div style="padding-left: 9px;">
+              <label nz-checkbox [nzChecked]="rowData?.selected"
+                     (nzCheckedChange)="deselectThePlt(rowData.pltId, $event)"></label>
             </div>
           </td>
-          <td  *ngIf="col?.type == 'checkbox-col' && rowData.treatySectionsState[col?.header].state == 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
-            <div style="padding-left: 9px;">
+          <td  *ngIf="col?.type == 'checkbox-col' && isPltDisabled(rowData, col?.header) == 'notDisabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div class="checkbox-off">
+              <label nz-checkbox class="special-check" [nzChecked]="isPltAttached(rowData, col?.header) == 'attached'" (nzCheckedChange)="selectPltForAttach(rowData,col?.header)"></label>
+            </div>
+          </td>
+          <td  *ngIf="col?.type == 'checkbox-col' && isPltDisabled(rowData, col?.header) == 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div class="checkbox-off">
               <label nz-checkbox nzDisabled ></label>
             </div>
           </td>
