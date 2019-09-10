@@ -91,6 +91,7 @@ public class TagService {
                 userTag= new UserTag();
                 userTag.setTagColor(tag.getTagColor());
                 userTag.setTagName(tag.getTagName());
+                userTag.setWorkspace(workspace);
                 userTag.setUser(userRepository.findById(request.userId).orElse(null));
                 userTagRepository.save(userTag);
             }
@@ -107,7 +108,6 @@ public class TagService {
         });
         request.unselectedTags.forEach(tag -> {
             UserTag userTag = userTagRepository.findById(tag.getTagId()).orElseThrow(()-> new RuntimeException("userTag ID not found"));
-            System.out.println(userTag);
             pltHeaders.forEach(pltHeader -> pltUserTagRepository.delete(pltUserTagRepository.findByTagAndPlt(userTag, pltHeader)));
         });
 
