@@ -1457,7 +1457,7 @@
     </colgroup>
   </ng-template>
   <ng-template let-columns pTemplate="header">
-    <tr *ngIf="extended" style="background-color: #ffffff !important;">
+    <!--<tr *ngIf="extended" style="background-color: #ffffff !important;">
       <ng-container *ngFor="let col of columns;">
         <th *ngIf="col?.fields === 'checkbox'" [ngStyle]="{'overflow':'visible'}"
             class="checkBoxHead"
@@ -1646,7 +1646,7 @@
 
         </th>
       </ng-container>
-    </tr>
+    </tr>-->
     <tr>
       <ng-container *ngFor="let col of columns; let i = index">
         <th *ngIf="col?.fields === 'checkbox'" class="checkBoxHead"
