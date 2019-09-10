@@ -281,6 +281,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   @ViewChild('iconNote') iconNote: ElementRef;
   activeCheckboxSort: boolean = false;
   descriptionDropDown: any = false;
+  deltaSwitch: boolean = false;
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -437,7 +438,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       }
 
     } else {
-      if (this.tableType == 'adjustments') {
+      if (this.tableType == 'adjustments' || this.tableType == 'Impacts') {
         _.forEach(this.pltColumns, (value, key) => {
           if (value.extended && !value.frozen) {
             this.dataColumns.push(value);
@@ -970,8 +971,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   }
 
-  onTableTypeChange($event) {
-    this.tableType = $event ? 'EP Metrics' : 'adjustments';
+  onTableTypeChange() {
+    // this.tableType = $event ? 'EP Metrics' : 'adjustments';
     this.initDataColumns();
     this.headerWidth = '403px';
     this.tableType == 'adjustments' ? this.frozenWidth = '463' : this.frozenWidth = '403';
@@ -1142,5 +1143,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.template = currentTemplate
     this.templateList.push(currentTemplate);
     this.closeSaveTemplate();
+  }
+
+  onDeltaChange($event) {
+    if ($event) {
+      this.EPMDisplay = 'amount';
+    } else {
+      this.EPMDisplay = 'percentage';
+    }
   }
 }

@@ -95,6 +95,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
   searchAddress: string;
   listOfPltsDataCache: any[];
+  invalidPltString = "<Invalid PLT Thread>";
   shownDropDown: any;
   inProgressCheckbox: boolean = true;
   newCheckbox: boolean = true;
