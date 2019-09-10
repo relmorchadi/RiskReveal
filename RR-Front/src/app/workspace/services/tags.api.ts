@@ -14,7 +14,6 @@ export class TagsApi {
   }
 
   getTagsBySelection(params: any): Observable<any> {
-    console.log(params);
     return this.http.post(`${this.URL}/getSelection`, params);
   }
 

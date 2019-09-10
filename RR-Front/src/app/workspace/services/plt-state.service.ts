@@ -354,8 +354,6 @@ export class PltStateService {
         ...rest
       } = payloadTag;
 
-      console.log(payloadTag);
-
       uesrTagsSummary[tagId] = {tagId, ...rest, selected: userTags && userTags[tagId] ? userTags[tagId].selected : false}
     });
 
