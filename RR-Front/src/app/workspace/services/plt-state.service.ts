@@ -32,7 +32,6 @@ export class PltStateService {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.loading = true;
     }));
-    console.log(payload);
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
@@ -75,7 +74,6 @@ export class PltStateService {
           const {workspaceId, uwy } = params;
           const {workspaceName, programName, cedantName, projects} = ws;
           const wsIdentifier = `${workspaceId}-${uwy}`;
-          console.log('this are projects', projects);
           (projects || []).length > 0 ? ws.projects= this._selectProject(projects, 0) : null;
           ctx.patchState(produce(ctx.getState(), draft => {
             draft.content = _.merge(draft.content, {

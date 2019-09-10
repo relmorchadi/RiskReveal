@@ -4,6 +4,7 @@
   [closable]="false"
   [modal]="true"
   [responsive]="true"
+  (visibleChange)="visibleChange(isVisible)"
   [styleClass]="'m-dialog-modal-m-74 adjustment-modal'"
   [visible]="isVisible">
   <p-header>
@@ -41,7 +42,6 @@
                                                            class="icon-star_border_24px unfavoredStar"
                                                            style="font-size: 22px;"></i></nz-option>
             </nz-option-group>
-
           </nz-select>
         </div>
       </div>
@@ -102,7 +102,7 @@
         </nz-switch>
       </div>
     </div>
-    <div *ngIf="linear" class="ui-g">
+    <div *ngIf="singleValue?.name == 'Linear'" class="ui-g">
       <div class="ui-g-3">
         <label> Loss Modification Factor (LMF) </label>
       </div>

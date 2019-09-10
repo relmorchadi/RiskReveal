@@ -40,6 +40,7 @@
           (onSelectSinglePlt)="selectSinglePLT($event)"
           (openPltInDrawer)="openPltInDrawer($event)"
           [tableInputs]="Inputs | pickKeys : tableInputs"
+          [listOfPltsThread]="listOfPltsThread"
         ></app-pop-up-plt-table>
       </div>
     </div>
@@ -53,7 +54,7 @@
 
   <p-footer>
     <div class="footer">
-      <button (click)="onHide()" class="a-button-text">Close</button>
+      <button (click)="onHide()" class="a-button-text">Cancel</button>
       <button (click)="onSave()" class="a-buttons-contained">
         Save
       </button>

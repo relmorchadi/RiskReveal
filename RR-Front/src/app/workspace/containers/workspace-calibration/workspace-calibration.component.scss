@@ -1003,7 +1003,6 @@
 
       .checkBoxHead div {
         display: flex;
-        align-items: center;
       }
 
       th {
@@ -1079,10 +1078,12 @@
 
         .text-elipsice {
           width: 100%;
-          height: 39.47px !important;
+          height: 51.47px !important;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+          display: table-cell;
+          vertical-align: middle;
         }
 
         .td-wrapper-tags {
@@ -1530,9 +1531,10 @@ body .ui-table .ui-table-thead > tr > th {
 
     span.title {
       padding: 16px 0px 16px 12px;
-      font-size: 1.3em;
+      font-size: 15px;
       font-weight: bold;
       border-top: 3px solid #0700e4;
+      font-family: Rubik;
     }
   }
 
@@ -1552,9 +1554,10 @@ body .ui-table .ui-table-thead > tr > th {
 
     span.title {
       padding: 16px 0px 16px 23px;
-      font-size: 1.3em;
+      font-size: 15px;
       font-weight: bold;
       border-top: 3px solid #0700e4;
+      font-family: Rubik;
     }
   }
 
@@ -1567,6 +1570,8 @@ body .ui-table .ui-table-thead > tr > th {
 
 .table-header2 {
   height: 88px !important;
+  display: flex;
+  flex-direction: column;
 }
 
 .threeValues {
@@ -1642,6 +1647,11 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.ui-radiobutton-label {
   color: #0700cf !important;
+  cursor: pointer;
+}
+
+::ng-deep.ui-radiobutton-label:hover {
+  color: #1890ff !important;
 }
 
 .title-as-tab-bis {
@@ -1755,4 +1765,62 @@ body .ui-table .ui-table-thead > tr > th {
   align-items: center;
   justify-content: center;
   padding: 12px;
+}
+
+.template-type {
+  background-color: #0700CF;
+  color: #ffffff;
+  border-radius: 8px;
+  height: 14px;
+  margin: auto 8px auto 8px;
+  font-size: 9px;
+  padding: 0px 7px 0px 7px;
+
+}
+
+.description-tooltip {
+  color: #000c17;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
+
+  span {
+    height: 28px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    width: 100%;
+  }
+
+  p {
+    padding: 5px;
+  }
+}
+
+.info-desc:hover {
+  color: #06b9ff !important;
+}
+
+.impacts-points {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  align-items: flex-end;
+  color: #848688;
+}
+
+.impact-container {
+  display: flex;
+  align-items: center;
+  width: 45%;
+  justify-content: space-evenly;
+  margin-top: 10px;
+}
+
+::ng-deep.ui-radiobutton .ui-radiobutton-box {
+  border: 1px solid #0700cf !important;
+}
+
+::ng-deep.ui-radiobutton .ui-radiobutton-box:hover {
+  border: 1px solid #1890ff !important;
 }

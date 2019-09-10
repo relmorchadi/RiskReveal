@@ -29,12 +29,12 @@ COMPONENT STYLE
     color: #000000;
   }
 
-  .menu-left-wrapper {
-    float: left;
+  .menu-searchPlt-wrapper {
+    display: flex;
     background-color: #FFFFFF;
-    width: 20%;
-    height: 595px;
-    box-shadow: 1px 2px 6px rgba(0,0,0,0.15);
+    width: 100%;
+    margin-bottom: 10px;
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15);
 
     ::ng-deep {
       .ui-tree.ui-widget.ui-widget-content.ui-corner-all.ui-tree-selectable {
@@ -44,14 +44,18 @@ COMPONENT STYLE
       }
 
       ul.ui-tree-container {
-        height: 215px;
+        height: 170px;
+
+        li.ui-treenode {
+          font-size: 11px;
+        }
       }
     }
 
     .menu-left-header {
-      padding: 6px 10px 0;
+      padding: 8px 0 0 25px;
       display: flex;
-      width: 55%;
+      width: 60%;
       white-space: nowrap;
     }
 
@@ -68,22 +72,29 @@ COMPONENT STYLE
     }
 
     .tree-menu-wrapper {
-      width: fit-content;
+      width: 100%;
       max-width: 98%;
       margin: 10px auto;
     }
 
     .files-selection-wrap {
-      width: 91%;
+      width: 95%;
       margin: 10px auto 0;
-      height: 150px;
+      height: 140px;
 
       ul {
-        height: 140px;
+        height: 121px;
 
         li {
           height: 30px;
           align-items: center;
+
+          ::ng-deep {
+            .ant-checkbox-wrapper {
+              font-size: 12px
+            }
+          }
+
         }
       }
 
@@ -99,18 +110,17 @@ COMPONENT STYLE
     .empty-data-wrap {
       margin: 11px 15px;
       background: #F4F6FC;
-      height: 140px;
+      height: 130px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
   }
 
-  .menu-right-wrapper {
-    float: right;
+  .menu-data-wrapper {
     background: #FFFFFF;
-    width: 79%;
-    height: 595px;
+    width: 100%;
+    height: fit-content;
     box-shadow: 1px 2px 6px rgba(0,0,0,0.15);
 
     .menu-left-header {
@@ -118,13 +128,49 @@ COMPONENT STYLE
       display: flex;
       font-weight: bold;
       color: #000000;
-      padding: 12px 25px 0;
+      padding: 6px 25px 0;
       width: 33%;
     }
 
     ::ng-deep {
       .ui-table-scrollable-wrapper.ng-star-inserted > div {
         width: 100% !important;
+      }
+    }
+  }
+
+  .menu-left-wrapper {
+    float: left;
+    width: 67%;
+  }
+
+  .menu-detail-wrapper {
+    float: right;
+    width: 32%;
+    background: #FFFFFF;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.15);
+
+    ul {
+      list-style: none;
+      padding: 5px 10px 0 25px;
+
+      li {
+        display: flex;
+        align-items: center;
+
+        .list-key {
+          flex: 0 0 40%;
+        }
+
+        .list-value {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          font-size: 12.22px;
+        }
+
+        .subtitle-2 {
+          font-size: 11.22px;
+        }
       }
     }
   }
@@ -173,7 +219,7 @@ TABLE STYLE
 */
 
 .summary-info {
-  padding: 20px 0;
+  padding: 0 0 10px;
   margin: auto;
   width: 97%;
   overflow: hidden;
@@ -208,7 +254,7 @@ TABLE STYLE
       }
 
       th {
-        padding: 15px 10px 5px 3px;
+        padding: 15px 3px 5px 8px;
         font-size: 10px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38);
@@ -266,7 +312,15 @@ TABLE STYLE
       }
 
       tr.ui-contextmenu-selected {
-        background-color: #f4f6fc !important;
+        background-color: #F4F6FC !important;
+      }
+
+      tr:hover {
+        background-color: #F7F8FD;
+      }
+
+      tr.selected_contract_item {
+        background-color: #E1E1E1 !important;
       }
 
       .ant-progress-text {
@@ -287,7 +341,7 @@ TABLE STYLE
       }
 
       th {
-        padding: 0;
+        padding: 0 3px 0 8px;
         cursor: pointer;
         color: rgb(0, 0, 0);
         font-size: 12px;
@@ -299,10 +353,11 @@ TABLE STYLE
         .text-data {
           width: 100%;
           height: 30px;
+          display: flex;
+          align-items: center;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          padding-top: 4px;
           font-weight: 400;
         }
 
@@ -343,8 +398,12 @@ TABLE STYLE
         }
       }
 
-      .selected-item {
+      .active_contract_item {
         background-color: #FDFBDF !important;
+      }
+
+      .selected_contract_item {
+        background-color: #E1E1E1 !important;
       }
 
       .icon-check_circle_24px {
@@ -371,10 +430,14 @@ TABLE STYLE
   }
 }
 
-.table-width {
-  p-table {
-    width: 98%;
-  }
+.empty-notif-wrapper {
+  width: 41vw;
+  background-color: #F4F6FC;
+  margin: 4px 2px 0;
+  padding: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .empty-table {
@@ -391,17 +454,16 @@ TABLE STYLE
   }
 
   .empty-notif-wrapper {
-    background-color: #f4f6fc;
-    margin: 4px 2px 0;
-    padding: 7px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
   }
 }
 
 .fixed-table-height {
   .empty-notif-wrapper {
-    height: 445px;
+    height: 222px;
   }
+}
+
+.body-1 {
+  font-size: 14.22px;
 }

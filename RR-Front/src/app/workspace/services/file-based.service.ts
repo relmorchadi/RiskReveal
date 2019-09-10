@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {FileBaseApi} from './fileBase.api';
 import * as fromWs from '../store/actions';
 import * as _ from 'lodash';
@@ -14,7 +14,8 @@ import {switchMap} from 'rxjs/operators';
 })
 export class FileBasedService {
 
-  constructor(private fileBaseApi: FileBaseApi) { }
+  constructor(private fileBaseApi: FileBaseApi) {
+  }
 
   loadFolderList(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
@@ -24,14 +25,17 @@ export class FileBasedService {
         (ds: any) => {
           const data = {data: []};
           _.forEach(ds, item => data.data = [...data.data,
-            {label: item, data: 'folder',
-            expandedIcon: 'fa fa-folder-open',
-            collapsedIcon: 'fa fa-folder'}]);
+            {
+              label: item, data: 'folder',
+              expandedIcon: 'fa fa-folder-open',
+              collapsedIcon: 'fa fa-folder'
+            }]);
           return of(ctx.patchState(
             produce(
               ctx.getState(), draft => {
                 draft.content[wsIdentifier].fileBaseImport.folders = data;
                 draft.content[wsIdentifier].fileBaseImport.files = [];
+                draft.content[wsIdentifier].fileBaseImport.selectedFiles = [];
               }
             )
           ));
@@ -48,7 +52,9 @@ export class FileBasedService {
         (ds: any) => of(ctx.patchState(
           produce(
             ctx.getState(), draft => {
-              draft.content[wsIdentifier].fileBaseImport.files = ds.map(item => { return {label: item, selected: false}; });
+              draft.content[wsIdentifier].fileBaseImport.files = ds.map(item => {
+                return {label: item, selected: false};
+              });
             }
           )
         ))
@@ -75,9 +81,57 @@ export class FileBasedService {
   toggleFile(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[wsIdentifier].fileBaseImport.files[payload.index].selected = payload.selection;
-    }));
+    if (payload.scope === 'single') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].fileBaseImport.files[payload.index].selected = payload.selection;
+      }));
+    } else if (payload.scope === 'all') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].fileBaseImport.files = draft.content[wsIdentifier].fileBaseImport.files.map(item => {
+          return {...item, selected: payload.selection};
+        });
+      }));
+    }  else if (payload.scope === 'chunk') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].fileBaseImport.files =
+          draft.content[wsIdentifier].fileBaseImport.files.map((item, i) => {
+            if (i >= payload.from && i <= payload.to) {
+              return {...item, selected: true};
+            } else {
+              return {...item, selected: false};
+            }
+          });
+      }));
+    }
+
+  }
+
+  togglePlts(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    if (payload.scope === 'single') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].fileBaseImport.selectedFiles[payload.index].selected = payload.selection;
+      }));
+    } else if (payload.scope === 'all') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].fileBaseImport.selectedFiles =
+          draft.content[wsIdentifier].fileBaseImport.selectedFiles.map(item => {
+            return {...item, selected: payload.selection};
+          });
+      }));
+    } else if (payload.scope === 'chunk') {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].fileBaseImport.selectedFiles =
+          draft.content[wsIdentifier].fileBaseImport.selectedFiles.map((item, i) => {
+            if (i >= payload.from && i <= payload.to) {
+              return {...item, selected: true};
+            } else {
+              return {...item, selected: false};
+            }
+          });
+      }));
+    }
   }
 
   addToImport(ctx: StateContext<WorkspaceModel>, payload) {
@@ -111,9 +165,13 @@ export class FileBasedService {
         ResultsName: 'SAGI_XOL_2019 - SAGI_XOL_2019',
         ResultsDescription: 'NA',
         Run_Date: '2018-11-21',
+        RegionPeril: 'ZAEQ',
         Currency: 'THB',
+        TargetCurrency: 'THB',
         FinPerspective: 'GR',
         FinPerspectiveDesc: 'Gross',
+        UnitMultiplier: 1,
+        Proportion: 100,
         Years: '100000',
         SimulationPeriodBasis: '1',
         occurrenceBasis: 'PerEvent',

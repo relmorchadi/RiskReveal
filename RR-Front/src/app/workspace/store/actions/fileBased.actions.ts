@@ -23,6 +23,11 @@ export class ToggleFilesAction {
   constructor(public payload: any) {}
 }
 
+export class TogglePltsAction {
+  static readonly type = '[File Based] Toggle Plts Selection';
+  constructor(public payload: any) {}
+}
+
 export class AddFileForImportAction {
   static readonly type = '[File Based] Added File For Import';
   constructor(public payload: any) {}

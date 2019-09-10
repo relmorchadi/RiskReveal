@@ -57,7 +57,7 @@
   }
 
   ::ng-deep .ui-table-scrollable-body {
-    height: 47vh;
+    height: calc(100vh - 420px);
     max-height: none;
   }
 

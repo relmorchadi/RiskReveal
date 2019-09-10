@@ -1,6 +1,6 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
-import {combineLatest, Observable, of, Subject, Subscription} from "rxjs";
-import {Actions, ofActionDispatched, Store} from "@ngxs/store";
+import {Observable, Subject, Subscription} from "rxjs";
+import {Actions, Store} from "@ngxs/store";
 import * as rightMenuStore from "../../../../shared/components/plt/plt-right-menu/store";
 import {Actions as rightMenuActions} from "../../../../shared/components/plt/plt-right-menu/store";
 import {FormBuilder, FormControl, FormGroup} from "@angular/forms";
@@ -11,17 +11,19 @@ import {WorkspaceState} from "../../../store/states";
 import * as fromWorkspaceStore from "../../../store";
 import {toCalibratePlts} from "../../../store";
 import * as _ from "lodash";
-import {mergeMap} from "rxjs/operators";
+import {switchMap, tap} from "rxjs/operators";
 import {Debounce} from "../../../../shared/decorators";
 import {LazyLoadEvent} from "primeng/api";
 import {Message} from "../../../../shared/message";
+import {BaseContainer} from "../../../../shared/base";
+import {SystemTagsService} from "../../../../shared/services/system-tags.service";
 
 @Component({
   selector: 'app-add-remove-pop-up',
   templateUrl: './add-remove-pop-up.component.html',
   styleUrls: ['./add-remove-pop-up.component.scss']
 })
-export class AddRemovePopUpComponent implements OnInit, OnDestroy {
+export class AddRemovePopUpComponent extends BaseContainer implements OnInit, OnDestroy {
 
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
@@ -35,9 +37,11 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
 
   @Input() isVisible;
   @Input('selectionStep') selectionStep: string;
+  @Input('userTags') userTags: string;
+  @Input('projects') projects: string;
   @Input() multiSteps: boolean;
-  @Input() workspaceId: any;
-  @Input() uwy: any;
+  workspaceId: any;
+  uwy: any;
   @Input() stepConfig: {
     wsId: string,
     uwYear: string,
@@ -46,6 +50,7 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   rightMenuInputs: rightMenuStore.Input;
   workspace: any;
   index: any;
+  listOfPltsThread: any;
   searchWorkspace = false;
   selectedWorkspace: any = null;
   keywordFormGroup: FormGroup;
@@ -123,7 +128,9 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
     private cdRef: ChangeDetectorRef,
     private searchService: SearchService,
     private fb: FormBuilder,
+    private systemTagService: SystemTagsService,
   ) {
+    super(router, cdRef, store$);
     this.Inputs = {
       contextMenuItems: [
         {
@@ -276,7 +283,7 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
         title: 'basket',
       },
       tabs: {'basket': true, 'pltDetail': true},
-      visible: true,
+      visible: false,
       mode: "pop-up"
     };
     this.setRightMenuSelectedTab('basket');
@@ -298,176 +305,60 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-
+    this.setInputs('userTags', this.userTags);
+    // this.setInputs('projects',this.projects);
   }
 
+  getPlts() {
+    return this.select(WorkspaceState.getPltsForCalibration(this.workspaceId + '-' + this.uwy));
+  }
   getBrowesingItemsDirectly() {
-    this.browesing = true;
-    this.data$ = this.store$.select(WorkspaceState.getPltsForCalibrationPopUp(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
-    this.deletedPlts$ = this.store$.select(WorkspaceState.getDeletedPltsForCalibration(this.getInputs('wsId') + '-' + this.getInputs('uwYear')));
 
-    this.pltTableSubscription = combineLatest(
-      this.data$,
-      this.deletedPlts$
-    ).subscribe(([data, deletedData]: any) => {
-      let d1 = [];
-      let dd1 = [];
-      let d2 = [];
-      let dd2 = [];
-      this.Inputs['systemTagsCount'] = {};
-
-      if (data) {
-        if (_.keys(this.Inputs['systemTagsCount']).length == 0) {
-          _.forEach(data, (v, k) => {
-            //Init Tags Counters
-
-            //Grouped Sys Tags
-            _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-              this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
-              const tag = _.toString(v[section]);
-              if (tag) {
-                this.Inputs['systemTagsCount'][sectionName][tag] = {selected: false, count: 0, max: 0}
-              }
-            });
-
-            //NONE grouped Sys Tags
-            _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-              this.Inputs['systemTagsCount'][sectionName] = this.Inputs['systemTagsCount'][sectionName] || {};
-              this.Inputs['systemTagsCount'][sectionName][section] = {selected: false, count: 0};
-              this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {selected: false, count: 0, max: 0};
-            });
-
-          });
-        }
-
-        _.forEach(data, (v, k) => {
-          d1.push({...v, pltId: k});
-          d2.push(k);
-
-          /*if (v.visible) {*/
-          //Grouped Sys Tags
-          _.forEach(this.systemTagsMapping.grouped, (sectionName, section) => {
-            const tag = _.toString(v[section]);
-            if (tag) {
-              if (this.Inputs['systemTagsCount'][sectionName][tag] || this.Inputs['systemTagsCount'][sectionName][tag].count === 0) {
-                const {
-                  count,
-                  max
-                } = this.Inputs['systemTagsCount'][sectionName][tag];
-
-                this.Inputs['systemTagsCount'][sectionName][tag] = {
-                  ...this.Inputs['systemTagsCount'][sectionName][tag],
-                  count: v.visible ? count + 1 : count,
-                  max: max + 1
-                };
-              }
-            }
-          })
-
-          //NONE grouped Sys Tags
-          _.forEach(this.systemTagsMapping.nonGrouped, (section, sectionName) => {
-            const tag = v[section];
-            if (this.Inputs['systemTagsCount'][sectionName][section] || this.Inputs['systemTagsCount'][sectionName][section] == 0) {
-              const {
-                max,
-                count
-              } = this.Inputs['systemTagsCount'][sectionName][section];
-              this.Inputs['systemTagsCount'][sectionName][section] = {
-                ...this.Inputs['systemTagsCount'][sectionName][section],
-                count: v.visible ? count + 1 : count,
-                max: max + 1
-              };
-            }
-            if (this.Inputs['systemTagsCount'][sectionName]['non-' + section] || this.Inputs['systemTagsCount'][sectionName]['non-' + section].count == 0) {
-              const {
-                count,
-                max
-              } = this.Inputs['systemTagsCount'][sectionName]['non-' + section];
-              this.Inputs['systemTagsCount'][sectionName]['non-' + section] = {
-                ...this.Inputs['systemTagsCount'][sectionName]['non-' + section],
-                count: v.visible ? count + 1 : count,
-                max: max + 1
-              };
-            }
-          })
-          /*}*/
-
-        });
-
-        this.setInputs('listOfPlts', d2);
-        this.setInputs('listOfPltsData', d1);
-        this.setInputs('listOfPltsCache', d1);
-        this.setInputs('selectedListOfPlts', []);
-        this.updateMenuKey('basket', []);
-
-        _.forEach(d2, k => {
-          if (data[k].calibrate) {
-            this.setInputs('selectedListOfPlts', _.concat(this.getInputs('selectedListOfPlts'), k));
-            this.updateMenuKey('basket', _.concat(this.getRightMenuKey('basket'), {
-              pltId: k,
-              ...data[k]
-            }));
-          }
-        })
-
-        console.log(this.getRightMenuKey('basket'), this.getInputs('selectedListOfPlts'))
-      }
-
-      if (deletedData) {
-        _.forEach(deletedData, (v, k) => {
-          dd1.push({...v, pltId: k});
-          dd2.push(k);
-        });
-
-        this.setInputs('listOfDeletedPlts', dd2);
-        this.setInputs('listOfDeletedPltsData', dd1);
-        this.setInputs('listOfDeletedPltsCache', dd1);
-        this.setInputs('selectedListOfDeletedPlts', _.filter(dd2, k => deletedData[k].selected))
-      }
-
-      this.setInputs(
-        'selectAll',
-        !this.getInputs('showDeleted')
-          ?
-          (this.getInputs('selectedListOfPlts').length > 0 || (this.getInputs('selectedListOfPlts').length == this.getInputs('listOfPlts').length)) && this.getInputs('listOfPltsData').length > 0
-          :
-          (this.getInputs('selectedListOfDeletedPlts').length > 0 || (this.getInputs('selectedListOfDeletedPlts').length == this.getInputs('listOfDeletedPlts').length)) && this.getInputs('listOfDeletedPltsData').length > 0
-      );
-
-      this.setInputs(
-        'someItemsAreSelected',
-        !this.getInputs('showDeleted') ?
-          this.getInputs('selectedListOfPlts').length < this.getInputs('listOfPlts').length && this.getInputs('selectedListOfPlts').length > 0
-          :
-          this.getInputs('selectedListOfDeletedPlts').length < this.getInputs('listOfDeletedPlts').length && this.getInputs('selectedListOfDeletedPlts').length > 0
-      );
-      console.log('END');
+    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
+      this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
+      this.setInputs('listOfPltsData', [...this.Inputs.listOfPltsCache]);
+      this.initThreadsData();
+      this.updateMenuKey('basket', _.filter(this.listOfPltsThread, row => row.calibrate));
       this.detectChanges();
     });
 
-    this.d = this.actions$.pipe(
-      ofActionDispatched(fromWorkspaceStore.loadAllPltsSuccess),
-      mergeMap(() => {
-        this.calibrateSelectPlts(_.zipObject(
-          _.map(_.map(this.stepConfig.plts, id => _.find(this.getInputs('listOfPltsData'), plt => id == plt.pltId)), plt => plt.pltId),
-          _.map(this.stepConfig.plts, plt => ({type: true}))
-        ));
-        return of(null);
-      })
-    ).subscribe(() => this.d.unsubscribe());
+    this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
+      this.setInputs('selectAll', this.Inputs.selectedListOfPlts.length > 0 || (this.Inputs.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0);
 
-    this.pltProjectSubscription = this.store$.select(WorkspaceState.getProjects).subscribe((projects: any) => {
-      this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.setInputs('someItemsAreSelected', this.Inputs.selectedListOfPlts.length < this.listOfPltsThread.length && this.Inputs.selectedListOfPlts.length > 0);
       this.detectChanges();
     });
+    const pltToCalibrate = [];
+    _.forEach(this.listOfPltsThread, row => {
+      pltToCalibrate[row.pltId] = {calibrate: row.toCalibrate};
+    })
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&', pltToCalibrate);
+    this.calibrateSelectPlts(pltToCalibrate);
 
-    this.pltUserTagsSubscription = this.store$.select(WorkspaceState.getUserTagsPlt).subscribe(userTags => {
-      this.setInputs('userTags', userTags || {});
-      console.log(this.getInputs('userTags'))
-      this.detectChanges();
-    });
   }
 
+  observeRouteParamsWithSelector(operator) {
+    console.log(operator);
+    return this.observeRouteParams()
+      .pipe(
+        switchMap(() => operator()),
+        this.unsubscribeOnDestroy
+      )
+  }
+
+  observeRouteParams() {
+    return this.route.params.pipe(tap(({wsId, year}) => {
+      this.workspaceId = wsId;
+      this.uwy = year;
+    }))
+  }
+  initThreadsData() {
+    if (this.Inputs.listOfPltsData) {
+      this.listOfPltsThread = Array.prototype.concat.apply([], this.Inputs.listOfPltsData.map((row: any) => row.threads));
+      this.setInputs('selectedListOfPlts', _.filter(this.listOfPltsThread, (v, k) => v.calibrate).map(e => e.pltId));
+    }
+  }
   ngOnDestroy(): void {
     this.unSubscribe$.next();
     this.unSubscribe$.complete();
@@ -644,13 +535,13 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
        wsIdentifier:this.workspaceId + "-" + this.uwy
      }))*/
     const result: any = {};
-    _.forEach(this.Inputs.listOfPltsData, (plt: any) => {
-      plt.toCalibrate = false;
-      result[plt.pltId] = plt;
+    _.forEach(this.listOfPltsThread, (plt: any) => {
+      result[plt.pltId] = {toCalibrate: false};
     })
     _.forEach(this.Inputs.selectedListOfPlts, pltId => {
       result[pltId].toCalibrate = true;
     })
+    console.log(result);
     this.store$.dispatch(new toCalibratePlts({
       plts: result,
       wsIdentifier: this.stepConfig.wsId + "-" + this.stepConfig.uwYear
@@ -708,10 +599,10 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
   }
 
   calibrateSelectPlts(plts: any) {
+    console.log('selected   ************************==> ', this.Inputs.selectedListOfPlts);
     this.store$.dispatch(new fromWorkspaceStore.calibrateSelectPlts({
-      wsIdentifier: this.getInputs('wsId') + '-' + this.getInputs('uwYear'),
-      plts,
-      forDeleted: this.getInputs('showDeleted')
+      plts: plts,
+      ws: this.workspaceId + "-" + this.uwy
     }));
   }
 
@@ -902,4 +793,5 @@ export class AddRemovePopUpComponent implements OnInit, OnDestroy {
       return;
     }
   }
+
 }

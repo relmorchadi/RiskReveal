@@ -1,8 +1,8 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
-import * as fromInuring from '../actions/inuring.actions';
 import {PatchCalibrationStateAction} from '../actions';
+import * as fromInuring from '../actions/inuring.actions';
 import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
@@ -296,6 +296,11 @@ export class WorkspaceState {
     return state.content[wsIdentifier].scopeOfCompletence.data;
   }
 
+  static getPltsForScopeCompleteness(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+  }
+
 
 
   /***********************************
@@ -314,8 +319,8 @@ export class WorkspaceState {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
-  @Action(fromWS.openWS)
-  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.openWS) {
+  @Action(fromWS.OpenWS)
+  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
   }
 
@@ -541,6 +546,11 @@ export class WorkspaceState {
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
     return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
+  }
+
+  @Action(fromWS.loadAllAdjustmentApplication)
+  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllAdjustmentApplication) {
+    return this.calibrationService.loadAllAdjustmentApplication(ctx, payload);
   }
 
   @Action(fromWS.loadAllPltsFromCalibrationSuccess)
@@ -911,6 +921,11 @@ export class WorkspaceState {
   @Action(fromWS.ToggleFilesAction)
   toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
     this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.TogglePltsAction)
+  togglePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePltsAction) {
+    this.fileBasedFacade.togglePlts(ctx, payload);
   }
 
   @Action(fromWS.AddFileForImportAction)

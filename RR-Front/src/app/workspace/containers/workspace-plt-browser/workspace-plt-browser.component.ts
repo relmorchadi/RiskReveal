@@ -634,7 +634,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getOpenedPlt()).subscribe(openedPlt => {
-      console.log(openedPlt);
       this.updateMenuKey('pltDetail', openedPlt);
       this.updateTable('openedPlt', openedPlt && openedPlt.pltId);
       this.updateMenuKey('visible', openedPlt && !openedPlt.pltId ? false : this.getRightMenuKey('visible'));
@@ -969,6 +968,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           status: this.getTableInputKey('status')
         }));
         break;
+
+
+
       default:
         console.log('table action dispatcher')
     }

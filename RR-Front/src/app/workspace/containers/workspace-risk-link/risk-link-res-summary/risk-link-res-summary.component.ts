@@ -38,7 +38,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   lastSelectedIndexFPstandard = null;
   lastSelectedIndexFPAnalysis = null;
   lastSelectedIndexLinkAnalysis = null;
-  lastSelectedIndexLinkPortfolio = null;
 
   workingFSC: any;
   serviceSubscription: any;
@@ -91,9 +90,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
   allCheckedAnalysis: boolean;
   indeterminateAnalysis: boolean;
 
-  allCheckedPortfolio: boolean;
-  indeterminatePortfolio: boolean;
-
   collapseDataSources = false;
   collapseFPDataTable = false;
 
@@ -132,8 +128,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
         if (this.linking.portfolio !== null) {
           if (_.get(this.linking, 'portfolio', null) !== null) {
             this.portfolio = _.toArray(this.linking.portfolio.data);
-            this.allCheckedPortfolio = this.linking.portfolio.allChecked;
-            this.indeterminatePortfolio = this.linking.portfolio.indeterminate;
           }
         }
         if (this.linking.portfolio === null && this.linking.analysis === null ) {
@@ -189,6 +183,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   /** */
+
+  getTableHeight() {
+    return this.collapseDataSources ? '252px' : '147px';
+  }
 
   getChecked(item) {
     if (this.selectedEDM !== null) {
@@ -252,8 +250,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
     } else if (scope === 'linkingAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
       this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: selection, wrapper: wrapperEDM}));
-    } else if (scope === 'linkingPortfolio') {
-      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: selection}));
     }
   }
 
@@ -270,6 +266,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       const wrapperEDM = this.linking.rdm.selected;
       this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectOne', wrapper: wrapperEDM, value: event, item: rowData}));
     } else if (target === 'linkPortfolio') {
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
       this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: event, item: rowData}));
     }
   }
@@ -327,24 +324,21 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
       this.lastSelectedIndexLinkAnalysis = index;
     } else if (target === 'linkPortfolio') {
-      const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
-      this._selectRowsProvider(row, index, this.lastSelectedIndexLinkPortfolio, action, 'linkPortfolio');
-      this.lastSelectedIndexLinkPortfolio = index;
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'selectOne', value: true, item: row}));
     }
   }
 
   private _selectSectionProvider(from, to, action: any, state) {
-    this.store.dispatch(action({action: 'unselectAll'}));
     if (from === to) {
+      this.store.dispatch(action({action: 'unselectAll'}));
       this.store.dispatch(action({
         action: 'selectOne', value: true, item: this.dataList(state)[from]
       }));
     } else {
-      for (let i = from; i <= to; i++) {
-        this.store.dispatch(action({
-          action: 'selectOne', value: true, item: this.dataList(state)[i]
-        }));
-      }
+      this.store.dispatch(action({
+        action: 'chunk', from, to
+      }));
     }
   }
 
@@ -363,21 +357,16 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this._selectSectionProvider(from, to, action, this.workingFSC.analysis.data);
     } else if (target === 'linkAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
-      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
       if (from === to) {
+        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
         this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({
           action: 'selectOne', wrapper: wrapperEDM, value: true, item: this.linking.analysis[wrapperEDM.id].data[from]
         }));
       } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({
-            action: 'selectOne', wrapper: wrapperEDM, value: true, item: this.linking.analysis[wrapperEDM.id].data[i]
-          }));
-        }
+        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({
+          action: 'chunk', wrapper: wrapperEDM, from, to
+        }));
       }
-    } else if (target === 'linkPortfolio') {
-      const action = (payload) => new fromWs.TogglePortfolioLinkingAction(payload);
-      this._selectSectionProvider(from, to, action, this.linking.portfolio.data);
     }
   }
 
@@ -424,6 +413,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   changeFinancialPTarget(target) {
+  }
+
+  updateFpOverride(value, row) {
+    this.store.dispatch(new fromWs.ApplyRegionPerilAction({row: row, scope: 'single', value: value}));
   }
 
   handleCancel() {
@@ -487,7 +480,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   applyRpToAll(row) {
-    this.store.dispatch(new ApplyRegionPerilAction(row));
+    this.store.dispatch(new ApplyRegionPerilAction({row: row, scope: 'all'}));
   }
 
   getTreeApp() {
