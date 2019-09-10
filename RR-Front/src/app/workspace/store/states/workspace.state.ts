@@ -315,8 +315,8 @@ export class WorkspaceState {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
-  @Action(fromWS.openWS)
-  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.openWS) {
+  @Action(fromWS.OpenWS)
+  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
   }
 

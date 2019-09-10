@@ -34,7 +34,7 @@ export class FacWidgetComponent implements OnInit {
 
   cols = [
     {field: 'carId', header: 'CAR ID', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'projectId', header: 'PROJECT ID', width: '100px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'projectId', header: 'Project ID', width: '100px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'Insured', header: 'Insured', width: '110px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwYear', header: 'UW Year', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'contractId', header: 'Contract ID', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},

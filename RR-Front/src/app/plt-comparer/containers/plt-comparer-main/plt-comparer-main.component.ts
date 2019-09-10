@@ -33,9 +33,8 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
     uwYear: string,
     plts: any[]
   };
-  
   switchValue = false;
-  listOfSelectedValues = ['AEP'];
+  listOfSelectedValues = ['OEP', 'AEP'];
   colorSwitcher = ['#A96EFE', '#06B8FF', '#F5A623', '#03DAC4', '#E3B8FF', '#0700CF', '#ADFEFA', '#1C607C'];
   isVisible = false;
 
@@ -278,7 +277,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
     {id: 2, title: 'PTL', content: 'ID 9867', chip: 'Pure PLT'},
     {id: 2, title: 'PTL', content: 'ID 9888', chip: 'Thead PLT'},
     {id: 2, title: 'PTL', content: 'ID 9901', chip: 'Cloned PLT'}
-  ]
+  ];
 
   drawerIndex: any;
   private pageSize: number = 20;
@@ -638,8 +637,8 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
     // this.generateContextMenu(this.showDeleted);
     this.tableInputs = {
       scrollHeight: 'calc(100vh - 480px)',
-      dataKey: "pltId",
-      openedPlt: "",
+      dataKey: 'pltId',
+      openedPlt: '',
       contextMenuItems: [],
       filterData: {},
       filters: {
@@ -805,7 +804,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
           icon: 'icon-note',
           type: 'icon',
           active: true,
-          tooltip: "Published for Pricing"
+          tooltip: 'Published for Pricing'
         },
         {
           sortDir: 1,
@@ -817,7 +816,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
           icon: 'icon-dollar-alt',
           type: 'icon',
           active: true,
-          tooltip: "Priced"
+          tooltip: 'Priced'
         },
         {
           sortDir: 1,
@@ -829,7 +828,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
           icon: 'icon-focus-add',
           type: 'icon',
           active: true,
-          tooltip: "Published for Accumulation"
+          tooltip: 'Published for Accumulation'
         },
       ],
       filterInput: '',
@@ -851,19 +850,17 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
         },
       }
     };
-    this.multiSteps= true;
-    this.stepConfig= {
-      wsId: '',
-      uwYear: '',
-      plts: []
-    }
+    this.multiSteps = true;
+    this.stepConfig = {
+      wsId: '', uwYear: '', plts: []
+    };
   }
 
-  getOpenedWorkspaces(){
+  getOpenedWorkspaces() {
     return this.select(WorkspaceState.getWorkspaces).pipe(switchMap((workspaces: any) => of(_.map(workspaces, ws => ({
       workSpaceId: ws.wsId,
       uwYear: ws.uwYear
-    })))))
+    })))));
   }
 
   getPlts() {
@@ -885,7 +882,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
         this.uwy = defaultImport.uwYear;
         return of(null);
       })
-    )
+    );
   }
 
   observeFormInputsWithSelector(operator) {
@@ -893,7 +890,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
       .pipe(
         switchMap(() => operator()),
         this.unsubscribeOnDestroy
-      )
+      );
   }
 
   ngOnInit() {
@@ -901,9 +898,8 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
     this.colorThePlt();
 
     this.getOpenedWorkspaces().subscribe( (workspaces: any) => {
-      this.listOfWs= workspaces;
-      console.log(workspaces)
-
+      this.listOfWs = workspaces;
+      console.log(workspaces);
       this.detectChanges();
     });
 
@@ -953,7 +949,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   initForm() {
     this.form = this._fb.group({
       defaultImport: [ {workSpaceId: '', uwYear: ''} ]
-    })
+    });
   }
 
   colorThePlt() {
@@ -1048,7 +1044,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
     this.dispatch(new fromWorkspaceStore.editTag({wsIdentifier: this.workspaceId + '-' + this.uwy, ...$event}));
   }
   resetPath() {
-    //this.filterData = _.omit(this.filterData, 'project');
+    // this.filterData = _.omit(this.filterData, 'project');
     this.projects = _.map(this.projects, p => ({...p, selected: false}));
     this.showDeleted = false;
   }
@@ -1089,11 +1085,11 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   }
 
   setTagModal($event: any) {
-    this.addTagModal= $event;
+    this.addTagModal = $event;
   }
 
   setTagForMenu($event: any) {
-    this.tagFormenu=$event;
+    this.tagFormenu = $event;
   }
 
   setRenameTag($event: any) {
@@ -1108,9 +1104,9 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   }
   emitFilters(filters: any) {
     this.dispatch(new fromWorkspaceStore.setUserTagsFilters({
-      wsIdentifier: this.workspaceId+'-'+this.uwy,
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
       filters: filters
-    }))
+    }));
   }
 
   setWsHeaderSelect($event: any) {
@@ -1154,7 +1150,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
         break;
 
       case tableStore.filterByStatus:
-        const status= this.getTableInputKey('status');
+        const status = this.getTableInputKey('status');
 
         this.updateTable('status', {
           ...status,
@@ -1163,7 +1159,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
           }
         });
         this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
-          wsIdentifier: this.workspaceId+"-"+this.uwy,
+          wsIdentifier: this.workspaceId + '-' + this.uwy,
           status: this.getTableInputKey('status')
         }));
         break;
@@ -1174,6 +1170,13 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
 
   updateTable(key: string, value: any) {
     this.tableInputs = tableActions.updateKey.handler(this.tableInputs, key, value);
+  }
+
+  updateTableDr(event) {
+    if (this.listOfSelectedValues.length === 1 && event.length === 0) {
+    } else {
+      this.listOfSelectedValues = event;
+    }
   }
 
   getTableInputKey(key) {

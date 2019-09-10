@@ -191,9 +191,10 @@
                 [nzMaxTagCount]="0"
                 nzMode="multiple"
                 nzPlaceHolder="EP Metrics"
-                [(ngModel)]="listOfSelectedValues" style="width: 150px;"
+                (ngModelChange)="updateTableDr($event)"
+                [ngModel]="listOfSelectedValues" style="width: 150px;"
               >
-                <nz-option nzLabel="OEP" nzValue="OEP" nzDisabled></nz-option>
+                <nz-option nzLabel="OEP" nzValue="OEP"></nz-option>
                 <nz-option nzLabel="AEP" nzValue="AEP"></nz-option>
                 <nz-option nzLabel="TVaR-OEP" nzValue="TVaR-OEP"></nz-option>
                 <nz-option nzLabel="TVaR-AEP" nzValue="TVaR-AEP"></nz-option>
@@ -325,13 +326,6 @@
                 <table>
                   <thead>
                   <tr>
-                    <th>OEP</th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                      <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>OEP</div>
-                    </th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                      OEP %
-                    </th>
                     <ng-container *ngFor="let th of listOfSelectedValues">
                       <th>
                         {{th}}
@@ -344,15 +338,10 @@
                         {{th}} %
                       </th>
                     </ng-container>
-
-
                   </tr>
                   </thead>
                   <tbody>
                   <tr *ngFor="let row of item.table">
-                    <th>{{row[0]}}</th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
                     <ng-container *ngFor="let tab of listOfSelectedValues">
                       <th>{{row[0]}}</th>
                       <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
@@ -360,14 +349,6 @@
                     </ng-container>
                   </tr>
                   <tr>
-                    <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field">
-                    </th>
-                    <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
-                                                                     name="new-field" style="width: 100%; margin: 0px;"
-                                                                     type="text"></th>
-                    <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
-                                                                     name="new-field" style="width: 100%; margin: 0px;"
-                                                                     type="text"></th>
                     <ng-container *ngFor="let th of listOfSelectedValues">
                       <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text"
                                  name="new-field"></th>

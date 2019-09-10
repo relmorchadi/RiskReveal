@@ -33,7 +33,7 @@ export class LoadWsFail {
   }
 }
 
-export class openWS {
+export class OpenWS {
   static readonly type = '[Workspace] OpenWS';
 
   constructor(public payload?: any) {
