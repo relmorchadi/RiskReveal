@@ -240,16 +240,46 @@ export class RiskLinkResSummaryComponent implements OnInit {
   updateAllChecked(value, scope) {
     const selection = value ? 'selectAll' : 'unselectAll';
     if (scope === 'summaries') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: selection}));
+      const selected = _.filter(this.resultsSummary, item => item.selected).length;
+      if (selected === 0) {
+        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectAll'}));
+      } else {
+        this.state.summaries.allChecked = true;
+        this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
+      }
     } else if (scope === 'results') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: selection}));
+      const selected = _.filter(this.analysisResults, item => item.selected).length;
+      if (selected === 0) {
+        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectAll'}));
+      } else {
+        this.state.results.allChecked = true;
+        this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'unselectAll'}));
+      }
     } else if (scope === 'FPAnalysis') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: selection}));
+      const selected = _.filter(this.dataList(this.workingFSC.analysis.data), item => item.selected).length;
+      if (selected === 0) {
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'selectAll'}));
+      } else {
+        this.workingFSC.analysis.allChecked = true;
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
+      }
     } else if (scope === 'FPStandard') {
-      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: selection}));
+      const selected = _.filter(this.dataList(this.workingFSC.standard.data), item => item.selected).length;
+      if (selected === 0) {
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectAll'}));
+      } else {
+        this.workingFSC.standard.allChecked = true;
+        this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
+      }
     } else if (scope === 'linkingAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
-      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: selection, wrapper: wrapperEDM}));
+      const selected = _.filter(this.dataList(this.state.results.data), item => item.selected).length;
+      if (selected === 0) {
+        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'selectAll', wrapper: wrapperEDM}));
+      } else {
+        this.allCheckedAnalysis = true;
+        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
+      }
     }
   }
 

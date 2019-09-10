@@ -178,16 +178,20 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
 
   checkIndeterminateFile() {
     const filtredFiles =  _.filter(this.fileBase.files, item => item.selected).length;
+    console.log(filtredFiles === this.fileBase.files.length);
     if (filtredFiles === this.fileBase.files.length) {
       this.indeterminateImportedFiles = false;
       this.allCheckedImportedFiles = true;
-    } else if (filtredFiles > 0) {
-      this.indeterminateImportedFiles = true;
-      this.allCheckedImportedFiles = false;
     } else {
-      this.indeterminateImportedFiles = false;
-      this.allCheckedImportedFiles = false;
+      if (filtredFiles > 0) {
+        this.indeterminateImportedFiles = true;
+        this.allCheckedImportedFiles = false;
+      } else {
+        this.indeterminateImportedFiles = false;
+        this.allCheckedImportedFiles = false;
+      }
     }
+    console.log(this.allCheckedImportedFiles, this.indeterminateImportedFiles);
   }
 
    checkIndeterminatePlt() {
@@ -195,12 +199,14 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
      if (filtred === this.fileBase.selectedFiles.length) {
        this.indeterminateImportedPlts = false;
        this.allCheckedImportedPlts = true;
-     } else if (filtred > 0) {
-       this.indeterminateImportedPlts = true;
-       this.allCheckedImportedPlts = false;
      } else {
-       this.indeterminateImportedPlts = false;
-       this.allCheckedImportedPlts = false;
+       if (filtred > 0) {
+         this.indeterminateImportedPlts = true;
+         this.allCheckedImportedPlts = false;
+       } else {
+         this.indeterminateImportedPlts = false;
+         this.allCheckedImportedPlts = false;
+       }
      }
    }
 
@@ -272,12 +278,24 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     this.checkIndeterminatePlt();
   }
 
-  updateAllChecked(value, scope) {
+  updateAllChecked(scope) {
     if (scope === 'ImportedFiles') {
-      this.dispatch(new fromWs.ToggleFilesAction({selection: value, scope: 'all'}));
+      const selected = _.filter(this.fileBase.files, item => item.selected).length;
+      if (selected === 0) {
+        this.dispatch(new fromWs.ToggleFilesAction({selection: true, scope: 'all'}));
+      } else {
+        this.allCheckedImportedFiles = true;
+        this.dispatch(new fromWs.ToggleFilesAction({selection: false, scope: 'all'}));
+      }
       this.checkIndeterminateFile();
     } else if (scope === 'ImportedPlts') {
-      this.dispatch(new fromWs.TogglePltsAction({selection: value, scope: 'all'}));
+      const selected = _.filter(this.fileBase.selectedFiles, item => item.selected).length;
+      if (selected === 0) {
+        this.dispatch(new fromWs.TogglePltsAction({selection: true, scope: 'all'}));
+      } else {
+        this.allCheckedImportedPlts = true;
+        this.dispatch(new fromWs.TogglePltsAction({selection: false, scope: 'all'}));
+      }
       this.checkIndeterminatePlt();
     }
   }
@@ -307,6 +325,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     } else {
       return this.fileBase.selectedFiles.length === 0;
     }
+  }
+
+  getHeight() {
+    return this.collapseSearchFiles ? '350px' : '143px';
   }
 
   getFileLength() {

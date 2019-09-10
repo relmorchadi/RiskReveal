@@ -396,12 +396,22 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     }
   }
 
-  updateAllChecked(value, scope) {
-    const selection = value ? 'selectAll' : 'unselectAll';
+  updateAllChecked(scope) {
+    const selected = _.filter(this.getTableData(), item => item.selected).length;
     if (scope === 'analysis') {
-      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: selection}));
+      if (selected === 0) {
+        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectAll'}));
+      } else {
+        this.allCheckedAnalysis = true;
+        this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+      }
     } else if (scope === 'portfolio') {
-      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: selection}));
+      if (selected === 0) {
+        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectAll'}));
+      } else {
+        this.allCheckedPortolfios = true;
+        this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
+      }
     }
   }
 

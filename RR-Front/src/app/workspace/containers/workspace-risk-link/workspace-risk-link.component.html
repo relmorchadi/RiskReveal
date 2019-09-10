@@ -323,11 +323,11 @@
                           <ng-container *ngIf="col.header === 'selected'">
                             <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
                                    style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis"
-                                   (ngModelChange)="updateAllChecked($event, 'analysis')"
+                                   (ngModelChange)="updateAllChecked('analysis')"
                                    [nzIndeterminate]="indeterminateAnalysis"></label>
                             <label *ngIf="state.selectedEDMOrRDM === 'edm'"
                                    style="margin-top:20px" nz-checkbox [ngModel]="allCheckedPortolfios"
-                                   (ngModelChange)="updateAllChecked($event, 'portfolio')"
+                                   (ngModelChange)="updateAllChecked('portfolio')"
                                    [nzIndeterminate]="indeterminatePortfolio"></label>
                             <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                           </ng-container>
