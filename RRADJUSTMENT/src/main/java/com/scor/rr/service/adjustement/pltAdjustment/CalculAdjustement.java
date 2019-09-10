@@ -119,7 +119,7 @@ public class CalculAdjustement implements ICalculAdjustment{
                                             pltLossData.getSimPeriod(),
                                             pltLossData.getSeq(),
                                             cap ? pltLossData.getMaxExposure() : minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))) * pltLossData.getMaxExposure(),
-                                            cap ? Double.min((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))) * loss, pltLossData.getMaxExposure() * (minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod()))))) : ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getLmf()) / (maxRp.getLmf() - minRp.getLmf())))) * loss));
+                                            cap ? Double.min((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getReturnPeriod()) / (maxRp.getReturnPeriod() - minRp.getReturnPeriod())))) * loss, pltLossData.getMaxExposure() ) : ((minRp.getLmf() + ((maxRp.getLmf() - minRp.getLmf()) * ((returnPeriosd.get(finalI1[0]).get(0) - minRp.getLmf()) / (maxRp.getLmf() - minRp.getLmf())))) * loss));
                                 } else {
                                     return new PLTLossData(pltLossData.getEventId(),
                                             pltLossData.getEventDate(),
