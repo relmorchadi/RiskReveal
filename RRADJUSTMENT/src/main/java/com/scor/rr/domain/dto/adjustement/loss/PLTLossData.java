@@ -51,6 +51,8 @@ public class PLTLossData {
 
     }
 
+
+
     public int getSimPeriod() {
         return simPeriod;
     }

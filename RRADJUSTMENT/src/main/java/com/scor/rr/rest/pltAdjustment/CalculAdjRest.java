@@ -72,19 +72,19 @@ public class CalculAdjRest {
     public double CoefOfVariance(String pathToFile,StaticType type) throws RRException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
-        if(StaticType.CoefOfVariance.getValue().equals(type)) {
+        if(StaticType.CoefOfVariance.equals(type)) {
             return StatisticAdjustment.CoefOfVariance(pltLossData);
         }
-        if(StaticType.stdDev.getValue().equals(type)) {
+        if(StaticType.stdDev.equals(type)) {
             return StatisticAdjustment.stdDev(pltLossData);
         }
-        if(StaticType.AEPTVaRMetrics.getValue().equals(type)) {
+        if(StaticType.AEPTVaRMetrics.equals(type)) {
             return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData));
         }
-        if(StaticType.OEPTVaRMetrics.getValue().equals(type)) {
+        if(StaticType.OEPTVaRMetrics.equals(type)) {
             return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData));
         }
-        if(StaticType.averageAnnualLoss.getValue().equals(type)) {
+        if(StaticType.averageAnnualLoss.equals(type)) {
             return StatisticAdjustment.averageAnnualLoss(pltLossData);
         }
         return 0;

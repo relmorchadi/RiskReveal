@@ -1,5 +1,6 @@
 package com.scor.rr.service.adjustement.pltAdjustment;
 
+import com.scor.rr.configuration.UtilsMethode;
 import com.scor.rr.domain.dto.AEPMetric;
 import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
@@ -18,14 +19,16 @@ import java.util.stream.Collectors;
 public class CalculAdjustement implements ICalculAdjustment{
 
     private static final Logger log = LoggerFactory.getLogger(CalculAdjustement.class);
-    static final double CONSTANTE =100000;
+    private static final double CONSTANTE =100000;
 
-    public static List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossData){
-        if(pltLossData != null && !pltLossData.isEmpty()) {
+    public static List<OEPMetric> getOEPMetric(List<PLTLossData> pltLossDatas){
+        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
-            return pltLossData.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
+            List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
+            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss())).filter(UtilsMethode.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
+            return pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(pltLossDataVar -> {
                 finalI[0]++;
-                return new OEPMetric(finalI[0] / CONSTANTE, CONSTANTE / finalI[0], pltLossData.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossDataVar.getSimPeriod()).max(Comparator.comparing(PLTLossData::getLoss)).get().getLoss());
+                return new OEPMetric(finalI[0] / CONSTANTE, CONSTANTE / finalI[0], pltLossDataVar.getLoss());
             }).collect(Collectors.toList());
         } else {
             log.info("plt empty");
@@ -35,12 +38,14 @@ public class CalculAdjustement implements ICalculAdjustment{
     public static List<AEPMetric> getAEPMetric(List<PLTLossData> pltLossDatas){
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             int[] finalI = new int[]{0};
+            List<PLTLossData> finalPltLossDatas1 = pltLossDatas;
+            pltLossDatas = pltLossDatas.stream().map(pltLossData -> new PLTLossData(pltLossData.getSimPeriod(),pltLossData.getEventId(),pltLossData.getEventDate(),pltLossData.getSeq(),pltLossData.getMaxExposure(), finalPltLossDatas1.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum())).filter(UtilsMethode.distinctByKey(PLTLossData::getSimPeriod)).collect(Collectors.toList());
             return pltLossDatas.stream().sorted(Comparator.comparing(PLTLossData::getLoss).reversed()).map(
                     pltLossData -> {
                         finalI[0]++;
                             return new AEPMetric(finalI[0] / CONSTANTE,
                                     CONSTANTE / finalI[0] ,
-                                    pltLossDatas.stream().filter(pltLossData1 -> pltLossData1.getSimPeriod()==pltLossData.getSimPeriod()).mapToDouble(PLTLossData::getLoss).sum());
+                                    pltLossData.getLoss());
                     }).distinct().collect(Collectors.toList());
         } else {
             log.info("plt empty");
