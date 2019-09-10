@@ -26,7 +26,7 @@ public class StatisticAdjustment {
 
     public static Double stdDev(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
-            return  Math.sqrt(pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/(CONSTANTE-1));
+            return  Math.sqrt(Math.pow(pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum(),2)/(CONSTANTE-1));
         } else {
             log.info("PLT EMPTY");
             return null;

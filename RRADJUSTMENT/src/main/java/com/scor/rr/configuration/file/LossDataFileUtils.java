@@ -1,6 +1,6 @@
 package com.scor.rr.configuration.file;
 
-import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
+import com.scor.rr.domain.dto.ImportFilePLTData;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class LossDataFileUtils {
@@ -28,28 +30,63 @@ public class LossDataFileUtils {
     private static final String PLT_DATA_VALUE = "VALUE";
     private static final String PLT_DATA_MAX_EXPOSURE = "MAXEXPOSURE";
 
-    public static List<PLTLossData> getPltFromLossDataFile(String path) {
+     static Pattern pattern = Pattern.compile("(\\d+)-(\\d+)\\((\\d+)\\)");
+
+    public static List<ImportFilePLTData> getPltFromLossDataFile(String path) {
+        List<ImportFilePLTData> pltDataList = null;
         try (Stream<String> stream = Files.lines(Paths.get(path))) {
             AtomicBoolean testEndMarker = new AtomicBoolean(false);
             AtomicBoolean testHeaderPlt = new AtomicBoolean(false);
             AtomicReference<Map<String, Integer>> pltHeaderOrder = new AtomicReference<>();
-            List<PLTLossData> lossDataList = new ArrayList<>();
+            pltDataList = new ArrayList<>();
+            List<ImportFilePLTData> finalPltDataList = pltDataList;
             stream.forEach(s -> {
-                        if (StringUtils.isEmpty(s)) {
+                        if (!StringUtils.isEmpty(s)) {
+                            if (testHeaderPlt.get()) {
+                                if (pltHeaderOrder.get() != null) {
+                                    String[] pltline = s.split("\\s+");
+                                    ImportFilePLTData importFilePLTData = new ImportFilePLTData();
+                                    if (pltHeaderOrder.get().get(PLT_DATA_EVENT_ID) != null) {
+                                        importFilePLTData.setEventId(Integer.parseInt(pltline[pltHeaderOrder.get().get(PLT_DATA_EVENT_ID)]));
+                                    }
+                                    if (pltHeaderOrder.get().get(PLT_DATA_YEAR) != null) {
+                                        importFilePLTData.setYear(Integer.parseInt(pltline[pltHeaderOrder.get().get(PLT_DATA_YEAR)]));
+                                    }
+                                    if (pltline[pltHeaderOrder.get().get(PLT_DATA_VALUE)] != null) {
+                                        importFilePLTData.setValue(Float.parseFloat(pltline[pltHeaderOrder.get().get(PLT_DATA_VALUE)]));
+                                    }
+                                    if (pltHeaderOrder.get().get(PLT_DATA_MAX_EXPOSURE) != null) {
+                                        importFilePLTData.setMaxExposure(Float.parseFloat(pltline[pltHeaderOrder.get().get(PLT_DATA_MAX_EXPOSURE)]));
+                                    } else {
+                                        importFilePLTData.setMaxExposure(importFilePLTData.getValue());
+                                    }
+                                    if (pltHeaderOrder.get().get(PLT_DATA_EVENT_DATE) != null) {
+                                        String eventDate = pltline[pltHeaderOrder.get().get(PLT_DATA_EVENT_DATE)];
+                                        importFilePLTData.setEventDate(eventDate);
+                                        Matcher matcher = pattern.matcher(eventDate);
+                                        if (matcher.find()) {
+                                            if (matcher.group(1) != null) {
+                                                importFilePLTData.setMonth(Integer.parseInt(matcher.group(1)));
+                                            }
+                                            if (matcher.group(2) != null) {
+                                                importFilePLTData.setDay(Integer.parseInt(matcher.group(2)));
+                                            }
+                                            if (matcher.group(3) != null) {
+                                                importFilePLTData.setRepetition(Integer.parseInt(matcher.group(3)));
+                                            }
+                                        }
+                                    }
+                                    finalPltDataList.add(importFilePLTData);
+                                }
+                            }
                             if (testEndMarker.get()) {
                                 String[] pltline = s.split("\\s+");
                                 pltHeaderOrder.set(retrieveFieldOrder(pltline));
                                 testHeaderPlt.set(true);
+                                testEndMarker.set(false);
                             }
                             if (s.equals(END_MARKER)) {
                                 testEndMarker.set(true);
-                            }
-                            if(testHeaderPlt.get()) {
-                                if(pltHeaderOrder.get()!= null) {
-                                    String[] pltline =  s.split("\\s+");
-                                    lossDataList.add(new PLTLossData());
-
-                                }
                             }
                         }
                     }
@@ -57,7 +94,7 @@ public class LossDataFileUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return null;
+        return pltDataList;
     }
 
     private static Map<String, Integer> retrieveFieldOrder(String[] headings) {
