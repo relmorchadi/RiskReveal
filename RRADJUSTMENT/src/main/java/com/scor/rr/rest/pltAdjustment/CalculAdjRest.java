@@ -78,16 +78,23 @@ public class CalculAdjRest {
         if(StaticType.stdDev.equals(type)) {
             return StatisticAdjustment.stdDev(pltLossData);
         }
-        if(StaticType.AEPTVaRMetrics.equals(type)) {
-            return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData));
-        }
-        if(StaticType.OEPTVaRMetrics.equals(type)) {
-            return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData));
-        }
         if(StaticType.averageAnnualLoss.equals(type)) {
             return StatisticAdjustment.averageAnnualLoss(pltLossData);
         }
         return 0;
     }
+    @GetMapping("AEPTvAR-METRIC")
+    public List<AEPMetric> AEPTvAR(String pathToFile) throws RRException {
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
+        return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(pltLossData));
+    }
+    @GetMapping("OEPTvAR-METRIC")
+    public List<OEPMetric> OEPTvAR(String pathToFile) throws RRException {
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
+        return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData));
+    }
+
 
 }

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class StatisticAdjustment {
@@ -26,29 +27,37 @@ public class StatisticAdjustment {
 
     public static Double stdDev(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
-            return  Math.sqrt(Math.pow(pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum(),2)/(CONSTANTE-1));
+            List<AEPMetric> aepMetrics = CalculAdjustement.getAEPMetric(pltLossDatas);
+            double averageAnnualLoss =averageAnnualLoss(pltLossDatas);
+            return  Math.sqrt(aepMetrics.stream().mapToDouble(value -> Math.pow(value.getLossAep() - averageAnnualLoss,2)).sum()/(CONSTANTE-1));
         } else {
             log.info("PLT EMPTY");
             return null;
         }
     }
 
-    public static Double AEPTVaRMetrics(List<AEPMetric> aepMetrics) {
+    public static List<AEPMetric> AEPTVaRMetrics(List<AEPMetric> aepMetrics) {
         if(aepMetrics != null && !aepMetrics.isEmpty()) {
-            int s = 0;
-            double oep = 0;
-            return aepMetrics.stream().mapToDouble(oepMetric -> (oep + oepMetric.getLossAep()) / (s + 1)).sum();
+            final int[] s = {0};
+            final double[] oep = {0};
+            return aepMetrics.stream().map(aepMetric -> {
+                s[0] = s[0] +1;
+                oep[0] = oep[0] + aepMetric.getLossAep();
+                return new AEPMetric(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList());
         } else {
             log.info("PLT EMPTY");
             return null;
         }
     }
 
-    public static Double OEPTVaRMetrics(List<OEPMetric> oepMetrics) {
+    public static List<OEPMetric> OEPTVaRMetrics(List<OEPMetric> oepMetrics) {
         if(oepMetrics != null && !oepMetrics.isEmpty()) {
-            int s = 0;
-            double oep = 0;
-            return oepMetrics.stream().mapToDouble(oepMetric -> (oep + oepMetric.getLossOep()) / (s + 1)).sum();
+            final int[] s = {0};
+            final double[] oep = {0};
+            return oepMetrics.stream().map(aepMetric -> {
+                s[0] = s[0] +1;
+                oep[0] = oep[0] + aepMetric.getLossOep();
+                return new OEPMetric(aepMetric.getFrequency(),aepMetric.getReturnPeriod() ,oep[0]/s[0] );}).collect(Collectors.toList());
         } else {
             log.info("PLT EMPTY");
             return null;

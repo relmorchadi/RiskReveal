@@ -3,6 +3,8 @@ package com.scor.rr.service.adjustement;
 import com.scor.rr.configuration.file.BinaryPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
 import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.domain.dto.AEPMetric;
+import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.adjustement.AdjustmentManuelleParameterProcess;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
@@ -48,11 +50,11 @@ public class ScorPltHeaderService {
         return StatisticAdjustment.CoefOfVariance(getPltLossDataFromFile(path));
     }
 
-    public Double AEPTVaRMetrics(String path) throws RRException {
+    public List<AEPMetric> AEPTVaRMetrics(String path) throws RRException {
         return StatisticAdjustment.AEPTVaRMetrics(CalculAdjustement.getAEPMetric(getPltLossDataFromFile(path)));
     }
 
-    public Double OEPTVaRMetrics(String path) throws RRException {
+    public List<OEPMetric> OEPTVaRMetrics(String path) throws RRException {
         return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(getPltLossDataFromFile(path)));
     }
 

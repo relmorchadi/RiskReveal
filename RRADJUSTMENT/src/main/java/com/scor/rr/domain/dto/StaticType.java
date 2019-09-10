@@ -1,8 +1,7 @@
 package com.scor.rr.domain.dto;
 
 public enum  StaticType {
-    CoefOfVariance("coef of variance"),stdDev("stddev"),AEPTVaRMetrics("AEPTVaRMetrics"),
-    OEPTVaRMetrics("OEPTVaRMetrics"),averageAnnualLoss("average Annual Loss");
+    CoefOfVariance("coef of variance"),stdDev("stddev"),averageAnnualLoss("average Annual Loss");
     String value;
 
     StaticType(String value) {
