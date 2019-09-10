@@ -1,8 +1,8 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
-import * as fromInuring from '../actions/inuring.actions';
 import {PatchCalibrationStateAction} from '../actions';
+import * as fromInuring from '../actions/inuring.actions';
 import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
@@ -537,6 +537,11 @@ export class WorkspaceState {
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
     return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
+  }
+
+  @Action(fromWS.loadAllAdjustmentApplication)
+  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllAdjustmentApplication) {
+    return this.calibrationService.loadAllAdjustmentApplication(ctx, payload);
   }
 
   @Action(fromWS.loadAllPltsFromCalibrationSuccess)
