@@ -36,7 +36,6 @@ export class ManageColumnsComponent implements OnInit {
   }
 
   onShow() {
-    console.log(this.listOfAvailbleColumns, this.listOfUsedColumns, this.listOfAvailbleColumnsCache);
     this.listOfAvailbleColumnsCache= [...this.listOfAvailbleColumns];
     this.listOfUsedColumns= this.columns;
   }

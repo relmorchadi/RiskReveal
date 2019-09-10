@@ -14,27 +14,7 @@ export class PltApi {
   }
 
   public getAllPlts(params?): Observable<any> {
-    console.log(params)
     return this.http.get(`${this.URL}/`, {params: params});
   }
 
-  public assignPltsToTag(params?): Observable<any> {
-    return this.http.post(`${this.URL}/assign-user-tag`, params)
-  }
-
-  public creatUserTag(params?): Observable<any> {
-    return this.http.post(`${this.URL}/create-user-tag`, params)
-  }
-
-  public editTag(params: any): Observable<any> {
-    return this.http.put(`${this.URL}/update-user-tag`,params)
-  }
-
-  deleteUserTag(params): Observable<any>{
-    return this.http.delete(`${this.URL}/user-tag/${params}`)
-  }
-
-  deletePlt(params: any): Observable<any> {
-    return this.http.delete(`${this.URL}/plt`,params)
-  }
 }

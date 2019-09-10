@@ -20,14 +20,6 @@
   <div class="content">
     <div class="left">
       <app-plt-left-menu
-        (emitFilters)="emitFilters($event)"
-        (onProjectFilter)="filterPlts($event)"
-        (onSelectProjects)="setSelectedProjects($event)"
-        (onSetFilters)="setFilters($event)"
-        (onSetSelectedUserTags)="setUserTags($event)"
-        (onWsHeaderSelection)="setWsHeaderSelect($event)"
-        (unCkeckAllPlts)="unCheckAll()"
-        [inputs]="Inputs | pickKeys : menuInputs"
       >
 
       </app-plt-left-menu>

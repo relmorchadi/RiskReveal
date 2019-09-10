@@ -74,14 +74,6 @@
     <div class="content">
       <div class="left">
         <app-plt-left-menu
-          [inputs]="Inputs | pickKeys : menuInputs"
-          (onSetSelectedUserTags)="setUserTags($event)"
-          (onSetFilters)="setFilters($event)"
-          (emitFilters)="emitFilters($event)"
-          (onProjectFilter)="filterPlts($event)"
-          (onWsHeaderSelection)="setWsHeaderSelect($event)"
-          (onSelectProjects)="setSelectedProjects($event)"
-          (unCkeckAllPlts)="unCheckAll()"
         >
         </app-plt-left-menu>
       </div>

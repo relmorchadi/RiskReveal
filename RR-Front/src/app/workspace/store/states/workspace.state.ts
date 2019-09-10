@@ -148,6 +148,10 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt)
   }
 
+  static getUserTagManager(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager)
+  }
+
   /***********************************
    *
    * Calibration Selectors
@@ -444,19 +448,14 @@ export class WorkspaceState {
     return this.pltStateService.constructUserTags(ctx, payload);
   }
 
-  @Action(fromPlt.createOrAssignTags)
-  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.createOrAssignTags) {
-    return this.pltStateService.assignPltsToTag(ctx, payload);
-  }
-
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
-    return this.pltStateService.createUserTagSuccess(ctx, payload);
+    //return this.pltStateService.createUserTagSuccess(ctx, payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-    return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
+    //return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
 
 
@@ -467,7 +466,7 @@ export class WorkspaceState {
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
+    //return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
   }
 
   @Action(fromPlt.deletePlt)
@@ -513,12 +512,22 @@ export class WorkspaceState {
 
   @Action(fromPlt.AddNewTag)
   addNewTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AddNewTag) {
-    this.pltStateService.addNewTag(ctx, payload);
+    return this.pltStateService.addNewTag(ctx, payload);
   }
 
   @Action(fromPlt.DeleteTag)
   deleteTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.DeleteTag) {
-    this.pltStateService.deleteTag(ctx, payload);
+    //this.pltStateService.deleteTag(ctx, payload);
+  }
+
+  @Action(fromPlt.GetTagsBySelection)
+  getTagsBySelection(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.GetTagsBySelection) {
+    return this.pltStateService.getTagsBySelection(ctx, payload);
+  }
+
+  @Action(fromPlt.AssignPltsToTag)
+  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AssignPltsToTag) {
+    return this.pltStateService.assignPltsToTag(ctx, payload);
   }
 
   /***********************************

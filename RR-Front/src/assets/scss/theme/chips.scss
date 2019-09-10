@@ -87,12 +87,21 @@
     .chips-counter {
       margin-left: 16px;
       border-radius: 11px;
-      padding: 0px 14px;
+      padding: 0 14px;
       color: white;
       position: relative;
       display: flex;
-
       @include chips-layer;
+    }
+
+    .chips-icon {
+      cursor: pointer;
+      margin: 0 7px;
+      border-radius: 11px;
+      color: white;
+      position: relative;
+      display: flex;
+      align-items: center;
     }
   }
 }
@@ -104,3 +113,22 @@
 
 @include chips(true);
 @include chips(false);
+
+.half, .full {
+  background-color: white;
+}
+
+.half {
+  height: 14px;
+  width: 7px;
+  margin: 2px 0;
+  border-bottom-right-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.full {
+  height: 14px;
+  width: 14px;
+  margin: 2px 0;
+  border-radius: 14px;
+}
