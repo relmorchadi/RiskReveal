@@ -18,7 +18,7 @@ public class StatisticAdjustment {
 
     public static Double CoefOfVariance(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
-            return stdDev(pltLossDatas) / (averageAnnualLoss(pltLossDatas) + CONSTANTE);
+            return stdDev(pltLossDatas) / (averageAnnualLoss(pltLossDatas));
         } else {
             log.info("PLT EMPTY");
             return null;
