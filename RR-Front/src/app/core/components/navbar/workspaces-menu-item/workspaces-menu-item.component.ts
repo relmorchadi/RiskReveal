@@ -162,7 +162,7 @@ export class WorkspacesMenuItemComponent implements OnInit {
               selected: false,
               ...dt
             };
-            this.store.dispatch(new workspaceActions.openWS({wsId: ws.wsId, uwYear: ws.uwYear, route: 'projects'}));
+            this.store.dispatch(new workspaceActions.OpenWS({wsId: ws.wsId, uwYear: ws.uwYear, route: 'projects', type: 'treaty'}));
             workspaces = [workspace, ...workspaces];
             if (workspaces.length === selectedItems.length) {
               this.visible = false;

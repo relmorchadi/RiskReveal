@@ -185,7 +185,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   /** */
 
   getTableHeight() {
-    return this.collapseDataSources ? '201px' : '147px';
+    return this.collapseDataSources ? '252px' : '147px';
   }
 
   getChecked(item) {
@@ -330,17 +330,15 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   private _selectSectionProvider(from, to, action: any, state) {
-    this.store.dispatch(action({action: 'unselectAll'}));
     if (from === to) {
+      this.store.dispatch(action({action: 'unselectAll'}));
       this.store.dispatch(action({
         action: 'selectOne', value: true, item: this.dataList(state)[from]
       }));
     } else {
-      for (let i = from; i <= to; i++) {
-        this.store.dispatch(action({
-          action: 'selectOne', value: true, item: this.dataList(state)[i]
-        }));
-      }
+      this.store.dispatch(action({
+        action: 'chunk', from, to
+      }));
     }
   }
 
@@ -359,17 +357,15 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this._selectSectionProvider(from, to, action, this.workingFSC.analysis.data);
     } else if (target === 'linkAnalysis') {
       const wrapperEDM = this.linking.rdm.selected;
-      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
       if (from === to) {
+        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
         this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({
           action: 'selectOne', wrapper: wrapperEDM, value: true, item: this.linking.analysis[wrapperEDM.id].data[from]
         }));
       } else {
-        for (let i = from; i <= to; i++) {
-          this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({
-            action: 'selectOne', wrapper: wrapperEDM, value: true, item: this.linking.analysis[wrapperEDM.id].data[i]
-          }));
-        }
+        this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({
+          action: 'chunk', wrapper: wrapperEDM, from, to
+        }));
       }
     }
   }

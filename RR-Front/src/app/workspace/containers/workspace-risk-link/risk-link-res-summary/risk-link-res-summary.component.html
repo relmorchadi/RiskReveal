@@ -165,7 +165,7 @@
       <div class="body-wrapper-header">
         <div class="body-wrapper-header-left">
           <hr>
-          <div>Analysis Results</div>
+          <div class="header-title">Analysis Results</div>
         </div>
         <div class="body-wrapper-header-right-summary">
           <button class="a-buttons-outlined-mini"
@@ -747,7 +747,7 @@
       <div class="linking-right">
         <div class="modal-linking-wrapper">
           <div class="modal-linking-head" style="height: 100%">
-            <div class="modal-l-h-body-fill" style="height: 70vh; overflow: auto;">
+            <div class="modal-l-h-body-fill" style="height: 65vh; overflow: auto;">
               <span class="subtitle-2">Created Links</span>
               <div class="suggestion-card" *ngFor="let link of linking?.linked; let i = index" [ngClass]="{'selected-link': link.selected}">
                 <div class="suggestion-card-header">
@@ -819,49 +819,50 @@
         <div class="summary-info summary-info-override">
           <div class="fp-analysis">
             <div class="fp-header">
-              <span class="subtitle-2">Analysis</span>
-            </div>
-            <div style="display: flex">
-              <nz-dropdown [nzTrigger]="'click'">
-                <div class="dropdown-wrap" nz-dropdown>
-                  <div class="dropdown-wrap-title">
-                    <span class="dropdown-title">Select RDM</span>
-                    <span class="dropdown-item-selected" *ngIf="state.financialPerspective.rdm.selected">
+              <div style="display: flex">
+                <span class="subtitle-2">Analysis</span>
+                <nz-dropdown [nzTrigger]="'click'">
+                  <div class="dropdown-wrap" nz-dropdown>
+                    <div class="dropdown-wrap-title">
+                      <span class="dropdown-title">Select RDM</span>
+                      <span class="dropdown-item-selected" *ngIf="state.financialPerspective.rdm.selected">
                       {{state?.financialPerspective?.rdm?.selected}}
                     </span>
-                    <span *ngIf="state.financialPerspective?.rdm?.data !== null && state.financialPerspective?.rdm?.selected === null"
-                          class="dropdown-item-selected" >
+                      <span *ngIf="state.financialPerspective?.rdm?.data !== null && state.financialPerspective?.rdm?.selected === null"
+                            class="dropdown-item-selected" >
                       {{dataList(state.financialPerspective.rdm.data)[0]?.name}}
                     </span>
+                    </div>
+                    <div class="dropdown-icon">
+                      <i nz-icon type="down"></i>
+                    </div>
                   </div>
-                  <div class="dropdown-icon">
-                    <i nz-icon type="down"></i>
-                  </div>
-                </div>
-                <ul nz-menu>
-                  <li nz-menu-item (click)="changeFinancialPTarget(item)"
-                      *ngFor="let item of dataList(workingFSC?.rdm?.data)">{{item.name}}</li>
-                </ul>
-              </nz-dropdown>
+                  <ul nz-menu>
+                    <li nz-menu-item (click)="changeFinancialPTarget(item)"
+                        *ngFor="let item of dataList(workingFSC?.rdm?.data)">{{item.name}}</li>
+                  </ul>
+                </nz-dropdown>
+              </div>
+
+              <div class="menu-icon-wrap">
+                <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
+                  <a style="max-height: 28px;display: flex;" nz-dropdown>
+                    <i class="icon-settings_24px"></i>
+                  </a>
+                  <ul nz-menu style="font-size: 12px">
+                    <li nz-menu-item>Reset Sort</li>
+                    <li nz-menu-item>Reset Filters</li>
+                    <li nz-menu-item>Reset Sort/Filters</li>
+                    <li nz-menu-divider></li>
+                    <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                    <li nz-menu-divider></li>
+                    <li nz-menu-item>Unselect All</li>
+                  </ul>
+                </nz-dropdown>
+              </div>
             </div>
           </div>
           <div class="resize-table">
-            <div class="menu-icon-wrap">
-              <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
-                <a style="max-height: 28px;display: flex;" nz-dropdown>
-                  <i class="icon-settings_24px"></i>
-                </a>
-                <ul nz-menu style="font-size: 12px">
-                  <li nz-menu-item>Reset Sort</li>
-                  <li nz-menu-item>Reset Filters</li>
-                  <li nz-menu-item>Reset Sort/Filters</li>
-                  <li nz-menu-divider></li>
-                  <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
-                  <li nz-menu-divider></li>
-                  <li nz-menu-item>Unselect All</li>
-                </ul>
-              </nz-dropdown>
-            </div>
             <p-table #fat [columns]="colsFinancialAnalysis" [value]="dataList(workingFSC.analysis?.data)"
                      [resizableColumns]="true" columnResizeMode="expand" *ngIf="!collapseFPDataTable"
                      [scrollable]="true" scrollHeight="232px">
@@ -923,7 +924,7 @@
         <nz-tabset class="tabs-standard-top">
           <nz-tab nzTitle="Standard">
             <div style="padding-top:0" class="summary-info resize-table">
-              <div class="menu-icon-wrap">
+              <div class="menu-icon-wrap" style="position: absolute; top: 10px; right: 10px;">
                 <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
                   <a style="max-height: 28px;display: flex;" nz-dropdown>
                     <i class="icon-settings_24px"></i>

@@ -315,8 +315,8 @@ export class WorkspaceState {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
-  @Action(fromWS.openWS)
-  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.openWS) {
+  @Action(fromWS.OpenWS)
+  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
   }
 
@@ -912,6 +912,11 @@ export class WorkspaceState {
   @Action(fromWS.ToggleFilesAction)
   toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
     this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.TogglePltsAction)
+  togglePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePltsAction) {
+    this.fileBasedFacade.togglePlts(ctx, payload);
   }
 
   @Action(fromWS.AddFileForImportAction)

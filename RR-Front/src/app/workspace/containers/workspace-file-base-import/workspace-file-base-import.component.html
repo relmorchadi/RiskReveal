@@ -55,7 +55,7 @@
                   <ng-container *ngFor="let col of columns">
                     <th *ngIf="col.visible" pResizableColumn>
                       <div *ngIf="!col.filtered" style="white-space: nowrap;">{{col.header}}</div>
-                      <div *ngIf="col.filtered && col.type !== 'icon'" style="white-space: nowrap;">
+                      <div *ngIf="col.filtered" style="white-space: nowrap;">
                         {{col.header}}
                         <div class="search-bar-table">
                           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -63,8 +63,9 @@
                                  type="text">
                         </div>
                       </div>
-                      <div *ngIf="col.type === 'icon'">
-                        <i class="icon-menu_24px"></i>
+                      <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
+                        <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedFiles" (ngModelChange)="updateAllChecked($event, 'ImportedFiles')"
+                               [nzIndeterminate]="indeterminateImportedFiles"></label>
                       </div>
                     </th>
                   </ng-container>
@@ -76,7 +77,7 @@
                   <ng-container *ngFor="let col of columns">
                     <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
                       <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
-                        <label (ngModelChange)="selectToImport($event, i)" [ngModel]="rowData.selected"
+                        <label (ngModelChange)="checkRow($event, i, 'files')" [ngModel]="rowData.selected"
                                nz-checkbox></label>
                       </div>
                       <div *ngIf="col.type === 'text'" (click)="selectToImport(!rowData.selected, i)" class="text-data">
@@ -148,7 +149,7 @@
         <div class="summary-info fixed-table-height" [ngClass]="{'empty-table': getLength()}">
           <p-contextMenu appendTo="body" #cm [model]="items"></p-contextMenu>
           <p-table #iTable [columns]="pltColumns" [scrollable]="true" scrollHeight="226px"
-                   [(contextMenuSelection)]="contextSelectedItem"
+                   [(contextMenuSelection)]="contextSelectedItem" [dataKey]="'FileName'" [rowTrackBy]="rowTrackBy"
                    [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
                    [value]="fileBase?.selectedFiles" frozenWidth="485px">
             <ng-template let-columns pTemplate="colgroup">
@@ -171,8 +172,9 @@
                                type="text">
                       </div>
                     </div>
-                    <div *ngIf="col.type === 'icon'">
-                      <i class="icon-menu_24px"></i>
+                    <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
+                      <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedPlts" (ngModelChange)="updateAllChecked($event, 'ImportedPlts')"
+                             [nzIndeterminate]="indeterminateImportedPlts"></label>
                     </div>
                   </th>
                 </ng-container>
@@ -181,12 +183,12 @@
             <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
               <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
                   [ngClass]="{'active_contract_item': rowData?.selected,
-                  'selected_contract_item': rowData?.FileName === selectedPlt?.FileName
-                  }" (dblclick)="selectedPlt = rowData">
+                  'selected_contract_item': rowData?.FileName === selectedPlt?.FileName}"
+                  (dblclick)="selectedPlt = rowData">
                 <ng-container *ngFor="let col of columns">
-                  <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
+                  <th *ngIf="col.visible && !col.edit">
                     <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
-                      <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
+                      <label (ngModelChange)="checkRow($event, i, 'plt')" [ngModel]="rowData.selected"
                              nz-checkbox></label>
                     </div>
                     <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
@@ -194,34 +196,30 @@
                       <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
                                    [nzWidth]="20" nzType="circle"></nz-progress>
                     </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'indicator'">
-                    <span *ngIf="rowData.exposedLocation" class="indicator-flag"
-                          style="background-color: #0700CF"></span>
-                    </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'number'"
+                    <div (click)="selectRows(i)" *ngIf="col.type === 'number'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field]}}</div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'percentage'"
+                    <div (click)="selectRows(i)" *ngIf="col.type === 'percentage'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field]}}%
                     </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'perilIndicator'">
-                    <span class="perilIndicator" [ngStyle]="{'background-color': getColor(rowData[col.field])}">
-                      {{rowData[col.field]}}
-                    </span>
+                    <div (click)="selectRows(i)" *ngIf="col.type === 'perilIndicator'">
+                      <span class="perilIndicator" [ngStyle]="{'background-color': getColor(rowData[col.field])}">
+                        {{rowData[col.field]}}
+                      </span>
                     </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'info'"
+                    <div (click)="selectRows(i)" *ngIf="col.type === 'info'"
                          class="text-data">
                       {{rowData.ModelSystem}}_{{rowData.ModelProvider}}_{{rowData.ModelSystemVersion}}
                       _{{rowData.ModelSystemInstance}}
                     </div>
-                    <div (click)="selectRows(rowData, i)" *ngIf="col.type === 'text'"
+                    <div (click)="selectRows(i)" *ngIf="col.type === 'text'"
                          [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                          [ngClass]="{'highlight-temp': col.highlight}"
                          class="text-data">{{rowData[col.field]}}</div>
                     <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                    <div (click)="deleteRow(rowData)" *ngIf="col.type === 'action'"
+                    <div (click)="deleteRow(rowData, i)" *ngIf="col.type === 'action'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
                     </div>

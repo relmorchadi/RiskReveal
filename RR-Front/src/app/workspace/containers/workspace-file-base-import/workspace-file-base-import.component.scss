@@ -254,7 +254,7 @@ TABLE STYLE
       }
 
       th {
-        padding: 15px 10px 5px 3px;
+        padding: 15px 3px 5px 8px;
         font-size: 10px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38);
@@ -312,11 +312,15 @@ TABLE STYLE
       }
 
       tr.ui-contextmenu-selected {
-        background-color: #f4f6fc !important;
+        background-color: #F4F6FC !important;
       }
 
       tr:hover {
         background-color: #F7F8FD;
+      }
+
+      tr.selected_contract_item {
+        background-color: #E1E1E1 !important;
       }
 
       .ant-progress-text {
@@ -337,7 +341,7 @@ TABLE STYLE
       }
 
       th {
-        padding: 0;
+        padding: 0 3px 0 8px;
         cursor: pointer;
         color: rgb(0, 0, 0);
         font-size: 12px;
@@ -394,7 +398,7 @@ TABLE STYLE
         }
       }
 
-      .selected-item {
+      .active_contract_item {
         background-color: #FDFBDF !important;
       }
 
@@ -426,6 +430,16 @@ TABLE STYLE
   }
 }
 
+.empty-notif-wrapper {
+  width: 41vw;
+  background-color: #F4F6FC;
+  margin: 4px 2px 0;
+  padding: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .empty-table {
   ::ng-deep {
     .ui-table-scrollable-body-table {
@@ -440,12 +454,7 @@ TABLE STYLE
   }
 
   .empty-notif-wrapper {
-    background-color: #f4f6fc;
-    margin: 4px 2px 0;
-    padding: 7px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    width: 100%;
   }
 }
 

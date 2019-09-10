@@ -68,7 +68,7 @@
 </div>
 
 <div class="form-control-wrap show-table">
-  <h6>Division Section</h6>
+  <h6>Division</h6>
   <p-table #kt [columns]="coverageTemplate" [value]="dataCoverage"
            [resizableColumns]="true" columnResizeMode="expand"
            [scrollable]="true" scrollHeight="340px" >
@@ -118,7 +118,7 @@
             [ngClass]="{'selected-item': rowData?.selected}"
             [ngStyle]="{'background-color': rowData['AlreadyImported'] ? '#EBEEFB' : '#FFF'}">
             <div class="text-data" *ngIf="col.field === 'divisionNo'">
-              <span>{{i}}</span>
+              <span>{{i + 1}}</span>
             </div>
             <div class="text-data"
                  *ngIf="col.type === 'date'">
@@ -136,9 +136,9 @@
                 <ng-template pTemplate="input">
                   <nz-select
                     style="width: 100%"
-                    [(ngModel)]="rowData.principal" nzShowSearch
+                    (ngModelChange)="isPrincipalSet($event, i)"
+                    [ngModel]="rowData.principal" nzShowSearch
                     class="a-dropdown-small input-wrapper"
-                    nzPlaceHolder="TAG CURRENCY"
                   >
                     <nz-option nzLabel="True" [nzValue]="true"></nz-option>
                     <nz-option nzLabel="false" [nzValue]="false"></nz-option>
@@ -189,6 +189,35 @@
                 </ng-template>
               </p-cellEditor>
             </td>
+            <td pEditableColumn *ngIf="col.field === 'currency'"
+                style="background-color: #FFFFFF"
+                [ngClass]="{'selected-item': rowData?.selected}">
+              <p-cellEditor>
+                <ng-template pTemplate="input">
+                  <nz-select
+                    style="width: 100%"
+                    [(ngModel)]="rowData.currency" nzShowSearch
+                    class="a-dropdown-small input-wrapper"
+                    nzPlaceHolder="TAG CURRENCY"
+                  >
+                    <nz-option nzLabel="AED" nzValue="AED"></nz-option>
+                    <nz-option nzLabel="AFA" nzValue="AFA"></nz-option>
+                    <nz-option nzLabel="AFN" nzValue="AFN"></nz-option>
+                    <nz-option nzLabel="ALK" nzValue="ALK"></nz-option>
+                    <nz-option nzLabel="ALL" nzValue="ALL"></nz-option>
+                    <nz-option nzLabel="BBT" nzValue="BBT"></nz-option>
+                    <nz-option nzLabel="BBL" nzValue="BBL"></nz-option>
+                    <nz-option nzLabel="BMD" nzValue="BMD"></nz-option>
+                    <nz-option nzLabel="MGA" nzValue="MGA"></nz-option>
+                    <nz-option nzLabel="USD" nzValue="USD"></nz-option>
+                    <nz-option nzLabel="XXC" nzValue="XXC"></nz-option>
+                  </nz-select>
+                </ng-template>
+                <ng-template pTemplate="output">
+                  <div class="text-data highlight-temp"><span>{{rowData.currency}}</span></div>
+                </ng-template>
+              </p-cellEditor>
+            </td>
           </ng-container>
         </ng-container>
       </tr>
@@ -197,14 +226,15 @@
 </div>
 
 <div class="form-control-wrap">
-  <h6>Coverage Section</h6>
+  <h6>Coverage</h6>
   <div class="form-controller new-wrap"><span class="subtitle-2">Region Peril</span>
-    <div class="input-form-wrap">
+    <div class="input-form-wrap" style="width: 75%">
       <nz-select style="width: 100%" [(ngModel)]="metaData" nzShowSearch
                  nzMode="multiple"
                  class="a-dropdown-small"
-                 nzPlaceHolder="TAG CURRENCY">
-        <nz-option *ngFor="let item of data" [nzLabel]="item?.regionPerilDesc" [nzValue]="item?.regionPerilCode"></nz-option>
+                 nzPlaceHolder="Region Peril Selection">
+        <nz-option *ngFor="let item of data" [nzLabel]="item?.regionPerilDesc + ' [' + item?.regionPerilCode + ']'"
+                   [nzValue]="item?.regionPerilCode"></nz-option>
       </nz-select>
     </div>
   </div>

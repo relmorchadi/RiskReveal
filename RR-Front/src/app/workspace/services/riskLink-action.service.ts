@@ -10,6 +10,7 @@ import {Injectable} from '@angular/core';
 import {RiskLinkState} from '../store/states';
 import {WorkspaceModel} from '../model';
 import produce from 'immer';
+import {normalizeFileReplacements} from "@angular-devkit/build-angular/src/utils";
 
 @Injectable({
   providedIn: 'root'
@@ -195,7 +196,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkPortfolio(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item} = payload;
+    const {action, value, item, from, to} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const selectedPortfolio = _.filter(_.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm),
       dt => dt.selected)[0];
@@ -210,6 +211,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === portfolios.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked =
             (numSelectedItems === portfolios.length - 1 && value === true);
+        }));
+      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
+    } else if (action === 'chunk') {
+      portfolios.forEach((dt: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[dt.dataSourceId]: {
+              ...dt, selected: true}
+          };
+        } else {
+          pt = {[dt.dataSourceId]: {
+          ...dt, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data = newData;
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
@@ -235,7 +261,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item} = payload;
+    const {action, value, item, from, to} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const selectedAnalysis = _.filter(_.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm),
       dt => dt.selected)[0];
@@ -250,6 +276,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === analysis.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked =
             (numSelectedItems === analysis.length - 1 && value === true);
+        }));
+      ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
+    } else if (action === 'chunk') {
+      analysis.forEach((st: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[st.analysisId]: {
+              ...st, selected: true}
+          };
+        } else {
+          pt = {[st.analysisId]: {
+              ...st, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data = newData;
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
@@ -275,7 +326,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkResult(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item} = payload;
+    const {action, value, item, from, to} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const result = _.toArray(state.content[wsIdentifier].riskLink.results.data);
     const numSelectedItems = _.filter(result, items => items.selected).length;
@@ -287,6 +338,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === result.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.results.allChecked =
             (numSelectedItems === result.length - 1 && value === true);
+        }));
+    } else if (action === 'chunk') {
+      let newData = {};
+      result.forEach((st: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[st.id]: {
+              ...st, selected: true}
+          };
+        } else {
+          pt = {[st.id]: {
+              ...st, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.results.data = newData;
+          draft.content[wsIdentifier].riskLink.results.indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.results.allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
     } else {
       let selected: boolean;
@@ -303,7 +379,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkSummary(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item} = payload;
+    const {action, value, item, to, from} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const summaries = _.toArray(state.content[wsIdentifier].riskLink.summaries.data);
     const numSelectedItems = _.filter(summaries, items => items.selected).length;
@@ -315,6 +391,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === summaries.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.summaries.allChecked =
             (numSelectedItems === summaries.length - 1 && value === true);
+        }));
+    } else if (action === 'chunk') {
+      let newData = {};
+      summaries.forEach((st: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[st.id]: {
+              ...st, selected: true}
+          };
+        } else {
+          pt = {[st.id]: {
+              ...st, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.summaries.data = newData;
+          draft.content[wsIdentifier].riskLink.summaries.indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.summaries.allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
     } else {
       let selected: boolean;
@@ -331,7 +432,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkFPStandard(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item} = payload;
+    const {action, value, item, from, to} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const fpStandard = _.toArray(state.content[wsIdentifier].riskLink.financialPerspective.standard.data);
     const numSelectedItems = _.filter(fpStandard, items => items.selected).length;
@@ -343,6 +444,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === fpStandard.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.financialPerspective.standard.allChecked =
             (numSelectedItems === fpStandard.length - 1 && value === true);
+        }));
+    } else if (action === 'chunk') {
+      let newData = {};
+      fpStandard.forEach((st: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[st.id]: {
+              ...st, selected: true}
+          };
+        } else {
+          pt = {[st.id]: {
+              ...st, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.data = newData;
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.financialPerspective.standard.allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
     } else {
       let selected: boolean;
@@ -360,7 +486,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkFPAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item} = payload;
+    const {action, value, item, from, to} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const fpAnalysis = _.toArray(state.content[wsIdentifier].riskLink.financialPerspective.analysis.data);
     const numSelectedItems = _.filter(fpAnalysis, items => items.selected).length;
@@ -372,6 +498,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === fpAnalysis.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.financialPerspective.analysis.allChecked =
             (numSelectedItems === fpAnalysis.length - 1 && value === true);
+        }));
+    } else if (action === 'chunk') {
+      let newData = {};
+      fpAnalysis.forEach((st: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[st.id]: {
+              ...st, selected: true}
+          };
+        } else {
+          pt = {[st.id]: {
+              ...st, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.financialPerspective.analysis.data = newData;
+          draft.content[wsIdentifier].riskLink.financialPerspective.analysis.indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.financialPerspective.analysis.allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
     } else {
       let selected: boolean;
@@ -388,8 +539,8 @@ export class RiskLinkStateService {
 
   toggleAnalysisLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, wrapper, value, item} = payload;
-    console.log(wrapper);
+    const {action, wrapper, value, item, from, to} = payload;
+    console.log(item);
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const linkAnalysis = _.toArray(state.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].data);
     const numSelectedItems = _.filter(linkAnalysis, data => data.selected).length;
@@ -401,6 +552,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === linkAnalysis.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].allChecked =
             (numSelectedItems === linkAnalysis.length - 1 && value === true);
+        }));
+    } else if (action === 'chunk') {
+      let newData = {};
+      linkAnalysis.forEach((st: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[st.id]: {
+              ...st, selected: true}
+          };
+        } else {
+          pt = {[st.id]: {
+              ...st, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].data = newData;
+          draft.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.linking.analysis[wrapper.id].allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
     } else {
       let selected: boolean;
@@ -417,7 +593,7 @@ export class RiskLinkStateService {
 
   togglePortfolioLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item} = payload;
+    const {action, value, item, from, to} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const linkPortfolio = _.toArray(state.content[wsIdentifier].riskLink.linking.portfolio.data);
     const numSelectedItems = _.filter(linkPortfolio, data => data.selected).length;
@@ -429,6 +605,31 @@ export class RiskLinkStateService {
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === linkPortfolio.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.linking.portfolio.allChecked =
             (numSelectedItems === linkPortfolio.length - 1 && value === true);
+        }));
+    } else if (action === 'chunk') {
+      let newData = {};
+      linkPortfolio.forEach((st: any, index) => {
+        let pt;
+        if (index <= to && index >= from) {
+          pt = {[st.id]: {
+              ...st, selected: true}
+          };
+        } else {
+          pt = {[st.id]: {
+              ...st, selected: false}
+          };
+        }
+        newData = _.merge(newData, pt);
+      });
+      const newArray = _.toArray(newData);
+      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      ctx.patchState(
+        produce(ctx.getState(), draft => {
+          draft.content[wsIdentifier].riskLink.linking.portfolio.data = newData;
+          draft.content[wsIdentifier].riskLink.linking.portfolio.indeterminate =
+            filtredData.length !== 0 && newArray.length !== filtredData.length;
+          draft.content[wsIdentifier].riskLink.linking.portfolio.allChecked =
+            filtredData.length === 0 || newArray.length === filtredData.length;
         }));
     } else {
       let selected: boolean;
@@ -446,8 +647,8 @@ export class RiskLinkStateService {
   addToBasket(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    let analysis = _.toArray(state.content[wsIdentifier].riskLink.analysis).map(dt => _.toArray(dt.data));
-    let portfolio = _.toArray(state.content[wsIdentifier].riskLink.portfolios).map(dt => _.toArray(dt.data));
+    const analysis = _.toArray(state.content[wsIdentifier].riskLink.analysis).map(dt => _.toArray(dt.data));
+    const portfolio = _.toArray(state.content[wsIdentifier].riskLink.portfolios).map(dt => _.toArray(dt.data));
     const selectAnalysis = analysis.map(dt => _.filter(dt, ws => ws.selected));
     const selectPortfolio = portfolio.map(dt => _.filter(dt, ws => ws.selected));
     let dataAnalysis = [];

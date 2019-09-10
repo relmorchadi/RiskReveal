@@ -48,9 +48,10 @@ export class SubmissionPageComponent implements OnInit {
 
   coverageTemplate = [
     {field: 'divisionNo', header: 'Division No', width: '40px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
-    {field: 'principal', header: 'Principal', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
-    {field: 'lob', header: 'LOB', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
-    {field: 'coverage', header: 'Coverage', width: '150px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'principal', header: 'Is Principal', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'lob', header: 'LOB', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'coverage', header: 'Coverage', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'currency', header: 'Currency', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
     {field: 'action', header: 'Action', width: '40px', type: 'action', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   ];
 
@@ -59,7 +60,8 @@ export class SubmissionPageComponent implements OnInit {
       divisionNo: 1,
       principal: true,
       lob: 'Property',
-      coverage: 'PD, BI'
+      coverage: 'PD, BI',
+      currency: 'USD'
     }
   ];
 
@@ -74,11 +76,47 @@ export class SubmissionPageComponent implements OnInit {
       divisionNo: this.dataCoverage.length + 1,
       principal: false,
       lob: 'Property',
-      coverage: 'PD, BI'
+      coverage: 'PD, BI',
+      currency: 'USD'
     }];
   }
 
   deleteRow(index) {
-    this.dataCoverage.splice(index, 1);
+    if (this.dataCoverage.length !== 1) {
+      const isPrincipal = this.dataCoverage[index].principal;
+      if (isPrincipal) {
+        if (index === this.dataCoverage.length - 1) {
+          this.dataCoverage[index - 1].principal = true;
+        } else {
+          this.dataCoverage[index + 1].principal = true;
+        }
+        this.dataCoverage.splice(index, 1);
+      } else {
+        this.dataCoverage.splice(index, 1);
+      }
+    }
+  }
+
+  isPrincipalSet(event, index) {
+    if (event) {
+      this.dataCoverage = this.dataCoverage.map((item, iterator) => {
+        if (iterator !== index) {
+          return {...item, principal: false};
+        } else {
+          return {...item, principal: true};
+        }
+      });
+    } else {
+      if (this.dataCoverage.length === 1) {
+        this.dataCoverage[0].principal = true;
+      } else {
+        if (index === this.dataCoverage.length - 1) {
+          this.dataCoverage[index - 1].principal = true;
+        } else {
+          this.dataCoverage[index + 1].principal = true;
+        }
+        this.dataCoverage[index].principal = false;
+      }
+    }
   }
 }

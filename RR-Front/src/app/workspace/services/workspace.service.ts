@@ -24,25 +24,20 @@ export class WorkspaceService {
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {
-      wsId,
-      uwYear,
-      route
+      wsId, uwYear, route, type
     } = payload;
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
         mergeMap(ws => ctx.dispatch(new fromWS.LoadWsSuccess({
-          wsId,
-          uwYear,
-          ws,
-          route
+          wsId, uwYear, ws, route, type
         }))),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
   }
 
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
-    const {wsId, uwYear, ws, route} = payload;
+    const {wsId, uwYear, ws, route, type} = payload;
     const {workspaceName, programName, cedantName, projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
     console.log('this are projects', projects);
@@ -55,6 +50,7 @@ export class WorkspaceService {
           uwYear,
           ...ws,
           projects,
+          workspaceType: type,
           collapseWorkspaceDetail: true,
           route,
           leftNavbarCollapsed: false,
@@ -169,8 +165,8 @@ export class WorkspaceService {
   }
 
 
-  openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.openWS) {
-    const {wsId, uwYear, route} = payload;
+  openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
+    const {wsId, uwYear, route, type} = payload;
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
@@ -184,7 +180,8 @@ export class WorkspaceService {
       return ctx.dispatch(new fromWS.LoadWS({
         wsId,
         uwYear,
-        route
+        route,
+        type
       }));
     }
   }
@@ -310,7 +307,7 @@ export class WorkspaceService {
     return ctx.patchState(produce(ctx.getState(), draft => {
       const {projects} = draft.content[wsIdentifier];
       draft.content[wsIdentifier].projects = [...this._selectProject(projects, projectIndex)];
-    }))
+    }));
   }
 
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
