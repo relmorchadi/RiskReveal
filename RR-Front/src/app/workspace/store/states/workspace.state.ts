@@ -58,6 +58,12 @@ export class WorkspaceState {
     return state.currentTab;
   }
 
+  @Selector()
+  static getCurrentTabStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].workspaceType;
+  }
+
   static getDeletedPltsForCalibration(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
       _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.calibration.data.${wsIdentifier}`), e => e.deleted), 'pltId'));
@@ -774,7 +780,7 @@ export class WorkspaceState {
 
   @Action(fromWS.AddToBasketAction)
   addToBasket(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.addToBasket(ctx);
+    return this.riskLinkFacade.addToBasket(ctx);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)

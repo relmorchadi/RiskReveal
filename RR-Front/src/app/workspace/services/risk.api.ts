@@ -17,16 +17,14 @@ export class RiskApi {
   }
 
   searchRiskLinkAnalysis(paramId, paramName): Observable<any> {
-/*    console.log(paramId, paramName);
-    this.http.get(`${this.URL}analysis?rdmId=${paramId}&rdmName=${paramName}&size=20`).subscribe(
-      (dt: any) => console.log(dt.content)
-    );*/
-    console.log(paramId, paramName);
-    return this.http.get(`${this.URL}analysis?size=20`);
+    return this.http.get(`${this.URL}analysis?size=20`, {params: {rdmName: paramName}});
   }
 
   searchRiskLinkPortfolio(paramId, paramName): Observable<any> {
-    console.log('hey')
     return this.http.get(`${this.URL}portfolio?size=20`, {params: {edmId: paramId, edmName: paramName}});
+  }
+
+  searchDetailAnalysis(paramId, paramName): Observable<any> {
+    return this.http.get(`${this.URL}detailed-analysis-scan`, {params: {edmId: paramId, edmName: paramName}});
   }
 }

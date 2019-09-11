@@ -15,7 +15,7 @@
   <div class="app-body">
     <div [ngClass]="{'menu-left-wrapper': selectedPlt != null}">
       <div class="menu-searchPlt-wrapper">
-        <div style="width: 30%">
+        <div style="width: 23%">
         <span class="body-1 menu-left-header"
               style="border-top: 4px solid #0700CF; padding-top: 4px; padding-bottom: 10px">
           Find Directory
@@ -25,7 +25,7 @@
                     (onNodeSelect)="nodeSelect($event)" (onNodeUnselect)="nodeUnselect($event)"></p-tree>
           </div>
         </div>
-        <div style="width: 70%">
+        <div style="width: 77%">
         <span class="body-1 menu-left-header" style="width: 100%">
           <ng-container *ngIf="!collapseSearchFiles">Text Files Available</ng-container>
           <div class="body-wrapper-header-right" style="flex: 1">
@@ -41,7 +41,7 @@
             <input class="input-search"/>
           </div>-->
           <div class="summary-info" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
-            <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="226px"
+            <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="189px"
                      [resizableColumns]="true" [value]="fileBase.files">
               <ng-template let-columns pTemplate="colgroup">
                 <colgroup>
@@ -64,7 +64,7 @@
                         </div>
                       </div>
                       <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
-                        <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedFiles" (ngModelChange)="updateAllChecked($event, 'ImportedFiles')"
+                        <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedFiles" (ngModelChange)="updateAllChecked('ImportedFiles')"
                                [nzIndeterminate]="indeterminateImportedFiles"></label>
                       </div>
                     </th>
@@ -72,8 +72,7 @@
                 </tr>
               </ng-template>
               <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
-                <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
-                    [ngClass]="{'active_contract_item': rowData?.selected}" (dblclick)="selectedPlt = rowData">
+                <tr [ngClass]="{'active_contract_item': rowData?.selected}">
                   <ng-container *ngFor="let col of columns">
                     <th *ngIf="col.visible && !col.edit" [ngClass]="{'selected-item': rowData?.selected}">
                       <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
@@ -119,7 +118,7 @@
       <div class="menu-data-wrapper">
         <div style="display: flex; justify-content: space-between;">
         <span class="body-1 menu-left-header" style="border-top: 4px solid #0700CF;">
-          Selected PLT To Import
+          Selected PLT to Import
         </span>
           <div class="menu-icon-wrap" style="font-size: 22px; padding: 12px 20px 0;">
             <nz-dropdown [nzTrigger]="'hover'" *ngIf="!collapseImportedFiles" [nzPlacement]="'topRight'">
@@ -148,7 +147,7 @@
 
         <div class="summary-info fixed-table-height" [ngClass]="{'empty-table': getLength()}">
           <p-contextMenu appendTo="body" #cm [model]="items"></p-contextMenu>
-          <p-table #iTable [columns]="pltColumns" [scrollable]="true" scrollHeight="226px"
+          <p-table #iTable [columns]="pltColumns" [scrollable]="true" [scrollHeight]="getHeight()"
                    [(contextMenuSelection)]="contextSelectedItem" [dataKey]="'FileName'" [rowTrackBy]="rowTrackBy"
                    [contextMenu]="cm" [resizableColumns]="true" columnResizeMode="expand"
                    [value]="fileBase?.selectedFiles" frozenWidth="485px">
@@ -173,7 +172,7 @@
                       </div>
                     </div>
                     <div *ngIf="col.field === 'selected'" style="display:flex; justify-content: center">
-                      <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedPlts" (ngModelChange)="updateAllChecked($event, 'ImportedPlts')"
+                      <label style="margin-top:20px" nz-checkbox [ngModel]="allCheckedImportedPlts" (ngModelChange)="updateAllChecked('ImportedPlts')"
                              [nzIndeterminate]="indeterminateImportedPlts"></label>
                     </div>
                   </th>
@@ -228,7 +227,7 @@
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage" let-columns="columns">
-              <div class="empty-notif-wrapper">
+              <div class="empty-notng s if-wrapper">
                 <nz-empty></nz-empty>
               </div>
             </ng-template>
@@ -236,7 +235,7 @@
         </div>
       </div>
 
-      <div style="padding: 10px; display: flex; justify-content: flex-end;">
+      <div style="padding: 10px 10px 0; display: flex; justify-content: flex-end;">
         <button *ngIf="fileBase?.files?.length > 0" class="a-buttons-contained-micro">
           IMPORT
         </button>
