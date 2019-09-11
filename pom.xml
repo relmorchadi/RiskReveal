@@ -21,6 +21,7 @@
 		<module>RRADJUSTMENT</module>
         <module>RR-Common</module>
         <module>RR-Inuring</module>
+        <module>common</module>
     </modules>
 
     <properties>
