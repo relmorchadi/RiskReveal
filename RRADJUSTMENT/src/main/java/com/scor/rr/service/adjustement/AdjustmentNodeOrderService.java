@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import static com.scor.rr.exceptions.ExceptionCodename.ORDEREXIST;
+import static com.scor.rr.exceptions.ExceptionCodename.ORDER_EXIST;
 
 @Service
 public class AdjustmentNodeOrderService {
@@ -45,7 +45,7 @@ public class AdjustmentNodeOrderService {
             orderEntity.setOrderNode(orderRequest.getOrder());
             adjustmentNodeOrderRepository.save(orderEntity);
         } else {
-            throwException(ORDEREXIST,HttpStatus.NOT_ACCEPTABLE);
+            throwException(ORDER_EXIST,HttpStatus.NOT_ACCEPTABLE);
         }
     }
 

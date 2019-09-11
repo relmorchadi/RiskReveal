@@ -1,9 +1,9 @@
 package com.scor.rr.configuration.file;
 
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTFileExtNotSupportedException;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTFileNotFoundException;
-import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.exceptions.RRException;
+import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
+import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;

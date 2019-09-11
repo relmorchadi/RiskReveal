@@ -8,7 +8,7 @@ import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.adjustement.AdjustmentManuelleParameterProcess;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
-import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.ScorpltheaderRepository;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
-import static com.scor.rr.exceptions.ExceptionCodename.TYPENOTFOUND;
+import static com.scor.rr.exceptions.ExceptionCodename.TYPE_NOT_FOUND;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -87,7 +87,7 @@ public class ScorPltHeaderService {
         if (NONLINEARRETURNEVENTPERIOD.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData, parameterProcess.isCapped(), parameterProcess.getAdjustmentReturnPeriodBendings());
         }
-        throwException(TYPENOTFOUND, NOT_FOUND);
+        throwException(TYPE_NOT_FOUND, NOT_FOUND);
         return null;
     }
 

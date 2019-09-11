@@ -106,11 +106,11 @@ public class AdjustmentNodeProcessingService {
                 log.info("------End saving input PLT processing ------");
                 return adjustmentnodeprocessingRepository.save(nodeProcessing);
             } else {
-                throwException(NODENOTFOUND, NOT_FOUND);
+                throwException(NODE_NOT_FOUND, NOT_FOUND);
                 return null;
             }
         } else {
-            throwException(PLTNOTFOUNT, NOT_FOUND);
+            throwException(PLT_NOT_FOUND, NOT_FOUND);
             return null;
         }
     }
@@ -156,16 +156,16 @@ public class AdjustmentNodeProcessingService {
                         log.info("------END adjusted PLT processing ------");
                         return adjustmentnodeprocessingRepository.save(nodeProcessing);
                     } else {
-                        throw new com.scor.rr.exceptions.RRException(BINFILEEXCEPTION,1);
+                        throw new com.scor.rr.exceptions.RRException(BIN_FILE_EXCEPTION,1);
                     }
                 } else {
-                    throw new com.scor.rr.exceptions.RRException(NODEPROCESSINGNOTFOUND,1);
+                    throw new com.scor.rr.exceptions.RRException(NODE_PROCESSING_NOT_FOUND,1);
                 }
             } else {
-                throw new com.scor.rr.exceptions.RRException(NODENOTFOUND,1);
+                throw new com.scor.rr.exceptions.RRException(NODE_NOT_FOUND,1);
             }
         } else {
-            throw new com.scor.rr.exceptions.RRException(PLTNOTFOUNT,1);
+            throw new com.scor.rr.exceptions.RRException(PLT_NOT_FOUND,1);
         }
     }
 
@@ -174,7 +174,7 @@ public class AdjustmentNodeProcessingService {
                 .stream()
                 .filter(ape -> ape.getAdjustmentNodeByFkAdjustmentNode().getAdjustmentNodeId()== nodeId)
                 .findAny()
-                .orElseThrow(throwException(PLTNOTFOUNT, NOT_FOUND));
+                .orElseThrow(throwException(PLT_NOT_FOUND, NOT_FOUND));
     }
 
     public void deleteProcessingByNode(Integer nodeId){
@@ -189,7 +189,7 @@ public class AdjustmentNodeProcessingService {
             try {
                 fileWrite = new File("src/main/resources/file/PLT Adjustment Test PLT (Pure).csv");
                 csvpltFileWriter.write(pltLossData,fileWrite);
-            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+            } catch (RRException e) {
                 e.printStackTrace();
             }
         } else {
@@ -198,7 +198,7 @@ public class AdjustmentNodeProcessingService {
                 fileWrite = new File(pathbin);
                 binpltFileWriter.write(pltLossData,fileWrite);
 
-            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+            } catch (RRException e) {
                 e.printStackTrace();
             }
         }
@@ -218,22 +218,22 @@ public class AdjustmentNodeProcessingService {
                     CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
                     try {
                         return csvpltFileReader.read(file);
-                    } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                    } catch (RRException e) {
                         e.printStackTrace();
                     }
                 } else {
                     BinaryPLTFileReader binpltFileReader = new BinaryPLTFileReader();
                     try {
                         return binpltFileReader.read(file);
-                    } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+                    } catch (RRException e) {
                         e.printStackTrace();
                     }
                 }
             } else {
-                throw new com.scor.rr.exceptions.RRException(BINFILEEXCEPTION,1);
+                throw new com.scor.rr.exceptions.RRException(BIN_FILE_EXCEPTION,1);
             }
         } else {
-            throw new com.scor.rr.exceptions.RRException(PLTNOTFOUNT,1);
+            throw new com.scor.rr.exceptions.RRException(PLT_NOT_FOUND,1);
         }
         return null;
     }
@@ -269,7 +269,7 @@ public class AdjustmentNodeProcessingService {
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
             return CalculAdjustement.eefReturnPeriodBanding(pltLossData,node.getCapped(),parameterRequest.getAdjustmentReturnPeriodBendings());
         }
-        else throw new com.scor.rr.exceptions.RRException(TYPENOTFOUND,1);
+        else throw new com.scor.rr.exceptions.RRException(TYPE_NOT_FOUND,1);
     }
 
     private void saveParameterNode(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) throws RRException {
@@ -295,7 +295,7 @@ public class AdjustmentNodeProcessingService {
                 periodBandingParameterService.save(new AdjustmentReturnPeriodBandingParameterEntity(periodBanding.getReturnPeriod(), periodBanding.getLmf(), node));
             }
         }
-        else throw new com.scor.rr.exceptions.RRException(TYPENOTFOUND,1);
+        else throw new com.scor.rr.exceptions.RRException(TYPE_NOT_FOUND,1);
     }
 
     public List<AdjustmentNodeProcessingEntity> cloneAdjustmentNodeProcessing(List<AdjustmentNodeEntity> nodeClones,AdjustmentThreadEntity threadInitial,AdjustmentThreadEntity threadCloned) throws RRException {

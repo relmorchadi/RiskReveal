@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.exceptions.ExceptionCodename.TYPENOTFOUND;
+import static com.scor.rr.exceptions.ExceptionCodename.TYPE_NOT_FOUND;
 import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -26,7 +26,7 @@ public class AdjustmentTypeService {
     }
 
     public AdjustmentTypeEntity findOne(Integer id){
-        return adjustmentTypeRepository.findById(id).orElseThrow(throwException(TYPENOTFOUND,NOT_FOUND));
+        return adjustmentTypeRepository.findById(id).orElseThrow(throwException(TYPE_NOT_FOUND,NOT_FOUND));
     }
 
     public void delete(Integer id) {

@@ -73,7 +73,7 @@ public class AdjustmentNodeService {
     //TODO: implementation for updating node
 
     public AdjustmentNodeEntity findOne(Integer id){
-        return adjustmentnodeRepository.findById(id).orElseThrow(throwException(NODENOTFOUND,NOT_FOUND));
+        return adjustmentnodeRepository.findById(id).orElseThrow(throwException(NODE_NOT_FOUND,NOT_FOUND));
     }
 
     public List<AdjustmentNodeEntity> findAll(){
@@ -126,20 +126,20 @@ public class AdjustmentNodeService {
                                         0,
                                         0,
                                         adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()))==null) {
-                            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PARAMETERNOTFOUND,1);
+                            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PARAMETER_NOT_FOUND,1);
                         }
                         return adjustmentNodeEntity;
                     } else {
-                        throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND,1);
+                        throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
                     }
                 } else {
-                    throw new com.scor.rr.exceptions.RRException(ExceptionCodename.STATENOTFOUND,1);
+                    throw new com.scor.rr.exceptions.RRException(ExceptionCodename.STATE_NOT_FOUND,1);
                 }
             } else {
-                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.BASISNOTFOUND,1);
+                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.BASIS_NOT_FOUND,1);
             }
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.TYPENOTFOUND,1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.TYPE_NOT_FOUND,1);
         }
     }
 
@@ -168,7 +168,7 @@ public class AdjustmentNodeService {
                 return null;
             } else {
                 log.info("Exception Parameter : LMF not found");
-                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+                return throwException(PARAMETER_NOT_FOUND, NOT_FOUND);
             }
         }
         else if (EEFFrequency.getValue().equals(node.getAdjustmentType().getType())) {
@@ -182,7 +182,7 @@ public class AdjustmentNodeService {
                 return null;
             } else {
                 log.info("Exception Parameter : RPMF not found");
-                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+                return throwException(PARAMETER_NOT_FOUND, NOT_FOUND);
             }
         } else if (NonLinearEventDriven.getValue().equals(node.getAdjustmentType().getType())) {
             if(parameterRequest.getPeatData() != null) {
@@ -195,7 +195,7 @@ public class AdjustmentNodeService {
                 return null;
             } else {
                 log.info("Exception Parameter : Peat data not found");
-                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+                return throwException(PARAMETER_NOT_FOUND, NOT_FOUND);
             }
         }
         else if (NONLINEARRETURNPERIOD.getValue().equals(node.getAdjustmentType().getType())) {
@@ -209,7 +209,7 @@ public class AdjustmentNodeService {
                 return null;
             } else {
                 log.info("Exception Parameter : Peat data not found");
-                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+                return throwException(PARAMETER_NOT_FOUND, NOT_FOUND);
             }
         }
         else if (NONLINEARRETURNEVENTPERIOD.getValue().equals(node.getAdjustmentType().getType()) || NONLINEAROEP.getValue().equals(node.getAdjustmentType().getType())) {
@@ -225,10 +225,10 @@ public class AdjustmentNodeService {
                 return null;
             } else {
                 log.info("Exception Parameter : Return period banding not found");
-                return throwException(PARAMETERNOTFOUND, NOT_FOUND);
+                return throwException(PARAMETER_NOT_FOUND, NOT_FOUND);
             }
         }
-        else return throwException(TYPENOTFOUND, NOT_FOUND);
+        else return throwException(TYPE_NOT_FOUND, NOT_FOUND);
     }
 
     void savePeatDataFile(AdjustmentNodeEntity node, AdjustmentParameterRequest parameterRequest) {
@@ -240,7 +240,7 @@ public class AdjustmentNodeService {
             csvpltFileWriter.writePeatData(parameterRequest.getPeatData(),file);
             eventBasedParameterService.save(new AdjustmentEventBasedParameterEntity(file.getPath(),file.getName(),node));
             log.info("------ Success save file ------");
-        } catch (IOException | com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+        } catch (IOException | RRException e) {
             e.printStackTrace();
         }
     }

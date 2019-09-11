@@ -2,7 +2,7 @@ package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
-import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.junit.After;

@@ -4,10 +4,10 @@ import com.scor.rr.configuration.utils.Constant;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTDataNullException;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTFileExtNotSupportedException;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTFileWriteException;
-import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.exceptions.RRException;
+import com.scor.rr.exceptions.pltfile.PLTDataNullException;
+import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
+import com.scor.rr.exceptions.pltfile.PLTFileWriteException;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedWriter;
@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import java.util.Date;
 import java.util.List;
 
 /**

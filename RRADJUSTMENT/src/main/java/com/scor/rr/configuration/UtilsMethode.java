@@ -3,6 +3,7 @@ package com.scor.rr.configuration;
 import com.scor.rr.configuration.file.CSVPLTFileReader;
 import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
+import com.scor.rr.exceptions.RRException;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class UtilsMethode {
             CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
             try {
                 return csvpltFileReader.readPeatData(file);
-            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+            } catch (RRException e) {
                 e.printStackTrace();
             }
         }
@@ -34,7 +35,7 @@ public class UtilsMethode {
             CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
             try {
                 return csvpltFileReader.readAdjustmentReturnPeriodBanding(file);
-            } catch (com.scor.rr.exceptions.fileExceptionPlt.RRException e) {
+            } catch (RRException e) {
                 e.printStackTrace();
             }
         }

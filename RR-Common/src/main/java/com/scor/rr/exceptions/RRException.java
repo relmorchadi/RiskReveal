@@ -14,6 +14,14 @@ public class RRException extends Exception {
         );
     }
 
+    public RRException(final ExceptionCodename codename, final Integer status, String message) {
+        super(message);
+        this.payload = new ExceptionPayload(
+                codename,
+                status
+        );
+    }
+
     ExceptionPayload getPayload() {
         return payload;
     }

@@ -13,6 +13,7 @@
     <modules>
         <module>RR-Backend</module>
 		<module>RRADJUSTMENT</module>
+        <module>RR-Common</module>
     </modules>
 
     <properties>

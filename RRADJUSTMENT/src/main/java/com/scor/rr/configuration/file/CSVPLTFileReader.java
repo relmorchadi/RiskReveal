@@ -5,8 +5,11 @@ import com.scor.rr.domain.dto.adjustement.loss.AdjustmentReturnPeriodBending;
 import com.scor.rr.domain.dto.adjustement.loss.PEATData;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 
-import com.scor.rr.exceptions.fileExceptionPlt.*;
-
+import com.scor.rr.exceptions.RRException;
+import com.scor.rr.exceptions.pltfile.EventDateFormatException;
+import com.scor.rr.exceptions.pltfile.PLTFileCorruptedException;
+import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
+import com.scor.rr.exceptions.pltfile.PLTFileNotFoundException;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;

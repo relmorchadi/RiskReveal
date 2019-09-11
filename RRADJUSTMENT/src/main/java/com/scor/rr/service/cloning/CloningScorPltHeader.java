@@ -9,7 +9,7 @@ import com.scor.rr.domain.ScorPltHeaderEntity;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
-import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.BinfileRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
@@ -61,7 +61,7 @@ public class CloningScorPltHeader {
             scorPltHeaderEntityClone.setScorPltHeader(scorPltHeaderEntityInitial);
             return scorpltheaderRepository.save(scorPltHeaderEntityClone);
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT,1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND,1);
         }
     }
 
@@ -99,10 +99,10 @@ public class CloningScorPltHeader {
                     processingService.cloneAdjustmentNodeProcessing(nodeEntities, threadParent, threadCloned);
                     return scorPltHeaderCloned;
                 } else {
-                    throw new com.scor.rr.exceptions.RRException(ExceptionCodename.NODENOTFOUND, 1);
+                    throw new com.scor.rr.exceptions.RRException(ExceptionCodename.NODE_NOT_FOUND, 1);
                 }
             } else {
-                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND, 1);
+                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND, 1);
             }
         } else {
             return scorPltHeaderCloned;

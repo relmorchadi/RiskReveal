@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.exceptions.ExceptionCodename.THREADNOTFOUND;
+import static com.scor.rr.exceptions.ExceptionCodename.THREAD_NOT_FOUND;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
@@ -34,7 +34,7 @@ public class AdjustmentThreadService {
     CloningScorPltHeader cloningScorPltHeader;
 
     public AdjustmentThreadEntity findOne(Integer id){
-        return adjustmentthreadRepository.findById(id).orElseThrow(throwException(THREADNOTFOUND,NOT_FOUND));
+        return adjustmentthreadRepository.findById(id).orElseThrow(throwException(THREAD_NOT_FOUND,NOT_FOUND));
     }
 
     public List<AdjustmentThreadEntity> findAll(){
@@ -57,10 +57,10 @@ public class AdjustmentThreadService {
                 adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
                 return adjustmentthreadRepository.save(adjustmentThreadEntity);
             } else {
-                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTTYPENOTCORRECT,1);
+                throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_TYPE_NOT_CORRECT,1);
             }
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT,1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND,1);
         }
     }
 
@@ -75,7 +75,7 @@ public class AdjustmentThreadService {
             adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadId(scorpltheaderRepository.getOne(adjustmentThreadRequest.getPltFinalId()));
             return adjustmentthreadRepository.save(adjustmentThreadEntity);
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND,1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
         }
     }
 
@@ -90,7 +90,7 @@ public class AdjustmentThreadService {
            return adjustmentthreadRepository.save(threadClone);
 
        } else {
-           throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREADNOTFOUND,1);
+           throw new com.scor.rr.exceptions.RRException(ExceptionCodename.THREAD_NOT_FOUND,1);
        }
     }
 
@@ -98,7 +98,7 @@ public class AdjustmentThreadService {
         this.adjustmentthreadRepository.delete(
                 this.adjustmentthreadRepository.
                         findById(id)
-                        .orElseThrow(throwException(THREADNOTFOUND, NOT_FOUND))
+                        .orElseThrow(throwException(THREAD_NOT_FOUND, NOT_FOUND))
         );
     }
     private Supplier throwException(ExceptionCodename codeName, HttpStatus httpStatus) {

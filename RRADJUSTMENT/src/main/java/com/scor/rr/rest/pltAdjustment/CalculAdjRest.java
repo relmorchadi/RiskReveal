@@ -7,7 +7,7 @@ import com.scor.rr.domain.dto.CalculAdjustmentDto;
 import com.scor.rr.domain.dto.OEPMetric;
 import com.scor.rr.domain.dto.StaticType;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
-import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.pltAdjustment.CalculAdjustement;
 import com.scor.rr.service.adjustement.pltAdjustment.StatisticAdjustment;
 import org.apache.commons.io.FileUtils;

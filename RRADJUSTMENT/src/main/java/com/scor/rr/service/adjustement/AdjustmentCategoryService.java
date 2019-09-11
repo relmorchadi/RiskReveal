@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.function.Supplier;
 
-import static com.scor.rr.exceptions.ExceptionCodename.CATEGORYNOTFOUND;
+import static com.scor.rr.exceptions.ExceptionCodename.CATEGORY_NOT_FOUND;
 import static com.scor.rr.exceptions.ExceptionCodename.UNKNOWN;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
@@ -26,7 +26,7 @@ public class AdjustmentCategoryService {
     }
 
     public AdjustmentCategoryEntity findOne(Integer id){
-        return adjustmentCategoryRepository.findById(id).orElseThrow(throwException(CATEGORYNOTFOUND,NOT_FOUND));
+        return adjustmentCategoryRepository.findById(id).orElseThrow(throwException(CATEGORY_NOT_FOUND,NOT_FOUND));
     }
 
     public void delete(Integer id) {

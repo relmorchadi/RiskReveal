@@ -2,10 +2,10 @@ package com.scor.rr.configuration.file;
 
 
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTDataNullException;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTFileExtNotSupportedException;
-import com.scor.rr.exceptions.fileExceptionPlt.PLTFileWriteException;
-import com.scor.rr.exceptions.fileExceptionPlt.RRException;
+import com.scor.rr.exceptions.RRException;
+import com.scor.rr.exceptions.pltfile.PLTDataNullException;
+import com.scor.rr.exceptions.pltfile.PLTFileExtNotSupportedException;
+import com.scor.rr.exceptions.pltfile.PLTFileWriteException;
 import org.apache.commons.io.FilenameUtils;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
