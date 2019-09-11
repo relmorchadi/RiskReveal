@@ -34,7 +34,7 @@ public class DefaultAdjustmentRegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "IncludedExcluded", nullable = true, length = 1)
+    @Column(name = "IncludedExcluded", length = 1)
     public String getIncludedExcluded() {
         return includedExcluded;
     }

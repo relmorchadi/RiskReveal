@@ -64,7 +64,7 @@ public class FacContractEntity {
 
     @Id
     @Basic
-    @Column(name = "ID", nullable = true)
+    @Column(name = "ID")
     public Long getId() {
         return id;
     }
@@ -74,7 +74,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "FACUL_NUM", nullable = true, length = 10)
+    @Column(name = "FACUL_NUM", length = 10)
     public String getFaculNum() {
         return faculNum;
     }
@@ -84,7 +84,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "YEAR", nullable = true)
+    @Column(name = "YEAR")
     public Short getYear() {
         return year;
     }
@@ -94,7 +94,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ORDER_NUM", nullable = true)
+    @Column(name = "ORDER_NUM")
     public Short getOrderNum() {
         return orderNum;
     }
@@ -104,7 +104,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "UWFILE_ID", nullable = true)
+    @Column(name = "UWFILE_ID")
     public Long getUwfileId() {
         return uwfileId;
     }
@@ -114,7 +114,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "MASTER_CD", nullable = true, length = 8)
+    @Column(name = "MASTER_CD", length = 8)
     public String getMasterCd() {
         return masterCd;
     }
@@ -124,7 +124,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "INSUR_NUM", nullable = true)
+    @Column(name = "INSUR_NUM")
     public Long getInsurNum() {
         return insurNum;
     }
@@ -134,7 +134,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", nullable = true, length = 64)
+    @Column(name = "LABEL", length = 64)
     public String getLabel() {
         return label;
     }
@@ -144,7 +144,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDER_WRIT_CD", nullable = true, length = 4)
+    @Column(name = "UNDER_WRIT_CD", length = 4)
     public String getUnderWritCd() {
         return underWritCd;
     }
@@ -154,7 +154,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "TECH_ASST_CD", nullable = true, length = 4)
+    @Column(name = "TECH_ASST_CD", length = 4)
     public String getTechAsstCd() {
         return techAsstCd;
     }
@@ -164,7 +164,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "STATUS", nullable = true)
+    @Column(name = "STATUS")
     public Short getStatus() {
         return status;
     }
@@ -174,7 +174,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ADMIN_CD", nullable = true, length = 4)
+    @Column(name = "ADMIN_CD", length = 4)
     public String getAdminCd() {
         return adminCd;
     }
@@ -184,7 +184,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "UNIT_CD", nullable = true, length = 4)
+    @Column(name = "UNIT_CD", length = 4)
     public String getUnitCd() {
         return unitCd;
     }
@@ -194,7 +194,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "INCEP_DT", nullable = true)
+    @Column(name = "INCEP_DT")
     public Date getIncepDt() {
         return incepDt;
     }
@@ -204,7 +204,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "EXPIRY_DT", nullable = true)
+    @Column(name = "EXPIRY_DT")
     public Date getExpiryDt() {
         return expiryDt;
     }
@@ -214,7 +214,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "CEDENT_CD", nullable = true, length = 6)
+    @Column(name = "CEDENT_CD", length = 6)
     public String getCedentCd() {
         return cedentCd;
     }
@@ -224,7 +224,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "INTERMED_CD", nullable = true, length = 6)
+    @Column(name = "INTERMED_CD", length = 6)
     public String getIntermedCd() {
         return intermedCd;
     }
@@ -234,7 +234,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "STATUS_DT", nullable = true)
+    @Column(name = "STATUS_DT")
     public Date getStatusDt() {
         return statusDt;
     }
@@ -244,7 +244,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "SEC_OPINION_CD", nullable = true, length = 4)
+    @Column(name = "SEC_OPINION_CD", length = 4)
     public String getSecOpinionCd() {
         return secOpinionCd;
     }
@@ -254,7 +254,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "SECTOR_CD", nullable = true)
+    @Column(name = "SECTOR_CD")
     public Short getSectorCd() {
         return sectorCd;
     }
@@ -264,7 +264,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "IS_LONG_TERM", nullable = true, length = 5)
+    @Column(name = "IS_LONG_TERM", length = 5)
     public String getIsLongTerm() {
         return isLongTerm;
     }
@@ -274,7 +274,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "IS_RENEWABLE", nullable = true, length = 5)
+    @Column(name = "IS_RENEWABLE", length = 5)
     public String getIsRenewable() {
         return isRenewable;
     }
@@ -284,7 +284,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "VALID_DURATION", nullable = true)
+    @Column(name = "VALID_DURATION")
     public Short getValidDuration() {
         return validDuration;
     }
@@ -294,7 +294,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ORIG_INCEPT_DT", nullable = true)
+    @Column(name = "ORIG_INCEPT_DT")
     public Date getOrigInceptDt() {
         return origInceptDt;
     }
@@ -304,7 +304,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ORIG_EXPIRY_DT", nullable = true)
+    @Column(name = "ORIG_EXPIRY_DT")
     public Date getOrigExpiryDt() {
         return origExpiryDt;
     }
@@ -314,7 +314,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "OFFER_DT", nullable = true)
+    @Column(name = "OFFER_DT")
     public Date getOfferDt() {
         return offerDt;
     }
@@ -324,7 +324,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "PORTFOLIO_ORIG_CD", nullable = true)
+    @Column(name = "PORTFOLIO_ORIG_CD")
     public Short getPortfolioOrigCd() {
         return portfolioOrigCd;
     }
@@ -334,7 +334,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "CANCEL_DUR", nullable = true)
+    @Column(name = "CANCEL_DUR")
     public Short getCancelDur() {
         return cancelDur;
     }
@@ -344,7 +344,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARY_CD", nullable = true)
+    @Column(name = "SUBSIDIARY_CD")
     public Short getSubsidiaryCd() {
         return subsidiaryCd;
     }
@@ -354,7 +354,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "SUBSID_LEDGER_CD", nullable = true)
+    @Column(name = "SUBSID_LEDGER_CD")
     public Short getSubsidLedgerCd() {
         return subsidLedgerCd;
     }
@@ -364,7 +364,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "SCOR_LEADER", nullable = true)
+    @Column(name = "SCOR_LEADER")
     public Short getScorLeader() {
         return scorLeader;
     }
@@ -374,7 +374,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "LEADER", nullable = true)
+    @Column(name = "LEADER")
     public Integer getLeader() {
         return leader;
     }
@@ -384,7 +384,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "LEADER_SHARE", nullable = true, precision = 8)
+    @Column(name = "LEADER_SHARE", precision = 8)
     public BigDecimal getLeaderShare() {
         return leaderShare;
     }
@@ -394,7 +394,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ORIG_LEADER_CD", nullable = true)
+    @Column(name = "ORIG_LEADER_CD")
     public Integer getOrigLeaderCd() {
         return origLeaderCd;
     }
@@ -404,7 +404,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ORIG_CEDENT_NUM", nullable = true)
+    @Column(name = "ORIG_CEDENT_NUM")
     public Integer getOrigCedentNum() {
         return origCedentNum;
     }
@@ -414,7 +414,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ORIG_INTERMEA_CD", nullable = true)
+    @Column(name = "ORIG_INTERMEA_CD")
     public Integer getOrigIntermeaCd() {
         return origIntermeaCd;
     }
@@ -424,7 +424,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "REINSUR_TYPE", nullable = true)
+    @Column(name = "REINSUR_TYPE")
     public Short getReinsurType() {
         return reinsurType;
     }
@@ -434,7 +434,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "CLI_INSURED_NM", nullable = true, length = 64)
+    @Column(name = "CLI_INSURED_NM", length = 64)
     public String getCliInsuredNm() {
         return cliInsuredNm;
     }
@@ -444,7 +444,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "LOB_CD", nullable = true, length = 2)
+    @Column(name = "LOB_CD", length = 2)
     public String getLobCd() {
         return lobCd;
     }
@@ -454,7 +454,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "CREATED_DT", nullable = true)
+    @Column(name = "CREATED_DT")
     public Date getCreatedDt() {
         return createdDt;
     }
@@ -464,7 +464,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "UPDATED_DT", nullable = true)
+    @Column(name = "UPDATED_DT")
     public Date getUpdatedDt() {
         return updatedDt;
     }
@@ -474,7 +474,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "CREATED_BY", nullable = true, length = 16)
+    @Column(name = "CREATED_BY", length = 16)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -484,7 +484,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "UPDATED_BY", nullable = true, length = 16)
+    @Column(name = "UPDATED_BY", length = 16)
     public String getUpdatedBy() {
         return updatedBy;
     }
@@ -494,7 +494,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ENDOR_NUM", nullable = true)
+    @Column(name = "ENDOR_NUM")
     public Short getEndorNum() {
         return endorNum;
     }
@@ -504,7 +504,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "EGPI", nullable = true, precision = 3)
+    @Column(name = "EGPI", precision = 3)
     public BigDecimal getEgpi() {
         return egpi;
     }
@@ -514,7 +514,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "UW_CENTER_CD", nullable = true, length = 5)
+    @Column(name = "UW_CENTER_CD", length = 5)
     public String getUwCenterCd() {
         return uwCenterCd;
     }
@@ -524,7 +524,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "IP2_CALL", nullable = true, length = 5)
+    @Column(name = "IP2_CALL", length = 5)
     public String getIp2Call() {
         return ip2Call;
     }
@@ -534,7 +534,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "LAST_IN_FORCE", nullable = true)
+    @Column(name = "LAST_IN_FORCE")
     public Short getLastInForce() {
         return lastInForce;
     }
@@ -544,7 +544,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "CON_OMG_EGPI", nullable = true, precision = 3)
+    @Column(name = "CON_OMG_EGPI", precision = 3)
     public BigDecimal getConOmgEgpi() {
         return conOmgEgpi;
     }
@@ -554,7 +554,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "TECH_INSP_SERVICE", nullable = true, length = 250)
+    @Column(name = "TECH_INSP_SERVICE", length = 250)
     public String getTechInspService() {
         return techInspService;
     }
@@ -564,7 +564,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "ORDER_NUM_UPDATE", nullable = true)
+    @Column(name = "ORDER_NUM_UPDATE")
     public Short getOrderNumUpdate() {
         return orderNumUpdate;
     }
@@ -574,7 +574,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "PRICING_DERTY", nullable = true)
+    @Column(name = "PRICING_DERTY")
     public Short getPricingDerty() {
         return pricingDerty;
     }
@@ -584,7 +584,7 @@ public class FacContractEntity {
     }
 
     @Basic
-    @Column(name = "RENEW_UPDATED", nullable = true)
+    @Column(name = "RENEW_UPDATED")
     public Short getRenewUpdated() {
         return renewUpdated;
     }

@@ -29,7 +29,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "lossTableType", nullable = true, length = 255)
+    @Column(name = "lossTableType", length = 255)
     public String getLossTableType() {
         return lossTableType;
     }
@@ -39,7 +39,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "originalTarget", nullable = true, length = 255)
+    @Column(name = "originalTarget", length = 255)
     public String getOriginalTarget() {
         return originalTarget;
     }
@@ -49,7 +49,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "currency", nullable = true, length = 255)
+    @Column(name = "currency", length = 255)
     public String getCurrency() {
         return currency;
     }
@@ -59,7 +59,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "createdDate", nullable = true)
+    @Column(name = "createdDate")
     public Timestamp getCreatedDate() {
         return createdDate;
     }
@@ -69,7 +69,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "lossDataFilePath", nullable = true, length = 255)
+    @Column(name = "lossDataFilePath", length = 255)
     public String getLossDataFilePath() {
         return lossDataFilePath;
     }
@@ -79,7 +79,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "lossDataFileName", nullable = true, length = 255)
+    @Column(name = "lossDataFileName", length = 255)
     public String getLossDataFileName() {
         return lossDataFileName;
     }
@@ -89,7 +89,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "fileDataFormat", nullable = true, length = 255)
+    @Column(name = "fileDataFormat", length = 255)
     public String getFileDataFormat() {
         return fileDataFormat;
     }
@@ -99,7 +99,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "fileType", nullable = true, length = 255)
+    @Column(name = "fileType", length = 255)
     public String getFileType() {
         return fileType;
     }
@@ -109,7 +109,7 @@ public class RrLossDataHeaderEntity {
     }
 
     @Basic
-    @Column(name = "cloningSourceId", nullable = true)
+    @Column(name = "cloningSourceId")
     public Integer getCloningSourceId() {
         return cloningSourceId;
     }

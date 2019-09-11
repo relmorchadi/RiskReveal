@@ -29,7 +29,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "lastSynchronized", nullable = true)
+    @Column(name = "lastSynchronized")
     public Timestamp getLastSynchronized() {
         return lastSynchronized;
     }
@@ -39,7 +39,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "companyCode", nullable = true)
+    @Column(name = "companyCode")
     public Integer getCompanyCode() {
         return companyCode;
     }
@@ -49,7 +49,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "countryIsoCode", nullable = true, length = 255)
+    @Column(name = "countryIsoCode", length = 255)
     public String getCountryIsoCode() {
         return countryIsoCode;
     }
@@ -59,7 +59,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "importedOmegaId", nullable = true, length = 255)
+    @Column(name = "importedOmegaId", length = 255)
     public String getImportedOmegaId() {
         return importedOmegaId;
     }
@@ -69,7 +69,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", length = 255)
     public String getName() {
         return name;
     }
@@ -79,7 +79,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "pricingStructure", nullable = true, length = 255)
+    @Column(name = "pricingStructure", length = 255)
     public String getPricingStructure() {
         return pricingStructure;
     }
@@ -89,7 +89,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, length = 255)
+    @Column(name = "status", length = 255)
     public String getStatus() {
         return status;
     }
@@ -99,7 +99,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "uwYear", nullable = true)
+    @Column(name = "uwYear")
     public Integer getUwYear() {
         return uwYear;
     }
@@ -109,7 +109,7 @@ public class PltPricingEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateRiskReveal", nullable = true)
+    @Column(name = "lastUpdateRiskReveal")
     public Timestamp getLastUpdateRiskReveal() {
         return lastUpdateRiskReveal;
     }

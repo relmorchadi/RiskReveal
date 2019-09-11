@@ -38,7 +38,7 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
     }
 
     @Basic
-    @Column(name = "ReturnPeriod", nullable = true, precision = 7)
+    @Column(name = "ReturnPeriod", precision = 7)
     public double getReturnPeriod() {
         return returnPeriod;
     }
@@ -48,7 +48,7 @@ public class AdjustmentReturnPeriodBandingParameterEntity {
     }
 
     @Basic
-    @Column(name = "Factor", nullable = true, precision = 7)
+    @Column(name = "Factor", precision = 7)
     public double getFactor() {
         return factor;
     }

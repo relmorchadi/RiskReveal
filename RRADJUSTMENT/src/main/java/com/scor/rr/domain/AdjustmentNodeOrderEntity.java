@@ -23,7 +23,7 @@ public class AdjustmentNodeOrderEntity {
     }
 
     @Basic
-    @Column(name = "orderNode", nullable = true)
+    @Column(name = "orderNode")
     public Integer getOrderNode() {
         return orderNode;
     }

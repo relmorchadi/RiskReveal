@@ -24,7 +24,7 @@ public class SubsidiaryEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -34,7 +34,7 @@ public class SubsidiaryEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -44,7 +44,7 @@ public class SubsidiaryEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
+    @Column(name = "CODE", length = 255)
     public String getCode() {
         return code;
     }
@@ -54,7 +54,7 @@ public class SubsidiaryEntity {
     }
 
     @Basic
-    @Column(name = "LABEL", nullable = true, length = 1)
+    @Column(name = "LABEL", length = 1)
     public String getLabel() {
         return label;
     }

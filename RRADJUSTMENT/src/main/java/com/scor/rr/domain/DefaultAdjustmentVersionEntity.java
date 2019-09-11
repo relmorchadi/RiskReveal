@@ -18,7 +18,7 @@ public class DefaultAdjustmentVersionEntity {
     private DefaultAdjustmentEntity defaultAdjustment;
 
     @Basic
-    @Column(name = "VersionSequence", nullable = true)
+    @Column(name = "VersionSequence")
     public Integer getVersionSequence() {
         return versionSequence;
     }
@@ -28,7 +28,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "EffectiveTo", nullable = true)
+    @Column(name = "EffectiveTo")
     public Timestamp getEffectiveTo() {
         return effectiveTo;
     }
@@ -38,7 +38,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "EffectiveFrom", nullable = true)
+    @Column(name = "EffectiveFrom")
     public Timestamp getEffectiveFrom() {
         return effectiveFrom;
     }
@@ -58,7 +58,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "IsActive", nullable = true)
+    @Column(name = "IsActive")
     public Boolean getActive() {
         return isActive;
     }
@@ -68,7 +68,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "DeletedDt", nullable = true)
+    @Column(name = "DeletedDt")
     public Timestamp getDeletedDt() {
         return deletedDt;
     }
@@ -78,7 +78,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "DeletedBy", nullable = true, length = 50)
+    @Column(name = "DeletedBy", length = 50)
     public String getDeletedBy() {
         return deletedBy;
     }
@@ -88,7 +88,7 @@ public class DefaultAdjustmentVersionEntity {
     }
 
     @Basic
-    @Column(name = "Notes", nullable = true, length = 200)
+    @Column(name = "Notes", length = 200)
     public String getNotes() {
         return notes;
     }

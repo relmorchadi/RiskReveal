@@ -27,4 +27,9 @@ public class ImportiHubRest {
         return importiHubService.getPltFromLossDataFile(path);
     }
 
+    @GetMapping("verify-file")
+    public boolean verifyFilePlt(String path) {
+        return importiHubService.verifyFilePlt(path);
+    }
+
 }

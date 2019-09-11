@@ -21,7 +21,7 @@ public class ApMinimumGrainOverrideBasisEntity {
     }
 
     @Basic
-    @Column(name = "fkaccumulationPackageid", nullable = true)
+    @Column(name = "fkaccumulationPackageid")
     public Integer getFkaccumulationPackageid() {
         return fkaccumulationPackageid;
     }
@@ -31,7 +31,7 @@ public class ApMinimumGrainOverrideBasisEntity {
     }
 
     @Basic
-    @Column(name = "fksectionid", nullable = true, length = 255)
+    @Column(name = "fksectionid", length = 255)
     public String getFksectionid() {
         return fksectionid;
     }

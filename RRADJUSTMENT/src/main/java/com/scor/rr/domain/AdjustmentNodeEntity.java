@@ -39,7 +39,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "sequence", nullable = true)
+    @Column(name = "sequence")
     public Integer getSequence() {
         return sequence;
     }
@@ -49,7 +49,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "Capped", nullable = true)
+    @Column(name = "Capped")
     public Boolean getCapped() {
         return capped;
     }

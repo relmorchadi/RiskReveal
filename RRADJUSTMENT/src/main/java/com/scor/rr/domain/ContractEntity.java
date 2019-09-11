@@ -61,7 +61,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -71,7 +71,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -81,7 +81,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKSUBSIDIARYLEDGERCODEID", nullable = true, length = 255)
+    @Column(name = "FKSUBSIDIARYLEDGERCODEID", length = 255)
     public String getFksubsidiaryledgercodeId() {
         return fksubsidiaryledgercodeId;
     }
@@ -91,7 +91,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "TREATYID", nullable = true, length = 255)
+    @Column(name = "TREATYID", length = 255)
     public String getTreatyid() {
         return treatyid;
     }
@@ -101,7 +101,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UWYEAR", nullable = true)
+    @Column(name = "UWYEAR")
     public Integer getUwyear() {
         return uwyear;
     }
@@ -111,7 +111,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UWORDER", nullable = true)
+    @Column(name = "UWORDER")
     public Integer getUworder() {
         return uworder;
     }
@@ -121,7 +121,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ENDORSMENTNUMBER", nullable = true)
+    @Column(name = "ENDORSMENTNUMBER")
     public Integer getEndorsmentnumber() {
         return endorsmentnumber;
     }
@@ -131,7 +131,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "TREATYLABEL", nullable = true, length = 255)
+    @Column(name = "TREATYLABEL", length = 255)
     public String getTreatylabel() {
         return treatylabel;
     }
@@ -141,7 +141,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKSTATUSID", nullable = true, length = 255)
+    @Column(name = "FKSTATUSID", length = 255)
     public String getStatusId() {
         return statusId;
     }
@@ -151,7 +151,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARYCODE_ID", nullable = true)
+    @Column(name = "SUBSIDIARYCODE_ID")
     public Integer getSubsidiarycodeId() {
         return subsidiarycodeId;
     }
@@ -161,7 +161,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UWUNITID_ID", nullable = true, length = 255)
+    @Column(name = "UWUNITID_ID", length = 255)
     public String getUwunitidId() {
         return uwunitidId;
     }
@@ -171,7 +171,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARYLEDGERCODE", nullable = true, length = 255)
+    @Column(name = "SUBSIDIARYLEDGERCODE", length = 255)
     public String getSubsidiaryledgercode() {
         return subsidiaryledgercode;
     }
@@ -181,7 +181,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "INCEPTIONDATE", nullable = true)
+    @Column(name = "INCEPTIONDATE")
     public Timestamp getInceptiondate() {
         return inceptiondate;
     }
@@ -191,7 +191,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "EXPIRYDATE", nullable = true)
+    @Column(name = "EXPIRYDATE")
     public Timestamp getExpirydate() {
         return expirydate;
     }
@@ -201,7 +201,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "PROGRAMID", nullable = true, length = 255)
+    @Column(name = "PROGRAMID", length = 255)
     public String getProgramid() {
         return programid;
     }
@@ -211,7 +211,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "PROGRAMNAME", nullable = true, length = 255)
+    @Column(name = "PROGRAMNAME", length = 255)
     public String getProgramname() {
         return programname;
     }
@@ -221,7 +221,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "BOUQUETID", nullable = true, length = 255)
+    @Column(name = "BOUQUETID", length = 255)
     public String getBouquetid() {
         return bouquetid;
     }
@@ -231,7 +231,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "BOUQUETNAME", nullable = true, length = 255)
+    @Column(name = "BOUQUETNAME", length = 255)
     public String getBouquetname() {
         return bouquetname;
     }
@@ -241,7 +241,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKCEDENTID", nullable = true, length = 255)
+    @Column(name = "FKCEDENTID", length = 255)
     public String getCedentidId() {
         return cedentidId;
     }
@@ -251,7 +251,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITERID", nullable = true, length = 255)
+    @Column(name = "UNDERWRITERID", length = 255)
     public String getUnderwriterid() {
         return underwriterid;
     }
@@ -261,7 +261,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITERFIRSTNAME", nullable = true, length = 255)
+    @Column(name = "UNDERWRITERFIRSTNAME", length = 255)
     public String getUnderwriterfirstname() {
         return underwriterfirstname;
     }
@@ -271,7 +271,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITERLASTNAME", nullable = true, length = 255)
+    @Column(name = "UNDERWRITERLASTNAME", length = 255)
     public String getUnderwriterlastname() {
         return underwriterlastname;
     }
@@ -281,7 +281,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKLIABILITYCURRENCYCODE", nullable = true, length = 255)
+    @Column(name = "FKLIABILITYCURRENCYCODE", length = 255)
     public String getLiabilitycurrencycodeId() {
         return liabilitycurrencycodeId;
     }
@@ -291,7 +291,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ANNUALLIMITAMOUNT", nullable = true, length = 255)
+    @Column(name = "ANNUALLIMITAMOUNT", length = 255)
     public String getAnnuallimitamount() {
         return annuallimitamount;
     }
@@ -301,7 +301,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "EVENTLIMITAMOUNT", nullable = true, length = 255)
+    @Column(name = "EVENTLIMITAMOUNT", length = 255)
     public String getEventlimitamount() {
         return eventlimitamount;
     }
@@ -311,7 +311,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UPDATE_TIME", nullable = true)
+    @Column(name = "UPDATE_TIME")
     public Timestamp getUpdateTime() {
         return updateTime;
     }
@@ -321,7 +321,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LEADER", nullable = true, length = 255)
+    @Column(name = "LEADER", length = 255)
     public String getLeader() {
         return leader;
     }
@@ -331,7 +331,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITINGUNITCODE", nullable = true, length = 255)
+    @Column(name = "UNDERWRITINGUNITCODE", length = 255)
     public String getUnderwritingunitcode() {
         return underwritingunitcode;
     }
@@ -341,7 +341,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITINGUNITNAMELL", nullable = true, length = 255)
+    @Column(name = "UNDERWRITINGUNITNAMELL", length = 255)
     public String getUnderwritingunitnamell() {
         return underwritingunitnamell;
     }
@@ -351,7 +351,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UNDERWRITINGUNITNAMELS", nullable = true, length = 255)
+    @Column(name = "UNDERWRITINGUNITNAMELS", length = 255)
     public String getUnderwritingunitnamels() {
         return underwritingunitnamels;
     }
@@ -361,7 +361,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ULTIMATEGROUPCODE", nullable = true, length = 255)
+    @Column(name = "ULTIMATEGROUPCODE", length = 255)
     public String getUltimategroupcode() {
         return ultimategroupcode;
     }
@@ -371,7 +371,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "ULTIMATEGROUPNAME", nullable = true, length = 255)
+    @Column(name = "ULTIMATEGROUPNAME", length = 255)
     public String getUltimategroupname() {
         return ultimategroupname;
     }
@@ -381,7 +381,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "GROUPSEGMENTNAMELM", nullable = true, length = 255)
+    @Column(name = "GROUPSEGMENTNAMELM", length = 255)
     public String getGroupsegmentnamelm() {
         return groupsegmentnamelm;
     }
@@ -391,7 +391,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "GROUPSEGMENTCODE", nullable = true, length = 255)
+    @Column(name = "GROUPSEGMENTCODE", length = 255)
     public String getGroupsegmentcode() {
         return groupsegmentcode;
     }
@@ -401,7 +401,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "GROUPSEGMENTNAMELS", nullable = true, length = 255)
+    @Column(name = "GROUPSEGMENTNAMELS", length = 255)
     public String getGroupsegmentnamels() {
         return groupsegmentnamels;
     }
@@ -411,7 +411,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "INTERMEDIARYCODE", nullable = true, length = 255)
+    @Column(name = "INTERMEDIARYCODE", length = 255)
     public String getIntermediarycode() {
         return intermediarycode;
     }
@@ -421,7 +421,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "UWUnitOmega2", nullable = true, length = 255)
+    @Column(name = "UWUnitOmega2", length = 255)
     public String getUwUnitOmega2() {
         return uwUnitOmega2;
     }
@@ -431,7 +431,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATEOMEGA", nullable = true)
+    @Column(name = "LASTUPDATEOMEGA")
     public Timestamp getLastupdateomega() {
         return lastupdateomega;
     }
@@ -441,7 +441,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LASTEXTRACTOMEGA", nullable = true)
+    @Column(name = "LASTEXTRACTOMEGA")
     public Timestamp getLastextractomega() {
         return lastextractomega;
     }
@@ -451,7 +451,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LASTUPDATECATDOMAIN", nullable = true)
+    @Column(name = "LASTUPDATECATDOMAIN")
     public Timestamp getLastupdatecatdomain() {
         return lastupdatecatdomain;
     }
@@ -461,7 +461,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCRUNCATDOMAIN", nullable = true)
+    @Column(name = "LASTSYNCRUNCATDOMAIN")
     public Timestamp getLastsyncruncatdomain() {
         return lastsyncruncatdomain;
     }

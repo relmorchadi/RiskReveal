@@ -32,7 +32,7 @@ public class AdjustmentEventBasedParameterEntity {
     }
 
     @Basic
-    @Column(name = "InputFilePath", nullable = true, length = 500)
+    @Column(name = "InputFilePath", length = 500)
     public String getInputFilePath() {
         return inputFilePath;
     }
@@ -42,7 +42,7 @@ public class AdjustmentEventBasedParameterEntity {
     }
 
     @Basic
-    @Column(name = "InputFileName", nullable = true, length = 500)
+    @Column(name = "InputFileName", length = 500)
     public String getInputFileName() {
         return inputFileName;
     }

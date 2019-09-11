@@ -14,25 +14,31 @@ import java.util.stream.Collectors;
 public class StatisticAdjustment {
 
     private static final Logger log = LoggerFactory.getLogger(StatisticAdjustment.class);
-    static final double CONSTANTE =100000;
+    private static final double CONSTANTE =100000;
 
-    public static Double CoefOfVariance(List<PLTLossData> pltLossDatas) {
-        if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
-            return stdDev(pltLossDatas) / (averageAnnualLoss(pltLossDatas));
-        } else {
+    public static double CoefOfVariance(List<PLTLossData> pltLossDatas) {
+        if(pltLossDatas != null && !pltLossDatas.isEmpty())
+            return stdDev(pltLossDatas) / averageAnnualLoss(pltLossDatas);
+        else {
             log.info("PLT EMPTY");
-            return null;
+            return 0;
         }
     }
 
-    public static Double stdDev(List<PLTLossData> pltLossDatas) {
+    public static double stdDev(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             List<AEPMetric> aepMetrics = CalculAdjustement.getAEPMetric(pltLossDatas);
-            double averageAnnualLoss =averageAnnualLoss(pltLossDatas);
-            return  Math.sqrt(aepMetrics.stream().mapToDouble(value -> Math.pow(value.getLossAep() - averageAnnualLoss,2)).sum()/(CONSTANTE-1));
+            if(aepMetrics != null) {
+                double averageAnnualLoss;
+                averageAnnualLoss = averageAnnualLoss(pltLossDatas);
+                return Math.sqrt(aepMetrics.stream().mapToDouble(value -> Math.pow(value.getLossAep() - averageAnnualLoss, 2)).sum() / (CONSTANTE - 1));
+            } else {
+                log.info("AEP EMPTY");
+                return 0;
+            }
         } else {
             log.info("PLT EMPTY");
-            return null;
+            return 0;
         }
     }
 
@@ -64,12 +70,12 @@ public class StatisticAdjustment {
         }
     }
 
-    public static Double averageAnnualLoss(List<PLTLossData> pltLossDatas) {
+    public static double averageAnnualLoss(List<PLTLossData> pltLossDatas) {
         if(pltLossDatas != null && !pltLossDatas.isEmpty()) {
             return pltLossDatas.stream().mapToDouble(PLTLossData::getLoss).sum()/CONSTANTE;
         } else {
             log.info("PLT EMPTY");
-            return null;
+            return 0;
         }
     }
 }

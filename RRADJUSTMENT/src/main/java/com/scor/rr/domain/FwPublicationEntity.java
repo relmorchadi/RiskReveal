@@ -20,7 +20,7 @@ public class FwPublicationEntity {
     }
 
     @Basic
-    @Column(name = "FKScorPLTHeaderId", nullable = true)
+    @Column(name = "FKScorPLTHeaderId")
     public Integer getScorPltHeaderId() {
         return scorPltHeaderId;
     }

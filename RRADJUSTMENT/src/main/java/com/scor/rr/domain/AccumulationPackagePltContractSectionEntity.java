@@ -21,7 +21,7 @@ public class AccumulationPackagePltContractSectionEntity {
     }
 
     @Basic
-    @Column(name = "FkScorPltHeaderId", nullable = true)
+    @Column(name = "FkScorPltHeaderId")
     public Integer getFkscorpltheader() {
         return fkscorpltheader;
     }
@@ -31,7 +31,7 @@ public class AccumulationPackagePltContractSectionEntity {
     }
 
     @Basic
-    @Column(name = "FkAccumulationPackageId", nullable = true)
+    @Column(name = "FkAccumulationPackageId")
     public Integer getFkaccumulationPackageid() {
         return fkaccumulationPackageid;
     }

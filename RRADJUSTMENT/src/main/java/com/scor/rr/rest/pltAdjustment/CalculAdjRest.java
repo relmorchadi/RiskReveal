@@ -24,7 +24,7 @@ import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
 public class CalculAdjRest {
 
     @PostMapping
-    public List<PLTLossData> CalcAdjustement(@RequestBody CalculAdjustmentDto calculAdjustmentDto) throws RRException, IOException {
+    public List<PLTLossData> CalcAdjustement(@RequestBody CalculAdjustmentDto calculAdjustmentDto) throws RRException, IOException, com.scor.rr.exceptions.RRException {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(calculAdjustmentDto.getPathToFile()));
         if (Linear.equals(calculAdjustmentDto.getType()) ){

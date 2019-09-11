@@ -41,7 +41,7 @@ public class ScorPltHeaderService {
             FileUtils.touch(file);
             BinaryPLTFileWriter fileWriter = new BinaryPLTFileWriter();
             fileWriter.write(calculateAdjustment(parameterProcess,getPltLossDataFromFile(path)),file);
-        } catch (IOException e) {
+        } catch (IOException | com.scor.rr.exceptions.RRException e) {
             e.printStackTrace();
         }
     }
@@ -68,7 +68,7 @@ public class ScorPltHeaderService {
 
     //NOTE: this service should be open and as a part of API
 
-    private List<PLTLossData> calculateAdjustment(AdjustmentManuelleParameterProcess parameterProcess, List<PLTLossData> pltLossData) {
+    private List<PLTLossData> calculateAdjustment(AdjustmentManuelleParameterProcess parameterProcess, List<PLTLossData> pltLossData) throws com.scor.rr.exceptions.RRException {
         if (Linear.getValue().equals(parameterProcess.getType())) {
             return CalculAdjustement.linearAdjustement(pltLossData, parameterProcess.getLmf(), parameterProcess.isCapped());
         }

@@ -26,7 +26,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -36,7 +36,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -46,7 +46,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
+    @Column(name = "CODE", length = 255)
     public String getCode() {
         return code;
     }
@@ -56,7 +56,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "NAME", nullable = true, length = 1)
+    @Column(name = "NAME", length = 1)
     public String getName() {
         return name;
     }
@@ -66,7 +66,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "SECONDNAME", nullable = true, length = 1)
+    @Column(name = "SECONDNAME", length = 1)
     public String getSecondname() {
         return secondname;
     }
@@ -76,7 +76,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "FKCLIENTCODE", nullable = true, length = 255)
+    @Column(name = "FKCLIENTCODE", length = 255)
     public String getClientcodeId() {
         return clientcodeId;
     }

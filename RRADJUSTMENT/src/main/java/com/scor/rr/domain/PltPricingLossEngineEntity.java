@@ -33,7 +33,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "lastSynchronized", nullable = true)
+    @Column(name = "lastSynchronized")
     public Timestamp getLastSynchronized() {
         return lastSynchronized;
     }
@@ -43,7 +43,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "engineId", nullable = true)
+    @Column(name = "engineId")
     public Integer getEngineId() {
         return engineId;
     }
@@ -53,7 +53,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingId", nullable = true, length = 255)
+    @Column(name = "pltPricingId", length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -63,7 +63,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingSectionId", nullable = true, length = 255)
+    @Column(name = "pltPricingSectionId", length = 255)
     public String getPltPricingSectionId() {
         return pltPricingSectionId;
     }
@@ -73,7 +73,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", length = 255)
     public String getName() {
         return name;
     }
@@ -83,7 +83,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "nonNatCatLoss", nullable = true)
+    @Column(name = "nonNatCatLoss")
     public Long getNonNatCatLoss() {
         return nonNatCatLoss;
     }
@@ -93,7 +93,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "type", nullable = true, length = 255)
+    @Column(name = "type", length = 255)
     public String getType() {
         return type;
     }
@@ -103,7 +103,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltsFxRate", nullable = true, precision = 0)
+    @Column(name = "pltsFxRate", precision = 0)
     public Double getPltsFxRate() {
         return pltsFxRate;
     }
@@ -113,7 +113,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "pltsRiskRevealId", nullable = true, length = 255)
+    @Column(name = "pltsRiskRevealId", length = 255)
     public String getPltsRiskRevealId() {
         return pltsRiskRevealId;
     }
@@ -123,7 +123,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "franchiseDeductibleType", nullable = true, length = 255)
+    @Column(name = "franchiseDeductibleType", length = 255)
     public String getFranchiseDeductibleType() {
         return franchiseDeductibleType;
     }
@@ -133,7 +133,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "franchiseDeductibleAmount", nullable = true, precision = 0)
+    @Column(name = "franchiseDeductibleAmount", precision = 0)
     public Integer getFranchiseDeductibleAmount() {
         return franchiseDeductibleAmount;
     }
@@ -143,7 +143,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "capLossesAmount", nullable = true, precision = 0)
+    @Column(name = "capLossesAmount", precision = 0)
     public Integer getCapLossesAmount() {
         return capLossesAmount;
     }
@@ -153,7 +153,7 @@ public class PltPricingLossEngineEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateRiskReveal", nullable = true)
+    @Column(name = "lastUpdateRiskReveal")
     public Timestamp getLastUpdateRiskReveal() {
         return lastUpdateRiskReveal;
     }

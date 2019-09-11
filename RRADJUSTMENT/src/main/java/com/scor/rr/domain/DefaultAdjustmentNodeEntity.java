@@ -14,7 +14,7 @@ public class DefaultAdjustmentNodeEntity {
     private DefaultAdjustmentThreadEntity defaultAdjustmentThread;
 
     @Basic
-    @Column(name = "sequence", nullable = true)
+    @Column(name = "sequence")
     public Integer getSequence() {
         return sequence;
     }
@@ -34,7 +34,7 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "IsCappedMaxExposure", nullable = true)
+    @Column(name = "IsCappedMaxExposure")
     public Boolean getCappedMaxExposure() {
         return isCappedMaxExposure;
     }

@@ -20,7 +20,7 @@ public class AdjustmentThreadEntity {
     private ScorPltHeaderEntity scorPltHeaderByFkScorPltHeaderThreadPureId;
 
     @Basic
-    @Column(name = "ThreadType", nullable = true, length = 255)
+    @Column(name = "ThreadType", length = 255)
     public String getThreadType() {
         return threadType;
     }
@@ -30,7 +30,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "locked", nullable = true)
+    @Column(name = "locked")
     public Boolean getLocked() {
         return locked;
     }
@@ -40,7 +40,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "CreatedBy", nullable = true, length = 100)
+    @Column(name = "CreatedBy", length = 100)
     public String getCreatedBy() {
         return createdBy;
     }
@@ -50,7 +50,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "CreatedOn", nullable = true)
+    @Column(name = "CreatedOn")
     public Timestamp getCreatedOn() {
         return createdOn;
     }
@@ -60,7 +60,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "LastModifiedBy", nullable = true, length = 100)
+    @Column(name = "LastModifiedBy", length = 100)
     public String getLastModifiedBy() {
         return lastModifiedBy;
     }
@@ -70,7 +70,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "LastModifiedOn", nullable = true)
+    @Column(name = "LastModifiedOn")
     public Timestamp getLastModifiedOn() {
         return lastModifiedOn;
     }
@@ -80,7 +80,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "LastGeneratedOn", nullable = true)
+    @Column(name = "LastGeneratedOn")
     public Timestamp getLastGeneratedOn() {
         return lastGeneratedOn;
     }
@@ -90,7 +90,7 @@ public class AdjustmentThreadEntity {
     }
 
     @Basic
-    @Column(name = "GeneratedOn", nullable = true)
+    @Column(name = "GeneratedOn")
     public Timestamp getGeneratedOn() {
         return generatedOn;
     }

@@ -27,7 +27,7 @@ public class RrWorkspaceOldEntity {
     }
 
     @Basic
-    @Column(name = "audit", nullable = true, length = 2147483647)
+    @Column(name = "audit", length = 2147483647)
     public String getAudit() {
         return audit;
     }
@@ -37,7 +37,7 @@ public class RrWorkspaceOldEntity {
     }
 
     @Basic
-    @Column(name = "cedantName", nullable = true, length = 2147483647)
+    @Column(name = "cedantName", length = 2147483647)
     public String getCedantName() {
         return cedantName;
     }
@@ -47,7 +47,7 @@ public class RrWorkspaceOldEntity {
     }
 
     @Basic
-    @Column(name = "contractId", nullable = true, length = 2147483647)
+    @Column(name = "contractId", length = 2147483647)
     public String getContractId() {
         return contractId;
     }
@@ -57,7 +57,7 @@ public class RrWorkspaceOldEntity {
     }
 
     @Basic
-    @Column(name = "workspaceContextCode", nullable = true, length = 2147483647)
+    @Column(name = "workspaceContextCode", length = 2147483647)
     public String getWorkspaceContextCode() {
         return workspaceContextCode;
     }
@@ -67,7 +67,7 @@ public class RrWorkspaceOldEntity {
     }
 
     @Basic
-    @Column(name = "workspaceContextFlag", nullable = true, length = 2147483647)
+    @Column(name = "workspaceContextFlag", length = 2147483647)
     public String getWorkspaceContextFlag() {
         return workspaceContextFlag;
     }
@@ -77,7 +77,7 @@ public class RrWorkspaceOldEntity {
     }
 
     @Basic
-    @Column(name = "workspaceName", nullable = true, length = 2147483647)
+    @Column(name = "workspaceName", length = 2147483647)
     public String getWorkspaceName() {
         return workspaceName;
     }
@@ -87,7 +87,7 @@ public class RrWorkspaceOldEntity {
     }
 
     @Basic
-    @Column(name = "workspaceUwYear", nullable = true)
+    @Column(name = "workspaceUwYear")
     public Integer getWorkspaceUwYear() {
         return workspaceUwYear;
     }

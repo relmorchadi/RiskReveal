@@ -38,7 +38,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisName", nullable = true, length = 255)
+    @Column(name = "analysisName", length = 255)
     public String getAnalysisName() {
         return analysisName;
     }
@@ -48,7 +48,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrBusinessType", nullable = true, length = 255)
+    @Column(name = "analysisCtrBusinessType", length = 255)
     public String getAnalysisCtrBusinessType() {
         return analysisCtrBusinessType;
     }
@@ -58,7 +58,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrId", nullable = true, length = 255)
+    @Column(name = "analysisCtrId", length = 255)
     public String getAnalysisCtrId() {
         return analysisCtrId;
     }
@@ -68,7 +68,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrEndorsementNmber", nullable = true, length = 255)
+    @Column(name = "analysisCtrEndorsementNmber", length = 255)
     public String getAnalysisCtrEndorsementNmber() {
         return analysisCtrEndorsementNmber;
     }
@@ -78,7 +78,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrFacNumber", nullable = true, length = 255)
+    @Column(name = "analysisCtrFacNumber", length = 255)
     public String getAnalysisCtrFacNumber() {
         return analysisCtrFacNumber;
     }
@@ -88,7 +88,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrInsured", nullable = true, length = 255)
+    @Column(name = "analysisCtrInsured", length = 255)
     public String getAnalysisCtrInsured() {
         return analysisCtrInsured;
     }
@@ -98,7 +98,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrLabel", nullable = true, length = 255)
+    @Column(name = "analysisCtrLabel", length = 255)
     public String getAnalysisCtrLabel() {
         return analysisCtrLabel;
     }
@@ -108,7 +108,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrLob", nullable = true, length = 255)
+    @Column(name = "analysisCtrLob", length = 255)
     public String getAnalysisCtrLob() {
         return analysisCtrLob;
     }
@@ -118,7 +118,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrOrderNumber", nullable = true, length = 255)
+    @Column(name = "analysisCtrOrderNumber", length = 255)
     public String getAnalysisCtrOrderNumber() {
         return analysisCtrOrderNumber;
     }
@@ -128,7 +128,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrSubsidiary", nullable = true, length = 255)
+    @Column(name = "analysisCtrSubsidiary", length = 255)
     public String getAnalysisCtrSubsidiary() {
         return analysisCtrSubsidiary;
     }
@@ -138,7 +138,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrYear", nullable = true, length = 255)
+    @Column(name = "analysisCtrYear", length = 255)
     public String getAnalysisCtrYear() {
         return analysisCtrYear;
     }
@@ -148,7 +148,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "assignDate", nullable = true, length = 255)
+    @Column(name = "assignDate", length = 255)
     public String getAssignDate() {
         return assignDate;
     }
@@ -158,7 +158,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255)
+    @Column(name = "assignedTo", length = 255)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -168,7 +168,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateDate", nullable = true, length = 255)
+    @Column(name = "lastUpdateDate", length = 255)
     public String getLastUpdateDate() {
         return lastUpdateDate;
     }
@@ -178,7 +178,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdatedBy", nullable = true, length = 255)
+    @Column(name = "lastUpdatedBy", length = 255)
     public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
@@ -188,7 +188,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystemInstance", nullable = true, length = 255)
+    @Column(name = "modellingSystemInstance", length = 255)
     public String getEntitylingSystemInstance() {
         return modellingSystemInstance;
     }
@@ -198,7 +198,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateDate2", nullable = true)
+    @Column(name = "lastUpdateDate2")
     public Timestamp getLastUpdateDate2() {
         return lastUpdateDate2;
     }
@@ -208,7 +208,7 @@ public class CatRequestsEntity {
     }
 
     @Basic
-    @Column(name = "assignDate2", nullable = true)
+    @Column(name = "assignDate2")
     public Timestamp getAssignDate2() {
         return assignDate2;
     }

@@ -31,7 +31,7 @@ public class AdjustmentScalingParameterEntity {
     }
 
     @Basic
-    @Column(name = "factor", nullable = true, precision = 7)
+    @Column(name = "factor", precision = 7)
     public double getFactor() {
         return factor;
     }

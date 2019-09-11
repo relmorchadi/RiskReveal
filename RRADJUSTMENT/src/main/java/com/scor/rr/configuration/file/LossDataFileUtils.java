@@ -1,17 +1,17 @@
 package com.scor.rr.configuration.file;
 
+import com.scor.rr.domain.MetadataHeaderSectionEntity;
+import com.scor.rr.domain.dto.ImportFileHeaderData;
 import com.scor.rr.domain.dto.ImportFilePLTData;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
@@ -44,39 +44,7 @@ public class LossDataFileUtils {
                         if (!StringUtils.isEmpty(s)) {
                             if (testHeaderPlt.get()) {
                                 if (pltHeaderOrder.get() != null) {
-                                    String[] pltline = s.split("\\s+");
-                                    ImportFilePLTData importFilePLTData = new ImportFilePLTData();
-                                    if (pltHeaderOrder.get().get(PLT_DATA_EVENT_ID) != null) {
-                                        importFilePLTData.setEventId(Integer.parseInt(pltline[pltHeaderOrder.get().get(PLT_DATA_EVENT_ID)]));
-                                    }
-                                    if (pltHeaderOrder.get().get(PLT_DATA_YEAR) != null) {
-                                        importFilePLTData.setYear(Integer.parseInt(pltline[pltHeaderOrder.get().get(PLT_DATA_YEAR)]));
-                                    }
-                                    if (pltline[pltHeaderOrder.get().get(PLT_DATA_VALUE)] != null) {
-                                        importFilePLTData.setValue(Float.parseFloat(pltline[pltHeaderOrder.get().get(PLT_DATA_VALUE)]));
-                                    }
-                                    if (pltHeaderOrder.get().get(PLT_DATA_MAX_EXPOSURE) != null) {
-                                        importFilePLTData.setMaxExposure(Float.parseFloat(pltline[pltHeaderOrder.get().get(PLT_DATA_MAX_EXPOSURE)]));
-                                    } else {
-                                        importFilePLTData.setMaxExposure(importFilePLTData.getValue());
-                                    }
-                                    if (pltHeaderOrder.get().get(PLT_DATA_EVENT_DATE) != null) {
-                                        String eventDate = pltline[pltHeaderOrder.get().get(PLT_DATA_EVENT_DATE)];
-                                        importFilePLTData.setEventDate(eventDate);
-                                        Matcher matcher = pattern.matcher(eventDate);
-                                        if (matcher.find()) {
-                                            if (matcher.group(1) != null) {
-                                                importFilePLTData.setMonth(Integer.parseInt(matcher.group(1)));
-                                            }
-                                            if (matcher.group(2) != null) {
-                                                importFilePLTData.setDay(Integer.parseInt(matcher.group(2)));
-                                            }
-                                            if (matcher.group(3) != null) {
-                                                importFilePLTData.setRepetition(Integer.parseInt(matcher.group(3)));
-                                            }
-                                        }
-                                    }
-                                    finalPltDataList.add(importFilePLTData);
+                                    finalPltDataList.add(getImportFilePLTData(pltHeaderOrder.get(),s.split("\\s+")));
                                 }
                             }
                             if (testEndMarker.get()) {
@@ -95,6 +63,41 @@ public class LossDataFileUtils {
             e.printStackTrace();
         }
         return pltDataList;
+    }
+
+    private static ImportFilePLTData getImportFilePLTData(Map<String, Integer> pltHeaderOrder, String[] pltline) {
+        ImportFilePLTData importFilePLTData = new ImportFilePLTData();
+        if (pltHeaderOrder.get(PLT_DATA_EVENT_ID) != null) {
+            importFilePLTData.setEventId(Integer.parseInt(pltline[pltHeaderOrder.get(PLT_DATA_EVENT_ID)]));
+        }
+        if (pltHeaderOrder.get(PLT_DATA_YEAR) != null) {
+            importFilePLTData.setYear(Integer.parseInt(pltline[pltHeaderOrder.get(PLT_DATA_YEAR)]));
+        }
+        if (pltline[pltHeaderOrder.get(PLT_DATA_VALUE)] != null) {
+            importFilePLTData.setValue(Float.parseFloat(pltline[pltHeaderOrder.get(PLT_DATA_VALUE)]));
+        }
+        if (pltHeaderOrder.get(PLT_DATA_MAX_EXPOSURE) != null) {
+            importFilePLTData.setMaxExposure(Float.parseFloat(pltline[pltHeaderOrder.get(PLT_DATA_MAX_EXPOSURE)]));
+        } else {
+            importFilePLTData.setMaxExposure(importFilePLTData.getValue());
+        }
+        if (pltHeaderOrder.get(PLT_DATA_EVENT_DATE) != null) {
+            String eventDate = pltline[pltHeaderOrder.get(PLT_DATA_EVENT_DATE)];
+            importFilePLTData.setEventDate(eventDate);
+            Matcher matcher = pattern.matcher(eventDate);
+            if (matcher.find()) {
+                if (matcher.group(1) != null) {
+                    importFilePLTData.setMonth(Integer.parseInt(matcher.group(1)));
+                }
+                if (matcher.group(2) != null) {
+                    importFilePLTData.setDay(Integer.parseInt(matcher.group(2)));
+                }
+                if (matcher.group(3) != null) {
+                    importFilePLTData.setRepetition(Integer.parseInt(matcher.group(3)));
+                }
+            }
+        }
+        return importFilePLTData;
     }
 
     private static Map<String, Integer> retrieveFieldOrder(String[] headings) {
@@ -122,5 +125,47 @@ public class LossDataFileUtils {
             }
         }
         return fieldOrder;
+    }
+
+    public static boolean verifyFile(List<MetadataHeaderSectionEntity> metadataHeaders, String path) {
+        AtomicBoolean found = new AtomicBoolean(false);
+            ImportFileHeaderData importFileHeaderData = new ImportFileHeaderData();
+            List<Field> fs = Arrays.asList(importFileHeaderData.getClass().getFields());
+            for (MetadataHeaderSectionEntity metadataHeaderSectionEntity : metadataHeaders) {
+                if (metadataHeaderSectionEntity.isMandatory()) {
+                    Field fieldTemp;
+                    fieldTemp = fs.stream().filter(field -> field.getName().equalsIgnoreCase(metadataHeaderSectionEntity.getMetadataAttribute()) &&
+                            field.getType().getSimpleName().equalsIgnoreCase(metadataHeaderSectionEntity.getDataType()))
+                            .findFirst()
+                            .orElse(null);
+                    if (fieldTemp != null) {
+                        try {
+                            AtomicBoolean testEndMarker = new AtomicBoolean(false);
+
+                            Stream<String> stream = Files.lines(Paths.get(path));
+                            stream.forEach(s -> {
+                                if (s.equals(END_MARKER)) {
+                                    testEndMarker.set(true);
+                                }
+                                if(!testEndMarker.get()) {
+                                    String[] pltline = s.split("\\s+");
+                                    if(pltline.length == 2) {
+                                        if (pltline[0].equalsIgnoreCase(metadataHeaderSectionEntity.getMetadataAttribute())){
+                                            found.set(true);
+                                        }
+                                    }
+                                }
+
+
+                            });
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        found.set(false);
+                    }
+                }
+            }
+        return found.get();
     }
 }

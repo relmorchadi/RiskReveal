@@ -28,7 +28,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "lastSynchronized", nullable = true)
+    @Column(name = "lastSynchronized")
     public Timestamp getLastSynchronized() {
         return lastSynchronized;
     }
@@ -38,7 +38,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "pltPricingSectionId", nullable = true, length = 255)
+    @Column(name = "pltPricingSectionId", length = 255)
     public String getPltPricingSectionId() {
         return pltPricingSectionId;
     }
@@ -48,7 +48,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "FKPltPricingId", nullable = true, length = 255)
+    @Column(name = "FKPltPricingId", length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -58,7 +58,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "currency", nullable = true, length = 255)
+    @Column(name = "currency", length = 255)
     public String getCurrency() {
         return currency;
     }
@@ -68,7 +68,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", length = 255)
     public String getName() {
         return name;
     }
@@ -78,7 +78,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "omegaTreatyNo", nullable = true, length = 255)
+    @Column(name = "omegaTreatyNo", length = 255)
     public String getOmegaTreatyNo() {
         return omegaTreatyNo;
     }
@@ -88,7 +88,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "omegaSectionNo", nullable = true)
+    @Column(name = "omegaSectionNo")
     public Integer getOmegaSectionNo() {
         return omegaSectionNo;
     }
@@ -98,7 +98,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateRiskReveal", nullable = true)
+    @Column(name = "lastUpdateRiskReveal")
     public Timestamp getLastUpdateRiskReveal() {
         return lastUpdateRiskReveal;
     }
