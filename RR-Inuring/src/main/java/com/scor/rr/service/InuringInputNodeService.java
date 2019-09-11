@@ -2,8 +2,10 @@ package com.scor.rr.service;
 
 import com.scor.rr.entity.InuringInputAttachedPLT;
 import com.scor.rr.entity.InuringInputNode;
+import com.scor.rr.exceptions.RRException;
 import com.scor.rr.repository.InuringInputNodeRepository;
 import com.scor.rr.repository.InuringInputAttachedPLTRepository;
+import com.scor.rr.request.InuringInputNodeCreationRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +21,10 @@ public class InuringInputNodeService {
     @Autowired
     private InuringInputAttachedPLTRepository inuringInputAttachedPLTRepository;
 
+    public void createInuringInputNode(InuringInputNodeCreationRequest request) throws RRException {
+
+    }
+
     public InuringInputNode saveOrUpdateInuringInputNode(InuringInputNode inuringInputNode) {
         return inuringInputNodeRepository.saveAndFlush(inuringInputNode);
     }
@@ -27,11 +33,11 @@ public class InuringInputNodeService {
         return inuringInputNodeRepository.findByInuringInputNodeId(inuringInputNodeId);
     }
 
-    public List<InuringInputNode> findByInuringPackageId(int inuringPackageId) {
+    public List<InuringInputNode> findInputNodesByInuringPackageId(int inuringPackageId) {
         return inuringInputNodeRepository.findByInuringPackageId(inuringPackageId);
     }
 
-    List<InuringInputAttachedPLT> findAttachedPLTByInuringInputNodeId(int inuringInputNodeId) {
+    public List<InuringInputAttachedPLT> findAttachedPLTByInuringInputNodeId(int inuringInputNodeId) {
         return inuringInputAttachedPLTRepository.findByInuringInputNodeId(inuringInputNodeId);
     }
 }

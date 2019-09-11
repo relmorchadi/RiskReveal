@@ -15,7 +15,7 @@ public class RRException extends Exception {
     }
 
     public RRException(final ExceptionCodename codename, String message) {
-        new RRException(codename, 1, message);
+        this(codename, 1, message);
     }
 
     public RRException(final ExceptionCodename codename, final Integer status, String message) {
