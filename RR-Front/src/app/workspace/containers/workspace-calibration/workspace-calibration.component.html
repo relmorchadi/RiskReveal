@@ -7,6 +7,8 @@
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
         <div style="padding:unset;width: 193px;">
           <app-plt-left-menu
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
+            [tagsInput]="tagsInput"
           ></app-plt-left-menu>
         </div>
         <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
@@ -106,7 +108,8 @@
                           style="font-size: 25px; float: right; margin-left: 7px; margin-top: 3px;"></i>
                             <ul nz-menu>
                               <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                              <li class="menu-bottom-separator" nz-menu-item>Add from Template</li>
+                              <li (click)="openLoadTemplate()" class="menu-bottom-separator"
+                                  nz-menu-item>Load Template</li>
                                 <li nz-submenu>
                                   <span title>Apply To All </span>
                                   <ul nz-menu>
@@ -123,8 +126,8 @@
                                     <li nz-menu-item>New Alternate Threads</li>
                                   </ul>
                               </li>
-                              <li (click)="openSaveTemplate(true)" nz-menu-item>Save</li>
-                              <li (click)="openSaveTemplate(false)" nz-menu-item>Save As</li>
+                              <li (click)="openSaveTemplate(true)" nz-menu-item>Save Template</li>
+                              <li (click)="openSaveTemplate(false)" nz-menu-item>Save Template As</li>
                               <li nz-menu-item>Reset/Clear</li>
                             </ul>
                     </nz-dropdown>
@@ -334,10 +337,10 @@
                     Exhaustion Point(pE): 999,999,999,999
                   </span>
                     <span>
-                    User Specified Point(pE): 999,999,999,999
+                    User Specified Point(pU): 999,999,999,999
                   </span>
                     <span>
-                    Activation Point(pE): 999,999,999,999
+                    Activation Point(pA): 999,999,999,999
                   </span>
                   </div>
                   <div class="body-wrap-dropDowns-calibration">
@@ -778,3 +781,62 @@
     </div>
   </p-footer>
 </p-dialog>
+<!--<p-dialog
+  [visible]="loadTemplate"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Load Template
+      </h4>
+      <i style="cursor: pointer" (click)="closeLoadTemplate()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Name: </label>
+      </div>
+      <div class="ui-g-9">
+        <input [(ngModel)]="templateName" class="a-textfield-mini" nz-input nz-tooltip
+               style="width: 300px; !important; margin-right: 5px;"/>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Description </label>
+      </div>
+      <div class="ui-g-9">
+        <textarea [(ngModel)]="templateDesc" nz-input rows="4" style="margin-left: 10px; width: 300px"></textarea>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Type: </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-radio-group [(ngModel)]="templateType" class="default-radio" style="margin-left: 25px;">
+          <label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>
+          <label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>
+        </nz-radio-group>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeLoadTemplate()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="loadCurrentTemplate()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>-->

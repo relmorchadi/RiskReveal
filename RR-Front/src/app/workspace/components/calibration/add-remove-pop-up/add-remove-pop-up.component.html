@@ -21,8 +21,9 @@
   <div class="content">
     <div class="left">
       <app-plt-left-menu
+        (actionDispatcher)="leftMenuActionDispatcher($event)"
+        [tagsInput]="tagsInput"
       >
-
       </app-plt-left-menu>
     </div>
     <div class="center">
@@ -45,10 +46,10 @@
       </div>
     </div>
     <div class="right">
-      <app-plt-right-menu
+      <!--<app-plt-right-menu
         (actionDispatcher)="rightMenuActionDispatcher($event)"
         [Inputs]="rightMenuInputs"
-      ></app-plt-right-menu>
+      ></app-plt-right-menu>-->
     </div>
   </div>
 

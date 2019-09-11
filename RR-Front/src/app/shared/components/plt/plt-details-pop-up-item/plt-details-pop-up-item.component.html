@@ -5,7 +5,7 @@
     </span>
     <i class="icon-arrow_right_24px" (click)="openSection(inputs.title)"></i>
   </div>
-  <div class="pop-up-item-body">
+  <div *ngIf="plt && inputs?.cols" class="pop-up-item-body">
     <table class="pop-up-item-table">
       <tbody>
         <tr *ngFor="let col of inputs?.cols?.summary">
