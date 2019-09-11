@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.*;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -14,8 +15,8 @@ import static java.util.stream.Collectors.toSet;
 @Component
 public class FileBaseImportService {
 
-    //@Value("${filebaseimport.sandbox.unc}")
-    private String fileUnc="UNKNOWN";
+    @Value("${filebaseimport.sandbox.unc}")
+    private String fileUnc = "UNKNOWN";
 
     public Set<String> listFilesFromSandbox(String path) {
         return Stream.of(new File(this.fileUnc.concat(ofNullable(path).orElse(""))).listFiles())
