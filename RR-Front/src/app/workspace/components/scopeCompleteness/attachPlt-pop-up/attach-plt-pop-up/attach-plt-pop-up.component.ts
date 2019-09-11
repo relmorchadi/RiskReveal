@@ -21,6 +21,7 @@ import {mergeMap, switchMap, tap} from "rxjs/operators";
 import {SystemTagsService} from "../../../../../shared/services/system-tags.service";
 import {trestySections} from '../../../../containers/workspace-scope-completence/data';
 import {of} from "rxjs";
+import * as leftMenuStore from "../../../../../shared/components/plt/plt-left-menu/store";
 
 @Component({
   selector: 'app-attach-plt-pop-up',
@@ -31,6 +32,7 @@ import {of} from "rxjs";
 export class AttachPltPopUpComponent extends BaseContainer implements OnInit, OnDestroy {
 
   tableInputs: tableStore.Input;
+  tagsInput: leftMenuStore.Input;
   workspaceId: string;
   uwy: number;
   userTags: any;
@@ -275,7 +277,30 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
         },
       }
     };
-
+    this.tagsInput= {
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      projects: [],
+      showDeleted: this.tableInputs['showDeleted'],
+      filterData: this.tableInputs['filterData'],
+      filters: this.tableInputs['filters'],
+      deletedPltsLength: this.tableInputs['listOfDeletedPltsData'].length,
+      userTags: [],
+      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
+      systemTagsCount: {},
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      pathTab: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      toAssign: [],
+      toRemove: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
   }
 
   manageTags() {
@@ -1069,5 +1094,146 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     this.attachArray.emit(this.pltContainer);
     this.deleteArray.emit(this.pltContainerDelete);
     this.onHide();
+  }
+
+  leftMenuActionDispatcher(action: Message) {
+    console.log(action);
+
+    switch (action.type) {
+
+      case leftMenuStore.unCkeckAllPlts:
+        this.unCheckAll();
+        break;
+      case leftMenuStore.emitFilters:
+        this.emitFilters(action.payload);
+        break;
+      case leftMenuStore.setFilters:
+        this.setFilters(action.payload);
+        break;
+      case leftMenuStore.resetPath:
+        this.resetPath();
+        break;
+      case leftMenuStore.headerSelection:
+        this.setWsHeaderSelect(action.payload);
+        break;
+      case leftMenuStore.filterByProject:
+        this.filter(action.payload);
+        break;
+      case leftMenuStore.onSelectProjects:
+        this.setSelectedProjects(action.payload);
+        break;
+      case leftMenuStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
+      /*case leftMenuStore.toggleDeletedPlts:
+        this.toggleDeletePlts(action.payload);
+        break;*/
+      case leftMenuStore.onSelectSysTagCount:
+        this.selectSystemTag(action.payload);
+        break;
+      case leftMenuStore.onSetSelectedUserTags:
+        this.setUserTags(action.payload);
+        break;
+
+      //Tag Manager
+
+      case leftMenuStore.addNewTag:
+        this.addNewTag(action.payload)
+        break;
+      case leftMenuStore.toggleTag:
+        this.toggleTag(action.payload);
+        break;
+      case leftMenuStore.confirmSelection:
+        this.confirmSelection();
+        break;
+      case leftMenuStore.clearSelection:
+        this.clearSelection();
+        break;
+      case leftMenuStore.save:
+        this.save();
+        break;
+    }
+  }
+
+  updateTagsInput(key, value) {
+    this.tagsInput= {...this.tagsInput, [key]: value};
+  }
+
+  updateTableAndTagsInputs(key, value) {
+    this.updateTagsInput(key, value);
+    this.updateTable(key,value);
+  }
+
+  addNewTag(tag) {
+    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+  }
+
+  toggleTag({i, operation, source}) {
+    if(operation == this.tagsInput['operation']) {
+      if(!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+      }else {
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+      }
+    }else {
+      this.updateTagsInput('operation', operation);
+      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+    }
+
+    if(!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+  }
+
+  confirmSelection() {
+    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
+    if(this.tagsInput.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    }
+
+    if(this.tagsInput.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+    }
+
+    this.clearSelection();
+  }
+
+  checkTagType( tag ) {
+    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
+  }
+
+  updateTagsType(d) {
+    return _.map(d, tag => ({...tag, type: this.checkTagType(tag)}))
+  }
+
+  clearSelection() {
+    this.updateTagsInput('selectedTags', {});
+    this.updateTagsInput('operation', null);
+  }
+
+  save() {
+    this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
+      userId: 1,
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId),
+      selectedTags: this.tagsInput.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+    }));
+    this.tagsInput = {
+      ...this.tagsInput,
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
   }
 }

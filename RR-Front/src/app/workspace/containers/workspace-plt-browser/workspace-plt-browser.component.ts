@@ -1142,8 +1142,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     }
 
     if(this.tagsInput.operation == 'de-assign') {
-      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
-      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
     }
 
     this.clearSelection();
@@ -1163,13 +1163,17 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   save() {
+    console.log({
+      selectedTags: this.tagsInput.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, _.uniqBy([...this.tagsInput.assignedTags, ...this.tagsInput.toAssign], t => t.tagId || t.tagName), 'tagName')
+    })
     this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
       userId: 1,
       wsId: this.workspaceId,
       uwYear: this.uwy,
       plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId),
       selectedTags: this.tagsInput.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, _.uniqBy([...this.tagsInput.assignedTags, ...this.tagsInput.toAssign], t => t.tagId || t.tagName), 'tagName')
     }));
     this.tagsInput = {
       ...this.tagsInput,
