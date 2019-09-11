@@ -7,7 +7,7 @@ import {mergeMap} from 'rxjs/internal/operators/mergeMap';
 import {StateContext} from '@ngxs/store';
 import {WorkspaceModel} from '../model';
 import {forkJoin, of} from 'rxjs';
-import {switchMap} from 'rxjs/operators';
+import {catchError, switchMap} from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +20,10 @@ export class FileBasedService {
   loadFolderList(ctx: StateContext<WorkspaceModel>) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const data = {data: []};
     return this.fileBaseApi.searchFoldersList().pipe(
       mergeMap(
         (ds: any) => {
-          const data = {data: []};
           _.forEach(ds, item => data.data = [...data.data,
             {
               label: item, data: 'folder',
@@ -40,7 +40,18 @@ export class FileBasedService {
             )
           ));
         }
-      )
+      ),
+      catchError(err => {
+        return of(ctx.patchState(
+          produce(
+            ctx.getState(), draft => {
+              draft.content[wsIdentifier].fileBaseImport.folders = data;
+              draft.content[wsIdentifier].fileBaseImport.files = [];
+              draft.content[wsIdentifier].fileBaseImport.selectedFiles = [];
+            }
+          )
+        ));
+      })
     );
   }
 

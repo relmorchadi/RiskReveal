@@ -765,7 +765,7 @@ export class WorkspaceState {
 
   @Action(fromWS.AddToBasketAction)
   addToBasket(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.addToBasket(ctx);
+    return this.riskLinkFacade.addToBasket(ctx);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)

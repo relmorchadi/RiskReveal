@@ -5,11 +5,12 @@
   <ng-container *ngTemplateOutlet="title"></ng-container>
   <app-table [sortable]="true"
              [tableColumn]="cols"
-             [listOfData]="mockData"
+             [listOfData]="data"
              [virtualScroll]="false"
-             [totalRecords]="mockData.length">
+             (dbClickItem)="openFacItem($event)"
+             [totalRecords]="data.length">
   </app-table>
-  <div class="select-sections">
+<!--  <div class="select-sections">
     <nz-select class="country a-dropdown-label" style="width: 140px;" nzShowSearch nzAllowClear
                [(ngModel)]="activeCountry"
                (ngModelChange)="setFilter('country', $event)"
@@ -34,7 +35,7 @@
       [(ngModel)]="renewalPeriod">
       <nz-option nzLabel="Renewal Period" nzValue="1"></nz-option>
     </nz-select>
-  </div>
+  </div>-->
 </div>
 <ng-template #title>
   <div class="title-wrapper">

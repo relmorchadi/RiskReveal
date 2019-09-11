@@ -3,7 +3,7 @@
   flex: 1;
   height: max-content;
   display: flex;
-  min-height: 100vh;
+  min-height: 95vh;
   background-color: #F4F6FC;
 
   @media screen and (max-width: 1700px) {
@@ -44,7 +44,8 @@ COMPONENT STYLE
       }
 
       ul.ui-tree-container {
-        height: 270px;
+        height: 255px;
+        border-right: 1px solid rgba(0,0,0,0.15);
 
         li.ui-treenode {
           font-size: 11px;
@@ -460,7 +461,7 @@ TABLE STYLE
 
 .fixed-table-height {
   .empty-notif-wrapper {
-    height: 222px;
+    height: 127px;
   }
 }
 

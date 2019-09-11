@@ -11,6 +11,7 @@ import {RiskLinkState} from '../store/states';
 import {WorkspaceModel} from '../model';
 import produce from 'immer';
 import {normalizeFileReplacements} from "@angular-devkit/build-angular/src/utils";
+import * as fromPlt from "../store/actions/plt_main.actions";
 
 @Injectable({
   providedIn: 'root'
@@ -217,12 +218,16 @@ export class RiskLinkStateService {
       portfolios.forEach((dt: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[dt.dataSourceId]: {
-              ...dt, selected: true}
+          pt = {
+            [dt.dataSourceId]: {
+              ...dt, selected: true
+            }
           };
         } else {
-          pt = {[dt.dataSourceId]: {
-          ...dt, selected: false}
+          pt = {
+            [dt.dataSourceId]: {
+              ...dt, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -282,12 +287,16 @@ export class RiskLinkStateService {
       analysis.forEach((st: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[st.analysisId]: {
-              ...st, selected: true}
+          pt = {
+            [st.analysisId]: {
+              ...st, selected: true
+            }
           };
         } else {
-          pt = {[st.analysisId]: {
-              ...st, selected: false}
+          pt = {
+            [st.analysisId]: {
+              ...st, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -344,12 +353,16 @@ export class RiskLinkStateService {
       result.forEach((st: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[st.id]: {
-              ...st, selected: true}
+          pt = {
+            [st.id]: {
+              ...st, selected: true
+            }
           };
         } else {
-          pt = {[st.id]: {
-              ...st, selected: false}
+          pt = {
+            [st.id]: {
+              ...st, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -397,12 +410,16 @@ export class RiskLinkStateService {
       summaries.forEach((st: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[st.id]: {
-              ...st, selected: true}
+          pt = {
+            [st.id]: {
+              ...st, selected: true
+            }
           };
         } else {
-          pt = {[st.id]: {
-              ...st, selected: false}
+          pt = {
+            [st.id]: {
+              ...st, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -450,12 +467,16 @@ export class RiskLinkStateService {
       fpStandard.forEach((st: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[st.id]: {
-              ...st, selected: true}
+          pt = {
+            [st.id]: {
+              ...st, selected: true
+            }
           };
         } else {
-          pt = {[st.id]: {
-              ...st, selected: false}
+          pt = {
+            [st.id]: {
+              ...st, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -504,12 +525,16 @@ export class RiskLinkStateService {
       fpAnalysis.forEach((st: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[st.id]: {
-              ...st, selected: true}
+          pt = {
+            [st.id]: {
+              ...st, selected: true
+            }
           };
         } else {
-          pt = {[st.id]: {
-              ...st, selected: false}
+          pt = {
+            [st.id]: {
+              ...st, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -558,12 +583,16 @@ export class RiskLinkStateService {
       linkAnalysis.forEach((st: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[st.id]: {
-              ...st, selected: true}
+          pt = {
+            [st.id]: {
+              ...st, selected: true
+            }
           };
         } else {
-          pt = {[st.id]: {
-              ...st, selected: false}
+          pt = {
+            [st.id]: {
+              ...st, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -611,12 +640,16 @@ export class RiskLinkStateService {
       linkPortfolio.forEach((st: any, index) => {
         let pt;
         if (index <= to && index >= from) {
-          pt = {[st.id]: {
-              ...st, selected: true}
+          pt = {
+            [st.id]: {
+              ...st, selected: true
+            }
           };
         } else {
-          pt = {[st.id]: {
-              ...st, selected: false}
+          pt = {
+            [st.id]: {
+              ...st, selected: false
+            }
           };
         }
         newData = _.merge(newData, pt);
@@ -703,12 +736,41 @@ export class RiskLinkStateService {
         numberOfElement: results.numberOfElement + 1
       };
     });
-
-    ctx.patchState(
-      produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].riskLink.summaries = summary;
-        draft.content[wsIdentifier].riskLink.results = results;
-      })
+    return forkJoin(
+      dataAnalysis.map((item: any) => this.riskApi.searchDetailAnalysis(item.analysisId, item.analysisName))
+    ).pipe(
+      switchMap(out => {
+        out.forEach((dt: any) => {
+            results = {
+              ...results, data: {
+                ...results.data,
+                [dt.analysisId]: {
+                  ...results.data[dt.analysisId],
+                  ...dt,
+                }
+              },
+            };
+          }
+        );
+        return of(
+          ctx.patchState(
+            produce(ctx.getState(), draft => {
+              draft.content[wsIdentifier].riskLink.summaries = summary;
+              draft.content[wsIdentifier].riskLink.results = results;
+            })
+          )
+        );
+      }),
+      catchError( err => {
+          console.log(err);
+          return of(ctx.patchState(
+            produce(ctx.getState(), draft => {
+              draft.content[wsIdentifier].riskLink.summaries = summary;
+              draft.content[wsIdentifier].riskLink.results = results;
+            })
+          ));
+        }
+      )
     );
   }
 
@@ -1284,55 +1346,61 @@ export class RiskLinkStateService {
         })
       ).subscribe(data => {
         data.forEach(dt => {
-            count = count + 1;
-            if (dt !== null) {
-              dt[0].subscribe(
-                ks => {
-                  ks.content.forEach(ws => {
-                    const trim = ws.name.substr(0, ws.name.lastIndexOf('_'));
-                    if (trim === dt[1]) {
-                      if (ws.type !== dt.type) {
-                        if (ws.type === 'edm') {
-                          listSelected.edm = _.merge({}, listSelected.edm, {
-                            [ws.id]: {
-                              ...ws,
-                              scanned: true,
-                              selected: false
-                            }
-                          });
-                        } else {
-                          listSelected.rdm = _.merge({}, listSelected.rdm, {
-                            [ws.id]: {
-                              ...ws,
-                              scanned: true,
-                              selected: false
-                            }});
-                        }}}});
-                  if (count === data.length) {
-                    ctx.patchState(produce(ctx.getState(), draft => {
-                        draft.content[wsIdentifier].riskLink.listEdmRdm = {
-                          ...draft.content[wsIdentifier].riskLink.listEdmRdm,
-                          selectedListEDMAndRDM: {
-                            edm: listSelected.edm,
-                            rdm: listSelected.rdm
+          count = count + 1;
+          if (dt !== null) {
+            dt[0].subscribe(
+              ks => {
+                ks.content.forEach(ws => {
+                  const trim = ws.name.substr(0, ws.name.lastIndexOf('_'));
+                  if (trim === dt[1]) {
+                    if (ws.type !== dt.type) {
+                      if (ws.type === 'edm') {
+                        listSelected.edm = _.merge({}, listSelected.edm, {
+                          [ws.id]: {
+                            ...ws,
+                            scanned: true,
+                            selected: false
                           }
-                        };
-                        draft.content[wsIdentifier].riskLink.linking = {
-                          ...draft.content[wsIdentifier].riskLink.linking,
-                          edm: listSelected.edm,
-                          rdm: {data: listSelected.rdm, selected: null}
-                        };
-                        draft.content[wsIdentifier].riskLink.financialPerspective = {
-                          ...draft.content[wsIdentifier].riskLink.financialPerspective,
-                          rdm: {data: listSelected.rdm, selected: null},
-                        };
-                      }));
-                    ctx.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-                    ctx.dispatch(new fromWs.LoadPortfolioForLinkingAction(_.toArray(listSelected.edm)[0]));
-                    ctx.dispatch(new fromWs.LoadRiskLinkAnalysisDataAction(_.toArray(listSelected.rdm)));
-                    ctx.dispatch(new fromWs.LoadRiskLinkPortfolioDataAction(_.toArray(listSelected.edm)));
-                  }});
-            }});
+                        });
+                      } else {
+                        listSelected.rdm = _.merge({}, listSelected.rdm, {
+                          [ws.id]: {
+                            ...ws,
+                            scanned: true,
+                            selected: false
+                          }
+                        });
+                      }
+                    }
+                  }
+                });
+                if (count === data.length) {
+                  ctx.patchState(produce(ctx.getState(), draft => {
+                    draft.content[wsIdentifier].riskLink.listEdmRdm = {
+                      ...draft.content[wsIdentifier].riskLink.listEdmRdm,
+                      selectedListEDMAndRDM: {
+                        edm: listSelected.edm,
+                        rdm: listSelected.rdm
+                      }
+                    };
+                    draft.content[wsIdentifier].riskLink.linking = {
+                      ...draft.content[wsIdentifier].riskLink.linking,
+                      edm: listSelected.edm,
+                      rdm: {data: listSelected.rdm, selected: null}
+                    };
+                    draft.content[wsIdentifier].riskLink.financialPerspective = {
+                      ...draft.content[wsIdentifier].riskLink.financialPerspective,
+                      rdm: {data: listSelected.rdm, selected: null},
+                    };
+                  }));
+                  ctx.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+                  ctx.dispatch(new fromWs.LoadPortfolioForLinkingAction(_.toArray(listSelected.edm)[0]));
+                  ctx.dispatch(new fromWs.LoadRiskLinkAnalysisDataAction(_.toArray(listSelected.rdm)));
+                  ctx.dispatch(new fromWs.LoadRiskLinkPortfolioDataAction(_.toArray(listSelected.edm)));
+                }
+              });
+          }
+        });
       });
     } else {
       ctx.patchState(produce(ctx.getState(), draft => {

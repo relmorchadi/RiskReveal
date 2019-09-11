@@ -1,57 +1,74 @@
-:host{
+:host {
   position: relative;
   display: block;
-  height:100%;
+  height: 100%;
+
   ::ng-deep {
-    .ui-table .ui-sortable-column.ui-state-highlight{
+    .ui-table .ui-sortable-column.ui-state-highlight {
       background-color: #c8c8c8;
       color: #333333;
     }
-    .ui-table .ui-table-thead:nth-child(1) > tr > th{
-      color: rgba(0,0,0,0.6); font-size: 11px;
-      letter-spacing: 0.08px;    line-height: 14px
+
+    .ui-table .ui-table-thead:nth-child(1) > tr > th {
+      color: rgba(0, 0, 0, 0.6);
+      font-size: 11px;
+      letter-spacing: 0.08px;
+      line-height: 14px
     }
-    .ui-table-resizable>.ui-table-wrapper{
-      table thead:nth-child(1){
+
+    .ui-table-resizable > .ui-table-wrapper {
+      table thead:nth-child(1) {
         background: white;
         border-bottom: 2px solid #DDDDDD;
       }
     }
-    .ui-table .ui-table-thead > tr > th{
+
+    .ui-table .ui-table-thead > tr > th {
       border: 1px solid transparent;
       background-color: white;
     }
-    .ui-table .ui-sortable-column:not(.ui-state-highlight):hover{
+
+    .ui-table .ui-sortable-column:not(.ui-state-highlight):hover {
       background-color: transparent;
     }
-    .ui-table .ui-sortable-column.ui-state-highlight{
+
+    .ui-table .ui-sortable-column.ui-state-highlight {
       background-color: transparent;
     }
+
     .ui-table .ui-table-tbody > tr > td {
+      padding: 4px 7px !important;
+      font-size: 12px !important;
       background-color: inherit;
       border: none;
       border-bottom: 1px solid #DDDDDD;
       height: 24px;
       width: 56px;
-      color: rgba(0,0,0,0.87);
+      color: rgba(0, 0, 0, 0.87);
       font-family: Rubik;
-      font-size: 12px;
       letter-spacing: 0.08px;
       line-height: 24px;
+
+      div {
+        align-items: center;
+      }
     }
+
     .ui-table .ui-sortable-column.ui-state-highlight .ui-sortable-column-icon {
       color: #848484;
     }
+
     .ui-table-wrapper.ng-star-inserted > table > tbody {
       zoom: 0.8;
     }
-    .ui-table .ui-table-tbody > tr:nth-child(even){
+
+    .ui-table .ui-table-tbody > tr:nth-child(even) {
       background-color: white;
     }
   }
 }
 
-.uw-units  {
+.uw-units {
   ::ng-deep {
     .ant-select-selection__rendered::after {
       content: 'UW Units';
@@ -59,7 +76,8 @@
     }
   }
 }
-.renewal-periode  {
+
+.renewal-periode {
   ::ng-deep {
     .ant-select-selection__rendered::after {
       content: 'Renewal Periode';
@@ -77,30 +95,35 @@
 }
 
 
-.title-wrapper{
-  display:flex;
+.title-wrapper {
+  display: flex;
   justify-content: space-between;
   border-top: 4px solid #0700cf;
-  width:310px;
+  width: 310px;
   font-size: 20px;
   font-weight: bold;
-  padding:15px;
+  padding: 15px;
+
   .edit-dashboard-section {
-    width:100%;
-    input{
+    width: 100%;
+
+    input {
       width: 100%;
-      color: rgba(0,0,0,0.4);
+      color: rgba(0, 0, 0, 0.4);
       border: none;
-      &:focus{
-        outline:0;
-        border-bottom: 2px dotted rgba(0,0,0,0.25);
+
+      &:focus {
+        outline: 0;
+        border-bottom: 2px dotted rgba(0, 0, 0, 0.25);
       }
-      &:hover{
-        border-bottom: 2px dotted rgba(0,0,0,0.25);
+
+      &:hover {
+        border-bottom: 2px dotted rgba(0, 0, 0, 0.25);
       }
     }
   }
-  .title-wrapper-name{
+
+  .title-wrapper-name {
     flex: 1;
     cursor: pointer;
     user-select: none;
@@ -131,6 +154,7 @@
     * {
       text-align: center;
     }
+
     thead {
       th {
         color: rgba(0, 0, 0, 0.4) !important;
@@ -142,13 +166,15 @@
   }
 
   .select-sections {
-    display:flex;
-    padding:15px;
+    display: flex;
+    padding: 15px;
+
     ::ng-deep .ant-select-selection {
       background-color: transparent;
       border: none;
       border-bottom: 2px solid #0700CF;
     }
+
     ::ng-deep .ant-select-selection__rendered {
       color: #0700CF;
     }
@@ -156,23 +182,27 @@
 
 }
 
-app-table{
-  padding:0 15px;
+app-table {
+  padding: 0 15px;
   flex: 1;
   min-height: 10px;
   overflow: hidden;
   overflow-x: scroll;
-  ::ng-deep{
-    .ui-table.ui-widget.ui-table-responsive.ui-table-resizable.ui-table-resizable-fit{
-      height:100%;
+
+  ::ng-deep {
+    .ui-table.ui-widget.ui-table-responsive.ui-table-resizable.ui-table-resizable-fit {
+      height: 100%;
     }
-    .ui-table-scrollable-wrapper.ng-star-inserted{
-      height:100%;
+
+    .ui-table-scrollable-wrapper.ng-star-inserted {
+      height: 100%;
     }
-    .ui-table-scrollable-view{
-      height:100%;
+
+    .ui-table-scrollable-view {
+      height: 100%;
     }
-    .ui-table-scrollable-body{
+
+    .ui-table-scrollable-body {
       height: 100%;
       overflow: auto;
     }
