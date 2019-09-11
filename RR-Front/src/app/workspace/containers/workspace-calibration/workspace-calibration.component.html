@@ -7,6 +7,8 @@
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
         <div style="padding:unset;width: 193px;">
           <app-plt-left-menu
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
+            [tagsInput]="tagsInput"
           ></app-plt-left-menu>
         </div>
         <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
@@ -721,6 +723,65 @@
   </p-footer>
 </p-dialog>
 <p-dialog
+  [visible]="saveTemplate"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Save Template
+      </h4>
+      <i style="cursor: pointer" (click)="closeSaveTemplate()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Name: </label>
+      </div>
+      <div class="ui-g-9">
+        <input [(ngModel)]="templateName" class="a-textfield-mini" nz-input nz-tooltip
+               style="width: 300px; !important; margin-right: 5px;"/>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Description </label>
+      </div>
+      <div class="ui-g-9">
+        <textarea [(ngModel)]="templateDesc" nz-input rows="4" style="margin-left: 10px; width: 300px"></textarea>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Type: </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-radio-group [(ngModel)]="templateType" class="default-radio" style="margin-left: 25px;">
+          <label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>
+          <label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>
+        </nz-radio-group>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeSaveTemplate()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveCurrentTemplate()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<!--<p-dialog
   [visible]="loadTemplate"
   [closable]="false"
   styleClass="m-dialog-modal"
@@ -778,4 +839,4 @@
       </button>
     </div>
   </p-footer>
-</p-dialog>
+</p-dialog>-->
