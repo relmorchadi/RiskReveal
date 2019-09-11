@@ -75,6 +75,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   searchAddress: string;
   listOfPltsCache: any[];
   saveTemplate = false;
+  loadTemplate = false;
   templateName: string;
   templateType: string = 'Local';
   templateDesc: string;
