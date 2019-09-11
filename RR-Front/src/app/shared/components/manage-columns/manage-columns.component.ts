@@ -67,4 +67,17 @@ export class ManageColumnsComponent implements OnInit {
   onHide() {
     console.log(this.listOfAvailbleColumns, this.listOfUsedColumns, this.listOfAvailbleColumnsCache);
   }
+
+  dropAll(dir: string) {
+    if(dir == 'right') {
+      const t = this.listOfUsedColumns;
+      this.listOfUsedColumns= this.listOfAvailbleColumns;
+      this.listOfAvailbleColumns= t;
+    }
+    if(dir == 'left') {
+      const t = this.listOfAvailbleColumns;
+      this.listOfAvailbleColumns= this.listOfUsedColumns;
+      this.listOfUsedColumns= t;
+    }
+  }
 }

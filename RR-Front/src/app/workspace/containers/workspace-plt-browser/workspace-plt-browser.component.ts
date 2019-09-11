@@ -519,6 +519,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       pathTab: true,
       assignedTags: [],
       assignedTagsCache: [],
+      toAssign: [],
+      toRemove: [],
       usedInWs: [],
       allTags: [],
       suggested: [],
@@ -738,7 +740,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       selectedTags: this.tagsInput.assignedTags
     }));
 
-    this.updateTagsInput('assignedTagsCache', _.uniqBy(_.flatten(d), 'tagId'));
+    //this.updateTagsInput('assignedTagsCache', _.uniqBy(_.flatten(d), 'tagId'));
   }
 
   restore() {
@@ -1114,6 +1116,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
     this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
     this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
   }
 
   toggleTag({i, operation, source}) {
@@ -1134,10 +1137,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   confirmSelection() {
     const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
     if(this.tagsInput.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
       this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
     }
 
     if(this.tagsInput.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
       this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
     }
 
@@ -1163,7 +1168,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsId: this.workspaceId,
       uwYear: this.uwy,
       plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId),
-      selectedTags: this.tagsInput.assignedTags,
+      selectedTags: this.tagsInput.toAssign,
       unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
     }));
     this.tagsInput = {

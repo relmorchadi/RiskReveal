@@ -22,7 +22,9 @@ export class TagsApi {
   }
 
   public assignPltsToTag(params?): Observable<any> {
+    //console.log(params);
     return this.http.post(`${this.URL}/assign`, params)
+    //return of(null);
   }
 
 

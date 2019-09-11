@@ -17,6 +17,8 @@ export interface Input {
   pathTab: boolean;
   assignedTags: any[];
   assignedTagsCache: any[];
+  toAssign: any[];
+  toRemove: any[];
   usedInWs: any[];
   allTags: any[];
   suggested: any[];
