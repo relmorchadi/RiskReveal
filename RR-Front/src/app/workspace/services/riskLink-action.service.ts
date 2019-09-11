@@ -1533,11 +1533,11 @@ export class RiskLinkStateService {
                   financialValidator: {
                     rmsInstance: {
                       data: ['AZU-P-RL17-SQL14', 'AZU-U-RL17-SQL14', 'AZU-U2-RL181-SQL16'],
-                      selected: 'AZU-P-RL17-SQL14'
+                      selected: this._facTraitement(ctx) ? 'AZU-U-RL17-SQL14' : 'AZU-P-RL17-SQL14'
                     },
                     financialPerspectiveELT: {
                       data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
-                      selected: 'Net Loss Pre Cat (RL)'
+                      selected: this._facTraitement(ctx) ? 'Gross Loss (GR)' : 'Net Loss Pre Cat (RL)'
                     },
                     targetCurrency: {
                       data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
@@ -1578,4 +1578,12 @@ export class RiskLinkStateService {
       )
     );
   }
+
+  private _facTraitement(ctx): boolean {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    return state.content[wsIdentifier].workspaceType === 'fac';
+  }
 }
+
+

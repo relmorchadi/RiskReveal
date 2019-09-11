@@ -62,11 +62,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   occurrenceBasis;
 
-  tableLeftAnalysis: any;
-  tableAnalysisLinking: any;
-  tableLeftPortfolio: any;
-  tablePortfolioLinking: any;
-
   scrollableColsAnalysis: any;
   frozenColsAnalysis: any;
 
@@ -85,10 +80,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   selectedEDM = null;
   scrollableColslinking: any;
 
-  contextSelectedItem: any;
-
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
+  workspaceStatus: any;
 
   @Select(WorkspaceState.getListEdmRdm) listEdmRdm$;
   listEdmRdm: any;
@@ -102,6 +96,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   portfolios: any;
   allCheckedPortolfios: boolean;
   indeterminatePortfolio: boolean;
+
+  @Select(WorkspaceState.getCurrentTabStatus) currentTabStatus$;
 
   constructor(
     private _helper: HelperService,
@@ -138,6 +134,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.portfolios = _.merge({}, value);
         this.allCheckedPortolfios = this.portfolios.allChecked;
         this.indeterminatePortfolio = this.portfolios.indeterminate;
+        this.detectChanges();
+      }),
+      this.currentTabStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.workspaceStatus = value;
         this.detectChanges();
       }),
       this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
