@@ -1,7 +1,5 @@
 import {State} from '@ngxs/store';
 import {pltMainModel} from "../../model";
-import {PltApi} from '../../services/plt.api';
-import {PltStateService} from '../../services/plt-state.service';
 
 const initiaState: pltMainModel = {
   data: {},
@@ -13,7 +11,7 @@ const initiaState: pltMainModel = {
 })
 export class PltMainState {
 
-  constructor(private pltApi: PltApi, private pltFacade: PltStateService) {
+  constructor() {
   }
 
   /**

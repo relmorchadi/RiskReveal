@@ -7,47 +7,6 @@
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
         <div style="padding:unset;width: 193px;">
           <app-plt-left-menu
-            [inputs]="{
-            tagContextMenu: tagContextMenu,
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
-            addTagModalIndex: tagModalIndex,
-            fromPlts: fromPlts,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
-            userTags: userTags,
-            systemTags: systemTags,
-            selectedListOfPlts: selectedListOfPlts,
-            systemTagsCount: systemTagsCount,
-            _tagModalVisible: tagModalVisible,
-            _editingTag: editingTag,
-            _modalSelect: modalSelect,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:false
-          }"
-            (onAssignPltsToTag)="assignPltsToTag($event)"
-            (onCreateTag)="createTag($event)"
-            (onProjectFilter)="filter($event)"
-            (onEditTag)="editTag()"
-            (onResetPath)="resetPath()"
-            (onSelectProjects)="setSelectedProjects($event)"
-            (onSelectSysTagCount)="selectSystemTag($event)"
-            (onSetFilters)="setFilters($event)"
-            (onSetFromPlts)="setFromPlts($event)"
-            (onSetSelectedUserTags)="setUserTags($event)"
-            (onToggleDeletedPlts)="toggleDeletePlts($event)"
-            (setTagModalIndex)="setModalIndex($event)"
-            (setTagModalVisibility)="setTagModal($event)"
-            (onSetTagForMenu)="setTagForMenu($event)"
-            (onSetRenameTag)="setRenameTag($event)"
-            (emitFilters)="emitFilters($event)"
-            (unCkeckAllPlts)="unCheckAll()"
-            (onWsHeaderSelection)="setWsHeaderSelect($event)"
-            (onModalSelect)="setModalSelectedItems($event)"
           ></app-plt-left-menu>
         </div>
         <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"

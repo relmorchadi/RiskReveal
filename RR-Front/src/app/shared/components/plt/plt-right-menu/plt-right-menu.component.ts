@@ -1,6 +1,8 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Message} from '../../../message';
 import * as rightMenuStore from './store';
+import * as pltDetailsPopUpItemStore from '../plt-details-pop-up-item/store';
+import * as _ from 'lodash';
 
 @Component({
   selector: 'app-plt-right-menu',
@@ -10,6 +12,9 @@ import * as rightMenuStore from './store';
 export class PltRightMenuComponent implements OnInit {
 
   @Input('Inputs') inputs: rightMenuStore.Input;
+  pltDetailsItemsInput: pltDetailsPopUpItemStore.Input;
+
+  pltPopUpItemConfig: pltDetailsPopUpItemStore.Input[];
 
   _input(key): any {
     return this.inputs[key];
@@ -177,8 +182,24 @@ export class PltRightMenuComponent implements OnInit {
   CalibrationImpactCurrencySelected: any = 'EUR';
   epMetricsFinancialUnitSelected: any = 'Million';
   CalibrationImpactFinancialUnitSelected: any = 'Million';
+  fullViewActive: boolean;
+  currentFullView: any;
 
-  constructor() { }
+  constructor() {
+    this.pltPopUpItemConfig= [
+      {
+        title: "PLT THREAD",
+        cols: {
+          summary: [{header: "PLT ID", field: "pltId"},{header: "PLT Name", field: "pltName"},{header: "Peril", field: "peril"}],
+          sections: [{title: "PLT Detail" ,headers: [{header: "Region Peril Code", field: "regionPerilCode"}]}]
+        }
+      }
+    ];
+    this.fullViewActive= false;
+    this.currentFullView= {
+
+    };
+  }
 
   ngOnInit() {
   }
@@ -215,10 +236,35 @@ export class PltRightMenuComponent implements OnInit {
     })
   }
 
+  popupActionHandler(action: Message) {
+    switch (action.type) {
+
+      case pltDetailsPopUpItemStore.openSection:
+        this.openSection(action.payload);
+        break;
+
+      case pltDetailsPopUpItemStore.closeSection:
+        this.closeSection();
+        break;
+    }
+  }
+
+  openSection(title) {
+    this.fullViewActive= true;
+    console.log(_.find(this.pltPopUpItemConfig, ['title', title]));
+    this.currentFullView = _.find(this.pltPopUpItemConfig, ['title', title]).cols.sections;
+  }
+
+  closeSection() {
+    this.fullViewActive= false;
+    this.currentFullView= {};
+  }
+
   selectTab($event: void) {
     this.actionDispatcher.emit({
       type: rightMenuStore.setSelectedTabByIndex,
       payload: $event
     })
   }
+
 }
