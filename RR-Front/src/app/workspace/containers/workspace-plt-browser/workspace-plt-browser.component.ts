@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
@@ -6,7 +6,6 @@ import * as fromWorkspaceStore from '../../store';
 import {WorkspaceState} from '../../store';
 import {switchMap, tap} from 'rxjs/operators';
 import {ActivatedRoute, Router} from '@angular/router';
-import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
 import * as leftMenuStore from '../../../shared/components/plt/plt-left-menu/store';
@@ -29,193 +28,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   rightMenuInputs: rightMenuStore.Input;
   tableInputs: tableStore.Input;
-  tagsInput: any;
+  tagsInput: leftMenuStore.Input;
 
   private dropdown: NzDropdownContextComponent;
   searchAddress: string;
-  activeCheckboxSort: boolean;
   workspaceId: string;
   uwy: number;
-  projects: any[];
   params: any;
   lastSelectedId;
   managePopUp: boolean;
-  tagContextMenu = [
-    {
-      label: 'Delete Tag',
-      icon: 'pi pi-trash',
-      command: (event) => this.dispatch(new fromWorkspaceStore.deleteUserTag({
-        wsIdentifier: this.workspaceId + '-' + this.uwy,
-        userTagId: this.tagForMenu.tagId
-      }))
-    },
-    {
-      label: 'Edit Tag', icon: 'pi pi-pencil', command: (event) => {
-        this.editingTag = true;
-        this.fromPlts = false;
-        this.tagModalVisible = true;
-      }
-    }
-  ];
-  listOfUsedColumns: any[] = [
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      width: '60',
-      sorted: false,
-      filtred: false,
-      resizable: false,
-      icon: null,
-      type: 'checkbox',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: 'User Tags',
-      width: '60',
-      sorted: false,
-      filtred: false,
-      resizable: false,
-      icon: null,
-      type: 'tags',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'pltId',
-      header: 'PLT ID',
-      width: '80',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'id',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'pltName',
-      header: 'PLT Name',
-      width: '60',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'peril',
-      header: 'Peril',
-      width: '80',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      textAlign: 'center',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilCode',
-      header: 'Region Peril Code',
-      width: '130',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'regionPerilName',
-      header: 'Region Peril Name',
-      width: '160',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'grain',
-      header: 'Grain',
-      width: '90',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'vendorSystem',
-      header: 'Vendor System',
-      width: '90',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field', active: true
-    },
-    {
-      sortDir: 1,
-      fields: 'rap',
-      header: 'RAP',
-      width: '52',
-      sorted: true,
-      filtred: true,
-      resizable: true,
-      icon: null,
-      type: 'field',
-      active: true
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-note',
-      type: 'icon',
-      width: '50',
-      active: true,
-      tooltip: "Published for Pricing"
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-dollar-alt',
-      type: 'icon',
-      width: '50',
-      active: true,
-      tooltip: "Priced"
-    },
-    {
-      sortDir: 1,
-      fields: '',
-      header: '',
-      sorted: false,
-      filtred: false,
-      icon: 'icon-focus-add',
-      type: 'icon',
-      width: '50',
-      active: true,
-      tooltip: "Published for Accumulation"
-    },
-  ];
-  listOfAvailbleColumns: any[] = [];
   pltColumnsCache: any[] = [
     {
       sortDir: 1,
@@ -399,14 +220,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     },
   ];
   size = 'large';
-  systemTags: any;
-  systemTagsCount: any;
-  userTags: any;
-  userTagsCount: any;
   drawerIndex: any;
-  editingTag: boolean;
-  deletedPlts: any;
-  selectedUserTags: any;
   contextMenuItemsCache = [
     {
       label: 'View Detail', command: () => this.viewDetail()
@@ -428,7 +242,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   ];
 
   generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
-  listOfAvailbleColumnsCache: any[]= [];
 
   presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
@@ -446,22 +259,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.lastSelectedId = null;
     this.drawerIndex = 0;
     this.params = {};
-    this.activeCheckboxSort = false;
-    this.tagModalVisible = false;
-    this.tagModalIndex = 0;
-    this.systemTagsCount = {};
-    this.userTagsCount = {};
-    this.fromPlts = false;
-    this.editingTag = false;
-    this.selectedUserTags = {};
-    this.colorPickerIsVisible = false;
     this.addTagModalPlaceholder = 'Select a Tag';
-    this.wsHeaderSelected = true;
-    this.tagForMenu = {
-      tagId: null,
-      tagName: '',
-      tagColor: '#0700e4'
-    };
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
     this.generateColumns(this.getTableInputKey('showDeleted'));
     this.managePopUp = false;
@@ -706,63 +504,30 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       }
     };
     this.tagsInput= {
-      usedInWs: [
-        {
-          tagName: 'EU',
-          tagColor: this.presetColors[2],
-          count: 3
-        },
-        {
-          tagName: 'DE',
-          tagColor: this.presetColors[3],
-          count: 2,
-        }
-      ],
-      previouslyUsed: [
-        {
-          tagName: 'v7',
-          tagColor: this.presetColors[5],
-        },
-        {
-          tagName: 'v6',
-          tagColor: this.presetColors[6],
-        }
-      ],
-      allAssigned : [
-        {
-          tagName: 'pricingV1',
-          tagColor: this.presetColors[0],
-          count: 5
-        },
-        {
-          tagName: 'pricingV2',
-          tagColor: this.presetColors[1],
-          count: 5,
-        }
-      ],
-      subsetsAssigned: [
-        {
-          tagName: 'EU',
-          tagColor: this.presetColors[2],
-          count: 3
-        },
-        {
-          tagName: 'DE',
-          tagColor: this.presetColors[3],
-          count: 2,
-        }
-      ],
-      userFavorite: [
-        {
-          tagName: 'myTag1',
-          tagColor: this.presetColors[4],
-        },
-        {
-          tagName: 'myTag2',
-          tagColor: this.presetColors[4],
-        }
-      ]
-    }
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      projects: [],
+      showDeleted: this.tableInputs['showDeleted'],
+      filterData: this.tableInputs['filterData'],
+      filters: this.tableInputs['filters'],
+      deletedPltsLength: this.tableInputs['listOfDeletedPltsData'].length,
+      userTags: [],
+      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
+      systemTagsCount: {},
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      pathTab: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      toAssign: [],
+      toRemove: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
+
     this.setRightMenuSelectedTab('pltDetail');
   }
 
@@ -775,6 +540,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     return this.route$.params.pipe(tap(({wsId, year}) => {
       this.workspaceId = wsId;
       this.uwy = year;
+
+      this.updateTagsInput('wsId', this.workspaceId);
+      this.updateTagsInput('uwYear', this.uwy);
     }))
   }
 
@@ -806,6 +574,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     return this.select(WorkspaceState.getUserTagsPlt(this.workspaceId + '-' + this.uwy));
   }
 
+  getUserTagManager() {
+    return this.select(WorkspaceState.getUserTagManager(this.workspaceId + '-' + this.uwy))
+  }
+
   ngOnInit() {
     console.log('ngOnInit')
 
@@ -821,7 +593,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
-      this.systemTagsCount = this.systemTagService.countSystemTags(data);
+      this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
       this.updateTable('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.updateTable('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
       this.updateTable('selectedListOfPlts', _.filter(data, (v, k) => v.selected));
@@ -859,7 +631,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
-      this.projects = _.map(projects, p => ({...p, selected: false}));
+      this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
@@ -871,7 +643,14 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
-      this.userTags = userTags;
+      this.updateTagsInput('userTags', userTags);
+      this.detectChanges();
+    })
+
+    this.observeRouteParamsWithSelector(() => this.getUserTagManager()).subscribe( userTagManager => {
+      this.updateTagsInput('allTags', _.toArray(userTagManager.allTags));
+      this.updateTagsInput('suggested', _.toArray(userTagManager.suggested));
+      this.updateTagsInput('usedInWs', _.toArray(userTagManager.usedInWs));
       this.detectChanges();
     })
 
@@ -903,19 +682,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   selectedPlt: any;
-  tagModalIndex: any;
-  tagModalVisible: boolean;
-  modalSelect: any;
-  oldSelectedTags: any;
   tagForMenu: any;
-  fromPlts: any;
-  colorPickerIsVisible: any;
   addTagModalPlaceholder: any;
   showDeleted: boolean;
   selectedItemForMenu: string;
-  wsHeaderSelected: boolean;
   leftIsHidden: any;
-  filterInput: string = "";
 
   viewDetail() {
     this.openPltInDrawer(this.selectedPlt)
@@ -945,16 +716,31 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   manageTags() {
-    this.tagModalVisible = true;
-    this.tagForMenu = {
-      ...this.tagForMenu,
-      tagName: ''
+    this.tagsInput= {
+      ...this.tagsInput,
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      showDeleted: this.tableInputs['showDeleted'],
+      deletedPltsLength: this.tableInputs['listOfDeletedPltsData'].length,
+      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
+      _tagModalVisible: true,
+      pathTab:true,
     };
-    this.fromPlts = true;
-    this.editingTag = false;
+
     let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
-    this.modalSelect = _.intersectionBy(...d, 'tagId');
-    this.oldSelectedTags = _.uniqBy(_.flatten(d), 'tagId');
+
+    d= _.uniqBy(_.flatten(d), 'tagId');
+    this.updateTagsInput('assignedTags', this.updateTagsType(d));
+    this.updateTagsInput('assignedTagsCache', _.cloneDeep(d));
+
+    this.dispatch(new fromWorkspaceStore.GetTagsBySelection({
+      userId: 1,
+      uwYear: this.tagsInput.uwYear,
+      wsId: this.tagsInput.wsId,
+      selectedTags: this.tagsInput.assignedTags
+    }));
+
+    //this.updateTagsInput('assignedTagsCache', _.uniqBy(_.flatten(d), 'tagId'));
   }
 
   restore() {
@@ -985,13 +771,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   resetPath() {
-    this.updateTable('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
-    this.projects = _.map(this.projects, p => ({...p, selected: false}));
-    this.updateTable('showDeleted', false);
+    this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
+    this.updateTagsInput('projects', _.map(this.tagsInput.projects, p => ({...p, selected: false})));
+    this.updateTableAndTagsInputs('showDeleted', false);
   }
 
   setSelectedProjects($event) {
-    this.projects = $event;
+    this.updateTagsInput('projects', $event);
   }
 
   close(e: NzMenuItemDirective): void {
@@ -1011,24 +797,18 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.toggleSelectPlts($event);
   }
 
-  editTag() {
-    this.dispatch(new fromWorkspaceStore.editTag({
-      tag: this.tagForMenu,
-      workspaceId: this.workspaceId,
-      uwy: this.uwy
-    }))
-  }
-
 
   selectSystemTag({section, tag}) {
-    _.forEach(this.systemTagsCount, (s, sKey) => {
+    let newSysTagsCount= {};
+    _.forEach(this.tagsInput.systemTagsCount, (s, sKey) => {
       _.forEach(s, (t, tKey) => {
         if (tag == tKey && section == sKey) {
-          this.systemTagsCount[sKey][tKey] = {...t, selected: !t.selected}
+          newSysTagsCount[sKey][tKey] = {...t, selected: !t.selected}
         }
       })
-    })
+    });
 
+    this.updateTagsInput('systemTagsCount', newSysTagsCount);
   }
 
   emitFilters(filters: any) {
@@ -1038,16 +818,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     }))
   }
 
-  setFromPlts($event) {
-    this.fromPlts = $event;
-  }
-
   setUserTags($event) {
-    this.userTags = $event;
-  }
-
-  setModalIndex($event) {
-    this.tagModalIndex = $event;
+    this.updateTagsInput('userTags', $event);
   }
 
   assignPltsToTag($event: any) {
@@ -1058,22 +830,14 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       ...$event,
       selectedTags: _.map(selectedTags, (el: any) => el.tagId),
-      unselectedTags: _.map(_.differenceBy(this.oldSelectedTags, selectedTags, 'tagId'), (e: any) => e.tagId),
+      unselectedTags: _.map(_.differenceBy(this.tagsInput.assignedTagsCache, selectedTags, 'tagId'), (e: any) => e.tagId),
       type: 'assignOrRemove'
     }))
 
   }
 
   setTagModal($event: any) {
-    this.tagModalVisible = $event;
-  }
-
-  setTagForMenu($event: any) {
-    this.tagForMenu = $event;
-  }
-
-  setRenameTag($event: any) {
-    this.editingTag = $event;
+    this.updateTagsInput('_tagModalVisible', $event);
   }
 
   toggleDeletePlts($event) {
@@ -1104,11 +868,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   setWsHeaderSelect($event: any) {
-    this.wsHeaderSelected = $event;
-  }
-
-  setModalSelectedItems($event: any) {
-    this.modalSelect = $event;
+    this.updateTagsInput('wsHeaderSelected', $event);
   }
 
   resetSort() {
@@ -1116,17 +876,16 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   resetFilters() {
-    this.updateTable('filterData', {});
+    this.updateTableAndTagsInputs('filterData', {});
     this.emitFilters({
       userTag: [],
       systemTag: []
     })
-    this.userTags = _.map(this.userTags, t => ({...t, selected: false}))
-    this.updateTable("filters", {
+    this.updateTagsInput('userTags', _.map(this.tagsInput.userTags, t => ({...t, selected: false})));
+    this.updateTableAndTagsInputs("filters", {
       userTag: [],
       systemTag: {}
     })
-    this.filterInput = "";
   }
 
   createTag($event: any) {
@@ -1135,51 +894,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       type: 'createTag'
     }))
-  }
-
-  toggleColumnsManager() {
-    this.managePopUp= !this.managePopUp;
-    this.listOfAvailbleColumnsCache= [...this.listOfAvailbleColumns];
-    if (this.managePopUp) this.listOfUsedColumns = [...this.getTableInputKey('pltColumns')];
-  }
-
-  saveColumns() {
-    this.toggleColumnsManager();
-    this.updateTable('pltColumns', [...this.listOfUsedColumns])
-  }
-
-  drop(event: CdkDragDrop<any>) {
-    console.log(event);
-    const {
-      previousContainer,
-      container
-    } = event;
-
-    if (previousContainer === container) {
-      if(container.id == "usedListOfColumns") {
-        moveItemInArray(
-          this.listOfUsedColumns,
-          event.previousIndex + 1,
-          event.currentIndex + 1
-        );
-        console.log(container.id, this.listOfUsedColumns);
-      }
-    } else {
-      transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
-        event.previousContainer.id == "usedListOfColumns" ? event.previousIndex + 1 : event.previousIndex,
-        event.container.id == "availableListOfColumns" ? event.currentIndex : event.currentIndex + 1
-      );
-    }
-  }
-
-  toggleCol(i: number) {
-    this.listOfAvailbleColumns= _.merge(
-      [],
-      this.listOfAvailbleColumns,
-      { [i]: {...this.listOfAvailbleColumns[i], active: !this.listOfAvailbleColumns[i].active} }
-      )
   }
 
   rightMenuActionDispatcher(action: Message) {
@@ -1206,7 +920,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
 
-
   ngOnDestroy(): void {
     this.destroy();
   }
@@ -1214,10 +927,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   tableActionDispatcher(action: Message) {
     switch (action.type) {
       case tableStore.filterData:
-        this.updateTable('filterData', action.payload);
+        this.updateTableAndTagsInputs('filterData', action.payload);
         break;
       case tableStore.setFilters:
-        this.updateTable('filters', action.payload);
+        this.updateTableAndTagsInputs('filters', action.payload);
         break;
       case tableStore.sortChange:
         this.updateTable('sortData', action.payload);
@@ -1288,25 +1001,15 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   filter(filterData) {
-    this.updateTable('filterData', filterData);
+    this.updateTableAndTagsInputs('filterData', filterData);
   }
 
   setFilters(filters) {
-    this.updateTable('filters', filters);
+    this.updateTableAndTagsInputs('filters', filters);
   }
 
   protected detectChanges() {
     super.detectChanges();
-  }
-
-  dropAll(direction: string) {
-    if(direction == 'right') {
-      this.listOfAvailbleColumns= [];
-      this.listOfUsedColumns= [...this.pltColumnsCache];
-    } else {
-      this.listOfAvailbleColumns= [...this.pltColumnsCache];
-      this.listOfUsedColumns= [];
-    }
   }
 
   cloneFrom() {
@@ -1328,16 +1031,158 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.excel.exportAsExcelFile(this.tableInputs.listOfPltsData.map(e => _.omit(e, ['userTags','selected', 'visible', 'tagFilterActive', 'opened', 'deleted'])), 'sample')
   }
 
+  toggleColumnsManager() {
+    this.managePopUp= !this.managePopUp;
+  }
+
   resetColumns() {
     this.managePopUp= false;
-    this.listOfUsedColumns= [...this.getTableInputKey('pltColumns')];
-    this.listOfAvailbleColumns= [...this.listOfAvailbleColumnsCache];
+  }
+
+  saveColumns(listOfUsedColumns) {
+    this.toggleColumnsManager();
+    this.updateTable('pltColumns', [...listOfUsedColumns]);
   }
 
   leftMenuActionDispatcher(action: Message) {
+    console.log(action);
+
     switch (action.type) {
+
+      case leftMenuStore.unCkeckAllPlts:
+        this.unCheckAll();
+        break;
+      case leftMenuStore.emitFilters:
+        this.emitFilters(action.payload);
+        break;
+      case leftMenuStore.setFilters:
+        this.setFilters(action.payload);
+        break;
+      case leftMenuStore.resetPath:
+        this.resetPath();
+        break;
+      case leftMenuStore.headerSelection:
+        this.setWsHeaderSelect(action.payload);
+        break;
+      case leftMenuStore.filterByProject:
+        this.filter(action.payload);
+        break;
+      case leftMenuStore.onSelectProjects:
+        this.setSelectedProjects(action.payload);
+        break;
+      case leftMenuStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
+      case leftMenuStore.toggleDeletedPlts:
+        this.toggleDeletePlts(action.payload);
+        break;
+      case leftMenuStore.onSelectSysTagCount:
+        this.selectSystemTag(action.payload);
+        break;
+      case leftMenuStore.onSetSelectedUserTags:
+        this.setUserTags(action.payload);
+        break;
+
+        //Tag Manager
+
       case leftMenuStore.addNewTag:
-        this.dispatch(new fromWorkspaceStore.AddNewTag(action.payload))
+        this.addNewTag(action.payload)
+        break;
+      case leftMenuStore.toggleTag:
+        this.toggleTag(action.payload);
+        break;
+      case leftMenuStore.confirmSelection:
+        this.confirmSelection();
+        break;
+      case leftMenuStore.clearSelection:
+        this.clearSelection();
+        break;
+      case leftMenuStore.save:
+        this.save();
+        break;
     }
   }
+
+  updateTagsInput(key, value) {
+    this.tagsInput= {...this.tagsInput, [key]: value};
+  }
+
+  updateTableAndTagsInputs(key, value) {
+    this.updateTagsInput(key, value);
+    this.updateTable(key,value);
+  }
+
+  addNewTag(tag) {
+    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+  }
+
+  toggleTag({i, operation, source}) {
+    if(operation == this.tagsInput['operation']) {
+      if(!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+      }else {
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+      }
+    }else {
+      this.updateTagsInput('operation', operation);
+      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+    }
+
+    if(!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+  }
+
+  confirmSelection() {
+    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
+    if(this.tagsInput.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    }
+
+    if(this.tagsInput.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+    }
+
+    this.clearSelection();
+  }
+
+  checkTagType( tag ) {
+    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
+  }
+
+  updateTagsType(d) {
+    return _.map(d, tag => ({...tag, type: this.checkTagType(tag)}))
+  }
+
+  clearSelection() {
+    this.updateTagsInput('selectedTags', {});
+    this.updateTagsInput('operation', null);
+  }
+
+  save() {
+    this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
+      userId: 1,
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId),
+      selectedTags: this.tagsInput.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+    }));
+    this.tagsInput = {
+      ...this.tagsInput,
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
+  }
 }
+

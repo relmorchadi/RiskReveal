@@ -8,6 +8,8 @@ import {NodeCreationPopupComponent} from "./inuring/node-creation-popup/node-cre
 import {InuringGraphComponent} from "./inuring/inuring-graph/inuring-graph.component";
 import {SimpleNodeComponent} from "./inuring/simple-node/simple-node.component";
 import {INURING_NODES} from "./inuring/nodes";
+import {AttachPltPopUpComponent} from "./scopeCompleteness/attachPlt-pop-up/attach-plt-pop-up/attach-plt-pop-up.component";
+
 
 
 export const COMPONENTS = [
@@ -20,7 +22,8 @@ export const COMPONENTS = [
   NodeCreationPopupComponent,
   InuringGraphComponent,
   SimpleNodeComponent,
-  ...INURING_NODES
+  ...INURING_NODES,
+  AttachPltPopUpComponent
 ];
 
 export * from './workspace-router/workspace-router.component';

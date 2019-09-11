@@ -63,6 +63,11 @@ export class WorkspaceService {
             },
             openedPlt: {},
             userTags: {},
+            userTagManager: {
+              usedInWs: {},
+              suggested: {},
+              allTags: {}
+            },
             cloneConfig: {},
             loading: false
           },

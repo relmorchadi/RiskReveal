@@ -50,14 +50,14 @@ import {INURING_NODES} from "./components/inuring/nodes";
     NgMasonryGridModule,
     DndModule.forRoot(),
     DragDropModule,
-    DragDropModuleAngular,
     NgxDndNodule,
     RadioButtonModule,
     RouterModule.forChild(workspaceRoutes),
     ToastModule,
     ScrollingModule,
     DropdownModule,
-    jsPlumbToolkitModule, jsPlumbToolkitDragDropModule
+    jsPlumbToolkitModule,
+    jsPlumbToolkitDragDropModule
   ],
   exports: [
     RouterModule

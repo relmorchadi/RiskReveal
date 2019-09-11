@@ -1,10 +1,7 @@
 package com.scor.rr.rest;
 
 import com.scor.rr.domain.UserTag;
-import com.scor.rr.domain.dto.AssignPltsRequest;
-import com.scor.rr.domain.dto.AssignUpdatePltsRequest;
-import com.scor.rr.domain.dto.PltFilter;
-import com.scor.rr.domain.dto.PltTagResponse;
+import com.scor.rr.domain.dto.*;
 import com.scor.rr.service.PltBrowserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,15 +17,17 @@ public class PltBrowserResource {
     @Autowired
     PltBrowserService pltBrowserService;
 
-
     @GetMapping
     public PltTagResponse searchPltTable(PltFilter filter) {
         return pltBrowserService.searchPltTable(filter);
     }
 
+    @GetMapping("tag")
+
     @PostMapping("create-user-tag")
-    public UserTag createUserTag(@RequestBody AssignPltsRequest assignPltsRequest) {
-        return pltBrowserService.assignUserTag(assignPltsRequest);
+    public UserTag createUserTag(@RequestBody UserTagRequest userTagRequest) {
+        /*return pltBrowserService.assignUserTag(assignPltsRequest);*/
+        return pltBrowserService.createUserTag(userTagRequest);
     }
 
     @PostMapping("assign-user-tag")

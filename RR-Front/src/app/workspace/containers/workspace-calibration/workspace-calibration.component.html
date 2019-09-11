@@ -7,47 +7,6 @@
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
         <div style="padding:unset;width: 193px;">
           <app-plt-left-menu
-            [inputs]="{
-            tagContextMenu: tagContextMenu,
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
-            addTagModalIndex: tagModalIndex,
-            fromPlts: fromPlts,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
-            userTags: userTags,
-            systemTags: systemTags,
-            selectedListOfPlts: selectedListOfPlts,
-            systemTagsCount: systemTagsCount,
-            _tagModalVisible: tagModalVisible,
-            _editingTag: editingTag,
-            _modalSelect: modalSelect,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:false
-          }"
-            (onAssignPltsToTag)="assignPltsToTag($event)"
-            (onCreateTag)="createTag($event)"
-            (onProjectFilter)="filter($event)"
-            (onEditTag)="editTag()"
-            (onResetPath)="resetPath()"
-            (onSelectProjects)="setSelectedProjects($event)"
-            (onSelectSysTagCount)="selectSystemTag($event)"
-            (onSetFilters)="setFilters($event)"
-            (onSetFromPlts)="setFromPlts($event)"
-            (onSetSelectedUserTags)="setUserTags($event)"
-            (onToggleDeletedPlts)="toggleDeletePlts($event)"
-            (setTagModalIndex)="setModalIndex($event)"
-            (setTagModalVisibility)="setTagModal($event)"
-            (onSetTagForMenu)="setTagForMenu($event)"
-            (onSetRenameTag)="setRenameTag($event)"
-            (emitFilters)="emitFilters($event)"
-            (unCkeckAllPlts)="unCheckAll()"
-            (onWsHeaderSelection)="setWsHeaderSelect($event)"
-            (onModalSelect)="setModalSelectedItems($event)"
           ></app-plt-left-menu>
         </div>
         <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
@@ -199,7 +158,7 @@
                            [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
                            [sortableIndex]="adjIndex"
                            class="adjustDiv"
-                           dnd-sortable style="margin: 8px!important;">
+                           dnd-sortable style="margin: 2px 8px 8px 8px !important;">
                             <span
                               style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
                         <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
@@ -238,13 +197,23 @@
                 </div>
 
               </div>
-              <div class="pull-right radio-container">
-                <div class="Deltas" style="position: unset;">
-                  <div>
-                    <div class="button-toggle" style="width: 212px; float: left;">
-                      Impact on EP Metrics &nbsp;
-                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
-                                 class="switch-input"></nz-switch>
+              <div class="radio-container">
+                <div class="Deltas" style="display: grid">
+                  <div style="    margin-left: 25px;">
+                    <div class="button-toggle" style="width: 420px; float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impacts" name="tableType"
+                                     value="Impacts"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
                     </div>
                     <i (click)="manageAdjColumn = true" class="icon-settings_24px"
                        nz-tooltip="Manage  adjustment columns"
@@ -321,20 +290,103 @@
                   </nz-dropdown>
                 </div>
               </div>
-              <div class="pull-right radio-container" style="width: 100% !important;">
-                <div class="Deltas" style="position: unset; justify-content: space-between">
-                  <nz-radio-group [(ngModel)]="EPMDisplay" class="default-radio" style="margin-left: 25px;">
-                    <label nz-radio nzValue="percentage" style="color:  #0700e4">Delta by % Basis</label>
-                    <label nz-radio nzValue="amount" style="color:  #0700e4">Delta by amount</label>
-                  </nz-radio-group>
-                  <div>
-                    <div class="button-toggle" style="width: 212px; float: left;">
-                      Impact on EP Metrics &nbsp;
-                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
+              <div class="radio-container" style="width: 100% !important;">
+                <div class="Deltas" style="display: grid;">
+                  <div style="margin-left: 25px;">
+                    <div class="button-toggle" style="width: 420px; float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impacts" name="tableType"
+                                     value="Impacts"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
+                    </div>
+                    <div class="button-toggle" style="width: 115px; float: left;">
+                      Deltas &nbsp;
+                      <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
                                  class="switch-input"></nz-switch>
                     </div>
                     <i (click)="manageReturnPeriods = true" class="icon-settings_24px"
                        nz-tooltip="Manage return periods"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!extended && tableType=='Impacts'" [ngStyle]="{'margin-left': headerWidth}"
+                 class="table-header2"
+                 style="background-color: #fff">
+              <div class="title-as-tab" style="height: 42px; width: 100% !important; justify-content: space-between">
+                  <span class="title">
+                    Impacts Analysis
+                  </span>
+                <div class="impact-container">
+                  <div class="impacts-points">
+                  <span>
+                    Exhaustion Point(pE): 999,999,999,999
+                  </span>
+                    <span>
+                    User Specified Point(pE): 999,999,999,999
+                  </span>
+                    <span>
+                    Activation Point(pE): 999,999,999,999
+                  </span>
+                  </div>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Change Display</span>
+                          <span class="dropdown-item-selected-calibration">
+                        {{selectedEPM}}
+                      </span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li (click)="changeEPM(epm)" *ngFor="let epm of EPMS" nz-menu-item>{{epm}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+
+              </div>
+              <div class="radio-container" style="width: 100% !important;">
+                <div class="Deltas" style="display: grid">
+                  <div style="margin-left: 25px">
+                    <div class="button-toggle" style="width: 420px; float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impacts" name="tableType"
+                                     value="Impacts"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
+                    </div>
+                    <div class="button-toggle" style="width: 115px; float: left;">
+                      Deltas &nbsp;
+                      <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
+                                 class="switch-input"></nz-switch>
+                    </div>
+                    <i (click)="manageAdjColumn = true" class="icon-settings_24px"
+                       nz-tooltip="Manage  adjustment columns"
                        style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
                   </div>
 
