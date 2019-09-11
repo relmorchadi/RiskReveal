@@ -18,7 +18,7 @@ public enum ExceptionCodename {
     PLT_TYPE_NOT_CORRECT("PLT Type Not correct"),
 
     /*
-        This section is deligated to PLT File Exceptions
+        This section is delegated to PLT File Exceptions
      */
     EVENT_DATE_FORMAT_WRONG("Event Date format wrong"),
     NUMBER_FORMAT_WRONG("Number Format wrong"),
@@ -27,6 +27,16 @@ public enum ExceptionCodename {
     PLT_FILE_EXT_NOT_SUPPORTED("PLT file extension not supported"),
     PLT_FILE_NOT_FOUND("PLT file not found"),
     PLT_FILE_WRITE_ERROR("Error while writing to file"),
+
+
+    /*
+        This section is delegated to Inuring Exceptions
+     */
+    INURING_PACKAGE_NOT_FOUND("Inuring Package not found"),
+    INURING_INPUT_NODE_NOT_FOUND("Inuring Input Node not found"),
+    INURING_CONTRACT_NODE_NOT_FOUND("Inuring Contract Node not found"),
+    INURING_FINAL_NODE_NOT_FOUND("Inuring Final Node not found"),
+    INURING_EDGE_NOT_FOUND("Inuring Edge not found"),
 
     ;
     private final String exception;
