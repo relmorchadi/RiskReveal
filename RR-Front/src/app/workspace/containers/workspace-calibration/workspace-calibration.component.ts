@@ -75,6 +75,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   searchAddress: string;
   listOfPltsCache: any[];
   saveTemplate = false;
+  loadTemplate = false;
   templateName: string;
   templateType: string = 'Local';
   templateDesc: string;
@@ -582,7 +583,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.genericWidth = ['1019px', '33px', '157px'];
     } else {
       this.headerWidth = '403px';
-      this.tableType == 'adjustments' || 'Impacts' ? this.frozenWidth = '463' : this.frozenWidth = '403';
+      this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '463' : this.frozenWidth = '403';
       this.genericWidth = ['409px', '33px', '157px '];
     }
     this.adjustExention();
@@ -975,7 +976,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     // this.tableType = $event ? 'EP Metrics' : 'adjustments';
     this.initDataColumns();
     this.headerWidth = '403px';
-    this.tableType == 'adjustments' || 'Impacts' ? this.frozenWidth = '463' : this.frozenWidth = '403';
+    this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '463' : this.frozenWidth = '403';
   }
 
   changeEPM(epm) {

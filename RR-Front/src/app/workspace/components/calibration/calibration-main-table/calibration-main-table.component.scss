@@ -1084,8 +1084,8 @@
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          display: table-cell;
-          vertical-align: middle;
+          display: flex;
+          align-items: center;
         }
 
         .td-wrapper-tags {
