@@ -19,8 +19,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnit;
 import org.mockito.junit.MockitoRule;
+import org.mockito.stubbing.Answer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -36,7 +38,7 @@ import java.util.stream.Collectors;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Created by u004602 on 10/09/2019.
@@ -127,6 +129,18 @@ public class InuringInputNodeTests {
             int id = plt.getArgument(0);
             return id == PLT_ID_NOT_FOUND ? null : new ScorPltHeaderEntity();
         });
+
+        doAnswer(node -> {
+            int id = node.getArgument(0);
+            inuringInputNodes.remove(id);
+            return null;
+        }).when(inuringInputNodeRepository).deleteByInuringInputNodeId(anyInt());
+
+        doAnswer(node -> {
+            int id = node.getArgument(0);
+            inuringInputAttachedPLTS.removeIf(i -> i.getInuringInputNodeId() == id);
+            return null;
+        }).when(inuringInputAttachedPLTRepository).deleteByInuringInputNodeId(anyInt());
 
     }
 
@@ -239,7 +253,31 @@ public class InuringInputNodeTests {
 
     @Test
     public void testDeleteAnInputNode() {
-        fail();
+        try {
+            InuringInputNodeCreationRequest request1 = new InuringInputNodeCreationRequest(
+                    INURING_PACKAGE_HAS_PLT_ID,
+                    "Input Node 1",
+                    Arrays.asList(PLT_ID_1, PLT_ID_2));
+            inuringInputNodeService.createInuringInputNode(request1);
+
+            InuringInputNodeCreationRequest request2 = new InuringInputNodeCreationRequest(
+                    INURING_PACKAGE_HAS_PLT_ID,
+                    "Input Node 2",
+                    Arrays.asList(PLT_ID_1, PLT_ID_2));
+            inuringInputNodeService.createInuringInputNode(request2);
+
+            assertEquals(2, inuringInputNodeService.findInputNodesByInuringPackageId(INURING_PACKAGE_HAS_PLT_ID).size());
+
+            inuringInputNodeService.deleteInuringInputNode(1);
+
+            assertNull(inuringInputNodeService.findByInuringInputNodeId(1));
+            assertEquals(0, inuringInputNodeService.findAttachedPLTByInuringInputNodeId(1).size());
+
+            assertNotNull(inuringInputNodeService.findByInuringInputNodeId(2));
+            assertEquals(2, inuringInputNodeService.findAttachedPLTByInuringInputNodeId(2).size());
+        } catch (RRException ex) {
+            fail();
+        }
     }
 
 }
