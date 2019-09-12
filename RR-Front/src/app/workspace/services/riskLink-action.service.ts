@@ -736,7 +736,14 @@ export class RiskLinkStateService {
         numberOfElement: results.numberOfElement + 1
       };
     });
-    return forkJoin(
+
+    ctx.patchState(
+      produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].riskLink.summaries = summary;
+        draft.content[wsIdentifier].riskLink.results = results;
+      })
+    );
+/*    return forkJoin(
       dataAnalysis.map((item: any) => this.riskApi.searchDetailAnalysis(item.analysisId, item.analysisName))
     ).pipe(
       switchMap(out => {
@@ -771,7 +778,7 @@ export class RiskLinkStateService {
           ));
         }
       )
-    );
+    );*/
   }
 
   applyFinancialPerspective(ctx: StateContext<WorkspaceModel>, payload) {
@@ -1379,9 +1386,12 @@ export class RiskLinkStateService {
                     draft.content[wsIdentifier].riskLink.listEdmRdm = {
                       ...draft.content[wsIdentifier].riskLink.listEdmRdm,
                       selectedListEDMAndRDM: {
-                        edm: listSelected.edm,
-                        rdm: listSelected.rdm
-                      }
+                        edm: _.merge({},
+                          draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm , listSelected.edm),
+                        rdm: _.merge({},
+                          draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm , listSelected.rdm)
+                      },
+                      data: this._update(draft.content[wsIdentifier].riskLink.listEdmRdm.data, listSelected)
                     };
                     draft.content[wsIdentifier].riskLink.linking = {
                       ...draft.content[wsIdentifier].riskLink.linking,
@@ -1393,10 +1403,14 @@ export class RiskLinkStateService {
                       rdm: {data: listSelected.rdm, selected: null},
                     };
                   }));
+                  const mergedEDM = _.merge({},
+                    state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm , listSelected.edm);
+                  const mergedRDM = _.merge({},
+                    state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm , listSelected.rdm);
                   ctx.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
-                  ctx.dispatch(new fromWs.LoadPortfolioForLinkingAction(_.toArray(listSelected.edm)[0]));
-                  ctx.dispatch(new fromWs.LoadRiskLinkAnalysisDataAction(_.toArray(listSelected.rdm)));
-                  ctx.dispatch(new fromWs.LoadRiskLinkPortfolioDataAction(_.toArray(listSelected.edm)));
+                  ctx.dispatch(new fromWs.LoadPortfolioForLinkingAction(_.toArray(mergedEDM)[0]));
+                  ctx.dispatch(new fromWs.LoadRiskLinkAnalysisDataAction(_.toArray(mergedRDM)));
+                  ctx.dispatch(new fromWs.LoadRiskLinkPortfolioDataAction(_.toArray(mergedEDM)));
                 }
               });
           }
@@ -1515,6 +1529,7 @@ export class RiskLinkStateService {
                           }
                         }
                       ))),
+                    selectedListEDMAndRDM: {edm: null, rdm: null},
                     searchValue: '',
                     totalNumberElement: ds.totalElements,
                     numberOfElement: ds.size
@@ -1583,6 +1598,22 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     return state.content[wsIdentifier].workspaceType === 'fac';
+  }
+
+  private _update(source, list) {
+    const mergedList = [..._.toArray(list.edm), ..._.toArray(list.rdm)].map(item => item.id);
+    const newdata = _.toArray(source).map(item => {
+      const exist = _.includes(mergedList , item.id);
+      if (exist) {
+        return {...item, selected: true};
+      } else {
+        return {...item, selected: false};
+      }
+    });
+    return Object.assign({}, ...newdata.map(item => ({
+        [item.id]: {...item}
+      }
+    )));
   }
 }
 
