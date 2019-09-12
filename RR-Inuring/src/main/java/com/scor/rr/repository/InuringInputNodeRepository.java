@@ -13,4 +13,5 @@ import java.util.List;
 public interface InuringInputNodeRepository extends JpaRepository<InuringInputNode, Integer> {
     InuringInputNode findByInuringInputNodeId(int inuringInputNodeId);
     List<InuringInputNode> findByInuringPackageId(int inuringPackageId);
+    void deleteByInuringInputNodeId(int inuringInputNodeId);
 }

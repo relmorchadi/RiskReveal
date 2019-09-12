@@ -16,6 +16,11 @@ public class InuringInputAttachedPLT {
     private int inuringInputNodeId;
     private int pltHeaderId;
 
+    public InuringInputAttachedPLT(int inuringInputNodeId, int pltHeaderId) {
+        this.inuringInputNodeId = inuringInputNodeId;
+        this.pltHeaderId = pltHeaderId;
+    }
+
     @Id
     @Column(name = "InuringInputAttachedPLTId", nullable = false)
     public int getInuringInputAttachedPLTId() {

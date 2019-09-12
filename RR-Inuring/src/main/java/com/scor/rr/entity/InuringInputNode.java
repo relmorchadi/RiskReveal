@@ -1,9 +1,12 @@
 package com.scor.rr.entity;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Objects;
 
 /**
  * Created by u004602 on 10/09/2019.
@@ -17,6 +20,16 @@ public class InuringInputNode {
     private int inuringPackageId;
     private NodeStatus inputNodeStatus;
     private String inputNodeName;
+
+    public InuringInputNode(int inuringPackageId) {
+        this(inuringPackageId, "Input Node");
+    }
+
+    public InuringInputNode(int inuringPackageId, String inputNodeName) {
+        this.inuringPackageId = inuringPackageId;
+        this.inputNodeStatus = NodeStatus.Valid;
+        this.inputNodeName = ! StringUtils.isEmpty(inputNodeName) ? inputNodeName : "Input Node";
+    }
 
     @Id
     @Column(name = "InuringInputNodeId", nullable = false)
@@ -62,5 +75,22 @@ public class InuringInputNode {
 
     public void setInputNodeName(String inputNodeName) {
         this.inputNodeName = inputNodeName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        InuringInputNode that = (InuringInputNode) o;
+        return inuringInputNodeId == that.inuringInputNodeId &&
+                entity == that.entity &&
+                inuringPackageId == that.inuringPackageId &&
+                inputNodeStatus == that.inputNodeStatus &&
+                Objects.equals(inputNodeName, that.inputNodeName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(inuringInputNodeId, entity, inuringPackageId, inputNodeStatus, inputNodeName);
     }
 }
