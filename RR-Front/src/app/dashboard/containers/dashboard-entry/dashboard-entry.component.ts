@@ -139,29 +139,35 @@ export class DashboardEntryComponent implements OnInit {
     treaty: [
       {
         id: 1, icon: 'icon-window-section', title: 'Renewal Contract Scope',
-        componentName: 'RenewalContractScopeComponent', selected: true
+        componentName: 'RenewalContractScopeComponent', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
       },
       {
         id: 2, icon: 'icon-sliders-v-alt', title: 'Priced PLTs Changed',
-        componentName: 'Priced PLTs Changed', selected: true
+        componentName: 'Priced PLTs Changed', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
       },
       {
         id: 3, icon: 'icon-adjust-circle', title: 'Contract Scope Changed',
-        componentName: 'Contract Scope Changed', selected: true
+        componentName: 'Contract Scope Changed', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
       },
       {
         id: 4, icon: 'icon-window-grid', title: 'Latest Published PLTs',
-        componentName: 'Latest Published PLTs', selected: true
+        componentName: 'Latest Published PLTs', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
       },
       {
         id: 5, icon: 'icon-history-alt', title: 'Renewal Tracker',
-        componentName: 'Renewal Tracker', selected: true
+        componentName: 'Renewal Tracker', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
       },
     ],
     fac: [
       {
         id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
-        componentName: 'facWidgetComponent', selected: false
+        componentName: 'facWidgetComponent', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
       }
     ]
   };
@@ -212,7 +218,7 @@ export class DashboardEntryComponent implements OnInit {
       id: this.dashboards[this.dashboards.length - 1 ].id + 1,
       name: this.newDashboardTitle,
       visible: true,
-      items: _.concat(_.map(selectedTreatyComponent,
+      items: _.map(selectedTreatyComponent,
         ({componentName, title, icon}: any, key) => ({
           id: key,
           componentName,
@@ -220,20 +226,21 @@ export class DashboardEntryComponent implements OnInit {
           icon: icon,
           selected: false,
           position: {rows: 4, cols: 3}
-        })),
-        _.map(selectedFacComponent,
-          ({componentName, title, icon}: any, key) => ({
-            id: key,
-            componentName,
-            name: title,
-            icon: icon,
-            selected: false,
-            position: {rows: 2, cols: 3}
-          }))
-      )
+        })
+      ),
+      fac: _.map(selectedFacComponent,
+        ({componentName, title, icon}: any, key) => ({
+          id: key,
+          componentName,
+          name: title,
+          icon: icon,
+          selected: false,
+          position: {rows: 2, cols: 3}
+        }))
     };
     if (item.name != null) {
       this.dashboards = [...this.dashboards, item];
+      console.log(this.dashboards);
       this.dashboardTitle = this.newDashboardTitle || '';
       this.updateDashboardMockData();
       this.newDashboardTitle = '';

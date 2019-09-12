@@ -287,9 +287,6 @@
                   <span *ngIf="state?.selectedEDMOrRDM === 'rdm'">Select Analysis For Import</span>
                   <span *ngIf="state?.selectedEDMOrRDM === 'edm'">Select Portfolio For Import</span>
                 </div>
-                <div class="body-wrapper-header-right">
-                  <i class="icon-filter" (click)="filterModalVisibility = true"></i>
-                </div>
               </div>
               <div style="display: flex; flex-direction: column">
                 <div class="menu-icon-wrap">
@@ -302,7 +299,10 @@
                       <li nz-menu-item>Reset Filters</li>
                       <li nz-menu-item>Reset Sort/Filters</li>
                       <li nz-menu-divider></li>
-                      <li nz-menu-item (click)="toggleColumnsManager('')">Manage Columns</li>
+                      <li nz-menu-item *ngIf="state.selectedEDMOrRDM === 'rdm'"
+                          (click)="managePopUpAnalysis = true">Manage Columns</li>
+                      <li nz-menu-item *ngIf="state.selectedEDMOrRDM === 'edm'"
+                          (click)="managePopUpPortfolio = true">Manage Columns</li>
                       <li nz-menu-divider></li>
                       <li nz-menu-item>Unselect All</li>
                     </ul>
@@ -361,6 +361,12 @@
                       </tr>
                     </ng-template>
                   </p-table>
+                  <app-manage-columns [visible]="managePopUpAnalysis" [columns]="cloneData(scrollableColsAnalysis)"
+                                      (onSubmit)="saveColumns($event, 'analysis')"
+                                      (onCancel)="closePopUp()"></app-manage-columns>
+                  <app-manage-columns [visible]="managePopUpPortfolio" [columns]="cloneData(scrollableColsPortfolio)"
+                                      (onSubmit)="saveColumns($event, 'portfolio')"
+                                      (onCancel)="closePopUp()"></app-manage-columns>
                 </div>
               </div>
               <div class="import-button">
@@ -402,101 +408,3 @@
     <input type="text">
   </div>
 </ng-template>
-
-<!--Pop Up Manage Columns-->
-<p-dialog
-  [visible]="managePopUp"
-  [closable]="false"
-  styleClass="m-dialog-modal-lg-h"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
->
-
-  <p-header>
-    <div class="header">
-      <h6>Columns Manager</h6>
-      <i style="cursor: pointer" (click)="toggleColumnsManager(targetConfig)" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-
-  <div cdkDropList class="m-box-d" (cdkDropListDropped)="drop($event)">
-    <ng-container *ngFor="let col of columnsForConfig; let i=index">
-      <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-        <div class="m-box-overlay">
-          <div class="left">
-            <div class="burger">
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-              <div class="line"></div>
-            </div>
-            <span class="subtitle-2">
-          {{col.header}}
-        </span>
-          </div>
-          <div class="right">
-            <i *ngIf="col?.visible" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-            <i *ngIf="!col?.visible" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-          </div>
-        </div>
-      </div>
-    </ng-container>
-  </div>
-
-  <p-footer>
-    <div class="footer">
-      <button (click)="toggleColumnsManager(targetConfig)" class="a-button-text-cancel">cancel</button>
-      <button class="a-buttons-contained" (click)="saveColumns()">Save</button>
-    </div>
-  </p-footer>
-</p-dialog>
-<!--Pop Up Filter-->
-<p-dialog
-  [visible]="filterModalVisibility"
-  [closable]="false"
-  styleClass="m-dialog-modal-m"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
->
-  <p-header>
-    <div class="header">
-      <h6>{{getTitle()}} Filter Criteria</h6>
-      <i style="cursor: pointer" (click)="handleCancel()" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-  <div class="input-group-modal">
-    <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
-      [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
-    <div class="radio-wrapper default-radio">
-      <span>AGG/DET</span>
-      <nz-radio-group [(ngModel)]="radioValue">
-        <label nz-radio nzValue="all">All</label>
-        <label nz-radio nzValue="agg">AGG</label>
-        <label nz-radio nzValue="det">DET</label>
-      </nz-radio-group>
-    </div>
-    <div class="row-input"><span class="label-input">Number</span><input placeholder="Number"
-                                                                         class="a-textfield-mini input-wrapper">
-    </div>
-    <div class="row-input"><span class="label-input">Name</span><input placeholder="Name"
-                                                                       class="a-textfield-mini input-wrapper">
-    </div>
-    <div class="row-input"><span class="label-input">Description</span><input
-      placeholder="Description" class="a-textfield-mini input-wrapper"></div>
-  </div>
-  <p-footer>
-    <div class="modal-footer-wrapper">
-      <button class="a-button-text-cancel">CLEAR</button>
-      <button class="a-buttons-contained-disabled">APPLY</button>
-    </div>
-  </p-footer>
-</p-dialog>

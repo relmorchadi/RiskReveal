@@ -29,7 +29,7 @@
               <li nz-menu-item>Reset Filters</li>
               <li nz-menu-item>Reset Sort/Filters</li>
               <li nz-menu-divider></li>
-              <li (click)="toggleColumnsManager('summaries')" nz-menu-item>Manage Columns</li>
+              <li (click)="openFilterPopUp('edm')" nz-menu-item>Manage Columns</li>
               <li nz-menu-divider></li>
               <li nz-menu-item>Unselect All</li>
             </ul>
@@ -156,6 +156,9 @@
             </tr>
           </ng-template>
         </p-table>
+        <app-manage-columns [visible]="managePopUpSummaries" [columns]="cloneData(scrollableColsSummary)"
+                            (onSubmit)="saveColumns($event, 'summaries')"
+                            (onCancel)="closePopUp()"></app-manage-columns>
       </div>
     </div>
   </div>
@@ -175,7 +178,7 @@
           <button class="a-buttons-outlined-mini" (click)="setLinkingState()" *ngIf="state.collapse.collapseAnalysis"> LINKING
           </button>
           <i class="icon-filter" style="margin: 0px 10px; font-size: 23px;"
-             (click)="filterModalVisibility = true"></i>
+             (click)="openFilterPopUp('rdm')"></i>
           <div class="body-wrapper-header-right">
             <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
             <i *ngIf="state.collapse.collapseAnalysis" (click)="changeCollapse('collapseAnalysis')"
@@ -197,7 +200,7 @@
               <li nz-menu-item>Reset Filters</li>
               <li nz-menu-item>Reset Sort/Filters</li>
               <li nz-menu-divider></li>
-              <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+              <li nz-menu-item (click)="managePopUpResults = true">Manage Columns</li>
               <li nz-menu-divider></li>
               <li nz-menu-item>Unselect All</li>
             </ul>
@@ -348,63 +351,13 @@
             </tr>
           </ng-template>
         </p-table>
+        <app-manage-columns [visible]="managePopUpResults" [columns]="cloneData(scrollableColsResult)"
+                            (onSubmit)="saveColumns($event, 'results')"
+                            (onCancel)="closePopUp()"></app-manage-columns>
       </div>
     </div>
   </div>
 
-  <p-dialog
-    [visible]="managePopUp"
-    [closable]="false"
-    styleClass="m-dialog-modal-lg-h"
-    appendTo="body"
-    [modal]="true"
-    [autoZIndex]="false"
-    [responsive]="true"
-  >
-
-    <p-header>
-      <div class="header">
-        <h6>Columns Manager</h6>
-        <i style="cursor: pointer" (click)="toggleColumnsManager(targetConfig)" class="icon-close_24px"></i>
-      </div>
-    </p-header>
-
-    <div cdkDropList class="m-box-d" (cdkDropListDropped)="drop($event)">
-      <ng-container *ngFor="let col of columnsForConfig; let i=index">
-        <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-          <div class="m-box-overlay">
-            <div class="left">
-              <div class="burger">
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-                <div class="line"></div>
-              </div>
-              <span class="subtitle-2">
-          {{col.header}}
-        </span>
-            </div>
-            <div class="right">
-              <i *ngIf="col?.visible" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-              <i *ngIf="!col?.visible" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-            </div>
-          </div>
-        </div>
-      </ng-container>
-    </div>
-
-    <p-footer>
-      <div class="footer">
-        <button (click)="toggleColumnsManager(targetConfig)" class="a-button-text-cancel-mini">cancel</button>
-        <button class="a-buttons-contained-mini" (click)="saveColumns()">Save</button>
-      </div>
-    </p-footer>
-  </p-dialog>
   <!-- linking Modal -->
   <p-dialog [visible]="linkingModalVisibility"
             [closable]="false"
@@ -476,13 +429,13 @@
                           <li nz-menu-item>Reset Filters</li>
                           <li nz-menu-item>Reset Sort/Filters</li>
                           <li nz-menu-divider></li>
-                          <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                          <li nz-menu-item (click)="managePopUpLinkPortfolio = true">Manage Columns</li>
                           <li nz-menu-divider></li>
                           <li nz-menu-item>Unselect All</li>
                         </ul>
                       </nz-dropdown>
                     </div>
-                    <p-table #lt [columns]="scrollableColslinking" [value]="portfolio"
+                    <p-table #lt [columns]="scrollableColsLinkingPortfolio" [value]="portfolio"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [scrollable]="true" [scrollHeight]="getTableHeight()">
@@ -535,6 +488,9 @@
                         </div>
                       </ng-template>
                     </p-table>
+                    <app-manage-columns [visible]="managePopUpLinkPortfolio" [columns]="cloneData(scrollableColsLinkingPortfolio)"
+                                        (onSubmit)="saveColumns($event, 'linkPortfolio')"
+                                        (onCancel)="closePopUp()"></app-manage-columns>
                   </div>
                 </div>
               </div>
@@ -576,13 +532,13 @@
                           <li nz-menu-item>Reset Filters</li>
                           <li nz-menu-item>Reset Sort/Filters</li>
                           <li nz-menu-divider></li>
-                          <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                          <li nz-menu-item (click)="managePopUpLinkAnalysis = true">Manage Columns</li>
                           <li nz-menu-divider></li>
                           <li nz-menu-item>Unselect All</li>
                         </ul>
                       </nz-dropdown>
                     </div>
-                    <p-table #lt [columns]="scrollableColslinking" [value]="analysis"
+                    <p-table #lt [columns]="scrollableColsLinkingAnalysis" [value]="analysis"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [scrollable]="true" [scrollHeight]="getTableHeight()">
@@ -660,6 +616,9 @@
                         </div>
                       </ng-template>
                     </p-table>
+                    <app-manage-columns [visible]="managePopUpLinkAnalysis" [columns]="cloneData(scrollableColsLinkingAnalysis)"
+                                        (onSubmit)="saveColumns($event, 'linkAnalysis')"
+                                        (onCancel)="closePopUp()"></app-manage-columns>
                   </div>
                 </div>
               </div>
@@ -667,7 +626,7 @@
           </ng-container>
           <div class="modal-linking-wrapper" *ngIf="linking?.autoMode">
             <div class="modal-linking-head">
-              <div class="modal-l-h-body-fill" style="height: 270px; overflow: hidden">
+              <div class="modal-l-h-body-fill" style="height: 350px; overflow: hidden">
                 <span class="subtitle-2">Links Suggestions</span>
                 <div class="suggestion-card-wrap">
                   <div class="suggestion-card">
@@ -745,9 +704,9 @@
         </div>
       </div>
       <div class="linking-right">
-        <div class="modal-linking-wrapper">
+        <div class="modal-linking-wrapper" style="height: 99%">
           <div class="modal-linking-head" style="height: 100%">
-            <div class="modal-l-h-body-fill" style="height: 65vh; overflow: auto;">
+            <div class="modal-l-h-body-fill" style="height: 99%; overflow: auto;">
               <span class="subtitle-2">Created Links</span>
               <div class="suggestion-card" *ngFor="let link of linking?.linked; let i = index" [ngClass]="{'selected-link': link.selected}">
                 <div class="suggestion-card-header">
@@ -854,7 +813,7 @@
                     <li nz-menu-item>Reset Filters</li>
                     <li nz-menu-item>Reset Sort/Filters</li>
                     <li nz-menu-divider></li>
-                    <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                    <li nz-menu-item (click)="managePopUpFPAnalysis = true">Manage Columns</li>
                     <li nz-menu-divider></li>
                     <li nz-menu-item>Unselect All</li>
                   </ul>
@@ -917,6 +876,9 @@
                 </tr>
               </ng-template>
             </p-table>
+            <app-manage-columns [visible]="managePopUpFPAnalysis" [columns]="cloneData(colsFinancialAnalysis)"
+                                (onSubmit)="saveColumns($event, 'FPAnalysis')"
+                                (onCancel)="closePopUp()"></app-manage-columns>
           </div>
         </div>
       </div>
@@ -934,7 +896,7 @@
                     <li nz-menu-item>Reset Filters</li>
                     <li nz-menu-item>Reset Sort/Filters</li>
                     <li nz-menu-divider></li>
-                    <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+                    <li nz-menu-item (click)="managePopUpFPStandard = true">Manage Columns</li>
                     <li nz-menu-divider></li>
                     <li nz-menu-item>Unselect All</li>
                   </ul>
@@ -995,6 +957,9 @@
                   </tr>
                 </ng-template>
               </p-table>
+              <app-manage-columns [visible]="managePopUpFPStandard" [columns]="cloneData(colsFinancialStandard)"
+                                  (onSubmit)="saveColumns($event, 'FPStandard')"
+                                  (onCancel)="closePopUp()"></app-manage-columns>
             </div>
           </nz-tab>
           <nz-tab nzTitle="Treaty" nzDisabled>
@@ -1309,6 +1274,49 @@
       <button (click)="singleColEdit = false" class="a-button-text-cancel-mini">CANCEL</button>
       <button (click)="editSingleColRes(editableRow.target, null, editableRow.item)" class="a-buttons-contained-mini">SAVE
       </button>
+    </p-footer>
+  </p-dialog>
+  <!--Pop Up Filter-->
+  <p-dialog
+    [visible]="filterModalVisibility"
+    [closable]="false"
+    styleClass="m-dialog-modal-m-ws"
+    appendTo="body"
+    [modal]="true"
+    [autoZIndex]="false"
+    [responsive]="true"
+  >
+    <p-header>
+      <div class="header">
+        <h6>{{getTitle()}} Filter Criteria</h6>
+        <i style="cursor: pointer" (click)="handleCancel()" class="icon-close_24px"></i>
+      </div>
+    </p-header>
+    <div class="input-group-modal">
+      <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
+        [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
+      <div class="radio-wrapper default-radio">
+        <span>AGG/DET</span>
+        <nz-radio-group [(ngModel)]="radioValue">
+          <label nz-radio nzValue="all">All</label>
+          <label nz-radio nzValue="agg">AGG</label>
+          <label nz-radio nzValue="det">DET</label>
+        </nz-radio-group>
+      </div>
+      <div class="row-input"><span class="label-input">Number</span><input placeholder="Number"
+                                                                           class="a-textfield-mini input-wrapper">
+      </div>
+      <div class="row-input"><span class="label-input">Name</span><input placeholder="Name"
+                                                                         class="a-textfield-mini input-wrapper">
+      </div>
+      <div class="row-input"><span class="label-input">Description</span><input
+        placeholder="Description" class="a-textfield-mini input-wrapper"></div>
+    </div>
+    <p-footer>
+      <div class="modal-footer-wrapper">
+        <button class="a-button-text-cancel">CLEAR</button>
+        <button class="a-buttons-contained-disabled">APPLY</button>
+      </div>
     </p-footer>
   </p-dialog>
 </div>

@@ -1,4 +1,5 @@
 const scrollableColsAnalysis = [
+  {field: '', header: '', width: '0px', type: ''},
   {field: 'description', header: 'Description', width: '150px', type: 'text'},
   {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
   {field: 'groupType', header: 'Group Type', width: '110px', type: 'text'},
@@ -29,6 +30,7 @@ const frozenColsAnalysis = [
 ];
 
 const scrollableColsPortfolio = [
+  {field: '', header: '', width: '0px', type: ''},
   {field: 'dataSourceName', header: 'Name', width: '150px', type: 'text'},
   {field: 'creationDate', header: 'Creation Date', width: '180px', type: 'date'},
   {field: 'descriptionType', header: 'Description Type', width: '180px', type: 'text'},
@@ -65,6 +67,7 @@ const frozenColsSummary = [
 ];
 
 const scrollableColsResults = [
+  {field: '', header: '', width: '80px', type: '', filtered: false, visible: false, highlight: false, edit: false},
   {field: 'regionPeril', header: 'Region Peril', width: '80px', type: 'Rp', sorting: '', filtered: true, highlight: true, visible: true, edit: false},
   {field: 'analysisCurrency', header: 'Source Currency', width: '90px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'targetCurrency', header: 'Target Currency', width: '80px', type: 'text', sorting: '', filtered: true, highlight: true, visible: true, edit: true},

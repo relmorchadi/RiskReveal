@@ -1032,11 +1032,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   toggleColumnsManager() {
-    this.managePopUp= !this.managePopUp;
+    this.managePopUp = !this.managePopUp;
   }
 
   resetColumns() {
-    this.managePopUp= false;
+    this.managePopUp = false;
   }
 
   saveColumns(listOfUsedColumns) {
