@@ -17,12 +17,18 @@ export class RiskLinkResSummaryComponent implements OnInit {
   filterModalVisibility = false;
   linkingModalVisibility = false;
   editRowPopUp = false;
-  managePopUp = false;
+  managePopUpSummaries = false;
+  managePopUpResults = false;
+  managePopUpLinkAnalysis = false;
+  managePopUpLinkPortfolio = false;
+  managePopUpFPAnalysis = false;
+  managePopUpFPStandard = false;
   columnsForConfig;
-  targetConfig;
   financialP = false;
 
   selectedEDM = null;
+  filterPopUp = null;
+  radioValue = 'all';
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -48,7 +54,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
   scrollableColsResult: any;
   frozenColsResult: any;
 
-  scrollableColslinking: any;
+  scrollableColsLinkingPortfolio: any;
+  scrollableColsLinkingAnalysis: any;
   colsFinancialStandard: any;
   colsFinancialAnalysis: any;
   financialStandardContent: any;
@@ -83,6 +90,11 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   @Select(WorkspaceState.getLinkingData) linking$;
   linking: any;
+
+  @Select(WorkspaceState.getSummaries) summaries$;
+
+  @Select(WorkspaceState.getResults) results$;
+
   analysis = [];
   portfolio = [];
   updateMode = false;
@@ -110,12 +122,18 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.serviceSubscription = [
       this.state$.subscribe(value => {
         this.state = _.merge({}, value);
-        if (this.state.summaries !== null && this.state.results !== null) {
-          this.resultsSummary = _.toArray(this.state.summaries.data);
-          this.analysisResults = _.toArray(this.state.results.data);
-        }
         this.detectChanges();
       }),
+      this.results$.pipe().subscribe( value => {
+          this.analysisResults = _.toArray(value);
+          this.detectChanges();
+        }
+      ),
+      this.summaries$.pipe().subscribe(value => {
+          this.resultsSummary = _.toArray(value);
+          this.detectChanges();
+        }
+      ),
       this.linking$.pipe().subscribe(value => {
         this.linking = _.merge({}, value);
         if (this.linking.analysis !== null) {
@@ -140,7 +158,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.frozenColsSummary = DataTables.frozenColsSummary;
     this.scrollableColsResult = DataTables.scrollableColsResults;
     this.frozenColsResult = DataTables.frozenColsResults;
-    this.scrollableColslinking = DataTables.scrollableColsLinking;
+    this.scrollableColsLinkingPortfolio = DataTables.scrollableColsLinking;
+    this.scrollableColsLinkingAnalysis = DataTables.scrollableColsLinking;
     this.colsFinancialStandard = DataTables.colsFinancialStandard;
     this.colsFinancialAnalysis = DataTables.colsFinancialAnalysis;
     this.financialStandardContent = DataTables.financialStandarContent;
@@ -148,44 +167,46 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   /** Manage Columns Method's */
-  toggleColumnsManager(target) {
-    this.managePopUp = !this.managePopUp;
-    if (this.managePopUp) {
-      if (target === 'summaries') {
-        this.columnsForConfig = [...this.scrollableColsSummary];
-      } else if (target === 'results') {
-        this.columnsForConfig = [...this.scrollableColsResult];
-      }
-      this.targetConfig = target;
+
+  saveColumns(event, scope) {
+    this.closePopUp();
+    if (scope === 'summaries') {
+      this.scrollableColsSummary = [...event];
+    } else if (scope === 'results') {
+      this.scrollableColsResult = [...event];
+    } else if (scope === 'linkPortfolio') {
+      this.scrollableColsLinkingPortfolio = [...event];
+    } else if (scope === 'linkAnalysis') {
+      this.scrollableColsLinkingAnalysis = [...event];
+    } else if (scope === 'FPAnalysis') {
+      this.colsFinancialAnalysis = [...event];
+    } else if (scope === 'FPStandard') {
+      this.colsFinancialStandard = [...event];
     }
   }
 
-  saveColumns() {
-    this.toggleColumnsManager(this.targetConfig);
-    if (this.targetConfig === 'summaries') {
-      this.scrollableColsSummary = [...this.columnsForConfig];
-    } else if (this.targetConfig === 'results') {
-      this.scrollableColsResult = [...this.columnsForConfig];
-    }
+  closePopUp() {
+    this.managePopUpLinkAnalysis = false;
+    this.managePopUpLinkPortfolio = false;
+    this.managePopUpResults = false;
+    this.managePopUpResults = false;
+    this.managePopUpFPAnalysis = false;
+  }
 
+  cloneData(data) {
+    if (data === undefined) {
+      return null;
+    }
+    return [...data];
   }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.columnsForConfig, event.previousIndex, event.currentIndex);
   }
 
-  toggleCol(i: number) {
-    this.columnsForConfig = _.merge(
-      [],
-      this.columnsForConfig,
-      {[i]: {...this.columnsForConfig[i], visible: !this.columnsForConfig[i].visible}}
-    );
-  }
-
   /** */
-
   getTableHeight() {
-    return this.collapseDataSources ? '252px' : '147px';
+    return this.collapseDataSources ? '315px' : '203px';
   }
 
   getChecked(item) {
@@ -552,6 +573,15 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   getSelectedPeqt(row) {
     return _.filter(_.filter(_.toArray(this.state.results.data), dt => dt.id === row.id)[0].peqt, ws => ws.selected === true).length;
+  }
+
+  getTitle() {
+    return this.filterPopUp === 'rdm' ? 'Analysis' : 'Portfolio';
+  }
+
+  openFilterPopUp(scope) {
+    this.filterModalVisibility = true;
+    this.filterPopUp = scope;
   }
 
   changePeqt(parent, target, selected) {

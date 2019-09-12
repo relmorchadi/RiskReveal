@@ -33,7 +33,7 @@
           <div style="height:100%;width:100%">
             <gridster  [options]="options" style="background-color: transparent" >
               <ng-container *ngFor="let item of loopOverDashboard(dashboard)">
-                <gridster-item *ngIf="item.selected" [item]="item?.position ">
+                <gridster-item *ngIf="item?.selected" [item]="item?.position ">
                   <renewal-contract-scope *ngIf="item.componentName !== 'facWidgetComponent'"
                     [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                                           (delete)="deleteItem(dashboard.id, $event)"

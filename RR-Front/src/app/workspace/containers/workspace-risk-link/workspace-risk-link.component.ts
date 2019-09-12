@@ -41,7 +41,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   filterModalVisibility = false;
   linkingModalVisibility = false;
 
-  managePopUp = false;
+  managePopUpAnalysis = false;
+  managePopUpPortfolio = false;
 
   radioValue = 'all';
   columnsForConfig;
@@ -53,7 +54,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   dropDownFPOb: any;
   @ViewChild('rpRes')
   dropDownFP: any;
-  scopeForChanges = 'currentSelection';
 
   displayDropdownRDMEDM = false;
   displayListRDMEDM = false;
@@ -67,18 +67,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   scrollableColsPortfolio: any;
   frozenColsPortfolio: any;
-
-  scrollableColsSummary: any;
-
-  scrollableColsResult: any;
-
-  colsFinancialStandard: any;
-  financialStandardContent: any;
-  workingFSC: any;
-  colsFinancialAnalysis: any;
-
-  selectedEDM = null;
-  scrollableColslinking: any;
 
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
@@ -108,13 +96,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   ngOnInit() {
-    /*    combineLatest(
-          this.select(WorkspaceState.getFinancialPerspective)
-        ).pipe(this.unsubscribeOnDestroy).subscribe(
-          ([fp]: any) => {
-            this.workingFSC = fp;
-          }
-        );*/
     this.serviceSubscription = [
       this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.state = _.merge({}, value);
@@ -154,10 +135,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
     this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
     this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
-    this.scrollableColslinking = DataTables.scrollableColsLinking;
-    this.colsFinancialStandard = DataTables.colsFinancialStandard;
-    this.colsFinancialAnalysis = DataTables.colsFinancialAnalysis;
-    this.financialStandardContent = DataTables.financialStandarContent;
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -189,26 +166,23 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   /** Manage Columns Method's */
-  toggleColumnsManager(target) {
-    this.managePopUp = !this.managePopUp;
-    if (this.managePopUp) {
-      if (target === 'summaries') {
-        this.columnsForConfig = [...this.scrollableColsSummary];
-      } else if (target === 'results') {
-        this.columnsForConfig = [...this.scrollableColsResult];
-      }
-      this.targetConfig = target;
+
+  saveColumns(event, scope) {
+    if (scope === 'analysis') {
+      this.scrollableColsAnalysis = [...event];
+    } else if (this.targetConfig === 'portfolio') {
+      this.scrollableColsPortfolio = [...event];
     }
+    this.closePopUp();
   }
 
-  saveColumns() {
-    this.toggleColumnsManager(this.targetConfig);
-    if (this.targetConfig === 'summaries') {
-      this.scrollableColsSummary = [...this.columnsForConfig];
-    } else if (this.targetConfig === 'results') {
-      this.scrollableColsResult = [...this.columnsForConfig];
-    }
+  closePopUp() {
+    this.managePopUpPortfolio = false;
+    this.managePopUpAnalysis = false;
+  }
 
+  cloneData(data) {
+    return [...data];
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -313,10 +287,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     } else {
       return _.toArray(this.portfolios.data);
     }
-  }
-
-  getTitle() {
-    return this.state.selectedEDMOrRDM === 'rdm' ? 'Analysis' : 'Portfolio';
   }
 
   clearSelection(item, target) {

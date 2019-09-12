@@ -912,7 +912,7 @@ export const PLT_COLUMNS = [
     sortDir: 1,
     fields: 'pltName',
     header: 'PLT Name',
-    width: '150',
+    width: '200',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -1166,7 +1166,7 @@ export const EPM_COLUMNS = [
     sortDir: 1,
     fields: 'pltName',
     header: 'PLT Name',
-    width: '150',
+    width: '200',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -4572,3 +4572,96 @@ export const ADJUSTMENT_APPLICATION = {
     }
   ]
 }
+export const TEMPLATES = [
+  {
+    "id": 963,
+    "type": "Local",
+    "name": "Test Template 1",
+    "description": "Relax ! this is just a test.",
+    "adjs": [
+      {
+        "id": 292,
+        "adjustmentBasis": "Exposure Adjustment (Portfolio Evolution)",
+        "category": "Base",
+        "name": "Portfolio Evolution",
+        "description": "An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 1,
+        "isExposureGrowth": true,
+        "value": "Event Driven",
+        "idAdjustementType": 4,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      },
+      {
+        "id": 653,
+        "adjustmentBasis": "Allocated Loss Adjustment Expense (ALAE)",
+        "category": "Client",
+        "name": "ALAE",
+        "description": "An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 7,
+        "isExposureGrowth": false,
+        "value": "Freq (EEF)",
+        "idAdjustementType": 2,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      },
+      {
+        "id": 240,
+        "adjustmentBasis": "Missing Exposure",
+        "category": "Base",
+        "name": "Missing Exposures",
+        "description": "An adjustment to be applied on the basis that exposure is believed to be missing from the client's data.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 2,
+        "isExposureGrowth": false,
+        "value": "1.2",
+        "idAdjustementType": 5,
+        "favored": false,
+        "linear": false,
+        "hover": false
+      }
+    ]
+  },
+  {
+    "id": 144,
+    "type": "Global",
+    "name": "Test Template 2",
+    "description": "Relax ! this is just another test.",
+    "adjs": [
+      {
+        "id": 292,
+        "adjustmentBasis": "Exposure Adjustment (Portfolio Evolution)",
+        "category": "Base",
+        "name": "Portfolio Evolution",
+        "description": "An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 1,
+        "isExposureGrowth": true,
+        "value": "Event Driven",
+        "idAdjustementType": 4,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      },
+      {
+        "id": 653,
+        "adjustmentBasis": "Allocated Loss Adjustment Expense (ALAE)",
+        "category": "Client",
+        "name": "ALAE",
+        "description": "An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 7,
+        "isExposureGrowth": false,
+        "value": "Freq (EEF)",
+        "idAdjustementType": 2,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      }
+    ]
+  }
+]

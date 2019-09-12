@@ -11,23 +11,23 @@ export class ManageColumnsComponent implements OnInit {
   @Input('columns') columns: any[];
   @Input('visible') visible: boolean;
 
-  @Output('onSubmit') onSubmit: EventEmitter<any>= new EventEmitter<any>();
-  @Output('onCancel') onCancel: EventEmitter<any>= new EventEmitter<any>();
+  @Output('onSubmit') onSubmit: EventEmitter<any> = new EventEmitter<any>();
+  @Output('onCancel') onCancel: EventEmitter<any> = new EventEmitter<any>();
 
   listOfAvailbleColumnsCache: any[];
   listOfAvailbleColumns: any[];
   listOfUsedColumns: any[];
 
   constructor() {
-    this.listOfAvailbleColumnsCache= [];
+    this.listOfAvailbleColumnsCache = [];
   }
 
   ngOnInit() {
-    this.listOfAvailbleColumns= [];
+    this.listOfAvailbleColumns = [];
   }
 
   resetColumns() {
-    if(!this.visible) this.listOfUsedColumns = [...this.columns];
+    if (!this.visible) this.listOfUsedColumns = [...this.columns];
     this.onCancel.emit();
   }
 
@@ -36,8 +36,8 @@ export class ManageColumnsComponent implements OnInit {
   }
 
   onShow() {
-    this.listOfAvailbleColumnsCache= [...this.listOfAvailbleColumns];
-    this.listOfUsedColumns= this.columns;
+    this.listOfAvailbleColumnsCache = [...this.listOfAvailbleColumns];
+    this.listOfUsedColumns = this.columns;
   }
 
   drop(event: CdkDragDrop<any>) {
@@ -47,7 +47,7 @@ export class ManageColumnsComponent implements OnInit {
     } = event;
 
     if (previousContainer === container) {
-      if(container.id == "usedListOfColumns") {
+      if (container.id === 'usedListOfColumns') {
         moveItemInArray(
           this.listOfUsedColumns,
           event.previousIndex + 1,
@@ -58,8 +58,8 @@ export class ManageColumnsComponent implements OnInit {
       transferArrayItem(
         event.previousContainer.data,
         event.container.data,
-        event.previousContainer.id == "usedListOfColumns" ? event.previousIndex + 1 : event.previousIndex,
-        event.container.id == "availableListOfColumns" ? event.currentIndex : event.currentIndex + 1
+        event.previousContainer.id === 'usedListOfColumns' ? event.previousIndex + 1 : event.previousIndex,
+        event.container.id === 'availableListOfColumns' ? event.currentIndex : event.currentIndex + 1
       );
     }
   }
@@ -69,15 +69,15 @@ export class ManageColumnsComponent implements OnInit {
   }
 
   dropAll(dir: string) {
-    if(dir == 'right') {
+    if (dir === 'right') {
       const t = this.listOfUsedColumns;
-      this.listOfUsedColumns= this.listOfAvailbleColumns;
-      this.listOfAvailbleColumns= t;
+      this.listOfUsedColumns = this.listOfAvailbleColumns;
+      this.listOfAvailbleColumns = t;
     }
-    if(dir == 'left') {
+    if (dir === 'left') {
       const t = this.listOfAvailbleColumns;
-      this.listOfAvailbleColumns= this.listOfUsedColumns;
-      this.listOfUsedColumns= t;
+      this.listOfAvailbleColumns = this.listOfUsedColumns;
+      this.listOfUsedColumns = t;
     }
   }
 }
