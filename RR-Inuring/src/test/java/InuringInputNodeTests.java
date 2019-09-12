@@ -4,12 +4,14 @@ import com.scor.rr.entity.InuringInputNode;
 import com.scor.rr.entity.InuringPackage;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.InputPLTNotFoundException;
+import com.scor.rr.exceptions.inuring.InuringInputNodeNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
 import com.scor.rr.repository.InuringInputAttachedPLTRepository;
 import com.scor.rr.repository.InuringInputNodeRepository;
 import com.scor.rr.repository.InuringPackageRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
+import com.scor.rr.request.InuringInputNodeUpdateRequest;
 import com.scor.rr.service.InuringInputNodeService;
 import javafx.beans.binding.When;
 import org.junit.Before;
@@ -62,7 +64,7 @@ public class InuringInputNodeTests {
 
     private Map<Integer, InuringInputNode> inuringInputNodes;
 
-    private List<InuringInputAttachedPLT> inuringInputAttachedPLTS;
+    private Map<Integer, InuringInputAttachedPLT> inuringInputAttachedPLTS;
 
     private int inuringInputNodeCounter;
     private int inuringInputAttachedPLTCounter;
@@ -85,11 +87,11 @@ public class InuringInputNodeTests {
         inuringInputNodeCounter = 1;
         inuringInputAttachedPLTCounter = 1;
         inuringInputNodes = new HashMap<>();
-        inuringInputAttachedPLTS = new LinkedList<>();
+        inuringInputAttachedPLTS = new HashMap<>();
 
         when(inuringInputNodeRepository.saveAndFlush(any(InuringInputNode.class))).thenAnswer(i -> {
             InuringInputNode inuringInputNode = i.getArgument(0);
-            int id = inuringInputNodeCounter++;
+            int id = inuringInputNode.getInuringInputNodeId() != 0 ? inuringInputNode.getInuringInputNodeId() : inuringInputNodeCounter++;
             inuringInputNode.setInuringInputNodeId(id);
             inuringInputNodes.put(id, inuringInputNode);
             return inuringInputNode;
@@ -98,8 +100,9 @@ public class InuringInputNodeTests {
 
         when(inuringInputAttachedPLTRepository.saveAndFlush(any(InuringInputAttachedPLT.class))).thenAnswer(i -> {
             InuringInputAttachedPLT inuringInputAttachedPLT = i.getArgument(0);
-            inuringInputAttachedPLT.setInuringInputAttachedPLTId(inuringInputAttachedPLTCounter++);
-            inuringInputAttachedPLTS.add(inuringInputAttachedPLT);
+            int id = inuringInputAttachedPLT.getInuringInputAttachedPLTId() != 0 ? inuringInputAttachedPLT.getInuringInputAttachedPLTId() : inuringInputAttachedPLTCounter++;
+            inuringInputAttachedPLT.setInuringInputAttachedPLTId(id);
+            inuringInputAttachedPLTS.put(id, inuringInputAttachedPLT);
             return inuringInputAttachedPLT;
         });
 
@@ -115,7 +118,7 @@ public class InuringInputNodeTests {
 
         when(inuringInputAttachedPLTRepository.findByInuringInputNodeId(anyInt())).thenAnswer(node -> {
             int id = node.getArgument(0);
-            return inuringInputAttachedPLTS.stream().filter(i -> i.getInuringInputNodeId() == id).collect(Collectors.toList());
+            return inuringInputAttachedPLTS.values().stream().filter(i -> i.getInuringInputNodeId() == id).collect(Collectors.toList());
         });
 
         when(inuringPackageRepository.findById(NOT_EXISTING_INURING_PACKAGE_ID)).thenReturn(null);
@@ -123,7 +126,7 @@ public class InuringInputNodeTests {
         when(inuringPackageRepository.findById(INURING_PACKAGE_HAS_PLT_ID)).thenReturn(new InuringPackage());
 
         when(inuringInputNodeRepository.findAll()).thenReturn(new ArrayList<InuringInputNode> (inuringInputNodes.values()));
-        when(inuringInputAttachedPLTRepository.findAll()).thenReturn(inuringInputAttachedPLTS);
+        when(inuringInputAttachedPLTRepository.findAll()).thenReturn(new ArrayList<InuringInputAttachedPLT>(inuringInputAttachedPLTS.values()));
 
         when(scorpltheaderRepository.findByPkScorPltHeaderId(anyInt())).thenAnswer(plt -> {
             int id = plt.getArgument(0);
@@ -138,9 +141,19 @@ public class InuringInputNodeTests {
 
         doAnswer(node -> {
             int id = node.getArgument(0);
-            inuringInputAttachedPLTS.removeIf(i -> i.getInuringInputNodeId() == id);
+            inuringInputAttachedPLTS.entrySet().removeIf(i -> i.getValue().getInuringInputNodeId() == id);
             return null;
         }).when(inuringInputAttachedPLTRepository).deleteByInuringInputNodeId(anyInt());
+
+        doAnswer(node -> {
+            int id = node.getArgument(0);
+            inuringInputAttachedPLTS.remove(id);
+            return null;
+        }).when(inuringInputAttachedPLTRepository).deleteByInuringInputAttachedPLTId(anyInt());
+
+        when(inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1)).thenReturn(new InuringInputAttachedPLT(1, PLT_ID_1));
+        when(inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(2)).thenReturn(new InuringInputAttachedPLT(1, PLT_ID_2));
+        when(inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(3)).thenReturn(new InuringInputAttachedPLT(1, PLT_ID_3));
 
     }
 
@@ -148,8 +161,7 @@ public class InuringInputNodeTests {
     @Test
     public void testCreateAnInputNodeForNonExistingPackage() {
         try {
-            InuringInputNodeCreationRequest request = new InuringInputNodeCreationRequest(NOT_EXISTING_INURING_PACKAGE_ID, null, null);
-            inuringInputNodeService.createInuringInputNode(request);
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(NOT_EXISTING_INURING_PACKAGE_ID, null, null));
             fail();
         } catch (InuringPackageNotFoundException ex) {
             assertEquals("Inuring Package id " + NOT_EXISTING_INURING_PACKAGE_ID + " not found", ex.getMessage());
@@ -161,8 +173,7 @@ public class InuringInputNodeTests {
     @Test
     public void testCreateAnInputNodeWithoutAttachedPLT() {
         try {
-            InuringInputNodeCreationRequest request = new InuringInputNodeCreationRequest(INURING_PACKAGE_ZERO_PLT_ID, null, null);
-            inuringInputNodeService.createInuringInputNode(request);
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(INURING_PACKAGE_ZERO_PLT_ID, null, null));
             InuringInputNode expectedInuringInputNode = new InuringInputNode(INURING_PACKAGE_ZERO_PLT_ID);
             expectedInuringInputNode.setInuringInputNodeId(1);
             assertEquals(expectedInuringInputNode, inuringInputNodeService.findByInuringInputNodeId(1));
@@ -176,11 +187,10 @@ public class InuringInputNodeTests {
     @Test
     public void testCreateAnInputNodeWithAttachedPLTs() {
         try {
-            InuringInputNodeCreationRequest request = new InuringInputNodeCreationRequest(
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
                     INURING_PACKAGE_HAS_PLT_ID,
                     "Input Node - 2 PLTs",
-                    Arrays.asList(PLT_ID_1, PLT_ID_2));
-            inuringInputNodeService.createInuringInputNode(request);
+                    Arrays.asList(PLT_ID_1, PLT_ID_2)));
             InuringInputNode expectedInuringInputNode = new InuringInputNode(INURING_PACKAGE_HAS_PLT_ID, "Input Node - 2 PLTs");
             expectedInuringInputNode.setInuringInputNodeId(1);
             assertEquals(expectedInuringInputNode, inuringInputNodeService.findByInuringInputNodeId(1));
@@ -198,11 +208,10 @@ public class InuringInputNodeTests {
     @Test
     public void testCreateAnInputNodeWithNotFoundPLT() {
         try {
-            InuringInputNodeCreationRequest request = new InuringInputNodeCreationRequest(
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
                     INURING_PACKAGE_HAS_PLT_ID,
                     "Input Node",
-                    Arrays.asList(PLT_ID_1, PLT_ID_NOT_FOUND));
-            inuringInputNodeService.createInuringInputNode(request);
+                    Arrays.asList(PLT_ID_1, PLT_ID_NOT_FOUND)));
             fail();
         } catch (InputPLTNotFoundException ex) {
             assertEquals("Input PLT id " + PLT_ID_NOT_FOUND + " not found", ex.getMessage());
@@ -215,34 +224,17 @@ public class InuringInputNodeTests {
     }
 
     @Test
-    public void testAttachOnePLTToExistingInputNode() {
-        fail();
-    }
-
-    @Test
-    public void testDetachOnePLTFromExistingInputNode() {
-        fail();
-    }
-
-    @Test
-    public void testAssignTagToAnAttachedPLT() {
-        fail();
-    }
-
-    @Test
     public void testAddTwoInputNodeToAnInuringPackage() {
         try {
-            InuringInputNodeCreationRequest request1 = new InuringInputNodeCreationRequest(
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
                     INURING_PACKAGE_HAS_PLT_ID,
                     "Input Node 1",
-                    Arrays.asList(PLT_ID_1));
-            inuringInputNodeService.createInuringInputNode(request1);
+                    Arrays.asList(PLT_ID_1)));
 
-            InuringInputNodeCreationRequest request2 = new InuringInputNodeCreationRequest(
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
                     INURING_PACKAGE_HAS_PLT_ID,
                     "Input Node 2",
-                    Arrays.asList(PLT_ID_2));
-            inuringInputNodeService.createInuringInputNode(request2);
+                    Arrays.asList(PLT_ID_2)));
 
             assertEquals(2, inuringInputNodeService.findInputNodesByInuringPackageId(INURING_PACKAGE_HAS_PLT_ID).size());
 
@@ -254,17 +246,15 @@ public class InuringInputNodeTests {
     @Test
     public void testDeleteAnInputNode() {
         try {
-            InuringInputNodeCreationRequest request1 = new InuringInputNodeCreationRequest(
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
                     INURING_PACKAGE_HAS_PLT_ID,
                     "Input Node 1",
-                    Arrays.asList(PLT_ID_1, PLT_ID_2));
-            inuringInputNodeService.createInuringInputNode(request1);
+                    Arrays.asList(PLT_ID_1, PLT_ID_2)));
 
-            InuringInputNodeCreationRequest request2 = new InuringInputNodeCreationRequest(
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
                     INURING_PACKAGE_HAS_PLT_ID,
                     "Input Node 2",
-                    Arrays.asList(PLT_ID_1, PLT_ID_2));
-            inuringInputNodeService.createInuringInputNode(request2);
+                    Arrays.asList(PLT_ID_1, PLT_ID_2)));
 
             assertEquals(2, inuringInputNodeService.findInputNodesByInuringPackageId(INURING_PACKAGE_HAS_PLT_ID).size());
 
@@ -278,6 +268,126 @@ public class InuringInputNodeTests {
         } catch (RRException ex) {
             fail();
         }
+    }
+
+    @Test
+    public void testRenameAnNotExistingInputNode() {
+        try {
+            inuringInputNodeService.updateInuringInputNode(new InuringInputNodeUpdateRequest(1, "Input Node 2"));
+            fail();
+        } catch (InuringInputNodeNotFoundException ex) {
+            assertEquals("Inuring Input Node id 1 not found", ex.getMessage());
+        } catch (RRException other) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testRenameAnExistingInputNode() {
+        try {
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
+                    INURING_PACKAGE_HAS_PLT_ID,
+                    "Input Node 1",
+                    Arrays.asList(PLT_ID_1)));
+
+            inuringInputNodeService.updateInuringInputNode(new InuringInputNodeUpdateRequest(1, "Input Node 2"));
+
+            assertEquals("Input Node 2", inuringInputNodeService.findByInuringInputNodeId(1).getInputNodeName());
+
+        } catch (RRException ex) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testAttachNotExistingPLTToInputNode() {
+        try {
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
+                    INURING_PACKAGE_HAS_PLT_ID,
+                    "Input Node 1",
+                    Arrays.asList(PLT_ID_1)));
+            inuringInputNodeService.updateInuringInputNode(new InuringInputNodeUpdateRequest(1, "Input Node 2", Arrays.asList(PLT_ID_1, PLT_ID_NOT_FOUND)));
+            fail();
+        } catch (InputPLTNotFoundException ex) {
+            assertEquals("Input PLT id " + PLT_ID_NOT_FOUND + " not found", ex.getMessage());
+            assertEquals("Input Node 1", inuringInputNodeService.findByInuringInputNodeId(1).getInputNodeName());
+            assertEquals(1, inuringInputNodeService.findAttachedPLTByInuringInputNodeId(1).size());
+            assertEquals(1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1).getInuringInputNodeId());
+            assertEquals(PLT_ID_1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1).getPltHeaderId());
+        } catch (RRException other) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testAttachOnePLTToNotExistingInputNode() {
+        try {
+            inuringInputNodeService.updateInuringInputNode(new InuringInputNodeUpdateRequest(1, Arrays.asList(PLT_ID_1)));
+            fail();
+        } catch (InuringInputNodeNotFoundException ex) {
+            assertEquals("Inuring Input Node id 1 not found", ex.getMessage());
+        } catch (RRException other) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testAttachOnePLTToExistingInputNode() {
+        try {
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
+                    INURING_PACKAGE_HAS_PLT_ID,
+                    "Input Node 1",
+                    Arrays.asList(PLT_ID_1)));
+            inuringInputNodeService.updateInuringInputNode(new InuringInputNodeUpdateRequest(1, Arrays.asList(PLT_ID_1, PLT_ID_2)));
+            assertNotNull(inuringInputNodeService.findAttachedPLTByInuringInputNodeId(1));
+            assertEquals("Input Node 1", inuringInputNodeService.findByInuringInputNodeId(1).getInputNodeName());
+            assertEquals(2, inuringInputNodeService.findAttachedPLTByInuringInputNodeId(1).size());
+            assertEquals(1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1).getInuringInputNodeId());
+            assertEquals(PLT_ID_1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1).getPltHeaderId());
+            assertEquals(1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(2).getInuringInputNodeId());
+            assertEquals(PLT_ID_2, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(2).getPltHeaderId());
+
+        } catch (RRException other) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testDetachOnePLTFromNotExistingInputNode() {
+        try {
+            inuringInputNodeService.updateInuringInputNode(new InuringInputNodeUpdateRequest(1, Arrays.asList(PLT_ID_1, PLT_ID_2)));
+            fail();
+        } catch (InuringInputNodeNotFoundException ex) {
+            assertEquals("Inuring Input Node id 1 not found", ex.getMessage());
+        } catch (RRException other) {
+            fail();
+        }
+    }
+
+    @Test
+    public void testDetachOnePLTFromExistingInputNode() {
+        try {
+            inuringInputNodeService.createInuringInputNode(new InuringInputNodeCreationRequest(
+                    INURING_PACKAGE_HAS_PLT_ID,
+                    "Input Node 1",
+                    Arrays.asList(PLT_ID_1, PLT_ID_2, PLT_ID_3)));
+            inuringInputNodeService.updateInuringInputNode(new InuringInputNodeUpdateRequest(1, Arrays.asList(PLT_ID_1, PLT_ID_3)));
+            assertNotNull(inuringInputNodeService.findAttachedPLTByInuringInputNodeId(1));
+            assertEquals("Input Node 1", inuringInputNodeService.findByInuringInputNodeId(1).getInputNodeName());
+            assertEquals(2, inuringInputNodeService.findAttachedPLTByInuringInputNodeId(1).size());
+            assertEquals(1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1).getInuringInputNodeId());
+            assertEquals(PLT_ID_1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(1).getPltHeaderId());
+            assertEquals(1, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(3).getInuringInputNodeId());
+            assertEquals(PLT_ID_3, inuringInputAttachedPLTRepository.findByInuringInputAttachedPLTId(3).getPltHeaderId());
+        } catch (RRException other) {
+            fail();
+        }
+    }
+
+
+    @Test
+    public void testAssignTagToAnAttachedPLT() {
+//        fail();
     }
 
 }

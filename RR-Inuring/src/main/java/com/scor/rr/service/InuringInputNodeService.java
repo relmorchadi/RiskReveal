@@ -5,16 +5,20 @@ import com.scor.rr.entity.InuringInputNode;
 import com.scor.rr.entity.InuringPackage;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.InputPLTNotFoundException;
+import com.scor.rr.exceptions.inuring.InuringInputNodeNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
 import com.scor.rr.repository.InuringInputNodeRepository;
 import com.scor.rr.repository.InuringInputAttachedPLTRepository;
 import com.scor.rr.repository.InuringPackageRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
+import com.scor.rr.request.InuringInputNodeUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by u004602 on 10/09/2019.
@@ -40,7 +44,7 @@ public class InuringInputNodeService {
             }
         }
 
-        InuringInputNode inuringInputNode = saveOrUpdateInuringInputNode(new InuringInputNode(request.getInuringPackageId(), request.getInputNodeName()));
+        InuringInputNode inuringInputNode = inuringInputNodeRepository.saveAndFlush(new InuringInputNode(request.getInuringPackageId(), request.getInputNodeName()));
         if (request.getAttachedPLTs() != null && ! request.getAttachedPLTs().isEmpty()) {
             for (Integer pltId : request.getAttachedPLTs()) {
                 inuringInputAttachedPLTRepository.saveAndFlush(new InuringInputAttachedPLT(inuringInputNode.getInuringInputNodeId(), pltId));
@@ -48,8 +52,34 @@ public class InuringInputNodeService {
         }
     }
 
-    public InuringInputNode saveOrUpdateInuringInputNode(InuringInputNode inuringInputNode) {
-        return inuringInputNodeRepository.saveAndFlush(inuringInputNode);
+    public void  updateInuringInputNode(InuringInputNodeUpdateRequest request) throws RRException {
+        InuringInputNode inuringInputNode = inuringInputNodeRepository.findByInuringInputNodeId(request.getInuringInputNodeId());
+        if (inuringInputNode == null) throw new InuringInputNodeNotFoundException(request.getInuringInputNodeId());
+        if (request.getAttachedPLTs() != null) {
+            Set<Integer> newPLTIds = new HashSet<>();
+            for (Integer id : request.getAttachedPLTs()) {
+                if (scorpltheaderRepository.findByPkScorPltHeaderId(id) == null) throw new InputPLTNotFoundException(id);
+                newPLTIds.add(id);
+            }
+            List<InuringInputAttachedPLT> inuringInputAttachedPLTs = inuringInputAttachedPLTRepository.findByInuringInputNodeId(request.getInuringInputNodeId());
+            for (InuringInputAttachedPLT inuringInputAttachedPLT : inuringInputAttachedPLTs) {
+                if (! request.getAttachedPLTs().contains(inuringInputAttachedPLT.getPltHeaderId())) {
+                    inuringInputAttachedPLTRepository.deleteByInuringInputAttachedPLTId(inuringInputAttachedPLT.getInuringInputAttachedPLTId());
+                } else {
+                    newPLTIds.remove(inuringInputAttachedPLT.getPltHeaderId());
+                }
+            }
+            if (! newPLTIds.isEmpty()) {
+                for (Integer pltId : newPLTIds) {
+                    inuringInputAttachedPLTRepository.saveAndFlush(new InuringInputAttachedPLT(inuringInputNode.getInuringInputNodeId(), pltId));
+                }
+            }
+        }
+        if (request.getInputNodeName() != null) {
+            inuringInputNode.setInputNodeName(request.getInputNodeName());
+        }
+        inuringInputNodeRepository.save(inuringInputNode);
+
     }
 
     public InuringInputNode findByInuringInputNodeId(int inuringInputNodeId) {
