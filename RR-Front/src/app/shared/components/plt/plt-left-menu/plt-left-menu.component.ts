@@ -366,4 +366,8 @@ export class PltLeftMenuComponent implements OnInit {
       type: leftMenuStore.save
     })
   }
+
+  reset() {
+    this.initTagForm();
+  }
 }

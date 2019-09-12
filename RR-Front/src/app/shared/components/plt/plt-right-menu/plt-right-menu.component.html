@@ -1,4 +1,8 @@
 <div *ngIf="inputs['visible'] || inputs['mode'] == 'pop-up'" class="plt-details-container">
+  <div class="navigation-icons-drawer">
+    <i [ngClass]="{'icon-arrow_forward_ios_24px': inputs['visible'], 'icon-arrow_back_ios_24px': inputs['mode'] == 'pop-up' && !inputs['visible']}"  (click)="closeDrawer()"></i>
+  </div>
+
   <ng-container *ngIf="fullViewActive">
     <div class="plt-details-header">
       <hr>

@@ -1115,8 +1115,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   addNewTag(tag) {
     /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
     this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
-    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tag), 'tagName'));
+    this.updateTagsInput('toAssign',  _.uniqBy(_.concat(this.tagsInput.toAssign, tag), 'tagName'));
   }
 
   toggleTag({i, operation, source}) {
