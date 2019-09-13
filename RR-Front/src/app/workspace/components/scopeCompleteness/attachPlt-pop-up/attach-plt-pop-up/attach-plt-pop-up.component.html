@@ -23,47 +23,8 @@
   <div class="content">
     <div class="left">
       <app-plt-left-menu
-        [inputs]="{
-            tagContextMenu: tagContextMenu,
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: tableInputs['showDeleted'],
-            filterData: tableInputs['filterData'],
-            filters: tableInputs['filters'],
-            addTagModalIndex: tagModalIndex,
-            fromPlts: fromPlts,
-            deletedPltsLength: (tableInputs['listOfDeletedPltsData'] | keys).length,
-            userTags: userTags,
-            systemTags: systemTags,
-            selectedListOfPlts: tableInputs['selectedListOfPlts'],
-            systemTagsCount: systemTagsCount,
-            _tagModalVisible: tagModalVisible,
-            _editingTag: editingTag,
-            _modalSelect: modalSelect,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:true,
-            selectedItemForMenu: selectedItemForMenu
-          }"
-        (onAssignPltsToTag)="assignPltsToTag($event)"
-        (onCreateTag)="createTag($event)"
-        (onProjectFilter)="filter($event)"
-        (onEditTag)="editTag()"
-        (onResetPath)="resetPath()"
-        (onSelectProjects)="setSelectedProjects($event)"
-        (onSelectSysTagCount)="selectSystemTag($event)"
-        (onSetFilters)="setFilters($event)"
-        (onSetFromPlts)="setFromPlts($event)"
-        (onSetSelectedUserTags)="setUserTags($event)"
-        (setTagModalIndex)="setModalIndex($event)"
-        (setTagModalVisibility)="setTagModal($event)"
-        (onSetTagForMenu)="setTagForMenu($event)"
-        (onSetRenameTag)="setRenameTag($event)"
-        (emitFilters)="emitFilters($event)"
-        (unCkeckAllPlts)="unCheckAll()"
-        (onWsHeaderSelection)="setWsHeaderSelect($event)"
-        (onModalSelect)="setModalSelectedItems($event)"
+        [tagsInput]="tagsInput"
+        (actionDispatcher)="leftMenuActionDispatcher($event)"
       >
 
       </app-plt-left-menu>

@@ -35,7 +35,13 @@ public class FileBaseImportResource {
                             "52_SAGI_XOL_2019 - SAGI_XOL_2019_EventSetId_7511_100k-1547193581-Original-20190111_155940.txt",
                             "6_IDFL_all_cresta - Analysis_EventSetId_7511_100k-1547173370-Original-20190111_102249.txt",
                             "5_IDFL_Cresta3 - Analysis_EventSetId_7511_100k-1547173150-Original-20190111_101910.txt",
-                            "21_Baoviet_XOL - Analysis_EventSetId_7511_100k-1548815065-Original-20190130_102425.txt"
+                            "21_Baoviet_XOL - Analysis_EventSetId_7511_100k-1548815065-Original-20190130_102425.txt",
+                            "31_2A_ALGERIA_Fire_SP - Analysis_2A_IF_Fire_SP_EventSetId_1100_100k-1534254107-Original-20180814_154147.txt",
+                            "27_201804_PPS - 201804_PPS_ZAEQ_EventSetId_1190_100k-1534263841-Original-20180814_182400.txt",
+                            "52_SAGI_XOL_2019 - SAGI_XOL_2019_EventSetId_7511_100k-1547193581-Original-20190111_155940.txt",
+                            "Please Delete Me.txt",
+                            "Please Edit Me.txt",
+                            "Please Rename Me.txt"
                     )
             );
         }

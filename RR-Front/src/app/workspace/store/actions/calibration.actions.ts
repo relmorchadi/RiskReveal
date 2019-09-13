@@ -5,6 +5,13 @@ export class loadAllPltsFromCalibration {
   }
 }
 
+export class loadAllAdjustmentApplication {
+  static readonly type = '[Calibration] load All Adjustment Application'
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class loadAllPltsFromCalibrationSuccess {
   static readonly type = '[Calibration] Load All Plts Success'
 

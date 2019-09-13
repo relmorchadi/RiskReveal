@@ -17,6 +17,7 @@ import {LazyLoadEvent} from "primeng/api";
 import {Message} from "../../../../shared/message";
 import {BaseContainer} from "../../../../shared/base";
 import {SystemTagsService} from "../../../../shared/services/system-tags.service";
+import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/store";
 
 @Component({
   selector: 'app-add-remove-pop-up',
@@ -24,6 +25,8 @@ import {SystemTagsService} from "../../../../shared/services/system-tags.service
   styleUrls: ['./add-remove-pop-up.component.scss']
 })
 export class AddRemovePopUpComponent extends BaseContainer implements OnInit, OnDestroy {
+
+  tagsInput: leftMenuStore.Input;
 
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
@@ -40,8 +43,8 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   @Input('userTags') userTags: string;
   @Input('projects') projects: string;
   @Input() multiSteps: boolean;
-  @Input() workspaceId: any;
-  @Input() uwy: any;
+  workspaceId: any;
+  uwy: any;
   @Input() stepConfig: {
     wsId: string,
     uwYear: string,
@@ -286,6 +289,30 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       visible: false,
       mode: "pop-up"
     };
+    this.tagsInput = {
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      projects: [],
+      showDeleted: this.tableInputs['showDeleted'],
+      filterData: this.tableInputs['filterData'],
+      filters: this.tableInputs['filters'],
+      deletedPltsLength: 0,
+      userTags: [],
+      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
+      systemTagsCount: {},
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      pathTab: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      toAssign: [],
+      toRemove: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
     this.setRightMenuSelectedTab('basket');
   }
 
@@ -329,6 +356,12 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       this.setInputs('someItemsAreSelected', this.Inputs.selectedListOfPlts.length < this.listOfPltsThread.length && this.Inputs.selectedListOfPlts.length > 0);
       this.detectChanges();
     });
+    const pltToCalibrate = [];
+    _.forEach(this.listOfPltsThread, row => {
+      pltToCalibrate[row.pltId] = {calibrate: row.toCalibrate};
+    })
+    console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&', pltToCalibrate);
+    this.calibrateSelectPlts(pltToCalibrate);
 
   }
 
@@ -594,7 +627,10 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
 
   calibrateSelectPlts(plts: any) {
     console.log('selected   ************************==> ', this.Inputs.selectedListOfPlts);
-    this.store$.dispatch(new fromWorkspaceStore.calibrateSelectPlts({plts: plts}));
+    this.store$.dispatch(new fromWorkspaceStore.calibrateSelectPlts({
+      plts: plts,
+      ws: this.workspaceId + "-" + this.uwy
+    }));
   }
 
   selectSinglePLT($event) {
@@ -783,6 +819,146 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       }
       return;
     }
+  }
+
+  leftMenuActionDispatcher(action: Message) {
+    console.log(action);
+
+    switch (action.type) {
+
+      case leftMenuStore.unCkeckAllPlts:
+        this.unCheckAll();
+        break;
+      case leftMenuStore.emitFilters:
+        this.emitFilters(action.payload);
+        break;
+      case leftMenuStore.setFilters:
+        this.setFilters(action.payload);
+        break;
+      /* case leftMenuStore.resetPath:
+         this.resetPath();
+         break;*/
+      case leftMenuStore.headerSelection:
+        this.setWsHeaderSelect(action.payload);
+        break;
+      /*case leftMenuStore.filterByProject:
+        this.filter(action.payload);
+        break;*/
+      case leftMenuStore.onSelectProjects:
+        this.setSelectedProjects(action.payload);
+        break;
+      /*case leftMenuStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;*/
+      /*case leftMenuStore.toggleDeletedPlts:
+        this.toggleDeletePlts(action.payload);
+        break;*/
+      /*case leftMenuStore.onSelectSysTagCount:
+        this.selectSystemTag(action.payload);
+        break;*/
+      case leftMenuStore.onSetSelectedUserTags:
+        this.setUserTags(action.payload);
+        break;
+
+      //Tag Manager
+
+      case leftMenuStore.addNewTag:
+        this.addNewTag(action.payload)
+        break;
+      case leftMenuStore.toggleTag:
+        this.toggleTag(action.payload);
+        break;
+      case leftMenuStore.confirmSelection:
+        this.confirmSelection();
+        break;
+      case leftMenuStore.clearSelection:
+        this.clearSelection();
+        break;
+      case leftMenuStore.save:
+        this.save();
+        break;
+    }
+  }
+
+  updateTagsInput(key, value) {
+    this.tagsInput = {...this.tagsInput, [key]: value};
+  }
+
+  updateTableAndTagsInputs(key, value) {
+    this.updateTagsInput(key, value);
+    /*this.updateTable(key,value);*/
+  }
+
+  addNewTag(tag) {
+    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+  }
+
+  toggleTag({i, operation, source}) {
+    if (operation == this.tagsInput['operation']) {
+      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+      } else {
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+      }
+    } else {
+      this.updateTagsInput('operation', operation);
+      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+    }
+
+    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+  }
+
+  confirmSelection() {
+    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
+    if (this.tagsInput.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    }
+
+    if (this.tagsInput.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+    }
+
+    this.clearSelection();
+  }
+
+  /*checkTagType( tag ) {
+    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
+  }
+
+  updateTagsType(d) {
+    return _.map(d, tag => ({...tag, type: this.checkTagType(tag)}))
+  }*/
+
+  clearSelection() {
+    this.updateTagsInput('selectedTags', {});
+    this.updateTagsInput('operation', null);
+  }
+
+  save() {
+    this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
+      userId: 1,
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      selectedTags: this.tagsInput.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+    }));
+    this.tagsInput = {
+      ...this.tagsInput,
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
   }
 
 }

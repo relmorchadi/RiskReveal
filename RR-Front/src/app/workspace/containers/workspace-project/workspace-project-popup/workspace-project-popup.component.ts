@@ -20,6 +20,7 @@ import {Actions as tableActions} from '../../../../shared/components/plt/plt-mai
 import {BaseContainer} from '../../../../shared/base';
 import {StateSubscriber} from '../../../model/state-subscriber';
 import {SystemTagsService} from '../../../../shared/services/system-tags.service';
+import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/store";
 
 @Component({
   selector: 'app-workspace-project-popup',
@@ -27,6 +28,8 @@ import {SystemTagsService} from '../../../../shared/services/system-tags.service
   styleUrls: ['./workspace-project-popup.component.scss'],
 })
 export class WorkspaceProjectPopupComponent extends BaseContainer implements OnInit, StateSubscriber {
+
+  tagsInput: leftMenuStore.Input;
 
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
@@ -419,6 +422,31 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       visible: false,
       mode: "pop-up"
     };
+
+    this.tagsInput= {
+      wsId: '',
+      uwYear: 0,
+      projects: [],
+      showDeleted: false,
+      filterData: this.tableInputs['filterData'],
+      filters: this.tableInputs['filters'],
+      deletedPltsLength: 0,
+      userTags: [],
+      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
+      systemTagsCount: {},
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      pathTab: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      toAssign: [],
+      toRemove: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
     this.setRightMenuSelectedTab('basket');
   }
 
@@ -428,8 +456,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   observeRouteParams() {
     return this.route.params.pipe(tap(({wsId, year}) => {
-      this.setInputs('wsId', wsId);
-      this.setInputs('uwYear', year);
+      this.updateTableAndTagsInputs('wsId', wsId);
+      this.updateTableAndTagsInputs('uwYear', year);
     }))
   }
 
@@ -472,7 +500,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }));
 
     this.getPlts().subscribe((data) => {
-      this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
@@ -534,12 +562,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     ).subscribe( () => this.d.unsubscribe());
 
     this.getProjects().subscribe((projects: any) => {
-      this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
     this.getUserTags().subscribe(userTags => {
-      this.setInputs('userTags', userTags || {});
+      this.updateTagsInput('userTags', userTags);
       this.detectChanges();
     })
   }
@@ -838,8 +866,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   onRowSelect(event) {
     this.selectedWorkspace = event;
-    this.setInputs('wsId', event.workSpaceId);
-    this.setInputs('uwYear', event.uwYear);
+    this.updateTableAndTagsInputs('wsId', event.workSpaceId);
+    this.updateTableAndTagsInputs('uwYear', event.uwYear);
   }
 
   onRowUnselect(event) {
@@ -847,9 +875,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   getBrowesingItems(workspace) {
-    console.log(workspace);
-    console.log(this.Inputs);
-    console.log(this.getInputs('wsId'),this.getInputs('uwYear'))
     this.onSelectWorkspace.emit(workspace);
     this.browesing = false;
     if (this.selectionStep == 'project') {
@@ -880,7 +905,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         }));
 
         this.getPlts().subscribe((data) => {
-          this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+          this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
 
           this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
           this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
@@ -930,12 +955,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         });
 
         this.getProjects().subscribe((projects: any) => {
-          this.setInputs('projects', _.map(projects, p => ({...p, selected: false})));
+          this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
           this.detectChanges();
         });
 
         this.getUserTags().subscribe(userTags => {
-          this.setInputs('userTags', userTags || {});
+          this.updateTagsInput('userTags', userTags);
           this.detectChanges();
         })
 
@@ -986,9 +1011,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       });
 
     if (this.stepConfig && this.stepConfig.uwYear && this.stepConfig.wsId) {
-      this.setInputs('wsId', this.stepConfig.wsId);
-      this.setInputs('uwYear', this.stepConfig.uwYear);
-      console.log(this.stepConfig)
+
+      this.updateTableAndTagsInputs('wsId', this.stepConfig.wsId);
+      this.updateTableAndTagsInputs('uwYear', this.stepConfig.uwYear);
       this.getBrowesingItemsDirectly();
     }
 
@@ -1200,5 +1225,100 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   patchState(state: any): void {
+  }
+
+  leftMenuActionDispatcher(action: Message) {
+    console.log(action);
+
+    switch (action.type) {
+
+      case leftMenuStore.unCkeckAllPlts:
+        this.unCheckAll();
+        break;
+      case leftMenuStore.emitFilters:
+        this.emitFilters(action.payload);
+        break;
+      case leftMenuStore.setFilters:
+        this.setFilters(action.payload);
+        break;
+      case leftMenuStore.resetPath:
+        this.resetPath();
+        break;
+      case leftMenuStore.headerSelection:
+        this.setWsHeaderSelect(action.payload);
+        break;
+      case leftMenuStore.filterByProject:
+        this.filterData2(action.payload);
+        break;
+      case leftMenuStore.onSelectProjects:
+        this.setSelectedProjects(action.payload);
+        break;
+      case leftMenuStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
+      case leftMenuStore.toggleDeletedPlts:
+        this.toggleDeletePlts(action.payload);
+        break;
+      case leftMenuStore.onSelectSysTagCount:
+        this.selectSystemTag(action.payload);
+        break;
+      case leftMenuStore.onSetSelectedUserTags:
+        this.setUserTags(action.payload);
+        break;
+    }
+  }
+
+  updateTagsInput(key, value) {
+    this.tagsInput= {...this.tagsInput, [key]: value};
+  }
+
+  updateTableAndTagsInputs(key, value) {
+    this.updateTagsInput(key, value);
+    this.updateTable(key,value);
+  }
+
+  resetPath() {
+    this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
+    this.updateTagsInput('projects', _.map(this.tagsInput.projects, p => ({...p, selected: false})));
+    this.updateTableAndTagsInputs('showDeleted', false);
+  }
+
+  filterData2(filterData) {
+    this.updateTableAndTagsInputs('filterData', filterData);
+  }
+
+  setTagModal($event: any) {
+    this.updateTagsInput('_tagModalVisible', $event);
+  }
+
+  toggleDeletePlts($event) {
+    console.log('showDeleted', $event);
+    this.updateTable('showDeleted', $event);
+    //this.generateContextMenu(this.getTableInputKey('showDeleted'));
+
+    this.updateTable('selectAll',
+      (this.getTableInputKey('selectedListOfPlts').length > 0 || (this.getTableInputKey('selectedListOfPlts').length == this.getTableInputKey('listOfPltsData').length))
+      &&
+      this.getTableInputKey('listOfPltsData').length > 0);
+
+    this.updateTable('selectAllDeletedPlts', (this.getTableInputKey('selectedListOfDeletedPlts').length > 0 || (this.getTableInputKey('selectedListOfDeletedPlts').length == this.getTableInputKey('listOfDeletedPltsData').length)) && this.getTableInputKey('listOfDeletedPltsData').length > 0);
+
+    this.updateTable("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0)
+
+    console.log(this.tableInputs);
+    // this.generateContextMenu(this.showDeleted);
+  }
+
+  selectSystemTag({section, tag}) {
+    let newSysTagsCount= {};
+    _.forEach(this.tagsInput.systemTagsCount, (s, sKey) => {
+      _.forEach(s, (t, tKey) => {
+        if (tag == tKey && section == sKey) {
+          newSysTagsCount[sKey][tKey] = {...t, selected: !t.selected}
+        }
+      })
+    });
+
+    this.updateTagsInput('systemTagsCount', newSysTagsCount);
   }
 }

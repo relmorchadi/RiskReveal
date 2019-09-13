@@ -7,47 +7,8 @@
       <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
         <div style="padding:unset;width: 193px;">
           <app-plt-left-menu
-            [inputs]="{
-            tagContextMenu: tagContextMenu,
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: showDeleted,
-            filterData: filterData,
-            filters: filters,
-            addTagModalIndex: tagModalIndex,
-            fromPlts: fromPlts,
-            deletedPltsLength: (listOfDeletedPlts | keys).length,
-            userTags: userTags,
-            systemTags: systemTags,
-            selectedListOfPlts: selectedListOfPlts,
-            systemTagsCount: systemTagsCount,
-            _tagModalVisible: tagModalVisible,
-            _editingTag: editingTag,
-            _modalSelect: modalSelect,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:false
-          }"
-            (onAssignPltsToTag)="assignPltsToTag($event)"
-            (onCreateTag)="createTag($event)"
-            (onProjectFilter)="filter($event)"
-            (onEditTag)="editTag()"
-            (onResetPath)="resetPath()"
-            (onSelectProjects)="setSelectedProjects($event)"
-            (onSelectSysTagCount)="selectSystemTag($event)"
-            (onSetFilters)="setFilters($event)"
-            (onSetFromPlts)="setFromPlts($event)"
-            (onSetSelectedUserTags)="setUserTags($event)"
-            (onToggleDeletedPlts)="toggleDeletePlts($event)"
-            (setTagModalIndex)="setModalIndex($event)"
-            (setTagModalVisibility)="setTagModal($event)"
-            (onSetTagForMenu)="setTagForMenu($event)"
-            (onSetRenameTag)="setRenameTag($event)"
-            (emitFilters)="emitFilters($event)"
-            (unCkeckAllPlts)="unCheckAll()"
-            (onWsHeaderSelection)="setWsHeaderSelect($event)"
-            (onModalSelect)="setModalSelectedItems($event)"
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
+            [tagsInput]="tagsInput"
           ></app-plt-left-menu>
         </div>
         <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
@@ -65,7 +26,7 @@
 
             <div *ngIf="!extended" class="table-header1" [ngStyle]="{'width': headerWidth}"
                  style="float: left;background-color: #fff">
-              <div class="title-as-tab" style="height: 42px; width: 100% !important;justify-content: space-between;">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;justify-content: space-between;">
                   <span class="title">
                     PLTs
                    <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
@@ -120,10 +81,9 @@
                      style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
                 </div>
               </div>
-              <div class=" radio-container"
-                   style="height: 46px;margin-top: 42px;justify-content: space-between;display: flex;">
+              <div class=" radio-container">
                 <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
-                <div style="margin-top: 23px;">
+                <div style="margin-top: 23px;float: right">
                   <i (click)="groupedByPure = true" *ngIf="tableType == 'adjustments' && !groupedByPure"
                      class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
                   <i (click)="groupedByPure = false" *ngIf="tableType == 'adjustments' && groupedByPure"
@@ -138,7 +98,7 @@
             <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
                  [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
-              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;">
                   <span class="title">
                     Generic Thread
                      <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
@@ -147,7 +107,8 @@
                           style="font-size: 25px; float: right; margin-left: 7px; margin-top: 3px;"></i>
                             <ul nz-menu>
                               <li nz-menu-item (click)="clickButtonPlus(true)">Add New Adjustment</li>
-                              <li class="menu-bottom-separator" nz-menu-item>Add from Template</li>
+                              <li (click)="openLoadTemplate()" class="menu-bottom-separator"
+                                  nz-menu-item>Load Template</li>
                                 <li nz-submenu>
                                   <span title>Apply To All </span>
                                   <ul nz-menu>
@@ -164,70 +125,98 @@
                                     <li nz-menu-item>New Alternate Threads</li>
                                   </ul>
                               </li>
-                              <li nz-menu-item>Save</li>
-                              <li nz-menu-item>Save As</li>
+                              <li (click)="openSaveTemplate(true)" nz-menu-item>Save Template</li>
+                              <li (click)="openSaveTemplate(false)" nz-menu-item>Save Template As</li>
                               <li nz-menu-item>Reset/Clear</li>
                             </ul>
                     </nz-dropdown>
                   </span>
-                <div
-                  *ngIf="adjsArray.length > 0"
-                  class="generic-thread-container"
-                  dnd-sortable-container [sortableData]="adjsArray" [dropZones]="['adjustment-dropZone']"
-                  style="margin-top: 10px; margin-left: 25px; max-width: calc(100% - 230px);z-index: 100;border: 1px solid #dddddd; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
-                  <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
-                    <div class="adjustDiv"
-                         style="margin: 8px!important;"
-                         (mouseover)="shownDropDown = adj.id"
-                         (mouseleave)="onLeaveAdjustment(adj.id)"
-                         dnd-sortable
-                         [sortableIndex]="adjIndex"
-                         [dragEnabled]="true"
-                         (click)="selectedAdjust(adj.id)"
-                         [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
-                         [dragData]="adj" (onDropSuccess)="dropThreadAdjustment()">
+                <div style="display: flex; flex-direction: column;flex: 1;height: 66px;margin-left: 25px;">
+                  <div
+                    style="margin-left: 8px;margin-top: 5px;  display: flex; align-items: center;margin-bottom: 7px;">
+                    Template: <span *ngIf="template.id !== 0"
+                                    class="template-type"> {{template.type}} </span> {{template.name}}
+                    <i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px info-desc" nz-tooltip
+                       nzPlacement="right"
+                       nzTrigger="click" style="margin-left: 5px;font-size: 17px;cursor: pointer; color: #0000a0"></i>
+                    <ng-template #tool>
+                      <div class="description-tooltip">
+                        <span class="title"> Description</span>
+                        <p>{{template.description}}</p>
+                      </div>
+                    </ng-template>
+                  </div>
+                  <div
+                    *ngIf="adjsArray.length > 0"
+                    [dropZones]="['adjustment-dropZone']"
+                    [sortableData]="adjsArray" class="generic-thread-container" dnd-sortable-container
+                    style=" max-width: calc(100% - 230px);z-index: 100; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                    <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
+                      <div (click)="selectedAdjust(adj.id)"
+                           (mouseleave)="onLeaveAdjustment(adj.id)"
+                           (mouseover)="shownDropDown = adj.id"
+                           (onDropSuccess)="dropThreadAdjustment()"
+                           [dragData]="adj"
+                           [dragEnabled]="true"
+                           [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
+                           [sortableIndex]="adjIndex"
+                           class="adjustDiv"
+                           dnd-sortable style="margin: 2px 8px 8px 8px !important;">
                             <span
                               style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
-                      <nz-dropdown *ngIf="shownDropDown === adj.id" [(nzVisible)]="dropdownVisible"
-                                   (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                                   nzTrigger="click"
-                                   [nzPlacement]="'bottomLeft'" class="dropD">
-                        <i class="icon-menu_24px" nz-dropdown
-                           style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                        <ul nz-menu>
-                          <li nz-menu-item (click)="ModifyAdjustement(adj)">Edit</li>
-                          <li (click)="DeleteAdjustement(adj)" class="menu-bottom-separator" nz-menu-item>Delete</li>
-                          <li nz-submenu>
-                            <span title>Apply For All Threads</span>
-                            <ul nz-menu>
-                              <li (click)="applyToAll(adj)" nz-menu-item>Add to Existing Threads</li>
-                              <li nz-menu-item>New Alternate Threads</li>
-                              <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>Replace Existing Threads</li>
-                            </ul>
-                          <li nz-submenu>
-                            <span title>Apply For Selected Threads only</span>
-                            <ul nz-menu>
-                              <li (click)="applyToSelected(adj)" nz-menu-item>Add to Existing Threads</li>
-                              <li nz-menu-item>New Alternate Threads</li>
-                              <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>Replace Existing Threads</li>
-                            </ul>
-                          </li>
-                        </ul>
-                      </nz-dropdown>
-                      <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
-                             class="templateInput"
-                      >
-                    </div>
-                  </ng-container>
+                        <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                                     *ngIf="shownDropDown === adj.id"
+                                     [(nzVisible)]="dropdownVisible"
+                                     [nzPlacement]="'bottomLeft'"
+                                     class="dropD" nzTrigger="click">
+                          <i class="icon-menu_24px" nz-dropdown
+                             style="font-size: 14px;float: right;margin-right: 2px;"></i>
+                          <ul nz-menu>
+                            <li (click)="ModifyAdjustement(adj)" nz-menu-item>Edit</li>
+                            <li (click)="DeleteAdjustement(adj)" class="menu-bottom-separator" nz-menu-item>Delete</li>
+                            <li nz-submenu>
+                              <span title>Apply For All Threads</span>
+                              <ul nz-menu>
+                                <li (click)="applyToAll(adj)" nz-menu-item>Add to Existing Threads</li>
+                                <li nz-menu-item>New Alternate Threads</li>
+                                <li (click)="replaceToAllAdjustement(adj)" nz-menu-item>Replace Existing Threads</li>
+                              </ul>
+                            <li nz-submenu>
+                              <span title>Apply For Selected Threads only</span>
+                              <ul nz-menu>
+                                <li (click)="applyToSelected(adj)" nz-menu-item>Add to Existing Threads</li>
+                                <li nz-menu-item>New Alternate Threads</li>
+                                <li (click)="replaceToSelectedPlt(adj)" nz-menu-item>Replace Existing Threads</li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </nz-dropdown>
+                        <input (change)="onChangeAdjValue(adj,$event)" [disabled]="adj.linear" [value]="adj.value"
+                               class="templateInput"
+                        >
+                      </div>
+                    </ng-container>
+                  </div>
                 </div>
+
               </div>
-              <div class="pull-right radio-container">
-                <div class="Deltas" style="position: unset;">
-                  <div>
-                    <div class="button-toggle" style="width: 212px; float: left;">
-                      Impact on EP Metrics &nbsp;
-                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
-                                 class="switch-input"></nz-switch>
+              <div class="radio-container">
+                <div class="Deltas" style="display: grid">
+                  <div style="    margin-left: 25px;">
+                    <div class="button-toggle" style="float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
                     </div>
                     <i (click)="manageAdjColumn = true" class="icon-settings_24px"
                        nz-tooltip="Manage  adjustment columns"
@@ -239,7 +228,7 @@
             <div *ngIf="!extended && tableType=='EP Metrics'" class="table-header2"
                  [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
-              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;">
                   <span class="title">
                     Thread Level EP Metrics
                   </span>
@@ -304,20 +293,102 @@
                   </nz-dropdown>
                 </div>
               </div>
-              <div class="pull-right radio-container" style="width: 100% !important;">
-                <div class="Deltas" style="position: unset; justify-content: space-between">
-                  <nz-radio-group [(ngModel)]="EPMDisplay" class="default-radio" style="margin-left: 25px;">
-                    <label nz-radio nzValue="percentage" style="color:  #0700e4">Delta by % Basis</label>
-                    <label nz-radio nzValue="amount" style="color:  #0700e4">Delta by amount</label>
-                  </nz-radio-group>
-                  <div>
-                    <div class="button-toggle" style="width: 212px; float: left;">
-                      Impact on EP Metrics &nbsp;
-                      <nz-switch (ngModelChange)="onTableTypeChange($event)" [(ngModel)]="EPMetricsTable"
-                                 class="switch-input"></nz-switch>
+              <div class="radio-container" style="width: 100% !important;">
+                <div class="Deltas" style="display: grid;">
+                  <div style="margin-left: 25px;">
+                    <div class="button-toggle" style="float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
+                    </div>
+                    <div class="button-toggle" style="float: left;">
+                      <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
+                      <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
+                                 class="switch-input"></nz-switch>&nbsp;
+                      <span [ngStyle]="{'visibility': !deltaSwitch ?'hidden':'visible'}"> Deltas by Amount</span>
                     </div>
                     <i (click)="manageReturnPeriods = true" class="icon-settings_24px"
                        nz-tooltip="Manage return periods"
+                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+            <div *ngIf="!extended && tableType=='Impact'" [ngStyle]="{'margin-left': headerWidth}"
+                 class="table-header2"
+                 style="background-color: #fff">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between">
+                  <span class="title">
+                    Impact
+                  </span>
+                <div class="impact-container">
+                  <div class="Impact-points">
+                  <span>
+                    Exhaustion Point(pE): 999,999,999,999
+                  </span>
+                    <span>
+                    User Specified Point(pU): 999,999,999,999
+                  </span>
+                    <span>
+                    Activation Point(pA): 999,999,999,999
+                  </span>
+                  </div>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Layer Overlay</span>
+                          <span class="dropdown-item-selected-calibration">Workspace</span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li nz-menu-item>Workspace</li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+
+              </div>
+              <div class="radio-container" style="width: 100% !important;">
+                <div class="Deltas" style="display: grid">
+                  <div style="margin-left: 25px">
+                    <div class="button-toggle" style="float: left;">
+                      <span style="font-weight: bold; margin-right: 10px">View: </span>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'20px'}"
+                                     label="Adjustments" name="tableType"
+                                     value="adjustments"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'30px'}"
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
+                      <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
+                                     [ngStyle]="{'padding-right':'10px'}"
+                                     label="EP Metrics" name="tableType"
+                                     value="EP Metrics"></p-radioButton>
+                    </div>
+                    <div class="button-toggle" style="float: left;">
+                      <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
+                      <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
+                                 class="switch-input"></nz-switch>&nbsp;
+                      <span [ngStyle]="{'visibility': !deltaSwitch ?'hidden':'visible'}">Deltas by Amount </span>
+                    </div>
+                    <i (click)="manageAdjColumn = true" class="icon-settings_24px"
+                       nz-tooltip="Manage  adjustment columns"
                        style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
                   </div>
 
@@ -379,6 +450,7 @@
   [AdjustementType]="AdjustementType"
   [modalTitle]="modalTitle"
   [singleValue]="singleValue"
+  [columnPosition]="columnPosition"
   [modifyModal]="modifyModal"
   [global]="global"
   [categorySelected]="categorySelected"
@@ -644,6 +716,137 @@
     <div class="footer">
       <button (click)="toggleColumnsManager(false)" nz-button class="a-button-text">cancel</button>
       <button class="a-buttons-contained" (click)="saveColumns(false)" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="saveTemplate"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Save Template
+      </h4>
+      <i style="cursor: pointer" (click)="closeSaveTemplate()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Name: </label>
+      </div>
+      <div class="ui-g-9">
+        <input [(ngModel)]="templateName" class="a-textfield-mini" nz-input nz-tooltip
+               style="width: 300px; !important; margin-right: 5px;"/>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Description </label>
+      </div>
+      <div class="ui-g-9">
+        <textarea pInputTextarea [(ngModel)]="templateDesc" rows="4" style="width: 300px"></textarea>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Type: </label>
+      </div>
+      <div class="ui-g-9">
+        <nz-radio-group [(ngModel)]="templateType" class="default-radio">
+          <label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>
+          <label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>
+        </nz-radio-group>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeSaveTemplate()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="saveCurrentTemplate()" nz-button>
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>
+<p-dialog
+  [visible]="loadTemplate"
+  [closable]="false"
+  styleClass="m-dialog-modal"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+
+  <p-header>
+    <div class="header">
+      <h4>
+        Load Template
+      </h4>
+      <i style="cursor: pointer" (click)="closeLoadTemplate()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <div class="content" style="display: unset;">
+    <div class="ui-g">
+      <div class="ui-g-3" style="margin-top: 15px;">
+        <label>Template: </label>
+      </div>
+      <div class="ui-g-9">
+        <div class="body-wrap-dropDowns-calibration">
+
+          <nz-select
+            [(ngModel)]="searchSelectedTemplate"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a template"
+            nzShowSearch
+            style="width: 300px">
+            <nz-option-group nzLabel="Local Templates" *ngIf="localTemplates.length">
+              <nz-option *ngFor="let option of localTemplates" [nzLabel]="option.name" [nzValue]="option">
+                {{option.name}}
+              </nz-option>
+            </nz-option-group>
+            <nz-option-group nzLabel="Global Templates" *ngIf="globalTemplates.length">
+              <nz-option *ngFor="let option of globalTemplates" [nzLabel]="option.name" [nzValue]="option">
+                {{option.name}}
+              </nz-option>
+            </nz-option-group>
+          </nz-select>
+        </div>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Type: </label>
+      </div>
+      <div class="ui-g-9">
+        <p style="font-weight: bold"> {{searchSelectedTemplate.type}}</p>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Description </label>
+      </div>
+      <div class="ui-g-9">
+        <p> {{searchSelectedTemplate.description}}</p>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="closeLoadTemplate()" nz-button class="a-button-text">cancel</button>
+      <button class="a-buttons-contained" (click)="loadCurrentTemplate()" nz-button>
         Save
       </button>
     </div>

@@ -1,8 +1,8 @@
 import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store';
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
-import * as fromInuring from '../actions/inuring.actions';
 import {PatchCalibrationStateAction} from '../actions';
+import * as fromInuring from '../actions/inuring.actions';
 import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
@@ -56,6 +56,12 @@ export class WorkspaceState {
   @Selector()
   static getCurrentTab(state: WorkspaceModel) {
     return state.currentTab;
+  }
+
+  @Selector()
+  static getCurrentTabStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].workspaceType;
   }
 
   static getDeletedPltsForCalibration(wsIdentifier: string) {
@@ -146,6 +152,10 @@ export class WorkspaceState {
 
   static getOpenedPlt(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt)
+  }
+
+  static getUserTagManager(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager)
   }
 
   /***********************************
@@ -249,6 +259,18 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getSummaries(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.get(state.content[wsIdentifier].riskLink.summaries, 'data', null);
+  }
+
+  @Selector()
+  static getResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.get(state.content[wsIdentifier].riskLink.results, 'data', null);
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -315,8 +337,8 @@ export class WorkspaceState {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
-  @Action(fromWS.openWS)
-  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.openWS) {
+  @Action(fromWS.OpenWS)
+  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
   }
 
@@ -449,19 +471,14 @@ export class WorkspaceState {
     return this.pltStateService.constructUserTags(ctx, payload);
   }
 
-  @Action(fromPlt.createOrAssignTags)
-  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.createOrAssignTags) {
-    return this.pltStateService.assignPltsToTag(ctx, payload);
-  }
-
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
-    return this.pltStateService.createUserTagSuccess(ctx, payload);
+    //return this.pltStateService.createUserTagSuccess(ctx, payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-    return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
+    //return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
 
 
@@ -472,7 +489,7 @@ export class WorkspaceState {
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
+    //return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
   }
 
   @Action(fromPlt.deletePlt)
@@ -518,12 +535,22 @@ export class WorkspaceState {
 
   @Action(fromPlt.AddNewTag)
   addNewTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AddNewTag) {
-    this.pltStateService.addNewTag(ctx, payload);
+    return this.pltStateService.addNewTag(ctx, payload);
   }
 
   @Action(fromPlt.DeleteTag)
   deleteTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.DeleteTag) {
-    this.pltStateService.deleteTag(ctx, payload);
+    //this.pltStateService.deleteTag(ctx, payload);
+  }
+
+  @Action(fromPlt.GetTagsBySelection)
+  getTagsBySelection(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.GetTagsBySelection) {
+    return this.pltStateService.getTagsBySelection(ctx, payload);
+  }
+
+  @Action(fromPlt.AssignPltsToTag)
+  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AssignPltsToTag) {
+    return this.pltStateService.assignPltsToTag(ctx, payload);
   }
 
   /***********************************
@@ -537,6 +564,11 @@ export class WorkspaceState {
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
     return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
+  }
+
+  @Action(fromWS.loadAllAdjustmentApplication)
+  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllAdjustmentApplication) {
+    return this.calibrationService.loadAllAdjustmentApplication(ctx, payload);
   }
 
   @Action(fromWS.loadAllPltsFromCalibrationSuccess)
@@ -760,7 +792,7 @@ export class WorkspaceState {
 
   @Action(fromWS.AddToBasketAction)
   addToBasket(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.addToBasket(ctx);
+    return this.riskLinkFacade.addToBasket(ctx);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)
@@ -907,6 +939,11 @@ export class WorkspaceState {
   @Action(fromWS.ToggleFilesAction)
   toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
     this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.TogglePltsAction)
+  togglePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePltsAction) {
+    this.fileBasedFacade.togglePlts(ctx, payload);
   }
 
   @Action(fromWS.AddFileForImportAction)

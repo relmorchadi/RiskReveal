@@ -912,7 +912,7 @@ export const PLT_COLUMNS = [
     sortDir: 1,
     fields: 'pltName',
     header: 'PLT Name',
-    width: '150',
+    width: '200',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -1052,7 +1052,7 @@ export const PLT_COLUMNS = [
     sortDir: 1,
     fields: 'base',
     header: 'Base',
-    width: '220',
+    width: '260',
     dragable: true,
     sorted: false,
     filtred: false,
@@ -1080,7 +1080,7 @@ export const PLT_COLUMNS = [
     sortDir: 1,
     fields: 'client',
     header: 'Client',
-    width: '220',
+    width: '260',
     dragable: true,
     sorted: false,
     filtred: false,
@@ -1166,7 +1166,7 @@ export const EPM_COLUMNS = [
     sortDir: 1,
     fields: 'pltName',
     header: 'PLT Name',
-    width: '150',
+    width: '200',
     dragable: false,
     sorted: true,
     filtred: true,
@@ -1494,8 +1494,7 @@ export const CURRENCIES = [
   {id: '7', name: 'Hungarian forint', label: 'HUF'},
   {id: '8', name: 'Singapore Dollars', label: 'SGD'}
 ];
-export const PURE =
-  {
+export const PURE = {
     "SPLTH-000735433": {
       "workspaceId": "17P3398",
       "uwy": 2016,
@@ -1581,8 +1580,7 @@ export const PURE =
       "xactPublicationDate": null
     }
   };
-export const ONE_PLT =
-  {
+export const ONE_PLT = {
     "workspaceId": "17P3398",
     "uwy": 2016,
     "pltId": "SPLTH-000735505",
@@ -1621,9 +1619,7 @@ export const ONE_PLT =
     }],
     "xactPublicationDate": null
   }
-
-export const PLT_DATA =
-  {
+export const PLT_DATA = {
       'SPLTH-000735484': {
         workspaceId: '17P3398',
         uwy: 2016,
@@ -4030,3 +4026,642 @@ export const API_RESPONSE = {
     "pltHeaders": [{"id": "SPLTH-000735496"}, {"id": "SPLTH-000735494"}, {"id": "SPLTH-000735501"}]
   }]
 }
+export const ADJUSTMENT_APPLICATION = {
+  'SPLTH-0007246': [
+    {
+      id: 'SPLTH-0007246-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    },
+    {
+      id: 'SPLTH-0007246-1010',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    },
+    {
+      id: 'SPLTH-0007246-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    }
+  ],
+  'SPLTH-0007715': [
+    {
+      id: 'SPLTH-0007715-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    },
+    {
+      id: 'SPLTH-0007715-126',
+      adjustmentBasis: 'Allocated Loss Adjustment Expense (ALAE)',
+      category: 'Client',
+      name: 'ALAE',
+      description: 'An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 7,
+      isExposureGrowth: false,
+      value: 'Event Driven',
+      idAdjustementType: 2,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 875
+    },
+    {
+      id: 'SPLTH-0007715-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    }
+  ],
+  'SPLTH-0007153': [
+    {
+      id: 'SPLTH-0007153-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    },
+    {
+      id: 'SPLTH-0007153-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    }
+  ],
+  'SPLTH-0007171': [
+    {
+      id: 'SPLTH-0007171-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    }
+  ],
+  'SPLTH-0007436': [
+    {
+      id: 'SPLTH-0007436-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    },
+    {
+      id: 'SPLTH-0007436-126',
+      adjustmentBasis: 'Allocated Loss Adjustment Expense (ALAE)',
+      category: 'Client',
+      name: 'ALAE',
+      description: 'An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 7,
+      isExposureGrowth: false,
+      value: 'Event Driven',
+      idAdjustementType: 2,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 875
+    },
+    {
+      id: 'SPLTH-0007436-611',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    }
+  ],
+  'SPLTH-0007422': [
+    {
+      id: 'SPLTH-0007422-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    },
+    {
+      id: 'SPLTH-0007422-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    },
+    {
+      id: 'SPLTH-0007422-611',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    }
+  ],
+  'SPLTH-0007317': [
+    {
+      id: 'SPLTH-0007317-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    }
+  ],
+  'SPLTH-0007707': [
+    {
+      id: 'SPLTH-0007707-297',
+      adjustmentBasis: 'Exposure Adjustment (Portfolio Evolution)',
+      category: 'Base',
+      name: 'Portfolio Evolution',
+      description: 'An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 1,
+      isExposureGrowth: true,
+      value: '1.3',
+      idAdjustementType: 4,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 930
+    },
+    {
+      id: 'SPLTH-0007707-1010',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    },
+    {
+      id: 'SPLTH-0007707-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    }
+  ],
+  'SPLTH-0007830': [
+    {
+      id: 'SPLTH-0007830-126',
+      adjustmentBasis: 'Allocated Loss Adjustment Expense (ALAE)',
+      category: 'Client',
+      name: 'ALAE',
+      description: 'An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 7,
+      isExposureGrowth: false,
+      value: 'Event Driven',
+      idAdjustementType: 2,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 875
+    },
+    {
+      id: 'SPLTH-0007830-1010',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    }
+  ],
+  'SPLTH-0007402': [
+    {
+      id: 'SPLTH-0007402-126',
+      adjustmentBasis: 'Allocated Loss Adjustment Expense (ALAE)',
+      category: 'Client',
+      name: 'ALAE',
+      description: 'An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 7,
+      isExposureGrowth: false,
+      value: 'Event Driven',
+      idAdjustementType: 2,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 875
+    },
+    {
+      id: 'SPLTH-0007402-1010',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    }
+  ],
+  'SPLTH-0007109': [
+    {
+      id: 'SPLTH-0007109-126',
+      adjustmentBasis: 'Allocated Loss Adjustment Expense (ALAE)',
+      category: 'Client',
+      name: 'ALAE',
+      description: 'An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 7,
+      isExposureGrowth: false,
+      value: 'Event Driven',
+      idAdjustementType: 2,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 875
+    },
+    {
+      id: 'SPLTH-0007109-1010',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    }
+  ],
+  'SPLTH-0007664': [
+    {
+      id: 'SPLTH-0007664-126',
+      adjustmentBasis: 'Allocated Loss Adjustment Expense (ALAE)',
+      category: 'Client',
+      name: 'ALAE',
+      description: 'An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 7,
+      isExposureGrowth: false,
+      value: 'Event Driven',
+      idAdjustementType: 2,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 875
+    }
+  ],
+  'SPLTH-0007661': [
+    {
+      id: 'SPLTH-0007661-126',
+      adjustmentBasis: 'Allocated Loss Adjustment Expense (ALAE)',
+      category: 'Client',
+      name: 'ALAE',
+      description: 'An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 7,
+      isExposureGrowth: false,
+      value: 'Event Driven',
+      idAdjustementType: 2,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 875
+    },
+    {
+      id: 'SPLTH-0007661-1010',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    },
+    {
+      id: 'SPLTH-0007661-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    }
+  ],
+  'SPLTH-0007236': [
+    {
+      id: 'SPLTH-0007236-1010',
+      adjustmentBasis: 'Missing Exposure',
+      category: 'Base',
+      name: 'Missing Exposures',
+      description: 'An adjustment to be applied on the basis that exposure is believed to be missing from the client\'s data.',
+      exposureFlag: 'UNCAPPED',
+      sequence: 2,
+      isExposureGrowth: false,
+      value: 'RP (OEP)',
+      idAdjustementType: 5,
+      favored: false,
+      linear: true,
+      hover: false,
+      ref: 123
+    }
+  ],
+  'SPLTH-0007285': [
+    {
+      id: 'SPLTH-0007285-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    }
+  ],
+  'SPLTH-0007701': [
+    {
+      id: 'SPLTH-0007701-655',
+      adjustmentBasis: 'Cedant Historical Claims',
+      category: 'Client',
+      name: 'Cedant Claims',
+      description: 'An adjustment to be applied on the basis of client claims data (contextualization).',
+      exposureFlag: 'CAP',
+      sequence: 11,
+      isExposureGrowth: false,
+      value: '1.3',
+      idAdjustementType: 6,
+      favored: false,
+      linear: false,
+      hover: false,
+      ref: 863
+    }
+  ]
+}
+export const TEMPLATES = [
+  {
+    "id": 963,
+    "type": "Local",
+    "name": "Test Template 1",
+    "description": "Relax ! this is just a test.",
+    "adjs": [
+      {
+        "id": 292,
+        "adjustmentBasis": "Exposure Adjustment (Portfolio Evolution)",
+        "category": "Base",
+        "name": "Portfolio Evolution",
+        "description": "An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 1,
+        "isExposureGrowth": true,
+        "value": "Event Driven",
+        "idAdjustementType": 4,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      },
+      {
+        "id": 653,
+        "adjustmentBasis": "Allocated Loss Adjustment Expense (ALAE)",
+        "category": "Client",
+        "name": "ALAE",
+        "description": "An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 7,
+        "isExposureGrowth": false,
+        "value": "Freq (EEF)",
+        "idAdjustementType": 2,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      },
+      {
+        "id": 240,
+        "adjustmentBasis": "Missing Exposure",
+        "category": "Base",
+        "name": "Missing Exposures",
+        "description": "An adjustment to be applied on the basis that exposure is believed to be missing from the client's data.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 2,
+        "isExposureGrowth": false,
+        "value": "1.2",
+        "idAdjustementType": 5,
+        "favored": false,
+        "linear": false,
+        "hover": false
+      }
+    ]
+  },
+  {
+    "id": 144,
+    "type": "Global",
+    "name": "Test Template 2",
+    "description": "Relax ! this is just another test.",
+    "adjs": [
+      {
+        "id": 292,
+        "adjustmentBasis": "Exposure Adjustment (Portfolio Evolution)",
+        "category": "Base",
+        "name": "Portfolio Evolution",
+        "description": "An adjustment to be applied on the basis that exposure is expected to grow or shrink for a client.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 1,
+        "isExposureGrowth": true,
+        "value": "Event Driven",
+        "idAdjustementType": 4,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      },
+      {
+        "id": 653,
+        "adjustmentBasis": "Allocated Loss Adjustment Expense (ALAE)",
+        "category": "Client",
+        "name": "ALAE",
+        "description": "An adjustment to be applied on the basis that losses are expected to be higher than anticipated due to legal costs, business costs, and other associated losses outside of the exposures themselves.",
+        "exposureFlag": "UNCAPPED",
+        "sequence": 7,
+        "isExposureGrowth": false,
+        "value": "Freq (EEF)",
+        "idAdjustementType": 2,
+        "favored": false,
+        "linear": true,
+        "hover": false
+      }
+    ]
+  }
+]

@@ -32,12 +32,14 @@ $modal-sizes: (
   "m-60": ( "height": auto, "width": 70vw ),
   "m-h": ( "height": 70vh, "width": auto ),
   "m-w": ( "height": auto, "width": 60vw ),
+  "m-ws": ( "height": auto, "width": 50vw ),
   "m-74": ("height": auto, "width": 450px),
   "m-f": ( "height": auto, "width": 55vw, "minWidth": 750px ),
   "spec-def": ( "height": 80vh, "width": 1200px ),
   "lg": ( "height": 90vh, "width": 90vw ),
   "lg-h": ( "height": 90vh, "width": auto ),
   "lg-auto": ( "height": auto, "width": 90vw ),
+  "tags": ( "height": auto, "width": 43vw, "minWidth": 557px)
 );
 
 body {
@@ -70,7 +72,7 @@ body {
 
             .previous-container {
               display: flex;
-              align-items: center;
+              align-items: flex-start;
 
               button,h4 {
                 margin: 0 12px;
@@ -80,8 +82,8 @@ body {
 
           span.pi.pi-times, .icon-close_24px {
             position: relative;
-            left: 34px;
-            bottom: 14px;
+            left: 52px;
+            bottom: 10px;
             margin: 12px;
             font-size: 1.6em;
           }

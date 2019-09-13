@@ -42,7 +42,7 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   ngOnInit() {
     this._route.params
       .pipe(this.unsubscribeOnDestroy,
-        map(({wsId, year, route}: any) => new fromWs.openWS({wsId, uwYear: year, route})))
+        map(({wsId, year, route}: any) => new fromWs.OpenWS({wsId, uwYear: year, route, type: 'treaty'})))
       .subscribe(action => this.dispatch(action));
 
     this.select(WorkspaceState.getCurrentTab)
@@ -97,10 +97,11 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   addWs(wsId, uwYear) {
-    this.dispatch(new fromWs.openWS({
+    this.dispatch(new fromWs.OpenWS({
       wsId,
       uwYear,
-      route: 'projects'
+      route: 'projects',
+      type: 'treaty'
     }));
   }
 

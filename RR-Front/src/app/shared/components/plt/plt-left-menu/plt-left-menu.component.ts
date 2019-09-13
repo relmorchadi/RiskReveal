@@ -10,42 +10,18 @@ import {Message} from "../../../message";
   styleUrls: ['./plt-left-menu.component.scss']
 })
 export class PltLeftMenuComponent implements OnInit {
-
-  @Input() inputs: leftMenuStore.Input;
   @Input() tagsInput: leftMenuStore.Input;
-
-  @Output() onResetPath= new EventEmitter();
-  @Output() onToggleDeletedPlts= new EventEmitter();
-  @Output() onProjectFilter= new EventEmitter();
-  @Output() onSelectProjects= new EventEmitter();
-  @Output() setTagModalIndex= new EventEmitter();
-  @Output() onSetFromPlts= new EventEmitter();
-  @Output() onSetFilters= new EventEmitter();
-  @Output() emitFilters= new EventEmitter();
-  @Output() onSetSelectedUserTags= new EventEmitter();
-  @Output() onSelectSysTagCount= new EventEmitter();
-  @Output() onEditTag= new EventEmitter();
-  @Output() onAssignPltsToTag= new EventEmitter();
-  @Output() onCreateTag= new EventEmitter();
-  @Output() setTagModalVisibility= new EventEmitter();
-  @Output() onSetTagForMenu= new EventEmitter();
-  @Output() onSetRenameTag= new EventEmitter();
-  @Output() unCkeckAllPlts= new EventEmitter();
-  @Output() onWsHeaderSelection= new EventEmitter();
-  @Output() onModalSelect= new EventEmitter();
-  @Output() emitModalInputValue= new EventEmitter();
 
   @Output() actionDispatcher= new EventEmitter<Message>();
 
   _modalInput: string;
-  colorPickerIsVisible: boolean;
 
   perilColors = {
     'EQ': 'red',
     'FL': '#0b99cc',
     'WS': '#62ec07',
     'CS': '#62ec07'
-  }
+  };
   presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
   tagForm: FormGroup;
@@ -93,66 +69,72 @@ export class PltLeftMenuComponent implements OnInit {
     })
     this.actionDispatcher.emit({
       type: leftMenuStore.headerSelection,
-      payload: false
+      payload: true
     })
-    this.onWsHeaderSelection.emit(true)
-    this.onProjectFilter.emit(_.omit(this.inputs.filterData, ['project']))
-    this.onToggleDeletedPlts.emit(false);
+    this.actionDispatcher.emit({
+      type: leftMenuStore.filterByProject,
+      payload: _.omit(this.tagsInput.filterData, ['project'])
+    });
+
+    this.actionDispatcher.emit({
+      type: leftMenuStore.toggleDeletedPlts,
+      payload: false
+    });
   }
 
   filter(key, filterData, value){
     if (key == 'project') {
-      this.unCkeckAllPlts.emit();
-      if (this.inputs.filterData['project'] && this.inputs.filterData['project'] != '' && value == this.inputs.filterData['project']) {
-        this.onWsHeaderSelection.emit(true);
-        this.onProjectFilter.emit(_.omit(this.inputs.filterData, [key]))
+      this.actionDispatcher.emit({
+        type: leftMenuStore.unCkeckAllPlts
+      });
+      if (this.tagsInput.filterData['project'] && this.tagsInput.filterData['project'] != '' && value == this.tagsInput.filterData['project']) {
+        this.actionDispatcher.emit({
+          type: leftMenuStore.headerSelection,
+          payload: true
+        })
+        this.actionDispatcher.emit({
+          type: leftMenuStore.filterByProject,
+          payload: _.omit(this.tagsInput.filterData, [key])
+        });
       } else {
-        this.onWsHeaderSelection.emit(false);
-        this.onProjectFilter.emit(_.merge({}, this.inputs.filterData, {[key]: value}))
+        this.actionDispatcher.emit({
+          type: leftMenuStore.headerSelection,
+          payload: false
+        });
+        this.actionDispatcher.emit({
+          type: leftMenuStore.filterByProject,
+          payload: _.merge({}, this.tagsInput.filterData, {[key]: value})
+        });
       }
-      this.onSelectProjects.emit(_.map(this.inputs.projects, t => {
-        if(t.projectId == value){
-          return ({...t,selected: !t.selected})
-        }else if(t.selected) {
-          return ({...t,selected: false})
-        }else return t;
-      }))
+      this.actionDispatcher.emit({
+        type: leftMenuStore.onSelectProjects,
+        payload: _.map(this.tagsInput.projects, t => {
+          if(t.projectId == value){
+            return ({...t,selected: !t.selected})
+          }else if(t.selected) {
+            return ({...t,selected: false})
+          }else return t;
+        })
+      })
     }
   }
 
   toggleDeletedPlts() {
-    this.onToggleDeletedPlts.emit(!this.inputs.showDeleted);
-  }
-
-  toggleModal(){
-    this.tagModal( false);
-    if(!this.inputs._tagModalVisible){
-      this.modalInput(null);
-      this.modalSelect(null);
-      this.renamingTag(false);
-      this.setTagModalIndex.emit(0);
-    }
+    this.actionDispatcher.emit({
+      type: leftMenuStore.toggleDeletedPlts,
+      payload: !this.tagsInput.showDeleted
+    });
   }
 
   tagModal(value: boolean) {
-    this.setTagModalVisibility.emit(value);
+    this.actionDispatcher.emit({
+      type: leftMenuStore.setTagModalVisibility,
+      payload: value
+    });
   }
 
   modalInput(value: string) {
     this._modalInput = value;
-  }
-
-  modalSelect(value: any) {
-    this.onModalSelect.emit(value);
-  }
-
-  renamingTag(value: boolean) {
-    this.onSetRenameTag.emit(value)
-  }
-
-  initColorPicker(){
-    this.colorPickerIsVisible = false;
-    this.emitTagValues('tagColor','#fe45cd')
   }
 
   toggleColorPicker(i: number){
@@ -161,95 +143,116 @@ export class PltLeftMenuComponent implements OnInit {
     this.tagForm.patchValue({ visible: !this.visible.value})
   }
 
+  closeColorPicker() {
+    event.stopPropagation();
+    event.preventDefault();
+    this.tagForm.patchValue({ visible: false});
+  }
+
   handlePopUpCancel() {
     this.tagModal(false);
     this.modalInput('');
-    this.modalSelect('');
-    this.renamingTag(false);
   }
 
   handlePopUpConfirm() {
-    if(this.inputs._editingTag) {
+    /*if(this.tagsInput._editingTag) {
         this.onEditTag.emit()
     }else {
 
-      if(this.inputs.addTagModalIndex === 1 ){
+      if(this.tagsInput.addTagModalIndex === 1 ){
         this.onAssignPltsToTag.emit({
-          plts: _.map(this.inputs.selectedListOfPlts.length > 0 ? this.inputs.selectedListOfPlts : [this.inputs.selectedItemForMenu], plt => plt.pltId),
-          wsId: this.inputs.wsId,
-          uwYear: this.inputs.uwYear,
-          selectedTags: this.inputs._modalSelect
+          plts: _.map(this.tagsInput.selectedListOfPlts.length > 0 ? this.tagsInput.selectedListOfPlts : [this.tagsInput.selectedItemForMenu], plt => plt.pltId),
+          wsId: this.tagsInput.wsId,
+          uwYear: this.tagsInput.uwYear,
+          selectedTags: this.tagsInput._modalSelect
         })
       }
 
-      if(this.inputs.addTagModalIndex === 0) {
+      if(this.tagsInput.addTagModalIndex === 0) {
         this.onCreateTag.emit({
-          plts: this.inputs.fromPlts ? _.map((this.inputs.selectedListOfPlts.length > 0 ? this.inputs.selectedListOfPlts : [this.inputs.selectedItemForMenu]), plt => plt.pltId) : [],
-          wsId: this.inputs.wsId,
-          uwYear: this.inputs.uwYear,
-          tag: _.omit(this.inputs.tagForMenu, 'tagId')
+          plts: this.tagsInput.fromPlts ? _.map((this.tagsInput.selectedListOfPlts.length > 0 ? this.tagsInput.selectedListOfPlts : [this.tagsInput.selectedItemForMenu]), plt => plt.pltId) : [],
+          wsId: this.tagsInput.wsId,
+          uwYear: this.tagsInput.uwYear,
+          tag: _.omit(this.tagsInput.tagForMenu, 'tagId')
         });
       }
 
     }
 
-    this.toggleModal();
-  }
-
-  setFromPlts(b: boolean) {
-    this.onSetFromPlts.emit(b)
+    this.toggleModal();*/
   }
 
   resetFilterByTags() {
-    this.onSetFilters.emit( {
+    this.actionDispatcher.emit({
+      payload: {
         systemTag: [],
         userTag: []
-      });
-    this.emitFilters.emit({
-      systemTag: [],
-      userTag: []
+      },
+      type: leftMenuStore.setFilters
     });
-    this.onSetSelectedUserTags.emit(_.map(this.inputs.userTags, t => ({...t, selected: false})));
+
+    this.actionDispatcher.emit({
+      payload: {
+        systemTag: [],
+        userTag: []
+      },
+      type: leftMenuStore.emitFilters
+    });
+
+    this.actionDispatcher.emit({
+      type: leftMenuStore.onSetSelectedUserTags,
+      payload: _.map(this.tagsInput.userTags, t => ({...t, selected: false}))
+    });
   }
 
   setFilter(filter: string, tag,section) {
     if(filter === 'userTag'){
-      const filters = _.findIndex(this.inputs.filters[filter], e => e == tag.tagId) < 0 ?
-        _.merge({}, this.inputs.filters, { [filter]: _.merge([], this.inputs.filters[filter], {[this.inputs.filters[filter].length] : tag.tagId} ) }) :
-        _.assign({}, this.inputs.filters, {[filter]: _.filter(this.inputs.filters[filter], e => e != tag.tagId)});
+      const filters = _.findIndex(this.tagsInput.filters[filter], e => e == tag.tagId) < 0 ?
+        _.merge({}, this.tagsInput.filters, { [filter]: _.merge([], this.tagsInput.filters[filter], {[this.tagsInput.filters[filter].length] : tag.tagId} ) }) :
+        _.assign({}, this.tagsInput.filters, {[filter]: _.filter(this.tagsInput.filters[filter], e => e != tag.tagId)});
 
-      this.onSetFilters.emit(filters);
+      this.actionDispatcher.emit({
+        payload: filters,
+        type: leftMenuStore.setFilters
+      });
 
-      this.onSetSelectedUserTags.emit(_.map(this.inputs.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t))
+      this.actionDispatcher.emit({
+        type: leftMenuStore.onSetSelectedUserTags,
+        payload: _.map(this.tagsInput.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
+      });
 
-      this.emitFilters.emit(filters);
+      this.actionDispatcher.emit({
+        payload: filters,
+        type: leftMenuStore.emitFilters
+      });
     }else{
       const {
         systemTag
-      } = this.inputs.filters;
+      } = this.tagsInput.filters;
 
-      this.onSetFilters.emit(
-        !systemTag[section] ?
-          _.merge({}, this.inputs.filters, {
+      this.actionDispatcher.emit({
+        payload: !systemTag[section] ?
+          _.merge({}, this.tagsInput.filters, {
             systemTag: _.merge({},systemTag, { [section]: [tag]})
           })
           :
           _.findIndex(systemTag[section], sysTagValue =>  sysTagValue == tag) < 0 ?
-            _.merge({}, this.inputs.filters, {
+            _.merge({}, this.tagsInput.filters, {
               systemTag: _.merge({},systemTag, { [section]: this.toggleArrayItem(tag, systemTag[section], (a,b) => a == b) })
             })
             :
             (
               systemTag[section].length == 1 ?
-                _.assign({}, this.inputs.filters, {
+                _.assign({}, this.tagsInput.filters, {
                   systemTag: _.omit(systemTag, `${section}`)
                 })
                 :
-                _.assign({}, this.inputs.filters, {
+                _.assign({}, this.tagsInput.filters, {
                   systemTag: _.assign({},systemTag, { [section]: this.toggleArrayItem(tag, systemTag[section], (a,b) => a == b) })
                 })
-            )
-      )
+            ),
+        type: leftMenuStore.setFilters
+      });
 
     }
   }
@@ -260,30 +263,18 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   selectSystemTag(section,tag) {
-    this.onSelectSysTagCount.emit({
-      section,
-      tag
-    })
-  }
-
-  setTagForMenu(any: any) {
-    this.onSetTagForMenu.emit(_.pick(any, ['tagName','tagColor','tagId']));
-  }
-
-  tagModalIndexChange($event: number) {
-    this.setTagModalIndex.emit($event);
+    this.actionDispatcher.emit({
+      type: leftMenuStore.onSelectSysTagCount,
+      payload: {
+        section,
+        tag
+      }
+    });
   }
 
   getProjectID(projectId: string | string) {
     const str= _.split(projectId,'-');
     return _.join([str[0],_.trimStart(str[1],'0')],'-')
-  }
-
-  emitTagValues(key, value) {
-    this.onSetTagForMenu.emit({
-      ...this.inputs.tagForMenu,
-      [key]: value
-    })
   }
 
   onEnter(i: number, event: KeyboardEvent) {
@@ -307,7 +298,6 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   addNewTag() {
-    console.log(this.tagForm)
     if(this.tagForm.valid) this.actionDispatcher.emit({
       type: leftMenuStore.addNewTag,
       payload: _.omit(this.tagForm.value, ['visible', 'editorId', 'tagId'])
@@ -319,5 +309,65 @@ export class PltLeftMenuComponent implements OnInit {
       type: leftMenuStore.deleteTag,
       payload: _.omit(this.tagForm.value, ['tagName', 'tagColor', 'visible'])
     })
+  }
+
+  /*assignTag(tag: any) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.actionDispatcher.emit({
+      type: leftMenuStore.assignTag,
+      payload: tag
+    })
+  }
+
+  deassignTag(index: number) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.actionDispatcher.emit({
+      type: leftMenuStore.deassignTag,
+      payload: index
+    })
+  }
+
+  toggleAssignedTag(i: number) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.actionDispatcher.emit({
+      type: leftMenuStore.toggleAssignedTag,
+      payload: i
+    })
+  }*/
+
+  clearSelection() {
+    this.actionDispatcher.emit({
+      type: leftMenuStore.clearSelection,
+    })
+  }
+
+  confirmSelection() {
+    this.actionDispatcher.emit({
+      type: leftMenuStore.confirmSelection,
+    })
+  }
+
+  toggleTag(i: number, operation: string, source: string) {
+    this.actionDispatcher.emit({
+      type: leftMenuStore.toggleTag,
+      payload: {
+        i,
+        operation,
+        source
+      }
+    })
+  }
+
+  save() {
+    this.actionDispatcher.emit({
+      type: leftMenuStore.save
+    })
+  }
+
+  reset() {
+    this.initTagForm();
   }
 }
