@@ -399,7 +399,7 @@ export class RiskLinkStateService {
     if (action === 'selectOne') {
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.summaries.data[item.id].selected = value;
+          draft.content[wsIdentifier].riskLink.summaries.data[item.dataSourceId].selected = value;
           draft.content[wsIdentifier].riskLink.summaries.indeterminate =
             !(numSelectedItems === 1 && value === false) && !(numSelectedItems === summaries.length - 1 && value === true);
           draft.content[wsIdentifier].riskLink.summaries.allChecked =
@@ -411,13 +411,13 @@ export class RiskLinkStateService {
         let pt;
         if (index <= to && index >= from) {
           pt = {
-            [st.id]: {
+            [st.dataSourceId]: {
               ...st, selected: true
             }
           };
         } else {
           pt = {
-            [st.id]: {
+            [st.dataSourceId]: {
               ...st, selected: false
             }
           };
@@ -440,7 +440,7 @@ export class RiskLinkStateService {
       ctx.patchState(
         produce(ctx.getState(), draft => {
           draft.content[wsIdentifier].riskLink.summaries.data = Object.assign({},
-            ...summaries.map(dt => ({[dt.id]: {...dt, selected: selected}})));
+            ...summaries.map(dt => ({[dt.dataSourceId]: {...dt, selected: selected}})));
           draft.content[wsIdentifier].riskLink.summaries.indeterminate = false;
           draft.content[wsIdentifier].riskLink.summaries.allChecked = selected;
         }));
@@ -1102,7 +1102,7 @@ export class RiskLinkStateService {
         );
         return of(ctx.patchState(
           produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].riskLink.analysis = dataTable;
+            draft.content[wsIdentifier].riskLink.analysis = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.analysis);
           })
         ));
       }),
@@ -1145,7 +1145,7 @@ export class RiskLinkStateService {
         );
         return of(ctx.patchState(
           produce(ctx.getState(), draft => {
-            draft.content[wsIdentifier].riskLink.portfolios = dataTable;
+            draft.content[wsIdentifier].riskLink.portfolios = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.portfolios);
           })));
       }),
       catchError(err => {
@@ -1381,15 +1381,17 @@ export class RiskLinkStateService {
                     }
                   }
                 });
+                const mergedEDM = _.merge({}, listSelected.edm,
+                  state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm);
+                const mergedRDM = _.merge({}, listSelected.rdm,
+                  state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm);
                 if (count === data.length) {
                   ctx.patchState(produce(ctx.getState(), draft => {
                     draft.content[wsIdentifier].riskLink.listEdmRdm = {
                       ...draft.content[wsIdentifier].riskLink.listEdmRdm,
                       selectedListEDMAndRDM: {
-                        edm: _.merge({},
-                          draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm , listSelected.edm),
-                        rdm: _.merge({},
-                          draft.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm , listSelected.rdm)
+                        edm: mergedEDM,
+                        rdm: mergedRDM
                       },
                       data: this._update(draft.content[wsIdentifier].riskLink.listEdmRdm.data, listSelected)
                     };
@@ -1403,11 +1405,7 @@ export class RiskLinkStateService {
                       rdm: {data: listSelected.rdm, selected: null},
                     };
                   }));
-                  const mergedEDM = _.merge({},
-                    state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm , listSelected.edm);
-                  const mergedRDM = _.merge({},
-                    state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm , listSelected.rdm);
-                  ctx.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
+                  // ctx.dispatch(new fromWs.PatchRiskLinkDisplayAction({key: 'displayTable', value: false}));
                   ctx.dispatch(new fromWs.LoadPortfolioForLinkingAction(_.toArray(mergedEDM)[0]));
                   ctx.dispatch(new fromWs.LoadRiskLinkAnalysisDataAction(_.toArray(mergedRDM)));
                   ctx.dispatch(new fromWs.LoadRiskLinkPortfolioDataAction(_.toArray(mergedEDM)));
@@ -1451,7 +1449,9 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const {keyword, size} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
-    const array = state.content[wsIdentifier].riskLink.listEdmRdm.dataSelected;
+    const array = state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM;
+    const arrayCong = [..._.toArray(array.edm), ..._.toArray(array.rdm)];
+    console.log(arrayCong);
     return this.riskApi.searchRiskLinkData(keyword, size).pipe(
       mergeMap(
         (ds: any) =>
@@ -1461,8 +1461,8 @@ export class RiskLinkStateService {
                 ...draft.content[wsIdentifier].riskLink.listEdmRdm,
                 data: Object.assign({},
                   ...ds.content.map(item => {
-                    const validator = array.filter(vd => vd.id == item.id);
-                    const validate = validator.length === 1;
+                    const validator = arrayCong.filter(vd => vd.id == item.id);
+                    const validate = validator.length > 0;
                     return ({
                         [item.id]: {
                           ...item,
