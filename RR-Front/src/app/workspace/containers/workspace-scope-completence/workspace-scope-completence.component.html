@@ -111,7 +111,7 @@
                 <div style="width: 60px">Peril</div>
               </div>
               <div>
-                <button class="AttachPlts-button" (click)="addRemoveModal=true" nz-button nzType="default">Attach PLTs
+                <button class="AttachPlts-button" (click)="addRemoveModal=true; rowInformation= null" nz-button nzType="default">Attach PLTs
                 </button>
               </div>
             </th>
@@ -366,7 +366,7 @@
               <th class="divided-col"></th>
             </tr>
             <ng-container *ngFor="let plt of grain.pltsAttached">
-              <tr *ngIf="grains[grain.id]" class="row-hover">
+              <tr *ngIf="grains[grain.id + rowData.id]" class="row-hover">
 
                 <th class="inner-line">
                   <div class="grain-info-wrapper">
