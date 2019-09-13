@@ -1564,12 +1564,12 @@ body .ui-table .ui-table-thead > tr > th {
 }
 
 .table-header1 {
-  height: 88px !important;
+  height: 105px !important;
   border-right: 5px solid #f4f6fc;
 }
 
 .table-header2 {
-  height: 88px !important;
+  height: 105px !important;
   display: flex;
   flex-direction: column;
 }
@@ -1812,7 +1812,7 @@ body .ui-table .ui-table-thead > tr > th {
 .impact-container {
   display: flex;
   align-items: center;
-  width: 45%;
+  width: 365px;
   justify-content: space-evenly;
   margin-top: 10px;
 }
@@ -1823,4 +1823,8 @@ body .ui-table .ui-table-thead > tr > th {
 
 ::ng-deep.ui-radiobutton .ui-radiobutton-box:hover {
   border: 1px solid #1890ff !important;
+}
+
+::ng-deep.ui-g-1, .ui-g-2, .ui-g-3, .ui-g-4, .ui-g-5, .ui-g-6, .ui-g-7, .ui-g-8, .ui-g-9, .ui-g-10, .ui-g-11, .ui-g-12 {
+  padding: 1.5em !important;
 }

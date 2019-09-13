@@ -16,9 +16,9 @@
             <button class="a-buttons-contained override">
               <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
             </button>
-            <h4>
+            <h6>
               {{ selectionStep == 'plt' ? 'Select PLTs to Clone' : 'Search For Project' }}
-            </h4>
+            </h6>
           </div>
       </ng-container>
 
@@ -79,6 +79,8 @@
       <div class="content">
         <div class="left">
           <app-plt-left-menu
+            [tagsInput]="tagsInput"
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
           >
           </app-plt-left-menu>
         </div>
@@ -97,12 +99,14 @@
             ></app-plt-main-table>
           </div>
         </div>
+        <!--
         <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
           <app-plt-right-menu
             (actionDispatcher)="rightMenuActionDispatcher($event)"
             [Inputs]="rightMenuInputs"
           ></app-plt-right-menu>
         </div>
+        -->
       </div>
   </ng-container>
 

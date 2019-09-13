@@ -29,7 +29,7 @@ import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {BaseContainer} from "../../../shared/base";
-import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, UNITS} from "./data";
+import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, TEMPLATES, UNITS} from "./data";
 import {SystemTagsService} from "../../../shared/services/system-tags.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Message} from "../../../shared/message";
@@ -57,7 +57,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   listOfPltsThread = [];
   selectedListOfPlts = [];
   template = {id: 0, type: '', name: 'none', description: '', adjs: []};
-  templateList = [this.template];
+  templateList = [this.template, ...TEMPLATES];
   drawerIndex = 0;
   params = {};
   loading = true;
@@ -89,8 +89,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   frozenColumnsCache: any[] = [];
   extraFrozenColumns: any[] = [];
   extraFrozenColumnsCache: any[] = [];
-  frozenWidth: any = '463';
-  headerWidth: any = '403px';
+  frozenWidth: any = '513';
+  headerWidth: any = '453px';
   genericWidth: any = ['409px', '33px', '157px'];
   selectedAdjustment: any;
   shownDropDown: any;
@@ -287,6 +287,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   activeCheckboxSort: boolean = false;
   descriptionDropDown: any = false;
   deltaSwitch: boolean = false;
+  searchSelectedTemplate: any = this.template;
+  localTemplates: any = [];
+  globalTemplates: any = [];
+
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -346,6 +350,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   ngOnInit() {
     this.initDataColumns();
     this.initFrozenWidth();
+    this.initTemplateList();
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
     ).subscribe(() => {
@@ -387,6 +392,20 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     });
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
+  }
+
+  initTemplateList() {
+    console.log('template List ======> ', this.templateList)
+
+    _.forEach(this.templateList, (row: any) => {
+      if (row.type == 'Global' && !this.globalTemplates.includes(row)) {
+        this.globalTemplates.push(row)
+      } else if (row.type == 'Local' && !this.localTemplates.includes(row)) {
+        this.localTemplates.push(row)
+      }
+    })
+    console.log('local List ======> ', this.localTemplates)
+    console.log('global List ======> ', this.globalTemplates)
   }
 
   initThreadsData() {
@@ -611,8 +630,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.frozenWidth = '0'
       this.genericWidth = ['1019px', '33px', '157px'];
     } else {
-      this.headerWidth = '403px';
-      this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '463' : this.frozenWidth = '403';
+      this.headerWidth = '453px';
+      this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '513' : this.frozenWidth = '453';
       this.genericWidth = ['409px', '33px', '157px '];
     }
     this.adjustExention();
@@ -1004,8 +1023,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   onTableTypeChange() {
     // this.tableType = $event ? 'EP Metrics' : 'adjustments';
     this.initDataColumns();
-    this.headerWidth = '403px';
-    this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '463' : this.frozenWidth = '403';
+    this.headerWidth = '453px';
+    this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '513' : this.frozenWidth = '453';
   }
 
   changeEPM(epm) {
@@ -1172,6 +1191,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     };
     this.template = currentTemplate
     this.templateList.push(currentTemplate);
+    this.initTemplateList();
     this.closeSaveTemplate();
   }
 
@@ -1320,5 +1340,19 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     } else {
       this.EPMDisplay = 'percentage';
     }
+  }
+
+  openLoadTemplate() {
+    this.loadTemplate = true;
+  }
+
+  closeLoadTemplate() {
+    this.loadTemplate = false;
+  }
+
+  loadCurrentTemplate() {
+    this.template = this.searchSelectedTemplate;
+    this.adjsArray = this.searchSelectedTemplate.adjs;
+    this.closeLoadTemplate();
   }
 }

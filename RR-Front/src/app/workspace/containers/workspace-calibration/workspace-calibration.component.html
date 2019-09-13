@@ -26,7 +26,7 @@
 
             <div *ngIf="!extended" class="table-header1" [ngStyle]="{'width': headerWidth}"
                  style="float: left;background-color: #fff">
-              <div class="title-as-tab" style="height: 42px; width: 100% !important;justify-content: space-between;">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;justify-content: space-between;">
                   <span class="title">
                     PLTs
                    <nz-dropdown [ngStyle]="{'visibility' : selectedListOfPlts.length > 1 ? 'visible':'hidden' }"
@@ -81,10 +81,9 @@
                      style="font-size: 25px; cursor: pointer;color: rgba(0, 0, 0, 0.65);right: 3px;"></i>
                 </div>
               </div>
-              <div class=" radio-container"
-                   style="height: 46px;margin-top: 42px;justify-content: space-between;display: flex;">
+              <div class=" radio-container">
                 <label (click)="addRemoveModal=true" class="addRemove">Add/Remove</label>
-                <div style="margin-top: 23px;">
+                <div style="margin-top: 23px;float: right">
                   <i (click)="groupedByPure = true" *ngIf="tableType == 'adjustments' && !groupedByPure"
                      class="icon-format_indent_increase_24px regenerate-all" nz-tooltip="Group by Pure"></i>
                   <i (click)="groupedByPure = false" *ngIf="tableType == 'adjustments' && groupedByPure"
@@ -99,7 +98,7 @@
             <div *ngIf="!extended && tableType=='adjustments'" class="table-header2"
                  [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
-              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;">
                   <span class="title">
                     Generic Thread
                      <nz-dropdown [nzPlacement]="'bottomLeft'" nzTrigger="click"
@@ -132,8 +131,9 @@
                             </ul>
                     </nz-dropdown>
                   </span>
-                <div style="display: flex; flex-direction: column;flex: 1;height: 66px">
-                  <div style="margin-left: 8px;margin-top: 5px;  display: flex; align-items: center;">
+                <div style="display: flex; flex-direction: column;flex: 1;height: 66px;margin-left: 25px;">
+                  <div
+                    style="margin-left: 8px;margin-top: 5px;  display: flex; align-items: center;margin-bottom: 7px;">
                     Template: <span *ngIf="template.id !== 0"
                                     class="template-type"> {{template.type}} </span> {{template.name}}
                     <i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px info-desc" nz-tooltip
@@ -203,7 +203,7 @@
               <div class="radio-container">
                 <div class="Deltas" style="display: grid">
                   <div style="    margin-left: 25px;">
-                    <div class="button-toggle" style="width: 420px; float: left;">
+                    <div class="button-toggle" style="float: left;">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'20px'}"
@@ -211,8 +211,8 @@
                                      value="adjustments"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'30px'}"
-                                     label="Impacts" name="tableType"
-                                     value="Impacts"></p-radioButton>
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'10px'}"
                                      label="EP Metrics" name="tableType"
@@ -228,7 +228,7 @@
             <div *ngIf="!extended && tableType=='EP Metrics'" class="table-header2"
                  [ngStyle]="{'margin-left': headerWidth}"
                  style="background-color: #fff">
-              <div class="title-as-tab" style="height: 42px; width: 100% !important;">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important;">
                   <span class="title">
                     Thread Level EP Metrics
                   </span>
@@ -296,7 +296,7 @@
               <div class="radio-container" style="width: 100% !important;">
                 <div class="Deltas" style="display: grid;">
                   <div style="margin-left: 25px;">
-                    <div class="button-toggle" style="width: 420px; float: left;">
+                    <div class="button-toggle" style="float: left;">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'20px'}"
@@ -304,17 +304,18 @@
                                      value="adjustments"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'30px'}"
-                                     label="Impacts" name="tableType"
-                                     value="Impacts"></p-radioButton>
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'10px'}"
                                      label="EP Metrics" name="tableType"
                                      value="EP Metrics"></p-radioButton>
                     </div>
-                    <div class="button-toggle" style="width: 115px; float: left;">
-                      Deltas &nbsp;
+                    <div class="button-toggle" style="float: left;">
+                      <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
                       <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
-                                 class="switch-input"></nz-switch>
+                                 class="switch-input"></nz-switch>&nbsp;
+                      <span [ngStyle]="{'visibility': !deltaSwitch ?'hidden':'visible'}"> Deltas by Amount</span>
                     </div>
                     <i (click)="manageReturnPeriods = true" class="icon-settings_24px"
                        nz-tooltip="Manage return periods"
@@ -324,15 +325,15 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="!extended && tableType=='Impacts'" [ngStyle]="{'margin-left': headerWidth}"
+            <div *ngIf="!extended && tableType=='Impact'" [ngStyle]="{'margin-left': headerWidth}"
                  class="table-header2"
                  style="background-color: #fff">
-              <div class="title-as-tab" style="height: 42px; width: 100% !important; justify-content: space-between">
+              <div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between">
                   <span class="title">
-                    Impacts Analysis
+                    Impact
                   </span>
                 <div class="impact-container">
-                  <div class="impacts-points">
+                  <div class="Impact-points">
                   <span>
                     Exhaustion Point(pE): 999,999,999,999
                   </span>
@@ -347,18 +348,15 @@
                     <nz-dropdown [nzTrigger]="'click'">
                       <div class="dropdown-wrap-calibration" nz-dropdown>
                         <div class="dropdown-wrap-title-calibration">
-                          <span class="dropdown-title-calibration">Change Display</span>
-                          <span class="dropdown-item-selected-calibration">
-                        {{selectedEPM}}
-                      </span>
+                          <span class="dropdown-title-calibration">Layer Overlay</span>
+                          <span class="dropdown-item-selected-calibration">Workspace</span>
                         </div>
                         <div class="dropdown-icon">
                           <i nz-icon type="down"></i>
                         </div>
                       </div>
                       <ul nz-menu>
-                        <li (click)="changeEPM(epm)" *ngFor="let epm of EPMS" nz-menu-item>{{epm}}
-                        </li>
+                        <li nz-menu-item>Workspace</li>
                       </ul>
                     </nz-dropdown>
                   </div>
@@ -368,7 +366,7 @@
               <div class="radio-container" style="width: 100% !important;">
                 <div class="Deltas" style="display: grid">
                   <div style="margin-left: 25px">
-                    <div class="button-toggle" style="width: 420px; float: left;">
+                    <div class="button-toggle" style="float: left;">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'20px'}"
@@ -376,17 +374,18 @@
                                      value="adjustments"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'30px'}"
-                                     label="Impacts" name="tableType"
-                                     value="Impacts"></p-radioButton>
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'10px'}"
                                      label="EP Metrics" name="tableType"
                                      value="EP Metrics"></p-radioButton>
                     </div>
-                    <div class="button-toggle" style="width: 115px; float: left;">
-                      Deltas &nbsp;
+                    <div class="button-toggle" style="float: left;">
+                      <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
                       <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
-                                 class="switch-input"></nz-switch>
+                                 class="switch-input"></nz-switch>&nbsp;
+                      <span [ngStyle]="{'visibility': !deltaSwitch ?'hidden':'visible'}">Deltas by Amount </span>
                     </div>
                     <i (click)="manageAdjColumn = true" class="icon-settings_24px"
                        nz-tooltip="Manage  adjustment columns"
@@ -756,7 +755,7 @@
         <label> Description </label>
       </div>
       <div class="ui-g-9">
-        <textarea [(ngModel)]="templateDesc" nz-input rows="4" style="margin-left: 10px; width: 300px"></textarea>
+        <textarea pInputTextarea [(ngModel)]="templateDesc" rows="4" style="width: 300px"></textarea>
       </div>
     </div>
     <div class="ui-g">
@@ -764,7 +763,7 @@
         <label> Type: </label>
       </div>
       <div class="ui-g-9">
-        <nz-radio-group [(ngModel)]="templateType" class="default-radio" style="margin-left: 25px;">
+        <nz-radio-group [(ngModel)]="templateType" class="default-radio">
           <label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>
           <label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>
         </nz-radio-group>
@@ -781,11 +780,10 @@
     </div>
   </p-footer>
 </p-dialog>
-<!--<p-dialog
+<p-dialog
   [visible]="loadTemplate"
   [closable]="false"
   styleClass="m-dialog-modal"
-  appendTo="body"
   [modal]="true"
   [autoZIndex]="false"
   [responsive]="true"
@@ -802,20 +800,30 @@
 
   <div class="content" style="display: unset;">
     <div class="ui-g">
-      <div class="ui-g-3">
-        <label> Name: </label>
+      <div class="ui-g-3" style="margin-top: 15px;">
+        <label>Template: </label>
       </div>
       <div class="ui-g-9">
-        <input [(ngModel)]="templateName" class="a-textfield-mini" nz-input nz-tooltip
-               style="width: 300px; !important; margin-right: 5px;"/>
-      </div>
-    </div>
-    <div class="ui-g">
-      <div class="ui-g-3">
-        <label> Description </label>
-      </div>
-      <div class="ui-g-9">
-        <textarea [(ngModel)]="templateDesc" nz-input rows="4" style="margin-left: 10px; width: 300px"></textarea>
+        <div class="body-wrap-dropDowns-calibration">
+
+          <nz-select
+            [(ngModel)]="searchSelectedTemplate"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a template"
+            nzShowSearch
+            style="width: 300px">
+            <nz-option-group nzLabel="Local Templates" *ngIf="localTemplates.length">
+              <nz-option *ngFor="let option of localTemplates" [nzLabel]="option.name" [nzValue]="option">
+                {{option.name}}
+              </nz-option>
+            </nz-option-group>
+            <nz-option-group nzLabel="Global Templates" *ngIf="globalTemplates.length">
+              <nz-option *ngFor="let option of globalTemplates" [nzLabel]="option.name" [nzValue]="option">
+                {{option.name}}
+              </nz-option>
+            </nz-option-group>
+          </nz-select>
+        </div>
       </div>
     </div>
     <div class="ui-g">
@@ -823,14 +831,18 @@
         <label> Type: </label>
       </div>
       <div class="ui-g-9">
-        <nz-radio-group [(ngModel)]="templateType" class="default-radio" style="margin-left: 25px;">
-          <label nz-radio nzValue="Local" style="color:  #0700e4">Local</label>
-          <label nz-radio nzValue="Global" style="color:  #0700e4">Global</label>
-        </nz-radio-group>
+        <p style="font-weight: bold"> {{searchSelectedTemplate.type}}</p>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label> Description </label>
+      </div>
+      <div class="ui-g-9">
+        <p> {{searchSelectedTemplate.description}}</p>
       </div>
     </div>
   </div>
-
   <p-footer>
     <div class="footer">
       <button (click)="closeLoadTemplate()" nz-button class="a-button-text">cancel</button>
@@ -839,4 +851,4 @@
       </button>
     </div>
   </p-footer>
-</p-dialog>-->
+</p-dialog>

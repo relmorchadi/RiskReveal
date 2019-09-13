@@ -35,17 +35,6 @@
   }
 }
 
-.navigation-icons-drawer {
-  i {
-    padding: 5px;
-    border-radius: 25px;
-    border: 2px solid #F5F5F5;
-    color: #9C99EC;
-    font-size: 24px;
-    cursor: pointer;
-  }
-}
-
 .tabset-drawer {
   padding: 0px 10px 10px 10px;
 
@@ -444,6 +433,21 @@
     background: #fff;
     box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
     z-index: 9999;
+
+    .navigation-icons-drawer {
+      position: absolute;
+      right: 10px;
+      top: 16px;
+
+      i {
+        padding: 5px;
+        border-radius: 25px;
+        border: 2px solid #F5F5F5;
+        color: #9C99EC;
+        font-size: 24px;
+        cursor: pointer;
+      }
+    }
   }
 
   .plt-details-header {

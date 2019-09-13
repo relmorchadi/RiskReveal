@@ -121,17 +121,18 @@
 <p-dialog
   [visible]="tagsInput?._tagModalVisible"
   [closable]="false"
-  styleClass="m-dialog-modal-m-w  tag-manager-pop-up"
+  styleClass="m-dialog-modal-tags tag-manager-pop-up"
   [modal]="true"
   [responsive]="true"
   [baseZIndex]="1"
   [autoZIndex]="false"
+  (onHide)="reset()"
 >
   <p-header>
     <div class="header">
-      <h4>
+      <h5>
         Tag Manager
-      </h4>
+      </h5>
       <i (click)="tagModal(false)" class="icon-close_24px" style="cursor: pointer"></i>
     </div>
   </p-header>
@@ -232,7 +233,10 @@
   <p-footer>
     <div class="footer">
       <form *ngIf="!tagsInput.operation" [formGroup]="tagForm" class="tag-container footer-left">
-        <div class="a-form-control" style="flex-direction: row; margin: 7px;align-items: center;">
+        <div class="a-form-control" style="flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: end;">
           <div class="color-container">
             <div class="color" [ngStyle]="{'background-color': color.value}"
                  (click)="toggleColorPicker()">
@@ -254,7 +258,7 @@
             </div>
 
           </div>
-          <button class="a-buttons-contained" (click)="addNewTag()" style="margin: 0 0.5em 0 16px;">
+          <button class="a-buttons-contained" (click)="addNewTag()" style="margin: 0.5em 0.5em 0 16px;">
             ADD
           </button>
         </div>
