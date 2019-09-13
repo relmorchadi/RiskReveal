@@ -106,8 +106,8 @@
                        [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data"><span>{{rowData[col.field]}}%</span>
                   </div>
+                  <!--[ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"-->
                   <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'text'"
-                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                        [ngClass]="{'highlight-temp': col.highlight}"
                        class="text-data"><span>{{rowData[col.field]}}</span></div>
                   <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
