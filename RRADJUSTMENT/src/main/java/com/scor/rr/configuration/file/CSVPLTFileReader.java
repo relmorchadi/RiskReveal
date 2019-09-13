@@ -37,9 +37,9 @@ public class CSVPLTFileReader implements PLTFileReader {
                 int periodIdx = Integer.parseInt(sc.next()); //Simulated Period ID
                 int eventId = Integer.parseInt(sc.next()); //Event ID
                 Date eventDate = Constant.getEventDateFormat().parse(sc.next());
-                int seq = Integer.parseInt(sc.next());
-                double exp = Double.parseDouble(sc.next()); //Loss
-                double loss = Double.parseDouble(sc.next()); //Loss
+                int seq = Integer.parseInt(sc.next().replace(" ",""));
+                double exp = Double.parseDouble(sc.next().replace(" ","")); //Loss
+                double loss = Double.parseDouble(sc.next().replace(" ","")); //Loss
 
                 pltLossDatas.add(new PLTLossData(eventId,
                         eventDate.getTime(),

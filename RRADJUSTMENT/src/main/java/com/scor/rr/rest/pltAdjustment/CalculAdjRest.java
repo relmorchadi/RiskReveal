@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.scor.rr.domain.dto.adjustement.AdjustmentTypeEnum.*;
 
@@ -34,7 +36,7 @@ public class CalculAdjRest {
             pltLossData = CalculAdjustement.eefFrequency(pltLossData, calculAdjustmentDto.isCap(),calculAdjustmentDto.getRpmf());
         }
         else if (NONLINEAROEP.equals(calculAdjustmentDto.getType())) {
-            pltLossData = CalculAdjustement.oepReturnPeriodBanding(pltLossData, calculAdjustmentDto.isCap(), calculAdjustmentDto.getAdjustmentReturnPeriodBendings());
+            pltLossData = CalculAdjustement.oepReturnBanding(pltLossData, calculAdjustmentDto.isCap(), calculAdjustmentDto.getAdjustmentReturnPeriodBendings());
         }
         else if (NonLinearEventDriven.equals(calculAdjustmentDto.getType())) {
             pltLossData = CalculAdjustement.nonLinearEventDrivenAdjustment(pltLossData,calculAdjustmentDto.isCap(),calculAdjustmentDto.getPeatDatas());
@@ -50,8 +52,8 @@ public class CalculAdjRest {
             FileUtils.touch(f);
         }
         CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-        csvpltFileWriter.write(pltLossData,f);
-        return pltLossData;
+        csvpltFileWriter.write(pltLossData, f);
+        return pltLossData.stream().sorted(Comparator.comparing(PLTLossData::getLoss)).collect(Collectors.toList());
     }
 
 
@@ -94,6 +96,18 @@ public class CalculAdjRest {
         MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
         List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
         return StatisticAdjustment.OEPTVaRMetrics(CalculAdjustement.getOEPMetric(pltLossData));
+    }
+
+    @GetMapping("convert-to-csv")
+    public void convert(String pathToFile,String newfilepath) throws RRException, IOException {
+        MultiExtentionReadPltFile readPltFile = new MultiExtentionReadPltFile();
+        List<PLTLossData> pltLossData = readPltFile.read(new File(pathToFile));
+        File f = new File(newfilepath);
+        if(!f.exists()) {
+            FileUtils.touch(f);
+        }
+        CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
+        csvpltFileWriter.write(pltLossData,f);
     }
 
 

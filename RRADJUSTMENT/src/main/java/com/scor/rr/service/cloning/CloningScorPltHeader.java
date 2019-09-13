@@ -58,6 +58,7 @@ public class CloningScorPltHeader {
             scorPltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
             scorPltHeaderEntityClone.setPublishToPricing(false);
             scorPltHeaderEntityClone.setBinFileEntity(cloneBinFile(scorPltHeaderEntityInitial.getBinFileEntity()));
+            scorPltHeaderEntityClone.setWorkspaceEntity(scorPltHeaderEntityInitial.getWorkspaceEntity());
             scorPltHeaderEntityClone.setScorPltHeader(scorPltHeaderEntityInitial);
             return scorpltheaderRepository.save(scorPltHeaderEntityClone);
         } else {

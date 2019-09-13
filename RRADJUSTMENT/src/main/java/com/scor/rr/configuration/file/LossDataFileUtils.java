@@ -1,7 +1,8 @@
 package com.scor.rr.configuration.file;
 
+import com.scor.rr.configuration.ConverterType;
+import com.scor.rr.configuration.TypeToConvert;
 import com.scor.rr.domain.MetadataHeaderSectionEntity;
-import com.scor.rr.domain.dto.ImportFileHeaderData;
 import com.scor.rr.domain.dto.ImportFilePLTData;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -16,13 +17,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LossDataFileUtils {
 
     private static final Logger log = LoggerFactory.getLogger(LossDataFileUtils.class);
 
-    private static final String START_MARKER = "LOSSFILE";
+    private static final String START_MARKER = "LOSSFILE\t";
     private static final String END_MARKER = "#[HEADER-END]";
     private static final String PLT_DATA_EVENT_DATE = "MM-DD(N)";
     private static final String PLT_DATA_YEAR = "YEAR";
@@ -128,44 +130,64 @@ public class LossDataFileUtils {
     }
 
     public static boolean verifyFile(List<MetadataHeaderSectionEntity> metadataHeaders, String path) {
-        AtomicBoolean found = new AtomicBoolean(false);
-            ImportFileHeaderData importFileHeaderData = new ImportFileHeaderData();
+            TypeToConvert importFileHeaderData = new TypeToConvert();
             List<Field> fs = Arrays.asList(importFileHeaderData.getClass().getFields());
             for (MetadataHeaderSectionEntity metadataHeaderSectionEntity : metadataHeaders) {
                 if (metadataHeaderSectionEntity.isMandatory()) {
                     Field fieldTemp;
-                    fieldTemp = fs.stream().filter(field -> field.getName().equalsIgnoreCase(metadataHeaderSectionEntity.getMetadataAttribute()) &&
-                            field.getType().getSimpleName().equalsIgnoreCase(metadataHeaderSectionEntity.getDataType()))
+                    fieldTemp = fs.stream().filter(field -> field.getType().getSimpleName().equalsIgnoreCase(metadataHeaderSectionEntity.getDataType()))
                             .findFirst()
                             .orElse(null);
                     if (fieldTemp != null) {
                         try {
-                            AtomicBoolean testEndMarker = new AtomicBoolean(false);
-
+                            boolean testEndMarker = false;
+                            boolean testStartMarker = false;
+                            boolean found = false;
                             Stream<String> stream = Files.lines(Paths.get(path));
-                            stream.forEach(s -> {
-                                if (s.equals(END_MARKER)) {
-                                    testEndMarker.set(true);
-                                }
-                                if(!testEndMarker.get()) {
-                                    String[] pltline = s.split("\\s+");
-                                    if(pltline.length == 2) {
-                                        if (pltline[0].equalsIgnoreCase(metadataHeaderSectionEntity.getMetadataAttribute())){
-                                            found.set(true);
+                            String firstLigne = stream.findFirst().orElse(null);
+                            if(firstLigne != null && firstLigne.equals(START_MARKER)) {
+                                for (String s : stream.collect(Collectors.toList())) {
+                                    if (s.equals(END_MARKER)) {
+                                        testEndMarker = true;
+                                        if (!found) {
+                                            log.info("element not found in file {}", metadataHeaderSectionEntity.getMetadataAttribute());
+                                            return false;
                                         }
                                     }
+                                    if (!testEndMarker && testStartMarker) {
+                                        String[] pltline = s.split("\t");
+                                        if (pltline.length <= 2) {
+                                            if (pltline[0].equals(metadataHeaderSectionEntity.getMetadataAttribute())) {
+                                                ConverterType converterType = new ConverterType(fieldTemp.getType());
+                                                converterType.convert(pltline[1]);
+                                                if (converterType.value != null) {
+                                                    if (!converterType.value.getClass().equals(fieldTemp.getType())) {
+                                                        return false;
+                                                    } else {
+                                                        found = true;
+                                                    }
+                                                } else {
+                                                    return false;
+                                                }
+                                            }
+                                        } else {
+                                            return false;
+                                        }
+                                    }
+                                    if (s.equals(START_MARKER)) {
+                                        testStartMarker = true;
+                                    }
                                 }
-
-
-                            });
+                            }
                         } catch (IOException e) {
                             e.printStackTrace();
+                            return false;
                         }
                     } else {
-                        found.set(false);
+                        return false;
                     }
                 }
             }
-        return found.get();
+            return true;
     }
 }

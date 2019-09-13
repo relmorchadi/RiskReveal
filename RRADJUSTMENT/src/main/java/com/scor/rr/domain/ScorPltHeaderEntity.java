@@ -54,6 +54,7 @@ public class ScorPltHeaderEntity {
     private MarketChannelEntity marketChannel;
     private ScorPltHeaderEntity scorPltHeader;
     private BinFileEntity binFileEntity;
+    private WorkspaceEntity workspaceEntity;
 
     public ScorPltHeaderEntity(ScorPltHeaderEntity other) {
         this.pltType = other.pltType;
@@ -601,5 +602,15 @@ public class ScorPltHeaderEntity {
 
     public void setBinFileEntity(BinFileEntity binFileEntity) {
         this.binFileEntity = binFileEntity;
+    }
+
+    @ManyToOne
+    @JoinColumn(name = "workspaceId", referencedColumnName = "workspaceId",insertable = false,updatable = false)
+    public WorkspaceEntity getWorkspaceEntity() {
+        return workspaceEntity;
+    }
+
+    public void setWorkspaceEntity(WorkspaceEntity workspaceEntity) {
+        this.workspaceEntity = workspaceEntity;
     }
 }
