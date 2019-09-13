@@ -7,7 +7,7 @@
           <div>Exposure Summaries</div>
         </div>
         <div class="body-wrapper-header-right-summary">
-          <i (click)="filterModalVisibility = true" class="icon-filter"
+          <i (click)="openFilterPopUp('edm')" class="icon-filter"
              style="margin-right: 10px;font-size: 23px;"></i>
           <div class="body-wrapper-header-right">
             <!--              <button *ngIf="collapsehead"  nz-button> ADVANCED</button>-->
@@ -29,7 +29,7 @@
               <li nz-menu-item>Reset Filters</li>
               <li nz-menu-item>Reset Sort/Filters</li>
               <li nz-menu-divider></li>
-              <li (click)="openFilterPopUp('edm')" nz-menu-item>Manage Columns</li>
+              <li (click)="managePopUpSummaries = true" nz-menu-item>Manage Columns</li>
               <li nz-menu-divider></li>
               <li nz-menu-item>Unselect All</li>
             </ul>

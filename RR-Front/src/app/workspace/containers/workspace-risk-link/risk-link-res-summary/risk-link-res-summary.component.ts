@@ -308,6 +308,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
     if (target === 'R') {
       this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'S') {
+      console.log(event, rowData, target);
       this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpS') {
       this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
