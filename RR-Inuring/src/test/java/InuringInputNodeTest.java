@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
  * Created by u004602 on 10/09/2019.
  */
 
-public class InuringInputNodeTests {
+public class InuringInputNodeTest {
     @InjectMocks
     private InuringInputNodeService inuringInputNodeService;
 
