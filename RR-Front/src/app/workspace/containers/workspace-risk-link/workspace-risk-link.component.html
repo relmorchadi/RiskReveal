@@ -287,8 +287,9 @@
                   <span *ngIf="state?.selectedEDMOrRDM === 'rdm'">Select Analysis For Import</span>
                   <span *ngIf="state?.selectedEDMOrRDM === 'edm'">Select Portfolio For Import</span>
                 </div>
-              </div>
-              <div style="display: flex; flex-direction: column">
+                <div class="body-wrapper-header-right">
+                  <i class="icon-filter" (click)="filterModalVisibility = true"></i>
+                </div>
                 <div class="menu-icon-wrap">
                   <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
                     <a style="max-height: 28px;display: flex;" nz-dropdown>
@@ -308,6 +309,8 @@
                     </ul>
                   </nz-dropdown>
                 </div>
+              </div>
+              <div style="display: flex; flex-direction: column">
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
                            [resizableColumns]="true" columnResizeMode="expand"
@@ -408,3 +411,80 @@
     <input type="text">
   </div>
 </ng-template>
+
+<!--Pop Up Filter-->
+<p-dialog
+  [visible]="filterModalVisibility"
+  [closable]="false"
+  styleClass="m-dialog-modal-m-ws"
+  appendTo="body"
+  [modal]="true"
+  [autoZIndex]="false"
+  [responsive]="true"
+>
+  <p-header>
+    <div class="header">
+      <h6>{{getTitle()}} Filter Criteria</h6>
+      <i style="cursor: pointer" (click)="handleCancel()" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+  <div class="input-group-modal" *ngIf="state.selectedEDMOrRDM === 'edm'">
+    <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
+      [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
+    <div class="radio-wrapper default-radio">
+      <span>AGG/DET</span>
+      <nz-radio-group [(ngModel)]="radioValue">
+        <label nz-radio nzValue="all">All</label>
+        <label nz-radio nzValue="agg">AGG</label>
+        <label nz-radio nzValue="det">DET</label>
+      </nz-radio-group>
+    </div>
+    <div class="row-input"><span class="label-input">Number</span><input placeholder="Number"
+                                                                         class="a-textfield-mini input-wrapper">
+    </div>
+    <div class="row-input"><span class="label-input">Name</span><input placeholder="Name"
+                                                                       class="a-textfield-mini input-wrapper">
+    </div>
+    <div class="row-input"><span class="label-input">Description</span><input
+      placeholder="Description" class="a-textfield-mini input-wrapper"></div>
+  </div>
+
+  <div class="input-group-modal" *ngIf="state.selectedEDMOrRDM === 'rdm'">
+    <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
+      [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
+    <div class="radio-wrapper default-radio">
+      <span>ALM/DLM</span>
+      <nz-radio-group [(ngModel)]="radioValueAnalysis">
+        <label nz-radio nzValue="all">All</label>
+        <label nz-radio nzValue="agg">ALM</label>
+        <label nz-radio nzValue="det">DLM</label>
+      </nz-radio-group>
+    </div>
+    <div class="radio-wrapper default-radio">
+      <span>Single Or Grouped</span>
+      <nz-radio-group [(ngModel)]="radioValueGroup">
+        <label nz-radio nzValue="all">All</label>
+        <label nz-radio nzValue="agg">Grouped</label>
+        <label nz-radio nzValue="det">Individual</label>
+      </nz-radio-group>
+    </div>
+    <div class="row-input"><span class="label-input">Region</span><input placeholder="Number"
+                                                                         class="a-textfield-mini input-wrapper">
+    </div>
+    <div class="row-input"><span class="label-input">Peril</span><input placeholder="Number"
+                                                                         class="a-textfield-mini input-wrapper">
+    </div>
+    <div class="row-input"><span class="label-input">User Value</span><input placeholder="Number"
+                                                                         class="a-textfield-mini input-wrapper">
+    </div>
+    <div class="row-input"><span class="label-input">Name/Description</span><input placeholder="Number"
+                                                                         class="a-textfield-mini input-wrapper">
+    </div>
+  </div>
+  <p-footer>
+    <div class="modal-footer-wrapper">
+      <button class="a-button-text-cancel">CLEAR</button>
+      <button class="a-buttons-contained-disabled">APPLY</button>
+    </div>
+  </p-footer>
+</p-dialog>

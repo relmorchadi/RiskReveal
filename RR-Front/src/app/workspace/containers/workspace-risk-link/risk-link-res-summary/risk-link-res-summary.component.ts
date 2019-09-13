@@ -576,15 +576,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
     return _.filter(_.filter(_.toArray(this.state.results.data), dt => dt.id === row.id)[0].peqt, ws => ws.selected === true).length;
   }
 
-  getTitle() {
-    return this.filterPopUp === 'rdm' ? 'Analysis' : 'Portfolio';
-  }
-
-  openFilterPopUp(scope) {
-    this.filterModalVisibility = true;
-    this.filterPopUp = scope;
-  }
-
   changePeqt(parent, target, selected) {
     _.forEach(parent.children, dt => {
       _.forEach(dt.selectedItems, kt => {

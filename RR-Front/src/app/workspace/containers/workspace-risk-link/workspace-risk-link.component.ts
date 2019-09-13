@@ -45,6 +45,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   managePopUpPortfolio = false;
 
   radioValue = 'all';
+  radioValueAnalysis = '';
+  radioValueGroup = 'all';
   columnsForConfig;
   targetConfig;
 
@@ -287,6 +289,10 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     } else {
       return _.toArray(this.portfolios.data);
     }
+  }
+
+  getTitle() {
+    return this.state.selectedEDMOrRDM === 'rdm' ? 'Analysis' : 'Portfolio';
   }
 
   clearSelection(item, target) {
