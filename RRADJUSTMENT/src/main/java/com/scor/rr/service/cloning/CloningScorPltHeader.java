@@ -2,16 +2,14 @@ package com.scor.rr.service.cloning;
 
 import com.scor.rr.configuration.file.CSVPLTFileWriter;
 import com.scor.rr.configuration.file.MultiExtentionReadPltFile;
-import com.scor.rr.domain.AdjustmentNodeEntity;
-import com.scor.rr.domain.AdjustmentThreadEntity;
-import com.scor.rr.domain.BinFileEntity;
-import com.scor.rr.domain.ScorPltHeaderEntity;
+import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.adjustement.AdjustmentNodeOrderRequest;
 import com.scor.rr.domain.dto.adjustement.loss.PLTLossData;
 import com.scor.rr.exceptions.ExceptionCodename;
 import com.scor.rr.exceptions.fileExceptionPlt.RRException;
 import com.scor.rr.repository.BinfileRepository;
 import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.WorkspaceRepository;
 import com.scor.rr.service.adjustement.AdjustmentNodeOrderService;
 import com.scor.rr.service.adjustement.AdjustmentNodeProcessingService;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
@@ -51,9 +49,12 @@ public class CloningScorPltHeader {
     @Autowired
     AdjustmentNodeProcessingService processingService;
 
+    @Autowired
+    WorkspaceRepository workspaceRepository;
+
     public ScorPltHeaderEntity cloneScorPltHeader(int scorPltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
         ScorPltHeaderEntity scorPltHeaderEntityInitial = scorpltheaderRepository.findByPkScorPltHeaderId(scorPltHeaderEntityInitialId);
-        if(scorPltHeaderEntityInitial != null) {
+        if (scorPltHeaderEntityInitial != null) {
             ScorPltHeaderEntity scorPltHeaderEntityClone = new ScorPltHeaderEntity(scorPltHeaderEntityInitial);
             scorPltHeaderEntityClone.setCreatedDate(new Date(new java.util.Date().getTime()));
             scorPltHeaderEntityClone.setPublishToPricing(false);
@@ -62,7 +63,7 @@ public class CloningScorPltHeader {
             scorPltHeaderEntityClone.setScorPltHeader(scorPltHeaderEntityInitial);
             return scorpltheaderRepository.save(scorPltHeaderEntityClone);
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT,1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT, 1);
         }
     }
 
@@ -74,7 +75,7 @@ public class CloningScorPltHeader {
             File fileClone = new File("/src/main/resources/file/pltnew.csv");
             FileUtils.touch(fileClone);
             CSVPLTFileWriter csvpltFileWriter = new CSVPLTFileWriter();
-            csvpltFileWriter.write(pltFileReaders,fileClone);
+            csvpltFileWriter.write(pltFileReaders, fileClone);
             BinFileEntity fileBinClone = new BinFileEntity();
             fileBinClone.setFileName(fileClone.getName());
             fileBinClone.setFqn(fileClone.getAbsolutePath());
@@ -86,8 +87,10 @@ public class CloningScorPltHeader {
         return null;
     }
 
-    public ScorPltHeaderEntity clonePltWithAdjustment(int pltHeaderEntityInitialId) throws com.scor.rr.exceptions.RRException {
+    public ScorPltHeaderEntity clonePltWithAdjustment(int pltHeaderEntityInitialId, String workspaceId) throws com.scor.rr.exceptions.RRException {
+        WorkspaceEntity workspaceEntity = workspaceRepository.findById(workspaceId).orElse(null);
         ScorPltHeaderEntity scorPltHeaderCloned = cloneScorPltHeader(pltHeaderEntityInitialId);
+        scorPltHeaderCloned.setWorkspaceEntity(workspaceEntity);
         if (scorPltHeaderCloned.getPltType().equalsIgnoreCase("pure")) {
             AdjustmentThreadEntity threadCloned = threadService.cloneThread(pltHeaderEntityInitialId, scorPltHeaderCloned);
             if (threadCloned != null) {
