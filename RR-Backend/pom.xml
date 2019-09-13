@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.scor.rr</groupId>
     <artifactId>risk-reveal</artifactId>
-    <version>0.0.11</version>
+    <version>0.0.12</version>
     <name>Risk Reveal Backend</name>
     <description>Risk Reveal Project by Scor</description>
     <packaging>war</packaging>
