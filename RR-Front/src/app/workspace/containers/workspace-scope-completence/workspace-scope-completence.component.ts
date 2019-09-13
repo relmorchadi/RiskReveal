@@ -28,10 +28,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   listOfPltsData = {};
   listOfPltsForPopUp = [];
   selectionForOverride = [];
+  selectionForCancelOverride = [];
   overrideReason: string;
   overrideReasonExplained: string = '';
   attachArray: any;
   deleteArray: any;
+  removeOverride: boolean = false;
 
   selectedDropDown: any;
   dataSource: any;
@@ -201,8 +203,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   }
 
   /** expending the parent**/
-  toggleExpanded(item: any) {
-    this.grains[item.id] = !this.grains[item.id];
+  toggleExpanded(item: any, rowData: any) {
+    this.grains[item.id + rowData.id] = !this.grains[item.id + rowData.id];
+  }
+
+  getGrainState(grain, rowData) {
+    return this.grains[grain.id + rowData.id];
   }
 
   /** expending the child**/
@@ -216,6 +222,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.selectedSortBy = item;
     this.pTable.expandedRowKeys = {};
     this.grains = {};
+    this.cancelOverride();
+    this.cancelRemoveOverride();
     this.regionCodes = {};
     if (item == 'Minimum Grain / RAP') {
       this.dataSource = this.getData(this.treatySections[0]);
@@ -351,6 +359,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         }
       )
     }
+
     if (_.includes(holder, 'dispoWs')) {
       checked = 'dispoWs';
     } else if (_.includes(holder, 'checked')) {
@@ -433,6 +442,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       })
     }
 
+    if (checked == 'overridden' && this.removeOverride) {
+      checked = 'cancelOverride'
+    }
     return checked;
   }
 
@@ -501,10 +513,14 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       })
     }
 
-    if (rowData.override) {
+    if (rowData.override || grain.override) {
       if (checked == 'checked' || checked == 'dispoWs') {
         checked = 'override'
       }
+    }
+
+    if (this.removeOverride && checked == 'overridden') {
+      checked = 'override';
     }
 
     return checked;
@@ -552,6 +568,52 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       })
     }
     return checked;
+  }
+
+  /**go in the child override mode selecting all checkboxes beforeHand**/
+  overrideChildMode(rowData, grain) {
+    grain.override = true;
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      let holder = {}
+      this.treatySections[0].forEach(ts => {
+        ts.regionPerils.forEach(rp => {
+          if (rp.id == rowData.id) {
+            rp.targetRaps.forEach(tr => {
+              if (!tr.attached && !tr.overridden) {
+                holder = {
+                  "treatySection": ts.id,
+                  "parent": rowData.id,
+                  "child": grain.id
+                };
+                this.selectionForOverride.push(holder);
+              }
+            })
+          }
+        })
+      })
+    }
+
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      let holder = {}
+      this.treatySections[0].forEach(ts => {
+        ts.targetRaps.forEach(rp => {
+          if (rp.id == rowData.id) {
+            rp.regionPerils.forEach(tr => {
+              if (!tr.attached && !tr.overridden) {
+                holder = {
+                  "treatySection": ts.id,
+                  "parent": grain.id,
+                  "child": rowData.id
+                };
+                this.selectionForOverride.push(holder);
+              }
+            })
+          }
+        })
+      })
+    }
+
+
   }
 
   /** adding or deleting the override selection from the override container with checking/unchecking the checkbox **/
@@ -726,6 +788,141 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
   }
 
+  overrideSelectionForCancel(item, rowData) {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+
+      const count = _.filter(this.selectionForOverride, res => res.parent == rowData.id && res.treatySection == item.id).length;
+
+      let const1 = 0;
+      rowData.child.forEach(chi => {
+        item.regionPerils.forEach(reg => {
+          if (reg.id == rowData.id) {
+            reg.targetRaps.forEach(des => {
+              if (des.id == chi.id) {
+                if (!des.attached && des.overridden) {
+                  const1++;
+                }
+              }
+            })
+          }
+        })
+      })
+
+      if (count == const1) {
+
+        rowData.child.forEach(chi => {
+          item.regionPerils.forEach(reg => {
+            if (reg.id == rowData.id) {
+              reg.targetRaps.forEach(des => {
+                if (des.id == chi.id) {
+                  if (!des.attached && des.overridden) {
+                    let holder = {
+                      "treatySection": item.id,
+                      "parent": rowData.id,
+                      "child": chi.id
+                    };
+                    this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
+                  }
+                }
+              })
+            }
+          })
+        })
+
+
+      } else {
+        rowData.child.forEach(chi => {
+          item.regionPerils.forEach(reg => {
+            if (reg.id == rowData.id) {
+              reg.targetRaps.forEach(des => {
+                if (des.id == chi.id) {
+                  if (!des.attached && des.overridden) {
+                    let Holder = {
+                      "treatySection": item.id,
+                      "parent": rowData.id,
+                      "child": chi.id
+                    };
+                    if (_.findIndex(this.selectionForOverride, Holder) == -1) {
+                      this.selectionForOverride.push(Holder);
+                    }
+
+
+                  }
+
+                }
+              })
+            }
+          })
+        })
+      }
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      const count = _.filter(this.selectionForOverride, res => res.child == rowData.id && res.treatySection == item.id).length;
+
+      let const1 = 0;
+      rowData.child.forEach(chi => {
+        item.targetRaps.forEach(reg => {
+          if (reg.id == rowData.id) {
+            reg.regionPerils.forEach(des => {
+              if (des.id == chi.id) {
+                if (!des.attached && des.overridden) {
+                  const1++;
+                }
+              }
+            })
+          }
+        })
+      })
+      if (count == const1) {
+
+        rowData.child.forEach(chi => {
+          item.targetRaps.forEach(reg => {
+            if (reg.id == rowData.id) {
+              reg.regionPerils.forEach(des => {
+                if (des.id == chi.id) {
+                  if (!des.attached && des.overridden) {
+                    let holder = {
+                      "treatySection": item.id,
+                      "parent": chi.id,
+                      "child": rowData.id
+                    };
+                    this.selectionForOverride.splice(_.findIndex(this.selectionForOverride, holder), 1);
+                  }
+                }
+              })
+            }
+          })
+        })
+
+      } else {
+
+        rowData.child.forEach(chi => {
+          item.targetRaps.forEach(reg => {
+            if (reg.id == rowData.id) {
+              reg.regionPerils.forEach(des => {
+                if (des.id == chi.id) {
+                  if (!des.attached && des.overridden) {
+                    let Holder = {
+                      "treatySection": item.id,
+                      "parent": chi.id,
+                      "child": rowData.id
+                    };
+                    if (_.findIndex(this.selectionForOverride, Holder) == -1) {
+                      this.selectionForOverride.push(Holder);
+                    }
+                  }
+                }
+              })
+            }
+          })
+        })
+      }
+    }
+
+
+  }
+
+
   /** checking the parent's checkbox when all the children are selected**/
   checkParent(rowData, item) {
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
@@ -772,6 +969,51 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
   }
 
+  checkParentForCancel(rowData, item) {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      let const1 = 0;
+      const count = _.filter(this.selectionForOverride, res => res.parent === rowData.id && res.treatySection === item.id).length;
+      rowData.child.forEach(chi => {
+        item.regionPerils.forEach(reg => {
+          if (reg.id == rowData.id) {
+            reg.targetRaps.forEach(des => {
+              if (des.id == chi.id) {
+                if (!des.attached && des.overridden) {
+                  const1++;
+                }
+              }
+            })
+          }
+        })
+      })
+
+      if (count == const1) {
+        return true;
+      }
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      let const1 = 0;
+
+      const count = _.filter(this.selectionForOverride, res => res.child === rowData.id && res.treatySection === item.id).length;
+      rowData.child.forEach(chi => {
+        item.targetRaps.forEach(reg => {
+          if (reg.id == rowData.id) {
+            reg.regionPerils.forEach(des => {
+              if (des.id == chi.id) {
+                if (!des.attached && des.overridden) {
+                  const1++;
+                }
+              }
+            })
+          }
+        })
+      })
+      if (count == const1) {
+        return true;
+      }
+    }
+  }
+
   /** checking the override container to determine whether to check the child's checkbox or not**/
   checkChild(rowData, item, grain) {
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
@@ -799,6 +1041,90 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.dataSource.forEach(res => {
       res.override = true;
     })
+  }
+
+  RemoveOverrideAll() {
+    this.removeOverride = true;
+    let holder = {}
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      this.treatySections[0].forEach(ts => {
+        ts.regionPerils.forEach(rp => {
+          rp.targetRaps.forEach(tr => {
+            if (tr.overridden) {
+              holder = {
+                "treatySection": ts.id,
+                "parent": rp.id,
+                "child": tr.id
+              };
+              this.selectionForOverride.push(holder);
+            }
+          })
+        })
+      })
+    }
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      this.treatySections[0].forEach(ts => {
+        ts.targetRaps.forEach(rp => {
+          rp.regionPerils.forEach(tr => {
+            if (tr.overridden) {
+              holder = {
+                "treatySection": ts.id,
+                "parent": tr.id,
+                "child": rp.id
+              };
+              this.selectionForOverride.push(holder);
+            }
+          })
+        })
+      })
+    }
+
+    this.selectionForCancelOverride = _.merge([], this.selectionForOverride);
+  }
+
+  checkSelectionToCancelOverride() {
+    return this.selectionForCancelOverride.length > this.selectionForOverride.length;
+  }
+
+  removeOverrideBack() {
+    this.selectionForCancelOverride.forEach(item => {
+      if (_.findIndex(this.selectionForOverride, item) == -1) {
+        this.treatySections[0].forEach(section => {
+
+          if (item.treatySection == section.id) {
+            section.regionPerils.forEach(rp => {
+              if (rp.id == item.parent) {
+                rp.targetRaps.forEach(tr => {
+                  if (tr.id == item.child) {
+                    tr.overridden = false;
+                    tr.reason = null;
+                    tr.resonDescribed = null;
+
+                  }
+                })
+              }
+            })
+            section.targetRaps.forEach(tr => {
+              if (tr.id == item.child) {
+                tr.regionPerils.forEach(rp => {
+                  if (rp.id == item.parent) {
+                    rp.overridden = false;
+                    rp.reason = null;
+                    rp.resonDescribed = null;
+
+                  }
+                })
+              }
+
+            })
+          }
+        })
+      }
+    })
+    this.selectionForCancelOverride = [];
+    this.selectionForOverride = []
+    this.removeOverride = false;
+
   }
 
   /**Saving the overrides made (will be sending a request to the backend in the future)**/
@@ -836,12 +1162,9 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       })
     })
 
-    this.dataSource.forEach(res => {
-      res.override = false;
-    })
+    this.cancelOverride();
 
     this.onHide();
-    this.selectionForOverride = [];
 
   }
 
@@ -850,7 +1173,16 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.selectionForOverride = [];
     this.dataSource.forEach(res => {
       res.override = false;
+      res.child.forEach(child => {
+        child.override = false;
+      })
     })
+
+  }
+
+  cancelRemoveOverride() {
+    this.selectionForOverride = [];
+    this.removeOverride = false;
   }
 
   /** showing the override checkbox for the child selected, when the conditions of override are available**/
@@ -860,8 +1192,17 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       if (res.override == true) {
         checked = true;
       }
+      res.child.forEach(child => {
+        if (child.override) {
+          checked = true;
+        }
+      })
     })
     return checked;
+  }
+
+  showRemoveOverrideButton() {
+    return this.removeOverride;
   }
 
   /** hiding the popup**/
@@ -873,17 +1214,30 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
   applyAttachChangesTwo(event) {
     this.deleteArray = event;
-    console.log("this is the deleteArray",this.deleteArray)
     _.forEach(this.deleteArray, att => {
-      _.forEach(this.treatySections[0], ts => {
-        if (ts.id == att.tsId) {
+        _.forEach(this.treatySections[0], ts => {
+          if (ts.id == att.tsId) {
 
 
+            _.forEach(ts.regionPerils, rg => {
+              if (rg.id == att.regionPeril) {
+                _.forEach(rg.targetRaps, tr => {
+                  if (tr.id == att.targetRap) {
+                    tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
+                    if (tr.pltsAttached.length == 0) {
+                      tr.attached = false;
+                    }
+                  }
+                })
+              }
+            })
+          }
 
-          _.forEach(ts.regionPerils, rg => {
-            if (rg.id == att.regionPeril) {
-              _.forEach(rg.targetRaps, tr => {
-                if (tr.id == att.targetRap) {
+
+          _.forEach(ts.targetRaps, rg => {
+            if (rg.id == att.targetRap) {
+              _.forEach(rg.regionPerils, tr => {
+                if (tr.id == att.regionPeril) {
                   tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
                   if (tr.pltsAttached.length == 0) {
                     tr.attached = false;
@@ -892,26 +1246,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
               })
             }
           })
-        }
 
-
-        _.forEach(ts.targetRaps, rg => {
-          if (rg.id == att.targetRap) {
-            _.forEach(rg.regionPerils, tr => {
-              if (tr.id == att.regionPeril) {
-                tr.pltsAttached.splice(_.findIndex(tr.pltsAttached, this.state[att.pltId]), 1);
-                if (tr.pltsAttached.length == 0) {
-                  tr.attached = false;
-                }
-              }
-            })
-          }
         })
-
-    })
-  }
-
-)
+      }
+    )
 
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
       this.dataSource = this.getDataTwo(this.treatySections[0]);
@@ -919,211 +1257,208 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       this.dataSource = this.getData(this.treatySections[0]);
     }
-}
-
-/** applying the attach changes from the attachplt popup**/
-applyAttachChanges(event)
-{
-  this.attachArray = [];
-  this.attachArray = _.merge([],event);
-  console.log("this is the attachArray",this.attachArray)
-  _.forEach(this.attachArray, att => {
-    _.forEach(this.treatySections[0], ts => {
-      if (ts.id == att.tsId) {
-
-
-        _.forEach(ts.regionPerils, rg => {
-          if (rg.id == att.regionPeril) {
-            _.forEach(rg.targetRaps, tr => {
-              if (tr.id == att.targetRap) {
-                tr.attached = true;
-                tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
-              }
-            })
-          }
-        })
-
-        _.forEach(ts.targetRaps, rg => {
-          if (rg.id == att.targetRap) {
-            _.forEach(rg.regionPerils, tr => {
-              if (tr.id == att.regionPeril) {
-                tr.attached = true;
-                tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
-              }
-            })
-          }
-        })
-      }
-    })
-
-  })
-  if (this.selectedSortBy == 'RAP / Minimum Grain') {
-    this.dataSource = this.getDataTwo(this.treatySections[0]);
-  }
-  if (this.selectedSortBy == 'Minimum Grain / RAP') {
-    this.dataSource = this.getData(this.treatySections[0]);
   }
 
+  /** applying the attach changes from the attachplt popup**/
+  applyAttachChanges(event) {
+    this.attachArray = [];
+    this.attachArray = _.merge([], event);
+    _.forEach(this.attachArray, att => {
+      _.forEach(this.treatySections[0], ts => {
+        if (ts.id == att.tsId) {
 
 
-}
-
-/**getting the row information to send it to the attach plt popup**/
-getRowInformation(rowData)
-{
-  if (this.selectedSortBy == 'Minimum Grain / RAP') {
-    const targetRaps = [];
-    rowData.child.forEach(tr => {
-      targetRaps.push(tr.id)
-    })
-    this.rowInformation = {
-      "sort": "1",
-      "rowData": rowData.id,
-      "child": targetRaps
-    };
-  }
-  if (this.selectedSortBy == 'RAP / Minimum Grain') {
-    const targetRaps = [];
-    rowData.child.forEach(tr => {
-      targetRaps.push(tr.id)
-    })
-    this.rowInformation = {
-      "sort": "2",
-      "rowData": rowData.id,
-      "child": targetRaps
-    };
-
-  }
-  this.addRemoveModal = true;
-}
-
-/**checking if the treaty section needs to show the attached icon**/
-checkTreatySectionAttached(treatySection)
-{
-  let checked = true;
-  this.treatySections[0].forEach(ts => {
-    if (ts.id == treatySection.id) {
-      if (this.selectedSortBy == 'Minimum Grain / RAP') {
-        ts.regionPerils.forEach(rg => {
-          if (!rg.attached && !rg.overridden) {
-            checked = false;
-          }
-        })
-      }
-      if (this.selectedSortBy == 'RAP / Minimum Grain') {
-        ts.targetRaps.forEach(tr => {
-          if (!tr.attached && !tr.overridden) {
-            checked = false;
-          }
-        })
-      }
-    }
-  })
-  return checked;
-}
-
-checkRowAttached(row)
-{
-  let checked = true;
-  this.treatySections[0].forEach(ts => {
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      ts.regionPerils.forEach(rp => {
-          if (rp.id == row.id) {
-            if (!rp.attached && !rp.overridden) {
-              checked = false;
+          _.forEach(ts.regionPerils, rg => {
+            if (rg.id == att.regionPeril) {
+              _.forEach(rg.targetRaps, tr => {
+                if (tr.id == att.targetRap) {
+                  tr.attached = true;
+                  tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+                }
+              })
             }
-          }
+          })
+
+          _.forEach(ts.targetRaps, rg => {
+            if (rg.id == att.targetRap) {
+              _.forEach(rg.regionPerils, tr => {
+                if (tr.id == att.regionPeril) {
+                  tr.attached = true;
+                  tr.pltsAttached = [...tr.pltsAttached, this.state[att.pltId]];
+                }
+              })
+            }
+          })
         }
-      )
+      })
+
+    })
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      this.dataSource = this.getDataTwo(this.treatySections[0]);
+    }
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      this.dataSource = this.getData(this.treatySections[0]);
+    }
+
+
+  }
+
+  /**getting the row information to send it to the attach plt popup**/
+  getRowInformation(rowData) {
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      const targetRaps = [];
+      rowData.child.forEach(tr => {
+        targetRaps.push(tr.id)
+      })
+      this.rowInformation = {
+        "sort": "1",
+        "rowData": rowData.id,
+        "child": targetRaps
+      };
     }
     if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      ts.targetRaps.forEach(tr => {
-          if (tr.id == row.id) {
+      const targetRaps = [];
+      rowData.child.forEach(tr => {
+        targetRaps.push(tr.id)
+      })
+      this.rowInformation = {
+        "sort": "2",
+        "rowData": rowData.id,
+        "child": targetRaps
+      };
+
+    }
+    this.addRemoveModal = true;
+  }
+
+  /**checking if the treaty section needs to show the attached icon**/
+  checkTreatySectionAttached(treatySection) {
+    let checked = true;
+    this.treatySections[0].forEach(ts => {
+      if (ts.id == treatySection.id) {
+        if (this.selectedSortBy == 'Minimum Grain / RAP') {
+          ts.regionPerils.forEach(rg => {
+            if (!rg.attached && !rg.overridden) {
+              checked = false;
+            }
+          })
+        }
+        if (this.selectedSortBy == 'RAP / Minimum Grain') {
+          ts.targetRaps.forEach(tr => {
             if (!tr.attached && !tr.overridden) {
               checked = false;
             }
-          }
+          })
         }
-      )
-    }
-
-  })
-  return checked;
-}
-
-checkRowChildAttached(rowData, child)
-{
-  let checked = true;
-  this.treatySections[0].forEach(ts => {
-    if (this.selectedSortBy == 'Minimum Grain / RAP') {
-      ts.regionPerils.forEach(rp => {
-          if (rp.id == rowData.id) {
-            rp.targetRaps.forEach(tr => {
-              if (tr.id == child.id) {
-                if (!tr.attached && !tr.overridden) {
-                  checked = false;
-                }
-              }
-            })
-          }
-        }
-      )
-    }
-    if (this.selectedSortBy == 'RAP / Minimum Grain') {
-      ts.targetRaps.forEach(tr => {
-          if (tr.id == rowData.id) {
-            tr.regionPerils.forEach(rp => {
-              if (rp.id == child.id) {
-                if (!rp.attached && !rp.overridden) {
-                  checked = false;
-                }
-              }
-            })
-          }
-        }
-      )
-    }
-
-  })
-  return checked;
-}
-
-  selectDropDown(event:boolean,rowId){
-  console.log("this is the event and the rowdata id:",event, rowId)
-  if(event){
-    this.selectedDropDown = rowId;
-  }else{
-    this.selectedDropDown = null;
+      }
+    })
+    return checked;
   }
-}
 
-private _mergeFunction(source, target)
-{
-  let newData = [...source];
+  checkRowAttached(row) {
+    let checked = true;
+    this.treatySections[0].forEach(ts => {
+      if (this.selectedSortBy == 'Minimum Grain / RAP') {
+        ts.regionPerils.forEach(rp => {
+            if (rp.id == row.id) {
+              if (!rp.attached && !rp.overridden) {
+                checked = false;
+              }
+            }
+          }
+        )
+      }
+      if (this.selectedSortBy == 'RAP / Minimum Grain') {
+        ts.targetRaps.forEach(tr => {
+            if (tr.id == row.id) {
+              if (!tr.attached && !tr.overridden) {
+                checked = false;
+              }
+            }
+          }
+        )
+      }
 
-  target.forEach(tr => {
-    const index = _.findIndex(newData, item => item.id == tr.id);
-    if (index != -1) {
-      newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+    })
+    return checked;
+  }
+
+  checkRowChildAttached(rowData, child) {
+    let checked = true;
+    this.treatySections[0].forEach(ts => {
+      if (this.selectedSortBy == 'Minimum Grain / RAP') {
+        ts.regionPerils.forEach(rp => {
+            if (rp.id == rowData.id) {
+              rp.targetRaps.forEach(tr => {
+                if (tr.id == child.id) {
+                  if (!tr.attached && !tr.overridden) {
+                    checked = false;
+                  }
+                }
+              })
+            }
+          }
+        )
+      }
+      if (this.selectedSortBy == 'RAP / Minimum Grain') {
+        ts.targetRaps.forEach(tr => {
+            if (tr.id == rowData.id) {
+              tr.regionPerils.forEach(rp => {
+                if (rp.id == child.id) {
+                  if (!rp.attached && !rp.overridden) {
+                    checked = false;
+                  }
+                }
+              })
+            }
+          }
+        )
+      }
+
+    })
+    return checked;
+  }
+
+  selectDropDown(event: boolean, rowId) {
+    if (event) {
+      this.selectedDropDown = rowId;
     } else {
-      newData = [...newData, tr];
+      this.selectedDropDown = null;
     }
-  });
-  return newData;
-}
+  }
 
-private _mergeFunctionTwo(source, target)
-{
-  let newData = [...source];
+  private _mergeFunction(source, target) {
+    let newData = [...source];
 
-  target.forEach(tr => {
-    const index = _.findIndex(newData, item => item.id == tr.id);
-    if (index != -1) {
-      newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
-    } else {
-      newData = [...newData, tr];
-    }
-  });
-  return newData;
-}
+    target.forEach(tr => {
+      const index = _.findIndex(newData, item => item.id == tr.id);
+      if (index != -1) {
+        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+      } else {
+        newData = [...newData, tr];
+      }
+    });
+    newData = _.map(newData, item => {
+      return {...item, override: false}
+    });
+    return newData;
+  }
+
+  private _mergeFunctionTwo(source, target) {
+    let newData = [...source];
+
+    target.forEach(tr => {
+      const index = _.findIndex(newData, item => item.id == tr.id);
+      if (index != -1) {
+        newData[index].pltsAttached = _.uniqBy([...(tr.pltsAttached), ...(newData[index].pltsAttached)], (item: any) => item.pltId);
+      } else {
+        newData = [...newData, tr];
+      }
+    });
+    newData = _.map(newData, item => {
+      return {...item, override: false}
+    });
+    return newData;
+  }
+
 }
