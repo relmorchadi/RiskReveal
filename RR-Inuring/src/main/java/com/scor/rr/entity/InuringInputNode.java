@@ -18,7 +18,7 @@ public class InuringInputNode {
     private int inuringInputNodeId;
     private int entity;
     private int inuringPackageId;
-    private NodeStatus inputNodeStatus;
+    private InuringNodeStatus inputInuringNodeStatus;
     private String inputNodeName;
 
     public InuringInputNode(int inuringPackageId) {
@@ -27,7 +27,7 @@ public class InuringInputNode {
 
     public InuringInputNode(int inuringPackageId, String inputNodeName) {
         this.inuringPackageId = inuringPackageId;
-        this.inputNodeStatus = NodeStatus.Valid;
+        this.inputInuringNodeStatus = InuringNodeStatus.Valid;
         this.inputNodeName = ! StringUtils.isEmpty(inputNodeName) ? inputNodeName : "Input Node";
     }
 
@@ -60,12 +60,12 @@ public class InuringInputNode {
     }
 
     @Column(name = "InputNodeStatus", nullable = false)
-    public NodeStatus getInputNodeStatus() {
-        return inputNodeStatus;
+    public InuringNodeStatus getInputInuringNodeStatus() {
+        return inputInuringNodeStatus;
     }
 
-    public void setInputNodeStatus(NodeStatus inputNodeStatus) {
-        this.inputNodeStatus = inputNodeStatus;
+    public void setInputInuringNodeStatus(InuringNodeStatus inputInuringNodeStatus) {
+        this.inputInuringNodeStatus = inputInuringNodeStatus;
     }
 
     @Column(name = "InputNodeName", nullable = false)
@@ -85,12 +85,12 @@ public class InuringInputNode {
         return inuringInputNodeId == that.inuringInputNodeId &&
                 entity == that.entity &&
                 inuringPackageId == that.inuringPackageId &&
-                inputNodeStatus == that.inputNodeStatus &&
+                inputInuringNodeStatus == that.inputInuringNodeStatus &&
                 Objects.equals(inputNodeName, that.inputNodeName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(inuringInputNodeId, entity, inuringPackageId, inputNodeStatus, inputNodeName);
+        return Objects.hash(inuringInputNodeId, entity, inuringPackageId, inputInuringNodeStatus, inputNodeName);
     }
 }
