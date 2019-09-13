@@ -21,6 +21,8 @@ public interface UserTagRepository extends JpaRepository<UserTag, Integer>{
     @Query("from UserTag tag where tag not in (SELECT userTagPltPk.tag from UserTagPlt)")
     List<UserTag> findAllUserTags();
 
+    List<UserTag> findAllByWorkspaceNot(Workspace workspace);
+
     /*@Query("select distinct userTagPltPk.tag from UserTagPlt where assigner = ?1 and workSpaceId = ?2 and uwYear = ?3")
     List<UserTag> findByAssignerAndWorkSpaceIdAndUwYear(User user, String workspaceId,Integer uwYear);*/
 }

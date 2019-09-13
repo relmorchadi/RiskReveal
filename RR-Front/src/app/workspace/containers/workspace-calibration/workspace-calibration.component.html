@@ -211,8 +211,8 @@
                                      value="adjustments"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'30px'}"
-                                     label="Impacts Analysis" name="tableType"
-                                     value="Impacts"></p-radioButton>
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'10px'}"
                                      label="EP Metrics" name="tableType"
@@ -304,14 +304,14 @@
                                      value="adjustments"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'30px'}"
-                                     label="Impacts Analysis" name="tableType"
-                                     value="Impacts"></p-radioButton>
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'10px'}"
                                      label="EP Metrics" name="tableType"
                                      value="EP Metrics"></p-radioButton>
                     </div>
-                    <div class="button-toggle" style="width: 265px; float: left;">
+                    <div class="button-toggle" style="float: left;">
                       <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
                       <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
                                  class="switch-input"></nz-switch>&nbsp;
@@ -325,15 +325,15 @@
                 </div>
               </div>
             </div>
-            <div *ngIf="!extended && tableType=='Impacts'" [ngStyle]="{'margin-left': headerWidth}"
+            <div *ngIf="!extended && tableType=='Impact'" [ngStyle]="{'margin-left': headerWidth}"
                  class="table-header2"
                  style="background-color: #fff">
               <div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between">
                   <span class="title">
-                    Impacts
+                    Impact
                   </span>
                 <div class="impact-container">
-                  <div class="impacts-points">
+                  <div class="Impact-points">
                   <span>
                     Exhaustion Point(pE): 999,999,999,999
                   </span>
@@ -374,14 +374,14 @@
                                      value="adjustments"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'30px'}"
-                                     label="Impacts Analysis" name="tableType"
-                                     value="Impacts"></p-radioButton>
+                                     label="Impact Analysis" name="tableType"
+                                     value="Impact"></p-radioButton>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
                                      [ngStyle]="{'padding-right':'10px'}"
                                      label="EP Metrics" name="tableType"
                                      value="EP Metrics"></p-radioButton>
                     </div>
-                    <div class="button-toggle" style="width: 265px; float: left;">
+                    <div class="button-toggle" style="float: left;">
                       <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
                       <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
                                  class="switch-input"></nz-switch>&nbsp;

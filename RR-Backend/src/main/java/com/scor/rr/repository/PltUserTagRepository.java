@@ -24,4 +24,6 @@ public interface PltUserTagRepository extends JpaRepository<UserTagPlt, Integer>
     UserTagPlt findByTagAndPlt(@Param("tag") UserTag tag, @Param("plt") PltHeader plt);
 
     List<UserTagPlt> findByAssignerAndWorkSpaceIdAndUwYear(User assigner, String workspaceId,Integer uwYear);
+
+    List<UserTagPlt> findByWorkSpaceIdAndUwYear(String workspaceId,Integer uwYear);
 }
