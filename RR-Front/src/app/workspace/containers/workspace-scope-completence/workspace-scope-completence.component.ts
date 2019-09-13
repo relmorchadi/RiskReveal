@@ -359,6 +359,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         }
       )
     }
+    console.log("this is the listOfplts:",this.listOfPltsData);
 
     if (_.includes(holder, 'dispoWs')) {
       checked = 'dispoWs';
