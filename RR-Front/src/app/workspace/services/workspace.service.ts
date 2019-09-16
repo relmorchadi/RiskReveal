@@ -36,6 +36,84 @@ export class WorkspaceService {
       );
   }
 
+  loadWsFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFacWs) {
+    const {
+      wsId, uwYear, route, type
+    } = payload;
+    ctx.patchState({loading: true});
+
+    const ws = {
+        id: 'RCC000022.2019.1.0.1',
+        workspaceName: 'CFS-SCOR REASS.-MADRID',
+        cedantCode: '22231',
+        cedantName: 'SCOR SE',
+        subsidiaryId: '2',
+        subsidiaryName: 'SCOR REASS.',
+        ledgerName: 'MADRID',
+        inceptionDate: 1546297200000,
+        expiryDate: 1577746800000,
+        subsidiaryLedgerId: '2',
+        treatySections: [
+          'CFS-SCOR REASS.-MADRID RCC000022/ 1'
+          ],
+        years: [
+            wsId
+          ],
+        projects: [
+          {
+            workspaceId: '00C0022',
+            uwy: 2019,
+            projectId: 'P-000008932',
+            name: 'Post-Inured PLTs',
+            description: null,
+            assignedTo: null,
+            createdBy: 'Nathalie Dulac',
+            creationDate: 1559922212147,
+            dueDate: 1559922195933,
+            linkFlag: true,
+            postInuredFlag: null,
+            publishFlag: false,
+            pltSum: null,
+            pltThreadSum: 0,
+            regionPerilSum: 0,
+            xactSum: 0,
+            sourceProjectId: null,
+            sourceProjectName: null,
+            sourceWsId: null,
+            sourceWsName: null,
+            locking: null,
+            selected: true
+          },
+          {
+            workspaceId: '00C0022',
+            uwy: 2019,
+            projectId: 'P-000008931',
+            name: 'Post-Inured PLTs',
+            description: null,
+            assignedTo: null,
+            createdBy: 'Nathalie Dulac',
+            creationDate: 1559922196097,
+            dueDate: 1559922179000,
+            linkFlag: true,
+            postInuredFlag: null,
+            publishFlag: false,
+            pltSum: null,
+            pltThreadSum: 0,
+            regionPerilSum: 0,
+            xactSum: 0,
+            sourceProjectId: null,
+            sourceProjectName: null,
+            sourceWsId: null,
+            sourceWsName: null,
+            locking: null
+          }
+          ]
+    };
+    ctx.dispatch(new fromWS.LoadWsSuccess({
+      wsId, uwYear, ws, route, type
+    }));
+  }
+
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
     const {wsId, uwYear, ws, route, type} = payload;
     const {workspaceName, programName, cedantName, projects} = ws;
@@ -183,6 +261,27 @@ export class WorkspaceService {
       }));
     } else {
       return ctx.dispatch(new fromWS.LoadWS({
+        wsId,
+        uwYear,
+        route,
+        type
+      }));
+    }
+  }
+
+  openFacWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenFacWS) {
+    const {wsId, uwYear, route, type} = payload;
+    const state = ctx.getState();
+    const wsIdentifier = wsId + '-' + uwYear;
+
+    if (state.content[wsIdentifier]) {
+      this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
+      return ctx.dispatch(new fromWS.SetCurrentTab({
+        index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
+        wsIdentifier
+      }));
+    } else {
+      return ctx.dispatch(new fromWS.LoadFacWs({
         wsId,
         uwYear,
         route,
