@@ -40,7 +40,7 @@
             <i class="icon-search_24px"></i>
             <input class="input-search"/>
           </div>-->
-          <div class="summary-info" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
+          <div class="summary-info" style="min-height: 251px" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
             <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="189px"
                      [resizableColumns]="true" [value]="fileBase.files">
               <ng-template let-columns pTemplate="colgroup">
@@ -87,7 +87,7 @@
                 </tr>
               </ng-template>
               <ng-template pTemplate="emptymessage" let-columns="columns">
-                <div class="empty-notif-wrapper">
+                <div class="empty-notif-wrapper" style="height: 180px">
                   <nz-empty></nz-empty>
                 </div>
               </ng-template>
@@ -227,7 +227,7 @@
               </tr>
             </ng-template>
             <ng-template pTemplate="emptymessage" let-columns="columns">
-              <div class="empty-notng s if-wrapper">
+              <div class="empty-notif-wrapper">
                 <nz-empty></nz-empty>
               </div>
             </ng-template>
