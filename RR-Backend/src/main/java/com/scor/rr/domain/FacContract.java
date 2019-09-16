@@ -1,13 +1,14 @@
 package com.scor.rr.domain;
 
+import com.scor.rr.util.StringPrefixedSequenceIdGenerator;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.id.enhanced.SequenceStyleGenerator;
+
+import javax.persistence.*;
 
 @Entity
 @Data
@@ -18,16 +19,27 @@ import javax.persistence.Table;
 public class FacContract {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "car_seq")
+    @GenericGenerator(
+            name = "car_seq",
+            strategy = "com.scor.rr.util.StringPrefixedSequenceIdGenerator",
+            parameters = {
+                    @org.hibernate.annotations.Parameter(name = SequenceStyleGenerator.INITIAL_PARAM,value = "1"),
+                    @org.hibernate.annotations.Parameter(name = StringPrefixedSequenceIdGenerator.INCREMENT_PARAM, value = "1"),
+                    @org.hibernate.annotations.Parameter(name = StringPrefixedSequenceIdGenerator.VALUE_PREFIX_PARAMETER, value = "CAR-"),
+                    @org.hibernate.annotations.Parameter(name = StringPrefixedSequenceIdGenerator.NUMBER_FORMAT_PARAMETER, value = "%09d") })
     @Column(name = "id")
     private String id;
     @Column(name = "lastUpdateDate")
     private String lastUpdateDate;
     @Column(name = "lastUpdatedBy")
     private String lastUpdatedBy;
-    @Column(name = "reauestedByFirstName")
-    private String reauestedByFirstName;
-    @Column(name = "reauestedByLastName")
-    private String reauestedByLastName;
+    @Column(name = "requestedByFirstName")
+    private String requestedByFirstName;
+    @Column(name = "requestedByLastName")
+    private String requestedByLastName;
+    @Column(name = "requestedByFullName")
+    private String requestedByFullName;
     @Column(name = "requestCreationDate")
     private String requestCreationDate;
     @Column(name = "uWanalysisContractBusinessType")
