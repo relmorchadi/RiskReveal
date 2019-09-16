@@ -1,4 +1,4 @@
-package com.scor.rr.entity;
+package com.scor.rr.enums;
 
 /**
  * Created by u004602 on 10/09/2019.

@@ -1,5 +1,9 @@
 package com.scor.rr.entity;
 
+import com.scor.rr.enums.InuringFinancialPerspective;
+import com.scor.rr.enums.InuringFinancialTreatment;
+import com.scor.rr.enums.InuringNodeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;

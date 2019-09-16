@@ -1,5 +1,6 @@
 package com.scor.rr.entity;
 
+import com.scor.rr.enums.InuringNodeStatus;
 import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.Column;
