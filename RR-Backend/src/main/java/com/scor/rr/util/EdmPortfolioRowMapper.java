@@ -12,7 +12,7 @@ public class EdmPortfolioRowMapper implements RowMapper<EdmPortfolio> {
     @Override
     public EdmPortfolio mapRow(ResultSet rs , int rowNum ) throws SQLException {
 
-        EdmPortfolio edmPortfolio = new EdmPortfolio() ;
+        EdmPortfolio edmPortfolio = new EdmPortfolio();
         edmPortfolio.setEdmId(rs.getLong("edm_id"));
         edmPortfolio.setEdmName(rs.getString("edm_name"));
         edmPortfolio.setPortfolioId(rs.getLong("port_id"));
