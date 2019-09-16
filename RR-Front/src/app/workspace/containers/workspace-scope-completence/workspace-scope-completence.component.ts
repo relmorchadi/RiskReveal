@@ -288,6 +288,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   checkExpected(item, rowData) {
     let checked = 'not';
     let holder = [];
+    console.log("this is the pltData",this.listOfPltsData)
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
           if (reg.id == rowData.id) {
