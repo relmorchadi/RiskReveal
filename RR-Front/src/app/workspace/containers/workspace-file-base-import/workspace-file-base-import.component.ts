@@ -208,6 +208,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
          this.allCheckedImportedPlts = false;
        }
      }
+     if (this.fileBase.selectedFiles.length === 0) {
+       this.indeterminateImportedPlts = false;
+       this.allCheckedImportedPlts = false;
+     }
    }
 
   selectToImport(value, index) {
@@ -274,6 +278,7 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
         this.selectedPlt = this.fileBase.selectedFiles[index + 1];
       }
     }
+    const selectedPltData = _.filter(this.fileBase.selectedFiles, item => item.selected);
     this.dispatch(new fromWs.RemoveFileFromImportAction(row));
     this.checkIndeterminatePlt();
   }
@@ -303,6 +308,8 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   nodeSelect(event) {
     this.nodePath = '/' + event.node.label;
     this.dispatch(new fromWs.LoadFileBasedFilesAction(this.nodePath));
+    this.allCheckedImportedFiles = false;
+    this.indeterminateImportedFiles = false;
   }
 
   nodeUnselect(event) {
