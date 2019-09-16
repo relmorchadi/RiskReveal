@@ -137,7 +137,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           description: regionPeril.description,
           override: false,
           selected: false,
-          child: this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || {child: []}).child, regionPeril.targetRaps)
+          child: _.sortBy(this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || {child: []}).child, regionPeril.targetRaps),item => item.id)
         };
         const index = _.findIndex(res, row => row.id == object.id);
         if (index == -1) {
@@ -147,7 +147,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         }
       })
     });
-    return _.cloneDeep(res);
+    return _.sortBy(_.cloneDeep(res), item => item.id);
   }
 
   getDataTwo(treatySections) {
@@ -161,7 +161,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           description: targetRap.description,
           override: false,
           selected: false,
-          child: this._mergeFunctionTwo((_.find(res, item => item.id == targetRap.id) || {child: []}).child, targetRap.regionPerils)
+          child: _.sortBy(this._mergeFunctionTwo((_.find(res, item => item.id == targetRap.id) || {child: []}).child, targetRap.regionPerils), item => item.id)
         };
         const index = _.findIndex(res, row => row.id == object.id);
         if (index == -1) {
@@ -171,7 +171,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         }
       })
     });
-    return _.cloneDeep(res);
+    return _.sortBy(_.cloneDeep(res), item => item.id);
 
   }
 
@@ -359,7 +359,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         }
       )
     }
-    console.log("this is the listOfplts:",this.listOfPltsData);
 
     if (_.includes(holder, 'dispoWs')) {
       checked = 'dispoWs';
@@ -1125,6 +1124,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     this.selectionForCancelOverride = [];
     this.selectionForOverride = []
     this.removeOverride = false;
+    this.detectChanges();
 
   }
 
@@ -1258,6 +1258,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       this.dataSource = this.getData(this.treatySections[0]);
     }
+    this.detectChanges();
   }
 
   /** applying the attach changes from the attachplt popup**/
@@ -1300,6 +1301,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       this.dataSource = this.getData(this.treatySections[0]);
     }
+    this.detectChanges();
 
 
   }
@@ -1442,6 +1444,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     newData = _.map(newData, item => {
       return {...item, override: false}
     });
+    _.forEach(newData, item =>{
+      if(item.pltsAttached.length != 0){
+      item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
+    }})
     return newData;
   }
 
@@ -1459,6 +1465,10 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     newData = _.map(newData, item => {
       return {...item, override: false}
     });
+    _.forEach(newData, item =>{
+      if(item.pltsAttached.length != 0){
+        item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
+      }})
     return newData;
   }
 

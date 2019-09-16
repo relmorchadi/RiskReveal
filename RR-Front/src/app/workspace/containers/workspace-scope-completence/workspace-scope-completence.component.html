@@ -83,7 +83,8 @@
 
       </div>
       <div class="divider-right">
-        <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
+        <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" *ngIf="!showRemoveOverrideButton() && !showOverrideButton()" >
+
           <a nz-dropdown>
             <i class="icon-menu_24px" style="font-size: 25px;"></i>
           </a>
@@ -117,7 +118,7 @@
             </th>
 
             <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px">
-              <div>{{item.id}}</div>
+              <div>{{item.id}}<br/>{{item.name}}</div>
               <div *ngIf="checkTreatySectionAttached(item)" class="icon-holder" nz-tooltip [nzTitle]="checked">
                 <ng-container>
                   <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
