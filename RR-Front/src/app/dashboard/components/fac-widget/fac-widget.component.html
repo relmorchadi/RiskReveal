@@ -8,7 +8,7 @@
              [listOfData]="data"
              [virtualScroll]="false"
              (dbClickItem)="openFacItem($event)"
-             [totalRecords]="data.length">
+             [totalRecords]="data?.length">
   </app-table>
 <!--  <div class="select-sections">
     <nz-select class="country a-dropdown-label" style="width: 140px;" nzShowSearch nzAllowClear
