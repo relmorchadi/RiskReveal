@@ -1353,8 +1353,8 @@ const treatySections2 = [
     }]
   },
   {
-    id: "17T008583/ 2",
-    name: "1st Cat XL",
+    id: "17T010540 / 1",
+    name: "2nd Cat XL",
     attached: false,
     regionPerils: [{
       id: 'EUEQ-DE',
@@ -1421,22 +1421,6 @@ const treatySections2 = [
         }]
       },
       {
-        id: 'EUEQ-GR',
-        description: 'Europe (Greece) Earthquake',
-        attached: false,
-        overridden: false,
-        targetRaps: [{
-          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
-          description: 'European Earthquake, Risklink v11.0',
-          overridden: false,
-          selected: false,
-          reason: null,
-          resonDescribed: null,
-          attached: false,
-          pltsAttached: []
-        }]
-      },
-      {
         id: 'EUET',
         description: 'Europe Extra Tropical Cyclone',
         attached: false,
@@ -1458,16 +1442,6 @@ const treatySections2 = [
         attached: false,
         overridden: false,
         targetRaps: [{
-          id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
-          description: 'Australia Earthquake, Risklink 7.0',
-          overridden: false,
-          selected: false,
-          reason: null,
-          resonDescribed: null,
-          attached: false,
-          pltsAttached: []
-        },
-          {
             id: 'RL_AUEQ_Mv18.0_S-104-LTR)',
             description: 'Australia Earthquake, Risklink 18.0',
             overridden: false,
@@ -1518,30 +1492,6 @@ const treatySections2 = [
         reason: null,
         resonDescribed: null,
         attached: false,
-        pltsAttached: []
-      }, {
-        id: 'EUEQ-GR',
-        description: 'Europe (Greece) Earthquake',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }]
-    }, {
-      id: 'RL_AUEQ_Mv7.0_S-7-LTR (Default)',
-      description: 'Australia Earthquake, Risklink 7.0',
-      attached: false,
-      overridden: false,
-      regionPerils: [{
-        id: 'AUEQ',
-        description: 'Australia Earthquake',
-        overridden: false,
-        selected: false,
-        attached: false,
-        reason: null,
-        resonDescribed: null,
         pltsAttached: []
       }]
     }, {
@@ -1577,26 +1527,10 @@ const treatySections2 = [
     }]
   },
   {
-    id: "17T008583/ 3",
-    name: "1st Cat XL",
+    id: "20T002794 / 1",
+    name: "Property/Engineering CAT 1st XL (All Perils)",
     attached: false,
     regionPerils: [{
-      id: 'EUEQ-DE',
-      description: 'Europe (Germany) Earthquake',
-      attached: false,
-      overridden: false,
-      targetRaps: [{
-        id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
-        description: 'European Earthquake, Risklink v11.0',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }]
-    },
-      {
         id: 'EUEQ-AD',
         description: 'Europe (Andorra) Earthquake',
         attached: false,
@@ -1615,22 +1549,6 @@ const treatySections2 = [
       {
         id: 'EUEQ-AT',
         description: 'Europe (Austria) Earthquake',
-        attached: false,
-        overridden: false,
-        targetRaps: [{
-          id: 'RL_EUEQ_Mv11.0_Ev17.1_S-61-LTR (Default)',
-          description: 'European Earthquake, Risklink v11.0',
-          overridden: false,
-          selected: false,
-          reason: null,
-          resonDescribed: null,
-          attached: false,
-          pltsAttached: []
-        }]
-      },
-      {
-        id: 'EUEQ-CH',
-        description: 'Europe (Switzerland) Earthquake',
         attached: false,
         overridden: false,
         targetRaps: [{
@@ -1708,15 +1626,6 @@ const treatySections2 = [
       attached: false,
       overridden: false,
       regionPerils: [{
-        id: 'EUEQ-DE',
-        description: 'Europe (Germany) Earthquake',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }, {
         id: 'EUEQ-AD',
         description: 'Europe (Andorra) Earthquake',
         overridden: false,
@@ -1728,15 +1637,6 @@ const treatySections2 = [
       }, {
         id: 'EUEQ-AT',
         description: 'Europe (Austria) Earthquake',
-        overridden: false,
-        selected: false,
-        reason: null,
-        resonDescribed: null,
-        attached: false,
-        pltsAttached: []
-      }, {
-        id: 'EUEQ-CH',
-        description: 'Europe (Switzerland) Earthquake',
         overridden: false,
         selected: false,
         reason: null,

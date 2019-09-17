@@ -160,6 +160,12 @@ export class WorkspaceState {
 
   /***********************************
    *
+   * Dashboard Selectors
+   *
+   ***********************************/
+
+  /***********************************
+   *
    * Calibration Selectors
    *
    ***********************************/
@@ -332,6 +338,11 @@ export class WorkspaceState {
     return this.wsService.loadWs(ctx, payload);
   }
 
+  @Action(fromWS.LoadFacWs)
+  loadFacWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadFacWs) {
+    return this.wsService.loadWsFac(ctx, payload);
+  }
+
   @Action(fromWS.LoadWsSuccess)
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWsSuccess) {
     return this.wsService.loadWsSuccess(ctx, payload);
@@ -340,6 +351,11 @@ export class WorkspaceState {
   @Action(fromWS.OpenWS)
   openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
+  }
+
+  @Action(fromWS.OpenFacWS)
+  openFacWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenFacWS) {
+    return this.wsService.openFacWorkspace(ctx, payload);
   }
 
   @Action(fromWS.OpenMultiWS)

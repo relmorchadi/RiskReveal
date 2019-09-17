@@ -64,7 +64,7 @@ COMPONENT STYLE
       display: flex;
       justify-content: flex-end;
       width: 100%;
-      padding: 0 10px 10px;
+      padding: 0 10px 7px;
     }
 
     .search-document-wrap {
@@ -75,7 +75,7 @@ COMPONENT STYLE
     .tree-menu-wrapper {
       width: 100%;
       max-width: 98%;
-      margin: -2px auto;
+      margin: -2px auto 20px;
     }
 
     .files-selection-wrap {
@@ -432,9 +432,8 @@ TABLE STYLE
 }
 
 .empty-notif-wrapper {
-  width: 41vw;
   background-color: #F4F6FC;
-  margin: 4px 2px 0;
+  margin: 2px auto;
   padding: 7px;
   display: flex;
   justify-content: center;
@@ -455,13 +454,13 @@ TABLE STYLE
   }
 
   .empty-notif-wrapper {
-    width: 100%;
+    width: 98%;
   }
 }
 
 .fixed-table-height {
   .empty-notif-wrapper {
-    height: 127px;
+    height: 138px;
   }
 }
 

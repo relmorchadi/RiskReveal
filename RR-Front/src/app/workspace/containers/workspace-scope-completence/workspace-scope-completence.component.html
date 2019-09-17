@@ -72,16 +72,25 @@
         <button class="a-buttons-contained-micro" (click)="showOverrideModal = true" *ngIf="selectionForOverride.length != 0">Override Selected</button>
         <button class="a-buttons-linked" (click)="cancelOverride()">Cancel Override Action</button>
       </div>
+
+      <div style="display: flex; flex-direction: column" *ngIf="showRemoveOverrideButton()">
+        <button class="a-buttons-contained-disabled-micro"  *ngIf="!checkSelectionToCancelOverride()">Remove Override</button>
+        <button class="a-buttons-contained-micro"  *ngIf="checkSelectionToCancelOverride()" (click)="removeOverrideBack()">Remove Override</button>
+        <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
+      </div>
+
       <div style="width:30%;">
 
       </div>
       <div class="divider-right">
-        <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
+        <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" *ngIf="!showRemoveOverrideButton() && !showOverrideButton()" >
+
           <a nz-dropdown>
             <i class="icon-menu_24px" style="font-size: 25px;"></i>
           </a>
           <ul nz-menu style="font-size: 12px">
             <li nz-menu-item (click)="overrideAll()">Override</li>
+            <li nz-menu-item (click)="RemoveOverrideAll()">Remove Override</li>
             <li nz-menu-item>Generate Synthetic</li>
             <li nz-menu-item>Export Data</li>
             <li nz-menu-item>Manage Columns</li>
@@ -103,13 +112,13 @@
                 <div style="width: 60px">Peril</div>
               </div>
               <div>
-                <button class="AttachPlts-button" (click)="addRemoveModal=true" nz-button nzType="default">Attach PLTs
+                <button class="AttachPlts-button" (click)="addRemoveModal=true; rowInformation= null" nz-button nzType="default">Attach PLTs
                 </button>
               </div>
             </th>
 
             <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px">
-              <div>{{item.id}}</div>
+              <div>{{item.id}}<br/>{{item.name}}</div>
               <div *ngIf="checkTreatySectionAttached(item)" class="icon-holder" nz-tooltip [nzTitle]="checked">
                 <ng-container>
                   <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
@@ -231,13 +240,20 @@
                 </div>
               </div>
 
-
-
               <div *ngIf="checkExpected(item,rowData) == 'override'" class="icon-holder">
                 <div class="icon-holder">
                   <ng-container>
                     <i (click)="overrideSelection(item,rowData)" class="icon-check_24px unCheckedBoxTab"
                        [ngClass]="{'checkedBoxTab': checkParent(rowData,item)}"></i>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="checkExpected(item,rowData) == 'cancelOverride'" class="icon-holder">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i (click)="overrideSelectionForCancel(item,rowData)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': checkParentForCancel(rowData,item)}"></i>
                   </ng-container>
                 </div>
               </div>
@@ -263,10 +279,10 @@
         </ng-template>
         <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
           <ng-container *ngFor="let grain of rowData.child">
-            <tr [ngClass]="{'expanded-inner-row': grains[grain.id]}" class="row-hover">
+            <tr [ngClass]="{'expanded-inner-row': getGrainState(grain,rowData)}" class="row-hover">
               <th class="child-row-show">
                 <div class="inner-line">
-                <div class="grain-info-wrapper" (click)="toggleExpanded(grain)">
+                <div class="grain-info-wrapper" (click)="toggleExpanded(grain, rowData)">
                   <div style="width: 20px;">
                     <div *ngIf="checkRowChildAttached(rowData,grain)">
                       <ng-container>
@@ -274,8 +290,8 @@
                       </ng-container>
                     </div>
                   </div>
-                  <i *ngIf="!grains[grain.id]" class="icon-keyboard_arrow_down_24px"></i>
-                  <i *ngIf="grains[grain.id]" class="icon-keyboard_arrow_up_24px"></i>
+                  <i *ngIf="!grains[grain.id + rowData.id]" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="grains[grain.id + rowData.id]" class="icon-keyboard_arrow_up_24px"></i>
                   <i *ngIf="selectedSortBy == 'RAP / Minimum Grain'" class="icon-map-marker-alt"></i>
                   <i *ngIf="selectedSortBy == 'Minimum Grain / RAP'" class="icon-map_24px"></i>
                   <div class="grain-info">
@@ -290,7 +306,7 @@
                     <i class="icon-menu_24px" [ngClass]="{'burger-menu-visible': selectedDropDown == grain.id, 'burger-menu': selectedDropDown != grain.id}"></i>
                   </a>
                   <ul nz-menu style="font-size: 12px">
-                    <li nz-menu-item >Override</li>
+                    <li nz-menu-item (click)="overrideChildMode(rowData,grain)">Override</li>
                   </ul>
                 </nz-dropdown>
                 </div>
@@ -351,7 +367,7 @@
               <th class="divided-col"></th>
             </tr>
             <ng-container *ngFor="let plt of grain.pltsAttached">
-              <tr *ngIf="grains[grain.id]" class="row-hover">
+              <tr *ngIf="grains[grain.id + rowData.id]" class="row-hover">
 
                 <th class="inner-line">
                   <div class="grain-info-wrapper">

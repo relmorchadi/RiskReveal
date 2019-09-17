@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Regions } from '../../../shared/data/region-peril';
+import {Component, OnInit} from '@angular/core';
+import {Regions} from '../../../shared/data/region-peril';
+import {WsApi} from '../../../workspace/services/workspace.api';
+import {ActivatedRoute, Router} from "@angular/router";
 
 @Component({
   selector: 'app-submission-page',
@@ -47,12 +49,72 @@ export class SubmissionPageComponent implements OnInit {
   metaData: any;
 
   coverageTemplate = [
-    {field: 'divisionNo', header: 'Division No', width: '40px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
-    {field: 'principal', header: 'Is Principal', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
-    {field: 'lob', header: 'LOB', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
-    {field: 'coverage', header: 'Coverage', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
-    {field: 'currency', header: 'Currency', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
-    {field: 'action', header: 'Action', width: '40px', type: 'action', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+    {
+      field: 'divisionNo',
+      header: 'Division No',
+      width: '40px',
+      type: 'text',
+      sorted: false,
+      filtered: true,
+      highlight: false,
+      visible: true,
+      edit: false
+    },
+    {
+      field: 'principal',
+      header: 'Is Principal',
+      width: '120px',
+      type: 'text',
+      sorted: false,
+      filtered: true,
+      highlight: false,
+      visible: true,
+      edit: true
+    },
+    {
+      field: 'lob',
+      header: 'LOB',
+      width: '120px',
+      type: 'text',
+      sorted: false,
+      filtered: true,
+      highlight: false,
+      visible: true,
+      edit: true
+    },
+    {
+      field: 'coverage',
+      header: 'Coverage',
+      width: '120px',
+      type: 'text',
+      sorted: false,
+      filtered: true,
+      highlight: false,
+      visible: true,
+      edit: true
+    },
+    {
+      field: 'currency',
+      header: 'Currency',
+      width: '120px',
+      type: 'text',
+      sorted: false,
+      filtered: true,
+      highlight: false,
+      visible: true,
+      edit: true
+    },
+    {
+      field: 'action',
+      header: 'Action',
+      width: '40px',
+      type: 'action',
+      sorted: false,
+      filtered: false,
+      highlight: false,
+      visible: true,
+      edit: false
+    },
   ];
 
   dataCoverage = [
@@ -65,7 +127,8 @@ export class SubmissionPageComponent implements OnInit {
     }
   ];
 
-  constructor() { }
+  constructor(private wsApi: WsApi, private router: Router, private route: ActivatedRoute) {
+  }
 
   ngOnInit() {
     this.data = Regions.regionPeril;
@@ -118,5 +181,30 @@ export class SubmissionPageComponent implements OnInit {
         this.dataCoverage[index].principal = false;
       }
     }
+  }
+
+  submitData() {
+    const data = {
+      id: 'car' + this.contractId,
+      lastUpdateDate: null,
+      lastUpdatedBy: null,
+      requestCreationDate: new Date(),
+      requestedByFirstName: this.raisedBy.value,
+      requestedByFullName: this.raisedBy.value,
+      requestedByLastName: this.raisedBy.value,
+      uwanalysisContractBusinessType: this.businessType,
+      uwanalysisContractContractId: this.contractId,
+      uwanalysisContractEndorsementNumber: 0,
+      uwanalysisContractFacNumber: this.uwAnalysis,
+      uwanalysisContractInsured: this.insured,
+      uwanalysisContractLabel: this.contractLabel,
+      uwanalysisContractLob: this.lob.value,
+      uwanalysisContractOrderNumber: 0,
+      uwanalysisContractSector: this.sector,
+      uwanalysisContractSubsidiary: this.subsidiary.value,
+      uwanalysisContractYear: this.uwYear
+    };
+    this.wsApi.postFacData(data).subscribe(dt => console.log(dt));
+    this.router.navigate(['dashboard']);
   }
 }
