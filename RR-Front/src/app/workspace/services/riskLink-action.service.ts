@@ -919,6 +919,29 @@ export class RiskLinkStateService {
     }
   }
 
+  saveEditPeqt(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const {data} = payload;
+    let list = [];
+    data.map(item => list = [...list, ...item.children]);
+    let results = _.toArray(state.content[wsIdentifier].riskLink.results.data);
+    results = results.map(item => {
+      return {...item, peqt: _.filter(list,
+            dt => dt.analysisId === item.analysisId && dt.analysisName === item.analysisName)[0].selectedItems};
+    });
+    console.log(list, results);
+    ctx.patchState(produce(
+      ctx.getState(), draft => {
+        draft.content[wsIdentifier].riskLink.results.data = Object.assign({}, ...results.map( analysis => ({
+          [analysis.analysisId]: {
+            ...analysis
+          }})
+        ));
+      }
+    ));
+  }
+
   createLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');

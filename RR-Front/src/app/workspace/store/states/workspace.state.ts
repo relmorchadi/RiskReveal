@@ -837,6 +837,11 @@ export class WorkspaceState {
     this.riskLinkFacade.saveEditAnalysis(ctx, payload);
   }
 
+  @Action(fromWS.SaveEditPEQTAction)
+  saveEditPeqt(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveEditPEQTAction) {
+    this.riskLinkFacade.saveEditPeqt(ctx, payload);
+  }
+
   @Action(fromWS.CreateLinkingAction)
   createLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateLinkingAction) {
     this.riskLinkFacade.createLinking(ctx, payload);

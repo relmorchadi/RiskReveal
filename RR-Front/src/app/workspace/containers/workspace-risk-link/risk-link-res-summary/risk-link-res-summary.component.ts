@@ -253,8 +253,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
     } else if (target === 'UM') {
       this.store.dispatch(new fromWs.PatchResultsAction({id: row.id, target: 'unitMultiplier', value: $event}));
-    } else if (target === 'peqt') {
-
+    } else if (target === 'Peqt') {
+      this.store.dispatch(new fromWs.SaveEditPEQTAction({data: this.tree}));
+      this.singleColEdit = false;
     }
   }
 
@@ -558,6 +559,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
       if (target === dt.regionPeril) {
         array = [...array, {
           title: `${dt.analysisId} | ${dt.analysisName} | ${dt.description}`,
+          analysisId: dt.analysisId,
+          analysisName: dt.analysisName,
           selected: false,
           selectedItems: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
             {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},

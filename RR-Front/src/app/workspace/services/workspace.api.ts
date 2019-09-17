@@ -18,7 +18,7 @@ export class WsApi {
   }
 
   searchFacWidget() {
-    return this._http.get(`${environment.API_URI}fac`);
+    return this._http.get(`${environment.API_URI}fac?size=50`);
   }
 
   postFacData(data) {
