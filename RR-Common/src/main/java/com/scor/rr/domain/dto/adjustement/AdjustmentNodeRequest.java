@@ -24,7 +24,10 @@ public class AdjustmentNodeRequest {
     private Integer nodeId;
     private List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings;
 
-    public AdjustmentNodeRequest(int adjustmentNodeId,String layer, Integer sequence, Boolean isInputChanged, String lossNetFlag, Boolean hasNewParamsFile, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
+    public AdjustmentNodeRequest() {
+    }
+
+    public AdjustmentNodeRequest(int adjustmentNodeId, String layer, Integer sequence, Boolean isInputChanged, String lossNetFlag, Boolean hasNewParamsFile, Integer adjustmentBasis, Integer adjustmentType, Integer adjustmentState, Integer adjustmentThreadId, Double lmf, Double rpmf, List<PEATData> peatData, Integer scorPltHeaderInput, Integer nodeId, List<AdjustmentReturnPeriodBending> adjustmentReturnPeriodBendings) {
         this.adjustmentNodeId = adjustmentNodeId;
         this.layer = layer;
         this.sequence = sequence;

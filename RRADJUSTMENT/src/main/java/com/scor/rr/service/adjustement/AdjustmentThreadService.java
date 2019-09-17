@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -48,7 +50,7 @@ public class AdjustmentThreadService {
     public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
-        adjustmentThreadEntity.setCreatedOn(adjustmentThreadRequest.getCreatedOn());
+        adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
         adjustmentThreadEntity.setCreatedBy(adjustmentThreadRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(adjustmentThreadRequest.getLocked());
         if(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).isPresent()) {

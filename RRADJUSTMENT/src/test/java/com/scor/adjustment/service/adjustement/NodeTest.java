@@ -64,12 +64,12 @@ public class NodeTest {
 
     @Before
     public void setUp() throws RRException {
-        threadTest = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",true,
+        threadTest = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",
+                true,
                 983,0,
-                "",new Timestamp(new Date().getTime()),
-                "",new Timestamp(new Date().getTime()),
-                "",new Timestamp(new Date().getTime()),
-                new Timestamp(new Date().getTime()),null));
+                "",
+                "",
+                ""));
 
         nodeTest = adjustmentNodeService.save(new AdjustmentNodeRequest("",1,
                 false,"",
@@ -78,10 +78,9 @@ public class NodeTest {
 
         threadEntityForUpdateOrder = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",true,
                 983,0,
-                "",new Timestamp(new Date().getTime()),
-                "",new Timestamp(new Date().getTime()),
-                "",new Timestamp(new Date().getTime()),
-                new Timestamp(new Date().getTime()),null));
+                "",
+                "",
+                ""));
 
         nodeEntity1 = adjustmentNodeService.save(new AdjustmentNodeRequest("",1,
                 false,"",

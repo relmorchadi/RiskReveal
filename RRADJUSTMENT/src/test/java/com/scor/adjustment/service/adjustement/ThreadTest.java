@@ -54,10 +54,9 @@ public class ThreadTest {
     public void createPurePltThread() throws RRException {
         AdjustmentThreadEntity threadEntity = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",true,
                 983,0,
-                "",new Timestamp(new Date().getTime()),
-                "",new Timestamp(new Date().getTime()),
-                "",new Timestamp(new Date().getTime()),
-                new Timestamp(new Date().getTime()),null));
+                "",
+                "",
+                ""));
         Assert.assertEquals(threadEntity,adjustmentThreadService.findOne(threadEntity.getAdjustmentThreadId()));
         AdjustmentNodeEntity nodeEntity1 = adjustmentNodeService.save(new AdjustmentNodeRequest("",1,
                 false,"",

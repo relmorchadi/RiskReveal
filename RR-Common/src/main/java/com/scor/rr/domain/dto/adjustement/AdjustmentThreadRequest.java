@@ -10,34 +10,26 @@ public class AdjustmentThreadRequest {
     private Integer pltPureId;
     private Integer pltFinalId;
     private String createdBy;
-    private Timestamp createdOn;
     private String accessBy;
-    private Timestamp accessOn;
     private String lastModifiedBy;
-    private Timestamp lastModifiedOn;
-    private Timestamp lastGeneratedOn;
-    private Timestamp generatedOn;
 
-    public AdjustmentThreadRequest(int adjustmentThreadId, Integer pltFinalId, String lastModifiedBy, Timestamp lastModifiedOn) {
+    public AdjustmentThreadRequest() {
+    }
+
+    public AdjustmentThreadRequest(int adjustmentThreadId, Integer pltFinalId, String lastModifiedBy) {
         this.adjustmentThreadId = adjustmentThreadId;
         this.pltFinalId = pltFinalId;
         this.lastModifiedBy = lastModifiedBy;
-        this.lastModifiedOn = lastModifiedOn;
     }
 
-    public AdjustmentThreadRequest(String threadType, Boolean locked, Integer pltPureId, Integer pltFinalId, String createdBy, Timestamp createdOn, String accessBy, Timestamp accessOn, String lastModifiedBy, Timestamp lastModifiedOn, Timestamp lastGeneratedOn, Timestamp generatedOn) {
+    public AdjustmentThreadRequest(String threadType, Boolean locked, Integer pltPureId, Integer pltFinalId, String createdBy, String accessBy, String lastModifiedBy) {
         this.threadType = threadType;
         this.locked = locked;
         this.pltPureId = pltPureId;
         this.pltFinalId = pltFinalId;
         this.createdBy = createdBy;
-        this.createdOn = createdOn;
         this.accessBy = accessBy;
-        this.accessOn = accessOn;
         this.lastModifiedBy = lastModifiedBy;
-        this.lastModifiedOn = lastModifiedOn;
-        this.lastGeneratedOn = lastGeneratedOn;
-        this.generatedOn = generatedOn;
     }
 
     public void setAdjustmentThreadId(int adjustmentThreadId) {
@@ -88,28 +80,12 @@ public class AdjustmentThreadRequest {
         this.createdBy = createdBy;
     }
 
-    public Timestamp getCreatedOn() {
-        return createdOn;
-    }
-
-    public void setCreatedOn(Timestamp createdOn) {
-        this.createdOn = createdOn;
-    }
-
     public String getAccessBy() {
         return accessBy;
     }
 
     public void setAccessBy(String accessBy) {
         this.accessBy = accessBy;
-    }
-
-    public Timestamp getAccessOn() {
-        return accessOn;
-    }
-
-    public void setAccessOn(Timestamp accessOn) {
-        this.accessOn = accessOn;
     }
 
     public String getLastModifiedBy() {
@@ -120,27 +96,4 @@ public class AdjustmentThreadRequest {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public Timestamp getLastModifiedOn() {
-        return lastModifiedOn;
-    }
-
-    public void setLastModifiedOn(Timestamp lastModifiedOn) {
-        this.lastModifiedOn = lastModifiedOn;
-    }
-
-    public Timestamp getLastGeneratedOn() {
-        return lastGeneratedOn;
-    }
-
-    public void setLastGeneratedOn(Timestamp lastGeneratedOn) {
-        this.lastGeneratedOn = lastGeneratedOn;
-    }
-
-    public Timestamp getGeneratedOn() {
-        return generatedOn;
-    }
-
-    public void setGeneratedOn(Timestamp generatedOn) {
-        this.generatedOn = generatedOn;
-    }
 }
