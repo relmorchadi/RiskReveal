@@ -308,6 +308,12 @@ export class WorkspaceState {
     return state.content[wsIdentifier].fileBaseImport;
   }
 
+  @Selector()
+  static getFileBaseSelectedFiles(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].fileBaseImport.files;
+  }
+
   /***********************************
    *
    * Scope And Completeness Selectors

@@ -10,7 +10,7 @@
   [columnResizeMode]="'expand'"
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
-  [scrollHeight]="'calc(100vh - 480px)'"
+  [scrollHeight]="'calc(100vh - 435px)'"
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
@@ -82,8 +82,9 @@
       <ng-container *ngFor="let col of columns;let i=index;">
         <ng-container *ngIf="col?.active">
           <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
-            <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
-              <div class="filter-input">
+            <th>
+              <div class="filter-input"
+                   [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
                 <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
                 <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterData[col?.fields]">
               </div>
