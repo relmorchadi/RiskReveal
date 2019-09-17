@@ -43,7 +43,7 @@ if (environment.hmr) {
     console.log('Are you using the --hmr flag for ng serve?');
   }
 } else {
-  disableLogging()
+  // disableLogging()
   enableProdMode()
   bootstrap().catch(console.error);
 }
