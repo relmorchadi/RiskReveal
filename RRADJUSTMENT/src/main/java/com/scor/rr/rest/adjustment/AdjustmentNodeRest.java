@@ -32,9 +32,9 @@ public class AdjustmentNodeRest {
         return adjustmentNodeService.findByThread(threadId);
     }
 
-    @DeleteMapping
+    @PostMapping("delete")
     public void deleteNode(Integer id){
-        //adjustmentNodeService.delete(id);
+        adjustmentNodeService.deleteNode(id);
 
     }
 

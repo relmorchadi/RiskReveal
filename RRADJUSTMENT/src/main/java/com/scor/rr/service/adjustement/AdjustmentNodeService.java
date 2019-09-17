@@ -30,6 +30,7 @@ import static com.scor.rr.exceptions.ExceptionCodename.*;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @Service
+@Transactional
 public class AdjustmentNodeService {
 
     private static final Logger log = LoggerFactory.getLogger(AdjustmentNodeService.class);
@@ -125,7 +126,7 @@ public class AdjustmentNodeService {
                                         adjustmentNodeRequest.getPeatData(),
                                         0,
                                         0,
-                                        adjustmentNodeRequest.getAdjustmentReturnPeriodBendings()))==null) {
+                                        adjustmentNodeRequest.getAdjustmentReturnPeriodBendings())) !=null ) {
                             throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PARAMETER_NOT_FOUND,1);
                         }
                         return adjustmentNodeEntity;
