@@ -10,5 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface InuringPackageRepository extends JpaRepository<InuringPackage, Integer> {
-    InuringPackage findById(int inuringPackageId);
+    InuringPackage findByInuringPackageId(int inuringPackageId);
 }

@@ -20,6 +20,12 @@ public class InuringFinalNode {
     private InuringNodeStatus finalNodeStatus;
     private InuringOutputGrain  inuringOutputGrain;
 
+    public InuringFinalNode(int inuringPackageId) {
+        this.inuringPackageId = inuringPackageId;
+        this.finalNodeStatus = InuringNodeStatus.Invalid;
+        this.inuringOutputGrain = InuringOutputGrain.MinimunRegionPeril;
+    }
+
     @Id
     @Column(name = "InuringFinalNodeId", nullable = false)
     public int getInuringFinalNodeId() {
