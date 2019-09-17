@@ -75,11 +75,13 @@ export class PltMainTableComponent implements OnInit {
 
   checkSelectedRows() {
     let check = true;
+    let count = 0;
     this.tableInputs.listOfPltsData.forEach(plt => {
       let valid = false;
       plt.treatySectionsState.forEach(ts => {
         if (ts.state != 'disabled') {
-          valid = true
+          valid = true;
+          count++;
         }
       })
       if (valid) {
@@ -89,6 +91,7 @@ export class PltMainTableComponent implements OnInit {
       }
 
     })
+    if(count == 0) check = false;
     return check;
   }
 

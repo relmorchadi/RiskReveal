@@ -36,6 +36,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   workspaceId: string;
   uwy: number;
   userTags: any;
+  showApplicablePlts: boolean = true;
   projects: any[];
   selectedItemForMenu: string;
   selectedPlt: any;
