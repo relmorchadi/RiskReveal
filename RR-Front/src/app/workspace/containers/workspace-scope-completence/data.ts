@@ -1244,7 +1244,7 @@ const treatySections2 = [
           pltsAttached: []
         },
           {
-            id: 'RL_AUEQ_Mv18.0_S-104-LTR)',
+            id: 'RL_AUEQ_Mv18.0_S-104-LTR',
             description: 'Australia Earthquake, Risklink 18.0',
             overridden: false,
             selected: false,
@@ -1442,7 +1442,7 @@ const treatySections2 = [
         attached: false,
         overridden: false,
         targetRaps: [{
-          id: 'RL_AUEQ_Mv18.0_S-104-LTR)',
+          id: 'RL_AUEQ_Mv18.0_S-104-LTR',
           description: 'Australia Earthquake, Risklink 18.0',
           overridden: false,
           selected: false,
@@ -1610,7 +1610,7 @@ const treatySections2 = [
           pltsAttached: []
         },
           {
-            id: 'RL_AUEQ_Mv18.0_S-104-LTR)',
+            id: 'RL_AUEQ_Mv18.0_S-104-LTR',
             description: 'Australia Earthquake, Risklink 18.0',
             overridden: false,
             selected: false,
