@@ -31,9 +31,8 @@ export class PltMainTableComponent implements OnInit {
   @ViewChild('cm') cm: TemplateRef<any>;
 
   @Input() tableInputs: tableStore.Input;
-
   @Input() containerPlts: any;
-
+  @Input() tableHeight = 'calc(100vh - 430px)';
 
   selectedDropDown: any;
   selectedDropDownTs: any;

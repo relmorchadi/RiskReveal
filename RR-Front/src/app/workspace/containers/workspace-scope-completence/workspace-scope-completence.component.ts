@@ -85,9 +85,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     this.state$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
       this.state = value;
-      console.log('ggggggggggg',this.state)
       this.listOfPltsData = this.getSortedPlts(this.state);
-      console.log('this is the listOfp:',this.listOfPltsData);
       this.treatySections = _.toArray(trestySections);
       this.dataSource = this.getData(this.treatySections[0]);
       this.detectChanges();

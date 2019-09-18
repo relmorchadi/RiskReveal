@@ -91,7 +91,7 @@
         <div><span class="package-info">Last Modified: </span><span> {{packageInformation['Last Modified']}}</span></div>
         <div><span class="package-info">Published: </span><span> {{packageInformation['Published']}}</span></div>
       </div>
-      <div style="display: flex; flex-direction: column;padding: 5px;" >
+      <div style="display: flex; flex-direction: column;padding: 15px;" >
         <div><span class="package-info">Status: </span><span> {{packageInformation['Status']}}</span></div>
         <div><span class="package-info">By: </span><span> {{packageInformation['By']}}</span></div>
         <div><span class="package-info">Notes: </span><span> {{packageInformation['Note']}}</span></div>
@@ -136,8 +136,8 @@
               </div>
             </th>
 
-            <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px">
-              <div>{{item.id}}<br/>{{item.name}}</div>
+            <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px; " >
+              <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
               <div *ngIf="checkTreatySectionAttached(item)" class="icon-holder" nz-tooltip [nzTitle]="checked">
                 <ng-container>
                   <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
