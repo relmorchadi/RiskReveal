@@ -1184,6 +1184,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       usedInWs: [],
       allTags: [],
       suggested: [],
+      toAssign: [],
+      toRemove: [],
       selectedTags: {},
       operation: null
     };
