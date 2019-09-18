@@ -90,6 +90,7 @@
   .a-form-input-wrapper {
     display: flex;
     flex-direction: column;
+    position: relative;
 
     .label-input {
       position: absolute;
@@ -130,7 +131,7 @@
   width: -webkit-fill-available;
   flex-wrap: nowrap;
   flex-direction: column;
-  margin: 20px 15px;
+  margin: 20px 15px 10px;
 }
 
 .a-app-header {
@@ -161,4 +162,8 @@
     font-weight: 600;
     border-radius: 20px;
   }
+}
+
+.app-body--tansparent{
+  background: transparent !important;
 }

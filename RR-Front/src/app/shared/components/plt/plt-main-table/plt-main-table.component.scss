@@ -26,9 +26,7 @@
     .ui-table-thead {
 
       .checkBoxHead div {
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        margin-left: 9px;
 
         .ant-checkbox-indeterminate .ant-checkbox-inner::after {
           background-color: #fff;
@@ -193,5 +191,27 @@
       }
     }
 
+  }
+  .checkbox-off{
+    padding-left: 9px;
+    display: flex;
+    justify-content: center;
+  }
+
+
+
+  .burger-menu-visible{
+    display: block;
+    width: 0px;
+
+  }
+  .burger-menu{
+    display: none;
+    width: 0px;
+  }
+  .checkbox-off:hover{
+    .burger-menu{
+      display: block;
+    }
   }
 }

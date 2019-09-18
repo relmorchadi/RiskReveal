@@ -5,27 +5,54 @@
           <h4>PLT Comparer &nbsp;</h4>
           <i class="icon-plus-circle icon-generic" (click)="showModal()"
            style="font-size: 25px; cursor: pointer;"></i>
-          <nz-modal
-          [(nzVisible)]="isVisible"
-          nzFooter=" "
-          nzTitle="Browse For Comparer"
-          (nzOnCancel)="handleCancel()">
-          <form [formGroup]="form">
-            <nz-select
-              formControlName="defaultImport"
-              nzShowSearch
-              nzAllowClear
-              class="a-dropdown-small"
-              style="width: 200px; margin-bottom: 5px;"
-              nzPlaceHolder="Select Workspace"
-            >
-              <nz-option nzCustomContent *ngFor="let item of listOfWs.data" [nzLabel]="item.workSpaceId"
-                         [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
-            </nz-select>
-          </form>
-          <div class="my-modal">
-            <app-plt-left-menu
-              [menuInputs]="{
+
+        <app-plt-selection-pop-up
+          [isVisible]="isVisible"
+          [multiSteps]="multiSteps"
+          [stepConfig]="stepConfig"
+          (onVisibleChange)="isVisible= $event"
+          (onSelectWorkspace)="setSelectedWs($event)"
+          (onSelectItems)="setSelectedPlts($event)"
+        >
+
+        </app-plt-selection-pop-up>
+        <!--
+        <p-dialog
+          [visible]="isVisible"
+          [closable]="false"
+          styleClass="m-dialog-modal-lg plt-comparer-pop-up"
+          [modal]="true"
+          [autoZIndex]="false"
+          [responsive]="true"
+          (onHide)="handleCancel()"
+        >
+
+          <p-header>
+            <div class="header">
+              <h4>
+                Browse For Comparer
+              </h4>
+              <i style="cursor: pointer" (click)="handleCancel()" class="icon-close_24px"></i>
+            </div>
+          </p-header>
+
+          <div class="content">
+              <div class="left">
+                <form [formGroup]="form">
+                  <nz-select
+                    formControlName="defaultImport"
+                    nzShowSearch
+                    nzAllowClear
+                    class="a-dropdown-small"
+                    style="margin-bottom: 5px;"
+                    nzPlaceHolder="Select Workspace"
+                  >
+                    <nz-option nzCustomContent *ngFor="let item of listOfWs" [nzLabel]="item.workSpaceId"
+                               [nzValue]="item"><span>{{item.workSpaceId}} - {{item.uwYear}}</span></nz-option>
+                  </nz-select>
+                </form>
+                <app-plt-left-menu
+                  [inputs]="{
             tagContextMenu: tagContextMenu,
             wsId: workspaceId,
             uwYear: uwy,
@@ -46,86 +73,71 @@
             tagForMenu: tagFormenu,
             wsHeaderSelected: wsHeaderSelected
           }"
-              (onAssignPltsToTag)="assignPltsToTag($event)"
-              (onProjectFilter)="filter($event)"
-              (onEditTag)="renameTag($event)"
-              (onResetPath)="resetPath()"
-              (onSelectProjects)="setSelectedProjects($event)"
-              (onSelectSysTagCount)="selectSystemTag($event)"
-              (onSetFilters)="setFilters($event)"
-              (onSetFromPlts)="setFromPlts($event)"
-              (onSetSelectedUserTags)="setUserTags($event)"
-              (onToggleDeletedPlts)="toggleDeletePlts()"
-              (setTagModalIndex)="setModalIndex($event)"
-              (setTagModalVisibility)="setTagModal($event)"
-              (onSetTagForMenu)="setTagForMenu($event)"
-              (onSetRenameTag)="setRenameTag($event)"
-              (emitFilters)="emitFilters($event)"
-              (unCkeckAllPlts)="unCheckAll()"
-              (onWsHeaderSelection)="setWsHeaderSelect($event)"
-              (onModalSelect)="setModalSelectedItems($event)"
-            >
+                  (onAssignPltsToTag)="assignPltsToTag($event)"
+                  (onProjectFilter)="filter($event)"
+                  (onEditTag)="renameTag($event)"
+                  (onResetPath)="resetPath()"
+                  (onSelectProjects)="setSelectedProjects($event)"
+                  (onSelectSysTagCount)="selectSystemTag($event)"
+                  (onSetFilters)="setFilters($event)"
+                  (onSetFromPlts)="setFromPlts($event)"
+                  (onSetSelectedUserTags)="setUserTags($event)"
+                  (onToggleDeletedPlts)="toggleDeletePlts()"
+                  (setTagModalIndex)="setModalIndex($event)"
+                  (setTagModalVisibility)="setTagModal($event)"
+                  (onSetTagForMenu)="setTagForMenu($event)"
+                  (onSetRenameTag)="setRenameTag($event)"
+                  (emitFilters)="emitFilters($event)"
+                  (unCkeckAllPlts)="unCheckAll()"
+                  (onWsHeaderSelection)="setWsHeaderSelect($event)"
+                  (onModalSelect)="setModalSelectedItems($event)"
+                >
 
-            </app-plt-left-menu>
-            <div class="title-right">
-              <div class="title-as-tab">
+                </app-plt-left-menu>
+              </div>
+              <div
+                class="center">
+                <div class="title-as-tab">
           <span>
             PLTs
           </span>
+                </div>
+                <div class="PLTs-content">
+                  <app-plt-main-table
+                    [tableInputs]="tableInputs"
+                    (actionDispatcher)="tableActionDispatcher($event)"
+                  ></app-plt-main-table>
+                </div>
               </div>
-              <div class="PLTs-content">
-                <!--<i class="icon-menu_24px" style="position: absolute;top: 15px;right: 2px;z-index: 10;font-size: 15px;"></i>-->
-                <app-plt-main-table
-                  [tableInputs]="{
-                  pltColumns: pltColumns,
-                  listOfPltsData: listOfPltsData,
-                  listOfDeletedPltsData: listOfDeletedPltsData,
-                  listOfPltsCache: listOfPltsCache,
-                  listOfDeletedPltsCache: listOfDeletedPltsCache,
-                  listOfPlts: listOfPlts,
-                  listOfDeletedPlts: listOfDeletedPlts,
-                  selectedListOfPlts: selectedListOfPlts,
-                  selectedListOfDeletedPlts: selectedListOfDeletedPlts,
-                  selectAll: selectAll,
-                  someItemsAreSelected: someItemsAreSelected,
-                  showDeleted: showDeleted,
-                  filterData: filterData,
-                  filters: filters,
-                  sortData: sortData
-                }"
-
-                  (deletePlt)="deletePlt()"
-                  (openPltInDrawer)="openPltInDrawer($event)"
-                  (editTags)="editTags()"
-                  (restore)="restore()"
-                  (onCheckAll)="checkAll()"
-                  (onCheckBoxSort)="checkBoxSort($event)"
-                  (onFilter)="filter($event)"
-                  (onItemSelectForMenu)="setSelectedMenuItem($event)"
-                  (onPltClick)="toggleSelectPlts($event)"
-                  (onSelectSinglePlt)="selectSinglePLT($event)"
-                  (onSortChange)="sortChange($event)"
-                ></app-plt-main-table>
-              </div>
-            </div>
           </div>
-        </nz-modal>
+
+        </p-dialog>
+
+        -->
 <!--        </div>-->
       </div>
-      <div class="header-center">
-        <div class="Deltas" style="position: unset;">
-          <span>Deltas &nbsp;</span>
-          <div class="button-toggle">
-            <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch>
-            <div>
-              <nz-select *ngIf="switchValue"
-                         class="delta-context a-dropdown-label"
-                         [(ngModel)]="defaultImport" style="width: 150px;"
-              >
-                <nz-option nzLabel="Baseline" nzValue="Baseline"></nz-option>
-                <nz-option nzLabel="Year-On-Year" nzValue="Year-On-Year"></nz-option>
-              </nz-select>
-            </div>
+      <div class="header-center" style="width: 290px">
+        <div class="Deltas" style="height: 35px; justify-content: space-between">
+          <span>Deltas &nbsp;
+            <nz-switch class="switch-input" (ngModelChange)="selectFirst($event)" [(ngModel)]="switchValue"></nz-switch></span>
+          <div class="button-toggle body-wrap-dropDowns-comparer">
+            <nz-dropdown *ngIf="switchValue" [nzTrigger]="'click'">
+              <div class="dropdown-wrap-comparer" nz-dropdown>
+                <div class="dropdown-wrap-title-comparer">
+                  <span class="dropdown-title-comparer">Delta Context</span>
+                  <span class="dropdown-item-selected-comparer">
+                    {{defaultImport}}
+                  </span>
+                </div>
+                <div class="dropdown-icon">
+                  <i nz-icon type="down"></i>
+                </div>
+              </div>
+              <ul nz-menu>
+                <li nz-menu-item (click)="defaultImport = 'Baseline'">Baseline</li>
+                <li nz-menu-item (click)="defaultImport = 'Year-On-Year'">Year-On-Year</li>
+              </ul>
+            </nz-dropdown>
           </div>
         </div>
       </div>
@@ -179,9 +191,10 @@
                 [nzMaxTagCount]="0"
                 nzMode="multiple"
                 nzPlaceHolder="EP Metrics"
-                [(ngModel)]="listOfSelectedValues" style="width: 150px;"
+                (ngModelChange)="updateTableDr($event)"
+                [ngModel]="listOfSelectedValues" style="width: 150px;"
               >
-                <nz-option nzLabel="OEP" nzValue="OEP" nzDisabled></nz-option>
+                <nz-option nzLabel="OEP" nzValue="OEP"></nz-option>
                 <nz-option nzLabel="AEP" nzValue="AEP"></nz-option>
                 <nz-option nzLabel="TVaR-OEP" nzValue="TVaR-OEP"></nz-option>
                 <nz-option nzLabel="TVaR-AEP" nzValue="TVaR-AEP"></nz-option>
@@ -313,13 +326,6 @@
                 <table>
                   <thead>
                   <tr>
-                    <th>OEP</th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                      <div style="margin-bottom:2px;"><i class="icon-triangle" style="font-size: 20px;"></i>OEP</div>
-                    </th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC; color: #0700CF;">
-                      OEP %
-                    </th>
                     <ng-container *ngFor="let th of listOfSelectedValues">
                       <th>
                         {{th}}
@@ -332,15 +338,10 @@
                         {{th}} %
                       </th>
                     </ng-container>
-
-
                   </tr>
                   </thead>
                   <tbody>
                   <tr *ngFor="let row of item.table">
-                    <th>{{row[0]}}</th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
-                    <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[4]}}</th>
                     <ng-container *ngFor="let tab of listOfSelectedValues">
                       <th>{{row[0]}}</th>
                       <th *ngIf="switchValue && !item.selected" style="background-color: #F4F6FC;">{{row[1]}}</th>
@@ -348,14 +349,6 @@
                     </ng-container>
                   </tr>
                   <tr>
-                    <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text" name="new-field">
-                    </th>
-                    <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
-                                                                     name="new-field" style="width: 100%; margin: 0px;"
-                                                                     type="text"></th>
-                    <th *ngIf="switchValue && !item.selected"><input class="a-textfield-mini-disabled" disabled
-                                                                     name="new-field" style="width: 100%; margin: 0px;"
-                                                                     type="text"></th>
                     <ng-container *ngFor="let th of listOfSelectedValues">
                       <th><input class="a-textfield-mini" style="width: 100%; margin: 0px;" type="text"
                                  name="new-field"></th>

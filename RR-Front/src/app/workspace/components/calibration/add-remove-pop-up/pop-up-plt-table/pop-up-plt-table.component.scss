@@ -5,8 +5,10 @@
       margin-left: -473px;
     }
 
-    .ui-table-scrollable-body {
-      max-height: calc(85vh - 205px);
+    .activate-header-scroll {
+      .ui-table-scrollable-header {
+        overflow: auto !important;
+      }
     }
 
     .icon-check {
@@ -24,9 +26,7 @@
     .ui-table-thead {
 
       .checkBoxHead div {
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
+        margin-left: 9px;
 
         .ant-checkbox-indeterminate .ant-checkbox-inner::after {
           background-color: #fff;
@@ -113,6 +113,17 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         user-select: none;
 
+        .peril-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 30px !important;
+          height: 30px !important;
+          margin: auto;
+          border-radius: 100%;
+          color: #fff !important;
+        }
+
         .text-elipsice {
           width: 100%;
           height: 30px;
@@ -125,7 +136,6 @@
           padding: 4px 0px 0px 5px !important;
           position: relative;
           top: -4px;
-
           .tag-el {
             border-radius: 29px;
             font-size: 14px;
@@ -133,7 +143,6 @@
             padding: 0px 7px 0px 7px;
             border: 2px solid white;
           }
-
           .tag-ellipsis {
             background-color: #0CB79B;
             border-radius: 25px;
@@ -182,5 +191,16 @@
       }
     }
 
+  }
+
+  .checkbox-off {
+    padding-left: 9px;
+
+    ::ng-deep {
+      .ant-checkbox {
+        border: 2px solid blue;
+        border-radius: 25%;
+      }
+    }
   }
 }

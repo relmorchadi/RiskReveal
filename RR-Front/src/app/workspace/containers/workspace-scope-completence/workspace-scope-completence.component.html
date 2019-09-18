@@ -16,7 +16,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Sort By</span>
               <span class="dropdown-item-selected">
-                Minimum Grain / RAP
+                {{selectedSortBy}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -24,7 +24,9 @@
             </div>
           </div>
           <ul nz-menu>
-            <li nz-menu-item>Minimum Grain / RAP</li>
+            <li nz-menu-item (click)="changeSortBy('Minimum Grain / RAP')">Minimum Grain / RAP</li>
+            <li nz-menu-item (click)="changeSortBy('RAP / Minimum Grain')">RAP / Minimum Grain</li>
+            <!--<li nz-menu-item>Peak Peril Tier</li>-->
           </ul>
         </nz-dropdown>
         <nz-dropdown [nzTrigger]="'click'">
@@ -41,16 +43,19 @@
           </div>
           <ul nz-menu>
             <li nz-menu-item>All</li>
+            <li nz-menu-item>Incomplete Only</li>
+            <li nz-menu-item>Overridden Only</li>
+            <li nz-menu-item>Synthetic PLTs Only</li>
+            <li nz-menu-item>Expected Only</li>
+            <li nz-menu-item>Unexpected Only</li>
           </ul>
         </nz-dropdown>
-      </div>
-      <div class="divider-right">
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
-              <span class="dropdown-title">Accumulation Status</span>
+              <span class="dropdown-title">Accumulation status</span>
               <span class="dropdown-item-selected">
-                Published
+                {{accumulationStatus}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -58,63 +63,232 @@
             </div>
           </div>
           <ul nz-menu>
-            <li nz-menu-item>Published</li>
+            <li nz-menu-item (click)="accumulationStatus = 'Scope Only'">Scope Only</li>
+            <li nz-menu-item (click)="accumulationStatus = 'Pending'" *ngIf="showPendingOption">Pending</li>
           </ul>
         </nz-dropdown>
-        <i class="icon-menu_24px"></i>
+      </div>
+      <div style="display: flex; flex-direction: column" *ngIf="showOverrideButton()">
+        <button class="a-buttons-contained-disabled-micro"  *ngIf="selectionForOverride.length == 0">Override Selected</button>
+        <button class="a-buttons-contained-micro" (click)="showOverrideModal = true" *ngIf="selectionForOverride.length != 0">Override Selected</button>
+        <button class="a-buttons-linked" (click)="cancelOverride()">Cancel Override Action</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column" *ngIf="showRemoveOverrideButton()">
+        <button class="a-buttons-contained-disabled-micro"  *ngIf="!checkSelectionToCancelOverride()">Remove Override</button>
+        <button class="a-buttons-contained-micro"  *ngIf="checkSelectionToCancelOverride()" (click)="removeOverrideBack()">Remove Override</button>
+        <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column" *ngIf="showPackage()">
+        <button class="a-buttons-contained-micro">Publish Package</button>
+        <button class="a-buttons-linked">Delete Pending Package</button>
+      </div>
+      <div *ngIf="showPackage()" style="display: flex;border: 1px solid lightgreen;">
+      <div style="display: flex; flex-direction: column;padding: 5px;" >
+        <div><span class="package-info">PackageId: </span><span> {{packageInformation['packageId']}}</span></div>
+        <div><span class="package-info">Created: </span><span> {{packageInformation['Created']}}</span></div>
+        <div><span class="package-info">Last Modified: </span><span> {{packageInformation['Last Modified']}}</span></div>
+        <div><span class="package-info">Published: </span><span> {{packageInformation['Published']}}</span></div>
+      </div>
+      <div style="display: flex; flex-direction: column;padding: 15px;" >
+        <div><span class="package-info">Status: </span><span> {{packageInformation['Status']}}</span></div>
+        <div><span class="package-info">By: </span><span> {{packageInformation['By']}}</span></div>
+        <div><span class="package-info">Notes: </span><span> {{packageInformation['Note']}}</span></div>
+
+      </div>
+      </div>
+      <div style="width: 40%;" *ngIf="!showPackage()"></div>
+
+
+      <div class="divider-right">
+        <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" *ngIf="!showRemoveOverrideButton() && !showOverrideButton()" >
+
+          <a nz-dropdown>
+            <i class="icon-menu_24px" style="font-size: 25px;"></i>
+          </a>
+          <ul nz-menu style="font-size: 12px">
+            <li nz-menu-item (click)="overrideAll()">Override</li>
+            <li nz-menu-item (click)="RemoveOverrideAll()">Remove Override</li>
+            <li nz-menu-item>Generate Synthetic</li>
+            <li nz-menu-item>Export Data</li>
+            <li nz-menu-item>Manage Columns</li>
+          </ul>
+        </nz-dropdown>
       </div>
 
     </div>
     <div class="table-wrap">
-      <p-table [value]="dataSource" scrollHeight="340px" dataKey="id">
+      <p-table [value]="dataSource" scrollHeight="340px" dataKey="id" #pTable>
         <ng-template pTemplate="header" let-columns>
           <tr>
-            <th style="width: 420px">
+            <th style="width: 420px;height: 74px;">
               <div style="display: flex;">
-                <div style="width: 100px"></div>
-                <div style="width: 50px">ID</div>
-                <div style="width: 150px">Name</div>
-                <div style="width: 30px">P</div>
+                <div style="width: 75px"></div>
+                <div style="width: 69px">ID</div>
+                <div style="width: 225px">Name</div>
+                <div style="width: 46px">P</div>
                 <div style="width: 60px">Peril</div>
+              </div>
+              <div>
+                <button class="AttachPlts-button" (click)="addRemoveModal=true; rowInformation= null" nz-button nzType="default">Attach PLTs
+                </button>
               </div>
             </th>
 
-            <th *ngFor="let item of workspace?.treatySections" class="divided-col" style="width:90px">
-              <div>{{item}}</div>
-              <div class="icon-holder">
-                <i class="icon-share-folder"></i>
-                <i class="icon-box"></i>
-                <div>
-                  <i class="icon-focus-add"></i>
-                  <i class="icon-check_24px"></i>
-                </div>
-              </div>
-            </th>
-            <th style="width: 130px" class="divided-col">Completion</th>
-          </tr>
-        </ng-template>
-        <ng-template pTemplate="body" let-rowData let-expanded="expanded">
-          <tr [ngClass]="{'expanded-row': expanded}">
-            <th>
-              <div class="info-rp" (click)="expanded = !expanded" [pRowToggler]="rowData">
-                <i *ngIf="!rowData.expanded" class="icon-keyboard_arrow_down_24px"></i>
-                <i *ngIf="rowData.expanded" class="icon-keyboard_arrow_up_24px"></i>
-                <i class="icon-map-marker-alt"></i><span class="code-rp">{{rowData?.regionPerilCode}}</span><span style="font-weight: 400">{{rowData?.type}}</span>
-              </div>
-            </th>
-            <th *ngFor="let item of workspace?.treatySections" class="divided-col">
-              <div class="icon-holder">
+            <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px; " >
+              <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
+              <div *ngIf="checkTreatySectionAttached(item)" class="icon-holder" nz-tooltip [nzTitle]="checked">
                 <ng-container>
-                  <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                  <i class="icon-box" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                  <ng-container>
-                    <i class="icon-focus-add" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                  </ng-container>
-                  <ng-container *ngIf="!check">
-                    <i class="icon-block_24px"></i>
-                  </ng-container>
+                  <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
                 </ng-container>
               </div>
+              <ng-template #checked>
+                Treaty Section Complete
+              </ng-template>
+
+            </th>
+            <th style="width: 130px; height: 74px;" class="divided-col">Completion</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
+          <tr [ngClass]="{'expanded-row': regionCodes[rowData.id]}" class="row-hover">
+            <th>
+              <div style="display: flex; justify-content: space-between;">
+                <div class="info-rp" (click)="toggleParentExpand(rowData)" [pRowToggler]="rowData">
+
+                  <ng-container *ngIf="selectedSortBy == 'Minimum Grain / RAP'">
+                    <div style="width: 20px;">
+                      <div *ngIf="checkRowAttached(rowData)">
+                        <ng-container>
+                          <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                        </ng-container>
+                      </div>
+                    </div>
+                    <i *ngIf="!regionCodes[rowData.id]" style="margin-top: 5px;"
+                       class="icon-keyboard_arrow_down_24px"></i>
+                    <i *ngIf="regionCodes[rowData.id]" style="margin-top: 5px;" class="icon-keyboard_arrow_up_24px"></i>
+                    <i class="icon-map-marker-alt"></i>
+                    <span class="code-rp">
+                {{rowData.id}}
+              </span><span style="font-weight: 400">{{rowData.description}}</span>
+                  </ng-container>
+
+                  <ng-container *ngIf="selectedSortBy == 'RAP / Minimum Grain'">
+                    <div style="width: 20px;margin-top: 5px;">
+                      <div *ngIf="checkRowAttached(rowData)">
+                        <ng-container>
+                          <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                        </ng-container>
+                      </div>
+                    </div>
+                    <i *ngIf="!regionCodes[rowData.id]" style="margin-top: 13px;"
+                       class="icon-keyboard_arrow_down_24px"></i>
+                    <i *ngIf="regionCodes[rowData.id]" style="margin-top: 13px;"
+                       class="icon-keyboard_arrow_up_24px"></i>
+                    <i *ngIf="selectedSortBy == 'RAP / Minimum Grain'" class="icon-map_24px"
+                       style="margin: 10px 15px 13px 5px;"></i>
+                    <div class="grain-info-wrapper" style="display: flex;">
+                      <div class="grain-info">
+                        <span class="name-grain">{{rowData.id}}</span>
+                        <span class="desc-grain" style="font-weight: 400">{{rowData.description}}</span>
+                      </div>
+                    </div>
+                  </ng-container>
+
+
+                </div>
+                <div *ngIf="selectedSortBy == 'RAP / Minimum Grain'"
+                     style="padding-top: 8px;">
+
+                  <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">
+                    <a nz-dropdown >
+                      <i class="icon-menu_24px" [ngClass]="{'burger-menu-visible': selectedDropDown == rowData.id, 'burger-menu': selectedDropDown != rowData.id}" style="margin-top:5px;"></i>
+                    </a>
+                    <ul nz-menu style="font-size: 12px">
+                      <li nz-menu-item (click)="rowData.override = true">Override</li>
+                      <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>
+                    </ul>
+                  </nz-dropdown>
+
+                </div>
+                <div *ngIf="selectedSortBy == 'Minimum Grain / RAP'">
+
+                  <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.id)">
+                    <a nz-dropdown>
+                      <i class="icon-menu_24px" [ngClass]="{'burger-menu-visible': selectedDropDown == rowData.id, 'burger-menu': selectedDropDown != rowData.id}"></i>
+                    </a>
+                    <ul nz-menu style="font-size: 12px">
+                      <li nz-menu-item (click)="rowData.override = true">Override</li>
+                      <li nz-menu-item (click)="getRowInformation(rowData)">Attach Plts</li>
+                    </ul>
+                  </nz-dropdown>
+
+                </div>
+              </div>
+
+            </th>
+            <th *ngFor="let item of treatySections[0]" class="divided-col">
+
+
+              <div *ngIf="checkExpected(item,rowData)  == 'checked'" class="icon-holder">
+                <div class="icon-holder" style="padding: 7px;" nz-tooltip [nzTitle]="checked">
+                  <i class="icon-reorder_24px" style="color: lightgray"></i>
+                  <i class="icon-plus"></i>
+                </div>
+              </div>
+              <ng-template #checked>
+                No Qualifying PLTs in Workspace
+              </ng-template>
+
+              <div *ngIf="checkExpected(item,rowData)  == 'dispoWs'" class="icon-holder" nz-tooltip [nzTitle]="dispoWs">
+                <div class="icon-holder" >
+                  <i class="icon-reorder_24px"></i>
+                  <i class="icon-plus"></i>
+                </div>
+              </div>
+              <ng-template #dispoWs>
+                One or more Qualifying PLTs in Workspace
+              </ng-template>
+
+              <div *ngIf="checkExpected(item,rowData) == 'overridden'" class="icon-holder">
+                <div class="icon-holder" >
+                  <span>
+                    <i class="icon-not_interested_24px"  style="font-size: 25px; color: #B71835;"  ></i>
+                  </span>
+                </div>
+              </div>
+
+              <div *ngIf="checkExpected(item,rowData) == 'override'" class="icon-holder">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i (click)="overrideSelection(item,rowData)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': checkParent(rowData,item)}"></i>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="checkExpected(item,rowData) == 'cancelOverride'" class="icon-holder">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i (click)="overrideSelectionForCancel(item,rowData)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': checkParentForCancel(rowData,item)}"></i>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div *ngIf="checkExpected(item,rowData)== 'attached'" class="icon-holder" nz-tooltip [nzTitle]="attached">
+                <div class="icon-holder">
+                  <ng-container>
+                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                  </ng-container>
+                </div>
+              </div>
+              <ng-template #attached>
+                Qualifying PLTs Attached
+              </ng-template>
+
+
             </th>
             <th class="divided-col">
 
@@ -123,37 +297,96 @@
 
         </ng-template>
         <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
-          <ng-container *ngFor="let grain of rowData?.grain">
-            <tr [ngClass]="{'expanded-inner-row': grain.expanded}">
-              <th class="inner-line">
-                <div class="grain-info-wrapper" (click)="grain.expanded = !grain.expanded">
-                  <i *ngIf="!grain.expanded" class="icon-keyboard_arrow_down_24px"></i>
-                  <i *ngIf="grain.expanded" class="icon-keyboard_arrow_up_24px"></i>
-                  <i class="icon-map_24px"></i>
+          <ng-container *ngFor="let grain of rowData.child">
+            <tr [ngClass]="{'expanded-inner-row': getGrainState(grain,rowData)}" class="row-hover">
+              <th class="child-row-show">
+                <div class="inner-line">
+                <div class="grain-info-wrapper" (click)="toggleExpanded(grain, rowData)">
+                  <div style="width: 20px;">
+                    <div *ngIf="checkRowChildAttached(rowData,grain)">
+                      <ng-container>
+                        <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                      </ng-container>
+                    </div>
+                  </div>
+                  <i *ngIf="!grains[grain.id + rowData.id]" class="icon-keyboard_arrow_down_24px"></i>
+                  <i *ngIf="grains[grain.id + rowData.id]" class="icon-keyboard_arrow_up_24px"></i>
+                  <i *ngIf="selectedSortBy == 'RAP / Minimum Grain'" class="icon-map-marker-alt"></i>
+                  <i *ngIf="selectedSortBy == 'Minimum Grain / RAP'" class="icon-map_24px"></i>
                   <div class="grain-info">
-                    <span class="name-grain">{{grain?.grainName}}</span>
-                    <span class="desc-grain" style="font-weight: 400">{{grain?.grainDescriprion}}</span>
+                    <span class="name-grain">{{grain.id}}</span>
+                    <span class="desc-grain" style="font-weight: 400">{{grain.description}}</span>
                   </div>
                 </div>
-              </th>
-              <th *ngFor="let item of workspace?.treatySections" class="divided-col">
-                <div class="icon-holder">
-                  <ng-container>
-                    <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                    <i class="icon-box" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                    <ng-container>
-                      <i class="icon-focus-add" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                    </ng-container>
-                    <ng-container *ngIf="!check">
-                      <i class="icon-block_24px"></i>
-                    </ng-container>
-                  </ng-container>
+                </div>
+                <div class="inner-menu">
+                <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,grain.id)">
+                  <a nz-dropdown>
+                    <i class="icon-menu_24px" [ngClass]="{'burger-menu-visible': selectedDropDown == grain.id, 'burger-menu': selectedDropDown != grain.id}"></i>
+                  </a>
+                  <ul nz-menu style="font-size: 12px">
+                    <li nz-menu-item (click)="overrideChildMode(rowData,grain)">Override</li>
+                  </ul>
+                </nz-dropdown>
                 </div>
               </th>
-              <th class="divided-col"> </th>
+              <th *ngFor="let item of treatySections[0]" class="divided-col">
+
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'checked'" class="icon-holder">
+                  <div class="icon-holder" style="padding:2px;" nz-tooltip [nzTitle]="checked">
+                    <i class="icon-reorder_24px" style="color: lightgray"></i>
+                    <i class="icon-plus"></i>
+                  </div>
+                </div>
+                <ng-template #checked>
+                  No Qualifying PLTs in Workspace
+                </ng-template>
+
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'overridden'" class="icon-holder">
+                  <span nz-tooltip [nzTitle]="reason">
+                    <i class="icon-not_interested_24px" style="font-size: 25px; color: #B71835;"></i>
+                  </span>
+                </div>
+
+                <ng-template #reason>
+                 Basis: {{getReasonOverride(item,grain, rowData).rr}}
+                  <br/>
+                 Narrative: {{getReasonOverride(item,grain, rowData).rd}}
+                </ng-template>
+
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'override'" class="icon-holder">
+                  <ng-container>
+                    <i (click)="overrideSelectionTwo(item,rowData,grain)" class="icon-check_24px unCheckedBoxTab"
+                       [ngClass]="{'checkedBoxTab': checkChild(rowData, item, grain)}"></i>
+                  </ng-container>
+                </div>
+
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'attached'" class="icon-holder">
+                  <ng-container>
+                    <div  nz-tooltip [nzTitle]="attached">
+                    <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
+                    </div>
+                  </ng-container>
+                </div>
+                <ng-template #attached>
+                  Qualifying PLTs Attached
+                </ng-template>
+
+                <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'dispoWs'" class="icon-holder">
+                  <div class="icon-holder" style="padding: 2px;" nz-tooltip [nzTitle]="dispoWs">
+                    <i class="icon-reorder_24px"></i>
+                    <i class="icon-plus"></i>
+                  </div>
+                </div>
+                <ng-template #dispoWs>
+                  One or more Qualifying PLTs in Workspace
+                </ng-template>
+
+              </th>
+              <th class="divided-col"></th>
             </tr>
-            <ng-container *ngFor="let plt of grain.plts">
-              <tr *ngIf="grain.expanded">
+            <ng-container *ngFor="let plt of grain.pltsAttached">
+              <tr *ngIf="grains[grain.id + rowData.id]" class="row-hover">
 
                 <th class="inner-line">
                   <div class="grain-info-wrapper">
@@ -165,27 +398,21 @@
                       </ng-container>
                     </div>
                     <span class="plt-info">{{plt.pltId | textLength}}</span>
-                    <span class="plt-info">{{plt.pltName}}</span>
-                    <label nz-checkbox></label>
-                    <div class="plt-info peril-indicator" [ngStyle]="{'background-color': perilZone(plt.peril).color}">{{perilZone(plt.peril).peril}}</div>
+                    <span class="plt-info text-ellipsis" style="width: 26%;">{{plt.pltName }}</span>
+                    <!--<label nz-checkbox></label>-->
+                    <div class="plt-info peril-indicator"
+                         [ngStyle]="{'background-color': perilZone(plt.peril)?.color}">{{perilZone(plt.peril)?.peril}}</div>
                     <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
                   </div>
                 </th>
-                <th *ngFor="let item of workspace?.treatySections" class="divided-col">
+                <th *ngFor="let item of treatySections[0]" class="divided-col">
                   <div class="icon-holder">
-                    <ng-container>
-                      <i class="icon-share-folder" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                      <i class="icon-box" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                      <ng-container>
-                        <i class="icon-focus-add" [ngStyle]="{'color': check ? '#0700CF' : 'rgba(0,0,0,0.3)'}"></i>
-                      </ng-container>
-                      <ng-container *ngIf="!check">
-                        <i class="icon-block_24px"></i>
-                      </ng-container>
+                    <ng-container *ngIf="checkAttached(item, rowData,grain, plt) == 'attached'">
+                      <i class="icon-check_circle_24px" style="font-size: 20px;color: #60E7DA;"></i>
                     </ng-container>
                   </div>
                 </th>
-                <th class="divided-col"> </th>
+                <th class="divided-col"></th>
               </tr>
             </ng-container>
           </ng-container>
@@ -196,3 +423,63 @@
 
   </div>
 </div>
+
+<ng-container *ngIf="addRemoveModal">
+  <app-attach-plt-pop-up
+    [isVisible]="addRemoveModal"
+    (onVisibleChange)="addRemoveModal= $event"
+    [rowData]="rowInformation"
+    (attachArray)="applyAttachChanges($event)"
+    (deleteArray)="applyAttachChangesTwo($event)">
+  </app-attach-plt-pop-up>
+</ng-container>
+
+<p-dialog
+  [visible]="showOverrideModal"
+  [closable]="false"
+  [modal]="true"
+  [autoZIndex]="false"
+
+  [responsive]="true"
+  [styleClass]="'m-dialog-modal-auto '">
+
+  <p-header>
+    <div class="header header-override">
+      <h6>
+        Override Information
+      </h6>
+      <i (click)="onHide()" class="icon-close_24px" style="cursor: pointer;"></i>
+    </div>
+  </p-header>
+  <div class="body-body">
+    <div class="body-override">
+      <div class="label-override subtitle-2"><span>Basis:</span></div>
+      <div class="select-override">
+        <nz-select
+          nzPlaceHolder="Override Reason" class="a-dropdown-small"
+          [(ngModel)]="overrideReason" style="width: 300px;"
+        >
+          <nz-option nzLabel="De Minimis Results" nzValue="De Minimis Results"></nz-option>
+          <nz-option nzLabel="Region Peril Out of Scope" nzValue="Region Peril Out of Scope"></nz-option>
+          <nz-option nzLabel="Other" nzValue="Other"></nz-option>
+
+        </nz-select>
+      </div>
+    </div>
+
+    <div class="body-override">
+      <div class="label-override subtitle-2"><span>Narrative:</span></div>
+      <div class="textarea-override">
+        <textarea maxlength="255" [(ngModel)]="overrideReasonExplained" style="width: 100%;" ></textarea>
+      </div>
+    </div>
+  </div>
+  <p-footer>
+    <div class="footer">
+      <button (click)="onHide()" class="a-button-text">Close</button>
+      <button (click)="overrideBack()" class="a-buttons-contained">
+        Save
+      </button>
+    </div>
+  </p-footer>
+</p-dialog>

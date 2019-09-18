@@ -2,20 +2,17 @@ import {Action, createSelector, Selector, State, StateContext} from '@ngxs/store
 import * as _ from 'lodash';
 import * as fromWS from '../actions';
 import {PatchCalibrationStateAction} from '../actions';
-import {WorkspaceMain} from "../../../core/model";
-import {CalibrationService} from "../../services/calibration.service";
-import {WorkspaceService} from "../../services/workspace.service";
+import * as fromInuring from '../actions/inuring.actions';
+import {WorkspaceMain} from '../../../core/model';
+import {CalibrationService} from '../../services/calibration.service';
+import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
-import * as fromPlt from "../actions/plt_main.actions";
-import {PltStateService} from "../../services/plt-state.service";
-import {RiskLinkStateService} from "../../services/riskLink-action.service";
-import {
-  AddNewProject,
-  AddNewProjectFail,
-  AddNewProjectSuccess,
-  DeleteProject,
-  DeleteProjectFail, DeleteProjectSuccess
-} from "../../../core/store/actions";
+import {InuringService} from "../../services/inuring.service";
+import * as fromPlt from '../actions/plt_main.actions';
+import {PltStateService} from '../../services/plt-state.service';
+import {RiskLinkStateService} from '../../services/riskLink-action.service';
+import {FileBasedService} from '../../services/file-based.service';
+import {ScopeCompletenessService} from "../../services/scop-completeness.service";
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -38,7 +35,10 @@ export class WorkspaceState {
   constructor(private wsService: WorkspaceService,
               private pltStateService: PltStateService,
               private calibrationService: CalibrationService,
-              private riskLinkFacade: RiskLinkStateService
+              private riskLinkFacade: RiskLinkStateService,
+              private inuringService: InuringService,
+              private fileBasedFacade: FileBasedService,
+              private scopService: ScopeCompletenessService,
   ) {
   }
 
@@ -56,6 +56,12 @@ export class WorkspaceState {
   @Selector()
   static getCurrentTab(state: WorkspaceModel) {
     return state.currentTab;
+  }
+
+  @Selector()
+  static getCurrentTabStatus(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].workspaceType;
   }
 
   static getDeletedPltsForCalibration(wsIdentifier: string) {
@@ -148,6 +154,16 @@ export class WorkspaceState {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt)
   }
 
+  static getUserTagManager(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager)
+  }
+
+  /***********************************
+   *
+   * Dashboard Selectors
+   *
+   ***********************************/
+
   /***********************************
    *
    * Calibration Selectors
@@ -167,13 +183,13 @@ export class WorkspaceState {
 
   @Selector()
   static getAdjustmentApplication(state: WorkspaceModel) {
-    return _.get(state.content.wsIdentifier.Calibration, "adjustmentApplication")
+    return _.get(state.content.wsIdentifier.Calibration, 'adjustmentApplication');
   }
 
   static getPlts(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) => {
       return _.keyBy(_.filter(_.get(state.content[wsIdentifier].calibration.data, `${wsIdentifier}`), e => !e.deleted), 'pltId')
-    })
+    });
   }
 
   static getDeletedPlts(wsIdentifier: string) {
@@ -249,6 +265,18 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getSummaries(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.get(state.content[wsIdentifier].riskLink.summaries, 'data', null);
+  }
+
+  @Selector()
+  static getResults(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return _.get(state.content[wsIdentifier].riskLink.results, 'data', null);
+  }
+
+  @Selector()
   static getLinkingData(state: WorkspaceModel) {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.linking;
@@ -259,6 +287,44 @@ export class WorkspaceState {
     const wsIdentifier = state.currentTab.wsIdentifier;
     return state.content[wsIdentifier].riskLink.financialPerspective;
   }
+
+  /***********************************
+   *
+   * Inuring Selectors
+   *
+   ***********************************/
+
+  //TBD
+
+  /***********************************
+   *
+   * File Based Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getFileBasedData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].fileBaseImport;
+  }
+
+  /***********************************
+   *
+   * Scope And Completeness Selectors
+   *
+   ***********************************/
+
+  @Selector()
+  static getScopeCompletenessData(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].scopeOfCompletence.data;
+  }
+
+  static getPltsForScopeCompleteness(wsIdentifier: string) {
+    return createSelector([WorkspaceState], (state: WorkspaceModel) =>
+      _.keyBy(_.get(state.content, `${wsIdentifier}.scopeOfCompletence.data`), 'pltId'))
+  }
+
 
 
   /***********************************
@@ -272,14 +338,24 @@ export class WorkspaceState {
     return this.wsService.loadWs(ctx, payload);
   }
 
+  @Action(fromWS.LoadFacWs)
+  loadFacWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadFacWs) {
+    return this.wsService.loadWsFac(ctx, payload);
+  }
+
   @Action(fromWS.LoadWsSuccess)
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadWsSuccess) {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
-  @Action(fromWS.openWS)
-  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.openWS) {
+  @Action(fromWS.OpenWS)
+  openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
+  }
+
+  @Action(fromWS.OpenFacWS)
+  openFacWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenFacWS) {
+    return this.wsService.openFacWorkspace(ctx, payload);
   }
 
   @Action(fromWS.OpenMultiWS)
@@ -366,6 +442,11 @@ export class WorkspaceState {
     return this.pltStateService.LoadAllPlts(ctx, payload);
   }
 
+  @Action(fromWS.loadWorkSpaceAndPlts)
+  loadWorkSpaceAndPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadWorkSpaceAndPlts){
+    return this.pltStateService.loadWorkSpaceAndPlts(ctx, payload);
+  }
+
   @Action(fromPlt.loadAllPltsSuccess)
   LoadAllPltsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.loadAllPltsSuccess) {
     return this.pltStateService.loadAllPltsSuccess(ctx, payload);
@@ -406,19 +487,14 @@ export class WorkspaceState {
     return this.pltStateService.constructUserTags(ctx, payload);
   }
 
-  @Action(fromPlt.createOrAssignTags)
-  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.createOrAssignTags) {
-    return this.pltStateService.assignPltsToTag(ctx, payload);
-  }
-
   @Action(fromPlt.CreateTagSuccess)
   createUserTagSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.CreateTagSuccess) {
-    return this.pltStateService.createUserTagSuccess(ctx, payload);
+    //return this.pltStateService.createUserTagSuccess(ctx, payload);
   }
 
   @Action(fromPlt.assignPltsToTagSuccess)
   assignPltsToTagSucess(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.assignPltsToTagSuccess) {
-    return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
+    //return this.pltStateService.assignPltsToTagSuccess(ctx, payload);
   }
 
 
@@ -429,7 +505,7 @@ export class WorkspaceState {
 
   @Action(fromPlt.deleteUserTagSuccess)
   deleteUserTagFromPlts(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.deleteUserTagSuccess) {
-    return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
+    //return this.pltStateService.deleteUserTagFromPlts(ctx, payload);
   }
 
   @Action(fromPlt.deletePlt)
@@ -473,6 +549,26 @@ export class WorkspaceState {
     this.pltStateService.filterPltsByStatus(ctx, payload);
   }
 
+  @Action(fromPlt.AddNewTag)
+  addNewTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AddNewTag) {
+    return this.pltStateService.addNewTag(ctx, payload);
+  }
+
+  @Action(fromPlt.DeleteTag)
+  deleteTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.DeleteTag) {
+    //this.pltStateService.deleteTag(ctx, payload);
+  }
+
+  @Action(fromPlt.GetTagsBySelection)
+  getTagsBySelection(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.GetTagsBySelection) {
+    return this.pltStateService.getTagsBySelection(ctx, payload);
+  }
+
+  @Action(fromPlt.AssignPltsToTag)
+  assignPltsToTag(ctx: StateContext<WorkspaceModel>, {payload}: fromPlt.AssignPltsToTag) {
+    return this.pltStateService.assignPltsToTag(ctx, payload);
+  }
+
   /***********************************
    *
    * Calibration Actions
@@ -484,6 +580,11 @@ export class WorkspaceState {
   @Action(fromWS.loadAllPltsFromCalibration)
   loadAllPltsFromCalibration(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllPltsFromCalibration) {
     return this.calibrationService.loadAllPltsFromCalibration(ctx, payload);
+  }
+
+  @Action(fromWS.loadAllAdjustmentApplication)
+  loadAllAdjustmentApplication(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAllAdjustmentApplication) {
+    return this.calibrationService.loadAllAdjustmentApplication(ctx, payload);
   }
 
   @Action(fromWS.loadAllPltsFromCalibrationSuccess)
@@ -518,7 +619,7 @@ export class WorkspaceState {
 
   @Action(fromWS.toCalibratePlts)
   toCalibratePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.toCalibratePlts) {
-    this.calibrationService.toCalibratePlts(ctx, payload)
+    this.calibrationService.toCalibratePlts(ctx, payload);
   }
 
   @Action(fromWS.initCalibrationData)
@@ -707,7 +808,7 @@ export class WorkspaceState {
 
   @Action(fromWS.AddToBasketAction)
   addToBasket(ctx: StateContext<WorkspaceModel>) {
-    this.riskLinkFacade.addToBasket(ctx);
+    return this.riskLinkFacade.addToBasket(ctx);
   }
 
   @Action(fromWS.ApplyFinancialPerspectiveAction)
@@ -818,4 +919,68 @@ export class WorkspaceState {
   loadRiskLinkData(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.loadRiskLinkData(ctx);
   }
+
+  /***********************************
+   *
+   * Scope And Completeness Actions
+   *
+   ***********************************/
+  @Action(fromWS.LoadScopeCompletenessDataSuccess)
+  loadScopeCompletenessData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadScopeCompletenessDataSuccess) {
+    return this.scopService.loadScopeCompletenessData(ctx, payload);
+  }
+
+
+  /***********************************
+   *
+   * File Based Actions
+   *
+   ***********************************/
+
+  @Action(fromWS.LoadFileBasedFoldersAction)
+  loadFileBasedFolders(ctx: StateContext<WorkspaceModel>) {
+    return this.fileBasedFacade.loadFolderList(ctx);
+  }
+
+  @Action(fromWS.LoadFileBasedFilesAction)
+  loadFileBasedFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFileBasedFilesAction) {
+    return this.fileBasedFacade.loadFilesList(ctx, payload);
+  }
+
+  @Action(fromWS.RemoveFileFromImportAction)
+  removeFileFromImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.RemoveFileFromImportAction) {
+    this.fileBasedFacade.removeFileFromImport(ctx, payload);
+  }
+
+  @Action(fromWS.ToggleFilesAction)
+  toggleFiles(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleFilesAction) {
+    this.fileBasedFacade.toggleFile(ctx, payload);
+  }
+
+  @Action(fromWS.TogglePltsAction)
+  togglePlts(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.TogglePltsAction) {
+    this.fileBasedFacade.togglePlts(ctx, payload);
+  }
+
+  @Action(fromWS.AddFileForImportAction)
+  addForImport(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddFileForImportAction) {
+    return this.fileBasedFacade.addToImport(ctx, payload);
+  }
+
+  /***********************************
+   *
+   * Inuring Actions
+   *
+   ***********************************/
+
+  @Action(fromInuring.OpenInuringPackage)
+  openInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.OpenInuringPackage) {
+    return this.inuringService.openInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.CloseInuringPackage)
+  closeInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.CloseInuringPackage) {
+    return this.inuringService.closeInuringPackage(ctx, payload);
+  }
+
 }

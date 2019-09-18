@@ -21,16 +21,9 @@
   <div class="content">
     <div class="left">
       <app-plt-left-menu
-        (emitFilters)="emitFilters($event)"
-        (onProjectFilter)="filterPlts($event)"
-        (onSelectProjects)="setSelectedProjects($event)"
-        (onSetFilters)="setFilters($event)"
-        (onSetSelectedUserTags)="setUserTags($event)"
-        (onWsHeaderSelection)="setWsHeaderSelect($event)"
-        (unCkeckAllPlts)="unCheckAll()"
-        [menuInputs]="Inputs | pickKeys : menuInputs"
+        (actionDispatcher)="leftMenuActionDispatcher($event)"
+        [tagsInput]="tagsInput"
       >
-
       </app-plt-left-menu>
     </div>
     <div class="center">
@@ -48,20 +41,21 @@
           (onSelectSinglePlt)="selectSinglePLT($event)"
           (openPltInDrawer)="openPltInDrawer($event)"
           [tableInputs]="Inputs | pickKeys : tableInputs"
+          [listOfPltsThread]="listOfPltsThread"
         ></app-pop-up-plt-table>
       </div>
     </div>
     <div class="right">
-      <app-plt-right-menu
+      <!--<app-plt-right-menu
         (actionDispatcher)="rightMenuActionDispatcher($event)"
         [Inputs]="rightMenuInputs"
-      ></app-plt-right-menu>
+      ></app-plt-right-menu>-->
     </div>
   </div>
 
   <p-footer>
     <div class="footer">
-      <button (click)="onHide()" class="a-button-text">Close</button>
+      <button (click)="onHide()" class="a-button-text">Cancel</button>
       <button (click)="onSave()" class="a-buttons-contained">
         Save
       </button>

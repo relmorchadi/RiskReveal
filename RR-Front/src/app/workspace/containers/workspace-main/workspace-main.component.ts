@@ -3,7 +3,7 @@ import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
-import * as fromWs from '../../store/actions/workspace.actions';
+import * as fromWs from '../../store/actions';
 import {ToggleWsDetails, ToggleWsLeftMenu, UpdateWsRouting} from '../../store/actions/workspace.actions';
 import {BaseContainer} from '../../../shared/base';
 import {WorkspaceState} from '../../store/states';
@@ -23,9 +23,10 @@ import {HelperService} from '../../../shared/services';
 export class WorkspaceMainComponent extends BaseContainer implements OnInit {
 
   state: WorkspaceMain = null;
-  private selectedTabIndex: number;
+  selectedTabIndex: number;
   loading: boolean;
-  private data: { [p: string]: any };
+  data: { [p: string]: any };
+  currentWsIdentifier: string;
 
   constructor(
     private _helper: HelperService,
@@ -41,13 +42,14 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   ngOnInit() {
     this._route.params
       .pipe(this.unsubscribeOnDestroy,
-        map(({wsId, year, route}: any) => new fromWs.openWS({wsId, uwYear: year, route})))
+        map(({wsId, year, route}: any) => new fromWs.OpenWS({wsId, uwYear: year, route, type: 'treaty'})))
       .subscribe(action => this.dispatch(action));
 
     this.select(WorkspaceState.getCurrentTab)
       .pipe(this.unsubscribeOnDestroy)
       .subscribe(curTab => {
         this.selectedTabIndex = curTab.index;
+        this.currentWsIdentifier = curTab.wsIdentifier;
         this.detectChanges();
       });
     this.select(WorkspaceState.getLoading)
@@ -95,10 +97,11 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   addWs(wsId, uwYear) {
-    this.dispatch(new fromWs.openWS({
+    this.dispatch(new fromWs.OpenWS({
       wsId,
       uwYear,
-      route: 'projects'
+      route: 'projects',
+      type: 'treaty'
     }));
   }
 
@@ -123,6 +126,10 @@ export class WorkspaceMainComponent extends BaseContainer implements OnInit {
   }
 
   selectWorkspace(wsIdentifier, index) {
+    this.dispatch(new fromWs.setCloneConfig({
+      cloneConfig: {},
+      wsIdentifier: this.currentWsIdentifier
+    }));
     this.dispatch(new fromWs.SetCurrentTab({
       wsIdentifier,
       index

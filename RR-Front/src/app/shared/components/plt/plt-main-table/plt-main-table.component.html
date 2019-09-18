@@ -10,7 +10,7 @@
   [columnResizeMode]="'expand'"
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
-  [scrollHeight]="tableInputs.scrollHeight"
+  [scrollHeight]="tableHeight"
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
@@ -31,16 +31,24 @@
                    [nzIndeterminate]="!tableInputs.showDeleted ? tableInputs.someItemsAreSelected : tableInputs.someDeletedItemsAreSelected"></label>
             <i (click)="checkBoxSort()" style="cursor: pointer;position: relative;left: 3px;" nz-icon nzType="down" nzTheme="outline"></i>
           </th>
+          <th *ngIf="col?.type == 'checkbox-scope'"   [ngStyle]="{'width': col?.width }">
+            <label nz-checkbox style="padding-left: 8px;"
+                   [nzChecked]="checkSelectedRows()"
+                   (nzCheckedChange)="checkAllScope($event)"
+                   [nzIndeterminate]="checkMiddleState()"
+                   ></label>
+
+            <i (click)="checkBoxSortScope()" style="cursor: pointer;position: relative;left: 3px;" nz-icon nzType="down" nzTheme="outline"></i>
+          </th>
           <th *ngIf="col?.type === 'tags'" [ngStyle]="{'width': col?.width }" pResizableColumn>
                       <span style="display:flex;justify-content: space-between;font-weight: bold">
                         User Tags
                       </span>
           </th>
           <ng-container *ngIf="col?.resizable">
-            <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' ) " [ngStyle]="{'width': col?.width }" pResizableColumn>
+            <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' && col?.type !== 'checkbox-scope' ) " [ngStyle]="{'width': col?.width }" pResizableColumn>
           <span style="display:flex;justify-content: space-between;">
-
-                        {{col?.header}}
+            {{col?.header}} <br> {{col?.subHeader}}
             <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
               <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
               <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
@@ -51,7 +59,7 @@
             </th>
           </ng-container>
           <ng-container *ngIf="!col?.resizable">
-            <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' ) " [ngStyle]="{'width': col?.width }">
+            <th  *ngIf="col?.forDelete ? tableInputs.showDeleted : ( col?.type !== 'tags' && col?.type !== 'checkbox' && col?.type !== 'checkbox-scope' ) " [ngStyle]="{'width': col?.width }">
               <span style="display:flex;justify-content: space-between;">
                             {{col?.header}}
                 <ng-container *ngIf="col?.sorted" [ngSwitch]="tableInputs.sortData[col?.fields]">
@@ -86,7 +94,7 @@
             <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
               <div class="filter-input">
                 <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterInput">
+                <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterData[col?.fields]">
               </div>
             </th>
           </ng-container>
@@ -106,6 +114,33 @@
             <div style="padding-left: 9px;">
               <label nz-checkbox [nzChecked]="rowData.selected"
                      (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>
+            </div>
+          </td>
+          <td  *ngIf="col?.type == 'checkbox-scope'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div style="padding-left: 9px;">
+              <label nz-checkbox [nzChecked]="rowData?.selected"
+                     (nzCheckedChange)="deselectThePlt(rowData.pltId, $event)"></label>
+            </div>
+          </td>
+          <td  *ngIf="col?.type == 'checkbox-col' && isPltDisabled(rowData, col?.header) == 'notDisabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div class="checkbox-off">
+              <label nz-checkbox class="special-check" [nzChecked]="isPltAttached(rowData, col?.header) == 'attached'" (nzCheckedChange)="selectPltForAttach(rowData,col?.header)"></label>
+
+              <nz-dropdown [nzTrigger]="'click'" (nzVisibleChange)="selectDropDown($event,rowData.pltId, col?.header)" >
+                <a nz-dropdown>
+                  <i class="icon-ellipsis-v" style="font-size: 20px;margin-top: 1px;" [ngClass]="{'burger-menu-visible': selectedDropDown == rowData.pltId && selectedDropDownTs == col?.header, 'burger-menu': selectedDropDown != rowData.pltId || selectedDropDownTs != col?.header}"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px;">
+                  <li nz-menu-item (click)="attachToAllTs(rowData)" >Attach to all contracts</li>
+                  <li nz-menu-item (click)="unattachOtherTs(rowData,col?.header)">Attach to only this contract</li>
+                </ul>
+              </nz-dropdown>
+
+            </div>
+          </td>
+          <td  *ngIf="col?.type == 'checkbox-col' && isPltDisabled(rowData, col?.header) == 'disabled'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+            <div class="checkbox-off">
+              <label nz-checkbox nzDisabled ></label>
             </div>
           </td>
           <td *ngIf="col?.type == 'tags'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">

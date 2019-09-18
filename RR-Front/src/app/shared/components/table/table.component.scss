@@ -7,6 +7,11 @@
   .table-ngPrime {
     ::ng-deep {
 
+      .ant-checkbox-checked .ant-checkbox-inner {
+        background-color: #0700cf;
+        border-color: #0700cf;
+      }
+
       .ant-checkbox-indeterminate .ant-checkbox-inner::after {
         background-color: #fff;
         height: 2px;
@@ -26,7 +31,7 @@
       }
 
       .ui-table-scrollable-view {
-        min-height: 750px;
+        //min-height: 200px;
       }
 
       .ui-table-thead {

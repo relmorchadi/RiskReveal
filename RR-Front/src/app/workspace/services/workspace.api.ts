@@ -17,4 +17,12 @@ export class WsApi {
     return this._http.get(`${environment.API_URI + 'search/'}worspace/${id}/${year}`);
   }
 
+  searchFacWidget() {
+    return this._http.get(`${environment.API_URI}fac`);
+  }
+
+  postFacData(data) {
+    return this._http.post(`${environment.API_URI}fac`, {params: data});
+  }
+
 }

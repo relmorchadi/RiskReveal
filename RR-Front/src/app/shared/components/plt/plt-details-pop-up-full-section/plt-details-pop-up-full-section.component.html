@@ -1,0 +1,29 @@
+<div class="plt-details-full-section-view">
+  <div class="header">
+    <i class="icon-arrow_back_24px" (click)="closeSection()"></i>
+    <div class="title">
+      <span>
+        {{plt?.pltName}}
+      </span>
+      <div class="sub-title">
+        <span>[{{plt?.pltId | textLength}}]</span>
+        <span>[{{plt?.pltType}}]</span>
+      </div>
+    </div>
+  </div>
+  <div class="body">
+    <div *ngFor="let section of inputs" class="section">
+      <div class="title">
+        {{section?.title}}
+      </div>
+      <table>
+        <tbody>
+        <tr *ngFor="let header of section?.headers">
+          <td>{{header?.header}}</td>
+          <td>{{plt[header?.field]}}</td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

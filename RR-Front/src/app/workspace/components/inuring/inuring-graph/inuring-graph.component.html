@@ -1,0 +1,14 @@
+<div class="graph-commands">
+  <i class="icon-home_24px"></i>
+  <i (click)="refreshToolkit()" class="icon-refresh_24px"></i>
+  <i (click)="addNoteNode()" class="icon-comment-alt"></i>
+  <i (click)="addJoinNode()" class="icon-link-alt"></i>
+</div>
+<div pDroppable="inuring-contract" (onDrop)="drop($event)">
+  <jsplumb-surface
+    [surfaceId]="surfaceId"
+    [toolkitId]="toolkitId"
+    [view]="view"
+    [renderParams]="renderParams"
+  ></jsplumb-surface>
+</div>

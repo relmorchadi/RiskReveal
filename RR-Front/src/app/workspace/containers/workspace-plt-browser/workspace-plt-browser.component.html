@@ -5,50 +5,9 @@
     </div>
     <div class="my-tabs">
       <app-plt-left-menu
-        [menuInputs]="{
-            tagContextMenu: tagContextMenu,
-            wsId: workspaceId,
-            uwYear: uwy,
-            projects: projects,
-            showDeleted: tableInputs['showDeleted'],
-            filterData: tableInputs['filterData'],
-            filters: tableInputs['filters'],
-            addTagModalIndex: tagModalIndex,
-            fromPlts: fromPlts,
-            deletedPltsLength: (tableInputs['listOfDeletedPltsData'] | keys).length,
-            userTags: userTags,
-            systemTags: systemTags,
-            selectedListOfPlts: tableInputs['selectedListOfPlts'],
-            systemTagsCount: systemTagsCount,
-            _tagModalVisible: tagModalVisible,
-            _editingTag: editingTag,
-            _modalSelect: modalSelect,
-            tagForMenu: tagForMenu,
-            wsHeaderSelected: wsHeaderSelected,
-            pathTab:true,
-            selectedItemForMenu: selectedItemForMenu
-          }"
-        (onAssignPltsToTag)="assignPltsToTag($event)"
-        (onCreateTag)="createTag($event)"
-        (onProjectFilter)="filter($event)"
-        (onEditTag)="editTag()"
-        (onResetPath)="resetPath()"
-        (onSelectProjects)="setSelectedProjects($event)"
-        (onSelectSysTagCount)="selectSystemTag($event)"
-        (onSetFilters)="setFilters($event)"
-        (onSetFromPlts)="setFromPlts($event)"
-        (onSetSelectedUserTags)="setUserTags($event)"
-        (onToggleDeletedPlts)="toggleDeletePlts($event)"
-        (setTagModalIndex)="setModalIndex($event)"
-        (setTagModalVisibility)="setTagModal($event)"
-        (onSetTagForMenu)="setTagForMenu($event)"
-        (onSetRenameTag)="setRenameTag($event)"
-        (emitFilters)="emitFilters($event)"
-        (unCkeckAllPlts)="unCheckAll()"
-        (onWsHeaderSelection)="setWsHeaderSelect($event)"
-        (onModalSelect)="setModalSelectedItems($event)"
+        [tagsInput]="tagsInput"
+        (actionDispatcher)="leftMenuActionDispatcher($event)"
       >
-
       </app-plt-left-menu>
       <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - 212px - 80px - 174px + 130px)' : 'calc(100vw - 212px - 80px - 177px)'}">
         <div class="title-as-tab">
@@ -56,8 +15,21 @@
             PLTs
           </span>
           <div class="right">
-            <div *ngIf="tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
-              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ' PLTs are selected'}}</p>
+            <div *ngIf="!tableInputs['showDeleted'] && tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
+              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ( tableInputs['selectedListOfPlts']?.length  > 1 ?  ' PLTs are selected'  : ' PLT is selected')}}</p>
+              <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
+                <a style="max-height: 28px;display: flex;" nz-dropdown>
+                  <i class="icon-menu_24px"></i>
+                </a>
+                <ul nz-menu style="font-size: 12px">
+                  <li nz-menu-item (click)="deletePlt()">Delete</li>
+                  <li nz-menu-item (click)="cloneTo()">Clone To</li>
+                  <li nz-menu-item >Calibrate</li>
+                </ul>
+              </nz-dropdown>
+            </div>
+            <div *ngIf="tableInputs['showDeleted'] && tableInputs['selectedListOfDeletedPlts']?.length" style="display: flex;align-items: center;">
+              <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfDeletedPlts']?.length + ( tableInputs['selectedListOfDeletedPlts']?.length  > 1 ?  ' Deleted PLTs are selected'  : ' Deleted PLT is selected')}}</p>
               <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'">
                 <a style="max-height: 28px;display: flex;" nz-dropdown>
                   <i class="icon-menu_24px"></i>
@@ -81,7 +53,7 @@
                 <li nz-menu-divider></li>
 
                 <li nz-menu-item (click)="toggleColumnsManager()" >Manage Columns</li>
-                <li nz-menu-item (click)="exportTable()" >Export</li>
+                <li (click)="exportTable()" nz-menu-item>Export</li>
 
                 <li nz-menu-divider></li>
 
@@ -118,128 +90,5 @@
   [Inputs]="rightMenuInputs"
 ></app-plt-right-menu>
 
-<p-dialog
-  [visible]="managePopUp"
-  [closable]="false"
-  styleClass="m-dialog-modal"
-  appendTo="body"
-  [modal]="true"
-  [autoZIndex]="false"
-  [responsive]="true"
->
+<app-manage-columns [visible]="managePopUp" [columns]="tableInputs.pltColumns" (onSubmit)="saveColumns($event)" (onCancel)="resetColumns()"></app-manage-columns>
 
-  <p-header>
-    <div class="header">
-      <h4>
-        Manage Columns
-      </h4>
-      <i style="cursor: pointer" (click)="toggleColumnsManager()" class="icon-close_24px"></i>
-    </div>
-  </p-header>
-
-  <div class="content">
-
-    <div style="display: flex;flex-direction: column;">
-      <h6>Available columns:</h6>
-      <div
-        cdkDropList
-        [id]="'availableListOfColumns'"
-        #availbleListOfColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[usedListOfColumns]"
-        [cdkDropListData]="listOfAvailbleColumns"
-        class="m-box-d"
-        (cdkDropListDropped)="drop($event)">
-        <ng-container *ngFor="let col of listOfAvailbleColumns;let i=index">
-          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-            <div class="m-box-overlay">
-              <div class="left">
-                <div class="burger" cdkDragHandle>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                </div>
-                <span class="subtitle-2">
-              {{col.header}}
-              </span>
-              </div>
-              <!--
-              <div class="right">
-                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-              </div>
-              -->
-            </div>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-
-    <div class="toolkit">
-      <div class="toolkit-cnt">
-        <div class="all right">
-          <i (click)="dropAll('right')" style="cursor: pointer" class="icon-arrow_forward_ios_24px"></i>
-        </div>
-        <span>
-          All
-        </span>
-        <div class="all left">
-          <i (click)="dropAll('left')" style="cursor: pointer" class="icon-arrow_back_ios_24px"></i>
-        </div>
-      </div>
-    </div>
-
-    <div style="display: flex;flex-direction: column;">
-      <h6>Show these columns in order:</h6>
-      <div
-        cdkDropList
-        [id]="'usedListOfColumns'"
-        #usedListOfColumns="cdkDropList"
-        [cdkDropListConnectedTo]="[availbleListOfColumns]"
-        [cdkDropListData]="listOfUsedColumns"
-        class="m-box-d"
-        (cdkDropListDropped)="drop($event)">
-        <ng-container *ngFor="let col of listOfUsedColumns;let i=index">
-          <div class="m-box-drag" *ngIf="col.header" cdkDrag>
-            <div class="m-box-overlay">
-              <div class="left">
-                <div class="burger" cdkDragHandle>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                  <div class="line"></div>
-                </div>
-                <span class="subtitle-2">
-              {{col.header}}
-              </span>
-              </div>
-              <!--
-              <div class="right">
-                <i *ngIf="col?.active" (click)="toggleCol(i)" class="icon-visibility_24px"></i>
-                <i *ngIf="!col?.active" (click)="toggleCol(i)" class="icon-visibility_off_24px"></i>
-              </div>
-              -->
-            </div>
-          </div>
-        </ng-container>
-      </div>
-    </div>
-  </div>
-
-  <p-footer>
-    <div class="footer">
-      <button (click)="toggleColumnsManager()" class="a-button-text-cancel">cancel</button>
-      <button class="a-buttons-contained" (click)="saveColumns()">
-        Save
-      </button>
-    </div>
-  </p-footer>
-</p-dialog>

@@ -6,6 +6,8 @@ import com.scor.rr.domain.EdmRdm;
 import com.scor.rr.domain.PortfolioView;
 import com.scor.rr.domain.dto.AnalysisFilter;
 import com.scor.rr.domain.dto.PortfolioFilter;
+import com.scor.rr.domain.views.AnalysisDetailView;
+import com.scor.rr.repository.AnalysisDetailsViewRepository;
 import com.scor.rr.repository.AnalysisRepository;
 import com.scor.rr.repository.EdmRdmRepository;
 import com.scor.rr.repository.PortfolioRepository;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 @Component
 public class RiskLinkService {
@@ -34,6 +38,9 @@ public class RiskLinkService {
     @Autowired
     PortfolioSpecification portfolioSpecification;
 
+    @Autowired
+    AnalysisDetailsViewRepository analysisDetailsViewRepository;
+
     public Page<EdmRdm> searchEdmRdm(String keyword, Pageable pageable) {
         return keyword==null ? edmRdmRepository.findAll(pageable) :  edmRdmRepository.findByNameLike("%" + keyword + "%", pageable);
     }
@@ -42,6 +49,12 @@ public class RiskLinkService {
     public Page<AnalysisView> searchAnalysis(AnalysisFilter filter, Pageable pageable){
         return analysisRepository.findAll(analysisSpecification.getFilter(filter),pageable);
     }
+
+    public List<AnalysisDetailView> analysisDetailsScan(Double analysisId, String analysisName){
+        return analysisDetailsViewRepository.findAllByAnalysisIdAndAnalysisName(analysisId, analysisName);
+    }
+
+
 
     public Page<PortfolioView> searchPortflio(PortfolioFilter filter, Pageable pageable){
         return portfolioRepository.findAll(portfolioSpecification.getFilter(filter),pageable);

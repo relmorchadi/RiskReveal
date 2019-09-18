@@ -1,12 +1,14 @@
 :host {
-  width: 100%;
+  width: 80%;
+  flex: 1;
   height: max-content;
   display: flex;
-  min-height: 100vh;
+  min-height: 95vh;
   background-color: #F4F6FC;
 
   @media screen and (max-width: 1700px) {
-    width: 94%;
+    width: 60%;
+    flex: 1;
   }
 }
 
@@ -20,33 +22,49 @@ COMPONENT STYLE
   display: block;
 
   .menu-left-header {
-    padding: 6px 10px 0;
+    padding: 6px 25px 0;
     display: flex;
     width: 55%;
     font-weight: bold;
     color: #000000;
   }
 
-  .menu-left-wrapper {
-    float: left;
+  .menu-searchPlt-wrapper {
+    display: flex;
     background-color: #FFFFFF;
-    width: 20%;
+    width: 100%;
+    margin-bottom: 10px;
+    box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15);
 
     ::ng-deep {
       .ui-tree.ui-widget.ui-widget-content.ui-corner-all.ui-tree-selectable {
         border: none;
         padding: 0;
+        width: 100%;
       }
 
       ul.ui-tree-container {
-        height: 215px;
+        height: 255px;
+        border-right: 1px solid rgba(0,0,0,0.15);
+
+        li.ui-treenode {
+          font-size: 11px;
+        }
       }
     }
 
     .menu-left-header {
-      padding: 6px 10px 0;
+      padding: 8px 0 0 25px;
       display: flex;
-      width: 55%;
+      width: 60%;
+      white-space: nowrap;
+    }
+
+    .menu-left-footer {
+      display: flex;
+      justify-content: flex-end;
+      width: 100%;
+      padding: 0 10px 7px;
     }
 
     .search-document-wrap {
@@ -55,20 +73,29 @@ COMPONENT STYLE
     }
 
     .tree-menu-wrapper {
-      width: fit-content;
-      margin: 10px auto;
+      width: 100%;
+      max-width: 98%;
+      margin: -2px auto 20px;
     }
 
     .files-selection-wrap {
-      width: 250px;
-      margin: 0 auto 10px;
+      width: 95%;
+      margin: 10px auto 0;
+      height: 140px;
 
       ul {
-        height: 210px;
+        height: 121px;
 
         li {
           height: 30px;
           align-items: center;
+
+          ::ng-deep {
+            .ant-checkbox-wrapper {
+              font-size: 12px
+            }
+          }
+
         }
       }
 
@@ -83,23 +110,27 @@ COMPONENT STYLE
 
     .empty-data-wrap {
       margin: 11px 15px;
-      padding: 10px;
       background: #F4F6FC;
+      height: 130px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 
-  .menu-right-wrapper {
-    float: right;
+  .menu-data-wrapper {
     background: #FFFFFF;
-    width: 79%;
+    width: 100%;
+    height: fit-content;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.15);
 
     .menu-left-header {
       border-top: 4px solid #0700CF;
       display: flex;
       font-weight: bold;
       color: #000000;
-      padding: 12px 25px 0;
-      width: 33%;
+      padding: 6px 25px 0;
+      width: 30%;
     }
 
     ::ng-deep {
@@ -108,6 +139,78 @@ COMPONENT STYLE
       }
     }
   }
+
+  .menu-left-wrapper {
+    float: left;
+    width: 70%;
+  }
+
+  .menu-detail-wrapper {
+    float: right;
+    width: 29%;
+    background: #FFFFFF;
+    box-shadow: 1px 2px 6px rgba(0,0,0,0.15);
+
+    ul {
+      list-style: none;
+      padding: 5px 10px 0 25px;
+
+      li {
+        display: flex;
+        align-items: center;
+
+        .list-key {
+          flex: 0 0 40%;
+        }
+
+        .list-value {
+          text-overflow: ellipsis;
+          overflow: hidden;
+          font-size: 12.22px;
+        }
+
+        .subtitle-2 {
+          font-size: 11.22px;
+        }
+      }
+    }
+  }
+}
+
+.body-wrapper-header-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-left: 10px;
+  padding-right: 10px;
+  align-items: center;
+
+  .icon-filter {
+    margin: 4px 15px 0;
+    font-size: 25px;
+    color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    display: flex;
+  }
+
+  .icon-keyboard_arrow_down_24px, .icon-keyboard_arrow_up_24px {
+    color: #fff;
+    border-radius: 24px;
+    font-size: 19px;
+    width: 19px;
+    height: 19px;
+    display: flex;
+    cursor: pointer;
+  }
+
+  .icon-keyboard_arrow_down_24px {
+    background-color: #0700CF;
+  }
+
+  .icon-keyboard_arrow_up_24px {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: rgba(0, 0, 0, 0.35);
+  }
+
 }
 
 /*
@@ -117,7 +220,7 @@ TABLE STYLE
 */
 
 .summary-info {
-  padding: 20px 0;
+  padding: 0 0 10px;
   margin: auto;
   width: 97%;
   overflow: hidden;
@@ -152,7 +255,7 @@ TABLE STYLE
       }
 
       th {
-        padding: 15px 10px 5px 3px;
+        padding: 5px 3px 5px 8px;
         font-size: 10px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38);
@@ -210,7 +313,15 @@ TABLE STYLE
       }
 
       tr.ui-contextmenu-selected {
-        background-color: #f4f6fc !important;
+        background-color: #F4F6FC !important;
+      }
+
+      tr:hover {
+        background-color: #F7F8FD;
+      }
+
+      tr.selected_contract_item {
+        background-color: #E1E1E1 !important;
       }
 
       .ant-progress-text {
@@ -231,7 +342,7 @@ TABLE STYLE
       }
 
       th {
-        padding: 0;
+        padding: 0 3px;
         cursor: pointer;
         color: rgb(0, 0, 0);
         font-size: 12px;
@@ -242,12 +353,23 @@ TABLE STYLE
 
         .text-data {
           width: 100%;
-          height: 30px;
+          height: 26px;
+          display: flex;
+          align-items: center;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-          padding-top: 4px;
           font-weight: 400;
+        }
+
+        .perilIndicator {
+          color: #FFFFFF;
+          width: 25px;
+          height: 25px;
+          display: flex;
+          border-radius: 20px;
+          align-items: center;
+          justify-content: center;
         }
 
         .branched-data {
@@ -277,8 +399,12 @@ TABLE STYLE
         }
       }
 
-      .selected-item {
+      .active_contract_item {
         background-color: #FDFBDF !important;
+      }
+
+      .selected_contract_item {
+        background-color: #E1E1E1 !important;
       }
 
       .icon-check_circle_24px {
@@ -305,10 +431,13 @@ TABLE STYLE
   }
 }
 
-.table-width {
-  p-table {
-    width: 98%;
-  }
+.empty-notif-wrapper {
+  background-color: #F4F6FC;
+  margin: 2px auto;
+  padding: 7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .empty-table {
@@ -325,10 +454,16 @@ TABLE STYLE
   }
 
   .empty-notif-wrapper {
-    background-color: #f4f6fc;
-    margin: 4px 2px;
-    padding: 7px;
-    display: flex;
-    justify-content: center;
+    width: 98%;
   }
+}
+
+.fixed-table-height {
+  .empty-notif-wrapper {
+    height: 138px;
+  }
+}
+
+.body-1 {
+  font-size: 14.22px;
 }

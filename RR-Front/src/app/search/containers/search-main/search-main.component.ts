@@ -140,7 +140,7 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
   }
 
   openWorkspace(wsId, year) {
-    this.dispatch(new workspaceActions.openWS({wsId, uwYear: year, route: 'projects'}));
+    this.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: 'projects', type: 'treaty'}));
   }
 
   navigateToTab(value) {

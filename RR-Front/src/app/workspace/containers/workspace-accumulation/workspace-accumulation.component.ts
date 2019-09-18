@@ -4,7 +4,6 @@ import {WorkspaceState} from '../../store/states';
 import {WorkspaceMainState} from '../../../core/store/states';
 import {combineLatest} from 'rxjs';
 import {ActivatedRoute, Router} from '@angular/router';
-import {dataTable} from '../workspace-scope-completence/data';
 import * as _ from 'lodash';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from "../../model/state-subscriber";
@@ -36,7 +35,7 @@ export class WorkspaceAccumulationComponent extends BaseContainer implements OnI
   }
 
   ngOnInit() {
-    this.dataSource = dataTable.dataSource;
+    //   this.dataSource = dataTable.dataSource;
     combineLatest(
       this.wsData$,
       this.route.params

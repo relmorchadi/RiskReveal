@@ -117,7 +117,7 @@ export class TasksMenuItemComponent implements OnInit {
   }
 
   openWorkspace(wsId, year, routerLink) {
-    this.store.dispatch(new workspaceActions.openWS({wsId, uwYear: year, route: routerLink}));
+    this.store.dispatch(new workspaceActions.OpenWS({wsId, uwYear: year, route: routerLink, type: 'treaty'}));
   }
 
   navigateToTab(value) {

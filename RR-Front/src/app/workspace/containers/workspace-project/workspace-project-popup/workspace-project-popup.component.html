@@ -16,9 +16,9 @@
             <button class="a-buttons-contained override">
               <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
             </button>
-            <h4>
+            <h6>
               {{ selectionStep == 'plt' ? 'Select PLTs to Clone' : 'Search For Project' }}
-            </h4>
+            </h6>
           </div>
       </ng-container>
 
@@ -79,16 +79,9 @@
       <div class="content">
         <div class="left">
           <app-plt-left-menu
-            [menuInputs]="Inputs | pickKeys : menuInputs"
-            (onSetSelectedUserTags)="setUserTags($event)"
-            (onSetFilters)="setFilters($event)"
-            (emitFilters)="emitFilters($event)"
-            (onProjectFilter)="filterPlts($event)"
-            (onWsHeaderSelection)="setWsHeaderSelect($event)"
-            (onSelectProjects)="setSelectedProjects($event)"
-            (unCkeckAllPlts)="unCheckAll()"
+            [tagsInput]="tagsInput"
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
           >
-
           </app-plt-left-menu>
         </div>
         <div
@@ -106,12 +99,14 @@
             ></app-plt-main-table>
           </div>
         </div>
+        <!--
         <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
           <app-plt-right-menu
             (actionDispatcher)="rightMenuActionDispatcher($event)"
             [Inputs]="rightMenuInputs"
           ></app-plt-right-menu>
         </div>
+        -->
       </div>
   </ng-container>
 

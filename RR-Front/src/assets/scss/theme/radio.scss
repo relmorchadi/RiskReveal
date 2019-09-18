@@ -92,3 +92,30 @@ body .ui-radiobutton .ui-radiobutton-box {
   width: 17px;
   height: 17px;
 }
+
+.special-check {
+  .ant-checkbox-inner::after {
+    display: block;
+    z-index: 2000;
+    opacity: 1;
+    color: #d9d9d9;
+    left: 0;
+    top: 0;
+    transform: none;
+    font-family: 'scor_fonticon' !important;
+    content: "\e9b4" !important;
+  }
+
+  span.ant-checkbox.ant-checkbox-checked {
+    .ant-checkbox-inner::after {
+      top: -2px;
+      left: -2px;
+      border-right: 0;
+      border-bottom: 0;
+      display: table;
+      font-family: 'scor_fonticon' !important;
+      content: "\e9b4" !important;
+      color: #FFFFFF;
+    }
+  }
+}

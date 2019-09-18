@@ -4,6 +4,7 @@
   [closable]="false"
   [modal]="true"
   [responsive]="true"
+  (visibleChange)="visibleChange(isVisible)"
   [styleClass]="'m-dialog-modal-m-74 adjustment-modal'"
   [visible]="isVisible">
   <p-header>
@@ -29,19 +30,18 @@
             nzShowSearch
             style="padding: 10px 0; width: 300px"
           >
-            <nz-option-group nzLabel="Favored">
+            <nz-option-group *ngIf="favoredBasis.length">
               <nz-option *ngFor="let option of favoredBasis" [nzLabel]="option.name" [nzValue]="option"
                          nzCustomContent>{{option.name}}<i (click)="unfavorise(option)"
                                                            class="icon-star_24px favoredStar"
                                                            style="font-size: 22px;"></i></nz-option>
             </nz-option-group>
-            <nz-option-group nzLabel="Normal">
+            <nz-option-group>
               <nz-option *ngFor="let option of unFavoredBasis" [nzLabel]="option.name" [nzValue]="option"
                          nzCustomContent>{{option.name}}<i (click)="favorise(option)"
                                                            class="icon-star_border_24px unfavoredStar"
                                                            style="font-size: 22px;"></i></nz-option>
             </nz-option-group>
-
           </nz-select>
         </div>
       </div>
@@ -102,7 +102,7 @@
         </nz-switch>
       </div>
     </div>
-    <div *ngIf="linear" class="ui-g">
+    <div *ngIf="singleValue?.name == 'Linear'" class="ui-g">
       <div class="ui-g-3">
         <label> Loss Modification Factor (LMF) </label>
       </div>

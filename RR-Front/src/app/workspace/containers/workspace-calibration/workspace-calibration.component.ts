@@ -14,6 +14,7 @@ import {
   applyAdjustment,
   deleteAdjsApplication,
   deleteAdjustment,
+  dropAdjustment,
   dropThreadAdjustment,
   extendPltSection,
   replaceAdjustement,
@@ -28,9 +29,11 @@ import * as fromWorkspaceStore from "../../store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {StateSubscriber} from "../../model/state-subscriber";
 import {BaseContainer} from "../../../shared/base";
-import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, UNITS} from "./data";
+import {CURRENCIES, DEPENDENCIES, EPM_COLUMNS, EPMS, PLT_COLUMNS, TEMPLATES, UNITS} from "./data";
 import {SystemTagsService} from "../../../shared/services/system-tags.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
+import {Message} from "../../../shared/message";
+import * as leftMenuStore from "../../../shared/components/plt/plt-left-menu/store";
 
 
 @Component({
@@ -41,11 +44,20 @@ import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag
 })
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
+  tagsInput: leftMenuStore.Input;
+
+  dropAll = (param) => null;
+
   someItemsAreSelected = false;
+  groupedByPure = false;
+  allRowsExpanded = true;
   selectAll = false;
   listOfPlts = [];
   listOfPltsData = [];
+  listOfPltsThread = [];
   selectedListOfPlts = [];
+  template = {id: 0, type: '', name: 'none', description: '', adjs: []};
+  templateList = [this.template, ...TEMPLATES];
   drawerIndex = 0;
   params = {};
   loading = true;
@@ -66,16 +78,23 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
   searchAddress: string;
   listOfPltsCache: any[];
+  saveTemplate = false;
+  loadTemplate = false;
+  templateName: string;
+  templateType: string = 'Local';
+  templateDesc: string;
+  listOfPltsThreadCache: any[];
   listOfDeletedPlts: any[] = [];
   frozenColumns: any[] = [];
   frozenColumnsCache: any[] = [];
   extraFrozenColumns: any[] = [];
   extraFrozenColumnsCache: any[] = [];
-  frozenWidth: any = '463';
-  headerWidth: any = '403px';
+  frozenWidth: any = '513';
+  headerWidth: any = '453px';
   genericWidth: any = ['409px', '33px', '157px'];
   selectedAdjustment: any;
   shownDropDown: any;
+  rowKeys: any = [];
   lastModifiedAdj;
   dataColumns = [];
   dataColumnsCache = [];
@@ -252,6 +271,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   };
   manageReturnPeriods = false;
   manageAdjColumn = false;
+  rowGroupMetadata = {
+    'SPLTH-000735433': [],
+    'SPLTH-000735434': [],
+    'SPLTH-000735435': []
+  };
+
 
   @Select(WorkspaceState.getUserTags) userTags$;
   @Select(WorkspaceState) state$: Observable<any>;
@@ -259,6 +284,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   @Select(WorkspaceState.getLeftNavbarIsCollapsed()) leftNavbarIsCollapsed$;
   @ViewChild('dt')
   @ViewChild('iconNote') iconNote: ElementRef;
+  activeCheckboxSort: boolean = false;
+  descriptionDropDown: any = false;
+  deltaSwitch: boolean = false;
+  searchSelectedTemplate: any = this.template;
+  localTemplates: any = [];
+  globalTemplates: any = [];
+
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -269,6 +301,31 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     private systemTagService: SystemTagsService,
     private route$: ActivatedRoute) {
     super(router$, cdRef, store$);
+
+    this.tagsInput = {
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      projects: this.projects,
+      showDeleted: this.showDeleted,
+      filterData: this.filterData,
+      filters: this.filters,
+      deletedPltsLength: 0,
+      userTags: this.userTags,
+      selectedListOfPlts: this.selectedListOfPlts,
+      selectedTags: [],
+      operation: '',
+      systemTagsCount: this.systemTagsCount,
+      _tagModalVisible: this.tagModalVisible,
+      assignedTags: [],
+      assignedTagsCache: [],
+      toAssign: [],
+      toRemove: [],
+      suggested: [],
+      allTags: [],
+      usedInWs: [],
+      wsHeaderSelected: this.wsHeaderSelected,
+      pathTab: false
+    }
   }
 
   observeRouteParams() {
@@ -293,6 +350,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   ngOnInit() {
     this.initDataColumns();
     this.initFrozenWidth();
+    this.initTemplateList();
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
     ).subscribe(() => {
@@ -302,32 +360,69 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         },
         wsIdentifier: this.workspaceId + '-' + this.uwy
       }));
+      /*this.dispatch(new fromWorkspaceStore.loadAllAdjustmentApplication({
+        params: {
+          workspaceId: this.workspaceId, uwy: this.uwy
+        },
+        wsIdentifier: this.workspaceId + '-' + this.uwy
+      }));*/
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
       this.systemTagsCount = this.systemTagService.countSystemTags(data);
       this.listOfPltsCache = _.map(data, (v, k) => ({...v, pltId: k}));
       this.listOfPltsData = [...this.listOfPltsCache];
-      this.selectedListOfPlts = _.filter(data, (v, k) => v.selected);
-
+      this.listOfPltsData = _.filter(this.listOfPltsData, pure => _.some(pure.threads, thread => thread.toCalibrate));
+      this.initThreadsData();
+      // console.log('pltThread', Array.prototype.concat.apply([],this.listOfPltsData.map(row => row.threads)))
       this.detectChanges();
+      console.log(data);
+      _.forEach(this.listOfPltsData, row => {
+        this.rowKeys[row.pltId] = true;
+      })
+      // this.rowKeys = this.listOfPltsData.map(e => e.pltId)
+      console.log('rowKey ===> ', this.rowKeys);
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe(data => {
-      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsData.length) && this.listOfPltsData.length > 0;
+      this.selectAll = this.selectedListOfPlts.length > 0 || (this.selectedListOfPlts.length == this.listOfPltsThread.length) && this.listOfPltsThread.length > 0;
 
-      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsData.length && this.selectedListOfPlts.length > 0;
+      this.someItemsAreSelected = this.selectedListOfPlts.length < this.listOfPltsThread.length && this.selectedListOfPlts.length > 0;
       this.detectChanges();
     });
-    console.log(this.randomMetaData);
+    this.listOfPltsData.sort(this.dynamicSort("pureId"));
+    this.updateRowGroupMetaData();
+  }
+
+  initTemplateList() {
+    console.log('template List ======> ', this.templateList)
+
+    _.forEach(this.templateList, (row: any) => {
+      if (row.type == 'Global' && !this.globalTemplates.includes(row)) {
+        this.globalTemplates.push(row)
+      } else if (row.type == 'Local' && !this.localTemplates.includes(row)) {
+        this.localTemplates.push(row)
+      }
+    })
+    console.log('local List ======> ', this.localTemplates)
+    console.log('global List ======> ', this.globalTemplates)
+  }
+
+  initThreadsData() {
+    if (this.listOfPltsData) {
+      this.listOfPltsThread = Array.prototype.concat.apply([], this.listOfPltsData.map(row => row.threads));
+      this.listOfPltsThreadCache = _.filter(this.listOfPltsThread, row => row.toCalibrate);
+      this.listOfPltsThread = [...this.listOfPltsThreadCache];
+      this.selectedListOfPlts = _.filter(this.listOfPltsThread, (v, k) => v.selected).map(e => e.pltId);
+    }
   }
 
   initRandomMetaData() {
     const cols: any[] = ['AAL', 'EPM2', 'EPM5', 'EPM10', 'EPM25', 'EPM50', 'EPM100', 'EPM250', 'EPM500', 'EPM1000', 'EPM5000', 'EPM10000'];
-    _.forEach(this.listOfPltsData, value => {
+    _.forEach(this.listOfPltsThread, value => {
       this.randomMetaData[value.pltId] = {}
     })
-    _.forEach(this.listOfPltsData, value => {
+    _.forEach(this.listOfPltsThread, value => {
       _.forEach(cols, col => {
         if (col == 'AAL') {
           this.randomMetaData[value.pltId][col] = [
@@ -371,6 +466,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       return result * sortOrder;
     }
   }
+
   initDataColumns() {
     this.dataColumns = [];
     this.frozenColumns = [];
@@ -391,7 +487,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       }
 
     } else {
-      if (this.tableType == 'adjustments') {
+      if (this.tableType == 'adjustments' || this.tableType == 'Impacts') {
         _.forEach(this.pltColumns, (value, key) => {
           if (value.extended && !value.frozen) {
             this.dataColumns.push(value);
@@ -426,6 +522,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     console.log('frozenColumns ==> ', this.frozenColumns);
     console.log('extraFrozenColumns ==> ', this.extraFrozenColumns);
   }
+
   sort(sort: { key: string, value: string }): void {
     if (sort.value) {
       this.sortData = _.merge({}, this.sortData, {
@@ -502,8 +599,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       plts: event.plts,
       forDeleted: this.showDeleted
     }));
-    console.log(this.listOfPltsData);
+    this.initThreadsData();
+    console.log(this.selectedListOfPlts);
     this.cdRef.detectChanges()
+
   }
 
 
@@ -519,14 +618,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     })
   }
 
-  sortChange(field: any, sortCol: any) {
-    if (!sortCol) {
-      this.sortData[field] = 'asc';
-    } else if (sortCol === 'asc') {
-      this.sortData[field] = 'desc';
-    } else if (sortCol === 'desc') {
-      this.sortData[field] = null
-    }
+  sortChange(sortData) {
+    this.sortData = sortData;
+    console.log(this.sortData);
   }
 
   extend() {
@@ -536,8 +630,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.frozenWidth = '0'
       this.genericWidth = ['1019px', '33px', '157px'];
     } else {
-      this.headerWidth = '403px';
-      this.tableType == 'adjustments' ? this.frozenWidth = '463' : this.frozenWidth = '403';
+      this.headerWidth = '453px';
+      this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '513' : this.frozenWidth = '453';
       this.genericWidth = ['409px', '33px', '157px '];
     }
     this.adjustExention();
@@ -580,6 +674,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.categorySelectedFromAdjustement = null;
     this.inputValue = '';
     this.singleValue = null;
+    this.columnPosition = null;
+
     if (!bool) {
       this.idPlt = data.pltId;
       this.addAdjustement = true;
@@ -587,12 +683,14 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.addAdjustement = false;
     }
     this.isVisible = true;
+    this.cdRef.detectChanges();
   }
 
   handleCancel(): void {
     this.singleValue = null;
     this.columnPosition = null;
     this.isVisible = false;
+    this.cdRef.detectChanges();
   }
 
   addAdjustment($event) {
@@ -609,7 +707,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         adjustementType: adjustementType,
         adjustement: adjustement,
         columnPosition: columnPosition,
-        pltId: [this.idPlt],
+        pltId: this.listOfPltsThread.filter(row => row.pltId == this.idPlt),
       }));
     } else {
       if (boolAdj) {
@@ -649,10 +747,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         clientLengthArray.push(countClient);
       });
     });
-    let baseWidth = 120 * Math.max(...baseLengthArray);
-    let clientWidth = 120 * Math.max(...clientLengthArray);
-    clientWidth == 0 ? clientWidth = 120 : null;
-    baseWidth == 0 ? baseWidth = 120 : null;
+    let baseWidth = 130 * Math.max(...baseLengthArray);
+    let clientWidth = 130 * Math.max(...clientLengthArray);
+    clientWidth < 260 ? clientWidth = 260 : null;
+    baseWidth < 260 ? baseWidth = 260 : null;
     let indexBase = _.findIndex(this.dataColumns, col => col.fields == 'base');
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();
@@ -667,11 +765,12 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.singleValue = _.find(this.AdjustementType, {name: "Linear"});
       this.columnPosition = adj.value;
     }
+    console.log(this.listOfPltsThread);
     this.dispatch(new applyAdjustment({
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.listOfPltsData,
+      pltId: this.listOfPltsThread.filter(row => row.status != 'locked'),
     }));
     this.adjustColWidth(adj);
     this.singleValue = null;
@@ -731,9 +830,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       adjustementType: this.singleValue,
       adjustement: adj,
       columnPosition: this.columnPosition,
-      pltId: this.selectedListOfPlts,
+      pltId: this.listOfPltsThread.filter(row => row.selected),
     }));
-    this.adjustColWidth(adj);
+    // this.adjustColWidth(adj);
   }
 
   ModifyAdjustement(adj) {
@@ -748,6 +847,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       this.columnPosition = adj.value;
     }
     this.isVisible = true;
+    console.log(this.categorySelectedFromAdjustement)
   }
 
   DeleteAdjustement(adj) {
@@ -782,12 +882,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
 
-  onDrop(col, pltId) {
-    /* this.dispatch(new dropAdjustment({
-       pltId: pltId,
-       adjustement: this.draggedAdjs
-     }))*/
-    this.adjustColWidth(this.draggedAdjs);
+  onDrop(col, pltId, draggedAdjs, lastpltId) {
+    this.dispatch(new dropAdjustment({
+      pltId: pltId,
+      adjustement: draggedAdjs,
+      lastpltId: lastpltId
+    }))
+    this.adjustColWidth(draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
   }
@@ -919,11 +1020,11 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   }
 
-  onTableTypeChange($event) {
-    this.tableType = $event ? 'EP Metrics' : 'adjustments';
+  onTableTypeChange() {
+    // this.tableType = $event ? 'EP Metrics' : 'adjustments';
     this.initDataColumns();
-    this.headerWidth = '403px';
-    this.tableType == 'adjustments' ? this.frozenWidth = '463' : this.frozenWidth = '403';
+    this.headerWidth = '453px';
+    this.tableType == 'adjustments' || this.tableType == 'Impacts' ? this.frozenWidth = '513' : this.frozenWidth = '453';
   }
 
   changeEPM(epm) {
@@ -1016,7 +1117,242 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   }
 
-  dropAll(param){
-    throw new Error('To be implemented !');
+  updateRowGroupMetaData() {
+    this.rowGroupMetadata = {
+      'SPLTH-000735433': [],
+      'SPLTH-000735434': [],
+      'SPLTH-000735435': []
+    };
+    if (this.listOfPltsData) {
+      _.forEach(this.listOfPltsData, (value, i) => {
+        if (!this.rowGroupMetadata[value.pureId]) {
+          this.rowGroupMetadata[value.pureId] = [i]
+        }
+        this.rowGroupMetadata[value.pureId].push(value.pltId)
+
+      })
+      console.log(this.rowGroupMetadata);
+    }
+  }
+
+  expandAll(expand) {
+    if (expand) {
+      _.forEach(this.listOfPltsData, row => {
+        this.rowKeys[row.pltId] = true;
+      })
+      this.allRowsExpanded = true;
+    } else {
+      _.forEach(this.listOfPltsData, row => {
+        this.rowKeys[row.pltId] = false;
+      })
+      this.allRowsExpanded = false;
+    }
+  }
+
+  checkBoxsort() {
+    this.activeCheckboxSort = !this.activeCheckboxSort;
+    console.log('checked', this.activeCheckboxSort)
+    if (this.activeCheckboxSort) {
+      this.listOfPltsThread = _.sortBy(this.listOfPltsThread, [(o) => !o.selected]);
+    } else {
+      this.listOfPltsThread = this.listOfPltsThreadCache;
+    }
+  }
+
+  closeSaveTemplate() {
+    this.saveTemplate = false;
+    this.templateName = null;
+    this.templateType = "Local";
+    this.templateDesc = null;
+  }
+
+  openSaveTemplate(save: boolean) {
+    if (save) {
+      if (this.template.id == 0) {
+        this.saveTemplate = true;
+      } else {
+        // Save adjustment into current here
+        this.template.adjs = this.adjsArray;
+      }
+    } else {
+      this.saveTemplate = true;
+    }
+  }
+
+  saveCurrentTemplate() {
+    let today = new Date();
+    let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    const currentTemplate = {
+      id: numberAdjs,
+      type: this.templateType,
+      name: this.templateName,
+      description: this.templateDesc,
+      adjs: this.adjsArray
+    };
+    this.template = currentTemplate
+    this.templateList.push(currentTemplate);
+    this.initTemplateList();
+    this.closeSaveTemplate();
+  }
+
+  leftMenuActionDispatcher(action: Message) {
+    console.log(action);
+
+    switch (action.type) {
+
+      /*case leftMenuStore.unCkeckAllPlts:
+        this.unCheckAll();
+        break;*/
+      case leftMenuStore.emitFilters:
+        this.emitFilters(action.payload);
+        break;
+      case leftMenuStore.setFilters:
+        this.setFilters(action.payload);
+        break;
+      case leftMenuStore.resetPath:
+        this.resetPath();
+        break;
+      case leftMenuStore.headerSelection:
+        this.setWsHeaderSelect(action.payload);
+        break;
+      case leftMenuStore.filterByProject:
+        this.filter(action.payload);
+        break;
+      case leftMenuStore.onSelectProjects:
+        this.setSelectedProjects(action.payload);
+        break;
+      case leftMenuStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
+      case leftMenuStore.toggleDeletedPlts:
+        this.toggleDeletePlts(action.payload);
+        break;
+      case leftMenuStore.onSelectSysTagCount:
+        this.selectSystemTag(action.payload.section, action.payload.tag);
+        break;
+      case leftMenuStore.onSetSelectedUserTags:
+        this.setUserTags(action.payload);
+        break;
+
+      //Tag Manager
+
+      case leftMenuStore.addNewTag:
+        this.addNewTag(action.payload)
+        break;
+      case leftMenuStore.toggleTag:
+        this.toggleTag(action.payload);
+        break;
+      case leftMenuStore.confirmSelection:
+        this.confirmSelection();
+        break;
+      case leftMenuStore.clearSelection:
+        this.clearSelection();
+        break;
+      case leftMenuStore.save:
+        this.save();
+        break;
+    }
+  }
+
+  updateTagsInput(key, value) {
+    this.tagsInput = {...this.tagsInput, [key]: value};
+  }
+
+  updateTableAndTagsInputs(key, value) {
+    this.updateTagsInput(key, value);
+  }
+
+  addNewTag(tag) {
+    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+  }
+
+  toggleTag({i, operation, source}) {
+    if (operation == this.tagsInput['operation']) {
+      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+      } else {
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+      }
+    } else {
+      this.updateTagsInput('operation', operation);
+      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+    }
+
+    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+  }
+
+  confirmSelection() {
+    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
+    if (this.tagsInput.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    }
+
+    if (this.tagsInput.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+    }
+
+    this.clearSelection();
+  }
+
+  /*checkTagType( tag ) {
+    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
+  }
+
+  updateTagsType(d) {
+    return _.map(d, tag => ({...tag, type: this.checkTagType(tag)}))
+  }*/
+
+  clearSelection() {
+    this.updateTagsInput('selectedTags', {});
+    this.updateTagsInput('operation', null);
+  }
+
+  save() {
+    this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
+      userId: 1,
+      wsId: this.workspaceId,
+      uwYear: this.uwy,
+      selectedTags: this.tagsInput.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+    }));
+    this.tagsInput = {
+      ...this.tagsInput,
+      _tagModalVisible: false,
+      wsHeaderSelected: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
+    };
+  }
+
+  onDeltaChange($event) {
+    if ($event) {
+      this.EPMDisplay = 'amount';
+    } else {
+      this.EPMDisplay = 'percentage';
+    }
+  }
+
+  openLoadTemplate() {
+    this.loadTemplate = true;
+  }
+
+  closeLoadTemplate() {
+    this.loadTemplate = false;
+  }
+
+  loadCurrentTemplate() {
+    this.template = this.searchSelectedTemplate;
+    this.adjsArray = this.searchSelectedTemplate.adjs;
+    this.closeLoadTemplate();
   }
 }

@@ -1,11 +1,20 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output
+} from '@angular/core';
 import * as _ from 'lodash'
 import {ADJUSTMENTS_ARRAY} from "../../../containers/workspace-calibration/data";
 
 @Component({
   selector: 'app-adjustment-pop-up',
   templateUrl: './adjustment-pop-up.component.html',
-  styleUrls: ['./adjustment-pop-up.component.scss']
+  styleUrls: ['./adjustment-pop-up.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdjustmentPopUpComponent implements OnInit {
 
@@ -19,11 +28,11 @@ export class AdjustmentPopUpComponent implements OnInit {
   allAdjsArray = _.merge([], ADJUSTMENTS_ARRAY);
   favoredBasis: any[];
   unFavoredBasis: any[];
-  @Input() singleValue;
-  @Input() AdjustementType;
-  @Input() linear;
-  @Input() modifyModal;
-  @Input() columnPosition;
+  @Input('singleValue') singleValue;
+  @Input('AdjustementType') AdjustementType;
+  linear: any;
+  @Input('modifyModal') modifyModal;
+  @Input('columnPosition') columnPosition;
   size = 'large';
   @Input() categorySelected: any;
   inputValue: any;
@@ -31,11 +40,12 @@ export class AdjustmentPopUpComponent implements OnInit {
   @Input() isVisible: boolean;
   @Input() global: boolean;
 
-  constructor() {
+  constructor(private changeDetect: ChangeDetectorRef) {
   }
 
   ngOnInit() {
     this.initFavored();
+
   }
 
   initFavored() {
@@ -72,6 +82,10 @@ export class AdjustmentPopUpComponent implements OnInit {
 
   hide() {
     this.handleCancel.emit();
+    this.linear = false;
+    this.singleValue = null;
+    this.columnPosition = null;
+    this.changeDetect.detectChanges();
   }
 
 
@@ -85,5 +99,12 @@ export class AdjustmentPopUpComponent implements OnInit {
     console.log('unfavorise : ', item);
     _.filter(this.allAdjsArray, value => value == item)[0].favored = false;
     this.initFavored();
+  }
+
+  visibleChange($event: any) {
+    if ($event) {
+      console.log(this.categorySelected)
+      console.log(this.categorySelectedFromAdjustement)
+    }
   }
 }

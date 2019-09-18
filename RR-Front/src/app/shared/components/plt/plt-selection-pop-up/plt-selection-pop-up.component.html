@@ -1,0 +1,118 @@
+<p-dialog [(visible)]="isVisible"
+          [closable]="false"
+          [styleClass]="'m-dialog-modal-lg plt-selection-pop-up' + (browesing ? ' borderless' : '')"
+          appendTo="body"
+          [modal]="true"
+          [responsive]="true"
+          [baseZIndex]="1"
+          [autoZIndex]="false"
+          (onHide)="onHide()"
+          (onShow)="onShow()">
+
+  <p-header>
+    <div class="header">
+      <ng-container *ngIf="browesing">
+        <div class="previous-container">
+          <button class="a-buttons-contained override">
+            <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
+          </button>
+          <h4>
+            Select PLTs
+          </h4>
+        </div>
+      </ng-container>
+
+      <ng-container *ngIf="!browesing">
+        <h4 >
+          Select Workspace
+        </h4>
+
+        <div [formGroup]="keywordFormGroup">
+
+          <nz-input-group style="z-index: 1001"
+                          class="global-search-input-grp"
+                          [ngClass]="{'global-search-input-grp-active': 1===1}"
+                          [nzSuffix]="suffixIconSearch">
+            <input searchInput [ngClass]="{'search-page-active-border': 1===1}"
+                   (onEnter)="onEnter()"
+                   #searchInput
+                   formControlName="keyword"  (click)="search()"
+                   class="search-input" type="text" nz-input [placeholder]="'Search for Treaty' ">
+          </nz-input-group>
+
+          <ng-template #suffixIconSearch>
+            <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
+               nzTheme="outline"></i>
+            <i [ngClass]="{'search-page-active-shape': 1===1}" (click)="onEnter()" style="cursor: pointer"
+               class="icon-search_24px"></i>
+          </ng-template>
+
+        </div>
+      </ng-container>
+      <i (click)="isVisible=false" style="cursor: pointer" class="icon-close_24px"></i>
+    </div>
+  </p-header>
+
+  <ng-container *ngIf="!browesing">
+    <div style="height:600px;">
+
+      <app-table [tableColumn]="selectWsTable" [sortable]="false" [totalRecords]="paginationOption?.total" #dt
+                 [listOfData]="contracts" [virtualScroll]="true" (selectOne)="openWorkspaceInSlider($event)"
+                 [tableWidth]="'1000px'" (loadMore)="loadMore($event)"
+                 (filterData)="filterData($event.searchValue, $event.searchAddress)"
+                 (dbClickItem)="onRowSelect($event);getBrowesingItems($event)"
+                 (onRowSelect)="onRowSelect($event.data)"
+                 (onRowUnselect)="onRowUnselect($event)"
+                 [selectionMode]="'single'"
+                 [loading]="loading">
+      </app-table>
+
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="browesing">
+    <div class="content">
+      <div class="left">
+        <app-plt-left-menu
+        >
+        </app-plt-left-menu>
+      </div>
+      <div
+        [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
+        class="center">
+        <div class="title-as-tab">
+          <span>
+            PLTs
+          </span>
+        </div>
+        <div class="PLTs-content">
+          <app-plt-main-table
+            [tableInputs]="Inputs | pickKeys : tableInputs"
+            (actionDispatcher)="tableActionDispatcher($event)"
+          ></app-plt-main-table>
+        </div>
+      </div>
+      <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
+        <app-plt-right-menu
+          (actionDispatcher)="rightMenuActionDispatcher($event)"
+          [Inputs]="rightMenuInputs"
+        ></app-plt-right-menu>
+      </div>
+    </div>
+  </ng-container>
+
+  <p-footer>
+    <div class="a-control-buttons">
+      <button class="a-button-text-cancel" (click)="onHide()" >CANCEL</button>
+      <ng-container *ngIf="!browesing">
+        <button [ngClass]="{'a-buttons-contained-disabled' : !selectedWorkspace, 'a-buttons-contained': selectedWorkspace}"
+                [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">{{ multiSteps ? 'NEXT' : 'SELECT'}}</button>
+      </ng-container>
+      <ng-container *ngIf="browesing">
+        <button [ngClass]="{'a-buttons-contained-disabled' : Inputs['selectedListOfPlts'].length == 0, 'a-buttons-contained': Inputs['selectedListOfPlts'].length > 0 }"
+                [disabled]="Inputs['selectedListOfPlts'].length == 0" (click)="setBrowesingItems()">SELECT</button>
+      </ng-container>
+    </div>
+  </p-footer>
+
+</p-dialog>

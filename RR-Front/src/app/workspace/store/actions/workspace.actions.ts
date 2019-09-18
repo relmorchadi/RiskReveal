@@ -5,11 +5,19 @@ export class loadWSFromLocalStorage {
   }
 }
 
+export class loadWorkSpaceAndPlts {
+  static readonly type = '[Workspace] Load Workspace And Plts';
+  constructor(public payload?: any) {}
+}
+
 export class LoadWS {
   static readonly type = '[Workspace] Load WS';
+  constructor(public payload?: any) {}
+}
 
-  constructor(public payload?: any) {
-  }
+export class LoadFacWs {
+  static readonly type = '[Workspace] Load Fac WS';
+  constructor(public payload?: any) {}
 }
 
 export class LoadWsSuccess {
@@ -26,18 +34,19 @@ export class LoadWsFail {
   }
 }
 
-export class openWS {
+export class OpenWS {
   static readonly type = '[Workspace] OpenWS';
+  constructor(public payload?: any) {}
+}
 
-  constructor(public payload?: any) {
-  }
+export class OpenFacWS {
+  static readonly type = '[Workspace] Open Fac Workspace';
+  constructor(public payload?: any) {}
 }
 
 export class OpenMultiWS {
   static readonly type = '[Workspace] Multiple OpenWS';
-
-  constructor(public payload?: any[]) {
-  }
+  constructor(public payload?: any[]) {}
 }
 
 export class CloseWS {

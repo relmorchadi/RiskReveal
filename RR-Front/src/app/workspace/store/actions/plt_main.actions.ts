@@ -73,16 +73,6 @@ export class createOrAssignTags {
   constructor(public payload?: any) {}
 }
 
-export class assignPltsToTagSuccess {
-  static readonly type = '[PLT Main] Assign plts to Tag Success'
-  constructor(public payload?: any) {}
-}
-
-export class assignPltsToTagFail {
-  static readonly type = '[PLT Main] Assign plts to Tag Fail'
-  constructor(public payload?: any) {}
-}
-
 export class CreateTagSuccess {
   static readonly type = '[PLT Main] Create Tag Success'
   constructor(public payload?: any) {}
@@ -154,3 +144,54 @@ export class setCloneConfig {
   constructor(public payload?: any) {
   }
 }
+
+export class AddNewTag {
+  static readonly type = '[PLT Main] Add New Tag';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class DeleteTag {
+  static readonly type = '[PLT Main] Delete Tag';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class GetTagsBySelection {
+  static readonly type = '[PLT Main] Get Tags By Selection';
+
+  constructor(public payload?: any) {}
+}
+
+export class GetTagsBySelectionSuccess {
+  static readonly type = '[PLT Main] Get Tags By Selection Success';
+
+  constructor(public payload?: any) {}
+}
+
+export class GetTagsBySelectionFail {
+  static readonly type = '[PLT Main] Get Tags By Selection Fail';
+
+  constructor(public payload?: any) {}
+}
+
+export class AssignPltsToTag {
+  static readonly type = '[Tag Manager] AssignPltsToTag';
+
+  constructor(public payload?: any) {}
+}
+
+export class assignPltsToTagSuccess {
+  static readonly type = '[PLT Main] Assign plts to Tag Success'
+  constructor(public payload?: any) {}
+}
+
+export class assignPltsToTagFail {
+  static readonly type = '[PLT Main] Assign plts to Tag Fail'
+  constructor(public payload?: any) {}
+}
+
+
+

@@ -12,6 +12,7 @@ import {HeaderState} from "../../core/store/states/header.state";
 import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
 import {EMPTY} from "rxjs";
 import {WsProjectService} from "./ws-project.service";
+import {defaultInuringState} from "./inuring.service";
 
 @Injectable({
   providedIn: 'root'
@@ -23,36 +24,111 @@ export class WorkspaceService {
 
   loadWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWS) {
     const {
-      wsId,
-      uwYear,
-      route
+      wsId, uwYear, route, type
     } = payload;
     ctx.patchState({loading: true});
     return this.wsApi.searchWorkspace(wsId, uwYear)
       .pipe(
         mergeMap(ws => ctx.dispatch(new fromWS.LoadWsSuccess({
-          wsId,
-          uwYear,
-          ws,
-          route
+          wsId, uwYear, ws, route, type
         }))),
         catchError(e => ctx.dispatch(new fromWS.LoadWsFail()))
       );
   }
 
+  loadWsFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFacWs) {
+    const {
+      wsId, uwYear, route, type
+    } = payload;
+    ctx.patchState({loading: true});
+
+    const ws = {
+        id: 'RCC000022.2019.1.0.1',
+        workspaceName: 'CFS-SCOR REASS.-MADRID',
+        cedantCode: '22231',
+        cedantName: 'SCOR SE',
+        subsidiaryId: '2',
+        subsidiaryName: 'SCOR REASS.',
+        ledgerName: 'MADRID',
+        inceptionDate: 1546297200000,
+        expiryDate: 1577746800000,
+        subsidiaryLedgerId: '2',
+        treatySections: [
+          'CFS-SCOR REASS.-MADRID RCC000022/ 1'
+          ],
+        years: [
+            wsId
+          ],
+        projects: [
+          {
+            workspaceId: '00C0022',
+            uwy: 2019,
+            projectId: 'P-000008932',
+            name: 'Post-Inured PLTs',
+            description: null,
+            assignedTo: null,
+            createdBy: 'Nathalie Dulac',
+            creationDate: 1559922212147,
+            dueDate: 1559922195933,
+            linkFlag: true,
+            postInuredFlag: null,
+            publishFlag: false,
+            pltSum: null,
+            pltThreadSum: 0,
+            regionPerilSum: 0,
+            xactSum: 0,
+            sourceProjectId: null,
+            sourceProjectName: null,
+            sourceWsId: null,
+            sourceWsName: null,
+            locking: null,
+            selected: true
+          },
+          {
+            workspaceId: '00C0022',
+            uwy: 2019,
+            projectId: 'P-000008931',
+            name: 'Post-Inured PLTs',
+            description: null,
+            assignedTo: null,
+            createdBy: 'Nathalie Dulac',
+            creationDate: 1559922196097,
+            dueDate: 1559922179000,
+            linkFlag: true,
+            postInuredFlag: null,
+            publishFlag: false,
+            pltSum: null,
+            pltThreadSum: 0,
+            regionPerilSum: 0,
+            xactSum: 0,
+            sourceProjectId: null,
+            sourceProjectName: null,
+            sourceWsId: null,
+            sourceWsName: null,
+            locking: null
+          }
+          ]
+    };
+    ctx.dispatch(new fromWS.LoadWsSuccess({
+      wsId, uwYear, ws, route, type
+    }));
+  }
+
   loadWsSuccess(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadWsSuccess) {
-    const {wsId, uwYear, ws, route} = payload;
+    const {wsId, uwYear, ws, route, type} = payload;
     const {workspaceName, programName, cedantName, projects} = ws;
     const wsIdentifier = `${wsId}-${uwYear}`;
     console.log('this are projects', projects);
-    (projects || []).length > 0 ? ws.projects= this._selectProject(projects, 0) : null;
+    (projects || []).length > 0 ? ws.projects = this._selectProject(projects, 0) : null;
     ctx.dispatch(new fromHeader.AddWsToRecent({wsId, uwYear, workspaceName, programName, cedantName}));
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content = _.merge(draft.content, {
         [wsIdentifier]: {
           wsId,
-          uwYear, ...ws,
+          uwYear,
+          ...ws,
           projects,
+          workspaceType: type,
           collapseWorkspaceDetail: true,
           route,
           leftNavbarCollapsed: false,
@@ -65,6 +141,11 @@ export class WorkspaceService {
             },
             openedPlt: {},
             userTags: {},
+            userTagManager: {
+              usedInWs: {},
+              suggested: {},
+              allTags: {}
+            },
             cloneConfig: {},
             loading: false
           },
@@ -146,7 +227,16 @@ export class WorkspaceService {
             selectedEDMOrRDM: null,
             activeAddBasket: false
           },
-          fileBaseImport: {}
+          scopeOfCompletence: {
+            data: {},
+          },
+          fileBaseImport: {
+            folders: null,
+            files: null,
+            selectedFiles: null,
+            importedPLTs: null
+          },
+          inuring: defaultInuringState
         }
       });
       draft.loading = false;
@@ -157,8 +247,9 @@ export class WorkspaceService {
     }));
   }
 
-  openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.openWS) {
-    const {wsId, uwYear, route} = payload;
+
+  openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
+    const {wsId, uwYear, route, type} = payload;
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
@@ -172,7 +263,29 @@ export class WorkspaceService {
       return ctx.dispatch(new fromWS.LoadWS({
         wsId,
         uwYear,
-        route
+        route,
+        type
+      }));
+    }
+  }
+
+  openFacWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenFacWS) {
+    const {wsId, uwYear, route, type} = payload;
+    const state = ctx.getState();
+    const wsIdentifier = wsId + '-' + uwYear;
+
+    if (state.content[wsIdentifier]) {
+      this.updateWsRouting(ctx, {wsId: wsIdentifier, route});
+      return ctx.dispatch(new fromWS.SetCurrentTab({
+        index: _.findIndex(_.toArray(state.content), ws => ws.wsId == wsId && ws.uwYear == uwYear),
+        wsIdentifier
+      }));
+    } else {
+      return ctx.dispatch(new fromWS.LoadFacWs({
+        wsId,
+        uwYear,
+        route,
+        type
       }));
     }
   }
@@ -298,7 +411,7 @@ export class WorkspaceService {
     return ctx.patchState(produce(ctx.getState(), draft => {
       const {projects} = draft.content[wsIdentifier];
       draft.content[wsIdentifier].projects = [...this._selectProject(projects, projectIndex)];
-    }))
+    }));
   }
 
   addNewProject(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.AddNewProject) {
