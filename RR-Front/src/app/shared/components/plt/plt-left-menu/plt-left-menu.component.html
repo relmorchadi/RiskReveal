@@ -1,12 +1,12 @@
-<nz-tabset class="tabset-left">
-  <nz-tab *ngIf="tagsInput.pathTab" [nzTitle]="path" class="path-content">
+<nz-tabset class="tabset-left tabs-standard-top">
+  <nz-tab *ngIf="tagsInput?.pathTab" [nzTitle]="path" class="path-content">
     <ng-template #path>
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
     <div class="upPartLeftMenu">
         <span class="wsHeader" [ngStyle]="{'background-color': tagsInput.wsHeaderSelected && !tagsInput.showDeleted ?  '#FDFBDF' : 'white'}" (click)="resetPath()">
                       <i class="icon-window-section"></i>
-          {{tagsInput.wsId}} - {{tagsInput.uwYear}}
+          {{tagsInput?.wsId}} - {{tagsInput?.uwYear}}
       </span>
       <ul class="title-list">
         <!--
@@ -58,7 +58,7 @@
           </button>
         </div>
         <div class="rest">
-          <div *ngFor="let key of tagsInput.userTags | keys" nz-row class="ml-3 mt-1">
+          <div *ngFor="let key of tagsInput?.userTags | keys" nz-row class="ml-3 mt-1">
             <span
               #tagMenu
               [ngClass]="{'active-tag': tagsInput.userTags[key]?.selected}"
@@ -83,28 +83,28 @@
         <nz-collapse
           [nzAccordion]="false"
         >
-          <ng-container *ngFor="let section of (tagsInput.systemTagsCount | keys)">
+          <ng-container *ngFor="let section of (tagsInput?.systemTagsCount | keys)">
             <ng-container >
               <nz-collapse-panel
                 [nzHeader]="section"
               >
-                <div *ngFor="let tag of ( tagsInput.systemTagsCount[section] | keys)"
+                <div *ngFor="let tag of ( tagsInput?.systemTagsCount[section] | keys)"
                      style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
                      class="ml-3 my-1"
                 >
                     <span
-                      [ngClass]="{'active-tag': tagsInput.systemTagsCount[section][tag].selected }"
+                      [ngClass]="{'active-tag': tagsInput?.systemTagsCount[section][tag].selected }"
                       class="a-chips-input-filled-textonly"
                       [ngStyle]="{
-                      'background-color': tagsInput.systemTagsCount[section][tag].count ? (section === 'Peril' ? perilColors[tag] ? perilColors[tag] : 'orange' : 'orange') : 'grey',
-                      'cursor': tagsInput.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      'background-color': tagsInput?.systemTagsCount[section][tag].count ? (section === 'Peril' ? perilColors[tag] ? perilColors[tag] : 'orange' : 'orange') : 'grey',
+                      'cursor': tagsInput?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
                       }"
                       (click)="setFilter('systemTag', tag, section);selectSystemTag(section,tag)">
                       <span [ngStyle]="{
-                      'cursor': tagsInput.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
+                      'cursor': tagsInput?.systemTagsCount[section][tag].count ? 'pointer' : 'not-allowed'
                       }" class="chips-content">{{tag}}</span>
                       <span class="chips-counter">
-                        {{tagsInput.systemTagsCount[section][tag].count}}/{{tagsInput.systemTagsCount[section][tag].max}}
+                        {{tagsInput?.systemTagsCount[section][tag].count}}/{{tagsInput?.systemTagsCount[section][tag].max}}
                         <span [ngStyle]="{'background-color': 'white'}" class="chips-layer"></span>
                       </span>
                     </span>
@@ -232,7 +232,7 @@
   </div>
   <p-footer>
     <div class="footer">
-      <form *ngIf="!tagsInput.operation" [formGroup]="tagForm" class="tag-container footer-left">
+      <form *ngIf="!tagsInput?.operation" [formGroup]="tagForm" class="tag-container footer-left">
         <div class="a-form-control" style="flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
@@ -263,10 +263,10 @@
           </button>
         </div>
       </form>
-      <div *ngIf="tagsInput.operation">
-        <span>{{ tagsInput.operation == 'assign' ? (tagsInput.selectedTags | keys).length :  (tagsInput.selectedTags | keys).length}} {{ tagsInput.operation == 'assign' ? 'Assigned' : 'Unassigned'}} Tags Selected</span>
+      <div *ngIf="tagsInput?.operation">
+        <span>{{ tagsInput?.operation == 'assign' ? (tagsInput?.selectedTags | keys).length :  (tagsInput?.selectedTags | keys).length}} {{ tagsInput.operation == 'assign' ? 'Assigned' : 'Unassigned'}} Tags Selected</span>
         <button (click)="clearSelection()" class="a-button-text-cancel">clear</button>
-        <button class="a-buttons-contained" (click)="confirmSelection()"> {{ tagsInput.operation == 'assign' ? 'Assign' : 'Remove' }}</button>
+        <button class="a-buttons-contained" (click)="confirmSelection()"> {{ tagsInput?.operation == 'assign' ? 'Assign' : 'Remove' }}</button>
       </div>
       <div class="footer-right">
         <button (click)="handlePopUpCancel()" class="a-button-text-cancel">cancel</button>

@@ -308,6 +308,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
     if (target === 'R') {
       this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'S') {
+      console.log(event, rowData, target);
       this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'selectOne', value: event, item: rowData}));
     } else if (target === 'fpS') {
       this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'selectOne', value: event, item: rowData}));
@@ -573,15 +574,6 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   getSelectedPeqt(row) {
     return _.filter(_.filter(_.toArray(this.state.results.data), dt => dt.id === row.id)[0].peqt, ws => ws.selected === true).length;
-  }
-
-  getTitle() {
-    return this.filterPopUp === 'rdm' ? 'Analysis' : 'Portfolio';
-  }
-
-  openFilterPopUp(scope) {
-    this.filterModalVisibility = true;
-    this.filterPopUp = scope;
   }
 
   changePeqt(parent, target, selected) {

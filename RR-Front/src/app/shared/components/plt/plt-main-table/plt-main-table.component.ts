@@ -31,10 +31,11 @@ export class PltMainTableComponent implements OnInit {
   @ViewChild('cm') cm: TemplateRef<any>;
 
   @Input() tableInputs: tableStore.Input;
-
   @Input() containerPlts: any;
+  @Input() tableHeight = 'calc(100vh - 430px)';
 
-
+  selectedDropDown: any;
+  selectedDropDownTs: any;
   initContainer: [];
 
   @Output() setTagModalVisibility = new EventEmitter();
@@ -42,6 +43,7 @@ export class PltMainTableComponent implements OnInit {
   @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
   private activeCheckboxSort: boolean;
+  private activeCheckboxSortScope: boolean;
   private lastSelectedId: number;
   private lastClick: string;
   private userTagsLength: number;
@@ -60,6 +62,61 @@ export class PltMainTableComponent implements OnInit {
       type: tableStore.onCheckAll,
       payload: this.tableInputs.showDeleted
     })
+  }
+
+  checkAllScope(event) {
+    this.actionDispatcher.emit({
+      type: tableStore.onCheckAllScope,
+      payload: event
+
+    })
+  }
+
+  checkSelectedRows() {
+    let check = true;
+    let count = 0;
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      let valid = false;
+      plt.treatySectionsState.forEach(ts => {
+        if (ts.state != 'disabled') {
+          valid = true;
+          count++;
+        }
+      })
+      if (valid) {
+        if (!plt.selected) {
+          check = false;
+        }
+      }
+
+    })
+    if(count == 0) check = false;
+    return check;
+  }
+
+  checkMiddleState() {
+    let check = false;
+    let count = 0;
+    let count2 = 0;
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      if (plt.selected) {
+        count++;
+      }
+    })
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      let valid = false;
+      plt.treatySectionsState.forEach(ts => {
+        if (ts.state != 'disabled') {
+          valid = true
+        }
+      })
+      if (valid) count2++;
+
+    })
+    if (count < count2 && count != 0) {
+      check = true;
+    }
+    return check;
   }
 
   isPltAttached(plt, tsId) {
@@ -83,8 +140,19 @@ export class PltMainTableComponent implements OnInit {
       type: tableStore.deselectPlt,
       payload:
       pltId
-      })
+    })
 
+  }
+
+  selectDropDown(event, pltId, tsId) {
+    if (event) {
+      this.selectedDropDown = pltId;
+      this.selectedDropDownTs = tsId;
+    } else {
+
+      this.selectedDropDown = null;
+      this.selectedDropDownTs = null;
+    }
   }
 
   isPltDisabled(plts, tsId) {
@@ -116,6 +184,16 @@ export class PltMainTableComponent implements OnInit {
           this.tableInputs.listOfDeletedPltsData, [(o: any) => !o.selected]) : !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsCache : this.tableInputs.listOfDeletedPltsCache
     })
 
+  }
+
+  checkBoxSortScope() {
+    this.activeCheckboxSortScope = !this.activeCheckboxSortScope;
+
+    this.actionDispatcher.emit({
+      type: tableStore.checkBoxSortScope,
+      payload: this.activeCheckboxSortScope ?
+        _.sortBy(this.tableInputs.listOfPltsData, plt => !plt.selected) : _.sortBy(this.tableInputs.listOfPltsData, plt => plt.selected)
+    })
   }
 
   sortChange(field: any, sortCol: any) {
@@ -170,6 +248,28 @@ export class PltMainTableComponent implements OnInit {
     })
   }
 
+  attachToAllTs(plt) {
+    this.actionDispatcher.emit({
+      type: tableStore.attachToAllTs,
+      payload: {
+        pltId: plt.pltId,
+        regionPeril: plt.regionPerilCode,
+        targetRap: plt.grain
+      }
+    })
+  }
+
+  unattachOtherTs(plt, tsId) {
+    this.actionDispatcher.emit({
+      type: tableStore.attachToJustThisTs,
+      payload: {
+        pltId: plt.pltId,
+        regionPeril: plt.regionPerilCode,
+        targetRap: plt.grain,
+        tsId: tsId
+      }
+    })
+  }
 
   selectSinglePLT(pltId: number, $event: boolean) {
     this.actionDispatcher.emit({

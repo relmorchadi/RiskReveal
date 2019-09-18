@@ -36,6 +36,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   workspaceId: string;
   uwy: number;
   userTags: any;
+  showApplicablePlts: boolean = true;
   projects: any[];
   selectedItemForMenu: string;
   selectedPlt: any;
@@ -127,7 +128,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '25%',
+          width: '45px',
           icon: null,
           type: 'checkbox-scope',
           active: true
@@ -139,7 +140,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '24%',
+          width: '75px',
           icon: null,
           type: 'tags',
           active: true
@@ -152,7 +153,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           icon: null,
-          width: '28%',
+          width: '60',
           type: 'id',
           active: true
         },
@@ -163,7 +164,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '80%',
+          width: '150',
           icon: null,
           type: 'field',
           active: true
@@ -175,7 +176,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '22%',
+          width: '40',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -188,7 +189,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '35%',
+          width: '70',
           icon: null,
           type: 'field',
           active: true
@@ -200,7 +201,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '60%',
+          width: '100',
           icon: null,
           type: 'field',
           active: true
@@ -212,7 +213,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '70%',
+          width: '100',
           icon: null,
           type: 'field',
           active: true
@@ -223,35 +224,35 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           header: '17T008583/ 1',
           subHeader: '1st Cat XL',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '17T008583/ 2',
-          header: '17T008583/ 2',
+          fields: '17T010540 / 1',
+          header: '17T010540 / 1',
           subHeader: '2nd Cat XL',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '17T008583/ 3',
-          header: '17T008583/ 3',
-          subHeader: '3rd Cat XL',
+          fields: '20T002794 / 1',
+          header: '20T002794 / 1',
+          subHeader: 'Property/Engineering CAT 1st XL (All Perils)',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -277,7 +278,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
         },
       }
     };
-    this.tagsInput= {
+    this.tagsInput = {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
@@ -344,7 +345,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '25%',
+          width: '45px',
           icon: null,
           type: 'checkbox-scope',
           active: true
@@ -356,7 +357,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '24%',
+          width: '75px',
           icon: null,
           type: 'tags',
           active: true
@@ -369,7 +370,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           icon: null,
-          width: '28%',
+          width: '60',
           type: 'id',
           active: true
         },
@@ -380,7 +381,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '80%',
+          width: '150',
           icon: null,
           type: 'field',
           active: true
@@ -392,7 +393,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '22%',
+          width: '40',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -405,7 +406,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '35%',
+          width: '70',
           icon: null,
           type: 'field',
           active: true
@@ -417,7 +418,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '60%',
+          width: '100',
           icon: null,
           type: 'field',
           active: true
@@ -429,7 +430,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '70%',
+          width: '100',
           icon: null,
           type: 'field',
           active: true
@@ -440,35 +441,35 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           header: '17T008583/ 1',
           subHeader: '1st Cat XL',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '17T008583/ 2',
-          header: '17T008583/ 2',
+          fields: '17T010540 / 1',
+          header: '17T010540 / 1',
           subHeader: '2nd Cat XL',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '17T008583/ 3',
-          header: '17T008583/ 3',
-          subHeader: '3rd Cat XL',
+          fields: '20T002794 / 1',
+          header: '20T002794 / 1',
+          subHeader: 'Property/Engineering CAT 1st XL (All Perils)',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -538,7 +539,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '25%',
+          width: '45px',
           icon: null,
           type: 'checkbox-scope',
           active: true
@@ -550,7 +551,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '24%',
+          width: '75px',
           icon: null,
           type: 'tags',
           active: true
@@ -563,7 +564,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           icon: null,
-          width: '28%',
+          width: '60',
           type: 'id',
           active: true
         },
@@ -574,7 +575,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '80%',
+          width: '150',
           icon: null,
           type: 'field',
           active: true
@@ -586,7 +587,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '22%',
+          width: '40',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -599,7 +600,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '35%',
+          width: '70',
           icon: null,
           type: 'field',
           active: true
@@ -611,7 +612,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '60%',
+          width: '100',
           icon: null,
           type: 'field',
           active: true
@@ -623,7 +624,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '70%',
+          width: '100',
           icon: null,
           type: 'field',
           active: true
@@ -634,35 +635,35 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           header: '17T008583/ 1',
           subHeader: '1st Cat XL',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '17T008583/ 2',
-          header: '17T008583/ 2',
+          fields: '17T010540 / 1',
+          header: '17T010540 / 1',
           subHeader: '2nd Cat XL',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
         },
         {
           sortDir: 1,
-          fields: '17T008583/ 3',
-          header: '17T008583/ 3',
-          subHeader: '3rd Cat XL',
+          fields: '20T002794 / 1',
+          header: '20T002794 / 1',
+          subHeader: 'Property/Engineering CAT 1st XL (All Perils)',
           sorted: true,
-          filtred: true,
+          filtred: false,
           resizable: true,
-          width: '70%',
+          width: '50',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -740,6 +741,10 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       case tableStore.checkBoxSort:
         this.updateTable('listOfPltsData', action.payload);
         break;
+
+      case tableStore.checkBoxSortScope:
+        this.updateTable('listOfPltsData', action.payload);
+        break;
       case tableStore.onCheckAll:
         this.toggleSelectPlts(
           _.zipObject(
@@ -755,6 +760,19 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
 
       case tableStore.attachPlt:
         this.handleContainer(action.payload);
+        break;
+
+      case tableStore.onCheckAllScope:
+        this.selectAllPltsContainer(action.payload);
+        break;
+
+
+      case tableStore.attachToAllTs:
+        this.handleContainerTwo(action.payload);
+        break;
+
+      case tableStore.attachToJustThisTs:
+        this.handleContainerThree(action.payload);
         break;
 
       case tableStore.deselectPlt:
@@ -868,7 +886,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       })
     })
     this.pltContainerTwo = _.merge([], this.pltContainer);
-    console.log("pltContainerTwo",this.pltContainerTwo);
+    console.log("pltContainerTwo", this.pltContainerTwo);
 
   }
 
@@ -932,14 +950,70 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     this.detectChanges();
   }
 
-  updatePltsSelection(){
+  handleContainerTwo(content) {
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      if (plt.pltId == content.pltId) {
+        plt.treatySectionsState.forEach(state => {
+          if (state.state != 'disabled') {
+            content = {...content, tsId: state.tsId};
+            if (_.findIndex(this.pltContainer, content) == -1) {
+              this.pltContainer.push(content);
+            }
+          }
+
+        })
+      }
+    })
+    this.updatePltSingleSelection(content.pltId);
+
+    this.detectChanges();
+  }
+
+  selectAllPltsContainer(event) {
+    if(event){
+    this.pltContainer = [];
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      plt.treatySectionsState.forEach(ts => {
+        if (ts.state != 'disabled') {
+          let object = {
+            pltId: plt.pltId,
+            regionPeril: plt.regionPerilCode,
+            targetRap: plt.grain,
+            tsId: ts.tsId
+          }
+          this.pltContainer.push(object)
+          this.updatePltSingleSelection(object.pltId);
+        }
+      })
+    })}else{
+      this.pltContainer = [];
+      this.tableInputs.listOfPltsData.forEach(plt => {
+        this.updatePltSingleSelection(plt.pltId);
+      })
+    }
+    this.detectChanges();
+  }
+
+
+  handleContainerThree(content) {
+    _.remove(this.pltContainer, plt => plt.pltId == content.pltId);
+
+
+    this.pltContainer.push(content);
+
+    this.updatePltSingleSelection(content.pltId);
+
+    this.detectChanges();
+  }
+
+  updatePltsSelection() {
     this.updateTable("listOfPltsData", _.map(this.getTableInputKey('listOfPltsData'), plt => ({
       ...plt,
       selected: this.checkSelection(plt.pltId)
     })))
   }
 
-  updatePltSingleSelection(pltId){
+  updatePltSingleSelection(pltId) {
     let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
 
     this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: this.checkSelection(pltId)}}))
@@ -947,15 +1021,16 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   }
 
 
-  checkSelection(pltId){
+  checkSelection(pltId) {
     return _.filter(this.pltContainer, item => item.pltId == pltId).length > 0;
   }
 
-  deselectThePlt(pltId){
+  deselectThePlt(pltId) {
     let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
     this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: false}}))
     this.pltContainer = _.filter(this.pltContainer, plt => plt.pltId != pltId);
   }
+
   toggleSelectPlts(plts: any) {
     this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({
       wsIdentifier: this.workspaceId + '-' + this.uwy,
@@ -1075,22 +1150,21 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   }
 
 
-  getDifference(containerTwo,container){
+  getDifference(containerTwo, container) {
     let deleteArray = [];
-    containerTwo.forEach( plt =>{
-      if(_.findIndex(container, plt) != -1){
-          container.splice(_.findIndex(container, plt), 1);
-        }else{
-          deleteArray.push(plt);
-        }
+    containerTwo.forEach(plt => {
+      if (_.findIndex(container, plt) != -1) {
+        container.splice(_.findIndex(container, plt), 1);
+      } else {
+        deleteArray.push(plt);
+      }
 
     })
     return deleteArray;
   }
+
   dispatchAttachTable() {
-    console.log(this.pltContainer, this.pltContainerTwo);
-    this.pltContainerDelete = this.getDifference(this.pltContainerTwo,this.pltContainer);
-    console.log(this.pltContainer, this.pltContainerTwo);
+    this.pltContainerDelete = this.getDifference(this.pltContainerTwo, this.pltContainer);
     this.attachArray.emit(this.pltContainer);
     this.deleteArray.emit(this.pltContainerDelete);
     this.onHide();
@@ -1156,12 +1230,12 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput= {...this.tagsInput, [key]: value};
+    this.tagsInput = {...this.tagsInput, [key]: value};
   }
 
   updateTableAndTagsInputs(key, value) {
     this.updateTagsInput(key, value);
-    this.updateTable(key,value);
+    this.updateTable(key, value);
   }
 
   addNewTag(tag) {
@@ -1172,28 +1246,28 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   }
 
   toggleTag({i, operation, source}) {
-    if(operation == this.tagsInput['operation']) {
-      if(!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
-        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
-      }else {
+    if (operation == this.tagsInput['operation']) {
+      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+      } else {
         this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
       }
-    }else {
+    } else {
       this.updateTagsInput('operation', operation);
-      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
     }
 
-    if(!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
   }
 
   confirmSelection() {
     const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
-    if(this.tagsInput.operation == 'assign') {
+    if (this.tagsInput.operation == 'assign') {
       this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
       this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
     }
 
-    if(this.tagsInput.operation == 'de-assign') {
+    if (this.tagsInput.operation == 'de-assign') {
       this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
       this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
     }
@@ -1201,8 +1275,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     this.clearSelection();
   }
 
-  checkTagType( tag ) {
-    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
+  checkTagType(tag) {
+    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) => _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
   }
 
   updateTagsType(d) {

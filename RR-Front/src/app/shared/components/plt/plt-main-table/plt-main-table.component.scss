@@ -197,4 +197,21 @@
     display: flex;
     justify-content: center;
   }
+
+
+
+  .burger-menu-visible{
+    display: block;
+    width: 0px;
+
+  }
+  .burger-menu{
+    display: none;
+    width: 0px;
+  }
+  .checkbox-off:hover{
+    .burger-menu{
+      display: block;
+    }
+  }
 }
