@@ -31,9 +31,8 @@ export class PltMainTableComponent implements OnInit {
   @ViewChild('cm') cm: TemplateRef<any>;
 
   @Input() tableInputs: tableStore.Input;
-
   @Input() containerPlts: any;
-
+  @Input() tableHeight = 'calc(100vh - 430px)';
 
   selectedDropDown: any;
   selectedDropDownTs: any;
@@ -75,11 +74,13 @@ export class PltMainTableComponent implements OnInit {
 
   checkSelectedRows() {
     let check = true;
+    let count = 0;
     this.tableInputs.listOfPltsData.forEach(plt => {
       let valid = false;
       plt.treatySectionsState.forEach(ts => {
         if (ts.state != 'disabled') {
-          valid = true
+          valid = true;
+          count++;
         }
       })
       if (valid) {
@@ -89,6 +90,7 @@ export class PltMainTableComponent implements OnInit {
       }
 
     })
+    if(count == 0) check = false;
     return check;
   }
 
