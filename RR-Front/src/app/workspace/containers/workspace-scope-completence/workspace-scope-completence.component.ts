@@ -26,14 +26,25 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   addRemoveModal: boolean = false;
   showOverrideModal: boolean = false;
   listOfPltsData = {};
-  listOfPltsForPopUp = [];
+  packageInformation = {
+    "packageId": "#2335",
+    "Created": "16/09/2019",
+    "Last Modified": "16/09/2019",
+    "Published": "N/A",
+    "Status": "Pending",
+    "By": "Huw Parry",
+    "Note": "Information about why those modifications were applied"
+  };
   selectionForOverride = [];
   selectionForCancelOverride = [];
   overrideReason: string;
+  showPendingOption: boolean = false;
+  accumulationStatus: string = "Scope Only"
   overrideReasonExplained: string = '';
   attachArray: any;
   deleteArray: any;
   removeOverride: boolean = false;
+  treatySectionContainer: any;
 
   selectedDropDown: any;
   dataSource: any;
@@ -79,6 +90,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       this.dataSource = this.getData(this.treatySections[0]);
       this.detectChanges();
     });
+    this.treatySectionContainer = _.cloneDeep(this.treatySections[0]);
 
     combineLatest(
       this.route.params
@@ -87,6 +99,24 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         const {wsId, year} = dt[0];
         this.workspaceUrl = {wsId, uwYear: year};
       });
+  }
+
+  showPackage() {
+    let check = false;
+    if (_.differenceWith(this.treatySectionContainer, this.treatySections[0], _.isEqual).length != 0) {
+      this.showPendingOption = true;
+      if (!this.showRemoveOverrideButton() && !this.showOverrideButton()) {
+        check = true;
+      } else{
+        check = false;
+      }
+
+    } else {
+      check = false;
+      this.showPendingOption = false;
+
+    }
+    return check;
   }
 
   observeRouteParams() {
@@ -137,7 +167,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
           description: regionPeril.description,
           override: false,
           selected: false,
-          child: _.sortBy(this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || {child: []}).child, regionPeril.targetRaps),item => item.id)
+          child: _.sortBy(this._mergeFunction((_.find(res, item => item.id == regionPeril.id) || {child: []}).child, regionPeril.targetRaps), item => item.id)
         };
         const index = _.findIndex(res, row => row.id == object.id);
         if (index == -1) {
@@ -288,7 +318,6 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   checkExpected(item, rowData) {
     let checked = 'not';
     let holder = [];
-    console.log("this is the pltData",this.listOfPltsData)
     if (this.selectedSortBy == 'Minimum Grain / RAP') {
       item.regionPerils.forEach(reg => {
           if (reg.id == rowData.id) {
@@ -303,14 +332,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
-                    const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
-                    if (check != null) {
-                      if (this.listOfPltsData[rowData.id][des.id]) {
+                    // const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
+                    // const check = this.listOfPltsData[rowData.id][des.id]
+                    // if (check != null) {
+                      if (this.listOfPltsData[rowData.id] && this.listOfPltsData[rowData.id][des.id]) {
                         if (this.listOfPltsData[rowData.id][des.id].length) {
                           holder.push('dispoWs');
                         }
 
-                      }
+
                     } else {
                       holder.push('checked');
                     }
@@ -339,14 +369,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
-                    const check = _.get(this.listOfPltsData, `${des.id}.${rowData.id}`, null);
-                    if (check != null) {
-                      if (this.listOfPltsData[des.id][rowData.id]) {
+                      if (this.listOfPltsData[des.id] && this.listOfPltsData[des.id][rowData.id]) {
                         if (this.listOfPltsData[des.id][rowData.id].length) {
                           holder.push('dispoWs');
                         }
 
-                      }
+
                     } else {
                       holder.push('checked');
                     }
@@ -1081,6 +1109,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
 
     this.selectionForCancelOverride = _.merge([], this.selectionForOverride);
+
   }
 
   checkSelectionToCancelOverride() {
@@ -1445,10 +1474,11 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     newData = _.map(newData, item => {
       return {...item, override: false}
     });
-    _.forEach(newData, item =>{
-      if(item.pltsAttached.length != 0){
-      item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
-    }})
+    _.forEach(newData, item => {
+      if (item.pltsAttached.length != 0) {
+        item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
+      }
+    })
     return newData;
   }
 
@@ -1466,10 +1496,11 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     newData = _.map(newData, item => {
       return {...item, override: false}
     });
-    _.forEach(newData, item =>{
-      if(item.pltsAttached.length != 0){
+    _.forEach(newData, item => {
+      if (item.pltsAttached.length != 0) {
         item.pltsAttached = _.sortBy(item.pltsAttached, plt => plt.pltName)
-      }})
+      }
+    })
     return newData;
   }
 
