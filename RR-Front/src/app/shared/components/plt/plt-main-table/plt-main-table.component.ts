@@ -51,7 +51,7 @@ export class PltMainTableComponent implements OnInit {
 
   constructor(private _baseCdr: ChangeDetectorRef) {
     this.activeCheckboxSort = false;
-    this.userTagsLength = 10000;
+    this.userTagsLength = 3;
 
   }
 
@@ -62,15 +62,14 @@ export class PltMainTableComponent implements OnInit {
     this.actionDispatcher.emit({
       type: tableStore.onCheckAll,
       payload: this.tableInputs.showDeleted
-    })
+    });
   }
 
   checkAllScope(event) {
     this.actionDispatcher.emit({
       type: tableStore.onCheckAllScope,
       payload: event
-
-    })
+    });
   }
 
   checkSelectedRows() {
@@ -79,16 +78,15 @@ export class PltMainTableComponent implements OnInit {
       let valid = false;
       plt.treatySectionsState.forEach(ts => {
         if (ts.state != 'disabled') {
-          valid = true
+          valid = true;
         }
-      })
+      });
       if (valid) {
         if (!plt.selected) {
           check = false;
         }
       }
-
-    })
+    });
     return check;
   }
 
@@ -100,17 +98,17 @@ export class PltMainTableComponent implements OnInit {
       if (plt.selected) {
         count++;
       }
-    })
+    });
     this.tableInputs.listOfPltsData.forEach(plt => {
       let valid = false;
       plt.treatySectionsState.forEach(ts => {
         if (ts.state != 'disabled') {
-          valid = true
+          valid = true;
         }
-      })
+      });
       if (valid) count2++;
 
-    })
+    });
     if (count < count2 && count != 0) {
       check = true;
     }
@@ -126,7 +124,7 @@ export class PltMainTableComponent implements OnInit {
       targetRap: plt.grain,
       tsId: tsId
     }) != -1) {
-      check = "attached";
+      check = 'attached';
     } else {
       check = 'notAttached';
     }
@@ -138,8 +136,7 @@ export class PltMainTableComponent implements OnInit {
       type: tableStore.deselectPlt,
       payload:
       pltId
-    })
-
+    });
   }
 
   selectDropDown(event, pltId, tsId) {
@@ -180,7 +177,7 @@ export class PltMainTableComponent implements OnInit {
         _.sortBy(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData
           :
           this.tableInputs.listOfDeletedPltsData, [(o: any) => !o.selected]) : !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsCache : this.tableInputs.listOfDeletedPltsCache
-    })
+    });
 
   }
 
@@ -192,7 +189,7 @@ export class PltMainTableComponent implements OnInit {
       payload: this.activeCheckboxSortScope ?
         _.sortBy(this.tableInputs.listOfPltsData, plt => !plt.selected) : _.sortBy(this.tableInputs.listOfPltsData, plt => plt.selected)
     })
-  }
+  };
 
   sortChange(field: any, sortCol: any) {
     if (!sortCol) {
@@ -218,12 +215,12 @@ export class PltMainTableComponent implements OnInit {
       this.actionDispatcher.emit({
         type: tableStore.filterData,
         payload: _.merge({}, this.tableInputs.filterData, {[key]: value})
-      })
+      });
     } else {
       this.actionDispatcher.emit({
         type: tableStore.filterData,
         payload: _.omit(this.tableInputs.filterData, [key])
-      })
+      });
     }
   }
 
@@ -231,7 +228,7 @@ export class PltMainTableComponent implements OnInit {
     this.actionDispatcher.emit({
       type: tableStore.setSelectedMenuItem,
       payload: pltId
-    })
+    });
   }
 
   selectPltForAttach(plt: any, treatySectionId: any) {
@@ -243,7 +240,7 @@ export class PltMainTableComponent implements OnInit {
         targetRap: plt.grain,
         tsId: treatySectionId
       }
-    })
+    });
   }
 
   attachToAllTs(plt) {
@@ -283,7 +280,7 @@ export class PltMainTableComponent implements OnInit {
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
     const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
-      this.lastClick = "withKey";
+      this.lastClick = 'withKey';
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
     } else {
       this.lastSelectedId = i;

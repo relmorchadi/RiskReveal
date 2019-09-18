@@ -7,15 +7,15 @@
         ></app-hyper-links>
         <div style="display: flex ">
           <h4>Projects</h4>
-          <nz-dropdown nzTrigger="click">
+          <nz-dropdown nzTrigger="click" *ngIf="status === 'treaty'">
             <button  class="a-buttons-outlined" style="color: #332ed7 ;border-color: #332ed7"
                      nz-button nzGhost nz-dropdown >
               <i class="icon-plus"></i>
               Add New
             </button>
             <ul nz-menu nzSelectable>
-              <li (click)="newProject=true; searchWorkspace=false;" nz-menu-item> Project</li>
-              <li (click)="searchWorkspace=true; newProject=false;" nz-menu-item> Linked Project</li>
+              <li (click)="newProject = true; searchWorkspace = false;" nz-menu-item> Project</li>
+              <li (click)="searchWorkspace = true; newProject = false;" nz-menu-item> Linked Project</li>
             </ul>
           </nz-dropdown>
         </div>

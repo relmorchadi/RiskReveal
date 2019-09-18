@@ -29,7 +29,7 @@
               <li nz-menu-divider></li>
               <li (click)="managePopUpSummaries = true" nz-menu-item>Manage Columns</li>
               <li nz-menu-divider></li>
-              <li nz-menu-item>Unselect All</li>
+              <li (click)="unselectAllTable('S')" nz-menu-item>Unselect All</li>
             </ul>
           </nz-dropdown>
         </div>
@@ -198,7 +198,7 @@
               <li nz-menu-divider></li>
               <li nz-menu-item (click)="managePopUpResults = true">Manage Columns</li>
               <li nz-menu-divider></li>
-              <li nz-menu-item>Unselect All</li>
+              <li nz-menu-item (click)="unselectAllTable('R')">Unselect All</li>
             </ul>
           </nz-dropdown>
         </div>
@@ -269,7 +269,9 @@
                         <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
                               *ngIf="rowData.financialPerspective.length > 1">M*</span>
                     <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
-                          *ngIf="rowData.financialPerspective.length <= 1">{{rowData?.financialPerspective[0]}}</span>
+                          *ngIf="rowData.financialPerspective.length == 1">{{rowData?.financialPerspective[0]}}</span>
+                    <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
+                          *ngIf="rowData.financialPerspective.length == 0">Nan</span>
                     <ng-template #infoFP>
                       <div class="popover-menu">
                         <ul style="margin-bottom: 0">
@@ -283,28 +285,43 @@
                   </div>
                   <div class="text-data" (click)="selectRows(rowData, i, 'R')"
                        [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'number'"><span>{{rowData[col.field]}}</span></div>
+                       *ngIf="col.type === 'number'"><span>{{rowData[col.field] | number: '1.2-2'}}</span></div>
                   <div class="text-data" (click)="selectRows(rowData, i, 'R')"
                        [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'percentage'"><span>{{rowData[col.field]}}%</span>
-                  </div>
+                       *ngIf="col.type === 'percentage'"><span>{{rowData[col.field]}}%</span></div>
                   <div class="text-data" (click)="selectRows(rowData, i, 'R')"
                        [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                        [ngClass]="{'highlight-temp': col.highlight}"
                        *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
-                  <div class="text-data highlight-temp" stytle="font-weight: 500"
+                  <div class="text-data" style="font-weight: 500"
                        *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
                        (click)="updateRow(rowData, col.type)">
-                  <span *ngIf="col.type === 'Peqt'">
-                    {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
-                  </span>
-                    <span *ngIf="col.type !== 'Peqt'">
-                    {{rowData[col.field]}}
-                  </span>
+                    <span class="highlighted-change" *ngIf="col.type === 'Peqt'">
+                      <span *ngIf="getSelectedPeqt(rowData) > 0" nz-tooltip [nzTitle]="peqtInfo" >
+                        {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
+                      </span>
+                      <span *ngIf="getSelectedPeqt(rowData) === 0" >
+                        {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
+                      </span>
+                      <ng-template #peqtInfo>
+                        <div class="popover-menu">
+                          <ul style="margin-bottom: 0">
+                            <ng-container *ngFor="let item of rowData.peqt">
+                              <li *ngIf="item.selected">{{item.title}}</li>
+                            </ng-container>
+                          </ul>
+                        </div>
+                      </ng-template>
+                    </span>
+                    <span *ngIf="col.type === 'Peqt' && getSelectedPeqt(rowData) === 0">
+                        <i class="icon-exclamation-triangle"></i>
+                    </span>
+                    <span class="highlighted-change" *ngIf="col.type !== 'Peqt'">
+                      {{rowData[col.field]}}
+                    </span>
                   </div>
                   <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
                        *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
-                  <div class="text-data" *ngIf="col.field === 'number'">{{rowData[col.field] | number: '1.2-2'}}</div>
                   <div style="padding-left: 10px;" *ngIf="col.type === 'check'">
                     <label nz-checkbox [(ngModel)]="rowData[col.field]"></label>
                   </div>
@@ -427,7 +444,7 @@
                           <li nz-menu-divider></li>
                           <li nz-menu-item (click)="managePopUpLinkPortfolio = true">Manage Columns</li>
                           <li nz-menu-divider></li>
-                          <li nz-menu-item>Unselect All</li>
+                          <li nz-menu-item (click)="unselectAllTable('linkPortfolio')">Unselect All</li>
                         </ul>
                       </nz-dropdown>
                     </div>
@@ -530,7 +547,7 @@
                           <li nz-menu-divider></li>
                           <li nz-menu-item (click)="managePopUpLinkAnalysis = true">Manage Columns</li>
                           <li nz-menu-divider></li>
-                          <li nz-menu-item>Unselect All</li>
+                          <li nz-menu-item (click)="unselectAllTable('linkAnalysis')">Unselect All</li>
                         </ul>
                       </nz-dropdown>
                     </div>
@@ -811,7 +828,7 @@
                     <li nz-menu-divider></li>
                     <li nz-menu-item (click)="managePopUpFPAnalysis = true">Manage Columns</li>
                     <li nz-menu-divider></li>
-                    <li nz-menu-item>Unselect All</li>
+                    <li nz-menu-item (click)="unselectAllTable('fpA')">Unselect All</li>
                   </ul>
                 </nz-dropdown>
               </div>
@@ -894,7 +911,7 @@
                     <li nz-menu-divider></li>
                     <li nz-menu-item (click)="managePopUpFPStandard = true">Manage Columns</li>
                     <li nz-menu-divider></li>
-                    <li nz-menu-item>Unselect All</li>
+                    <li nz-menu-item (click)="unselectAllTable('fpS')">Unselect All</li>
                   </ul>
                 </nz-dropdown>
               </div>
@@ -1087,9 +1104,9 @@
               <li nz-menu-item>Reset Filters</li>
               <li nz-menu-item>Reset Sort/Filters</li>
               <li nz-menu-divider></li>
-              <li nz-menu-item (click)="toggleColumnsManager('results')">Manage Columns</li>
+              <li nz-menu-item>Manage Columns</li>
               <li nz-menu-divider></li>
-              <li nz-menu-item>Unselect All</li>
+              <li nz-menu-item (click)="unselectAllTable('')">Unselect All</li>
             </ul>
           </nz-dropdown>
         </div>

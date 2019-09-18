@@ -22,7 +22,7 @@ export class WsApi {
   }
 
   postFacData(data) {
-    return this._http.post(`${environment.API_URI}fac`, {params: data});
+    return this._http.post(`${environment.API_URI}fac`, data);
   }
 
 }
