@@ -38,6 +38,7 @@ public enum ExceptionCodename {
     INURING_FINAL_NODE_NOT_FOUND("Inuring Final Node not found"),
     INURING_EDGE_NOT_FOUND("Inuring Edge not found"),
     INURING_ILLEGAL_MODIFICATION("Illegal modification request"),
+    INURING_NODE_NOT_FOUND("Inuring Node not found"),
 
     ;
     private final String exception;

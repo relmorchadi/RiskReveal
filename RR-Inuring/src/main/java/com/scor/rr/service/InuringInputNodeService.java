@@ -1,16 +1,15 @@
 package com.scor.rr.service;
 
+import com.scor.rr.entity.InuringEdge;
 import com.scor.rr.entity.InuringInputAttachedPLT;
 import com.scor.rr.entity.InuringInputNode;
 import com.scor.rr.entity.InuringPackage;
+import com.scor.rr.enums.InuringNodeType;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.InputPLTNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringInputNodeNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
-import com.scor.rr.repository.InuringInputNodeRepository;
-import com.scor.rr.repository.InuringInputAttachedPLTRepository;
-import com.scor.rr.repository.InuringPackageRepository;
-import com.scor.rr.repository.ScorpltheaderRepository;
+import com.scor.rr.repository.*;
 import com.scor.rr.request.InuringInputNodeCreationRequest;
 import com.scor.rr.request.InuringInputNodeUpdateRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,11 @@ public class InuringInputNodeService {
     private InuringPackageRepository inuringPackageRepository;
     @Autowired
     private ScorpltheaderRepository scorpltheaderRepository;
+    @Autowired
+    private InuringEdgeService inuringEdgeService;
 
     public void createInuringInputNode(InuringInputNodeCreationRequest request) throws RRException {
-        InuringPackage inuringPackage = inuringPackageRepository.findById(request.getInuringPackageId());
+        InuringPackage inuringPackage = inuringPackageRepository.findByInuringPackageId(request.getInuringPackageId());
         if (inuringPackage == null) throw new InuringPackageNotFoundException(request.getInuringPackageId());
 
         if (request.getAttachedPLTs() != null && ! request.getAttachedPLTs().isEmpty()) {
@@ -97,5 +98,6 @@ public class InuringInputNodeService {
     public void deleteInuringInputNode(int inuringInputNodeId) {
         inuringInputNodeRepository.deleteByInuringInputNodeId(inuringInputNodeId);
         inuringInputAttachedPLTRepository.deleteByInuringInputNodeId(inuringInputNodeId);
+        inuringEdgeService.deleteByRelatedNode(InuringNodeType.InputNode, inuringInputNodeId);
     }
 }

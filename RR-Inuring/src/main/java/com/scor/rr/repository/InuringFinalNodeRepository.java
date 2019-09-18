@@ -9,6 +9,7 @@ import java.util.List;
  * Created by u004602 on 16/09/2019.
  */
 public interface InuringFinalNodeRepository extends JpaRepository<InuringFinalNode, Integer> {
+    InuringFinalNode findByInuringFinalNodeId(int inuringFinalNodeId);
     InuringFinalNode findByInuringPackageId(int inuringPackageId);
     void deleteByInuringPackageId(int inuringPackageId);
 }
