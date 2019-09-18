@@ -332,14 +332,15 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
-                    const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
-                    if (check != null) {
-                      if (this.listOfPltsData[rowData.id][des.id]) {
+                    // const check = _.get(this.listOfPltsData, `${rowData.id}.${des.id}`, null)
+                    // const check = this.listOfPltsData[rowData.id][des.id]
+                    // if (check != null) {
+                      if (this.listOfPltsData[rowData.id] && this.listOfPltsData[rowData.id][des.id]) {
                         if (this.listOfPltsData[rowData.id][des.id].length) {
                           holder.push('dispoWs');
                         }
 
-                      }
+
                     } else {
                       holder.push('checked');
                     }
@@ -368,14 +369,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
                     holder.push('overridden')
                   }
                   if (!res.attached && !res.overridden) {
-                    const check = _.get(this.listOfPltsData, `${des.id}.${rowData.id}`, null);
-                    if (check != null) {
-                      if (this.listOfPltsData[des.id][rowData.id]) {
+                      if (this.listOfPltsData[des.id] && this.listOfPltsData[des.id][rowData.id]) {
                         if (this.listOfPltsData[des.id][rowData.id].length) {
                           holder.push('dispoWs');
                         }
 
-                      }
+
                     } else {
                       holder.push('checked');
                     }
@@ -1110,6 +1109,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     }
 
     this.selectionForCancelOverride = _.merge([], this.selectionForOverride);
+
   }
 
   checkSelectionToCancelOverride() {
