@@ -55,7 +55,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Accumulation status</span>
               <span class="dropdown-item-selected">
-                Scope Only
+                {{accumulationStatus}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -63,7 +63,8 @@
             </div>
           </div>
           <ul nz-menu>
-            <li nz-menu-item>Scope Only</li>
+            <li nz-menu-item (click)="accumulationStatus = 'Scope Only'">Scope Only</li>
+            <li nz-menu-item (click)="accumulationStatus = 'Pending'" *ngIf="showPendingOption">Pending</li>
           </ul>
         </nz-dropdown>
       </div>
@@ -79,9 +80,27 @@
         <button class="a-buttons-linked" (click)="cancelRemoveOverride()">Cancel</button>
       </div>
 
-      <div style="width:30%;">
+      <div style="display: flex; flex-direction: column" *ngIf="showPackage()">
+        <button class="a-buttons-contained-micro">Publish Package</button>
+        <button class="a-buttons-linked">Delete Pending Package</button>
+      </div>
+      <div *ngIf="showPackage()" style="display: flex;border: 1px solid lightgreen;">
+      <div style="display: flex; flex-direction: column;padding: 5px;" >
+        <div><span class="package-info">PackageId: </span><span> {{packageInformation['packageId']}}</span></div>
+        <div><span class="package-info">Created: </span><span> {{packageInformation['Created']}}</span></div>
+        <div><span class="package-info">Last Modified: </span><span> {{packageInformation['Last Modified']}}</span></div>
+        <div><span class="package-info">Published: </span><span> {{packageInformation['Published']}}</span></div>
+      </div>
+      <div style="display: flex; flex-direction: column;padding: 15px;" >
+        <div><span class="package-info">Status: </span><span> {{packageInformation['Status']}}</span></div>
+        <div><span class="package-info">By: </span><span> {{packageInformation['By']}}</span></div>
+        <div><span class="package-info">Notes: </span><span> {{packageInformation['Note']}}</span></div>
 
       </div>
+      </div>
+      <div style="width: 40%;" *ngIf="!showPackage()"></div>
+
+
       <div class="divider-right">
         <nz-dropdown [nzTrigger]="'click'" [nzPlacement]="'bottomRight'" *ngIf="!showRemoveOverrideButton() && !showOverrideButton()" >
 
@@ -117,8 +136,8 @@
               </div>
             </th>
 
-            <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px">
-              <div>{{item.id}}<br/>{{item.name}}</div>
+            <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px; " >
+              <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
               <div *ngIf="checkTreatySectionAttached(item)" class="icon-holder" nz-tooltip [nzTitle]="checked">
                 <ng-container>
                   <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
