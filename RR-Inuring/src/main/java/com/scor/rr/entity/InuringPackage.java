@@ -26,6 +26,9 @@ public class InuringPackage {
     private boolean locked;
     private InuringPackageStatus inuringPackageStatus;
 
+    public InuringPackage() {
+    }
+
     public InuringPackage(String packageName, String packageDescription, int workspaceId, int createdBy) {
         this.packageName = packageName;
         this.packageDescription = packageDescription;

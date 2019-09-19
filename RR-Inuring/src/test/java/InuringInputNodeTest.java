@@ -121,9 +121,9 @@ public class InuringInputNodeTest {
             return inuringInputAttachedPLTS.values().stream().filter(i -> i.getInuringInputNodeId() == id).collect(Collectors.toList());
         });
 
-        when(inuringPackageRepository.findById(NOT_EXISTING_INURING_PACKAGE_ID)).thenReturn(null);
-        when(inuringPackageRepository.findById(INURING_PACKAGE_ZERO_PLT_ID)).thenReturn(new InuringPackage());
-        when(inuringPackageRepository.findById(INURING_PACKAGE_HAS_PLT_ID)).thenReturn(new InuringPackage());
+        when(inuringPackageRepository.findByInuringPackageId(NOT_EXISTING_INURING_PACKAGE_ID)).thenReturn(null);
+        when(inuringPackageRepository.findByInuringPackageId(INURING_PACKAGE_ZERO_PLT_ID)).thenReturn(new InuringPackage());
+        when(inuringPackageRepository.findByInuringPackageId(INURING_PACKAGE_HAS_PLT_ID)).thenReturn(new InuringPackage());
 
         when(inuringInputNodeRepository.findAll()).thenReturn(new ArrayList<InuringInputNode> (inuringInputNodes.values()));
         when(inuringInputAttachedPLTRepository.findAll()).thenReturn(new ArrayList<InuringInputAttachedPLT>(inuringInputAttachedPLTS.values()));
