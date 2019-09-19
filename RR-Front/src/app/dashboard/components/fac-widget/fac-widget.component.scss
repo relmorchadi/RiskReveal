@@ -208,3 +208,18 @@ app-table {
     }
   }
 }
+
+.menu-right-wrapper-icon {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  display: flex;
+
+  .icon-wrapper {
+    i {
+      color: #0700CF;
+      font-size: 20px;
+      margin-right: 5px;
+    }
+  }
+}

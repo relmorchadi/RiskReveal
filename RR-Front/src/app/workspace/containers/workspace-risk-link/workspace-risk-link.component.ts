@@ -245,7 +245,17 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   resetFilters() {
+    console.log(this.tables);
+    this.tables.filters = {};
+    this.tables.filteredValue = null;
     this.filtersInput.nativeElement.value = '';
+  }
+
+  resetsorts() {
+    this.tables.sortOrder = this.tables.defaultSortOrder;
+    this.tables.sortField = '';
+    this.tables.multiSortMeta = null;
+    this.tables.tableService.onSort(null);
   }
 
   closeDropdown() {

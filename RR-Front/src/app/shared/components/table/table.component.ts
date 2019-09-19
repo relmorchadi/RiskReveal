@@ -15,6 +15,7 @@ export class TableComponent implements OnInit {
   @Output('dbClickItem') doubleClick: any = new EventEmitter<any>();
   @Output('onRowSelect') onRowSelect: any = new EventEmitter<any>();
   @Output('onRowUnselect') onRowUnselect: any = new EventEmitter<any>();
+  @Output('updateFavStatus') updateStatus: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
@@ -135,6 +136,10 @@ export class TableComponent implements OnInit {
     this.filterData.emit({searchValue: searchValue, searchAddress: searchAddress});
   }
 
+  updateFavValue(row) {
+    this.updateStatus.emit(row);
+  }
+
   loadDataOnScroll(event: LazyLoadEvent) {
     this.event = event;
     this.loadMore.emit(event);
@@ -216,31 +221,31 @@ export class TableComponent implements OnInit {
   rowSelect($event) {
     this.onRowSelect.emit($event);
   }
+
   rowUnselect($event) {
     this.onRowUnselect.emit($event);
   }
+
   getContextMenu() {
       return _.isNil(this.activateContextMenu) || this.activateContextMenu ? this.contextMenu : null;
   }
 
   sortChange(field: any, sortCol: any) {
-    if(!sortCol){
+    if (!sortCol) {
       this.sortData = _.merge({}, this.sortData, {[field]: 'asc'});
-    }else if(sortCol === 'asc'){
+    } else if (sortCol === 'asc') {
       this.sortData = _.merge({}, this.sortData, {[field]: 'desc'});
-    } else if(sortCol === 'desc') {
+    } else if (sortCol === 'desc') {
         this.sortData =  _.omit(this.sortData, `${field}`);
     }
     console.log('this.sortData', this.sortData);
   }
 
   filter(key: string, value) {
-    console.log('key', key)
-    if(value) {
+    if (value) {
       this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
-    }
-    else {
-      this.FilterData =  _.omit(this.FilterData, [key])
+    } else {
+      this.FilterData =  _.omit(this.FilterData, [key]);
     }
     console.log('this.FilterData', this.FilterData);
 

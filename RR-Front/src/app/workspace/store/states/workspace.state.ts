@@ -416,6 +416,11 @@ export class WorkspaceState {
     return this.wsService.markWsAsFavorite(ctx, payload);
   }
 
+  @Action(fromWS.MarkFacWsAsFavorite)
+  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkFacWsAsFavorite) {
+    this.wsService.markFacWsAsFavorite(ctx, payload);
+  }
+
   @Action(fromWS.MarkWsAsNonFavorite)
   markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonFavorite) {
     return this.wsService.markWsAsNonFavorite(ctx, payload);

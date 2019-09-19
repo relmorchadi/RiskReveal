@@ -35,8 +35,8 @@ export class FacWidgetComponent implements OnInit {
   editName = false;
 
   cols = [
-    {field: 'id', header: 'CAR ID', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractFacNumber', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'favorite', header: '', width: '25px', display: true, sorted: false, filtered: false, type: 'favStatus'},
+    {field: 'id', header: 'Project ID', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractYear', header: 'UW Year', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
@@ -46,7 +46,7 @@ export class FacWidgetComponent implements OnInit {
     {field: 'uwanalysisContractSector', header: 'Sector', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractBusinessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'reauestedByFirstName', header: 'Assigned Analyst', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'carStatus', header: 'CAR Status', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'carStatus', header: 'CAR Status', width: '50px', display: true, sorted: true, filtered: true, type: 'rawStatus'},
     {field: 'requestCreationDate', header: 'Created At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
     {field: 'lastUpdateDate', header: 'Updated At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
     /*{field: 'rrStatus', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
@@ -108,15 +108,20 @@ export class FacWidgetComponent implements OnInit {
 
   }
 
-  getDataFacWidget() {
+  makeMavorite() {
 
   }
 
   openFacItem(event) {
+    console.log(event);
     this.store.dispatch(new workspaceActions.OpenFacWS({wsId: event.uwanalysisContractFacNumber,
-      uwYear: event.uwanalysisContractYear, route: 'Project', type: 'fac'}));
+      uwYear: event.uwanalysisContractYear, route: 'Project', type: 'fac', item: event}));
     this.store.dispatch(new workspaceActions.LoadProjectForWs({wsId: event.uwanalysisContractFacNumber,
       uwYear: event.uwanalysisContractYear}));
+  }
+
+  valueFavChange(event) {
+    this.store.dispatch(new workspaceActions.MarkFacWsAsFavorite(event));
   }
 
   duplicateItem(itemName: any): void {

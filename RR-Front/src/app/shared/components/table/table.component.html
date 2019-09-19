@@ -138,13 +138,20 @@
               <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
             </div>
           </td>
-          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " class="ui-resizable-column"
+          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'" class="ui-resizable-column"
               (dblclick)="doubleClickRow(rowData)"
               (click)="selectRow(rowData, i)">
-            <div style="display:flex">
+            <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rowStatus'" style="display:flex">
               <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
               <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
             </div>
+            <div class="fav-status-info" *ngIf="col?.type === 'favStatus'">
+              <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>
+              <i *ngIf="rowData[col?.field]" class="icon-star_24px"></i>
+            </div>
+            <ng-container *ngIf="col?.type === 'rowStatus'">
+
+            </ng-container>
           </td>
           <td *ngIf="col?.type === 'icon'" class="ui-resizable-column">
             <div style="display:flex">
@@ -186,8 +193,6 @@
          [responsive]="true"
          class="table-ngPrime"
 >
-  C
-
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
       <col *ngFor="let col of columns" [ngStyle]="{'width': col.width}">
@@ -221,22 +226,38 @@
     <tr
       [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
-        <td *ngIf="col?.type ==='checkbox'">
+        <td *ngIf="col?.type ==='checkbox'" class="ui-resizable-column">
           <div style="display:flex">
             <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
-        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " class="ui-resizable-column"
+        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon'" class="ui-resizable-column"
             (dblclick)="doubleClickRow(rowData)"
             (click)="selectRow(rowData, i)">
-          <div style="display:flex">
+          <div *ngIf="col?.type !== 'favStatus' && col?.type !== 'rawStatus'" style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
           </div>
+          <div class="fav-status-info" (click)="updateFavValue(rowData)" *ngIf="col?.type === 'favStatus'">
+            <i *ngIf="!rowData[col?.field]" class="icon-star_outline_24px"></i>
+            <i *ngIf="rowData[col?.field]" class="icon-star_24px"></i>
+          </div>
+          <ng-container *ngIf="col?.type === 'rawStatus'">
+            <span class="new-item" *ngIf="rowData[col.field] === 'New'">New</span>
+            <span class="canceled-item" *ngIf="rowData[col.field] === 'Canceled'">Canceled</span>
+            <span class="superseeded-item" *ngIf="rowData[col.field] === 'SuperSeeded'">SuperSeeded</span>
+            <span class="current-item" *ngIf="rowData[col.field] === 'In Progress'">In Progress</span>
+            <span class="completed-item" *ngIf="rowData[col.field] === 'Completed'">Completed</span>
+          </ng-container>
         </td>
-        <td *ngIf="col?.type === 'icon'">
+        <td *ngIf="col?.type === 'icon'" class="ui-resizable-column">
           <div style="display:flex">
             <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+          </div>
+        </td>
+        <td *ngIf="col?.type === 'multi-icons'" class="ui-resizable-column">
+          <div style="display:flex">
+            <i *ngFor="let icon of col?.icons" (click)="icon.handler(col, rowData)" [ngClass]="icon?.class"></i>
           </div>
         </td>
       </ng-container>

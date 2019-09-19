@@ -38,15 +38,15 @@ export class WorkspaceService {
 
   loadWsFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadFacWs) {
     const {
-      wsId, uwYear, route, type
+      wsId, uwYear, route, type, item
     } = payload;
     ctx.patchState({loading: true});
 
     const ws = {
-        id: 'RCC000022.2019.1.0.1',
-        workspaceName: 'CFS-SCOR REASS.-MADRID',
+        id: wsId,
+        workspaceName: item.contractName,
         cedantCode: '22231',
-        cedantName: 'SCOR SE',
+        cedantName: item.cedantName,
         subsidiaryId: '2',
         subsidiaryName: 'SCOR REASS.',
         ledgerName: 'MADRID',
@@ -266,7 +266,7 @@ export class WorkspaceService {
   }
 
   openFacWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenFacWS) {
-    const {wsId, uwYear, route, type} = payload;
+    const {wsId, uwYear, route, type, item} = payload;
     const state = ctx.getState();
     const wsIdentifier = wsId + '-' + uwYear;
 
@@ -280,8 +280,7 @@ export class WorkspaceService {
       return ctx.dispatch(new fromWS.LoadFacWs({
         wsId,
         uwYear,
-        route,
-        type
+        route, type, item
       }));
     }
   }
@@ -378,6 +377,13 @@ export class WorkspaceService {
     const {wsIdentifier} = payload;
     return ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier] = {...draft.content[wsIdentifier], isFavorite: true};
+    }));
+  }
+
+  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkFacWsAsFavorite) {
+    ctx.patchState(produce(ctx.getState(), draft => {
+      const index = _.findIndex(draft.facWs, item => item.id === payload.id);
+      draft.facWs[index].favorite = !draft.facWs[index].favorite;
     }));
   }
 

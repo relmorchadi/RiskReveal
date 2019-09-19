@@ -8,6 +8,7 @@
              [listOfData]="data" [tableHeight]="'300px'"
              [virtualScroll]="false"
              (dbClickItem)="openFacItem($event)"
+             (updateFavStatus)="valueFavChange($event)"
              [totalRecords]="data?.length">
   </app-table>
 <!--  <div class="select-sections">
@@ -51,7 +52,12 @@
       </ul>
     </nz-dropdown>
 
-    <div style="position: absolute;top: 7px;right: 30px">
+    <div class="menu-right-wrapper-icon">
+      <div class="icon-wrapper">
+        <span><i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i></span>
+        <span><i class="icon-loop_24px" nz-tooltip [nzTitle]="'In Progress'"></i></span>
+        <span><i class="icon-file-block-alt" nz-tooltip [nzTitle]="'Archived'"></i></span>
+      </div>
       <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">
         <a style="max-height: 28px;display: flex;" nz-dropdown>
           <i class="icon-settings_24px"></i>
