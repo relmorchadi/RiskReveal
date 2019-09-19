@@ -131,30 +131,17 @@
                             </ul>
                     </nz-dropdown>
                   </span>
-                <div style="display: flex; flex-direction: column;flex: 1;height: 66px;margin-left: 25px;">
-                  <div
-                    style="margin-left: 8px;margin-top: 5px;  display: flex; align-items: center;margin-bottom: 7px;">
-                    Template: <span *ngIf="template.id !== 0"
-                                    class="template-type"> {{template.type}} </span> {{template.name}}
-                    <i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px info-desc" nz-tooltip
-                       nzPlacement="right"
-                       nzTrigger="click" style="margin-left: 5px;font-size: 17px;cursor: pointer; color: #0000a0"></i>
-                    <ng-template #tool>
-                      <div class="description-tooltip">
-                        <span class="title"> Description</span>
-                        <p>{{template.description}}</p>
-                      </div>
-                    </ng-template>
-                  </div>
+                <div style="display: flex; flex: 1;height: 66px;width: calc(100% - 175px);">
                   <div
                     *ngIf="adjsArray.length > 0"
                     [dropZones]="['adjustment-dropZone']"
                     [sortableData]="adjsArray" class="generic-thread-container" dnd-sortable-container
-                    style=" max-width: calc(100% - 230px);z-index: 100; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;">
+                    style=" max-width: calc(100% - 200px);z-index: 100; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;margin-top: 11px;">
                     <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                       <div (click)="selectedAdjust(adj.id)"
                            (mouseleave)="onLeaveAdjustment(adj.id)"
                            (mouseover)="shownDropDown = adj.id"
+                           (onDragStart)="onDragStart(adj)"
                            (onDropSuccess)="dropThreadAdjustment()"
                            [dragData]="adj"
                            [dragEnabled]="true"
@@ -197,6 +184,25 @@
                       </div>
                     </ng-container>
                   </div>
+                  <div
+                    style="display: flex; align-items: center;margin: 5px 18px 7px 8px;float: right;flex-direction: column;">
+                    Template:
+                    <span *ngIf="template.id !== 0" class="template-type"> {{template.type}} </span>
+                    <div style="display: flex">
+                      <span
+                        style="text-overflow: ellipsis;max-width: 150px;overflow: hidden;display: block;">{{template.name}}</span>
+                      <i *ngIf="template.id !== 0" [nzTitle]="tool" class="icon-info_24px info-desc" nz-tooltip
+                       nzPlacement="right"
+                       nzTrigger="click" style="margin-left: 5px;font-size: 17px;cursor: pointer; color: #0000a0"></i>
+                    </div>
+                    <ng-template #tool>
+                      <div class="description-tooltip">
+                        <span class="title"> Description</span>
+                        <p>{{template.description}}</p>
+                      </div>
+                    </ng-template>
+                  </div>
+
                 </div>
 
               </div>
@@ -403,7 +409,7 @@
               (expandAll)="expandAll($event)"
               (sortChange)="sortChange($event)"
               (checkboxSort)="checkBoxsort()"
-              (onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId)"
+              (onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId, $event.application)"
               [EPMColumns]="EPMColumns"
               [sortData]="sortData"
               [frozenColumns]="frozenColumns"
@@ -746,7 +752,8 @@
         <label> Name: </label>
       </div>
       <div class="ui-g-9">
-        <input [(ngModel)]="templateName" class="a-textfield-mini" nz-input nz-tooltip
+        <input (focus)="$event.target.select()" [(ngModel)]="templateName" id="templateNameInput" #templateNameInput
+               class="a-textfield-mini" nz-input nz-tooltip
                style="width: 300px; !important; margin-right: 5px;"/>
       </div>
     </div>
