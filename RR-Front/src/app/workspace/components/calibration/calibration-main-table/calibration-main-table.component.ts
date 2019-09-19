@@ -39,6 +39,8 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('checkboxSort') checkboxSortEmitter: EventEmitter<any> = new EventEmitter();
   @Output('expandAll') expandEmitter: EventEmitter<any> = new EventEmitter();
   @Output('onDrop') onDropEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('draggedAdjs') draggedAdjsEmitter: EventEmitter<any> = new EventEmitter();
+
 
   @Input('extended') extended: boolean;
   // @Input('cm') cm: any;
@@ -269,6 +271,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   returnPeriodInput: any;
   clickedDropdown: any;
   userTagsLength: number = 10000;
+
 
 
   constructor(
@@ -650,7 +653,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   }
 
   onDragStart(adj, pltId) {
-    this.draggedAdjs = adj;
+    this.draggedAdjsEmitter.emit({draggedAdjs: adj})
     this.lastDragPltId = pltId;
   }
 }

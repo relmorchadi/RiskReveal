@@ -884,23 +884,13 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   onDrop(col, pltId, draggedAdjs, lastpltId, application) {
-    if (this.dragBool) {
-      this.dispatch(new dropAdjustment({
-        pltId: pltId,
-        adjustement: draggedAdjs,
-        lastpltId: lastpltId,
-        application: application,
-      }))
-      this.dragBool = false;
-    } else {
-      this.dispatch(new dropAdjustment({
+
+    this.dispatch(new dropAdjustment({
         pltId: pltId,
         adjustement: this.draggedAdjs,
         lastpltId: lastpltId,
         application: application,
       }))
-    }
-
     this.adjustColWidth(draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
@@ -1383,6 +1373,5 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   onDragStart(adj: any) {
     this.draggedAdjs = adj;
-    this.dragBool = true;
   }
 }

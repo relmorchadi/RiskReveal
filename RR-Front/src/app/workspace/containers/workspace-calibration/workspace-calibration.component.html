@@ -410,6 +410,7 @@
               (sortChange)="sortChange($event)"
               (checkboxSort)="checkBoxsort()"
               (onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId, $event.application)"
+              (draggedAdjs)="onDragStart($event.draggedAdjs)"
               [EPMColumns]="EPMColumns"
               [sortData]="sortData"
               [frozenColumns]="frozenColumns"
