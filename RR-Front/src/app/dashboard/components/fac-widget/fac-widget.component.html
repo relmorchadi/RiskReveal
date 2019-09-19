@@ -5,7 +5,7 @@
   <ng-container *ngTemplateOutlet="title"></ng-container>
   <app-table [sortable]="true"
              [tableColumn]="cols"
-             [listOfData]="data"
+             [listOfData]="data" [tableHeight]="'300px'"
              [virtualScroll]="false"
              (dbClickItem)="openFacItem($event)"
              [totalRecords]="data?.length">

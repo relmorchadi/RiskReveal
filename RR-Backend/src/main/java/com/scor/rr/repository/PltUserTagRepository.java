@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PltUserTagRepository extends JpaRepository<UserTagPlt, Integer> {
     List<UserTagPlt> findUserTagPltsByAssigner(User assigner);
@@ -21,7 +22,7 @@ public interface PltUserTagRepository extends JpaRepository<UserTagPlt, Integer>
     List<UserTagPlt> findByNotInWS(String wsId, Integer uwYear);
 
     @Query("FROM UserTagPlt WHERE userTagPltPk.tag =:tag AND userTagPltPk.plt =:plt")
-    UserTagPlt findByTagAndPlt(@Param("tag") UserTag tag, @Param("plt") PltHeader plt);
+    Optional<UserTagPlt> findByTagAndPlt(@Param("tag") UserTag tag, @Param("plt") PltHeader plt);
 
     List<UserTagPlt> findByAssignerAndWorkSpaceIdAndUwYear(User assigner, String workspaceId,Integer uwYear);
 

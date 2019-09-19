@@ -50,12 +50,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   columnsForConfig;
   targetConfig;
 
+  @ViewChild('kt')
+  tables: any;
   @ViewChild('searchInput')
   searchInput: ElementRef;
   @ViewChild('obRes')
   dropDownFPOb: any;
   @ViewChild('rpRes')
   dropDownFP: any;
+  @ViewChild('filters')
+  filtersInput: any;
 
   displayDropdownRDMEDM = false;
   displayListRDMEDM = false;
@@ -235,8 +239,13 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.dispatch(new fromWs.ToggleRiskLinkEDMAndRDMAction({action: 'unselectAll', source: 'solo'}));
   }
 
-  refreshAll() {
+  resetAll() {
+    this.tables.reset();
+    this.filtersInput.nativeElement.value = '';
+  }
 
+  resetFilters() {
+    this.filtersInput.nativeElement.value = '';
   }
 
   closeDropdown() {
@@ -369,6 +378,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'selectOne', value: true, item: row}));
     } else {
       this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'selectOne', value: true, item: row}));
+    }
+  }
+
+  unselectAllTable(scope) {
+    if (scope === 'analysis') {
+      this.dispatch(new fromWs.ToggleRiskLinkAnalysisAction({action: 'unselectAll'}));
+    } else if (scope === 'portfolio') {
+      this.dispatch(new fromWs.ToggleRiskLinkPortfolioAction({action: 'unselectAll'}));
     }
   }
 

@@ -45,8 +45,7 @@ import * as leftMenuStore from "../../../shared/components/plt/plt-left-menu/sto
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
   tagsInput: leftMenuStore.Input;
-
-  dropAll = (param) => null;
+  private dragBool: boolean = false;
 
   someItemsAreSelected = false;
   groupedByPure = false;
@@ -290,6 +289,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   searchSelectedTemplate: any = this.template;
   localTemplates: any = [];
   globalTemplates: any = [];
+
+  // @ViewChild('templateNameInput') templateNameInput: ElementRef;
+  dropAll = (param) => null;
 
 
   constructor(
@@ -881,13 +883,24 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }));
   }
 
+  onDrop(col, pltId, draggedAdjs, lastpltId, application) {
+    if (this.dragBool) {
+      this.dispatch(new dropAdjustment({
+        pltId: pltId,
+        adjustement: draggedAdjs,
+        lastpltId: lastpltId,
+        application: application,
+      }))
+      this.dragBool = false;
+    } else {
+      this.dispatch(new dropAdjustment({
+        pltId: pltId,
+        adjustement: this.draggedAdjs,
+        lastpltId: lastpltId,
+        application: application,
+      }))
+    }
 
-  onDrop(col, pltId, draggedAdjs, lastpltId) {
-    this.dispatch(new dropAdjustment({
-      pltId: pltId,
-      adjustement: draggedAdjs,
-      lastpltId: lastpltId
-    }))
     this.adjustColWidth(draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
@@ -1175,7 +1188,19 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         this.template.adjs = this.adjsArray;
       }
     } else {
-      this.saveTemplate = true;
+      if (this.template.id == 0) {
+        this.saveTemplate = true;
+      } else {
+        this.saveTemplate = true;
+        this.templateName = this.template.name;
+        this.templateType = this.template.type;
+        this.templateDesc = this.template.description;
+        /*document.getElementById('templateNameInput').focus();
+        // this.templateNameInput.nativeElement.select();
+        // this.cdRef.detectChanges();
+        console.log(this.templateNameInput);*/
+      }
+
     }
   }
 
@@ -1354,5 +1379,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.template = this.searchSelectedTemplate;
     this.adjsArray = this.searchSelectedTemplate.adjs;
     this.closeLoadTemplate();
+  }
+
+  onDragStart(adj: any) {
+    this.draggedAdjs = adj;
+    this.dragBool = true;
   }
 }

@@ -471,7 +471,13 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
     console.log(this.draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
-    this.onDropEmitter.emit({col: col, pltId: pltId, draggedAdjs: this.draggedAdjs, lastpltId: this.lastDragPltId});
+    this.onDropEmitter.emit({
+      col: col,
+      pltId: pltId,
+      draggedAdjs: this.draggedAdjs,
+      lastpltId: this.lastDragPltId,
+      application: this.adjutmentApplication[pltId]
+    });
   }
 
   emitFilters(filters: any) {

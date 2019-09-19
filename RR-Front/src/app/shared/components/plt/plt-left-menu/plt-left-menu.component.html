@@ -1,12 +1,13 @@
-<nz-tabset class="tabset-left">
+<nz-tabset class="tabset-left tabs-standard-top">
   <nz-tab *ngIf="tagsInput?.pathTab" [nzTitle]="path" class="path-content">
     <ng-template #path>
       <span style="width: 90px; padding: 0px 12px 0px 12px; font-size: 15px; font-weight: bold;">Path</span>
     </ng-template>
     <div class="upPartLeftMenu">
-        <span class="wsHeader" [ngStyle]="{'background-color': tagsInput.wsHeaderSelected && !tagsInput.showDeleted ?  '#FDFBDF' : 'white'}" (click)="resetPath()">
-                      <i class="icon-window-section"></i>
-          {{tagsInput?.wsId}} - {{tagsInput?.uwYear}}
+        <span class="wsHeader" [ngStyle]="{'background-color': tagsInput.wsHeaderSelected && !tagsInput.showDeleted ?  '#FDFBDF' : 'white'}"
+              (click)="resetPath()">
+          <i class="icon-window-section"></i>
+          <span class="body-info">{{tagsInput?.wsId}} - {{tagsInput?.uwYear}}</span>
       </span>
       <ul class="title-list">
         <!--
@@ -21,11 +22,10 @@
         </ng-container>
         -->
         <li *ngFor="let project of tagsInput.projects" (click)="filter('project',null,project.projectId)"
-            style="text-overflow: ellipsis;white-space: nowrap;overflow: hidden;"
             class="clickable-item"
             [ngClass]="{'active-path': project.selected}">
           <i class="icon-assignment_24px"></i>
-          <span class="tooltipMsg"
+          <span class="body-list"
                 [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
         </li>
         <li>
@@ -53,8 +53,7 @@
             <span>User Tags</span>
           </div>
           <button (click)="resetFilterByTags()" nz-button nzType="default" nzShape="circle">
-            <i nz-icon nzType="undo" nzTheme="outline">
-            </i>
+            <i nz-icon nzType="undo" nzTheme="outline"></i>
           </button>
         </div>
         <div class="rest">

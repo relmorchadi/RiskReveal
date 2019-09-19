@@ -83,7 +83,7 @@
           </span>
   </li>
   <hr class="col-xs-12">
-  <li (click)="routerNavigate('Inuring')" [nzTitle]="isCollapsed ? 'Inuring' : ''" nz-menu-item nz-tooltip
+  <li (click)="routerNavigate('Inuring')" *ngIf="status === 'treaty'" [nzTitle]="isCollapsed ? 'Inuring' : ''" nz-menu-item nz-tooltip
       nzPlacement="right">
           <span title>
             <i nz-icon><i class="fa fa-code-fork"></i></i>

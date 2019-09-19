@@ -39,17 +39,31 @@
         }
       }
 
+      tr:nth-child(2n) {
+        border-bottom: 1px solid rgba(0,0,0,0.15);
+
+        th {
+          padding: 0 2px !important;
+          height: 30px;
+        }
+      }
+
+      tr:nth-child(2n + 1) {
+
+        th {
+          padding: 0 2px 0 2px !important;
+          height:25px
+        }
+      }
+
       th {
-        padding: 15px 2px 5px 2px !important;
-        font-size: 12px;
+        font-size: 10px;
         vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
         background-color: #fff !important;
         outline-color: #fff;
         font-family: Rubik;
-        height: 45px;
         border: none !important;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
 
         .filter-input {
           width: 100%;
