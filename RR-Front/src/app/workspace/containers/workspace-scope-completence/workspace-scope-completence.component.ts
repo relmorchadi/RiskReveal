@@ -36,6 +36,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     "Note": "Information about why those modifications were applied"
   };
   selectionForOverride = [];
+  filterBy: string ='All';
   selectionForCancelOverride = [];
   overrideReason: string;
   showPendingOption: boolean = false;
@@ -116,6 +117,8 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
       this.showPendingOption = false;
 
     }
+    if(check) {this.accumulationStatus = 'Pending'}
+    else{this.accumulationStatus = 'Scope Only'}
     return check;
   }
 
@@ -1503,5 +1506,13 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     })
     return newData;
   }
+
+  showIncompleteOnly(){
+    this.filterBy = 'Incomplete Only';
+  }
+  showAll(){
+    this.filterBy = 'All';
+  }
+
 
 }

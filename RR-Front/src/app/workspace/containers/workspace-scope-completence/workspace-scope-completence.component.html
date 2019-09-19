@@ -34,7 +34,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Filter By</span>
               <span class="dropdown-item-selected">
-                All
+                {{filterBy}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -42,8 +42,8 @@
             </div>
           </div>
           <ul nz-menu>
-            <li nz-menu-item>All</li>
-            <li nz-menu-item>Incomplete Only</li>
+            <li nz-menu-item (click)="showAll()">All</li>
+            <li nz-menu-item (click)="showIncompleteOnly()">Incomplete Only</li>
             <li nz-menu-item>Overridden Only</li>
             <li nz-menu-item>Synthetic PLTs Only</li>
             <li nz-menu-item>Expected Only</li>
@@ -135,10 +135,10 @@
                 </button>
               </div>
             </th>
-
-            <th *ngFor="let item of treatySections[0]" class="divided-col" style="width:90px; " >
+<ng-container *ngFor="let item of treatySections[0]">
+            <th  class="divided-col" style="width:90px; " *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')">
               <div style="text-align: center;">{{item.id}}<br/>{{item.name}}</div>
-              <div *ngIf="checkTreatySectionAttached(item)" class="icon-holder" nz-tooltip [nzTitle]="checked">
+              <div *ngIf="checkTreatySectionAttached(item) " class="icon-holder" nz-tooltip [nzTitle]="checked">
                 <ng-container>
                   <i class="icon-check_circle_24px" style="font-size: 22px;color: #60E7DA;"></i>
                 </ng-container>
@@ -148,12 +148,13 @@
               </ng-template>
 
             </th>
+</ng-container>
             <th style="width: 130px; height: 74px;" class="divided-col">Completion</th>
           </tr>
         </ng-template>
         <ng-template pTemplate="body" let-rowData let-expanded="expanded" let-columns="columns">
-          <tr [ngClass]="{'expanded-row': regionCodes[rowData.id]}" class="row-hover">
-            <th>
+          <tr [ngClass]="{'expanded-row': regionCodes[rowData.id]}" class="row-hover" *ngIf="!(checkRowAttached(rowData) && filterBy == 'Incomplete Only')">
+            <th style="height: 54px;">
               <div style="display: flex; justify-content: space-between;">
                 <div class="info-rp" (click)="toggleParentExpand(rowData)" [pRowToggler]="rowData">
 
@@ -228,7 +229,8 @@
               </div>
 
             </th>
-            <th *ngFor="let item of treatySections[0]" class="divided-col">
+            <ng-container *ngFor="let item of treatySections[0]">
+            <th  *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 
 
               <div *ngIf="checkExpected(item,rowData)  == 'checked'" class="icon-holder">
@@ -290,6 +292,7 @@
 
 
             </th>
+            </ng-container>
             <th class="divided-col">
 
             </th>
@@ -298,7 +301,7 @@
         </ng-template>
         <ng-template pTemplate="rowexpansion" let-rowData let-columns="columns">
           <ng-container *ngFor="let grain of rowData.child">
-            <tr [ngClass]="{'expanded-inner-row': getGrainState(grain,rowData)}" class="row-hover">
+            <tr [ngClass]="{'expanded-inner-row': getGrainState(grain,rowData)}" class="row-hover" *ngIf="!(checkRowChildAttached(rowData,grain) && filterBy == 'Incomplete Only')">
               <th class="child-row-show">
                 <div class="inner-line">
                 <div class="grain-info-wrapper" (click)="toggleExpanded(grain, rowData)">
@@ -330,7 +333,8 @@
                 </nz-dropdown>
                 </div>
               </th>
-              <th *ngFor="let item of treatySections[0]" class="divided-col">
+             <ng-container *ngFor="let item of treatySections[0]" >
+              <th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
 
                 <div *ngIf="checkExpectedTwo(item,grain,rowData) == 'checked'" class="icon-holder">
                   <div class="icon-holder" style="padding:2px;" nz-tooltip [nzTitle]="checked">
@@ -383,10 +387,11 @@
                 </ng-template>
 
               </th>
+             </ng-container>
               <th class="divided-col"></th>
             </tr>
-            <ng-container *ngFor="let plt of grain.pltsAttached">
-              <tr *ngIf="grains[grain.id + rowData.id]" class="row-hover">
+            <ng-container *ngFor="let plt of grain.pltsAttached" >
+              <tr *ngIf="grains[grain.id + rowData.id] && !(checkRowChildAttached(rowData,grain) && filterBy == 'Incomplete Only')"  class="row-hover">
 
                 <th class="inner-line">
                   <div class="grain-info-wrapper">
@@ -405,13 +410,15 @@
                     <div class="plt-info" style="font-weight: 400">{{plt.regionPerilCode}}</div>
                   </div>
                 </th>
-                <th *ngFor="let item of treatySections[0]" class="divided-col">
+                <ng-container *ngFor="let item of treatySections[0]" >
+                <th *ngIf="!(checkTreatySectionAttached(item) && filterBy == 'Incomplete Only')" class="divided-col">
                   <div class="icon-holder">
                     <ng-container *ngIf="checkAttached(item, rowData,grain, plt) == 'attached'">
                       <i class="icon-check_circle_24px" style="font-size: 20px;color: #60E7DA;"></i>
                     </ng-container>
                   </div>
                 </th>
+                </ng-container>
                 <th class="divided-col"></th>
               </tr>
             </ng-container>

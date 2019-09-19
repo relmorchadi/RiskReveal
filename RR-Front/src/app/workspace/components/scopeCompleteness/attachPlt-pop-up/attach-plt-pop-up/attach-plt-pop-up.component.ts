@@ -871,6 +871,26 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     }
   }
 
+  showApplicablePltsFunction() {
+    this.showApplicablePlts != this.showApplicablePlts;
+    if (this.showApplicablePlts) {
+      this.updateTable('listOfPltsData', this.tableInputs.listOfPltsData.map(plt => {
+
+        let check = false;
+        plt.treatySectionsState.forEach(ts => {
+          if (ts.state != 'disabled') {
+            check = true;
+          }
+        })
+        return {...plt, showApplicable: check};
+      }))
+    } else {
+      this.updateTable('listOfPltsData', this.tableInputs.listOfPltsData.map(plt => {
+        return {...plt, showApplicable: true};
+      }))
+    }
+  }
+
   initialiseContainer(tableInputs) {
 
     tableInputs.listOfPltsData.forEach(plt => {
@@ -970,22 +990,23 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   }
 
   selectAllPltsContainer(event) {
-    if(event){
-    this.pltContainer = [];
-    this.tableInputs.listOfPltsData.forEach(plt => {
-      plt.treatySectionsState.forEach(ts => {
-        if (ts.state != 'disabled') {
-          let object = {
-            pltId: plt.pltId,
-            regionPeril: plt.regionPerilCode,
-            targetRap: plt.grain,
-            tsId: ts.tsId
+    if (event) {
+      this.pltContainer = [];
+      this.tableInputs.listOfPltsData.forEach(plt => {
+        plt.treatySectionsState.forEach(ts => {
+          if (ts.state != 'disabled') {
+            let object = {
+              pltId: plt.pltId,
+              regionPeril: plt.regionPerilCode,
+              targetRap: plt.grain,
+              tsId: ts.tsId
+            }
+            this.pltContainer.push(object)
+            this.updatePltSingleSelection(object.pltId);
           }
-          this.pltContainer.push(object)
-          this.updatePltSingleSelection(object.pltId);
-        }
+        })
       })
-    })}else{
+    } else {
       this.pltContainer = [];
       this.tableInputs.listOfPltsData.forEach(plt => {
         this.updatePltSingleSelection(plt.pltId);
