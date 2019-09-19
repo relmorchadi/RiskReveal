@@ -44,7 +44,7 @@ public class TagService {
         //1
         List<UserTag> usedInWs = userTagRepository.findByWorkspace(workspaceRepository.findWorkspaceByWorkspaceId(workspaceId))
                 .stream()
-                .filter( tag -> !assignedInWs.contains(tag))
+                .filter( tag -> !request.selectedTags.contains(tag))
                 .collect(Collectors.toList());
         //2
         List<UserTag> suggested = Stream
@@ -146,8 +146,16 @@ public class TagService {
             });
         });
         request.unselectedTags.forEach(tag -> {
-            UserTag userTag = userTagRepository.findById(tag.getTagId()).orElseThrow(()-> new RuntimeException("userTag ID not found"));
-            pltHeaders.forEach(pltHeader -> pltUserTagRepository.delete(pltUserTagRepository.findByTagAndPlt(userTag, pltHeader)));
+
+            System.out.println("test :" + tag);
+
+            UserTag userTag = userTagRepository.findById(tag.getTagId()).get();
+            pltHeaders.forEach(pltHeader -> {
+                UserTagPlt assignment = pltUserTagRepository.findByTagAndPlt(userTag, pltHeader).orElse(null);
+                if(assignment != null) {
+                    pltUserTagRepository.delete(assignment);
+                }
+            });
         });
 
         /*request.unselectedTags.forEach(tag -> {

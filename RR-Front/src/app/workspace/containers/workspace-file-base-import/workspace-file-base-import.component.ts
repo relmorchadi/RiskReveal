@@ -72,6 +72,9 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
   @Select(WorkspaceState.getFileBasedData) fileBase$;
   fileBase: any;
 
+  @Select(WorkspaceState.getFileBaseSelectedFiles) selectedData$;
+  selectedData;
+
   constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
     super(_baseRouter, _baseCdr, _baseStore);
   }
@@ -87,6 +90,10 @@ export class WorkspaceFileBaseImportComponent extends BaseContainer implements O
     this.dispatch(new fromWs.LoadFileBasedFoldersAction());
     this.fileBase$.subscribe(value => {
       this.fileBase = _.merge({}, value);
+      this.detectChanges();
+    });
+    this.selectedData$.subscribe(value => {
+      this.selectedData =  value;
       this.detectChanges();
     });
 

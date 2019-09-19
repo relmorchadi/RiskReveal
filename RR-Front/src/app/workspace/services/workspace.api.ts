@@ -18,11 +18,11 @@ export class WsApi {
   }
 
   searchFacWidget() {
-    return this._http.get(`${environment.API_URI}fac`);
+    return this._http.get(`${environment.API_URI}fac?size=50`);
   }
 
   postFacData(data) {
-    return this._http.post(`${environment.API_URI}fac`, {params: data});
+    return this._http.post(`${environment.API_URI}fac`, data);
   }
 
 }

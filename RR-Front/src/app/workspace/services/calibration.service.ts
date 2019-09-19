@@ -472,13 +472,21 @@ export class CalibrationService implements NgxsOnInit {
     let pltId = payload.pltId;
     let newAdj = {...payload.adjustement};
     let lastpltId = payload.lastpltId;
-    const addtoAdj = [...state.content[this.prefix].calibration.adjustmentApplication[pltId], newAdj];
-    const removefrom = [..._.filter(state.content[this.prefix].calibration.adjustmentApplication[lastpltId], row => row.id != newAdj.id)];
+    let application = payload.application;
+    if (pltId !== lastpltId) {
+      const addtoAdj = [...state.content[this.prefix].calibration.adjustmentApplication[pltId], newAdj];
+      const removefrom = [..._.filter(state.content[this.prefix].calibration.adjustmentApplication[lastpltId], row => row.id != newAdj.id)];
 
-    ctx.patchState(produce(ctx.getState(), draft => {
-      draft.content[this.prefix].calibration.adjustmentApplication[pltId] = addtoAdj;
-      draft.content[this.prefix].calibration.adjustmentApplication[lastpltId] = removefrom;
-    }));
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[this.prefix].calibration.adjustmentApplication[lastpltId] = removefrom;
+        draft.content[this.prefix].calibration.adjustmentApplication[pltId] = addtoAdj;
+      }));
+    } else {
+      ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[this.prefix].calibration.adjustmentApplication[pltId] = application;
+      }));
+    }
+
   }
 
   deleteAdjsApplication(ctx: StateContext<any>, payload: any) {

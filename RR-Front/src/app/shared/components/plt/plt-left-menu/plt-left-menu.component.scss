@@ -175,7 +175,6 @@
     .title-list {
       letter-spacing: 0.2px;
       line-height: 27px;
-      font-size: 9px;
       list-style: none;
       padding-left: 20px;
       padding-right: 7px;
@@ -183,8 +182,18 @@
       overflow: auto;
       max-width: 212px;
 
-      li * {
-        font-size: 1.5em;
+      li {
+        display: flex;
+        align-items: center;
+        margin: 0 0 3px 0;
+      }
+
+      .icon-assignment_24px {
+        font-size: 16px;
+      }
+
+      .body-list {
+        font-size: 11px;
       }
 
       .icon-window-section {
@@ -208,8 +217,11 @@
     }
 
     .wsHeader {
-      font-size: 1.2em;
-      margin-bottom: 10px;
+      font-size: 15px;
+      margin-bottom: 4px;
+      margin-left: 8px;
+      display: flex;
+      align-items: center;
     }
     span {
       i {
@@ -360,4 +372,16 @@
   color: var(--danger);
   position: absolute;
   bottom: -16px;
+}
+
+.body-info {
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 5px;
+}
+
+.body-list {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
 }

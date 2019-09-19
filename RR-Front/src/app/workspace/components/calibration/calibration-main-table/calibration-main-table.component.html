@@ -412,7 +412,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
-    <tr class="ui-widget-header" style="background-color: #ecf1f7 !important;">
+    <tr class="ui-widget-header" style="background-color: #ecf1f7 !important; max-height: 30px; !important;">
       <td *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col.fields === 'checkbox'">
           <a [pRowToggler]="rowData">
@@ -431,12 +431,12 @@
           </div>-->
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div class="text-elipsice"
+          <div class="text-elipsice-pure"
                style="font-weight: bold">{{rowData.pltId | textLength}}</div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
           <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-               class="text-elipsice">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+               class="text-elipsice-pure">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
         </ng-container>
         <!--<ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
@@ -505,7 +505,7 @@
             [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
             [sortableData]="adjutmentApplication[rowData.pltId]"
 
-            class="text-elipsice border-dragable"
+            class="text-elipsice-pure border-dragable"
             dnd-sortable-container
             style="display: flex;">
 
@@ -1304,7 +1304,7 @@
           <div
             (drop)="onDrop(col,rowData.pltId)"
             [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-            [dropZones]="['widget-dropZone']"
+            [dropZones]="['adjustment-dropZone']"
             [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
             [sortableData]="adjutmentApplication[rowData.pltId]"
 

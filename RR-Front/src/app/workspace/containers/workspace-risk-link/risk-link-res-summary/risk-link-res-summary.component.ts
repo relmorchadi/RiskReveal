@@ -253,8 +253,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
       }
     } else if (target === 'UM') {
       this.store.dispatch(new fromWs.PatchResultsAction({id: row.id, target: 'unitMultiplier', value: $event}));
-    } else if (target === 'peqt') {
-
+    } else if (target === 'Peqt') {
+      this.store.dispatch(new fromWs.SaveEditPEQTAction({data: this.tree}));
+      this.singleColEdit = false;
     }
   }
 
@@ -422,6 +423,23 @@ export class RiskLinkResSummaryComponent implements OnInit {
     }
   }
 
+  unselectAllTable(scope) {
+    if (scope === 'R') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkResultAction({action: 'unselectAll'}));
+    } else if (scope === 'S') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkSummaryAction({action: 'unselectAll'}));
+    } else if (scope === 'fpS') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPStandardAction({action: 'unselectAll'}));
+    } else if (scope === 'fpA') {
+      this.store.dispatch(new fromWs.ToggleRiskLinkFPAnalysisAction({action: 'unselectAll'}));
+    } else if (scope === 'linkAnalysis') {
+      const wrapperEDM = this.linking.rdm.selected;
+      this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
+    } else if (scope === 'linkPortfolio') {
+      this.store.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
+    }
+  }
+
   changeCollapse(value) {
     this.store.dispatch(new fromWs.PatchRiskLinkCollapseAction({key: value}));
   }
@@ -549,6 +567,17 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.tree.forEach(dt => {
       dt.children = [...this.getInnerTree(dt.title)];
     });
+
+    this.tree.forEach(
+      dt => {
+        dt.selectedItems.forEach( (st, key) => {
+          const filtered = _.filter(dt.children, child => child.selectedItems[key].selected);
+          if (filtered.length === dt.children.length) {
+            st.selected = true;
+          }
+        });
+      }
+    );
   }
 
   getInnerTree(target) {
@@ -558,10 +587,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
       if (target === dt.regionPeril) {
         array = [...array, {
           title: `${dt.analysisId} | ${dt.analysisName} | ${dt.description}`,
+          analysisId: dt.analysisId,
+          analysisName: dt.analysisName,
           selected: false,
-          selectedItems: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
-            {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
-            {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false}]
+          selectedItems: _.cloneDeep(dt.peqt)
         }];
       }
     });
@@ -573,7 +602,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   getSelectedPeqt(row) {
-    return _.filter(_.filter(_.toArray(this.state.results.data), dt => dt.id === row.id)[0].peqt, ws => ws.selected === true).length;
+    return _.filter(this.state.results.data[row.analysisId].peqt, ws => ws.selected === true).length;
   }
 
   changePeqt(parent, target, selected) {

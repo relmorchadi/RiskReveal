@@ -1,8 +1,6 @@
 export class loadWSFromLocalStorage {
   static readonly type = '[Workspace] Load WS from Local Storage';
-
-  constructor() {
-  }
+  constructor() {}
 }
 
 export class loadWorkSpaceAndPlts {
@@ -22,16 +20,12 @@ export class LoadFacWs {
 
 export class LoadWsSuccess {
   static readonly type = '[Workspace] Load WS Success';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class LoadWsFail {
   static readonly type = '[Workspace] Load WS Fail';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
 export class OpenWS {
@@ -58,31 +52,32 @@ export class CloseWS {
 
 export class SetCurrentTab {
   static readonly type = '[Workspace] Set Current Tab';
-
-  constructor(public payload?: any) {
-  }
+  constructor(public payload?: any) {}
 }
 
+export class CreateNewFac {
+  static readonly type = '[Workspace] New Fac Data';
+  constructor(public payload?: any) {}
+}
+
+export class LoadProjectForWs {
+  static readonly type = '[Workspace] Load Project For Fac Workspace';
+  constructor(public payload?: any) {}
+}
 
 export class ToggleWsDetails {
   static readonly type = '[Workspace] Toggle workspace details';
-
-  constructor(public wsId: string) {
-  }
+  constructor(public wsId: string) {}
 }
 
 export class ToggleWsLeftMenu {
   static readonly type = '[Workspace] Toggle workspace left menu';
-
-  constructor(public wsId: string) {
-  }
+  constructor(public wsId: string) {}
 }
 
 export class UpdateWsRouting {
   static readonly type = '[Workspace] Update workspace routing';
-
-  constructor(public wsId: string, public route: string) {
-  }
+  constructor(public wsId: string, public route: string) {}
 }
 
 

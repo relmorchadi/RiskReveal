@@ -2,13 +2,14 @@ import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output, Templ
 import {GeneralConfigState} from '../../../core/store/states';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
-import {Store} from '@ngxs/store';
+import {Select, Store} from '@ngxs/store';
 import {Data} from '../../../core/model/data';
 import * as moment from 'moment';
 import {dashData} from '../../../shared/data/dashboard-data';
 import {OpenWS} from "../../../workspace/store/actions";
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WsApi} from '../../../workspace/services/workspace.api';
+import {WorkspaceState} from "../../../workspace/store/states";
 
 @Component({
   selector: 'app-fac-widget',
@@ -60,6 +61,7 @@ export class FacWidgetComponent implements OnInit {
   Countries = Data.coutryAlt;
   private mockDataCache;
 
+  @Select(WorkspaceState.getFacData) facData$;
   data: any[];
 
   constructor(private nzDropdownService: NzDropdownService, private store: Store,
@@ -83,9 +85,12 @@ export class FacWidgetComponent implements OnInit {
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-    this.wsApi.searchFacWidget().subscribe((ws: any) => {
+/*    this.wsApi.searchFacWidget().subscribe((ws: any) => {
       this.data = ws.content;
       console.log(this.data);
+    });*/
+    this.facData$.subscribe(value => {
+      this.data = value;
     });
     this.store.select(GeneralConfigState.getGeneralConfigAttr('contractOfInterest', {
       country: '',
@@ -110,6 +115,8 @@ export class FacWidgetComponent implements OnInit {
   openFacItem(event) {
     this.store.dispatch(new workspaceActions.OpenFacWS({wsId: event.uwanalysisContractFacNumber,
       uwYear: event.uwanalysisContractYear, route: 'Project', type: 'fac'}));
+    this.store.dispatch(new workspaceActions.LoadProjectForWs({wsId: event.uwanalysisContractFacNumber,
+      uwYear: event.uwanalysisContractYear}));
   }
 
   duplicateItem(itemName: any): void {
