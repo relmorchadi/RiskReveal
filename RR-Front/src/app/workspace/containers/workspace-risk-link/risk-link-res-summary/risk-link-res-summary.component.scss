@@ -138,10 +138,17 @@ TABLE STYLE
           width: 100%;
           height: 27px;
           font-weight: 400;
+
           span {
             text-overflow: ellipsis;
             white-space: nowrap;
             overflow: hidden;
+          }
+
+          .icon-exclamation-triangle {
+            font-size: 15px;
+            margin-left: 3px;
+            color: orange;
           }
         }
 
@@ -151,6 +158,13 @@ TABLE STYLE
           font-weight: bold !important;
           width: fit-content;
           height: 50%;
+        }
+
+        .highlighted-change {
+          color: #0700CF;
+          border-bottom: 1px solid #0700CF;
+          font-weight: bold !important;
+          width: fit-content;
         }
 
         .indicator-flag {

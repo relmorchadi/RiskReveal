@@ -298,14 +298,19 @@
                     <ul nz-menu style="font-size: 12px">
                       <li nz-menu-item>Reset Sort</li>
                       <li nz-menu-item>Reset Filters</li>
-                      <li nz-menu-item>Reset Sort/Filters</li>
-                      <li nz-menu-divider></li>
-                      <li nz-menu-item *ngIf="state.selectedEDMOrRDM === 'rdm'"
-                          (click)="managePopUpAnalysis = true">Manage Columns</li>
-                      <li nz-menu-item *ngIf="state.selectedEDMOrRDM === 'edm'"
-                          (click)="managePopUpPortfolio = true">Manage Columns</li>
-                      <li nz-menu-divider></li>
-                      <li nz-menu-item>Unselect All</li>
+                      <li nz-menu-item (click)="resetAll()">Reset Sort/Filters</li>
+                      <ng-container *ngIf="state.selectedEDMOrRDM === 'rdm'">
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item (click)="managePopUpAnalysis = true">Manage Columns</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item (click)="unselectAllTable('analysis')">Unselect All</li>
+                      </ng-container>
+                      <ng-container *ngIf="state.selectedEDMOrRDM === 'edm'">
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item (click)="managePopUpPortfolio = true">Manage Columns</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item (click)="unselectAllTable('portfolio')">Unselect All</li>
+                      </ng-container>
                     </ul>
                   </nz-dropdown>
                 </div>
@@ -325,11 +330,11 @@
                         <th *ngFor="let col of columns" pResizableColumn>
                           <ng-container *ngIf="col.header === 'selected'">
                             <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
-                                   style="margin-top:20px" nz-checkbox [ngModel]="allCheckedAnalysis"
+                                   style="margin-top: -5px" nz-checkbox [ngModel]="allCheckedAnalysis"
                                    (ngModelChange)="updateAllChecked('analysis')"
                                    [nzIndeterminate]="indeterminateAnalysis"></label>
                             <label *ngIf="state.selectedEDMOrRDM === 'edm'"
-                                   style="margin-top:20px" nz-checkbox [ngModel]="allCheckedPortolfios"
+                                   style="margin-top: -5px" nz-checkbox [ngModel]="allCheckedPortolfios"
                                    (ngModelChange)="updateAllChecked('portfolio')"
                                    [nzIndeterminate]="indeterminatePortfolio"></label>
                             <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
@@ -339,10 +344,14 @@
                             <p-sortIcon style="position: absolute; float: right;"
                                         [field]="col.field" ariaLabel="Activate to sort" ariaLabelDesc="Activate to sort in descending order" ariaLabelAsc="Activate to sort in ascending order"></p-sortIcon>
                           </div>
+                        </th>
+                      </tr>
+                      <tr>
+                        <th *ngFor="let col of columns" pResizableColumn>
                           <div class="search-bar-table"
                                *ngIf="col.header !== 'selected' && col.header !== 'id'">
                             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                            <input pInputText type="text"
+                            <input pInputText type="text" #filters [id]="'i'"
                                    (input)="kt.filter($event.target.value, col.field, col.filterMatchMode)">
                           </div>
                         </th>

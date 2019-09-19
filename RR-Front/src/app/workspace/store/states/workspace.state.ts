@@ -7,12 +7,13 @@ import {WorkspaceMain} from '../../../core/model';
 import {CalibrationService} from '../../services/calibration.service';
 import {WorkspaceService} from '../../services/workspace.service';
 import {WorkspaceModel} from '../../model';
-import {InuringService} from "../../services/inuring.service";
+import {InuringService} from '../../services/inuring.service';
 import * as fromPlt from '../actions/plt_main.actions';
 import {PltStateService} from '../../services/plt-state.service';
 import {RiskLinkStateService} from '../../services/riskLink-action.service';
 import {FileBasedService} from '../../services/file-based.service';
-import {ScopeCompletenessService} from "../../services/scop-completeness.service";
+import {Data} from '../../../shared/data/fac-data';
+import {ScopeCompletenessService} from '../../services/scop-completeness.service';
 
 const initialState: WorkspaceModel = {
   content: {},
@@ -20,6 +21,7 @@ const initialState: WorkspaceModel = {
     index: 0,
     wsIdentifier: null,
   },
+  facWs: Data.facWs,
   favorite: [],
   pinned: [],
   routing: '',
@@ -56,6 +58,11 @@ export class WorkspaceState {
   @Selector()
   static getCurrentTab(state: WorkspaceModel) {
     return state.currentTab;
+  }
+
+  @Selector()
+  static getFacData(state: WorkspaceModel) {
+    return state.facWs;
   }
 
   @Selector()
@@ -139,23 +146,23 @@ export class WorkspaceState {
 
   static getPltsForPlts(wsIdentifier: string) {
     return createSelector([WorkspaceState], (state: WorkspaceModel) =>
-      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => !e.deleted), 'pltId'))
+      _.keyBy(_.filter(_.get(state.content, `${wsIdentifier}.pltManager.data`), e => !e.deleted), 'pltId'));
   }
 
   static getProjectsPlt(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].projects)
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].projects);
   }
 
   static getUserTagsPlt(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTags)
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTags);
   }
 
   static getOpenedPlt(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt)
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.openedPlt);
   }
 
   static getUserTagManager(wsIdentifier: string) {
-    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager)
+    return createSelector([WorkspaceState], (state: WorkspaceModel) => state.content[wsIdentifier].pltManager.userTagManager);
   }
 
   /***********************************
@@ -308,6 +315,12 @@ export class WorkspaceState {
     return state.content[wsIdentifier].fileBaseImport;
   }
 
+  @Selector()
+  static getFileBaseSelectedFiles(state: WorkspaceModel) {
+    const wsIdentifier = state.currentTab.wsIdentifier;
+    return state.content[wsIdentifier].fileBaseImport.files;
+  }
+
   /***********************************
    *
    * Scope And Completeness Selectors
@@ -348,9 +361,19 @@ export class WorkspaceState {
     return this.wsService.loadWsSuccess(ctx, payload);
   }
 
+  @Action(fromWS.LoadProjectForWs)
+  loadProjectForWs(ctx: StateContext<WorkspaceModel>, payload: fromWS.LoadProjectForWs) {
+    this.wsService.loadProjectForWs(ctx, payload);
+  }
+
   @Action(fromWS.OpenWS)
   openWorkspace(ctx: StateContext<WorkspaceModel>, payload: fromWS.OpenWS) {
     return this.wsService.openWorkspace(ctx, payload);
+  }
+
+  @Action(fromWS.CreateNewFac)
+  createNewFac(ctx: StateContext<WorkspaceModel>, payload: fromWS.CreateNewFac) {
+    this.wsService.createNewFac(ctx, payload);
   }
 
   @Action(fromWS.OpenFacWS)
@@ -829,6 +852,11 @@ export class WorkspaceState {
   @Action(fromWS.SaveEditAnalysisAction)
   saveEditAnalysis(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveEditAnalysisAction) {
     this.riskLinkFacade.saveEditAnalysis(ctx, payload);
+  }
+
+  @Action(fromWS.SaveEditPEQTAction)
+  saveEditPeqt(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SaveEditPEQTAction) {
+    this.riskLinkFacade.saveEditPeqt(ctx, payload);
   }
 
   @Action(fromWS.CreateLinkingAction)

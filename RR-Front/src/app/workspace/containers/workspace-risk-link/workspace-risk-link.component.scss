@@ -411,16 +411,18 @@
             }
 
             .ui-table-thead {
-              th {
-                padding: 15px 10px 5px 3px;
-                font-size: 10px;
-                vertical-align: top;
-                color: rgba(0, 0, 0, 0.38);
-                background-color: #fff;
-                font-family: Rubik;
-                height: 45px;
-                border: none;
-                border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+              tr:nth-child(2n) {
+                th {
+                  padding: 0px 10px 5px 3px;
+                  font-size: 10px;
+                  vertical-align: top;
+                  color: rgba(0, 0, 0, 0.38);
+                  background-color: #fff;
+                  font-family: Rubik;
+                  height: 25px;
+                  border: none;
+                  border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+                }
 
                 .search-bar-table {
                   display: flex;
@@ -437,6 +439,19 @@
                       outline: 0;
                     }
                   }
+                }
+              }
+
+              tr:nth-child(2n + 1) {
+                th {
+                  padding: 15px 10px 5px 0px;
+                  font-size: 10px;
+                  vertical-align: top;
+                  color: rgba(0, 0, 0, 0.38);
+                  background-color: #FFF;
+                  font-family: Rubik;
+                  height: 20px;
+                  border: none;
                 }
               }
             }
@@ -965,21 +980,18 @@ TABLE STYLE
     }
 
     .ui-table-thead {
-      .icon-menu_24px {
-        font-size: 20px;
-        cursor: pointer;
-      }
-
-      th {
-        padding: 15px 10px 5px 3px;
-        font-size: 10px;
-        vertical-align: top;
-        color: rgba(0, 0, 0, 0.38);
-        background-color: #fff;
-        font-family: Rubik;
-        height: 45px;
-        border: none;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+      tr:nth-child(2n) {
+        th {
+          padding: 0px 10px 5px 3px;
+          font-size: 10px;
+          vertical-align: top;
+          color: rgba(0, 0, 0, 0.38);
+          background-color: #fff;
+          font-family: Rubik;
+          height: 25px;
+          border: none;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+        }
 
         .search-bar-table {
           display: flex;
@@ -997,6 +1009,24 @@ TABLE STYLE
             }
           }
         }
+      }
+
+      tr:nth-child(2n + 1) {
+        th {
+          padding: 15px 10px 5px 0px;
+          font-size: 10px;
+          vertical-align: top;
+          color: rgba(0, 0, 0, 0.38);
+          background-color: #FFF;
+          font-family: Rubik;
+          height: 20px;
+          border: none;
+        }
+      }
+
+      .icon-menu_24px {
+        font-size: 20px;
+        cursor: pointer;
       }
     }
 
