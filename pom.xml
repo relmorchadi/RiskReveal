@@ -20,9 +20,6 @@
     <modules>
 		<module>RRADJUSTMENT</module>
         <module>RR-Common</module>
-        <module>RR-Front</module>
-        <module>RR-Backend</module>
-        <module>import</module>
     </modules>
 
     <properties>
