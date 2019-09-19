@@ -1,9 +1,16 @@
-
-:host {
-  display: flex;
-  height: 100%;
-
+body {
+  overflow: hidden !important;
 }
+
+.delta-context {
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'Delta Context';
+      width: fit-content;
+    }
+  }
+}
+
 
 /*::ng-deep  {
   .ant-modal-mask {
@@ -18,48 +25,80 @@
   top: 30%;
 }
 
-.title-right {
-  background: #fff;
-  //max-width: calc(100vw - 190px - 80px - 221px);
-  width: 85%;
-  display: flex;
-  flex-flow: column;
-  align-items: stretch;
 
-  .title-as-tab {
-    display: flex;
-    flex: 0 1 auto;
+/*::ng-deep .plt-comparer-pop-up {
+  .ui-dialog-content {
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
 
-    span {
-      padding: 16px 43px;
-      font-size: 1.3em;
-      font-weight: bold;
-      border-top: 3px solid #0700e4;
+  .content {
+    flex: 1;
+    height: 100%;
+    flex-wrap: nowrap;
+    padding: 5px;
+
+    .title-as-tab {
+      display: flex;
+      flex: 0 1 auto;
+      justify-content: space-between;
+
+      span {
+        padding: 16px 43px;
+        font-size: 1.3em;
+        font-weight: bold;
+        border-top: 3px solid #0700e4;
+      }
+    }
+
+    .center {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .left .tabset-left{
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    }
+
+    .center > div, .left > div {
+      box-shadow: none;
+    }
+
+    .left {
+      flex-flow: column;
+
+      form {
+        display: flex;
+        max-width: 210px !important;
+      }
+      .tabset-left .title-list {
+        max-width: 210px !important;
+      }
+
+      ::ng-deep .tabset-left .ant-tabs-content {
+        height: calc(90vh - 210px) !important;
+      }
+    }
+
+    ::ng-deep .ui-table-scrollable-body {
+      height: calc(100vh - 400px);
+      max-height: none;
+    }
+
+    .PLTs-content {
+      position: relative;
+      flex: 1 1 auto;
     }
   }
-}
-
-.my-modal {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-
-
-  nz-tabset {
-    height: 100%;
-  }
-}
+}*/
 
 .layout-comparer {
   background-color: #F4F6FC;
-  width: 100%;
-  height: 100%;
+  height: calc(100vh - 59px);
+  width: 100vw;
 }
 
 .button-toggle {
-  margin-right: 10px;
+  display: flex;
 }
 
 /* Drop Drown of the Risk Link Page  */
@@ -91,6 +130,7 @@
 
       .dropdown-item-selected-comparer {
         font-size: 13px;
+        line-height: 17px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
@@ -126,36 +166,56 @@ div.blank-space {
   height: 350px;
 }
 
-.header {
+.header-comparer-wrapper {
+  width: 100%;
   display: flex;
   justify-content: space-between;
-  flex-wrap: wrap;
-  width: 99%;
-  padding: 0;
-  margin: 28px auto 0;
-  height: 60px;
-  ::ng-deep{
-    .ant-select-search--inline{
+  padding: 25px;
+  align-items: center;
+
+  .header-left {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .header-right {
+    display: flex;
+    flex: 0 0 55%;
+    justify-content: space-between;
+
+    .header-right-wrap {
+      display: flex;
+    }
+  }
+
+  ::ng-deep {
+    .ant-select-search--inline {
       position: unset;
     }
   }
-  .multiple-selection{
-    ::ng-deep{
+
+  .multiple-selection {
+    ::ng-deep {
       .ant-select-selection__placeholder {
         top: 30%;
-        display:block !important;
+        display: block !important;
       }
-      .ant-select-selection__choice{
+
+      .ant-select-selection__choice {
         display: none;
       }
     }
   }
 }
 
-.content {
-  padding: 70px 200px;
+.header {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  width: 99%;
+  padding: 0;
+  height: 60px;
 }
-
 
 .title-section-comparer {
   display: flex;
@@ -166,7 +226,6 @@ div.blank-space {
   line-height: 41px;
   height: 50px;
   align-items: center;
-
 
 
   h3 {
@@ -183,7 +242,6 @@ div.blank-space {
   font-family: Rubik;
   font-size: 18.26px;
   letter-spacing: 0.5px;
-  line-height: 45px;
 }
 
 .dropdown-group {
@@ -271,7 +329,7 @@ div.blank-space {
 
       span {
         color: #E5E9FA;
-        font-size:14px ;
+        font-size: 14px;
         line-height: 15px;
       }
     }
@@ -420,7 +478,13 @@ div.blank-space {
   background-color: #FFFFFF;
   height: 700px;
   box-shadow: 1px 2px 6px rgba(0, 0, 0, 0.15), -3px 0px 5px rgba(0, 0, 0, 0.15);
-  margin: 10px 20px 40px 10px;
+  margin: 10px;
+
+  .card-header-detail {
+    display: flex;
+    flex-direction: column;
+    margin-left: 36px;
+  }
 }
 
 .example-list {
@@ -478,7 +542,7 @@ div.blank-space {
 
       span {
         color: #E5E9FA;
-        font-size:14px ;
+        font-size: 14px;
         line-height: 15px;
       }
     }
@@ -579,9 +643,8 @@ div.blank-space {
   display: flex;
   width: 150px;
   justify-content: center;
-  padding: 15px;
+  padding: 15px 15px 5px;
   font-size: 17px;
   font-weight: bold;
-
 }
 

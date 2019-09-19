@@ -1,6 +1,7 @@
 import {Component, EventEmitter, HostListener, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {LazyLoadEvent} from 'primeng/primeng';
 import * as _ from 'lodash';
+import * as tableStore from "../plt/plt-main-table/store";
 
 @Component({
   selector: 'app-table',
@@ -12,17 +13,31 @@ export class TableComponent implements OnInit {
   @Output('selectOne') selectOne: any = new EventEmitter<any>();
   @Output('loadMore') loadMore: any = new EventEmitter<any>();
   @Output('dbClickItem') doubleClick: any = new EventEmitter<any>();
+  @Output('onRowSelect') onRowSelect: any = new EventEmitter<any>();
+  @Output('onRowUnselect') onRowUnselect: any = new EventEmitter<any>();
 
   @ViewChild('dt') table;
   @ViewChild('cm') contextMenu;
 
   contextSelectedItem: any;
+  FilterData: any = {};
+  sortData: any = {};
+  filterInput: any;
 
   @Input() loading: boolean;
+  _activateContextMenu: boolean;
+  get activateContextMenu(): boolean {
+    return this._activateContextMenu;
+  }
+  @Input('activateContextMenu')
+  set activateContextMenu(value: boolean) {
+    if (!_.isNil(value)) { this._activateContextMenu = value;  } else { this._activateContextMenu = true; }
+  }
   currentSelectedItem: any;
   dataCashed: any;
   allChecked = false;
   indeterminate = false;
+  selectedRow: any;
 
   items = [
     {
@@ -62,6 +77,8 @@ export class TableComponent implements OnInit {
   tableHeight: string;
   @Input()
   tableWidth: string;
+  @Input()
+  selectionMode: string = null;
 
   event: any;
   selectedRows: any = [];
@@ -185,12 +202,48 @@ export class TableComponent implements OnInit {
     this.selectedRows = this.listOfData.filter(dt => dt.selected);
     const data = this.selectedRows.filter(dt => dt === row) || [];
     data.length === 0 ? this.selectedRows = [...this.selectedRows, row] : null;
-    console.log(this.selectedRows);
     row.selected = true;
     tableColumn.handler(this.selectedRows);
+
   }
 
   @HostListener('wheel', ['$event']) onElementScroll(event) {
-    this.contextMenu.hide();
+    if (this.contextMenu !== undefined) {
+      this.contextMenu.hide();
+    }
   }
+
+  rowSelect($event) {
+    this.onRowSelect.emit($event);
+  }
+  rowUnselect($event) {
+    this.onRowUnselect.emit($event);
+  }
+  getContextMenu() {
+      return _.isNil(this.activateContextMenu) || this.activateContextMenu ? this.contextMenu : null;
+  }
+
+  sortChange(field: any, sortCol: any) {
+    if(!sortCol){
+      this.sortData = _.merge({}, this.sortData, {[field]: 'asc'});
+    }else if(sortCol === 'asc'){
+      this.sortData = _.merge({}, this.sortData, {[field]: 'desc'});
+    } else if(sortCol === 'desc') {
+        this.sortData =  _.omit(this.sortData, `${field}`);
+    }
+    console.log('this.sortData', this.sortData);
+  }
+
+  filter(key: string, value) {
+    console.log('key', key)
+    if(value) {
+      this.FilterData =  _.merge({}, this.FilterData, {[key]: value}) ;
+    }
+    else {
+      this.FilterData =  _.omit(this.FilterData, [key])
+    }
+    console.log('this.FilterData', this.FilterData);
+
+  }
+
 }

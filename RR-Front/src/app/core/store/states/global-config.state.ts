@@ -1,8 +1,11 @@
 import {GeneralConfig} from '../../model';
 import * as _ from 'lodash';
 import {Action, NgxsOnInit, Selector, State, StateContext} from '@ngxs/store';
-import {PatchNumberFormatAction} from '../actions';
+import * as fromGeneralConfig from '../actions';
 import {Data} from '../../model/data';
+import produce from "immer";
+import {of} from "rxjs";
+import {mergeMap} from "rxjs/operators";
 
 
 const initiaState: GeneralConfig = {
@@ -20,12 +23,15 @@ const initiaState: GeneralConfig = {
         decimalThousandSeparator: ',',
         negativeFormat: 'simple',
         numberHistory: '',
-      }
+      },
+      colors: []
     },
     riskLink: {
       importPage: '',
       financialPerspectiveELT: {
-        data: ['Net Loss Pre Cat (RL)', 'Gross Loss (GR)', 'Net Cat (NC)'],
+        data: [{label: 'Net Loss Pre Cat (RL)', value: 'Net Loss Pre Cat (RL)'},
+          {label: 'Gross Loss (GR)', value: 'Gross Loss (GR)'},
+          {label: 'Net Cat (NC)', value: 'Net Cat (NC)'}],
         selected: ['Net Loss Pre Cat (RL)']
       },
       financialPerspectiveEPM: {
@@ -79,12 +85,17 @@ export class GeneralConfigState implements NgxsOnInit {
     return  (state: any) =>  _.get(state.RiskLinkModel, path, value);
   }
 
+  @Selector()
+  static getColors(state: GeneralConfig) {
+    return state.general.colors;
+  }
+
   /**
    * Commands
    */
 
-  @Action(PatchNumberFormatAction)
-  patchSearchTarget(ctx: StateContext<GeneralConfig>, {payload}: PatchNumberFormatAction) {
+  @Action(fromGeneralConfig.PatchNumberFormatAction)
+  patchSearchTarget(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.PatchNumberFormatAction) {
     const state = ctx.getState();
     const {target, value} = payload;
     let newFormat = {...state.general.numberFormat};
@@ -98,5 +109,84 @@ export class GeneralConfigState implements NgxsOnInit {
       {general:  {
             ...state.general, numberFormat: newFormat
         }});
+  }
+
+
+  @Action(fromGeneralConfig.AddNewColors)
+  addNewColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.AddNewColors) {
+    const {
+      colors
+    } = payload;
+
+    const {
+      general
+    } = ctx.getState();
+
+    ctx.patchState(
+      produce(ctx.getState(), draft => {
+        draft.general.colors= general.colors.concat(colors);
+      })
+    )
+  }
+
+  @Action(fromGeneralConfig.RemoveColors)
+  removeColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.RemoveColors) {
+    const {
+      colors
+    } = payload;
+
+    const {
+      general
+    } = ctx.getState();
+
+    ctx.patchState(
+      produce(ctx.getState(), draft => {
+        draft.general.colors= _.filter(general.colors, color => !_.find(colors, clr => clr == color));
+      })
+    )
+  }
+
+  @Action(fromGeneralConfig.ReplaceColors)
+  replaceColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.ReplaceColors) {
+    const {
+      colors
+    } = payload;
+
+    const {
+      general
+    } = ctx.getState();
+
+    ctx.patchState(
+      produce(ctx.getState(), draft => {
+
+        _.forEach(general.colors, (color, i) => {
+          let index= _.findIndex(colors, (clr: any) => clr.old == color);
+          if( index > -1 ) {
+            draft.general.colors[i]= colors[index].new;
+          }
+          index=-1;
+        })
+      })
+    )
+  }
+
+  @Action(fromGeneralConfig.LoadColors)
+  loadColors(ctx: StateContext<GeneralConfig>, {payload}: fromGeneralConfig.LoadColors) {
+
+    return of(JSON.parse(localStorage.getItem('colors')))
+      .pipe(
+        mergeMap((colors) => {
+
+          if(colors) {
+            ctx.patchState(produce(ctx.getState(), draft => {
+              draft.general.colors = colors;
+            }))
+          }else {
+            localStorage.setItem('colors', JSON.stringify([]));
+          }
+
+          return of(null);
+        })
+      )
   }
 }

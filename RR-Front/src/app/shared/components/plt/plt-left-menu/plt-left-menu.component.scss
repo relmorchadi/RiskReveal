@@ -1,61 +1,161 @@
-::ng-deep .m-dialog-modal {
+::ng-deep .tag-manager-pop-up {
 
-
-  nz-tabset, .ui-dialog-content {
-    overflow: visible;
+  ::ng-deep .ui-dialog-titlebar {
+    padding: .5em .75em !important;
   }
-    .ant-modal {
-      top: 0;
-    }
 
-    .ant-modal-header {
-      border-bottom: none;
-    }
+  ::ng-deep .ui-dialog-content {
+    padding: 0 !important;
+    margin: 0;
+    display: flex;
+    flex-flow: column;
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow: visible !important;
 
-    .ant-modal-body {
-      padding: 0;
-    }
-
-    .header {
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: nowrap;
+    .a-chips-input-mini {
+      max-width: 100% !important;
+      margin: 5px 5px !important;
     }
 
     .content {
-      display: flex;
-      justify-content: center;
-      padding: 25px;
-      .color {
-        margin: 0 5px;
-        display: block;
-        width: 70px;
-        height: 43px;
-        cursor: pointer;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+
+      .content-wrapper {
+        display: flex;
+        flex-flow: column;
+        flex: 1;
+        justify-content: flex-start;
+        flex-wrap: nowrap;
+      }
+
+      .assigned-tags {
+        padding: 7px;
+      }
+
+      .section {
+        margin: 7px 0;
+      }
+
+      .tag-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+        margin: 7px 0 0 0;
+
+        .all, .subsets {
+          flex: 1;
+
+          .a-chips-input-mini {
+            margin: 3px 2px;
+          }
+        }
+      }
+
+
+      ::ng-deep {
+        .ant-collapse {
+          border: none;
+        }
+        .ant-collapse-content {
+          border:none;
+          overflow: visible;
+        }
+        .ant-collapse > .ant-collapse-item {
+          border-bottom: none;
+        }
+        .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+          background-color: white;
+          border-top: 1px solid #c8c8c8;
+        }
+        .ant-collapse-content > .ant-collapse-content-box {
+          padding: 0 16px;
+        }
+      }
+
+      .drawer {
+        width: fit-content;
+        display: flex;
+        flex-flow: column;
+        justify-content: space-between;
+        align-content: center;
+        padding: 34px 0 7px 7px;
+        box-shadow: -1px -1px 3px rgba(0, 0, 0, 0.15);
+        z-index: 3;
         position: relative;
+
+        .confirm-msg {
+          font-size: 12px;
+          text-align: center;
+          margin: 16px;
+        }
+
+        .a-button-text-cancel, .a-buttons-contained{
+          padding: 5px 9px 5px !important;
+          font-size: 12px;
+        }
+
+        .footer-btn {
+          justify-content: flex-end;
+          width: 100%;
+          display: flex;
+          padding: 0 14px;
+        }
       }
-      color-chrome, color-sketch{
-        display: block;
-        position: absolute;
-        z-index: 1;
-        right: -236px;
-        bottom: -288px;
-        max-width: 270px;
-      }
-    }
-
-    .ant-input-affix-wrapper {
-      width: auto;
-    }
-
-    .footer {
-      padding: 7px;
-    }
-
-    .ant-modal-footer {
-      border-top: none;
     }
   }
+
+  .ui-dialog-footer .footer {
+    display: flex;
+    justify-content: space-between;
+
+    .footer-left {
+      display: flex;
+      align-items: center;
+
+      .color-container {
+        display: flex;
+        justify-content: center;
+        margin: 0;
+        position: relative;
+
+        .color {
+          margin: 0 9px;
+          display: block;
+          width: 40px;
+          height: 40px;
+          cursor: pointer;
+          position: relative;
+        }
+
+        color-chrome, color-sketch{
+          display: block;
+          max-width: 234px;
+          min-width: 200px;
+          position: absolute;
+          bottom: 9px;
+          left: 52px;
+          z-index: 10000;
+        }
+
+        color-sketch {
+          .sketch-picker {
+            border-radius: 0;
+            box-shadow: none;
+          }
+        }
+      }
+    }
+
+    .footer-right {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
 
 :host ::ng-deep {
   .tabset-left {
@@ -63,7 +163,7 @@
     margin-right: 5px;
 
     .ant-tabs-content{
-      height: calc( 85vh - 49px) !important;
+      height: calc( 100vh - 320px) !important;
     }
     .ant-tabs-tabpane {
       display: flex;
@@ -76,13 +176,12 @@
       letter-spacing: 0.2px;
       line-height: 27px;
       font-size: 9px;
-      font-family: rubik;
       list-style: none;
       padding-left: 20px;
       padding-right: 7px;
       font-weight: bold;
       overflow: auto;
-      max-width: 190px;
+      max-width: 212px;
 
       li * {
         font-size: 1.5em;
@@ -161,17 +260,36 @@
       margin-bottom: 17px;
       padding-top: 22px;
     }
-  }
 
-  .Tabs-content {
-    display: flex;
-    flex-flow: column;
-    height: 80vh;
+    ::ng-deep {
+      .ant-collapse {
+        border: none;
+      }
+      .ant-collapse-content > .ant-collapse-content-box {
+        max-width: 190px;
+        padding: 0;
+      }
+      .ant-collapse-content {
+        border:none;
+      }
+      .ant-collapse > .ant-collapse-item {
+        border-bottom: none;
+      }
+      .ant-collapse > .ant-collapse-item > .ant-collapse-header {
+        background-color: white;
+      }
+      .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
+        font-size: 10px;
+        top: 44%;
+      }
+    }
   }
 
   .Tags-content {
     display: flex;
     flex-flow: column;
+    overflow: auto;
+    min-width: 212px;
   }
 
   .user-tag-section, .sys-tag-section {
@@ -180,18 +298,13 @@
     flex-flow: column;
   }
 
-  .user-tag-section {
-    min-height: 160px;
-    max-height: 20.5%;
-  }
-
   .header{
     display: flex;
     justify-content: space-between;
-    padding: 5px 16px;
     font-weight: bold;
     font-size: 16px;
     flex: 0 1 auto;
+
     div {
       display: flex;
       justify-content: center;
@@ -214,13 +327,11 @@
 
   .rest {
     flex: 1 1 auto;
-    overflow: auto;
     padding: 5px 0;
   }
 
   nz-collapse{
     max-height: 100%;
-    overflow: auto;
   }
   .tag-section {
     ul {
@@ -232,27 +343,6 @@
   .tab-content-cnt{
     overflow: visible;
   }
-
-  .ant-collapse {
-    border: none;
-  }
-  .ant-collapse-content > .ant-collapse-content-box {
-    max-width: 190px;
-    padding: 0;
-  }
-  .ant-collapse-content {
-    border:none;
-  }
-  .ant-collapse > .ant-collapse-item {
-    border-bottom: none;
-  }
-  .ant-collapse > .ant-collapse-item > .ant-collapse-header {
-    background-color: white;
-  }
-  .ant-collapse > .ant-collapse-item > .ant-collapse-header .ant-collapse-arrow {
-    font-size: 10px;
-    top: 44%;
-  }
   .ant-tabs-nav-container-scrolling {
     padding: 0!important;
   }
@@ -263,4 +353,11 @@
 
 .cdk-global-scrollblock {
   overflow-y: hidden;
+}
+
+.msg-err {
+  font-size: 11px;
+  color: var(--danger);
+  position: absolute;
+  bottom: -16px;
 }

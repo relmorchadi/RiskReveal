@@ -1,7 +1,6 @@
-.a-buttons-contained {
+.a-buttons-contained, .a-buttons-contained-mini, .a-buttons-contained-micro {
   background-color: #0700CF;
   color: #FFFFFF;
-  font-family: Rubik;
   font-size: 14.22px;
   font-weight: 500;
   letter-spacing: 1.25px;
@@ -9,7 +8,7 @@
   line-height: 16px;
   text-align: center;
   cursor: pointer;
-  padding: 8px 20px 6px;
+  padding: 7px 20px 7px;
   border: none;
   background-position: center;
   transition: background 1s;
@@ -30,24 +29,40 @@
   }
 }
 
-.a-buttons-contained-disabled {
-  background-color: rgba(0, 0, 0, 0.87);
-  color: rgba(0, 0, 0, 0.38);
+.a-buttons-contained-disabled, .a-buttons-contained-disabled-mini, .a-buttons-contained-disabled-micro {
+  background-color: #DFDFDF;
+  color: #8A8A8A;
   font-family: Rubik;
   font-size: 14.22px;
   font-weight: 500;
   border-radius: 36px;
   letter-spacing: 1.25px;
-  padding: 8px 20px 6px;
+  padding: 7px 20px 7px;
   border: none;
   line-height: 16px;
   text-align: center;
   background-position: center;
   transition: background 0.8s;
   text-transform: uppercase;
+
+  &:focus {
+    outline: 0;
+  }
 }
 
-.a-buttons-outlined {
+.a-buttons-contained-mini, .a-buttons-contained-disabled-mini {
+  font-size: 13px;
+  line-height: 13px;
+  padding: 6px 17px 7px;
+}
+
+.a-buttons-contained-micro, .a-buttons-contained-disabled-micro {
+  font-size: 11px;
+  line-height: 12px;
+  padding: 6px 15px 6px;
+}
+
+.a-buttons-outlined, .a-buttons-outlined-mini {
   border: 1px solid #0700CF;
   border-radius: 18px;
   background-color: rgba(98, 2, 238, 0);
@@ -57,11 +72,15 @@
   font-weight: bold;
   letter-spacing: 1.25px;
   text-align: center;
-  padding: 7px 11px 5px;
+  padding: 6px 11px;
   cursor: pointer;
   background-position: center;
   transition: background 1s;
   text-transform: uppercase;
+
+  i{
+    font-weight: bold;
+  }
 
   &:hover {
     background: transparent radial-gradient(circle, transparent 1%, #FFFFFF 1%) center/15000%;
@@ -78,7 +97,12 @@
   }
 }
 
-.a-button-text, .a-button-text-warning, .a-button-text-cancel {
+.a-buttons-outlined-mini {
+  font-size: 12px;
+  line-height: 12px;
+}
+
+.a-button-text, .a-button-text-warning, .a-button-text-cancel, .a-button-text-cancel-mini {
   border: none;
   background-color: #FFFFFF;
   color: #0700CF;
@@ -111,12 +135,18 @@
 
 }
 
-.a-button-text-cancel {
+.a-button-text-cancel, .a-button-text-cancel-mini {
   color: #A8A8A8;
 }
 
 .a-button-text-warning {
   color: #D0021B;
+}
+
+.a-button-text-cancel-mini {
+  font-size: 13px;
+  line-height: 13px;
+  padding: 6px 17px 7px;
 }
 
 .button-outlined-disabled {
@@ -168,4 +198,32 @@
 
 .button-icon-disabled {
 
+}
+
+.pine-btn {
+  box-sizing: border-box;
+  height: 57px;
+  width: 57px;
+  background: transparent;
+  border: 1px solid #E5E9FA;
+
+  .active {
+    color: rgb(91, 139, 159);
+  }
+
+  .inactive {
+    color: #fff;
+  }
+}
+
+.a-buttons-linked {
+  background-color: transparent;
+  border: none;
+  color: rgba(0,0,0,0.6);
+  line-height: 28px;
+  text-decoration: underline;
+
+  &:focus {
+    outline: 0;
+  }
 }

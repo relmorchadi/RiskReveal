@@ -1,4 +1,6 @@
-
+::ng-deep * {
+  transition: none !important;
+}
 .AdjustmentCanvas {
   ::ng-deep {
     .ant-tabs-tab.ant-tabs-tab-active.ng-star-inserted {
@@ -140,8 +142,10 @@
 
 
 :host {
-  display: flex;
   width: 100%;
+  height: calc(100vh - 200px);
+  display: flex;
+  background-color: #F4F6FC;
 
   ::ng-deep.plt-browser-wrapper {
     display: flex;
@@ -200,6 +204,7 @@
   .tabset-left {
     background: #fff;
     margin-right: 5px;
+    max-height: 580px;
 
     .path-content {
       cursor: pointer;
@@ -335,7 +340,6 @@
     th {
       padding: 3px;
       padding-right: 0 !important;
-      vertical-align: top;
       line-height: 17px !important;
       color: rgba(0, 0, 0, 0.38);
       font-size: 11px;
@@ -652,6 +656,7 @@
 
 ::ng-deep {
   .ep-metric-tabset {
+
     .ant-tabs-ink-bar {
       display: none;
       transform: translate3d(0px, 0px, 0px);
@@ -686,6 +691,7 @@
     display: block;
     overflow: auto;
     padding-bottom: 4px;
+    width: 100%;
 
     th {
       font-weight: bold;
@@ -844,8 +850,9 @@
   .noMargin {
     background: #fff;
     display: flex;
-    margin-left: 8px;
+    margin-left: 0;
     margin-right: 8px;
+
 
     .ant-tabs-nav .ant-tabs-tab {
       margin: 0;
@@ -930,11 +937,14 @@
   position: relative;
 }
 
+:host ::ng-deep {
+  .tabset-left {
+    max-height: 580px !important;
+  }
+}
 
 :host .PLTs-content {
-
-  border-bottom: 3px solid #F4F6FC;
-  background: #fff;
+  //background: #fff;
 
   ::ng-deep {
     .ant-table-thead > tr > th .ant-table-column-sorters:hover::before {
@@ -993,12 +1003,9 @@
 
       .checkBoxHead div {
         display: flex;
-        align-items: center;
       }
 
       th {
-        font-size: 12px;
-        vertical-align: top;
         color: rgba(0, 0, 0, 0.38) !important;
         background-color: #F3F3F3;
         outline-color: #fff;
@@ -1006,6 +1013,7 @@
         height: 45px;
         border: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
+        border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
 
         .filter-input {
           width: 100%;
@@ -1070,10 +1078,12 @@
 
         .text-elipsice {
           width: 100%;
-          height: 39.47px !important;
+          height: 51.47px !important;
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
+          display: flex;
+          align-items: center;
         }
 
         .td-wrapper-tags {
@@ -1187,8 +1197,8 @@
 :host {
   ::ng-deep {
     nz-collapse {
-      max-height: 48%;
-      overflow: auto;
+      /*max-height: 48%;
+      overflow: auto;*/
     }
 
     .Tags-content {
@@ -1208,7 +1218,7 @@
     }
 
     .ant-collapse-content > .ant-collapse-content-box {
-      max-width: 190px;
+      //max-width: 190px;
       padding: 0;
     }
 
@@ -1265,15 +1275,28 @@
 }
 
 .iconYellow {
-  color: #FDC228;
+  color: #fde729;
+  font-size: 17px;
+}
+
+.iconYellow2 {
+  color: #d8880f;
+  font-size: 17px;
 }
 
 .iconGreen {
   color: #00B396;
+  font-size: 17px;
 }
 
 .iconRed {
-  color: #d81206;
+  color: #b8200c;
+  font-size: 17px;
+}
+
+.iconRed2 {
+  color: #ff2126;
+  font-size: 17px;
 }
 
 .inuring-header {
@@ -1293,6 +1316,10 @@
   background-color: #F3F3F3 !important;
 }
 
+.overallLMF {
+  background-color: #F3F3F3 !important;
+}
+
 .data-separator-right {
   border-left: 8px solid #F4F6FC !important;
   background-color: #F3F3F3 !important;
@@ -1309,12 +1336,14 @@
 .adjustDiv {
   margin: 4px !important;
   border: solid 1px #cccccc;
-  font-size: 10px;
+  font-size: 9px;
   background: white;
-  width: 102px !important;
   display: inline-block !important;
   color: black;
   font-weight: normal !important;
+  max-height: 33px;
+  max-width: 109px !important;
+  min-width: 109px !important;
 }
 
 /*.adjustDiv:hover {
@@ -1330,7 +1359,7 @@
   box-shadow: none;
   border: 0;
   width: 82%;
-  height: 49%;
+  height: 35%;
   bottom: 3px;
   margin-left: 2px;
 }
@@ -1412,14 +1441,390 @@ body .ui-table .ui-table-thead > tr > th {
 }
 
 .addRemove {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
   color: #0700e4;
-  padding-top: 17px;
-  padding-left: 4px;
+  margin-top: 20px;
+  margin-left: 15px;
   cursor: pointer;
 }
 
+.regenerate-all {
+  font-size: 17px;
+  margin-top: 20px;
+  margin-right: 5px;
+  color: #0700e4;
+  cursor: pointer;
+}
+
+.regenerate-all:hover {
+  color: #1890ff;
+}
 .addRemove:hover {
   color: #1890ff;
+}
+
+.dnd-sortable-drag {
+  transform: scale(.8);
+  opacity: .6;
+  border: 1px dashed #6fd089;
+}
+
+.selectedAdjustment {
+  border: solid 1px #6fd089 !important;
+}
+
+.newTag {
+  width: fit-content;
+  height: fit-content !important;
+  color: #fff;
+  padding: 0px 6px 0px 6px;
+  background-color: #27c0ff;
+  border-radius: 14px;
+}
+
+.content {
+  .right, .center, .left {
+    /*box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
+    margin-right: 10px;*/
+  }
+
+  .PLTs-content {
+    padding: 0 21px 0 16px !important;
+    position: relative;
+    flex: 1 1 auto;
+  }
+}
+
+::ng-deep.generic-thread-container.-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::ng-deep.generic-thread-container.-webkit-scrollbar:hover {
+  width: 8px;
+  height: 8px;
+}
+
+::ng-deep.ui-radiobutton .ui-radiobutton-box.ui-state-active {
+  border-color: #0700cf !important;
+  background-color: #0700cf !important;
+  color: #ffffff !important;
+}
+
+.table-radio {
+
+}
+
+@media (max-width: 1100px) {
+  .radio-container {
+    margin-top: 0px;
+    margin-right: 0px;
+  }
+  .title-as-tab {
+    display: flex;
+    flex: 0 1 auto;
+    width: calc(100% - 28px);
+    float: left;
+    color: #585858;
+    height: 53px;
+
+    span.title {
+      padding: 16px 0px 16px 12px;
+      font-size: 15px;
+      font-weight: bold;
+      border-top: 3px solid #0700e4;
+      font-family: Rubik;
+    }
+  }
+
+}
+
+@media (min-width: 1100px) {
+  .radio-container {
+    margin-top: 0px;
+
+  }
+  .title-as-tab {
+    display: flex;
+    flex: 0 1 auto;
+    width: calc(100% - 230px);
+    float: left;
+    color: #585858;
+
+    span.title {
+      padding: 16px 0px 16px 23px;
+      font-size: 15px;
+      font-weight: bold;
+      border-top: 3px solid #0700e4;
+      font-family: Rubik;
+    }
+  }
+
+}
+
+.table-header1 {
+  height: 105px !important;
+  border-right: 5px solid #f4f6fc;
+}
+
+.table-header2 {
+  height: 105px !important;
+  display: flex;
+  flex-direction: column;
+}
+
+.threeValues {
+  .EPM0 {
+    text-align: end;
+    font-weight: bold;
+    margin-right: 3px;
+  }
+
+  .EPM1 {
+    width: 50%;
+    float: left;
+    font-size: 12px;
+    margin-left: 3px;
+    color: #acacac;
+  }
+
+  .EPM2B {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    color: #06b9ff;
+  }
+
+  .EPM2R {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    color: #cf1912;
+  }
+}
+
+.twoValues {
+  .EPM0 {
+    font-weight: bold;
+    width: 50%;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    float: left;
+  }
+
+  .EPM2B {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #06b9ff;
+  }
+
+  .EPM2R {
+    width: 47%;
+    margin-left: 50%;
+    text-align: end;
+    font-size: 12px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    color: #cf1912;
+  }
+}
+
+.oneValue {
+  .EPM0 {
+    font-weight: bold;
+    margin: 10px 25px 10px 25px;
+  }
+}
+
+
+
+::ng-deep.ui-radiobutton-label {
+  color: #0700cf !important;
+  cursor: pointer;
+}
+
+::ng-deep.ui-radiobutton-label:hover {
+  color: #1890ff !important;
+}
+
+.title-as-tab-bis {
+  display: flex;
+  flex: 0 1 auto;
+  justify-content: space-between;
+
+  span {
+    padding: 16px 43px;
+    font-size: 1.3em;
+    font-weight: bold;
+    border-top: 3px solid #0700e4;
+  }
+}
+
+.body-wrap-dropDowns-calibration {
+  display: flex;
+
+  .dropdown-wrap-calibration {
+    display: flex;
+    width: 108px;
+    padding-right: 13px;
+    height: 35px;
+    margin-right: 10px;
+    justify-content: space-between;
+    background-color: #fff;
+    border: 1px solid #1FCBB4;
+    cursor: pointer;
+
+    .dropdown-wrap-title-calibration {
+      display: flex;
+      width: 100%;
+      font-family: Rubik;
+      flex-direction: column;
+      padding: 3px 6px;
+
+      .dropdown-title-calibration {
+        font-size: 10px;
+        line-height: 10px;
+        color: rgba(0, 0, 0, 0.4);
+      }
+
+      .dropdown-item-selected-calibration {
+        font-size: 13px;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        width: 100px;
+      }
+    }
+
+    .dropdown-icon {
+      display: flex;
+      font-size: 8px;
+      align-items: center;
+      padding-right: 8px;
+    }
+  }
+}
+
+
+.Deltas {
+  display: flex;
+  color: rgba(0, 0, 0, 0.6);
+  font-family: Rubik;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+  line-height: 60px;
+  margin-right: 10px;
+}
+
+.generic-thread-container::-webkit-scrollbar {
+  height: 3px !important;
+}
+
+.generic-thread-container:hover::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+::ng-deep.ant-switch::after {
+  height: 15px !important;
+}
+
+::ng-deep.ant-switch {
+  height: 19px !important;
+}
+
+::ng-deep.ui-dropdown {
+  background: #ffffff;
+  border: 1px solid #a6a6a6;
+  width: 95%;
+  margin-left: 10px;
+}
+
+.add-adjustment-input {
+  width: 200px;
+  height: 40px;
+  background: #f9f9f9;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid black;
+  color: #0700CF;
+}
+
+.menu-bottom-separator {
+  border-bottom: 1px solid #d1d1d1;
+}
+
+.toolkit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+}
+
+.template-type {
+  background-color: #0700CF;
+  color: #ffffff;
+  border-radius: 8px;
+  height: 14px;
+  margin: auto 8px auto 8px;
+  font-size: 9px;
+  padding: 0px 7px 0px 7px;
+
+}
+
+.description-tooltip {
+  color: #000c17;
+  font-size: 14px;
+  display: flex;
+  flex-direction: column;
+  max-width: 250px;
+
+  span {
+    height: 28px;
+    font-weight: bold;
+    margin-bottom: 2px;
+    width: 100%;
+  }
+
+  p {
+    padding: 5px;
+  }
+}
+
+.info-desc:hover {
+  color: #06b9ff !important;
+}
+
+.impacts-points {
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  align-items: flex-end;
+  color: #848688;
+}
+
+.impact-container {
+  display: flex;
+  align-items: center;
+  width: 365px;
+  justify-content: space-evenly;
+  margin-top: 10px;
+}
+
+::ng-deep.ui-radiobutton .ui-radiobutton-box {
+  border: 1px solid #0700cf !important;
+}
+
+::ng-deep.ui-radiobutton .ui-radiobutton-box:hover {
+  border: 1px solid #1890ff !important;
+}
+
+::ng-deep.ui-g-1, .ui-g-2, .ui-g-3, .ui-g-4, .ui-g-5, .ui-g-6, .ui-g-7, .ui-g-8, .ui-g-9, .ui-g-10, .ui-g-11, .ui-g-12 {
+  padding: 1.5em !important;
 }

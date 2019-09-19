@@ -16,6 +16,7 @@
       padding: 5px 1px 5px 16px;
     }
   }
+ overflow: hidden;
 }
 
 .popover-title {
@@ -272,4 +273,25 @@ ul.widgets-list {
   justify-content: space-between;
   align-items: center;
   margin: 20px 0;
+}
+
+.icon-visibility_24px {
+  color: var(--primary-1);
+}
+
+.icon-visibility_off_24px {
+  color: var(--surface-6);
+}
+
+.dashboard-wrapper {
+  ::ng-deep {
+    .ant-tabs-content {
+      height: calc(100vh - 150px);
+    }
+
+    .ant-tabs-tabpane.ant-tabs-tabpane-active {
+      height: calc(100vh - 150px);
+    }
+  }
+
 }

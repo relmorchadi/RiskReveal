@@ -1,10 +1,13 @@
 package com.scor.rr.domain.counter;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Objects;
 
 @Entity
-@Table(name = "UWY_COUNT_VIEW", schema = "dbo")
+@Table(name = "UWY_COUNT_VIEW", schema = "poc")
 public class UwyCountView {
 
     @Id

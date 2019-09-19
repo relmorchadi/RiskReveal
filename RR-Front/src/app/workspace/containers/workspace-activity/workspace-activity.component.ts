@@ -1,11 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BaseContainer} from '../../../shared/base';
+import {Store} from '@ngxs/store';
+import * as fromHeader from '../../../core/store/actions/header.action';
+import * as fromWs from '../../store/actions';
+import {UpdateWsRouting} from '../../store/actions';
+import {StateSubscriber} from '../../model/state-subscriber';
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-activity',
   templateUrl: './workspace-activity.component.html',
   styleUrls: ['./workspace-activity.component.scss']
 })
-export class WorkspaceActivityComponent implements OnInit {
+export class WorkspaceActivityComponent extends BaseContainer implements OnInit, StateSubscriber {
+
+  wsIdentifier;
+  workspaceInfo: any;
+
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
+    'Projects': '/projects',
+    'Contract': '/Contract',
+    'Activity': '/Activity'
+  };
+  hyperLinksConfig: {
+    wsId: string,
+    uwYear: string
+  };
 
   contentActive = {
     today: [{
@@ -13,6 +35,7 @@ export class WorkspaceActivityComponent implements OnInit {
         icon: 'icon-chat_24px',
         text: 'Project P-6458 has been assigned to you by Huw Parry',
         projectInfo: [],
+        user: 'Parry Huw',
         expanded: false,
         project: 'P-6458',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
@@ -22,6 +45,7 @@ export class WorkspaceActivityComponent implements OnInit {
         icon: 'icon-focus-add',
         text: 'Accumulation Package AP-3857 has been successfully published to ARC',
         projectInfo: [],
+        user: 'Nathalie Dulac',
         expanded: false,
         project: 'AP-3857',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
@@ -31,6 +55,7 @@ export class WorkspaceActivityComponent implements OnInit {
         icon: 'icon-check_24px',
         text: 'Calculation on Inuring Package IP-2645 is now complete',
         projectInfo: [],
+        user: 'Chi Choy',
         expanded: false,
         project: 'IP-2645',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
@@ -50,6 +75,7 @@ export class WorkspaceActivityComponent implements OnInit {
           ['937080', 'NATC-USM_RL_lmf.T1'],
           ['937080', 'NATC-USM_RL_lmf.T1']
         ],
+        user: 'Amina Cheref',
         expanded: false,
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
       },
@@ -64,6 +90,7 @@ export class WorkspaceActivityComponent implements OnInit {
           ['937080', 'NATC-USM_RL_lmf.T1'],
           ['937080', 'NATC-USM_RL_lmf.T1']
         ],
+        user: 'Amina Cheref',
         expanded: false,
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
       }
@@ -78,6 +105,7 @@ export class WorkspaceActivityComponent implements OnInit {
           ['937080', 'NATC-USM_RL_lmf.T1'],
           ['937080', 'NATC-USM_RL_lmf.T1']
         ],
+        user: 'Amina Cheref',
         expanded: false,
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
       },
@@ -86,6 +114,7 @@ export class WorkspaceActivityComponent implements OnInit {
         icon: 'icon-window-section',
         text: 'Workspace 02PY376 created by Huw Parry',
         projectInfo: [],
+        user: 'Amina Cheref',
         expanded: false,
         project: '02PY376',
         timeStamp: 'Wed Jul 04 16:19:39 UTC 2019'
@@ -93,9 +122,59 @@ export class WorkspaceActivityComponent implements OnInit {
     ]
   };
 
-  constructor() { }
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
+  }
 
   ngOnInit() {
+    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
+      this.hyperLinksConfig = {
+        wsId,
+        uwYear: year
+      };
+    });
+  }
+
+  patchState({wsIdentifier, data}: any): void {
+    this.workspaceInfo = data;
+    this.wsIdentifier = wsIdentifier;
+  }
+
+  pinWorkspace() {
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspaceInfo;
+    this.dispatch([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
+
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.dispatch([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ]);
+  }
+
+  navigateFromHyperLink({route}) {
+    const {wsId, uwYear} = this.workspaceInfo;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
+  }
+
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  protected detectChanges() {
+    super.detectChanges();
   }
 
 }

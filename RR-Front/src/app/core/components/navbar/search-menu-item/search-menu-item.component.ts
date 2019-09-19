@@ -18,7 +18,6 @@ import {Actions, ofActionDispatched, Store} from '@ngxs/store';
 import {SearchNavBar} from '../../../model/search-nav-bar';
 import * as _ from 'lodash';
 import {Subject, Subscription} from "rxjs";
-import {RouterNavigation} from "@ngxs/router-plugin";
 import {HelperService} from "../../../../shared/helper.service";
 
 
@@ -29,6 +28,8 @@ import {HelperService} from "../../../../shared/helper.service";
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SearchMenuItemComponent implements OnInit, OnDestroy {
+
+  readonly componentName: string = 'search-pop-in';
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -58,6 +59,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.subscriptions = new Subscription();
     this.scrollParams = {scrollTo: -1, listLength: 0, position: {i: 0, j: 0}};
     this.unSubscribe$ = new Subject<void>();
+    HelperService.headerBarPopinChange$.subscribe(({from}) => {
+      if (from != this.componentName)
+        this.store.dispatch(new SearchActions.CloseSearchPopIns());
+    });
   }
 
   ngOnInit() {
@@ -77,7 +82,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(
         takeUntil(this.unSubscribe$),
-        ofActionDispatched(SearchActions.EnableExpertMode, SearchActions.DisableExpertMode, RouterNavigation))
+        ofActionDispatched(SearchActions.EnableExpertMode, SearchActions.DisableExpertMode))
       .subscribe(instance => {
         if (instance instanceof SearchActions.EnableExpertMode)
           this._notifcationService.createNotification('Information',
@@ -160,6 +165,7 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
 
   appendSearchBadges(items) {
     this.store.dispatch(new SearchActions.PatchSearchStateAction({key: 'badges', value: items}));
+    this.searchInput.nativeElement.focus();
   }
 
   selectSearchAndRedirect(items) {
@@ -167,15 +173,12 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this.onEnter(event as any);
   }
 
-  clearValue(): void {
-    this.store.dispatch(new SearchActions.ClearSearchValuesAction());
-  }
-
   focusInput(event) {
     if (this.searchConfigPopInVisible)
       this.searchConfigPopInVisible = false;
     this._searchService.setvisibleDropdown(false);
     this.store.dispatch(new SearchActions.SearchInputFocusAction(this.isExpertMode, event.target.value));
+    this.togglePopup();
   }
 
   openClose(): void {
@@ -186,7 +189,9 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
         key: 'visible',
         value: !this.state.visible
       }]));
+    this.togglePopup();
   }
+
 
   get isExpertMode() {
     return this.contractFilterFormGroup.get('expertModeToggle').value;
@@ -205,6 +210,8 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
     this._unsubscribeToFormChanges();
     this.contractFilterFormGroup.get('globalKeyword').patchValue('');
     this._subscribeGlobalKeywordChanges();
+    this.store.dispatch(new SearchActions.ClearSearchValuesAction());
+    this.searchInput.nativeElement.focus();
   }
 
   private _unsubscribeToFormChanges() {
@@ -214,6 +221,10 @@ export class SearchMenuItemComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unSubscribe$.next();
     this.unSubscribe$.complete();
+  }
+
+  togglePopup() {
+    HelperService.headerBarPopinChange$.next({from: this.componentName});
   }
 
 }

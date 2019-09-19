@@ -10,14 +10,14 @@
   }
 }
 
-::ng-deep {
+/*::ng-deep {
   .ant-popover-message > .anticon {
     position: absolute;
     top: 25px;
     font-size: 18px;
     left: 10px;
   }
-}
+}*/
 
 ::ng-deep span.ant-progress-text {
   display: none;
@@ -42,7 +42,7 @@ i.icon-pause_circle_outline_24px {
   .data-first {
     display: flex;
 
-    .icon-pause_circle_outline_24px {
+    .icon-pause_circle_outline_24px, .icon-check_circle_outline_24px {
       font-size: 27px;
       color: rgba(0, 0, 0, 0.3);
       display: flex;

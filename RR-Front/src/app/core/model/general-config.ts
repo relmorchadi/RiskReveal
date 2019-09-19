@@ -15,6 +15,7 @@ export class GeneralConfig {
       negativeFormat: string;
       numberHistory: string;
     };
+    colors: string[];
   };
   riskLink: {
     importPage: any;

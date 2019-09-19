@@ -1,14 +1,15 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -19,7 +20,7 @@ import java.util.Set;
 @JsonIgnoreProperties({"currencyCode","geoCode","perilCode","fileName",
         "pltType","project","publishToArc","regionPeril","rrAnalysisId",
         "targetRap","udName","userSelectedGrain","xActPublicationDate","xactPublicationDate","userTags"})
-@Table(name = "[RR-PltHeader]", schema = "dbo")
+@Table(name = "[RR-PltHeader]", schema = "poc")
 public class PltHeader {
 
   @Id
@@ -39,9 +40,9 @@ public class PltHeader {
   private String userSelectedGrain;
   private String xActPublicationDate;
 
-
-  @ManyToMany(mappedBy = "pltHeaders")
-  Set<UserTag> userTags;
+  @OneToMany(mappedBy = "userTagPltPk.plt")
+  @JsonIgnore
+  Set<UserTagPlt> Assignment = new HashSet<>();
 
   @Override
   public boolean equals(Object o) {
@@ -67,5 +68,25 @@ public class PltHeader {
   @Override
   public int hashCode() {
     return Objects.hash(getId(), getCurrencyCode(), getGeoCode(), getPerilCode(), getFileName(), getPltType(), getProject(), getPublishToArc(), getRegionPeril(), getRrAnalysisId(), getTargetRap(), getUdName(), getUserSelectedGrain(), xActPublicationDate);
+  }
+
+  @Override
+  public String toString() {
+    return "PltHeader{" +
+            "id='" + id + '\'' +
+            ", currencyCode='" + currencyCode + '\'' +
+            ", geoCode='" + geoCode + '\'' +
+            ", perilCode='" + perilCode + '\'' +
+            ", fileName='" + fileName + '\'' +
+            ", pltType='" + pltType + '\'' +
+            ", project='" + project + '\'' +
+            ", publishToArc='" + publishToArc + '\'' +
+            ", regionPeril='" + regionPeril + '\'' +
+            ", rrAnalysisId='" + rrAnalysisId + '\'' +
+            ", targetRap='" + targetRap + '\'' +
+            ", udName='" + udName + '\'' +
+            ", userSelectedGrain='" + userSelectedGrain + '\'' +
+            ", xActPublicationDate='" + xActPublicationDate + '\'' +
+            '}';
   }
 }

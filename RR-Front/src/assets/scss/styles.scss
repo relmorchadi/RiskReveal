@@ -11,6 +11,14 @@
 @import "/theme/list";
 @import "/theme/modal";
 @import "/theme/layout";
+@import "/theme/m-box";
+@import "/theme/popconfirm";
+@import "/theme/hyper-links";
+
+.clickable-item {
+  cursor: pointer;
+}
+
 /*
 
 * {

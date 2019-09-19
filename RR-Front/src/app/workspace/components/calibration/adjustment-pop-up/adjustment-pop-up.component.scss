@@ -1,0 +1,42 @@
+::ng-deep.ui-dropdown {
+  background: #ffffff;
+  border: 1px solid #a6a6a6;
+  width: 95%;
+  margin-left: 10px;
+}
+
+.add-adjustment-input {
+  width: 250px;
+  /*height: 40px;
+  background: #f9f9f9;
+  border-radius: 0;
+  border: 0;
+  border-bottom: 1px solid black;
+  color: #0700CF !important;*/
+}
+
+/*::ng-deep.adjustment-modal{
+  height: 800px !important;
+  width: 450px !important;
+}*/
+.favoredStar {
+  color: #f1c215;
+}
+
+.favoredStar:hover {
+  color: #d8880f;
+}
+
+.unfavoredStar {
+  color: #f1c215;
+}
+
+.unfavoredStar:hover {
+  color: #d8880f;
+}
+
+::ng-deep.ant-select-dropdown-menu-item-group-title {
+  border-top: 1px solid;
+  font-size: 15px;
+  font-weight: 700;
+}

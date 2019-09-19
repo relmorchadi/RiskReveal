@@ -1,7 +1,17 @@
-<app-left-menu></app-left-menu>
-<div class="app-wrapper">
-  <div class="app-header">
-    <h4>Activity</h4>
+<div class="a-app-wrapper">
+  <div class="a-app-header">
+    <div style="display: flex;flex-flow: column;">
+      <app-hyper-links (navigate)="navigateFromHyperLink($event)" [activeItem]="'Activity'" [links]="hyperLinks"
+                       [routes]="hyperLinksRoutes"
+      ></app-hyper-links>
+      <h4>Activity</h4>
+    </div>
+    <app-pin
+      (pinWs)="pinWorkspace()"
+      (unpinWs)="unPinWorkspace()"
+      [active]="!workspaceInfo?.isPinned"
+    >
+    </app-pin>
   </div>
   <div class="app-body">
     <nz-tabset class="a-tab-minitab">
@@ -20,6 +30,10 @@
                   <span>{{items.text}}</span>
                 </div>
                 <div class="item-right">
+                  <nz-tag>
+                    <i class="icon-user-circle"></i>
+                    {{items.user}}
+                  </nz-tag>
                   <span>{{items.timeStamp}}</span>
                   <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
                   <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>
@@ -52,6 +66,10 @@
                   <span>{{items.text}}</span>
                 </div>
                 <div class="item-right">
+                  <nz-tag>
+                    <i class="icon-user-circle"></i>
+                    {{items.user}}
+                  </nz-tag>
                   <span>{{items.timeStamp}}</span>
                   <i *ngIf="!items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_down_24px"></i>
                   <i *ngIf="items.expanded" [ngStyle]="{'visibility': items.projectInfo.length > 0 ? 'visible' : 'hidden'}" class="icon-keyboard_arrow_up_24px"></i>

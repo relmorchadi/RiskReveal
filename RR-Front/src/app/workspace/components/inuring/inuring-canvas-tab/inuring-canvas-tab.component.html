@@ -1,0 +1,332 @@
+<div class="col-content">
+  <nz-tabset class="a-tab-large">
+    <nz-tab [nzTitle]="'Create'">
+      <div class="create-tab-content">
+        <div class="simple-panel">
+          <h6>Input Node Creation</h6>
+          <div class="menu-item add-item" (click)="createNode()">
+            Create Node
+            <i class="icon-add_circle_24px"></i>
+          </div>
+        </div>
+        <div class="simple-panel">
+          <h6>Nodes</h6>
+          <div class="menu-item node-item">
+            Node 1
+            <i class="icon-arrow_forward_ios_24px"></i>
+          </div>
+        </div>
+        <div class="simple-panel">
+          <h6>Contract Type</h6>
+          <!-- TMP -->
+          <div cdkDropList class="m-box-d" style="border: none !important;"
+               (cdkDropListDropped)="onContractDrop($event)">
+            <div class="m-box-drag m-box-overlay menu-item draggable-item" pDraggable="inuring-contract">
+              <span class="no-wrap">XoL Event</span>
+              <i class="icon-drag_handle_24px"></i>
+            </div>
+            <ng-container *ngFor="let item of contractTypes; let i=index">
+              <div class="m-box-drag m-box-overlay menu-item draggable-item draggable-disabled-item" cdkDrag [cdkDragDisabled]="true">
+                <span class="no-wrap">{{item.label}}</span>
+<!--                <i class="icon-drag_handle_24px"></i>-->
+              </div>
+            </ng-container>
+          </div>
+
+        </div>
+        <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
+          <button nz-button class="a-button-text-cancel">CANCEL</button>
+          <button nz-button class="a-buttons-outlined">UPDATE</button>
+          <button nz-button class="a-buttons-contained">RUN</button>
+        </div>
+        <div class="mx-2 my-1">
+          <nz-progress [nzStrokeColor]="'#03DAC4'" [nzPercent]="20" [nzShowInfo]="false"></nz-progress>
+        </div>
+      </div>
+    </nz-tab>
+    <nz-tab [nzTitle]="'Info'">
+
+      <div class="info-tab-content">
+        <div class="simple-panel">
+          <h6>Contract Node Properties</h6>
+
+          <div class="collapsible-panel my-2">
+            <div (click)="collapses.contractDetails= !collapses.contractDetails"
+                 class="d-flex justify-content-between align-items-center collapse-header px-3 py-1">
+              Contract Details
+              <i [ngClass]="{'icon-keyboard_arrow_up_24px': collapses.contractDetails,
+                                'icon-keyboard_arrow_down_24px': !collapses.contractDetails}"></i>
+            </div>
+            <div *ngIf="collapses.contractDetails" class="collapse-content  mx-2 mt-2">
+              <div nz-row>
+                <div nz-col class="title" [nzSpan]="8">ID:</div>
+                <div nz-col class="value" [nzSpan]="16">I0CN - 0000003570</div>
+              </div>
+              <div nz-row>
+                <div nz-col class="title" [nzSpan]="8">Name:</div>
+                <div nz-col class="value" [nzSpan]="16">30% QS</div>
+              </div>
+              <div nz-row>
+                <div nz-col class="title" [nzSpan]="8">Type:</div>
+                <div nz-col class="value" [nzSpan]="16">Pro-Rata Quota Share</div>
+              </div>
+              <div nz-row>
+                <div nz-col class="title" [nzSpan]="8">Description:</div>
+                <div nz-col class="value" [nzSpan]="16">-</div>
+              </div>
+              <div class="table-title mt-4">
+                Layer details
+              </div>
+              <table class="summary-table">
+                <thead>
+                <th>#</th>
+                <th><i class="icon-filter"></i>City</th>
+                <th>Pct Placed</th>
+                </thead>
+                <tbody>
+                <tr style="height: 40px">
+                  <td>1</td>
+                  <td>USD</td>
+                  <td>0.3</td>
+                </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="collapsible-panel my-2">
+            <div (click)="collapses.inboundRoutedLoss= !collapses.inboundRoutedLoss"
+                 class="d-flex justify-content-between align-items-center collapse-header px-3 py-1">
+              Inbound Routed Loss Distribution
+              <i [ngClass]="{'icon-keyboard_arrow_up_24px': collapses.inboundRoutedLoss,
+                                'icon-keyboard_arrow_down_24px': !collapses.inboundRoutedLoss}"></i>
+            </div>
+            <div *ngIf="collapses.inboundRoutedLoss" class="collapse-content  mx-2 mt-2">
+              <div class="table-title mt-4">
+                Inbound Edges
+              </div>
+              <table class="summary-table">
+                <thead>
+                <th>#</th>
+                <th>Node Name</th>
+                <th>Fin Persp</th>
+                <th>Treatment</th>
+                </thead>
+                <tbody>
+                <tr style="height: 40px">
+                  <td>1</td>
+                  <td>Input Node 1</td>
+                  <td>Net</td>
+                  <td>+ve</td>
+                </tr>
+                </tbody>
+              </table>
+              <div class="table-title mt-4">
+                Routed Region Peril
+              </div>
+              <table class="summary-table">
+                <thead>
+                <th>Edge</th>
+                <th>Region Peril</th>
+                <th>#PLT</th>
+                </thead>
+                <tbody>
+                <tr style="height: 20px">
+                  <td>1</td>
+                  <td>CAEQ</td>
+                  <td>1</td>
+                </tr>
+                <tr style="height: 20px">
+                  <td>1</td>
+                  <td>CAEQ-EAS</td>
+                  <td>1</td>
+                </tr>
+                <tr style="height: 20px">
+                  <td>1</td>
+                  <td>CAEQ-WES</td>
+                  <td>1</td>
+                </tr>
+                </tbody>
+              </table>
+
+              <div class="tags-title my-2 mx-1">
+                Associated Tags
+              </div>
+
+              <div class="tags-container d-flex my-3">
+                <nz-tag [nzColor]="'#7BBE31'">CAEQ</nz-tag>
+                <nz-tag [nzColor]="'#7BBE31'">NAEQ</nz-tag>
+                <nz-tag [nzColor]="'#00C4AA'">TAG1</nz-tag>
+              </div>
+
+            </div>
+
+
+          </div>
+
+          <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
+            <button nz-button class="a-button-text-cancel">CANCEL</button>
+            <button nz-button class="a-buttons-outlined">UPDATE</button>
+            <button nz-button class="a-buttons-contained">RUN</button>
+          </div>
+          <div class="mx-2 my-1">
+            <nz-progress [nzStrokeColor]="'#03DAC4'" [nzPercent]="20" [nzShowInfo]="false"></nz-progress>
+          </div>
+
+        </div>
+      </div>
+
+
+    </nz-tab>
+    <nz-tab [nzTitle]="'EP'">
+      <div class="ep-tab-content">
+        <div class="simple-panel">
+          <h6>EP Metrics</h6>
+          <div>
+            <div nz-row class="dropdowns" nzGutter="2">
+              <div nz-col [nzSpan]="8">
+                <div class="dropdown-currency">
+                  <nz-dropdown [nzTrigger]="'click'">
+                    <a nz-dropdown>
+                      <div style="display:flex">
+                        <div class="dropdown-currency-title">
+                          <div class="dropdown-currency-header d-flex align-items-center justify-content-between" >
+                            <div [nz-tooltip]="'Display Currency'" class="no-wrap">
+                              Display Currency
+                            </div>
+                            <i nz-icon type="down"></i>
+                          </div>
+                          <span class="dropdown-currency-subtitle"
+                                style="font-weight: bold;">{{epMetricsCurrencySelected}}</span>
+                        </div>
+                      </div>
+                    </a>
+                    <ul nz-menu>
+                      <li nz-menu-item (click)="epMetricsCurrencySelected= currency?.label"
+                          *ngFor="let currency of currencies">{{currency?.label}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+              </div>
+              <div nz-col [nzSpan]="8">
+                <div class="dropdown-financial-unit">
+                  <nz-dropdown [nzTrigger]="'click'">
+                    <a nz-dropdown>
+                      <div style="display:flex">
+                        <div class="dropdown-unit-title">
+                          <div class="dropdown-unit-header d-flex align-items-center justify-content-between">
+                            <div [nz-tooltip]="'Financial Unit'" class="no-wrap">
+                              Financial Unit
+                            </div>
+                            <i nz-icon type="down"></i>
+                          </div>
+                          <span class="dropdown-unit-subtitle"
+                                style="font-weight: bold;">{{epMetricsFinancialUnitSelected}}</span>
+                        </div>
+                      </div>
+                    </a>
+                    <ul nz-menu>
+                      <li nz-menu-item (click)="epMetricsFinancialUnitSelected = unit?.label"
+                          *ngFor="let unit of units">{{unit?.label}}
+                      </li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+              </div>
+              <div nz-col [nzSpan]="2">&nbsp;</div>
+              <div nz-col [nzSpan]="6">
+                <div class="dropdown-ep-metric">
+                  <nz-dropdown [nzTrigger]="'click'">
+                    <a nz-dropdown nz-row>
+                      <div nz-col [nzSpan]="12">
+                        Metric
+                      </div>
+                      <div nz-col [nzSpan]="6">&nbsp;</div>
+                      <i nz-icon type="down" nz-col [nzSpan]="6"></i>
+                    </a>
+                    <ul nz-menu>
+                      <li nz-menu-item>AEP</li>
+                      <li nz-menu-item>OEP</li>
+                    </ul>
+                  </nz-dropdown>
+                </div>
+              </div>
+              <div nz-col [nzSpan]="1">&nbsp;</div>
+            </div>
+            <div class="ep-metric-tabset">
+              <nz-tabset>
+                <nz-tab [nzTitle]="table">
+                  <ng-template #table><i class="icon-grid_on_24px"></i></ng-template>
+                  <div class="metric-table-content">
+                    <table class="table metric-table">
+                      <thead>
+                      <tr>
+                        <th style="width: 45%; text-align: right">Return Period</th>
+                        <th style="width: 15%">OEP</th>
+                        <th style="width: 15%">AEP</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let metric of metrics">
+                        <td>{{metric.retrunPeriod}}</td>
+                        <td>{{metric.OEP}}</td>
+                        <td>{{metric.AEP}}</td>
+                      </tr>
+                      </tbody>
+                      <tfoot>
+                      <tr>
+                        <td>Pure Premium</td>
+                        <td>323,849</td>
+                        <td>323,884</td>
+                      </tr>
+                      <tr>
+                        <td>Std Deviation</td>
+                        <td>5,806,767</td>
+                        <td>5,806,767</td>
+                      </tr>
+                      <tr>
+                        <td>CoV</td>
+                        <td>17,83</td>
+                        <td>17,83</td>
+                      </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </nz-tab>
+                <nz-tab [nzTitle]="chart">
+                  <ng-template #chart><i class="icon-show_chart_24px"
+                                         style="border-bottom: 2px solid #0700cf; border-left: 2px solid #0700cf;"></i>
+                  </ng-template>
+                  <div style="width: 100%">
+                    <img style="width: inherit" src="../../../../assets/images/RRchartInVision.png">
+                  </div>
+                </nz-tab>
+              </nz-tabset>
+              <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
+                <button nz-button class="a-button-text-cancel">CANCEL</button>
+                <button nz-button class="a-buttons-outlined">UPDATE</button>
+                <button nz-button class="a-buttons-contained">RUN</button>
+              </div>
+              <div class="mx-2 my-1">
+                <nz-progress [nzStrokeColor]="'#03DAC4'" [nzPercent]="20" [nzShowInfo]="false"></nz-progress>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </nz-tab>
+  </nz-tabset>
+</div>
+
+
+<node-creation-popup
+  [isVisible]="showCreationPopup"
+  [selectionStep]="'plt'"
+  (onSave)="handleSave($event)"
+  [stepConfig]=" {wsId: wsConfig.wsId,
+    uwYear: wsConfig.year,
+    plts: []}"
+  (onVisibleChange)="showCreationPopup= $event"
+
+></node-creation-popup>

@@ -53,6 +53,11 @@ export class FilterPltsByUserTags{
   constructor(public payload?: any) {}
 }
 
+export class FilterPltsByStatus{
+  static readonly  type = '[PLT Main] Filter Plts By Status'
+  constructor(public payload?: any) {}
+}
+
 export class setUserTagsFilters{
   static readonly  type = '[PLT Main] set Filter Plts'
   constructor(public payload?: any) {}
@@ -65,16 +70,6 @@ static readonly  type = '[PLT Main] set Table Filter & Sort'
 
 export class createOrAssignTags {
   static readonly type = '[PLT Main] Create Or Assign Tags'
-  constructor(public payload?: any) {}
-}
-
-export class assignPltsToTagSuccess {
-  static readonly type = '[PLT Main] Assign plts to Tag Success'
-  constructor(public payload?: any) {}
-}
-
-export class assignPltsToTagFail {
-  static readonly type = '[PLT Main] Assign plts to Tag Fail'
   constructor(public payload?: any) {}
 }
 
@@ -142,3 +137,61 @@ export class restorePlt {
   static readonly type = '[PLT Main] Restore Plt'
   constructor(public payload?: any) {}
 }
+
+export class setCloneConfig {
+  static readonly type = '[PLT Main] Clone Config';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class AddNewTag {
+  static readonly type = '[PLT Main] Add New Tag';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class DeleteTag {
+  static readonly type = '[PLT Main] Delete Tag';
+
+  constructor(public payload?: any) {
+  }
+}
+
+export class GetTagsBySelection {
+  static readonly type = '[PLT Main] Get Tags By Selection';
+
+  constructor(public payload?: any) {}
+}
+
+export class GetTagsBySelectionSuccess {
+  static readonly type = '[PLT Main] Get Tags By Selection Success';
+
+  constructor(public payload?: any) {}
+}
+
+export class GetTagsBySelectionFail {
+  static readonly type = '[PLT Main] Get Tags By Selection Fail';
+
+  constructor(public payload?: any) {}
+}
+
+export class AssignPltsToTag {
+  static readonly type = '[Tag Manager] AssignPltsToTag';
+
+  constructor(public payload?: any) {}
+}
+
+export class assignPltsToTagSuccess {
+  static readonly type = '[PLT Main] Assign plts to Tag Success'
+  constructor(public payload?: any) {}
+}
+
+export class assignPltsToTagFail {
+  static readonly type = '[PLT Main] Assign plts to Tag Fail'
+  constructor(public payload?: any) {}
+}
+
+
+

@@ -4,16 +4,19 @@
       margin-top: -362px;
       margin-left: -473px;
     }
-    .ui-table-scrollable-body {
-      max-height: calc(85vh - 205px);
+
+    .activate-header-scroll {
+      .ui-table-scrollable-header {
+        overflow: auto !important;
+      }
     }
 
     .icon-check {
       background-color: #0700e4;
       color: #fff;
       border-radius: 25px;
-      font-size: 18px;
-      padding: 2px;
+      font-size: 16px;
+      margin: 5px;
     }
 
     .active_plt_item {
@@ -23,9 +26,8 @@
     .ui-table-thead {
 
       .checkBoxHead div {
-        display: flex;
-        align-items: center;
-        justify-content: space-around;
+        margin-left: 9px;
+
         .ant-checkbox-indeterminate .ant-checkbox-inner::after {
           background-color: #fff;
           height: 2px;
@@ -111,6 +113,17 @@
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         user-select: none;
 
+        .peril-container {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 30px !important;
+          height: 30px !important;
+          margin: auto;
+          border-radius: 100%;
+          color: #fff !important;
+        }
+
         .text-elipsice {
           width: 100%;
           height: 30px;
@@ -178,5 +191,27 @@
       }
     }
 
+  }
+  .checkbox-off{
+    padding-left: 9px;
+    display: flex;
+    justify-content: center;
+  }
+
+
+
+  .burger-menu-visible{
+    display: block;
+    width: 0px;
+
+  }
+  .burger-menu{
+    display: none;
+    width: 0px;
+  }
+  .checkbox-off:hover{
+    .burger-menu{
+      display: block;
+    }
   }
 }

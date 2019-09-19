@@ -1,4 +1,4 @@
-<div class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover
+<div (click)="togglePopup()" class="pl-1 pr-1" style="cursor: pointer; padding-right: 1rem !important;" [(nzVisible)]="visible" nz-popover
      [nzContent]="userPopoverContent" nzPlacement="bottomRight" nzTrigger="click">
   <nz-avatar nzText="N.D" nzSize="large"></nz-avatar>
   Nathalie Dulac &nbsp;&nbsp;
@@ -26,9 +26,6 @@
     </div>
 
     <div class="user-config-footer">
-      <div style="display: flex;
-    align-items: center;
-    flex: 1;">More Configuration</div>
       <button (click)="navigateToUserPreference()" class="a-button-text">GENERAL SETTINGS</button>
     </div>
 

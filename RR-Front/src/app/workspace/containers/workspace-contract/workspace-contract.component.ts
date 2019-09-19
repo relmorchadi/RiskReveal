@@ -1,14 +1,36 @@
-import {Component, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, OnInit} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import {BaseContainer} from '../../../shared/base';
+import {Store} from '@ngxs/store';
+import {StateSubscriber} from '../../model/state-subscriber';
+import * as fromHeader from '../../../core/store/actions/header.action';
+import * as fromWs from '../../store/actions';
+import {UpdateWsRouting} from '../../store/actions';
+import {Navigate} from "@ngxs/router-plugin";
 
 @Component({
   selector: 'app-workspace-contract',
   templateUrl: './workspace-contract.component.html',
   styleUrls: ['./workspace-contract.component.scss']
 })
-export class WorkspaceContractComponent implements OnInit {
+export class WorkspaceContractComponent extends BaseContainer implements OnInit, StateSubscriber {
   collapseHead = false;
   collapseLeft = false;
   collapseRight = false;
+
+  wsIdentifier;
+  workspace: any;
+
+  hyperLinks: string[] = ['Projects', 'Contract', 'Activity'];
+  hyperLinksRoutes: any = {
+    'Projects': '/projects',
+    'Contract': '/Contract',
+    'Activity': '/Activity'
+  };
+  hyperLinksConfig: {
+    wsId: string,
+    uwYear: string
+  };
 
   scrollableColsTreaty = [
     {field: 'bouquet', header: 'Bouquet', width: '130px', display: true, filtered: false, type: 'text', indicator: true, color: '#8C54FF'},
@@ -223,13 +245,63 @@ export class WorkspaceContractComponent implements OnInit {
     },
   ];
 
-  constructor() { }
+  constructor(private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+    super(_baseRouter, _baseCdr, _baseStore);
+  }
 
   ngOnInit() {
+    this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
+      this.hyperLinksConfig = {
+        wsId,
+        uwYear: year
+      };
+    });
+  }
+
+  patchState({wsIdentifier, data}: any): void {
+    this.workspace = data;
+    this.wsIdentifier = wsIdentifier;
+  }
+
+  pinWorkspace() {
+    const {wsId, uwYear, workspaceName, programName, cedantName} = this.workspace;
+    this.dispatch([
+      new fromHeader.PinWs({
+        wsId,
+        uwYear,
+        workspaceName,
+        programName,
+        cedantName
+      }), new fromWs.MarkWsAsPinned({wsIdentifier: this.wsIdentifier})]);
+  }
+
+  unPinWorkspace() {
+    const {wsId, uwYear} = this.workspace;
+    this.dispatch([
+      new fromHeader.UnPinWs({wsId, uwYear}),
+      new fromWs.MarkWsAsNonPinned({wsIdentifier: this.wsIdentifier})
+    ]);
   }
 
   changeCollapse() {
     this.collapseHead = !this.collapseHead;
+  }
+
+  navigateFromHyperLink({route}) {
+    const {wsId, uwYear} = this.workspace;
+    this.dispatch(
+      [new UpdateWsRouting(this.wsIdentifier, route),
+        new Navigate(route ? [`workspace/${wsId}/${uwYear}/${route}`] : [`workspace/${wsId}/${uwYear}/projects`])]
+    );
+  }
+
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+  protected detectChanges() {
+    super.detectChanges();
   }
 
 }

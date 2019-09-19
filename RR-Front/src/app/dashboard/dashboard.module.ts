@@ -7,6 +7,7 @@ import { RenewalContractScopeComponent } from './components/renewal-contract-sco
 import {GridsterModule} from 'angular-gridster2';
 import {DataTableModule} from 'primeng/primeng';
 import {TableModule} from 'primeng/table';
+import { FacWidgetComponent } from './components/fac-widget/fac-widget.component';
 
 const routes = [
   {path: '', component: DashboardEntryComponent}
@@ -14,7 +15,7 @@ const routes = [
 
 
 @NgModule({
-  declarations: [...CONTAINERS, SliderRightComponent, RenewalContractScopeComponent],
+  declarations: [...CONTAINERS, SliderRightComponent, RenewalContractScopeComponent, FacWidgetComponent],
   imports: [
     GridsterModule,
     SharedModule,

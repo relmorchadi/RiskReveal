@@ -1,86 +1,154 @@
-<app-left-menu></app-left-menu>
 <div class="app-wrapper">
   <div class="app-header">
-    <h4>Clone Data &nbsp;&nbsp;</h4>
-    <span class="subtitle-2">
-      {{ subTitle[activeSubTitle] }}
-    </span>
+    <h4>Clone Workspace assets</h4>
   </div>
   <div class="app-body">
     <ng-container [ngSwitch]="activeSubTitle">
-      <div class="box-container" *ngSwitchCase="0">
-        <div class="box-item" style="background-color: #e5e9fa;">
-          <span class="subtitle-3">
-        Summary of assets being cloned:
-      </span>
-          <div class="plts-detail-boxes">
-            <div class="box">
-              <div class="left" style="background-color: var(--primary-9);">
-                <i class="icon-assignment_24px"></i>
+      <div class="box-container" *ngSwitchCase="0" style="padding: 0 0;">
+        <div class="box-item" style="background-color: #e5e9fa;width: 100%;">
+          <div style="width: 812px;margin: auto;">
+            <span class="subtitle-3">
+              Summary of assets being cloned:
+            </span>
+            <div class="plts-detail-boxes">
+              <div *ngFor="let summaryItem of ( cloneConfig.summary | keys ) " class="box">
+                <div class="left" [ngStyle]="{ 'background-color': cloneConfig.summary[summaryItem].color }">
+                  <i [ngClass]="cloneConfig.summary[summaryItem].icon"></i>
+                </div>
+                <div class="right">
+                  <div class="regular1">{{summaryItem}}</div>
+                  <span class="regular">{{cloneConfig.summary[summaryItem].value}}</span>
+                </div>
               </div>
-              <div class="right">
-                <div class="regular">Pre-Inured PLTs</div>
-                <span class="regular">12</span>
-              </div>
-            </div>
-            <div class="box">
-              <div class="left" style="background-color: var(--scor-peril-2);">
-                <i class="fa fa-code-fork" style="margin: 4px;"></i>
-              </div>
-              <div class="right">
-                <div class="regular">Post-Inured PLTs</div>
-                <span class="regular">4</span>
-              </div>
-            </div>
-            <div class="box">
-              <div class="left" style="background-color: var(--primary-9);">
-                <i></i>
-              </div>
-              <div class="right">
-                <div class="regular">Inuring Packages</div>
-                <span class="regular">1</span>
-              </div>
-            </div>
-            <div class="box">
-              <div class="left" style="background-color: var(--primary-10);">
-                <i class="icon-assignment_24px"></i>
-              </div>
-              <div class="right">
-                <div class="regular">Sources Projects</div>
-                <span class="regular">3</span>
+              <div *ngIf="_from.value?.wsId" class="box edit-box">
+                <i class="icon-down-arrow"  (click)="editPlts()"></i>
+                <span class="body-3" (click)="editPlts()">
+                  Edit PLT List
+                </span>
               </div>
             </div>
           </div>
         </div>
-        <div class="box-item">
-          <span class="subtitle-3">
+        <div class="box-item" style="width: 780px;padding-bottom: 25px;">
+
+          <span class="subtitle-4">
             Cloning from:
           </span>
-          <div class="input-group">
-            <input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />
-            <i (click)="setSubTitle(1)" class="icon-search-alt" style="cursor:pointer;"></i>
+          <div style="display: flex;flex-wrap: nowrap;"
+               [ngStyle]="{'background-color': _from.value?.detail ?  '#fff' : '#e5e9fa','justify-content': _from.value?.detail ? 'unset' : 'center' }">
+            <ng-container *ngIf="_from.value?.detail">
+              <div class="left-box">
+                {{_from.value?.detail}}
+              </div>
+              <div class="right-box">
+                <button class="a-buttons-contained override">
+                  <i (click)="openSearchPopUp('from')" class="icon-search_24px"></i>
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!_from.value?.detail">
+              <button (click)="openSearchPopUp('from')" class="a-buttons-contained override" style="margin: 9px">
+                <i class="icon-search_24px"></i>
+                Select workspace
+              </button>
+            </ng-container>
           </div>
         </div>
-        <div class="box-item">
-        <span class="subtitle-3">
-          Cloning to:
-        </span>
-          <div class="input-group">
-            <input class="a-textfield-mini" placeholder="Captive - Property Event Group Cover"  style="flex: auto;margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="workspace" style="margin-right: 12px" />
-            <input class="a-textfield-mini" placeholder="uwy" style="margin-right: 12px" />
-            <i (click)="setSubTitle(2)" class="icon-search-alt" style="cursor:pointer;"></i>
+        <div class="box-item" style="width: 780px;padding: 0 25px;margin: 0;">
+          <div style="margin: 0 0 0 0; padding: 0 0 0 0; display: flex;justify-content: flex-end;">
+            <i style="cursor:pointer;font-size:27px;color: var(--primary-1);transform: rotate(90deg);margin-right: 14px"
+               class="icon-compare_arrows_24px" (click)="swapCloneItems()"></i>
           </div>
         </div>
-        <div class="box-item">
+        <div class="box-item" style="width: 780px;padding-top: 0;margin: 0;">
+          <span class="subtitle-4">
+            Cloning to:
+          </span>
+          <div style="display: flex;flex-wrap: nowrap;"
+               [ngStyle]="{'background-color': _to.value?.detail ?  '#fff' : '#e5e9fa','justify-content': _to.value?.detail ? 'unset' : 'center'}">
+            <ng-container *ngIf="_to.value?.detail">
+              <div class="left-box">
+                {{_to.value?.detail}}
+              </div>
+              <div class="right-box">
+                <button class="a-buttons-contained override">
+                  <i (click)="openSearchPopUp('to')" class="icon-search_24px"></i>
+                </button>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="!_to.value?.detail">
+              <button (click)="openSearchPopUp('to')" class="a-buttons-contained override" style="margin: 9px">
+                <i class="icon-search_24px"></i>
+                Select workspace
+              </button>
+            </ng-container>
+          </div>
+        </div>
+        <div class="box-item" style="width: 780px;">
           <div class="default-radio">
-            <nz-radio-group>
-              <label nz-radio nzValue="all" class="body-2">Keep Source Project Name(s)</label>
-              <label nz-radio nzValue="agg" class="body-2">Clone into New Project</label>
-              <label nz-radio nzValue="det" class="body-2">Clone into Existing Project</label>
-            </nz-radio-group>
+            <form [formGroup]="projectsForm">
+              <nz-radio-group formControlName="projectStep">
+                <label nz-radio [nzValue]="-1" class="body-2">Keep Source Project Name(s)</label>
+                <label nz-radio [nzValue]="0" class="body-2" [ngClass]="{'label-border': _projectStep.value == 0}">
+                  Clone into New Project
+                  <div class="toHide"></div>
+                </label>
+                <label nz-radio [nzValue]="1" class="body-2" [ngClass]="{'label-border': _projectStep.value == 1}">
+                  Clone into Existing Project
+                  <div class="toHide"></div>
+                </label>
+              </nz-radio-group>
+            </form>
+          </div>
+          <form [formGroup]="projectsForm" style="display: flex;justify-content: center">
+            <div *ngIf="_projectStep.value == 0" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    padding: 13px;
+    bottom: 3px;
+    z-index: 0;
+    border: 3px solid var(--primary-1);
+">
+              <div class="form-group">
+                <input formControlName="projectName" class="a-textfield-standard" type="text" placeholder="Project name" style="margin: 0 16px;">
+                <div *ngIf="_projectName.invalid && _projectName.dirty" class="input-err"><span *ngIf="_projectName.errors.required">Name is required</span></div>
+              </div>
+              <div class="form-group">
+                <input formControlName="projectDescription" class="a-textfield-standard" type="text" placeholder="Project description" style="margin: 0 16px;">
+                <div *ngIf="_projectDescription.invalid && _projectDescription.dirty" class="input-err"><span *ngIf="_projectDescription.errors?.required">Description is required</span></div>
+              </div>
+            </div>
+            <form [formGroup]="projectsForm" *ngIf="_projectStep.value == 1" class="input-group" style="position: relative;display: flex;flex-wrap: wrap;
+    align-items: stretch;
+    justify-content: center;
+    padding: 13px;
+    bottom: 3px;
+    z-index: 0;
+    border: 3px solid var(--primary-1);
+">
+              <div class="form-group">
+                <nz-select
+                  style="width: 270px;"
+                  nzShowSearch
+                  class="a-dropdown-small"
+                  nzPlaceHolder="Choose target project"
+                  formControlName="selectedProjectIndex"
+                >
+                  <nz-option *ngFor="let project of listOfProjects;let i=index;" [nzLabel]="project?.name+ ' | ' + project?.projectId" [nzValue]="i"></nz-option>
+                </nz-select>
+                <div *ngIf="_selectedProjectIndex.invalid && _selectedProjectIndex.dirty" class="input-err"><span *ngIf="_selectedProjectIndex.errors?.noSelectedProject">Project is required</span></div>
+              </div>
+            </form>
+          </form>
+        </div>
+        <div class="box-item" style="width: 880px;margin: 0;padding: 0;">
+          <nz-divider></nz-divider>
+        </div>
+        <div class="box-item" style="width: 780px;">
+          <div style="margin-top: 20px; display: flex;justify-content: flex-end;">
+            <button (click)="reset()" [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
+            <button (click)="clone()" class="a-buttons-contained" style="margin-left: 10px;">clone</button>
+            <button (click)="cloneAndOpen()" class="a-buttons-contained" style="margin-left: 10px;">clone AND open</button>
           </div>
         </div>
       </div>
@@ -91,10 +159,15 @@
         target
       </div>
     </ng-container>
-    <div class="box-buttons">
-      <button [ngClass]="{'a-button-text': activeSubTitle === 0, 'a-buttons-outlined': activeSubTitle != 0}">{{ activeSubTitle === 0 ? 'reset' : 'submit'}}</button>
-      <button class="a-buttons-contained">clone & open</button>
-      <button class="a-buttons-contained">clone</button>
-    </div>
   </div>
 </div>
+
+<app-workspace-project-popup
+  [isVisible]="searchWorkSpaceModal"
+  [selectionStep]="'plt'"
+  [multiSteps]="multiSteps"
+  [stepConfig]="stepConfig"
+  (onVisibleChange)="searchWorkSpaceModal= $event"
+  (onSelectWorkspace)="setSelectedWs(cloneConfig.currentSourceOfItems,$event)"
+  (onSelectItems)="setSelectedPlts(cloneConfig.currentSourceOfItems,$event)"
+></app-workspace-project-popup>

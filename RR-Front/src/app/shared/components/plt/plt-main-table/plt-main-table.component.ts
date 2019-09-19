@@ -1,5 +1,17 @@
-import {ChangeDetectionStrategy, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  TemplateRef,
+  ViewChild
+} from '@angular/core';
 import * as _ from 'lodash';
+import * as tableStore from './store';
+import {Message} from '../../../message';
 
 @Component({
   selector: 'app-plt-main-table',
@@ -9,134 +21,317 @@ import * as _ from 'lodash';
 })
 export class PltMainTableComponent implements OnInit {
 
-  @Input() tableInputs: {
-    filterInput: string,
-    contextMenuItems: any,
-    pltColumns: any[];
-    listOfPltsData: [];
-    listOfDeletedPltsData: [];
-    listOfPltsCache: [];
-    listOfDeletedPltsCache: [];
-    listOfPlts: [];
-    listOfDeletedPlts: [];
-    selectedListOfPlts: any;
-    selectedListOfDeletedPlts: any;
-    selectAll: boolean;
-    someItemsAreSelected: boolean;
-    showDeleted: boolean;
-    filterData: any;
-    filters: {
-      systemTag: [],
-      userTag: []
-    };
-    sortData: any;
-  };
+  perilColors = {
+    'EQ': 'red',
+    'FL': '#0b99cc',
+    'WS': '#62ec07',
+    'CS': '#62ec07'
+  }
 
-  contextMenuSelect: any;
+  @ViewChild('cm') cm: TemplateRef<any>;
 
-  contextMenuItems = [
-    { label: 'View Detail', command: (event) => {
-        console.log(this.contextMenuSelect);
-        this.openPltInDrawer.emit(this.contextMenuSelect.pltId);
-      }},
-    { label: 'Delete', command: (event) =>
-        this.deletePlt.emit()
-    },
-     { label: 'Edit Tags', command: (event) =>
-         this.editTags.emit()
-    },
-    {
-      label: 'Restore',
-      command: () => this.restore.emit()
-    }
-  ];
+  @Input() tableInputs: tableStore.Input;
+  @Input() containerPlts: any;
+  @Input() tableHeight = 'calc(100vh - 430px)';
 
-  contextMenuItemsCache = this.contextMenuItems;
+  selectedDropDown: any;
+  selectedDropDownTs: any;
+  initContainer: [];
 
-  @Output() editTags = new EventEmitter();
-  @Output() deletePlt = new EventEmitter();
-  @Output() restore = new EventEmitter();
-  @Output() openPltInDrawer = new EventEmitter();
+  @Output() setTagModalVisibility = new EventEmitter();
 
-  @Output() onCheckAll= new EventEmitter();
-  @Output() onCheckBoxSort= new EventEmitter();
-  @Output() onSortChange= new EventEmitter();
-  @Output() onFilter= new EventEmitter();
-  @Output() onItemSelectForMenu= new EventEmitter();
-  @Output() onSelectSinglePlt= new EventEmitter();
-  @Output() onPltClick= new EventEmitter();
-  @Output() setTagModalVisibility= new EventEmitter();
+  @Output() actionDispatcher: EventEmitter<Message> = new EventEmitter<Message>();
 
   private activeCheckboxSort: boolean;
+  private activeCheckboxSortScope: boolean;
   private lastSelectedId: number;
   private lastClick: string;
+  private userTagsLength: number;
 
-  constructor() {}
+  constructor(private _baseCdr: ChangeDetectorRef) {
+    this.activeCheckboxSort = false;
+    this.userTagsLength = 10000;
+
+  }
 
   ngOnInit() {
   }
 
-  checkAll($event){
-    this.onCheckAll.emit(this.tableInputs.showDeleted);
+  checkAll($event) {
+    this.actionDispatcher.emit({
+      type: tableStore.onCheckAll,
+      payload: this.tableInputs.showDeleted
+    })
+  }
+
+  checkAllScope(event) {
+    this.actionDispatcher.emit({
+      type: tableStore.onCheckAllScope,
+      payload: event
+
+    })
+  }
+
+  checkSelectedRows() {
+    let check = true;
+    let count = 0;
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      let valid = false;
+      plt.treatySectionsState.forEach(ts => {
+        if (ts.state != 'disabled') {
+          valid = true;
+          count++;
+        }
+      })
+      if (valid) {
+        if (!plt.selected) {
+          check = false;
+        }
+      }
+
+    })
+    if(count == 0) check = false;
+    return check;
+  }
+
+  checkMiddleState() {
+    let check = false;
+    let count = 0;
+    let count2 = 0;
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      if (plt.selected) {
+        count++;
+      }
+    })
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      let valid = false;
+      plt.treatySectionsState.forEach(ts => {
+        if (ts.state != 'disabled') {
+          valid = true
+        }
+      })
+      if (valid) count2++;
+
+    })
+    if (count < count2 && count != 0) {
+      check = true;
+    }
+    return check;
+  }
+
+  isPltAttached(plt, tsId) {
+    let check = '';
+
+    if (_.findIndex(this.containerPlts, {
+      pltId: plt.pltId,
+      regionPeril: plt.regionPerilCode,
+      targetRap: plt.grain,
+      tsId: tsId
+    }) != -1) {
+      check = "attached";
+    } else {
+      check = 'notAttached';
+    }
+    return check;
+  }
+
+  deselectThePlt(pltId, event) {
+    if (!event) this.actionDispatcher.emit({
+      type: tableStore.deselectPlt,
+      payload:
+      pltId
+    })
+
+  }
+
+  selectDropDown(event, pltId, tsId) {
+    if (event) {
+      this.selectedDropDown = pltId;
+      this.selectedDropDownTs = tsId;
+    } else {
+
+      this.selectedDropDown = null;
+      this.selectedDropDownTs = null;
+    }
+  }
+
+  isPltDisabled(plts, tsId) {
+    let check = '';
+    this.tableInputs.listOfPltsData.forEach(plt => {
+      if (plt.pltId == plts.pltId) {
+        plt.treatySectionsState.forEach(state => {
+          if (state.tsId == tsId) {
+            if (state.state == 'disabled') {
+              check = "disabled";
+            } else {
+              check = "notDisabled";
+            }
+          }
+        })
+      }
+    })
+    return check;
   }
 
   checkBoxSort() {
     this.activeCheckboxSort = !this.activeCheckboxSort;
-    this.onCheckBoxSort.emit( this.activeCheckboxSort ?
-      _.sortBy( !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData
-        :
-        this.tableInputs.listOfDeletedPltsData, [(o: any) => !o.selected]) : !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsCache : this.tableInputs.listOfDeletedPltsCache)
+
+    this.actionDispatcher.emit({
+      type: tableStore.checkBoxSort,
+      payload: this.activeCheckboxSort ?
+        _.sortBy(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData
+          :
+          this.tableInputs.listOfDeletedPltsData, [(o: any) => !o.selected]) : !this.tableInputs.showDeleted ? this.tableInputs.listOfPltsCache : this.tableInputs.listOfDeletedPltsCache
+    })
+
+  }
+
+  checkBoxSortScope() {
+    this.activeCheckboxSortScope = !this.activeCheckboxSortScope;
+
+    this.actionDispatcher.emit({
+      type: tableStore.checkBoxSortScope,
+      payload: this.activeCheckboxSortScope ?
+        _.sortBy(this.tableInputs.listOfPltsData, plt => !plt.selected) : _.sortBy(this.tableInputs.listOfPltsData, plt => plt.selected)
+    })
   }
 
   sortChange(field: any, sortCol: any) {
-    if(!sortCol){
-      this.onSortChange.emit(_.merge({}, this.tableInputs.sortData, { [field]: 'asc'}))
-    }else if(sortCol === 'asc'){
-      this.onSortChange.emit(_.merge({}, this.tableInputs.sortData, { [field]: 'desc'}))
-    } else if(sortCol === 'desc') {
-      this.onSortChange.emit(_.omit(this.tableInputs.sortData, `${field}`))
+    if (!sortCol) {
+      this.actionDispatcher.emit({
+        type: tableStore.sortChange,
+        payload: _.merge({}, this.tableInputs.sortData, {[field]: 'asc'})
+      });
+    } else if (sortCol === 'asc') {
+      this.actionDispatcher.emit({
+        type: tableStore.sortChange,
+        payload: _.merge({}, this.tableInputs.sortData, {[field]: 'desc'})
+      });
+    } else if (sortCol === 'desc') {
+      this.actionDispatcher.emit({
+        type: tableStore.sortChange,
+        payload: _.omit(this.tableInputs.sortData, `${field}`)
+      });
     }
   }
 
   filter(key: string, value) {
-    if(value) {
-      this.onFilter.emit(_.merge({},this.tableInputs.filterData, {[key]: value}))
+    if (value) {
+      this.actionDispatcher.emit({
+        type: tableStore.filterData,
+        payload: _.merge({}, this.tableInputs.filterData, {[key]: value})
+      })
     } else {
-      this.onFilter.emit(_.omit(this.tableInputs.filterData, [key]))
+      this.actionDispatcher.emit({
+        type: tableStore.filterData,
+        payload: _.omit(this.tableInputs.filterData, [key])
+      })
     }
   }
 
   selectedItemForMenu(pltId: any) {
-    this.onItemSelectForMenu.emit(pltId);
+    this.actionDispatcher.emit({
+      type: tableStore.setSelectedMenuItem,
+      payload: pltId
+    })
   }
 
-  selectSinglePLT(pltId: number, $event: boolean) {
-    this.onSelectSinglePlt.emit({
-      [pltId]: {
-        type:  $event
+  selectPltForAttach(plt: any, treatySectionId: any) {
+    this.actionDispatcher.emit({
+      type: tableStore.attachPlt,
+      payload: {
+        pltId: plt.pltId,
+        regionPeril: plt.regionPerilCode,
+        targetRap: plt.grain,
+        tsId: treatySectionId
       }
     })
   }
 
-  generateContextMenu(toRestore) {
-    this.contextMenuItems = _.filter(this.contextMenuItemsCache, e => e.label != (!toRestore ? 'Restore' : 'Delete'))
+  attachToAllTs(plt) {
+    this.actionDispatcher.emit({
+      type: tableStore.attachToAllTs,
+      payload: {
+        pltId: plt.pltId,
+        regionPeril: plt.regionPerilCode,
+        targetRap: plt.grain
+      }
+    })
+  }
+
+  unattachOtherTs(plt, tsId) {
+    this.actionDispatcher.emit({
+      type: tableStore.attachToJustThisTs,
+      payload: {
+        pltId: plt.pltId,
+        regionPeril: plt.regionPerilCode,
+        targetRap: plt.grain,
+        tsId: tsId
+      }
+    })
+  }
+
+  selectSinglePLT(pltId: number, $event: boolean) {
+    this.actionDispatcher.emit({
+      type: tableStore.toggleSelectedPlts,
+      payload: {
+        [pltId]: {
+          type: $event
+        }
+      }
+    })
   }
 
   handlePLTClick(pltId, i: number, $event: MouseEvent) {
-    const isSelected = _.findIndex( !this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
+    const isSelected = _.findIndex(!this.tableInputs.showDeleted ? this.tableInputs.selectedListOfPlts : this.tableInputs.selectedListOfDeletedPlts, el => el == pltId) >= 0;
     if ($event.ctrlKey || $event.shiftKey) {
       this.lastClick = "withKey";
       this.handlePLTClickWithKey(pltId, i, !isSelected, $event);
     } else {
       this.lastSelectedId = i;
-      this.onPltClick.emit(
-        _.zipObject(
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
-          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt =>   ({type: plt == pltId && (this.lastClick == 'withKey' || !isSelected) }))
+      this.actionDispatcher.emit({
+        type: tableStore.toggleSelectedPlts,
+        payload: _.zipObject(
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
+          _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => ({type: plt.pltId == pltId && (this.lastClick == 'withKey' || !isSelected)}))
         )
-      );
-      this.lastClick= null;
+      })
+      this.lastClick = null;
     }
+  }
+
+  rowTrackBy = (index, item) => {
+    return item[this.tableInputs.dataKey || this.tableInputs.pltColumns[0].field];
+  }
+
+  tmp(param: any) {
+    console.log(param);
+  }
+
+  filterByStatus(statue: string) {
+    this.actionDispatcher.emit({
+      type: tableStore.filterByStatus,
+      payload: statue
+    })
+  }
+
+  onColResize(event: any) {
+    const {
+      innerText,
+      scrollWidth
+    } = event.element;
+    console.log(event)
+
+    if (innerText == "User Tags") {
+      console.log(_.floor(scrollWidth / 18));
+      this.userTagsLength = _.floor(scrollWidth / 18);
+      this.detectChanges();
+    }
+  }
+
+  protected detectChanges() {
+    if (!this._baseCdr['destroyed'])
+      this._baseCdr.detectChanges();
   }
 
   private handlePLTClickWithKey(pltId: number, i: number, isSelected: boolean, $event: MouseEvent) {
@@ -146,24 +341,22 @@ export class PltMainTableComponent implements OnInit {
       return;
     }
 
-    if($event.shiftKey) {
-      console.log(i, this.lastSelectedId);
-      if(!this.lastSelectedId) this.lastSelectedId = 0;
-      if(this.lastSelectedId || this.lastSelectedId == 0) {
+    if ($event.shiftKey) {
+      if (!this.lastSelectedId) this.lastSelectedId = 0;
+      if (this.lastSelectedId || this.lastSelectedId == 0) {
         const max = _.max([i, this.lastSelectedId]);
         const min = _.min([i, this.lastSelectedId]);
-        this.onPltClick.emit(
-          _.zipObject(
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts, plt => plt),
-            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPlts : this.tableInputs.listOfDeletedPlts,(plt,i) =>  ({type:  i <= max  && i >= min})),
+        this.actionDispatcher.emit({
+          type: tableStore.toggleSelectedPlts,
+          payload: _.zipObject(
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, plt => plt.pltId),
+            _.map(!this.tableInputs.showDeleted ? this.tableInputs.listOfPltsData : this.tableInputs.listOfDeletedPltsData, (plt, i) => ({type: i <= max && i >= min})),
           )
-        )
+        })
       } else {
         this.lastSelectedId = i;
       }
       return;
     }
   }
-
-
 }

@@ -10,7 +10,14 @@
   }
 }
 
-
+.jobs-for{
+  ::ng-deep {
+    .ant-select-selection__rendered::after {
+      content: 'Jobs For';
+      width: fit-content;
+    }
+  }
+}
 
 .app-wrapper {
   background-color: #f5f5f5;

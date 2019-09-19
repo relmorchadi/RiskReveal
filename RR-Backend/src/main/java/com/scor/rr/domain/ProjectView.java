@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @IdClass(ProjectViewId.class)
-@Table(name = "PROJECTS_VIEW", schema = "dbo")
+@Table(name = "PROJECTS_VIEW", schema = "poc")
 public class ProjectView implements Serializable {
 
     @Id
@@ -48,6 +48,10 @@ public class ProjectView implements Serializable {
     private Integer regionPerilSum;
     @Column(name = "xactSum")
     private Integer xactSum;
+    private String sourceProjectId;
+    private String sourceProjectName;
+    private String sourceWsId;
+    private String sourceWsName;
 
     public ProjectView() {
     }
@@ -202,6 +206,38 @@ public class ProjectView implements Serializable {
 
     public void setXactSum(Integer xactSum) {
         this.xactSum = xactSum;
+    }
+
+    public String getSourceProjectId() {
+        return sourceProjectId;
+    }
+
+    public void setSourceProjectId(String sourceProjectId) {
+        this.sourceProjectId = sourceProjectId;
+    }
+
+    public String getSourceProjectName() {
+        return sourceProjectName;
+    }
+
+    public void setSourceProjectName(String sourceProjectName) {
+        this.sourceProjectName = sourceProjectName;
+    }
+
+    public String getSourceWsId() {
+        return sourceWsId;
+    }
+
+    public void setSourceWsId(String sourceWsId) {
+        this.sourceWsId = sourceWsId;
+    }
+
+    public String getSourceWsName() {
+        return sourceWsName;
+    }
+
+    public void setSourceWsName(String sourceWsName) {
+        this.sourceWsName = sourceWsName;
     }
 
     @Override

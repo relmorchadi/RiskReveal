@@ -7,5 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UwyCountRepository extends JpaRepository<UwyCountView, String> {
     Page<UwyCountView> findByLabelIgnoreCaseLikeOrderByCountOccurDesc(String label, Pageable pageable);
+    Page<UwyCountView> findByLabelIgnoreCaseLikeOrderByLabelDesc(String label, Pageable pageable);
+
 
 }

@@ -1,0 +1,18 @@
+<div class="pop-up-item">
+  <div class="pop-up-item-header">
+    <span>
+      {{inputs.title}}
+    </span>
+    <i class="icon-arrow_right_24px" (click)="openSection(inputs.title)"></i>
+  </div>
+  <div *ngIf="plt && inputs?.cols" class="pop-up-item-body">
+    <table class="pop-up-item-table">
+      <tbody>
+        <tr *ngFor="let col of inputs?.cols?.summary">
+          <td style="min-width: 150px;padding: 16px;">{{col?.header}}</td>
+          <td style="width: auto;padding: 16px;">{{plt[col?.field]}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

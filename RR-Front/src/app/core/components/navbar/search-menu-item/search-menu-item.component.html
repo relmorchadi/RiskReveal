@@ -1,7 +1,6 @@
 <form class="my-class" [formGroup]="contractFilterFormGroup">
 
-  <nz-input-group style="z-index: 1001"
-                  class="global-search-input-grp"
+  <nz-input-group class="global-search-input-grp"
                   [ngClass]="{'global-search-input-grp-active': isSearchRoute()}"
                   [nzSuffix]="suffixIconSearch"
                   [nzAddOnBefore]="prefixIconTag">
@@ -41,7 +40,7 @@
   </ng-template>
 
   <ng-template #suffixIconSearch>
-    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close" (click)="clearValue()" nzType="close"
+    <i nz-icon *ngIf=" searchInput?.value?.length>=1" class="item-close clickable-item" (click)="clearSearchValue()" nzType="close"
        nzTheme="outline"></i>
     <i [ngClass]="{'search-page-active-shape': isSearchRoute()}" (click)="onEnter($event)" style="cursor: pointer"
        class="icon-search_24px"></i>
@@ -87,7 +86,7 @@
       </div>
 
       <ng-template #basicTable>
-        <div class="result-wrapper" *ngIf="state?.data?.length > 0; else loadingTemp">
+        <div class="result-wrapper" *ngIf="state?.data?.length > 0 && !state?.emptyResult; else loadingTemp">
           <div class="search-result-wrapper" *ngFor="let val of state?.data; let i = index ">
             <span (click)="addBadgeFromResultList(state?.tables[i])" class="search-result-span"
                   *ngIf="state?.data[i].length > 0">{{state?.tables[i]}}</span>
@@ -111,7 +110,7 @@
         </ng-container>
         <ng-template #emptyState>
           <div>
-            <nz-empty></nz-empty>
+            <nz-empty [nzNotFoundContent]="'No Corresponding Results !'"></nz-empty>
           </div>
         </ng-template>
       </ng-template>

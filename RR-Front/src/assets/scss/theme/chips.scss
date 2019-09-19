@@ -70,7 +70,8 @@
     border-radius: 10px;
     font-size: .9em;
     display: flex;
-
+    cursor: pointer;
+    margin: 0 2px;
     .right-icon {
       @include pos-icon('right','left');
       position: relative;
@@ -86,15 +87,48 @@
     .chips-counter {
       margin-left: 16px;
       border-radius: 11px;
-      padding: 0px 14px;
+      padding: 0 14px;
       color: white;
       position: relative;
       display: flex;
-
       @include chips-layer;
+    }
+
+    .chips-icon {
+      cursor: pointer;
+      margin: 0 7px;
+      border-radius: 11px;
+      color: white;
+      position: relative;
+      display: flex;
+      align-items: center;
     }
   }
 }
 
+.active-tag {
+  border: 2px solid #666666;
+  border-radius: 25px;
+}
+
 @include chips(true);
 @include chips(false);
+
+.half, .full {
+  background-color: white;
+}
+
+.half {
+  height: 14px;
+  width: 7px;
+  margin: 2px 0;
+  border-bottom-right-radius: 14px;
+  border-top-right-radius: 14px;
+}
+
+.full {
+  height: 14px;
+  width: 14px;
+  margin: 2px 0;
+  border-radius: 14px;
+}

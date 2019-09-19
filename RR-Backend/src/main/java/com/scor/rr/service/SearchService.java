@@ -22,7 +22,9 @@ import javax.transaction.Transactional;
 import java.util.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static java.util.Arrays.asList;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 
@@ -87,7 +89,7 @@ public class SearchService {
         countMapper.put(TableNames.CEDANT_NAME, cedantNameCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.COUNTRY, countryCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.TREATY, treatyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
-        countMapper.put(TableNames.YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
+        countMapper.put(TableNames.YEAR, uwyCountRepository::findByLabelIgnoreCaseLikeOrderByLabelDesc);
         countMapper.put(TableNames.WORKSPACE_ID, workspaceIdCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
         countMapper.put(TableNames.WORKSPACE_NAME, workspaceNameCountViewRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
 //        countMapper.put(TableNames.PROGRAM, programRepository::findByLabelIgnoreCaseLikeOrderByCountOccurDesc);
@@ -111,51 +113,25 @@ public class SearchService {
     }
 
 
-    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
-//    public Page<ContractSearchResult> getWorkspaces(WorkspaceFilter filter, int size) {
-//        if (filter.isEmpty())
-//            return contractSearchResultRepository.findAll(PageRequest.of(0, size));
-//        else if (filter.isGlobalSearch())
-//            return contractSearchResultRepository.findAll(filterGlobal(filter.getGlobalKeyword()), PageRequest.of(0, size));
-//        else
-//            return contractSearchResultRepository.findAll(filter(filter), PageRequest.of(0, size));
-//        return workspaceViewRepository.findAll(WorkspaceViewSpecification.filter(filter), PageRequest.of(0, size));
-
-//        return contractSearchResultRepository.customQuery(PageRequest.of(0, size));
-        return new PageImpl<WorkspaceProjection>(
-                contractSearchResultRepository.getContracts(filter, offset,size),
-                PageRequest.of(offset/size, size),
-                contractSearchResultRepository.countContracts(filter)
-        );
-
-//        return contractSearchResultRepository.findAll(selectAndGroupFields(),PageRequest.of(0,size));
-
-//        return entityManager.createNativeQuery("EXEC filterContracts '10', 'ax', '2015', NULL, NULL, NULL")
-//                .setParameter("workspaceId", null)
-//                .setParameter("workspaceName", null)
-//                .setParameter("year", null)
-//                .setParameter("cedantCode", null)
-//                .setParameter("cedantName", null)
-//                .setParameter("countryName", null)
-//                .getResultList();
-//        Page<WorkspaceProjection> workspaceProjectionPage= new PageImpl<WorkspaceProjection>(
-//                ctrP.getContent().stream().map(ctr -> new SpelAwareProxyProjectionFactory().createProjection(WorkspaceProjection.class, ctr)).collect(toList()),
-//                ctrP.getPageable(),
-//                ctrP.getTotalElements());
-//        return workspaceProjectionPage;
-
-    }
-
-//    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter,int offset, int size) {
-//        String resultsQueryString= queryHelper.generateSqlQuery(filter, offset, size);
-//        String countQueryString= queryHelper.generateCountQuery(filter);
-//        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
-//        Query countQuery = entityManager.createNativeQuery(countQueryString);
-//        List<Object[]> resultList = resultsQuery.getResultList();
-//        Object total = countQuery.getSingleResult();
-//        List<ContractSearchResult> contractSearchResult = map(resultList);
-//        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
+//    public Page<WorkspaceProjection> getWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
+//        return new PageImpl<WorkspaceProjection>(
+//                contractSearchResultRepository.getContracts(filter, offset, size),
+//                PageRequest.of(offset / size, size),
+//                contractSearchResultRepository.countContracts(filter)
+//        );
+//
 //    }
+
+    public Page<?> globalSearchWorkspaces(NewWorkspaceFilter filter, int offset, int size) {
+        String resultsQueryString = queryHelper.generateSqlQuery(filter, offset, size);
+        String countQueryString = queryHelper.generateCountQuery(filter);
+        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+        Query countQuery = entityManager.createNativeQuery(countQueryString);
+        List<Object[]> resultList = resultsQuery.getResultList();
+        Object total = countQuery.getSingleResult();
+        List<ContractSearchResult> contractSearchResult = map(resultList);
+        return new PageImpl<>(contractSearchResult, PageRequest.of(offset / size, size), (Integer) total);
+    }
 
     public Page<?> countInWorkspace(TableNames table, String keyword, int size) {
         return ofNullable(countMapper.get(table))
@@ -168,24 +144,27 @@ public class SearchService {
         if (items == null || items.isEmpty())
             return Optional.empty();
         List<String> years = contractSearchResultRepository.findDistinctByWorkSpaceId(worspaceId).map(item -> item.getUwYear()).filter(Objects::nonNull).map(String::valueOf).distinct().sorted().collect(toList());
-        List<ProjectView> projects= projectViewRepository.findByWorkspaceIdAndUwy(worspaceId, Integer.valueOf(uwy));
-        return Optional.of(new WorkspaceDetailsDTO(items, years, projects));
+        final List<ProjectView> projects = projectViewRepository.findByWorkspaceIdAndUwy(worspaceId, Integer.valueOf(uwy));
+        List<ProjectView> filtredProjects = projectViewRepository.findFirstByWorkspaceIdAndUwyAndPostInuredFlagIsTrue(worspaceId, Integer.valueOf(uwy))
+                .map(postInuredProject -> Stream.concat(asList(postInuredProject).stream(), projects.stream()).collect(toList()))
+                .orElse(projects);
+        return Optional.of(new WorkspaceDetailsDTO(items, years, filtredProjects));
     }
 
     public Page<VwFacTreaty> getAllFacTreaties(VwFacTreatyFilter filter, Pageable pageable) {
-        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter),pageable);
+        return vwFacTreatyRepository.findAll(vwFacTreatySpecification.getFilter(filter), pageable);
     }
 
-//    public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
-//        String resultsQueryString= queryHelper.generateSqlQuery(request.getFilter(),request.getKeyword(), request.getOffset(), request.getSize());
-//        String countQueryString= queryHelper.generateCountQuery(request.getFilter(),request.getKeyword());
-//        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
-//        Query countQuery = entityManager.createNativeQuery(countQueryString);
-//        List<Object[]> resultList = resultsQuery.getResultList();
-//        Object total = countQuery.getSingleResult();
-//        List<ContractSearchResult> contractSearchResult = map(resultList);
-//        return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
-//    }
+    public Page<?> expertModeSearch(ExpertModeFilterRequest request) {
+        String resultsQueryString = queryHelper.generateSqlQuery(request.getFilter(), request.getKeyword(), request.getOffset(), request.getSize());
+        String countQueryString = queryHelper.generateCountQuery(request.getFilter(), request.getKeyword());
+        Query resultsQuery = entityManager.createNativeQuery(resultsQueryString);
+        Query countQuery = entityManager.createNativeQuery(countQueryString);
+        List<Object[]> resultList = resultsQuery.getResultList();
+        Object total = countQuery.getSingleResult();
+        List<ContractSearchResult> contractSearchResult = map(resultList);
+        return new PageImpl<>(contractSearchResult, PageRequest.of(request.getOffset() / request.getSize(), request.getSize()), (Integer) total);
+    }
 
     private List<ContractSearchResult> map(List<Object[]> resultList) {
         return resultList.stream().map((r) ->

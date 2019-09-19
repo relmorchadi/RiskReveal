@@ -1,0 +1,1 @@
+These are typescript definition files for the Community edition and the Toolkit edition. 

@@ -1,0 +1,21 @@
+
+:host {
+  .graph-commands {
+    height: 35px;
+    display: flex;
+    border-bottom: 1px solid #0700CF;
+    margin-bottom: 3px;
+
+    i{
+      color: #0700CF;
+      background-color: #E5E9FA;
+      font-size: 20px;
+      border-radius: 10px;
+      height: fit-content;
+      padding: 3px;
+      margin: 2px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  }
+}

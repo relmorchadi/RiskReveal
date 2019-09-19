@@ -1,9 +1,19 @@
 /* You can add global styles to this file, and also import other style files */
 @import "assets/fonts/Rubik/rubik.css";
 @import "assets/scss/styles";
+// JSPlumb St
+@import "../node_modules/jsplumbtoolkit/dist/css/syntax-highlighter.css";
+@import "../node_modules/jsplumbtoolkit/dist/css/jsplumbtoolkit-defaults.css";
+@import "../node_modules/jsplumbtoolkit/dist/css/jsplumbtoolkit-demo.css";
+@import "../src/assets/jsplumb/flowchart-builder/app.css";
+
 
 body {
   overflow: auto;
+}
+
+.jtk-surface{
+  height: -webkit-fill-available;
 }
 
 .ant-avatar {
@@ -12,9 +22,11 @@ body {
   justify-content: center;
 }
 
-//.ant-avatar-string{
-//  position: webkit sticky !important;
-//}
+
+div.cdk-overlay-container{
+  margin-top: 60px;
+}
+
 .ant-menu-item-group-title {
   padding: 0 !important;
 }
@@ -47,9 +59,12 @@ body {
 }
 
 .ant-tooltip-placement-left .ant-tooltip-arrow {
-  border-left-color: white !important;
+  border-left-color: #FFFFFF !important;
 }
 
+.ant-tooltip-placement-topLeft .ant-tooltip-arrow {
+  border-top-color: #FFFFFF !important;
+}
 
 .gr__localhost {
   overflow-y: hidden;
@@ -60,3 +75,30 @@ body {
   color: #362FD8 !important;
 }
 
+.cdk-overlay-container {
+  z-index: 1002 !important;
+}
+
+body > div.ui-widget-overlay.ui-dialog-mask {
+  z-index: 1001 !important;
+}
+
+
+body > div.ui-widget-overlay.ui-dialog-mask{
+  z-index: 1000 !important;
+}
+
+div.ui-toast-message.ui-shadow.ui-toast-message-success.ng-trigger.ng-trigger-messageState {
+  box-shadow: 0 0 0 0 rgba(0,0,0,0);
+}
+
+body .ui-toast .ui-toast-message.ui-toast-message-success {
+  background-color: transparent;
+  border: 0 none;
+  color: transparent;
+}
+
+.ui-toast {
+  width: 440px;
+  height: 200px;
+}

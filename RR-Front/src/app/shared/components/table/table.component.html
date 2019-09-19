@@ -81,15 +81,21 @@
   <i nz-tooltip nzTitle="Unselect All" nzPlacement="bottom" (click)="unselectAll()" class="icon-minus-square icons-font"></i>
 </div>-->
 
-<p-contextMenu #cm [model]="getItems()"></p-contextMenu>
+<ng-container *ngIf="activateContextMenu">
+  <p-contextMenu appendTo="body" #cm [model]="getItems()"></p-contextMenu>
+</ng-container>
 
 <nz-spin [nzSpinning]="loading && virtualScroll" [nzDelay]="700">
   <p-table *ngIf="virtualScroll" (scroll)="onElementScroll($event)"
            [value]="listOfData" #dt [columns]="tableColumn" [resizableColumns]="true"
-           [scrollable]="true" [scrollHeight]="tableHeight" [rows]="50" [totalRecords]="totalRecords"
+           [scrollable]="true" [scrollHeight]="'1000px'" [rows]="50" [totalRecords]="totalRecords"
            [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
            [lazy]="true" [virtualRowHeight]="50" [showLoader]="false" [(contextMenuSelection)]="contextSelectedItem"
-           [contextMenu]="cm" class="table-ngPrime"
+           [contextMenu]="getContextMenu()" class="table-ngPrime"
+           [selectionMode]="selectionMode"
+           (onRowSelect)="rowSelect($event)"
+           (onRowUnselect)="rowUnselect($event)"
+           [(selection)]="selectedRow"
   >
     <ng-template pTemplate="colgroup" let-columns>
       <colgroup>
@@ -97,15 +103,24 @@
       </colgroup>
     </ng-template>
     <ng-template pTemplate="header" let-columns>
-      <tr *ngIf="!sortable">
+      <tr>
         <th *ngFor="let col of columns" pResizableColumn>
-        <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}" style="display:flex">
+        <span [ngStyle]="{'visibility': col?.display ? 'unset' : 'hidden'}"
+              style="display:flex;justify-content: space-between">
           {{col?.header}}
           <ng-container *ngIf="col.type === 'checkbox'">
             <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
                    [nzIndeterminate]="indeterminate"></label>
             <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
           </ng-container>
+           <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
+              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
+                 style="font-size: 1.4em;"></i>
+            </ng-container>
         </span>
           <div class="search-bar-table" *ngIf="col?.filtered">
             <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
@@ -115,22 +130,30 @@
       </tr>
     </ng-template>
     <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-      <tr [pContextMenuRow]="rowData" [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+      <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
+          [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
         <ng-container *ngFor="let col of columns">
-          <td *ngIf="col?.type ==='checkbox'">
+          <td *ngIf="col?.type ==='checkbox'" class="ui-resizable-column">
             <div style="display:flex">
               <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
             </div>
           </td>
-          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (dblclick)="doubleClickRow(rowData)" (click)="selectRow(rowData, i)">
+          <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " class="ui-resizable-column"
+              (dblclick)="doubleClickRow(rowData)"
+              (click)="selectRow(rowData, i)">
             <div style="display:flex">
               <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
               <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
             </div>
           </td>
-          <td *ngIf="col?.type === 'icon'">
+          <td *ngIf="col?.type === 'icon'" class="ui-resizable-column">
             <div style="display:flex">
               <i (click)="handler(col, rowData)" [ngClass]="col?.class"></i>
+            </div>
+          </td>
+          <td *ngIf="col?.type === 'multi-icons'" class="ui-resizable-column">
+            <div style="display:flex">
+              <i *ngFor="let icon of col?.icons" (click)="icon.handler(col, rowData)" [ngClass]="icon?.class"></i>
             </div>
           </td>
         </ng-container>
@@ -143,15 +166,27 @@
         </td>
       </tr>
     </ng-template>
+    <ng-template pTemplate="emptymessage" let-columns>
+      <tr>
+        <td [attr.colspan]="columns.length">
+          No records found
+        </td>
+      </tr>
+    </ng-template>
   </p-table>
 </nz-spin>
 
-<!--<nz-spin [nzSpinning]="loading && !virtualScroll" [nzDelay]="700">-->
 <p-table *ngIf="!virtualScroll"
-         [value]="listOfData" [columns]="tableColumn" [resizableColumns]="true"
-         [scrollable]="true" [scrollHeight]="tableHeight" [responsive]="true"
+         [columns]="tableColumn"
+         [value]="listOfData | tableSortAndFilter : [sortData, FilterData]"
+         [resizableColumns]="true"
+         [columnResizeMode]="'expand'"
+         [scrollable]="true"
+         [scrollHeight]="'calc(100vh - 216px)'"
+         [responsive]="true"
          class="table-ngPrime"
 >
+  C
 
   <ng-template pTemplate="colgroup" let-columns>
     <colgroup>
@@ -161,33 +196,39 @@
   <ng-template pTemplate="header" let-columns>
     <tr>
       <th *ngFor="let col of columns" pResizableColumn>
-        <span *ngIf="col?.display" style="display:flex">
+        <span *ngIf="col?.display"
+              style="display:flex ;justify-content: space-between ; white-space:nowrap ;text-overflow: ellipsis ">
           {{col?.header}}
-          <ng-container *ngIf="col.type === 'checkbox'">
-            <label style="margin-top:20px" nz-checkbox [(ngModel)]="allChecked" (ngModelChange)="updateAllChecked()"
-                   [nzIndeterminate]="indeterminate"></label>
-            <i (click)="sort()" style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>
-          </ng-container>
+          <ng-container *ngIf="col?.sorted" [ngSwitch]="sortData[col?.field]">
+              <i *ngSwitchCase="'asc'" class="icon-keyboard_arrow_up_24px"
+                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchCase="'desc'" class="icon-keyboard_arrow_down_24px"
+                 (click)="sortChange(col?.field,sortData[col.field])" style="font-size: 1.4em;"></i>
+              <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.field,sortData[col.field])"
+                 style="font-size: 1.4em;"></i>
+            </ng-container>
+
         </span>
+<!--        (input)="filterCol($event.target.value, col?.filterParam)"-->
         <div class="search-bar-table" *ngIf="col?.filtered">
           <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-          <input pInputText type="text" (input)="filterCol($event.target.value, col?.filterParam)">
+          <input *ngIf="col?.header?.length > 0" pInputText type="text"  (input)="filter(col?.field, $event.target.value)" [ngModel]="FilterData[col?.field]">
         </div>
       </th>
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-    <div *ngIf="listOfData.length == 0">
-      No Result
-    </div>
-    <tr [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
+    <tr
+      [ngClass]="{'active_contract_item': rowData?.selected, 'selected_contract_item': rowData === currentSelectedItem}">
       <ng-container *ngFor="let col of columns">
         <td *ngIf="col?.type ==='checkbox'">
           <div style="display:flex">
             <label nz-checkbox [(ngModel)]="rowData.selected" (ngModelChange)="uncheckRow()"></label>
           </div>
         </td>
-        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " (click)="selectRow(rowData, i)">
+        <td *ngIf="col?.type !=='checkbox' && col?.type !== 'icon' " class="ui-resizable-column"
+            (dblclick)="doubleClickRow(rowData)"
+            (click)="selectRow(rowData, i)">
           <div style="display:flex">
             <i *ngIf="col?.type === 'date'" class="icon-calendar-alt"></i>
             <span [title]="rowData[col?.field]" class="text-wrapper">{{rowData[col?.field]}}</span>
@@ -201,9 +242,13 @@
       </ng-container>
     </tr>
   </ng-template>
+  <ng-template pTemplate="emptymessage" let-columns>
+    <tr>
+      <td [attr.colspan]="columns.length">
+        No records found
+      </td>
+    </tr>
+  </ng-template>
 </p-table>
 <!--</nz-spin>-->
 
-<div *ngIf="listOfData.length == 0">
-  <nz-empty></nz-empty>
-</div>

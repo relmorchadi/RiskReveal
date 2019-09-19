@@ -15,6 +15,7 @@
   flex-direction: column;
   overflow: auto;
   height: 320px;
+  overflow-x: hidden;
 }
 
 .empty-wrapper {
@@ -26,7 +27,8 @@
 
 .list-group-fuse {
   height: auto;
-  margin-right: 10px;
+  margin-right: 22px;
+  padding-left: 20px;
 }
 
 i.notifications_24px {
@@ -62,4 +64,18 @@ i.notifications_24px {
 .notification-footer {
   display: flex;
   justify-content: flex-end;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+
+  .date-label {
+    ::ng-deep {
+      .ant-select-selection__rendered::after {
+        content: 'Date';
+      }
+    }
+  }
+
 }

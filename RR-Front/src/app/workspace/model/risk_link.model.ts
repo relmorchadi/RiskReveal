@@ -7,6 +7,14 @@ export class RiskLinkModel {
     searchValue: string,
     numberOfElement: number
   };
+  linking: {
+    edm: any,
+    rdm: any,
+    autoLinks: any,
+    linked: any,
+    analysis: any,
+    portfolio: any,
+  };
   display: {
     displayTable: boolean,
     displayImport: boolean,
@@ -26,7 +34,17 @@ export class RiskLinkModel {
     targetCurrency: any,
     calibration: any,
   };
+  financialPerspective: {
+    rdm: any,
+    analysis: any,
+    treaty: any,
+    standard: any,
+    target: any,
+  };
   analysis: any;
   portfolios: any;
+  results: any;
+  summaries: any;
   selectedEDMOrRDM: string;
+  activeAddBasket: boolean;
 }

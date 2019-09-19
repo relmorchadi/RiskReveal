@@ -6,6 +6,7 @@ export class NotificationService{
   constructor(private notification: NzNotificationService) {}
 
   createNotification(title: string,message: string, type:string, placement: string, duration: number) {
+    this.notification.remove();
     this.notification.config({
       nzPlacement: placement
     })

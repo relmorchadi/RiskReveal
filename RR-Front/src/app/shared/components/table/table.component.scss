@@ -7,7 +7,6 @@
   .table-ngPrime {
     ::ng-deep {
 
-
       .ant-checkbox-checked .ant-checkbox-inner {
         background-color: #0700cf;
         border-color: #0700cf;
@@ -32,7 +31,7 @@
       }
 
       .ui-table-scrollable-view {
-        min-height: 750px;
+        //min-height: 200px;
       }
 
       .ui-table-thead {
@@ -168,6 +167,7 @@
       .ui-table-tbody {
         tr.active_contract_item {
           background-color: #FCF9D6 !important;
+          color: black;
         }
 
         tr.selected_contract_item {
@@ -178,6 +178,7 @@
       .ant-table-tbody {
         tr.active_contract_item {
           background-color: #FCF9D6 !important;
+          color: black !important;
         }
 
         tr.selected_contract_item {

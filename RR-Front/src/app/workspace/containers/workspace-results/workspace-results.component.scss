@@ -1,29 +1,13 @@
 :host {
-  display: flex;
   width: 100%;
-  @media screen and (min-width: 1900px) {
-    height: 100vh;
-  }
+  height: max-content;
+  display: flex;
+  min-height: 100vh;
+  background-color: #F4F6FC;
 }
 
-.app-wrapper {
-  background-color: #F4F6FC;
+.app-body{
   display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  margin: auto;
-
-  .app-header {
-    display: flex;
-    width: 90%;
-    margin: 20px auto;
-  }
-
-  .app-body {
-    height: 500px;
-    width: 90%;
-    margin: 0 auto;
-    background-color: #fff;
-  }
+  height:500px;
+  background-color: #fff;
 }
