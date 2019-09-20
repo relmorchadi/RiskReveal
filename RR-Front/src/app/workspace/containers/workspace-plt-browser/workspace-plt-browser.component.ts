@@ -30,7 +30,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   tableInputs: tableStore.Input;
   tagsInput: leftMenuStore.Input;
   collapsedTags: boolean= true;
-  @ViewChild('leftMenu') leftMenuRef: ElementRef;
 
   private dropdown: NzDropdownContextComponent;
   searchAddress: string;
@@ -603,8 +602,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.updateTable('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.updateTable('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
       this.updateTable('selectedListOfPlts', _.filter(data, (v, k) => v.selected));
-
-      console.log(this.leftMenuRef);
 
       this.detectChanges();
     });
