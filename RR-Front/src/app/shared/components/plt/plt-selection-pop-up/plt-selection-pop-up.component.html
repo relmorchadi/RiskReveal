@@ -1,12 +1,13 @@
 <p-dialog [(visible)]="isVisible"
           [closable]="false"
           [styleClass]="'m-dialog-modal-lg plt-selection-pop-up' + (browesing ? ' borderless' : '')"
-          appendTo="body"
           [modal]="true"
           [responsive]="true"
           [baseZIndex]="1"
           [autoZIndex]="false"
+          [maximizable]="true"
           (onHide)="onHide()"
+          appendTo="body"
           (onShow)="onShow()">
 
   <p-header>
@@ -16,16 +17,16 @@
           <button class="a-buttons-contained override">
             <i (click)="goToSearchWorkspace()" class="icon-arrow_back_ios_24px"></i>
           </button>
-          <h4>
+          <h6>
             Select PLTs
-          </h4>
+          </h6>
         </div>
       </ng-container>
 
       <ng-container *ngIf="!browesing">
-        <h4 >
+        <h6>
           Select Workspace
-        </h4>
+        </h6>
 
         <div [formGroup]="keywordFormGroup">
 
@@ -74,6 +75,7 @@
     <div class="content">
       <div class="left">
         <app-plt-left-menu
+          [tagsInput]="tagsInput"
         >
         </app-plt-left-menu>
       </div>
@@ -92,12 +94,14 @@
           ></app-plt-main-table>
         </div>
       </div>
+      <!--
       <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
         <app-plt-right-menu
           (actionDispatcher)="rightMenuActionDispatcher($event)"
           [Inputs]="rightMenuInputs"
         ></app-plt-right-menu>
       </div>
+      -->
     </div>
   </ng-container>
 

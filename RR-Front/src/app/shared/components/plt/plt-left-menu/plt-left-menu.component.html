@@ -26,7 +26,7 @@
             [ngClass]="{'active-path': project.selected}">
           <i class="icon-assignment_24px"></i>
           <span class="body-list"
-                [nz-tooltip]="(project.projectId | reFormatPID) + ' ' +  project.name + ' ' + (toDate(project.creationDate) | date: 'y')">{{(project.projectId | reFormatPID) + ' ' + project.name + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
+                [nz-tooltip]="project.name + ' ' + (project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')">{{( project.name + ' ' + project.projectId | reFormatPID) + ' ' + (toDate(project.creationDate) | date: 'y')}}</span>
         </li>
         <li>
           <div class="plt-trash" [ngStyle]="{'display': tagsInput.deletedPltsLength > 0 ? 'flex' : 'none', 'background-color': tagsInput.showDeleted ? 'rgb(253, 251, 223)' : 'white'}" style="font-size: 0.7em;">
@@ -214,7 +214,7 @@
                   [ngClass]="{'active-tag':tagsInput?.selectedTags[tag?.tagId]}"
                   class="a-chips-input-mini"
                   style="cursor: default"
-                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': tag?.count ? '1px 0 0 10px' : '1px 10px 0 10px'}">
+                  [ngStyle]="{'background-color': tag?.tagColor, 'padding': '1px 10px 0 10px'}">
                   <span class="chips-content">{{tag?.tagName}}</span>
               </span>
                 </div>

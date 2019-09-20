@@ -23,24 +23,41 @@
       background-color: #fcf9d6;
     }
 
-    .ui-table-thead {
+    .ui-table-thead  {
+
+      .ui-column-resizer {
+        width: 1.6px !important;
+        border: none !important;
+        background-color: #d8cdcd;
+      }
+
+
 
       .checkBoxHead div {
         margin-left: 9px;
+        display: flex;
+        align-items: center;
+
 
         .ant-checkbox-indeterminate .ant-checkbox-inner::after {
-          background-color: #fff;
+          border-color: #0700cf;
           height: 2px;
           display: flex;
+
         }
 
         .ant-checkbox-indeterminate .ant-checkbox-inner {
           background-color: #0700cf;
+          border-color: #0700cf;
         }
       }
 
       tr:nth-child(2n) {
         border-bottom: 1px solid rgba(0,0,0,0.15);
+
+        .icon-header {
+          padding: 6px 0 0 2px !important;
+        }
 
         th {
           padding: 0 2px !important;
@@ -51,7 +68,7 @@
       tr:nth-child(2n + 1) {
 
         th {
-          padding: 0 2px 0 2px !important;
+          padding: 2px 2px 0 2px !important;
           height:25px
         }
       }
