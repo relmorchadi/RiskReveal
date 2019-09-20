@@ -395,8 +395,17 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
     this.adjustColWidth();
+    this.initAdjApplication();
   }
 
+  initAdjApplication() {
+    this.dispatch(new applyAdjustment({
+      adjustementType: this.singleValue,
+      adjustement: false,
+      columnPosition: this.columnPosition,
+      pltId: this.listOfPltsThread.filter(row => row.status != 'locked'),
+    }));
+  }
   initTemplateList() {
     console.log('template List ======> ', this.templateList)
 

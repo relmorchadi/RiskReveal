@@ -433,41 +433,57 @@ export class CalibrationService implements NgxsOnInit {
   }
 
   applyAdjustment(ctx: StateContext<any>, payload: any) {
+
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
     let columnPosition = payload.columnPosition;
     let pltId = payload.pltId;
-    if (pltId !== undefined) {
-      let today = new Date();
-      let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
-      adjustement.ref = adjustement.id;
-      adjustement.id = numberAdjs;
-      if (adjustementType != null && adjustementType.id == 1) {
-        adjustement.linear = false;
-        adjustement.value = columnPosition;
-      } else {
-        adjustement.linear = true;
-        adjustement.value = adjustementType ? adjustementType.abv : adjustement.value;
-      }
-      let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
+    if (adjustement) {
+      if (pltId !== undefined) {
+        let today = new Date();
+        let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+        adjustement.ref = adjustement.id;
+        adjustement.id = numberAdjs;
+        if (adjustementType != null && adjustementType.id == 1) {
+          adjustement.linear = false;
+          adjustement.value = columnPosition;
+        } else {
+          adjustement.linear = true;
+          adjustement.value = adjustementType ? adjustementType.abv : adjustement.value;
+        }
+        let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
 
-      let newAdj = {...adjustement};
+        let newAdj = {...adjustement};
+        _.forEach(pltId, (value) => {
+          if (value.pltId !== undefined) {
+            newAdj['id'] = value.pltId + '-' + adjustement['id'];
+            if (adjustmentApplication[value.pltId] !== undefined) {
+              adjustmentApplication[value.pltId].push({...newAdj});
+            } else {
+              adjustmentApplication[value.pltId] = [{...newAdj}]
+            }
+          }
+        })
+        console.log(adjustmentApplication);
+        ctx.patchState(produce(ctx.getState(), draft => {
+          draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
+        }));
+      }
+    } else {
+      let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
       _.forEach(pltId, (value) => {
         if (value.pltId !== undefined) {
-          newAdj['id'] = value.pltId + '-' + adjustement['id'];
-          if (adjustmentApplication[value.pltId] !== undefined) {
-            adjustmentApplication[value.pltId].push({...newAdj});
-          } else {
-            adjustmentApplication[value.pltId] = [{...newAdj}]
+          if (adjustmentApplication[value.pltId] == undefined) {
+            adjustmentApplication[value.pltId] = []
           }
         }
       })
-      console.log(adjustmentApplication);
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
       }));
     }
+
 
   }
 
