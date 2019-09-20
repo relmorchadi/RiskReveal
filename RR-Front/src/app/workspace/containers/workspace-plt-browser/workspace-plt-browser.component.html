@@ -5,11 +5,6 @@
     </div>
     <div class="my-tabs">
       <div #leftMenu
-           [ngResizable]="!collapsedTags"
-           [rzMinWidth]="200"
-           [rzMaxWidth]="300"
-           [rzHandles]="'e,w'"
-           (rzStop)="onResizeStop()"
       >
         <div *ngIf="!collapsedTags" style="position: relative;">
           <app-plt-left-menu
@@ -27,7 +22,7 @@
           </div>
         </div>
       </div>
-      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - '+ leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - '+leftMenu.clientWidth+'px - 80px - 177px)'}">
+      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
         <div class="title-as-tab">
           <div class="div-title">
             <span class="title">PLTs</span>
