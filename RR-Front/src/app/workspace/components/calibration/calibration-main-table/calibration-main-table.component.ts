@@ -40,6 +40,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('expandAll') expandEmitter: EventEmitter<any> = new EventEmitter();
   @Output('onDrop') onDropEmitter: EventEmitter<any> = new EventEmitter();
   @Output('draggedAdjs') draggedAdjsEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('adjustColWidth') adjustColWidthEmitter: EventEmitter<any> = new EventEmitter();
 
 
   @Input('extended') extended: boolean;
@@ -465,12 +466,12 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
 
   }
 
-  onDrop(col, pltId) {
+  onDrop(col, pltId, event) {
     /* this.dispatch(new dropAdjustment({
        pltId: pltId,
        adjustement: this.draggedAdjs
      }))*/
-    this.adjustColWidth(this.draggedAdjs);
+    console.log("*******************************", event, "********************************");
     console.log(this.draggedAdjs);
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
@@ -479,8 +480,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
       pltId: pltId,
       draggedAdjs: this.draggedAdjs,
       lastpltId: this.lastDragPltId,
-      application: this.adjutmentApplication[pltId]
+      application: this.adjutmentApplication
     });
+    this.changeRef.detectChanges();
   }
 
   emitFilters(filters: any) {
@@ -655,5 +657,11 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   onDragStart(adj, pltId) {
     this.draggedAdjsEmitter.emit({draggedAdjs: adj})
     this.lastDragPltId = pltId;
+    this.changeRef.detectChanges();
+  }
+
+  onDragOver() {
+    this.adjustColWidthEmitter.emit(0)
+    // this.changeRef.detectChanges();
   }
 }
