@@ -57,57 +57,9 @@ export class WorkspaceService {
           'CFS-SCOR REASS.-MADRID RCC000022/ 1'
           ],
         years: [
-            wsId
+            uwYear
           ],
-        projects: [
-          {
-            workspaceId: '00C0022',
-            uwy: 2019,
-            projectId: 'P-000008932',
-            name: 'Post-Inured PLTs',
-            description: null,
-            assignedTo: null,
-            createdBy: 'Nathalie Dulac',
-            creationDate: 1559922212147,
-            dueDate: 1559922195933,
-            linkFlag: true,
-            postInuredFlag: null,
-            publishFlag: false,
-            pltSum: null,
-            pltThreadSum: 0,
-            regionPerilSum: 0,
-            xactSum: 0,
-            sourceProjectId: null,
-            sourceProjectName: null,
-            sourceWsId: null,
-            sourceWsName: null,
-            locking: null,
-            selected: true
-          },
-          {
-            workspaceId: '00C0022',
-            uwy: 2019,
-            projectId: 'P-000008931',
-            name: 'Post-Inured PLTs',
-            description: null,
-            assignedTo: null,
-            createdBy: 'Nathalie Dulac',
-            creationDate: 1559922196097,
-            dueDate: 1559922179000,
-            linkFlag: true,
-            postInuredFlag: null,
-            publishFlag: false,
-            pltSum: null,
-            pltThreadSum: 0,
-            regionPerilSum: 0,
-            xactSum: 0,
-            sourceProjectId: null,
-            sourceProjectName: null,
-            sourceWsId: null,
-            sourceWsName: null,
-            locking: null
-          }
-          ]
+        projects: []
     };
     ctx.dispatch(new fromWS.LoadWsSuccess({
       wsId, uwYear, ws, route, type
@@ -247,6 +199,43 @@ export class WorkspaceService {
     }));
   }
 
+  loadProjectForWs(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadProjectForWs) {
+    const state = ctx.getState();
+    const {wsId, uwYear} = payload;
+    const wsIdentifier = wsId + '-' + uwYear;
+    const projects = _.filter(state.facWs,
+      item => item.uwanalysisContractFacNumber === wsId && item.uwanalysisContractYear === uwYear);
+    ctx.patchState(produce(ctx.getState(), draft => {
+        draft.content[wsIdentifier].projects = projects.map(item => {
+          return {
+            workspaceId: item.uwanalysisContractFacNumber,
+            uwy: item.uwanalysisContractYear,
+            projectId: item.id,
+            name: 'Fac Project',
+            description: null,
+            assignedTo: null,
+            createdBy: item.requestedByFullName,
+            creationDate: item.requestCreationDate,
+            dueDate: 1559922195933,
+            linkFlag: true,
+            postInuredFlag: null,
+            publishFlag: false,
+            pltSum: null,
+            pltThreadSum: 0,
+            regionPerilSum: 0,
+            xactSum: 0,
+            sourceProjectId: null,
+            sourceProjectName: null,
+            sourceWsId: null,
+            sourceWsName: null,
+            locking: null,
+            selected: false
+          };
+        });
+        draft.content[wsIdentifier].projects[0].selected = true;
+      }
+    ));
+  }
 
   openWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenWS) {
     const {wsId, uwYear, route, type} = payload;
@@ -267,6 +256,13 @@ export class WorkspaceService {
         type
       }));
     }
+  }
+
+  createNewFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateNewFac) {
+    const state = ctx.getState();
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.facWs = [...draft.facWs, payload];
+    }));
   }
 
   openFacWorkspace(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.OpenFacWS) {

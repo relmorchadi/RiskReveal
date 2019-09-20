@@ -1,7 +1,8 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {Router} from '@angular/router';
 import {BaseContainer} from "../../../shared/base";
-import {Store} from "@ngxs/store";
+import {Select, Store} from "@ngxs/store";
+import {WorkspaceState} from "../../store/states";
 
 
 @Component({
@@ -22,6 +23,8 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   wsId: string;
   uwYear: string;
 
+  @Select(WorkspaceState.getCurrentTabStatus) status$;
+  status;
 
   constructor(private _router: Router, private _store: Store) {
     super(_router, null, null);
@@ -30,6 +33,7 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   }
 
   ngOnInit() {
+    this.status$.subscribe(value => this.status = value);
     /*this._store.select(WorkspaceState.getCurrentTab).subscribe( ({wsIdentifier}): any => {
       this.wsId= wsIdentifier.split('-')[0];
       this.uwYear= wsIdentifier.split('-')[1];
@@ -47,16 +51,16 @@ export class LeftMenuComponent extends BaseContainer implements OnInit, OnDestro
   routerNavigate(route) {
     this.navigationEmitter.emit({route});
 
-    // let patchRouting;
-    // if (routerLink) {
-    //   this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${routerLink}`]);
-    //   patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
-    // } else {
-    //   this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
-    //   patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
-    // }
-    // this._store.dispatch(new SetWsRoutingAction(patchRouting));
-    // this._helper.updateWorkspaceItems();
+  /*    let patchRouting;
+    if (routerLink) {
+      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}/${routerLink}`]);
+      patchRouting = _.merge({}, this.state.openedWs, {routing: routerLink});
+    } else {
+      this._router.navigate([`workspace/${this.state.openedWs.workSpaceId}/${this.state.openedWs.uwYear}`]);
+      patchRouting = _.merge({}, this.state.openedWs, {routing: ''});
+    }
+    this._store.dispatch(new SetWsRoutingAction(patchRouting));
+    this._helper.updateWorkspaceItems();*/
   }
 
   riskLinkImportNavigation() {

@@ -45,8 +45,7 @@ import * as leftMenuStore from "../../../shared/components/plt/plt-left-menu/sto
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
   tagsInput: leftMenuStore.Input;
-
-  dropAll = (param) => null;
+  private dragBool: boolean = false;
 
   someItemsAreSelected = false;
   groupedByPure = false;
@@ -291,6 +290,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   localTemplates: any = [];
   globalTemplates: any = [];
 
+  // @ViewChild('templateNameInput') templateNameInput: ElementRef;
+  dropAll = (param) => null;
+
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -392,6 +394,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     });
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
+    this.adjustColWidth();
   }
 
   initTemplateList() {
@@ -728,7 +731,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.categorySelected = p.category;
   }
 
-  adjustColWidth(dndDragover = 10) {
+  adjustColWidth(dndDragover = 0) {
     let countBase = 0;
     let countClient = 0;
     const baseLengthArray = [];
@@ -747,10 +750,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         clientLengthArray.push(countClient);
       });
     });
-    let baseWidth = 130 * Math.max(...baseLengthArray);
-    let clientWidth = 130 * Math.max(...clientLengthArray);
-    clientWidth < 260 ? clientWidth = 260 : null;
-    baseWidth < 260 ? baseWidth = 260 : null;
+    let baseWidth = 125 * Math.max(...baseLengthArray) + dndDragover;
+    let clientWidth = 125 * Math.max(...clientLengthArray) + dndDragover;
+    clientWidth < 250 ? clientWidth = 250 : null;
+    baseWidth < 250 ? baseWidth = 250 : null;
     let indexBase = _.findIndex(this.dataColumns, col => col.fields == 'base');
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();
@@ -881,14 +884,26 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     }));
   }
 
-
-  onDrop(col, pltId, draggedAdjs, lastpltId) {
-    this.dispatch(new dropAdjustment({
-      pltId: pltId,
-      adjustement: draggedAdjs,
-      lastpltId: lastpltId
-    }))
-    this.adjustColWidth(draggedAdjs);
+  onDrop(col, pltId, draggedAdjs, lastpltId, application) {
+    console.log(this.draggedAdjs);
+    console.log(this.adjsArray);
+    console.log(_.findIndex(this.adjsArray, row => row.id == this.draggedAdjs.id));
+    if (_.findIndex(this.adjsArray, row => row.id == this.draggedAdjs.id) > -1) {
+      this.dispatch(new applyAdjustment({
+        adjustementType: this.singleValue,
+        adjustement: this.draggedAdjs,
+        columnPosition: this.columnPosition,
+        pltId: pltId,
+      }));
+    } else {
+      this.dispatch(new dropAdjustment({
+        pltId: pltId,
+        adjustement: this.draggedAdjs,
+        lastpltId: lastpltId,
+        application: application,
+      }))
+    }
+    this.adjustColWidth();
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
   }
@@ -1175,7 +1190,19 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         this.template.adjs = this.adjsArray;
       }
     } else {
-      this.saveTemplate = true;
+      if (this.template.id == 0) {
+        this.saveTemplate = true;
+      } else {
+        this.saveTemplate = true;
+        this.templateName = this.template.name;
+        this.templateType = this.template.type;
+        this.templateDesc = this.template.description;
+        /*document.getElementById('templateNameInput').focus();
+        // this.templateNameInput.nativeElement.select();
+        // this.cdRef.detectChanges();
+        console.log(this.templateNameInput);*/
+      }
+
     }
   }
 
@@ -1354,5 +1381,18 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.template = this.searchSelectedTemplate;
     this.adjsArray = this.searchSelectedTemplate.adjs;
     this.closeLoadTemplate();
+  }
+
+  onDragStart(adj: any) {
+    console.log('***********DRAG START***********', adj);
+    let today = new Date();
+    this.draggedAdjs = adj;
+    let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    // this.draggedAdjs = adj.map({ref:adj.id});
+    // _.map(this.draggedAdjs, {ref:adj.id});
+    this.draggedAdjs['ref'] = adj.id
+    this.draggedAdjs.id = numberAdjs;
+    console.log('Dragged ADJ ************', this.draggedAdjs)
+    // this.cdRef.detectChanges();
   }
 }

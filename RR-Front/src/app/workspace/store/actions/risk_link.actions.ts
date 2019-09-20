@@ -163,6 +163,11 @@ export class SaveEditAnalysisAction {
   constructor(public payload: any) {}
 }
 
+export class SaveEditPEQTAction {
+  static readonly type = '[Risk Link] Save PEQT Changes';
+  constructor(public payload: any) {}
+}
+
 export class CreateLinkingAction {
   static readonly type = '[Risk Link] Create Linking';
   constructor(public payload: any) {}
