@@ -4,7 +4,13 @@
       <h4>PLT Manager</h4>
     </div>
     <div class="my-tabs">
-      <div #leftMenu>
+      <div #leftMenu
+           [ngResizable]="!collapsedTags"
+           [rzMinWidth]="200"
+           [rzMaxWidth]="300"
+           [rzHandles]="'e,w'"
+           (rzStop)="detectChanges()"
+      >
         <div *ngIf="!collapsedTags" style="position: relative;">
           <app-plt-left-menu
             [tagsInput]="tagsInput"
