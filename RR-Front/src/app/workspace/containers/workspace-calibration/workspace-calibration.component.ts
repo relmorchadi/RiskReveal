@@ -394,6 +394,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     });
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
+    this.adjustColWidth();
   }
 
   initTemplateList() {
@@ -730,7 +731,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.categorySelected = p.category;
   }
 
-  adjustColWidth(dndDragover = 10) {
+  adjustColWidth(dndDragover = 0) {
     let countBase = 0;
     let countClient = 0;
     const baseLengthArray = [];
@@ -749,10 +750,10 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         clientLengthArray.push(countClient);
       });
     });
-    let baseWidth = 130 * Math.max(...baseLengthArray);
-    let clientWidth = 130 * Math.max(...clientLengthArray);
-    clientWidth < 260 ? clientWidth = 260 : null;
-    baseWidth < 260 ? baseWidth = 260 : null;
+    let baseWidth = 125 * Math.max(...baseLengthArray) + dndDragover;
+    let clientWidth = 125 * Math.max(...clientLengthArray) + dndDragover;
+    clientWidth < 250 ? clientWidth = 250 : null;
+    baseWidth < 250 ? baseWidth = 250 : null;
     let indexBase = _.findIndex(this.dataColumns, col => col.fields == 'base');
     let indexClient = _.findIndex(this.dataColumns, col => col.fields == 'client');
     this.dataColumns[indexBase].width = baseWidth.toString();
@@ -884,14 +885,16 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   onDrop(col, pltId, draggedAdjs, lastpltId, application) {
-    if (this.dragBool) {
-      this.dispatch(new dropAdjustment({
+    console.log(this.draggedAdjs);
+    console.log(this.adjsArray);
+    console.log(_.findIndex(this.adjsArray, row => row.id == this.draggedAdjs.id));
+    if (_.findIndex(this.adjsArray, row => row.id == this.draggedAdjs.id) > -1) {
+      this.dispatch(new applyAdjustment({
+        adjustementType: this.singleValue,
+        adjustement: this.draggedAdjs,
+        columnPosition: this.columnPosition,
         pltId: pltId,
-        adjustement: draggedAdjs,
-        lastpltId: lastpltId,
-        application: application,
-      }))
-      this.dragBool = false;
+      }));
     } else {
       this.dispatch(new dropAdjustment({
         pltId: pltId,
@@ -900,8 +903,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
         application: application,
       }))
     }
-
-    this.adjustColWidth(draggedAdjs);
+    this.adjustColWidth();
     /*this.dragPlaceHolderCol = null;
     this.dragPlaceHolderId = null;*/
   }
@@ -1382,7 +1384,15 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   onDragStart(adj: any) {
+    console.log('***********DRAG START***********', adj);
+    let today = new Date();
     this.draggedAdjs = adj;
-    this.dragBool = true;
+    let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    // this.draggedAdjs = adj.map({ref:adj.id});
+    // _.map(this.draggedAdjs, {ref:adj.id});
+    this.draggedAdjs['ref'] = adj.id
+    this.draggedAdjs.id = numberAdjs;
+    console.log('Dragged ADJ ************', this.draggedAdjs)
+    // this.cdRef.detectChanges();
   }
 }

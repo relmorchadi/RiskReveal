@@ -133,22 +133,25 @@
                   </span>
                 <div style="display: flex; flex: 1;height: 66px;width: calc(100% - 175px);">
                   <div
+                    [sortableData]="adjsArray"
                     *ngIf="adjsArray.length > 0"
                     [dropZones]="['adjustment-dropZone']"
-                    [sortableData]="adjsArray" class="generic-thread-container" dnd-sortable-container
-                    style=" max-width: calc(100% - 200px);z-index: 100; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;margin-top: 11px;">
+                    class="generic-thread-container"
+                    dnd-sortable-container
+                    style=" max-width: calc(100% - 100px);z-index: 100; height: 50px;overflow-x: auto;overflow-y: hidden;white-space: nowrap;margin-top: 11px;">
                     <ng-container *ngFor="let adj of adjsArray;let adjIndex=index">
                       <div (click)="selectedAdjust(adj.id)"
-                           (mouseleave)="onLeaveAdjustment(adj.id)"
-                           (mouseover)="shownDropDown = adj.id"
+                           (onDragEnd)="cdRef.detectChanges()"
                            (onDragStart)="onDragStart(adj)"
-                           (onDropSuccess)="dropThreadAdjustment()"
                            [dragData]="adj"
                            [dragEnabled]="true"
-                           [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
                            [sortableIndex]="adjIndex"
+                           dnd-sortable
+                           (mouseleave)="onLeaveAdjustment(adj.id)"
+                           (mouseover)="shownDropDown = adj.id"
+                           [ngClass]="{'selectedAdjustment':selectedAdjustment===adj.id}"
                            class="adjustDiv"
-                           dnd-sortable style="margin: 2px 8px 8px 8px !important;">
+                           style="margin: 2px 8px 8px 8px !important;">
                             <span
                               style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adj?.name}}</span>
                         <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
@@ -185,7 +188,7 @@
                     </ng-container>
                   </div>
                   <div
-                    style="display: flex; align-items: center;margin: 5px 18px 7px 8px;float: right;flex-direction: column;">
+                    style="display: flex; align-items: center;margin: 5px 18px 7px 8px;float: right;flex-direction: column;justify-content: center;">
                     Template:
                     <span *ngIf="template.id !== 0" class="template-type"> {{template.type}} </span>
                     <div style="display: flex">
@@ -410,6 +413,8 @@
               (sortChange)="sortChange($event)"
               (checkboxSort)="checkBoxsort()"
               (onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId, $event.application)"
+              (draggedAdjs)="onDragStart($event.draggedAdjs)"
+              (adjustColWidth)="adjustColWidth($event)"
               [EPMColumns]="EPMColumns"
               [sortData]="sortData"
               [frozenColumns]="frozenColumns"
