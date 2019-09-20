@@ -1207,5 +1207,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.collapsedTags= !this.collapsedTags;
     this.detectChanges();
   }
+
+  onResizeStop() {
+    this.detectChanges();
+  }
 }
 
