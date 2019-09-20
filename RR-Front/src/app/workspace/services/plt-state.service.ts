@@ -357,7 +357,6 @@ export class PltStateService {
       uesrTagsSummary[tagId] = {tagId, ...rest, selected: userTags && userTags[tagId] ? userTags[tagId].selected : false}
     });
 
-    console.log(uesrTagsSummary);
 
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].pltManager.userTags = uesrTagsSummary;
