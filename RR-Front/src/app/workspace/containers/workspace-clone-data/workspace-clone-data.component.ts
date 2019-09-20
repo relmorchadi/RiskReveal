@@ -253,8 +253,9 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
         let navigationWsId = _.get(navigationPayload, 'payload.wsId', null);
         let navigationUwYear = _.get(navigationPayload, 'payload.uwYear', null);
         console.log({
-          navigationWsId,
-          navigationUwYear,wsId, year, currentWS
+          navigationPayload,
+          wsId,
+          year
         });
         if(_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
           if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {

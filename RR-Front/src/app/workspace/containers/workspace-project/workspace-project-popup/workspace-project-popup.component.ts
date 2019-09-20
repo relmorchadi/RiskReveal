@@ -165,9 +165,10 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     wsHeaderSelected: boolean;
     pathTab: boolean;
     selectedItemForMenu: any;
+    status: any
   };
 
-  tableInputs = ['scrollHeight', 'dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
+  tableInputs = [ 'status','scrollHeight', 'dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
   menuInputs = ['_tagModalVisible','_modalSelect','tagForMenu','_editingTag', 'wsId','uwYear', 'projects', 'showDeleted','filterData','filters', 'addTagModalIndex', 'fromPlts', 'deletedPltsLength', 'userTags', 'selectedListOfPlts', 'systemTagsCount', 'wsHeaderSelected', 'pathTab', 'selectedItemForMenu'];
 
@@ -192,7 +193,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
-      scrollHeight: null,
+      scrollHeight: 'calc(100vh - 358px)',
       filterInput: '',
       pltColumns: [
         {
@@ -202,7 +203,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '25%',
+          width: '40',
           icon: null,
           type: 'checkbox',
           active: true
@@ -405,7 +406,18 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       systemTagsCount: {},
       wsHeaderSelected: true,
       pathTab: true,
-      selectedItemForMenu: null
+      selectedItemForMenu: null,
+      status: {
+        Published: {
+          selected: false
+        },
+        Priced: {
+          selected: false
+        },
+        Accumulated: {
+          selected: false
+        },
+      }
   };
     this.keywordFormGroup = new FormGroup({
       keyword: new FormControl(null)
@@ -631,7 +643,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
-      scrollHeight: null,
+      scrollHeight: 'calc(100vh - 358px)',
       filterInput: '',
       pltColumns: [
         {
@@ -641,7 +653,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '25%',
+          width: '40',
           icon: null,
           type: 'checkbox',
           active: true
@@ -844,7 +856,18 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       systemTagsCount: {},
       wsHeaderSelected: true,
       pathTab: true,
-      selectedItemForMenu: null
+      selectedItemForMenu: null,
+      status: {
+        Published: {
+          selected: false
+        },
+        Priced: {
+          selected: false
+        },
+        Accumulated: {
+          selected: false
+        },
+      }
     };
     this.searchWorkspace = false;
     this.selectedWorkspace = null;

@@ -105,7 +105,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       tagColor: '#0700e4'
     };
     this.tableInputs = {
-      scrollHeight: 'calc(100vh - 480px)',
+      scrollHeight: null,
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: null,
@@ -322,7 +322,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
 
   onHide() {
     this.tableInputs = {
-      scrollHeight: 'calc(100vh - 480px)',
+      scrollHeight: null,
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: null,
