@@ -9,7 +9,7 @@
            [rzMinWidth]="200"
            [rzMaxWidth]="300"
            [rzHandles]="'e,w'"
-           (rzStop)="detectChanges()"
+           (rzStop)="onResizeStop()"
       >
         <div *ngIf="!collapsedTags" style="position: relative;">
           <app-plt-left-menu
