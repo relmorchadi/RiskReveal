@@ -30,6 +30,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   tableInputs: tableStore.Input;
   tagsInput: leftMenuStore.Input;
   collapsedTags: boolean= true;
+  @ViewChild('leftMenu') leftMenu: any;
 
   private dropdown: NzDropdownContextComponent;
   searchAddress: string;
@@ -1205,6 +1206,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   collapseLeftMenu() {
     this.collapsedTags= !this.collapsedTags;
+    console.log(this.leftMenu);
     this.detectChanges();
   }
 
