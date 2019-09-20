@@ -3,7 +3,7 @@
   width: 100%;
 
   .PLTs-content {
-    padding: 0 21px 0 16px !important;
+    padding: 0 !important;
     position: relative;
     flex: 1 1 auto;
   }
@@ -198,6 +198,7 @@
 
       .ant-checkbox-checked .ant-checkbox-inner, .ant-checkbox-checked::after {
         background-color: #00ffaa;
+        border-radius: 50px;
       }
 
     }
