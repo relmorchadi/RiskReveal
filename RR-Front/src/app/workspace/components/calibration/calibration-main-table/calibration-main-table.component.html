@@ -613,6 +613,9 @@
           *ngIf="(filters.systemTag.length == 0 ? thread?.visible :  thread?.visible && thread?.tagFilterActive) &&  statusFilterActive(thread.status) && thread.toCalibrate"
           [ngClass]="{'active_plt_item': thread.selected && !thread.opened, 'opened_plt_item': thread.opened }">
         <td (click)="handlePLTClick(thread.pltId,rowIndex,$event)"
+            dnd-droppable
+            [dropZones]="['adjustment-dropZone']"
+            (drop)="onDrop(col,thread.pltId,'sortable-TD')"
             *ngFor="let col of columns; let i = index"
             [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}">
 
@@ -698,16 +701,14 @@
             </div>
           </ng-container>
           <ng-container *ngIf="col?.dragable">
-            <div
-              (drop)="onDrop(col,thread.pltId)"
-              [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-              [dropZones]="['widget-dropZone']"
-              [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-              [sortableData]="adjutmentApplication[thread.pltId]"
-
-              class="text-elipsice border-dragable"
-              dnd-sortable-container
-              style="display: flex;">
+            <div dnd-sortable-container
+                 (dragover)="onDragOver()"
+                 [dropZones]="['adjustment-dropZone']"
+                 [sortableData]="adjutmentApplication[thread.pltId]"
+                 (drop)="onDrop(col,thread.pltId,'sortable-container')"
+                 [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
+                 class="text-elipsice border-dragable"
+                 style="display: flex;">
 
               <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
                 <div
@@ -721,17 +722,17 @@
               </div>
 
               <ng-container *ngFor="let adjs of adjutmentApplication[thread.pltId]; let i=index">
-                <ng-container
-                  *ngIf="col.fields== adjs.category.toLowerCase()"
-                  style="display: flex;height: max-content;">
-                  <div (drop)="onDrop(col,thread.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id+thread.pltId)"
-                       (mouseover)="shownDropDown = adjs.id+thread.pltId"
-                       (onDragStart)="onDragStart(adjs,thread.pltId)" [dragData]="adjs"
-                       [dragEnabled]="true"
-                       [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
-                       [sortableIndex]="i"
-                       class="adjustDiv"
-                       dnd-sortable>
+                <div *ngIf="col.fields== adjs.category.toLowerCase()"
+                     (mouseleave)="onLeaveAdjustment(adjs.id+thread.pltId)"
+                     (mouseover)="shownDropDown = adjs.id+thread.pltId"
+                     dnd-sortable
+                     [sortableIndex]="i"
+                     [dragEnabled]="true"
+                     [dragData]="adjs"
+                     (onDragStart)="onDragStart(adjs,thread.pltId)"
+                     (onDropSuccess)="onDrop(col,thread.pltId,'sortable')"
+                     [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
+                     class="adjustDiv">
                               <span class="spanStyle"
                                     style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
                     <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
@@ -762,7 +763,6 @@
                     </nz-dropdown>
                     <input [value]="adjs?.value" class="templateInput">
                   </div>
-                </ng-container>
               </ng-container>
 
               <div (mouseenter)="shownDropDown = thread.pltId" (mouseleave)="onLeaveAdjustment(thread.pltId)"
@@ -799,8 +799,6 @@
                 <input class="templateInput" disabled
                        value="P00002">
               </div>
-              <div *ngIf="dragPlaceHolderId == thread.pltId && dragPlaceHolderCol == col?.fields"
-                   class="dndPlaceholder"></div>
             </div>
           </ng-container>
         </td>

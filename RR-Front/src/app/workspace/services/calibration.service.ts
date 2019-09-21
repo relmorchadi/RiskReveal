@@ -338,6 +338,13 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
+  loadAdjsArray(ctx: StateContext<any>, payload: any) {
+    let adjustmentArray = payload.adjustmentArray;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustments = [...adjustmentArray]
+    }));
+  }
+
   saveAdjModification(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;

@@ -302,9 +302,9 @@
                   </nz-dropdown>
                 </div>
               </div>
-              <div class="radio-container" style="width: 100% !important;">
-                <div class="Deltas" style="display: grid;">
-                  <div style="margin-left: 25px;">
+              <div class="radio-container">
+                <div class="Deltas" style="display: grid">
+                  <div style="    margin-left: 25px;">
                     <div class="button-toggle" style="width: 480px; float: left;">
                       <span style="font-weight: bold; margin-right: 10px">View: </span>
                       <p-radioButton (onClick)="onTableTypeChange()" [(ngModel)]="tableType"
@@ -320,17 +320,15 @@
                                      label="EP Metrics" name="tableType"
                                      value="EP Metrics"></p-radioButton>
                     </div>
-                    <div class="button-toggle" style="width: 265px; float: left;">
-                      <span [ngStyle]="{'visibility': deltaSwitch ?'hidden':'visible'}">Deltas by %</span>&nbsp;
-                      <nz-switch (ngModelChange)="onDeltaChange($event)" [(ngModel)]="deltaSwitch"
-                                 class="switch-input"></nz-switch>&nbsp;
-                      <span [ngStyle]="{'visibility': !deltaSwitch ?'hidden':'visible'}"> Deltas by Amount</span>
-                    </div>
-                    <i (click)="manageReturnPeriods = true" class="icon-settings_24px"
-                       nz-tooltip="Manage return periods"
-                       style="margin-right: 6px; font-size: 20px; cursor: pointer;float: right;margin-top: 20px;"></i>
+                    <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+                      <i class="icon-settings_24px" nz-dropdown
+                         style="margin-right: 6px;font-size: 20px;cursor: pointer;float: right;margin-top: 20px;"></i>
+                      <ul nz-menu style="font-size: 12px">
+                        <li (cflick)="manageReturnPeriods = true" nz-menu-item>Manage return periods</li>
+                        <li nz-menu-item>Export to Excel</li>
+                      </ul>
+                    </nz-dropdown>
                   </div>
-
                 </div>
               </div>
             </div>
@@ -338,9 +336,72 @@
                  class="table-header2"
                  style="background-color: #fff">
               <div class="title-as-tab" style="height: 58px; width: 100% !important; justify-content: space-between">
+                <div style="display: flex">
                   <span class="title">
                     Impacts
                   </span>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Change Display</span>
+                          <span class="dropdown-item-selected-calibration">
+                        {{selectedEPM}}
+                      </span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li (click)="changeEPM(epm)" *ngFor="let epm of EPMS" nz-menu-item>{{epm}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Financial Unit</span>
+                          <span class="dropdown-item-selected-calibration">
+                        {{financialUnits.selected.label}}
+                      </span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li (click)="changeFinancialUnit(financialUnit)"
+                            *ngFor="let financialUnit of financialUnits.data" nz-menu-item>
+                          {{financialUnit.label}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                  <div class="body-wrap-dropDowns-calibration">
+                    <nz-dropdown [nzTrigger]="'click'" style="margin-left: 10px;margin-top: 15px;">
+                      <div class="dropdown-wrap-calibration" nz-dropdown>
+                        <div class="dropdown-wrap-title-calibration">
+                          <span class="dropdown-title-calibration">Change Currency</span>
+                          <span class="dropdown-item-selected-calibration">
+                        {{currencies.selected.label}}
+                      </span>
+                        </div>
+                        <div class="dropdown-icon">
+                          <i nz-icon type="down"></i>
+                        </div>
+                      </div>
+                      <ul nz-menu>
+                        <li (click)="changeCurrency(currency)" *ngFor="let currency of currencies.data" nz-menu-item>
+                          {{currency.label}}
+                        </li>
+                      </ul>
+                    </nz-dropdown>
+                  </div>
+                </div>
+
                 <div class="impact-container">
                   <div class="impacts-points">
                   <span>
