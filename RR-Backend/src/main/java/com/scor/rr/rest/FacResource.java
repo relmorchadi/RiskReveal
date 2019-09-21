@@ -32,4 +32,26 @@ public class FacResource {
         );
     }
 
+    @GetMapping("datasources")
+    ResponseEntity<?> getDataSources(){
+        return ResponseEntity.ok(facService.getDatasources());
+    }
+
+    @GetMapping("analysis-basic")
+    ResponseEntity<?> findAnalysisBasic(@RequestParam("rdmId") Integer rdmId, @RequestParam("rdmName") String rdmName){
+        return ResponseEntity.ok(facService.findAnalysisBasic(rdmId, rdmName));
+    }
+
+    @GetMapping("analysis-detail")
+    ResponseEntity<?> findAnalysisDetail(@RequestParam("analysisId") Integer analysisId, @RequestParam("analysisName") String analysisName){
+        return ResponseEntity.ok(facService.findAnalysisDetail(analysisId, analysisName));
+    }
+
+    @GetMapping("portfolio")
+    ResponseEntity<?> findPortfolio(@RequestParam("edmId") Integer edmId, @RequestParam("edmName") String edmName){
+        return ResponseEntity.ok(facService.findPortfolio(edmId, edmName));
+    }
+
+
+
 }
