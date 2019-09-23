@@ -47,6 +47,55 @@ const frozenColsPortfolio = [
   {field: 'number', header: 'Number', width: '190px', type: 'text'}
 ];
 
+const scrollableFacColsAnalysis = [
+  {field: '', header: '', width: '0px', type: ''},
+  {field: 'analysisDescription', header: 'Description', width: '150px', type: 'text'},
+  {field: 'engineVersion', header: 'Engine Version', width: '110px', type: 'text'},
+  {field: 'grouptypeName', header: 'Group Type', width: '110px', type: 'text'},
+  {field: 'cedant', header: 'Cedant', width: '110px', type: 'text'},
+  {field: 'lobName', header: 'LOB', width: '110px', type: 'text'},
+  {field: 'engineType', header: 'Engine Type', width: '110px', type: 'text'},
+  {field: 'runDate', header: 'Run Date', width: '110px', type: 'text'},
+  {field: 'typeName', header: 'Type', width: '110px', type: 'text'},
+  {field: 'peril', header: 'Peril', width: '110px', type: 'text'},
+  {field: 'subPeril', header: 'Sub Peril', width: '110px', type: 'text'},
+  {field: 'lossAmplification', header: 'Loss Amplification', width: '110px', type: 'text'},
+  {field: 'region', header: 'Region', width: '110px', type: 'text'},
+  {field: 'modeName', header: 'Mode', width: '110px', type: 'text'},
+  {field: 'user1', header: 'User 1', width: '110px', type: 'text'},
+  {field: 'user2', header: 'User 2', width: '110px', type: 'text'},
+  {field: 'user3', header: 'User 3', width: '110px', type: 'text'},
+  {field: 'user4', header: 'User 4', width: '110px', type: 'text'},
+  {field: 'analysisCcy', header: 'Source Currency', width: '110px', type: 'text'},
+  {field: 'regionName', header: 'Region Name', width: '110px', type: 'text'},
+  {field: 'statusDescription', header: 'Status Description', width: '110px', type: 'text'},
+  {field: 'grouping', header: 'Grouping', width: '110px', type: 'text'},
+];
+
+const frozenFacColsAnalysis = [
+  {field: 'selected', header: 'selected', width: '20px', type: 'select'},
+  {field: 'analysisId', header: 'id', width: '30px', type: 'text'},
+  {field: 'analysisName', header: 'name', width: '190px', type: 'text'}
+];
+
+const scrollableFacColsPortfolio = [
+  {field: '', header: '', width: '0px', type: ''},
+  {field: 'portName', header: 'Name', width: '150px', type: 'text'},
+  {field: 'portCreatedDt', header: 'Creation Date', width: '180px', type: 'date'},
+  {field: 'portDescr', header: 'Description Type', width: '180px', type: 'text'},
+  {field: 'portType', header: 'Type', width: '180px', type: 'text'},
+  {field: 'agCedant', header: 'Cedant', width: '120px', type: 'text'},
+  {field: 'agCcy', header: 'Currency', width: '120px', type: 'text'},
+  {field: 'agSource', header: 'Source', width: '120px', type: 'text'},
+  {field: 'peril', header: 'Peril', width: '120px', type: 'text'},
+];
+
+const frozenFacColsPortfolio = [
+  {field: 'selected', header: 'selected', width: '20px', type: 'select'},
+  {field: 'portId', header: 'id', width: '30px', type: 'text'},
+  {field: 'portNum', header: 'Number', width: '190px', type: 'text'}
+];
+
 const scrollableColsSummary = [
   // {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorting: ', filtered: true, highlight: false, visible: true},
   {field: 'analysisCurrency', header: 'Source Currency', width: '100px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
@@ -149,11 +198,15 @@ const regionPerilDataTable = [
 export const DataTables = {
   scrollableColsAnalysis,
   scrollableColsPortfolio,
+  scrollableFacColsAnalysis,
+  scrollableFacColsPortfolio,
   scrollableColsSummary,
   scrollableColsResults,
   scrollableColsLinking,
   frozenColsAnalysis,
   frozenColsPortfolio,
+  frozenFacColsAnalysis,
+  frozenFacColsPortfolio,
   frozenColsSummary,
   frozenColsResults,
   colsFinancialAnalysis,

@@ -416,6 +416,11 @@ export class WorkspaceState {
     return this.wsService.markWsAsFavorite(ctx, payload);
   }
 
+  @Action(fromWS.MarkFacWsAsFavorite)
+  markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkFacWsAsFavorite) {
+    this.wsService.markFacWsAsFavorite(ctx, payload);
+  }
+
   @Action(fromWS.MarkWsAsNonFavorite)
   markWsAsNonFavorite(ctx: StateContext<WorkspaceModel>, payload: fromWS.MarkWsAsNonFavorite) {
     return this.wsService.markWsAsNonFavorite(ctx, payload);
@@ -892,6 +897,26 @@ export class WorkspaceState {
   @Action(fromWS.DeleteInnerLinkAction)
   deleteInnerLink(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.DeleteInnerLinkAction) {
     this.riskLinkFacade.deleteInnerLink(ctx, payload);
+  }
+
+  @Action(fromWS.LoadFacDataAction)
+  loadFacData(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.loadFacData(ctx);
+  }
+
+  @Action(fromWS.LoadBasicAnalysisFacAction)
+  loadBasicAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadBasicAnalysisFacAction) {
+    return this.riskLinkFacade.loadBasicAnalysisFac(ctx, payload);
+  }
+
+  @Action(fromWS.LoadDetailAnalysisFacAction)
+  loadDetailAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDetailAnalysisFacAction) {
+    return this.riskLinkFacade.loadDetailAnalysisFac(ctx, payload);
+  }
+
+  @Action(fromWS.LoadPortfolioFacAction)
+  loadPortfolioFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacAction) {
+    return this.riskLinkFacade.loadBasicPortfolioFac(ctx, payload);
   }
 
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)
