@@ -681,6 +681,11 @@ export class WorkspaceState {
 
   }
 
+  @Action(fromWS.loadAdjsArray)
+  loadAdjsArray(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.loadAdjsArray) {
+    this.calibrationService.loadAdjsArray(ctx, payload);
+  }
+
   @Action(fromWS.saveAdjModification)
   saveAdjModification(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.saveAdjModification) {
     this.calibrationService.saveAdjModification(ctx, payload);
