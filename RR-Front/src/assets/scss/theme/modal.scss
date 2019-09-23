@@ -57,6 +57,16 @@ body {
       min-width: map_get($size, "minWidth");
       z-index: 1002 !important;
 
+      .ui-dialog-titlebar-icon {
+        color: #000 !important;
+      }
+
+      .ui-dialog-titlebar-maximize {
+        position: absolute;
+        top: 18px;
+        right: 36px;
+      }
+
       .ui-dialog-titlebar {
         border: none;
         background-color: #FFFFFF;
@@ -72,7 +82,8 @@ body {
 
             .previous-container {
               display: flex;
-              align-items: flex-start;
+              height: min-content;
+              align-items: center;
 
               button,h4 {
                 margin: 0 12px;

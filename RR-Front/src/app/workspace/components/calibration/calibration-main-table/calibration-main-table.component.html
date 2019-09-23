@@ -412,7 +412,7 @@
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowData let-rowIndex="rowIndex" let-expanded="expanded" let-columns="columns">
-    <tr class="ui-widget-header" style="background-color: #ecf1f7 !important;">
+    <tr class="ui-widget-header" style="background-color: #ecf1f7 !important; max-height: 30px; !important;">
       <td *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col.fields === 'checkbox'">
           <a [pRowToggler]="rowData">
@@ -431,12 +431,12 @@
           </div>-->
         </ng-container>
         <ng-container *ngIf="col.fields === 'pltId'">
-          <div class="text-elipsice"
+          <div class="text-elipsice-pure"
                style="font-weight: bold">{{rowData.pltId | textLength}}</div>
         </ng-container>
         <ng-container *ngIf="col?.type == 'field' && !col?.dragable && col.fields  !== 'pltId'">
           <div [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-               class="text-elipsice">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
+               class="text-elipsice-pure">{{ i == 2 ? (rowData[col.fields]) : rowData[col.fields]}}</div>
         </ng-container>
         <!--<ng-container *ngIf="col?.type == 'icon'">
           <div class="td-wrapper-check">
@@ -505,7 +505,7 @@
             [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
             [sortableData]="adjutmentApplication[rowData.pltId]"
 
-            class="text-elipsice border-dragable"
+            class="text-elipsice-pure border-dragable"
             dnd-sortable-container
             style="display: flex;">
 
@@ -1217,8 +1217,10 @@
         [ngClass]="{'active_plt_item': rowData.selected && !rowData.opened, 'opened_plt_item': rowData.opened }">
       <td (click)="handlePLTClick(rowData.pltId,rowIndex,$event)"
           *ngFor="let col of columns; let i = index"
+          dnd-droppable
+          [dropZones]="['adjustment-dropZone']"
+          (drop)="onDrop(col,rowData.pltId,'sortable-TD')"
           [ngClass]="{'separator-right':col?.icon == 'icon-note','overallLMF':col?.fields == 'overallLMF','data-inuring':col?.fields == 'inuring','data-default':col?.fields == 'default'}">
-
         <ng-container *ngIf="col.fields === 'checkbox'">
           <label (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)" [nzChecked]="rowData.selected"
                  nz-checkbox></label>
@@ -1301,17 +1303,14 @@
           </div>
         </ng-container>
         <ng-container *ngIf="col?.dragable">
-          <div
-            (drop)="onDrop(col,rowData.pltId)"
-            [dragEnabled]="col.fields == 'client' && col.fields == 'base'"
-            [dropZones]="['widget-dropZone']"
-            [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
-            [sortableData]="adjutmentApplication[rowData.pltId]"
-
-            class="text-elipsice border-dragable"
-            dnd-sortable-container
-            style="display: flex;">
-
+          <div dnd-sortable-container
+               (dragover)="onDragOver()"
+               [dropZones]="['adjustment-dropZone']"
+               [sortableData]="adjutmentApplication[rowData.pltId]"
+               (drop)="onDrop(col,rowData.pltId,'sortable-container')"
+               [ngStyle]="{'font-weight': i == 2 ? 'bold' : 'normal'}"
+               class="text-elipsice border-dragable"
+               style="display: flex;">
             <div *ngIf="col.fields=='default'" style="display: flex;height: max-content">
               <div
                 class="adjustDiv"
@@ -1324,49 +1323,48 @@
             </div>
 
             <ng-container *ngFor="let adjs of adjutmentApplication[rowData.pltId]; let i=index">
-              <ng-container
-                *ngIf="col.fields== adjs.category.toLowerCase()"
-                style="display: flex;height: max-content;">
-                <div (drop)="onDrop(col,rowData.pltId)" (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
-                     (mouseover)="shownDropDown = adjs.id+rowData.pltId"
-                     (onDragStart)="onDragStart(adjs,rowData.pltId)" [dragData]="adjs"
-                     [dragEnabled]="true"
-                     [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
-                     [sortableIndex]="i"
-                     class="adjustDiv"
-                     dnd-sortable>
+              <div *ngIf="col.fields== adjs.category.toLowerCase()"
+                   (mouseleave)="onLeaveAdjustment(adjs.id+rowData.pltId)"
+                   (mouseover)="shownDropDown = adjs.id+rowData.pltId"
+                   dnd-sortable
+                   [sortableIndex]="i"
+                   [dragEnabled]="true"
+                   [dragData]="adjs"
+                   (onDragStart)="onDragStart(adjs,rowData.pltId)"
+                   (onDropSuccess)="onDrop(col,rowData.pltId,'sortable')"
+                   [ngClass]="{'selectedAdjustment':selectedAdjustment===adjs.ref}"
+                   class="adjustDiv">
                               <span class="spanStyle"
                                     style="font-weight: normal !important;text-overflow: ellipsis;max-width: 85px;overflow: hidden;display:inline-block;">{{adjs?.name}}</span>
-                  <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
-                               *ngIf="shownDropDown ===  adjs.id+rowData.pltId"
-                               [(nzVisible)]="dropdownVisible"
-                               [nzPlacement]="'bottomLeft'"
-                               nzTrigger="click"
-                               class="dropD">
-                    <i [id]="i" class="icon-menu_24px" nz-dropdown
-                       style="font-size: 14px;float: right;margin-right: 2px;"></i>
-                    <ul nz-menu>
-                      <li nz-menu-item>Edit</li>
-                      <li nz-menu-item>Branch new Thread</li>
-                      <li nz-menu-item>Copy</li>
-                      <li nz-submenu>
-                        <span title>Paste</span>
-                        <ul nz-menu>
-                          <li nz-menu-item>To the Left</li>
-                          <li nz-menu-item>To the Right</li>
-                        </ul>
-                      </li>
-                      <li nz-menu-item class="menu-bottom-separator">Delete</li>
-                      <li nz-menu-item>View EP Metrics</li>
-                      <li nz-menu-item>Pin to Chart</li>
-                      <li nz-menu-item>Add to Comparer</li>
-                      <li nz-menu-item>Export</li>
-                    </ul>
-                  </nz-dropdown>
-                  <input [value]="adjs?.value" class="templateInput">
-                </div>
+                <nz-dropdown (nzVisibleChange)="shownDropDown = $event ? shownDropDown : null"
+                             *ngIf="shownDropDown ===  adjs.id+rowData.pltId"
+                             [(nzVisible)]="dropdownVisible"
+                             [nzPlacement]="'bottomLeft'"
+                             nzTrigger="click"
+                             class="dropD">
+                  <i [id]="i" class="icon-menu_24px" nz-dropdown
+                     style="font-size: 14px;float: right;margin-right: 2px;"></i>
+                  <ul nz-menu>
+                    <li nz-menu-item>Edit</li>
+                    <li nz-menu-item>Branch new Thread</li>
+                    <li nz-menu-item>Copy</li>
+                    <li nz-submenu>
+                      <span title>Paste</span>
+                      <ul nz-menu>
+                        <li nz-menu-item>To the Left</li>
+                        <li nz-menu-item>To the Right</li>
+                      </ul>
+                    </li>
+                    <li nz-menu-item class="menu-bottom-separator">Delete</li>
+                    <li nz-menu-item>View EP Metrics</li>
+                    <li nz-menu-item>Pin to Chart</li>
+                    <li nz-menu-item>Add to Comparer</li>
+                    <li nz-menu-item>Export</li>
+                  </ul>
+                </nz-dropdown>
+                <input [value]="adjs?.value" class="templateInput">
+              </div>
               </ng-container>
-            </ng-container>
 
             <div (mouseenter)="shownDropDown = rowData.pltId" (mouseleave)="onLeaveAdjustment(rowData.pltId)"
                  *ngIf="col.fields=='inuring'"
@@ -1425,10 +1423,12 @@
                 </div>
               </div>
             </div>-->
-            <div *ngIf="dragPlaceHolderId == rowData.pltId && dragPlaceHolderCol == col?.fields"
-                 class="dndPlaceholder"></div>
+            <!--<div *ngIf="dragPlaceHolderId == rowData.pltId && dragPlaceHolderCol == col?.fields"
+                 class="dndPlaceholder"></div>-->
           </div>
         </ng-container>
+        <!--<div *ngIf="dragPlaceHolderId == rowData.pltId && dragPlaceHolderCol == col?.fields"
+             class="dndPlaceholder"></div>-->
       </td>
     </tr>
   </ng-template>

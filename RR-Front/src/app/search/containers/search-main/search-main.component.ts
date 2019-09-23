@@ -116,8 +116,8 @@ export class SearchMainComponent extends BaseContainer implements OnInit, OnDest
       class: 'icon-open_in_new_24px',
       handler: (option) => option.forEach(dt => this.popUpWorkspace(dt.workSpaceId, dt.uwYear)),
       display: false,
-      sorted: true,
-      filtered: true
+      sorted: false,
+      filtered: false
     }
   ];
   private _filter = {};

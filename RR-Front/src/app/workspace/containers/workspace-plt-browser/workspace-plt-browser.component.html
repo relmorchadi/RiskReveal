@@ -4,16 +4,34 @@
       <h4>PLT Manager</h4>
     </div>
     <div class="my-tabs">
-      <app-plt-left-menu
-        [tagsInput]="tagsInput"
-        (actionDispatcher)="leftMenuActionDispatcher($event)"
+      <div #leftMenu
       >
-      </app-plt-left-menu>
-      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - 212px - 80px - 174px + 130px)' : 'calc(100vw - 212px - 80px - 177px)'}">
+        <div *ngIf="!collapsedTags" style="position: relative;">
+          <app-plt-left-menu
+            [tagsInput]="tagsInput"
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
+          >
+          </app-plt-left-menu>
+          <i (click)="collapseLeftMenu();" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
+             style="font-size: 25px; cursor: pointer;position: absolute;top: 12px;right: 12px;"></i>
+        </div>
+        <div *ngIf="collapsedTags" class="a-closed-sidebar" style="position: relative;width: 37px">
+          <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
+            <i (click)="collapseLeftMenu()" class="icon-chevron_right_24px"
+               style="font-size: 20px; cursor: pointer"></i>
+          </div>
+        </div>
+      </div>
+      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
         <div class="title-as-tab">
-          <span>
-            PLTs
-          </span>
+          <div class="div-title">
+            <span class="title">PLTs</span>
+            <div class="single-col-button">
+              <button class="a-buttons-contained-micro" (click)="cloneFrom()">Clone from</button>
+            </div>
+          </div>
+
+
           <div class="right">
             <div *ngIf="!tableInputs['showDeleted'] && tableInputs['selectedListOfPlts']?.length" style="display: flex;align-items: center;">
               <p style="margin: 0 16px 0 0;">{{tableInputs['selectedListOfPlts']?.length + ( tableInputs['selectedListOfPlts']?.length  > 1 ?  ' PLTs are selected'  : ' PLT is selected')}}</p>
@@ -62,16 +80,7 @@
               </ul>
             </nz-dropdown>
           </div>
-          <span style="    font-size: 14px;
-    font-weight: bold;
-    color: #0700e4;
-    cursor: pointer;
-    position: absolute;
-    border: 0;
-    left: 48px;
-    bottom: -7px;
-    z-index: 10;
-    padding: 0;" (click)="cloneFrom()">Clone from</span>
+
         </div>
         <div class="PLTs-content">
           <app-plt-main-table

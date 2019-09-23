@@ -10,7 +10,7 @@
   [columnResizeMode]="'expand'"
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
-  [scrollHeight]="tableHeight"
+  [scrollHeight]="tableInputs.scrollHeight || tableHeight"
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"
@@ -24,7 +24,7 @@
     <tr>
       <ng-container *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col?.active">
-          <th *ngIf="col?.type == 'checkbox'"  class="checkBoxHead" [ngStyle]="{'width': col?.width }">
+          <th *ngIf="col?.type == 'checkbox'"  class="checkBoxHead" [ngStyle]="{'width': col?.width + 'px' }">
             <label nz-checkbox
                    [nzChecked]="!tableInputs.showDeleted ? tableInputs.selectAll : tableInputs.selectAllDeletedPlts"
                    (nzCheckedChange)="checkAll($event)"
@@ -55,7 +55,7 @@
               <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
             </ng-container>
           </span>
-              <i *ngIf="col.icon" style="font-size: 1.6em" [ngClass]="col.icon"></i>
+              <i *ngIf="col?.icon" style="font-size: 1.6em" [ngClass]="col?.icon"></i>
             </th>
           </ng-container>
           <ng-container *ngIf="!col?.resizable">
@@ -68,9 +68,26 @@
                   <i *ngSwitchDefault class="icon-direction" (click)="sortChange(col?.fields,tableInputs.sortData[col.fields])" style="font-size: 1.4em;"></i>
                 </ng-container>
               </span>
-              <ng-container *ngIf="col.icon">
+            </th>
+          </ng-container>
+        </ng-container>
+      </ng-container>
+    </tr>
+    <tr>
+      <ng-container *ngFor="let col of columns;let i=index;">
+        <ng-container *ngIf="col?.active">
+          <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
+            <th [ngClass]="{'icon-header': col?.icon}">
+              <ng-container *ngIf="!col?.icon">
+                <div class="filter-input"
+                     [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
+                  <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
+                  <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterData[col?.fields]">
+                </div>
+              </ng-container>
+              <ng-container *ngIf="col?.icon">
                 <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'" [nzClickHide]="false">
-                  <i nz-dropdown [nzTitle]="tooltipInfo" nzPlacement="top" nz-tooltip style="font-size: 1.6em" [ngClass]="col.icon">
+                  <i nz-dropdown [nzTitle]="tooltipInfo" nzPlacement="top" nz-tooltip style="font-size: 20px;" [ngClass]="col?.icon" [ngStyle]="{'color': tableInputs.status[col.highlight]?.selected ? '#0700e4' : '#434343'}">
                     <ng-template #tooltipInfo>
                       {{ col?.tooltip }}
                     </ng-template>
@@ -87,20 +104,6 @@
         </ng-container>
       </ng-container>
     </tr>
-    <tr>
-      <ng-container *ngFor="let col of columns;let i=index;">
-        <ng-container *ngIf="col?.active">
-          <ng-container *ngIf="(col?.forDelete ? tableInputs.showDeleted : true)">
-            <th  [ngStyle]="{ 'visibility': col?.filtred && ( col?.type != 'tags' && col?.type !='checkbox' ) ? 'visible' : 'hidden'}">
-              <div class="filter-input">
-                <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                <input *ngIf="col?.header?.length > 0" pInputText type="text" (input)="filter(col?.fields, $event.target.value)" [ngModel]="tableInputs.filterData[col?.fields]">
-              </div>
-            </th>
-          </ng-container>
-        </ng-container>
-      </ng-container>
-    </tr>
   </ng-template>
   <ng-template pTemplate="body" let-rowIndex="rowIndex" let-rowData let-columns="columns">
     <tr
@@ -110,7 +113,7 @@
       *ngIf="(tableInputs.filters.systemTag | keys ).length == 0 ? rowData?.visible :  (rowData?.visible && rowData?.tagFilterActive )">
       <ng-container *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col?.active">
-          <td  *ngIf="col?.type == 'checkbox'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">
+          <td  *ngIf="col?.type == 'checkbox'" class="ui-resizable-column" [ngStyle]="{'width': col?.width + 'px' }">
             <div style="padding-left: 9px;">
               <label nz-checkbox [nzChecked]="rowData.selected"
                      (nzCheckedChange)="selectSinglePLT(rowData.pltId,$event)"></label>

@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
@@ -29,6 +29,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   rightMenuInputs: rightMenuStore.Input;
   tableInputs: tableStore.Input;
   tagsInput: leftMenuStore.Input;
+  collapsedTags: boolean= true;
+  @ViewChild('leftMenu') leftMenu: any;
 
   private dropdown: NzDropdownContextComponent;
   searchAddress: string;
@@ -42,7 +44,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: '',
       header: '',
-      width: '60',
+      width: '40',
       sorted: false,
       filtred: false,
       resizable: false,
@@ -54,7 +56,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: '',
       header: 'User Tags',
-      width: '60',
+      width: '60px',
       sorted: false,
       filtred: false,
       resizable: false,
@@ -66,7 +68,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'pltId',
       header: 'PLT ID',
-      width: '80',
+      width: '80px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -78,7 +80,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'pltName',
       header: 'PLT Name',
-      width: '60',
+      width: '60px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -90,7 +92,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'peril',
       header: 'Peril',
-      width: '80',
+      width: '80px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -103,7 +105,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'regionPerilCode',
       header: 'Region Peril Code',
-      width: '130',
+      width: '130px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -115,7 +117,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'regionPerilName',
       header: 'Region Peril Name',
-      width: '160',
+      width: '160px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -127,7 +129,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'grain',
       header: 'Grain',
-      width: '90',
+      width: '90px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -140,7 +142,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       fields: 'deletedBy',
       forDelete: true,
       header: 'Deleted By',
-      width: '50',
+      width: '50px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -152,7 +154,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       fields: 'deletedAt',
       forDelete: true,
       header: 'Deleted On',
-      width: '50',
+      width: '50px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -163,7 +165,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'vendorSystem',
       header: 'Vendor System',
-      width: '90',
+      width: '90px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -174,7 +176,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       sortDir: 1,
       fields: 'rap',
       header: 'RAP',
-      width: '52',
+      width: '52px',
       sorted: true,
       filtred: true,
       resizable: true,
@@ -190,9 +192,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       filtred: false,
       icon: 'icon-note',
       type: 'icon',
-      width: '50',
+      width: '50px',
       active: true,
-      tooltip: "Published for Pricing"
+      tooltip: "Published for Pricing",
+      highlight: 'Published'
     },
     {
       sortDir: 1,
@@ -202,9 +205,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       filtred: false,
       icon: 'icon-dollar-alt',
       type: 'icon',
-      width: '50',
+      width: '50px',
       active: true,
-      tooltip: "Priced"
+      tooltip: "Priced",
+      highlight: 'Priced'
     },
     {
       sortDir: 1,
@@ -214,9 +218,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       filtred: false,
       icon: 'icon-focus-add',
       type: 'icon',
-      width: '50',
+      width: '50px',
       active: true,
-      tooltip: "Published for Accumulation"
+      tooltip: "Published for Accumulation",
+      highlight: 'Accumulated'
     },
   ];
   size = 'large';
@@ -275,7 +280,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       mode: "default"
     };
     this.tableInputs = {
-      scrollHeight: 'calc(100vh - 480px)',
+      scrollHeight: 'calc(100vh - 386px)',
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: [
@@ -312,7 +317,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '25%',
+          width: '40',
           icon: null,
           type: 'checkbox',
           active: true
@@ -446,18 +451,18 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           icon: null,
           type: 'field',
           active: true
-        },
-        {
+        },{
           sortDir: 1,
           fields: '',
           header: '',
           sorted: false,
           filtred: false,
-          width: '25px',
           icon: 'icon-note',
           type: 'icon',
+          width: '50px',
           active: true,
-          tooltip: "Published for Pricing"
+          tooltip: "Published for Pricing",
+          highlight: 'Published'
         },
         {
           sortDir: 1,
@@ -465,11 +470,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           header: '',
           sorted: false,
           filtred: false,
-          width: '25px',
           icon: 'icon-dollar-alt',
           type: 'icon',
+          width: '50px',
           active: true,
-          tooltip: "Priced"
+          tooltip: "Priced",
+          highlight: 'Priced'
         },
         {
           sortDir: 1,
@@ -477,11 +483,12 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           header: '',
           sorted: false,
           filtred: false,
-          width: '25px',
           icon: 'icon-focus-add',
           type: 'icon',
+          width: '50px',
           active: true,
-          tooltip: "Published for Accumulation"
+          tooltip: "Published for Accumulation",
+          highlight: 'Accumulated'
         },
       ],
       filterInput: '',
@@ -579,7 +586,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   ngOnInit() {
-    console.log('ngOnInit')
 
     this.observeRouteParams().pipe(
       this.unsubscribeOnDestroy
@@ -880,12 +886,17 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.emitFilters({
       userTag: [],
       systemTag: []
-    })
+    });
     this.updateTagsInput('userTags', _.map(this.tagsInput.userTags, t => ({...t, selected: false})));
     this.updateTableAndTagsInputs("filters", {
       userTag: [],
       systemTag: {}
-    })
+    });
+    this.updateTable("status", {"Published":{"selected":false},"Priced":{"selected":false},"Accumulated":{"selected":false}})
+    this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
+      wsIdentifier: this.workspaceId+"-"+this.uwy,
+      status: this.getTableInputKey('status')
+    }));
   }
 
   createTag($event: any) {
@@ -965,6 +976,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
             selected: !status[action.payload].selected
           }
         });
+
+        console.log(this.getTableInputKey('status'));
         this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
           wsIdentifier: this.workspaceId+"-"+this.uwy,
           status: this.getTableInputKey('status')
@@ -1184,9 +1197,21 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       usedInWs: [],
       allTags: [],
       suggested: [],
+      toAssign: [],
+      toRemove: [],
       selectedTags: {},
       operation: null
     };
+  }
+
+  collapseLeftMenu() {
+    this.collapsedTags= !this.collapsedTags;
+    console.log(this.leftMenu);
+    this.detectChanges();
+  }
+
+  onResizeStop() {
+    this.detectChanges();
   }
 }
 

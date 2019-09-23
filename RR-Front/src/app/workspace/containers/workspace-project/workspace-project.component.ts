@@ -1,17 +1,18 @@
 import {ChangeDetectorRef, Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {HelperService, NotificationService} from '../../../shared';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
+import {Actions, ofActionSuccessful, Select, Store} from '@ngxs/store';
 import {WorkspaceMain} from '../../../core/model/workspace-main';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
-import {StateSubscriber} from "../../model/state-subscriber";
-import * as fromHeader from "../../../core/store/actions/header.action";
-import * as fromWs from "../../store/actions";
-import {UpdateWsRouting} from "../../store/actions";
+import {StateSubscriber} from '../../model/state-subscriber';
+import * as fromHeader from '../../../core/store/actions/header.action';
+import * as fromWs from '../../store/actions';
+import {UpdateWsRouting} from '../../store/actions';
 import {MessageService} from 'primeng/api';
-import {BaseContainer} from "../../../shared/base";
-import {Navigate} from "@ngxs/router-plugin";
-import {debounceTime} from "rxjs/operators";
+import {BaseContainer} from '../../../shared/base';
+import {Navigate} from '@ngxs/router-plugin';
+import {debounceTime} from 'rxjs/operators';
+import {WorkspaceState} from "../../store/states";
 
 @Component({
   selector: 'workspace-project',
@@ -51,8 +52,10 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
     wsId: string,
     uwYear: string
   };
-
   selectedProject;
+
+  @Select(WorkspaceState.getCurrentTabStatus) status$;
+  status;
 
   constructor(private _helper: HelperService,
               private route: ActivatedRoute,
@@ -69,7 +72,6 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
   patchState({wsIdentifier, data}: any): void {
     this.workspace = data;
     this.wsIdentifier = wsIdentifier;
-
   }
 
 
@@ -79,17 +81,17 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
       .pipe(this.unsubscribeOnDestroy, debounceTime(1000))
       .subscribe(() => {
         this.newProject = false;
-        this.detectChanges()
+        this.detectChanges();
         this.notificationService.createNotification('Project added successfully', '',
           'success', 'topRight', 4000);
         // this.detectChanges()
       }
     );
+    this.status$.subscribe(value => this.status = value);
     this.actions$.pipe(ofActionSuccessful(fromWs.AddNewProjectFail, fromWs.DeleteProjectFails)).pipe(this.unsubscribeOnDestroy).subscribe(() => {
       this.notificationService.createNotification(' Error please try again', '',
         'error', 'topRight', 4000);
-    })
-
+    });
     this.actions$.pipe(this.unsubscribeOnDestroy).pipe(ofActionSuccessful(fromWs.DeleteProjectSuccess)).subscribe(() => {
       this.notificationService.createNotification('Project deleted successfully', '',
           'success', 'topRight', 4000);

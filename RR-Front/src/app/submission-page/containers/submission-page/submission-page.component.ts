@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {Regions} from '../../../shared/data/region-peril';
 import {WsApi} from '../../../workspace/services/workspace.api';
 import {ActivatedRoute, Router} from "@angular/router";
+import {Store} from "@ngxs/store";
+import * as fromWs from '../../../workspace/store/actions';
 
 @Component({
   selector: 'app-submission-page',
@@ -127,7 +129,7 @@ export class SubmissionPageComponent implements OnInit {
     }
   ];
 
-  constructor(private wsApi: WsApi, private router: Router, private route: ActivatedRoute) {
+  constructor(private wsApi: WsApi, private router: Router,  private store: Store) {
   }
 
   ngOnInit() {
@@ -185,14 +187,14 @@ export class SubmissionPageComponent implements OnInit {
 
   submitData() {
     const data = {
-      id: 'car' + this.contractId,
+      id: 'car - 0' + Math.floor(Math.random() * 10000),
       lastUpdateDate: null,
       lastUpdatedBy: null,
       requestCreationDate: new Date(),
       requestedByFirstName: this.raisedBy.value,
       requestedByFullName: this.raisedBy.value,
       requestedByLastName: this.raisedBy.value,
-      uwanalysisContractBusinessType: this.businessType,
+      uwanalysisContractBusinessType: this.businessType.value,
       uwanalysisContractContractId: this.contractId,
       uwanalysisContractEndorsementNumber: 0,
       uwanalysisContractFacNumber: this.uwAnalysis,
@@ -204,7 +206,8 @@ export class SubmissionPageComponent implements OnInit {
       uwanalysisContractSubsidiary: this.subsidiary.value,
       uwanalysisContractYear: this.uwYear
     };
-    this.wsApi.postFacData(data).subscribe(dt => console.log(dt));
+/*    this.wsApi.postFacData(data).subscribe(dt => console.log(dt));*/
+    this.store.dispatch(new fromWs.CreateNewFac(data));
     this.router.navigate(['dashboard']);
   }
 }

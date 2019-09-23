@@ -13,8 +13,6 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
-import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
-import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
 
 
 @NgModule({
@@ -31,7 +29,8 @@ import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
     ColorSketchModule,
     MultiSelectModule,
     SidebarModule,
-    DragDropModuleAngular
+    DragDropModuleAngular,
+    AngularDraggableModule
   ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
@@ -45,6 +44,7 @@ import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
     DialogModule,
     DragDropModule,
     DragDropModuleAngular,
+    AngularDraggableModule,
     SidebarModule,
     ...COMPONENTS,
     ...PIPES

@@ -42,7 +42,7 @@
           </div>-->
           <div class="summary-info" style="min-height: 251px" *ngIf="!collapseSearchFiles" [ngClass]="{'empty-table': getFileLength()}">
             <p-table #iTable [columns]="importedFiles" [scrollable]="true" scrollHeight="189px"
-                     [resizableColumns]="true" [value]="fileBase.files">
+                     [resizableColumns]="true" [value]="selectedData">
               <ng-template let-columns pTemplate="colgroup">
                 <colgroup>
                   <ng-container *ngFor="let col of columns">
