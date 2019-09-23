@@ -13,6 +13,8 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
+import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
+import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
 
 
 @NgModule({
@@ -31,7 +33,7 @@ import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
     SidebarModule,
     DragDropModuleAngular
   ],
-  providers: [],
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
     CommonModule,
     NgZorroAntdModule,

@@ -107,7 +107,7 @@
       (contextmenu)="selectedItemForMenu(rowData.pltId)"
       [pContextMenuRow]="rowData"
       [ngClass]="{'active_plt_item': rowData.selected && !(tableInputs['openedPlt'] === rowData.pltId), 'opened_plt_item': tableInputs['openedPlt'] === rowData.pltId }"
-      *ngIf="(tableInputs.filters.systemTag | keys ).length == 0 ? (rowData?.visible && rowData?.showApplicable) :  (rowData?.visible && rowData?.tagFilterActive && rowData?.showApplicable)">
+      *ngIf="(tableInputs.filters.systemTag | keys ).length == 0 ? rowData?.visible :  (rowData?.visible && rowData?.tagFilterActive )">
       <ng-container *ngFor="let col of columns; let i = index">
         <ng-container *ngIf="col?.active">
           <td  *ngIf="col?.type == 'checkbox'" class="ui-resizable-column" [ngStyle]="{'width': col?.width }">

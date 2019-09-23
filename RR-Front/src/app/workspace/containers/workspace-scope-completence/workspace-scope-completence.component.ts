@@ -50,6 +50,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
   selectedDropDown: any;
   dataSource: any;
   workspaceId: any;
+  keys: any = {};
   uwy: any;
   grains = {}
   regionCodes = {};
@@ -100,7 +101,12 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
         const {wsId, year} = dt[0];
         this.workspaceUrl = {wsId, uwYear: year};
       });
+
+
+
   }
+
+
 
   showPackage() {
     let check = false;
@@ -244,10 +250,92 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
     return this.grains[grain.id + rowData.id];
   }
 
+  expandAllRows(){
+
+    let regions = []
+    _.forEach(this.dataSource, data =>{
+      this.keys[data.id] = true ;
+      regions[data.id] = true;
+    })
+    if(_.keys(this.pTable.expandedRowKeys).length < _.keys(this.keys).length ){
+      this.pTable.expandedRowKeys = {...this.keys}
+      this.regionCodes = regions
+
+    }else {
+      _.forEach(this.dataSource, row => {
+        row.child.forEach( item =>{
+          this.grains[item.id + row.id] = true;
+        })
+      })
+    }
+    // }this.grains[item.id + rowData.id]
+
+  }
+  closeAllRows(){
+    let check = false;
+    _.forEach(this.grains, item =>{
+      if(item == true){
+        check = true;
+      }
+    })
+
+    if(check){
+      _.forEach(this.dataSource, row => {
+        row.child.forEach( item =>{
+          this.grains[item.id + row.id] = false;
+        })
+      })
+    }else {
+      this.pTable.expandedRowKeys = {}
+      this.regionCodes = []
+    }
+  }
   /** expending the child**/
   toggleParentExpand(item: any) {
     this.regionCodes[item.id] = !this.regionCodes[item.id];
+  }
 
+  overrideRow(rowData){
+    rowData.override = true;
+    if (this.selectedSortBy == 'Minimum Grain / RAP') {
+      let holder = {}
+      this.treatySections[0].forEach(ts => {
+        ts.regionPerils.forEach(rp => {
+          if (rp.id == rowData.id) {
+            rp.targetRaps.forEach(tr => {
+              if (!tr.attached && !tr.overridden) {
+                holder = {
+                  "treatySection": ts.id,
+                  "parent": rowData.id,
+                  "child": tr.id
+                };
+                this.selectionForOverride.push(holder);
+              }
+            })
+          }
+        })
+      })
+    }
+
+    if (this.selectedSortBy == 'RAP / Minimum Grain') {
+      let holder = {}
+      this.treatySections[0].forEach(ts => {
+        ts.targetRaps.forEach(rp => {
+          if (rp.id == rowData.id) {
+            rp.regionPerils.forEach(tr => {
+              if (!tr.attached && !tr.overridden) {
+                holder = {
+                  "treatySection": ts.id,
+                  "parent": tr.id,
+                  "child": rowData.id
+                };
+                this.selectionForOverride.push(holder);
+              }
+            })
+          }
+        })
+      })
+    }
   }
 
   /**sorting the data either by RP/TR or TR/RP**/
@@ -316,6 +404,7 @@ export class WorkspaceScopeCompletenceComponent extends BaseContainer implements
 
     return {rr, rd};
   }
+
 
   /** get which icon to be shown in the parent depending on the children's icons **/
   checkExpected(item, rowData) {
