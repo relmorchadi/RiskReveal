@@ -447,7 +447,7 @@ public class ScorPltHeaderEntity {
     }
 
     @Id
-    @Column(name = "PKScorPltHeaderId", nullable = false)
+    @Column(name = "ScorPltHeaderId", nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getPkScorPltHeaderId() {
         return pkScorPltHeaderId;
@@ -506,7 +506,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKRRAnalysisId", referencedColumnName = "rrAnalysisId")
+    @JoinColumn(name = "RRAnalysisId", referencedColumnName = "rrAnalysisId")
     public RrAnalysisNewEntity getRrAnalysisNew() {
         return rrAnalysisNew;
     }
@@ -516,7 +516,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKTargetRapId", referencedColumnName = "targetRapId")
+    @JoinColumn(name = "TargetRapId", referencedColumnName = "targetRapId")
     public TargetRapEntity getTargetRap() {
         return targetRap;
     }
@@ -526,7 +526,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId" ,insertable = false,updatable = false)
+    @JoinColumn(name = "RegionPerilId", referencedColumnName = "regionPerilId" ,insertable = false,updatable = false)
     public RegionPerilEntity getRegionPeril() {
         return regionPeril;
     }
@@ -536,7 +536,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKProjectId", referencedColumnName = "projectId")
+    @JoinColumn(name = "ProjectId", referencedColumnName = "projectId")
     public ProjectEntity getProjectByFkProjectId() {
         return projectByFkProjectId;
     }
@@ -546,7 +546,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKPreviousBasisId", referencedColumnName = "AdjustmentBasisId")
+    @JoinColumn(name = "PreviousBasisId", referencedColumnName = "AdjustmentBasisId")
     public AdjustmentBasisEntity getAdjustmentBasisByFkPreviousBasisId() {
         return adjustmentBasisByFkPreviousBasisId;
     }
@@ -556,7 +556,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKCurrentBasisId", referencedColumnName = "AdjustmentBasisId")
+    @JoinColumn(name = "CurrentBasisId", referencedColumnName = "AdjustmentBasisId")
     public AdjustmentBasisEntity getAdjustmentBasisByFkCurrentBasisId() {
         return adjustmentBasisByFkCurrentBasisId;
     }
@@ -566,7 +566,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKEntityId", referencedColumnName = "EntityId",insertable = false,updatable = false)
+    @JoinColumn(name = "EntityId", referencedColumnName = "EntityId",insertable = false,updatable = false)
     public EntityEntity getEntity() {
         return entity;
     }
@@ -576,7 +576,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKMarketChannelId", referencedColumnName = "MarketChannelID",insertable = false,updatable = false)
+    @JoinColumn(name = "MarketChannelId", referencedColumnName = "MarketChannelID",insertable = false,updatable = false)
     public MarketChannelEntity getMarketChannel() {
         return marketChannel;
     }
@@ -586,7 +586,7 @@ public class ScorPltHeaderEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKCloningSourceId", referencedColumnName = "PKScorPltHeaderId",insertable = false,updatable = false)
+    @JoinColumn(name = "CloningSourceId", referencedColumnName = "ScorPltHeaderId",insertable = false,updatable = false)
     public ScorPltHeaderEntity getScorPltHeader() {
         return scorPltHeader;
     }
@@ -595,7 +595,7 @@ public class ScorPltHeaderEntity {
         this.scorPltHeader = scorPltHeader;
     }
     @ManyToOne
-    @JoinColumn(name = "FKBinFileId", referencedColumnName = "BinFileId",insertable = false,updatable = false)
+    @JoinColumn(name = "BinFileId", referencedColumnName = "BinFileId",insertable = false,updatable = false)
     public BinFileEntity getBinFileEntity() {
         return binFileEntity;
     }

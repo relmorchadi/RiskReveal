@@ -76,7 +76,7 @@ public class InsuredEntity {
     }
 
     @Basic
-    @Column(name = "FKCLIENTCODE", length = 255)
+    @Column(name = "CLIENTCODE", length = 255)
     public String getClientcodeId() {
         return clientcodeId;
     }

@@ -47,7 +47,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "FKPltPricingId", length = 255)
+    @Column(name = "PltPricingId", length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }
@@ -57,7 +57,7 @@ public class PltPricingMinimumGrainEntity {
     }
 
     @Basic
-    @Column(name = "FKPltPricingSectionId", length = 255)
+    @Column(name = "PltPricingSectionId", length = 255)
     public String getPltPricingSectionId() {
         return pltPricingSectionId;
     }

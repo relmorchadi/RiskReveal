@@ -170,7 +170,7 @@ public class ProjectEntity {
     }
 
     @Basic
-    @Column(name = "FKLinkedSourceProjectId")
+    @Column(name = "LinkedSourceProjectId")
     public Integer getFkLinkedSourceProjectId() {
         return fkLinkedSourceProjectId;
     }
@@ -252,7 +252,7 @@ public class ProjectEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKWorkspaceId", referencedColumnName = "workspaceId")
+    @JoinColumn(name = "WorkspaceId", referencedColumnName = "workspaceId")
     public WorkspaceEntity getWorkspaceByFkWorkspaceId() {
         return workspaceByFkWorkspaceId;
     }
@@ -262,7 +262,7 @@ public class ProjectEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKCloneSourceProjectId", referencedColumnName = "projectId")
+    @JoinColumn(name = "CloneSourceProjectId", referencedColumnName = "projectId")
     public ProjectEntity getFkCloneSourceProjectId() {
         return fkCloneSourceProjectId;
     }

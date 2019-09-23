@@ -69,7 +69,7 @@ public class TermsandconditionsEntity {
     }
 
     @Basic
-    @Column(name = "FKSECTION_ID", length = 255)
+    @Column(name = "SECTION_ID", length = 255)
     public String getFksectionId() {
         return fksectionId;
     }

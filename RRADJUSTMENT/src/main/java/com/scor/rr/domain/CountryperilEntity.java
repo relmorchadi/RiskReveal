@@ -57,7 +57,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "FKSECTION_ID", length = 255)
+    @Column(name = "SECTION_ID", length = 255)
     public String getFksectionId() {
         return fksectionId;
     }
@@ -127,7 +127,7 @@ public class CountryperilEntity {
     }
 
     @Basic
-    @Column(name = "FKCOUNTRYCODE", length = 255)
+    @Column(name = "COUNTRYCODE", length = 255)
     public String getCountrycodeId() {
         return countrycodeId;
     }

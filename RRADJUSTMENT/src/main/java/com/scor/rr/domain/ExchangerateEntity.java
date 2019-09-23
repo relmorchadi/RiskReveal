@@ -54,7 +54,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "FKCURRENCYCODE", length = 255)
+    @Column(name = "CURRENCYCODE", length = 255)
     public String getCurrencycodeId() {
         return currencycodeId;
     }

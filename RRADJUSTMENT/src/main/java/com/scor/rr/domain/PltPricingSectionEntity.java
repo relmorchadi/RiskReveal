@@ -48,7 +48,7 @@ public class PltPricingSectionEntity {
     }
 
     @Basic
-    @Column(name = "FKPltPricingId", length = 255)
+    @Column(name = "PltPricingId", length = 255)
     public String getPltPricingId() {
         return pltPricingId;
     }

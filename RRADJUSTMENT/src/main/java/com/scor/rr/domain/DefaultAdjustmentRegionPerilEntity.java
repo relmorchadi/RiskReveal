@@ -14,7 +14,7 @@ public class DefaultAdjustmentRegionPerilEntity {
     private RegionPerilEntity regionPeril;
 
     @Id
-    @Column(name = "FKDefaultAdjustmentId", nullable = false)
+    @Column(name = "DefaultAdjustmentId", nullable = false)
     public int getFkDefaultAdjustmentId() {
         return fkDefaultAdjustmentId;
     }
@@ -24,7 +24,7 @@ public class DefaultAdjustmentRegionPerilEntity {
     }
 
     @Id
-    @Column(name = "FKRegionPerilId", nullable = false)
+    @Column(name = "RegionPerilId", nullable = false)
     public int getFkRegionPerilId() {
         return fkRegionPerilId;
     }
@@ -59,7 +59,7 @@ public class DefaultAdjustmentRegionPerilEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKDefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId", nullable = false,insertable = false,updatable = false)
+    @JoinColumn(name = "DefaultAdjustmentId", referencedColumnName = "DefaultAdjustmentId", nullable = false,insertable = false,updatable = false)
     public DefaultAdjustmentEntity getDefaultAdjustment() {
         return defaultAdjustment;
     }
@@ -69,7 +69,7 @@ public class DefaultAdjustmentRegionPerilEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKRegionPerilId", referencedColumnName = "regionPerilId", nullable = false,insertable = false,updatable = false)
+    @JoinColumn(name = "RegionPerilId", referencedColumnName = "regionPerilId", nullable = false,insertable = false,updatable = false)
     public RegionPerilEntity getRegionPeril() {
         return regionPeril;
     }

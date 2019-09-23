@@ -10,7 +10,10 @@ public class MetadataHeaderSectionEntity {
     private String metadataAttribute;
     private String description;
     private String dataType;
-    private boolean mandatory;
+    private String mandatory;
+    private String format;
+    private String assertValue;
+    private String defaultValue;
 
     @Id
     @Column(name = "MetadataHeaderSection", nullable = false)
@@ -54,12 +57,42 @@ public class MetadataHeaderSectionEntity {
 
     @Basic
     @Column(name = "Mandatory")
-    public boolean isMandatory() {
+    public String getMandatory() {
         return mandatory;
     }
 
-    public void setMandatory(boolean mandatory) {
+    public void setMandatory(String mandatory) {
         this.mandatory = mandatory;
+    }
+
+    @Basic
+    @Column(name = "format")
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(String format) {
+        this.format = format;
+    }
+
+    @Basic
+    @Column(name = "assertValue")
+    public String getAssertValue() {
+        return assertValue;
+    }
+
+    public void setAssertValue(String assertValue) {
+        this.assertValue = assertValue;
+    }
+
+    @Basic
+    @Column(name = "defaultValue")
+    public String getDefaultValue() {
+        return defaultValue;
+    }
+
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override

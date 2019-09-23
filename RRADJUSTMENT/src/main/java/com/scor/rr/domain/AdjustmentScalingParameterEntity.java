@@ -55,7 +55,7 @@ public class AdjustmentScalingParameterEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeScaling", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNodeScaling", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeScaling() {
         return adjustmentNodeByFkAdjustmentNodeScaling;
     }

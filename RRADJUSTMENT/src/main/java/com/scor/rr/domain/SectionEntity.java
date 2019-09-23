@@ -85,7 +85,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKCONTRACTID", length = 255)
+    @Column(name = "CONTRACTID", length = 255)
     public String getFkcontractId() {
         return fkcontractId;
     }
@@ -155,7 +155,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKSTATUSID", length = 255)
+    @Column(name = "STATUSID", length = 255)
     public String getStatusId() {
         return statusId;
     }
@@ -165,7 +165,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKLINEOFBUSINESSID", length = 255)
+    @Column(name = "LINEOFBUSINESSID", length = 255)
     public String getLineofbusinessId() {
         return lineofbusinessId;
     }
@@ -175,7 +175,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKSCOPEOFBUSINESSID", length = 255)
+    @Column(name = "SCOPEOFBUSINESSID", length = 255)
     public String getScopeofbusinessId() {
         return scopeofbusinessId;
     }
@@ -185,7 +185,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKTYPEOFPOLICYID", length = 255)
+    @Column(name = "TYPEOFPOLICYID", length = 255)
     public String getTypeofpolicyId() {
         return typeofpolicyId;
     }
@@ -195,7 +195,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKNATURECODEID", length = 255)
+    @Column(name = "NATURECODEID", length = 255)
     public String getNaturecodeId() {
         return naturecodeId;
     }
@@ -505,7 +505,7 @@ public class SectionEntity {
     }
 
     @Basic
-    @Column(name = "FKAccumulationPackagePLTContractSectionId")
+    @Column(name = "AccumulationPackagePLTContractSectionId")
     public Integer getAccumulationPackagePltContractSectionId() {
         return accumulationPackagePltContractSectionId;
     }

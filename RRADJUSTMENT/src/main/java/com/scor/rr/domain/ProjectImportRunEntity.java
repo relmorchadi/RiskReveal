@@ -118,7 +118,7 @@ public class ProjectImportRunEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKProjectId", referencedColumnName = "projectId")
+    @JoinColumn(name = "ProjectId", referencedColumnName = "projectId")
     public ProjectEntity getProjectByFkProjectId() {
         return projectByFkProjectId;
     }

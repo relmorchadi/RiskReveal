@@ -21,7 +21,7 @@ public class AccumulationPackageEntity {
     }
 
     @Basic
-    @Column(name = "FKWorkspaceID", length = 255)
+    @Column(name = "WorkspaceID", length = 255)
     public String getFkworkspaceId() {
         return fkworkspaceId;
     }
@@ -32,7 +32,7 @@ public class AccumulationPackageEntity {
 
 
     @Basic
-    @Column(name = "FKStatusId")
+    @Column(name = "StatusId")
     public Integer getIdstatus() {
         return idstatus;
     }

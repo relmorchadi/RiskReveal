@@ -59,7 +59,7 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
+    @JoinColumn(name = "AdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
     public AdjustmentBasisEntity getAdjustmentBasis() {
         return adjustmentBasis;
     }
@@ -69,7 +69,7 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
+    @JoinColumn(name = "AdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
     public AdjustmentTypeEntity getAdjustmentType() {
         return adjustmentType;
     }
@@ -79,7 +79,7 @@ public class DefaultAdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentThreadId", referencedColumnName = "DefaultAdjustmentThreadId")
+    @JoinColumn(name = "AdjustmentThreadId", referencedColumnName = "DefaultAdjustmentThreadId")
     public DefaultAdjustmentThreadEntity getDefaultAdjustmentThread() {
         return defaultAdjustmentThread;
     }

@@ -129,7 +129,7 @@ public class AdjustmentBasisEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FkCategoryId", referencedColumnName = "AdjustmentCategoryId")
+    @JoinColumn(name = "CategoryId", referencedColumnName = "AdjustmentCategoryId")
     public AdjustmentCategoryEntity getAdjustmentCategoryByFkCategoryId() {
         return adjustmentCategory;
     }

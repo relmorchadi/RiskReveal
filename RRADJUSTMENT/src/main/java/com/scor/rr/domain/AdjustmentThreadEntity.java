@@ -132,7 +132,7 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKScorPltHeaderThreadId", referencedColumnName = "PKScorPltHeaderId")
+    @JoinColumn(name = "ScorPltHeaderThreadId", referencedColumnName = "ScorPltHeaderId")
     public ScorPltHeaderEntity getScorPltHeaderByFkScorPltHeaderThreadId() {
         return scorPltHeaderByFkScorPltHeaderThreadId;
     }
@@ -142,7 +142,7 @@ public class AdjustmentThreadEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKScorPltHeaderThreadPureId", referencedColumnName = "PKScorPltHeaderId")
+    @JoinColumn(name = "ScorPltHeaderThreadPureId", referencedColumnName = "ScorPltHeaderId")
     public ScorPltHeaderEntity getScorPltHeaderByFkScorPltHeaderThreadPureId() {
         return scorPltHeaderByFkScorPltHeaderThreadPureId;
     }

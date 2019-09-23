@@ -81,7 +81,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKSUBSIDIARYLEDGERCODEID", length = 255)
+    @Column(name = "SUBSIDIARYLEDGERCODEID", length = 255)
     public String getFksubsidiaryledgercodeId() {
         return fksubsidiaryledgercodeId;
     }
@@ -141,7 +141,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKSTATUSID", length = 255)
+    @Column(name = "STATUSID", length = 255)
     public String getStatusId() {
         return statusId;
     }
@@ -241,7 +241,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKCEDENTID", length = 255)
+    @Column(name = "CEDENTID", length = 255)
     public String getCedentidId() {
         return cedentidId;
     }
@@ -281,7 +281,7 @@ public class ContractEntity {
     }
 
     @Basic
-    @Column(name = "FKLIABILITYCURRENCYCODE", length = 255)
+    @Column(name = "LIABILITYCURRENCYCODE", length = 255)
     public String getLiabilitycurrencycodeId() {
         return liabilitycurrencycodeId;
     }

@@ -47,7 +47,7 @@ public class DefaultAdjustmentEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKMarketChannelId", referencedColumnName = "MarketChannelID")
+    @JoinColumn(name = "MarketChannelId", referencedColumnName = "MarketChannelID")
     public MarketChannelEntity getMarketChannel() {
         return marketChannel;
     }
@@ -57,7 +57,7 @@ public class DefaultAdjustmentEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKTargetRapId", referencedColumnName = "targetRapId")
+    @JoinColumn(name = "TargetRapId", referencedColumnName = "targetRapId")
     public TargetRapEntity getTargetRap() {
         return targetRap;
     }
@@ -67,7 +67,7 @@ public class DefaultAdjustmentEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKEntityId", referencedColumnName = "EntityId")
+    @JoinColumn(name = "EntityId", referencedColumnName = "EntityId")
     public EntityEntity getEntity() {
         return entity;
     }

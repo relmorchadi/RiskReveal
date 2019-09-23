@@ -21,7 +21,7 @@ public class ScorPltHeaderTagsEntity {
     }
 
     @Basic
-    @Column(name = "FKScorPLTHeaderId")
+    @Column(name = "ScorPLTHeaderId")
     public Integer getScorPltHeaderId() {
         return scorPltHeaderId;
     }
