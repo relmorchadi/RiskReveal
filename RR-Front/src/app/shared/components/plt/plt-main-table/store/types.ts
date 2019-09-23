@@ -12,4 +12,5 @@ export const attachPlt = "[scope Table] attach selected plt";
 export const attachToAllTs = "[scope Table] attach selected plt To all ts";
 export const attachToJustThisTs = "[scope Table] attach selected plt to just this ts";
 export const deselectPlt = "[scope Table] deselect  plt";
+export const selectAllPltsRow = "[scope Table] select all plts in row";
 export const filterByStatus = "[Table] filter by status";

@@ -6,10 +6,10 @@ import {Select, Store} from '@ngxs/store';
 import {Data} from '../../../core/model/data';
 import * as moment from 'moment';
 import {dashData} from '../../../shared/data/dashboard-data';
-import {OpenWS} from "../../../workspace/store/actions";
+import {OpenWS} from '../../../workspace/store/actions';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WsApi} from '../../../workspace/services/workspace.api';
-import {WorkspaceState} from "../../../workspace/store/states";
+import {WorkspaceState} from '../../../workspace/store/states';
 
 @Component({
   selector: 'app-fac-widget',
@@ -25,6 +25,11 @@ export class FacWidgetComponent implements OnInit {
   uwyUnits;
   cedants = Data.cedant;
 
+  filterNew = false;
+  filterCurrent = false;
+  filterArchive = false;
+  filterAssigned = true;
+
   @Input()
   itemName = 'Car Widget';
   @Input()
@@ -35,31 +40,28 @@ export class FacWidgetComponent implements OnInit {
   editName = false;
 
   cols = [
-    {field: 'id', header: 'CAR ID', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractFacNumber', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'favorite', header: '', width: '20px', display: true, sorted: false, filtered: false, type: 'favStatus'},
+    {field: 'id', header: 'CAR ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'contractName', header: 'Contract Name', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'id', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractYear', header: 'UW Year', width: '40px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwAnalysisContractDate', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractLabel', header: 'UW Analysis', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'contractName', header: 'Contract Name', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractSubsidiary', header: 'Subsidiary', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'uwanalysisContractSector', header: 'Sector', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwanalysisContractSubsidiary', header: 'Subsidiary', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwanalysisContractSector', header: 'Sector', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractBusinessType', header: 'Business Type', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'reauestedByFirstName', header: 'Assigned Analyst', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'assignedAnalyst', header: 'Assigned Analyst', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'carStatus', header: 'CAR Status', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'requestCreationDate', header: 'Created At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
     {field: 'lastUpdateDate', header: 'Updated At', width: '80px', display: true, sorted: true, filtered: true, type: 'date'},
-    /*{field: 'rrStatus', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
-    {field: 'plt', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
-    {field: 'publishedToPricing', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
-    {field: 'usedInPricing', header: '', width: '20px', display: true, sorted: false, type: 'icon'},
-    {field: 'publishedToAccumulation', header: '', width: '20px', display: true, sorted: false, type: 'text'}*/
   ];
   mockData = [];
   private defaultCountry: string;
   private defaultUwUnit: string;
   Countries = Data.coutryAlt;
   private mockDataCache;
+  tabIndex = 2;
 
   @Select(WorkspaceState.getFacData) facData$;
   data: any[];
@@ -105,18 +107,67 @@ export class FacWidgetComponent implements OnInit {
         this.mockData= data;
         this.detectChanges();
       })*/
-
   }
 
-  getDataFacWidget() {
+  getValueNumber(scope) {
+    return _.filter(this.data, item => item.carStatus === scope).length;
+  }
 
+  getAssignedValueNumber(scope) {
+    return _.filter(this.filterAssign(), item => item.carStatus === scope).length;
+  }
+
+  getCombinedNumber(data) {
+    return _.filter(data,
+        item => item.carStatus === 'Canceled' || item.carStatus === 'Completed' || item.carStatus === 'superSeeded').length;
+  }
+
+  selectTab(index) {
+    this.tabIndex = index;
+  }
+
+  filterData(filter) {
+    if (filter === 'New') {
+      this.filterNew = true;
+      this.filterCurrent = false;
+      this.filterArchive = false;
+    } else if (filter === 'In Progress') {
+      this.filterNew = false;
+      this.filterCurrent = true;
+      this.filterArchive = false;
+    } else if (filter === 'Archive') {
+      this.filterNew = false;
+      this.filterCurrent = false;
+      this.filterArchive = true;
+    }
+  }
+
+  applyFilters(data) {
+    let filteredData = [...data];
+    if (this.filterCurrent) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
+    } else if (this.filterNew) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
+    } else if (this.filterArchive) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
+    }
+    return filteredData;
   }
 
   openFacItem(event) {
+    console.log(event);
     this.store.dispatch(new workspaceActions.OpenFacWS({wsId: event.uwanalysisContractFacNumber,
-      uwYear: event.uwanalysisContractYear, route: 'Project', type: 'fac'}));
+      uwYear: event.uwAnalysisContractDate, route: 'Project', type: 'fac', item: event}));
     this.store.dispatch(new workspaceActions.LoadProjectForWs({wsId: event.uwanalysisContractFacNumber,
-      uwYear: event.uwanalysisContractYear}));
+      uwYear: event.uwAnalysisContractDate}));
+  }
+
+  filterAssign() {
+    return _.filter(this.data, item => item.assignedAnalyst === 'Amina Cheref');
+  }
+
+  valueFavChange(event) {
+    this.store.dispatch(new workspaceActions.MarkFacWsAsFavorite(event));
   }
 
   duplicateItem(itemName: any): void {
