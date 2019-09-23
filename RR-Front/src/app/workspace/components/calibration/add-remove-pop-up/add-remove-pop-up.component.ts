@@ -184,7 +184,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
           header: 'Peril',
           width: '40',
           sorted: false,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',
           textAlign: 'center', active: true
@@ -194,7 +194,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
           header: 'Region Peril Code',
           width: '70',
           sorted: false,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field', active: true
         },
@@ -203,7 +203,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
           header: 'Region Peril Name',
           width: '160',
           sorted: false,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field', active: true
         },
@@ -213,7 +213,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
           header: 'Grain',
           width: '90',
           sorted: false,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',
           active: true
@@ -224,7 +224,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
           header: 'Vendor System',
           width: '90',
           sorted: false,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field', active: true
         },
@@ -234,7 +234,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
           header: 'RAP',
           width: '52',
           sorted: false,
-          filtred: false,
+          filtred: true,
           icon: null,
           type: 'field',
           active: true

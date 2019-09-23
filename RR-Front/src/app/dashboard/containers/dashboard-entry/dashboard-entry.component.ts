@@ -74,13 +74,13 @@ export class DashboardEntryComponent implements OnInit {
     },
     {
       id: 1,
-      name: 'Dashboard N°2',
+      name: 'Fac Dashboard',
       visible: true,
       items: [
         {
           id: 1,
           name: 'Renewal Contract Scope',
-          selected: true,
+          selected: false,
           icon: 'icon-window-section',
           componentName: 'RenewalContractScopeComponent',
           position: {cols: 3, rows: 2, col: 0, row: 0}
@@ -121,7 +121,7 @@ export class DashboardEntryComponent implements OnInit {
       fac: [
         {
           id: 99, icon: 'icon-camera-focus', name: 'Car Status Widget',
-          componentName: 'facWidgetComponent', selected: false,
+          componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]

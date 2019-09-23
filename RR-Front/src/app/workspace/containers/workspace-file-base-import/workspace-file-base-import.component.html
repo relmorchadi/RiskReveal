@@ -183,7 +183,7 @@
               <tr [pContextMenuRow]="rowData" [pSelectableRow]="rowData"
                   [ngClass]="{'active_contract_item': rowData?.selected,
                   'selected_contract_item': rowData?.FileName === selectedPlt?.FileName}"
-                  (dblclick)="selectedPlt = rowData">
+                  (click)="selectedPlt = rowData">
                 <ng-container *ngFor="let col of columns">
                   <th *ngIf="col.visible && !col.edit">
                     <div *ngIf="col.type === 'select'" style="display: flex; justify-content: center">
@@ -195,30 +195,30 @@
                       <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
                                    [nzWidth]="20" nzType="circle"></nz-progress>
                     </div>
-                    <div (click)="selectRows(i)" *ngIf="col.type === 'number'"
+                    <div *ngIf="col.type === 'number'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field]}}</div>
-                    <div (click)="selectRows(i)" *ngIf="col.type === 'percentage'"
+                    <div  *ngIf="col.type === 'percentage'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field]}}%
                     </div>
-                    <div (click)="selectRows(i)" *ngIf="col.type === 'perilIndicator'">
+                    <div  *ngIf="col.type === 'perilIndicator'">
                       <span class="perilIndicator" [ngStyle]="{'background-color': getColor(rowData[col.field])}">
                         {{rowData[col.field]}}
                       </span>
                     </div>
-                    <div (click)="selectRows(i)" *ngIf="col.type === 'info'"
+                    <div *ngIf="col.type === 'info'"
                          class="text-data">
                       {{rowData.ModelSystem}}_{{rowData.ModelProvider}}_{{rowData.ModelSystemVersion}}
                       _{{rowData.ModelSystemInstance}}
                     </div>
-                    <div (click)="selectRows(i)" *ngIf="col.type === 'text'"
+                    <div *ngIf="col.type === 'text'"
                          [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
                          [ngClass]="{'highlight-temp': col.highlight}"
                          class="text-data">{{rowData[col.field]}}</div>
                     <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data">{{rowData[col.field] | date:'dd/MM/yyyy'}}</div>
-                    <div (click)="deleteRow(rowData, i)" *ngIf="col.type === 'action'"
+                    <div *ngIf="col.type === 'action'"
                          [ngClass]="{'highlight-temp': rowData.highlight}"
                          class="text-data" style="display: flex;justify-content: center;"><i class="icon-trash-alt"></i>
                     </div>

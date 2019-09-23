@@ -1,6 +1,6 @@
 import {StateContext} from '@ngxs/store';
 import * as fromWs from '../store/actions';
-import {PatchRiskLinkDisplayAction} from '../store/actions';
+import {LoadBasicAnalysisFacAction, LoadPortfolioFacAction, PatchRiskLinkDisplayAction} from '../store/actions';
 import * as _ from 'lodash';
 import {catchError, mergeMap, switchMap} from 'rxjs/operators';
 import {of} from 'rxjs/internal/observable/of';
@@ -1094,6 +1094,140 @@ export class RiskLinkStateService {
     }
   }
 
+  loadFacData(ctx: StateContext<WorkspaceModel>) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    return this.riskApi.searchFacData().pipe(
+      mergeMap(
+        (dt: any) => {
+          const dataModel = dt.map(item => { return {
+            id: item.databaseId,
+            name: item.name,
+            createDt: '19/01/2018 19:01:50',
+            type: this._getTypeData(item.name) ? 'rdm' : 'edm',
+            versionNum: 17,
+            selected: item.name === 'SBS_RR_2019_08_SoonLing_E' || item.name === 'SBS_RR_2019_08_SoonLing_R',
+            source: ''};
+          });
+          const selectedData = {
+            rdm: Object.assign({},
+              ..._.filter(dataModel, item => item.type === 'rdm' && item.selected).map((ds: any) =>
+                ({[ds.id]: {...ds, selected: false, scanned: true}}))),
+            edm: Object.assign({},
+              ..._.filter(dataModel, item => item.type === 'edm' && item.selected).map((ds: any) =>
+                ({[ds.id]: {...ds, selected: false, scanned: true}})))
+          };
+          console.log(_.toArray(selectedData.rdm), _.toArray(selectedData.edm));
+          ctx.dispatch(new LoadBasicAnalysisFacAction(_.toArray(selectedData.rdm)));
+          ctx.dispatch(new LoadPortfolioFacAction(_.toArray(selectedData.edm)));
+          return of(ctx.patchState(produce(
+            ctx.getState(), draft => {
+              draft.content[wsIdentifier].riskLink.listEdmRdm = {
+                ...draft.content[wsIdentifier].riskLink.listEdmRdm,
+                data: _.merge({},
+                  draft.content[wsIdentifier].riskLink.listEdmRdm.data,
+                  Object.assign({}, ...dataModel.map(ds => ({[ds.id]: {...ds}})))
+                ),
+                selectedListEDMAndRDM: selectedData,
+                totalNumberElement: draft.content[wsIdentifier].riskLink.listEdmRdm.totalNumberElement + dataModel.length,
+                numberOfElement: draft.content[wsIdentifier].riskLink.listEdmRdm.numberOfElement + dataModel.length
+              };
+            }))
+          );
+        }
+      )
+    );
+  }
+
+  loadBasicAnalysisFac(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    return forkJoin(
+      payload.map(dt => this.riskApi.searchFacAnalysisBasic(dt.id, dt.name))
+    ).pipe(
+      switchMap(out => {
+        let dataTable = {};
+        out.forEach((dt: any, i) => {
+            dataTable = {
+              ...dataTable,
+              [payload[i].id]: {
+                data: Object.assign({},
+                  ...dt.map(analysis => ({
+                      [analysis.analysisId]: {
+                        ...analysis,
+                        selected: false
+                      }
+                    }
+                  ))),
+                allChecked: false,
+                indeterminate: false,
+                totalNumberElement: dt.length,
+                numberOfElement: dt.length,
+                filter: {}
+              }
+            };
+          }
+        );
+        return of(ctx.patchState(
+          produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].riskLink.analysis = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.analysis);
+          })));
+      }),
+      catchError(err => {
+        // @TODO Handle error case
+        console.error(err);
+        return of();
+      })
+    );
+  }
+
+  loadDetailAnalysisFac(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+  }
+
+  loadBasicPortfolioFac(ctx: StateContext<WorkspaceModel>, payload) {
+    const state = ctx.getState();
+    const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    return forkJoin(
+      payload.map(dt => this.riskApi.searchFacPortfolio(dt.id, dt.name))
+    ).pipe(
+      switchMap(out => {
+        let dataTable = {};
+        out.forEach((dt: any, i) => {
+            dataTable = {
+              ...dataTable,
+              [payload[i].id]: {
+                data: Object.assign({},
+                  ...dt.map(portfolio => ({
+                      [portfolio.portId]: {
+                        ...portfolio,
+                        selected: false
+                      }
+                    }
+                  ))),
+                allChecked: false,
+                indeterminate: false,
+                totalNumberElement: dt.length,
+                numberOfElement: dt.length,
+                filter: {}
+              }
+            };
+          }
+        );
+        return of(ctx.patchState(
+          produce(ctx.getState(), draft => {
+            draft.content[wsIdentifier].riskLink.portfolios = _.merge({}, dataTable, draft.content[wsIdentifier].riskLink.portfolios);
+          })));
+      }),
+      catchError(err => {
+        // @TODO Handle error case
+        console.error(err);
+        return of();
+      })
+    );
+  }
+
   loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
@@ -1637,6 +1771,11 @@ export class RiskLinkStateService {
         [item.id]: {...item}
       }
     )));
+  }
+
+  private _getTypeData(item) {
+    const lastIndex = item.slice(-2);
+    return lastIndex === '_R';
   }
 }
 

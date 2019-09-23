@@ -36,8 +36,10 @@
           </span>
         <div style="font-size: 1.3em;font-weight: bold;padding-top: 18px;padding-right: 18px;">
           <label nz-checkbox style="padding-left: 8px;"
-                 [nzChecked]="showApplicablePlts"
+                 [(ngModel)]="showApplicablePlts"
+                 (ngModelChange)="showApplicablePltsFunction()"
           >Show Applicable Plts Only</label>
+
         </div>
       </div>
       <div class="PLTs-content">
