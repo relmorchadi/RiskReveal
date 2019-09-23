@@ -899,6 +899,26 @@ export class WorkspaceState {
     this.riskLinkFacade.deleteInnerLink(ctx, payload);
   }
 
+  @Action(fromWS.LoadFacDataAction)
+  loadFacData(ctx: StateContext<WorkspaceModel>) {
+    return this.riskLinkFacade.loadFacData(ctx);
+  }
+
+  @Action(fromWS.LoadBasicAnalysisFacAction)
+  loadBasicAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadBasicAnalysisFacAction) {
+    return this.riskLinkFacade.loadBasicAnalysisFac(ctx, payload);
+  }
+
+  @Action(fromWS.LoadDetailAnalysisFacAction)
+  loadDetailAnalysisFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadDetailAnalysisFacAction) {
+    return this.riskLinkFacade.loadDetailAnalysisFac(ctx, payload);
+  }
+
+  @Action(fromWS.LoadPortfolioFacAction)
+  loadPortfolioFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioFacAction) {
+    return this.riskLinkFacade.loadBasicPortfolioFac(ctx, payload);
+  }
+
   @Action(fromWS.LoadRiskLinkAnalysisDataAction)
   loadRiskLinkAnalysisData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadRiskLinkAnalysisDataAction) {
     return this.riskLinkFacade.loadRiskLinkAnalysisData(ctx, payload);

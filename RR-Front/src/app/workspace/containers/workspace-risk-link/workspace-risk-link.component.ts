@@ -6,12 +6,13 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
-import {UpdateWsRouting} from '../../store/actions';
+import {LoadFacDataAction, UpdateWsRouting} from '../../store/actions';
 import {DataTables} from './data';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import {Navigate} from '@ngxs/router-plugin';
+import {LazyLoadEvent} from "primeng/api";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -69,14 +70,20 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   occurrenceBasis;
 
   scrollableColsAnalysis: any;
+  scrollableFacColsAnalysis: any;
   frozenColsAnalysis: any;
+  frozenFacColsAnalysis: any;
 
   scrollableColsPortfolio: any;
+  scrollableFacColsPortfolio: any;
   frozenColsPortfolio: any;
+  frozenFacColsPortfolio: any;
 
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
-  workspaceStatus: any;
+
+  @Select(WorkspaceState.getCurrentTabStatus) tabStatus$;
+  tabStatus: any;
 
   @Select(WorkspaceState.getListEdmRdm) listEdmRdm$;
   listEdmRdm: any;
@@ -90,8 +97,6 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   portfolios: any;
   allCheckedPortolfios: boolean;
   indeterminatePortfolio: boolean;
-
-  @Select(WorkspaceState.getCurrentTabStatus) currentTabStatus$;
 
   constructor(
     private _helper: HelperService,
@@ -117,30 +122,35 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.indeterminateAnalysis = this.analysis.indeterminate;
         this.detectChanges();
       }),
+      this.tabStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
+        this.tabStatus = value;
+        this.detectChanges();
+      }),
       this.portfolios$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
         this.portfolios = _.merge({}, value);
         this.allCheckedPortolfios = this.portfolios.allChecked;
         this.indeterminatePortfolio = this.portfolios.indeterminate;
         this.detectChanges();
       }),
-      this.currentTabStatus$.pipe(this.unsubscribeOnDestroy).subscribe(value => {
-        this.workspaceStatus = value;
-        this.detectChanges();
-      }),
       this.route.params.pipe(this.unsubscribeOnDestroy).subscribe(({wsId, year}) => {
-        this.hyperLinksConfig = {
-          wsId,
-          uwYear: year
-        };
+        this.hyperLinksConfig = {wsId, uwYear: year};
         this.dispatch(new fromWs.LoadRiskLinkDataAction());
+        if (this.tabStatus === 'fac') {
+          this.dispatch(new LoadFacDataAction());
+          this.displayListRDMEDM = true;
+        }
         this.detectChanges();
       })
     ];
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
+    this.scrollableFacColsAnalysis = DataTables.scrollableFacColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
+    this.frozenFacColsAnalysis = DataTables.frozenFacColsAnalysis;
     this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
+    this.scrollableFacColsPortfolio = DataTables.scrollableFacColsPortfolio;
     this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
+    this.frozenFacColsPortfolio = DataTables.frozenFacColsPortfolio;
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -287,18 +297,35 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   getScrollableCols() {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
-      return this.scrollableColsAnalysis;
+    if (this.tabStatus === 'treaty') {
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        return this.scrollableColsAnalysis;
+      } else {
+        return this.scrollableColsPortfolio;
+      }
     } else {
-      return this.scrollableColsPortfolio;
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        return this.scrollableFacColsAnalysis;
+      } else {
+        return this.scrollableFacColsPortfolio;
+      }
     }
+
   }
 
   getFrozenCols() {
-    if (this.state.selectedEDMOrRDM === 'rdm') {
-      return this.frozenColsAnalysis;
+    if (this.tabStatus === 'treaty') {
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        return this.frozenColsAnalysis;
+      } else {
+        return this.frozenColsPortfolio;
+      }
     } else {
-      return this.frozenColsPortfolio;
+      if (this.state.selectedEDMOrRDM === 'rdm') {
+        return this.frozenFacColsAnalysis;
+      } else {
+        return this.frozenFacColsPortfolio;
+      }
     }
   }
 
@@ -307,6 +334,14 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
       return _.toArray(this.analysis.data);
     } else {
       return _.toArray(this.portfolios.data);
+    }
+  }
+
+  getTableRecords() {
+    if (this.state.selectedEDMOrRDM === 'rdm') {
+      return this.analysis.totalNumberElement;
+    } else {
+      return this.portfolios.totalNumberElement;
     }
   }
 

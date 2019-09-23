@@ -4,6 +4,10 @@
   height: 100%;
 
   ::ng-deep {
+    .ant-tabs-bar {
+      display: none;
+    }
+
     .ui-table .ui-sortable-column.ui-state-highlight {
       background-color: #c8c8c8;
       color: #333333;
@@ -212,14 +216,45 @@ app-table {
 .menu-right-wrapper-icon {
   position: absolute;
   top: 20px;
-  right: 40px;
+  right: 50px;
   display: flex;
 
   .icon-wrapper {
     i {
-      color: #0700CF;
-      font-size: 20px;
+      font-size: 28px;
       margin-right: 5px;
     }
+
+    .tag-number {
+      font-size: 11px;
+      color: #FFF;
+      background-color: #f5222d;
+      padding: 2px 7px;
+      border-radius: 8px;
+      position: relative;
+      top: -18px;
+      right: 16px;
+    }
+
+    .selected-Filter {
+      color: #0700CF;
+    }
   }
+
+  .icon-wrapper-active {
+    i {
+      color: #0700CF;
+    }
+  }
+}
+
+.tab-index {
+  cursor: pointer;
+  color: rgba(0,0,0,0.5);
+  font-size: 18px;
+  margin: 8px 10px;
+}
+
+.selectedTab {
+  font-weight: bold;
 }

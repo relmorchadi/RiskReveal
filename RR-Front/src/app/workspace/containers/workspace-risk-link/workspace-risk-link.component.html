@@ -146,10 +146,6 @@
                                   <i style="margin-right: 5px" class="icon-check"></i>
                                 </span>
                               </ng-template>
-
-                              <!--                              <label nz-checkbox
-                                                                   style="margin-right: 5px"
-                                                                   [ngModel]="item.selected"></label>-->
                               <span class="logo" *ngIf="item?.type === 'rdm'" style="background: #03DAC4">R</span>
                               <span class="logo" *ngIf="item?.type === 'edm'" style="background: #0700CF">E</span>
                               <span>{{item?.name}}</span>
@@ -318,7 +314,9 @@
               <div style="display: flex; flex-direction: column">
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                           [resizableColumns]="true" columnResizeMode="expand"
+                           [resizableColumns]="true" columnResizeMode="expand" [virtualScroll]="true"
+                           [showLoader]="false"
+                           [lazy]="true" [virtualRowHeight]="40" [rows]="40" [totalRecords]="getTableRecords()"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
@@ -374,6 +372,13 @@
                                *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                           <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
                                *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
+                        </td>
+                      </tr>
+                    </ng-template>
+                    <ng-template pTemplate="loadingbody" let-columns="columns">
+                      <tr style="height:34px">
+                        <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
+                          <div class="loading-text"></div>
                         </td>
                       </tr>
                     </ng-template>

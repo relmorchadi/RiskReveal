@@ -204,7 +204,7 @@ export class WorkspaceService {
     const {wsId, uwYear} = payload;
     const wsIdentifier = wsId + '-' + uwYear;
     const projects = _.filter(state.facWs,
-      item => item.uwanalysisContractFacNumber === wsId && item.uwanalysisContractYear === uwYear);
+      item => item.uwanalysisContractFacNumber === wsId && item.uwAnalysisContractDate === uwYear);
     ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].projects = projects.map(item => {
           return {
