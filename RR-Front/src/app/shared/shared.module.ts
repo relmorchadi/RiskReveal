@@ -13,6 +13,7 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
+import { AngularDraggableModule } from 'angular2-draggable';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
     ColorSketchModule,
     MultiSelectModule,
     SidebarModule,
-    DragDropModuleAngular
+    DragDropModuleAngular,
+    AngularDraggableModule
   ],
   providers: [],
   exports: [
@@ -43,6 +45,7 @@ import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
     DialogModule,
     DragDropModule,
     DragDropModuleAngular,
+    AngularDraggableModule,
     SidebarModule,
     ...COMPONENTS,
     ...PIPES
