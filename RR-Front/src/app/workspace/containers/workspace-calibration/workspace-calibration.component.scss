@@ -1014,6 +1014,8 @@
         border: none;
         border-bottom: 1px solid rgba(0, 0, 0, 0.15) !important;
         border-top: 1px solid rgba(0, 0, 0, 0.15) !important;
+        padding: 0 !important;
+
 
         .filter-input {
           width: 100%;
@@ -1547,6 +1549,8 @@ body .ui-table .ui-table-thead > tr > th {
       font-weight: bold;
       border-top: 3px solid #0700e4;
       font-family: Rubik;
+      margin-right: 25px;
+
     }
   }
 

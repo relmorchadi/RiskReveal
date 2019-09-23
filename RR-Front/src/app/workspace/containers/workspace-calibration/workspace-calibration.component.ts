@@ -395,8 +395,17 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
     this.adjustColWidth();
+    this.initAdjApplication();
   }
 
+  initAdjApplication() {
+    this.dispatch(new applyAdjustment({
+      adjustementType: this.singleValue,
+      adjustement: false,
+      columnPosition: this.columnPosition,
+      pltId: this.listOfPltsThread.filter(row => row.status != 'locked'),
+    }));
+  }
   initTemplateList() {
     console.log('template List ======> ', this.templateList)
 
@@ -1379,8 +1388,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
 
   loadCurrentTemplate() {
     this.template = this.searchSelectedTemplate;
-    this.adjsArray = this.searchSelectedTemplate.adjs;
     this.closeLoadTemplate();
+    this.store$.dispatch(new fromWorkspaceStore.loadAdjsArray({adjustmentArray: this.searchSelectedTemplate.adjs}));
+    this.cdRef.detectChanges();
   }
 
   onDragStart(adj: any) {
@@ -1390,7 +1400,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
     // this.draggedAdjs = adj.map({ref:adj.id});
     // _.map(this.draggedAdjs, {ref:adj.id});
-    this.draggedAdjs['ref'] = adj.id
+    if (!this.draggedAdjs['ref']) {
+      this.draggedAdjs['ref'] = adj.id
+    }
     this.draggedAdjs.id = numberAdjs;
     console.log('Dragged ADJ ************', this.draggedAdjs)
     // this.cdRef.detectChanges();

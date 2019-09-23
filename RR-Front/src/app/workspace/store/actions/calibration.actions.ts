@@ -151,6 +151,13 @@ export class dropThreadAdjustment {
   }
 }
 
+export class loadAdjsArray {
+  static readonly type = '[Calibration]Load Template Adjustments';
+
+  constructor(public payload?: any) {
+  }
+}
+
 export class initCalibrationData {
   static readonly type = '[Calibration] initData';
 
