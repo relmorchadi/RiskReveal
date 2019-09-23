@@ -60,10 +60,6 @@ public class InuringEdgeService {
         inuringEdgeRepository.deleteByInuringEdgeId(inuringEdgeId);
     }
 
-    private void updateUnderlineNodeStatus(InuringNodeType nodeType, int nodeId) {
-//TODO
-    }
-
     public void deleteByRelatedNode(InuringNodeType nodeType, int nodeId) {
         inuringEdgeRepository.deleteBySourceNodeTypeAndSourceNodeId(nodeType, nodeId);
         inuringEdgeRepository.deleteByTargetNodeTypeAndTargetNodeId(nodeType, nodeId);
