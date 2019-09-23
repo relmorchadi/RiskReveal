@@ -2476,4 +2476,4 @@ const regionPeril = [{"regionPerilCode": "EUCS-DE", "regionPerilName": "Europe (
 }, {"regionPerilCode": "EUET", "regionPerilName": "Europe"}]
 
 
-export const trestySections = {treatySections};
+export const trestySections = {treatySections2};
