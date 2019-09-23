@@ -12,6 +12,7 @@ import * as _ from 'lodash'
 import {Select, Store} from "@ngxs/store";
 import {
   applyAdjustment,
+  collapseTags,
   deleteAdjsApplication,
   deleteAdjustment,
   dropAdjustment,
@@ -106,7 +107,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   selectedEPM = "AEP";
   EPMDisplay = 'percentage';
   manageColumn = false;
-  collapsedTags: boolean = false;
+  collapsedTags: boolean;
   filterInput: string = "";
   addRemoveModal: boolean = false;
   isVisible = false;
@@ -395,7 +396,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.listOfPltsData.sort(this.dynamicSort("pureId"));
     this.updateRowGroupMetaData();
     this.adjustColWidth();
-    this.initAdjApplication();
+    // this.initAdjApplication();
   }
 
   initAdjApplication() {
@@ -456,6 +457,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   patchState(state: any): void {
     const path = state.data.calibration;
     this.leftNavbarIsCollapsed = path.leftNavbarIsCollapsed;
+    this.collapsedTags = path.collapseTags;
+    console.log(path);
     this.adjutmentApplication = _.merge({}, path.adjustmentApplication);
     this.allAdjsArray = _.merge([], path.allAdjsArray).sort(this.dynamicSort("name"));
     this.AdjustementType = _.merge([], path.adjustementType);
@@ -925,7 +928,8 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   collapseTags() {
-    this.collapsedTags = !this.collapsedTags;
+    this.store$.dispatch(new collapseTags(!this.collapsedTags))
+    this.cdRef.detectChanges();
   }
 
 
@@ -1406,5 +1410,15 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     this.draggedAdjs.id = numberAdjs;
     console.log('Dragged ADJ ************', this.draggedAdjs)
     // this.cdRef.detectChanges();
+  }
+
+  togglePureRow($event: any) {
+    console.log('***************************************', $event, '***********************************************')
+    this.rowKeys = $event;
+    if (_.filter(this.rowKeys, row => row = true).length == this.rowKeys.length) {
+      this.allRowsExpanded = true;
+    } else if (_.filter(this.rowKeys, row => row = false).length == this.rowKeys.length) {
+      this.allRowsExpanded = false;
+    }
   }
 }

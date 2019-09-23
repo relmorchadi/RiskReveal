@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../store/actions";
+import {applyAdjustment} from "../store/actions";
 import {map} from "rxjs/operators";
 import * as _ from "lodash";
 import {PltApi} from "./plt.api";
@@ -139,9 +140,25 @@ export class CalibrationService implements NgxsOnInit {
   }
 
   loadAllPltsFromCalibrationSuccess(ctx: StateContext<any>, payload: any) {
+    const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.loading = false;
       ctx.dispatch(new fromPlt.constructUserTagsFromCalibration({userTags: payload.userTags}))
+    }));
+    /* init adjustments application*/
+    let plts = [];
+    _.forEach(_.merge({}, state.content[this.prefix].calibration.data[this.prefix]), plt => {
+      plts.push(plt);
+    })
+    console.log(plts);
+    let threads = Array.prototype.concat.apply([], plts.map(row => row.threads));
+
+
+    return ctx.dispatch(new applyAdjustment({
+      adjustementType: null,
+      adjustement: false,
+      columnPosition: null,
+      pltId: threads,
     }));
   }
 

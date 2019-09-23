@@ -13,7 +13,7 @@
   [scrollable]="true"
   [expandedRowKeys]="rowKeys"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 480px)"
+  scrollHeight="calc(100vh - 280px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="listOfPltsData  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -417,6 +417,7 @@
         <ng-container *ngIf="col.fields === 'checkbox'">
           <a [pRowToggler]="rowData">
             <i [ngClass]="expanded ? 'icon-keyboard_arrow_down_24px' : 'icon-keyboard_arrow_right_24px'"
+               (click)="togglePureRow(false)"
                style="font-size: 24px;"></i>
           </a>
         </ng-container>
@@ -818,7 +819,7 @@
   [responsive]="true"
   [scrollable]="true"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 480px)"
+  scrollHeight="calc(100vh - 280px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsThread)  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -1443,7 +1444,7 @@
   [responsive]="true"
   [scrollable]="true"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 480px)"
+  scrollHeight="calc(100vh - 280px)"
   [totalRecords]="listOfPltsData.length"
   [rowTrackBy]="trackby"
   [value]="(showDeleted ? deletedPlts : listOfPltsThread)  | tableSortAndFilter : [sortData,filterData] | systemTagFilter: [filters.systemTag]">
@@ -2010,7 +2011,7 @@
   [columnResizeMode]="'fit'"
   [contextMenu]="cm"
   (onColResize)="onColResize($event)"
-  scrollHeight="calc(100vh - 480px)"
+  scrollHeight="calc(100vh - 280px)"
   [scrollable]="true"
   [totalRecords]="listOfPltsData.length"
   (onSort)="onSort($event)"
