@@ -1,4 +1,11 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
@@ -9,15 +16,17 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {Message} from '../../../shared/message';
 import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/store/';
 import * as leftMenuStore from '../../../shared/components/plt/plt-left-menu/store';
+import * as tagsStore from '../../../shared/components/plt/plt-tag-manager/store';
 import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
 import {Actions as tableActions} from '../../../shared/components/plt/plt-main-table/store/actionTypes';
-import {Actions as leftMenuActions} from '../../../shared/components/plt/plt-left-menu/store/actionTypes';
 import * as tableStore from '../../../shared/components/plt/plt-main-table/store';
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
 import {BaseContainer} from '../../../shared/base';
 import {SystemTagsService} from '../../../shared/services/system-tags.service';
 import {StateSubscriber} from '../../model/state-subscriber';
 import {ExcelService} from '../../../shared/services/excel.service';
+import produce from "immer";
+import {ResizedEvent} from "angular-resize-event";
 
 @Component({
   selector: 'app-workspace-plt-browser',
@@ -28,7 +37,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   rightMenuInputs: rightMenuStore.Input;
   tableInputs: tableStore.Input;
-  tagsInput: leftMenuStore.Input;
+  leftMenuInputs: leftMenuStore.Input;
+  tagsInputs: tagsStore.Input;
   collapsedTags: boolean= true;
   @ViewChild('leftMenu') leftMenu: any;
 
@@ -248,8 +258,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
 
-  presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
-
   constructor(
     private nzDropdownService: NzDropdownService,
     private zone: NgZone,
@@ -280,7 +288,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       mode: "default"
     };
     this.tableInputs = {
-      scrollHeight: 'calc(100vh - 386px)',
+      scrollConfig: {
+        containerHeight: null,
+        containerGap: '49px',
+      },
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: [
@@ -510,7 +521,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         },
       }
     };
-    this.tagsInput= {
+    this.leftMenuInputs= {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
@@ -521,22 +532,25 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       userTags: [],
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
-      _tagModalVisible: false,
       wsHeaderSelected: true,
-      pathTab: true,
+      pathTab: true
+    };
+    this.tagsInputs= {
+      _tagModalVisible: false,
+      toRemove: [],
+      toAssign: [],
       assignedTags: [],
       assignedTagsCache: [],
-      toAssign: [],
-      toRemove: [],
-      usedInWs: [],
+      operation: null,
+      selectedTags: [],
       allTags: [],
       suggested: [],
-      selectedTags: {},
-      operation: null
-    };
+      usedInWs: []
+    }
 
     this.setRightMenuSelectedTab('pltDetail');
   }
+
 
   generateContextMenu(toRestore) {
     const t = ['Delete', 'Manage Tags', 'Clone To'];
@@ -548,8 +562,8 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       this.workspaceId = wsId;
       this.uwy = year;
 
-      this.updateTagsInput('wsId', this.workspaceId);
-      this.updateTagsInput('uwYear', this.uwy);
+      this.updateLeftMenuInputs('wsId', this.workspaceId);
+      this.updateLeftMenuInputs('uwYear', this.uwy);
     }))
   }
 
@@ -599,7 +613,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
-      this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
       this.updateTable('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.updateTable('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
       this.updateTable('selectedListOfPlts', _.filter(data, (v, k) => v.selected));
@@ -637,7 +651,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getProjects()).subscribe((projects: any) => {
-      this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
+      this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
@@ -649,30 +663,28 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     });
 
     this.observeRouteParamsWithSelector(() => this.getUserTags()).subscribe(userTags => {
-      this.updateTagsInput('userTags', userTags);
+      this.updateLeftMenuInputs('userTags', userTags);
       this.detectChanges();
-    })
+    });
 
     this.observeRouteParamsWithSelector(() => this.getUserTagManager()).subscribe( userTagManager => {
-      this.updateTagsInput('allTags', _.toArray(userTagManager.allTags));
-      this.updateTagsInput('suggested', _.toArray(userTagManager.suggested));
-      this.updateTagsInput('usedInWs', _.toArray(userTagManager.usedInWs));
+      this.updateTagsInput('allTags', _.toArray(userTagManager.allTags || []));
+      this.updateTagsInput('suggested', _.toArray(userTagManager.suggested || []));
+      this.updateTagsInput('usedInWs', _.toArray(userTagManager.usedInWs || []));
       this.detectChanges();
-    })
+    });
 
     this.actions$
       .pipe(
         ofActionSuccessful(fromWorkspaceStore.AddNewTag)
       ).subscribe( (userTag) => {
-        console.log(userTag);
         this.detectChanges();
-    })
+    });
 
     this.actions$
       .pipe(
         ofActionSuccessful(fromWorkspaceStore.DeleteTag)
       ).subscribe( userTag => {
-        console.log(userTag);
         this.detectChanges();
     })
   }
@@ -722,16 +734,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   manageTags() {
-    this.tagsInput= {
-      ...this.tagsInput,
-      wsId: this.workspaceId,
-      uwYear: this.uwy,
-      showDeleted: this.tableInputs['showDeleted'],
-      deletedPltsLength: this.tableInputs['listOfDeletedPltsData'].length,
-      selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
-      _tagModalVisible: true,
-      pathTab:true,
-    };
+    this.updateTagsInput('_tagModalVisible', true);
 
     let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
 
@@ -741,9 +744,9 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
     this.dispatch(new fromWorkspaceStore.GetTagsBySelection({
       userId: 1,
-      uwYear: this.tagsInput.uwYear,
-      wsId: this.tagsInput.wsId,
-      selectedTags: this.tagsInput.assignedTags
+      uwYear: this.leftMenuInputs.uwYear,
+      wsId: this.leftMenuInputs.wsId,
+      selectedTags: this.tagsInputs.assignedTags
     }));
 
     //this.updateTagsInput('assignedTagsCache', _.uniqBy(_.flatten(d), 'tagId'));
@@ -765,7 +768,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   openPltInDrawer(plt) {
-    console.log(plt);
     if(this.getRightMenuKey('pltDetail')) {
       this.closePltInDrawer();
     }
@@ -777,13 +779,13 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   resetPath() {
-    this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
-    this.updateTagsInput('projects', _.map(this.tagsInput.projects, p => ({...p, selected: false})));
-    this.updateTableAndTagsInputs('showDeleted', false);
+    this.updateTableAndLeftMenuInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
+    this.updateLeftMenuInputs('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: false})));
+    this.updateTableAndLeftMenuInputs('showDeleted', false);
   }
 
   setSelectedProjects($event) {
-    this.updateTagsInput('projects', $event);
+    this.updateLeftMenuInputs('projects', $event);
   }
 
   close(e: NzMenuItemDirective): void {
@@ -805,16 +807,16 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
 
   selectSystemTag({section, tag}) {
-    let newSysTagsCount= {};
-    _.forEach(this.tagsInput.systemTagsCount, (s, sKey) => {
-      _.forEach(s, (t, tKey) => {
-        if (tag == tKey && section == sKey) {
-          newSysTagsCount[sKey][tKey] = {...t, selected: !t.selected}
-        }
-      })
-    });
 
-    this.updateTagsInput('systemTagsCount', newSysTagsCount);
+    this.updateLeftMenuInputs('systemTagsCount', produce( this.leftMenuInputs.systemTagsCount, draft => {
+      _.forEach(this.leftMenuInputs.systemTagsCount, (s, sKey) => {
+        _.forEach(s, (t, tKey) => {
+          if (tag == tKey && section == sKey) {
+            draft[sKey][tKey] = {...t, selected: !t.selected}
+          }
+        })
+      });
+    }));
   }
 
   emitFilters(filters: any) {
@@ -825,7 +827,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   setUserTags($event) {
-    this.updateTagsInput('userTags', $event);
+    this.updateLeftMenuInputs('userTags', $event);
   }
 
   assignPltsToTag($event: any) {
@@ -836,7 +838,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       wsIdentifier: this.workspaceId + '-' + this.uwy,
       ...$event,
       selectedTags: _.map(selectedTags, (el: any) => el.tagId),
-      unselectedTags: _.map(_.differenceBy(this.tagsInput.assignedTagsCache, selectedTags, 'tagId'), (e: any) => e.tagId),
+      unselectedTags: _.map(_.differenceBy(this.tagsInputs.assignedTagsCache, selectedTags, 'tagId'), (e: any) => e.tagId),
       type: 'assignOrRemove'
     }))
 
@@ -847,7 +849,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   toggleDeletePlts($event) {
-    console.log('showDeleted', $event);
     this.updateTable('showDeleted', $event)
     this.generateContextMenu(this.getTableInputKey('showDeleted'));
 
@@ -860,7 +861,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
     this.updateTable("someDeletedItemsAreSelected", this.getTableInputKey('selectedListOfDeletedPlts').length < this.getTableInputKey('listOfDeletedPltsData').length && this.getTableInputKey('selectedListOfDeletedPlts').length > 0)
 
-    console.log(this.tableInputs);
     // this.generateContextMenu(this.showDeleted);
   }
 
@@ -874,7 +874,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   setWsHeaderSelect($event: any) {
-    this.updateTagsInput('wsHeaderSelected', $event);
+    this.updateLeftMenuInputs('wsHeaderSelected', $event);
   }
 
   resetSort() {
@@ -882,17 +882,17 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   resetFilters() {
-    this.updateTableAndTagsInputs('filterData', {});
+    this.updateTableAndLeftMenuInputs('filterData', {});
     this.emitFilters({
       userTag: [],
       systemTag: []
     });
-    this.updateTagsInput('userTags', _.map(this.tagsInput.userTags, t => ({...t, selected: false})));
-    this.updateTableAndTagsInputs("filters", {
+    this.updateLeftMenuInputs('userTags', _.map(this.leftMenuInputs.userTags, t => ({...t, selected: false})));
+    this.updateTableAndLeftMenuInputs("filters", {
       userTag: [],
       systemTag: {}
     });
-    this.updateTable("status", {"Published":{"selected":false},"Priced":{"selected":false},"Accumulated":{"selected":false}})
+    this.updateTable("status", {"Published":{"selected":false},"Priced":{"selected":false},"Accumulated":{"selected":false}});
     this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
       wsIdentifier: this.workspaceId+"-"+this.uwy,
       status: this.getTableInputKey('status')
@@ -938,10 +938,10 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   tableActionDispatcher(action: Message) {
     switch (action.type) {
       case tableStore.filterData:
-        this.updateTableAndTagsInputs('filterData', action.payload);
+        this.updateTableAndLeftMenuInputs('filterData', action.payload);
         break;
       case tableStore.setFilters:
-        this.updateTableAndTagsInputs('filters', action.payload);
+        this.updateTableAndLeftMenuInputs('filters', action.payload);
         break;
       case tableStore.sortChange:
         this.updateTable('sortData', action.payload);
@@ -963,7 +963,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         break;
 
       case tableStore.toggleSelectedPlts:
-        console.log(action.payload);
         this.toggleSelectPlts(action.payload);
         break;
 
@@ -977,13 +976,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
           }
         });
 
-        console.log(this.getTableInputKey('status'));
         this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
           wsIdentifier: this.workspaceId+"-"+this.uwy,
           status: this.getTableInputKey('status')
         }));
         break;
-
 
 
       default:
@@ -1014,11 +1011,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   filter(filterData) {
-    this.updateTableAndTagsInputs('filterData', filterData);
+    this.updateTableAndLeftMenuInputs('filterData', filterData);
   }
 
   setFilters(filters) {
-    this.updateTableAndTagsInputs('filters', filters);
+    this.updateTableAndLeftMenuInputs('filters', filters);
   }
 
   protected detectChanges() {
@@ -1058,7 +1055,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   leftMenuActionDispatcher(action: Message) {
-    console.log(action);
 
     switch (action.type) {
 
@@ -1083,9 +1079,6 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       case leftMenuStore.onSelectProjects:
         this.setSelectedProjects(action.payload);
         break;
-      case leftMenuStore.setTagModalVisibility:
-        this.setTagModal(action.payload);
-        break;
       case leftMenuStore.toggleDeletedPlts:
         this.toggleDeletePlts(action.payload);
         break;
@@ -1096,67 +1089,54 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.setUserTags(action.payload);
         break;
 
-        //Tag Manager
-
-      case leftMenuStore.addNewTag:
-        this.addNewTag(action.payload)
-        break;
-      case leftMenuStore.toggleTag:
-        this.toggleTag(action.payload);
-        break;
-      case leftMenuStore.confirmSelection:
-        this.confirmSelection();
-        break;
-      case leftMenuStore.clearSelection:
-        this.clearSelection();
-        break;
-      case leftMenuStore.save:
-        this.save();
-        break;
+      case 'Detect Parent Changes':
+        this.detectChanges();
     }
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput= {...this.tagsInput, [key]: value};
+    this.tagsInputs= {...this.tagsInputs, [key]: value};
   }
 
-  updateTableAndTagsInputs(key, value) {
-    this.updateTagsInput(key, value);
+  updateLeftMenuInputs(key, value) {
+    this.leftMenuInputs= {...this.leftMenuInputs, [key]: value};
+  }
+
+  updateTableAndLeftMenuInputs(key, value) {
+    this.updateLeftMenuInputs(key, value);
     this.updateTable(key,value);
   }
 
   addNewTag(tag) {
-    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
-    this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tag), 'tagName'));
-    this.updateTagsInput('toAssign',  _.uniqBy(_.concat(this.tagsInput.toAssign, tag), 'tagName'));
+    this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tag), 'tagName'));
+    this.updateTagsInput('toAssign',  _.uniqBy(_.concat(this.tagsInputs.toAssign, tag), 'tagName'));
   }
 
   toggleTag({i, operation, source}) {
-    if(operation == this.tagsInput['operation']) {
-      if(!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
-        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+    if(operation == this.tagsInputs['operation']) {
+      if(!_.find(this.tagsInputs.selectedTags, tag => tag.tagId == this.tagsInputs[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInputs.selectedTags, { [this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]} }));
       }else {
-        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInputs.selectedTags, this.tagsInputs[source][i].tagId));
       }
     }else {
       this.updateTagsInput('operation', operation);
-      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]} }));
     }
 
-    if(!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+    if(!_.keys(this.tagsInputs.selectedTags).length) this.updateTagsInput('operation', null);
   }
 
   confirmSelection() {
-    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
-    if(this.tagsInput.operation == 'assign') {
-      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
-      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    const tags = _.map(this.tagsInputs.selectedTags, t => ({...t, type: 'full'}));
+    if(this.tagsInputs.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInputs.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tags), 'tagId'))
     }
 
-    if(this.tagsInput.operation == 'de-assign') {
-      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
-      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
+    if(this.tagsInputs.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInputs.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInputs.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
     }
 
     this.clearSelection();
@@ -1177,21 +1157,20 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   save() {
     console.log({
-      selectedTags: this.tagsInput.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, _.uniqBy([...this.tagsInput.assignedTags, ...this.tagsInput.toAssign], t => t.tagId || t.tagName), 'tagName')
+      selectedTags: this.tagsInputs.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, _.uniqBy([...this.tagsInputs.assignedTags, ...this.tagsInputs.toAssign], t => t.tagId || t.tagName), 'tagName')
     })
     this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
       userId: 1,
       wsId: this.workspaceId,
       uwYear: this.uwy,
       plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId),
-      selectedTags: this.tagsInput.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, _.uniqBy([...this.tagsInput.assignedTags, ...this.tagsInput.toAssign], t => t.tagId || t.tagName), 'tagName')
+      selectedTags: this.tagsInputs.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, _.uniqBy([...this.tagsInputs.assignedTags, ...this.tagsInputs.toAssign], t => t.tagId || t.tagName), 'tagName')
     }));
-    this.tagsInput = {
-      ...this.tagsInput,
+    this.tagsInputs = {
+      ...this.tagsInputs,
       _tagModalVisible: false,
-      wsHeaderSelected: true,
       assignedTags: [],
       assignedTagsCache: [],
       usedInWs: [],
@@ -1210,8 +1189,39 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     this.detectChanges();
   }
 
-  onResizeStop() {
+  resizing() {
     this.detectChanges();
+  }
+
+  tagsActionDispatcher(action: Message) {
+
+    switch (action.type) {
+      case tagsStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
+      case tagsStore.addNewTag:
+        this.addNewTag(action.payload)
+        break;
+      case tagsStore.toggleTag:
+        this.toggleTag(action.payload);
+        break;
+      case tagsStore.confirmSelection:
+        this.confirmSelection();
+        break;
+      case tagsStore.clearSelection:
+        this.clearSelection();
+        break;
+      case tagsStore.save:
+        this.save();
+        break;
+    }
+  }
+
+  onTableContainerResize($event: ResizedEvent) {
+    this.updateTable('scrollConfig', {
+      containerHeight: $event.newHeight,
+      containerGap: '49px',
+    })
   }
 }
 

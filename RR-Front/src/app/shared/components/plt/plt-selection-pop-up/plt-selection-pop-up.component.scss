@@ -37,6 +37,11 @@
       margin-right: 10px;
     }
 
+    .center {
+      display: inline-block !important;
+      position: relative !important;
+    }
+
     .right > div, .center > div, .left > div {
       box-shadow: none;
     }
@@ -46,9 +51,6 @@
     }
 
     .left {
-      .tabset-left .title-list {
-        max-width: 210px !important;
-      }
 
       ::ng-deep .tabset-left .ant-tabs-content {
         height: calc(90vh - 184px) !important;

@@ -10,7 +10,7 @@
   [columnResizeMode]="'expand'"
   [responsive]="true"
   [rowTrackBy]="rowTrackBy"
-  [scrollHeight]="tableInputs.scrollHeight || tableHeight"
+  [scrollHeight]="tableInputs?.scrollHeight ? tableInputs?.scrollHeight : 'calc(' + tableInputs?.scrollConfig?.containerHeight + 'px' + ' - ' + getElHeight() + ' - ' +  tableInputs?.scrollConfig?.containerGap + ')'"
   (onColResize)="onColResize($event)"
   #dt
   [styleClass]="!((tableInputs.showDeleted ? tableInputs.listOfDeletedPltsData : tableInputs.listOfPltsData) | tableSortAndFilter : [tableInputs.sortData, tableInputs.filterData] | systemTagFilter: [tableInputs.filters.systemTag] )?.length ? 'activate-header-scroll' : ''"

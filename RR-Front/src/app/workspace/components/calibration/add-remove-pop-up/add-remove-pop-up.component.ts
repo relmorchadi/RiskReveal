@@ -18,6 +18,7 @@ import {Message} from "../../../../shared/message";
 import {BaseContainer} from "../../../../shared/base";
 import {SystemTagsService} from "../../../../shared/services/system-tags.service";
 import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/store";
+import * as tagsStore from "../../../../shared/components/plt/plt-tag-manager/store";
 
 @Component({
   selector: 'app-add-remove-pop-up',
@@ -26,7 +27,8 @@ import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/
 })
 export class AddRemovePopUpComponent extends BaseContainer implements OnInit, OnDestroy {
 
-  tagsInput: leftMenuStore.Input;
+  leftMenuInputs: leftMenuStore.Input;
+  tagsInputs: tagsStore.Input;
 
   data$: Observable<any>;
   deletedPlts$: Observable<any>;
@@ -289,7 +291,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       visible: false,
       mode: "pop-up"
     };
-    this.tagsInput = {
+    this.leftMenuInputs = {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
@@ -300,9 +302,13 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       userTags: [],
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
-      _tagModalVisible: false,
       wsHeaderSelected: true,
       pathTab: true,
+
+    };
+
+    this.tagsInputs = {
+      _tagModalVisible: false,
       assignedTags: [],
       assignedTagsCache: [],
       toAssign: [],
@@ -312,7 +318,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       suggested: [],
       selectedTags: {},
       operation: null
-    };
+    }
     this.setRightMenuSelectedTab('basket');
   }
 
@@ -342,7 +348,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   getBrowesingItemsDirectly() {
 
     this.observeRouteParamsWithSelector(() => this.getPlts()).subscribe((data) => {
-      this.setInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.updateTableAndLeftMenu('systemTagsCount', this.systemTagService.countSystemTags(data));
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.setInputs('listOfPltsData', [...this.Inputs.listOfPltsCache]);
       this.initThreadsData();
@@ -669,7 +675,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   }
 
   setWsHeaderSelect($event: any) {
-    this.setInputs('wsHeaderSelected', $event);
+    this.updateTableAndLeftMenu('wsHeaderSelected', $event);
   }
 
   unCheckAll() {
@@ -683,7 +689,7 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
   }
 
   setSelectedProjects($event) {
-    this.setInputs('projects', $event);
+    this.updateTableAndLeftMenu('projects', $event);
   }
 
   detectChanges() {
@@ -859,68 +865,54 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       case leftMenuStore.onSetSelectedUserTags:
         this.setUserTags(action.payload);
         break;
-
-      //Tag Manager
-
-      case leftMenuStore.addNewTag:
-        this.addNewTag(action.payload)
-        break;
-      case leftMenuStore.toggleTag:
-        this.toggleTag(action.payload);
-        break;
-      case leftMenuStore.confirmSelection:
-        this.confirmSelection();
-        break;
-      case leftMenuStore.clearSelection:
-        this.clearSelection();
-        break;
-      case leftMenuStore.save:
-        this.save();
-        break;
     }
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput = {...this.tagsInput, [key]: value};
+    this.tagsInputs = {...this.tagsInputs, [key]: value};
   }
 
-  updateTableAndTagsInputs(key, value) {
-    this.updateTagsInput(key, value);
-    /*this.updateTable(key,value);*/
+  updateLeftMenuInput(key, value) {
+    this.leftMenuInputs = {...this.leftMenuInputs, [key]: value};
+  }
+
+  updateTableAndLeftMenu(key, value) {
+    this.updateLeftMenuInput(key, value);
+    this.setInputs(key,value);
   }
 
   addNewTag(tag) {
-    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
-    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    /*this.updateTagsInput('toAssign', _.concat(this.tagsInputs.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInputs.assignedTags, tag));*/
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInputs.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInputs.toAssign, tag));
   }
 
   toggleTag({i, operation, source}) {
-    if (operation == this.tagsInput['operation']) {
-      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
-        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+    if (operation == this.tagsInputs['operation']) {
+      if (!_.find(this.tagsInputs.selectedTags, tag => tag.tagId == this.tagsInputs[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInputs.selectedTags, {[this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]}}));
       } else {
-        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInputs.selectedTags, this.tagsInputs[source][i].tagId));
       }
     } else {
       this.updateTagsInput('operation', operation);
-      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]}}));
     }
 
-    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+    if (!_.keys(this.tagsInputs.selectedTags).length) this.updateTagsInput('operation', null);
   }
 
   confirmSelection() {
-    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
-    if (this.tagsInput.operation == 'assign') {
-      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
-      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    const tags = _.map(this.tagsInputs.selectedTags, t => ({...t, type: 'full'}));
+    if (this.tagsInputs.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInputs.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tags), 'tagId'))
     }
 
-    if (this.tagsInput.operation == 'de-assign') {
-      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
-      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+    if (this.tagsInputs.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInputs.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInputs.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
     }
 
     this.clearSelection();
@@ -944,13 +936,12 @@ export class AddRemovePopUpComponent extends BaseContainer implements OnInit, On
       userId: 1,
       wsId: this.workspaceId,
       uwYear: this.uwy,
-      selectedTags: this.tagsInput.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+      selectedTags: this.tagsInputs.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, this.tagsInputs.assignedTags, 'tagId')
     }));
-    this.tagsInput = {
-      ...this.tagsInput,
+    this.tagsInputs = {
+      ...this.tagsInputs,
       _tagModalVisible: false,
-      wsHeaderSelected: true,
       assignedTags: [],
       assignedTagsCache: [],
       usedInWs: [],

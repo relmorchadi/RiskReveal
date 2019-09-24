@@ -14,6 +14,7 @@ import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 import { AngularDraggableModule } from 'angular2-draggable';
+import { AngularResizedEventModule } from 'angular-resize-event';
 
 
 @NgModule({

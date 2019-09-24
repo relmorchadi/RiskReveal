@@ -4,7 +4,7 @@ import * as _ from 'lodash';
 
 export const Actions = {
   updateKey: {
-    type: Types.updateKey,
+    type: Types.onSetSelectedUserTags,
     handler: (rightMenuInput: Input, key, value): Input => ({
       ...rightMenuInput,
       [key]: value
