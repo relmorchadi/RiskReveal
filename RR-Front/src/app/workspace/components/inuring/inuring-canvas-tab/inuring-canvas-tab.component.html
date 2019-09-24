@@ -4,22 +4,22 @@
       <div class="create-tab-content">
         <div class="simple-panel">
           <h6>Input Node Creation</h6>
-          <div class="menu-item add-item" (click)="createNode()">
+          <div class="menu-item add-item" (click)="showCreationPopup=true">
             Create Node
             <i class="icon-add_circle_24px"></i>
           </div>
         </div>
         <div class="simple-panel">
           <h6>Nodes</h6>
-          <div class="menu-item node-item">
-            Node 1
+          <div *ngFor="let node of appendedNodes; let i=index" class="menu-item node-item" [nz-tooltip]="node.join(', ')">
+            Node {{i+1}}
             <i class="icon-arrow_forward_ios_24px"></i>
           </div>
         </div>
         <div class="simple-panel">
           <h6>Contract Type</h6>
           <!-- TMP -->
-          <div cdkDropList class="m-box-d" style="border: none !important;"
+          <div cdkDropList id="draggable-contracts-list" style="border: none !important;"
                (cdkDropListDropped)="onContractDrop($event)">
             <div class="m-box-drag m-box-overlay menu-item draggable-item" pDraggable="inuring-contract">
               <span class="no-wrap">XoL Event</span>
@@ -320,13 +320,23 @@
 </div>
 
 
-<node-creation-popup
-  [isVisible]="showCreationPopup"
-  [selectionStep]="'plt'"
-  (onSave)="handleSave($event)"
-  [stepConfig]=" {wsId: wsConfig.wsId,
-    uwYear: wsConfig.year,
-    plts: []}"
-  (onVisibleChange)="showCreationPopup= $event"
+<!--<node-creation-popup-->
+<!--  [isVisible]="showCreationPopup"-->
+<!--  [selectionStep]="'plt'"-->
+<!--  (onSave)="handleSave($event)"-->
+<!--  [stepConfig]=" {wsId: wsConfig.wsId,-->
+<!--    uwYear: wsConfig.year,-->
+<!--    plts: []}"-->
+<!--  (onVisibleChange)="showCreationPopup= $event"-->
 
-></node-creation-popup>
+<!--&gt;</node-creation-popup>-->
+<app-plt-selection-pop-up
+  [isVisible]="showCreationPopup"
+  [multiSteps]="false"
+  [stepConfig]="stepConfig"
+  (onVisibleChange)="showCreationPopup = $event"
+  (onSelectWorkspace)="setSelectedWs($event)"
+  (onSelectItems)="setSelectedPlts($event)"
+>
+
+</app-plt-selection-pop-up>

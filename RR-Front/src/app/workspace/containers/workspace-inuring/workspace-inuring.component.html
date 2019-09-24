@@ -22,11 +22,11 @@
         <div class="all-packages-tab-content">
 
           <div class="table-container">
-            <app-table [tableColumn]="columns" [sortable]="true" [totalRecords]="paginationOption?.total"
-                       [listOfData]="packages" [virtualScroll]="false" (dbClickItem)="openInuringPackage($event)"
-                       [tableWidth]="'700px'" (filterData)="filterData($event.searchValue, $event.searchAddress)"
-                       [tableHeight]="'500px'" [activateContextMenu]="false" [loading]="false">
-            </app-table>
+            <inuring-datatable [tableColumn]="columns" [sortable]="true" [totalRecords]="paginationOption?.total"
+                               [listOfData]="packages" [virtualScroll]="false"
+                               (dbClickItem)="openInuringPackage($event)"
+                               [tableWidth]="'700px'" [tableHeight]="'500px'">
+            </inuring-datatable>
           </div>
         </div>
       </nz-tab>
@@ -79,7 +79,21 @@
     </div>
   </p-header>
   <div class="input-group-modal" style="min-height: 300px">
-
+    <form>
+      <div nz-row>
+        <div nz-col nzSpan="24" class="input-container">
+          <div class="input-placehoder"></div>
+          <input placeholder="Package ID">
+        </div>
+      </div>
+      <div class="form-divider"></div>
+      <div nz-row>
+        <input type="text">
+      </div>
+      <div nz-row>
+        <textarea name="" id="" cols="30" rows="10"></textarea>
+      </div>
+    </form>
   </div>
   <p-footer>
     <div class="modal-footer-wrapper">

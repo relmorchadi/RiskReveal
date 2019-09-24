@@ -30,7 +30,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'checkbox',
       header: '',
-      width: '20px',
+      width: '2%',
       display: true,
       sorted: false,
       filtered: false,
@@ -40,7 +40,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'id',
       header: 'ID',
-      width: '50px',
+      width: '7%',
       display: true,
       sorted: true,
       filtered: false,
@@ -48,7 +48,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'name',
       header: 'Name',
-      width: '90px',
+      width: '10%',
       display: true,
       sorted: true,
       filtered: true,
@@ -56,7 +56,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'description',
       header: 'Description',
-      width: '150px',
+      width: '15%',
       display: true,
       sorted: true,
       filtered: true,
@@ -64,7 +64,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'statsExchangeRate',
       header: 'Stats Exchange Rate',
-      width: '50px',
+      width: '5%',
       display: true,
       sorted: true,
       filtered: true,
@@ -72,15 +72,16 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'status',
       header: 'Status',
-      width: '20px',
+      width: '2%',
       display: true,
       sorted: true,
       filtered: true,
+      type: 'status'
     },
     {
       field: 'creationDate',
       header: 'Creation Date',
-      width: '50px',
+      width: '4%',
       display: true,
       sorted: true,
       filtered: true,
@@ -89,7 +90,7 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'lastModifiedDate',
       header: 'Last Modified Date',
-      width: '50px',
+      width: '4%',
       display: true,
       sorted: true,
       filtered: true,
@@ -98,23 +99,23 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     {
       field: 'lock',
       header: '',
-      width: '10px',
+      width: '2%',
       display: true,
       sorted: false,
       filtered: false,
       type: 'icon',
-      class: 'icon-lock_24px-2',
+      class: 'icon-lock_24px-2 red',
     },
     {
       field: 'actions',
       header: '',
-      width: '30px',
+      width: '5%',
       display: true,
       sorted: false,
       filtered: false,
       type: 'multi-icons',
       icons: [
-        {class: 'icon-check_24px', handler: (col, row) => null},
+        {class: 'icon-edit', handler: (col, row) => null},
         {class: 'icon-copy_24px', handler: (col, row) => null},
         {class: 'icon-trash-alt', handler: (col, row) => null}
       ]
@@ -172,9 +173,9 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     ]);
   }
 
-  filterData(value, target) {
-    console.log('[Inuring] ->  search value, targer', value, target);
-  }
+  // filterData(value, target) {
+  //   console.log('[Inuring] ->  search value, targer', value, target);
+  // }
 
   openInuringPackage(p) {
     console.log('[Inuring] ->  Open Inuring package', p);
@@ -187,7 +188,9 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
   }
 
   private _openPackageById(packageId: string) {
-    this.currentTabIndex = _.findIndex(this.openedTabs, (val, key) => val.id == packageId) + 1;
+    setTimeout(() =>
+      this.currentTabIndex = _.findIndex(_.toArray(this.workspace.inuring.content), (val, key) => val.id == packageId) + 1
+    );
 
   }
 

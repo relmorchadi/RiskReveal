@@ -27,6 +27,10 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
 
   showCreationPopup = false;
 
+  stepConfig = {
+    wsId: 'TB01735', uwYear: '2019', plts: []
+  };
+
   collapses = {
     contractDetails: true,
     inboundRoutedLoss: true
@@ -147,6 +151,8 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
     }
   ];
 
+  appendedNodes= [];
+
   @Input('wsConfig')
   wsConfig: { wsId: string, year: number };
 
@@ -161,13 +167,21 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
     console.log('[Inuring Details] Contact dop evt', $event);
   }
 
-  handleSave($event) {
-    this._store.dispatch(new AddInputNode($event));
-  }
+  // handleSave($event) {
+  //   this._store.dispatch(new AddInputNode($event));
+  // }
 
   createNode() {
     console.log('Dispatch node creation action');
-    this._store.dispatch(new AddInputNode(null));
+
+  }
+
+  setSelectedWs = ($event) => {
+  };
+
+  setSelectedPlts(selectedPlts) {
+    this.appendedNodes.push(selectedPlts);
+    this._store.dispatch(new AddInputNode(selectedPlts));
   }
 
 }

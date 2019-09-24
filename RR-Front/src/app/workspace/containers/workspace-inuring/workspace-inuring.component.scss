@@ -36,6 +36,18 @@
 
   }
 
+  .input-container{
+    border: 1px solid #00C4AA;
+    .input-placehoder{
+      height: 10px;
+    }
+    input{
+      border: none;
+      background-color: white;
+      width: 100%;
+    }
+  }
+
 }
 
 .app-body {

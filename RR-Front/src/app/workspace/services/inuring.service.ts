@@ -58,7 +58,7 @@ export class InuringService {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].inuring.content[data.id] = data;
       draft.content[wsIdentifier].inuring.currentTab = {
-        index: _.findIndex(_.keys(draft.content[wsIdentifier].inuring.content), (key, val) => key == data.id),
+        index: _.findIndex(_.keys(draft.content[wsIdentifier].inuring.content), (key, val) => key == data.id)+1,
         packageId: data.id
       };
     }));
