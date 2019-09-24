@@ -27,6 +27,7 @@ public class InuringInputNode {
     }
 
     public InuringInputNode(int inuringPackageId, String inputNodeName) {
+        this.entity = 1;
         this.inuringPackageId = inuringPackageId;
         this.inputInuringNodeStatus = InuringNodeStatus.Valid;
         this.inputNodeName = ! StringUtils.isEmpty(inputNodeName) ? inputNodeName : "Input Node";

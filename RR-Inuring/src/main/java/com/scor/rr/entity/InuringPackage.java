@@ -30,6 +30,7 @@ public class InuringPackage {
     }
 
     public InuringPackage(String packageName, String packageDescription, int workspaceId, int createdBy) {
+        this.entity = 1;
         this.packageName = packageName;
         this.packageDescription = packageDescription;
         this.workspaceId = workspaceId;

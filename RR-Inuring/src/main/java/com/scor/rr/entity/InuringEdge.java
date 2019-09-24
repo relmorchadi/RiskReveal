@@ -31,6 +31,7 @@ public class InuringEdge {
     }
 
     public InuringEdge(int inuringPackageId, int sourceNodeId, InuringNodeType sourceNodeType, int targetNodeId, InuringNodeType targetNodeType, InuringFinancialPerspective outputPerspective, InuringFinancialTreatment financialTreatment) {
+        this.entity = 1;
         this.inuringPackageId = inuringPackageId;
         this.sourceNodeId = sourceNodeId;
         this.sourceNodeType = sourceNodeType;

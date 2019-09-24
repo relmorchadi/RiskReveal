@@ -17,6 +17,7 @@ public class InuringInputAttachedPLT {
     private int pltHeaderId;
 
     public InuringInputAttachedPLT(int inuringInputNodeId, int pltHeaderId) {
+        this.entity = 1;
         this.inuringInputNodeId = inuringInputNodeId;
         this.pltHeaderId = pltHeaderId;
     }

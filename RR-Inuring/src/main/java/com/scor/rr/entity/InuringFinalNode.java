@@ -21,6 +21,7 @@ public class InuringFinalNode {
     private InuringOutputGrain  inuringOutputGrain;
 
     public InuringFinalNode(int inuringPackageId) {
+        this.entity = 1;
         this.inuringPackageId = inuringPackageId;
         this.finalNodeStatus = InuringNodeStatus.Invalid;
         this.inuringOutputGrain = InuringOutputGrain.MinimunRegionPeril;
