@@ -1,7 +1,7 @@
 package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
-import com.scor.rr.configuration.file.LossDataFileUtils;
+import com.scor.rr.configuration.utils.LossDataFileUtils;
 import com.scor.rr.domain.MetadataHeaderSectionEntity;
 import com.scor.rr.domain.MetadataHeaderSegmentEntity;
 import com.scor.rr.repository.ImportedFileRepository;

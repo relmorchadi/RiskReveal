@@ -16,6 +16,7 @@ public enum ExceptionCodename {
     NODE_PROCESSING_NOT_FOUND("NODE PROCESSING NOT FOUND"),
     ORDER_EXIST("ORDER EXIST"),
     PLT_TYPE_NOT_CORRECT("PLT Type Not correct"),
+    LMF_MUST_BE_POSITIVE("LMF MUST BE POSITIVE"),
 
     /*
         This section is deligated to PLT File Exceptions

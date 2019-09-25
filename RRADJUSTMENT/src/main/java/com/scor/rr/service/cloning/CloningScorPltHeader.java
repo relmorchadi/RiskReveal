@@ -63,7 +63,7 @@ public class CloningScorPltHeader {
             scorPltHeaderEntityClone.setScorPltHeader(scorPltHeaderEntityInitial);
             return scorpltheaderRepository.save(scorPltHeaderEntityClone);
         } else {
-            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLTNOTFOUNT, 1);
+            throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_NOT_FOUND, 1);
         }
     }
 

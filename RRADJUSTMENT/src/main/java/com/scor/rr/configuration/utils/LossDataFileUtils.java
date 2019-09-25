@@ -1,8 +1,7 @@
-package com.scor.rr.configuration.file;
+package com.scor.rr.configuration.utils;
 
 import com.scor.rr.configuration.ConverterType;
 import com.scor.rr.configuration.TypeToConvert;
-import com.scor.rr.configuration.utils.Status;
 import com.scor.rr.domain.ImportedFileEntity;
 import com.scor.rr.domain.MetadataHeaderSectionEntity;
 import com.scor.rr.domain.MetadataHeaderSegmentEntity;
