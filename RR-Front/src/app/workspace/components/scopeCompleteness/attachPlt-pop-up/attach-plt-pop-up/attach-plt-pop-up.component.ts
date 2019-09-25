@@ -138,7 +138,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '45px',
+          width: '45',
+          unit: 'px',
           icon: null,
           type: 'checkbox-scope',
           active: true
@@ -150,7 +151,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '75px',
+          width: '75',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -164,6 +166,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           resizable: true,
           icon: null,
           width: '60',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -175,6 +178,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '150',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -187,6 +191,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: false,
           width: '40',
+          unit: '%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -200,6 +205,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -212,6 +218,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -224,6 +231,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -237,6 +245,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -250,6 +259,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -263,6 +273,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -349,19 +360,19 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       someItemsAreSelected: false,
       someDeletedItemsAreSelected: false,
       showDeleted: false,
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '45px',
-          icon: null,
-          type: 'checkbox-scope',
-          active: true
-        },
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '45',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox-scope',
+        active: true
+      },
         {
           sortDir: 1,
           fields: '',
@@ -369,7 +380,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '75px',
+          width: '75',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -383,6 +395,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           resizable: true,
           icon: null,
           width: '60',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -394,6 +407,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '150',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -406,6 +420,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: false,
           width: '40',
+          unit: '%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -419,6 +434,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -431,6 +447,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -443,6 +460,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -456,6 +474,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -469,6 +488,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -482,12 +502,11 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
-        }
-
-      ],
+        }],
       filterInput: '',
       listOfDeletedPltsCache: [],
       listOfDeletedPltsData: [],
@@ -543,19 +562,19 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       someItemsAreSelected: false,
       someDeletedItemsAreSelected: false,
       showDeleted: false,
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '45px',
-          icon: null,
-          type: 'checkbox-scope',
-          active: true
-        },
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '45',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox-scope',
+        active: true
+      },
         {
           sortDir: 1,
           fields: '',
@@ -563,7 +582,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '75px',
+          width: '75',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -577,6 +597,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           resizable: true,
           icon: null,
           width: '60',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -588,6 +609,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '150',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -600,6 +622,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: false,
           width: '40',
+          unit: '%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -613,6 +636,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -625,6 +649,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -637,6 +662,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -650,6 +676,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -663,6 +690,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -676,12 +704,11 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
-        }
-
-      ],
+        }],
       filterInput: '',
       listOfDeletedPltsCache: [],
       listOfDeletedPltsData: [],
