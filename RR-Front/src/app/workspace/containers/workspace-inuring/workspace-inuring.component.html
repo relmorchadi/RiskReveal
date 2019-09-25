@@ -2,7 +2,7 @@
   <div class="a-app-header ">
     <div class="title-container">
       <h4>Inuring Package</h4>
-      <button (click)="addPackageVisibility=true" class="a-buttons-outlined"
+      <button (click)="showAddPackagePopup()" class="a-buttons-outlined"
               style="color: #332ed7 ;border-color: #332ed7">
         <i class="icon-plus"></i>
         Add Package
@@ -71,6 +71,7 @@
   [modal]="true"
   [autoZIndex]="false"
   [responsive]="true"
+  [formGroup]="inuringPackageFG"
 >
   <p-header>
     <div class="header">
@@ -78,27 +79,31 @@
       <i style="cursor: pointer" (click)="addPackageVisibility=false" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <div class="input-group-modal" style="min-height: 300px">
-    <form>
-      <div nz-row>
-        <div nz-col nzSpan="24" class="input-container">
-          <div class="input-placehoder"></div>
-          <input placeholder="Package ID">
+  <div class="input-group-modal" style="min-height: 350px">
+    <div class="popup-input mt-2" nz-row>
+      <div class="input-placeholder">ID</div>
+      <input *ngIf="!inuringPackageFG.get('edit').value; else packageId" formControlName="id" placeholder="Package ID">
+      <ng-template #packageId>
+        <div>
+          {{inuringPackageFG.get('id').value}}
         </div>
-      </div>
-      <div class="form-divider"></div>
-      <div nz-row>
-        <input type="text">
-      </div>
-      <div nz-row>
-        <textarea name="" id="" cols="30" rows="10"></textarea>
-      </div>
-    </form>
+      </ng-template>
+    </div>
+    <div class="form-divider my-1"></div>
+    <div class="popup-input" nz-row>
+      <div class="input-placeholder">Name</div>
+      <input formControlName="name" placeholder="Package Name">
+    </div>
+    <div class="popup-input mt-1" nz-row>
+      <div class="input-placeholder">Description</div>
+      <textarea formControlName="description" placeholder="Description" cols="30" rows="7"></textarea>
+    </div>
   </div>
   <p-footer>
     <div class="modal-footer-wrapper">
       <button (click)="addPackageVisibility=false" class="a-button-text-cancel">CANCEL</button>
-      <button class="a-buttons-contained-disabled">APPLY</button>
+      <button (click)="submitInuringPackageForm()" [ngClass]="{'a-buttons-contained-disabled': !inuringPackageFG.valid,
+      'a-buttons-contained': inuringPackageFG.valid}" [disabled]="!inuringPackageFG.valid" >APPLY</button>
     </div>
   </p-footer>
 </p-dialog>

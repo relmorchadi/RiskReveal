@@ -8,6 +8,7 @@ import * as fromInuring from '../../store/actions/inuring.actions';
 import * as fromWs from '../../store/actions';
 import {debounceTime} from "rxjs/operators";
 import * as _ from 'lodash';
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 
 @Component({
   selector: 'app-workspace-inuring',
@@ -115,9 +116,21 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
       filtered: false,
       type: 'multi-icons',
       icons: [
-        {class: 'icon-edit', handler: (col, row) => null},
+        {
+          class: 'icon-edit',
+          handler: (col, row) => {
+            console.log('Handle Edit ', col, row);
+            this.inuringPackageFG.patchValue({..._.pick(row, ['id', 'name', 'description']), edit: true});
+            this.addPackageVisibility = true;
+          }
+        },
         {class: 'icon-copy_24px', handler: (col, row) => null},
-        {class: 'icon-trash-alt', handler: (col, row) => null}
+        {
+          class: 'icon-trash-alt',
+          handler: (col, row) => {
+            this.dispatch(new fromInuring.DeleteInuringPackage({wsIdentifier: this.wsIdentifier, inuringPackage: row}))
+          }
+        }
       ]
     }
   ];
@@ -126,16 +139,22 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
 
   packages;
 
-  openedTabs: Array<any> = [];
-
   addPackageVisibility: boolean = false;
 
   paginationOption = {
     total: 3
   };
 
-  constructor(private actions: Actions, private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef) {
+  inuringPackageFG: FormGroup;
+
+  constructor(private actions: Actions, private route: ActivatedRoute, _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef, private _fb: FormBuilder) {
     super(_baseRouter, _baseCdr, _baseStore);
+    this.inuringPackageFG = this._fb.group({
+      'id': [, Validators.required],
+      'name': [, Validators.required],
+      'description': [],
+      'edit': [false]
+    });
   }
 
   ngOnInit() {
@@ -173,9 +192,21 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     ]);
   }
 
-  // filterData(value, target) {
-  //   console.log('[Inuring] ->  search value, targer', value, target);
-  // }
+  showAddPackagePopup() {
+    this.addPackageVisibility = true;
+    this.inuringPackageFG.patchValue({edit: false});
+  }
+
+  submitInuringPackageForm() {
+    const inuringPackage = this.inuringPackageFG.value;
+    console.log('Submit inuring Form', inuringPackage);
+    if (inuringPackage.edit)
+      this.dispatch(new fromInuring.EditInuringPackage({wsIdentifier: this.wsIdentifier, inuringPackage}));
+    else
+      this.dispatch(new fromInuring.AddInuringPackage({wsIdentifier: this.wsIdentifier, inuringPackage}));
+    this.addPackageVisibility = false;
+  }
+
 
   openInuringPackage(p) {
     console.log('[Inuring] ->  Open Inuring package', p);
@@ -191,7 +222,6 @@ export class WorkspaceInuringComponent extends BaseContainer implements OnInit {
     setTimeout(() =>
       this.currentTabIndex = _.findIndex(_.toArray(this.workspace.inuring.content), (val, key) => val.id == packageId) + 1
     );
-
   }
 
   ngOnDestroy(): void {

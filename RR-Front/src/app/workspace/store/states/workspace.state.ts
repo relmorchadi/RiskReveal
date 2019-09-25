@@ -1041,4 +1041,19 @@ export class WorkspaceState {
     return this.inuringService.closeInuringPackage(ctx, payload);
   }
 
+  @Action(fromInuring.AddInuringPackage)
+  addInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.AddInuringPackage) {
+    return this.inuringService.addInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.EditInuringPackage)
+  editInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.EditInuringPackage) {
+    return this.inuringService.editInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.DeleteInuringPackage)
+  deleteInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.DeleteInuringPackage) {
+    return this.inuringService.deleteInuringPackage(ctx, payload);
+  }
+
 }

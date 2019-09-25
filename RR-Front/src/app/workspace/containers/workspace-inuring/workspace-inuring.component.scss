@@ -36,18 +36,6 @@
 
   }
 
-  .input-container{
-    border: 1px solid #00C4AA;
-    .input-placehoder{
-      height: 10px;
-    }
-    input{
-      border: none;
-      background-color: white;
-      width: 100%;
-    }
-  }
-
 }
 
 .app-body {
@@ -62,7 +50,6 @@
 }
 
 .a-app-header {
-
   div.title-container {
     display: flex;
     flex-wrap: nowrap;
@@ -71,7 +58,36 @@
   button.a-buttons-outlined {
     margin-left: 10px;
   }
-
-
 }
 
+/**
+  Popup Styling
+ */
+
+.form-divider{
+  background-color: rgba(0,0,0,.3);
+  height: 1px;
+  border-radius: 2px;
+  width: 100%;
+
+}
+.popup-input {
+  border: 1px solid #00C4AA;
+  padding: 5px 2px;
+  width: 90%;
+  margin: auto;
+
+  .input-placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.7rem;
+    font-weight: bold;
+  }
+
+  input, textarea {
+    border: none;
+    background-color: white;
+    color: black;
+    width: 100%;
+  }
+
+}
