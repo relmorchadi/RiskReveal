@@ -42,7 +42,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilCode", nullable = true, length = 255)
+    @Column(name = "regionPerilCode", length = 255)
     public String getRegionPerilCode() {
         return regionPerilCode;
     }
@@ -52,7 +52,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilDesc", nullable = true, length = 255)
+    @Column(name = "regionPerilDesc", length = 255)
     public String getRegionPerilDesc() {
         return regionPerilDesc;
     }
@@ -62,7 +62,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "perilCode", nullable = true, length = 255)
+    @Column(name = "perilCode", length = 255)
     public String getPerilCode() {
         return perilCode;
     }
@@ -72,7 +72,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupCode", nullable = true, length = 255)
+    @Column(name = "regionPerilGroupCode", length = 255)
     public String getRegionPerilGroupCode() {
         return regionPerilGroupCode;
     }
@@ -82,7 +82,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupDescription", nullable = true, length = 255)
+    @Column(name = "regionPerilGroupDescription", length = 255)
     public String getRegionPerilGroupDescription() {
         return regionPerilGroupDescription;
     }
@@ -92,7 +92,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionHierarchy", nullable = true)
+    @Column(name = "regionHierarchy")
     public Integer getRegionHierarchy() {
         return regionHierarchy;
     }
@@ -102,7 +102,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionDesc", nullable = true, length = 255)
+    @Column(name = "regionDesc", length = 255)
     public String getRegionDesc() {
         return regionDesc;
     }
@@ -112,7 +112,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isModelled", nullable = true)
+    @Column(name = "isModelled")
     public Boolean getModelled() {
         return isModelled;
     }
@@ -122,7 +122,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierarchyParentCode", nullable = true, length = 255)
+    @Column(name = "hierarchyParentCode", length = 255)
     public String getHierarchyParentCode() {
         return hierarchyParentCode;
     }
@@ -132,7 +132,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierarchyLevel", nullable = true)
+    @Column(name = "hierarchyLevel")
     public Integer getHierarchyLevel() {
         return hierarchyLevel;
     }
@@ -142,7 +142,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isMinimumGrainRegionPeril", nullable = true)
+    @Column(name = "isMinimumGrainRegionPeril")
     public Boolean getMinimumGrainRegionPeril() {
         return isMinimumGrainRegionPeril;
     }
@@ -152,7 +152,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "parentMinimumGrainRegionPeril", nullable = true, length = 255)
+    @Column(name = "parentMinimumGrainRegionPeril", length = 255)
     public String getParentMinimumGrainRegionPeril() {
         return parentMinimumGrainRegionPeril;
     }
@@ -162,7 +162,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isActive", nullable = true)
+    @Column(name = "isActive")
     public Boolean getActive() {
         return isActive;
     }
@@ -172,7 +172,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "isEntityled", nullable = true)
+    @Column(name = "isEntityled")
     public Boolean getEntityled() {
         return isEntityled;
     }
@@ -182,7 +182,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "LastUpdatedRiskReveal", nullable = true)
+    @Column(name = "LastUpdatedRiskReveal")
     public Timestamp getLastUpdatedRiskReveal() {
         return lastUpdatedRiskReveal;
     }
@@ -192,7 +192,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "LastUpdatedCatDomain", nullable = true)
+    @Column(name = "LastUpdatedCatDomain")
     public Timestamp getLastUpdatedCatDomain() {
         return lastUpdatedCatDomain;
     }
@@ -202,7 +202,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "LastSyncRunCatDomain", nullable = true)
+    @Column(name = "LastSyncRunCatDomain")
     public Timestamp getLastSyncRunCatDomain() {
         return lastSyncRunCatDomain;
     }
@@ -212,7 +212,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "comments", nullable = true, length = 100)
+    @Column(name = "comments", length = 100)
     public String getComments() {
         return comments;
     }
@@ -222,7 +222,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierachyLevel", nullable = true)
+    @Column(name = "hierachyLevel")
     public Integer getHierachyLevel() {
         return hierachyLevel;
     }
@@ -232,7 +232,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "hierachyParentCode", nullable = true, length = 255)
+    @Column(name = "hierachyParentCode", length = 255)
     public String getHierachyParentCode() {
         return hierachyParentCode;
     }
@@ -242,7 +242,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionHierachy", nullable = true)
+    @Column(name = "regionHierachy")
     public Integer getRegionHierachy() {
         return regionHierachy;
     }
@@ -252,7 +252,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupDesc", nullable = true, length = 255)
+    @Column(name = "regionPerilGroupDesc", length = 255)
     public String getRegionPerilGroupDesc() {
         return regionPerilGroupDesc;
     }

@@ -24,7 +24,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "lmf", nullable = true, precision = 7)
+    @Column(name = "lmf", precision = 7)
     public Double getLmf() {
         return lmf;
     }
@@ -34,7 +34,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "rpmf", nullable = true, precision = 7)
+    @Column(name = "rpmf", precision = 7)
     public Double getRpmf() {
         return rpmf;
     }
@@ -44,7 +44,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "PeatDataPath", nullable = true, length = 200)
+    @Column(name = "PeatDataPath", length = 200)
     public String getPeatDataPath() {
         return peatDataPath;
     }
@@ -54,7 +54,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @Basic
-    @Column(name = "AdjustmentReturnPeriodPath", nullable = true, length = 200)
+    @Column(name = "AdjustmentReturnPeriodPath", length = 200)
     public String getAdjustmentReturnPeriodPath() {
         return adjustmentReturnPeriodPath;
     }
@@ -81,7 +81,7 @@ public class DefaultRetPerBandingParamsEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKDefaultNode", referencedColumnName = "DefaultAdjustmentNodeId")
+    @JoinColumn(name = "DefaultNode", referencedColumnName = "DefaultAdjustmentNodeId")
     public DefaultAdjustmentNodeEntity getDefaultAdjustmentNodeByFkDefaultNode() {
         return defaultAdjustmentNodeByFkDefaultNode;
     }

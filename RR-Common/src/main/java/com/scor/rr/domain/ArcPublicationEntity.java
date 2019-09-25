@@ -20,7 +20,7 @@ public class ArcPublicationEntity {
     }
 
     @Basic
-    @Column(name = "scorPLTHeaderId", nullable = true)
+    @Column(name = "scorPLTHeaderId")
     public Integer getScorPltHeaderId() {
         return scorPltHeaderId;
     }

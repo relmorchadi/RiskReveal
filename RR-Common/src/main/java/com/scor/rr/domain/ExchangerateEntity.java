@@ -34,7 +34,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -44,7 +44,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -54,7 +54,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "FKCURRENCYCODE", nullable = true, length = 255)
+    @Column(name = "CURRENCYCODE", length = 255)
     public String getCurrencycodeId() {
         return currencycodeId;
     }
@@ -64,7 +64,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "TYPE", nullable = true, length = 255)
+    @Column(name = "TYPE", length = 255)
     public String getType() {
         return type;
     }
@@ -74,7 +74,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "USD", nullable = true, length = 255)
+    @Column(name = "USD", length = 255)
     public String getUsd() {
         return usd;
     }
@@ -84,7 +84,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "EUR", nullable = true, length = 255)
+    @Column(name = "EUR", length = 255)
     public String getEur() {
         return eur;
     }
@@ -94,7 +94,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "GBP", nullable = true, length = 255)
+    @Column(name = "GBP", length = 255)
     public String getGbp() {
         return gbp;
     }
@@ -104,7 +104,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "SGD", nullable = true, length = 255)
+    @Column(name = "SGD", length = 255)
     public String getSgd() {
         return sgd;
     }
@@ -114,7 +114,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "CAD", nullable = true, length = 255)
+    @Column(name = "CAD", length = 255)
     public String getCad() {
         return cad;
     }
@@ -124,7 +124,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "EFFECTIVEDATE", nullable = true)
+    @Column(name = "EFFECTIVEDATE")
     public Timestamp getEffectivedate() {
         return effectivedate;
     }
@@ -134,7 +134,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "CREATEDBY", nullable = true, length = 255)
+    @Column(name = "CREATEDBY", length = 255)
     public String getCreatedby() {
         return createdby;
     }
@@ -144,7 +144,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "CREATEDDATE", nullable = true)
+    @Column(name = "CREATEDDATE")
     public Timestamp getCreateddate() {
         return createddate;
     }
@@ -154,7 +154,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "UPDATEDBY", nullable = true, length = 255)
+    @Column(name = "UPDATEDBY", length = 255)
     public String getUpdatedby() {
         return updatedby;
     }
@@ -164,7 +164,7 @@ public class ExchangerateEntity {
     }
 
     @Basic
-    @Column(name = "UPDATEDDATE", nullable = true)
+    @Column(name = "UPDATEDDATE")
     public Timestamp getUpdateddate() {
         return updateddate;
     }

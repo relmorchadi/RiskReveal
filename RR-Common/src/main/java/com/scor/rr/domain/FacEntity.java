@@ -36,7 +36,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisName", nullable = true, length = 255)
+    @Column(name = "analysisName", length = 255)
     public String getAnalysisName() {
         return analysisName;
     }
@@ -46,7 +46,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrBusinessType", nullable = true, length = 255)
+    @Column(name = "analysisCtrBusinessType", length = 255)
     public String getAnalysisCtrBusinessType() {
         return analysisCtrBusinessType;
     }
@@ -56,7 +56,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrId", nullable = true, length = 255)
+    @Column(name = "analysisCtrId", length = 255)
     public String getAnalysisCtrId() {
         return analysisCtrId;
     }
@@ -66,7 +66,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrEndorsementNmber", nullable = true, length = 255)
+    @Column(name = "analysisCtrEndorsementNmber", length = 255)
     public String getAnalysisCtrEndorsementNmber() {
         return analysisCtrEndorsementNmber;
     }
@@ -76,7 +76,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrFacNumber", nullable = true, length = 255)
+    @Column(name = "analysisCtrFacNumber", length = 255)
     public String getAnalysisCtrFacNumber() {
         return analysisCtrFacNumber;
     }
@@ -86,7 +86,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrInsured", nullable = true, length = 255)
+    @Column(name = "analysisCtrInsured", length = 255)
     public String getAnalysisCtrInsured() {
         return analysisCtrInsured;
     }
@@ -96,7 +96,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrLabel", nullable = true, length = 255)
+    @Column(name = "analysisCtrLabel", length = 255)
     public String getAnalysisCtrLabel() {
         return analysisCtrLabel;
     }
@@ -106,7 +106,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrLob", nullable = true, length = 255)
+    @Column(name = "analysisCtrLob", length = 255)
     public String getAnalysisCtrLob() {
         return analysisCtrLob;
     }
@@ -116,7 +116,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrOrderNumber", nullable = true, length = 255)
+    @Column(name = "analysisCtrOrderNumber", length = 255)
     public String getAnalysisCtrOrderNumber() {
         return analysisCtrOrderNumber;
     }
@@ -126,7 +126,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrSubsidiary", nullable = true)
+    @Column(name = "analysisCtrSubsidiary")
     public Integer getAnalysisCtrSubsidiary() {
         return analysisCtrSubsidiary;
     }
@@ -136,7 +136,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "analysisCtrYear", nullable = true)
+    @Column(name = "analysisCtrYear")
     public Integer getAnalysisCtrYear() {
         return analysisCtrYear;
     }
@@ -146,7 +146,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "assignedDate", nullable = true)
+    @Column(name = "assignedDate")
     public Timestamp getAssignedDate() {
         return assignedDate;
     }
@@ -156,7 +156,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "assignedTo", nullable = true, length = 255)
+    @Column(name = "assignedTo", length = 255)
     public String getAssignedTo() {
         return assignedTo;
     }
@@ -166,7 +166,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdateDate", nullable = true)
+    @Column(name = "lastUpdateDate")
     public Timestamp getLastUpdateDate() {
         return lastUpdateDate;
     }
@@ -176,7 +176,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "lastUpdatedBy", nullable = true, length = 255)
+    @Column(name = "lastUpdatedBy", length = 255)
     public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
@@ -186,7 +186,7 @@ public class FacEntity {
     }
 
     @Basic
-    @Column(name = "modellingSystemInstance", nullable = true)
+    @Column(name = "modellingSystemInstance")
     public Integer getEntitylingSystemInstance() {
         return modellingSystemInstance;
     }

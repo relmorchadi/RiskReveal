@@ -44,7 +44,7 @@ public class CalculAdjustementLinearTest {
     }
     //when lmf <= 0
     @Test
-    public void linearAdjustementLmfNegative() {
+    public void linearAdjustementLmfNegative() throws com.scor.rr.exceptions.RRException {
 
         log.info("Launch test for Linear Adjustment with negative lmf");
         assertNull(CalculAdjustement.linearAdjustement(pltLossDataList, -1, cap));
@@ -52,19 +52,19 @@ public class CalculAdjustementLinearTest {
     }
     //when PLT is empty or null
     @Test
-    public void linearAdjustementNullPlt() {
+    public void linearAdjustementNullPlt() throws com.scor.rr.exceptions.RRException {
         log.info("Launch test for Linear Adjustment with PLT NULL");
         assertNull(CalculAdjustement.linearAdjustement(null,lmf,cap));
     }
 
     @Test
-    public void linearAdjustementEmptyPlt() {
+    public void linearAdjustementEmptyPlt() throws com.scor.rr.exceptions.RRException {
         log.info("Launch test for Linear Adjustment with an EMPTY PLT");
         assertNull(CalculAdjustement.linearAdjustement(new ArrayList<>(),lmf,cap));
     }
 
     @Test
-    public void testLinearFileEmpty() {
+    public void testLinearFileEmpty() throws com.scor.rr.exceptions.RRException {
         BinaryPLTFileReader binarypltFileReader = new BinaryPLTFileReader();
         log.info("Launch test for Linear Adjustment with an empty plt file ");
         try {
@@ -85,7 +85,7 @@ public class CalculAdjustementLinearTest {
     }
 
     @Test
-    public void testLinearFileFormatDateWrong() {
+    public void testLinearFileFormatDateWrong() throws com.scor.rr.exceptions.RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a plt file ");
         try {
@@ -107,7 +107,7 @@ public class CalculAdjustementLinearTest {
     }
 
     @Test
-    public void testLinearFile() throws RRException {
+    public void testLinearFile() throws RRException, com.scor.rr.exceptions.RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
@@ -118,7 +118,7 @@ public class CalculAdjustementLinearTest {
     }
 
     @Test
-    public void testLinearFileLmf2Cap() throws RRException {
+    public void testLinearFileLmf2Cap() throws RRException, com.scor.rr.exceptions.RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));
@@ -131,7 +131,7 @@ public class CalculAdjustementLinearTest {
     }
 
     @Test
-    public void testLinearFileLmf250Uncap() throws RRException {
+    public void testLinearFileLmf250Uncap() throws RRException, com.scor.rr.exceptions.RRException {
         CSVPLTFileReader csvpltFileReader = new CSVPLTFileReader();
         log.info("Launch test for Linear Adjustment for a File ");
         List<PLTLossData> pltLossData = csvpltFileReader.read(new File("src/main/resources/file/PLT Adjustment Test PLT (Pure) 1.csv"));

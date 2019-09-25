@@ -22,7 +22,7 @@ public class ProjectMgaConfigurationEntity {
     }
 
     @Basic
-    @Column(name = "expectedFrequency", nullable = true, length = 255)
+    @Column(name = "expectedFrequency", length = 255)
     public String getExpectedFrequency() {
         return expectedFrequency;
     }
@@ -32,7 +32,7 @@ public class ProjectMgaConfigurationEntity {
     }
 
     @Basic
-    @Column(name = "submissionPeriod", nullable = true, length = 255)
+    @Column(name = "submissionPeriod", length = 255)
     public String getSubmissionPeriod() {
         return submissionPeriod;
     }
@@ -42,7 +42,7 @@ public class ProjectMgaConfigurationEntity {
     }
 
     @Basic
-    @Column(name = "financialBasis", nullable = true, length = 255)
+    @Column(name = "financialBasis", length = 255)
     public String getFinancialBasis() {
         return financialBasis;
     }

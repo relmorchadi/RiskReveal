@@ -22,7 +22,7 @@ public class RmsPortfolioEntity {
 
     @Id
     @Basic
-    @Column(name = "agCedent", nullable = true, length = 255)
+    @Column(name = "agCedent", length = 255)
     public String getAgCedent() {
         return agCedent;
     }
@@ -32,7 +32,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "agCurrency", nullable = true, length = 255)
+    @Column(name = "agCurrency", length = 255)
     public String getAgCurrency() {
         return agCurrency;
     }
@@ -42,7 +42,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "agSource", nullable = true, length = 255)
+    @Column(name = "agSource", length = 255)
     public String getAgSource() {
         return agSource;
     }
@@ -52,7 +52,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "created", nullable = true)
+    @Column(name = "created")
     public Timestamp getCreated() {
         return created;
     }
@@ -62,7 +62,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", length = 255)
     public String getDescription() {
         return description;
     }
@@ -72,7 +72,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "edmId", nullable = true)
+    @Column(name = "edmId")
     public Integer getEdmId() {
         return edmId;
     }
@@ -82,7 +82,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "edmName", nullable = true, length = 255)
+    @Column(name = "edmName", length = 255)
     public String getEdmName() {
         return edmName;
     }
@@ -92,7 +92,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "name", nullable = true, length = 255)
+    @Column(name = "name", length = 255)
     public String getName() {
         return name;
     }
@@ -102,7 +102,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "number", nullable = true, length = 255)
+    @Column(name = "number", length = 255)
     public String getNumber() {
         return number;
     }
@@ -112,7 +112,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "peril", nullable = true, length = 255)
+    @Column(name = "peril", length = 255)
     public String getPeril() {
         return peril;
     }
@@ -122,7 +122,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "portfolioId", nullable = true)
+    @Column(name = "portfolioId")
     public Integer getPortfolioId() {
         return portfolioId;
     }
@@ -132,7 +132,7 @@ public class RmsPortfolioEntity {
     }
 
     @Basic
-    @Column(name = "type", nullable = true, length = 255)
+    @Column(name = "type", length = 255)
     public String getType() {
         return type;
     }

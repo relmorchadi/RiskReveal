@@ -25,7 +25,7 @@ public class RrepCurveHeaderEntity {
     }
 
     @Basic
-    @Column(name = "lossDataType", nullable = true, length = 255)
+    @Column(name = "lossDataType", length = 255)
     public String getLossDataType() {
         return lossDataType;
     }
@@ -35,7 +35,7 @@ public class RrepCurveHeaderEntity {
     }
 
     @Basic
-    @Column(name = "financialPerspective", nullable = true, length = 255)
+    @Column(name = "financialPerspective", length = 255)
     public String getFinancialPerspective() {
         return financialPerspective;
     }
@@ -45,7 +45,7 @@ public class RrepCurveHeaderEntity {
     }
 
     @Basic
-    @Column(name = "statisticMetric", nullable = true, length = 255)
+    @Column(name = "statisticMetric", length = 255)
     public String getStatisticMetric() {
         return statisticMetric;
     }
@@ -55,7 +55,7 @@ public class RrepCurveHeaderEntity {
     }
 
     @Basic
-    @Column(name = "epCurves", nullable = true, length = 255)
+    @Column(name = "epCurves", length = 255)
     public String getEpCurves() {
         return epCurves;
     }
@@ -65,7 +65,7 @@ public class RrepCurveHeaderEntity {
     }
 
     @Basic
-    @Column(name = "epcFilePath", nullable = true, length = 255)
+    @Column(name = "epcFilePath", length = 255)
     public String getEpcFilePath() {
         return epcFilePath;
     }
@@ -75,7 +75,7 @@ public class RrepCurveHeaderEntity {
     }
 
     @Basic
-    @Column(name = "epcFileName", nullable = true, length = 255)
+    @Column(name = "epcFileName", length = 255)
     public String getEpcFileName() {
         return epcFileName;
     }

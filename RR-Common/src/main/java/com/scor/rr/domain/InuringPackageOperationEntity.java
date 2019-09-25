@@ -22,7 +22,7 @@ public class InuringPackageOperationEntity {
     }
 
     @Basic
-    @Column(name = "FKExchangeRateId", nullable = true, length = 255)
+    @Column(name = "FKExchangeRateId", length = 255)
     public String getExchangeRateId() {
         return exchangeRateId;
     }
@@ -32,7 +32,7 @@ public class InuringPackageOperationEntity {
     }
 
     @Basic
-    @Column(name = "FKInuringPackageId", nullable = true, precision = 0)
+    @Column(name = "FKInuringPackageId", precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }
@@ -42,7 +42,7 @@ public class InuringPackageOperationEntity {
     }
 
     @Basic
-    @Column(name = "FKUserId", nullable = true, precision = 0)
+    @Column(name = "FKUserId", precision = 0)
     public Integer getUserId() {
         return userId;
     }

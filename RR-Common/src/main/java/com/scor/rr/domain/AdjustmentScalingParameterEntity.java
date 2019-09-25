@@ -31,7 +31,7 @@ public class AdjustmentScalingParameterEntity {
     }
 
     @Basic
-    @Column(name = "factor", nullable = true, precision = 7)
+    @Column(name = "factor", precision = 7)
     public double getFactor() {
         return factor;
     }
@@ -55,7 +55,7 @@ public class AdjustmentScalingParameterEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeScaling", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNodeScaling", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeScaling() {
         return adjustmentNodeByFkAdjustmentNodeScaling;
     }

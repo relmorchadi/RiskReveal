@@ -23,7 +23,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "FKInuringPackageId", nullable = true, precision = 0)
+    @Column(name = "FKInuringPackageId", precision = 0)
     public Integer getInuringPackageId() {
         return inuringPackageId;
     }
@@ -33,7 +33,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "FKClaimsBasisId", nullable = true, precision = 0)
+    @Column(name = "FKClaimsBasisId", precision = 0)
     public Integer getClaimsBasisId() {
         return claimsBasisId;
     }
@@ -43,7 +43,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "FKContractId", nullable = true, length = 255)
+    @Column(name = "FKContractId", length = 255)
     public String getContractId() {
         return contractId;
     }
@@ -53,7 +53,7 @@ public class InuringObjectContractNodeEntity {
     }
 
     @Basic
-    @Column(name = "FKSubjectPremiumBasisId", nullable = true, length = 255)
+    @Column(name = "FKSubjectPremiumBasisId", length = 255)
     public String getSubjectPremiumBasisId() {
         return subjectPremiumBasisId;
     }

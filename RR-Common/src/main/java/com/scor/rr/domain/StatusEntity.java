@@ -25,7 +25,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -35,7 +35,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -45,7 +45,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "CODE", nullable = true, length = 255)
+    @Column(name = "CODE", length = 255)
     public String getCode() {
         return code;
     }
@@ -55,7 +55,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "SHORTNAME", nullable = true, length = 255)
+    @Column(name = "SHORTNAME", length = 255)
     public String getShortname() {
         return shortname;
     }
@@ -65,7 +65,7 @@ public class StatusEntity {
     }
 
     @Basic
-    @Column(name = "LONGNAME", nullable = true, length = 255)
+    @Column(name = "LONGNAME", length = 255)
     public String getLongname() {
         return longname;
     }

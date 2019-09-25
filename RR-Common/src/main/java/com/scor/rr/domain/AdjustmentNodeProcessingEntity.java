@@ -36,7 +36,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNode", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNode", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNode() {
         return adjustmentNodeByFkAdjustmentNode;
     }
@@ -46,7 +46,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustedPlt", referencedColumnName = "PKScorPltHeaderId")
+    @JoinColumn(name = "AdjustedPlt", referencedColumnName = "ScorPltHeaderId")
     public ScorPltHeaderEntity getScorPltHeaderByFkAdjustedPlt() {
         return scorPltHeaderByFkAdjustedPlt;
     }
@@ -56,7 +56,7 @@ public class AdjustmentNodeProcessingEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKInputPlt", referencedColumnName = "PKScorPltHeaderId")
+    @JoinColumn(name = "InputPlt", referencedColumnName = "ScorPltHeaderId")
     public ScorPltHeaderEntity getScorPltHeaderByFkInputPlt() {
         return scorPltHeaderByFkInputPlt;
     }

@@ -33,7 +33,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "lossDataType", nullable = true, length = 255)
+    @Column(name = "lossDataType", length = 255)
     public String getLossDataType() {
         return lossDataType;
     }
@@ -43,7 +43,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "financialPerspective", nullable = true, length = 255)
+    @Column(name = "financialPerspective", length = 255)
     public String getFinancialPerspective() {
         return financialPerspective;
     }
@@ -53,7 +53,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "purePremium", nullable = true, precision = 7)
+    @Column(name = "purePremium", precision = 7)
     public BigDecimal getPurePremium() {
         return purePremium;
     }
@@ -63,7 +63,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "standardDeviation", nullable = true, precision = 7)
+    @Column(name = "standardDeviation", precision = 7)
     public BigDecimal getStandardDeviation() {
         return standardDeviation;
     }
@@ -73,7 +73,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "cov", nullable = true, precision = 7)
+    @Column(name = "cov", precision = 7)
     public BigDecimal getCov() {
         return cov;
     }
@@ -83,7 +83,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "epsFilePath", nullable = true, length = 255)
+    @Column(name = "epsFilePath", length = 255)
     public String getEpsFilePath() {
         return epsFilePath;
     }
@@ -93,7 +93,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "epsFileName", nullable = true, length = 255)
+    @Column(name = "epsFileName", length = 255)
     public String getEpsFileName() {
         return epsFileName;
     }
@@ -103,7 +103,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "OEP100", nullable = true, precision = 7)
+    @Column(name = "OEP100", precision = 7)
     public BigDecimal getOep100() {
         return oep100;
     }
@@ -113,7 +113,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "OEP250", nullable = true, precision = 7)
+    @Column(name = "OEP250", precision = 7)
     public BigDecimal getOep250() {
         return oep250;
     }
@@ -123,7 +123,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "OEP500", nullable = true, precision = 7)
+    @Column(name = "OEP500", precision = 7)
     public BigDecimal getOep500() {
         return oep500;
     }
@@ -133,7 +133,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "AEP100", nullable = true, precision = 7)
+    @Column(name = "AEP100", precision = 7)
     public BigDecimal getAep100() {
         return aep100;
     }
@@ -143,7 +143,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "AEP250", nullable = true, precision = 7)
+    @Column(name = "AEP250", precision = 7)
     public BigDecimal getAep250() {
         return aep250;
     }
@@ -153,7 +153,7 @@ public class RrSummaryStatisticHeaderEntity {
     }
 
     @Basic
-    @Column(name = "AEP500", nullable = true, precision = 7)
+    @Column(name = "AEP500", precision = 7)
     public BigDecimal getAep500() {
         return aep500;
     }

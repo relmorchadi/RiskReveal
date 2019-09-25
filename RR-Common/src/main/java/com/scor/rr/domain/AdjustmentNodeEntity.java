@@ -39,7 +39,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "sequence", nullable = true)
+    @Column(name = "sequence")
     public Integer getSequence() {
         return sequence;
     }
@@ -49,7 +49,7 @@ public class AdjustmentNodeEntity {
     }
 
     @Basic
-    @Column(name = "Capped", nullable = true)
+    @Column(name = "Capped")
     public Boolean getCapped() {
         return capped;
     }
@@ -85,7 +85,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentThreadId", referencedColumnName = "AdjustmentThreadId")
+    @JoinColumn(name = "AdjustmentThreadId", referencedColumnName = "AdjustmentThreadId")
     public AdjustmentThreadEntity getAdjustmentThread() {
         return adjustmentThread;
     }
@@ -95,7 +95,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
+    @JoinColumn(name = "AdjustmentBasisId", referencedColumnName = "AdjustmentBasisId")
     public AdjustmentBasisEntity getAdjustmentBasis() {
         return adjustmentBasis;
     }
@@ -105,7 +105,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId")
+    @JoinColumn(name = "AdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId")
     public AdjustmentNodeEntity getAdjustmentNode() {
         return adjustmentNode;
     }
@@ -115,7 +115,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
+    @JoinColumn(name = "AdjustmentTypeId", referencedColumnName = "AdjustmentTypeId")
     public AdjustmentTypeEntity getAdjustmentType() {
         return adjustmentType;
     }
@@ -125,7 +125,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentStateId", referencedColumnName = "AdjustmentStateId")
+    @JoinColumn(name = "AdjustmentStateId", referencedColumnName = "AdjustmentStateId")
     public AdjustmentStateEntity getAdjustmentState() {
         return adjustmentState;
     }
@@ -135,7 +135,7 @@ public class AdjustmentNodeEntity {
     }
 
     @ManyToOne
-    @JoinColumn(name = "FKAdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId",insertable = false,updatable = false)
+    @JoinColumn(name = "AdjustmentNodeIdCloning", referencedColumnName = "AdjustmentNodeId",insertable = false,updatable = false)
     public AdjustmentNodeEntity getAdjustmentNodeByFkAdjustmentNodeIdCloning() {
         return adjustmentNodeByFkAdjustmentNodeIdCloning;
     }

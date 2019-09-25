@@ -24,7 +24,7 @@ public class InuringPackageEntity {
     }
 
     @Basic
-    @Column(name = "FKWorkspaceId", nullable = true, length = 255)
+    @Column(name = "FKWorkspaceId", length = 255)
     public String getWorkspaceId() {
         return workspaceId;
     }
@@ -34,7 +34,7 @@ public class InuringPackageEntity {
     }
 
     @Basic
-    @Column(name = "FKLastExportUserId", nullable = true, precision = 0)
+    @Column(name = "FKLastExportUserId", precision = 0)
     public Integer getLastExportUserId() {
         return lastExportUserId;
     }
@@ -44,7 +44,7 @@ public class InuringPackageEntity {
     }
 
     @Basic
-    @Column(name = "FKCreatedUserId", nullable = true, precision = 0)
+    @Column(name = "FKCreatedUserId", precision = 0)
     public Integer getCreatedUserId() {
         return createdUserId;
     }
@@ -54,7 +54,7 @@ public class InuringPackageEntity {
     }
 
     @Basic
-    @Column(name = "FKModifiedUserId", nullable = true, precision = 0)
+    @Column(name = "FKModifiedUserId", precision = 0)
     public Integer getModifiedUserId() {
         return modifiedUserId;
     }
@@ -64,7 +64,7 @@ public class InuringPackageEntity {
     }
 
     @Basic
-    @Column(name = "FKLastImportUserId", nullable = true, precision = 0)
+    @Column(name = "FKLastImportUserId", precision = 0)
     public Integer getLastImportUserId() {
         return lastImportUserId;
     }

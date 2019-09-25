@@ -52,7 +52,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "projectId", nullable = true)
+    @Column(name = "projectId")
     public Integer getProjectId() {
         return projectId;
     }
@@ -62,7 +62,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "rdmId", nullable = true, precision = 7)
+    @Column(name = "rdmId", precision = 7)
     public BigDecimal getRdmId() {
         return rdmId;
     }
@@ -72,7 +72,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "rmdName", nullable = true, length = 255)
+    @Column(name = "rmdName", length = 255)
     public String getRmdName() {
         return rmdName;
     }
@@ -82,7 +82,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "analysisId", nullable = true, precision = 7)
+    @Column(name = "analysisId", precision = 7)
     public BigDecimal getAnalysisId() {
         return analysisId;
     }
@@ -92,7 +92,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "analysisName", nullable = true, length = 255)
+    @Column(name = "analysisName", length = 255)
     public String getAnalysisName() {
         return analysisName;
     }
@@ -102,7 +102,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "description", nullable = true, length = 255)
+    @Column(name = "description", length = 255)
     public String getDescription() {
         return description;
     }
@@ -112,7 +112,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "defaultGrain", nullable = true, length = 255)
+    @Column(name = "defaultGrain", length = 255)
     public String getDefaultGrain() {
         return defaultGrain;
     }
@@ -122,7 +122,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "exposureType", nullable = true, length = 255)
+    @Column(name = "exposureType", length = 255)
     public String getExposureType() {
         return exposureType;
     }
@@ -132,7 +132,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "exposureTypeCode", nullable = true)
+    @Column(name = "exposureTypeCode")
     public Integer getExposureTypeCode() {
         return exposureTypeCode;
     }
@@ -142,7 +142,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "edmNameSourceLink", nullable = true, length = 255)
+    @Column(name = "edmNameSourceLink", length = 255)
     public String getEdmNameSourceLink() {
         return edmNameSourceLink;
     }
@@ -152,7 +152,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "exposureId", nullable = true, precision = 7)
+    @Column(name = "exposureId", precision = 7)
     public BigDecimal getExposureId() {
         return exposureId;
     }
@@ -162,7 +162,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "anakysisCurrency", nullable = true, length = 255)
+    @Column(name = "anakysisCurrency", length = 255)
     public String getAnakysisCurrency() {
         return anakysisCurrency;
     }
@@ -172,7 +172,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "rmsExchangeRate", nullable = true, precision = 7)
+    @Column(name = "rmsExchangeRate", precision = 7)
     public BigDecimal getRmsExchangeRate() {
         return rmsExchangeRate;
     }
@@ -182,7 +182,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "typeCode", nullable = true)
+    @Column(name = "typeCode")
     public Integer getTypeCode() {
         return typeCode;
     }
@@ -192,7 +192,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "analysisType", nullable = true, length = 255)
+    @Column(name = "analysisType", length = 255)
     public String getAnalysisType() {
         return analysisType;
     }
@@ -202,7 +202,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "runDate", nullable = true)
+    @Column(name = "runDate")
     public Timestamp getRunDate() {
         return runDate;
     }
@@ -212,7 +212,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "region", nullable = true, length = 255)
+    @Column(name = "region", length = 255)
     public String getRegion() {
         return region;
     }
@@ -222,7 +222,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "peril", nullable = true, length = 255)
+    @Column(name = "peril", length = 255)
     public String getPeril() {
         return peril;
     }
@@ -232,7 +232,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "rpCode", nullable = true, length = 255)
+    @Column(name = "rpCode", length = 255)
     public String getRpCode() {
         return rpCode;
     }
@@ -242,7 +242,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "subPeril", nullable = true, length = 255)
+    @Column(name = "subPeril", length = 255)
     public String getSubPeril() {
         return subPeril;
     }
@@ -252,7 +252,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "lossAmplification", nullable = true, length = 255)
+    @Column(name = "lossAmplification", length = 255)
     public String getLossAmplification() {
         return lossAmplification;
     }
@@ -262,7 +262,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "status", nullable = true, precision = 7)
+    @Column(name = "status", precision = 7)
     public BigDecimal getStatus() {
         return status;
     }
@@ -272,7 +272,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "analysisMode", nullable = true)
+    @Column(name = "analysisMode")
     public Integer getAnalysisMode() {
         return analysisMode;
     }
@@ -282,7 +282,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "engineTypeCode", nullable = true)
+    @Column(name = "engineTypeCode")
     public Integer getEngineTypeCode() {
         return engineTypeCode;
     }
@@ -292,7 +292,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "engineType", nullable = true, length = 255)
+    @Column(name = "engineType", length = 255)
     public String getEngineType() {
         return engineType;
     }
@@ -302,7 +302,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "engineVersion", nullable = true, length = 255)
+    @Column(name = "engineVersion", length = 255)
     public String getEngineVersion() {
         return engineVersion;
     }
@@ -312,7 +312,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "engineVersionMajor", nullable = true, length = 255)
+    @Column(name = "engineVersionMajor", length = 255)
     public String getEngineVersionMajor() {
         return engineVersionMajor;
     }
@@ -322,7 +322,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "profileName", nullable = true, length = 255)
+    @Column(name = "profileName", length = 255)
     public String getProfileName() {
         return profileName;
     }
@@ -332,7 +332,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "profileKey", nullable = true, length = 255)
+    @Column(name = "profileKey", length = 255)
     public String getProfileKey() {
         return profileKey;
     }
@@ -342,7 +342,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "purePremium", nullable = true, precision = 7)
+    @Column(name = "purePremium", precision = 7)
     public BigDecimal getPurePremium() {
         return purePremium;
     }
@@ -352,7 +352,7 @@ public class RmsAnalysisNewEntity {
     }
 
     @Basic
-    @Column(name = "exposureTiv", nullable = true, precision = 7)
+    @Column(name = "exposureTiv", precision = 7)
     public BigDecimal getExposureTiv() {
         return exposureTiv;
     }

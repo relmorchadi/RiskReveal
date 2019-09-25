@@ -26,7 +26,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "ISACTIVE", nullable = true)
+    @Column(name = "ISACTIVE")
     public Boolean getIsactive() {
         return isactive;
     }
@@ -36,7 +36,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "LASTSYNCHRONIZED", nullable = true)
+    @Column(name = "LASTSYNCHRONIZED")
     public Timestamp getLastsynchronized() {
         return lastsynchronized;
     }
@@ -46,7 +46,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARYLEDGERCODE", nullable = true, length = 255)
+    @Column(name = "SUBSIDIARYLEDGERCODE", length = 255)
     public String getSubsidiaryledgercode() {
         return subsidiaryledgercode;
     }
@@ -56,7 +56,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "NAME", nullable = true, length = 1)
+    @Column(name = "NAME", length = 1)
     public String getName() {
         return name;
     }
@@ -66,7 +66,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "LONGNAMENAME", nullable = true, length = 1)
+    @Column(name = "LONGNAMENAME", length = 1)
     public String getLongnamename() {
         return longnamename;
     }
@@ -76,7 +76,7 @@ public class SubsidiaryledgerEntity {
     }
 
     @Basic
-    @Column(name = "SUBSIDIARYCODE_ID", nullable = true, length = 255)
+    @Column(name = "SUBSIDIARYCODE_ID", length = 255)
     public String getSubsidiarycodeId() {
         return subsidiarycodeId;
     }

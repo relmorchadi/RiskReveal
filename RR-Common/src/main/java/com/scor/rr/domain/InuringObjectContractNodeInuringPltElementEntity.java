@@ -21,7 +21,7 @@ public class InuringObjectContractNodeInuringPltElementEntity {
     }
 
     @Basic
-    @Column(name = "FKoutputInuringPltElementsId", nullable = true, precision = 0)
+    @Column(name = "FKoutputInuringPltElementsId", precision = 0)
     public Integer getOutputInuringPltElementsInuringPltElementId() {
         return outputInuringPltElementsInuringPltElementId;
     }
@@ -31,7 +31,7 @@ public class InuringObjectContractNodeInuringPltElementEntity {
     }
 
     @Basic
-    @Column(name = "FKinputInuringPltElementsId", nullable = true, precision = 0)
+    @Column(name = "FKinputInuringPltElementsId", precision = 0)
     public Integer getInputInuringPltElementsInuringPltElementId() {
         return inputInuringPltElementsInuringPltElementId;
     }
