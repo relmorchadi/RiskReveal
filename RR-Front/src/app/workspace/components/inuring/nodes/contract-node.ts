@@ -26,7 +26,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
           </a>
           <ul nz-menu style="font-size: 12px">
             <li nz-menu-item>Clone</li>
-            <li nz-menu-item>Delete</li>
+            <li (click)="deleteNode()" nz-menu-item>Delete</li>
             <li nz-menu-item>Unpin to Curve</li>
             <li nz-menu-divider></li>
             <li nz-menu-item>Edit</li>
@@ -90,6 +90,10 @@ export class ContractNodeComponent extends BaseNodeComponent implements OnInit {
   }
 
   ngOnInit() {
+  }
+
+  deleteNode(){
+    this.removeNode();
   }
 
 }

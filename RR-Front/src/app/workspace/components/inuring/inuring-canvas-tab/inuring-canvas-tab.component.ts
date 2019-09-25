@@ -151,7 +151,7 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
     }
   ];
 
-  appendedNodes= [];
+  appendedNodes = [];
 
   @Input('wsConfig')
   wsConfig: { wsId: string, year: number };
@@ -181,7 +181,7 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
 
   setSelectedPlts(selectedPlts) {
     this.appendedNodes.push(selectedPlts);
-    this._store.dispatch(new AddInputNode(selectedPlts));
+    this._store.dispatch(new AddInputNode({plts: selectedPlts, index: this.appendedNodes.length }));
   }
 
 }

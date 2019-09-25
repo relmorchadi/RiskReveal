@@ -1,4 +1,4 @@
-import {AfterViewInit, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Dialogs, Surface} from "jsplumbtoolkit";
 import {jsPlumbService, jsPlumbSurfaceComponent} from "jsplumbtoolkit-angular";
 import {FinalNodeComponent,InputNodeComponent} from "../nodes";
@@ -20,11 +20,17 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   surface: Surface;
 
+  @Input('data')
+  set setInuringData(d){
+    console.log('Data Inuring Graph', d);
+  }
+
   view = {
     nodes: {
       'selectable': {
         events: {
           tap: (params: any) => {
+            console.log('Tap Param', params);
             if (params.node.data.ofType === 'stats') {
               if (params.e.which === 3) return;
               // this.store$.dispatch(new SelectLayoutToShowAction({id: 4, type: 'DEFAULT'}));
@@ -38,7 +44,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       'inputNode': {
         parent: 'selectable',
         component: InputNodeComponent,
-        events: {},
+        events: {}
       },
       'contractNode': {
         parent: 'selectable',
@@ -223,8 +229,9 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       ofActionDispatched(AddInputNode, AddJoinNode)
     ).subscribe(action => {
       console.log('Actions here')
-      if (action instanceof AddInputNode)
-        return this.toolkit.addNode({type: 'inputNode'});
+      if (action instanceof AddInputNode){
+        return this.toolkit.addNode({type: 'inputNode', plts: action.payload.plts, index: action.payload.index});
+      }
       else if (action instanceof AddJoinNode)
         return this.toolkit.addNode({type: 'joinNode'});
     })
@@ -233,10 +240,10 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   ngAfterViewInit(): void {
     this.surface = window['surface'] = this.surfaceComponent.surface;
     this.toolkit = window['toolkit'] = this.$jsplumb.getToolkit(this.toolkitId);
-    this.toolkit.addNode({type: 'inputNode'});
+    // this.toolkit.addNode({type: 'inputNode'});
     // this.toolkit.addNode({type: 'contractNode'});
-    this.toolkit.addNode({type: 'joinNode'});
-    this.toolkit.addNode({type: 'finalNode'});
+    // this.toolkit.addNode({type: 'joinNode'});
+    this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
   }
 
   drop(param) {
@@ -245,7 +252,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   refreshToolkit() {
     this.toolkit.clear();
-    this.toolkit.addNode({type: 'finalNode'});
+    this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
   }
 
   addJoinNode() {
@@ -253,7 +260,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   }
 
   addNoteNode(){
-    this.toolkit.addNode({type: 'noteNode'});
+    this.toolkit.addNode({type: 'noteNode', content: 'Heey !!'});
   }
 
   ngOnDestroy(): void {

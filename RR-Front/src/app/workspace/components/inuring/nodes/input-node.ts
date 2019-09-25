@@ -1,15 +1,15 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {BaseNodeComponent} from "jsplumbtoolkit-angular";
 
 @Component({
   selector: 'input-node',
   template: `
-    <div class="flowchart-object flowchart-start input-node-card">
+    <div class="flowchart-object flowchart-start input-node-card" (dblclick)="openPopup()">
       <div class="node-header">
-        Input Node {{nodeNumber}}
+        Input Node {{index}}
       </div>
       <div class="node-content">
-        2 PLTs
+        {{plts?.length}} PLTs
       </div>
       <div class="node-footer d-flex justify-content-between align-items-center">
         <i class="icon-corner-right-down"></i>
@@ -19,7 +19,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
           </a>
           <ul nz-menu style="font-size: 12px">
             <li nz-menu-item>Clone</li>
-            <li nz-menu-item>Delete</li>
+            <li (click)="deleteNode()" nz-menu-item>Delete</li>
             <li nz-menu-item>Unpin to Curve</li>
             <li nz-menu-divider></li>
             <li nz-menu-item>Edit</li>
@@ -73,14 +73,24 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
 })
 export class InputNodeComponent extends BaseNodeComponent implements OnInit {
 
-  @Input('number')
-  nodeNumber = '1';
+  index;
+  plts = [];
 
   constructor() {
     super();
   }
 
   ngOnInit() {
+    this.plts= this.getNode().data.plts;
+    this.index= this.getNode().data.index;
+  }
+
+  deleteNode(){
+    this.removeNode();
+  }
+
+  openPopup(){
+
   }
 
 }
