@@ -31,7 +31,6 @@ import {jsPlumbToolkitModule} from 'jsplumbtoolkit-angular';
 import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import {Dialogs} from 'jsplumbtoolkit';
 import {INURING_NODES} from "./components/inuring/nodes";
-import {AngularResizedEventModule} from "angular-resize-event";
 
 
 @NgModule({
@@ -58,8 +57,7 @@ import {AngularResizedEventModule} from "angular-resize-event";
     ScrollingModule,
     DropdownModule,
     jsPlumbToolkitModule,
-    jsPlumbToolkitDragDropModule,
-    AngularResizedEventModule
+    jsPlumbToolkitDragDropModule
   ],
   exports: [
     RouterModule

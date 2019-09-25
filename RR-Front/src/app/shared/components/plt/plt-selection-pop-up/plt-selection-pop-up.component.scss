@@ -15,9 +15,10 @@
   }
 
   .content {
-    flex: 1;
     height: 100%;
-
+    display: grid;
+    grid-template-columns: auto auto auto;
+    grid-template-rows: auto;
 
     .title-as-tab {
       display: flex;
@@ -35,11 +36,6 @@
     .right, .center, .left {
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 0 6px rgba(0, 0, 0, 0.23);
       margin-right: 10px;
-    }
-
-    .center {
-      display: inline-block !important;
-      position: relative !important;
     }
 
     .right > div, .center > div, .left > div {

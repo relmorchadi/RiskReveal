@@ -187,7 +187,7 @@ export class SubmissionPageComponent implements OnInit {
 
   submitData() {
     const data = {
-      id: 'car - 0' + Math.floor(Math.random() * 10000),
+      id: 'CAR-0' + Math.floor(Math.random() * 10000),
       lastUpdateDate: null,
       lastUpdatedBy: null,
       requestCreationDate: new Date(),
@@ -204,7 +204,12 @@ export class SubmissionPageComponent implements OnInit {
       uwanalysisContractOrderNumber: 0,
       uwanalysisContractSector: this.sector,
       uwanalysisContractSubsidiary: this.subsidiary.value,
-      uwanalysisContractYear: this.uwYear
+      uwanalysisContractYear: this.uwYear,
+      cedantName: 'INGREDION, INC_',
+      contractName: 'ENNMG1800030 /ex ENEUR2800034',
+      uwAnalysisContractDate: this.uwYear + '-01',
+      assignedAnalyst: 'Amina Cheref',
+      carStatus: 'New'
     };
 /*    this.wsApi.postFacData(data).subscribe(dt => console.log(dt));*/
     this.store.dispatch(new fromWs.CreateNewFac(data));

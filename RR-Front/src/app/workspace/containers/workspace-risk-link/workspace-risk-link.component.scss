@@ -413,7 +413,7 @@
             .ui-table-thead {
               tr:nth-child(2n) {
                 th {
-                  padding: 0px 10px 5px 3px;
+                  padding: 0 10px 5px 3px;
                   font-size: 10px;
                   vertical-align: top;
                   color: rgba(0, 0, 0, 0.38);
@@ -452,6 +452,12 @@
                   font-family: Rubik;
                   height: 20px;
                   border: none;
+                  outline: 0;
+                }
+
+                .select-header {
+                  padding: 0 10px 0 3px;
+                  vertical-align: bottom;
                 }
               }
             }
@@ -1021,6 +1027,11 @@ TABLE STYLE
           font-family: Rubik;
           height: 20px;
           border: none;
+        }
+
+        .select-header {
+          padding: 0 10px 0 3px;
+          vertical-align: bottom;
         }
       }
 

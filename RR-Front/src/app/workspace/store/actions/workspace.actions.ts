@@ -80,19 +80,19 @@ export class UpdateWsRouting {
   constructor(public wsId: string, public route: string) {}
 }
 
-
 export class MarkWsAsFavorite {
-  static readonly type = '[Workspace] Mark workspace as favorite';
+  static readonly type = '[Workspace] Mark workspace as Favorite';
+  constructor(public payload: { wsIdentifier: string }) {}
+}
 
-  constructor(public payload: { wsIdentifier: string }) {
-  }
+export class MarkFacWsAsFavorite {
+  static readonly type = '[Workspace] Mark Workspace Fac as Favorite';
+  constructor(public payload?: any) {}
 }
 
 export class MarkWsAsNonFavorite {
   static readonly type = '[Workspace] Mark workspace as non favorite';
-
-  constructor(public payload: { wsIdentifier: string }) {
-  }
+  constructor(public payload: { wsIdentifier: string }) {}
 }
 
 

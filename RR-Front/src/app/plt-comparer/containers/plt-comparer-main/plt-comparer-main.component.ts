@@ -1,13 +1,9 @@
 import {ChangeDetectorRef, Component, NgZone, OnInit, TemplateRef, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
-import * as fromWorkspaceStore from "../../../workspace/store";
-import {WorkspaceState} from "../../../workspace/store";
 import {Select, Store} from '@ngxs/store';
 import * as _ from 'lodash';
 import {Table} from "primeng/table";
-import {map, switchMap} from 'rxjs/operators';
-import {combineLatest, Observable, of} from 'rxjs';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as tableStore from "../../../shared/components/plt/plt-main-table/store";
 import {BaseContainer} from "../../../shared/base";
@@ -581,6 +577,11 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
 
   showModal(): void {
     this.isVisible = true;
+    this.detectChanges();
+  }
+
+  log(e) {
+    console.log(e)
   }
 
   handleCancel(): void {

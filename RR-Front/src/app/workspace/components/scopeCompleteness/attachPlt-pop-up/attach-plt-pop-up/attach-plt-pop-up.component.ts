@@ -22,6 +22,8 @@ import {SystemTagsService} from "../../../../../shared/services/system-tags.serv
 import {trestySections} from '../../../../containers/workspace-scope-completence/data';
 import {of} from "rxjs";
 import * as leftMenuStore from "../../../../../shared/components/plt/plt-left-menu/store";
+import {TableSortAndFilterPipe} from "../../../../../shared/pipes/table-sort-and-filter.pipe";
+import {SystemTagFilterPipe} from "../../../../../shared/pipes/system-tag-filter.pipe";
 import * as tagsStore from "../../../../../shared/components/plt/plt-tag-manager/store";
 
 @Component({
@@ -95,6 +97,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
 
   constructor(private route$: ActivatedRoute,
               private systemTagService: SystemTagsService,
+              private filterPipe: TableSortAndFilterPipe ,
+              private systemTagFilter:SystemTagFilterPipe,
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -111,6 +115,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       tagColor: '#0700e4'
     };
     this.tableInputs = {
+      scrollHeight: null,
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: null,
@@ -329,6 +334,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
 
   onHide() {
     this.tableInputs = {
+      scrollHeight: null,
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: null,
@@ -522,6 +528,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     this.pltContainerTwo = [];
     this.pltContainer = [];
     this.tableInputs = {
+      scrollHeight: 'calc(100vh - 480px)',
       dataKey: "pltId",
       openedPlt: "",
       contextMenuItems: null,
@@ -730,6 +737,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       this.projects = _.map(projects, p => ({...p, selected: false}));
       this.detectChanges();
     });
+    this.showApplicablePltsFunction();
   }
 
   tableActionDispatcher(action: Message) {
@@ -782,6 +790,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
 
       case tableStore.deselectPlt:
         this.deselectThePlt(action.payload);
+        break;
+      case tableStore.selectAllPltsRow:
+        this.selectAllPltsRow(action.payload);
         break;
 
       case tableStore.toggleSelectedPlts:
@@ -876,6 +887,29 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     }
   }
 
+  getCurrentPlts(){
+    return this.systemTagFilter.transform(this.filterPipe.transform(this.tableInputs.showDeleted ? this.tableInputs.listOfDeletedPltsData : this.tableInputs.listOfPltsData,[this.tableInputs.sortData, this.tableInputs.filterData]),[this.tableInputs.filters.systemTag])
+  }
+  showApplicablePltsFunction() {
+    // this.showApplicablePlts = !this.showApplicablePlts;
+    if (this.showApplicablePlts) {
+      this.updateTable('listOfPltsData', this.tableInputs.listOfPltsData.map(plt => {
+
+        let check = false;
+        plt.treatySectionsState.forEach(ts => {
+          if (ts.state != 'disabled') {
+            check = true;
+          }
+        })
+        return {...plt, visible: check};
+      }))
+    } else {
+      this.updateTable('listOfPltsData', this.tableInputs.listOfPltsData.map(plt => {
+        return {...plt, visible: true};
+      }))
+    }
+  }
+
   initialiseContainer(tableInputs) {
 
     tableInputs.listOfPltsData.forEach(plt => {
@@ -891,7 +925,6 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       })
     })
     this.pltContainerTwo = _.merge([], this.pltContainer);
-    console.log("pltContainerTwo", this.pltContainerTwo);
 
   }
 
@@ -975,25 +1008,25 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   }
 
   selectAllPltsContainer(event) {
-    if(event){
-    this.pltContainer = [];
-    this.tableInputs.listOfPltsData.forEach(plt => {
-      plt.treatySectionsState.forEach(ts => {
-        if (ts.state != 'disabled') {
-          let object = {
-            pltId: plt.pltId,
-            regionPeril: plt.regionPerilCode,
-            targetRap: plt.grain,
-            tsId: ts.tsId
-          }
-          this.pltContainer.push(object)
-          this.updatePltSingleSelection(object.pltId);
-        }
-      })
-    })}else{
+    if (event) {
       this.pltContainer = [];
-      this.tableInputs.listOfPltsData.forEach(plt => {
-        this.updatePltSingleSelection(plt.pltId);
+      this.getCurrentPlts().forEach(plt => {
+        plt.treatySectionsState.forEach(ts => {
+          if (ts.state != 'disabled') {
+            let object = {
+              pltId: plt.pltId,
+              regionPeril: plt.regionPerilCode,
+              targetRap: plt.grain,
+              tsId: ts.tsId
+            }
+            this.pltContainer.push(object)
+            this.updatePltSingleSelection(object.pltId);
+          }
+        })
+      })
+    } else {
+      this.getCurrentPlts().forEach(plt => {
+        this.deselectThePlt(plt.pltId);
       })
     }
     this.detectChanges();
@@ -1034,6 +1067,24 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
     this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: false}}))
     this.pltContainer = _.filter(this.pltContainer, plt => plt.pltId != pltId);
+  }
+
+  selectAllPltsRow(pltId) {
+    _.forEach(this.tableInputs.listOfPltsData, plt => {
+      if(plt.pltId == pltId){
+      plt.treatySectionsState.forEach(ts => {
+        if (ts.state != 'disabled') {
+          this.pltContainer.push({
+            pltId: plt.pltId,
+            regionPeril: plt.regionPerilCode,
+            targetRap: plt.grain,
+            tsId: ts.tsId
+          })
+        }
+      })
+        let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
+        this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: true}}))
+    }})
   }
 
   toggleSelectPlts(plts: any) {

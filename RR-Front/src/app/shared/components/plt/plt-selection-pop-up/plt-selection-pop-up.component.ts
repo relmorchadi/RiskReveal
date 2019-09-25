@@ -5,7 +5,8 @@ import {
   Input,
   OnInit,
   Output,
-  ViewChild
+  ViewChild,
+  ViewEncapsulation
 } from '@angular/core';
 import {BaseContainer} from "../../../base";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
@@ -32,7 +33,7 @@ import {ResizedEvent} from "angular-resize-event";
 @Component({
   selector: 'app-plt-selection-pop-up',
   templateUrl: './plt-selection-pop-up.component.html',
-  styleUrls: ['./plt-selection-pop-up.component.scss'],
+  styleUrls: ['./plt-selection-pop-up.component.scss']
 })
 export class PltSelectionPopUpComponent extends BaseContainer implements OnInit {
 
@@ -143,11 +144,10 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       mode: "pop-up"
     };
     this.tableInputs= {
-      scrollHeight: 'calc( 100vh - 286px )',
       dataKey: 'pltId',
       scrollConfig: {
         containerHeight: null,
-        containerGap: null
+        containerGap: '62px'
       },
       contextMenuItems: [
         {
@@ -157,27 +157,28 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
         },
       ],
       filterInput: '',
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '40',
-          icon: null,
-          type: 'checkbox',
-          active: true
-        },
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '40',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox',
+        active: true
+      },
         {
           sortDir: 1,
           fields: '',
           header: 'User Tags',
           sorted: false,
           filtred: false,
-          resizable: false,
-          width: '24%',
+          resizable: true,
+          width: '66',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -190,7 +191,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: true,
           resizable: true,
           icon: null,
-          width: '28%',
+          width: '28',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -201,7 +203,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '100%',
+          width: '80',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -213,7 +216,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '22%',
+          width: '53',
+          unit: 'px',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -226,7 +230,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '35%',
+          width: '35',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -238,7 +243,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '60%',
+          width: '60',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -250,7 +256,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '70%',
+          width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -295,12 +302,12 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '25%',
+          width: '25',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
-        },
-        {
+        },{
           sortDir: 1,
           fields: '',
           header: '',
@@ -308,7 +315,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-note',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Published for Pricing",
           highlight: 'Published'
@@ -321,7 +329,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-dollar-alt',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Priced",
           highlight: 'Priced'
@@ -334,12 +343,12 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-focus-add',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Published for Accumulation",
           highlight: 'Accumulated'
-        },
-      ],
+        }],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
@@ -689,27 +698,28 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
         },
       ],
       filterInput: '',
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '40',
-          icon: null,
-          type: 'checkbox',
-          active: true
-        },
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '40',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox',
+        active: true
+      },
         {
           sortDir: 1,
           fields: '',
           header: 'User Tags',
           sorted: false,
           filtred: false,
-          resizable: false,
-          width: '24%',
+          resizable: true,
+          width: '66',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -722,7 +732,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: true,
           resizable: true,
           icon: null,
-          width: '28%',
+          width: '28',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -733,7 +744,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '100%',
+          width: '80',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -745,7 +757,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: false,
-          width: '22%',
+          width: '53',
+          unit: 'px',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -758,7 +771,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '35%',
+          width: '35',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -770,7 +784,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '60%',
+          width: '60',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -782,7 +797,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '70%',
+          width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -827,12 +843,12 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           sorted: true,
           filtred: true,
           resizable: true,
-          width: '25%',
+          width: '25',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
-        },
-        {
+        },{
           sortDir: 1,
           fields: '',
           header: '',
@@ -840,7 +856,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-note',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Published for Pricing",
           highlight: 'Published'
@@ -853,7 +870,8 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-dollar-alt',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Priced",
           highlight: 'Priced'
@@ -866,12 +884,12 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
           filtred: false,
           icon: 'icon-focus-add',
           type: 'icon',
-          width: '50px',
+          width: '50',
+          unit: 'px',
           active: true,
           tooltip: "Published for Accumulation",
           highlight: 'Accumulated'
-        },
-      ],
+        }],
       listOfPltsData: [],
       listOfDeletedPltsData: [],
       listOfPltsCache: [],
@@ -1387,7 +1405,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     console.log($event)
     this.updateTable('scrollConfig', {
       containerHeight: $event.newHeight,
-      containerGap: '49px',
+      containerGap: '62px',
     })
   }
 

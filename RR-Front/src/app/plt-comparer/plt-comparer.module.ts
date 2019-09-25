@@ -4,7 +4,6 @@ import {CONTAINERS, PltComparerMainComponent} from './containers';
 import {COMPONENTS} from './components';
 import {SharedModule} from '../shared/shared.module';
 import {RouterModule} from '@angular/router';
-import {AngularResizedEventModule} from "angular-resize-event";
 // import {WorkspaceModule} from '../workspace/workspace.module';
 
 const routes = [
@@ -17,7 +16,6 @@ const routes = [
     CommonModule,
     SharedModule,
     RouterModule.forChild(routes),
-    AngularResizedEventModule
   ]
 })
 export class PltComparerModule { }

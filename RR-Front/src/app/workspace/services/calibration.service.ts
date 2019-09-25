@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {NgxsOnInit, StateContext, Store} from "@ngxs/store";
 import * as fromPlt from "../store/actions";
+import {applyAdjustment} from "../store/actions";
 import {map} from "rxjs/operators";
 import * as _ from "lodash";
 import {PltApi} from "./plt.api";
@@ -139,9 +140,25 @@ export class CalibrationService implements NgxsOnInit {
   }
 
   loadAllPltsFromCalibrationSuccess(ctx: StateContext<any>, payload: any) {
+    const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[this.prefix].calibration.loading = false;
       ctx.dispatch(new fromPlt.constructUserTagsFromCalibration({userTags: payload.userTags}))
+    }));
+    /* init adjustments application*/
+    let plts = [];
+    _.forEach(_.merge({}, state.content[this.prefix].calibration.data[this.prefix]), plt => {
+      plts.push(plt);
+    })
+    console.log(plts);
+    let threads = Array.prototype.concat.apply([], plts.map(row => row.threads));
+
+
+    return ctx.dispatch(new applyAdjustment({
+      adjustementType: null,
+      adjustement: false,
+      columnPosition: null,
+      pltId: threads,
     }));
   }
 
@@ -338,6 +355,13 @@ export class CalibrationService implements NgxsOnInit {
     }));
   }
 
+  loadAdjsArray(ctx: StateContext<any>, payload: any) {
+    let adjustmentArray = payload.adjustmentArray;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[this.prefix].calibration.adjustments = [...adjustmentArray]
+    }));
+  }
+
   saveAdjModification(ctx: StateContext<any>, payload: any) {
     const state = ctx.getState();
     let adjustement = payload.adjustement;
@@ -433,41 +457,57 @@ export class CalibrationService implements NgxsOnInit {
   }
 
   applyAdjustment(ctx: StateContext<any>, payload: any) {
+
     const state = ctx.getState();
     let adjustement = payload.adjustement;
     let adjustementType = payload.adjustementType;
     let columnPosition = payload.columnPosition;
     let pltId = payload.pltId;
-    if (pltId !== undefined) {
-      let today = new Date();
-      let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
-      adjustement.ref = adjustement.id;
-      adjustement.id = numberAdjs;
-      if (adjustementType != null && adjustementType.id == 1) {
-        adjustement.linear = false;
-        adjustement.value = columnPosition;
-      } else {
-        adjustement.linear = true;
-        adjustement.value = adjustementType ? adjustementType.abv : adjustement.value;
-      }
-      let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
+    if (adjustement) {
+      if (pltId !== undefined) {
+        let today = new Date();
+        let numberAdjs = today.getMilliseconds() + today.getSeconds() + today.getHours();
+        adjustement.ref = adjustement.id;
+        adjustement.id = numberAdjs;
+        if (adjustementType != null && adjustementType.id == 1) {
+          adjustement.linear = false;
+          adjustement.value = columnPosition;
+        } else {
+          adjustement.linear = true;
+          adjustement.value = adjustementType ? adjustementType.abv : adjustement.value;
+        }
+        let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
 
-      let newAdj = {...adjustement};
+        let newAdj = {...adjustement};
+        _.forEach(pltId, (value) => {
+          if (value.pltId !== undefined) {
+            newAdj['id'] = value.pltId + '-' + adjustement['id'];
+            if (adjustmentApplication[value.pltId] !== undefined) {
+              adjustmentApplication[value.pltId].push({...newAdj});
+            } else {
+              adjustmentApplication[value.pltId] = [{...newAdj}]
+            }
+          }
+        })
+        console.log(adjustmentApplication);
+        ctx.patchState(produce(ctx.getState(), draft => {
+          draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
+        }));
+      }
+    } else {
+      let adjustmentApplication = _.merge({}, state.content[this.prefix].calibration.adjustmentApplication);
       _.forEach(pltId, (value) => {
         if (value.pltId !== undefined) {
-          newAdj['id'] = value.pltId + '-' + adjustement['id'];
-          if (adjustmentApplication[value.pltId] !== undefined) {
-            adjustmentApplication[value.pltId].push({...newAdj});
-          } else {
-            adjustmentApplication[value.pltId] = [{...newAdj}]
+          if (adjustmentApplication[value.pltId] == undefined) {
+            adjustmentApplication[value.pltId] = []
           }
         }
       })
-      console.log(adjustmentApplication);
       ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[this.prefix].calibration.adjustmentApplication = {...adjustmentApplication}
       }));
     }
+
 
   }
 
