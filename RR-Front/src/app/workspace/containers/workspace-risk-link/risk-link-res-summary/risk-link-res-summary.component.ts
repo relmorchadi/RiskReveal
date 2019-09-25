@@ -602,7 +602,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   getSelectedPeqt(row) {
-    return _.filter(this.state.results.data[row.analysisId].peqt, ws => ws.selected === true).length;
+    return _.filter(this.state.results.data[row.id].peqt, ws => ws.selected === true).length;
   }
 
   changePeqt(parent, target, selected) {

@@ -2,8 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Regions} from '../../../shared/data/region-peril';
 import {WsApi} from '../../../workspace/services/workspace.api';
 import {ActivatedRoute, Router} from "@angular/router";
-import {Store} from "@ngxs/store";
+import {Select, Store} from "@ngxs/store";
 import * as fromWs from '../../../workspace/store/actions';
+import {WorkspaceState} from "../../../workspace/store/states";
 
 @Component({
   selector: 'app-submission-page',
@@ -129,11 +130,15 @@ export class SubmissionPageComponent implements OnInit {
     }
   ];
 
+  @Select(WorkspaceState.getFacData) Fac$;
+  facData: any;
+
   constructor(private wsApi: WsApi, private router: Router,  private store: Store) {
   }
 
   ngOnInit() {
     this.data = Regions.regionPeril;
+    this.Fac$.subscribe(value => this.facData = value);
   }
 
   addRow() {
@@ -186,6 +191,7 @@ export class SubmissionPageComponent implements OnInit {
   }
 
   submitData() {
+    const seqeuence = {};
     const data = {
       id: 'CAR-0' + Math.floor(Math.random() * 10000),
       lastUpdateDate: null,
