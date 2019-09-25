@@ -5,6 +5,7 @@ import com.scor.rr.entity.InuringPackage;
 import com.scor.rr.enums.InuringNodeType;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.exceptions.inuring.InuringEdgeNodeFoundException;
+import com.scor.rr.exceptions.inuring.InuringIllegalRequestException;
 import com.scor.rr.exceptions.inuring.InuringNodeNotFoundException;
 import com.scor.rr.exceptions.inuring.InuringPackageNotFoundException;
 import com.scor.rr.repository.InuringEdgeRepository;
@@ -37,6 +38,10 @@ public class InuringEdgeService {
             throw new InuringNodeNotFoundException(request.getSourceNodeType().toString(), request.getSourceNodeId());
         if (! checkInuringNodeExisting(request.getTargetNodeType(), request.getTargetNodeId()))
             throw new InuringNodeNotFoundException(request.getTargetNodeType().toString(), request.getTargetNodeId());
+        if (InuringNodeType.InputNode.equals(request.getTargetNodeType()))
+            throw new InuringIllegalRequestException("Illegal request: could not create an edge to an Input Node");
+        if (InuringNodeType.FinalNode.equals(request.getSourceNodeType()))
+            throw new InuringIllegalRequestException("Illegal request: could not create an edge from an Final Node");
         InuringEdge inuringEdge = new InuringEdge(request.getInuringPackageId(),
                 request.getSourceNodeId(),
                 request.getSourceNodeType(),
