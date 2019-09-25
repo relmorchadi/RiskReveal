@@ -108,7 +108,7 @@
         (actionDispatcher)="tagsActionDispatcher($event)"
       >
       </plt-tag-manager>
-      <div (resized)="onTableContainerResize($event)" class="center">
+      <div (resized)="onTableContainerResize($event)" class="center" [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - ' + leftMenu.clientWidth + 'px - 58px - 16px)'}">
         <div class="title-as-tab">
           <span>
             PLTs
@@ -120,6 +120,9 @@
             (actionDispatcher)="tableActionDispatcher($event)"
           ></app-plt-main-table>
         </div>
+      </div>
+      <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" style="visibility: hidden;">
+
       </div>
       <!--
       <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
