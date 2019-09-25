@@ -4,15 +4,15 @@
       <h4>Calibration Editor</h4>
     </div>
     <div class="my-tabs" style="margin-bottom: 10px; height: 95%">
-      <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;">
-        <div style="padding:unset;width: 193px;">
+      <div *ngIf="!collapsedTags" class="noMargin row" style="position: relative;min-width: 160px;">
+        <div style="padding:unset;width: 80%;">
           <app-plt-left-menu
             (actionDispatcher)="leftMenuActionDispatcher($event)"
-            [tagsInput]="tagsInput"
+            [leftMenuInputs]="leftMenuInputs"
           ></app-plt-left-menu>
         </div>
         <i (click)="collapseTags()" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
-           style="font-size: 25px; cursor: pointer; margin-top: 10px; margin-right: 3px"></i>
+           style="font-size: 25px; cursor: pointer; margin-top: 10px;"></i>
       </div>
       <div *ngIf="collapsedTags" class="noMargin row a-closed-sidebar" style="position: relative;width: 37px">
         <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
@@ -476,6 +476,7 @@
               (onDrop)="onDrop($event.col, $event.pltId, $event.draggedAdjs, $event.lastpltId, $event.application)"
               (draggedAdjs)="onDragStart($event.draggedAdjs)"
               (adjustColWidth)="adjustColWidth($event)"
+              (togglePureRow)="togglePureRow($event)"
               [EPMColumns]="EPMColumns"
               [sortData]="sortData"
               [frozenColumns]="frozenColumns"

@@ -19,5 +19,9 @@ export interface Input {
   filters: any;
   sortData: any;
   status: any;
-  scrollHeight: string | number;
+  scrollConfig?: {
+    containerHeight?: any,
+    containerGap?: string | number,
+  }
+  scrollHeight?: number | string;
 }

@@ -8,7 +8,9 @@
           [maximizable]="true"
           (onHide)="onHide()"
           appendTo="body"
-          (onShow)="onShow()">
+          (onShow)="onShow()"
+          (resized)="onTableContainerResize($event)"
+>
 
   <p-header>
     <div class="header">
@@ -73,15 +75,40 @@
 
   <ng-container *ngIf="browesing">
     <div class="content">
-      <div class="left">
-        <app-plt-left-menu
-          [tagsInput]="tagsInput"
-        >
-        </app-plt-left-menu>
-      </div>
       <div
-        [ngStyle]="{ 'width': rightMenuInputs['visible'] ? 'calc(100% - 220px - 500px - 16px - 3px)' : 'calc(100% - 220px - 58px - 16px)'}"
-        class="center">
+        #leftMenu
+        class="left"
+      >
+        <div
+          *ngIf="!collapsedTags"
+          ngResizable
+          [rzHandles]="'e,w'"
+          (rzResizing)="resizing()"
+          [rzMinWidth]="200"
+          [rzMaxWidth]="350"
+          style="position: relative;width: 280px;"
+        >
+          <app-plt-left-menu
+            [leftMenuInputs]="leftMenuInputs"
+            (actionDispatcher)="leftMenuActionDispatcher($event)"
+          >
+          </app-plt-left-menu>
+          <i (click)="collapseLeftMenu();" *ngIf="!collapsedTags" class="icon-chevron_left_24px"
+             style="font-size: 25px; cursor: pointer;position: absolute;top: 12px;right: 12px;"></i>
+        </div>
+        <div *ngIf="collapsedTags" class="a-closed-sidebar" style="position: relative;width: 37px;height: calc( 100vh - 280px);">
+          <div class="collapseTags col-2" style="padding:15px 0px 0px 8px; position: absolute;">
+            <i (click)="collapseLeftMenu()" class="icon-chevron_right_24px"
+               style="font-size: 20px; cursor: pointer"></i>
+          </div>
+        </div>
+      </div>
+      <plt-tag-manager
+        [tagsInputs]="tagsInputs"
+        (actionDispatcher)="tagsActionDispatcher($event)"
+      >
+      </plt-tag-manager>
+      <div (resized)="onTableContainerResize($event)" class="center">
         <div class="title-as-tab">
           <span>
             PLTs
@@ -89,7 +116,7 @@
         </div>
         <div class="PLTs-content">
           <app-plt-main-table
-            [tableInputs]="Inputs | pickKeys : tableInputs"
+            [tableInputs]="tableInputs"
             (actionDispatcher)="tableActionDispatcher($event)"
           ></app-plt-main-table>
         </div>
@@ -98,7 +125,7 @@
       <div [ngStyle]="{'width': rightMenuInputs['visible'] ? '500px' : '60px'}" class="right">
         <app-plt-right-menu
           (actionDispatcher)="rightMenuActionDispatcher($event)"
-          [Inputs]="rightMenuInputs"
+          [tableInputs]="rightMenuInputs"
         ></app-plt-right-menu>
       </div>
       -->
@@ -113,8 +140,8 @@
                 [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">{{ multiSteps ? 'NEXT' : 'SELECT'}}</button>
       </ng-container>
       <ng-container *ngIf="browesing">
-        <button [ngClass]="{'a-buttons-contained-disabled' : Inputs['selectedListOfPlts'].length == 0, 'a-buttons-contained': Inputs['selectedListOfPlts'].length > 0 }"
-                [disabled]="Inputs['selectedListOfPlts'].length == 0" (click)="setBrowesingItems()">SELECT</button>
+        <button [ngClass]="{'a-buttons-contained-disabled' : tableInputs['selectedListOfPlts'].length == 0, 'a-buttons-contained': tableInputs['selectedListOfPlts'].length > 0 }"
+                [disabled]="tableInputs['selectedListOfPlts'].length == 0" (click)="setBrowesingItems()">SELECT</button>
       </ng-container>
     </div>
   </p-footer>

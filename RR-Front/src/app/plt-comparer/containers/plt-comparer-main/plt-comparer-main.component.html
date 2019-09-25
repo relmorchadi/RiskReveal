@@ -14,8 +14,12 @@
           (onSelectWorkspace)="setSelectedWs($event)"
           (onSelectItems)="setSelectedPlts($event)"
         >
-
         </app-plt-selection-pop-up>
+        <!--
+                <p-dialog header="Title" [(visible)]="isVisible">
+                  <div (resized)="log($event)">Hey</div>
+                </p-dialog>
+                -->
         <!--
         <p-dialog
           [visible]="isVisible"

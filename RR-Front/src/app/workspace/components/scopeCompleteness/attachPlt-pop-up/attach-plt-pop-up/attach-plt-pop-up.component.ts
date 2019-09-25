@@ -6,7 +6,7 @@ import {
   Input,
   OnDestroy,
   OnInit,
-  Output
+  Output, ViewChild
 } from '@angular/core';
 import * as tableStore from "../../../../../shared/components/plt/plt-main-table/store";
 import {Actions as tableActions} from "../../../../../shared/components/plt/plt-main-table/store";
@@ -22,6 +22,9 @@ import {SystemTagsService} from "../../../../../shared/services/system-tags.serv
 import {trestySections} from '../../../../containers/workspace-scope-completence/data';
 import {of} from "rxjs";
 import * as leftMenuStore from "../../../../../shared/components/plt/plt-left-menu/store";
+import {TableSortAndFilterPipe} from "../../../../../shared/pipes/table-sort-and-filter.pipe";
+import {SystemTagFilterPipe} from "../../../../../shared/pipes/system-tag-filter.pipe";
+import * as tagsStore from "../../../../../shared/components/plt/plt-tag-manager/store";
 
 @Component({
   selector: 'app-attach-plt-pop-up',
@@ -32,7 +35,12 @@ import * as leftMenuStore from "../../../../../shared/components/plt/plt-left-me
 export class AttachPltPopUpComponent extends BaseContainer implements OnInit, OnDestroy {
 
   tableInputs: tableStore.Input;
-  tagsInput: leftMenuStore.Input;
+  leftMenuInputs: leftMenuStore.Input;
+  tagsInputs: tagsStore.Input;
+
+  collapsedTags: boolean= true;
+  @ViewChild('leftMenu') leftMenu: any;
+
   workspaceId: string;
   uwy: number;
   userTags: any;
@@ -89,6 +97,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
 
   constructor(private route$: ActivatedRoute,
               private systemTagService: SystemTagsService,
+              private filterPipe: TableSortAndFilterPipe ,
+              private systemTagFilter:SystemTagFilterPipe,
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
@@ -128,7 +138,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '45px',
+          width: '45',
+          unit: 'px',
           icon: null,
           type: 'checkbox-scope',
           active: true
@@ -140,7 +151,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '75px',
+          width: '75',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -154,6 +166,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           resizable: true,
           icon: null,
           width: '60',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -165,6 +178,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '150',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -177,6 +191,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: false,
           width: '40',
+          unit: '%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -190,6 +205,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -202,6 +218,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -214,6 +231,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -227,6 +245,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -240,6 +259,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -253,6 +273,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -278,7 +299,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
         },
       }
     };
-    this.tagsInput = {
+    this.leftMenuInputs = {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
@@ -289,19 +310,21 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       userTags: [],
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
-      _tagModalVisible: false,
       wsHeaderSelected: true,
       pathTab: true,
+    };
+    this.tagsInputs= {
+      _tagModalVisible: false,
+      toRemove: [],
+      toAssign: [],
       assignedTags: [],
       assignedTagsCache: [],
-      toAssign: [],
-      toRemove: [],
-      usedInWs: [],
+      operation: null,
+      selectedTags: [],
       allTags: [],
       suggested: [],
-      selectedTags: {},
-      operation: null
-    };
+      usedInWs: []
+    }
   }
 
   manageTags() {
@@ -337,19 +360,19 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       someItemsAreSelected: false,
       someDeletedItemsAreSelected: false,
       showDeleted: false,
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '45px',
-          icon: null,
-          type: 'checkbox-scope',
-          active: true
-        },
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '45',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox-scope',
+        active: true
+      },
         {
           sortDir: 1,
           fields: '',
@@ -357,7 +380,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '75px',
+          width: '75',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -371,6 +395,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           resizable: true,
           icon: null,
           width: '60',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -382,6 +407,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '150',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -394,6 +420,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: false,
           width: '40',
+          unit: '%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -407,6 +434,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -419,6 +447,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -431,6 +460,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -444,6 +474,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -457,6 +488,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -470,12 +502,11 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
-        }
-
-      ],
+        }],
       filterInput: '',
       listOfDeletedPltsCache: [],
       listOfDeletedPltsData: [],
@@ -531,19 +562,19 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       someItemsAreSelected: false,
       someDeletedItemsAreSelected: false,
       showDeleted: false,
-      pltColumns: [
-        {
-          sortDir: 1,
-          fields: '',
-          header: '',
-          sorted: false,
-          filtred: false,
-          resizable: false,
-          width: '45px',
-          icon: null,
-          type: 'checkbox-scope',
-          active: true
-        },
+      pltColumns: [{
+        sortDir: 1,
+        fields: '',
+        header: '',
+        sorted: false,
+        filtred: false,
+        resizable: false,
+        width: '45',
+        unit: 'px',
+        icon: null,
+        type: 'checkbox-scope',
+        active: true
+      },
         {
           sortDir: 1,
           fields: '',
@@ -551,7 +582,8 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           sorted: false,
           filtred: false,
           resizable: false,
-          width: '75px',
+          width: '75',
+          unit: 'px',
           icon: null,
           type: 'tags',
           active: true
@@ -565,6 +597,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           resizable: true,
           icon: null,
           width: '60',
+          unit: '%',
           type: 'id',
           active: true
         },
@@ -576,6 +609,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '150',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -588,6 +622,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: false,
           width: '40',
+          unit: '%',
           icon: null,
           type: 'field',
           textAlign: 'center',
@@ -601,6 +636,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '70',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -613,6 +649,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -625,6 +662,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: true,
           resizable: true,
           width: '100',
+          unit: '%',
           icon: null,
           type: 'field',
           active: true
@@ -638,6 +676,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -651,6 +690,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
@@ -664,12 +704,11 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
           filtred: false,
           resizable: true,
           width: '50',
+          unit: '%',
           icon: null,
           type: 'checkbox-col',
           active: true
-        }
-
-      ],
+        }],
       filterInput: '',
       listOfDeletedPltsCache: [],
       listOfDeletedPltsData: [],
@@ -725,6 +764,7 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       this.projects = _.map(projects, p => ({...p, selected: false}));
       this.detectChanges();
     });
+    this.showApplicablePltsFunction();
   }
 
   tableActionDispatcher(action: Message) {
@@ -777,6 +817,9 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
 
       case tableStore.deselectPlt:
         this.deselectThePlt(action.payload);
+        break;
+      case tableStore.selectAllPltsRow:
+        this.selectAllPltsRow(action.payload);
         break;
 
       case tableStore.toggleSelectedPlts:
@@ -871,6 +914,29 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     }
   }
 
+  getCurrentPlts(){
+    return this.systemTagFilter.transform(this.filterPipe.transform(this.tableInputs.showDeleted ? this.tableInputs.listOfDeletedPltsData : this.tableInputs.listOfPltsData,[this.tableInputs.sortData, this.tableInputs.filterData]),[this.tableInputs.filters.systemTag])
+  }
+  showApplicablePltsFunction() {
+    // this.showApplicablePlts = !this.showApplicablePlts;
+    if (this.showApplicablePlts) {
+      this.updateTable('listOfPltsData', this.tableInputs.listOfPltsData.map(plt => {
+
+        let check = false;
+        plt.treatySectionsState.forEach(ts => {
+          if (ts.state != 'disabled') {
+            check = true;
+          }
+        })
+        return {...plt, visible: check};
+      }))
+    } else {
+      this.updateTable('listOfPltsData', this.tableInputs.listOfPltsData.map(plt => {
+        return {...plt, visible: true};
+      }))
+    }
+  }
+
   initialiseContainer(tableInputs) {
 
     tableInputs.listOfPltsData.forEach(plt => {
@@ -886,7 +952,6 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       })
     })
     this.pltContainerTwo = _.merge([], this.pltContainer);
-    console.log("pltContainerTwo", this.pltContainerTwo);
 
   }
 
@@ -970,25 +1035,25 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
   }
 
   selectAllPltsContainer(event) {
-    if(event){
-    this.pltContainer = [];
-    this.tableInputs.listOfPltsData.forEach(plt => {
-      plt.treatySectionsState.forEach(ts => {
-        if (ts.state != 'disabled') {
-          let object = {
-            pltId: plt.pltId,
-            regionPeril: plt.regionPerilCode,
-            targetRap: plt.grain,
-            tsId: ts.tsId
-          }
-          this.pltContainer.push(object)
-          this.updatePltSingleSelection(object.pltId);
-        }
-      })
-    })}else{
+    if (event) {
       this.pltContainer = [];
-      this.tableInputs.listOfPltsData.forEach(plt => {
-        this.updatePltSingleSelection(plt.pltId);
+      this.getCurrentPlts().forEach(plt => {
+        plt.treatySectionsState.forEach(ts => {
+          if (ts.state != 'disabled') {
+            let object = {
+              pltId: plt.pltId,
+              regionPeril: plt.regionPerilCode,
+              targetRap: plt.grain,
+              tsId: ts.tsId
+            }
+            this.pltContainer.push(object)
+            this.updatePltSingleSelection(object.pltId);
+          }
+        })
+      })
+    } else {
+      this.getCurrentPlts().forEach(plt => {
+        this.deselectThePlt(plt.pltId);
       })
     }
     this.detectChanges();
@@ -1029,6 +1094,24 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
     let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
     this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: false}}))
     this.pltContainer = _.filter(this.pltContainer, plt => plt.pltId != pltId);
+  }
+
+  selectAllPltsRow(pltId) {
+    _.forEach(this.tableInputs.listOfPltsData, plt => {
+      if(plt.pltId == pltId){
+      plt.treatySectionsState.forEach(ts => {
+        if (ts.state != 'disabled') {
+          this.pltContainer.push({
+            pltId: plt.pltId,
+            regionPeril: plt.regionPerilCode,
+            targetRap: plt.grain,
+            tsId: ts.tsId
+          })
+        }
+      })
+        let index = _.findIndex(this.getTableInputKey('listOfPltsData'), {pltId: pltId});
+        this.updateTable("listOfPltsData", _.merge([], this.getTableInputKey('listOfPltsData'), {[index]: {selected: true}}))
+    }})
   }
 
   toggleSelectPlts(plts: any) {
@@ -1196,9 +1279,6 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       case leftMenuStore.onSelectProjects:
         this.setSelectedProjects(action.payload);
         break;
-      case leftMenuStore.setTagModalVisibility:
-        this.setTagModal(action.payload);
-        break;
       /*case leftMenuStore.toggleDeletedPlts:
         this.toggleDeletePlts(action.payload);
         break;*/
@@ -1208,75 +1288,59 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       case leftMenuStore.onSetSelectedUserTags:
         this.setUserTags(action.payload);
         break;
-
-      //Tag Manager
-
-      case leftMenuStore.addNewTag:
-        this.addNewTag(action.payload)
-        break;
-      case leftMenuStore.toggleTag:
-        this.toggleTag(action.payload);
-        break;
-      case leftMenuStore.confirmSelection:
-        this.confirmSelection();
-        break;
-      case leftMenuStore.clearSelection:
-        this.clearSelection();
-        break;
-      case leftMenuStore.save:
-        this.save();
-        break;
     }
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput = {...this.tagsInput, [key]: value};
+    this.tagsInputs = {...this.tagsInputs, [key]: value};
   }
 
-  updateTableAndTagsInputs(key, value) {
-    this.updateTagsInput(key, value);
+  updateLeftMenuInput(key, value) {
+    this.leftMenuInputs = {...this.leftMenuInputs, [key]: value};
+  }
+
+  updateTableAndLeftMenuInputs(key, value) {
+    this.updateLeftMenuInput(key, value);
     this.updateTable(key, value);
   }
 
   addNewTag(tag) {
-    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
-    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
-    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tag), 'tagName'));
+    this.updateTagsInput('toAssign',  _.uniqBy(_.concat(this.tagsInputs.toAssign, tag), 'tagName'));
   }
 
   toggleTag({i, operation, source}) {
-    if (operation == this.tagsInput['operation']) {
-      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
-        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
-      } else {
-        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
+    if(operation == this.tagsInputs['operation']) {
+      if(!_.find(this.tagsInputs.selectedTags, tag => tag.tagId == this.tagsInputs[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInputs.selectedTags, { [this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]} }));
+      }else {
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInputs.selectedTags, this.tagsInputs[source][i].tagId));
       }
-    } else {
+    }else {
       this.updateTagsInput('operation', operation);
-      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]} }));
     }
 
-    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+    if(!_.keys(this.tagsInputs.selectedTags).length) this.updateTagsInput('operation', null);
   }
 
   confirmSelection() {
-    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
-    if (this.tagsInput.operation == 'assign') {
-      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
-      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
+    const tags = _.map(this.tagsInputs.selectedTags, t => ({...t, type: 'full'}));
+    if(this.tagsInputs.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInputs.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tags), 'tagId'))
     }
 
-    if (this.tagsInput.operation == 'de-assign') {
-      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
-      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+    if(this.tagsInputs.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInputs.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInputs.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
     }
 
     this.clearSelection();
   }
 
-  checkTagType(tag) {
-    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) => _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
+  checkTagType( tag ) {
+    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
   }
 
   updateTagsType(d) {
@@ -1294,20 +1358,55 @@ export class AttachPltPopUpComponent extends BaseContainer implements OnInit, On
       wsId: this.workspaceId,
       uwYear: this.uwy,
       plts: _.map(this.getTableInputKey('selectedListOfPlts'), plt => plt.pltId),
-      selectedTags: this.tagsInput.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
+      selectedTags: this.tagsInputs.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, _.uniqBy([...this.tagsInputs.assignedTags, ...this.tagsInputs.toAssign], t => t.tagId || t.tagName), 'tagName')
     }));
-    this.tagsInput = {
-      ...this.tagsInput,
+    this.tagsInputs = {
+      ...this.tagsInputs,
       _tagModalVisible: false,
-      wsHeaderSelected: true,
       assignedTags: [],
       assignedTagsCache: [],
       usedInWs: [],
       allTags: [],
       suggested: [],
+      toAssign: [],
+      toRemove: [],
       selectedTags: {},
       operation: null
     };
+  }
+
+  collapseLeftMenu() {
+    this.collapsedTags= !this.collapsedTags;
+    console.log(this.leftMenu);
+    this.detectChanges();
+  }
+
+  resizing() {
+    this.detectChanges();
+  }
+
+  tagsActionDispatcher(action: Message) {
+
+    switch (action.type) {
+      case tagsStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
+      case tagsStore.addNewTag:
+        this.addNewTag(action.payload)
+        break;
+      case tagsStore.toggleTag:
+        this.toggleTag(action.payload);
+        break;
+      case tagsStore.confirmSelection:
+        this.confirmSelection();
+        break;
+      case tagsStore.clearSelection:
+        this.clearSelection();
+        break;
+      case tagsStore.save:
+        this.save();
+        break;
+    }
   }
 }
