@@ -49,15 +49,15 @@ public class FacService {
         return facDatasourcesRepository.findAll();
     }
 
-    public List<FacRmsAnalysisBasic> findAnalysisBasic(Integer rdmId, String rdmName) {
-        return facRmsAnalysisBasicRepository.findByRdmIdAndRdmName(rdmId, rdmName);
+    public List<FacRmsAnalysisBasic> findAnalysisBasic(Integer rdmId, String rdmName, String analysisName) {
+        return facRmsAnalysisBasicRepository.findByRdmIdAndRdmNameAndAnalysisName(rdmId, rdmName, analysisName);
     }
 
     public List<FacRmsAnalysisDetail> findAnalysisDetail(Integer analysisId, String analysisName) {
         return facRmsAnalysisDetailRepository.findByAnalysisIdAndAnalysisName(analysisId, analysisName);
     }
 
-    public List<FacRmsPortfolio> findPortfolio(Integer edmId, String edmName) {
-        return facRmsPortfolioRepository.findByEdmIdAndEdmName(edmId, edmName);
+    public List<FacRmsPortfolio> findPortfolio(Integer edmId, String edmName, String portNum) {
+        return facRmsPortfolioRepository.findByEdmIdAndEdmNameAndPortNum(edmId, edmName, portNum);
     }
 }
