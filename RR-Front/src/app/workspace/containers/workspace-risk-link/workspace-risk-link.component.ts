@@ -189,7 +189,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   cloneData(data) {
-    return [...data];
+    if (data !== undefined) {
+      return [...data];
+    }
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -313,17 +315,17 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
 
   getTableData() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      return _.toArray(this.analysis.data);
+      return _.toArray(_.get(this.analysis, 'data', null));
     } else {
-      return _.toArray(this.portfolios.data);
+      return _.toArray(_.get(this.portfolios, 'data', null));
     }
   }
 
   getTableRecords() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      return this.analysis.totalNumberElement;
+      return _.get(this.analysis, 'totalNumberElement', 0);
     } else {
-      return this.portfolios.totalNumberElement;
+      return _.get(this.portfolios, 'totalNumberElement', 0);
     }
   }
 
