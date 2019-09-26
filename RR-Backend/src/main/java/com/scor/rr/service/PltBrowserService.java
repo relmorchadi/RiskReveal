@@ -32,6 +32,8 @@ public class PltBrowserService {
     PltHeaderRepository pltHeaderRepository;
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PltUserTagRepository pltUserTagRepository;
 
     public PltTagResponse searchPltTable(PltFilter pltFilter) {
 
@@ -40,9 +42,19 @@ public class PltBrowserService {
         List<UserTag> userTags = userTagRepository.findByWorkspace(
                 workspaceRepository.findWorkspaceByWorkspaceId(
                         new Workspace.WorkspaceId(pltFilter.getWorkspaceId(), pltFilter.getUwy())
-                ));
+                )
+        );
         pltTagResponse.setPlts(plts);
-        pltTagResponse.setUserTags(userTags);
+        pltTagResponse.setUserTags(
+                userTags.stream()
+                        .map( tag -> {
+
+                            tag.setCount(pltUserTagRepository.findByTagAndWS(tag,pltFilter.getWorkspaceId(), pltFilter.getUwy()).size());
+
+                            return tag;
+                        })
+                        .collect(Collectors.toList())
+        );
         return pltTagResponse;
     }
 

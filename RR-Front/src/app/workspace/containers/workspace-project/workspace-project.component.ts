@@ -67,6 +67,7 @@ export class WorkspaceProjectComponent extends BaseContainer implements OnInit, 
               _baseStore: Store, _baseRouter: Router, _baseCdr: ChangeDetectorRef
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
+    console.log('INIT PROJECTS')
   }
 
   patchState({wsIdentifier, data}: any): void {

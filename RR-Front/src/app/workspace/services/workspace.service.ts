@@ -1,18 +1,18 @@
 import {Injectable} from '@angular/core';
-import {StateContext, Store} from "@ngxs/store";
-import {WorkspaceModel} from "../model";
-import * as fromWS from "../store/actions";
-import {catchError, map, mergeMap} from "rxjs/operators";
-import {WsApi} from "./workspace.api";
-import * as fromHeader from "../../core/store/actions/header.action";
-import produce from "immer";
-import * as _ from "lodash";
-import {Navigate} from "@ngxs/router-plugin";
-import {HeaderState} from "../../core/store/states/header.state";
-import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from "../containers/workspace-calibration/data";
-import {EMPTY} from "rxjs";
-import {WsProjectService} from "./ws-project.service";
-import {defaultInuringState} from "./inuring.service";
+import {StateContext, Store} from '@ngxs/store';
+import {WorkspaceModel} from '../model';
+import * as fromWS from '../store/actions';
+import {catchError, map, mergeMap} from 'rxjs/operators';
+import {WsApi} from './workspace.api';
+import * as fromHeader from '../../core/store/actions/header.action';
+import produce from 'immer';
+import * as _ from 'lodash';
+import {Navigate} from '@ngxs/router-plugin';
+import {HeaderState} from '../../core/store/states/header.state';
+import {ADJUSTMENT_TYPE, ADJUSTMENTS_ARRAY} from '../containers/workspace-calibration/data';
+import {EMPTY} from 'rxjs';
+import {WsProjectService} from './ws-project.service';
+import {defaultInuringState} from './inuring.service';
 
 @Injectable({
   providedIn: 'root'
@@ -138,6 +138,7 @@ export class WorkspaceService {
               autoMode: false
             },
             display: {
+              displayListRDMEDM: false,
               displayTable: false,
               displayImport: false,
             },
@@ -163,7 +164,7 @@ export class WorkspaceService {
                 data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
                 selected: 'Main Liability Currency (MLC)'
               },
-              calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
+              division: {data: ['division N°1', 'division N°2', 'division N°3'], selected: 'division N°1'},
             },
             financialPerspective: {
               rdm: {data: null, selected: null},
