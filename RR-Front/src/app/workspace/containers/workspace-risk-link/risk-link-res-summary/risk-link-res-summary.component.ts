@@ -95,6 +95,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   @Select(WorkspaceState.getResults) results$;
 
+  @Select(WorkspaceState.getCurrentTabStatus) tabStatus$;
+  wsStatus: any;
+
   analysis = [];
   portfolio = [];
   updateMode = false;
@@ -129,6 +132,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
           this.detectChanges();
         }
       ),
+      this.tabStatus$.subscribe(value => {
+        this.wsStatus = value;
+        this.detectChanges();
+      }),
       this.summaries$.pipe().subscribe(value => {
           this.resultsSummary = _.toArray(value);
           this.detectChanges();

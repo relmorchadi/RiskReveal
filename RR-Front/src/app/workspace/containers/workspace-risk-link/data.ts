@@ -75,6 +75,7 @@ const scrollableColsResults = [
   {field: 'occurrenceBasis', header: 'Occurrence Basis', width: '100px', type: 'Ob', sorting: '', filtered: true, highlight: true, visible: true, edit: false},
   // {field: 'targetRap', header: 'Target RAP', width: '80px', type: 'number', sorting: ', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'peqt', header: 'PEQT', width: '80px', type: 'Peqt', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'division', header: 'Division', width: '80px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'rdmName', header: 'RDM', width: '140px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},

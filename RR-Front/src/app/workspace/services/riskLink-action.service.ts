@@ -702,6 +702,7 @@ export class RiskLinkStateService {
             financialPerspective: ['RL'],
             occurrenceBasis: 'PerEvent',
             regionPeril: 'EUET',
+            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
             ty: true,
             peqt: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: true},
               {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
