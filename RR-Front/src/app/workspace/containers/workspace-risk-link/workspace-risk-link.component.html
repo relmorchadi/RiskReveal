@@ -93,7 +93,7 @@
             <div class="dropdown-wrap-title">
               <span class="dropdown-title">Division</span>
               <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.division?.selected">
-                {{state?.financialValidator?.divison?.selected}}
+                {{state?.financialValidator?.division?.selected}}
               </span>
             </div>
             <div class="dropdown-icon">
@@ -103,7 +103,6 @@
           <ul nz-menu>
             <li nz-menu-item (click)="changeFinancialValidator('division', item)"
                 *ngFor="let item of state?.financialValidator?.division?.data">
-              <span></span>
               {{item}}</li>
           </ul>
         </nz-dropdown>
@@ -234,7 +233,7 @@
             </div>
           </div>
         </div>
-        <div class="body-main-wrapper" style="" *ngIf="state.display.displayListRDMEDM">
+        <div class="body-main-wrapper" style="" *ngIf="state?.display?.displayListRDMEDM">
           <div class="left" *ngIf="state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
@@ -243,7 +242,7 @@
                 </div>
               </div>
               <div class="list-items"
-                   *ngIf="state.display.displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.edm).length > 0">
+                   *ngIf="state?.display?.displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.edm).length > 0">
                 <span class="list-items-title">EDM</span>
                 <ul>
                   <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM.edm)">

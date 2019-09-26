@@ -164,7 +164,7 @@ export class WorkspaceService {
                 data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
                 selected: 'Main Liability Currency (MLC)'
               },
-              division: {data: ['division N°1', 'division N°2', 'division N°3'], selected: []},
+              division: {data: ['division N°1', 'division N°2', 'division N°3'], selected: 'division N°1'},
             },
             financialPerspective: {
               rdm: {data: null, selected: null},

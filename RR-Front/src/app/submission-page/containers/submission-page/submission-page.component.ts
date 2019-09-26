@@ -191,7 +191,7 @@ export class SubmissionPageComponent implements OnInit {
   }
 
   submitData() {
-    const seqeuence = {};
+/*    const seqeuence = this.facData.map();*/
     const data = {
       id: 'CAR-0' + Math.floor(Math.random() * 10000),
       lastUpdateDate: null,

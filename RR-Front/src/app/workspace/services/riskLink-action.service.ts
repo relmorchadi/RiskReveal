@@ -703,7 +703,7 @@ export class RiskLinkStateService {
             occurrenceBasis: 'PerEvent',
             regionPeril: 'EUET',
             ty: true,
-            peqt: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
+            peqt: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: true},
               {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
               {title: 'RL_EUWS_Mv11.2_S-66-LTR-Clue', selected: false}],
             override: 'EUET',
@@ -1107,7 +1107,7 @@ export class RiskLinkStateService {
             createDt: '19/01/2018 19:01:50',
             type: this._getTypeData(item.name) ? 'rdm' : 'edm',
             versionNum: 17,
-            selected: item.name === 'SBS_RR_2019_08_SoonLing_E' || item.name === 'SBS_RR_2019_08_SoonLing_R',
+            selected: item.name === 'SBS_RR_2019_08_MELANIE_E' || item.name === 'SBS_RR_2019_08_MELANIE_R',
             typeWs: 'fac',
             source: ''};
           });
@@ -1147,8 +1147,9 @@ export class RiskLinkStateService {
   loadBasicAnalysisFac(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const facId = state.content[wsIdentifier].wsId;
     return forkJoin(
-      payload.map(dt => this.riskApi.searchFacAnalysisBasic(dt.id, dt.name))
+      payload.map(dt => this.riskApi.searchFacAnalysisBasic(dt.id, dt.name, facId))
     ).pipe(
       switchMap(out => {
         let dataTable = {};
@@ -1230,8 +1231,9 @@ export class RiskLinkStateService {
   loadBasicPortfolioFac(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
+    const facId = state.content[wsIdentifier].wsId;
     return forkJoin(
-      payload.map(dt => this.riskApi.searchFacPortfolio(dt.id, dt.name))
+      payload.map(dt => this.riskApi.searchFacPortfolio(dt.id, dt.name, facId))
     ).pipe(
       switchMap(out => {
         let dataTable = {};
@@ -1241,9 +1243,9 @@ export class RiskLinkStateService {
               [payload[i].id]: {
                 data: Object.assign({},
                   ...dt.map(portfolio => ({
-                      [portfolio.portId]: {
+                      [portfolio.id]: {
                         id: portfolio.id,
-                        dataSourceId: portfolio.portId,
+                        dataSourceId: portfolio.id,
                         dataSourceName: portfolio.portName,
                         creationDate: portfolio.portCreatedDt,
                         descriptionType: portfolio.portDescr,
@@ -1841,7 +1843,7 @@ export class RiskLinkStateService {
                       data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
                       selected: 'Main Liability Currency (MLC)'
                     },
-                    division: {data: ['division N°1', 'division N°2', 'division N°3'], selected: []},
+                    division: {data: ['division N°1', 'division N°2', 'division N°3'], selected: 'division N°1'},
                   },
                   display: {
                     displayListRDMEDM: false,
