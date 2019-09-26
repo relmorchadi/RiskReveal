@@ -218,7 +218,7 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && col.field !== division && wsStatus === 'treaty'" pResizableColumn>
+                <th *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'" pResizableColumn>
                   <ng-container *ngIf="col.type === 'selection'">
                     <label style="margin-top:20px" nz-checkbox [ngModel]="state.results.allChecked" (ngModelChange)="updateAllChecked($event, 'results')"
                            [nzIndeterminate]="state.results.indeterminate"></label>
@@ -282,7 +282,7 @@
           <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
             <tr [pContextMenuRow]="rowData">
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'tearty'" class="ui-resizable-column"
+                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'treaty'" class="ui-resizable-column"
                     [ngClass]="{'selected-item': rowData?.selected}">
                   <div class="" *ngIf="col.type === 'selection'">
                     <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'R')"
