@@ -2,20 +2,28 @@
 :host {
   .graph-commands {
     height: 35px;
+    line-height: 35px;
+    vertical-align: middle;
     display: flex;
-    border-bottom: 1px solid #0700CF;
+    border-bottom: 1px solid rgba(0, 0, 0, .4);
     margin-bottom: 3px;
+    margin-right: 5px;
 
-    i{
-      color: #0700CF;
-      background-color: #E5E9FA;
-      font-size: 20px;
-      border-radius: 10px;
-      height: fit-content;
-      padding: 3px;
-      margin: 2px;
+    i.icon-menu_24px {
+      font-size: 24px;
       font-weight: bold;
-      cursor: pointer;
     }
+
+    //i{
+    //  color: #0700CF;
+    //  background-color: #E5E9FA;
+    //  font-size: 20px;
+    //  border-radius: 10px;
+    //  height: fit-content;
+    //  padding: 3px;
+    //  margin: 2px;
+    //  font-weight: bold;
+    //  cursor: pointer;
+    //}
   }
 }

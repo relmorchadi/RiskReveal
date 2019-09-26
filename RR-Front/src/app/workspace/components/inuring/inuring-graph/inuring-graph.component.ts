@@ -7,6 +7,7 @@ import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
 import {AddInputNode, AddJoinNode} from "../../../store/actions";
+import * as fromInuring from "../../../store/actions/inuring.actions"
 
 @Component({
   selector: 'inuring-graph',
@@ -253,6 +254,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   refreshToolkit() {
     this.toolkit.clear();
     this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
+    this.dispatch(new fromInuring.RefreshInuringGraph(null))
   }
 
   addJoinNode() {
