@@ -20,18 +20,6 @@
     <div class="renewal-contract-table">
       <app-table [sortable]="true"
                  [tableColumn]="cols"
-                 [listOfData]="data" [tableHeight]="'330px'"
-                 [virtualScroll]="false"
-                 (dbClickItem)="openFacItem($event)"
-                 (updateFavStatus)="valueFavChange($event)"
-                 [totalRecords]="data?.length">
-      </app-table>
-    </div>
-  </nz-tab>
-  <nz-tab>
-    <div class="renewal-contract-table">
-      <app-table [sortable]="true"
-                 [tableColumn]="cols"
                  [listOfData]="applyFilters(filterAssign())" [tableHeight]="'330px'"
                  [virtualScroll]="false"
                  (dbClickItem)="openFacItem($event)"
@@ -57,7 +45,7 @@
         </ul>
       </nz-dropdown>
 
-      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 0 || tabIndex === 1">
+      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 0">
         <div class="icon-wrapper">
           <span (click)="filterData('New')" [ngClass]="{'selected-Filter': filterNew}">
             <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
@@ -74,7 +62,7 @@
         </div>
       </div>
 
-      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 2">
+      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 1">
         <div class="icon-wrapper">
           <span (click)="filterData('New')" [ngClass]="{'selected-Filter': filterNew}">
             <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
@@ -115,8 +103,7 @@
     </div>
     <div style="display: flex; align-items: center">
       <span (click)="selectTab(0)" [ngClass]="{'selectedTab': tabIndex === 0}" class="tab-index">ALL</span>
-      <span (click)="selectTab(1)" [ngClass]="{'selectedTab': tabIndex === 1}" class="tab-index">My Recent</span>
-      <span (click)="selectTab(2)" [ngClass]="{'selectedTab': tabIndex === 2}" class="tab-index">My Assigned</span>
+      <span (click)="selectTab(1)" [ngClass]="{'selectedTab': tabIndex === 1}" class="tab-index">My Assigned</span>
     </div>
   </div>
 </ng-template>

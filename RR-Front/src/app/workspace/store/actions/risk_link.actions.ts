@@ -128,6 +128,11 @@ export class SelectRiskLinkEDMAndRDMAction {
   constructor() {}
 }
 
+export class SelectFacRiskLinkEDMAndRDMAction {
+  static readonly type = '[Risk Link] Select Fac Risk Link EDM And RDM';
+  constructor(public payload: any) {}
+}
+
 export class ApplyFinancialPerspectiveAction {
   static readonly type = '[Risk Link] Apply Financial Perspective For Analysis';
   constructor(public payload: any) {}
