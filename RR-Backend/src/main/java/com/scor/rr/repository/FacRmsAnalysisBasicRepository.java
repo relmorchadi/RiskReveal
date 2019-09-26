@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface FacRmsAnalysisBasicRepository extends JpaRepository<FacRmsAnalysisBasic, Integer> {
 
-    List<FacRmsAnalysisBasic> findByRdmIdAndRdmName(Integer rdmId, String rdmName);
+    List<FacRmsAnalysisBasic> findByRdmIdAndRdmNameAndAnalysisName(Integer rdmId, String rdmName, String analysisName);
 
 }

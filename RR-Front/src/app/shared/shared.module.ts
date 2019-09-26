@@ -13,9 +13,10 @@ import {DragDropModule} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
 import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
-import {AngularDraggableModule} from "angular2-draggable";
-import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
+import { AngularDraggableModule } from 'angular2-draggable';
 import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
+import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
+import {AngularResizedEventModule} from "angular-resize-event";
 
 
 @NgModule({
@@ -33,7 +34,8 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     MultiSelectModule,
     SidebarModule,
     DragDropModuleAngular,
-    AngularDraggableModule
+    AngularDraggableModule,
+    AngularResizedEventModule,
   ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
@@ -49,6 +51,7 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     DragDropModuleAngular,
     AngularDraggableModule,
     SidebarModule,
+    AngularResizedEventModule,
     ...COMPONENTS,
     ...PIPES
   ]

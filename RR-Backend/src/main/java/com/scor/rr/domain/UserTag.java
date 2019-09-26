@@ -41,6 +41,9 @@ public class UserTag implements Serializable {
     @JsonIgnore
     Workspace workspace;
 
+    @Transient
+    private Integer count;
+
     //@JsonManagedReference
     @ManyToOne
     private User user;
@@ -54,8 +57,8 @@ public class UserTag implements Serializable {
         this.tagColor = tagColor;
     }
 
-    public Integer getCount(){
-        return this.assignment.size();
+    public void setCount(Integer count) {
+        this.count= count;
     }
 
     @Override
