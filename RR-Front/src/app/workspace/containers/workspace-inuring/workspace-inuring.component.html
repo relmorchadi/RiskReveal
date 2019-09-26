@@ -1,24 +1,24 @@
 <div class="a-app-wrapper">
-  <div class="a-app-header ">
-    <div class="title-container">
-      <h4>Inuring Package</h4>
-      <button (click)="showAddPackagePopup()" class="a-buttons-outlined"
-              style="color: #332ed7 ;border-color: #332ed7">
-        <i class="icon-plus"></i>
-        Add Package
-      </button>
-    </div>
-    <app-pin
-      (pinWs)="pinWorkspace()"
-      (unpinWs)="unPinWorkspace()"
-      [active]="!workspace?.isPinned"
-    >
-    </app-pin>
-  </div>
   <div class="app-body app-body--tansparent">
 
     <nz-tabset [(nzSelectedIndex)]="currentTabIndex" class="dashboard-content" style="width: 100%; height: fit-content">
       <nz-tab [nzTitle]="'All Packages'">
+        <div class="a-app-header mt-2">
+          <div class="title-container">
+            <h4>Inuring Package</h4>
+            <button (click)="showAddPackagePopup()" class="a-buttons-outlined"
+                    style="color: #332ed7 ;border-color: #332ed7">
+              <i class="icon-plus"></i>
+              Add Package
+            </button>
+          </div>
+<!--          <app-pin-->
+<!--            (pinWs)="pinWorkspace()"-->
+<!--            (unpinWs)="unPinWorkspace()"-->
+<!--            [active]="!workspace?.isPinned"-->
+<!--          >-->
+<!--          </app-pin>-->
+        </div>
         <div class="all-packages-tab-content">
 
           <div class="table-container">

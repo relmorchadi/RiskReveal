@@ -24,7 +24,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
             <li nz-menu-divider></li>
             <li nz-menu-item>Edit</li>
             <li nz-menu-item>Details</li>
-            <li nz-menu-item>Add Node</li>
+            <li nz-menu-item>Add Note</li>
           </ul>
         </nz-dropdown>
       </div>
