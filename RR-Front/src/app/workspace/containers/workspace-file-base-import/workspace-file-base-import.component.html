@@ -243,10 +243,11 @@
     </div>
 
     <div class="menu-detail-wrapper" *ngIf="selectedPlt != null">
-      <span class="body-1 menu-left-header"
-            style="border-top: 4px solid #0700CF; padding-top: 4px; width: 75%;">
+      <h4 class="menu-left-header"
+            style="border-top: 4px solid #0700CF;padding: 25px 0 25px 24px;width: 75%;">
           Attributes Of Selected PLT
-      </span>
+        <i (click)="selectedPlt = null" class="icon-chevron_right_24px"></i>
+      </h4>
       <div>
         <ul>
           <li style="align-items: baseline;">

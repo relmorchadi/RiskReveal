@@ -27,6 +27,16 @@ COMPONENT STYLE
     width: 55%;
     font-weight: bold;
     color: #000000;
+
+    .icon-chevron_right_24px {
+      cursor: pointer;
+      font-size: 31px;
+      border: 1px solid #9C99EC;
+      border-radius: 20px;
+      color: #9C99EC;
+      position: absolute;
+      right: 30px;
+    }
   }
 
   .menu-searchPlt-wrapper {
@@ -148,8 +158,10 @@ COMPONENT STYLE
   .menu-detail-wrapper {
     position: absolute;
     right: 0;
+    top: 0;
     height: 100%;
     overflow-y: auto;
+    width: 40%;
     overflow-x: hidden;
     box-shadow: -2px 0px 7px rgba(0, 0, 0, 0.3);
     background: #FFFFFF;
