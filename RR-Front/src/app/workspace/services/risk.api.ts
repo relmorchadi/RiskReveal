@@ -8,6 +8,7 @@ import {backendUrl} from '../../shared/api';
 })
 export class RiskApi {
   protected URL = `${backendUrl()}risk-link/`;
+  protected FURL = `${backendUrl()}fac/`;
 
   constructor(private http: HttpClient) {
   }
@@ -26,5 +27,21 @@ export class RiskApi {
 
   searchDetailAnalysis(paramId, paramName): Observable<any> {
     return this.http.get(`${this.URL}detailed-analysis-scan`, {params: {edmId: paramId, edmName: paramName}});
+  }
+
+  searchFacData() {
+    return this.http.get(`${this.FURL}datasources`);
+  }
+
+  searchFacAnalysisBasic(paramId, paramName) {
+    return this.http.get(`${this.FURL}analysis-basic`, {params: {rdmId: paramId, rdmName: paramName}});
+  }
+
+  searchFacAnalysisDetail(paramId, paramName) {
+    return this.http.get(`${this.FURL}analysis-detail`, {params: {analysisId: paramId, analysisName: paramName}});
+  }
+
+  searchFacPortfolio(paramId, paramName) {
+    return this.http.get(`${this.FURL}portfolio`, {params: {edmId: paramId, edmName: paramName}});
   }
 }

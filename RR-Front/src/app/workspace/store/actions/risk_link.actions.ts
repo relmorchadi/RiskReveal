@@ -173,6 +173,26 @@ export class CreateLinkingAction {
   constructor(public payload: any) {}
 }
 
+export class LoadFacDataAction {
+  static readonly type = '[Risk Link] Load EDM And RDM For Fac Workspace';
+  constructor(public payload?: any) {}
+}
+
+export class LoadBasicAnalysisFacAction {
+  static readonly type = '[Risk Link] Load Basic Analysis For Fac Ws';
+  constructor(public payload: any) {}
+}
+
+export class LoadDetailAnalysisFacAction {
+  static readonly type = '[Risk Link] Load Detail Analysis For Fac Ws';
+  constructor(public payload: any) {}
+}
+
+export class LoadPortfolioFacAction {
+  static readonly type = '[Risk Link] Load Portfolio For Fac Ws';
+  constructor(public payload: any) {}
+}
+
 export class LoadAnalysisForLinkingAction {
   static readonly type = '[Risk Link] Load Analysis For Linking';
   constructor(public payload: any) {}

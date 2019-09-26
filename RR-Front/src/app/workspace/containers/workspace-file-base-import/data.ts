@@ -129,7 +129,7 @@ const textFilesData = [
 ];
 
 const PltDataTables = [
-  {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
+  // {field: 'selected', header: '', width: '25px', type: 'select', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'scanned', header: '', width: '25px', type: 'scan', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'delete', header: '', width: '25px', type: 'action', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   {field: 'FileName', header: 'File Name', width: '130px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},

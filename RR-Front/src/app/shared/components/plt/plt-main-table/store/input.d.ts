@@ -20,4 +20,5 @@ export interface Input {
   sortData: any;
   status: any;
   scrollHeight: string | number;
+  showApplicable?: boolean;
 }

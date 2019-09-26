@@ -41,6 +41,7 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   @Output('onDrop') onDropEmitter: EventEmitter<any> = new EventEmitter();
   @Output('draggedAdjs') draggedAdjsEmitter: EventEmitter<any> = new EventEmitter();
   @Output('adjustColWidth') adjustColWidthEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('togglePureRow') togglePureRowEmitter: EventEmitter<any> = new EventEmitter();
 
 
   @Input('extended') extended: boolean;
@@ -663,5 +664,9 @@ export class CalibrationMainTableComponent extends BaseContainer implements OnIn
   onDragOver() {
     this.adjustColWidthEmitter.emit(0)
     // this.changeRef.detectChanges();
+  }
+
+  togglePureRow() {
+    this.togglePureRowEmitter.emit(this.rowKeys);
   }
 }

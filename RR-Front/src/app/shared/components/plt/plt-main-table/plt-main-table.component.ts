@@ -12,12 +12,15 @@ import {
 import * as _ from 'lodash';
 import * as tableStore from './store';
 import {Message} from '../../../message';
+import {TableSortAndFilterPipe} from "../../../pipes/table-sort-and-filter.pipe";
+import {SystemTagFilterPipe} from "../../../pipes/system-tag-filter.pipe";
 
 @Component({
   selector: 'app-plt-main-table',
   templateUrl: './plt-main-table.component.html',
   styleUrls: ['./plt-main-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [TableSortAndFilterPipe, SystemTagFilterPipe]
 })
 export class PltMainTableComponent implements OnInit {
 
@@ -48,13 +51,17 @@ export class PltMainTableComponent implements OnInit {
   private lastClick: string;
   private userTagsLength: number;
 
-  constructor(private _baseCdr: ChangeDetectorRef) {
+  constructor(private _baseCdr: ChangeDetectorRef, private filterPipe: TableSortAndFilterPipe, private systemTagFilter: SystemTagFilterPipe) {
     this.activeCheckboxSort = false;
     this.userTagsLength = 3;
 
   }
 
   ngOnInit() {
+  }
+
+  getCurrentPlts(){
+    return this.systemTagFilter.transform(this.filterPipe.transform(this.tableInputs.showDeleted ? this.tableInputs.listOfDeletedPltsData : this.tableInputs.listOfPltsData,[this.tableInputs.sortData, this.tableInputs.filterData]),[this.tableInputs.filters.systemTag])
   }
 
   checkAll($event) {
@@ -74,7 +81,7 @@ export class PltMainTableComponent implements OnInit {
   checkSelectedRows() {
     let check = true;
     let count = 0;
-    this.tableInputs.listOfPltsData.forEach(plt => {
+    this.getCurrentPlts().forEach(plt => {
       let valid = false;
       plt.treatySectionsState.forEach(ts => {
         if (ts.state != 'disabled') {
@@ -97,12 +104,12 @@ export class PltMainTableComponent implements OnInit {
     let check = false;
     let count = 0;
     let count2 = 0;
-    this.tableInputs.listOfPltsData.forEach(plt => {
+    this.getCurrentPlts().forEach(plt => {
       if (plt.selected) {
         count++;
       }
-    });
-    this.tableInputs.listOfPltsData.forEach(plt => {
+    })
+    this.getCurrentPlts().forEach(plt => {
       let valid = false;
       plt.treatySectionsState.forEach(ts => {
         if (ts.state != 'disabled') {
@@ -135,11 +142,19 @@ export class PltMainTableComponent implements OnInit {
   }
 
   deselectThePlt(pltId, event) {
-    if (!event) this.actionDispatcher.emit({
+    if (!event){this.actionDispatcher.emit({
       type: tableStore.deselectPlt,
       payload:
       pltId
-    });
+    })}
+    else{
+      this.actionDispatcher.emit({
+        type: tableStore.selectAllPltsRow,
+        payload:
+        pltId
+      })
+    }
+
   }
 
   selectDropDown(event, pltId, tsId) {
