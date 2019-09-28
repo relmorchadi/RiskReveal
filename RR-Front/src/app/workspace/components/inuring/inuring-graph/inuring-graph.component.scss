@@ -26,4 +26,9 @@
     //  cursor: pointer;
     //}
   }
+
+  .grid-background {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.3) .1em, transparent .1em), linear-gradient(90deg, rgba(0, 0, 0, .3) .1em, transparent .1em);
+    background-size: 20px 20px;
+  }
 }

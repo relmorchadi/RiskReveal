@@ -1,7 +1,7 @@
 import {AfterViewInit, ChangeDetectorRef, Component, Input, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {Dialogs, Surface} from "jsplumbtoolkit";
 import {jsPlumbService, jsPlumbSurfaceComponent} from "jsplumbtoolkit-angular";
-import {FinalNodeComponent,InputNodeComponent} from "../nodes";
+import {FinalNodeComponent, InputNodeComponent} from "../nodes";
 import {ContractNodeComponent, JoinNodeComponent, NoteNodeComponent} from "../nodes";
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
@@ -22,7 +22,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   surface: Surface;
 
   @Input('data')
-  set setInuringData(d){
+  set setInuringData(d) {
     console.log('Data Inuring Graph', d);
   }
 
@@ -211,7 +211,8 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       stop: (params) => {
         console.log('drag End', params);
       },
-      filter: '.jtk-draw-handle, .node-action, .node-action i'
+      filter: '.jtk-draw-handle, .node-action, .node-action i',
+      grid: []
     }
   };
 
@@ -230,12 +231,11 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       ofActionDispatched(AddInputNode, AddJoinNode)
     ).subscribe(action => {
       console.log('Actions here')
-      if (action instanceof AddInputNode){
+      if (action instanceof AddInputNode) {
         return this.toolkit.addNode({type: 'inputNode', plts: action.payload.plts, index: action.payload.index});
-      }
-      else if (action instanceof AddJoinNode)
+      } else if (action instanceof AddJoinNode)
         return this.toolkit.addNode({type: 'joinNode'});
-    })
+    });
   }
 
   ngAfterViewInit(): void {
@@ -244,7 +244,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     // this.toolkit.addNode({type: 'inputNode'});
     // this.toolkit.addNode({type: 'contractNode'});
     // this.toolkit.addNode({type: 'joinNode'});
-    this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
+    this.toolkit.addNode({type: 'finalNode', top: 600, left: 450});
   }
 
   drop(param) {
@@ -253,7 +253,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   refreshToolkit() {
     this.toolkit.clear();
-    this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
+    this.toolkit.addNode({type: 'finalNode', top: 600, left: 450});
     this.dispatch(new fromInuring.RefreshInuringGraph(null))
   }
 
@@ -261,8 +261,15 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     this.toolkit.addNode({type: 'joinNode'});
   }
 
-  addNoteNode(){
+  addNoteNode() {
     this.toolkit.addNode({type: 'noteNode', content: 'Heey !!'});
+  }
+
+  toggleGrip() {
+    this.renderParams.dragOptions.grid = [20, 20];
+    console.log('this is toggle', this.surface);
+    this.surface.resetState()
+    this.toolkit.render()
   }
 
   ngOnDestroy(): void {
