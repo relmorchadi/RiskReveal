@@ -43,6 +43,19 @@ export class EditContractPopUpComponent implements OnInit {
   filters: any = [];
   perilFiltersTypes: any = ['Peril', 'Region Peril', 'Grain'];
   perils: any = ['CS', 'EQ', 'FL', 'FR', 'OP', 'TC', 'TO', 'TR', 'TY', 'WS', 'WT'];
+  currency: any;
+  currencies: any = [
+    {id: '1', name: 'Euro', label: 'EUR'},
+    {id: '2', name: 'Us Dollar', label: 'USD'},
+    {id: '3', name: 'Britsh Pound', label: 'GBP'},
+    {id: '4', name: 'Canadian Dollar', label: 'CAD'},
+    {id: '5', name: 'Moroccan Dirham', label: 'MAD'},
+    {id: '5', name: 'Swiss Franc', label: 'CHF'},
+    {id: '5', name: 'Saudi Riyal', label: 'SAR'},
+    {id: '6', name: 'Bitcoin', label: 'XBT'},
+    {id: '7', name: 'Hungarian forint', label: 'HUF'},
+    {id: '8', name: 'Singapore Dollars', label: 'SGD'}
+  ];
 
   constructor() {
   }

@@ -35,7 +35,6 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     plts: any[]
   };
   @Input() multiSteps: boolean;
-  @Input() selectedPlts: any;
 
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
   @Output('onSelectWorkspace') onSelectWorkspace: EventEmitter<any> = new EventEmitter();
@@ -362,7 +361,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
       listOfDeletedPltsCache: [],
       listOfPlts: [],
       listOfDeletedPlts: [],
-      selectedListOfPlts: this.selectedPlts,
+      selectedListOfPlts: [],
       selectedListOfDeletedPlts: [],
       selectAll: false,
       someItemsAreSelected: false,

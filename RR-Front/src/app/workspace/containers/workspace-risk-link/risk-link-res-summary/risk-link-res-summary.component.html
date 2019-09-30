@@ -218,36 +218,7 @@
           <ng-template pTemplate="header" let-columns>
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'" pResizableColumn>
-                  <ng-container *ngIf="col.type === 'selection'">
-                    <label style="margin-top:20px" nz-checkbox [ngModel]="state.results.allChecked" (ngModelChange)="updateAllChecked($event, 'results')"
-                           [nzIndeterminate]="state.results.indeterminate"></label>
-                    <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
-                  </ng-container>
-                  <div style="white-space: nowrap;" *ngIf="!col.filtered">{{col.header}}</div>
-                  <div style="white-space: nowrap;"
-                       *ngIf="col.filtered && col.type !== 'icon' && col.type !== 'check'">
-                    {{col.header}}
-                    <ng-container [ngSwitch]="col?.sorting">
-                      <i (click)="sortChange(col?.field, col?.sorting, 'Analysis')" *ngSwitchCase="'asc'"
-                         class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
-                      <i (click)="sortChange(col?.field, col?.sorting, 'Analysis')" *ngSwitchCase="'desc'"
-                         class="icon-keyboard_arrow_down_24px" style="font-size: 1.4em;"></i>
-                      <i (click)="sortChange(col?.field, col?.sorting, 'Analysis')" *ngSwitchDefault
-                         class="icon-direction" style="font-size: 1.4em;"></i>
-                    </ng-container>
-                    <div class="search-bar-table">
-                      <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                      <input pInputText type="text"
-                             (input)="rt.filter($event.target.value, col.field, col.filterMatchMode)">
-                    </div>
-                  </div>
-                  <div *ngIf="col.type === 'check'">
-                    <i [nzTitle]="col.header" nzPlacement="top" nz-tooltip style="font-size: 20px;"
-                       [ngClass]="col.icon"></i>
-                  </div>
-                </th>
-                <th *ngIf="col.visible && wsStatus === 'fac'" pResizableColumn>
+                <th *ngIf="col.visible" pResizableColumn>
                   <ng-container *ngIf="col.type === 'selection'">
                     <label style="margin-top:20px" nz-checkbox [ngModel]="state.results.allChecked" (ngModelChange)="updateAllChecked($event, 'results')"
                            [nzIndeterminate]="state.results.indeterminate"></label>
@@ -282,80 +253,7 @@
           <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
             <tr [pContextMenuRow]="rowData">
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'treaty'" class="ui-resizable-column"
-                    [ngClass]="{'selected-item': rowData?.selected}">
-                  <div class="" *ngIf="col.type === 'selection'">
-                    <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'R')"
-                           [ngModel]="rowData.selected"></label>
-                  </div>
-                  <div class="text-data" *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
-                  <div class="text-data" *ngIf="col.type === 'progress'">
-                    <nz-progress [nzPercent]="rowData.status" [ngClass]="{'hidden-text': rowData.status < 100 }"
-                                 [nzWidth]="20" nzType="circle"></nz-progress>
-                  </div>
-                  <div class="text-data" (click)="openFinancialP(rowData)" [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'multiple'">
-                        <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
-                              *ngIf="rowData.financialPerspective.length > 1">M*</span>
-                    <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
-                          *ngIf="rowData.financialPerspective.length == 1">{{rowData?.financialPerspective[0]}}</span>
-                    <span [nzTitle]="infoFP" nzPlacement="top" nz-tooltip
-                          *ngIf="rowData.financialPerspective.length == 0">Nan</span>
-                    <ng-template #infoFP>
-                      <div class="popover-menu">
-                        <ul style="margin-bottom: 0">
-                          <li *ngFor="let item of rowData.financialPerspective" style="border: none;">
-                            <span style="display: flex; width: 100%;">
-                              <span style="display: inline-flex; width: 23px;">{{item}}</span>: {{getCodeFp(item)}}</span>
-                          </li>
-                        </ul>
-                      </div>
-                    </ng-template>
-                  </div>
-                  <div class="text-data" (click)="selectRows(rowData, i, 'R')"
-                       [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'number'"><span>{{rowData[col.field] | number: '1.2-2'}}</span></div>
-                  <div class="text-data" (click)="selectRows(rowData, i, 'R')"
-                       [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'percentage'"><span>{{rowData[col.field]}}%</span></div>
-                  <div class="text-data" (click)="selectRows(rowData, i, 'R')"
-                       [ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"
-                       [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
-                  <div class="text-data" style="font-weight: 500"
-                       *ngIf="col.type === 'Rp' || col.type === 'Ob' || col.type === 'Peqt'"
-                       (click)="updateRow(rowData, col.type)">
-                    <span class="highlighted-change" *ngIf="col.type === 'Peqt'">
-                      <span *ngIf="getSelectedPeqt(rowData) > 0" nz-tooltip [nzTitle]="peqtInfo" >
-                        {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
-                      </span>
-                      <span *ngIf="getSelectedPeqt(rowData) === 0" >
-                        {{getSelectedPeqt(rowData)}}/{{rowData.peqt.length}}
-                      </span>
-                      <ng-template #peqtInfo>
-                        <div class="popover-menu">
-                          <ul style="margin-bottom: 0">
-                            <ng-container *ngFor="let item of rowData.peqt">
-                              <li *ngIf="item.selected">{{item.title}}</li>
-                            </ng-container>
-                          </ul>
-                        </div>
-                      </ng-template>
-                    </span>
-                    <span *ngIf="col.type === 'Peqt' && getSelectedPeqt(rowData) === 0">
-                        <i class="icon-exclamation-triangle"></i>
-                    </span>
-                    <span class="highlighted-change" *ngIf="col.type !== 'Peqt'">
-                      {{rowData[col.field]}}
-                    </span>
-                  </div>
-                  <div class="text-data" [ngClass]="{'highlight-temp': col.highlight}"
-                       *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
-                  <div style="padding-left: 10px;" *ngIf="col.type === 'check'">
-                    <label nz-checkbox [(ngModel)]="rowData[col.field]"></label>
-                  </div>
-                </th>
-                <th *ngIf="col.visible && !col.edit && wsStatus === 'fac'" class="ui-resizable-column"
+                <th *ngIf="col.visible && !col.edit" class="ui-resizable-column"
                     [ngClass]="{'selected-item': rowData?.selected}">
                   <div class="" *ngIf="col.type === 'selection'">
                     <label nz-checkbox (ngModelChange)="checkRow($event, rowData, 'R')"

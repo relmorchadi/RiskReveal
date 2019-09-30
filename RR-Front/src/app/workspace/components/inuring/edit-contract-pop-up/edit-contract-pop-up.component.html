@@ -32,7 +32,14 @@
         <div class="ui-g-6">
           <div class="popup-input mt-1" nz-row>
             <div class="input-placeholder">Currency</div>
-            <input placeholder="Currency">
+            <nz-select
+              [(ngModel)]="currency"
+              class="a-dropdown-small input-wrapper"
+              nzPlaceHolder="Select a peril"
+              nzShowSearch
+              style="width: 100%;">
+              <nz-option *ngFor="let option of currencies" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+            </nz-select>
           </div>
         </div>
         <div class="ui-g-6">

@@ -12,8 +12,8 @@ export class InuringPackageDetailsComponent implements OnInit {
   @Input('data') data;
   appendedNodes: any = [];
   showCreationPopup: any = false;
-  stepConfig = {wsId: 'TB01735', uwYear: '2019', plts: []};
   selectedPlts: any = [];
+  stepConfig = {wsId: 'TB01735', uwYear: '2019', plts: []};
   showEditContractPopup: boolean = false;
   private editInputNode: boolean = false;
   private editableNode: any;
@@ -57,7 +57,7 @@ export class InuringPackageDetailsComponent implements OnInit {
       this.editInputNode = true;
       let params = $event.params;
       this.editableNode = {...params.node};
-      this.selectedPlts = {...params.node.data.plts};
+      this.stepConfig.plts = {...params.node.data.plts};
     } else if ($event.type == 'contractNode') {
       console.log('params => ', $event.params);
       this.showEditContractPopup = $event.popup;

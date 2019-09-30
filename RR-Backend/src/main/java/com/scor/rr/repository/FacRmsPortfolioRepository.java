@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface FacRmsPortfolioRepository extends JpaRepository<FacRmsPortfolio, Integer> {
 
-    List<FacRmsPortfolio> findByEdmIdAndEdmNameAndPortNum(Integer edmId, String edmName, String portNum);
+    List<FacRmsPortfolio> findByEdmIdAndEdmName(Integer edmId, String edmName);
 }
