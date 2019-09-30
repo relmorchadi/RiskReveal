@@ -94,6 +94,12 @@
       background-color: #f4f6fc !important;
     }
 
+    tr {
+      .expanded-row {
+        background-color: #E5E9FA !important;
+      }
+    }
+
     tr:hover {
       background-color: #F7F8FD !important;
     }
@@ -115,7 +121,7 @@
       }
     }
 
-    th {
+    th, td {
       padding: 0;
       cursor: pointer;
       color: rgb(0, 0, 0);

@@ -147,6 +147,17 @@ const regionPerilDataTable = [
   {field: 'reason', header: 'Reason', width: '170px', type: 'comment', sorting: '', filtered: false, highlight: false, visible: true},
 ];
 
+const peqtDatatable = [
+  {field: 'expand', header: '', width: '20px', type: 'expand', sorting: false, filtered: false, highlight: false, visible: true},
+  {field: 'title', header: 'Region Peril', width: '80px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
+  {field: 'selectedItems', header: 'Selection', width: '210px', type: 'info', sorting: '', filtered: true, highlight: false, visible: true},
+];
+
+const targetRapDataTable = [
+  {field: 'selected', header: '', width: '20px', type: 'select', sorting: false, filtered: false, highlight: false, visible: true},
+  {field: 'title', header: 'target Rap', width: '150px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true},
+];
+
 export const DataTables = {
   scrollableColsAnalysis,
   scrollableColsPortfolio,
@@ -160,5 +171,7 @@ export const DataTables = {
   colsFinancialAnalysis,
   colsFinancialStandard,
   financialStandarContent,
-  regionPerilDataTable
+  regionPerilDataTable,
+  peqtDatatable,
+  targetRapDataTable
 };
