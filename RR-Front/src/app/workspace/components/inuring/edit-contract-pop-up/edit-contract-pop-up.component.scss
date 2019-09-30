@@ -1,0 +1,94 @@
+.popup-input {
+  border: 1px solid #00C4AA;
+  padding: 5px 2px;
+  width: 100%;
+  margin: auto;
+
+  .input-placeholder {
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 0.7rem;
+    font-weight: bold;
+  }
+
+  input {
+    border: none;
+    background-color: white;
+    color: black;
+    width: 450px;
+  }
+
+  textarea {
+    border: none;
+    background-color: white;
+    color: black;
+    width: 100%;
+    height: 80px;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+}
+
+.group-title {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 15px;
+
+  span {
+    margin-right: 6px;
+    font-weight: bold;
+  }
+
+  i {
+    font-size: 20px;
+    color: #0700cf;
+    cursor: pointer;
+  }
+}
+
+.filter-container {
+  width: 100%;
+  display: flex;
+  padding: 15px;
+
+  .select-type {
+    width: 20%;
+    margin-right: 20px;
+    margin-left: 20px;
+  }
+
+  .select-filter {
+    width: 30%;
+    margin-right: 25px;
+  }
+
+  .radio-include {
+    padding-right: 10px;
+    padding-top: 10px;
+    width: 15%;
+  }
+
+  .radio-exclude {
+    padding-right: 10px;
+    padding-top: 10px;
+    width: 15%;
+  }
+
+  .filter-save {
+    padding: 10px;
+    font-size: 25px;
+    color: green;
+    margin-left: 17px;
+    cursor: pointer;
+  }
+
+  .filter-close {
+    padding: 10px;
+    font-size: 25px;
+    color: red;
+    margin-left: 6px;
+    cursor: pointer;
+  }
+}

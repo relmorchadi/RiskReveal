@@ -1,0 +1,289 @@
+<p-dialog
+  [autoZIndex]="false"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [visible]="showEditContractPopup"
+  styleClass="m-dialog-modal-lg"
+>
+  <p-header>
+    <div class="header">
+      <h4>Edit Contract Node</h4>
+      <i (click)="closePopup()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content">
+    <div style="border: 1px solid #b8bfc5;">
+      <div class="ui-g">
+        <div class="ui-g-6">
+          <div class="popup-input mt-1" nz-row>
+            <div class="input-placeholder">Code</div>
+            <input placeholder="Code" value="Undefined">
+          </div>
+        </div>
+        <div class="ui-g-6">
+          <div class="popup-input mt-1" nz-row>
+            <div class="input-placeholder">Name</div>
+            <input placeholder="Name">
+          </div>
+        </div>
+      </div>
+      <div class="ui-g">
+        <div class="ui-g-6">
+          <div class="popup-input mt-1" nz-row>
+            <div class="input-placeholder">Currency</div>
+            <input placeholder="Currency">
+          </div>
+        </div>
+        <div class="ui-g-6">
+          <div class="popup-input mt-1" nz-row>
+            <div class="input-placeholder">SubPerm</div>
+            <input placeholder="SubPerm">
+          </div>
+        </div>
+      </div>
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <div class="popup-input mt-1" nz-row>
+            <div class="input-placeholder">Description</div>
+            <textarea cols="30" placeholder="Description" rows="7"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="group-title">
+      <span>Layers</span>
+      <i (click)="addLayer()" class="fa fa-plus-circle"></i>
+    </div>
+    <div class="summary-info" style="border: 1px solid #b8bfc5; height: 225px;">
+      <p-table
+        [columnResizeMode]="'fit'"
+        [columns]="layersColumns"
+        [resizableColumns]="true"
+        [responsive]="true"
+        [scrollable]="true"
+        [value]="layers"
+        scrollHeight="185px">
+        <ng-template let-columns pTemplate="colgroup">
+          <colgroup>
+            <ng-container *ngFor="let col of columns">
+              <col [ngStyle]="{'width': col.field == 'actionDelete' ? '25px' : 'unset'}">
+            </ng-container>
+          </colgroup>
+        </ng-template>
+        <ng-template let-columns pTemplate="header">
+          <tr>
+            <ng-container *ngFor="let col of columns; let i = index">
+              <th>
+                {{col.header}}
+              </th>
+            </ng-container>
+
+          </tr>
+        </ng-template>
+        <ng-template let-columns="columns" let-rowData let-rowIndex="rowIndex" pTemplate="body">
+          <tr>
+            <ng-container *ngFor="let col of columns; let i = index">
+              <ng-container *ngIf="col.field !== 'actionDelete' ">
+                <td pEditableColumn>
+                  <p-cellEditor>
+                    <ng-template pTemplate="input">
+                      <input [(ngModel)]="rowData[col.field]" pInputText type="text">
+                    </ng-template>
+                    <ng-template pTemplate="output">
+                      {{rowData[col.field]}}
+                    </ng-template>
+                  </p-cellEditor>
+                </td>
+              </ng-container>
+              <ng-container *ngIf="col.field == 'actionDelete' ">
+                <td>
+                  <i (click)="removeLayer(rowData.num)" class="fa fa-trash-o" style="color: red;cursor: pointer"></i>
+                </td>
+              </ng-container>
+            </ng-container>
+          </tr>
+        </ng-template>
+      </p-table>
+    </div>
+    <div style="display: flex">
+      <div style="width: 20%; display: flex;flex-direction: column;margin-right: 5px">
+        <div class="group-title">
+          <span>Peril Limits</span>
+          <i (click)="addPerilLimit()" class="fa fa-plus-circle"></i>
+        </div>
+        <div class="summary-info" style="border: 1px solid #b8bfc5; height: 225px;">
+          <p-table
+            [columnResizeMode]="'fit'"
+            [columns]="perilColumns"
+            [resizableColumns]="true"
+            [responsive]="true"
+            [scrollable]="true"
+            [value]="perilLimits"
+            scrollHeight="185px">
+            <ng-template let-columns pTemplate="colgroup">
+              <colgroup>
+                <ng-container *ngFor="let col of columns">
+                  <col [ngStyle]="{'width': col.field == 'actionDelete' ? '25px' : 'unset'}">
+                </ng-container>
+              </colgroup>
+            </ng-template>
+            <ng-template let-columns pTemplate="header">
+              <tr>
+                <ng-container *ngFor="let col of columns; let i = index">
+                  <th>
+                    {{col.header}}
+                  </th>
+                </ng-container>
+              </tr>
+            </ng-template>
+            <ng-template let-columns="columns" let-rowData let-rowIndex="rowIndex" pTemplate="body">
+              <tr>
+                <ng-container *ngFor="let col of columns; let i = index">
+                  <ng-container *ngIf="col.field == 'peril' ">
+                    <td>
+                      <nz-select
+                        [(ngModel)]="rowData[col.field]"
+                        class="a-dropdown-small input-wrapper"
+                        nzPlaceHolder="Select a peril"
+                        nzShowSearch
+                        style="width: 100%;">
+                        <nz-option *ngFor="let option of perils" [nzLabel]="option" [nzValue]="option"></nz-option>
+                      </nz-select>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngIf="col.field == 'perilLimit' ">
+                    <td pEditableColumn>
+                      <p-cellEditor>
+                        <ng-template pTemplate="input">
+                          <input [(ngModel)]="rowData[col.field]" pInputText type="text">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                      </p-cellEditor>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngIf="col.field == 'actionDelete' ">
+                    <td>
+                      <i (click)="removePerilLimit(rowData.id)" class="fa fa-trash-o"
+                         style="color: red;cursor: pointer"></i>
+                    </td>
+                  </ng-container>
+                </ng-container>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      <div style="width: 35%;display: flex;flex-direction: column;margin-right: 5px">
+        <div class="group-title">
+          <span>Reinstatements</span>
+          <i (click)="addReinstatement()" class="fa fa-plus-circle"></i>
+        </div>
+        <div class="summary-info" style="border: 1px solid #b8bfc5; height: 225px;">
+          <p-table
+            [columnResizeMode]="'fit'"
+            [columns]="reinstatementsColumns"
+            [resizableColumns]="true"
+            [responsive]="true"
+            [scrollable]="true"
+            [value]="reinstatements"
+            scrollHeight="185px">
+            <ng-template let-columns pTemplate="colgroup">
+              <colgroup>
+                <ng-container *ngFor="let col of columns">
+                  <col [ngStyle]="{'width': col.field == 'actionDelete' ? '25px' : 'unset'}">
+                </ng-container>
+              </colgroup>
+            </ng-template>
+            <ng-template let-columns pTemplate="header">
+              <tr>
+                <ng-container *ngFor="let col of columns; let i = index">
+                  <th>
+                    {{col.header}}
+                  </th>
+                </ng-container>
+
+              </tr>
+            </ng-template>
+            <ng-template let-columns="columns" let-rowData let-rowIndex="rowIndex" pTemplate="body">
+              <tr>
+                <ng-container *ngFor="let col of columns; let i = index">
+                  <ng-container *ngIf="col.field !== 'actionDelete' && col.field !== 'PRTemporis' ">
+                    <td pEditableColumn>
+                      <p-cellEditor>
+                        <ng-template pTemplate="input">
+                          <input [(ngModel)]="rowData[col.field]" pInputText type="text">
+                        </ng-template>
+                        <ng-template pTemplate="output">
+                          {{rowData[col.field]}}
+                        </ng-template>
+                      </p-cellEditor>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngIf="col.field == 'PRTemporis' ">
+                    <td>
+                      <nz-switch [(ngModel)]="rowData[col.field]" class="switch-input"></nz-switch>
+                    </td>
+                  </ng-container>
+                  <ng-container *ngIf="col.field == 'actionDelete' ">
+                    <td>
+                      <i (click)="removeRreinstatement(rowData.id)" class="fa fa-trash-o"
+                         style="color: red;cursor: pointer"></i>
+                    </td>
+                  </ng-container>
+                </ng-container>
+              </tr>
+            </ng-template>
+          </p-table>
+        </div>
+      </div>
+      <div style="width: 45%;display: flex;flex-direction: column;margin-right: 5px">
+        <div class="group-title">
+          <span>Filters</span>
+          <i (click)="addPeriFilter()" class="fa fa-plus-circle"></i>
+        </div>
+        <div class="summary-info" style="border: 1px solid #b8bfc5; height: 225px;overflow: auto">
+          <ng-container *ngFor="let perilFilter of perilFilters">
+            <div class="filter-container" style="width: 100%; display: flex;padding: 15px;">
+              <nz-select
+                [(ngModel)]="perilFilter.type"
+                class="a-dropdown-small input-wrapper select-type"
+                nzShowSearch>
+                <nz-option *ngFor="let option of perilFiltersTypes" [nzLabel]="option" [nzValue]="option"></nz-option>
+              </nz-select>
+              <nz-select
+                [(ngModel)]="perilFilter.filter"
+                class="a-dropdown-small input-wrapper select-filter"
+                nzShowSearch>
+                <nz-option *ngFor="let option of filters" [nzLabel]="option" [nzValue]="option"></nz-option>
+              </nz-select>
+              <p-radioButton [(ngModel)]="perilFilter.includeExclude"
+                             class="radio-include" label="Include"
+                             name="includeExlude"
+                             value="include"></p-radioButton>
+              <p-radioButton [(ngModel)]="perilFilter.includeExclude"
+                             class="radio-exclude" label="Exclude"
+                             name="includeExlude"
+                             value="exclude"></p-radioButton>
+              <div style="width: 20%;">
+                <i (click)="saveFilter(perilFilter.id)" class="fa fa-check filter-save"></i>
+                <i (click)="removeFilter(perilFilter.id)" class="fa fa-close filter-close"></i>
+              </div>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="modal-footer-wrapper">
+      <button (click)="closePopup()" class="a-button-text-cancel">CANCEL</button>
+      <button (click)="closePopup()" class="a-buttons-contained">SAVE</button>
+    </div>
+  </p-footer>
+</p-dialog>
+

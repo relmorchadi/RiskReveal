@@ -22,7 +22,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
             <li (click)="deleteNode()" nz-menu-item>Delete</li>
             <li nz-menu-item>Unpin to Curve</li>
             <li nz-menu-divider></li>
-            <li nz-menu-item>Edit</li>
+            <li nz-menu-item (click)="editNode()">Edit</li>
             <li nz-menu-item>Details</li>
             <li nz-menu-item>Add Note</li>
           </ul>
@@ -83,6 +83,13 @@ export class InputNodeComponent extends BaseNodeComponent implements OnInit {
   ngOnInit() {
     this.plts= this.getNode().data.plts;
     this.index= this.getNode().data.index;
+    console.log(this.plts);
+
+    window['toolkit'].bind('nodeUpdated', (data) => {
+      if (data.node.data.type === 'inputNode') {
+        this.plts = data.node.data.plts;
+      }
+    })
   }
 
   deleteNode(){
@@ -93,4 +100,7 @@ export class InputNodeComponent extends BaseNodeComponent implements OnInit {
 
   }
 
+  editNode() {
+    console.log(this);
+  }
 }
