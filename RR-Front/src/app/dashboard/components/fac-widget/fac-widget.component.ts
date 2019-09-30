@@ -61,7 +61,7 @@ export class FacWidgetComponent implements OnInit {
   private defaultUwUnit: string;
   Countries = Data.coutryAlt;
   private mockDataCache;
-  tabIndex = 2;
+  tabIndex = 1;
 
   @Select(WorkspaceState.getFacData) facData$;
   data: any[];

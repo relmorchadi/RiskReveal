@@ -31,6 +31,7 @@
     "@ngxs/storage-plugin": "^3.4.1-dev.master-ab0a0cc",
     "@ngxs/store": "3.4.1-dev.master-543c32f",
     "angular-gridster2": "^7.1.0",
+    "angular-resize-event": "^1.1.1",
     "angular2-draggable": "^2.3.2",
     "core-js": "2.5.4",
     "file-saver": "^2.0.2",

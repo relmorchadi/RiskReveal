@@ -29,14 +29,10 @@ import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/
 })
 export class WorkspaceProjectPopupComponent extends BaseContainer implements OnInit, StateSubscriber {
 
-  tagsInput: leftMenuStore.Input;
+  leftMenuInputs: leftMenuStore.Input;
 
-  data$: Observable<any>;
-  deletedPlts$: Observable<any>;
   @Select(WorkspaceMainState.getData) selectWsData$;
   @Select(WorkspaceMainState.getProjects) projects$;
-  private pltProjectSubscription: Subscription;
-  private pltUserTagsSubscription: Subscription;
 
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
@@ -129,7 +125,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   browesing: boolean;
 
   Inputs: {
-    scrollHeight: string | number,
+    scrollHeight: string,
     contextMenuItems: any,
     filterInput: string;
     pltColumns: any[];
@@ -186,6 +182,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.Inputs= {
+      scrollHeight: 'calc( 100vh - 368px )',
       contextMenuItems: [
         {
           label: 'View Detail', command: (event) => {
@@ -193,7 +190,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
-      scrollHeight: 'calc(100vh - 358px)',
       filterInput: '',
       pltColumns: [
         {
@@ -435,7 +431,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       mode: "pop-up"
     };
 
-    this.tagsInput= {
+    this.leftMenuInputs= {
       wsId: '',
       uwYear: 0,
       projects: [],
@@ -446,18 +442,8 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       userTags: [],
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
-      _tagModalVisible: false,
       wsHeaderSelected: true,
-      pathTab: true,
-      assignedTags: [],
-      assignedTagsCache: [],
-      toAssign: [],
-      toRemove: [],
-      usedInWs: [],
-      allTags: [],
-      suggested: [],
-      selectedTags: {},
-      operation: null
+      pathTab: true
     };
     this.setRightMenuSelectedTab('basket');
   }
@@ -512,7 +498,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }));
 
     this.getPlts().subscribe((data) => {
-      this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
@@ -574,12 +560,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     ).subscribe( () => this.d.unsubscribe());
 
     this.getProjects().subscribe((projects: any) => {
-      this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
+      this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
     this.getUserTags().subscribe(userTags => {
-      this.updateTagsInput('userTags', userTags);
+      this.updateLeftMenuInputs('userTags', userTags);
       this.detectChanges();
     })
   }
@@ -636,6 +622,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   onHide() {
     this.Inputs= {
+      scrollHeight: 'calc( 100vh - 368px )',
       contextMenuItems: [
         {
           label: 'View Detail', command: (event) => {
@@ -643,7 +630,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
-      scrollHeight: 'calc(100vh - 358px)',
       filterInput: '',
       pltColumns: [
         {
@@ -928,7 +914,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         }));
 
         this.getPlts().subscribe((data) => {
-          this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
+          this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
 
           this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
           this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
@@ -978,12 +964,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         });
 
         this.getProjects().subscribe((projects: any) => {
-          this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
+          this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
           this.detectChanges();
         });
 
         this.getUserTags().subscribe(userTags => {
-          this.updateTagsInput('userTags', userTags);
+          this.updateLeftMenuInputs('userTags', userTags);
           this.detectChanges();
         })
 
@@ -1276,9 +1262,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       case leftMenuStore.onSelectProjects:
         this.setSelectedProjects(action.payload);
         break;
-      case leftMenuStore.setTagModalVisibility:
-        this.setTagModal(action.payload);
-        break;
       case leftMenuStore.toggleDeletedPlts:
         this.toggleDeletePlts(action.payload);
         break;
@@ -1291,18 +1274,18 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }
   }
 
-  updateTagsInput(key, value) {
-    this.tagsInput= {...this.tagsInput, [key]: value};
+  updateLeftMenuInputs(key, value) {
+    this.leftMenuInputs= {...this.leftMenuInputs, [key]: value};
   }
 
   updateTableAndTagsInputs(key, value) {
-    this.updateTagsInput(key, value);
+    this.updateLeftMenuInputs(key, value);
     this.updateTable(key,value);
   }
 
   resetPath() {
     this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
-    this.updateTagsInput('projects', _.map(this.tagsInput.projects, p => ({...p, selected: false})));
+    this.updateLeftMenuInputs('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: false})));
     this.updateTableAndTagsInputs('showDeleted', false);
   }
 
@@ -1311,7 +1294,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   setTagModal($event: any) {
-    this.updateTagsInput('_tagModalVisible', $event);
+    this.updateLeftMenuInputs('_tagModalVisible', $event);
   }
 
   toggleDeletePlts($event) {
@@ -1334,7 +1317,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   selectSystemTag({section, tag}) {
     let newSysTagsCount= {};
-    _.forEach(this.tagsInput.systemTagsCount, (s, sKey) => {
+    _.forEach(this.leftMenuInputs.systemTagsCount, (s, sKey) => {
       _.forEach(s, (t, tKey) => {
         if (tag == tKey && section == sKey) {
           newSysTagsCount[sKey][tKey] = {...t, selected: !t.selected}
@@ -1342,6 +1325,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       })
     });
 
-    this.updateTagsInput('systemTagsCount', newSysTagsCount);
+    this.updateLeftMenuInputs('systemTagsCount', newSysTagsCount);
   }
 }
