@@ -112,7 +112,7 @@
                        class="text-data"><span>{{rowData[col.field]}}</span></div>
                   <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
-                  <div (click)="deleteFromBasket(rowData.dataSourceId, 'summaries')" *ngIf="col.type === 'icon'"
+                  <div (click)="deleteFromBasket(rowData.id, 'summaries')" *ngIf="col.type === 'icon'"
                        [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data" style="display: flex;justify-content: center;"><i
                     class="icon-trash-alt"></i></div>

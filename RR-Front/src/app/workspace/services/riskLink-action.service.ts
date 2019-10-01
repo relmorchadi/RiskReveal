@@ -1016,9 +1016,9 @@ export class RiskLinkStateService {
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     let newData = {};
     if (scope === 'summary') {
-      const summary = _.filter(_.toArray(state.content[wsIdentifier].riskLink.summaries.data), dt => dt.dataSourceId != id);
+      const summary = _.filter(_.toArray(state.content[wsIdentifier].riskLink.summaries.data), dt => dt.id != id);
       summary.forEach(dt => {
-        newData = {...newData, [dt.dataSourceId]: {...dt}};
+        newData = {...newData, [dt.id]: {...dt}};
       });
       ctx.patchState(
         produce(ctx.getState(), draft => {
@@ -1027,9 +1027,9 @@ export class RiskLinkStateService {
         })
       );
     } else if (scope === 'results') {
-      const results = _.filter(_.toArray(state.content[wsIdentifier].riskLink.results.data), dt => dt.analysisId != id);
+      const results = _.filter(_.toArray(state.content[wsIdentifier].riskLink.results.data), dt => dt.id != id);
       results.forEach(dt => {
-        newData = {...newData, [dt.analysisId]: {...dt}};
+        newData = {...newData, [dt.id]: {...dt}};
       });
       ctx.patchState(
         produce(ctx.getState(), draft => {
