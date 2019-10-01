@@ -4,22 +4,22 @@
       <div class="create-tab-content">
         <div class="simple-panel">
           <h6>Input Node Creation</h6>
-          <div class="menu-item add-item" (click)="createNode()">
+          <div (click)="onShowCreationPopup()" class="menu-item add-item">
             Create Node
             <i class="icon-add_circle_24px"></i>
           </div>
         </div>
         <div class="simple-panel">
           <h6>Nodes</h6>
-          <div class="menu-item node-item">
-            Node 1
+          <div *ngFor="let node of appendedNodes; let i=index" class="menu-item node-item" [nz-tooltip]="node.join(', ')">
+            Node {{i+1}}
             <i class="icon-arrow_forward_ios_24px"></i>
           </div>
         </div>
         <div class="simple-panel">
           <h6>Contract Type</h6>
           <!-- TMP -->
-          <div cdkDropList class="m-box-d" style="border: none !important;"
+          <div cdkDropList id="draggable-contracts-list" style="border: none !important;"
                (cdkDropListDropped)="onContractDrop($event)">
             <div class="m-box-drag m-box-overlay menu-item draggable-item" pDraggable="inuring-contract">
               <span class="no-wrap">XoL Event</span>
@@ -34,11 +34,11 @@
           </div>
 
         </div>
-        <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
-          <button nz-button class="a-button-text-cancel">CANCEL</button>
-          <button nz-button class="a-buttons-outlined">UPDATE</button>
-          <button nz-button class="a-buttons-contained">RUN</button>
-        </div>
+<!--        <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">-->
+<!--          <button nz-button class="a-button-text-cancel">CANCEL</button>-->
+<!--          <button nz-button class="a-buttons-outlined">UPDATE</button>-->
+<!--          <button nz-button class="a-buttons-contained">RUN</button>-->
+<!--        </div>-->
         <div class="mx-2 my-1">
           <nz-progress [nzStrokeColor]="'#03DAC4'" [nzPercent]="20" [nzShowInfo]="false"></nz-progress>
         </div>
@@ -164,11 +164,11 @@
 
           </div>
 
-          <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
-            <button nz-button class="a-button-text-cancel">CANCEL</button>
-            <button nz-button class="a-buttons-outlined">UPDATE</button>
-            <button nz-button class="a-buttons-contained">RUN</button>
-          </div>
+<!--          <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">-->
+<!--            <button nz-button class="a-button-text-cancel">CANCEL</button>-->
+<!--            <button nz-button class="a-buttons-outlined">UPDATE</button>-->
+<!--            <button nz-button class="a-buttons-contained">RUN</button>-->
+<!--          </div>-->
           <div class="mx-2 my-1">
             <nz-progress [nzStrokeColor]="'#03DAC4'" [nzPercent]="20" [nzShowInfo]="false"></nz-progress>
           </div>
@@ -303,11 +303,6 @@
                   </div>
                 </nz-tab>
               </nz-tabset>
-              <div class="my-3 mr-1 d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
-                <button nz-button class="a-button-text-cancel">CANCEL</button>
-                <button nz-button class="a-buttons-outlined">UPDATE</button>
-                <button nz-button class="a-buttons-contained">RUN</button>
-              </div>
               <div class="mx-2 my-1">
                 <nz-progress [nzStrokeColor]="'#03DAC4'" [nzPercent]="20" [nzShowInfo]="false"></nz-progress>
               </div>
@@ -320,13 +315,23 @@
 </div>
 
 
-<node-creation-popup
-  [isVisible]="showCreationPopup"
-  [selectionStep]="'plt'"
-  (onSave)="handleSave($event)"
-  [stepConfig]=" {wsId: wsConfig.wsId,
-    uwYear: wsConfig.year,
-    plts: []}"
-  (onVisibleChange)="showCreationPopup= $event"
+<!--<node-creation-popup-->
+<!--  [isVisible]="showCreationPopup"-->
+<!--  [selectionStep]="'plt'"-->
+<!--  (onSave)="handleSave($event)"-->
+<!--  [stepConfig]=" {wsId: wsConfig.wsId,-->
+<!--    uwYear: wsConfig.year,-->
+<!--    plts: []}"-->
+<!--  (onVisibleChange)="showCreationPopup= $event"-->
 
-></node-creation-popup>
+<!--&gt;</node-creation-popup>-->
+<!--<app-plt-selection-pop-up
+  [isVisible]="showCreationPopup"
+  [multiSteps]="false"
+  [stepConfig]="stepConfig"
+  (onVisibleChange)="showCreationPopup = $event"
+  (onSelectWorkspace)="setSelectedWs($event)"
+  (onSelectItems)="setSelectedPlts($event)"
+>
+
+</app-plt-selection-pop-up>-->

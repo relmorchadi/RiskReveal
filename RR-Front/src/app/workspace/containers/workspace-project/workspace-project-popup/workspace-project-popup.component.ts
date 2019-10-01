@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, of, Subject, Subscription} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../../core/store/states';
 import {LazyLoadEvent} from 'primeng/api';
@@ -29,10 +29,52 @@ import * as leftMenuStore from "../../../../shared/components/plt/plt-left-menu/
 })
 export class WorkspaceProjectPopupComponent extends BaseContainer implements OnInit, StateSubscriber {
 
-  leftMenuInputs: leftMenuStore.Input;
+  tagsInput: leftMenuStore.Input;
 
+  data$: Observable<any>;
+  deletedPlts$: Observable<any>;
   @Select(WorkspaceMainState.getData) selectWsData$;
   @Select(WorkspaceMainState.getProjects) projects$;
+  Inputs: {
+    scrollHeight: string | number,
+    contextMenuItems: any,
+    filterInput: string;
+    pltColumns: any[];
+    listOfPltsData: [];
+    listOfDeletedPltsData: [];
+    listOfPltsCache: [];
+    listOfDeletedPltsCache: [];
+    listOfPlts: [];
+    listOfDeletedPlts: [];
+    selectedListOfPlts: any;
+    selectedListOfDeletedPlts: any;
+    selectAll: boolean;
+    someItemsAreSelected: boolean;
+    showDeleted: boolean;
+    filterData: any;
+    filters: {
+      systemTag: any,
+      userTag: []
+    };
+    sortData: any;
+    _tagModalVisible: boolean;
+    _modalSelect: [];
+    tagForMenu: any;
+    _editingTag: boolean;
+    wsId: string;
+    uwYear: string;
+    projects: any[];
+    addTagModalIndex: number;
+    fromPlts: boolean;
+    deletedPltsLength: number;
+    userTags: any[];
+    systemTagsCount: any;
+    wsHeaderSelected: boolean;
+    pathTab: boolean;
+    selectedItemForMenu: any;
+    status: any
+  };
+  private pltProjectSubscription: Subscription;
 
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
@@ -123,46 +165,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   contracts = [];
   loading;
   browesing: boolean;
-
-  Inputs: {
-    scrollHeight: string,
-    contextMenuItems: any,
-    filterInput: string;
-    pltColumns: any[];
-    listOfPltsData: [];
-    listOfDeletedPltsData: [];
-    listOfPltsCache: [];
-    listOfDeletedPltsCache: [];
-    listOfPlts: [];
-    listOfDeletedPlts: [];
-    selectedListOfPlts: any;
-    selectedListOfDeletedPlts: any;
-    selectAll: boolean;
-    someItemsAreSelected: boolean;
-    showDeleted: boolean;
-    filterData: any;
-    filters: {
-      systemTag: any,
-      userTag: []
-    };
-    sortData: any;
-    _tagModalVisible: boolean;
-    _modalSelect: [];
-    tagForMenu: any;
-    _editingTag: boolean;
-    wsId: string;
-    uwYear: string;
-    projects: any[];
-    addTagModalIndex: number;
-    fromPlts: boolean;
-    deletedPltsLength: number;
-    userTags: any[];
-    systemTagsCount: any;
-    wsHeaderSelected: boolean;
-    pathTab: boolean;
-    selectedItemForMenu: any;
-    status: any
-  };
+  private pltUserTagsSubscription: Subscription;
 
   tableInputs = [ 'status','scrollHeight', 'dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
@@ -182,7 +185,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   ) {
     super(_baseRouter, _baseCdr, _baseStore);
     this.Inputs= {
-      scrollHeight: 'calc( 100vh - 368px )',
       contextMenuItems: [
         {
           label: 'View Detail', command: (event) => {
@@ -190,6 +192,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
+      scrollHeight: 'calc(100vh - 358px)',
       filterInput: '',
       pltColumns: [
         {
@@ -431,7 +434,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       mode: "pop-up"
     };
 
-    this.leftMenuInputs= {
+    this.tagsInput = {
       wsId: '',
       uwYear: 0,
       projects: [],
@@ -442,8 +445,18 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       userTags: [],
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       systemTagsCount: {},
+      _tagModalVisible: false,
       wsHeaderSelected: true,
-      pathTab: true
+      pathTab: true,
+      assignedTags: [],
+      assignedTagsCache: [],
+      toAssign: [],
+      toRemove: [],
+      usedInWs: [],
+      allTags: [],
+      suggested: [],
+      selectedTags: {},
+      operation: null
     };
     this.setRightMenuSelectedTab('basket');
   }
@@ -498,7 +511,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }));
 
     this.getPlts().subscribe((data) => {
-      this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+      this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
 
       this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
       this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
@@ -560,12 +573,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     ).subscribe( () => this.d.unsubscribe());
 
     this.getProjects().subscribe((projects: any) => {
-      this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
+      this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
       this.detectChanges();
     });
 
     this.getUserTags().subscribe(userTags => {
-      this.updateLeftMenuInputs('userTags', userTags);
+      this.updateTagsInput('userTags', userTags);
       this.detectChanges();
     })
   }
@@ -622,7 +635,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   onHide() {
     this.Inputs= {
-      scrollHeight: 'calc( 100vh - 368px )',
       contextMenuItems: [
         {
           label: 'View Detail', command: (event) => {
@@ -630,6 +642,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
           }
         },
       ],
+      scrollHeight: 'calc(100vh - 358px)',
       filterInput: '',
       pltColumns: [
         {
@@ -914,7 +927,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         }));
 
         this.getPlts().subscribe((data) => {
-          this.updateLeftMenuInputs('systemTagsCount', this.systemTagService.countSystemTags(data));
+          this.updateTagsInput('systemTagsCount', this.systemTagService.countSystemTags(data));
 
           this.setInputs('listOfPltsCache', _.map(data, (v, k) => ({...v, pltId: k})));
           this.setInputs('listOfPltsData', [...this.getTableInputKey('listOfPltsCache')]);
@@ -964,12 +977,12 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
         });
 
         this.getProjects().subscribe((projects: any) => {
-          this.updateLeftMenuInputs('projects', _.map(projects, p => ({...p, selected: false})));
+          this.updateTagsInput('projects', _.map(projects, p => ({...p, selected: false})));
           this.detectChanges();
         });
 
         this.getUserTags().subscribe(userTags => {
-          this.updateLeftMenuInputs('userTags', userTags);
+          this.updateTagsInput('userTags', userTags);
           this.detectChanges();
         })
 
@@ -1262,6 +1275,9 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       case leftMenuStore.onSelectProjects:
         this.setSelectedProjects(action.payload);
         break;
+      case leftMenuStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
       case leftMenuStore.toggleDeletedPlts:
         this.toggleDeletePlts(action.payload);
         break;
@@ -1274,18 +1290,18 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
     }
   }
 
-  updateLeftMenuInputs(key, value) {
-    this.leftMenuInputs= {...this.leftMenuInputs, [key]: value};
+  updateTagsInput(key, value) {
+    this.tagsInput = {...this.tagsInput, [key]: value};
   }
 
   updateTableAndTagsInputs(key, value) {
-    this.updateLeftMenuInputs(key, value);
+    this.updateTagsInput(key, value);
     this.updateTable(key,value);
   }
 
   resetPath() {
     this.updateTableAndTagsInputs('filterData', _.omit(this.getTableInputKey('filterData'), 'project'));
-    this.updateLeftMenuInputs('projects', _.map(this.leftMenuInputs.projects, p => ({...p, selected: false})));
+    this.updateTagsInput('projects', _.map(this.tagsInput.projects, p => ({...p, selected: false})));
     this.updateTableAndTagsInputs('showDeleted', false);
   }
 
@@ -1294,7 +1310,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   setTagModal($event: any) {
-    this.updateLeftMenuInputs('_tagModalVisible', $event);
+    this.updateTagsInput('_tagModalVisible', $event);
   }
 
   toggleDeletePlts($event) {
@@ -1317,7 +1333,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
 
   selectSystemTag({section, tag}) {
     let newSysTagsCount= {};
-    _.forEach(this.leftMenuInputs.systemTagsCount, (s, sKey) => {
+    _.forEach(this.tagsInput.systemTagsCount, (s, sKey) => {
       _.forEach(s, (t, tKey) => {
         if (tag == tKey && section == sKey) {
           newSysTagsCount[sKey][tKey] = {...t, selected: !t.selected}
@@ -1325,6 +1341,6 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       })
     });
 
-    this.updateLeftMenuInputs('systemTagsCount', newSysTagsCount);
+    this.updateTagsInput('systemTagsCount', newSysTagsCount);
   }
 }

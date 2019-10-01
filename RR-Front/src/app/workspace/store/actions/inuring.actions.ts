@@ -11,8 +11,35 @@ export class CloseInuringPackage {
   constructor(public payload: any) {}
 }
 
+export class AddInuringPackage {
+  static readonly type = `[${namespace}] Add inuring package`;
+  constructor(public payload: any) {}
+}
+
+export class EditInuringPackage {
+  static readonly type = `[${namespace}] Edit inuring package`;
+  constructor(public payload: any) {}
+}
+
+export class DeleteInuringPackage {
+  static readonly type = `[${namespace}] Delete inuring package`;
+  constructor(public payload: any) {}
+}
+
 export class AddInputNode {
   static readonly type = `[${namespace}] Add Input Node`;
+  constructor(public payload: any) {}
+}
+
+export class EditInputNode {
+  static readonly type = `[${namespace}] Edit Input Node`;
+
+  constructor(public payload: any) {
+  }
+}
+
+export class RefreshInuringGraph {
+  static readonly type = `[${namespace}] Refresh Inuring Graph`;
   constructor(public payload: any) {}
 }
 

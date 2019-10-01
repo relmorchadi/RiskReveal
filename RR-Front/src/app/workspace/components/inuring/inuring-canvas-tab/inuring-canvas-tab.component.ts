@@ -1,15 +1,15 @@
-import {ChangeDetectorRef, Component, Input, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
-import {Store} from "@ngxs/store";
-import {AddInputNode} from "../../../store/actions";
+import {Actions, ofActionDispatched, Store} from "@ngxs/store";
+import {RefreshInuringGraph} from "../../../store/actions";
 
 @Component({
   selector: 'inuring-canvas-tab',
   templateUrl: './inuring-canvas-tab.component.html',
-  styleUrls: ['./inuring-canvas-tab.component.scss']
+  styleUrls: ['./inuring-canvas-tab.component.scss'],
 })
-export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
+export class InuringCanvasTabComponent extends BaseContainer implements OnInit, OnDestroy {
 
   readonly contractTypes: Array<any> = [
     // {label: 'XoL Event'},
@@ -26,6 +26,10 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
   ];
 
   showCreationPopup = false;
+
+  stepConfig = {
+    wsId: 'TB01735', uwYear: '2019', plts: []
+  };
 
   collapses = {
     contractDetails: true,
@@ -147,27 +151,58 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit {
     }
   ];
 
+  @Input() appendedNodes;
+
   @Input('wsConfig')
   wsConfig: { wsId: string, year: number };
+  @Output('showCreationPopup') showCreationPopupEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('changeAppendedNodes') changeAppendedNodesEmitter: EventEmitter<any> = new EventEmitter();
 
-  constructor(private _router: Router, private _cdRef: ChangeDetectorRef, private _store: Store) {
+  constructor(private _router: Router, private _cdRef: ChangeDetectorRef, private _store: Store, private _actions: Actions) {
     super(_router, _cdRef, _store)
   }
 
   ngOnInit() {
+    this._actions.pipe(
+      this.unsubscribeOnDestroy,
+      ofActionDispatched(RefreshInuringGraph)
+    ).subscribe(action => {
+      console.log('Actions here')
+      if (action instanceof RefreshInuringGraph) {
+        this.changeAppendedNodesEmitter.emit([]);
+      }
+    });
+
   }
 
   onContractDrop($event) {
     console.log('[Inuring Details] Contact dop evt', $event);
   }
 
-  handleSave($event) {
-    this._store.dispatch(new AddInputNode($event));
-  }
+  // handleSave($event) {
+  //   this._store.dispatch(new AddInputNode($event));
+  // }
 
   createNode() {
     console.log('Dispatch node creation action');
-    this._store.dispatch(new AddInputNode(null));
+
   }
 
+  /* setSelectedWs = ($event) => {
+   };
+ */
+
+  /*setSelectedPlts(selectedPlts) {
+    this.appendedNodes.push(selectedPlts);
+    this._store.dispatch(new AddInputNode({plts: selectedPlts, index: this.appendedNodes.length}));
+  }*/
+
+  ngOnDestroy(): void {
+    this.destroy();
+  }
+
+
+  onShowCreationPopup() {
+    this.showCreationPopupEmitter.emit(true)
+  }
 }

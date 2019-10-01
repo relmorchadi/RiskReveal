@@ -1,4 +1,4 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {Actions, ofActionDispatched, Store} from '@ngxs/store';
 import {MessageService} from 'primeng/api';
@@ -6,13 +6,12 @@ import {combineLatest, forkJoin} from 'rxjs';
 import * as _ from 'lodash'
 import {WorkspaceState} from '../../store/states';
 import * as fromWS from '../../store'
+import {SetCurrentTab} from '../../store'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
-import {take} from 'rxjs/operators';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {WsApi} from "../../services/workspace.api";
-import {SetCurrentTab} from "../../store";
 
 interface SourceData {
   plts: any[];
@@ -28,7 +27,7 @@ interface SourceData {
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MessageService]
 })
-export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
+export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit, StateSubscriber {
 
   constructor(
     private route$: ActivatedRoute,
@@ -236,13 +235,28 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
       this.detectChanges();
     });
 
+    this.actions$
+      .pipe(
+        ofActionDispatched(SetCurrentTab)
+      ).subscribe(({payload}) => {
+      if (payload.wsIdentifier != this.workspaceId + "-" + this.uwy) this.destroy();
+    });
+
       combineLatest(
         this.select(WorkspaceState.getCloneConfig),
+        this.route$.params,
         this.select(WorkspaceState.getCurrentWS)
-      ).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, currentWS]: any) => {
+      ).pipe(this.unsubscribeOnDestroy).subscribe(([navigationPayload, {wsId, year}, currentWS]: any) => {
+        this.workspaceId = wsId;
+        this.uwy = year;
         let navigationWsId = _.get(navigationPayload, 'payload.wsId', null);
         let navigationUwYear = _.get(navigationPayload, 'payload.uwYear', null);
-        if(_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == this.workspaceId && navigationUwYear && navigationUwYear == this.uwy) {
+        console.log({
+          navigationPayload,
+          wsId,
+          year
+        });
+        if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
           if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {
             this.patchProjectForm('from', {
               wsId: '',
@@ -251,8 +265,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
               detail: ''
             });
             this.patchProjectForm('to', {
-              wsId: this.workspaceId,
-              uwYear: this.uwy,
+              wsId: wsId,
+              uwYear: year,
               plts: [],
               detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
             });
@@ -282,8 +296,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
         } else {
           this.patchProjectForm('to', {
-            wsId: this.workspaceId,
-            uwYear: this.uwy,
+            wsId: wsId,
+            uwYear: year,
             plts: [],
             detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
           });
@@ -543,14 +557,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
   selectedProjectValidator = (): ValidatorFn => (control: AbstractControl): {[key: string]: any} | null => control.value >= 0 ? null : ({ noSelectedProject: {value: control.value}})
 
 
-  patchState({data}: any): void {
-    const {
-      wsId,
-      uwYear
-    } = data;
-
-    this.workspaceId = wsId;
-    this.uwy= uwYear;
+  patchState(state: any): void {
   }
 
   clone() {
@@ -569,5 +576,4 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
 
     if(this.projectsForm.valid) this.navigate([`workspace/${this.getFormValueByKey('to').wsId}/${this.getFormValueByKey('to').uwYear}/PltBrowser`]);
   }
-
 }

@@ -35,7 +35,6 @@ import {SystemTagsService} from "../../../shared/services/system-tags.service";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from '@angular/cdk/drag-drop';
 import {Message} from "../../../shared/message";
 import * as leftMenuStore from "../../../shared/components/plt/plt-left-menu/store";
-import * as tagsStore from "../../../shared/components/plt/plt-tag-manager/store";
 
 
 @Component({
@@ -46,11 +45,8 @@ import * as tagsStore from "../../../shared/components/plt/plt-tag-manager/store
 })
 export class WorkspaceCalibrationComponent extends BaseContainer implements OnInit, OnDestroy, StateSubscriber {
 
-  leftMenuInputs: leftMenuStore.Input;
-  tagsInputs: tagsStore.Input;
+  tagsInput: leftMenuStore.Input;
   private dragBool: boolean = false;
-
-  @ViewChild('leftMenu') leftMenu: any;
 
   someItemsAreSelected = false;
   groupedByPure = false;
@@ -309,7 +305,7 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
     private route$: ActivatedRoute) {
     super(router$, cdRef, store$);
 
-    this.leftMenuInputs = {
+    this.tagsInput = {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: this.projects,
@@ -319,21 +315,19 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       deletedPltsLength: 0,
       userTags: this.userTags,
       selectedListOfPlts: this.selectedListOfPlts,
+      selectedTags: [],
+      operation: '',
       systemTagsCount: this.systemTagsCount,
-      wsHeaderSelected: this.wsHeaderSelected,
-      pathTab: false
-    }
-    this.tagsInputs= {
-      _tagModalVisible: false,
-      toRemove: [],
-      toAssign: [],
+      _tagModalVisible: this.tagModalVisible,
       assignedTags: [],
       assignedTagsCache: [],
-      operation: null,
-      selectedTags: [],
-      allTags: [],
+      toAssign: [],
+      toRemove: [],
       suggested: [],
-      usedInWs: []
+      allTags: [],
+      usedInWs: [],
+      wsHeaderSelected: this.wsHeaderSelected,
+      pathTab: false
     }
   }
 
@@ -1267,6 +1261,9 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       case leftMenuStore.onSelectProjects:
         this.setSelectedProjects(action.payload);
         break;
+      case leftMenuStore.setTagModalVisibility:
+        this.setTagModal(action.payload);
+        break;
       case leftMenuStore.toggleDeletedPlts:
         this.toggleDeletePlts(action.payload);
         break;
@@ -1276,11 +1273,29 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
       case leftMenuStore.onSetSelectedUserTags:
         this.setUserTags(action.payload);
         break;
+
+      //Tag Manager
+
+      case leftMenuStore.addNewTag:
+        this.addNewTag(action.payload)
+        break;
+      case leftMenuStore.toggleTag:
+        this.toggleTag(action.payload);
+        break;
+      case leftMenuStore.confirmSelection:
+        this.confirmSelection();
+        break;
+      case leftMenuStore.clearSelection:
+        this.clearSelection();
+        break;
+      case leftMenuStore.save:
+        this.save();
+        break;
     }
   }
 
   updateTagsInput(key, value) {
-    this.leftMenuInputs = {...this.leftMenuInputs, [key]: value};
+    this.tagsInput = {...this.tagsInput, [key]: value};
   }
 
   updateTableAndTagsInputs(key, value) {
@@ -1288,47 +1303,49 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   addNewTag(tag) {
-    this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tag), 'tagName'));
-    this.updateTagsInput('toAssign',  _.uniqBy(_.concat(this.tagsInputs.toAssign, tag), 'tagName'));
+    /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
+    this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));
+    this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
   }
 
   toggleTag({i, operation, source}) {
-    if(operation == this.tagsInputs['operation']) {
-      if(!_.find(this.tagsInputs.selectedTags, tag => tag.tagId == this.tagsInputs[source][i].tagId)) {
-        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInputs.selectedTags, { [this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]} }));
-      }else {
-        this.updateTagsInput('selectedTags', _.omit(this.tagsInputs.selectedTags, this.tagsInputs[source][i].tagId));
+    if (operation == this.tagsInput['operation']) {
+      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
+      } else {
+        this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
       }
-    }else {
+    } else {
       this.updateTagsInput('operation', operation);
-      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInputs[source][i].tagId]: {...this.tagsInputs[source][i]} }));
+      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
     }
 
-    if(!_.keys(this.tagsInputs.selectedTags).length) this.updateTagsInput('operation', null);
+    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
   }
 
   confirmSelection() {
-    const tags = _.map(this.tagsInputs.selectedTags, t => ({...t, type: 'full'}));
-    if(this.tagsInputs.operation == 'assign') {
-      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInputs.toAssign, tags), 'tagId'))
-      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInputs.assignedTags, tags), 'tagId'))
+    const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
+    if (this.tagsInput.operation == 'assign') {
+      this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
+      this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
     }
 
-    if(this.tagsInputs.operation == 'de-assign') {
-      this.updateTagsInput('toAssign', _.filter(this.tagsInputs.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
-      this.updateTagsInput('assignedTags', _.filter(this.tagsInputs.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
+    if (this.tagsInput.operation == 'de-assign') {
+      this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId)));
+      this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId)));
     }
 
     this.clearSelection();
   }
 
-  checkTagType( tag ) {
-    //return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
+  /*checkTagType( tag ) {
+    return _.every(this.getTableInputKey('selectedListOfPlts'), (plt) =>  _.some(plt.userTags, t => t.tagId == tag.tagId)) ? 'full' : 'half';
   }
 
   updateTagsType(d) {
     return _.map(d, tag => ({...tag, type: this.checkTagType(tag)}))
-  }
+  }*/
 
   clearSelection() {
     this.updateTagsInput('selectedTags', {});
@@ -1336,61 +1353,25 @@ export class WorkspaceCalibrationComponent extends BaseContainer implements OnIn
   }
 
   save() {
-    /*this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
+    this.dispatch(new fromWorkspaceStore.AssignPltsToTag({
       userId: 1,
       wsId: this.workspaceId,
       uwYear: this.uwy,
-      plts: _.map(this.get('selectedListOfPlts'), plt => plt.pltId),
-      selectedTags: this.tagsInputs.toAssign,
-      unselectedTags: _.differenceBy(this.tagsInputs.assignedTagsCache, _.uniqBy([...this.tagsInputs.assignedTags, ...this.tagsInputs.toAssign], t => t.tagId || t.tagName), 'tagName')
+      selectedTags: this.tagsInput.toAssign,
+      unselectedTags: _.differenceBy(this.tagsInput.assignedTagsCache, this.tagsInput.assignedTags, 'tagId')
     }));
-    this.tagsInputs = {
-      ...this.tagsInputs,
+    this.tagsInput = {
+      ...this.tagsInput,
       _tagModalVisible: false,
+      wsHeaderSelected: true,
       assignedTags: [],
       assignedTagsCache: [],
       usedInWs: [],
       allTags: [],
       suggested: [],
-      toAssign: [],
-      toRemove: [],
       selectedTags: {},
       operation: null
-    };*/
-  }
-
-  collapseLeftMenu() {
-    this.collapsedTags= !this.collapsedTags;
-    console.log(this.leftMenu);
-    this.detectChanges();
-  }
-
-  resizing() {
-    this.detectChanges();
-  }
-
-  tagsActionDispatcher(action: Message) {
-
-    switch (action.type) {
-      case tagsStore.setTagModalVisibility:
-        this.setTagModal(action.payload);
-        break;
-      case tagsStore.addNewTag:
-        this.addNewTag(action.payload)
-        break;
-      case tagsStore.toggleTag:
-        this.toggleTag(action.payload);
-        break;
-      case tagsStore.confirmSelection:
-        this.confirmSelection();
-        break;
-      case tagsStore.clearSelection:
-        this.clearSelection();
-        break;
-      case tagsStore.save:
-        this.save();
-        break;
-    }
+    };
   }
 
   onDeltaChange($event) {
