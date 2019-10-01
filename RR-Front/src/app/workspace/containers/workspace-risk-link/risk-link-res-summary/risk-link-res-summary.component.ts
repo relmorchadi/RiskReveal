@@ -100,6 +100,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   @Select(WorkspaceState.getResults) results$;
 
+  @Select(WorkspaceState.getCurrentTabStatus) tabStatus$;
+  wsStatus: any;
+
   analysis = [];
   portfolio = [];
   updateMode = false;
@@ -136,6 +139,10 @@ export class RiskLinkResSummaryComponent implements OnInit {
           this.detectChanges();
         }
       ),
+      this.tabStatus$.subscribe(value => {
+        this.wsStatus = value;
+        this.detectChanges();
+      }),
       this.summaries$.pipe().subscribe(value => {
           this.resultsSummary = _.toArray(value);
           this.detectChanges();
@@ -622,7 +629,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   getSelectedPeqt(row) {
-    return _.filter(this.state.results.data[row.analysisId].peqt, ws => ws.selected === true).length;
+    return _.filter(this.state.results.data[row.id].peqt, ws => ws.selected === true).length;
   }
 
   changePeqt(parent, target, selected) {

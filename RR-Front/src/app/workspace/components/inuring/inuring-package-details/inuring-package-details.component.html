@@ -15,6 +15,7 @@
         <!--          <nz-tab [nzTitle]="'IP0000055 Structure graph'">-->
         <inuring-graph
           (editNode)="editNode($event)"
+          (editEdge)="editEdge($event)"
         >
 
         </inuring-graph>
@@ -35,12 +36,16 @@
   (onSelectWorkspace)="setSelectedWs($event)"
   (onSelectItems)="setSelectedPlts($event)"
 >
-
 </app-plt-selection-pop-up>
 
 <app-edit-contract-pop-up
   [showEditContractPopup]="showEditContractPopup"
   (closePop)="showEditContractPopup = false"
 >
-
 </app-edit-contract-pop-up>
+<app-edit-edge-pop-up
+  [showEditEdgePopup]="showEditEdgePopup"
+  (closePop)="showEditEdgePopup = false"
+>
+
+</app-edit-edge-pop-up>

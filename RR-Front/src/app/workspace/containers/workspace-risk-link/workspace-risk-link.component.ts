@@ -6,12 +6,13 @@ import {Select, Store} from '@ngxs/store';
 import {WorkspaceState} from '../../store/states';
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWs from '../../store/actions';
-import {LoadFacDataAction, UpdateWsRouting} from '../../store/actions';
+import {LoadFacDataAction, PatchRiskLinkDisplayAction, UpdateWsRouting} from '../../store/actions';
 import {DataTables} from './data';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import {Navigate} from '@ngxs/router-plugin';
+import {LazyLoadEvent} from "primeng/api";
 
 @Component({
   selector: 'app-workspace-risk-link',
@@ -62,21 +63,16 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   filtersInput: any;
 
   displayDropdownRDMEDM = false;
-  displayListRDMEDM = false;
 
   serviceSubscription: any;
 
   occurrenceBasis;
 
   scrollableColsAnalysis: any;
-  scrollableFacColsAnalysis: any;
   frozenColsAnalysis: any;
-  frozenFacColsAnalysis: any;
 
   scrollableColsPortfolio: any;
-  scrollableFacColsPortfolio: any;
   frozenColsPortfolio: any;
-  frozenFacColsPortfolio: any;
 
   @Select(WorkspaceState.getRiskLinkState) state$;
   state: any;
@@ -136,20 +132,15 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
         this.dispatch(new fromWs.LoadRiskLinkDataAction());
         if (this.tabStatus === 'fac') {
           this.dispatch(new LoadFacDataAction());
-          this.displayListRDMEDM = true;
         }
         this.detectChanges();
       })
     ];
 
     this.scrollableColsAnalysis = DataTables.scrollableColsAnalysis;
-    this.scrollableFacColsAnalysis = DataTables.scrollableFacColsAnalysis;
     this.frozenColsAnalysis = DataTables.frozenColsAnalysis;
-    this.frozenFacColsAnalysis = DataTables.frozenFacColsAnalysis;
     this.scrollableColsPortfolio = DataTables.scrollableColsPortfolio;
-    this.scrollableFacColsPortfolio = DataTables.scrollableFacColsPortfolio;
     this.frozenColsPortfolio = DataTables.frozenColsPortfolio;
-    this.frozenFacColsPortfolio = DataTables.frozenFacColsPortfolio;
   }
 
   patchState({wsIdentifier, data}: any): void {
@@ -177,7 +168,8 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     ]);
   }
 
-  changeFinancialPTarget(target) {
+  loadDataOnScroll(event) {
+    console.log(event);
   }
 
   /** Manage Columns Method's */
@@ -197,7 +189,9 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   cloneData(data) {
-    return [...data];
+    if (data !== undefined) {
+      return [...data];
+    }
   }
 
   drop(event: CdkDragDrop<string[]>) {
@@ -276,11 +270,19 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
     this.dispatch(new fromWs.SelectRiskLinkEDMAndRDMAction());
   }
 
+  fillFacLists() {
+
+  }
+
   selectedItem() {
     this.fillLists();
     this.closeDropdown();
-    const array = _.toArray(this.state.listEdmRdm.selectedListEDMAndRDM);
-    array.length > 0 ? this.displayListRDMEDM = true : this.displayListRDMEDM = false;
+    const array = [..._.toArray(this.state.listEdmRdm.selectedListEDMAndRDM.edm), ..._.toArray(this.state.listEdmRdm.selectedListEDMAndRDM.rdm)];
+    if (array.length > 0) {
+      this.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
+    } else {
+      this.dispatch(new PatchRiskLinkDisplayAction({key: 'displayListRDMEDM', value: true}));
+    }
   }
 
   scanItem(item) {
@@ -296,51 +298,34 @@ export class WorkspaceRiskLinkComponent extends BaseContainer implements OnInit,
   }
 
   getScrollableCols() {
-    if (this.tabStatus === 'treaty') {
-      if (this.state.selectedEDMOrRDM === 'rdm') {
-        return this.scrollableColsAnalysis;
-      } else {
-        return this.scrollableColsPortfolio;
-      }
+    if (this.state.selectedEDMOrRDM === 'rdm') {
+      return this.scrollableColsAnalysis;
     } else {
-      if (this.state.selectedEDMOrRDM === 'rdm') {
-        return this.scrollableFacColsAnalysis;
-      } else {
-        return this.scrollableFacColsPortfolio;
-      }
+      return this.scrollableColsPortfolio;
     }
-
   }
 
   getFrozenCols() {
-    if (this.tabStatus === 'treaty') {
-      if (this.state.selectedEDMOrRDM === 'rdm') {
-        return this.frozenColsAnalysis;
-      } else {
-        return this.frozenColsPortfolio;
-      }
+    if (this.state.selectedEDMOrRDM === 'rdm') {
+      return this.frozenColsAnalysis;
     } else {
-      if (this.state.selectedEDMOrRDM === 'rdm') {
-        return this.frozenFacColsAnalysis;
-      } else {
-        return this.frozenFacColsPortfolio;
-      }
+      return this.frozenColsPortfolio;
     }
   }
 
   getTableData() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      return _.toArray(this.analysis.data);
+      return _.toArray(_.get(this.analysis, 'data', null));
     } else {
-      return _.toArray(this.portfolios.data);
+      return _.toArray(_.get(this.portfolios, 'data', null));
     }
   }
 
   getTableRecords() {
     if (this.state.selectedEDMOrRDM === 'rdm') {
-      return this.analysis.totalNumberElement;
+      return _.get(this.analysis, 'totalNumberElement', 0);
     } else {
-      return this.portfolios.totalNumberElement;
+      return _.get(this.portfolios, 'totalNumberElement', 0);
     }
   }
 

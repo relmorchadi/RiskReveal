@@ -1,0 +1,25 @@
+<p-dialog
+  [autoZIndex]="false"
+  [closable]="false"
+  [modal]="true"
+  [responsive]="true"
+  [visible]="showEditEdgePopup"
+  styleClass="m-dialog-modal"
+>
+  <p-header>
+    <div class="header">
+      <h4>Edge Configuration</h4>
+      <i (click)="closePopup()" class="icon-close_24px" style="cursor: pointer"></i>
+    </div>
+  </p-header>
+  <div class="content">
+
+  </div>
+  <p-footer>
+    <div class="modal-footer-wrapper">
+      <button (click)="closePopup()" class="a-button-text-cancel">CANCEL</button>
+      <button (click)="closePopup()" class="a-buttons-contained">SAVE</button>
+    </div>
+  </p-footer>
+</p-dialog>
+

@@ -31,13 +31,14 @@ import {jsPlumbToolkitDragDropModule} from 'jsplumbtoolkit-angular-drop';
 import {Dialogs} from 'jsplumbtoolkit';
 import {INURING_NODES} from "./components/inuring/nodes";
 import {EditContractPopUpComponent} from './components/inuring/edit-contract-pop-up/edit-contract-pop-up.component';
+import {EditEdgePopUpComponent} from './components/inuring/edit-edge-pop-up/edit-edge-pop-up.component';
 
 
 @NgModule({
   entryComponents: [...COMPONENTS, ...CONTAINERS, ...INURING_NODES],
   declarations: [
     ...COMPONENTS, ...CONTAINERS,
-    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent
+    ...PIPES, ...DIRECTIVES, TagsComponent, LastAdjustmentMatrixComponent, AdjustmentPopUpComponent, AddRemovePopUpComponent, RiskLinkResSummaryComponent, PopUpPltTableComponent, CalibrationMainTableComponent, InuringCanvasTabComponent, AttachPltPopUpComponent, EditContractPopUpComponent, EditEdgePopUpComponent
   ],
   imports: [
     GridsterModule,
