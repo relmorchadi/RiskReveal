@@ -86,7 +86,7 @@ export class InputNodeComponent extends BaseNodeComponent implements OnInit {
     console.log(this.plts);
 
     window['toolkit'].bind('nodeUpdated', (data) => {
-      if (data.node.data.type === 'inputNode') {
+      if (data.node.data.type === 'inputNode' && data.node.data.index == this.index) {
         this.plts = data.node.data.plts;
       }
     })

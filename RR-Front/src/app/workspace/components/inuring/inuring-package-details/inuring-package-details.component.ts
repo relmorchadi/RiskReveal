@@ -15,6 +15,7 @@ export class InuringPackageDetailsComponent implements OnInit {
   selectedPlts: any = [];
   stepConfig = {wsId: 'TB01735', uwYear: '2019', plts: []};
   showEditContractPopup: boolean = false;
+  showEditEdgePopup: boolean = false;
   private editInputNode: boolean = false;
   private editableNode: any;
 
@@ -63,5 +64,9 @@ export class InuringPackageDetailsComponent implements OnInit {
       this.showEditContractPopup = $event.popup;
     }
 
+  }
+
+  editEdge($event: any) {
+    this.showEditEdgePopup = $event;
   }
 }
