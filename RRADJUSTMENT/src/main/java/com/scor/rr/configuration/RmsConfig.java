@@ -37,11 +37,11 @@ public class RmsConfig {
         return new JdbcTemplate(rmsDS);
     }
 
-    @Bean(name = "jdbcRr")
-    @Autowired
-    public JdbcTemplate createJdbcTemplateRr(@Qualifier("dbRr") DataSource rrDS) {
-        return new JdbcTemplate(rrDS);
-    }
+//    @Bean(name = "jdbcRr")
+//    @Autowired
+//    public JdbcTemplate createJdbcTemplateRr(@Qualifier("dbRr") DataSource rrDS) {
+//        return new JdbcTemplate(rrDS);
+//    }
 
 
 }
