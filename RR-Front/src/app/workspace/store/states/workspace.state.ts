@@ -912,6 +912,11 @@ export class WorkspaceState {
     this.riskLinkFacade.deleteInnerLink(ctx, payload);
   }
 
+  @Action(fromWS.LoadLinkingDataAction)
+  loadLinkingData(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadLinkingDataAction) {
+    this.riskLinkFacade.loadLinkingDataAction(ctx, payload);
+  }
+
   @Action(fromWS.LoadFacDataAction)
   loadFacData(ctx: StateContext<WorkspaceModel>) {
     return this.riskLinkFacade.loadFacData(ctx);
@@ -942,7 +947,7 @@ export class WorkspaceState {
     return this.riskLinkFacade.loadRiskLinkPortfolioData(ctx, payload);
   }
 
-  @Action(fromWS.LoadPortfolioForLinkingAction)
+/*  @Action(fromWS.LoadPortfolioForLinkingAction)
   loadPortfolioForLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadPortfolioForLinkingAction) {
     return this.riskLinkFacade.loadPortfolioForLinking(ctx, payload);
   }
@@ -950,7 +955,7 @@ export class WorkspaceState {
   @Action(fromWS.LoadAnalysisForLinkingAction)
   loadAnalysisForLinking(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.LoadAnalysisForLinkingAction) {
     return this.riskLinkFacade.loadAnalysisForLinking(ctx, payload);
-  }
+  }*/
 
   @Action(fromWS.ToggleRiskLinkEDMAndRDMSelectedAction)
   toggleRiskLinkEDMAndRDMSelected(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.ToggleRiskLinkEDMAndRDMSelectedAction) {

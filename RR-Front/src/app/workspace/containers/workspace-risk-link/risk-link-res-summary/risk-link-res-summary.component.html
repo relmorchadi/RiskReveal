@@ -486,7 +486,26 @@
             [responsive]="true">
     <p-header>
       <div class="header">
-        <h6>Link Analysis To Portfolio</h6>
+        <div style="display: flex; width: 40%; align-items: center; justify-content: space-between">
+          <h6>Link Analysis To Portfolio</h6>
+          <nz-dropdown *ngIf="wsStatus === 'fac'" [nzTrigger]="'click'">
+            <div class="dropdown-wrap" nz-dropdown>
+              <div class="dropdown-wrap-title">
+                <span class="dropdown-title">Division</span>
+                <span class="dropdown-item-selected">
+                {{divisionLinking.selected}}
+              </span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item (click)="divisionLinking.selected = item"
+                  *ngFor="let item of divisionLinking.data">{{item}}</li>
+            </ul>
+          </nz-dropdown>
+        </div>
         <i style="cursor: pointer" (click)="linkingModalVisibility = false" class="icon-close_24px"></i>
       </div>
     </p-header>
@@ -498,7 +517,6 @@
               <span class="subtitle-2">Data Sources</span>
               <div class="radio-wrapper" *ngIf="!collapseDataSources">
                 <div class="popover-menu-item"
-                     (click)="toggleForLinkingEDM()"
                      [ngClass]="{'popover-menu-item-active': getChecked(itemsE)}"
                      *ngFor="let itemsE of dataList(linking?.edm)">
                   <p-radioButton [value]="itemsE.name" [label]="itemsE.name" [(ngModel)]="selectedEDM">
@@ -554,7 +572,7 @@
                         </ul>
                       </nz-dropdown>
                     </div>
-                    <p-table #lt [columns]="scrollableColsLinkingPortfolio" [value]="portfolio"
+                    <p-table #lt [columns]="scrollableColsLinkingPortfolio" [value]="filterPortfolioLinking()"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [scrollable]="true" [scrollHeight]="getTableHeight()">
@@ -622,13 +640,11 @@
 <!--                    <span class="selected-Item-text" *ngIf="linking?.rdm?.selected !== null">
                       {{linking?.rdm?.selected?.name}}
                     </span>-->
-                    <nz-dropdown *ngIf="linking?.rdm?.selected !== null" [nzTrigger]="'click'">
+                    <nz-dropdown *ngIf="selectedRDM !== null" [nzTrigger]="'click'">
                       <div class="dropdown-wrap" nz-dropdown>
                         <div class="dropdown-wrap-title">
                           <span class="dropdown-title">Select RDM</span>
-                          <span class="dropdown-item-selected">
-                          {{linking?.rdm?.selected?.name || null}}
-                        </span>
+                          <span class="dropdown-item-selected">{{selectedRDM}}</span>
                         </div>
                         <div class="dropdown-icon">
                           <i nz-icon type="down"></i>
@@ -657,7 +673,7 @@
                         </ul>
                       </nz-dropdown>
                     </div>
-                    <p-table #lt [columns]="scrollableColsLinkingAnalysis" [value]="analysis"
+                    <p-table #lt [columns]="scrollableColsLinkingAnalysis" [value]="filterLinkingAnalysis()"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [scrollable]="true" [scrollHeight]="getTableHeight()">
