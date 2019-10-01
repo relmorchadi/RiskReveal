@@ -1,4 +1,4 @@
-import {ChangeDetectorRef, Component, ElementRef, Input, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {ChangeDetectorRef, Component, NgZone, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from 'ng-zorro-antd';
 import * as _ from 'lodash';
 import {Actions, ofActionSuccessful, Store} from '@ngxs/store';
@@ -11,7 +11,6 @@ import * as rightMenuStore from '../../../shared/components/plt/plt-right-menu/s
 import * as leftMenuStore from '../../../shared/components/plt/plt-left-menu/store';
 import {Actions as rightMenuActions} from '../../../shared/components/plt/plt-right-menu/store/actionTypes'
 import {Actions as tableActions} from '../../../shared/components/plt/plt-main-table/store/actionTypes';
-import {Actions as leftMenuActions} from '../../../shared/components/plt/plt-left-menu/store/actionTypes';
 import * as tableStore from '../../../shared/components/plt/plt-main-table/store';
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
 import {BaseContainer} from '../../../shared/base';
@@ -248,7 +247,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
   generateColumns = (showDelete) => this.updateTable('pltColumns', showDelete ? _.omit(_.omit(this.pltColumnsCache, '7'), '7') : this.pltColumnsCache);
 
-  presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
+  presetColors: string[] = ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
   constructor(
     private nzDropdownService: NzDropdownService,
@@ -510,7 +509,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         },
       }
     };
-    this.tagsInput= {
+    this.tagsInput = {
       wsId: this.workspaceId,
       uwYear: this.uwy,
       projects: [],
@@ -664,7 +663,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       .pipe(
         ofActionSuccessful(fromWorkspaceStore.AddNewTag)
       ).subscribe( (userTag) => {
-        console.log(userTag);
+      console.log(userTag);
         this.detectChanges();
     })
 
@@ -672,7 +671,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       .pipe(
         ofActionSuccessful(fromWorkspaceStore.DeleteTag)
       ).subscribe( userTag => {
-        console.log(userTag);
+      console.log(userTag);
         this.detectChanges();
     })
   }
@@ -722,7 +721,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   manageTags() {
-    this.tagsInput= {
+    this.tagsInput = {
       ...this.tagsInput,
       wsId: this.workspaceId,
       uwYear: this.uwy,
@@ -730,7 +729,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       deletedPltsLength: this.tableInputs['listOfDeletedPltsData'].length,
       selectedListOfPlts: this.tableInputs['selectedListOfPlts'],
       _tagModalVisible: true,
-      pathTab:true,
+      pathTab: true,
     };
 
     let d = _.map(this.getTableInputKey('selectedListOfPlts').length > 0 ? this.getTableInputKey('selectedListOfPlts') : [this.selectedItemForMenu], k => _.find(this.getTableInputKey('listOfPltsData'), e => e.pltId == (this.getTableInputKey('selectedListOfPlts').length > 0 ? k.pltId : k)).userTags);
@@ -805,7 +804,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
 
 
   selectSystemTag({section, tag}) {
-    let newSysTagsCount= {};
+    let newSysTagsCount = {};
     _.forEach(this.tagsInput.systemTagsCount, (s, sKey) => {
       _.forEach(s, (t, tKey) => {
         if (tag == tKey && section == sKey) {
@@ -892,7 +891,11 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
       userTag: [],
       systemTag: {}
     });
-    this.updateTable("status", {"Published":{"selected":false},"Priced":{"selected":false},"Accumulated":{"selected":false}})
+    this.updateTable("status", {
+      "Published": {"selected": false},
+      "Priced": {"selected": false},
+      "Accumulated": {"selected": false}
+    })
     this.dispatch(new fromWorkspaceStore.FilterPltsByStatus({
       wsIdentifier: this.workspaceId+"-"+this.uwy,
       status: this.getTableInputKey('status')
@@ -1096,7 +1099,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
         this.setUserTags(action.payload);
         break;
 
-        //Tag Manager
+      //Tag Manager
 
       case leftMenuStore.addNewTag:
         this.addNewTag(action.payload)
@@ -1117,7 +1120,7 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput= {...this.tagsInput, [key]: value};
+    this.tagsInput = {...this.tagsInput, [key]: value};
   }
 
   updateTableAndTagsInputs(key, value) {
@@ -1129,32 +1132,32 @@ export class WorkspacePltBrowserComponent extends BaseContainer implements OnIni
     /*this.updateTagsInput('toAssign', _.concat(this.tagsInput.toAssign, tag));
     this.updateTagsInput('assignedTags', _.concat(this.tagsInput.assignedTags, tag));*/
     this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tag), 'tagName'));
-    this.updateTagsInput('toAssign',  _.uniqBy(_.concat(this.tagsInput.toAssign, tag), 'tagName'));
+    this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tag), 'tagName'));
   }
 
   toggleTag({i, operation, source}) {
-    if(operation == this.tagsInput['operation']) {
-      if(!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
-        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+    if (operation == this.tagsInput['operation']) {
+      if (!_.find(this.tagsInput.selectedTags, tag => tag.tagId == this.tagsInput[source][i].tagId)) {
+        this.updateTagsInput('selectedTags', _.merge({}, this.tagsInput.selectedTags, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
       }else {
         this.updateTagsInput('selectedTags', _.omit(this.tagsInput.selectedTags, this.tagsInput[source][i].tagId));
       }
     }else {
       this.updateTagsInput('operation', operation);
-      this.updateTagsInput('selectedTags', _.merge({}, { [this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]} }));
+      this.updateTagsInput('selectedTags', _.merge({}, {[this.tagsInput[source][i].tagId]: {...this.tagsInput[source][i]}}));
     }
 
-    if(!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
+    if (!_.keys(this.tagsInput.selectedTags).length) this.updateTagsInput('operation', null);
   }
 
   confirmSelection() {
     const tags = _.map(this.tagsInput.selectedTags, t => ({...t, type: 'full'}));
-    if(this.tagsInput.operation == 'assign') {
+    if (this.tagsInput.operation == 'assign') {
       this.updateTagsInput('toAssign', _.uniqBy(_.concat(this.tagsInput.toAssign, tags), 'tagId'))
       this.updateTagsInput('assignedTags', _.uniqBy(_.concat(this.tagsInput.assignedTags, tags), 'tagId'))
     }
 
-    if(this.tagsInput.operation == 'de-assign') {
+    if (this.tagsInput.operation == 'de-assign') {
       this.updateTagsInput('toAssign', _.filter(this.tagsInput.toAssign, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
       this.updateTagsInput('assignedTags', _.filter(this.tagsInput.assignedTags, tag => !_.find(tags, t => tag.tagId == t.tagId || tag.tagName == t.tagName)));
     }

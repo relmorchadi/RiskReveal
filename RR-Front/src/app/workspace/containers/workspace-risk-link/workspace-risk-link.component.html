@@ -104,7 +104,7 @@
                      nzTheme="outline"></i>
                   <div class="search-bar-text"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       *ngIf="!displayListRDMEDM" (click)="focusInput()">Select EDM & RDM
+                       (click)="focusInput()" *ngIf="!displayListRDMEDM">Select EDM & RDM
                   </div>
                   <input placeholder="Select EDM & RDM"
                          [ngStyle]="{'display': displayDropdownRDMEDM ? 'flex' : 'none'}"
@@ -213,7 +213,7 @@
             </div>
           </div>
         </div>
-        <div class="body-main-wrapper" style="" *ngIf="displayListRDMEDM">
+        <div *ngIf="displayListRDMEDM" class="body-main-wrapper" style="">
           <div class="left" *ngIf="state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
@@ -314,9 +314,10 @@
               <div style="display: flex; flex-direction: column">
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                           [resizableColumns]="true" columnResizeMode="expand" [virtualScroll]="true"
+                           [lazy]="true" [resizableColumns]="true" [rows]="40"
                            [showLoader]="false"
-                           [lazy]="true" [virtualRowHeight]="40" [rows]="40" [totalRecords]="getTableRecords()"
+                           [totalRecords]="getTableRecords()" [virtualRowHeight]="40" [virtualScroll]="true"
+                           columnResizeMode="expand"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
@@ -375,7 +376,7 @@
                         </td>
                       </tr>
                     </ng-template>
-                    <ng-template pTemplate="loadingbody" let-columns="columns">
+                    <ng-template let-columns="columns" pTemplate="loadingbody">
                       <tr style="height:34px">
                         <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
                           <div class="loading-text"></div>

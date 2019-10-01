@@ -4,17 +4,12 @@ import com.scor.rr.domain.*;
 import com.scor.rr.domain.dto.*;
 import com.scor.rr.repository.*;
 import com.scor.rr.repository.specification.PltTableSpecification;
-import org.hibernate.jpamodelgen.xml.jaxb.UniqueConstraint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 
 @Component

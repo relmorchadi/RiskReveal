@@ -3,20 +3,20 @@ import {BaseContainer} from "../../../base";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
 import {Router} from "@angular/router";
 import * as fromWorkspaceStore from "../../../../workspace/store";
+import {WorkspaceState} from "../../../../workspace/store";
 import * as _ from "lodash";
-import {Actions as rightMenuActions} from "../plt-right-menu/store";
 import * as rightMenuStore from "../plt-right-menu/store";
+import {Actions as rightMenuActions} from "../plt-right-menu/store";
 import {debounceTime, mergeMap} from "rxjs/operators";
 import {of} from "rxjs";
 import {FormControl, FormGroup} from "@angular/forms";
 import {SystemTagsService} from "../../../services/system-tags.service";
 import {SearchService} from "../../../../core/service";
-import {WorkspaceState} from "../../../../workspace/store";
 import {Debounce} from "../../../decorators";
 import {LazyLoadEvent} from "primeng/api";
+import * as tableStore from "../plt-main-table/store";
 import {Actions as tableActions} from "../plt-main-table/store";
 import {Message} from "../../../message";
-import * as tableStore from "../plt-main-table/store";
 import * as leftMenuStore from "../plt-left-menu/store";
 
 @Component({
@@ -436,6 +436,7 @@ export class PltSelectionPopUpComponent extends BaseContainer implements OnInit 
     this.keywordFormGroup = new FormGroup({
       keyword: new FormControl(null)
     });
+
   }
 
   onHide() {

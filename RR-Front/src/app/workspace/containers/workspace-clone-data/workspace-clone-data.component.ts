@@ -6,13 +6,12 @@ import {combineLatest, forkJoin} from 'rxjs';
 import * as _ from 'lodash'
 import {WorkspaceState} from '../../store/states';
 import * as fromWS from '../../store'
+import {SetCurrentTab} from '../../store'
 import {PreviousNavigationService} from '../../services/previous-navigation.service';
-import {take} from 'rxjs/operators';
 import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
-import {AbstractControl, FormBuilder, FormControl, FormGroup, ValidatorFn, Validators} from "@angular/forms";
+import {AbstractControl, FormBuilder, FormGroup, ValidatorFn, Validators} from "@angular/forms";
 import {WsApi} from "../../services/workspace.api";
-import {SetCurrentTab} from "../../store";
 
 interface SourceData {
   plts: any[];
@@ -239,8 +238,8 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
     this.actions$
       .pipe(
         ofActionDispatched(SetCurrentTab)
-      ).subscribe( ({payload}) => {
-        if(payload.wsIdentifier != this.workspaceId + "-" + this.uwy) this.destroy();
+      ).subscribe(({payload}) => {
+      if (payload.wsIdentifier != this.workspaceId + "-" + this.uwy) this.destroy();
     });
 
       combineLatest(
@@ -257,7 +256,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           wsId,
           year
         });
-        if(_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
+        if (_.get(navigationPayload, 'from', null) == 'pltBrowser' && navigationWsId && navigationWsId == wsId && navigationUwYear && navigationUwYear == year) {
           if(_.get(navigationPayload, 'type', null) == 'cloneFrom') {
             this.patchProjectForm('from', {
               wsId: '',
@@ -273,8 +272,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
             });
             this.setCloneConfig('currentSourceOfItems', 'from');
             this.multiSteps = true;
-          }
-          else {
+          } else {
             this.patchProjectForm('from', {
               ...navigationPayload.payload,
               detail: currentWS && currentWS.cedantName + ' | ' + currentWS.workspaceName + ' | ' + currentWS.uwYear + ' | ' + currentWS.wsId
@@ -296,8 +294,7 @@ export class WorkspaceCloneDataComponent extends BaseContainer implements OnInit
           };
           this.searchWorkSpaceModal = true;
 
-        }
-        else {
+        } else {
           this.patchProjectForm('to', {
             wsId: wsId,
             uwYear: year,

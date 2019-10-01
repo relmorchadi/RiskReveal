@@ -1,7 +1,7 @@
 import {ChangeDetectorRef, Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
 import {ActivatedRoute, Router} from '@angular/router';
-import {Observable, of, Subject, Subscription} from 'rxjs';
+import {Observable, of, Subscription} from 'rxjs';
 import {Actions, ofActionDispatched, Select, Store} from '@ngxs/store';
 import {WorkspaceMainState} from '../../../../core/store/states';
 import {LazyLoadEvent} from 'primeng/api';
@@ -35,8 +35,46 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   deletedPlts$: Observable<any>;
   @Select(WorkspaceMainState.getData) selectWsData$;
   @Select(WorkspaceMainState.getProjects) projects$;
+  Inputs: {
+    scrollHeight: string | number,
+    contextMenuItems: any,
+    filterInput: string;
+    pltColumns: any[];
+    listOfPltsData: [];
+    listOfDeletedPltsData: [];
+    listOfPltsCache: [];
+    listOfDeletedPltsCache: [];
+    listOfPlts: [];
+    listOfDeletedPlts: [];
+    selectedListOfPlts: any;
+    selectedListOfDeletedPlts: any;
+    selectAll: boolean;
+    someItemsAreSelected: boolean;
+    showDeleted: boolean;
+    filterData: any;
+    filters: {
+      systemTag: any,
+      userTag: []
+    };
+    sortData: any;
+    _tagModalVisible: boolean;
+    _modalSelect: [];
+    tagForMenu: any;
+    _editingTag: boolean;
+    wsId: string;
+    uwYear: string;
+    projects: any[];
+    addTagModalIndex: number;
+    fromPlts: boolean;
+    deletedPltsLength: number;
+    userTags: any[];
+    systemTagsCount: any;
+    wsHeaderSelected: boolean;
+    pathTab: boolean;
+    selectedItemForMenu: any;
+    status: any
+  };
   private pltProjectSubscription: Subscription;
-  private pltUserTagsSubscription: Subscription;
 
   @Output('onVisibleChange') onVisibleChange: EventEmitter<any> = new EventEmitter();
   @Output('onSelectProjectNext') onSelectProjectNext: EventEmitter<any> = new EventEmitter();
@@ -127,46 +165,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   contracts = [];
   loading;
   browesing: boolean;
-
-  Inputs: {
-    scrollHeight: string | number,
-    contextMenuItems: any,
-    filterInput: string;
-    pltColumns: any[];
-    listOfPltsData: [];
-    listOfDeletedPltsData: [];
-    listOfPltsCache: [];
-    listOfDeletedPltsCache: [];
-    listOfPlts: [];
-    listOfDeletedPlts: [];
-    selectedListOfPlts: any;
-    selectedListOfDeletedPlts: any;
-    selectAll: boolean;
-    someItemsAreSelected: boolean;
-    showDeleted: boolean;
-    filterData: any;
-    filters: {
-      systemTag: any,
-      userTag: []
-    };
-    sortData: any;
-    _tagModalVisible: boolean;
-    _modalSelect: [];
-    tagForMenu: any;
-    _editingTag: boolean;
-    wsId: string;
-    uwYear: string;
-    projects: any[];
-    addTagModalIndex: number;
-    fromPlts: boolean;
-    deletedPltsLength: number;
-    userTags: any[];
-    systemTagsCount: any;
-    wsHeaderSelected: boolean;
-    pathTab: boolean;
-    selectedItemForMenu: any;
-    status: any
-  };
+  private pltUserTagsSubscription: Subscription;
 
   tableInputs = [ 'status','scrollHeight', 'dataKey', 'filterInput', 'pltColumns', 'listOfPltsData', 'listOfDeletedPltsData', 'listOfPltsCache', 'listOfDeletedPltsCache', 'selectedListOfPlts', 'selectedListOfDeletedPlts', 'selectAll', 'selectAllDeletedPlts', 'someItemsAreSelected', 'someDeletedItemsAreSelected', 'showDeleted', 'filterData', 'filters', 'sortData', 'contextMenuItems', 'openedPlt'];
 
@@ -435,7 +434,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
       mode: "pop-up"
     };
 
-    this.tagsInput= {
+    this.tagsInput = {
       wsId: '',
       uwYear: 0,
       projects: [],
@@ -1292,7 +1291,7 @@ export class WorkspaceProjectPopupComponent extends BaseContainer implements OnI
   }
 
   updateTagsInput(key, value) {
-    this.tagsInput= {...this.tagsInput, [key]: value};
+    this.tagsInput = {...this.tagsInput, [key]: value};
   }
 
   updateTableAndTagsInputs(key, value) {

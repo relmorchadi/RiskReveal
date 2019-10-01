@@ -12,7 +12,6 @@ import {BaseContainer} from '../../../shared/base';
 import {StateSubscriber} from '../../model/state-subscriber';
 import * as fromHeader from '../../../core/store/actions/header.action';
 import {Navigate} from '@ngxs/router-plugin';
-import {LazyLoadEvent} from "primeng/api";
 
 @Component({
   selector: 'app-workspace-risk-link',

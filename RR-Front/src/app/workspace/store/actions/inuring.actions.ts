@@ -31,6 +31,13 @@ export class AddInputNode {
   constructor(public payload: any) {}
 }
 
+export class EditInputNode {
+  static readonly type = `[${namespace}] Edit Input Node`;
+
+  constructor(public payload: any) {
+  }
+}
+
 export class RefreshInuringGraph {
   static readonly type = `[${namespace}] Refresh Inuring Graph`;
   constructor(public payload: any) {}

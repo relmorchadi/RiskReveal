@@ -9,10 +9,9 @@ import {ContextMenuModule, DialogModule, MultiSelectModule} from 'primeng/primen
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
-import {DragDropModule} from '@angular/cdk/drag-drop';
+import {DragDropModule, DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
-import {DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 import {AngularDraggableModule} from "angular2-draggable";
 import {SystemTagFilterPipe} from "./pipes/system-tag-filter.pipe";
 import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";

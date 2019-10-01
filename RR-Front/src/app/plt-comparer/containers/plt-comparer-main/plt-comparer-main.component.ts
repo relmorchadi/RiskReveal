@@ -3,16 +3,15 @@ import {NzDropdownContextComponent, NzDropdownService, NzMenuItemDirective} from
 import {CdkDragDrop, moveItemInArray} from '@angular/cdk/drag-drop';
 import * as fromWorkspaceStore from "../../../workspace/store";
 import {WorkspaceState} from "../../../workspace/store";
-import {Select, Store} from '@ngxs/store';
+import {Store} from '@ngxs/store';
 import * as _ from 'lodash';
 import {Table} from "primeng/table";
-import {map, switchMap} from 'rxjs/operators';
-import {combineLatest, Observable, of} from 'rxjs';
-import {WorkspaceMain} from "../../../core/model";
+import {switchMap} from 'rxjs/operators';
+import {of} from 'rxjs';
 import {FormBuilder, FormGroup} from '@angular/forms';
 import * as tableStore from "../../../shared/components/plt/plt-main-table/store";
-import {Message} from "../../../shared/message";
 import {Actions as tableActions} from "../../../shared/components/plt/plt-main-table/store";
+import {Message} from "../../../shared/message";
 import {BaseContainer} from "../../../shared/base";
 import {Router} from "@angular/router";
 import {SystemTagsService} from "../../../shared/services/system-tags.service";
@@ -79,14 +78,20 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   defaultImport = 'Baseline';
 
   tagContextMenu = [
-    { label: 'Delete Tag', icon: 'pi pi-trash', command: (event) => this.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))},
-    { label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
+    {
+      label: 'Delete Tag',
+      icon: 'pi pi-trash',
+      command: (event) => this.dispatch(new fromWorkspaceStore.deleteUserTag(this.tagFormenu.tagId))
+    },
+    {
+      label: 'Rename Tag', icon: 'pi pi-pencil', command: (event) => {
         this.renamingTag = true;
         this.fromPlts = false;
         this.addModalInput = this.tagFormenu.tagName;
         this.modalInputCache = this.tagFormenu.tagName;
         this.addTagModal = true;
-      }}
+      }
+    }
   ];
 
   epMetricsCurrencySelected: any = 'EUR';
@@ -94,7 +99,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   epMetricsFinancialUnitSelected: any = 'Million';
   CalibrationImpactFinancialUnitSelected: any = 'Million';
 
-  currentPath:any = null;
+  currentPath: any = null;
 
   visible = false;
   size = 'large';
@@ -877,7 +882,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
 
   observeFormChanges() {
     return this.form.valueChanges.pipe(
-      switchMap( ({defaultImport}) => {
+      switchMap(({defaultImport}) => {
         this.workspaceId = defaultImport.workSpaceId;
         this.uwy = defaultImport.uwYear;
         return of(null);
@@ -897,13 +902,13 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
     this.initForm();
     this.colorThePlt();
 
-    this.getOpenedWorkspaces().subscribe( (workspaces: any) => {
+    this.getOpenedWorkspaces().subscribe((workspaces: any) => {
       this.listOfWs = workspaces;
       console.log(workspaces);
       this.detectChanges();
     });
 
-    this.observeFormChanges().subscribe( () => {
+    this.observeFormChanges().subscribe(() => {
       this.dispatch(new fromWorkspaceStore.loadAllPlts({
         params: {
           workspaceId: this.workspaceId, uwy: this.uwy
@@ -918,7 +923,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
       this.detectChanges();
     });
 
-    this.observeFormInputsWithSelector( () => this.getUserTags()).subscribe(userTags => {
+    this.observeFormInputsWithSelector(() => this.getUserTags()).subscribe(userTags => {
       this.userTags = userTags || {};
 
       this.detectChanges();
@@ -967,7 +972,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   }
 
   toggleSelectPlts(plts: any) {
-    this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({wsIdentifier: this.workspaceId+'-'+this.uwy,plts}));
+    this.dispatch(new fromWorkspaceStore.ToggleSelectPlts({wsIdentifier: this.workspaceId + '-' + this.uwy, plts}));
   }
 
   selectSinglePLT($event) {
@@ -1019,9 +1024,11 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   closeDrawer(): void {
     this.visible = false;
   }
+
   closePltInDrawer(pltId) {
     this.dispatch(new fromWorkspaceStore.ClosePLTinDrawer({wsIdentifier: this.workspaceId + '-' + this.uwy, pltId}));
   }
+
   getTagsForSummary() {
     this.pltdetailsSystemTags = this.systemTags;
     this.pltdetailsUserTags = this.userTags;
@@ -1029,10 +1036,14 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
 
   openPltInDrawer(plt) {
     this.closePltInDrawer(this.sumnaryPltDetailsPltId);
-    this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({wsIdentifier: this.workspaceId + '-' + this.uwy, pltId: plt}));
+    this.dispatch(new fromWorkspaceStore.OpenPLTinDrawer({
+      wsIdentifier: this.workspaceId + '-' + this.uwy,
+      pltId: plt
+    }));
     this.openDrawer(1);
     this.getTagsForSummary();
   }
+
   setSelectedMenuItem($event: any) {
     this.selectedItemForMenu = $event;
   }
@@ -1040,22 +1051,29 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   setFilters($event) {
     this.filters = $event;
   }
+
   renameTag($event) {
     this.dispatch(new fromWorkspaceStore.editTag({wsIdentifier: this.workspaceId + '-' + this.uwy, ...$event}));
   }
+
   resetPath() {
     // this.filterData = _.omit(this.filterData, 'project');
     this.projects = _.map(this.projects, p => ({...p, selected: false}));
     this.showDeleted = false;
   }
+
   setSelectedProjects($event) {
     this.projects = $event;
   }
+
   selectSystemTag({section, tag}) {
 
     _.forEach(this.systemTagsCount, (s, sKey) => {
       _.forEach(s, (t, tKey) => {
-        this.systemTagsCount[sKey][tKey] = tag == tKey && section == sKey ? {...t, selected: !t.selected} : {...t, selected: false};
+        this.systemTagsCount[sKey][tKey] = tag == tKey && section == sKey ? {...t, selected: !t.selected} : {
+          ...t,
+          selected: false
+        };
       });
     });
   }
@@ -1081,7 +1099,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
   }
 
   assignPltsToTag($event: any) {
-    this.dispatch(new fromWorkspaceStore.createOrAssignTags({wsIdentifier: this.workspaceId+'-'+this.uwy,...$event}))
+    this.dispatch(new fromWorkspaceStore.createOrAssignTags({wsIdentifier: this.workspaceId + '-' + this.uwy, ...$event}))
   }
 
   setTagModal($event: any) {
@@ -1102,6 +1120,7 @@ export class PltComparerMainComponent extends BaseContainer implements OnInit {
     this.selectedUnit = unit;
 
   }
+
   emitFilters(filters: any) {
     this.dispatch(new fromWorkspaceStore.setUserTagsFilters({
       wsIdentifier: this.workspaceId + '-' + this.uwy,

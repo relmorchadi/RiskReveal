@@ -113,8 +113,11 @@
                 [disabled]="!selectedWorkspace" (click)="getBrowesingItems(selectedWorkspace)">{{ multiSteps ? 'NEXT' : 'SELECT'}}</button>
       </ng-container>
       <ng-container *ngIf="browesing">
-        <button [ngClass]="{'a-buttons-contained-disabled' : Inputs['selectedListOfPlts'].length == 0, 'a-buttons-contained': Inputs['selectedListOfPlts'].length > 0 }"
-                [disabled]="Inputs['selectedListOfPlts'].length == 0" (click)="setBrowesingItems()">SELECT</button>
+        <button (click)="setBrowesingItems()"
+                [disabled]="Inputs['selectedListOfPlts'].length == 0"
+                [ngClass]="{'a-buttons-contained-disabled' : Inputs['selectedListOfPlts'].length == 0, 'a-buttons-contained': Inputs['selectedListOfPlts'].length > 0 }">
+          SELECT
+        </button>
       </ng-container>
     </div>
   </p-footer>

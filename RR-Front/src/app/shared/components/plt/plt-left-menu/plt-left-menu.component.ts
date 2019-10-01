@@ -1,6 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import * as _ from 'lodash';
-import {FormArray, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
 import * as leftMenuStore from './store';
 import {Message} from "../../../message";
 
@@ -22,28 +22,13 @@ export class PltLeftMenuComponent implements OnInit {
     'WS': '#62ec07',
     'CS': '#62ec07'
   };
-  presetColors: string[]= ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
+  presetColors: string[] = ['#0700CF', '#ef5350', '#d81b60', '#6a1b9a', '#880e4f', '#64ffda', '#00c853', '#546e7a'];
 
   tagForm: FormGroup;
   drawer: boolean;
 
   constructor(private _fb: FormBuilder) {
     this.drawer= false;
-  }
-
-  ngOnInit() {
-    this.initTagForm();
-  }
-
-  initTagForm(){
-    this.tagForm= this._fb.group({
-      tagId: [null],
-      tagName: ['', Validators.required],
-      tagColor: ['#ae1675'],
-      userId: [ 17, Validators.required],
-      editorId: [''],
-      visible: [false]
-    })
   }
 
   get title() {
@@ -56,6 +41,21 @@ export class PltLeftMenuComponent implements OnInit {
 
   get visible() {
     return this.tagForm.get('visible');
+  }
+
+  ngOnInit() {
+    this.initTagForm();
+  }
+
+  initTagForm() {
+    this.tagForm = this._fb.group({
+      tagId: [null],
+      tagName: ['', Validators.required],
+      tagColor: ['#ae1675'],
+      userId: [17, Validators.required],
+      editorId: [''],
+      visible: [false]
+    })
   }
 
   toDate(d) {
@@ -137,16 +137,16 @@ export class PltLeftMenuComponent implements OnInit {
     this._modalInput = value;
   }
 
-  toggleColorPicker(i: number){
+  toggleColorPicker(i: number) {
     event.stopPropagation();
     event.preventDefault();
-    this.tagForm.patchValue({ visible: !this.visible.value})
+    this.tagForm.patchValue({visible: !this.visible.value})
   }
 
   closeColorPicker() {
     event.stopPropagation();
     event.preventDefault();
-    this.tagForm.patchValue({ visible: false});
+    this.tagForm.patchValue({visible: false});
   }
 
   handlePopUpCancel() {
@@ -208,7 +208,7 @@ export class PltLeftMenuComponent implements OnInit {
   setFilter(filter: string, tag,section) {
     if(filter === 'userTag'){
       const filters = _.findIndex(this.tagsInput.filters[filter], e => e == tag.tagId) < 0 ?
-        _.merge({}, this.tagsInput.filters, { [filter]: _.merge([], this.tagsInput.filters[filter], {[this.tagsInput.filters[filter].length] : tag.tagId} ) }) :
+        _.merge({}, this.tagsInput.filters, {[filter]: _.merge([], this.tagsInput.filters[filter], {[this.tagsInput.filters[filter].length]: tag.tagId})}) :
         _.assign({}, this.tagsInput.filters, {[filter]: _.filter(this.tagsInput.filters[filter], e => e != tag.tagId)});
 
       this.actionDispatcher.emit({
@@ -218,7 +218,7 @@ export class PltLeftMenuComponent implements OnInit {
 
       this.actionDispatcher.emit({
         type: leftMenuStore.onSetSelectedUserTags,
-        payload: _.map(this.tagsInput.userTags, t => t.tagId == tag.tagId ? {...t,selected: !t.selected} : t)
+        payload: _.map(this.tagsInput.userTags, t => t.tagId == tag.tagId ? {...t, selected: !t.selected} : t)
       });
 
       this.actionDispatcher.emit({
@@ -298,7 +298,7 @@ export class PltLeftMenuComponent implements OnInit {
   }
 
   addNewTag() {
-    if(this.tagForm.valid) this.actionDispatcher.emit({
+    if (this.tagForm.valid) this.actionDispatcher.emit({
       type: leftMenuStore.addNewTag,
       payload: _.omit(this.tagForm.value, ['visible', 'editorId', 'tagId'])
     })

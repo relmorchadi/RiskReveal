@@ -4,6 +4,8 @@
     <div nz-col [nzSpan]="5">
       <inuring-canvas-tab
         [wsConfig]="{wsId: data?.wsId,year: data?.year}"
+        (changeAppendedNodes)="appendedNodes = $event"
+        (showCreationPopup)="onShowCreationPopup($event)"
       ></inuring-canvas-tab>
     </div>
 
@@ -11,7 +13,11 @@
       <div class="col-content mt-1">
         <!--        <nz-tabset class="a-tab-large">-->
         <!--          <nz-tab [nzTitle]="'IP0000055 Structure graph'">-->
-        <inuring-graph></inuring-graph>
+        <inuring-graph
+          (editNode)="editNode($event)"
+        >
+
+        </inuring-graph>
         <!--          </nz-tab>-->
         <!--        </nz-tabset>-->
       </div>
@@ -21,3 +27,20 @@
   </div>
 
 </div>
+<app-plt-selection-pop-up
+  [isVisible]="showCreationPopup"
+  [multiSteps]="false"
+  [stepConfig]="stepConfig"
+  (onVisibleChange)="showCreationPopup = $event"
+  (onSelectWorkspace)="setSelectedWs($event)"
+  (onSelectItems)="setSelectedPlts($event)"
+>
+
+</app-plt-selection-pop-up>
+
+<app-edit-contract-pop-up
+  [showEditContractPopup]="showEditContractPopup"
+  (closePop)="showEditContractPopup = false"
+>
+
+</app-edit-contract-pop-up>

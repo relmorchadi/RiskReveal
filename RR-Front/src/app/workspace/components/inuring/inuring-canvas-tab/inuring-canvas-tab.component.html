@@ -4,7 +4,7 @@
       <div class="create-tab-content">
         <div class="simple-panel">
           <h6>Input Node Creation</h6>
-          <div class="menu-item add-item" (click)="showCreationPopup=true">
+          <div (click)="onShowCreationPopup()" class="menu-item add-item">
             Create Node
             <i class="icon-add_circle_24px"></i>
           </div>
@@ -325,7 +325,7 @@
 <!--  (onVisibleChange)="showCreationPopup= $event"-->
 
 <!--&gt;</node-creation-popup>-->
-<app-plt-selection-pop-up
+<!--<app-plt-selection-pop-up
   [isVisible]="showCreationPopup"
   [multiSteps]="false"
   [stepConfig]="stepConfig"
@@ -334,4 +334,4 @@
   (onSelectItems)="setSelectedPlts($event)"
 >
 
-</app-plt-selection-pop-up>
+</app-plt-selection-pop-up>-->

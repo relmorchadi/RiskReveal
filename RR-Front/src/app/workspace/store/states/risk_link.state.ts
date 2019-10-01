@@ -1,4 +1,4 @@
-import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {Selector, State} from '@ngxs/store';
 
 import * as _ from 'lodash';
 import {RiskLinkModel} from '../../model/risk_link.model';

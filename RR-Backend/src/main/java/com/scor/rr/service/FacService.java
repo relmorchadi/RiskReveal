@@ -3,12 +3,10 @@ package com.scor.rr.service;
 
 import com.scor.rr.domain.*;
 import com.scor.rr.repository.*;
-import com.scor.rr.repository.specification.ContractSearchResultSpecification;
 import com.scor.rr.repository.specification.FacContractSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

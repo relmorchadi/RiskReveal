@@ -1,8 +1,8 @@
-import {ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
-import {AddInputNode, RefreshInuringGraph} from "../../../store/actions";
+import {RefreshInuringGraph} from "../../../store/actions";
 
 @Component({
   selector: 'inuring-canvas-tab',
@@ -151,10 +151,12 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit, 
     }
   ];
 
-  appendedNodes = [];
+  @Input() appendedNodes;
 
   @Input('wsConfig')
   wsConfig: { wsId: string, year: number };
+  @Output('showCreationPopup') showCreationPopupEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('changeAppendedNodes') changeAppendedNodesEmitter: EventEmitter<any> = new EventEmitter();
 
   constructor(private _router: Router, private _cdRef: ChangeDetectorRef, private _store: Store, private _actions: Actions) {
     super(_router, _cdRef, _store)
@@ -167,7 +169,7 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit, 
     ).subscribe(action => {
       console.log('Actions here')
       if (action instanceof RefreshInuringGraph) {
-        this.appendedNodes= [];
+        this.changeAppendedNodesEmitter.emit([]);
       }
     });
 
@@ -186,17 +188,21 @@ export class InuringCanvasTabComponent extends BaseContainer implements OnInit, 
 
   }
 
-  setSelectedWs = ($event) => {
-  };
+  /* setSelectedWs = ($event) => {
+   };
+ */
 
-  setSelectedPlts(selectedPlts) {
+  /*setSelectedPlts(selectedPlts) {
     this.appendedNodes.push(selectedPlts);
     this._store.dispatch(new AddInputNode({plts: selectedPlts, index: this.appendedNodes.length}));
-  }
+  }*/
 
   ngOnDestroy(): void {
     this.destroy();
   }
 
 
+  onShowCreationPopup() {
+    this.showCreationPopupEmitter.emit(true)
+  }
 }

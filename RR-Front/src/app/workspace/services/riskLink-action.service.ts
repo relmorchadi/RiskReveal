@@ -10,8 +10,6 @@ import {Injectable} from '@angular/core';
 import {RiskLinkState} from '../store/states';
 import {WorkspaceModel} from '../model';
 import produce from 'immer';
-import {normalizeFileReplacements} from "@angular-devkit/build-angular/src/utils";
-import * as fromPlt from "../store/actions/plt_main.actions";
 
 @Injectable({
   providedIn: 'root'

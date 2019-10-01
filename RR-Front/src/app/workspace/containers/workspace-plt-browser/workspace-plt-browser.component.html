@@ -22,7 +22,9 @@
           </div>
         </div>
       </div>
-      <div class="tabset-right" [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}">
+      <div
+        [ngStyle]="{ 'width': leftIsHidden ? 'calc(100vw - ' + leftMenu.clientWidth +'px - 80px - 174px + 130px)' : 'calc(100vw - ' + leftMenu.clientWidth + 'px - 80px - 177px)'}"
+        class="tabset-right">
         <div class="title-as-tab">
           <div class="div-title">
             <span class="title">PLTs</span>
