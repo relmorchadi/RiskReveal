@@ -6,7 +6,8 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
   template: `
     <div class="flowchart-object flowchart-start input-node-card" (dblclick)="openPopup()">
       <div class="node-header">
-        Input Node {{index}}
+        <input style="border: none !important;background-color: #f4f6fc !important;text-align: center;"
+               (ngModelChange)="changeNoteName()" [(ngModel)]="getNode().data.name">
       </div>
       <div class="node-content">
         {{plts?.length}} PLTs
@@ -51,6 +52,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
       font-weight: bold;
       padding: 10px 20px;
     }
+
 
     .input-node-card .node-content {
       font-weight: bold;
@@ -102,5 +104,9 @@ export class InputNodeComponent extends BaseNodeComponent implements OnInit {
 
   editNode() {
     console.log(this);
+  }
+
+  changeNoteName() {
+    window['toolkit'].updateNode(this.getNode().data.id, {name: this.getNode().data.name})
   }
 }

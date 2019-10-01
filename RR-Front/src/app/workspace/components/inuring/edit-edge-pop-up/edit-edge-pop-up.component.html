@@ -8,12 +8,84 @@
 >
   <p-header>
     <div class="header">
-      <h4>Edge Configuration</h4>
+      <h6>Edge Configuration</h6>
       <i (click)="closePopup()" class="icon-close_24px" style="cursor: pointer"></i>
     </div>
   </p-header>
-  <div class="content">
+  <div class="content" style="display: flex; flex-direction: column; justify-content: space-between">
+    <div class="source-target">
+      <div class="source-node">
+        <span class="source-node-label">Source Node:</span>
+        <span class="source-node-name"> Input Node</span>
+      </div>
+      <div class="target-node">
+        <span class="target-node-label">Target Node:</span>
+        <span class="target-node-name"> Undefined</span>
+      </div>
+    </div>
+    <div class="contract-attributes">
+      <span class="title">Contract Attributes</span>
+      <div class="out-put">
+        <div class="out-put-perspective">
+          <label>OutPut Perspective: </label>
+          <nz-select
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a peril"
+            nzShowSearch>
+            <nz-option *ngFor="let option of outPutPerspectives" [nzLabel]="option" [nzValue]="option"></nz-option>
+          </nz-select>
+        </div>
+        <div class="out-put-treatment-grouping">
+          <label>OutPut Treatment On Grouping: </label>
+          <p-radioButton [(ngModel)]="treatmentOnGrouping"
+                         class="radio-include" label="Positive"
+                         name="treatmentOnGrouping"
+                         value="positive"></p-radioButton>
+          <p-radioButton [(ngModel)]="treatmentOnGrouping"
+                         class="radio-exclude" label="Negative"
+                         name="treatmentOnGrouping"
+                         value="negative"></p-radioButton>
+        </div>
 
+      </div>
+      <div class="filters">
+        <div class="group-title">
+          <span>Filters</span>
+          <i (click)="addPeriFilter()" class="fa fa-plus-circle"></i>
+        </div>
+        <div class="summary-info" style="border: 1px solid #b8bfc5; height: 225px;overflow: auto">
+          <ng-container *ngFor="let perilFilter of perilFilters">
+            <div class="filter-container" style="width: 100%; display: flex;padding: 15px;">
+              <nz-select
+                [(ngModel)]="perilFilter.type"
+                class="a-dropdown-small input-wrapper select-type"
+                nzShowSearch>
+                <nz-option *ngFor="let option of perilFiltersTypes" [nzLabel]="option" [nzValue]="option"></nz-option>
+              </nz-select>
+              <nz-select
+                [(ngModel)]="perilFilter.filter"
+                class="a-dropdown-small input-wrapper select-filter"
+                nzShowSearch>
+                <nz-option *ngFor="let option of filters" [nzLabel]="option" [nzValue]="option"></nz-option>
+              </nz-select>
+              <p-radioButton [(ngModel)]="perilFilter.includeExclude"
+                             class="radio-include" label="Include"
+                             name="includeExlude"
+                             value="include"></p-radioButton>
+              <p-radioButton [(ngModel)]="perilFilter.includeExclude"
+                             class="radio-exclude" label="Exclude"
+                             name="includeExlude"
+                             value="exclude"></p-radioButton>
+              <div style="width: 20%;">
+                <i (click)="saveFilter(perilFilter.id)" class="fa fa-check filter-save"></i>
+                <i (click)="removeFilter(perilFilter.id)" class="fa fa-close filter-close"></i>
+              </div>
+            </div>
+          </ng-container>
+
+        </div>
+      </div>
+    </div>
   </div>
   <p-footer>
     <div class="modal-footer-wrapper">

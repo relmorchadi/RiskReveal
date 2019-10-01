@@ -9,6 +9,8 @@ export class EditEdgePopUpComponent implements OnInit {
 
   @Input() showEditEdgePopup: any;
   @Output('closePop') closePopEmitter: EventEmitter<any> = new EventEmitter();
+  outPutPerspectives: any = ['Net'];
+  treatmentOnGrouping: any = 'positive';
 
   constructor() {
   }
