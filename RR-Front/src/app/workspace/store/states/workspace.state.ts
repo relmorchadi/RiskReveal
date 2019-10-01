@@ -968,6 +968,11 @@ export class WorkspaceState {
     this.riskLinkFacade.selectRiskLinkEDMAndRDM(ctx);
   }
 
+  @Action(fromWS.SelectFacRiskLinkEDMAndRDMAction)
+  selectFacRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SelectFacRiskLinkEDMAndRDMAction) {
+    this.riskLinkFacade.selectMatchingFacEDMAndRDM(ctx, payload);
+  }
+
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
   @Action(fromWS.SearchRiskLinkEDMAndRDMAction)
   searchRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SearchRiskLinkEDMAndRDMAction) {
