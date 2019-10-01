@@ -10,7 +10,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
           Note Sample
         </div>
         <div>
-          <i class="icon-trash-alt"></i>
+          <i class="icon-trash-alt" (click)="deleteNode()"></i>
         </div>
       </div>
       <div class="node-content">
@@ -18,17 +18,17 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
       </div>
     </div>
   `,
-  styles: [`
-    .div-style {
-      height: 10px;
-      background-color: #4468c4;
-    }
-
+  styles: [`    
     .input-node-card {
-      height: 117.5px;
+      min-height: 100px;
       width: 198px;
       background-color: rgba(248, 231, 28, 0.34);
       border: 1px solid #F5A623;
+    }
+    
+    i.icon-trash-alt{
+      font-weight: bold;
+      font-size: 16px;
     }
 
     .input-node-card .node-header {
@@ -54,7 +54,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
       font-size: 12px;
       width: 95%;
       border: none;
-      max-height: 85px;
+      /*max-height: 85px;*/
     }
     
   `]
@@ -66,6 +66,11 @@ export class NoteNodeComponent extends BaseNodeComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('Here i m', this.getNode().data.content);
+  }
+
+  deleteNode(){
+    this.removeNode();
   }
 
 }

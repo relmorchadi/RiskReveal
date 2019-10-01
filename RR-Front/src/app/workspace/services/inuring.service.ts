@@ -58,7 +58,7 @@ export class InuringService {
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.content[wsIdentifier].inuring.content[data.id] = data;
       draft.content[wsIdentifier].inuring.currentTab = {
-        index: _.findIndex(_.keys(draft.content[wsIdentifier].inuring.content), (key, val) => key == data.id),
+        index: _.findIndex(_.keys(draft.content[wsIdentifier].inuring.content), (key, val) => key == data.id) + 1,
         packageId: data.id
       };
     }));
@@ -79,4 +79,36 @@ export class InuringService {
   }
 
 
+  addInuringPackage(ctx: StateContext<WorkspaceModel>, {payload}: fromInuring.AddInuringPackage) {
+    const {wsIdentifier, inuringPackage} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].inuring.packages.push(
+        {
+          ...inuringPackage,
+          selected: false,
+          status: 'init',
+          creationDate: new Date(),
+          lastModified: new Date(),
+          statsExchangeRate: '',
+          by: 'Risk Reveal'
+        }
+      );
+    }));
+  }
+
+  editInuringPackage(ctx: StateContext<WorkspaceModel>, {payload}: fromInuring.EditInuringPackage) {
+    const {wsIdentifier, inuringPackage} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      let targetIndex = draft.content[wsIdentifier].inuring.packages.findIndex(item => item.id == inuringPackage.id);
+      draft.content[wsIdentifier].inuring.packages[targetIndex] = inuringPackage;
+    }));
+  }
+
+
+  deleteInuringPackage(ctx: StateContext<WorkspaceModel>, {payload}: fromInuring.EditInuringPackage) {
+    const {wsIdentifier, inuringPackage} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].inuring.packages= draft.content[wsIdentifier].inuring.packages.filter(item => item.id != inuringPackage.id);
+    }));
+  }
 }
