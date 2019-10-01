@@ -4,6 +4,7 @@
     <div nz-col [nzSpan]="5">
       <inuring-canvas-tab
         [wsConfig]="{wsId: data?.wsId,year: data?.year}"
+        [appendedNodes]="appendedNodes"
         (changeAppendedNodes)="appendedNodes = $event"
         (showCreationPopup)="onShowCreationPopup($event)"
       ></inuring-canvas-tab>
@@ -37,7 +38,6 @@
   (onSelectItems)="setSelectedPlts($event)"
 >
 </app-plt-selection-pop-up>
-
 <app-edit-contract-pop-up
   [showEditContractPopup]="showEditContractPopup"
   (closePop)="showEditContractPopup = false"
@@ -47,5 +47,4 @@
   [showEditEdgePopup]="showEditEdgePopup"
   (closePop)="showEditEdgePopup = false"
 >
-
 </app-edit-edge-pop-up>

@@ -125,8 +125,8 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
             cssClass: "edge-config-point",
             label: '+  N',
             events: {
-              click: (labelOverlay, originalEvent) => {
-                this.edgeLabelClick(labelOverlay, originalEvent)
+              click: (params) => {
+                this.edgeLabelClick(params)
               }
             }
           }],
@@ -253,7 +253,12 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     ).subscribe(action => {
       console.log('Actions here')
       if (action instanceof AddInputNode){
-        return this.toolkit.addNode({type: 'inputNode', plts: action.payload.plts, index: action.payload.index});
+        return this.toolkit.addNode({
+          type: 'inputNode',
+          plts: action.payload.plts,
+          index: action.payload.index,
+          name: 'Input Node'
+        });
       }
       else if (action instanceof AddJoinNode)
         return this.toolkit.addNode({type: 'joinNode'});
@@ -273,8 +278,8 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     // this.toolkit.addNode({type: 'inputNode'});
     // this.toolkit.addNode({type: 'contractNode'});
     // this.toolkit.addNode({type: 'joinNode'});
-    this.toolkit.addNode({type: 'inputNode', top: 0, left: 0});
-    this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
+    this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
+    this.toolkit.addNode({type: 'finalNode', top: 600, left: 450, name: 'Final Node'});
   }
 
   drop(param) {
@@ -292,7 +297,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   }
 
   addNoteNode(){
-    this.toolkit.addNode({type: 'noteNode', content: 'Heey !!'});
+    this.toolkit.addNode({type: 'noteNode', content: 'Heey !!', name: 'New Note'});
   }
 
   ngOnDestroy(): void {
@@ -312,7 +317,8 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   }
 
-  private edgeLabelClick(labelOverlay: any, originalEvent: any) {
-    this.editEdgeEmitter.emit(true)
+  private edgeLabelClick(params: any) {
+    console.log('labelOverlay ======> ', params);
+    this.editEdgeEmitter.emit({popup: true, params: params})
   }
 }

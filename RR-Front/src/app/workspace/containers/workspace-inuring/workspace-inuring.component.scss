@@ -92,3 +92,14 @@
   }
 
 }
+
+.modal-content-div  {
+  display: flex;
+  flex-direction: column !important;
+  font-size: 14px;
+
+  input, textarea {
+    width: -webkit-fill-available;
+    margin-right: 25px;
+  }
+}

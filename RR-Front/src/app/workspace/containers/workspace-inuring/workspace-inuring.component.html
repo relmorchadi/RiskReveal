@@ -75,28 +75,40 @@
 >
   <p-header>
     <div class="header">
-      <h4>Add New Inuring Package</h4>
+      <h6>Add New Inuring Package</h6>
       <i style="cursor: pointer" (click)="addPackageVisibility=false" class="icon-close_24px"></i>
     </div>
   </p-header>
-  <div class="input-group-modal" style="min-height: 350px">
-    <div class="popup-input mt-2" nz-row>
-      <div class="input-placeholder">ID</div>
-      <input *ngIf="!inuringPackageFG.get('edit').value; else packageId" formControlName="id" placeholder="Package ID">
-      <ng-template #packageId>
-        <div>
-          {{inuringPackageFG.get('id').value}}
-        </div>
-      </ng-template>
+  <div class="modal-content-div">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label>ID :</label>
+      </div>
+      <div class="ui-g-9">
+        <input class="a-textfield-mini" *ngIf="!inuringPackageFG.get('edit').value; else packageId" formControlName="id"
+               placeholder="Package ID">
+        <ng-template #packageId>
+          <div>
+            {{inuringPackageFG.get('id').value}}
+          </div>
+        </ng-template>
+      </div>
     </div>
-    <div class="form-divider my-1"></div>
-    <div class="popup-input" nz-row>
-      <div class="input-placeholder">Name</div>
-      <input formControlName="name" placeholder="Package Name">
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label>Name: </label>
+      </div>
+      <div class="ui-g-9">
+        <input class="a-textfield-mini" formControlName="name" placeholder="Package Name">
+      </div>
     </div>
-    <div class="popup-input mt-1" nz-row>
-      <div class="input-placeholder">Description</div>
-      <textarea formControlName="description" placeholder="Description" cols="30" rows="7"></textarea>
+    <div class="ui-g">
+      <div class="ui-g-3">
+        <label>Description: </label>
+      </div>
+      <div class="ui-g-9">
+        <textarea formControlName="description" placeholder="Description" cols="30" rows="7"></textarea>
+      </div>
     </div>
   </div>
   <p-footer>
