@@ -36,6 +36,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   surface: Surface;
   @Output('editNode') editNodeEmitter: EventEmitter<any> = new EventEmitter();
+  @Output('editEdge') editEdgeEmitter: EventEmitter<any> = new EventEmitter();
 
   @Input('data')
   set setInuringData(d){
@@ -113,20 +114,21 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
         hoverPaintStyle: {strokeWidth: 2, stroke: '#b95124'}, // hover paint style for this edge type.
         events: {
           dblclick: (params: any) => {
-            Dialogs.show({
-              id: 'dlgConfirm',
-              data: {
-                msg: 'Delete Edge'
-              },
-              onOK: () => {
-                // this.removeEdge(params.edge);
-              }
-            });
+            // console.log('***************',params)
           }
         },
         overlays: [
           ['Arrow', {location: 1, width: 10, length: 10}],
-          ['Arrow', {location: 0.3, width: 10, length: 10}]
+          ['Arrow', {location: 0.3, width: 10, length: 10}],
+          ['Label', {
+            cssClass: "edge-config-point",
+            label: '+  N',
+            events: {
+              click: (labelOverlay, originalEvent) => {
+                this.edgeLabelClick(labelOverlay, originalEvent)
+              }
+            }
+          }],
         ]
       },
       dashed: {
@@ -256,16 +258,12 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
         return this.toolkit.addNode({type: 'joinNode'});
       else if (action instanceof EditInputNode) {
         let data = action.payload.data;
-        console.log('data => ', data);
-        console.log('node => ', this.editableNode);
         return this.toolkit.updateNode(this.editableNode, data);
 
       }
 
 
     })
-    this.surface.refresh();
-    this.surface.reload()
   }
 
   ngAfterViewInit(): void {
@@ -274,6 +272,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     // this.toolkit.addNode({type: 'inputNode'});
     // this.toolkit.addNode({type: 'contractNode'});
     // this.toolkit.addNode({type: 'joinNode'});
+    this.toolkit.addNode({type: 'inputNode', top: 0, left: 0});
     this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
   }
 
@@ -310,5 +309,9 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
     }
 
 
+  }
+
+  private edgeLabelClick(labelOverlay: any, originalEvent: any) {
+    this.editEdgeEmitter.emit(true)
   }
 }
