@@ -15,12 +15,12 @@ import javax.sql.DataSource;
 @Configuration
 public class RmsConfig {
 
-    @Bean(name = "dbRr")
-    @ConfigurationProperties(prefix = "spring.datasource")
-    @Primary
-    public DataSource createProductServiceDataSource() {
-        return DataSourceBuilder.create().build();
-    }
+//    @Bean(name = "dbRr")
+//    @ConfigurationProperties(prefix = "spring.datasource")
+//    @Primary
+//    public DataSource createProductServiceDataSource() {
+//        return DataSourceBuilder.create().build();
+//    }
 
 
     @Bean(name = "dbRms")
