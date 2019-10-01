@@ -6,7 +6,7 @@ export class WorkspaceModel {
     index: number,
     wsIdentifier: string
   };
-  facWs: any[];
+  facWs: {data: any[], sequence: any};
   favorite: any[];
   pinned: any[];
   routing: string;

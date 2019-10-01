@@ -204,7 +204,7 @@ export class WorkspaceService {
     const state = ctx.getState();
     const {wsId, uwYear} = payload;
     const wsIdentifier = wsId + '-' + uwYear;
-    const projects = _.filter(state.facWs,
+    const projects = _.filter(state.facWs.data,
       item => item.uwanalysisContractFacNumber === wsId && item.uwAnalysisContractDate === uwYear);
     ctx.patchState(produce(ctx.getState(), draft => {
         draft.content[wsIdentifier].projects = projects.map(item => {
@@ -262,7 +262,7 @@ export class WorkspaceService {
   createNewFac(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.CreateNewFac) {
     const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
-      draft.facWs = [...draft.facWs, payload];
+      draft.facWs.data = [...draft.facWs.data, payload];
     }));
   }
 
@@ -383,8 +383,8 @@ export class WorkspaceService {
 
   markFacWsAsFavorite(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.MarkFacWsAsFavorite) {
     ctx.patchState(produce(ctx.getState(), draft => {
-      const index = _.findIndex(draft.facWs, item => item.id === payload.id);
-      draft.facWs[index].favorite = !draft.facWs[index].favorite;
+      const index = _.findIndex(draft.facWs.data, item => item.id === payload.id);
+      draft.facWs.data[index].favorite = !draft.facWs.data[index].favorite;
     }));
   }
 

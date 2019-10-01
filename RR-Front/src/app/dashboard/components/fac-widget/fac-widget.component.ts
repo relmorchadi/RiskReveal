@@ -28,7 +28,10 @@ export class FacWidgetComponent implements OnInit {
   filterNew = false;
   filterCurrent = false;
   filterArchive = false;
-  filterAssigned = true;
+
+  filterAssignedNew = false;
+  filterAssignedCurrent = false;
+  filterAssignedArchive = false;
 
   @Input()
   itemName = 'Car Widget';
@@ -119,7 +122,7 @@ export class FacWidgetComponent implements OnInit {
 
   getCombinedNumber(data) {
     return _.filter(data,
-        item => item.carStatus === 'Canceled' || item.carStatus === 'Completed' || item.carStatus === 'superSeeded').length;
+        item => item.carStatus === 'Canceled' || item.carStatus === 'Completed' || item.carStatus === 'SuperSeeded').length;
   }
 
   selectTab(index) {
@@ -142,6 +145,22 @@ export class FacWidgetComponent implements OnInit {
     }
   }
 
+  filterAssignedData(filter) {
+    if (filter === 'New') {
+      this.filterAssignedNew = true;
+      this.filterAssignedCurrent = false;
+      this.filterAssignedArchive = false;
+    } else if (filter === 'In Progress') {
+      this.filterAssignedNew = false;
+      this.filterAssignedCurrent = true;
+      this.filterAssignedArchive = false;
+    } else if (filter === 'Archive') {
+      this.filterAssignedNew = false;
+      this.filterAssignedCurrent = false;
+      this.filterAssignedArchive = true;
+    }
+  }
+
   applyFilters(data) {
     let filteredData = [...data];
     if (this.filterCurrent) {
@@ -149,6 +168,18 @@ export class FacWidgetComponent implements OnInit {
     } else if (this.filterNew) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'New');
     } else if (this.filterArchive) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
+    }
+    return filteredData;
+  }
+
+  applyFiltersAssigned(data) {
+    let filteredData = [...data];
+    if (this.filterAssignedCurrent) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
+    } else if (this.filterAssignedNew) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
+    } else if (this.filterAssignedArchive) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
     }
     return filteredData;

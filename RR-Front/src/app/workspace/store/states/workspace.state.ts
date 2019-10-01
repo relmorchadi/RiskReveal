@@ -21,7 +21,10 @@ const initialState: WorkspaceModel = {
     index: 0,
     wsIdentifier: null,
   },
-  facWs: Data.facWs,
+  facWs: {
+    data: Data.facWs,
+    sequence: ''
+  },
   favorite: [],
   pinned: [],
   routing: '',
@@ -62,7 +65,12 @@ export class WorkspaceState {
 
   @Selector()
   static getFacData(state: WorkspaceModel) {
-    return state.facWs;
+    return state.facWs.data;
+  }
+
+  @Selector()
+  static getFacSequence(state: WorkspaceModel) {
+    return state.facWs.sequence;
   }
 
   @Selector()
