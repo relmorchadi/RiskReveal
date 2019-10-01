@@ -25,6 +25,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
   managePopUpFPStandard = false;
   columnsForConfig;
   financialP = false;
+  peqtP = false;
 
   selectedEDM = null;
   filterPopUp = null;
@@ -34,6 +35,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
   searchInput: ElementRef;
   @ViewChild('obRes')
   dropDownFPOb: any;
+  @ViewChild('peqtt')
+  tablepeqt: any;
   scopeForChanges = 'currentSelection';
 
   singleColEdit = false;
@@ -60,6 +63,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
   colsFinancialAnalysis: any;
   financialStandardContent: any;
   regionPerilDataTable: any;
+  peqtDataTable: any;
+  targetRapDataTable: any;
 
   contextSelectedItem: any;
   itemCm = [
@@ -108,6 +113,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
   analysisResults;
   resultsSummary;
 
+  expandedRows: {} = {};
+
   constructor(private store: Store, private cdRef: ChangeDetectorRef) {
   }
 
@@ -154,6 +161,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
         this.detectChanges();
       })
     ];
+
     this.scrollableColsSummary = DataTables.scrollableColsSummary;
     this.frozenColsSummary = DataTables.frozenColsSummary;
     this.scrollableColsResult = DataTables.scrollableColsResults;
@@ -164,6 +172,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.colsFinancialAnalysis = DataTables.colsFinancialAnalysis;
     this.financialStandardContent = DataTables.financialStandarContent;
     this.regionPerilDataTable = DataTables.regionPerilDataTable;
+    this.peqtDataTable = DataTables.peqtDatatable;
+    this.targetRapDataTable = DataTables.targetRapDataTable;
   }
 
   /** Manage Columns Method's */
@@ -255,7 +265,7 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this.store.dispatch(new fromWs.PatchResultsAction({id: row.id, target: 'unitMultiplier', value: $event}));
     } else if (target === 'Peqt') {
       this.store.dispatch(new fromWs.SaveEditPEQTAction({data: this.tree}));
-      this.singleColEdit = false;
+      this.peqtP = false;
     }
   }
 
@@ -511,15 +521,17 @@ export class RiskLinkResSummaryComponent implements OnInit {
     this.store.dispatch(new fromWs.RemoveFinancialPerspectiveAction({item, fp}));
   }
 
+  updatePeqt() {
+    this.peqtP = true;
+    this.getTreeApp();
+  }
+
   updateRow(item, target) {
     let title;
     if (target === 'Rp') {
       title = 'Override Region Peril';
     } else if (target === 'Ob') {
       title = 'Override Occurrence Basis';
-    } else if (target === 'Peqt') {
-      title = 'Target Rap Selection';
-      this.getTreeApp();
     }
     this.scopeForChanges = 'currentSelection';
     this.editableRow = {item: item, target: target, title: title};
@@ -556,8 +568,9 @@ export class RiskLinkResSummaryComponent implements OnInit {
   getTreeApp() {
     const data = _.toArray(this.state.results.data);
     const regions = _.unionBy(data.map(dt => dt.regionPeril));
-    this.tree = regions.map(dt => {
+    this.tree = regions.map((dt, key) => {
       return ({
+        id: key,
         title: dt, expanded: true, selected: false, children: [],
         selectedItems: [{title: 'RL_EUWS_Mv11.2_S-1003-LTR-Scor27c72u', selected: false},
           {title: 'RL_EUWS_Mv11.2_S-65-LTR', selected: false},
@@ -578,6 +591,13 @@ export class RiskLinkResSummaryComponent implements OnInit {
         });
       }
     );
+
+    const thisRef = this;
+    this.tree.forEach((car) => {
+      thisRef.expandedRows[car.id] = true;
+    });
+
+    this.expandedRows = Object.assign({}, this.expandedRows);
   }
 
   getInnerTree(target) {

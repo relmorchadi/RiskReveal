@@ -686,8 +686,8 @@ export class RiskLinkStateService {
     let dataPortfolio = [];
     selectAnalysis.forEach(dt => dataAnalysis = [...dataAnalysis, ...dt]);
     selectPortfolio.forEach(dt => dataPortfolio = [...dataPortfolio, ...dt]);
-    let results = {data: {}, filter: {}, numberOfElement: 0, allChecked: false, indeterminate: false};
-    let summary = {data: {}, filter: {}, numberOfElement: 0, allChecked: false, indeterminate: false};
+    let results = {data: {}};
+    let summary = {data: {}};
     dataAnalysis.forEach(dt => {
       results = {
         ...results, data: {
@@ -710,8 +710,7 @@ export class RiskLinkStateService {
             reason: '',
             selected: false
           },
-        },
-        numberOfElement: results.numberOfElement + 1
+        }
       };
     });
 
@@ -730,15 +729,26 @@ export class RiskLinkStateService {
             sourceCurrency: 'USD',
             exposedLocation: true
           },
-        },
-        numberOfElement: results.numberOfElement + 1
+        }
       };
     });
 
     ctx.patchState(
       produce(ctx.getState(), draft => {
-        draft.content[wsIdentifier].riskLink.summaries = summary;
-        draft.content[wsIdentifier].riskLink.results = results;
+        const summaryInfo = _.merge({}, summary.data, _.get(draft.content[wsIdentifier].riskLink.summaries, 'data', null));
+        const resultsInfo = _.merge({}, results.data, _.get(draft.content[wsIdentifier].riskLink.results, 'data', null));
+        draft.content[wsIdentifier].riskLink.summaries = {
+          data: summaryInfo,
+          numberOfElement: _.toArray(summaryInfo).length,
+          allChecked: false,
+          indeterminate: _.get(draft.content[wsIdentifier].riskLink.summaries, 'indeterminate', false)
+        };
+        draft.content[wsIdentifier].riskLink.results = {
+          data: resultsInfo,
+          numberOfElement: _.toArray(resultsInfo).length,
+          allChecked: false,
+          indeterminate: _.get(draft.content[wsIdentifier].riskLink.results, 'indeterminate', false)
+        }
       })
     );
 /*    return forkJoin(
