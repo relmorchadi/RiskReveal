@@ -32,3 +32,11 @@
     background-size: 20px 20px;
   }
 }
+
+::ng-deep .edge-config-point {
+  color: #ffffff;
+  background-color: #0700cf;
+  width: 40px;
+  height: 40px;
+  border-radius: 25px;
+}
