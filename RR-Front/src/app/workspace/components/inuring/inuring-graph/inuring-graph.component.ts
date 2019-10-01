@@ -33,6 +33,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
 
   surfaceId = 'flowchart';
   toolkitId = 'flowchartSurface';
+  toggleGrip;
 
   surface: Surface;
   @Output('editNode') editNodeEmitter: EventEmitter<any> = new EventEmitter();
