@@ -1,11 +1,8 @@
 package com.scor.rr.domain;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
@@ -13,8 +10,6 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
-
-import static java.util.Optional.ofNullable;
 
 @Entity
 @Table(name = "RRUserTag", schema = "poc")
@@ -41,9 +36,6 @@ public class UserTag implements Serializable {
     @JsonIgnore
     Workspace workspace;
 
-    @Transient
-    private Integer count;
-
     //@JsonManagedReference
     @ManyToOne
     private User user;
@@ -57,8 +49,8 @@ public class UserTag implements Serializable {
         this.tagColor = tagColor;
     }
 
-    public void setCount(Integer count) {
-        this.count= count;
+    public Integer getCount() {
+        return this.assignment.size();
     }
 
     @Override

@@ -35,7 +35,6 @@ export class PltStateService {
     return this.pltApi.getAllPlts(params)
       .pipe(
         mergeMap((data) => {
-          const now = performance.now();
           ctx.patchState(produce(ctx.getState(), draft => {
             const deletedPlts = JSON.parse(localStorage.getItem('deletedPlts')) || {};
             //draft.content[wsIdentifier].plts = _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: {...plt}})));
@@ -46,7 +45,6 @@ export class PltStateService {
               data: _.merge({}, ...data.plts.map(plt => ({[plt.pltId]: this._appendPltMetaData(draft.content[wsIdentifier].pltManager.data,plt, deletedPlts)})))
             };
           }));
-          console.log(performance.now() - now)
           return ctx.dispatch(new fromPlt.loadAllPltsSuccess({
             wsIdentifier: wsIdentifier,
             userTags: data.userTags

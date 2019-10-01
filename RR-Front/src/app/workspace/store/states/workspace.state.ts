@@ -968,11 +968,6 @@ export class WorkspaceState {
     this.riskLinkFacade.selectRiskLinkEDMAndRDM(ctx);
   }
 
-  @Action(fromWS.SelectFacRiskLinkEDMAndRDMAction)
-  selectFacRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SelectFacRiskLinkEDMAndRDMAction) {
-    this.riskLinkFacade.selectMatchingFacEDMAndRDM(ctx, payload);
-  }
-
   /** SEARCH WITH KEYWORD OR PAGE OF EDM AND RDM */
   @Action(fromWS.SearchRiskLinkEDMAndRDMAction)
   searchRiskLinkEDMAndRDM(ctx: StateContext<WorkspaceModel>, {payload}: fromWS.SearchRiskLinkEDMAndRDMAction) {
@@ -1052,6 +1047,21 @@ export class WorkspaceState {
   @Action(fromInuring.CloseInuringPackage)
   closeInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.CloseInuringPackage) {
     return this.inuringService.closeInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.AddInuringPackage)
+  addInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.AddInuringPackage) {
+    return this.inuringService.addInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.EditInuringPackage)
+  editInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.EditInuringPackage) {
+    return this.inuringService.editInuringPackage(ctx, payload);
+  }
+
+  @Action(fromInuring.DeleteInuringPackage)
+  deleteInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.DeleteInuringPackage) {
+    return this.inuringService.deleteInuringPackage(ctx, payload);
   }
 
 }

@@ -6,7 +6,6 @@ import {Select, Store} from '@ngxs/store';
 import {Data} from '../../../core/model/data';
 import * as moment from 'moment';
 import {dashData} from '../../../shared/data/dashboard-data';
-import {OpenWS} from '../../../workspace/store/actions';
 import * as workspaceActions from '../../../workspace/store/actions/workspace.actions';
 import {WsApi} from '../../../workspace/services/workspace.api';
 import {WorkspaceState} from '../../../workspace/store/states';
@@ -64,7 +63,7 @@ export class FacWidgetComponent implements OnInit {
   private defaultUwUnit: string;
   Countries = Data.coutryAlt;
   private mockDataCache;
-  tabIndex = 1;
+  tabIndex = 2;
 
   @Select(WorkspaceState.getFacData) facData$;
   data: any[];

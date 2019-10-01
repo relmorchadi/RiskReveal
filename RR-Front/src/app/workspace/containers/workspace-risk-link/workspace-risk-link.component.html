@@ -69,7 +69,6 @@
                         *ngFor="let item of state.financialValidator.financialPerspectiveEPM.data">{{item}}</li>
                   </ul>
                 </nz-dropdown>-->
-
         <nz-dropdown [nzTrigger]="'click'">
           <div class="dropdown-wrap" nz-dropdown>
             <div class="dropdown-wrap-title">
@@ -87,25 +86,6 @@
                 *ngFor="let item of state?.financialValidator?.targetCurrency?.data">{{item}}</li>
           </ul>
         </nz-dropdown>
-
-        <nz-dropdown [nzTrigger]="'click'" *ngIf="tabStatus === 'fac'">
-          <div class="dropdown-wrap" nz-dropdown>
-            <div class="dropdown-wrap-title">
-              <span class="dropdown-title">Division</span>
-              <span class="dropdown-item-selected" *ngIf="state?.financialValidator?.division?.selected">
-                {{state?.financialValidator?.division?.selected}}
-              </span>
-            </div>
-            <div class="dropdown-icon">
-              <i nz-icon type="down"></i>
-            </div>
-          </div>
-          <ul nz-menu>
-            <li nz-menu-item (click)="changeFinancialValidator('division', item)"
-                *ngFor="let item of state?.financialValidator?.division?.data">
-              {{item}}</li>
-          </ul>
-        </nz-dropdown>
       </div>
       <div class="body-wrap-body">
         <div class="body-wrapper">
@@ -117,21 +97,21 @@
             <div class="body-wrapper-header-middle">
               <div *ngIf="state?.collapse?.collapseHead" class="body-wrapper-search" clickOutside
                    (clickOutside)="closeDropdown()"
-                   [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': state?.display?.displayListRDMEDM}">
+                   [ngClass]="{'body-wrapper-search-active': displayDropdownRDMEDM ,'body-wrapper-search-display': displayListRDMEDM}">
                 <div class="search-bar"
-                     [ngClass]="{'search-bar-active': displayDropdownRDMEDM, 'search-bar-display': state?.display?.displayListRDMEDM}">
+                     [ngClass]="{'search-bar-active': displayDropdownRDMEDM, 'search-bar-display': displayListRDMEDM}">
                   <i class="search-bar-icon-search" (click)="focusInput()" nz-icon nzType="search"
                      nzTheme="outline"></i>
                   <div class="search-bar-text"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       *ngIf="!state.display.displayListRDMEDM" (click)="focusInput()">Select EDM & RDM
+                       (click)="focusInput()" *ngIf="!displayListRDMEDM">Select EDM & RDM
                   </div>
                   <input placeholder="Select EDM & RDM"
                          [ngStyle]="{'display': displayDropdownRDMEDM ? 'flex' : 'none'}"
                          (input)="onInputSearch($event)" #searchInput>
                   <div class="search-bar-text displayed-info"
                        [ngStyle]="{'display': displayDropdownRDMEDM ? 'none' : 'flex'}"
-                       (click)="focusInput()" *ngIf="state.display.displayListRDMEDM">
+                       (click)="focusInput()" *ngIf="displayListRDMEDM">
                     <span class="search-bar-text-title">EDM & RDM</span>
                     <span class="search-bar-text-subtitle">Add EDM & RDM</span>
                   </div>
@@ -233,7 +213,7 @@
             </div>
           </div>
         </div>
-        <div class="body-main-wrapper" style="" *ngIf="state?.display?.displayListRDMEDM">
+        <div *ngIf="displayListRDMEDM" class="body-main-wrapper" style="">
           <div class="left" *ngIf="state?.collapse?.collapseHead">
             <div class="body-wrapper">
               <div class="body-wrapper-header">
@@ -242,7 +222,7 @@
                 </div>
               </div>
               <div class="list-items"
-                   *ngIf="state?.display?.displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.edm).length > 0">
+                   *ngIf="displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.edm).length > 0">
                 <span class="list-items-title">EDM</span>
                 <ul>
                   <ng-container *ngFor="let itemsE of dataList(state.listEdmRdm.selectedListEDMAndRDM.edm)">
@@ -269,7 +249,7 @@
                 </ul>
               </div>
               <div class="list-items"
-                   *ngIf="state?.display?.displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.rdm).length > 0">
+                   *ngIf="displayListRDMEDM && dataList(state.listEdmRdm.selectedListEDMAndRDM.rdm).length > 0">
                 <span class="list-items-title">RDM</span>
                 <ul>
                   <ng-container *ngFor="let itemsR of dataList(state.listEdmRdm.selectedListEDMAndRDM.rdm)">
@@ -334,8 +314,10 @@
               <div style="display: flex; flex-direction: column">
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                           [resizableColumns]="true" columnResizeMode="expand" [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
-                           [lazy]="true" [virtualRowHeight]="25" [rows]="20" [totalRecords]="getTableRecords()"
+                           [lazy]="true" [resizableColumns]="true" [rows]="40"
+                           [showLoader]="false"
+                           [totalRecords]="getTableRecords()" [virtualRowHeight]="40" [virtualScroll]="true"
+                           columnResizeMode="expand"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
@@ -394,13 +376,13 @@
                         </td>
                       </tr>
                     </ng-template>
-<!--                    <ng-template pTemplate="loadingbody" let-columns="columns">
-                      <tr style="height:25px">
+                    <ng-template let-columns="columns" pTemplate="loadingbody">
+                      <tr style="height:34px">
                         <td [ngStyle]="{'width': col?.width}" *ngFor="let col of columns">
                           <div class="loading-text"></div>
                         </td>
                       </tr>
-                    </ng-template>-->
+                    </ng-template>
                   </p-table>
                   <app-manage-columns [visible]="managePopUpAnalysis" [columns]="cloneData(scrollableColsAnalysis)"
                                       (onSubmit)="saveColumns($event, 'analysis')"

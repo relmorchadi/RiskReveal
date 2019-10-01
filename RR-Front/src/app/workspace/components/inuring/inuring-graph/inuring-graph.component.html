@@ -1,11 +1,32 @@
-<div class="graph-commands">
-  <i class="icon-home_24px"></i>
-  <i (click)="refreshToolkit()" class="icon-refresh_24px"></i>
-  <i (click)="addNoteNode()" class="icon-comment-alt"></i>
-  <i (click)="addJoinNode()" class="icon-link-alt"></i>
+<div class="d-flex justify-content-between graph-commands">
+<!--  <i class="icon-home_24px"></i>-->
+<!--  <i (click)="refreshToolkit()" class="icon-refresh_24px"></i>-->
+<!--  <i (click)="addNoteNode()" class="icon-comment-alt"></i>-->
+<!--  <i (click)="addJoinNode()" class="icon-link-alt"></i>-->
+  <div class="d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
+    <button nz-button class="a-buttons-contained mx-1 my-1">RUN</button>
+    <button nz-button class="a-buttons-outlined mx-1 my-1">UPDATE</button>
+    <button (click)="toggleGrip()" nz-button class="a-button-text-cancel mx-1 my-1">CANCEL</button>
+  </div>
+  <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
+    <a class="mt-1" nz-dropdown>
+      <i class="icon-menu_24px"></i>
+    </a>
+    <ul nz-menu style="font-size: 12px">
+      <li (click)="refreshToolkit()" nz-menu-item>Clear Canvas</li>
+      <li nz-menu-item>Inuring Report</li>
+      <li nz-menu-item>Structure Snapshot</li>
+      <li nz-menu-item>AAL Flow</li>
+<!--      <li nz-menu-divider></li>-->
+      <li nz-menu-item>Zoom to fit</li>
+      <li nz-menu-item>Save Graph Position</li>
+      <li (click)="addNoteNode()" nz-menu-item>Add New Note</li>
+    </ul>
+  </nz-dropdown>
 </div>
 <div pDroppable="inuring-contract" (onDrop)="drop($event)">
   <jsplumb-surface
+    *ngIf=""
     [surfaceId]="surfaceId"
     [toolkitId]="toolkitId"
     [view]="view"
