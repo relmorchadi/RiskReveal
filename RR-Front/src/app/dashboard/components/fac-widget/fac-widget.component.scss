@@ -251,10 +251,11 @@ app-table {
 .tab-index {
   cursor: pointer;
   color: rgba(0,0,0,0.5);
-  font-size: 18px;
+  font-size: 26px;
   margin: 8px 10px;
 }
 
 .selectedTab {
   font-weight: bold;
+  color: rgba(0,0,0,0.7);
 }

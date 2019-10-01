@@ -6,7 +6,7 @@
   <div class="d-flex justify-content-around align-items-baseline" style="zoom: 0.8">
     <button nz-button class="a-buttons-contained mx-1 my-1">RUN</button>
     <button nz-button class="a-buttons-outlined mx-1 my-1">UPDATE</button>
-    <button nz-button class="a-button-text-cancel mx-1 my-1">CANCEL</button>
+    <button (click)="toggleGrip()" nz-button class="a-button-text-cancel mx-1 my-1">CANCEL</button>
   </div>
   <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
     <a class="mt-1" nz-dropdown>
@@ -26,6 +26,7 @@
 </div>
 <div pDroppable="inuring-contract" (onDrop)="drop($event)">
   <jsplumb-surface
+    *ngIf=""
     [surfaceId]="surfaceId"
     [toolkitId]="toolkitId"
     [view]="view"
