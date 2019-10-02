@@ -152,6 +152,7 @@ export class SubmissionPageComponent implements OnInit {
       uwanalysisContractYear: this.uwYear,
       cedantName: 'INGREDION, INC_',
       contractName: 'ENNMG1800030 /ex ENEUR2800034',
+      uwAnalysisProjectId: 'P-000' + Math.random() * 10000,
       uwAnalysisContractDate: this.uwYear + '-01',
       assignedAnalyst: 'Amina Cheref',
       carStatus: 'New'

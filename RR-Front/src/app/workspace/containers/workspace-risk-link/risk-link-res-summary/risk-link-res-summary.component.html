@@ -39,7 +39,12 @@
           <ng-template let-columns pTemplate="colgroup">
             <colgroup>
               <ng-container *ngFor="let col of columns">
-                <col [ngStyle]="{'width': col.width}">
+                <ng-container *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'">
+                  <col [ngStyle]="{'width': col.width}">
+                </ng-container>
+                <ng-container *ngIf="col.visible && wsStatus === 'fac'">
+                  <col [ngStyle]="{'width': col.width}">
+                </ng-container>
               </ng-container>
             </colgroup>
           </ng-template>
@@ -53,9 +58,9 @@
                     <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                   </ng-container>
                   <div *ngIf="col.type !== 'icon'" style="white-space: nowrap;">
-                    <ng-container [pSortableColumn]="col.field" >
+                    <ng-container [pSortableColumn]="col.field">
                       {{col.header}}
-                      <ng-container [ngSwitch]="col?.sorting">
+                      <ng-container *ngIf="col.sorting" [ngSwitch]="col?.sorting">
                         <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'asc'"
                            class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
                         <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'desc'"
@@ -81,9 +86,9 @@
                     <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                   </ng-container>
                   <div *ngIf="col.type !== 'icon'" style="white-space: nowrap;">
-                    <ng-container [pSortableColumn]="col.field" >
+                    <ng-container [pSortableColumn]="col.field">
                       {{col.header}}
-                      <ng-container [ngSwitch]="col?.sorting">
+                      <ng-container *ngIf="col.sorting" [ngSwitch]="col?.sorting">
                         <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'asc'"
                            class="icon-keyboard_arrow_up_24px" style="font-size: 1.4em;"></i>
                         <i (click)="sortChange(col?.field, col?.sorting, 'portfolio')" *ngSwitchCase="'desc'"
@@ -268,7 +273,12 @@
           <ng-template pTemplate="colgroup" let-columns>
             <colgroup>
               <ng-container *ngFor="let col of columns">
-                <col [ngStyle]="{'width': col.width}">
+                <ng-container *ngIf="col.visible && col.field !== 'division' && wsStatus === 'treaty'">
+                  <col [ngStyle]="{'width': col.width}">
+                </ng-container>
+                <ng-container *ngIf="col.visible && wsStatus === 'fac'">
+                  <col [ngStyle]="{'width': col.width}">
+                </ng-container>
               </ng-container>
             </colgroup>
           </ng-template>

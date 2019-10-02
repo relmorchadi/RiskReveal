@@ -46,7 +46,7 @@ export class FacWidgetComponent implements OnInit {
     {field: 'favorite', header: '', width: '20px', display: true, sorted: false, filtered: false, type: 'favStatus'},
     {field: 'id', header: 'CAR ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'contractName', header: 'Contract Name', width: '70px', display: true, sorted: true, filtered: true, type: 'text'},
-    {field: 'id', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
+    {field: 'uwAnalysisProjectId', header: 'Project ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractInsured', header: 'Insured', width: '80px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwAnalysisContractDate', header: 'UW Year', width: '50px', display: true, sorted: true, filtered: true, type: 'text'},
     {field: 'uwanalysisContractContractId', header: 'Contract ID', width: '60px', display: true, sorted: true, filtered: true, type: 'text'},
