@@ -225,7 +225,7 @@ export class DashboardEntryComponent implements OnInit {
           name: title,
           icon: icon,
           selected: false,
-          position: {rows: 4, cols: 3}
+          position: {rows: 2, cols: 3}
         })
       ),
       fac: _.map(selectedFacComponent,

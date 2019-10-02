@@ -616,7 +616,7 @@
 .input-group-modal {
   display: flex;
   flex-direction: column;
-  width: 580px;
+  width: 90%;
   margin: 0 auto;
 
   .row-input {
@@ -634,7 +634,7 @@
 
   .label-input {
     display: flex;
-    font-weight: 500;
+    font-weight: bold;
     flex: 1;
   }
 
