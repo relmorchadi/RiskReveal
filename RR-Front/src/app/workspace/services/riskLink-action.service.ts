@@ -721,6 +721,7 @@ export class RiskLinkStateService {
             id: dt.dataSourceId + '-' + dt.dataSourceName,
             selected: false,
             scanned: true,
+            division: state.content[wsIdentifier].riskLink.financialValidator.division.selected,
             status: 100,
             unitMultiplier: 1,
             proportion: 100,
@@ -1868,7 +1869,7 @@ export class RiskLinkStateService {
                       data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
                       selected: 'Main Liability Currency (MLC)'
                     },
-                    division: {data: ['division N°1', 'division N°2', 'division N°3'], selected: 'division N°1'},
+                    division: {data: ['Division N°1', 'Division N°2', 'Division N°3'], selected: 'Division N°1'},
                   },
                   display: {
                     displayListRDMEDM: false,

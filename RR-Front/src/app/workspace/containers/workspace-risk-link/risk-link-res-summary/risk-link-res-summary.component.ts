@@ -635,11 +635,11 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   filterLinkingAnalysis() {
-    return _.filter(this.analysis, item => item.rdmName === this.selectedRDM);
+    return _.filter(this.analysis, item => item.rdmName === this.selectedRDM && item.division === this.divisionLinking.selected);
   }
 
   filterPortfolioLinking() {
-    return _.filter(this.portfolio, item => item.edmName === this.selectedEDM);
+    return _.filter(this.portfolio, item => item.edmName === this.selectedEDM && item.division === this.divisionLinking.selected);
   }
 
   changePeqt(parent, target, selected) {

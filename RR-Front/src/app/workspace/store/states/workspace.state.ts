@@ -23,7 +23,7 @@ const initialState: WorkspaceModel = {
   },
   facWs: {
     data: Data.facWs,
-    sequence: ''
+    sequence: 137
   },
   favorite: [],
   pinned: [],
