@@ -13,48 +13,36 @@
     </div>
   </p-header>
   <div class="content">
-    <div style="border: 1px solid #b8bfc5;">
+    <div style="border: 1px solid #b8bfc5;min-height: 179px;display: grid;">
       <div class="ui-g">
-        <div class="ui-g-6">
-          <div class="popup-input mt-1" nz-row>
-            <div class="input-placeholder">Code</div>
-            <input placeholder="Code" value="Undefined">
-          </div>
+        <div class="ui-g-4 bloc">
+          <label class="header-label">Code: </label>
+          <input class="a-textfield-mini" placeholder="Code" style="width: 80%" value="Undefined">
         </div>
-        <div class="ui-g-6">
-          <div class="popup-input mt-1" nz-row>
-            <div class="input-placeholder">Name</div>
-            <input placeholder="Name">
-          </div>
+        <div class="ui-g-4 bloc">
+          <label class="header-label">Name: </label>
+          <input class="a-textfield-mini" placeholder="Name" style="width: 80%">
+        </div>
+        <div class="ui-g-4 bloc">
+          <label class="header-label">Currency: </label>
+          <nz-select
+            [(ngModel)]="currency"
+            class="a-dropdown-small input-wrapper"
+            nzPlaceHolder="Select a peril"
+            nzShowSearch
+            style="width: 80%">
+            <nz-option *ngFor="let option of currencies" [nzLabel]="option.name" [nzValue]="option"></nz-option>
+          </nz-select>
         </div>
       </div>
       <div class="ui-g">
-        <div class="ui-g-6">
-          <div class="popup-input mt-1" nz-row>
-            <div class="input-placeholder">Currency</div>
-            <nz-select
-              [(ngModel)]="currency"
-              class="a-dropdown-small input-wrapper"
-              nzPlaceHolder="Select a peril"
-              nzShowSearch
-              style="width: 100%;">
-              <nz-option *ngFor="let option of currencies" [nzLabel]="option.name" [nzValue]="option"></nz-option>
-            </nz-select>
-          </div>
+        <div class="ui-g-4 bloc">
+          <label class="header-label">SubPerm: </label>
+          <input class="a-textfield-mini" placeholder="SubPerm" style="width: 80%">
         </div>
-        <div class="ui-g-6">
-          <div class="popup-input mt-1" nz-row>
-            <div class="input-placeholder">SubPerm</div>
-            <input placeholder="SubPerm">
-          </div>
-        </div>
-      </div>
-      <div class="ui-g">
-        <div class="ui-g-12">
-          <div class="popup-input mt-1" nz-row>
-            <div class="input-placeholder">Description</div>
-            <textarea cols="30" placeholder="Description" rows="7"></textarea>
-          </div>
+        <div class="ui-g-8 bloc">
+          <label class="header-label">Description: </label>
+          <textarea placeholder="Description" style="width: 90%"></textarea>
         </div>
       </div>
     </div>
@@ -62,7 +50,7 @@
       <span>Layers</span>
       <i (click)="addLayer()" class="fa fa-plus-circle"></i>
     </div>
-    <div class="summary-info" style="border: 1px solid #b8bfc5; height: 225px;">
+    <div class="summary-info" style="border: 1px solid #b8bfc5; height: 324px;">
       <p-table
         [columnResizeMode]="'fit'"
         [columns]="layersColumns"
@@ -70,7 +58,7 @@
         [responsive]="true"
         [scrollable]="true"
         [value]="layers"
-        scrollHeight="185px">
+        scrollHeight="285px">
         <ng-template let-columns pTemplate="colgroup">
           <colgroup>
             <ng-container *ngFor="let col of columns">
@@ -114,7 +102,7 @@
       </p-table>
     </div>
     <div style="display: flex">
-      <div style="width: 20%; display: flex;flex-direction: column;margin-right: 5px">
+      <div style="width: 20%; display: flex;flex-direction: column;margin-right: 6px">
         <div class="group-title">
           <span>Peril Limits</span>
           <i (click)="addPerilLimit()" class="fa fa-plus-circle"></i>

@@ -1,0 +1,89 @@
+
+.source-node-label, .target-node-label {
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 5px;
+}
+
+.source-target {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 13px;
+  padding-right: 13px;
+}
+
+.title {
+  padding: 5px 0px 16px 12px;
+  font-size: 18px;
+  font-weight: bold;
+  border-top: 3px solid #0700e4;
+  margin-bottom: 15px;
+  margin-top: 30px;
+}
+
+.contract-attributes {
+  display: flex;
+  flex-direction: column;
+}
+
+.out-put {
+  display: flex;
+}
+
+.out-put-perspective {
+  width: 50%;
+  padding: 13px;
+
+  nz-select {
+    width: 50%;
+  }
+
+  label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+}
+
+.out-put-treatment-grouping {
+  width: 50%;
+  padding: 13px;
+
+  label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 5px;
+  }
+
+  p-radioButton {
+    padding: 10px;
+    font-size: 14px;
+  }
+}
+
+.group-title {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  font-size: 15px;
+
+  span {
+    margin-right: 6px;
+    font-weight: bold;
+  }
+
+  i {
+    font-size: 20px;
+    color: #0700cf;
+    cursor: pointer;
+  }
+}
+
+.filters {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  margin-right: 5px;
+  min-width: 980px;
+  padding: 13px;
+}
