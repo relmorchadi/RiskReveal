@@ -183,6 +183,11 @@ export class LoadFacDataAction {
   constructor(public payload?: any) {}
 }
 
+export class LoadLinkingDataAction {
+  static readonly type = '[Risk Link] Load Linking Data';
+  constructor(public payload?: any) {}
+}
+
 export class LoadBasicAnalysisFacAction {
   static readonly type = '[Risk Link] Load Basic Analysis For Fac Ws';
   constructor(public payload: any) {}
@@ -198,7 +203,7 @@ export class LoadPortfolioFacAction {
   constructor(public payload: any) {}
 }
 
-export class LoadAnalysisForLinkingAction {
+/*export class LoadAnalysisForLinkingAction {
   static readonly type = '[Risk Link] Load Analysis For Linking';
   constructor(public payload: any) {}
 }
@@ -206,7 +211,7 @@ export class LoadAnalysisForLinkingAction {
 export class LoadPortfolioForLinkingAction {
   static readonly type = '[Risk Link] Load Portfolio For Linking';
   constructor(public payload: any) {}
-}
+}*/
 
 export class LoadRiskLinkDataAction {
   static readonly type = '[Risk Link] Load Risk Link Data';

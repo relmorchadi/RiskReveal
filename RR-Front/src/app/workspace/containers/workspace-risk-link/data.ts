@@ -51,6 +51,7 @@ const scrollableColsSummary = [
   // {field: 'exposedLocation', header: 'Exposed Location', width: '90px', type: 'indicator', sorting: ', filtered: true, highlight: false, visible: true},
   {field: 'analysisCurrency', header: 'Source Currency', width: '100px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'targetCurrency', header: 'Target Currency', width: '100px', type: 'text', sorting: '', filtered: true, highlight: true, visible: true, edit: true},
+  {field: 'division', header: 'Division', width: '80px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'edmName', header: 'EDM', width: '150px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},

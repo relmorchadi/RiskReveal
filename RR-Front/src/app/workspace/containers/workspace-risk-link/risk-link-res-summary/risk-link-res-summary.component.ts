@@ -28,8 +28,11 @@ export class RiskLinkResSummaryComponent implements OnInit {
   peqtP = false;
 
   selectedEDM = null;
+  selectedRDM = null;
   filterPopUp = null;
   radioValue = 'all';
+
+  divisionLinking = {data: ['Division N°1', 'Division N°2', 'Division N°3'], selected: 'Division N°1'};
 
   @ViewChild('searchInput')
   searchInput: ElementRef;
@@ -151,16 +154,12 @@ export class RiskLinkResSummaryComponent implements OnInit {
       this.linking$.pipe().subscribe(value => {
         this.linking = _.merge({}, value);
         if (this.linking.analysis !== null) {
-          if (_.get(this.linking.analysis, `${this.linking.rdm.selected.id}`, null) !== null) {
-            this.analysis = _.toArray(this.linking.analysis[this.linking.rdm.selected.id].data);
-            this.allCheckedAnalysis = this.linking.analysis[this.linking.rdm.selected.id].allChecked;
-            this.indeterminateAnalysis = this.linking.analysis[this.linking.rdm.selected.id].indeterminate;
-          }
+          this.analysis = _.toArray(this.linking.analysis.data);
+          this.allCheckedAnalysis = this.linking.analysis.allChecked;
+          this.indeterminateAnalysis = this.linking.analysis.indeterminate;
         }
         if (this.linking.portfolio !== null) {
-          if (_.get(this.linking, 'portfolio', null) !== null) {
-            this.portfolio = _.toArray(this.linking.portfolio.data);
-          }
+          this.portfolio = _.toArray(this.linking.portfolio.data);
         }
         if (this.linking.portfolio === null && this.linking.analysis === null ) {
           this.portfolio = this.analysis = [];
@@ -241,17 +240,20 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   selectLinkedRDM(item) {
-    this.store.dispatch(new fromWs.LoadAnalysisForLinkingAction(item));
-  }
-
-  toggleForLinkingEDM() {
-    const item = _.filter(this.dataList(this.linking.edm), dt => dt.name === this.selectedEDM)[0];
-    this.detectChanges();
-    this.store.dispatch(new fromWs.LoadPortfolioForLinkingAction(item));
+    this.selectedRDM = item.name;
   }
 
   toggleForLinkingRDM(items) {
     this.store.dispatch(new fromWs.ToggleAnalysisForLinkingAction({item: items, selected: !items.selected}));
+    if (this.selectedRDM === null) {
+      this.selectedRDM = this.getSelectedRDM()[0].name;
+    } else {
+      if (!_.includes(this.getSelectedRDM(), this.selectedRDM) && this.getSelectedRDM().length > 0) {
+        this.selectedRDM = this.getSelectedRDM()[0].name;
+      } else if (this.getSelectedRDM().length === 0) {
+        this.selectedRDM = null;
+      }
+    }
   }
 
   editSingleColRes(target, $event = null, row = null) {
@@ -629,7 +631,15 @@ export class RiskLinkResSummaryComponent implements OnInit {
   }
 
   getSelectedPeqt(row) {
-    return _.filter(this.state.results.data[row.id].peqt, ws => ws.selected === true).length;
+    return _.filter( _.get(this.state.results.data[row.id], 'peqt', []), ws => ws.selected === true).length;
+  }
+
+  filterLinkingAnalysis() {
+    return _.filter(this.analysis, item => item.rdmName === this.selectedRDM && item.division === this.divisionLinking.selected);
+  }
+
+  filterPortfolioLinking() {
+    return _.filter(this.portfolio, item => item.edmName === this.selectedEDM && item.division === this.divisionLinking.selected);
   }
 
   changePeqt(parent, target, selected) {

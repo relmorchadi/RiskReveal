@@ -70,8 +70,7 @@
                     </ng-container>
                     <div class="search-bar-table">
                       <i class="fa fa-search" style="margin: 6px 4px 4px 6px"></i>
-                      <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText
-                             type="text">
+                      <input (input)="st.filter($event.target.value, col.field, col.filterMatchMode)" pInputText type="text">
                     </div>
                   </div>
                   <div *ngIf="col.type === 'icon'">
@@ -84,7 +83,7 @@
           <ng-template let-columns="columns" let-i="rowIndex" let-rowData pTemplate="body">
             <tr>
               <ng-container *ngFor="let col of columns">
-                <th *ngIf="col.visible && !col.edit"  class="ui-resizable-column"
+                <th *ngIf="col.visible && !col.edit && col.field !== 'division' && wsStatus === 'treaty'"  class="ui-resizable-column"
                     [ngClass]="{'selected-item': rowData?.selected}">
                   <div *ngIf="col.type === 'selection'" class="">
                     <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
@@ -112,7 +111,40 @@
                        class="text-data"><span>{{rowData[col.field]}}</span></div>
                   <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
-                  <div (click)="deleteFromBasket(rowData.dataSourceId, 'summaries')" *ngIf="col.type === 'icon'"
+                  <div (click)="deleteFromBasket(rowData.id, 'summaries')" *ngIf="col.type === 'icon'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data" style="display: flex;justify-content: center;"><i
+                    class="icon-trash-alt"></i></div>
+                </th>
+                <th *ngIf="col.visible && !col.edit && wsStatus === 'fac'"  class="ui-resizable-column"
+                    [ngClass]="{'selected-item': rowData?.selected}">
+                  <div *ngIf="col.type === 'selection'" class="">
+                    <label (ngModelChange)="checkRow($event, rowData, 'S')" [ngModel]="rowData.selected"
+                           nz-checkbox></label>
+                  </div>
+                  <div *ngIf="col.type === 'scan'"><i class="icon-loop_24px"></i></div>
+                  <div *ngIf="col.type === 'progress'">
+                    <nz-progress [ngClass]="{'hidden-text': rowData.status < 100 }" [nzPercent]="rowData.status"
+                                 [nzWidth]="20" nzType="circle"></nz-progress>
+                  </div>
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'indicator'">
+                        <span *ngIf="rowData?.exposedLocation" class="indicator-flag"
+                              style="background-color: #0700CF"></span>
+                  </div>
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'number'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data"><span>{{rowData[col.field]}}</span></div>
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'percentage'"
+                       [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data"><span>{{rowData[col.field]}}%</span>
+                  </div>
+                  <!--[ngStyle]="{'font-weight': col.field === 'number' ? 'bold' : '500'}"-->
+                  <div (click)="selectRows(rowData, i, 'S')" *ngIf="col.type === 'text'"
+                       [ngClass]="{'highlight-temp': col.highlight}"
+                       class="text-data"><span>{{rowData[col.field]}}</span></div>
+                  <div *ngIf="col.type === 'date'" [ngClass]="{'highlight-temp': rowData.highlight}"
+                       class="text-data"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
+                  <div (click)="deleteFromBasket(rowData.id, 'summaries')" *ngIf="col.type === 'icon'"
                        [ngClass]="{'highlight-temp': rowData.highlight}"
                        class="text-data" style="display: flex;justify-content: center;"><i
                     class="icon-trash-alt"></i></div>
@@ -486,7 +518,26 @@
             [responsive]="true">
     <p-header>
       <div class="header">
-        <h6>Link Analysis To Portfolio</h6>
+        <div style="display: flex; width: 35%; align-items: center; justify-content: space-between">
+          <h6>Link Analysis To Portfolio</h6>
+          <nz-dropdown *ngIf="wsStatus === 'fac'" [nzTrigger]="'click'">
+            <div class="dropdown-wrap" nz-dropdown>
+              <div class="dropdown-wrap-title">
+                <span class="dropdown-title">Division</span>
+                <span class="dropdown-item-selected">
+                {{divisionLinking.selected}}
+              </span>
+              </div>
+              <div class="dropdown-icon">
+                <i nz-icon type="down"></i>
+              </div>
+            </div>
+            <ul nz-menu>
+              <li nz-menu-item (click)="divisionLinking.selected = item"
+                  *ngFor="let item of divisionLinking.data">{{item}}</li>
+            </ul>
+          </nz-dropdown>
+        </div>
         <i style="cursor: pointer" (click)="linkingModalVisibility = false" class="icon-close_24px"></i>
       </div>
     </p-header>
@@ -498,7 +549,6 @@
               <span class="subtitle-2">Data Sources</span>
               <div class="radio-wrapper" *ngIf="!collapseDataSources">
                 <div class="popover-menu-item"
-                     (click)="toggleForLinkingEDM()"
                      [ngClass]="{'popover-menu-item-active': getChecked(itemsE)}"
                      *ngFor="let itemsE of dataList(linking?.edm)">
                   <p-radioButton [value]="itemsE.name" [label]="itemsE.name" [(ngModel)]="selectedEDM">
@@ -554,7 +604,7 @@
                         </ul>
                       </nz-dropdown>
                     </div>
-                    <p-table #lt [columns]="scrollableColsLinkingPortfolio" [value]="portfolio"
+                    <p-table #lt [columns]="scrollableColsLinkingPortfolio" [value]="filterPortfolioLinking()"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [scrollable]="true" [scrollHeight]="getTableHeight()">
@@ -622,13 +672,11 @@
 <!--                    <span class="selected-Item-text" *ngIf="linking?.rdm?.selected !== null">
                       {{linking?.rdm?.selected?.name}}
                     </span>-->
-                    <nz-dropdown *ngIf="linking?.rdm?.selected !== null" [nzTrigger]="'click'">
+                    <nz-dropdown *ngIf="selectedRDM !== null" [nzTrigger]="'click'">
                       <div class="dropdown-wrap" nz-dropdown>
                         <div class="dropdown-wrap-title">
                           <span class="dropdown-title">Select RDM</span>
-                          <span class="dropdown-item-selected">
-                          {{linking?.rdm?.selected?.name || null}}
-                        </span>
+                          <span class="dropdown-item-selected">{{selectedRDM}}</span>
                         </div>
                         <div class="dropdown-icon">
                           <i nz-icon type="down"></i>
@@ -657,7 +705,7 @@
                         </ul>
                       </nz-dropdown>
                     </div>
-                    <p-table #lt [columns]="scrollableColsLinkingAnalysis" [value]="analysis"
+                    <p-table #lt [columns]="scrollableColsLinkingAnalysis" [value]="filterLinkingAnalysis()"
                              [rowTrackBy]="rowTrackBy" [dataKey]="'id'"
                              [resizableColumns]="true" columnResizeMode="expand"
                              [scrollable]="true" [scrollHeight]="getTableHeight()">

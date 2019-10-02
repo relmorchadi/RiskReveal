@@ -2,8 +2,9 @@ import {Component, OnInit} from '@angular/core';
 import {Regions} from '../../../shared/data/region-peril';
 import {WsApi} from '../../../workspace/services/workspace.api';
 import {Router} from "@angular/router";
-import {Store} from "@ngxs/store";
+import {Select, Store} from "@ngxs/store";
 import * as fromWs from '../../../workspace/store/actions';
+import {WorkspaceState} from "../../../workspace/store/states";
 
 @Component({
   selector: 'app-submission-page',
@@ -12,7 +13,7 @@ import * as fromWs from '../../../workspace/store/actions';
 })
 export class SubmissionPageComponent implements OnInit {
   uwAnalysis = 'Submission Data';
-  contractId = '02F091155';
+  contractId = 'FA0062789_01';
   uwYear = '2019';
   insured = 'Global Partners';
   contractLabel = '';
@@ -51,72 +52,12 @@ export class SubmissionPageComponent implements OnInit {
   metaData: any;
 
   coverageTemplate = [
-    {
-      field: 'divisionNo',
-      header: 'Division No',
-      width: '40px',
-      type: 'text',
-      sorted: false,
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
-    {
-      field: 'principal',
-      header: 'Is Principal',
-      width: '120px',
-      type: 'text',
-      sorted: false,
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: true
-    },
-    {
-      field: 'lob',
-      header: 'LOB',
-      width: '120px',
-      type: 'text',
-      sorted: false,
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: true
-    },
-    {
-      field: 'coverage',
-      header: 'Coverage',
-      width: '120px',
-      type: 'text',
-      sorted: false,
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: true
-    },
-    {
-      field: 'currency',
-      header: 'Currency',
-      width: '120px',
-      type: 'text',
-      sorted: false,
-      filtered: true,
-      highlight: false,
-      visible: true,
-      edit: true
-    },
-    {
-      field: 'action',
-      header: 'Action',
-      width: '40px',
-      type: 'action',
-      sorted: false,
-      filtered: false,
-      highlight: false,
-      visible: true,
-      edit: false
-    },
+    {field: 'divisionNo', header: 'Division No', width: '40px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: false},
+    {field: 'principal', header: 'Is Principal', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'lob', header: 'LOB', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'coverage', header: 'Coverage', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'currency', header: 'Currency', width: '120px', type: 'text', sorted: false, filtered: true, highlight: false, visible: true, edit: true},
+    {field: 'action', header: 'Action', width: '40px', type: 'action', sorted: false, filtered: false, highlight: false, visible: true, edit: false},
   ];
 
   dataCoverage = [
@@ -129,11 +70,15 @@ export class SubmissionPageComponent implements OnInit {
     }
   ];
 
+  @Select(WorkspaceState.getFacSequence) facSequence$;
+  facSequence;
+
   constructor(private wsApi: WsApi, private router: Router,  private store: Store) {
   }
 
   ngOnInit() {
     this.data = Regions.regionPeril;
+    this.facSequence$.subscribe(value => this.facSequence = value);
   }
 
   addRow() {
@@ -187,7 +132,7 @@ export class SubmissionPageComponent implements OnInit {
 
   submitData() {
     const data = {
-      id: 'CAR-0' + Math.floor(Math.random() * 10000),
+      id: 'CAR-0' + this.facSequence,
       lastUpdateDate: null,
       lastUpdatedBy: null,
       requestCreationDate: new Date(),
@@ -197,7 +142,7 @@ export class SubmissionPageComponent implements OnInit {
       uwanalysisContractBusinessType: this.businessType.value,
       uwanalysisContractContractId: this.contractId,
       uwanalysisContractEndorsementNumber: 0,
-      uwanalysisContractFacNumber: this.uwAnalysis,
+      uwanalysisContractFacNumber: this.contractId,
       uwanalysisContractInsured: this.insured,
       uwanalysisContractLabel: this.contractLabel,
       uwanalysisContractLob: this.lob.value,

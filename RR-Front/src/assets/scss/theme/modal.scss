@@ -63,7 +63,7 @@ body {
 
       .ui-dialog-titlebar-maximize {
         position: absolute;
-        top: 18px;
+        top: 13px;
         right: 36px;
       }
 
@@ -76,8 +76,10 @@ body {
 
           .header {
             display: flex;
+            height: 100%;
             justify-content: space-between;
             flex-wrap: nowrap;
+            align-items: center;
             margin-right: 34px;
 
             .previous-container {
@@ -93,8 +95,8 @@ body {
 
           span.pi.pi-times, .icon-close_24px {
             position: relative;
-            left: 52px;
-            bottom: 10px;
+            left: 48px;
+            bottom: 2px;
             margin: 12px;
             font-size: 1.6em;
           }

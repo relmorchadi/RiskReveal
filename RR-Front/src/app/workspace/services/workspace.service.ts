@@ -138,6 +138,7 @@ export class WorkspaceService {
               autoMode: false
             },
             display: {
+              displayListRDMEDM: false,
               displayTable: false,
               displayImport: false,
             },
@@ -163,7 +164,7 @@ export class WorkspaceService {
                 data: ['Main Liability Currency (MLC)', 'Analysis Currency', 'User Defined Currency'],
                 selected: 'Main Liability Currency (MLC)'
               },
-              calibration: {data: ['Add calibration', 'item 1', 'item 2'], selected: 'Add calibration'},
+              division: {data: ['Division N°1', 'Division N°2', 'Division N°3'], selected: 'Division N°1'},
             },
             financialPerspective: {
               rdm: {data: null, selected: null},
@@ -262,6 +263,7 @@ export class WorkspaceService {
     const state = ctx.getState();
     ctx.patchState(produce(ctx.getState(), draft => {
       draft.facWs.data = [...draft.facWs.data, payload];
+      draft.facWs.sequence = draft.facWs.sequence + 1;
     }));
   }
 
