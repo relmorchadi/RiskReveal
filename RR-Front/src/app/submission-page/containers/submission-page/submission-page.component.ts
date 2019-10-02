@@ -142,7 +142,7 @@ export class SubmissionPageComponent implements OnInit {
       uwanalysisContractBusinessType: this.businessType.value,
       uwanalysisContractContractId: this.contractId,
       uwanalysisContractEndorsementNumber: 0,
-      uwanalysisContractFacNumber: this.uwAnalysis,
+      uwanalysisContractFacNumber: this.contractId,
       uwanalysisContractInsured: this.insured,
       uwanalysisContractLabel: this.contractLabel,
       uwanalysisContractLob: this.lob.value,

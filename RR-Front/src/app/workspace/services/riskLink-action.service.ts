@@ -956,12 +956,9 @@ export class RiskLinkStateService {
     const state = ctx.getState();
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const portfolio = _.toArray(state.content[wsIdentifier].riskLink.linking.portfolio.data);
-    const listAnalysis = _.toArray(state.content[wsIdentifier].riskLink.linking.analysis);
+    const analysis = _.toArray(state.content[wsIdentifier].riskLink.linking.analysis.data);
     const selectedPortfolios = _.filter(portfolio, item => item.selected);
-    let selectedAnalysis = [];
-    listAnalysis.forEach(item => {
-      selectedAnalysis = [...selectedAnalysis, ..._.filter(_.toArray(item.data), analysis => analysis.selected)];
-    });
+    const selectedAnalysis = _.filter(analysis, item => item.selected);
     ctx.patchState(produce(
       ctx.getState(), draft => {
         if (selectedPortfolios.length > 0 && selectedPortfolios.length > 0) {
@@ -970,8 +967,7 @@ export class RiskLinkStateService {
         }
       }
     ));
-    console.log(payload);
-    ctx.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: payload}));
+    ctx.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll'}));
     ctx.dispatch(new fromWs.TogglePortfolioLinkingAction({action: 'unselectAll'}));
   }
 
