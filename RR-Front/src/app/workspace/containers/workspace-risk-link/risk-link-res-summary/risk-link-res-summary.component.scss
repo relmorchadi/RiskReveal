@@ -4,6 +4,14 @@ TABLE STYLE
 =======================================================================================
 */
 
+.empty-notif-wrapper {
+  display: flex;
+  white-space: nowrap;
+  margin: 4px 0;
+  background: #f4f6fc;
+  padding: 7px 247px 7px 151px;
+}
+
 .empty-table {
   ::ng-deep {
     .ui-table-scrollable-body-table {

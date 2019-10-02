@@ -215,7 +215,7 @@ export class DashboardEntryComponent implements OnInit {
     const selectedTreatyComponent = _.filter(treaty, (e: any) => e.selected);
     const selectedFacComponent = _.filter(fac, (e: any) => e.selected);
     const item = {
-      id: this.dashboards[this.dashboards.length - 1].id + 1,
+      id: this.dashboards[this.dashboards.length - 1 ].id + 1,
       name: this.newDashboardTitle,
       visible: true,
       items: _.map(selectedTreatyComponent,
@@ -245,7 +245,7 @@ export class DashboardEntryComponent implements OnInit {
       this.updateDashboardMockData();
       this.newDashboardTitle = '';
       this.idTab = this.dashboards.length - 1;
-      this.idSelected = this.dashboards[this.dashboards.length - 1].id;
+      this.idSelected = this.dashboards[this.dashboards.length - 1 ].id;
       this.selectedDashboard = this.dashboards[this.dashboards.length - 1];
     }
   }
@@ -290,14 +290,14 @@ export class DashboardEntryComponent implements OnInit {
   changeItemPosition() {
     let rowEmpty = true;
     this.selectedDashboard.items.forEach(ds => {
-      if (ds.selected && ds.position.y === 0) {
+      if (ds.selected && ds.position.y === 0 ) {
         rowEmpty = false;
       }
     });
     if (rowEmpty) {
       const selectedItem = this.selectedDashboard.items.filter(ds => ds.selected === true);
       this.selectedDashboard.items.forEach(ds => {
-        if (ds.id === selectedItem[0].id) {
+        if  (ds.id === selectedItem[0].id) {
           ds.position.y = 0;
         }
       });
@@ -367,16 +367,12 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   duplicate(dashboardId: any, itemName: any) {
-    console.log('Duplicaion', dashboardId, itemName);
     const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
-    console.log('Dashboard Item', dashboard);
-    const dashboardItems = itemName == 'Car Status Widget' ? dashboard.fac : dashboard.items;
-    const duplicatedItem: any = dashboardItems.filter(ds => ds.name === itemName);
+    const duplicatedItem: any = dashboard.items.filter(ds => ds.name === itemName);
     const copy = Object.assign({}, duplicatedItem[0], {
       id: dashboard.items.length + 1,
       selected: true,
     });
-    console.log('this is copy', copy);
     dashboard.items = [...dashboard.items, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
@@ -404,7 +400,7 @@ export class DashboardEntryComponent implements OnInit {
         ds.selected = !ds.selected;
       }
     });
-    _.forEach(this.dashboards, ds => {
+    _.forEach(this.dashboards , ds => {
       if (ds.id === dashboard.id) {
         ds = dashboard;
       }
@@ -419,7 +415,7 @@ export class DashboardEntryComponent implements OnInit {
       }
     });
     console.log(dashboard.fac);
-    _.forEach(this.dashboards, ds => {
+    _.forEach(this.dashboards , ds => {
       if (ds.id === dashboard.id) {
         ds = dashboard;
       }
@@ -434,6 +430,6 @@ export class DashboardEntryComponent implements OnInit {
   }
 
   loopOverDashboard(dashboard: any) {
-    return _.concat(dashboard.items, dashboard.fac);
+    return _.concat(dashboard.items, dashboard.fac) ;
   }
 }

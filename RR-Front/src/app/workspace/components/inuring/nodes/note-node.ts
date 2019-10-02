@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {BaseNodeComponent} from "jsplumbtoolkit-angular";
 
 @Component({
@@ -6,9 +6,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
   template: `
     <div class="flowchart-object flowchart-start input-node-card">
       <div class="node-header d-flex justify-content-between align-items-center">
-        <div>
-          Note Sample
-        </div>
+        <input class="input-name" (ngModelChange)="changeNoteName()" [(ngModel)]="getNode().data.name">
         <div>
           <i class="icon-trash-alt" (click)="deleteNode()"></i>
         </div>
@@ -18,15 +16,20 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
       </div>
     </div>
   `,
-  styles: [`    
+  styles: [`
     .input-node-card {
       min-height: 100px;
       width: 198px;
       background-color: rgba(248, 231, 28, 0.34);
       border: 1px solid #F5A623;
     }
-    
-    i.icon-trash-alt{
+
+    .input-name {
+      border: none !important;
+      background-color: rgba(253, 247, 178, 0.34);
+    }
+
+    i.icon-trash-alt {
       font-weight: bold;
       font-size: 16px;
     }
@@ -56,10 +59,13 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
       border: none;
       /*max-height: 85px;*/
     }
-    
+
   `]
 })
 export class NoteNodeComponent extends BaseNodeComponent implements OnInit {
+  index: any;
+  id: any;
+  name: any;
 
   constructor() {
     super();
@@ -67,10 +73,22 @@ export class NoteNodeComponent extends BaseNodeComponent implements OnInit {
 
   ngOnInit() {
     console.log('Here i m', this.getNode().data.content);
+    /*  this.index= this.getNode().data.index;
+      this.id= this.getNode().data.id;
+      this.name= this.getNode().data.name;
+
+      window['toolkit'].bind('nodeUpdated', (data) => {
+        if (data.node.data.type === 'noteNode' && data.node.data.index == this.index) {
+          this.name = data.node.data.name;
+        }
+      })*/
   }
 
   deleteNode(){
     this.removeNode();
   }
 
+  changeNoteName() {
+    window['toolkit'].updateNode(this.getNode().data.id, {name: this.getNode().data.name})
+  }
 }

@@ -45,28 +45,24 @@ export class InuringPackageDetailsComponent implements OnInit {
   }
 
   onShowCreationPopup($event: any) {
-    console.log('creating');
     this.showCreationPopup = $event;
     this.editInputNode = false;
   }
 
   editNode($event: any) {
     if ($event.type == 'inputNode') {
-      console.log('editing');
-      console.log('params => ', $event.params);
       this.showCreationPopup = $event.popup;
       this.editInputNode = true;
       let params = $event.params;
       this.editableNode = {...params.node};
       this.stepConfig.plts = {...params.node.data.plts};
     } else if ($event.type == 'contractNode') {
-      console.log('params => ', $event.params);
       this.showEditContractPopup = $event.popup;
     }
 
   }
 
   editEdge($event: any) {
-    this.showEditEdgePopup = $event;
+    this.showEditEdgePopup = $event.popup;
   }
 }
