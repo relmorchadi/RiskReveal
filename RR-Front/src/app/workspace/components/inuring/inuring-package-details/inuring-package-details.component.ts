@@ -28,6 +28,7 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   setSelectedWs = ($event) => {
   };
+  collapsedCanvas: boolean = false;
 
   setSelectedPlts(selectedPlts) {
     if (this.editInputNode) {
@@ -46,6 +47,7 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   onShowCreationPopup($event: any) {
     this.showCreationPopup = $event;
+    this.stepConfig.plts = [];
     this.editInputNode = false;
   }
 
@@ -64,5 +66,9 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   editEdge($event: any) {
     this.showEditEdgePopup = $event.popup;
+  }
+
+  collapseCanvas() {
+    this.collapsedCanvas = !this.collapsedCanvas;
   }
 }

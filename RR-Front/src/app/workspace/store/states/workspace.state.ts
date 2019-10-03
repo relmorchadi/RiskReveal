@@ -1059,6 +1059,19 @@ export class WorkspaceState {
     return this.inuringService.addInuringPackage(ctx, payload);
   }
 
+  /*@Action(fromInuring.AddInputNode)
+  AddInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.AddInputNode) {
+    return this.inuringService.AddInputNode(ctx, payload);
+  }
+  @Action(fromInuring.EditInputNode)
+  EditInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.EditInputNode) {
+    return this.inuringService.EditInputNode(ctx, payload);
+  }
+  @Action(fromInuring.DeleteInputNode)
+  DeleteInputNode(ctx: StateContext<WorkspaceModel>, payload: fromInuring.DeleteInputNode) {
+    return this.inuringService.DeleteInputNode(ctx, payload);
+  }*/
+
   @Action(fromInuring.EditInuringPackage)
   editInuringPackage(ctx: StateContext<WorkspaceModel>, payload: fromInuring.EditInuringPackage) {
     return this.inuringService.editInuringPackage(ctx, payload);

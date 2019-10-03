@@ -1,7 +1,7 @@
 <div class="content">
-  <div nz-row [nzGutter]="8">
+  <div style="display: flex">
 
-    <div nz-col [nzSpan]="5">
+    <div *ngIf="!collapsedCanvas" style="background-color: #fff;">
       <inuring-canvas-tab
         [wsConfig]="{wsId: data?.wsId,year: data?.year}"
         [appendedNodes]="appendedNodes"
@@ -9,12 +9,18 @@
         (showCreationPopup)="onShowCreationPopup($event)"
       ></inuring-canvas-tab>
     </div>
-
-    <div nz-col [nzSpan]="19">
+    <div style="background-color: #ffffff; margin-right: 5px; display: flex;">
+      <i (click)="collapseCanvas()"
+         [ngClass]="{'icon-chevron_right_24px':collapsedCanvas,'icon-chevron_left_24px':!collapsedCanvas}"
+         style="font-size: 25px; cursor: pointer; margin-top: 10px"></i>
+    </div>
+    <div style="width: -webkit-fill-available;">
       <div class="col-content mt-1">
         <!--        <nz-tabset class="a-tab-large">-->
         <!--          <nz-tab [nzTitle]="'IP0000055 Structure graph'">-->
         <inuring-graph
+          [inuringPackage]="data.details.id"
+          [wsIdentifier]="stepConfig.wsId+'-'+stepConfig.uwYear"
           (editNode)="editNode($event)"
           (editEdge)="editEdge($event)"
         >
