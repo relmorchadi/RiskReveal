@@ -470,7 +470,7 @@
     <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
       [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
     <div class="radio-wrapper default-radio">
-      <span>AGG/DET</span>
+      <span class="label-input">AGG/DET</span>
       <nz-radio-group [(ngModel)]="radioValue">
         <label nz-radio nzValue="all">All</label>
         <label nz-radio nzValue="agg">AGG</label>
@@ -491,7 +491,7 @@
     <div class="row-input"><span class="label-input">{{getTitle()}} ID</span><input
       [placeholder]="getTitle() + ' ID'" class="a-textfield-mini input-wrapper"></div>
     <div class="radio-wrapper default-radio">
-      <span>ALM/DLM</span>
+      <span class="label-input">ALM/DLM</span>
       <nz-radio-group [(ngModel)]="radioValueAnalysis">
         <label nz-radio nzValue="all">All</label>
         <label nz-radio nzValue="agg">ALM</label>
@@ -499,7 +499,7 @@
       </nz-radio-group>
     </div>
     <div class="radio-wrapper default-radio">
-      <span>Single Or Grouped</span>
+      <span class="label-input">Single Or Grouped</span>
       <nz-radio-group [(ngModel)]="radioValueGroup">
         <label nz-radio nzValue="all">All</label>
         <label nz-radio nzValue="agg">Grouped</label>

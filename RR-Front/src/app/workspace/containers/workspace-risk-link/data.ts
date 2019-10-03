@@ -54,7 +54,7 @@ const scrollableColsSummary = [
   {field: 'division', header: 'Division', width: '80px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '90px', type: 'number', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
-  {field: 'edmName', header: 'EDM', width: '150px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'edmName', header: 'EDM', width: '250px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
 /*  {field: 'action', header: '', width: '25px', type: 'icon', sorting: ', filtered: false, highlight: false},*/
 ];
 
@@ -79,7 +79,7 @@ const scrollableColsResults = [
   {field: 'division', header: 'Division', width: '80px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'unitMultiplier', header: 'Unit Multiplier', width: '80px', type: 'number', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'proportion', header: 'Proportion', width: '70px', type: 'percentage', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
-  {field: 'rdmName', header: 'RDM', width: '140px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
+  {field: 'rdmName', header: 'RDM', width: '210px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'importId', header: 'Import ID', width: '80px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'dateImport', header: 'Date Import', width: '70px', type: 'date', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
   {field: 'user', header: 'User', width: '70px', type: 'text', sorting: '', filtered: true, highlight: false, visible: true, edit: false},
