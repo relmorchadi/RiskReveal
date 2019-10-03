@@ -38,8 +38,8 @@ public class FacResource {
     }
 
     @GetMapping("analysis-basic")
-    ResponseEntity<?> findAnalysisBasic(@RequestParam("rdmId") Integer rdmId, @RequestParam("rdmName") String rdmName) {
-        return ResponseEntity.ok(facService.findAnalysisBasic(rdmId, rdmName));
+    ResponseEntity<?> findAnalysisBasic(@RequestParam("rdmId") Integer rdmId, @RequestParam("rdmName") String rdmName, @RequestParam("analysisName") String analysisName) {
+        return ResponseEntity.ok(facService.findAnalysisBasic(rdmId, rdmName, analysisName));
     }
 
     @GetMapping("analysis-detail")
@@ -48,8 +48,8 @@ public class FacResource {
     }
 
     @GetMapping("portfolio")
-    ResponseEntity<?> findPortfolio(@RequestParam("edmId") Integer edmId, @RequestParam("edmName") String edmName) {
-        return ResponseEntity.ok(facService.findPortfolio(edmId, edmName));
+    ResponseEntity<?> findPortfolio(@RequestParam("edmId") Integer edmId, @RequestParam("edmName") String edmName, @RequestParam("portNum") String portNum) {
+        return ResponseEntity.ok(facService.findPortfolio(edmId, edmName, portNum));
     }
 
 
