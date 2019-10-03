@@ -7,7 +7,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
     <div class="flowchart-object flowchart-start input-node-card" (dblclick)="openPopup()">
       <div class="node-header">
         <input style="border: none !important;background-color: #f4f6fc !important;text-align: center;"
-               (ngModelChange)="changeNoteName()" [(ngModel)]="getNode().data.name">
+               (ngModelChange)="changeNoteName()" [(ngModel)]="getNode()?.data.name">
       </div>
       <div class="node-content">
         {{plts?.length}} PLTs

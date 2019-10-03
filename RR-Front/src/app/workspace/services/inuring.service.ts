@@ -96,6 +96,34 @@ export class InuringService {
     }));
   }
 
+  AddInputNode(ctx: StateContext<WorkspaceModel>, {payload}: fromInuring.AddInputNode) {
+    const {wsIdentifier, inuringPackage, node} = payload;
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].inuring.content[inuringPackage].nodes.push(node)
+    }));
+  }
+
+  EditInputNode(ctx: StateContext<WorkspaceModel>, {payload}: fromInuring.EditInputNode) {
+    const state = ctx.getState();
+    const {wsIdentifier, inuringPackage, node} = payload;
+    let nodes = state.content[wsIdentifier].inuring.content[inuringPackage].nodes;
+    const index = _.findIndex(nodes, (row: any) => row.id == node.id);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].inuring.content[inuringPackage].nodes[index] = node;
+    }));
+  }
+
+  DeleteInputNode(ctx: StateContext<WorkspaceModel>, {payload}: fromInuring.DeleteInputNode) {
+    const state = ctx.getState();
+    const {wsIdentifier, inuringPackage, node} = payload;
+    let nodes = state.content[wsIdentifier].inuring.content[inuringPackage].nodes;
+    const index = _.findIndex(nodes, (row: any) => row.id == node.id);
+    nodes.splice(index, 1);
+    ctx.patchState(produce(ctx.getState(), draft => {
+      draft.content[wsIdentifier].inuring.content[inuringPackage].nodes = nodes;
+    }));
+  }
+
   editInuringPackage(ctx: StateContext<WorkspaceModel>, {payload}: fromInuring.EditInuringPackage) {
     const {wsIdentifier, inuringPackage} = payload;
     ctx.patchState(produce(ctx.getState(), draft => {

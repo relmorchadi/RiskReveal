@@ -8,6 +8,9 @@
     <button nz-button class="a-buttons-outlined mx-1 my-1">UPDATE</button>
     <button (click)="toggleGrip()" nz-button class="a-button-text-cancel mx-1 my-1">CANCEL</button>
   </div>
+  <div style="width: -webkit-fill-available;margin-right: 25px">
+    <nz-progress [nzPercent]="20" [nzShowInfo]="false" [nzStrokeColor]="'#03DAC4'"></nz-progress>
+  </div>
   <nz-dropdown [nzPlacement]="'bottomRight'" [nzTrigger]="'click'">
     <a class="mt-1" nz-dropdown>
       <i class="icon-menu_24px"></i>
