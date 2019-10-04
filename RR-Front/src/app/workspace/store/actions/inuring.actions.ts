@@ -38,6 +38,13 @@ export class EditInputNode {
   }
 }
 
+export class DeleteInputNode {
+  static readonly type = `[${namespace}] Delete Input Node`;
+
+  constructor(public payload: any) {
+  }
+}
+
 export class RefreshInuringGraph {
   static readonly type = `[${namespace}] Refresh Inuring Graph`;
   constructor(public payload: any) {}

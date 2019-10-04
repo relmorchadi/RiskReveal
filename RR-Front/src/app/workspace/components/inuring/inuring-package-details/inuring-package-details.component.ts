@@ -1,6 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {AddInputNode, EditInputNode} from "../../../store/actions";
 import {Store} from "@ngxs/store";
+import {ActivatedRoute} from "@angular/router";
 
 @Component({
   selector: 'inuring-package-details',
@@ -13,21 +14,23 @@ export class InuringPackageDetailsComponent implements OnInit {
   appendedNodes: any = [];
   showCreationPopup: any = false;
   selectedPlts: any = [];
-  stepConfig = {wsId: 'TB01735', uwYear: '2019', plts: []};
+  stepConfig = {wsId: '05PA753', uwYear: '2019', plts: []};
   showEditContractPopup: boolean = false;
   showEditEdgePopup: boolean = false;
   private editInputNode: boolean = false;
   private editableNode: any;
 
+
   ngOnInit() {
     console.log('this is details', this.data);
   }
 
-  constructor(private _store: Store) {
+  constructor(private _store: Store, private route$: ActivatedRoute) {
   }
 
   setSelectedWs = ($event) => {
   };
+  collapsedCanvas: boolean = false;
 
   setSelectedPlts(selectedPlts) {
     if (this.editInputNode) {
@@ -46,7 +49,9 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   onShowCreationPopup($event: any) {
     this.showCreationPopup = $event;
+    this.stepConfig.plts = [];
     this.editInputNode = false;
+    this.stepConfig = {wsId: this.data.wsId, uwYear: this.data.year, plts: []}
   }
 
   editNode($event: any) {
@@ -64,5 +69,9 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   editEdge($event: any) {
     this.showEditEdgePopup = $event.popup;
+  }
+
+  collapseCanvas() {
+    this.collapsedCanvas = !this.collapsedCanvas;
   }
 }
