@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {StateContext, Store} from "@ngxs/store";
+import {StateContext, Store} from '@ngxs/store';
 import {WorkspaceModel} from "../model";
 import * as fromWS from "../store/actions";
 import {catchError, map, mergeMap} from "rxjs/operators";
@@ -43,23 +43,23 @@ export class WorkspaceService {
     ctx.patchState({loading: true});
 
     const ws = {
-        id: wsId,
-        workspaceName: item.contractName,
-        cedantCode: '22231',
-        cedantName: item.cedantName,
-        subsidiaryId: '2',
-        subsidiaryName: 'SCOR REASS.',
-        ledgerName: 'MADRID',
-        inceptionDate: 1546297200000,
-        expiryDate: 1577746800000,
-        subsidiaryLedgerId: '2',
-        treatySections: [
-          'CFS-SCOR REASS.-MADRID RCC000022/ 1'
-          ],
-        years: [
-            uwYear
-          ],
-        projects: []
+      id: wsId,
+      workspaceName: item.contractName,
+      cedantCode: '22231',
+      cedantName: item.cedantName,
+      subsidiaryId: '2',
+      subsidiaryName: 'SCOR REASS.',
+      ledgerName: 'MADRID',
+      inceptionDate: 1546297200000,
+      expiryDate: 1577746800000,
+      subsidiaryLedgerId: '2',
+      treatySections: [
+        'CFS-SCOR REASS.-MADRID RCC000022/ 1'
+      ],
+      years: [
+        uwYear
+      ],
+      projects: []
     };
     ctx.dispatch(new fromWS.LoadWsSuccess({
       wsId, uwYear, ws, route, type

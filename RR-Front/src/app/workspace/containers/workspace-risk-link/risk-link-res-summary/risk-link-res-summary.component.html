@@ -908,37 +908,39 @@
       <div class="linking-right">
         <div class="modal-linking-wrapper" style="height: 99%">
           <div class="modal-linking-head" style="height: 100%">
-            <div class="modal-l-h-body-fill" style="height: 99%; overflow: auto;">
+            <div class="modal-l-h-body-fill" style="height: 99%; overflow: hidden;">
               <span class="subtitle-2">Created Links</span>
-              <div class="suggestion-card" *ngFor="let link of linking?.linked; let i = index" [ngClass]="{'selected-link': link.selected}">
-                <div class="suggestion-card-header">
-                  <label [nzChecked]="link.selected" (click)="selectLink(link)" nz-checkbox>Link {{i + 1}}</label>
-                  <div>
-                    <i (click)="initUpdateLink(link)" class="icon-edit_24px"></i>
-                    <i (click)="deleteLink(link)" class="icon-trash-alt"></i>
-                  </div>
-                </div>
-
-                <div class="suggestion-card-body">
-                  <div class="suggestion-card-left">
-                    <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;" *ngFor="let portfolio of link.portfolio">
-                      <div>
-                        <span class="logo" style="background: #C38FFF">P</span>
-                        <span class="text">{{portfolio.dataSourceId}} | {{portfolio.dataSourceName}} | {{portfolio.descriptionType}} {{portfolio.number}}</span>
-                      </div>
-                      <div *ngIf="link.update">
-                        <i (click)="deleteComponentLink(link, portfolio, 'portfolio')" class="icon-close_24px"></i>
-                      </div>
+              <div style="max-height: 440px; overflow: auto">
+                <div class="suggestion-card" *ngFor="let link of linking?.linked; let i = index" [ngClass]="{'selected-link': link.selected}">
+                  <div class="suggestion-card-header">
+                    <label [nzChecked]="link.selected" (click)="selectLink(link)" nz-checkbox>Link {{i + 1}}</label>
+                    <div>
+                      <i (click)="initUpdateLink(link)" class="icon-edit_24px"></i>
+                      <i (click)="deleteLink(link)" class="icon-trash-alt"></i>
                     </div>
                   </div>
-                  <div class="suggestion-card-right">
-                    <div class="suggestion-card-item popover-menu-item" *ngFor="let analysis of link.analysis">
-                      <div>
-                        <span class="logo" style="background: #009575">A</span>
-                        <span class="text">{{analysis.id}} | {{analysis.analysisName}} | {{analysis.description}}</span>
+
+                  <div class="suggestion-card-body">
+                    <div class="suggestion-card-left">
+                      <div class="suggestion-card-item popover-menu-item" style="margin-left: 0;" *ngFor="let portfolio of link.portfolio">
+                        <div>
+                          <span class="logo" style="background: #C38FFF">P</span>
+                          <span class="text">{{portfolio.dataSourceId}} | {{portfolio.dataSourceName}} | {{portfolio.descriptionType}} {{portfolio.number}}</span>
+                        </div>
+                        <div *ngIf="link.update">
+                          <i (click)="deleteComponentLink(link, portfolio, 'portfolio')" class="icon-close_24px"></i>
+                        </div>
                       </div>
-                      <div *ngIf="link.update">
-                        <i (click)="deleteComponentLink(link, analysis, 'analysis')" class="icon-close_24px"></i>
+                    </div>
+                    <div class="suggestion-card-right">
+                      <div class="suggestion-card-item popover-menu-item" *ngFor="let analysis of link.analysis">
+                        <div>
+                          <span class="logo" style="background: #009575">A</span>
+                          <span class="text">{{analysis.id}} | {{analysis.analysisName}} | {{analysis.description}}</span>
+                        </div>
+                        <div *ngIf="link.update">
+                          <i (click)="deleteComponentLink(link, analysis, 'analysis')" class="icon-close_24px"></i>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -957,7 +959,7 @@
     <p-footer>
       <div>
         <button (click)="linkingModalVisibility = false" class="a-button-text-cancel-mini">CANCEL</button>
-        <button class="a-buttons-contained-mini">SAVE</button>
+        <button (click)="linkingModalVisibility = false" class="a-buttons-contained-mini">SAVE</button>
       </div>
     </p-footer>
   </p-dialog>
@@ -1286,7 +1288,13 @@
                   <label nz-checkbox (ngModelChange)="selectBranch(item)" [ngModel]="item.selected"></label>
                 </th>
                 <th (click)="selectBranch(item)">{{item?.title}}</th>
-                <th (click)="selectBranch(item)"><ng-conainer *ngFor="let peqt of item?.selectedItems"> <div *ngIf="peqt?.selected">{{peqt?.title}}</div></ng-conainer></th>
+                <th (click)="selectBranch(item)">
+                  <ng-conainer *ngFor="let peqt of item?.selectedItems">
+                    <div class="tags-stack-vertical" *ngIf="peqt?.selected">
+                      {{peqt?.title}} <i (click)="peqt.selected = false" class="icon-close_24px"></i>
+                    </div>
+                  </ng-conainer>
+                </th>
               </tr>
             </ng-template>
 
@@ -1332,7 +1340,8 @@
                           <ng-container *ngFor="let col of columns">
                             <th *ngIf="col.visible" pResizableColumn>
                               <ng-container *ngIf="col.type === 'select'">
-                                <label nz-checkbox></label>
+                                <label style="margin-top:20px" nz-checkbox [ngModel]="getCheckedValue(child.selectedItems)" (ngModelChange)="updateAllCheckedPeqt($event, child.selectedItems)"
+                                       [nzIndeterminate]="getIndeterminateValue(child.selectedItems)"></label>
                               </ng-container>
                               <div style="white-space: nowrap;" *ngIf="col.type !== 'icon' && col.type !== 'check'">{{col.header}}
                                 <p-sortIcon [field]="col.field" ariaLabel="Activate to sort" *ngIf="col.sorting"

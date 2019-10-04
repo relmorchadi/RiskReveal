@@ -332,10 +332,11 @@
                 </div>
               </div>
               <div style="display: flex; flex-direction: column">
+                <!--                           [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)" [lazy]="true" [virtualRowHeight]="25"
+                           [rows]="20" [totalRecords]="getTableRecords()"-->
                 <div class="show-table">
                   <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                           [resizableColumns]="true" columnResizeMode="expand" [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)"
-                           [lazy]="true" [virtualRowHeight]="25" [rows]="20" [totalRecords]="getTableRecords()"
+                           [resizableColumns]="true" columnResizeMode="expand"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
