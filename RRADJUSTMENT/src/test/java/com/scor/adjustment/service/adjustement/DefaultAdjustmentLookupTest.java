@@ -2,6 +2,8 @@ package com.scor.adjustment.service.adjustement;
 
 import com.scor.rr.RiskRevealApplication;
 import com.scor.rr.domain.AdjustmentNodeEntity;
+import com.scor.rr.domain.AdjustmentTypeEntity;
+import com.scor.rr.domain.DefaultAdjustmentNodeEntity;
 import com.scor.rr.exceptions.RRException;
 import com.scor.rr.service.adjustement.AdjustmentNodeService;
 import com.scor.rr.service.adjustement.DefaultAdjustmentService;
@@ -44,25 +46,19 @@ public class DefaultAdjustmentLookupTest {
     }
 
     @Test
-    public void lookupForDefaultAdjustmentWithInputPLT() throws RRException {
-        List<AdjustmentNodeEntity> nodeEntities = defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(983);
-        if(nodeEntities != null) {
-            for (AdjustmentNodeEntity nodeEntity : nodeEntities) {
-                Assert.assertEquals(nodeEntity, adjustmentNodeService.findOne(nodeEntity.getAdjustmentNodeId()));
-                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadId(),null);
-                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadPureId(),null);
-                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadPureId().getBinFileEntity(),null);
-                Assert.assertNotEquals(nodeEntity.getAdjustmentThread().getScorPltHeaderByFkScorPltHeaderThreadId().getBinFileEntity(),null);
-                //Assert.assertEquals(nodeEntity.getAdjustmentNode().getAdjustmentBasis().getAdjustmentCategoryByFkCategoryId(),1);
-            }
-        }
-        List<AdjustmentNodeEntity> nodeEntitie =defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(1);
-        if(nodeEntitie != null) {
-            for (AdjustmentNodeEntity nodeEntity : nodeEntitie) {
-                Assert.assertEquals(nodeEntity, adjustmentNodeService.findOne(nodeEntity.getAdjustmentNodeId()));
-
-            }
-        }
+    public void lookupForDefaultAdjustment() throws RRException {
+        List<DefaultAdjustmentNodeEntity> nodeEntities = defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(
+                470,
+                1,
+                1,
+                "AGG",
+                1);
+        Assert.assertNotNull(nodeEntities);
+        Assert.assertEquals(1, nodeEntities.size());
+        assert(nodeEntities.get(0).getDefaultAdjustmentNodeId() == 1);
+        assert(nodeEntities.get(0).getAdjustmentType().getAdjustmentTypeId() == 1);
+        assert(nodeEntities.get(0).getAdjustmentBasis().getAdjustmentBasisId() == 28);
+        Assert.assertEquals(1, nodeEntities.get(0).getDefaultAdjustmentNodeId());
     }
 
 }
