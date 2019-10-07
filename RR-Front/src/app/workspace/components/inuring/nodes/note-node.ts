@@ -6,7 +6,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
   template: `
     <div class="flowchart-object flowchart-start input-node-card">
       <div class="node-header d-flex justify-content-between align-items-center">
-        <input class="input-name" (ngModelChange)="changeNoteName()" [(ngModel)]="getNode().data.name">
+        <input class="input-name" (ngModelChange)="changeNoteName()" [(ngModel)]="name">
         <div>
           <i class="icon-trash-alt" (click)="deleteNode()"></i>
         </div>
@@ -73,6 +73,7 @@ export class NoteNodeComponent extends BaseNodeComponent implements OnInit {
 
   ngOnInit() {
     console.log('Here i m', this.getNode().data.content);
+    this.name = this.getNode().data.name;
     /*  this.index= this.getNode().data.index;
       this.id= this.getNode().data.id;
       this.name= this.getNode().data.name;
@@ -89,6 +90,6 @@ export class NoteNodeComponent extends BaseNodeComponent implements OnInit {
   }
 
   changeNoteName() {
-    window['toolkit'].updateNode(this.getNode().data.id, {name: this.getNode().data.name})
+    window['toolkit'].updateNode(this.getNode().data.id, {name: this.name})
   }
 }

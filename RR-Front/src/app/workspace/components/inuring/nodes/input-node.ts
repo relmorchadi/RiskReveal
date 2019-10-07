@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BaseNodeComponent} from "jsplumbtoolkit-angular";
+import {Store} from "@ngxs/store";
 
 @Component({
   selector: 'input-node',
@@ -7,7 +8,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
     <div class="flowchart-object flowchart-start input-node-card" (dblclick)="openPopup()">
       <div class="node-header">
         <input style="border: none !important;background-color: #f4f6fc !important;text-align: center;"
-               (ngModelChange)="changeNoteName()" [(ngModel)]="getNode().data.name">
+               (ngModelChange)="changeNoteName()" [(ngModel)]="getNode()?.data.name">
       </div>
       <div class="node-content">
         {{plts?.length}} PLTs
@@ -25,7 +26,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
             <li nz-menu-divider></li>
             <li nz-menu-item (click)="editNode()">Edit</li>
             <li nz-menu-item>Details</li>
-            <li nz-menu-item>Add Note</li>
+            <li nz-menu-item (click)="addNote()">Add Note</li>
           </ul>
         </nz-dropdown>
       </div>
@@ -78,7 +79,7 @@ export class InputNodeComponent extends BaseNodeComponent implements OnInit {
   index;
   plts = [];
 
-  constructor() {
+  constructor(private store: Store) {
     super();
   }
 
@@ -108,5 +109,9 @@ export class InputNodeComponent extends BaseNodeComponent implements OnInit {
 
   changeNoteName() {
     window['toolkit'].updateNode(this.getNode().data.id, {name: this.getNode().data.name})
+  }
+
+  addNote() {
+    window['toolkit'].addNode({type: 'noteNode', name: this.getNode().data.name})
   }
 }

@@ -3,8 +3,8 @@ import {GridsterConfig, GridType} from 'angular-gridster2';
 import {RenewalContractScopeComponent} from '../../components/renewal-contract-scope/renewal-contract-scope.component';
 import * as _ from 'lodash';
 import {NzMessageService} from 'ng-zorro-antd';
-import {NotificationService} from "../../../shared/notification.service";
-import {Router} from "@angular/router";
+import {NotificationService} from '../../../shared/notification.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-dashboard-entry',
@@ -66,7 +66,17 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'Car Status Widget',
+          id: 99, icon: 'icon-camera-focus', name: 'New Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 101, icon: 'icon-camera-focus', name: 'Archived Car Status Widget',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
@@ -120,8 +130,18 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'Car Status Widget',
+          id: 99, icon: 'icon-camera-focus', name: 'New Car Status Widget',
           componentName: 'facWidgetComponent', selected: true,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 101, icon: 'icon-camera-focus', name: 'Archived Car Status Widget',
+          componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
       ]
@@ -165,7 +185,17 @@ export class DashboardEntryComponent implements OnInit {
     ],
     fac: [
       {
-        id: 99, icon: 'icon-camera-focus', title: 'Car Status Widget',
+        id: 99, icon: 'icon-camera-focus', title: 'New Car Status Widget',
+        componentName: 'facWidgetComponent', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
+      },
+      {
+        id: 100, icon: 'icon-camera-focus', title: 'In Progress Car Status Widget',
+        componentName: 'facWidgetComponent', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
+      },
+      {
+        id: 101, icon: 'icon-camera-focus', title: 'Archived Car Status Widget',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       }

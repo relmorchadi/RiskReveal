@@ -21,7 +21,7 @@ import {
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
-import {AddInputNode, AddJoinNode, EditInputNode} from "../../../store/actions";
+import {AddInputNode, AddJoinNode, AddNoteNode, EditInputNode} from "../../../store/actions";
 import * as fromInuring from "../../../store/actions/inuring.actions"
 
 @Component({
@@ -38,6 +38,9 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   surface: Surface;
   @Output('editNode') editNodeEmitter: EventEmitter<any> = new EventEmitter();
   @Output('editEdge') editEdgeEmitter: EventEmitter<any> = new EventEmitter();
+
+  @Input('wsIdentifier') wsIdentifier;
+  @Input('inuringPackage') inuringPackage;
 
   @Input('data')
   set setInuringData(d){
@@ -241,6 +244,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   surfaceComponent: jsPlumbSurfaceComponent;
 
   toolkit;
+  afterViewInit = false;
 
   constructor(private $jsplumb: jsPlumbService, private _router: Router, private _cdRef: ChangeDetectorRef, private _store: Store, private _actions: Actions) {
     super(_router, _cdRef, _store);
@@ -249,7 +253,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   ngOnInit(): void {
     this._actions.pipe(
       this.unsubscribeOnDestroy,
-      ofActionDispatched(AddInputNode, AddJoinNode, EditInputNode)
+      ofActionDispatched(AddInputNode, AddJoinNode, EditInputNode, AddNoteNode)
     ).subscribe(action => {
       console.log('Actions here')
       if (action instanceof AddInputNode){
@@ -265,9 +269,9 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       else if (action instanceof EditInputNode) {
         let data = action.payload.data;
         return this.toolkit.updateNode(this.editableNode, data);
-
+      } else if (action instanceof AddNoteNode) {
+        this.toolkit.addNode({type: 'noteNode', name: action.payload.name});
       }
-
 
     })
   }
@@ -275,20 +279,40 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   ngAfterViewInit(): void {
     this.surface = window['surface'] = this.surfaceComponent.surface;
     this.toolkit = window['toolkit'] = this.$jsplumb.getToolkit(this.toolkitId);
+    console.log('toolkit ===> ', this.toolkit.getNodes());
     // this.toolkit.addNode({type: 'inputNode'});
     // this.toolkit.addNode({type: 'contractNode'});
     // this.toolkit.addNode({type: 'joinNode'});
-    this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
-    this.toolkit.addNode({type: 'finalNode', top: 600, left: 450, name: 'Final Node'});
+    if (this.toolkit.getNodes().length == 0) {
+      /*this.addNode('inputNode','Input Node');
+      this.addNode('finalNode','Final Node');*/
+      this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
+      this.toolkit.addNode({type: 'finalNode', top: 600, left: 450, name: 'Final Node'});
+      this.afterViewInit = true;
+    }
+
+    console.log('============>', this.toolkit.getNodes().map(row => row.data));
   }
 
   drop(param) {
     this.toolkit.addNode({type: 'contractNode'});
   }
 
+  addNode(type, name, top = 0, left = 0, plts = null) {
+    let today = new Date();
+    let id = today.getMilliseconds() + today.getSeconds() + today.getHours();
+    let node = {nodeId: id, type: type, top: top, left: left, name: name, plts: plts};
+    this._store.dispatch(new AddInputNode({
+      wsIdentifier: this.wsIdentifier,
+      inuringPackage: this.inuringPackage,
+      node: node
+    }));
+    this.toolkit.addNode(node);
+  }
   refreshToolkit() {
     this.toolkit.clear();
-    this.toolkit.addNode({type: 'finalNode', top : 600, left: 450});
+    this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
+    this.toolkit.addNode({type: 'finalNode', top: 600, left: 450, name: 'Final Node'});
     this.dispatch(new fromInuring.RefreshInuringGraph(null))
   }
 

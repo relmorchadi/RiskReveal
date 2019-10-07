@@ -38,6 +38,13 @@ export class EditInputNode {
   }
 }
 
+export class DeleteInputNode {
+  static readonly type = `[${namespace}] Delete Input Node`;
+
+  constructor(public payload: any) {
+  }
+}
+
 export class RefreshInuringGraph {
   static readonly type = `[${namespace}] Refresh Inuring Graph`;
   constructor(public payload: any) {}
@@ -46,4 +53,11 @@ export class RefreshInuringGraph {
 export class AddJoinNode {
   static readonly type = `[${namespace}] Add Join Node`;
   constructor(public payload: any) {}
+}
+
+export class AddNoteNode {
+  static readonly type = `[${namespace}] Add Note Node`;
+
+  constructor(public payload: any) {
+  }
 }

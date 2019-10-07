@@ -25,7 +25,7 @@ import {BaseNodeComponent} from "jsplumbtoolkit-angular";
             <li nz-menu-divider></li>
             <li nz-menu-item>Edit</li>
             <li nz-menu-item>Details</li>
-            <li nz-menu-item>Add Note</li>
+            <li nz-menu-item (click)="addNote()">Add Note</li>
           </ul>
         </nz-dropdown>
       </div>
@@ -90,4 +90,7 @@ export class FinalNodeComponent extends BaseNodeComponent implements OnInit {
   ngOnInit() {
   }
 
+  addNote() {
+    window['toolkit'].addNode({type: 'noteNode', name: this.getNode().data.name})
+  }
 }
