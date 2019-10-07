@@ -20,8 +20,14 @@ public class DefaultAdjustmentRest {
     DefaultAdjustmentService defaultAdjustmentService;
 
     @GetMapping("lookupdefaultadjustment")
-    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltMarketChannel(Integer scorPltHeaderId) throws RRException {
-        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(scorPltHeaderId);
+    public List<DefaultAdjustmentNodeEntity> getDefaultAdjustmentNodeByPurePltMarketChannel(int targetRapId,
+                                                                                            int regionPerilId,
+                                                                                            int marketChannelId,
+                                                                                            String engineType,
+                                                                                            int pltEntityId) throws RRException {
+        return defaultAdjustmentService.getDefaultAdjustmentNodeByPurePltRPAndTRAndETAndMC(targetRapId, regionPerilId, marketChannelId, engineType, pltEntityId);
     }
+
+
 
 }
