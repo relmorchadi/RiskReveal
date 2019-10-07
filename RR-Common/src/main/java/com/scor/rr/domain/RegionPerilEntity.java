@@ -282,6 +282,6 @@ public class RegionPerilEntity {
 
     @Override
     public int hashCode() {
-        return Objects.hash(regionPerilId, regionPerilCode, regionPerilDesc, perilCode, regionPerilGroupCode, regionPerilGroupDescription, regionHierarchy, regionDesc, isModelled, hierarchyParentCode, hierarchyLevel, isMinimumGrainRegionPeril, parentMinimumGrainRegionPeril, isActive, isEntityled, lastUpdatedRiskReveal, lastUpdatedCatDomain, lastSyncRunCatDomain, comments, hierachyLevel, hierachyParentCode, regionHierachy, regionPerilGroupDesc);
+        return Objects.hash(regionPerilId, regionPerilCode, regionPerilDesc, perilCode, regionPerilGroupCode, regionPerilGroupDescription, regionHierarchy, regionDesc, isModelled, hierarchyParentCode, hierarchyLevel, isMinimumGrainRegionPeril, parentMinimumGrainRegionPeril, isActive, isEntityled, lastUpdatedRiskReveal, lastUpdatedCatDomain, lastSyncRunCatDomain, hierachyLevel, hierachyParentCode, regionHierachy, regionPerilGroupDesc);
     }
 }
