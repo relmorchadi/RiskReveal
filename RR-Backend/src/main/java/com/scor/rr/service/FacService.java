@@ -48,7 +48,7 @@ public class FacService {
     }
 
     public List<FacRmsAnalysisBasic> findAnalysisBasic(Integer rdmId, String rdmName, String analysisName) {
-        return facRmsAnalysisBasicRepository.findByRdmIdAndRdmNameAndAnalysisName(rdmId, rdmName,analysisName);
+        return facRmsAnalysisBasicRepository.findByRdmIdAndRdmNameAndAnalysisNameLike(rdmId, rdmName,"%"+analysisName+"%");
     }
 
     public List<FacRmsAnalysisDetail> findAnalysisDetail(Integer analysisId, String analysisName) {
@@ -56,6 +56,6 @@ public class FacService {
     }
 
     public List<FacRmsPortfolio> findPortfolio(Integer edmId, String edmName, String portNum) {
-        return facRmsPortfolioRepository.findByEdmIdAndEdmNameAndPortNum(edmId, edmName,portNum);
+        return facRmsPortfolioRepository.findByEdmIdAndEdmNameAndPortNumLike(edmId, edmName,"%"+portNum+"%");
     }
 }
