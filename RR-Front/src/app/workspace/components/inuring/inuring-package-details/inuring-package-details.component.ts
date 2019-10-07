@@ -14,7 +14,7 @@ export class InuringPackageDetailsComponent implements OnInit {
   appendedNodes: any = [];
   showCreationPopup: any = false;
   selectedPlts: any = [];
-  stepConfig = {wsId: 'TB01735', uwYear: '2019', plts: []};
+  stepConfig = {wsId: '05PA753', uwYear: '2019', plts: []};
   showEditContractPopup: boolean = false;
   showEditEdgePopup: boolean = false;
   private editInputNode: boolean = false;
@@ -23,7 +23,6 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   ngOnInit() {
     console.log('this is details', this.data);
-    this.stepConfig = {wsId: this.data.wsId, uwYear: this.data.year, plts: []}
   }
 
   constructor(private _store: Store, private route$: ActivatedRoute) {

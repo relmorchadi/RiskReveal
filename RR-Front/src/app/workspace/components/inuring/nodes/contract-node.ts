@@ -97,6 +97,6 @@ export class ContractNodeComponent extends BaseNodeComponent implements OnInit {
   }
 
   addNote() {
-    window['toolkit'].addNode({type: 'noteNode', name: this.getNode().data.name})
+    window['toolkit'].addNode({type: 'noteNode', name: this.getNode().data.name, color: '#ffed78'})
   }
 }

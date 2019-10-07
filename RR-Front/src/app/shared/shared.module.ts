@@ -9,6 +9,7 @@ import {ContextMenuModule, DialogModule, MultiSelectModule} from 'primeng/primen
 import {ColorChromeModule} from 'ngx-color/chrome';
 import {PIPES} from './pipes';
 import {ColorSketchModule} from 'ngx-color/sketch';
+import {ColorGithubModule} from 'ngx-color/github';
 import {DragDropModule, DragDropModule as DragDropModuleAngular} from '@angular/cdk/drag-drop';
 import {DIRECTIVES} from "./directives";
 import {SidebarModule} from 'primeng/sidebar';
@@ -32,7 +33,8 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     MultiSelectModule,
     SidebarModule,
     DragDropModuleAngular,
-    AngularDraggableModule
+    AngularDraggableModule,
+    ColorGithubModule
   ],
   providers: [TableSortAndFilterPipe, SystemTagFilterPipe],
   exports: [
@@ -48,6 +50,7 @@ import {TableSortAndFilterPipe} from "./pipes/table-sort-and-filter.pipe";
     DragDropModuleAngular,
     AngularDraggableModule,
     SidebarModule,
+    ColorGithubModule,
     ...COMPONENTS,
     ...PIPES
   ]
