@@ -279,10 +279,11 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   ngAfterViewInit(): void {
     this.surface = window['surface'] = this.surfaceComponent.surface;
     this.toolkit = window['toolkit'] = this.$jsplumb.getToolkit(this.toolkitId);
+    console.log('toolkit ===> ', this.toolkit.getNodes());
     // this.toolkit.addNode({type: 'inputNode'});
     // this.toolkit.addNode({type: 'contractNode'});
     // this.toolkit.addNode({type: 'joinNode'});
-    if (!this.afterViewInit) {
+    if (this.toolkit.getNodes().length == 0) {
       /*this.addNode('inputNode','Input Node');
       this.addNode('finalNode','Final Node');*/
       this.toolkit.addNode({type: 'inputNode', top: 0, left: 0, name: 'Input Node'});
