@@ -25,7 +25,6 @@ public class RegionPerilEntity {
     private Timestamp lastUpdatedRiskReveal;
     private Timestamp lastUpdatedCatDomain;
     private Timestamp lastSyncRunCatDomain;
-    private String comments;
     private Integer hierachyLevel;
     private String hierachyParentCode;
     private Integer regionHierachy;
@@ -211,15 +210,6 @@ public class RegionPerilEntity {
         this.lastSyncRunCatDomain = lastSyncRunCatDomain;
     }
 
-    @Basic
-    @Column(name = "comments", length = 100)
-    public String getComments() {
-        return comments;
-    }
-
-    public void setComments(String comments) {
-        this.comments = comments;
-    }
 
     @Basic
     @Column(name = "hierachyLevel")
@@ -284,7 +274,6 @@ public class RegionPerilEntity {
                 Objects.equals(lastUpdatedRiskReveal, that.lastUpdatedRiskReveal) &&
                 Objects.equals(lastUpdatedCatDomain, that.lastUpdatedCatDomain) &&
                 Objects.equals(lastSyncRunCatDomain, that.lastSyncRunCatDomain) &&
-                Objects.equals(comments, that.comments) &&
                 Objects.equals(hierachyLevel, that.hierachyLevel) &&
                 Objects.equals(hierachyParentCode, that.hierachyParentCode) &&
                 Objects.equals(regionHierachy, that.regionHierachy) &&
