@@ -20,7 +20,7 @@
     <div class="renewal-contract-table">
       <app-table [sortable]="true"
                  [tableColumn]="cols"
-                 [listOfData]="applyFiltersAssigned(filterAssign())" [tableHeight]="'330px'"
+                 [listOfData]="applyFilters(filterAssign())" [tableHeight]="'330px'"
                  [virtualScroll]="false"
                  (dbClickItem)="openFacItem($event)"
                  (updateFavStatus)="valueFavChange($event)"
@@ -45,7 +45,7 @@
         </ul>
       </nz-dropdown>
 
-      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 0">
+<!--      <div class="menu-right-wrapper-icon" *ngIf="tabIndex === 0">
         <div class="icon-wrapper">
           <span (click)="filterData('New')" [ngClass]="{'selected-Filter': filterNew}">
             <i class="icon-new_releases_24px" nz-tooltip [nzTitle]="'New'"></i>
@@ -77,7 +77,7 @@
             <span class="tag-number">{{getCombinedNumber(filterAssign())}}</span>
           </span>
         </div>
-      </div>
+      </div>-->
 
       <div style="position: absolute;top: 10px; right: 25px" >
         <nz-dropdown [nzTrigger]="'hover'" [nzPlacement]="'bottomRight'">

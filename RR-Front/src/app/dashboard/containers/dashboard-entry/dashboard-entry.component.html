@@ -45,8 +45,7 @@
                     [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
                     (delete)="deleteItem(dashboard.id, $event)"
                     (changeName)="changeName(dashboard.id, $event)"
-                    (duplicate)="duplicate(dashboard.id, $event)"
-                  class="no-drag">
+                    (duplicate)="duplicate(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
                 </gridster-item>
               </ng-container>
@@ -145,7 +144,7 @@
         <div class="highlight" style="margin-top: 10px">
           <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
         </div>
-        <ul class="widgets-list" style="height: 50px;">
+        <ul class="widgets-list" style="height: 99px;">
           <li *ngFor="let fac of selectedDashboard.fac"
               (click)="addRemoveItemFac(fac, selectedDashboard)"
               class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">

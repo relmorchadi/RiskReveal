@@ -90,6 +90,10 @@ FINANCIAL PERSPECTIVE POPUP STYLE
       margin-right: 15px;
     }
   }
+
+  .tags-stack-vertical {
+    margin: 2px 0;
+  }
 }
 
 .input-group-modal {
@@ -602,6 +606,10 @@ LINKING MODAL STYLE
 
       .selected-Item-text {
         font-size: 10px;
+        width: 65%;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
         color: #B2B2B2;
       }
 
