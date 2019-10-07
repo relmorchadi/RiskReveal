@@ -112,6 +112,8 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   allCheckedAnalysis: boolean;
   indeterminateAnalysis: boolean;
+  allCheckedPeqt: boolean;
+  indeterminatePeqt: boolean;
 
   collapseDataSources = false;
   collapseFPDataTable = false;
@@ -322,6 +324,11 @@ export class RiskLinkResSummaryComponent implements OnInit {
         this.store.dispatch(new fromWs.ToggleAnalysisLinkingAction({action: 'unselectAll', wrapper: wrapperEDM}));
       }
     }
+  }
+
+  updateAllCheckedPeqt(value, child) {
+    const data = child.map(item => item.selected = value);
+    console.log(data);
   }
 
   checkRow(event, rowData, target) {
@@ -632,6 +639,20 @@ export class RiskLinkResSummaryComponent implements OnInit {
 
   getSelectedPeqt(row) {
     return _.filter( _.get(this.state.results.data[row.id], 'peqt', []), ws => ws.selected === true).length;
+  }
+
+  getIndeterminateValue(child) {
+    const selection = _.filter(child, item => item.selected);
+    if (selection.length > 0) {
+      return selection.length !== child.length;
+    } else {
+      return false;
+    }
+  }
+
+  getCheckedValue(child) {
+    const selection = _.filter(child, item => item.selected);
+    return selection.length === child.length;
   }
 
   filterLinkingAnalysis() {

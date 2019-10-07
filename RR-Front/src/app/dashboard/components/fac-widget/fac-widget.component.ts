@@ -29,9 +29,9 @@ export class FacWidgetComponent implements OnInit {
   filterCurrent = false;
   filterArchive = false;
 
-  filterAssignedNew = false;
+/*  filterAssignedNew = false;
   filterAssignedCurrent = false;
-  filterAssignedArchive = false;
+  filterAssignedArchive = false;*/
 
   @Input()
   itemName = 'Car Widget';
@@ -39,6 +39,8 @@ export class FacWidgetComponent implements OnInit {
   dashboard: any;
   @Input()
   identifier: number;
+  @Input()
+  widgetIndex: number;
   newDashboard: any;
   editName = false;
 
@@ -90,10 +92,6 @@ export class FacWidgetComponent implements OnInit {
 
   ngOnInit() {
     this.newDashboard = this.dashboard;
-/*    this.wsApi.searchFacWidget().subscribe((ws: any) => {
-      this.data = ws.content;
-      console.log(this.data);
-    });*/
     this.facData$.subscribe(value => {
       this.data = value;
     });
@@ -105,11 +103,17 @@ export class FacWidgetComponent implements OnInit {
       this.defaultUwUnit = coi.defaultUwUnit;
       this.detectChanges();
     });
+    this.setFilters();
+  }
 
-    /*this.api().subscribe( data => {
-        this.mockData= data;
-        this.detectChanges();
-      })*/
+  setFilters() {
+    if (this.itemName === 'New Car Status Widget') {
+      this.filterNew = true;
+    } else if (this.itemName === 'In Progress Car Status Widget') {
+      this.filterCurrent = true;
+    } else if (this.itemName === 'Archived Car Status Widget') {
+      this.filterArchive = true;
+    }
   }
 
   getValueNumber(scope) {
@@ -129,7 +133,7 @@ export class FacWidgetComponent implements OnInit {
     this.tabIndex = index;
   }
 
-  filterData(filter) {
+/*  filterData(filter) {
     if (filter === 'New') {
       this.filterNew = true;
       this.filterCurrent = false;
@@ -161,17 +165,6 @@ export class FacWidgetComponent implements OnInit {
     }
   }
 
-  applyFilters(data) {
-    let filteredData = [...data];
-    if (this.filterCurrent) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
-    } else if (this.filterNew) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
-    } else if (this.filterArchive) {
-      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
-    }
-    return filteredData;
-  }
 
   applyFiltersAssigned(data) {
     let filteredData = [...data];
@@ -180,6 +173,18 @@ export class FacWidgetComponent implements OnInit {
     } else if (this.filterAssignedNew) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'New');
     } else if (this.filterAssignedArchive) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
+    }
+    return filteredData;
+  }*/
+
+  applyFilters(data) {
+    let filteredData = [...data];
+    if (this.filterCurrent) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'In Progress');
+    } else if (this.filterNew) {
+      filteredData = _.filter(filteredData, item => item.carStatus === 'New');
+    } else if (this.filterArchive) {
       filteredData = _.filter(filteredData, item => item.carStatus === 'SuperSeeded' || item.carStatus === 'Completed' || item.carStatus === 'Canceled');
     }
     return filteredData;

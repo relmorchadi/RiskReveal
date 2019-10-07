@@ -23,6 +23,7 @@ export class InuringPackageDetailsComponent implements OnInit {
 
   ngOnInit() {
     console.log('this is details', this.data);
+    this.stepConfig = {wsId: this.data.wsId, uwYear: this.data.year, plts: []}
   }
 
   constructor(private _store: Store, private route$: ActivatedRoute) {

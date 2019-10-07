@@ -96,9 +96,8 @@ nz-header {
   display: flex;
   flex-direction: column;
   background: #FFFFFF;
-  height: 100%;
+  height: calc(100vh - 149px);
   padding: 15px 24px;
-  padding-bottom: 500px;
 }
 
 .add-workspace-btn {
