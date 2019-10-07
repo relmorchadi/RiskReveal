@@ -191,7 +191,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkPortfolio(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item, from, to} = payload;
+    const {action, value, item, from, to, data} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const selectedPortfolio = _.filter(_.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.edm),
       dt => dt.selected)[0];
@@ -209,32 +209,19 @@ export class RiskLinkStateService {
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else if (action === 'chunk') {
-      portfolios.forEach((dt: any, index) => {
-        let pt;
-        if (index <= to && index >= from) {
-          pt = {
-            [dt.dataSourceId]: {
-              ...dt, selected: true
-            }
-          };
-        } else {
-          pt = {
-            [dt.dataSourceId]: {
-              ...dt, selected: false
-            }
-          };
-        }
-        newData = _.merge(newData, pt);
+      let selectedItems = {};
+      data.forEach(items => {
+        selectedItems = _.merge({}, selectedItems, {[items.dataSourceId]: {...items, selected: true}});
       });
-      const newArray = _.toArray(newData);
-      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
+      console.log(selectedItems);
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data = newData;
+          draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data =
+            _.merge({}, draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].data, selectedItems);
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].indeterminate =
-            filtredData.length !== 0 && newArray.length !== filtredData.length;
+            data.length !== 0 && portfolios.length !== data.length;
           draft.content[wsIdentifier].riskLink.portfolios[selectedPortfolio.id].allChecked =
-            filtredData.length === 0 || newArray.length === filtredData.length;
+            data.length === 0 || portfolios.length === data.length;
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
@@ -260,7 +247,7 @@ export class RiskLinkStateService {
 
   toggleRiskLinkAnalysis(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();
-    const {action, value, item, from, to} = payload;
+    const {action, value, item, from, to, data} = payload;
     const wsIdentifier = _.get(state, 'currentTab.wsIdentifier');
     const selectedAnalysis = _.filter(_.toArray(state.content[wsIdentifier].riskLink.listEdmRdm.selectedListEDMAndRDM.rdm),
       dt => dt.selected)[0];
@@ -278,32 +265,18 @@ export class RiskLinkStateService {
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else if (action === 'chunk') {
-      analysis.forEach((st: any, index) => {
-        let pt;
-        if (index <= to && index >= from) {
-          pt = {
-            [st.analysisId]: {
-              ...st, selected: true
-            }
-          };
-        } else {
-          pt = {
-            [st.analysisId]: {
-              ...st, selected: false
-            }
-          };
-        }
-        newData = _.merge(newData, pt);
+      let selectedItems = {};
+      data.forEach(items => {
+        selectedItems = _.merge({}, selectedItems, {[items.analysisId]: {...items, selected: true}});
       });
-      const newArray = _.toArray(newData);
-      const filtredData = _.filter(newArray, (pts: any) => pts.selected);
       ctx.patchState(
         produce(ctx.getState(), draft => {
-          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data = newData;
+          draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data =
+            _.merge({}, draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].data, selectedItems);
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].indeterminate =
-            filtredData.length !== 0 && newArray.length !== filtredData.length;
+            data.length !== 0 && analysis.length !== data.length;
           draft.content[wsIdentifier].riskLink.analysis[selectedAnalysis.id].allChecked =
-            filtredData.length === 0 || newArray.length === filtredData.length;
+            data.length === 0 || analysis.length === data.length;
         }));
       ctx.dispatch(new fromWs.PatchAddToBasketStateAction());
     } else {
@@ -1400,6 +1373,7 @@ export class RiskLinkStateService {
       })
     );
   }
+
 /*
   loadPortfolioForLinking(ctx: StateContext<WorkspaceModel>, payload) {
     const state = ctx.getState();

@@ -107,9 +107,9 @@ export class FacWidgetComponent implements OnInit {
   }
 
   setFilters() {
-    if (this.itemName === 'New Car Status Widget') {
+    if (this.itemName === 'New CAR\'s') {
       this.filterNew = true;
-    } else if (this.itemName === 'In Progress Car Status Widget') {
+    } else if (this.itemName === 'In Progress CAR\'s') {
       this.filterCurrent = true;
     } else if (this.itemName === 'Archived Car Status Widget') {
       this.filterArchive = true;

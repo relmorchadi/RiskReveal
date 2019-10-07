@@ -66,17 +66,22 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'New Car Status Widget',
+          id: 99, icon: 'icon-camera-focus', name: 'New CAR\'s',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress Car Status Widget',
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress CAR\'s',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived Car Status Widget',
+          id: 101, icon: 'icon-camera-focus', name: 'Archived CAR\'s',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 102, icon: 'icon-camera-focus', name: 'Archived CAR\'s',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
@@ -130,17 +135,22 @@ export class DashboardEntryComponent implements OnInit {
       ],
       fac: [
         {
-          id: 99, icon: 'icon-camera-focus', name: 'New Car Status Widget',
+          id: 99, icon: 'icon-camera-focus', name: 'New CAR\'s',
           componentName: 'facWidgetComponent', selected: true,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 100, icon: 'icon-camera-focus', name: 'In Progress Car Status Widget',
+          id: 100, icon: 'icon-camera-focus', name: 'In Progress CAR\'s',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         },
         {
-          id: 101, icon: 'icon-camera-focus', name: 'Archived Car Status Widget',
+          id: 101, icon: 'icon-camera-focus', name: 'Archived CAR\'s',
+          componentName: 'facWidgetComponent', selected: false,
+          position: {cols: 3, rows: 2, col: 0, row: 0}
+        },
+        {
+          id: 102, icon: 'icon-camera-focus', name: 'CARs By Analyst\\Status',
           componentName: 'facWidgetComponent', selected: false,
           position: {cols: 3, rows: 2, col: 0, row: 0}
         }
@@ -185,17 +195,22 @@ export class DashboardEntryComponent implements OnInit {
     ],
     fac: [
       {
-        id: 99, icon: 'icon-camera-focus', title: 'New Car Status Widget',
+        id: 99, icon: 'icon-camera-focus', title: 'New CAR\'s',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       },
       {
-        id: 100, icon: 'icon-camera-focus', title: 'In Progress Car Status Widget',
+        id: 100, icon: 'icon-camera-focus', title: 'In Progress CAR\'s',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       },
       {
-        id: 101, icon: 'icon-camera-focus', title: 'Archived Car Status Widget',
+        id: 101, icon: 'icon-camera-focus', title: 'Archived CAR\'s',
+        componentName: 'facWidgetComponent', selected: true,
+        position: {cols: 3, rows: 2, col: 0, row: 0}
+      },
+      {
+        id: 102, icon: 'icon-camera-focus', title: 'CARs By Analyst\\Status',
         componentName: 'facWidgetComponent', selected: true,
         position: {cols: 3, rows: 2, col: 0, row: 0}
       }
@@ -371,7 +386,30 @@ export class DashboardEntryComponent implements OnInit {
     if (itemId > 5) {
       dashboard.items = dashboard.items.filter(ds => ds.id !== itemId);
     } else {
-      dashboard.items[itemId - 1].selected = false;
+      dashboard.items = dashboard.items.map(item => {
+        if (item.id === itemId) {
+          return {...item, selected: false};
+        } else {
+          return item;
+        }
+      });
+    }
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    this.updateDashboardMockData();
+  }
+
+  deleteItemFac(dashboardId: any, itemId: any) {
+    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
+    if (itemId > 102 || itemId < 99) {
+      dashboard.fac = dashboard.fac.filter(ds => ds.id !== itemId);
+    } else {
+      dashboard.fac = dashboard.fac.map(item => {
+        if (item.id === itemId) {
+          return {...item, selected: false};
+        } else {
+          return item;
+        }
+      });
     }
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
@@ -396,6 +434,25 @@ export class DashboardEntryComponent implements OnInit {
     // this.editName = false;
   }
 
+  changeNameFac(dashboardId: any, {itemId, newName}: any) {
+    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
+    if (itemId > 102 && itemId < 99) {
+      const newItem = dashboard.fac.filter(ds => ds.id === itemId);
+      const copy = Object.assign({}, newItem[0], {
+        name: newName,
+        id: dashboard.items.length + 1
+      });
+      dashboard.fac.push(copy);
+      newItem[0].selected = false;
+    } else {
+      let index = _.findIndex(dashboard.items, {id: itemId});
+      dashboard.items = _.merge(dashboard.items, {[index]: {name: newName}});
+    }
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    this.updateDashboardMockData();
+    // this.editName = false;
+  }
+
   duplicate(dashboardId: any, itemName: any) {
     const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
     const duplicatedItem: any = dashboard.items.filter(ds => ds.name === itemName);
@@ -404,6 +461,18 @@ export class DashboardEntryComponent implements OnInit {
       selected: true,
     });
     dashboard.items = [...dashboard.items, copy];
+    localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
+    this.updateDashboardMockData();
+  }
+
+  duplicateFac(dashboardId: any, itemName: any) {
+    const dashboard: any = this.dashboards.filter(ds => ds.id === this.selectedDashboard.id)[0];
+    const duplicatedItem: any = dashboard.fac.filter(ds => ds.name === itemName);
+    const copy = Object.assign({}, duplicatedItem[0], {
+      id: dashboard.items.length + 1,
+      selected: true,
+    });
+    dashboard.fac = [...dashboard.fac, copy];
     localStorage.setItem('dashboard', JSON.stringify(this.dashboards));
     this.updateDashboardMockData();
   }

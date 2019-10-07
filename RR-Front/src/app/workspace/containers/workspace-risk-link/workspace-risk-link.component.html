@@ -335,8 +335,9 @@
                 <!--                           [virtualScroll]="true" (onLazyLoad)="loadDataOnScroll($event)" [lazy]="true" [virtualRowHeight]="25"
                            [rows]="20" [totalRecords]="getTableRecords()"-->
                 <div class="show-table">
-                  <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" [value]="getTableData()"
-                           [resizableColumns]="true" columnResizeMode="expand"
+                  <p-table #kt [columns]="getScrollableCols()" [frozenColumns]="getFrozenCols()" (selectionChange)="getSelection($event)"
+                           [value]="getDivision(getTableData())" selectionMode="multiple" [(selection)]="selectedRows"
+                           [resizableColumns]="true" columnResizeMode="expand" [metaKeySelection]="true"
                            [scrollable]="true" scrollHeight="340px" frozenWidth="240px" [rowTrackBy]="rowTrackBy" [dataKey]="'id'">
                     <ng-template pTemplate="colgroup" let-columns>
                       <colgroup>
@@ -348,13 +349,13 @@
                         <th *ngFor="let col of columns" pResizableColumn [ngClass]="{'select-header': col.header === 'selected'}" [pSortableColumn]="col.field">
                           <ng-container *ngIf="col.header === 'selected'">
                             <label *ngIf="state.selectedEDMOrRDM === 'rdm'"
-                                   nz-checkbox [ngModel]="allCheckedAnalysis"
+                                   nz-checkbox [ngModel]="getCheckedData()"
                                    (ngModelChange)="updateAllChecked('analysis')"
-                                   [nzIndeterminate]="indeterminateAnalysis"></label>
+                                   [nzIndeterminate]="getIndeterminate()"></label>
                             <label *ngIf="state.selectedEDMOrRDM === 'edm'"
-                                   nz-checkbox [ngModel]="allCheckedPortolfios"
+                                   nz-checkbox [ngModel]="getCheckedData()"
                                    (ngModelChange)="updateAllChecked('portfolio')"
-                                   [nzIndeterminate]="indeterminatePortfolio"></label>
+                                   [nzIndeterminate]="getIndeterminate()"></label>
                             <!--                            <i style="cursor: pointer;" nz-icon nzType="down" nzTheme="outline"></i>-->
                           </ng-container>
                           <div *ngIf="col.header !== 'selected'">
@@ -381,7 +382,7 @@
                       </tr>
                     </ng-template>
                     <ng-template pTemplate="body" let-i="rowIndex" let-rowData let-columns="columns">
-                      <tr>
+                      <tr [pSelectableRow]="rowData" [pSelectableRowIndex]="i">
                         <td *ngFor="let col of columns"
                             [ngClass]="{'selected-item': rowData?.selected}">
                           <div style=" display: flex;" *ngIf="col.type === 'select'">
@@ -391,7 +392,7 @@
                           <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
                                *ngIf="col.type === 'text'"><span>{{rowData[col.field]}}</span></div>
                           <div class="text-data" (click)="selectRows(rowData, i, 'A&P')"
-                               *ngIf="col.type === 'date'"><span>{{rowData[col.field] | date:'dd/MM/yyyy'}}</span></div>
+                               *ngIf="col.type === 'date'"><span>{{getDateValue(rowData[col.field])}}</span></div>
                         </td>
                       </tr>
                     </ng-template>

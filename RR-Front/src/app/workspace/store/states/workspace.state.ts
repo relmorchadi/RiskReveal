@@ -59,6 +59,12 @@ export class WorkspaceState {
   }
 
   @Selector()
+  static getCurrentWorkspaces(state: WorkspaceModel) {
+    const wsId = state.currentTab.wsIdentifier;
+    return state.content[wsId];
+  }
+
+  @Selector()
   static getCurrentTab(state: WorkspaceModel) {
     return state.currentTab;
   }

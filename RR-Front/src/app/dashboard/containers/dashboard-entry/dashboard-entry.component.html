@@ -43,9 +43,9 @@
                   </renewal-contract-scope>
                   <app-fac-widget *ngIf="item.componentName === 'facWidgetComponent'"
                     [identifier]="item?.id" [dashboard]="dashboard" [itemName]="item?.name"
-                    (delete)="deleteItem(dashboard.id, $event)"
-                    (changeName)="changeName(dashboard.id, $event)"
-                    (duplicate)="duplicate(dashboard.id, $event)" class="no-drag">
+                    (delete)="deleteItemFac(dashboard.id, $event)"
+                    (changeName)="changeNameFac(dashboard.id, $event)"
+                    (duplicate)="duplicateFac(dashboard.id, $event)" class="no-drag">
                   </app-fac-widget>
                 </gridster-item>
               </ng-container>
@@ -144,15 +144,17 @@
         <div class="highlight" style="margin-top: 10px">
           <span class="title">FAC</span> <i (click)="routerNavigate()" class="icon-plus-circle"></i>
         </div>
-        <ul class="widgets-list" style="height: 99px;">
-          <li *ngFor="let fac of selectedDashboard.fac"
-              (click)="addRemoveItemFac(fac, selectedDashboard)"
-              class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">
-            <i [ngClass]="fac.icon"></i>
-            {{fac?.name}}
-            <i class="float-right mr-1 mt-1"
-               [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
-          </li>
+        <ul class="widgets-list" style="height: 129px;">
+          <ng-container *ngFor="let fac of selectedDashboard.fac;let i = index">
+            <li *ngIf="i < 4"
+                (click)="addRemoveItemFac(fac, selectedDashboard)"
+                class="widget-item" [ngClass]="{'active-widget-item': fac.selected}">
+              <!--            <i [ngClass]="fac.icon"></i>-->
+              {{fac?.name}}
+              <i class="float-right mr-1 mt-1"
+                 [ngClass]="{'icon-check_24px': fac.selected, 'icon-radio_button_unchecked_24px': !fac.selected}"></i>
+            </li>
+          </ng-container>
         </ul>
       </div>
       <!--        <div style="margin-bottom: 15px">
