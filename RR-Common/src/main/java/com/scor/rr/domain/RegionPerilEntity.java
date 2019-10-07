@@ -186,7 +186,7 @@ public class RegionPerilEntity {
     }
 
     @Basic
-    @Column(name = "regionPerilGroupDesc", length = 255)
+    @Column(name = "regionPerilGroupDescription", length = 255)
     public String getRegionPerilGroupDesc() {
         return regionPerilGroupDesc;
     }
