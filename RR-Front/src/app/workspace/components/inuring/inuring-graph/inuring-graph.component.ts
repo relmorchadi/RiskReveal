@@ -21,7 +21,7 @@ import {
 import {BaseContainer} from "../../../../shared/base";
 import {Router} from "@angular/router";
 import {Actions, ofActionDispatched, Store} from "@ngxs/store";
-import {AddInputNode, AddJoinNode, EditInputNode} from "../../../store/actions";
+import {AddInputNode, AddJoinNode, AddNoteNode, EditInputNode} from "../../../store/actions";
 import * as fromInuring from "../../../store/actions/inuring.actions"
 
 @Component({
@@ -253,7 +253,7 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
   ngOnInit(): void {
     this._actions.pipe(
       this.unsubscribeOnDestroy,
-      ofActionDispatched(AddInputNode, AddJoinNode, EditInputNode)
+      ofActionDispatched(AddInputNode, AddJoinNode, EditInputNode, AddNoteNode)
     ).subscribe(action => {
       console.log('Actions here')
       if (action instanceof AddInputNode){
@@ -269,9 +269,9 @@ export class InuringGraphComponent extends BaseContainer implements OnInit, Afte
       else if (action instanceof EditInputNode) {
         let data = action.payload.data;
         return this.toolkit.updateNode(this.editableNode, data);
-
+      } else if (action instanceof AddNoteNode) {
+        this.toolkit.addNode({type: 'noteNode', name: action.payload.name});
       }
-
 
     })
   }
