@@ -64,23 +64,25 @@ public class NodeTest {
 
     @Before
     public void setUp() throws RRException {
-        threadTest = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",
+        threadTest = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadRequest("",
                 true,
                 983,0,
                 "",
                 "",
-                ""));
+                "",
+                false));
 
         nodeTest = adjustmentNodeService.save(new AdjustmentNodeRequest("",1,
                 false,"",
                 false,1,
                 4,1,threadTest.getAdjustmentThreadId(),1.7,1.1,null,983,2,null));
 
-        threadEntityForUpdateOrder = adjustmentThreadService.savePurePlt(new AdjustmentThreadRequest("",true,
+        threadEntityForUpdateOrder = adjustmentThreadService.createNewAdjustmentThread(new AdjustmentThreadRequest("",true,
                 983,0,
                 "",
                 "",
-                ""));
+                "",
+                false));
 
         nodeEntity1 = adjustmentNodeService.save(new AdjustmentNodeRequest("",1,
                 false,"",

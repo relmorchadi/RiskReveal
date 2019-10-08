@@ -12,6 +12,7 @@ public class AdjustmentThreadRequest {
     private String createdBy;
     private String accessBy;
     private String lastModifiedBy;
+    private boolean generateDefaultThread;
 
     public AdjustmentThreadRequest() {
     }
@@ -22,7 +23,7 @@ public class AdjustmentThreadRequest {
         this.lastModifiedBy = lastModifiedBy;
     }
 
-    public AdjustmentThreadRequest(String threadType, Boolean locked, Integer pltPureId, Integer pltFinalId, String createdBy, String accessBy, String lastModifiedBy) {
+    public AdjustmentThreadRequest(String threadType, Boolean locked, Integer pltPureId, Integer pltFinalId, String createdBy, String accessBy, String lastModifiedBy, boolean generateDefaultThread) {
         this.threadType = threadType;
         this.locked = locked;
         this.pltPureId = pltPureId;
@@ -96,4 +97,11 @@ public class AdjustmentThreadRequest {
         this.lastModifiedBy = lastModifiedBy;
     }
 
+    public boolean isGenerateDefaultThread() {
+        return generateDefaultThread;
+    }
+
+    public void setGenerateDefaultThread(boolean generateDefaultThread) {
+        this.generateDefaultThread = generateDefaultThread;
+    }
 }

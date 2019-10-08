@@ -17,12 +17,12 @@ public class AdjustmentThreadRest {
 
     @PostMapping("pure")
     public AdjustmentThreadEntity savePurePlt(@RequestBody AdjustmentThreadRequest request) throws RRException {
-        return adjustmentThreadService.savePurePlt(request);
+        return adjustmentThreadService.createNewAdjustmentThread(request);
     }
 
     @PostMapping("adjusted")
     public AdjustmentThreadEntity saveAdjustedPlt(@RequestBody AdjustmentThreadRequest request) throws RRException {
-        return adjustmentThreadService.saveAdjustedPlt(request);
+        return adjustmentThreadService.updateAdjustmentThreadFinalPLT(request);
     }
 
     @GetMapping

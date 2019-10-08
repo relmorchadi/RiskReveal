@@ -24,16 +24,19 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 public class AdjustmentThreadService {
 
     @Autowired
-    AdjustmentThreadRepository adjustmentthreadRepository;
+    private AdjustmentThreadRepository adjustmentthreadRepository;
 
     @Autowired
-    AdjustmentNodeService nodeService;
+    private AdjustmentNodeService nodeService;
 
     @Autowired
-    ScorpltheaderRepository scorpltheaderRepository;
+    private ScorpltheaderRepository scorpltheaderRepository;
 
     @Autowired
-    CloningScorPltHeader cloningScorPltHeader;
+    private CloningScorPltHeader cloningScorPltHeader;
+
+    @Autowired
+    private DefaultAdjustmentService defaultAdjustmentService;
 
     public AdjustmentThreadEntity findOne(Integer id){
         return adjustmentthreadRepository.findById(id).orElseThrow(throwException(THREAD_NOT_FOUND,NOT_FOUND));
@@ -47,17 +50,21 @@ public class AdjustmentThreadService {
     //Refactor need to be done (methods name does not refer to what they are doing)
     //Done
 
-    public AdjustmentThreadEntity savePurePlt(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
+    public AdjustmentThreadEntity createNewAdjustmentThread(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = new AdjustmentThreadEntity();
         adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
         adjustmentThreadEntity.setCreatedOn(new Timestamp(new Date().getTime()));
         adjustmentThreadEntity.setCreatedBy(adjustmentThreadRequest.getCreatedBy());
         adjustmentThreadEntity.setLocked(adjustmentThreadRequest.getLocked());
         if(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).isPresent()) {
-            ScorPltHeaderEntity scorPltHeaderEntity = scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get();
-            if(scorPltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
+            ScorPltHeaderEntity pltHeaderEntity = scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get();
+            if(pltHeaderEntity.getPltType().equalsIgnoreCase("pure")) {
                 adjustmentThreadEntity.setScorPltHeaderByFkScorPltHeaderThreadPureId(scorpltheaderRepository.findById(adjustmentThreadRequest.getPltPureId()).get());
-                return adjustmentthreadRepository.save(adjustmentThreadEntity);
+                adjustmentThreadEntity = adjustmentthreadRepository.save(adjustmentThreadEntity);
+                if (adjustmentThreadRequest.isGenerateDefaultThread()) {
+                    adjustmentThreadEntity = defaultAdjustmentService.createDefaultThread(adjustmentThreadEntity);
+                }
+                return adjustmentThreadEntity;
             } else {
                 throw new com.scor.rr.exceptions.RRException(ExceptionCodename.PLT_TYPE_NOT_CORRECT,1);
             }
@@ -70,7 +77,7 @@ public class AdjustmentThreadService {
         return adjustmentthreadRepository.getAdjustmentThreadEntityByScorPltHeaderByFkScorPltHeaderThreadId_PkScorPltHeaderId(scorPltHeaderId);
     }
 
-    public AdjustmentThreadEntity saveAdjustedPlt(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
+    public AdjustmentThreadEntity updateAdjustmentThreadFinalPLT(AdjustmentThreadRequest adjustmentThreadRequest) throws RRException {
         AdjustmentThreadEntity adjustmentThreadEntity = adjustmentthreadRepository.getOne(adjustmentThreadRequest.getAdjustmentThreadId());
         if(adjustmentThreadEntity != null) {
             adjustmentThreadEntity.setThreadType(adjustmentThreadRequest.getThreadType());
